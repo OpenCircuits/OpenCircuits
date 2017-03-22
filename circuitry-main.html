@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta name="description" content="Circuits">
+        <meta name="viewport" content="width=device-width", initial-scale="1">
+
+        <link rel="stylesheet" href="circuitry-stylesheet.css">
+        <title>Circuits</title>
+    </head>
+
+    <body onload="start();">
+        <div id="container">
+            <div id="tools" class="toolbar">
+                <button type="button">
+                    <img src="img-open.svg" height="100%" alt="Save icon"/>
+                </button>
+                <button type="button">
+                    <img src="img-save.svg" height="100%" alt="Save icon"/>
+                </button>
+                <button type="button">
+                    <img src="img-cursor.svg" height="100%" alt="Save icon"/>
+                </button>
+                <button type="button">
+                    <img src="img-hand.svg" height="100%" alt="Save icon"/>
+                </button>
+            </div>
+
+            <div id="items" class="sidenav">
+                <h4 unselectable>Inputs</h4>
+                <button type="button" onclick="placeItem(new ConstantLow());">
+                    <img src="img-constLow.svg" width="100%" alt="Save icon"/>
+                    <br/>Constant Low
+                </button>
+                <button type="button" onclick="placeItem(new ConstantHigh());">
+                    <img src="img-constHigh.svg" width="100%" alt="Save icon"/>
+                    <br/>Constant High
+                </button>
+                <button type="button" onclick="placeItem(new Button());">
+                    <img src="img-buttonUp.svg" width="100%" alt="Save icon"/>
+                    <br/>Button
+                </button>
+                <button type="button" onclick="placeItem(new Switch());">
+                    <img src="img-switchUp.svg" width="100%" alt="Save icon"/>
+                    <br/>Switch
+                </button>
+
+                <h4 unselectable>Ouputs</h4>
+                <button type="button" onclick="placeItem(new LED());">
+                    <img src="img-led.svg" width="100%" alt="Save icon"/>
+                    <br/>LED
+                </button>
+
+                <h4 unselectable>Logic Gates</h4>
+                <button type="button" onclick="placeItem(new BUFGate());">
+                    <img src="buffer.svg" width="100%" alt="Save icon"/>
+                    <br/>BUFFER
+                </button>
+                <button type="button" onclick="placeItem(new BUFGate(true));">
+                    <img src="not.svg" width="100%" alt="Save icon"/>
+                    <br/>NOT
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate());">
+                    <img src="and.svg" width="100%" alt="Save icon"/>
+                    <br/>AND
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate(true));">
+                    <img src="nand.svg" width="100%" alt="Save icon"/>
+                    <br/>NAND
+                </button>
+                <button type="button" onclick="placeItem(new ORGate());">
+                    <img src="or.svg" width="100%" alt="Save icon"/>
+                    <br/>OR
+                </button>
+                <button type="button" onclick="placeItem(new ORGate(true));">
+                    <img src="nor.svg" width="100%" alt="Save icon"/>
+                    <br/>NOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate());">
+                    <img src="xor.svg" width="100%" alt="Save icon"/>
+                    <br/>XOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate(true));">
+                    <img src="xnor.svg" width="100%" alt="Save icon"/>
+                    <br/>XNOR
+                </button>
+            </div>
+        </div>
+
+        <div id="main">
+            <canvas id="canvas"></canvas>
+
+            <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
+
+            <script src="jsutils-vector.js"></script>
+            <script src="circuitry-helper.js"></script>
+            <script src="circuitry-tools.js"></script>
+            <script src="circuitry-items.js"></script>
+            <script src="circuitry-main.js"></script>
+            <script src="circuitry-input.js"></script>
+        </div>
+    </body>
+</html>

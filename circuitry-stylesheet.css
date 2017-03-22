@@ -1,0 +1,117 @@
+body, html {
+    background-color: #ccc;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+}
+canvas {
+    position:absolute;
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+}
+
+.toolbar {
+    width: 100%;
+    height: 5%;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(200, 200, 200, 0.7);
+    border-style: solid;
+    border-width: 5px;
+    border-color: #999;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 0px;
+    float: left;
+}
+.toolbar button {
+    background-color: rgba(210, 210, 210, 0.8);
+    margin-left: 1%;
+    border-style: none;
+    padding: 0;
+    height: 100%;
+    transition: 0.3s;
+}
+
+
+.tab {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 1em;
+    border-bottom-right-radius: 15px;
+    font-size: 18;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+#openItemsTab {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+.sidenav {
+    height: 94%;
+    width: 0;
+    position: relative;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(200, 200, 200, 0.7);
+    border-style: solid;
+    border-top-style: none;
+    border-width: 5px;
+    border-color: #999;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 0px;
+}
+.sidenav h4 {
+    padding-left: 0.5em;
+    padding-right: 1em;
+    font-size: 24px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+}
+.sidenav label.sidenav-label {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.25em;
+    font-size: 18px;
+    color: #ddd;
+    display: block;
+    transition: 0.3s;
+}
+.sidenav label[unselectable], h4[unselectable] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.sidenav button {
+    background-color: transparent;
+    border-color: transparent;
+    width: 45%;
+    color: #777;
+    font-weight: bold;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
