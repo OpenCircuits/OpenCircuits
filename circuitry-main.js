@@ -97,7 +97,7 @@ function render() {
 
 
     if (propogationQueue.length > 0) {
-        setTimeout(render, 1000/10);
+        setTimeout(render, 1000/30);
     }
 }
 

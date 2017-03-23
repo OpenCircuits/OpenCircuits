@@ -51,9 +51,6 @@ class IOObject {
     release() {
     }
     activate(on) {
-        console.log(this.isOn + ", " + on);
-        console.log(this);
-        console.log(this.connections[0]);
         if (this.isOn === on)
             return;
 
@@ -120,7 +117,7 @@ class IOObject {
         this.connections[i] = obj;
         obj.inputs[j] = this;
 
-        this.activate(this.isOn);
+        obj.activate(this.isOn);
         return true;
     }
     disconnect(obj) {
@@ -224,7 +221,7 @@ class Wire extends IOObject {
         var c = obj.getInputDir(indx).scale(50).add(p);
         this.curve.update(this.curve.p1, p, this.curve.c1, c);
 
-        super.activate(this.inputs[0].isOn);
+        obj.activate(this.isOn);
         return true;
     }
 }
