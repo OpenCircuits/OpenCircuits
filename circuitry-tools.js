@@ -184,6 +184,7 @@ class ItemTool extends Tool {
         super.activate();
         this.item = object;
         objects.push(this.item);
+        this.onMouseMove();
     }
     deactivate() {
         super.deactivate();
@@ -192,6 +193,7 @@ class ItemTool extends Tool {
     onMouseMove() {
         this.item.x = worldMousePos.x;
         this.item.y = worldMousePos.y;
+        console.log(this.item);
         render();
     }
     onClick() {

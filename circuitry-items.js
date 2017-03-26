@@ -114,6 +114,10 @@ class IOObject {
         if (j >= obj.maxInputs)
             return false;
 
+
+        console.log(this instanceof Wire);
+        console.log(i + ", " + j);
+
         this.connections[i] = obj;
         obj.inputs[j] = this;
 
@@ -151,7 +155,7 @@ class Wire extends IOObject {
 
         var p = host.getOutputPos(hostIndex);
         var c = host.getOutputDir(hostIndex).scale(50).add(p);
-        this.curve = new BezierCurve(p, p, c, c);
+        this.curve = new BezierCurve(p, V(0,0), c, V(0,0));
 
         wires.push(this);
     }
@@ -161,33 +165,35 @@ class Wire extends IOObject {
 
     }
     press(t) {
-        var wire = new Wire(this, t);
+        var wire = new Wire(this, 0);
         var obj = this.connections[0];
         this.disconnect(obj);
 
         wire.connect(obj);
-        this.connections[0] = wire;
+        this.connect(wire);
 
-        var p = wire.getInputPos(0);
-        var c = wire.getInputDir(0).scale(50).add(p);
-        this.curve.update(this.curve.p1, p, this.curve.c1, c);
-        // console.log(this.connections[0]);
-        // this.connect(wire);
-        // console.log(this.connections[0]);
+        // var p = wire.getInputPos(0);
+        // var c = wire.getInputDir(0).scale(50).add(p);
+        // this.curve.update(this.curve.p1, p, this.curve.c1, c);
     }
     draw() {
         this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        // this.curve.debugDraw();
         if (this.inputs[0] instanceof Wire) {
             circle(this.curve.p1.x, this.curve.p1.y, 7, '#fff', '#000', 1);
         }
     }
     move(x, y) {
+        console.log(this.curve);
+        console.log(this.connections[0].curve);
+        this.curve.c2.x += x - this.curve.p2.x;
+        this.curve.c2.y += y - this.curve.p2.y;
         this.curve.p2.x = x;
         this.curve.p2.y = y;
+        this.connections[0].curve.c2.x += x - this.connections[0].curve.p1.x;
+        this.connections[0].curve.c2.y += y - this.connections[0].curve.p1.y;
         this.connections[0].curve.p1.x = this.curve.p2.x;
         this.connections[0].curve.p1.y = this.curve.p2.y;
-        // this.curve.c2 = this.getOutputDir().scale(-50);//this
-        // this.connections[0].curve.c1 = this.connections[0].getInputDir();//this.inputs[0].getPos().sub(this.curve.p2).normalize();
     }
     contains(pos) {
         return this.curve.getNearestT(pos.x,pos.y) !== -1;
@@ -196,34 +202,48 @@ class Wire extends IOObject {
         return this.curve.getPos(0);
     }
     getInputDir(i) {
-        return this.curve.getVel(0).normalize().scale(-1);
+        return V(0,0);//this.curve.getVel(0).normalize().scale(-1);
     }
     getOutputPos(t) {
         return this.curve.getPos(t);
     }
     getOutputDir(t) {
-        return this.curve.getVel(1).normalize();
+        return V(0,0);//this.curve.getVel(1).normalize();
     }
-    connect(obj, indx) {
-        if (indx === undefined) {
-            for (indx = 0; indx < obj.inputs.length && obj.inputs[indx] !== undefined; indx++);
-            if (indx >= obj.maxInputs)
-                return false;
+    connect(obj, index) {
+        if (super.connect(obj, index)) {
+
+            // var indx;
+            // for (indx = 0; indx < this.connections.length && this.connections[i] !== this; indx++);
+
+            var p = obj.getInputPos(index);
+            var c = obj.getInputDir(index).scale(50).add(p);
+
+            this.curve.update(this.curve.p1, p, this.curve.c1, c);
+            return true;
         }
-        if (obj.inputs[indx] !== undefined || this.connections[0] !== undefined)
-            return false;
-
-        this.connectionIndex = indx;
-        this.connections[0] = obj;
-        obj.inputs[indx] = this;
-
-        var p = obj.getInputPos(indx);
-        var c = obj.getInputDir(indx).scale(50).add(p);
-        this.curve.update(this.curve.p1, p, this.curve.c1, c);
-
-        obj.activate(this.isOn);
-        return true;
+        return false;
     }
+    // connect(obj, indx) {
+    //     if (indx === undefined) {
+    //         for (indx = 0; indx < obj.inputs.length && obj.inputs[indx] !== undefined; indx++);
+    //         if (indx >= obj.maxInputs)
+    //             return false;
+    //     }
+    //     if (obj.inputs[indx] !== undefined || this.connections[0] !== undefined)
+    //         return false;
+    //
+    //     this.connectionIndex = indx;
+    //     this.connections[0] = obj;
+    //     obj.inputs[indx] = this;
+    //
+    //     var p = obj.getInputPos(indx);
+    //     var c = obj.getInputDir(indx).scale(50).add(p);
+    //     this.curve.update(this.curve.p1, p, this.curve.c1, c);
+    //
+    //     obj.activate(this.isOn);
+    //     return true;
+    // }
 }
 
 
@@ -463,7 +483,6 @@ class ORGate extends Gate {
 class XORGate extends Gate {
     constructor(not, x, y) {
         super(x, y, 2, 50, images["img-or.svg"], not);
-        this.setAngle(Math.PI  * 1/2);
     }
     activate(x) {
         var on = false;

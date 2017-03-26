@@ -4,11 +4,20 @@ var wires = [];
 
 var propogationQueue = [];
 
+var updateRequests = 0;
+
+const UPS = 10;
+
 class Propogation {
     constructor(sender, receiver, signal) {
         this.sender = sender;
         this.receiver = receiver;
         this.signal = signal;
+
+        if (updateRequests === 0) {
+            updateRequests++;
+            setTimeout(update, 1000/UPS);
+        }
     }
     send() {
         this.receiver.activate(this.signal);
@@ -35,7 +44,7 @@ function onFinishLoading() {
     // objects.push(new BUFGate(false, 0, 50));
     // objects.push(new BUFGate(true, 0, 100));
 
-    var a = Math.PI/2;
+    var a = 3*Math.PI/4;
 
     // objects.push(new ANDGate(false, 100, 0));
     // objects[objects.length-1].setAngle(a);
@@ -50,12 +59,26 @@ function onFinishLoading() {
     // objects.push(new BUFGate(true, 150, 120));
     // objects[objects.length-1].setAngle(a);
 
+    // S-R Flip flop
+
+    objects.push(new Switch(-100, 0));
+    objects.push(new Switch(-100, 100));
+    objects.push(new Switch(-100, -100));
+
+    objects.push(new ANDGate(false, 75, 50));
+    objects.push(new ANDGate(false, 75, -50));
+
+    objects.push(new ORGate(true, 250, 50));
+    objects.push(new ORGate(true, 250, -50));
+
+    objects.push(new LED(350, -50, '#fff'));
+
 
     render();
 }
 
-function render() {
-    console.log("RENDER");
+function update() {
+    console.log("UPDATE");
 
     var tempQueue = [];
     while (propogationQueue.length > 0)
@@ -63,6 +86,21 @@ function render() {
 
     while (tempQueue.length > 0)
         tempQueue.pop().send();
+
+    if (propogationQueue.length > 0)
+        updateRequests++;
+
+    updateRequests--;
+
+    render();
+
+    if (updateRequests > 0) {
+        setTimeout(update, 1000/UPS);
+    }
+}
+
+function render() {
+    console.log("RENDER");
 
     frame.clear();
 
@@ -94,11 +132,6 @@ function render() {
 
     for (var i = 0; i < objects.length; i++)
         objects[i].draw();
-
-
-    if (propogationQueue.length > 0) {
-        setTimeout(render, 1000/30);
-    }
 }
 
 function loadImage(imgs, imageNames, index, onFinish) {

@@ -157,6 +157,13 @@ class BezierCurve {
     draw(style, size) {
         strokeCurve(this.p1.x, this.p1.y, this.p2.x, this.p2.y, this.c1.x, this.c1.y, this.c2.x, this.c2.y, style, size);
     }
+    debugDraw() {
+        // strokeLine(this.p1.x, this.p1.y, this.c1.x, this.c2.y, )
+        circle(this.p1.x, this.p1.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+        circle(this.p2.x, this.p2.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+        circle(this.c1.x, this.c1.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+        circle(this.c2.x, this.c2.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+    }
     getX(t) {
         var it = 1 - t;
         return this.p1.x*it*it*it + 3*this.c1.x*t*it*it + 3*this.c2.x*t*t*it + this.p2.x*t*t*t;
@@ -220,19 +227,6 @@ class BezierCurve {
         return  dbx*dbx + dx*this.getDDX(t) +
                 dby*dby + dy*this.getDDY(t);
     }
-    // getNearestT(mx, my) {
-    //     var minDist = 1e40;
-    //     var t = 0;
-    //     var dt = 0.01;
-    //     for (var tt = 0; tt < 1+dt; tt += dt) {
-    //         var dist = this.getDist(tt, mx, my);
-    //         if (dist < minDist) {
-    //             t = tt;
-    //             minDist = dist;
-    //         }
-    //     }
-    //     return t;
-    // }
     getNearestT(mx, my) {
         var minDist = 1e20;
         var t0 = -1;
