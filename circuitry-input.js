@@ -88,6 +88,8 @@ function onWheel(e) {
     camera.pos.x -= dx;
     camera.pos.y -= dy;
 
+    popup.onWheel();
+
     render();
 }
 

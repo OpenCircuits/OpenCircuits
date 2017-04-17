@@ -91,6 +91,30 @@
 
             <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
 
+            <div id="popupDiv" class="popup">
+                <b id="nameText">Name: </b>
+                <hr/>
+                <div id="posText">
+                    Position
+                </div>
+                <label class="popup-label" id="position-label" onchange="popup.onInputChange();" unselectable disabled>
+                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="1"/>
+                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="1"/>
+                </label>
+                <div id="inputCountText">
+                    Input Count
+                </div>
+                <label class="popup-label" id="inputcount-label" onchange="popup.onInputChange();" unselectable disabled>
+                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1"/>
+                </label>
+                <div id="colorText">
+                    Color
+                </div>
+                <label class="popup-label" id="color-label" onchange="popup.onInputChange();" unselectable disabled>
+                    <input type="color" id="colorPicker" value="#ffffff" />
+                </label>
+            </div>
+
             <script src="jsutils-vector.js"></script>
             <script src="circuitry-helper.js"></script>
             <script src="circuitry-tools.js"></script>

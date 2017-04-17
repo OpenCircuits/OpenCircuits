@@ -30,6 +30,7 @@ class SelectionTool extends Tool {
         super();
         this.isWirePressed = false;
         this.pressedWire = undefined;
+        this.selection = undefined;
     }
     onKeyDown(code) {
         if (code === 18) { // Option key
@@ -47,13 +48,11 @@ class SelectionTool extends Tool {
     onMouseDown() {
         var pressed = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].isPressable) {
-                if (objects[i].contains(worldMousePos)) {
-                    pressed = true;
-                    objects[i].press();
-                    render();
-                    break;
-                }
+            if (objects[i].isPressable && objects[i].contains(worldMousePos)) {
+                pressed = true;
+                objects[i].press();
+                render();
+                break;
             }
 
             if (objects[i].oPortContains(worldMousePos) !== -1) {
@@ -90,13 +89,20 @@ class SelectionTool extends Tool {
         }
     }
     onClick() {
+        var clicked = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].isPressable) {
-                if (objects[i].contains(worldMousePos)) {
-                    objects[i].click();
-                    render();
-                    break;
-                }
+            if (objects[i].sContains(worldMousePos)) {
+                popup.select(objects[i]);
+                this.selection = objects[i];
+                clicked = true;
+                render();
+                break;
+            }
+            if (objects[i].isPressable && objects[i].contains(worldMousePos)) {
+                objects[i].click();
+                clicked = true;
+                render();
+                break;
             }
 
             var ii;
@@ -105,6 +111,12 @@ class SelectionTool extends Tool {
                 render();
                 break;
             }
+        }
+
+        if (!clicked) {
+            popup.deselect();
+            this.selection = null;
+            render();
         }
     }
 }
@@ -122,6 +134,9 @@ class PanTool extends Tool {
             camera.pos.x += camera.zoom * dPos.x;
             camera.pos.y += camera.zoom * dPos.y;
             mouseDownPos = mousePos;
+
+            popup.onMove();
+
             render();
         }
     }
@@ -141,6 +156,12 @@ class WiringTool extends Tool {
         super.deactivate();
         this.wire = undefined;
     }
+    removeWire() {
+        var j;
+        for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
+        wires.splice(j, 1);
+        this.wire.inputs[0].disconnect(this.wire);
+    }
     onMouseMove() {
         this.wire.curve.update(this.wire.curve.p1, worldMousePos, this.wire.curve.c1, worldMousePos);
         render();
@@ -149,21 +170,18 @@ class WiringTool extends Tool {
         for (var i = 0; i < objects.length; i++) {
             var ii;
             if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
-                if (!this.wire.connect(objects[i], ii)) {
-                    var j;
-                    for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
-                    wires.splice(j, 1);
-                    this.wire.inputs[0].disconnect(this.wire);
-                }
+                if (!this.wire.connect(objects[i], ii))
+                    this.removeWire();
+
                 selectionTool.activate();
                 render();
-                break;
-            } else if ((ii = objects[i].oPortContains(worldMousePos)) !== -1) {
-                selectionTool.activate();
-                render();
-                break;
+                return;
             }
         }
+
+        this.removeWire();
+        selectionTool.activate();
+        render();
     }
 }
 
@@ -193,7 +211,6 @@ class ItemTool extends Tool {
     onMouseMove() {
         this.item.x = worldMousePos.x;
         this.item.y = worldMousePos.y;
-        console.log(this.item);
         render();
     }
     onClick() {

@@ -47,12 +47,15 @@ function restoreCtx() {
     frame.context.restore();
 }
 
-function rect(x, y, w, h, tint) {
-    if (tint !== undefined)
-        frame.context.fillStyle = tint;
+function rect(x, y, w, h, tint, bTint, bSize) {
+    frame.context.fillStyle = (tint === undefined ? '#fff' : tint);
+    frame.context.strokeStyle = (bTint === undefined ? '#000' : bTint);
+    frame.context.lineWidth = (bSize === undefined ? 2 : bSize) / camera.zoom;
     var pos = camera.getScreenPos(V(x, y));
     var size = V(w / camera.zoom, h / camera.zoom);
     frame.context.fillRect(pos.x-size.x/2, pos.y-size.y/2, size.x, size.y);
+    if (bSize > 0 || bSize === undefined)
+        frame.context.strokeRect(pos.x-size.x/2, pos.y-size.y/2, size.x, size.y);
 }
 
 function drawImage(img, x, y, w, h, tint) {
@@ -278,9 +281,9 @@ class BezierCurve {
     }
 }
 
-function ioPort(x1, y1, x2, y2, r, s) {
-    strokeLine(x1, y1, x2, y2, '#000', (s === undefined ? 2 : s) / camera.zoom);
-    circle(x2, y2, (r === undefined ? 7 : r), '#fff', '#000', 1 / camera.zoom);
+function ioPort(x1, y1, x2, y2, col, bCol, r, s) {
+    strokeLine(x1, y1, x2, y2, (bCol === undefined ? '#000' : bCol), (s === undefined ? 2 : s) / camera.zoom);
+    circle(x2, y2, (r === undefined ? 7 : r), (col === undefined ? '#fff' : col), (bCol === undefined ? '#000' : bCol), 1 / camera.zoom);
 }
 
 function resize(e) {

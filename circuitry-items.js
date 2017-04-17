@@ -34,6 +34,11 @@ class IOObject {
         this.inputs = [];
         this.setAngle(0);
     }
+    setInputAmount(x) {
+    }
+    getInputAmount() {
+        return this.inputs.length;
+    }
     setAngle(theta) {
         this.angle = theta;
         this.orientation = V(Math.cos(this.angle), Math.sin(this.angle));
@@ -41,10 +46,13 @@ class IOObject {
     getAngle() {
         return -this.angle;
     }
+    getCol() {
+        return (selectionTool.selection === this ? '#1cff3e' : undefined);
+    }
+    getBorderColor() {
+        return (selectionTool.selection === this ? '#0d7f1f' : undefined);
+    }
     click() {
-        if (!this.isPressable)
-            return;
-        this.activate(!this.isOn);
     }
     press() {
     }
@@ -62,6 +70,9 @@ class IOObject {
     }
     contains(pos) {
         return contains(this.x, this.y, this.size, this.size, pos);
+    }
+    sContains(pos) {
+        return this.contains(pos);
     }
     iPortContains(pos) {
         var i;
@@ -83,6 +94,10 @@ class IOObject {
     }
     getPos() {
         return V(this.x, this.y);
+    }
+    setPos(p) {
+        this.x = p.x;
+        this.y = p.y;
     }
     getInputPos(i) {
         return this.getPos(i);
@@ -137,6 +152,22 @@ class IOObject {
 
         this.connections[i] = undefined;
         obj.inputs[j] = undefined;
+    }
+    getDisplayName() {
+        return "IOObject";
+    }
+}
+
+
+
+/*
+
+    IO PORT
+
+*/
+class IOPort extends IOObject {
+    constructor(x, y, size, isOn, isPressable, maxInputs, maxOutputs) {
+        super()
     }
 }
 
@@ -224,26 +255,9 @@ class Wire extends IOObject {
         }
         return false;
     }
-    // connect(obj, indx) {
-    //     if (indx === undefined) {
-    //         for (indx = 0; indx < obj.inputs.length && obj.inputs[indx] !== undefined; indx++);
-    //         if (indx >= obj.maxInputs)
-    //             return false;
-    //     }
-    //     if (obj.inputs[indx] !== undefined || this.connections[0] !== undefined)
-    //         return false;
-    //
-    //     this.connectionIndex = indx;
-    //     this.connections[0] = obj;
-    //     obj.inputs[indx] = this;
-    //
-    //     var p = obj.getInputPos(indx);
-    //     var c = obj.getInputDir(indx).scale(50).add(p);
-    //     this.curve.update(this.curve.p1, p, this.curve.c1, c);
-    //
-    //     obj.activate(this.isOn);
-    //     return true;
-    // }
+    getDisplayName() {
+        return "Wire";
+    }
 }
 
 
@@ -261,20 +275,29 @@ class LED extends IOObject {
         this.setAngle(-Math.PI/2);
     }
     draw() {
-        rect(this.x, this.y-this.size, this.connectorWidth, 2*this.size, "#ffffff");
-        circle(this.x, this.y, 7, '#fff', '#000', 1);
+        rect(this.x, this.y-this.size, this.connectorWidth, 2*this.size, this.getCol(), this.getBorderColor(), 0);
+        circle(this.x, this.y, 7, this.getCol(), this.getBorderColor(), 1);
         drawImage(images["img-led.svg"], this.x, this.y-2*this.size, this.size, this.size, this.color);
         if (this.isOn)
             drawImage(images["img-ledLight.svg"], this.x, this.y-2*this.size, 3*this.size, 3*this.size, this.color);
     }
     contains(pos) {
-        return contains(this.x, this.y-2*this.size, 5, this.size*2, pos);
+        return contains(this.x, this.y-this.size*2, this.size/2, this.size, pos);
+    }
+    setPos(v) {
+        super.setPos(V(v.x, v.y+2*this.size));
+    }
+    getInputPos(i) {
+        return V(this.x, this.y);
     }
     getPos() {
-        return V(this.x, this.y);
+        return V(this.x, this.y-2*this.size);
     }
     getOutputPortCount() {
         return 0;
+    }
+    getDisplayName() {
+        return "LED";
     }
 }
 
@@ -293,11 +316,14 @@ class ConstantLow extends IOObject {
     draw() {
         super.draw();
         var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y, 7);
-        drawImage(images["img-constLow.svg"], this.x, this.y, this.size, this.size);
+        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor(), 7);
+        drawImage(images["img-constLow.svg"], this.x, this.y, this.size, this.size, this.getCol());
     }
     getInputPortCount() {
         return 0;
+    }
+    getDisplayName() {
+        return "Constant Low";
     }
 }
 class ConstantHigh extends IOObject {
@@ -308,11 +334,14 @@ class ConstantHigh extends IOObject {
     draw() {
         super.draw();
         var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y, 7);
-        drawImage(images["img-constHigh.svg"], this.x, this.y, this.size, this.size);
+        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor(), 7);
+        drawImage(images["img-constHigh.svg"], this.x, this.y, this.size, this.size, this.getCol());
     }
     getInputPortCount() {
         return 0;
+    }
+    getDisplayName() {
+        return "Constant High";
     }
 }
 class Button extends IOObject {
@@ -320,7 +349,8 @@ class Button extends IOObject {
         super(x, y, 50, false, true, 0, 999);
         this.curPressed = false;
     }
-    click() {
+    getPos() {
+        return V(this.x, this.y);
     }
     press() {
         super.activate(true);
@@ -333,25 +363,48 @@ class Button extends IOObject {
     draw() {
         super.draw();
         var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y, 7);
-        drawImage(images[this.isOn ? "img-buttonDown.svg" : "img-buttonUp.svg"], this.x, this.y, this.size, this.size);
+        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor(), 7);
+        rect(this.x, this.y, this.size, this.size, this.getCol(), this.getBorderColor());
+        drawImage(images[this.isOn ? "img-buttonDown.svg" : "img-buttonUp.svg"], this.x, this.y, this.size, this.size, this.getCol());
+    }
+    contains(pos) {
+        return circleContains(this.getPos(), this.size/2, pos);
+    }
+    sContains(pos) {
+        return contains(this.x, this.y, this.size, this.size, pos) && !this.contains(pos);
     }
     getInputPortCount() {
         return 0;
+    }
+    getDisplayName() {
+        return "Button";
     }
 }
 class Switch extends IOObject {
     constructor(x, y) {
-        super(x, y, 80, false, true, 0, 999);
+        super(x, y, 60, false, true, 0, 999);
+    }
+    click() {
+        this.activate(!this.isOn);
     }
     draw() {
         super.draw();
         var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y, 7);
-        drawImage(images[this.isOn ? "img-switchDown.svg" : "img-switchUp.svg"], this.x, this.y, this.size, this.size);
+        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor(), 7);
+        rect(this.x, this.y, this.size*5/6, this.size, this.getCol(), this.getBorderColor());
+        drawImage(images[this.isOn ? "img-switchDown.svg" : "img-switchUp.svg"], this.x, this.y, this.size, this.size, this.getCol());
+    }
+    contains(pos) {
+        return contains(this.x, this.y+this.size/14, this.size*3/5, this.size*5/7, pos);
+    }
+    sContains(pos) {
+        return contains(this.x, this.y, this.size*5/6, this.size, pos) && !this.contains(pos);
     }
     getInputPortCount() {
         return 0;
+    }
+    getDisplayName() {
+        return "Switch";
     }
 }
 
@@ -364,11 +417,22 @@ class Switch extends IOObject {
 */
 class Gate extends IOObject {
     constructor(x, y, startInputs, size, img, not) {
-        super(x, y, size, false, false, 999, 999);
+        super(x, y, size, false, true, 999, 999);
         this.img = img;
         this.not = not;
-        for (var i = 0; i < startInputs; i++)
+        this.setInputAmount(startInputs);
+    }
+    getPos() {
+        return V(this.x, this.y);
+    }
+    setInputAmount(x) {
+        while (this.inputs.length > x)
+            this.inputs.splice(this.inputs.length-1, 1);
+        while (this.inputs.length < x)
             this.inputs.push(undefined);
+    }
+    click() {
+        console.log("ASD");
     }
     activate(on) {
         super.activate((this.not ? !on : on));
@@ -376,24 +440,24 @@ class Gate extends IOObject {
     draw() {
         super.draw();
         var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y);
+        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor());
         for (var i = 0; i < this.inputs.length; i++) {
             var inV = this.getInputPos(i);
 
             var l = -this.size/2*(i - this.inputs.length/2 + 0.5);
             if (i === 0) l -= 1;
             if (i === this.inputs.length-1) l += 1;
-            ioPort(l*this.orientation.y+this.x-this.size/2*this.orientation.x, l*this.orientation.x+this.y+this.size/2*this.orientation.y, inV.x, inV.y);
+            ioPort(l*this.orientation.y+this.x-this.size/2*this.orientation.x, l*this.orientation.x+this.y+this.size/2*this.orientation.y, inV.x, inV.y, this.getCol(), this.getBorderColor());
         }
 
         var w = this.size*this.img.width/this.img.height;
         var l = (w - this.size)/2;
 
-        drawRotatedImage(this.img, this.x-l*this.orientation.x, this.y+l*this.orientation.y, w, this.size, this.getAngle());
+        drawRotatedImage(this.img, this.x-l*this.orientation.x, this.y+l*this.orientation.y, w, this.size, this.getAngle(), this.getCol());
 
         if (this.not) {
             var l = this.size/2+5/2;
-            circle(this.x+l*this.orientation.x, this.y-l*this.orientation.y, 5, '#fff', '#000', 2 / camera.zoom);
+            circle(this.x+l*this.orientation.x, this.y-l*this.orientation.y, 5, this.getCol(), this.getBorderColor(), 2 / camera.zoom);
         }
     }
     getInputPos(i) {
@@ -404,6 +468,9 @@ class Gate extends IOObject {
     }
     getInputPortCount() {
         return this.inputs.length;
+    }
+    getDisplayName() {
+        return "Gate";
     }
 }
 class BUFGate extends Gate {
@@ -420,6 +487,9 @@ class BUFGate extends Gate {
             }
         }
         super.activate(on);
+    }
+    getDisplayName() {
+        return this.not ? "NOT Gate" : "Buffer Gate";
     }
 }
 class ANDGate extends Gate {
@@ -450,7 +520,10 @@ class ANDGate extends Gate {
         var p1 = V(l1*this.orientation.y+this.x-s*this.orientation.x, l1*this.orientation.x+this.y+s*this.orientation.y);
         var p2 = V(l2*this.orientation.y+this.x-s*this.orientation.x, l2*this.orientation.x+this.y+s*this.orientation.y);
 
-        strokeLine(p1.x, p1.y, p2.x, p2.y, '#000000', 2/camera.zoom);
+        strokeLine(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2/camera.zoom);
+    }
+    getDisplayName() {
+        return this.not ? "NAND Gate" : "AND Gate";
     }
 }
 class ORGate extends Gate {
@@ -466,6 +539,9 @@ class ORGate extends Gate {
             }
         }
         super.activate(on);
+    }
+    getDisplayName() {
+        return this.not ? "NOR Gate" : "OR Gate";
     }
     // draw() {
     //     var outV = this.getOutputPos();
@@ -514,5 +590,8 @@ class XORGate extends Gate {
         var c = V(this.x - (l/4 + h/2 + x/2)*this.orientation.x, this.y + (this.size/4 + h + x/2)*this.orientation.y);
 
         strokeQuadCurve(p1.x, p1.y, p2.x, p2.y, c.x, c.y, '#000000', 2/camera.zoom);
+    }
+    getDisplayName() {
+        return this.not ? "XNOR Gate" : "XOR Gate";
     }
 }
