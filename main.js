@@ -113,12 +113,12 @@ class SelectionPopup {
 
 function start() {
     loadImage(images,
-        ["img-constLow.svg", "img-constHigh.svg",
-         "img-buttonUp.svg", "img-buttonDown.svg",
-         "img-switchUp.svg", "img-switchDown.svg",
-         "img-led.svg", "img-ledLight.svg",
-         "img-buffer.svg", "img-and.svg",
-         "img-or.svg", "img-xor.svg"], 0, onFinishLoading);
+        ["constLow.svg", "constHigh.svg",
+         "buttonUp.svg", "buttonDown.svg",
+         "switchUp.svg", "switchDown.svg",
+         "led.svg", "ledLight.svg",
+         "buffer.svg", "and.svg",
+         "or.svg", "xor.svg"], 0, onFinishLoading);
 }
 
 function onFinishLoading() {
@@ -236,5 +236,5 @@ function loadImage(imgs, imageNames, index, onFinish) {
         else
             loadImage(imgs, imageNames, index+1, onFinish);
     }
-    img.src = imageNames[index];
+    img.src = "images/items/" + imageNames[index];
 }

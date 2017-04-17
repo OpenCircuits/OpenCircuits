@@ -4,7 +4,7 @@
         <meta name="description" content="Circuits">
         <meta name="viewport" content="width=device-width", initial-scale="1">
 
-        <link rel="stylesheet" href="circuitry-stylesheet.css">
+        <link rel="stylesheet" href="stylesheet.css">
         <title>Circuits</title>
     </head>
 
@@ -12,75 +12,75 @@
         <div id="container">
             <div id="tools" class="toolbar">
                 <button type="button">
-                    <img src="img-open.svg" height="100%" alt="Save icon"/>
+                    <img src="images/icons/open.svg" height="100%" alt="Save icon"/>
                 </button>
                 <button type="button">
-                    <img src="img-save.svg" height="100%" alt="Save icon"/>
+                    <img src="images/icons/save.svg" height="100%" alt="Save icon"/>
                 </button>
                 <button type="button">
-                    <img src="img-cursor.svg" height="100%" alt="Save icon"/>
+                    <img src="images/icons/cursor.svg" height="100%" alt="Save icon"/>
                 </button>
                 <button type="button">
-                    <img src="img-hand.svg" height="100%" alt="Save icon"/>
+                    <img src="images/icons/hand.svg" height="100%" alt="Save icon"/>
                 </button>
             </div>
 
             <div id="items" class="sidenav">
                 <h4 unselectable>Inputs</h4>
                 <button type="button" onclick="placeItem(new ConstantLow());">
-                    <img src="img-constLow.svg" width="100%" alt="Save icon"/>
+                    <img src="images/items/constLow.svg" width="100%" alt="Save icon"/>
                     <br/>Constant Low
                 </button>
                 <button type="button" onclick="placeItem(new ConstantHigh());">
-                    <img src="img-constHigh.svg" width="100%" alt="Save icon"/>
+                    <img src="images/items/constHigh.svg" width="100%" alt="Save icon"/>
                     <br/>Constant High
                 </button>
                 <button type="button" onclick="placeItem(new Button());">
-                    <img src="img-buttonUp.svg" width="100%" alt="Save icon"/>
+                    <img src="images/items/buttonUp.svg" width="100%" alt="Save icon"/>
                     <br/>Button
                 </button>
                 <button type="button" onclick="placeItem(new Switch());">
-                    <img src="img-switchUp.svg" width="100%" alt="Save icon"/>
+                    <img src="images/items/switchUp.svg" width="100%" alt="Save icon"/>
                     <br/>Switch
                 </button>
 
                 <h4 unselectable>Ouputs</h4>
                 <button type="button" onclick="placeItem(new LED());">
-                    <img src="img-led.svg" width="100%" alt="Save icon"/>
+                    <img src="images/items/led.svg" width="100%" alt="Save icon"/>
                     <br/>LED
                 </button>
 
                 <h4 unselectable>Logic Gates</h4>
                 <button type="button" onclick="placeItem(new BUFGate());">
-                    <img src="buffer.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/buffer.svg" width="100%" alt="Save icon"/>
                     <br/>BUFFER
                 </button>
                 <button type="button" onclick="placeItem(new BUFGate(true));">
-                    <img src="not.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/not.svg" width="100%" alt="Save icon"/>
                     <br/>NOT
                 </button>
                 <button type="button" onclick="placeItem(new ANDGate());">
-                    <img src="and.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/and.svg" width="100%" alt="Save icon"/>
                     <br/>AND
                 </button>
                 <button type="button" onclick="placeItem(new ANDGate(true));">
-                    <img src="nand.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/nand.svg" width="100%" alt="Save icon"/>
                     <br/>NAND
                 </button>
                 <button type="button" onclick="placeItem(new ORGate());">
-                    <img src="or.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/or.svg" width="100%" alt="Save icon"/>
                     <br/>OR
                 </button>
                 <button type="button" onclick="placeItem(new ORGate(true));">
-                    <img src="nor.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/nor.svg" width="100%" alt="Save icon"/>
                     <br/>NOR
                 </button>
                 <button type="button" onclick="placeItem(new XORGate());">
-                    <img src="xor.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/xor.svg" width="100%" alt="Save icon"/>
                     <br/>XOR
                 </button>
                 <button type="button" onclick="placeItem(new XORGate(true));">
-                    <img src="xnor.svg" width="100%" alt="Save icon"/>
+                    <img src="images/icons/xnor.svg" width="100%" alt="Save icon"/>
                     <br/>XNOR
                 </button>
             </div>
@@ -115,12 +115,32 @@
                 </label>
             </div>
 
-            <script src="jsutils-vector.js"></script>
-            <script src="circuitry-helper.js"></script>
-            <script src="circuitry-tools.js"></script>
-            <script src="circuitry-items.js"></script>
-            <script src="circuitry-main.js"></script>
-            <script src="circuitry-input.js"></script>
+            <script src="utils/vector.js"></script>
+            <script src="utils/bezier.js"></script>
+
+            <script src="helper.js"></script>
+
+            <script src="tools/tool.js"></script>
+            <script src="tools/selectiontool.js"></script>
+            <script src="tools/pantool.js"></script>
+            <script src="tools/wiringtool.js"></script>
+            <script src="tools/itemtool.js"></script>
+
+            <script src="items/ioobject.js"></script>
+            <script src="items/wire.js"></script>
+            <script src="items/inputs/button.js"></script>
+            <script src="items/inputs/constanthigh.js"></script>
+            <script src="items/inputs/constantlow.js"></script>
+            <script src="items/inputs/switch.js"></script>
+            <script src="items/outputs/led.js"></script>
+            <script src="items/gates/gate.js"></script>
+            <script src="items/gates/buffergate.js"></script>
+            <script src="items/gates/andgate.js"></script>
+            <script src="items/gates/orgate.js"></script>
+            <script src="items/gates/xorgate.js"></script>
+
+            <script src="main.js"></script>
+            <script src="input.js"></script>
         </div>
     </body>
 </html>
