@@ -1,22 +1,10 @@
 class Switch extends IOObject {
     constructor(x, y) {
-        super(x, y, 60, false, true, 0, 999);
+        super(x, y, 60*images["switchUp.svg"].ratio, 60, images["switchUp.svg"], true, 0, 1, 70*images["switchUp.svg"].ratio, 70);
     }
     click() {
-        this.activate(!this.isOn);
-    }
-    draw() {
-        super.draw();
-        var outV = this.getOutputPos();
-        ioPort(this.x, this.y, outV.x, outV.y, this.getCol(), this.getBorderColor(), 7);
-        rect(this.x, this.y, this.size*5/6, this.size, this.getCol(), this.getBorderColor());
-        drawImage(images[this.isOn ? "switchDown.svg" : "switchUp.svg"], this.x, this.y, this.size, this.size, this.getCol());
-    }
-    contains(pos) {
-        return contains(this.x, this.y+this.size/14, this.size*3/5, this.size*5/7, pos);
-    }
-    sContains(pos) {
-        return contains(this.x, this.y, this.size*5/6, this.size, pos) && !this.contains(pos);
+        this.activate(!this.outputs[0].isOn);
+        this.img = images[this.outputs[0].isOn ? "switchDown.svg" : "switchUp.svg"];
     }
     getInputPortCount() {
         return 0;

@@ -14,21 +14,21 @@ class SelectionTool extends Tool {
     }
     onMouseMove() {
         if (this.isWirePressed) {
-            this.pressedWire.move(worldMousePos.x,worldMousePos.y);
+            this.pressedWire.move(mousePos.x,mousePos.y);
             render();
         }
     }
     onMouseDown() {
         var pressed = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].isPressable && objects[i].contains(worldMousePos)) {
+            if (objects[i].isPressable && objects[i].contains(mousePos)) {
                 pressed = true;
                 objects[i].press();
                 render();
                 break;
             }
 
-            if (objects[i].oPortContains(worldMousePos) !== -1) {
+            if (objects[i].oPortContains(mousePos) !== -1) {
                 pressed = true;
                 break;
             }
@@ -36,7 +36,7 @@ class SelectionTool extends Tool {
         if (!pressed && !this.isWirePressed) {
             for (var i = 0; i < wires.length; i++) {
                 var t;
-                if ((t = wires[i].curve.getNearestT(worldMousePos.x,worldMousePos.y)) !== -1) {
+                if ((t = wires[i].curve.getNearestT(mousePos.x,mousePos.y)) !== -1) {
                     this.isWirePressed = true;
                     this.pressedWire = wires[i];
                     console.log("press-arooney " + t);
@@ -64,14 +64,14 @@ class SelectionTool extends Tool {
     onClick() {
         var clicked = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].sContains(worldMousePos)) {
+            if (objects[i].sContains(mousePos)) {
                 popup.select(objects[i]);
                 this.selection = objects[i];
                 clicked = true;
                 render();
                 break;
             }
-            if (objects[i].isPressable && objects[i].contains(worldMousePos)) {
+            if (objects[i].isPressable && objects[i].contains(mousePos)) {
                 objects[i].click();
                 clicked = true;
                 render();
@@ -79,7 +79,7 @@ class SelectionTool extends Tool {
             }
 
             var ii;
-            if ((ii = objects[i].oPortContains(worldMousePos)) !== -1) {
+            if ((ii = objects[i].oPortContains(mousePos)) !== -1) {
                 wiringTool.activate(objects[i], ii);
                 render();
                 break;

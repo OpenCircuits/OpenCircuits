@@ -20,7 +20,7 @@ var itemTool = new ItemTool();
 var currentTool = selectionTool;
 
 
-sidebar();
+// sidebar();
 function sidebar() {
     isSidebarOpen = !isSidebarOpen;
 

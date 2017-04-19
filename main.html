@@ -97,14 +97,14 @@
                 <div id="posText">
                     Position
                 </div>
-                <label class="popup-label" id="position-label" onchange="popup.onInputChange();" unselectable disabled>
-                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="1"/>
-                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="1"/>
+                <label class="popup-label" id="position-label" oninput="popup.onInputChange();" unselectable disabled>
+                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5"/>
+                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5"/>
                 </label>
                 <div id="inputCountText">
                     Input Count
                 </div>
-                <label class="popup-label" id="inputcount-label" onchange="popup.onInputChange();" unselectable disabled>
+                <label class="popup-label" id="inputcount-label" oninput="popup.onInputChange();" unselectable disabled>
                     <input type="number" id="inputcount" value="2" min="2" max="8" step="1"/>
                 </label>
                 <div id="colorText">
@@ -116,7 +116,9 @@
             </div>
 
             <script src="utils/vector.js"></script>
+            <script src="utils/matrix.js"></script>
             <script src="utils/bezier.js"></script>
+            <script src="utils/transform.js"></script>
 
             <script src="helper.js"></script>
 
@@ -127,6 +129,8 @@
             <script src="tools/itemtool.js"></script>
 
             <script src="items/ioobject.js"></script>
+            <script src="items/oport.js"></script>
+            <script src="items/iport.js"></script>
             <script src="items/wire.js"></script>
             <script src="items/inputs/button.js"></script>
             <script src="items/inputs/constanthigh.js"></script>

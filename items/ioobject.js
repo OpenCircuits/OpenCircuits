@@ -1,27 +1,45 @@
 class IOObject {
-    constructor(x, y, size, isOn, isPressable, maxInputs, maxOutputs) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.isOn = isOn;
+    constructor(x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
+        x = (x === undefined ? 0 : x);
+        y = (y === undefined ? 0 : y)
+        this.transform = new Transform(V(x, y), V(w, h), 0*Math.PI/4);
+
+        this.img = img;
+        this.isOn = false;
         this.isPressable = isPressable;
         this.maxInputs = maxInputs;
         this.maxOutputs = maxOutputs;
-        this.connections = [];
+
+        if (this.isPressable)
+            this.selectionBoxTransform = new Transform(V(x, y), V(selectionBoxWidth, selectionBoxHeight), 0);
+
+        this.outputs = [];
         this.inputs = [];
-        this.setAngle(0);
+
+        this.setOutputAmount(1);
     }
-    setInputAmount(x) {
+    setInputAmount(target) {
+        target = clamp(target, 0, this.maxInputs);
+        while (this.inputs.length > target)
+            this.inputs.splice(this.inputs.length-1, 1);
+        while (this.inputs.length < target)
+            this.inputs.push(new IPort(this));
+
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].updatePosition();
+    }
+    setOutputAmount(target) {
+        target = clamp(target, 0, this.maxOutputs);
+        while (this.outputs.length > target)
+            this.outputs.splice(this.outputs.length-1, 1);
+        while (this.outputs.length < target)
+            this.outputs.push(new OPort(this));
     }
     getInputAmount() {
         return this.inputs.length;
     }
-    setAngle(theta) {
-        this.angle = theta;
-        this.orientation = V(Math.cos(this.angle), Math.sin(this.angle));
-    }
-    getAngle() {
-        return -this.angle;
+    getImageTint() {
+        return this.getCol();
     }
     getCol() {
         return (selectionTool.selection === this ? '#1cff3e' : undefined);
@@ -29,71 +47,62 @@ class IOObject {
     getBorderColor() {
         return (selectionTool.selection === this ? '#0d7f1f' : undefined);
     }
+    setPos(v) {
+        console.log(v.y);
+        this.transform.setPos(v);
+        console.log(this.transform.pos.x);
+    }
+    getPos() {
+        return V(this.transform.pos.x, this.transform.pos.y);
+    }
     click() {
     }
     press() {
     }
     release() {
     }
-    activate(on) {
-        if (this.isOn === on)
-            return;
-
-        this.isOn = on;
-        for (var i = 0; i < this.connections.length; i++)
-            propogationQueue.push(new Propogation(this, this.connections[i], this.isOn));
+    activate(on, i) {
+        if (i === undefined)
+            i = 0;
+        this.outputs[i].activate(on);
+    }
+    localSpace() {
+        saveCtx();
+        translateCtx(camera.getScreenPos(this.transform.pos));
+        rotateCtx(this.transform.angle);
+        scaleCtx(V(1/camera.zoom, 1/camera.zoom));
     }
     draw() {
+        this.localSpace();
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].draw();
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].draw(i);
+        if (this.isPressable && this.selectionBoxTransform !== undefined)
+            rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
+        drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
+        restoreCtx();
     }
     contains(pos) {
-        return contains(this.x, this.y, this.size, this.size, pos);
+        return contains(this.transform, pos);
     }
     sContains(pos) {
-        return this.contains(pos);
+        return (!this.isPressable && this.contains(pos)) ||
+                (this.isPressable && contains(this.selectionBoxTransform, pos) && !this.contains(pos));
     }
     iPortContains(pos) {
-        var i;
-        for (i = 0; i < this.getInputPortCount(); i++) {
-            var p = this.getInputPos(i);
-            if (circleContains(p, 7, pos))
+        for (var i = 0; i < this.inputs.length; i++) {
+            if (inputs[i].contains(pos))
                 return i;
         }
         return -1;
     }
     oPortContains(pos) {
-        var i;
-        for (i = 0; i < this.getOutputPortCount(); i++) {
-            var p = this.getOutputPos(i);
-            if (circleContains(p, 7, pos))
+        for (var i = 0; i < this.outputs.length; i++) {
+            if (this.outputs[i].contains(pos))
                 return i;
         }
         return -1;
-    }
-    getPos() {
-        return V(this.x, this.y);
-    }
-    setPos(p) {
-        this.x = p.x;
-        this.y = p.y;
-    }
-    getInputPos(i) {
-        return this.getPos(i);
-    }
-    getInputDir(i) {
-        return V(-this.orientation.x, -this.orientation.y);
-    }
-    getInputPortCount() {
-        return 1;
-    }
-    getOutputPos(i) {
-        // return this.getPos(i);
-        return V(this.x+this.orientation.x*IO_PORT_LENGTH, this.y-this.orientation.y*50);
-    }
-    getOutputDir(i) {
-        return V(this.orientation.x, this.orientation.y);
-    }
-    getOutputPortCount() {
-        return 1;
     }
     connect(obj) {
         var i;

@@ -126,33 +126,10 @@ function onFinishLoading() {
 
     popup = new SelectionPopup();
 
-    // popup.show();
-
-    // objects.push(new ANDGate(false, 0, 0));
-    // objects.push(new ANDGate(true, 0, -50));
-    // objects.push(new XORGate(false, 100, -50));
-    // objects.push(new XORGate(true, 100, 50));
-    // objects.push(new BUFGate(false, 0, 50));
-    // objects.push(new BUFGate(true, 0, 100));
-
-    var a = 3*Math.PI/4;
-
-    // objects.push(new ANDGate(false, 100, 0));
-    // objects[objects.length-1].setAngle(a);
-    // objects.push(new ANDGate(true, 150, 0));
-    // objects[objects.length-1].setAngle(a);
-    // objects.push(new XORGate(false, 100, -120));
-    // objects[objects.length-1].setAngle(a);
-    // objects.push(new XORGate(true, 150, -120));
-    // objects[objects.length-1].setAngle(a);
-    // objects.push(new BUFGate(false, 100, 120));
-    // objects[objects.length-1].setAngle(a);
-    // objects.push(new BUFGate(true, 150, 120));
-    // objects[objects.length-1].setAngle(a);
 
     // S-R Flip flop
 
-    objects.push(new Switch(-100, 0));
+    objects.push(new Button(-100, 0));
     objects.push(new Switch(-100, 100));
     objects.push(new Switch(-100, -100));
 
@@ -163,7 +140,6 @@ function onFinishLoading() {
     objects.push(new ORGate(true, 250, -50));
 
     objects.push(new LED(350, -50, '#ff0000'));
-
 
     render();
 }
@@ -196,7 +172,7 @@ function render() {
     frame.clear();
 
     frame.context.strokeStyle = '#999';
-    frame.context.lineWidth = 1;
+    frame.context.lineWidth = 1 / camera.zoom;
 
     var step = 50/camera.zoom;
 
@@ -208,14 +184,18 @@ function render() {
     if (cpy < 0) cpy += step;
 
     for (var x = -cpx; x <= frame.canvas.width-cpx+step; x += step) {
+        frame.context.beginPath();
         frame.context.moveTo(x, 0);
         frame.context.lineTo(x, frame.canvas.height);
         frame.context.stroke();
+        frame.context.closePath();
     }
     for (var y = -cpy; y <= frame.canvas.height-cpy+step; y += step) {
+        frame.context.beginPath();
         frame.context.moveTo(0, y);
         frame.context.lineTo(frame.canvas.width, y);
         frame.context.stroke();
+        frame.context.closePath();
     }
 
     for (var i = 0; i < wires.length; i++)
@@ -231,6 +211,7 @@ function loadImage(imgs, imageNames, index, onFinish) {
         imgs[imageNames[index]] = img;
         img.dx = 0;
         img.dy = 0;
+        img.ratio = img.width / img.height;
         if (index === imageNames.length-1)
             onFinish(imgs);
         else

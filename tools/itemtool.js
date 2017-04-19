@@ -22,8 +22,7 @@ class ItemTool extends Tool {
         this.item = undefined;
     }
     onMouseMove() {
-        this.item.x = worldMousePos.x;
-        this.item.y = worldMousePos.y;
+        this.item.setPos(worldMousePos);
         render();
     }
     onClick() {
