@@ -34,6 +34,9 @@ class IOObject {
             this.outputs.splice(this.outputs.length-1, 1);
         while (this.outputs.length < target)
             this.outputs.push(new OPort(this));
+
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].updatePosition();
     }
     getInputAmount() {
         return this.inputs.length;
@@ -48,9 +51,7 @@ class IOObject {
         return (selectionTool.selection === this ? '#0d7f1f' : undefined);
     }
     setPos(v) {
-        console.log(v.y);
         this.transform.setPos(v);
-        console.log(this.transform.pos.x);
     }
     getPos() {
         return V(this.transform.pos.x, this.transform.pos.y);
@@ -64,7 +65,10 @@ class IOObject {
     activate(on, i) {
         if (i === undefined)
             i = 0;
-        this.outputs[i].activate(on);
+
+        this.isOn = on;
+        if (this.outputs[i] !== undefined)
+            this.outputs[i].activate(on);
     }
     localSpace() {
         saveCtx();
@@ -92,7 +96,7 @@ class IOObject {
     }
     iPortContains(pos) {
         for (var i = 0; i < this.inputs.length; i++) {
-            if (inputs[i].contains(pos))
+            if (this.inputs[i].contains(pos))
                 return i;
         }
         return -1;

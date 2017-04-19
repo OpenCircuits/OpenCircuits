@@ -29,16 +29,23 @@ class IPort {
         this.target.y = l;
         this.prevParentInputLength = this.parent.inputs.length;
     }
+    activate(on) {
+        if (this.isOn === on)
+            return;
+
+        this.isOn = on;
+        this.parent.activate(this.isOn);
+    }
     contains(pos) {
-        var pos = this.parent.transform.pos.add(this.target);
-        var transform = new Transform(pos, V(this.circleRadius,this.circleRadius), 0);
+        var mPos = this.parent.transform.pos.add(this.target);
+        var transform = new Transform(mPos, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
         return circleContains(transform, pos);
     }
     draw() {
         if (this.parent.inputs.length !== this.prevParentInputLength)
             this.updatePosition();
 
-        var v = this.getPos();
+        var v = this.target;
 
         var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
         strokeLine(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
@@ -48,10 +55,9 @@ class IPort {
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
     getPos() {
-        return this.target;
+        return this.parent.transform.pos.add(this.target);
     }
     getDir() {
-        return V(-this.parent.transform.orientation.x,
-                -this.parent.transform.orientation.y);
+        return V(-1, 0);
     }
 }

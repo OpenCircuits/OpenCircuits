@@ -16,14 +16,23 @@ class BezierCurve {
         this.c2.y = c2.y;
     }
     draw(style, size) {
-        strokeCurve(this.p1.x, this.p1.y, this.p2.x, this.p2.y, this.c1.x, this.c1.y, this.c2.x, this.c2.y, style, size);
+        var p1 = camera.getScreenPos(this.p1);
+        var p2 = camera.getScreenPos(this.p2);
+        var c1 = camera.getScreenPos(this.c1);
+        var c2 = camera.getScreenPos(this.c2);
+
+        strokeCurve(p1.x, p1.y, p2.x, p2.y, c1.x, c1.y, c2.x, c2.y, style, size);
     }
-    debugDraw() {
-        // strokeLine(this.p1.x, this.p1.y, this.c1.x, this.c2.y, )
-        circle(this.p1.x, this.p1.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
-        circle(this.p2.x, this.p2.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
-        circle(this.c1.x, this.c1.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
-        circle(this.c2.x, this.c2.y, 3/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+    debugDraw(r) {
+        r = (r === undefined ? 3 : r);
+        var p1 = camera.getScreenPos(this.p1);
+        var p2 = camera.getScreenPos(this.p2);
+        var c1 = camera.getScreenPos(this.c1);
+        var c2 = camera.getScreenPos(this.c2);
+        circle(p1.x, p1.y, r/camera.zoom, '#ff0000', '#000', 1/camera.zoom);
+        circle(p2.x, p2.y, r/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+        circle(c1.x, c1.y, r/camera.zoom, '#0000ff', '#000', 1/camera.zoom);
+        circle(c2.x, c2.y, r/camera.zoom, '#ffff00', '#000', 1/camera.zoom);
     }
     getX(t) {
         var it = 1 - t;

@@ -18,7 +18,7 @@ class LED extends IOObject {
 
         this.localSpace();
         if (this.isOn)
-            drawImage(images["ledLight.svg"], 0, -2*this.transform.size.y, 3*this.transform.size.x, 3*this.transform.size.y, this.color);
+            drawImage(images["ledLight.svg"], 0, 0, 3*this.transform.size.x, 3*this.transform.size.y, this.color);
         restoreCtx();
     }
     getDisplayName() {

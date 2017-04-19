@@ -129,7 +129,7 @@ function onFinishLoading() {
 
     // S-R Flip flop
 
-    objects.push(new Button(-100, 0));
+    objects.push(new Switch(-100, 0));
     objects.push(new Switch(-100, 100));
     objects.push(new Switch(-100, -100));
 

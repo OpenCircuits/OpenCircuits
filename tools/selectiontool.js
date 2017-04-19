@@ -14,7 +14,7 @@ class SelectionTool extends Tool {
     }
     onMouseMove() {
         if (this.isWirePressed) {
-            this.pressedWire.move(mousePos.x,mousePos.y);
+            this.pressedWire.move(worldMousePos.x, worldMousePos.y);
             render();
         }
     }
@@ -36,7 +36,7 @@ class SelectionTool extends Tool {
         if (!pressed && !this.isWirePressed) {
             for (var i = 0; i < wires.length; i++) {
                 var t;
-                if ((t = wires[i].curve.getNearestT(mousePos.x,mousePos.y)) !== -1) {
+                if ((t = wires[i].curve.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
                     this.isWirePressed = true;
                     this.pressedWire = wires[i];
                     console.log("press-arooney " + t);
@@ -80,7 +80,7 @@ class SelectionTool extends Tool {
 
             var ii;
             if ((ii = objects[i].oPortContains(mousePos)) !== -1) {
-                wiringTool.activate(objects[i], ii);
+                wiringTool.activate(objects[i].outputs[ii]);
                 render();
                 break;
             }
