@@ -129,17 +129,17 @@ function onFinishLoading() {
 
     // S-R Flip flop
 
-    objects.push(new Switch(-100, 0));
-    objects.push(new Switch(-100, 100));
-    objects.push(new Switch(-100, -100));
+    objects.push(new Switch(-225, 0));
+    objects.push(new Switch(-225, 100));
+    objects.push(new Switch(-225, -100));
 
-    objects.push(new ANDGate(false, 75, 50));
-    objects.push(new ANDGate(false, 75, -50));
+    objects.push(new ANDGate(false, -50, 50));
+    objects.push(new ANDGate(false, -50, -50));
 
-    objects.push(new ORGate(true, 250, 50));
-    objects.push(new ORGate(true, 250, -50));
+    objects.push(new ORGate(true, 125, 50));
+    objects.push(new ORGate(true, 125, -50));
 
-    objects.push(new LED(350, -50, '#ff0000'));
+    objects.push(new LED(225, -50, '#ff0000'));
 
     render();
 }

@@ -3,6 +3,7 @@ class Wire {
         var p = host.getPos(t);
         var c = host.getDir(t).scale(50).add(p);
         this.curve = new BezierCurve(p, V(0,0), c, V(0,0));
+        this.straight = false;
 
         wires.push(this);
     }
@@ -23,7 +24,13 @@ class Wire {
         this.connect(wire);
     }
     draw() {
-        this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        if (this.straight) {
+            var p1 = camera.getScreenPos(this.curve.p1);
+            var p2 = camera.getScreenPos(this.curve.p2);
+            strokeLine(p1.x, p1.y, p2.x, p2.y, this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        } else {
+            this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        }
 
         // this.curve.debugDraw(12);
 
@@ -33,6 +40,26 @@ class Wire {
         }
     }
     move(x, y) {
+        // Snap to end points
+        this.straight = false;
+        this.connection.straight = false;
+        if (Math.abs(x - this.curve.p1.x) <= 10) {
+            x = this.curve.p1.x;
+            this.straight = true;
+        }
+        if (Math.abs(y - this.curve.p1.y) <= 10) {
+            y = this.curve.p1.y;
+            this.straight = true;
+        }
+        if (Math.abs(x - this.connection.curve.p2.x) <= 10) {
+            x = this.connection.curve.p2.x;
+            this.connection.straight = true;
+        }
+        if (Math.abs(y - this.connection.curve.p2.y) <= 10) {
+            y = this.connection.curve.p2.y;
+            this.connection.straight = true;
+        }
+
         this.curve.c2.x += x - this.curve.p2.x;
         this.curve.c2.y += y - this.curve.p2.y;
         this.curve.p2.x = x;
