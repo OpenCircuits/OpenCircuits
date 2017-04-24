@@ -38,6 +38,12 @@ class IOObject {
         for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].updatePosition();
     }
+    onTransformChange() {
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].onTransformChange();
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].onTransformChange();
+    }
     getInputAmount() {
         return this.inputs.length;
     }
@@ -52,9 +58,14 @@ class IOObject {
     }
     setPos(v) {
         this.transform.setPos(v);
+        this.onTransformChange();
     }
     getPos() {
         return V(this.transform.pos.x, this.transform.pos.y);
+    }
+    setAngle(a) {
+        this.transform.setAngle(a);
+        this.onTransformChange();
     }
     click() {
     }
@@ -72,9 +83,7 @@ class IOObject {
     }
     localSpace() {
         saveCtx();
-        translateCtx(camera.getScreenPos(this.transform.pos));
-        rotateCtx(this.transform.angle);
-        scaleCtx(V(1/camera.zoom, 1/camera.zoom));
+        this.transform.transformCtx(frame.context);
     }
     draw() {
         this.localSpace();
@@ -91,8 +100,8 @@ class IOObject {
         return contains(this.transform, pos);
     }
     sContains(pos) {
-        return (!this.isPressable && this.contains(pos)) ||
-                (this.isPressable && contains(this.selectionBoxTransform, pos) && !this.contains(pos));
+        return (!this.isPressable &&  this.contains(pos)) ||
+                (this.isPressable && !this.contains(pos) && contains(this.selectionBoxTransform, pos));
     }
     iPortContains(pos) {
         for (var i = 0; i < this.inputs.length; i++) {

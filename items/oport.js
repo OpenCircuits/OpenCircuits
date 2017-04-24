@@ -29,6 +29,18 @@ class OPort {
         this.target.y = l;
         this.prevParentOutputLength = this.parent.outputs.length;
     }
+    onTransformChange() {
+        this.updatePosition();
+        var v = this.parent.transform.pos.add(this.target);
+        for (var i = 0; i < this.connections.length; i++) {
+            var v = this.parent.transform.pos.add(this.target);
+            var x = v.x, y = v.y;
+            this.connections[i].curve.c1.x += x - this.connections[i].curve.p1.x;
+            this.connections[i].curve.c1.y += y - this.connections[i].curve.p1.y;
+            this.connections[i].curve.p1.x = x;
+            this.connections[i].curve.p1.y = y;
+        }
+    }
     activate(on) {
         if (this.isOn === on)
             return;
@@ -48,11 +60,11 @@ class OPort {
         this.connections.splice(i, 1);
     }
     contains(pos) {
-        var mPos = this.parent.transform.pos.add(this.target);
-        var transform = new Transform(mPos, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        var transform = new Transform(this.target, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
-    draw(i) {
+    draw() {
         if (this.parent.outputs.length !== this.prevParentOutputLength)
             this.updatePosition();
 
@@ -66,7 +78,7 @@ class OPort {
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
     getPos() {
-        return this.parent.transform.pos.add(this.target);
+        return this.parent.transform.getMatrix().mul(this.target);
     }
     getDir() {
         return V(1, 0);

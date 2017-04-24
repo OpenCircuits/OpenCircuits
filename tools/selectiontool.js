@@ -21,14 +21,17 @@ class SelectionTool extends Tool {
     onMouseDown() {
         var pressed = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].isPressable && objects[i].contains(mousePos)) {
+            if (objects[i].contains(worldMousePos)) {
                 pressed = true;
-                objects[i].press();
-                render();
+                if (objects[i].isPressable) {
+                    objects[i].press();
+                    render();
+                }
                 break;
             }
 
-            if (objects[i].oPortContains(mousePos) !== -1) {
+            if (objects[i].oPortContains(worldMousePos) !== -1 ||
+                    objects[i].iPortContains(worldMousePos) !== -1) {
                 pressed = true;
                 break;
             }
@@ -64,14 +67,14 @@ class SelectionTool extends Tool {
     onClick() {
         var clicked = false;
         for (var i = 0; i < objects.length; i++) {
-            if (objects[i].sContains(mousePos)) {
+            if (objects[i].sContains(worldMousePos)) {
                 popup.select(objects[i]);
                 this.selection = objects[i];
                 clicked = true;
                 render();
                 break;
             }
-            if (objects[i].isPressable && objects[i].contains(mousePos)) {
+            if (objects[i].isPressable && objects[i].contains(worldMousePos)) {
                 objects[i].click();
                 clicked = true;
                 render();
@@ -79,7 +82,8 @@ class SelectionTool extends Tool {
             }
 
             var ii;
-            if ((ii = objects[i].oPortContains(mousePos)) !== -1) {
+            if ((ii = objects[i].oPortContains(worldMousePos)) !== -1) {
+                console.log("HH");
                 wiringTool.activate(objects[i].outputs[ii]);
                 render();
                 break;

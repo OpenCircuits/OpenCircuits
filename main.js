@@ -62,8 +62,8 @@ class SelectionPopup {
         this.posY.value = this.selection.getPos().y/50 - 0.5;
 
         this.inputCount.value = this.selection.getInputAmount();
-        this.inputCountText.style.display = (this.selection.maxInputs > 1 ? "inherit" : "none");
-        this.inputCount.style.display = (this.selection.maxInputs > 1 ? "inherit" : "none");
+        this.inputCountText.style.display = (this.selection.maxInputs > 1 && this.selection.noChange !== true ? "inherit" : "none");
+        this.inputCount.style.display = (this.selection.maxInputs > 1 && this.selection.noChange !== true ? "inherit" : "none");
 
         if (this.selection instanceof LED)
             this.colorPicker.value = this.selection.color;
@@ -118,7 +118,14 @@ function start() {
          "switchUp.svg", "switchDown.svg",
          "led.svg", "ledLight.svg",
          "buffer.svg", "and.svg",
-         "or.svg", "xor.svg"], 0, onFinishLoading);
+         "or.svg", "xor.svg",
+         "base.svg"], 0, onFinishLoading);
+}
+
+function wire(source, target) {
+    var wire = new Wire(source);
+    source.connect(wire);
+    wire.connect(target);
 }
 
 function onFinishLoading() {
@@ -139,7 +146,24 @@ function onFinishLoading() {
     objects.push(new ORGate(true, 125, 50));
     objects.push(new ORGate(true, 125, -50));
 
-    objects.push(new LED(225, -50, '#ff0000'));
+    objects.push(new LED(225, 0, '#ff0000'));
+
+    // objects.push(new SRFlipFlop(0, 0));
+
+    for (var i = 0; i < objects.length; i++)
+        objects[i].setAngle(Math.random() * 2 * Math.PI);
+
+    wire(objects[0].outputs[0], objects[3].inputs[1]);
+    wire(objects[1].outputs[0], objects[3].inputs[0]);
+    wire(objects[0].outputs[0], objects[4].inputs[0]);
+    wire(objects[2].outputs[0], objects[4].inputs[1]);
+    wire(objects[3].outputs[0], objects[5].inputs[0]);
+    wire(objects[4].outputs[0], objects[6].inputs[1]);
+    wire(objects[5].outputs[0], objects[6].inputs[0]);
+    wire(objects[6].outputs[0], objects[5].inputs[1]);
+    wire(objects[6].outputs[0], objects[7].inputs[0]);
+
+
 
     render();
 }

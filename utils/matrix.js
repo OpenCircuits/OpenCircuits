@@ -1,10 +1,11 @@
 class Matrix2x3 {
-    constructor(vals) {
+    constructor(other) {
         this.mat = [];
-        if (vals !== undefined)
-            this.mat = vals;
-        else
-            this.identity();
+        this.identity();
+        if (other !== undefined) {
+            for (var i = 0; i < 2*3; i++)
+                this.mat[i] = other.mat[i];
+        }
     }
     zero() {
         for (var i = 0; i < 2*3; i++)
@@ -21,8 +22,18 @@ class Matrix2x3 {
     }
     mul(v) {
         var result = V(0,0);
-        result.x = this.mat[0] * v.x + this.mat[2] * v.y + this.mat[4];// * v.z;
-        result.y = this.mat[1] * v.x + this.mat[3] * v.y + this.mat[5];// * v.z;
+        result.x = this.mat[0] * v.x + this.mat[2] * v.y + this.mat[4];
+        result.y = this.mat[1] * v.x + this.mat[3] * v.y + this.mat[5];
+        return result;
+    }
+    mult(m) {
+        var result = new Matrix2x3();
+        result.mat[0] = this.mat[0]*m.mat[0] + this.mat[2]*m.mat[1];
+        result.mat[1] = this.mat[1]*m.mat[0] + this.mat[3]*m.mat[1];
+        result.mat[2] = this.mat[0]*m.mat[2] + this.mat[2]*m.mat[3];
+        result.mat[3] = this.mat[1]*m.mat[2] + this.mat[3]*m.mat[3];
+        result.mat[4] = this.mat[0]*m.mat[4] + this.mat[2]*m.mat[5] + this.mat[4];
+        result.mat[5] = this.mat[1]*m.mat[4] + this.mat[3]*m.mat[5] + this.mat[5];
         return result;
     }
     translate(v) {
@@ -74,7 +85,7 @@ class Matrix2x3 {
         return m;
     }
     print() {
-        console.log("[" + this.mat[0] + ", " + this.mat[2] + ", " + this.mat[4] + "]");
-        console.log("[" + this.mat[1] + ", " + this.mat[3] + ", " + this.mat[5] + "]");
+        console.log("[" + this.mat[0] + ", " + this.mat[2] + ", " + this.mat[4] + "]\n" +
+                    "[" + this.mat[1] + ", " + this.mat[3] + ", " + this.mat[5] + "]");
     }
 }

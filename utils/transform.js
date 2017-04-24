@@ -1,5 +1,6 @@
 class Transform {
     constructor(pos, size, angle) {
+        this.parent = undefined;
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
         this.scale = V(1, 1);
@@ -18,27 +19,40 @@ class Transform {
         this.dirty = false;
 
         this.matrix = new Matrix2x3();
-        this.matrix.translate(camera.getScreenPos(this.pos));
+        this.matrix.translate(this.pos);
         this.matrix.rotate(this.angle);
-        this.matrix.scale(this.scale.scale(1 / camera.zoom));
+        this.matrix.scale(this.scale);
+
+        if (this.parent !== undefined)
+            this.matrix = this.parent.getMatrix().mult(this.matrix);
+
         this.inverse = this.matrix.inverse();
 
         this.prevCameraPos = V(camera.pos.x, camera.pos.y);
         this.prevCameraZoom = camera.zoom;
     }
     transformCtx(ctx) {
-        ctx.setTransform(this.matrix.mat[0], this.matrix.mat[1], this.matrix.mat[2], this.matrix.mat[3], this.matrix.mat[4], this.matrix.mat[5]);
+        this.updateMatrix();
+        var m = new Matrix2x3(this.matrix);
+        var v = camera.getScreenPos(V(m.mat[4], m.mat[5]));
+        m.mat[4] = v.x, m.mat[5] = v.y;
+        m.scale(V(1/camera.zoom, 1/camera.zoom));
+        ctx.setTransform(m.mat[0], m.mat[1], m.mat[2], m.mat[3], m.mat[4], m.mat[5]);
     }
-    toLocalSpace(v) { // v is in screen coords
+    toLocalSpace(v) { // v must be in world coords
         return this.getInverseMatrix().mul(v);
+    }
+    setParent(t) {
+        this.parent = t;
+        this.dirty = true;
     }
     setPos(p) {
         this.pos.x = p.x;
         this.pos.y = p.y;
         this.dirty = true;
     }
-    setAngle(theta) {
-        this.angle = theta;
+    setAngle(a) {
+        this.angle = a;
         this.dirty = true;
     }
     setScale(s) {

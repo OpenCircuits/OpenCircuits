@@ -15,9 +15,12 @@ class IPort {
         this.origin = V(0, 0);
         this.target = V(-IO_PORT_LENGTH, 0);
 
+        this.set = false;
+
         this.updatePosition();
     }
     updatePosition() {
+        console.log("HERE");
         var i;
         for (i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
 
@@ -29,6 +32,20 @@ class IPort {
         this.target.y = l;
         this.prevParentInputLength = this.parent.inputs.length;
     }
+    onTransformChange() {
+        if (!this.set)
+            this.updatePosition();
+
+        if (this.input !== undefined) {
+            // var
+            var v = this.parent.transform.pos.add(this.target);
+            var x = v.x, y = v.y;
+            this.input.curve.c2.x += x - this.input.curve.p2.x;
+            this.input.curve.c2.y += y - this.input.curve.p2.y;
+            this.input.curve.p2.x = x;
+            this.input.curve.p2.y = y;
+        }
+    }
     activate(on) {
         if (this.isOn === on)
             return;
@@ -37,12 +54,12 @@ class IPort {
         this.parent.activate(this.isOn);
     }
     contains(pos) {
-        var mPos = this.parent.transform.pos.add(this.target);
-        var transform = new Transform(mPos, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        var transform = new Transform(this.target, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
     draw() {
-        if (this.parent.inputs.length !== this.prevParentInputLength)
+        if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
             this.updatePosition();
 
         var v = this.target;
@@ -54,8 +71,18 @@ class IPort {
         var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
+    setOrigin(v) {
+        this.origin.x = v.x;
+        this.origin.y = v.y;
+        this.set = true;
+    }
+    setTarget(v) {
+        this.target.x = v.x;
+        this.target.y = v.y;
+        this.set = true;
+    }
     getPos() {
-        return this.parent.transform.pos.add(this.target);
+        return this.parent.transform.getMatrix().mul(this.target);
     }
     getDir() {
         return V(-1, 0);

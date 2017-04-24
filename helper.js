@@ -161,11 +161,15 @@ function contains(transform, pos) {
     var bl = transform.size.scale(-0.5);
     var p  = transform.toLocalSpace(pos);
 
+    //
+    // DEBUG DRAWING
+    //
     // saveCtx();
     // transform.transformCtx(frame.context);
     // rect(0, 0, transform.size.x, transform.size.y, '#ff00ff', '#000');
     // restoreCtx();
-    // circle(pos.x, pos.y, 5, '#00ff00', '#000', 1 / camera.zoom);
+    // var mv = camera.getScreenPos(pos);
+    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
 
     return (p.x > bl.x &&
             p.y > bl.y &&
@@ -175,6 +179,17 @@ function contains(transform, pos) {
 
 function circleContains(transform, pos) {
     var v = transform.toLocalSpace(pos);
+
+    //
+    // DEBUG DRAWING
+    //
+    // saveCtx();
+    // transform.transformCtx(frame.context);
+    // circle(0, 0, transform.size.x, '#ff00ff', '#000');
+    // restoreCtx();
+    // var mv = camera.getScreenPos(pos);
+    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
+
     return (v.len2() <= transform.size.x*transform.size.x/4);
 }
 

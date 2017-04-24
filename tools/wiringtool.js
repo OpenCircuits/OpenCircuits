@@ -28,7 +28,7 @@ class WiringTool extends Tool {
     onClick() {
         for (var i = 0; i < objects.length; i++) {
             var ii;
-            if ((ii = objects[i].iPortContains(mousePos)) !== -1) {
+            if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
                 if (!this.wire.connect(objects[i].inputs[ii]))
                     this.removeWire();
 

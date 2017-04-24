@@ -8,12 +8,12 @@ class Gate extends IOObject {
     click() {
         console.log("ASD");
     }
-    activate(on) {
-        super.activate((this.not ? !on : on));
+    activate(on, i) {
+        super.activate((this.not ? !on : on), i);
     }
     draw() {
         super.draw();
-        
+
         this.localSpace();
         if (this.not) {
             var l = this.transform.size.x/2+5;
