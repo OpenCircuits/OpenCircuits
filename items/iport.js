@@ -20,7 +20,6 @@ class IPort {
         this.updatePosition();
     }
     updatePosition() {
-        console.log("HERE");
         var i;
         for (i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
 
@@ -37,8 +36,7 @@ class IPort {
             this.updatePosition();
 
         if (this.input !== undefined) {
-            // var
-            var v = this.parent.transform.pos.add(this.target);
+            var v = this.getPos();
             var x = v.x, y = v.y;
             this.input.curve.c2.x += x - this.input.curve.p2.x;
             this.input.curve.c2.y += y - this.input.curve.p2.y;
@@ -54,7 +52,7 @@ class IPort {
         this.parent.activate(this.isOn);
     }
     contains(pos) {
-        var transform = new Transform(this.target, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0);
         transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
@@ -85,6 +83,6 @@ class IPort {
         return this.parent.transform.getMatrix().mul(this.target);
     }
     getDir() {
-        return V(-1, 0);
+        return this.parent.transform.getMatrix().mul(V(-1, 0)).sub(this.parent.getPos()).normalize();
     }
 }

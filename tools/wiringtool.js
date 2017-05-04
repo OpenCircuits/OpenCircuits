@@ -4,6 +4,14 @@ class WiringTool extends Tool {
 
         this.wire = undefined;
     }
+    onKeyUp(code) {
+        if (code === 27)  { // Escape key
+            this.removeWire();
+            selectionTool.activate();
+            render();
+        }
+
+    }
     activate(object) {
         super.activate();
 

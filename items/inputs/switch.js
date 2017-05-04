@@ -1,6 +1,6 @@
 class Switch extends IOObject {
     constructor(x, y) {
-        super(x, y, 60*images["switchUp.svg"].ratio, 60, images["switchUp.svg"], true, 0, 1, 70*images["switchUp.svg"].ratio, 70);
+        super(x, y, 60*images["switchUp.svg"].ratio, 60, images["switchUp.svg"], true, 0, 1, 77*images["switchUp.svg"].ratio, 77);
     }
     click() {
         this.activate(!this.outputs[0].isOn);

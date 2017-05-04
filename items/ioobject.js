@@ -27,6 +27,7 @@ class IOObject {
 
         for (var i = 0; i < this.inputs.length; i++)
             this.inputs[i].updatePosition();
+        this.onTransformChange();
     }
     setOutputAmount(target) {
         target = clamp(target, 0, this.maxOutputs);
@@ -66,6 +67,9 @@ class IOObject {
     setAngle(a) {
         this.transform.setAngle(a);
         this.onTransformChange();
+    }
+    getAngle() {
+        return this.transform.angle;
     }
     click() {
     }

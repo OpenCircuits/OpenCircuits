@@ -12,8 +12,12 @@ class Wire {
             return;
 
         this.isOn = on;
-        if (this.connection !== undefined)
-            propogationQueue.push(new Propogation(this, this.connection, this.isOn));
+        if (this.connection !== undefined) {
+            if (this.connection instanceof Wire)
+                this.connection.activate(on);
+            else
+                propogationQueue.push(new Propogation(this, this.connection, this.isOn));
+        }
     }
     press(t) {
         var wire = new Wire(this, t);

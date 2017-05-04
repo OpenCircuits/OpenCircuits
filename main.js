@@ -54,12 +54,15 @@ class SelectionPopup {
             render();
         }
     }
+    updatePosValue() {
+        this.posX.value = this.selection.getPos().x/50 - 0.5;
+        this.posY.value = this.selection.getPos().y/50 - 0.5;
+    }
     select(obj) {
         this.selection = obj;
         this.setTitle(obj.getDisplayName());
 
-        this.posX.value = this.selection.getPos().x/50 - 0.5;
-        this.posY.value = this.selection.getPos().y/50 - 0.5;
+        this.updatePosValue();
 
         this.inputCount.value = this.selection.getInputAmount();
         this.inputCountText.style.display = (this.selection.maxInputs > 1 && this.selection.noChange !== true ? "inherit" : "none");
@@ -150,8 +153,8 @@ function onFinishLoading() {
 
     // objects.push(new SRFlipFlop(0, 0));
 
-    for (var i = 0; i < objects.length; i++)
-        objects[i].setAngle(Math.random() * 2 * Math.PI);
+    // for (var i = 0; i < objects.length; i++)
+    //     objects[i].setAngle(Math.random() * 2 * Math.PI);
 
     wire(objects[0].outputs[0], objects[3].inputs[1]);
     wire(objects[1].outputs[0], objects[3].inputs[0]);
@@ -164,6 +167,9 @@ function onFinishLoading() {
     wire(objects[6].outputs[0], objects[7].inputs[0]);
 
 
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.click();
 
     render();
 }
@@ -227,6 +233,8 @@ function render() {
 
     for (var i = 0; i < objects.length; i++)
         objects[i].draw();
+
+    selectionTool.draw();
 }
 
 function loadImage(imgs, imageNames, index, onFinish) {

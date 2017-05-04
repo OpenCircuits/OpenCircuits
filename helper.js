@@ -82,15 +82,19 @@ function rect(x, y, w, h, tint, bTint, bSize) {
         frame.context.strokeRect(x-w/2, y-h/2, w, h);
 }
 
-function circle(x, y, r, style, borderStyle, borderSize) {
-    frame.context.fillStyle = (style === undefined ? '#fff' : style);
+function circle(x, y, r, fillStyle, borderStyle, borderSize, alpha) {
+    frame.context.fillStyle = (fillStyle === undefined ? '#fff' : fillStyle);
     frame.context.strokeStyle = (borderStyle === undefined ? '#000' : borderStyle);
     frame.context.lineWidth = (borderSize === undefined ? 2 : borderSize);
+    if (alpha !== undefined)
+        frame.context.globalAlpha = alpha;
     frame.context.beginPath();
     frame.context.arc(x, y, r, 0, 2*Math.PI);
-    frame.context.fill();
+    if (fillStyle !== null)
+        frame.context.fill();
     frame.context.stroke();
     frame.context.closePath();
+    frame.context.globalAlpha = 1.0;
 }
 
 function drawImage(img, x, y, w, h, tint) {

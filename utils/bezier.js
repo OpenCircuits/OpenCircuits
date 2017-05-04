@@ -122,7 +122,7 @@ class BezierCurve {
                 if (t < 0.0) t = 0.1;
             } while((amt--) > 0);
 
-            if (this.getDist(t, mx, my) < 15)
+            if (this.getDist(t, mx, my) < 5)
                 return t;
         }
 
@@ -140,7 +140,7 @@ class BezierCurve {
                 if (t < 0.0) t = 0.1;
             } while((amt--) > 0);
 
-            if (this.getDist(t, mx, my) < 15)
+            if (this.getDist(t, mx, my) < 5)
                 return t;
         }
 

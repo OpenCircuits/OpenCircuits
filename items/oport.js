@@ -15,6 +15,8 @@ class OPort {
         this.origin = V(0, 0);
         this.target = V(IO_PORT_LENGTH, 0);
 
+        this.set = false;
+
         this.updatePosition();
     }
     updatePosition() {
@@ -30,10 +32,11 @@ class OPort {
         this.prevParentOutputLength = this.parent.outputs.length;
     }
     onTransformChange() {
-        this.updatePosition();
-        var v = this.parent.transform.pos.add(this.target);
+        if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
+            this.updatePosition();
+
         for (var i = 0; i < this.connections.length; i++) {
-            var v = this.parent.transform.pos.add(this.target);
+            var v = this.getPos();
             var x = v.x, y = v.y;
             this.connections[i].curve.c1.x += x - this.connections[i].curve.p1.x;
             this.connections[i].curve.c1.y += y - this.connections[i].curve.p1.y;
@@ -60,7 +63,7 @@ class OPort {
         this.connections.splice(i, 1);
     }
     contains(pos) {
-        var transform = new Transform(this.target, V(this.circleRadius,this.circleRadius).scale(1.5), 0);
+        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0);
         transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
@@ -77,10 +80,20 @@ class OPort {
         var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
+    setOrigin(v) {
+        this.origin.x = v.x;
+        this.origin.y = v.y;
+        this.set = true;
+    }
+    setTarget(v) {
+        this.target.x = v.x;
+        this.target.y = v.y;
+        this.set = true;
+    }
     getPos() {
         return this.parent.transform.getMatrix().mul(this.target);
     }
     getDir() {
-        return V(1, 0);
+        return this.parent.transform.getMatrix().mul(V(1, 0)).sub(this.parent.getPos()).normalize();
     }
 }

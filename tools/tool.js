@@ -23,4 +23,6 @@ class Tool {
     }
     onClick() {
     }
+    draw() {
+    }
 }
