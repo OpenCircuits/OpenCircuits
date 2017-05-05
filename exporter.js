@@ -3,7 +3,7 @@ var _ROOT = undefined;
 
 function saveFile() {
     var data = writeFile();
-    var filename = "test.xml";
+    var filename = "Untitled.circuit";
 
     var file = new Blob([data], {type: "text/plain"});
     if (window.navigator.msSaveOrOpenBlob) { // IE10+

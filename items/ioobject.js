@@ -139,6 +139,7 @@ class IOObject {
         this.connections[i] = obj;
         obj.inputs[j] = this;
 
+        console.log(this.isOn);
         obj.activate(this.isOn);
         return true;
     }

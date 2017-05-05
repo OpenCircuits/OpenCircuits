@@ -27,6 +27,8 @@ function loadSwitch(node) {
     var isOn = getBooleanValue(getChildNode(node, "isOn"));
 
     var o = new Switch(x, y);
+    if (isOn)
+        o.click(isOn);
     o.setAngle(angle);
 
     objects[uid] = o;

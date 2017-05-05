@@ -102,6 +102,8 @@ class Wire {
         this.connection = obj;
         obj.input = this;
 
+        obj.activate(this.isOn);
+
         return true;
     }
     disconnect(obj) {

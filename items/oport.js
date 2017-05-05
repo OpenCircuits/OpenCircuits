@@ -22,7 +22,7 @@ class OPort {
     getIndexOfParent() {
         var i;
         for (i = 0; (i < this.parent.outputs.length) && (this.parent.outputs[i] !== this); i++);
-        return i;    
+        return i;
     }
     updatePosition() {
         var i = this.getIndexOfParent();
@@ -59,6 +59,7 @@ class OPort {
     connect(obj) {
         this.connections.push(obj);
         obj.input = this;
+        obj.activate(this.isOn);
     }
     disconnect(obj) {
         var i;
