@@ -4,6 +4,7 @@ class BUFGate extends Gate {
         this.maxInputs = 1;
 
         this.setInputAmount(1);
+        this.activate(false);
     }
     activate(x) {
         var on = false;

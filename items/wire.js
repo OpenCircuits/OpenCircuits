@@ -176,6 +176,7 @@ function loadWireConnections(wire, node) {
     var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
     var target = (targetUID >= objects.length) ? (wires[targetUID-objects.length]) : (objects[targetUID].inputs[targetIndx]);
 
+    wire.host = source;
     source.connect(wire);
     wire.connect(target);
 }
