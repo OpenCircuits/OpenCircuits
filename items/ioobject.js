@@ -121,42 +121,6 @@ class IOObject {
         }
         return -1;
     }
-    connect(obj) {
-        var i;
-        for (i = 0; i < this.connections.length && this.connections[i] !== undefined; i++);
-        if (i >= this.maxOutputs)
-            return false;
-
-        var j;
-        for (j = 0; j < obj.inputs.length && obj.inputs[j] !== undefined; j++);
-        if (j >= obj.maxInputs)
-            return false;
-
-
-        console.log(this instanceof Wire);
-        console.log(i + ", " + j);
-
-        this.connections[i] = obj;
-        obj.inputs[j] = this;
-
-        console.log(this.isOn);
-        obj.activate(this.isOn);
-        return true;
-    }
-    disconnect(obj) {
-        var i;
-        for (i = 0; i < this.connections.length && this.connections[i] !== obj; i++);
-        if (i === this.connections.length)
-            return false;
-
-        var j;
-        for (j = 0; j < obj.inputs.length && obj.inputs[j] !== this; j++);
-        if (j === obj.inputs.length)
-            return false;
-
-        this.connections[i] = undefined;
-        obj.inputs[j] = undefined;
-    }
     getDisplayName() {
         return "IOObject";
     }
