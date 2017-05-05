@@ -24,4 +24,9 @@ class Gate extends IOObject {
     getDisplayName() {
         return "Gate";
     }
+    writeTo(node, uid) {
+        super.writeTo(node, uid);
+        createTextElement(node, "not", this.not);
+        createTextElement(node, "inputcount", this.inputs.length);
+    }
 }

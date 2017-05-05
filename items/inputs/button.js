@@ -24,4 +24,20 @@ class Button extends IOObject {
     getDisplayName() {
         return "Button";
     }
+    writeTo(node, uid) {
+        var buttonNode = createChildNode(node, "button");
+        super.writeTo(buttonNode, uid);
+    }
+}
+
+function loadButton(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+
+    var o = new Button(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
 }

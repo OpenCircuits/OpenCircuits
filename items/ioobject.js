@@ -159,4 +159,10 @@ class IOObject {
     getDisplayName() {
         return "IOObject";
     }
+    writeTo(node, uid) {
+        createTextElement(node, "uid", uid);
+        createTextElement(node, "x", this.getPos().x);
+        createTextElement(node, "y", this.getPos().y);
+        createTextElement(node, "angle", this.getAngle());
+    }
 }

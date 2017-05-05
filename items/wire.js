@@ -1,11 +1,18 @@
 class Wire {
     constructor(host, t) {
-        var p = host.getPos(t);
-        var c = host.getDir(t).scale(50).add(p);
+        this.host = host;
+
+        var p, c;
+        if (host !== undefined) {
+            p = host.getPos(t);
+            c = host.getDir(t).scale(50).add(p);
+            wires.push(this);
+        } else {
+            p = V(0, 0);
+            c = V(0, 0);
+        }
         this.curve = new BezierCurve(p, V(0,0), c, V(0,0));
         this.straight = false;
-
-        wires.push(this);
     }
     activate(on) {
         if (this.isOn === on)
@@ -46,6 +53,7 @@ class Wire {
     move(x, y) {
         // Snap to end points
         this.straight = false;
+        console.log(this);
         this.connection.straight = false;
         if (Math.abs(x - this.curve.p1.x) <= 10) {
             x = this.curve.p1.x;
@@ -106,4 +114,66 @@ class Wire {
     getDisplayName() {
         return "Wire";
     }
+    writeTo(node, uid) {
+        var wireNode = createChildNode(node, "wire");
+
+        createTextElement(wireNode, "uid", uid);
+
+        var inputNode = createChildNode(wireNode, "input");
+        var inputUID = (this.host instanceof Wire) ? (getIndexOfWire(this.host)+objects.length) : (getIndexOfObject(this.host.parent));
+        var inputIndx = (this.host instanceof Wire) ? (0) : (this.host.getIndexOfParent());
+        createTextElement(inputNode, "uid", inputUID);
+        createTextElement(inputNode, "index", inputIndx);
+
+        var connectionNode = createChildNode(wireNode, "connection");
+        var connectionUID = (this.connection instanceof Wire) ? (getIndexOfWire(this.connection)+objects.length) : (getIndexOfObject(this.connection.parent));
+        var connectionIndx = (this.connection instanceof Wire) ? (0) : (this.connection.getIndexOfParent());
+        createTextElement(connectionNode, "uid", connectionUID);
+        createTextElement(connectionNode, "index", connectionIndx);
+
+        var bezierNode = createChildNode(wireNode, "bezier");
+        createTextElement(bezierNode, "p1x", this.curve.p1.x);
+        createTextElement(bezierNode, "p1y", this.curve.p1.y);
+        createTextElement(bezierNode, "p2x", this.curve.p2.x);
+        createTextElement(bezierNode, "p2y", this.curve.p2.y);
+        createTextElement(bezierNode, "c1x", this.curve.c1.x);
+        createTextElement(bezierNode, "c1y", this.curve.c1.y);
+        createTextElement(bezierNode, "c2x", this.curve.c2.x);
+        createTextElement(bezierNode, "c2y", this.curve.c2.y);
+
+        createTextElement(wireNode, "straight", this.straight);
+    }
+}
+
+function loadWire(node) {
+    var wire = new Wire();
+
+    var uid = getIntValue(getChildNode(node, "uid"));
+    wires[uid-objects.length] = wire;
+
+    var bezier = getChildNode(node, "bezier");
+    var p1 = V(getFloatValue(getChildNode(bezier, "p1x")), getFloatValue(getChildNode(bezier, "p1y")));
+    var p2 = V(getFloatValue(getChildNode(bezier, "p2x")), getFloatValue(getChildNode(bezier, "p2y")));
+    var c1 = V(getFloatValue(getChildNode(bezier, "c1x")), getFloatValue(getChildNode(bezier, "c1y")));
+    var c2 = V(getFloatValue(getChildNode(bezier, "c2x")), getFloatValue(getChildNode(bezier, "c2y")));
+
+    wire.curve.update(p1, p2, c1, c2);
+
+    var straight = getBooleanValue(getChildNode(node, "straight"));
+    wire.straight = straight;
+}
+
+function loadWireConnections(wire, node) {
+    var inputNode = getChildNode(node, "input");
+    var sourceUID = getIntValue(getChildNode(inputNode, "uid"));
+    var sourceIndx = getIntValue(getChildNode(inputNode, "index"));
+    var source = (sourceUID >= objects.length) ? (wires[sourceUID-objects.length]) : (objects[sourceUID].outputs[sourceIndx]);
+
+    var connectionNode = getChildNode(node, "connection");
+    var targetUID = getIntValue(getChildNode(connectionNode, "uid"));
+    var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
+    var target = (targetUID >= objects.length) ? (wires[targetUID-objects.length]) : (objects[targetUID].inputs[targetIndx]);
+
+    source.connect(wire);
+    wire.connect(target);
 }

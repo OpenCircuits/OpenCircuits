@@ -19,9 +19,13 @@ class IPort {
 
         this.updatePosition();
     }
-    updatePosition() {
+    getIndexOfParent() {
         var i;
         for (i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
+        return i;
+    }
+    updatePosition() {
+        var i = this.getIndexOfParent();
 
         var l = -this.parent.transform.size.y/2*(i - this.parent.inputs.length/2 + 0.5);
         if (i === 0) l -= 1;

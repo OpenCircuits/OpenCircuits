@@ -54,4 +54,23 @@ class XORGate extends Gate {
     getDisplayName() {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
+    writeTo(node, uid) {
+        var XORNode = createChildNode(node, "xorgate");
+        super.writeTo(XORNode, uid);
+    }
+}
+
+function loadXORGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+    var inputCount = getIntValue(getChildNode(node, "inputcount"));
+
+    var o = new XORGate(not, x, y);
+    o.setAngle(angle);
+    o.setInputAmount(inputCount);
+
+    objects[uid] = o;
 }

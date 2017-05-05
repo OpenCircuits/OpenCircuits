@@ -34,4 +34,23 @@ class ANDGate extends Gate {
     getDisplayName() {
         return this.not ? "NAND Gate" : "AND Gate";
     }
+    writeTo(node, uid) {
+        var ANDNode = createChildNode(node, "andgate");
+        super.writeTo(ANDNode, uid);
+    }
+}
+
+function loadANDGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+    var inputCount = getIntValue(getChildNode(node, "inputcount"));
+
+    var o = new ANDGate(not, x, y);
+    o.setAngle(angle);
+    o.setInputAmount(inputCount);
+
+    objects[uid] = o;
 }

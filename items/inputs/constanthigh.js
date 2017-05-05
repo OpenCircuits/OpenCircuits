@@ -6,4 +6,20 @@ class ConstantHigh extends IOObject {
     getDisplayName() {
         return "Constant High";
     }
+    writeTo(node, uid) {
+        var constantHighNode = createChildNode(node, "constanthigh");
+        super.writeTo(constantHighNode, uid);
+    }
+}
+
+function loadConstantHigh(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+
+    var o = new ConstantHigh(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
 }

@@ -10,6 +10,22 @@ var popup;
 
 const UPS = 60;
 
+function getIndexOfObject(obj) {
+    for (var i = 0; i < objects.length; i++) {
+        if (obj === objects[i])
+            return i;
+    }
+    return -1;
+}
+
+function getIndexOfWire(wire) {
+    for (var i = 0; i < wires.length; i++) {
+        if (wire === wires[i])
+            return i;
+    }
+    return -1;
+}
+
 class Propogation {
     constructor(sender, receiver, signal) {
         this.sender = sender;
@@ -139,37 +155,46 @@ function onFinishLoading() {
 
     // S-R Flip flop
 
-    objects.push(new Switch(-225, 0));
-    objects.push(new Switch(-225, 100));
-    objects.push(new Switch(-225, -100));
+    // objects.push(new Switch(-225, 0));
+    // objects.push(new Switch(-225, 100));
+    // objects.push(new Switch(-225, -100));
+    //
+    // objects.push(new ANDGate(false, -50, 50));
+    // objects.push(new ANDGate(false, -50, -50));
+    //
+    // objects.push(new ORGate(true, 125, 50));
+    // objects.push(new ORGate(true, 125, -50));
+    //
+    // objects.push(new LED(225, 0, '#ff0000'));
+    //
+    // // objects.push(new SRFlipFlop(0, 0));
+    //
+    // // for (var i = 0; i < objects.length; i++)
+    // //     objects[i].setAngle(Math.random() * 2 * Math.PI);
+    //
+    // wire(objects[0].outputs[0], objects[3].inputs[1]);
+    // wire(objects[1].outputs[0], objects[3].inputs[0]);
+    // wire(objects[0].outputs[0], objects[4].inputs[0]);
+    // wire(objects[2].outputs[0], objects[4].inputs[1]);
+    // wire(objects[3].outputs[0], objects[5].inputs[0]);
+    // wire(objects[4].outputs[0], objects[6].inputs[1]);
+    // wire(objects[5].outputs[0], objects[6].inputs[0]);
+    // wire(objects[6].outputs[0], objects[5].inputs[1]);
+    // wire(objects[6].outputs[0], objects[7].inputs[0]);
 
-    objects.push(new ANDGate(false, -50, 50));
-    objects.push(new ANDGate(false, -50, -50));
-
-    objects.push(new ORGate(true, 125, 50));
-    objects.push(new ORGate(true, 125, -50));
-
-    objects.push(new LED(225, 0, '#ff0000'));
-
-    // objects.push(new SRFlipFlop(0, 0));
-
-    // for (var i = 0; i < objects.length; i++)
-    //     objects[i].setAngle(Math.random() * 2 * Math.PI);
-
-    wire(objects[0].outputs[0], objects[3].inputs[1]);
-    wire(objects[1].outputs[0], objects[3].inputs[0]);
-    wire(objects[0].outputs[0], objects[4].inputs[0]);
-    wire(objects[2].outputs[0], objects[4].inputs[1]);
-    wire(objects[3].outputs[0], objects[5].inputs[0]);
-    wire(objects[4].outputs[0], objects[6].inputs[1]);
-    wire(objects[5].outputs[0], objects[6].inputs[0]);
-    wire(objects[6].outputs[0], objects[5].inputs[1]);
-    wire(objects[6].outputs[0], objects[7].inputs[0]);
-
-
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.click();
+    // objects.push(new Switch(-150, 50));
+    // objects.push(new Switch(-150, -50));
+    //
+    // objects.push(new ANDGate(false, 0, 0));
+    //
+    // objects.push(new LED(100, 0, '#ffffff'));
+    //
+    // wire(objects[0].outputs[0], objects[2].inputs[0]);
+    // wire(objects[1].outputs[0], objects[2].inputs[1]);
+    // wire(objects[2].outputs[0], objects[3].inputs[0]);
+    //
+    // for (var i = 0; i < wires.length; i++)
+    //     console.log(wires[i]);
 
     render();
 }

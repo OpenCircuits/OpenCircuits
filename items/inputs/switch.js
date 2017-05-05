@@ -12,4 +12,22 @@ class Switch extends IOObject {
     getDisplayName() {
         return "Switch";
     }
+    writeTo(node, uid) {
+        var switchNode = createChildNode(node, "switch");
+        super.writeTo(switchNode, uid);
+        createTextElement(switchNode, "isOn", this.outputs[0].isOn);
+    }
+}
+
+function loadSwitch(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var isOn = getBooleanValue(getChildNode(node, "isOn"));
+
+    var o = new Switch(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
 }

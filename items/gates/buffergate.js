@@ -14,4 +14,21 @@ class BUFGate extends Gate {
     getDisplayName() {
         return this.not ? "NOT Gate" : "Buffer Gate";
     }
+    writeTo(node, uid) {
+        var BufferNode = createChildNode(node, "buffergate");
+        super.writeTo(BufferNode, uid);
+    }
+}
+
+function loadBufferGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+
+    var o = new BUFGate(not, x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
 }
