@@ -8,7 +8,7 @@ var updateRequests = 0;
 
 var popup;
 
-const UPS = 6;
+const UPS = 60;
 
 function getIndexOfObject(obj) {
     for (var i = 0; i < objects.length; i++) {

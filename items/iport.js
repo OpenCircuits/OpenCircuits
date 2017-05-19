@@ -73,6 +73,11 @@ class IPort {
         var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
+    remove() {
+        if (this.input !== undefined)
+            this.input.remove();
+        this.input = undefined;
+    }
     setOrigin(v) {
         this.origin.x = v.x;
         this.origin.y = v.y;

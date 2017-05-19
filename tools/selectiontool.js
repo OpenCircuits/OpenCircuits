@@ -19,6 +19,12 @@ class SelectionTool extends Tool {
             panTool.activate();
         } else if (code === 16) { // Shift key
             this.shift = true;
+        } else if (code === 8) { // Delete key
+            while(this.selections.length > 0) {
+                this.selections.splice(0, 1)[0].remove();
+            }
+            popup.deselect();
+            render();
         }
     }
     onKeyUp(code) {

@@ -1,11 +1,11 @@
 class Wire {
-    constructor(host, t) {
-        this.host = host;
+    constructor(input, t) {
+        this.input = input;
 
         var p, c;
-        if (host !== undefined) {
-            p = host.getPos(t);
-            c = host.getDir(t).scale(50).add(p);
+        if (input !== undefined) {
+            p = input.getPos(t);
+            c = input.getDir(t).scale(50).add(p);
             wires.push(this);
         } else {
             p = V(0, 0);
@@ -34,6 +34,29 @@ class Wire {
         wire.connect(obj);
         this.connect(wire);
     }
+    remove() {
+        if (this.input !== undefined) {
+            if (this.input instanceof Wire) {
+                this.input.connection = undefined;
+                this.input.remove();
+            } else {
+                var i = -1;
+                for (i = 0; i < this.input.connections.length && this.input.connections[i] !== this; i++);
+                this.input.connections.splice(i, 1);
+            }
+            this.input = undefined;
+        }
+        if (this.connection !== undefined) {
+            if (this.connection instanceof Wire) {
+                this.connection.input = undefined;
+                this.connection.remove();
+            } else {
+                this.connection.input = undefined;
+            }
+            this.connection = undefined;
+        }
+        wires.splice(getIndexOfWire(this), 1);
+    }
     draw() {
         if (this.straight) {
             var p1 = camera.getScreenPos(this.curve.p1);
@@ -53,7 +76,6 @@ class Wire {
     move(x, y) {
         // Snap to end points
         this.straight = false;
-        console.log(this);
         this.connection.straight = false;
         if (Math.abs(x - this.curve.p1.x) <= 10) {
             x = this.curve.p1.x;
@@ -94,7 +116,7 @@ class Wire {
         return (this.straight) ? (-1) : (this.curve.getNearestT(mx, my));
     }
     connect(obj) {
-        if (obj.input !== undefined)
+        if (obj.input !== undefined && obj.input !== this)
             return false;
 
         var p = obj.getPos(0);
@@ -125,8 +147,8 @@ class Wire {
         createTextElement(wireNode, "uid", uid);
 
         var inputNode = createChildNode(wireNode, "input");
-        var inputUID = (this.host instanceof Wire) ? (getIndexOfWire(this.host)+objects.length) : (getIndexOfObject(this.host.parent));
-        var inputIndx = (this.host instanceof Wire) ? (0) : (this.host.getIndexOfParent());
+        var inputUID = (this.input instanceof Wire) ? (getIndexOfWire(this.input)+objects.length) : (getIndexOfObject(this.input.parent));
+        var inputIndx = (this.input instanceof Wire) ? (0) : (this.input.getIndexOfParent());
         createTextElement(inputNode, "uid", inputUID);
         createTextElement(inputNode, "index", inputIndx);
 
@@ -179,7 +201,7 @@ function loadWireConnections(wire, node) {
     var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
     var target = (targetUID >= objects.length) ? (wires[targetUID-objects.length]) : (objects[targetUID].inputs[targetIndx]);
 
-    wire.host = source;
+    wire.input = source;
     source.connect(wire);
     wire.connect(target);
 }

@@ -116,6 +116,19 @@ class IOObject {
         drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
         restoreCtx();
     }
+    remove() {
+        objects.splice(getIndexOfObject(this), 1);
+        for (var i = 0; i < this.outputs.length; i++) {
+            this.outputs[i].remove();
+            this.outputs[i] = undefined;
+        }
+        this.outputs = [];
+        for (var i = 0; i < this.inputs.length; i++) {
+            this.inputs[i].remove();
+            this.inputs[i] = undefined;
+        }
+        this.inputs = [];
+    }
     contains(pos) {
         return containsPoint(this.transform, pos);
     }

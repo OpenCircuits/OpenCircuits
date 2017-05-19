@@ -85,6 +85,14 @@ class OPort {
         var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
         circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
+    remove() {
+        for (var i = 0; i < this.connections.length; i++) {
+            console.log(this.connections[i])
+            this.connections[i].remove();
+            this.connections[i] = undefined;
+        }
+        this.connections = [];
+    }
     setOrigin(v) {
         this.origin.x = v.x;
         this.origin.y = v.y;
