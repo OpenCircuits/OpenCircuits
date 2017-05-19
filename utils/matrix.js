@@ -85,7 +85,7 @@ class Matrix2x3 {
         return m;
     }
     print() {
-        console.log("[" + this.mat[0] + ", " + this.mat[2] + ", " + this.mat[4] + "]\n" +
-                    "[" + this.mat[1] + ", " + this.mat[3] + ", " + this.mat[5] + "]");
+        console.log("[" + this.mat[0].toFixed(3) + ", " + this.mat[2].toFixed(3) + ", " + this.mat[4].toFixed(3) + "]\n" +
+                    "[" + this.mat[1].toFixed(3) + ", " + this.mat[3].toFixed(3) + ", " + this.mat[5].toFixed(3) + "]");
     }
 }

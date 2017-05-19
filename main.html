@@ -98,21 +98,21 @@
                 <div id="posText">
                     Position
                 </div>
-                <label class="popup-label" id="position-label" oninput="popup.onInputChange();" unselectable disabled>
-                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5"/>
-                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5"/>
+                <label class="popup-label" id="position-label" unselectable disabled>
+                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosXChange();" />
+                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosYChange();" />
                 </label>
                 <div id="inputCountText">
                     Input Count
                 </div>
-                <label class="popup-label" id="inputcount-label" oninput="popup.onInputChange();" unselectable disabled>
-                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1"/>
+                <label class="popup-label" id="inputcount-label" unselectable disabled>
+                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1" oninput="popup.onInputCountChange();" />
                 </label>
                 <div id="colorText">
                     Color
                 </div>
-                <label class="popup-label" id="color-label" onchange="popup.onInputChange();" unselectable disabled>
-                    <input type="color" id="colorPicker" value="#ffffff" />
+                <label class="popup-label" id="color-label" unselectable disabled>
+                    <input type="color" id="colorPicker" value="#ffffff" oninput="popup.onColorChange();" />
                 </label>
             </div>
 
@@ -128,6 +128,7 @@
             <script src="tools/pantool.js"></script>
             <script src="tools/wiringtool.js"></script>
             <script src="tools/itemtool.js"></script>
+            <script src="tools/selectionpopup.js"></script>
 
             <script src="items/ioobject.js"></script>
             <script src="items/oport.js"></script>

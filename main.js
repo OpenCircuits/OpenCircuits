@@ -8,7 +8,7 @@ var updateRequests = 0;
 
 var popup;
 
-const UPS = 60;
+const UPS = 6;
 
 function getIndexOfObject(obj) {
     for (var i = 0; i < objects.length; i++) {
@@ -42,94 +42,6 @@ class Propogation {
     }
 }
 
-class SelectionPopup {
-    constructor() {
-        this.div = document.getElementById("popupDiv");
-        this.title = document.getElementById("nameText");
-
-        this.posX = document.getElementById("positionx");
-        this.posY = document.getElementById("positiony");
-
-        this.inputCountText = document.getElementById("inputCountText");
-        this.inputCount = document.getElementById("inputcount");
-
-        this.colorText = document.getElementById("colorText");
-        this.colorPicker = document.getElementById("colorPicker");
-
-        this.setPos(V(0,0));
-        this.hide();
-    }
-    onInputChange() {
-        if (this.selection !== undefined) {
-            this.selection.setPos(V(Number(this.posX.value)+0.5, Number(this.posY.value)+0.5).scale(50));
-            if (this.selection.maxInputs > 1)
-                this.selection.setInputAmount(Number(this.inputCount.value));
-            if (this.selection instanceof LED)
-                this.selection.color = this.colorPicker.value;
-
-            render();
-        }
-    }
-    updatePosValue() {
-        this.posX.value = this.selection.getPos().x/50 - 0.5;
-        this.posY.value = this.selection.getPos().y/50 - 0.5;
-    }
-    select(obj) {
-        this.selection = obj;
-        this.setTitle(obj.getDisplayName());
-
-        this.updatePosValue();
-
-        this.inputCount.value = this.selection.getInputAmount();
-        this.inputCountText.style.display = (this.selection.maxInputs > 1 && this.selection.noChange !== true ? "inherit" : "none");
-        this.inputCount.style.display = (this.selection.maxInputs > 1 && this.selection.noChange !== true ? "inherit" : "none");
-
-        if (this.selection instanceof LED)
-            this.colorPicker.value = this.selection.color;
-        this.colorText.style.display = (this.selection instanceof LED > 0 ? "inherit" : "none");
-        this.colorPicker.style.display = (this.selection instanceof LED > 0 ? "inherit" : "none");
-
-        this.onMove();
-        this.show();
-    }
-    deselect() {
-        this.selection = undefined;
-        this.hide();
-    }
-    onMove() {
-        if (this.selection !== undefined) {
-            var pos = camera.getScreenPos(this.selection.getPos());
-            pos.y -= this.div.clientHeight;
-            this.setPos(pos);
-        }
-    }
-    onWheel() {
-        this.onMove();
-    }
-    show() {
-        this.hidden = false;
-        this.div.style.visibility = "visible";
-    }
-    hide() {
-        this.hidden = true;
-        this.div.style.visibility = "hidden";
-    }
-    setTitle(x) {
-        this.title.innerHTML = x;
-    }
-    setPos(v) {
-        this.pos = V(v.x, v.y);
-        this.clamp();
-
-        this.div.style.left = this.pos.x;
-        this.div.style.top = this.pos.y;
-    }
-    clamp() {
-        this.pos.x = Math.max(Math.min(this.pos.x, frame.canvas.width-this.div.clientWidth-1), isSidebarOpen ? 210 : 10);
-        this.pos.y = Math.max(Math.min(this.pos.y, frame.canvas.height-this.div.clientHeight-1), 46);
-    }
-}
-
 function start() {
     loadImage(images,
         ["constLow.svg", "constHigh.svg",
@@ -152,8 +64,17 @@ function onFinishLoading() {
 
     popup = new SelectionPopup();
 
-
-    // S-R Flip flop
+    // var o = new ANDGate(false, 0, 0);
+    // objects.push(o);
+    //
+    // o.transform.transformCtx(frame.context);
+    // frame.context.drawImage(o.img, -20, -20, 40, 40);
+    //
+    // o.rotate(1*Math.PI/4, V(100, 0));
+    //
+    // o.transform.transformCtx(frame.context);
+    // frame.context.drawImage(o.img, -20, -20, 40, 40);
+    // o.draw();
 
     render();
 }

@@ -9,7 +9,7 @@ class Transform {
         this.setAngle(angle);
         this.updateMatrix();
     }
-    updateMatrix() {
+    updateMatrix(c) {
         // Update matrix if camera moved/zoomed
         if (this.prevCameraPos.x !== camera.pos.x || this.prevCameraPos.y !== camera.pos.y || this.prevCameraZoom !== camera.zoom)
             this.dirty = true;
@@ -42,6 +42,9 @@ class Transform {
     toLocalSpace(v) { // v must be in world coords
         return this.getInverseMatrix().mul(v);
     }
+    toWorldSpace(v) { // v must be in local coords
+        return this.getMatrix().mul(v);
+    }
     setParent(t) {
         this.parent = t;
         this.dirty = true;
@@ -55,13 +58,22 @@ class Transform {
         this.angle = a;
         this.dirty = true;
     }
+    rotateAbout(a, c) {
+        this.setAngle(a);
+        this.setPos(this.pos.sub(c));
+        var cos = Math.cos(a), sin = Math.sin(a);
+        var xx = this.pos.x * cos - this.pos.y * sin;
+        var yy = this.pos.y * cos + this.pos.x * sin;
+        this.setPos(V(xx, yy).add(c));
+        this.dirty = true;
+    }
     setScale(s) {
         this.scale.x = s.x;
         this.scale.y = s.y;
         this.dirty = true;
     }
     getPos() {
-        return V(this.x, this.y);
+        return V(this.pos.x, this.pos.y);
     }
     getAngle() {
         return this.angle;

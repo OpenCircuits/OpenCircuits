@@ -90,6 +90,9 @@ class Wire {
     getDir(t) {
         return this.curve.getVel(t).normalize();
     }
+    getNearestT(mx, my) {
+        return (this.straight) ? (-1) : (this.curve.getNearestT(mx, my));
+    }
     connect(obj) {
         if (obj.input !== undefined)
             return false;
