@@ -10,6 +10,11 @@
 
     <body onload="start();">
         <div id="container">
+            <div id="scenes" class="scenebar">
+                <button type="button">
+                    Untitled.circuit*
+                </button>
+            </div>
             <div id="tools" class="toolbar">
                 <button type="button" onclick="document.getElementById('file-input').click();">
                     <img src="images/icons/open.svg" height="100%" alt="Save icon"/>
@@ -93,20 +98,20 @@
             <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
 
             <div id="popupDiv" class="popup">
-                <b id="nameText">Name: </b>
+                <input type="text" id="nameText" value="Name :" onfocus="popup.onTitleFocus();" onblur="popup.onTitleBlur();">
                 <hr/>
                 <div id="posText">
                     Position
                 </div>
                 <label class="popup-label" id="position-label" unselectable disabled>
-                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosXChange();" />
-                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosYChange();" />
+                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosXChange();" onfocus="popup.focused = true;" onblur="popup.focused = false;" />
+                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosYChange();" onfocus="popup.focused = true;" onblur="popup.focused = false;" />
                 </label>
                 <div id="inputCountText">
                     Input Count
                 </div>
                 <label class="popup-label" id="inputcount-label" unselectable disabled>
-                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1" oninput="popup.onInputCountChange();" />
+                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1" oninput="popup.onInputCountChange();" onfocus="popup.focused = true;" onblur="popup.focused = false;" />
                 </label>
                 <div id="colorText">
                     Color

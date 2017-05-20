@@ -3,6 +3,7 @@ class SelectionPopup {
         this.div = document.getElementById("popupDiv");
         this.div.style.position = "absolute";
         this.title = document.getElementById("nameText");
+        this.focused = false;
 
         this.posX = document.getElementById("positionx");
         this.posY = document.getElementById("positiony");
@@ -38,11 +39,40 @@ class SelectionPopup {
             this.selections[i].color = this.colorPicker.value;
         render();
     }
+    onTitleChange() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].setName(this.title.value);
+    }
+    onTitleFocus() {
+        this.focused = true;
+    }
+    onTitleBlur() {
+        this.focused = false;
+        this.onTitleChange();
+    }
+    onEnter() {
+        if (this.posX === document.activeElement) {
+            this.onPosXChange();
+            this.posX.blur();
+        }
+        if (this.posY === document.activeElement) {
+            this.onPosYChange();
+            this.posY.blur();
+        }
+        if (this.inputCount === document.activeElement) {
+            this.onInputCountChange();
+            this.inputCount.blur();
+        }
+        if (this.title === document.activeElement) {
+            this.onTitleChange();
+            this.title.blur();
+        }
+    }
     updateTitleValue() {
         var allSame = true;
         for (var i = 0; i < this.selections.length; i++)
             allSame = allSame && this.selections[i].getName() === this.selections[0].getName();
-        this.setTitle(allSame ? this.selections[0].getName() : "&lt;Multiple&gt;");
+        this.title.value = (allSame ? this.selections[0].getName() : "<Multiple>");
     }
     updatePosValue() {
         var allXSame = true, allYSame = true;
@@ -51,9 +81,9 @@ class SelectionPopup {
             allYSame = allYSame && this.selections[i].getPos().y === this.selections[0].getPos().y;
         }
         this.posX.value = (allXSame ? this.selections[0].getPos().x/50 - 0.5 : "");
-        this.posX.placeholder = (allXSame ? "" : "ÿ");
+        this.posX.placeholder = (allXSame ? "" : "-");
         this.posY.value = (allYSame ? this.selections[0].getPos().y/50 - 0.5 : "");
-        this.posY.placeholder = (allYSame ? "" : "ÿ");
+        this.posY.placeholder = (allYSame ? "" : "-");
     }
     updateInputCountValue() {
         var allSame = true, display = true;
@@ -62,7 +92,7 @@ class SelectionPopup {
             allSame = allSame && this.selections[i].getInputAmount() === this.selections[0].getInputAmount();
         }
         this.inputCount.value = (allSame ? this.selections[0].getInputAmount() : "");
-        this.inputCount.placeholder = (allSame ? "" : "ÿ");
+        this.inputCount.placeholder = (allSame ? "" : "-");
         this.inputCountText.style.display = this.inputCount.style.display = (display ? "inherit" : "none");
     }
     updateColorValue() {
@@ -114,9 +144,6 @@ class SelectionPopup {
     hide() {
         this.hidden = true;
         this.div.style.visibility = "hidden";
-    }
-    setTitle(x) {
-        this.title.innerHTML = x;
     }
     setPos(v) {
         this.pos = V(v.x, v.y);

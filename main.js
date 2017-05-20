@@ -64,18 +64,6 @@ function onFinishLoading() {
 
     popup = new SelectionPopup();
 
-    // var o = new ANDGate(false, 0, 0);
-    // objects.push(o);
-    //
-    // o.transform.transformCtx(frame.context);
-    // frame.context.drawImage(o.img, -20, -20, 40, 40);
-    //
-    // o.rotate(1*Math.PI/4, V(100, 0));
-    //
-    // o.transform.transformCtx(frame.context);
-    // frame.context.drawImage(o.img, -20, -20, 40, 40);
-    // o.draw();
-
     render();
 }
 

@@ -19,12 +19,14 @@ class SelectionTool extends Tool {
             panTool.activate();
         } else if (code === 16) { // Shift key
             this.shift = true;
-        } else if (code === 8) { // Delete key
+        } else if (code === 8 && !popup.focused) { // Delete key
             while(this.selections.length > 0) {
                 this.selections.splice(0, 1)[0].remove();
             }
             popup.deselect();
             render();
+        } else if (code === 13 && popup.focused) { // Enter key
+            popup.onEnter();
         }
     }
     onKeyUp(code) {
@@ -76,6 +78,7 @@ class SelectionTool extends Tool {
             }
 
             // Selection box
+            // TODO: Only calculate ON MOUSE UP!
             if (this.selBoxDownPos !== undefined) {
                 this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
                 this.deselect();

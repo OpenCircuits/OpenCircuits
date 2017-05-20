@@ -153,6 +153,9 @@ class IOObject {
     getDisplayName() {
         return "IOObject";
     }
+    setName(name) {
+        this.name = name;
+    }
     getName() {
         return this.name;
     }

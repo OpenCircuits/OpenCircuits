@@ -1,0 +1,3134 @@
+<!DOCTYPE HTML>
+<html>
+<style>
+body, html {
+    background-color: #ccc;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+}
+canvas {
+    position:absolute;
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+}
+
+.popup {
+    position: fixed;
+    padding: 1em;
+    left: 0;
+    top: 0;
+    width: 100px;
+    font-size: 16;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: #444;
+    color: #888;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.scenebar {
+    width: 100%;
+    height: 3%;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(200, 200, 200, 0.7);
+    border-style: solid;
+    border-width: 0px;
+    border-color: #999;
+    overflow: hidden;
+    transition: 0.5s;
+    border-bottom: 0px;
+    float: left;
+}
+.scenebar button {
+    background-color: rgba(210, 210, 210, 0.8);
+    border-style: solid;
+    border-width: 0px;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-color: #999;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.toolbar {
+    width: 100%;
+    height: 5%;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(200, 200, 200, 0.7);
+    border-style: solid;
+    border-width: 5px;
+    border-color: #999;
+    overflow: hidden;
+    transition: 0.5s;
+    padding-top: 0px;
+    float: left;
+}
+.toolbar button {
+    background-color: rgba(210, 210, 210, 0.8);
+    margin-left: 1%;
+    border-style: none;
+    padding: 0;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.tab {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 1em;
+    border-bottom-right-radius: 15px;
+    font-size: 18;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+#openItemsTab {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+.sidenav {
+    height: 94%;
+    width: 0;
+    position: relative;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(200, 200, 200, 0.7);
+    border-style: solid;
+    border-top-style: none;
+    border-width: 5px;
+    border-color: #999;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 0px;
+}
+.sidenav h4 {
+    padding-left: 0.5em;
+    padding-right: 1em;
+    font-size: 24px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+}
+.sidenav label.sidenav-label {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.25em;
+    font-size: 18px;
+    color: #ddd;
+    display: block;
+    transition: 0.3s;
+}
+.sidenav label[unselectable], h4[unselectable] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.sidenav button {
+    background-color: transparent;
+    border-color: transparent;
+    width: 45%;
+    color: #777;
+    font-weight: bold;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+</style>
+
+    <head>
+        <meta name="description" content="Circuits">
+        <meta name="viewport" content="width=device-width", initial-scale="1">
+
+
+        <title>Circuits</title>
+    </head>
+
+    <body onload="start();">
+        <div id="container">
+            <div id="scenes" class="scenebar">
+                <button type="button">
+                    Untitled.circuit*
+                </button>
+            </div>
+            <div id="tools" class="toolbar">
+                <button type="button" onclick="document.getElementById('file-input').click();">
+                    <img src="images/icons/open.svg" height="100%" alt="Save icon"/>
+                </button>
+                <input id="file-input" type="file" name="name" style="display: none;" onchange="openFile();" multiple="false" required="true" accept=".circuit,.xml" />
+                <button type="button" onclick="saveFile();">
+                    <img src="images/icons/save.svg" height="100%" alt="Save icon"/>
+                </button>
+                <button type="button">
+                    <img src="images/icons/cursor.svg" height="100%" alt="Save icon"/>
+                </button>
+                <button type="button">
+                    <img src="images/icons/hand.svg" height="100%" alt="Save icon"/>
+                </button>
+            </div>
+
+            <div id="items" class="sidenav">
+                <h4 unselectable>Inputs</h4>
+                <button type="button" onclick="placeItem(new ConstantLow());">
+                    <img src="images/items/constLow.svg" width="100%" alt="Save icon"/>
+                    <br/>Constant Low
+                </button>
+                <button type="button" onclick="placeItem(new ConstantHigh());">
+                    <img src="images/items/constHigh.svg" width="100%" alt="Save icon"/>
+                    <br/>Constant High
+                </button>
+                <button type="button" onclick="placeItem(new Button());">
+                    <img src="images/items/buttonUp.svg" width="100%" alt="Save icon"/>
+                    <br/>Button
+                </button>
+                <button type="button" onclick="placeItem(new Switch());">
+                    <img src="images/items/switchUp.svg" width="100%" alt="Save icon"/>
+                    <br/>Switch
+                </button>
+
+                <h4 unselectable>Ouputs</h4>
+                <button type="button" onclick="placeItem(new LED());">
+                    <img src="images/items/led.svg" width="100%" alt="Save icon"/>
+                    <br/>LED
+                </button>
+
+                <h4 unselectable>Logic Gates</h4>
+                <button type="button" onclick="placeItem(new BUFGate());">
+                    <img src="images/icons/buffer.svg" width="100%" alt="Save icon"/>
+                    <br/>BUFFER
+                </button>
+                <button type="button" onclick="placeItem(new BUFGate(true));">
+                    <img src="images/icons/not.svg" width="100%" alt="Save icon"/>
+                    <br/>NOT
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate());">
+                    <img src="images/icons/and.svg" width="100%" alt="Save icon"/>
+                    <br/>AND
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate(true));">
+                    <img src="images/icons/nand.svg" width="100%" alt="Save icon"/>
+                    <br/>NAND
+                </button>
+                <button type="button" onclick="placeItem(new ORGate());">
+                    <img src="images/icons/or.svg" width="100%" alt="Save icon"/>
+                    <br/>OR
+                </button>
+                <button type="button" onclick="placeItem(new ORGate(true));">
+                    <img src="images/icons/nor.svg" width="100%" alt="Save icon"/>
+                    <br/>NOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate());">
+                    <img src="images/icons/xor.svg" width="100%" alt="Save icon"/>
+                    <br/>XOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate(true));">
+                    <img src="images/icons/xnor.svg" width="100%" alt="Save icon"/>
+                    <br/>XNOR
+                </button>
+            </div>
+        </div>
+
+        <div id="main">
+            <canvas id="canvas"></canvas>
+
+            <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
+
+            <div id="popupDiv" class="popup">
+                <b id="nameText">Name: </b>
+                <hr/>
+                <div id="posText">
+                    Position
+                </div>
+                <label class="popup-label" id="position-label" unselectable disabled>
+                    <input type="number" id="positionx" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosXChange();" />
+                    <input type="number" id="positiony" value="0" min="-10000" max="10000" step="0.5" oninput="popup.onPosYChange();" />
+                </label>
+                <div id="inputCountText">
+                    Input Count
+                </div>
+                <label class="popup-label" id="inputcount-label" unselectable disabled>
+                    <input type="number" id="inputcount" value="2" min="2" max="8" step="1" oninput="popup.onInputCountChange();" />
+                </label>
+                <div id="colorText">
+                    Color
+                </div>
+                <label class="popup-label" id="color-label" unselectable disabled>
+                    <input type="color" id="colorPicker" value="#ffffff" oninput="popup.onColorChange();" />
+                </label>
+            </div>
+
+
+<script>
+
+// Quick, easy constructor for a new Vector
+function V(x, y, z, w) {
+    return new Vector(x, y, z, w);
+}
+
+// Constructor for a Vector object
+function Vector(x, y, z, w) {
+    if (y === undefined) {
+        this.x = (x.x === undefined ? 0 : x.x);
+        this.y = (x.y === undefined ? 0 : x.y);
+        this.z = (x.z === undefined ? 0 : x.z);
+        this.w = (x.w === undefined ? 0 : x.w);
+    } else {
+        this.x = (x === undefined ? 0 : x);
+        this.y = (y === undefined ? 0 : y);
+        this.z = (z === undefined ? 0 : z);
+        this.w = (w === undefined ? 0 : w);
+    }
+}
+
+// Mutator; translates the Vector
+Vector.prototype.translate = function(dx, dy, dz, dw) {
+    if (dy !== undefined) {
+        this.x += dx;
+        this.y += dy;
+        this.z += (dz === undefined ? 0 : dz);
+        this.w += (dw === undefined ? 0 : dw);
+    } else {
+        this.x += dx.x;
+        this.y += dx.y;
+        this.z += dx.z;
+        this.w += dx.w;
+    }
+}
+
+// Returns a new Vector which is a composite of this one and the given one
+Vector.prototype.add = function(a, b, c, d) {
+    if (b === undefined)
+        return new Vector(this.x + a.x, this.y + a.y, this.z + a.z, this.w + a.w);
+    else
+        return new Vector(this.x + a, this.y + b, this.z + (c === undefined ? 0 : c), this.w + (d === undefined ? 0 : d));
+}
+
+// Returns a new Vector which is the difference of this one and the given one
+Vector.prototype.sub = function(a, b, c, d) {
+    if (b === undefined)
+        return new Vector(this.x - a.x, this.y - a.y, this.z - a.z, this.w - a.w);
+    else
+        return new Vector(this.x - a, this.y - b, this.z - (c === undefined ? 0 : c), this.w - (d === undefined ? 0 : d));
+}
+
+// Returns a new Vector which is this Vector scaled by the given scalar
+Vector.prototype.scale = function(a) {
+    return new Vector(a * this.x, a * this.y, a * this.z, a * this.w);
+}
+
+// Returns a normalized version of this Vector
+Vector.prototype.normalize = function() {
+    var len = this.len();
+    if (len === 0)
+        return new Vector(0, 0);
+    else
+        return new Vector(this.x / len, this.y / len, this.z / len, this.w / len);
+}
+
+// Returns the length of this Vector
+Vector.prototype.len = function() {
+    return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w);
+}
+
+// Returns the length^2 of this Vector
+Vector.prototype.len2 = function() {
+    return this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w;
+}
+
+// Returns the distance between this Vector and the given Vector
+Vector.prototype.distanceTo = function(vec) {
+    return vec.sub(this).len();
+}
+
+</script>
+
+
+<script>
+class Matrix2x3 {
+    constructor(other) {
+        this.mat = [];
+        this.identity();
+        if (other !== undefined) {
+            for (var i = 0; i < 2*3; i++)
+                this.mat[i] = other.mat[i];
+        }
+    }
+    zero() {
+        for (var i = 0; i < 2*3; i++)
+            this.mat[i] = 0;
+        return this;
+    }
+    identity() {
+        this.zero();
+
+        this.mat[0] = 1.0;
+        this.mat[3] = 1.0;
+
+        return this;
+    }
+    mul(v) {
+        var result = V(0,0);
+        result.x = this.mat[0] * v.x + this.mat[2] * v.y + this.mat[4];
+        result.y = this.mat[1] * v.x + this.mat[3] * v.y + this.mat[5];
+        return result;
+    }
+    mult(m) {
+        var result = new Matrix2x3();
+        result.mat[0] = this.mat[0]*m.mat[0] + this.mat[2]*m.mat[1];
+        result.mat[1] = this.mat[1]*m.mat[0] + this.mat[3]*m.mat[1];
+        result.mat[2] = this.mat[0]*m.mat[2] + this.mat[2]*m.mat[3];
+        result.mat[3] = this.mat[1]*m.mat[2] + this.mat[3]*m.mat[3];
+        result.mat[4] = this.mat[0]*m.mat[4] + this.mat[2]*m.mat[5] + this.mat[4];
+        result.mat[5] = this.mat[1]*m.mat[4] + this.mat[3]*m.mat[5] + this.mat[5];
+        return result;
+    }
+    translate(v) {
+        this.mat[4] += this.mat[0] * v.x + this.mat[2] * v.y;
+        this.mat[5] += this.mat[1] * v.x + this.mat[3] * v.y;
+    }
+    rotate(theta) {
+        var c = Math.cos(theta);
+        var s = Math.sin(theta);
+        var m11 = this.mat[0] * c + this.mat[2] * s;
+        var m12 = this.mat[1] * c + this.mat[3] * s;
+        var m21 = this.mat[0] * -s + this.mat[2] * c;
+        var m22 = this.mat[1] * -s + this.mat[3] * c;
+        this.mat[0] = m11;
+        this.mat[1] = m12;
+        this.mat[2] = m21;
+        this.mat[3] = m22;
+    }
+    scale(s) {
+        this.mat[0] *= s.x;
+        this.mat[1] *= s.x;
+        this.mat[2] *= s.y;
+        this.mat[3] *= s.y;
+    }
+    inverse() {
+        var inv = new Array(3*2);
+        var det;
+
+        inv[0] = this.mat[3];
+        inv[1] = -this.mat[1];
+        inv[2] = -this.mat[2];
+        inv[3] = this.mat[0];
+        inv[4] = this.mat[2] * this.mat[5] -
+                 this.mat[4] * this.mat[3];
+        inv[5] = this.mat[4] * this.mat[1] -
+                 this.mat[0] * this.mat[5];
+
+        det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
+
+        if (det == 0)
+            return undefined;
+
+        det = 1.0 / det;
+
+        var m = new Matrix2x3();
+        for (var i = 0; i < 2*3; i++)
+            m.mat[i] = inv[i] * det;
+
+        return m;
+    }
+    print() {
+        console.log("[" + this.mat[0].toFixed(3) + ", " + this.mat[2].toFixed(3) + ", " + this.mat[4].toFixed(3) + "]\n" +
+                    "[" + this.mat[1].toFixed(3) + ", " + this.mat[3].toFixed(3) + ", " + this.mat[5].toFixed(3) + "]");
+    }
+}
+
+</script>
+
+
+<script>
+class BezierCurve {
+    constructor(p1, p2, c1, c2) {
+        this.p1 = V(p1.x,p1.y);
+        this.p2 = V(p2.x,p2.y);
+        this.c1 = V(c1.x,c1.y);
+        this.c2 = V(c2.x,c2.y);
+    }
+    update(p1, p2, c1, c2) {
+        this.p1.x = p1.x;
+        this.p1.y = p1.y;
+        this.p2.x = p2.x;
+        this.p2.y = p2.y;
+        this.c1.x = c1.x;
+        this.c1.y = c1.y;
+        this.c2.x = c2.x;
+        this.c2.y = c2.y;
+    }
+    draw(style, size) {
+        var p1 = camera.getScreenPos(this.p1);
+        var p2 = camera.getScreenPos(this.p2);
+        var c1 = camera.getScreenPos(this.c1);
+        var c2 = camera.getScreenPos(this.c2);
+
+        strokeCurve(p1.x, p1.y, p2.x, p2.y, c1.x, c1.y, c2.x, c2.y, style, size);
+    }
+    debugDraw(r) {
+        r = (r === undefined ? 3 : r);
+        var p1 = camera.getScreenPos(this.p1);
+        var p2 = camera.getScreenPos(this.p2);
+        var c1 = camera.getScreenPos(this.c1);
+        var c2 = camera.getScreenPos(this.c2);
+        circle(p1.x, p1.y, r/camera.zoom, '#ff0000', '#000', 1/camera.zoom);
+        circle(p2.x, p2.y, r/camera.zoom, '#00ff00', '#000', 1/camera.zoom);
+        circle(c1.x, c1.y, r/camera.zoom, '#0000ff', '#000', 1/camera.zoom);
+        circle(c2.x, c2.y, r/camera.zoom, '#ffff00', '#000', 1/camera.zoom);
+    }
+    getX(t) {
+        var it = 1 - t;
+        return this.p1.x*it*it*it + 3*this.c1.x*t*it*it + 3*this.c2.x*t*t*it + this.p2.x*t*t*t;
+    }
+    getY(t) {
+        var it = 1 - t;
+        return this.p1.y*it*it*it + 3*this.c1.y*t*it*it + 3*this.c2.y*t*t*it + this.p2.y*t*t*t;
+    }
+    getPos(t) {
+        return V(this.getX(t), this.getY(t));
+    }
+    getDX(t) {
+        var it = 1 - t;
+        return -3*this.p1.x*it*it + 3*this.c1.x*it*(1-3*t) + 3*this.c2.x*t*(2-3*t) + 3*this.p2.x*t*t;
+    }
+    getDY(t) {
+        var it = 1 - t;
+        return -3*this.p1.y*it*it + 3*this.c1.y*it*(1-3*t) + 3*this.c2.y*t*(2-3*t) + 3*this.p2.y*t*t;
+    }
+    getVel(t) {
+        return V(this.getDX(t), this.getDY(t));
+    }
+    getDDX(t) {
+        var m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
+        var b = this.p1.x - 2*this.c1.x + this.c2.x;
+        return 6*(m * t + b);
+    }
+    getDDY(t) {
+        var m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
+        var b = this.p1.y - 2*this.c1.y + this.c2.y;
+        return 6*(m * t + b);
+    }
+    getAcc(t) {
+        return V(this.getDDX(t), this.getDDY(t));
+    }
+    getDist(t, mx, my) {
+        var dx = this.getX(t) - mx;
+        var dy = this.getY(t) - my;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+    getDistDenominator(t, mx, my) {
+        var dx = this.getX(t) - mx;
+        var dy = this.getY(t) - my;
+        return dx*dx + dy*dy;
+    }
+    getDistDenominatorDerivative(t, mx, my) {
+        return  2*(this.getX(t) - mx) * this.getDX(t) +
+                2*(this.getY(t) - my) * this.getDY(t);
+    }
+    getDistNumerator(t, mx, my) {
+        var dx = this.getX(t) - mx;
+        var dy = this.getY(t) - my;
+        return  this.getDX(t)*dx +
+                this.getDY(t)*dy;
+    }
+    getDistNumeratorDerivative(t, mx, my) {
+        var dx = this.getX(t) - mx;
+        var dy = this.getY(t) - my;
+        var dbx = this.getDX(t);
+        var dby = this.getDY(t);
+        return  dbx*dbx + dx*this.getDDX(t) +
+                dby*dby + dy*this.getDDY(t);
+    }
+    getNearestT(mx, my) {
+        var minDist = 1e20;
+        var t0 = -1;
+        for (var tt = 0; tt <= 1.0; tt += 0.1) {
+            var dist = this.getDist(tt, mx, my);
+            if (dist < minDist) {
+                t0 = tt;
+                minDist = dist;
+            }
+        }
+
+        // Newton's method to find root for when slope is undefined
+        {
+            var amt = 5;
+            var t = t0;
+            do {
+                var f = this.getDistDenominator(t, mx, my);
+                var df = this.getDistDenominatorDerivative(t, mx, my);
+                if (df === 0)
+                    break;
+                t = t - f / df;
+                if (t > 1.0) t = 0.9;
+                if (t < 0.0) t = 0.1;
+            } while((amt--) > 0);
+
+            if (this.getDist(t, mx, my) < 5)
+                return t;
+        }
+
+        // Newton's method to find root for when slope is 0
+        {
+            var amt = 5;
+            var t = t0;
+            do {
+                var f = this.getDistNumerator(t, mx, my);
+                var df = this.getDistNumeratorDerivative(t, mx, my);
+                if (df === 0)
+                    break;
+                t = t - f / df;
+                if (t > 1.0) t = 0.9;
+                if (t < 0.0) t = 0.1;
+            } while((amt--) > 0);
+
+            if (this.getDist(t, mx, my) < 5)
+                return t;
+        }
+
+        return -1;
+    }
+}
+
+</script>
+
+
+<script>
+class Transform {
+    constructor(pos, size, angle) {
+        this.parent = undefined;
+        this.pos = V(pos.x, pos.y);
+        this.size = V(size.x, size.y);
+        this.scale = V(1, 1);
+        this.prevCameraPos = V(0,0);
+        this.prevCameraZoom = 0;
+        this.setAngle(angle);
+        this.updateMatrix();
+    }
+    updateMatrix(c) {
+        // Update matrix if camera moved/zoomed
+        if (this.prevCameraPos.x !== camera.pos.x || this.prevCameraPos.y !== camera.pos.y || this.prevCameraZoom !== camera.zoom)
+            this.dirty = true;
+
+        if (!this.dirty)
+            return;
+        this.dirty = false;
+
+        this.matrix = new Matrix2x3();
+        this.matrix.translate(this.pos);
+        this.matrix.rotate(this.angle);
+        this.matrix.scale(this.scale);
+
+        if (this.parent !== undefined)
+            this.matrix = this.parent.getMatrix().mult(this.matrix);
+
+        this.inverse = this.matrix.inverse();
+
+        this.prevCameraPos = V(camera.pos.x, camera.pos.y);
+        this.prevCameraZoom = camera.zoom;
+    }
+    transformCtx(ctx) {
+        this.updateMatrix();
+        var m = new Matrix2x3(this.matrix);
+        var v = camera.getScreenPos(V(m.mat[4], m.mat[5]));
+        m.mat[4] = v.x, m.mat[5] = v.y;
+        m.scale(V(1/camera.zoom, 1/camera.zoom));
+        ctx.setTransform(m.mat[0], m.mat[1], m.mat[2], m.mat[3], m.mat[4], m.mat[5]);
+    }
+    toLocalSpace(v) { // v must be in world coords
+        return this.getInverseMatrix().mul(v);
+    }
+    toWorldSpace(v) { // v must be in local coords
+        return this.getMatrix().mul(v);
+    }
+    setParent(t) {
+        this.parent = t;
+        this.dirty = true;
+    }
+    setPos(p) {
+        this.pos.x = p.x;
+        this.pos.y = p.y;
+        this.dirty = true;
+    }
+    setAngle(a) {
+        this.angle = a;
+        this.dirty = true;
+    }
+    rotateAbout(a, c) {
+        this.setAngle(a);
+        this.setPos(this.pos.sub(c));
+        var cos = Math.cos(a), sin = Math.sin(a);
+        var xx = this.pos.x * cos - this.pos.y * sin;
+        var yy = this.pos.y * cos + this.pos.x * sin;
+        this.setPos(V(xx, yy).add(c));
+        this.dirty = true;
+    }
+    setScale(s) {
+        this.scale.x = s.x;
+        this.scale.y = s.y;
+        this.dirty = true;
+    }
+    getPos() {
+        return V(this.pos.x, this.pos.y);
+    }
+    getAngle() {
+        return this.angle;
+    }
+    getScale() {
+        return V(this.scale.x, this.scale.y);
+    }
+    getMatrix() {
+        this.updateMatrix();
+        return this.matrix;
+    }
+    getInverseMatrix() {
+        this.updateMatrix();
+        return this.inverse;
+    }
+    print() {
+        this.updateMatrix();
+        this.matrix.print();
+    }
+}
+
+</script>
+
+
+
+<script>
+
+const IO_PORT_LENGTH = 60;
+const DEFAULT_SIZE = 50;
+
+var frame = {
+    // Create canvas
+    canvas : document.getElementById("canvas"),
+    tintCanvas : document.createElement("canvas"),
+    start : function() {
+        // Set canvas to be full-screen on the page
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.context = this.canvas.getContext("2d");
+
+        // Setup tint canvas
+        this.tintCanvas.width = 1000;
+        this.tintCanvas.height = 1000;
+        this.tintContext = this.tintCanvas.getContext("2d");
+
+        // Insert the canvas into the page
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+
+        // Setup input
+        setupInput(this.canvas);
+
+        // Setup resize event
+        window.addEventListener('resize', resize, false);
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+var camera = {
+    pos:new Vector(0, 0),
+    zoom:1,
+    getScreenPos: function(vec) {
+        return vec.sub(this.pos).scale(1.0 / this.zoom).add(frame.canvas.width/2, frame.canvas.height/2);
+    },
+    getWorldPos: function(vec) {
+        return vec.sub(frame.canvas.width/2, frame.canvas.height/2).scale(this.zoom).add(this.pos);
+    }
+}
+
+function resize(e) {
+    frame.canvas.width = window.innerWidth;
+    frame.canvas.height = window.innerHeight;
+
+    render();
+}
+
+function saveCtx() {
+    frame.context.save();
+}
+
+function restoreCtx() {
+    frame.context.restore();
+}
+
+function translateCtx(v) {
+    frame.context.translate(v.x, v.y);
+}
+
+function scaleCtx(s) {
+    frame.context.scale(s.x, s.y);
+}
+
+function rotateCtx(a) {
+    frame.context.rotate(a);
+}
+
+function clamp(x, min, max) {
+    return Math.min(Math.max(x, min), max);
+}
+
+function rect(x, y, w, h, tint, bTint, bSize) {
+    frame.context.fillStyle = (tint === undefined ? '#fff' : tint);
+    frame.context.strokeStyle = (bTint === undefined ? '#000' : bTint);
+    frame.context.lineWidth = (bSize === undefined ? 2 : bSize);
+    frame.context.fillRect(x-w/2, y-h/2, w, h);
+    if (bSize > 0 || bSize === undefined)
+        frame.context.strokeRect(x-w/2, y-h/2, w, h);
+}
+
+function circle(x, y, r, fillStyle, borderStyle, borderSize, alpha) {
+    frame.context.fillStyle = (fillStyle === undefined ? '#fff' : fillStyle);
+    frame.context.strokeStyle = (borderStyle === undefined ? '#000' : borderStyle);
+    frame.context.lineWidth = (borderSize === undefined ? 2 : borderSize);
+    if (alpha !== undefined)
+        frame.context.globalAlpha = alpha;
+    frame.context.beginPath();
+    frame.context.arc(x, y, r, 0, 2*Math.PI);
+    if (fillStyle !== null)
+        frame.context.fill();
+    frame.context.stroke();
+    frame.context.closePath();
+    frame.context.globalAlpha = 1.0;
+}
+
+function drawImage(img, x, y, w, h, tint) {
+    if (tint === undefined)
+        frame.context.drawImage(img, x-w/2, y-h/2, w, h);
+    else
+        tintDraw(img, x, y, w, h, tint);
+}
+
+function drawRotatedImage(img, x, y, w, h, angle, tint) {
+    saveCtx();
+    var pos = camera.getScreenPos(V(x, y));
+    var size = V(w / camera.zoom, h / camera.zoom);
+    frame.context.translate(pos.x, pos.y);
+    frame.context.rotate(angle);
+    if (tint === undefined)
+        frame.context.drawImage(img, -size.x/2, -size.y/2, size.x, size.y);
+    else
+        tintDraw(img, -size.x/2, -size.y/2, size.x, size.y, tint);
+    restoreCtx();
+}
+
+function tintDraw(img, x, y, w, h, col) {
+    frame.tintContext.clearRect(0, 0, frame.tintCanvas.width, frame.tintCanvas.height);
+    frame.tintContext.fillStyle = col;
+    frame.tintContext.fillRect(0, 0, frame.tintCanvas.width, frame.tintCanvas.height);
+    frame.tintContext.globalCompositeOperation = "destination-atop";
+    frame.tintContext.drawImage(img, 0, 0, frame.tintCanvas.width, frame.tintCanvas.height);
+
+    frame.context.drawImage(img, x-w/2, y-h/2, w, h);
+    frame.context.globalAlpha = 0.5;
+    frame.context.drawImage(frame.tintCanvas, x-w/2, y-h/2, w, h);
+    frame.context.globalAlpha = 1.0;
+}
+
+function strokeCurve(x1, y1, x2, y2, cx1, cy1, cx2, cy2, style, size) {
+    frame.context.strokeStyle = (style === undefined ? '#000' : style);
+    frame.context.lineWidth = (size === undefined ? 2 : size);
+    frame.context.beginPath();
+    frame.context.moveTo(x1, y1);
+    frame.context.bezierCurveTo(cx1, cy1, cx2, cy2, x2, y2);
+    frame.context.stroke();
+    frame.context.closePath();
+}
+
+function strokeQuadCurve(x1, y1, x2, y2, cx, cy, style, size) {
+    frame.context.strokeStyle = (style === undefined ? '#000' : style);
+    frame.context.lineWidth = (size === undefined ? 2 : size);
+    frame.context.beginPath();
+    frame.context.moveTo(x1, y1);
+    frame.context.quadraticCurveTo(cx, cy, x2, y2);
+    frame.context.stroke();
+    frame.context.closePath();
+}
+
+function strokeLine(x1, y1, x2, y2, style, size) {
+    frame.context.strokeStyle = (style === undefined ? '#000' : style);
+    frame.context.lineWidth = (size === undefined ? 2 : size);
+    frame.context.beginPath();
+    frame.context.moveTo(x1, y1);
+    frame.context.lineTo(x2, y2);
+    frame.context.stroke();
+    frame.context.closePath();
+}
+
+// Pos must be in world coords
+function containsPoint(transform, pos) {
+    var tr = transform.size.scale(0.5);
+    var bl = transform.size.scale(-0.5);
+    var p  = transform.toLocalSpace(pos);
+
+    //
+    // DEBUG DRAWING
+    //
+    // saveCtx();
+    // transform.transformCtx(frame.context);
+    // rect(0, 0, transform.size.x, transform.size.y, '#ff00ff', '#000');
+    // restoreCtx();
+    // var mv = camera.getScreenPos(pos);
+    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
+
+    return (p.x > bl.x &&
+            p.y > bl.y &&
+            p.x < tr.x &&
+            p.y < tr.y);
+}
+
+// Pos must be in world coords
+function circleContains(transform, pos) {
+    var v = transform.toLocalSpace(pos);
+
+    //
+    // DEBUG DRAWING
+    //
+    // saveCtx();
+    // transform.transfomCtx(frame.context);
+    // circle(0, 0, transform.size.x, '#ff00ff', '#000');
+    // restoreCtx();
+    // var mv = camera.getScreenPos(pos);
+    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
+
+    return (v.len2() <= transform.size.x*transform.size.x/4);
+}
+
+function transformContains(t1, t2) {
+    var s = t1.size;
+    var c1 = t1.toWorldSpace(V(s.x/2, s.y/2));
+    if (containsPoint(t2, c1))
+        return true;
+    var c2 = t1.toWorldSpace(V(s.x/2, -s.y/2));
+    if (containsPoint(t2, c2))
+        return true;
+    var c3 = t1.toWorldSpace(V(-s.x/2, -s.y/2));
+    if (containsPoint(t2, c3))
+        return true;
+    var c4 = t1.toWorldSpace(V(-s.x/2, s.y/2));
+    if (containsPoint(t2, c4))
+        return true;
+
+    return false;
+}
+
+function ioPort(x1, y1, x2, y2, col, bCol, r, s) {
+    strokeLine(x1, y1, x2, y2, (bCol === undefined ? '#000' : bCol), (s === undefined ? 2 : s));
+    circle(x2, y2, (r === undefined ? 7 : r), (col === undefined ? '#fff' : col), (bCol === undefined ? '#000' : bCol), 1);
+}
+
+</script>
+
+
+
+<script>
+class Tool {
+    constructor() {
+        this.isActive = false;
+    }
+    activate() {
+        currentTool.deactivate();
+
+        currentTool = this;
+        this.isActive = true;
+    }
+    deactivate() {
+        this.isActive = false;
+    }
+    onKeyDown(code) {
+    }
+    onKeyUp(code) {
+    }
+    onMouseMove() {
+    }
+    onMouseDown() {
+    }
+    onMouseUp() {
+    }
+    onClick() {
+    }
+    draw() {
+    }
+}
+
+</script>
+
+
+<script>
+class SelectionTool extends Tool {
+    constructor() {
+        super();
+        this.isWirePressed = false;
+        this.pressedWire = undefined;
+        this.selections = [];
+        this.midpoint = V(0, 0);
+        this.drag = false;
+        this.rotate = false;
+        this.startAngle = 0;
+        this.prevAngle = 0;
+        this.shift = false;
+        this.selBoxDownPos = undefined;
+        this.selBoxCurPos = undefined;
+    }
+    onKeyDown(code) {
+        console.log(code);
+        if (code === 18) { // Option key
+            panTool.activate();
+        } else if (code === 16) { // Shift key
+            this.shift = true;
+        } else if (code === 8) { // Delete key
+            while(this.selections.length > 0) {
+                this.selections.splice(0, 1)[0].remove();
+            }
+            popup.deselect();
+            render();
+        }
+    }
+    onKeyUp(code) {
+        this.shift = false;
+    }
+    onMouseMove() {
+        if (this.isWirePressed) {
+            this.pressedWire.move(worldMousePos.x, worldMousePos.y);
+            render();
+        } else {
+
+            // Transform selection(s)
+            if (this.selections.length > 0) {
+
+                // Move selection(s)
+                if (this.drag) {
+                    var dv = V(worldMousePos.x, worldMousePos.y).sub(this.dragObj.getPos());
+                    this.midpoint = V(0, 0);
+                    for (var i = 0; i < this.selections.length; i++) {
+                        var v = this.selections[i].getPos().add(dv);
+                        if (this.shift) {
+                            v.x = Math.floor(v.x/50+0.5)*50;
+                            v.y = Math.floor(v.y/50+0.5)*50;
+                        }
+                        this.selections[i].setPos(v);
+                        this.midpoint.translate(this.selections[i].getPos());
+                    }
+                    this.midpoint = this.midpoint.scale(1. / this.selections.length);
+                    popup.updatePosValue();
+                    render();
+                }
+
+                // Rotate selection(s)
+                else if (this.rotate) {
+                    var o = this.midpoint;
+                    var p = worldMousePos;
+                    var angle = Math.atan2(p.y-o.y, p.x-o.x);
+                    for (var i = 0; i < this.selections.length; i++) {
+                        var fAngle = this.realAngles[i] + angle - this.prevAngle;
+                        this.realAngles[i] = fAngle;
+                        if (this.shift) {
+                            fAngle = Math.floor(fAngle/(Math.PI/4))*Math.PI/4;
+                        }
+                        this.selections[i].setRotationAbout(fAngle, o);
+                    }
+                    this.prevAngle = angle;
+                    render();
+                }
+            }
+
+            // Selection box
+            // TODO: Only calculate ON MOUSE UP!
+            if (this.selBoxDownPos !== undefined) {
+                this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
+                this.deselect();
+                var p1 = this.selBoxDownPos;
+                var p2 = this.selBoxCurPos;
+                var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0);
+                this.midpoint = V(0, 0);
+                for (var i = 0; i < objects.length; i++) {
+                    var obj = objects[i];
+                    var t = (obj.selectionBoxTransform !== undefined ? obj.selectionBoxTransform : obj.transform);
+                    if (transformContains(t, trans)) {
+                        obj.selected = true;
+                        this.midpoint.translate(obj.transform.pos);
+                        this.selections.push(obj);
+                    }
+                }
+                this.midpoint = this.midpoint.scale(1. / this.selections.length);
+                render();
+            }
+
+        }
+    }
+    onMouseDown() {
+        this.selBoxDownPos = undefined;
+        var pressed = false;
+        for (var i = 0; i < objects.length && !pressed; i++) {
+            var obj = objects[i];
+
+            // Check if object's selection box was pressed
+            if (obj.sContains(worldMousePos)) {
+                for (var j = 0; j < this.selections.length; j++) {
+                    if (this.selections[j] === obj) {
+                        this.drag = true;
+                        this.dragObj = this.selections[j];
+                        popup.hide();
+                        pressed = true;
+                        break;
+                    }
+                }
+            }
+
+            // Check if object was pressed
+            if (obj.contains(worldMousePos)) {
+                if (obj.isPressable)
+                    obj.press();
+                pressed = true;
+            }
+
+            // Ignore if a port was pressed
+            if (obj.oPortContains(worldMousePos) !== -1 ||
+                    obj.iPortContains(worldMousePos) !== -1) {
+                pressed = true;
+            }
+        }
+
+        // If something was pressed, then render scene
+        if (pressed) {
+            render();
+        } else {
+
+            // Check if rotation circle was pressed
+            if (this.selections.length > 0) {
+                var o = this.midpoint;
+                var p = worldMousePos;
+                var d = p.sub(o).len2();
+                if (d <= 79*79 && d >= 71*71) {
+                    this.rotate = true;
+                    this.startAngle = Math.atan2(p.y-o.y, p.x-o.x);
+                    this.prevAngle = this.startAngle;
+                    this.realAngles = [];
+                    for (var i = 0; i < this.selections.length; i++)
+                        this.realAngles[i] = this.selections[i].getAngle();
+                    popup.hide();
+                    return;
+                }
+            }
+
+            // Check if a wire was pressed
+            if (!this.isWirePressed) {
+                for (var i = 0; i < wires.length; i++) {
+                    var wire = wires[i];
+                    var t;
+                    if ((t = wire.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
+                        this.isWirePressed = true;
+                        this.pressedWire = wires[i];
+                        console.log("press-arooney " + t);
+                        wire.press(t);
+                        render();
+                        return;
+                    }
+                }
+            }
+
+            this.selBoxDownPos = V(worldMousePos.x, worldMousePos.y);
+        }
+    }
+    onMouseUp() {
+        this.selBoxDownPos = undefined;
+        if (this.selBoxCurPos !== undefined) {
+            this.selBoxCurPos = undefined;
+            popup.deselect();
+            if (this.selections.length > 0)
+                popup.select(this.selections);
+            render();
+        }
+
+        // Stop moving wire
+        if (this.isWirePressed) {
+            this.isWirePressed = false;
+            this.pressedWire = undefined;
+        }
+        // Stop dragging
+        if (this.drag) {
+            this.drag = false;
+            this.dragObj = undefined;
+            render();
+        }
+        // Stop rotating
+        if (this.rotate) {
+            this.rotate = false;
+            render();
+        }
+
+        if (this.selections.length === 1 && popup.hidden) {
+            popup.show();
+            popup.onMove();
+        }
+
+        for (var i = 0; i < objects.length; i++) {
+            var obj = objects[i];
+
+            // Release pressed object
+            if (obj.isPressable && obj.curPressed) {
+                obj.release();
+                render();
+                break;
+            }
+        }
+    }
+    onClick() {
+        var clicked = false;
+        for (var i = 0; i < objects.length && !clicked; i++) {
+            var obj = objects[i];
+
+            // Check if object's selection box was clicked
+            if (obj.sContains(worldMousePos)) {
+                this.deselect();
+                this.selections = [obj];
+                obj.selected = true;
+                popup.select(this.selections);
+                this.midpoint = obj.getPos();
+                clicked = true;
+            }
+
+            // Check if object was clicked
+            if (obj.contains(worldMousePos)) {
+                if (obj.isPressable)
+                    obj.click();
+                clicked = true;
+            }
+
+            // Check if port was clicked, then activate wire tool
+            var ii;
+            if ((ii = obj.oPortContains(worldMousePos)) !== -1) {
+                wiringTool.activate(obj.outputs[ii]);
+                clicked = true;
+            }
+        }
+
+        if (clicked) {
+            render();
+        } else if (this.selections.length > 0) {
+            this.deselect();
+            render();
+        }
+    }
+    deselect() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].selected = false;
+        this.selections = [];
+        popup.deselect();
+    }
+    draw() {
+        if (this.selections.length > 0) {
+            var pos = camera.getScreenPos(this.midpoint);
+            var r = 75 / camera.zoom, br = 4 / camera.zoom;
+            if (this.rotate) {
+                saveCtx();
+                frame.context.fillStyle = '#fff';
+                frame.context.strokeStyle = '#000'
+                frame.context.lineWidth = 5;
+                frame.context.globalAlpha = 0.4;
+                frame.context.beginPath();
+                frame.context.moveTo(pos.x, pos.y);
+                var da = (this.prevAngle - this.startAngle) % (2*Math.PI);
+                if (da < 0) da += 2*Math.PI;
+                frame.context.arc(pos.x, pos.y, r, this.startAngle, this.prevAngle, da > Math.PI);
+                frame.context.fill();
+                frame.context.closePath();
+                restoreCtx();
+            }
+            circle(pos.x, pos.y, r, null, '#ff0000', br, 0.5);
+        }
+        if (this.selBoxDownPos !== undefined && this.selBoxCurPos !== undefined) {
+            var pos1 = camera.getScreenPos(this.selBoxDownPos);
+            var pos2 = camera.getScreenPos(this.selBoxCurPos);
+            var w = pos2.x - pos1.x, h = pos2.y - pos1.y;
+            saveCtx();
+            frame.context.globalAlpha = 0.4;
+            rect(pos1.x+w/2, pos1.y+h/2, w, h, '#ffffff', '#6666ff', 2 / camera.zoom);
+            restoreCtx();
+        }
+    }
+}
+
+</script>
+
+
+<script>
+class PanTool extends Tool {
+    onKeyUp(code) {
+        if (code === 18) { // Option key
+            selectionTool.activate();
+        }
+    }
+    onMouseMove() {
+        if (isDragging) {
+            var pos = new Vector(mousePos.x, mousePos.y);
+            var dPos = mouseDownPos.sub(pos);
+            camera.pos.x += camera.zoom * dPos.x;
+            camera.pos.y += camera.zoom * dPos.y;
+            mouseDownPos = mousePos;
+
+            popup.onMove();
+
+            render();
+        }
+    }
+}
+
+</script>
+
+
+<script>
+class WiringTool extends Tool {
+    constructor() {
+        super();
+
+        this.wire = undefined;
+    }
+    onKeyUp(code) {
+        if (code === 27)  { // Escape key
+            this.removeWire();
+            selectionTool.activate();
+            render();
+        }
+
+    }
+    activate(object) {
+        super.activate();
+
+        this.wire = new Wire(object);
+        object.connect(this.wire);
+    }
+    deactivate() {
+        super.deactivate();
+
+        this.wire = undefined;
+    }
+    removeWire() {
+        var j;
+        for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
+        wires.splice(j, 1);
+        this.wire.input.disconnect(this.wire);
+    }
+    onMouseMove() {
+        this.wire.curve.update(this.wire.curve.p1, worldMousePos, this.wire.curve.c1, worldMousePos);
+        render();
+    }
+    onClick() {
+        for (var i = 0; i < objects.length; i++) {
+            var ii;
+            if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
+                if (!this.wire.connect(objects[i].inputs[ii]))
+                    this.removeWire();
+
+                selectionTool.activate();
+                render();
+                return;
+            }
+        }
+
+        this.removeWire();
+        selectionTool.activate();
+        render();
+    }
+}
+
+</script>
+
+
+<script>
+class ItemTool extends Tool {
+    constructor() {
+        super();
+        this.item = undefined;
+    }
+    activate(object) {
+        if (this.item !== undefined) {
+            for (var i = 0; i < objects.length; i++) {
+                if (objects[i] === this.item) {
+                    objects.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        super.activate();
+        this.item = object;
+        objects.push(this.item);
+        this.onMouseMove();
+    }
+    deactivate() {
+        super.deactivate();
+        this.item = undefined;
+    }
+    onMouseMove() {
+        this.item.setPos(worldMousePos);
+        render();
+    }
+    onClick() {
+        selectionTool.activate();
+    }
+}
+
+</script>
+
+
+<script>
+class SelectionPopup {
+    constructor() {
+        this.div = document.getElementById("popupDiv");
+        this.div.style.position = "absolute";
+        this.title = document.getElementById("nameText");
+
+        this.posX = document.getElementById("positionx");
+        this.posY = document.getElementById("positiony");
+
+        this.inputCountText = document.getElementById("inputCountText");
+        this.inputCount = document.getElementById("inputcount");
+
+        this.colorText = document.getElementById("colorText");
+        this.colorPicker = document.getElementById("colorPicker");
+
+        this.selections = [];
+
+        this.setPos(V(0,0));
+        this.hide();
+    }
+    onPosXChange() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].setPos(V(50*(Number(this.posX.value)+0.5), this.selections[i].getPos().y));
+        render();
+    }
+    onPosYChange() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].setPos(V(this.selections[i].getPos().x, 50*(Number(this.posY.value)+0.5)));
+        render();
+    }
+    onInputCountChange() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].setInputAmount(Number(this.inputCount.value));
+        render();
+    }
+    onColorChange() {
+        for (var i = 0; i < this.selections.length; i++)
+            this.selections[i].color = this.colorPicker.value;
+        render();
+    }
+    updateTitleValue() {
+        var allSame = true;
+        for (var i = 0; i < this.selections.length; i++)
+            allSame = allSame && this.selections[i].getName() === this.selections[0].getName();
+        this.setTitle(allSame ? this.selections[0].getName() : "&lt;Multiple&gt;");
+    }
+    updatePosValue() {
+        var allXSame = true, allYSame = true;
+        for (var i = 0; i < this.selections.length; i++) {
+            allXSame = allXSame && this.selections[i].getPos().x === this.selections[0].getPos().x;
+            allYSame = allYSame && this.selections[i].getPos().y === this.selections[0].getPos().y;
+        }
+        this.posX.value = (allXSame ? this.selections[0].getPos().x/50 - 0.5 : "");
+        this.posX.placeholder = (allXSame ? "" : "ÿ");
+        this.posY.value = (allYSame ? this.selections[0].getPos().y/50 - 0.5 : "");
+        this.posY.placeholder = (allYSame ? "" : "ÿ");
+    }
+    updateInputCountValue() {
+        var allSame = true, display = true;
+        for (var i = 0; i < this.selections.length; i++) {
+            display = display && (this.selections[i].maxInputs > 1 && this.selections[i].noChange !== true);
+            allSame = allSame && this.selections[i].getInputAmount() === this.selections[0].getInputAmount();
+        }
+        this.inputCount.value = (allSame ? this.selections[0].getInputAmount() : "");
+        this.inputCount.placeholder = (allSame ? "" : "ÿ");
+        this.inputCountText.style.display = this.inputCount.style.display = (display ? "inherit" : "none");
+    }
+    updateColorValue() {
+        var allLEDs = true, allSame = true;
+        for (var i = 0; i < this.selections.length; i++) {
+            allLEDs = allLEDs && this.selections[i] instanceof LED;
+            if (allLEDs)
+                allSame = allSame && this.selections[i].color === this.selections[0].color;
+        }
+        this.colorPicker.value = (allLEDs && allSame ? this.selections[0].color : '#ffffff');
+        this.colorText.style.display = this.colorPicker.style.display = (allLEDs ? "inherit" : "none");
+    }
+    select(obj) {
+        for (var i = 0; i < obj.length; i++)
+            this.selections.push(obj[i]);
+
+        this.updateTitleValue();
+        this.updatePosValue();
+        this.updateInputCountValue();
+        this.updateColorValue();
+
+        this.onMove();
+        this.show();
+    }
+    deselect() {
+        this.selections = [];
+        this.hide();
+    }
+    getSelectionPos() {
+        var midpoint = V(0, 0);
+        for (var i = 0; i < this.selections.length; i++)
+            midpoint.translate(this.selections[i].getPos());
+        return midpoint.scale(1.0 / this.selections.length);
+    }
+    onMove() {
+        if (this.selections.length > 0) {
+            var pos = camera.getScreenPos(this.getSelectionPos());
+            pos.y -= this.div.clientHeight;
+            this.setPos(pos);
+        }
+    }
+    onWheel() {
+        this.onMove();
+    }
+    show() {
+        this.hidden = false;
+        this.div.style.visibility = "visible";
+    }
+    hide() {
+        this.hidden = true;
+        this.div.style.visibility = "hidden";
+    }
+    setTitle(x) {
+        this.title.innerHTML = x;
+    }
+    setPos(v) {
+        this.pos = V(v.x, v.y);
+        this.clamp();
+
+        this.div.style.left = this.pos.x + "px";
+        this.div.style.top = this.pos.y + "px";
+    }
+    clamp() {
+        this.pos.x = Math.max(Math.min(this.pos.x, frame.canvas.width-this.div.clientWidth-1), isSidebarOpen ? 210 : 10);
+        this.pos.y = Math.max(Math.min(this.pos.y, frame.canvas.height-this.div.clientHeight-1), 46);
+    }
+}
+
+</script>
+
+
+
+<script>
+class IOObject {
+    constructor(x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
+        x = (x === undefined ? 0 : x);
+        y = (y === undefined ? 0 : y)
+        this.transform = new Transform(V(x, y), V(w, h), 0);
+
+        this.name = this.getDisplayName();
+        this.img = img;
+        this.isOn = false;
+        this.isPressable = isPressable;
+        this.maxInputs = maxInputs;
+        this.maxOutputs = maxOutputs;
+        this.selected = false;
+
+        if (this.isPressable)
+            this.selectionBoxTransform = new Transform(V(x, y), V(selectionBoxWidth, selectionBoxHeight), 0);
+
+        this.outputs = [];
+        this.inputs = [];
+
+        this.setOutputAmount(1);
+    }
+    setInputAmount(target) {
+        target = clamp(target, 0, this.maxInputs);
+        while (this.inputs.length > target)
+            this.inputs.splice(this.inputs.length-1, 1);
+        while (this.inputs.length < target)
+            this.inputs.push(new IPort(this));
+
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].updatePosition();
+        this.onTransformChange();
+    }
+    setOutputAmount(target) {
+        target = clamp(target, 0, this.maxOutputs);
+        while (this.outputs.length > target)
+            this.outputs.splice(this.outputs.length-1, 1);
+        while (this.outputs.length < target)
+            this.outputs.push(new OPort(this));
+
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].updatePosition();
+    }
+    onTransformChange() {
+        if (this.isPressable && this.selectionBoxTransform !== undefined) {
+            this.selectionBoxTransform.setPos(this.transform.getPos());
+            this.selectionBoxTransform.setAngle(this.transform.getAngle());
+            this.selectionBoxTransform.setScale(this.transform.getScale());
+        }
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].onTransformChange();
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].onTransformChange();
+    }
+    getInputAmount() {
+        return this.inputs.length;
+    }
+    getImageTint() {
+        return this.getCol();
+    }
+    getCol() {
+        return (this.selected ? '#1cff3e' : undefined);
+    }
+    getBorderColor() {
+        return (this.selected ? '#0d7f1f' : undefined);
+    }
+    setPos(v) {
+        this.transform.setPos(v);
+        this.onTransformChange();
+    }
+    getPos() {
+        return V(this.transform.pos.x, this.transform.pos.y);
+    }
+    setAngle(a) {
+        this.transform.setAngle(a);
+        this.onTransformChange();
+    }
+    // setRotationAbout(a, c) {
+    //     this.transform.rotateAbout(a-this.getAngle(), c);
+    //     this.onTransformChange();
+    // }
+    setRotationAbout(a, c) {
+        this.transform.rotateAbout(-this.getAngle(), c);
+        this.transform.rotateAbout(a, c);
+        this.onTransformChange();
+    }
+    getAngle() {
+        return this.transform.angle;
+    }
+    click() {
+    }
+    press() {
+    }
+    release() {
+    }
+    activate(on, i) {
+        if (i === undefined)
+            i = 0;
+
+        this.isOn = on;
+        if (this.outputs[i] !== undefined)
+            this.outputs[i].activate(on);
+    }
+    localSpace() {
+        saveCtx();
+        this.transform.transformCtx(frame.context);
+    }
+    draw() {
+        this.localSpace();
+        for (var i = 0; i < this.inputs.length; i++)
+            this.inputs[i].draw();
+        for (var i = 0; i < this.outputs.length; i++)
+            this.outputs[i].draw(i);
+        if (this.isPressable && this.selectionBoxTransform !== undefined)
+            rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
+        drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
+        restoreCtx();
+    }
+    remove() {
+        objects.splice(getIndexOfObject(this), 1);
+        for (var i = 0; i < this.outputs.length; i++) {
+            this.outputs[i].remove();
+            this.outputs[i] = undefined;
+        }
+        this.outputs = [];
+        for (var i = 0; i < this.inputs.length; i++) {
+            this.inputs[i].remove();
+            this.inputs[i] = undefined;
+        }
+        this.inputs = [];
+    }
+    contains(pos) {
+        return containsPoint(this.transform, pos);
+    }
+    sContains(pos) {
+        return (!this.isPressable &&  this.contains(pos)) ||
+                (this.isPressable && !this.contains(pos) && containsPoint(this.selectionBoxTransform, pos));
+    }
+    iPortContains(pos) {
+        for (var i = 0; i < this.inputs.length; i++) {
+            if (this.inputs[i].contains(pos))
+                return i;
+        }
+        return -1;
+    }
+    oPortContains(pos) {
+        for (var i = 0; i < this.outputs.length; i++) {
+            if (this.outputs[i].contains(pos))
+                return i;
+        }
+        return -1;
+    }
+    getDisplayName() {
+        return "IOObject";
+    }
+    getName() {
+        return this.name;
+    }
+    writeTo(node, uid) {
+        createTextElement(node, "uid", uid);
+        createTextElement(node, "x", this.getPos().x);
+        createTextElement(node, "y", this.getPos().y);
+        createTextElement(node, "angle", this.getAngle());
+    }
+}
+
+</script>
+
+
+<script>
+class OPort {
+    constructor(parent) {
+        this.isOn = false;
+        this.parent = parent;
+        this.connections = [];
+
+        this.lineWidth = 2;
+        this.lineColor = '#000';
+
+        this.circleRadius = 7;
+        this.circleBorderWidth = 1;
+        this.circleFillColor = '#fff';
+        this.circleBorderColor = '#000';
+
+        this.origin = V(0, 0);
+        this.target = V(IO_PORT_LENGTH, 0);
+
+        this.set = false;
+
+        this.updatePosition();
+    }
+    getIndexOfParent() {
+        var i;
+        for (i = 0; (i < this.parent.outputs.length) && (this.parent.outputs[i] !== this); i++);
+        return i;
+    }
+    updatePosition() {
+        var i = this.getIndexOfParent();
+
+        var l = -this.parent.transform.size.y/2*(i - this.parent.outputs.length/2 + 0.5);
+        if (i === 0) l -= 1;
+        if (i === this.parent.outputs.length-1) l += 1;
+
+        this.origin.y = l;
+        this.target.y = l;
+        this.prevParentOutputLength = this.parent.outputs.length;
+    }
+    onTransformChange() {
+        if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
+            this.updatePosition();
+
+        for (var i = 0; i < this.connections.length; i++) {
+            var v = this.getPos();
+            var x = v.x, y = v.y;
+            this.connections[i].curve.c1.x += x - this.connections[i].curve.p1.x;
+            this.connections[i].curve.c1.y += y - this.connections[i].curve.p1.y;
+            this.connections[i].curve.p1.x = x;
+            this.connections[i].curve.p1.y = y;
+        }
+    }
+    activate(on) {
+        if (this.isOn === on)
+            return;
+
+        this.isOn = on;
+        for (var i = 0; i < this.connections.length; i++)
+            propogationQueue.push(new Propogation(this, this.connections[i], this.isOn));
+    }
+    connect(obj) {
+        this.connections.push(obj);
+        obj.input = this;
+        obj.activate(this.isOn);
+    }
+    disconnect(obj) {
+        var i;
+        for (i = 0; (i < this.connections.length) && (this.connections[i] !== obj); i++);
+        this.connections[i].input = undefined;
+        this.connections.splice(i, 1);
+    }
+    contains(pos) {
+        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0);
+        transform.setParent(this.parent.transform);
+        return circleContains(transform, pos);
+    }
+    draw() {
+        if (this.parent.outputs.length !== this.prevParentOutputLength)
+            this.updatePosition();
+
+        var v = this.target;
+
+        var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
+        strokeLine(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
+
+        var circleFillCol = (this.parent.getCol() === undefined ? this.circleFillColor : this.parent.getCol());
+        var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
+        circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
+    }
+    remove() {
+        for (var i = 0; i < this.connections.length; i++) {
+            console.log(this.connections[i])
+            this.connections[i].remove();
+            this.connections[i] = undefined;
+        }
+        this.connections = [];
+    }
+    setOrigin(v) {
+        this.origin.x = v.x;
+        this.origin.y = v.y;
+        this.set = true;
+    }
+    setTarget(v) {
+        this.target.x = v.x;
+        this.target.y = v.y;
+        this.set = true;
+    }
+    getPos() {
+        return this.parent.transform.getMatrix().mul(this.target);
+    }
+    getDir() {
+        return this.parent.transform.getMatrix().mul(V(1, 0)).sub(this.parent.getPos()).normalize();
+    }
+}
+
+</script>
+
+
+<script>
+class IPort {
+    constructor(parent) {
+        this.isOn = false;
+        this.parent = parent;
+        this.input = undefined;
+
+        this.lineWidth = 2;
+        this.lineColor = '#000';
+
+        this.circleRadius = 7;
+        this.circleBorderWidth = 1;
+        this.circleFillColor = '#fff';
+        this.circleBorderColor = '#000';
+
+        this.origin = V(0, 0);
+        this.target = V(-IO_PORT_LENGTH, 0);
+
+        this.set = false;
+
+        this.updatePosition();
+    }
+    getIndexOfParent() {
+        var i;
+        for (i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
+        return i;
+    }
+    updatePosition() {
+        var i = this.getIndexOfParent();
+
+        var l = -this.parent.transform.size.y/2*(i - this.parent.inputs.length/2 + 0.5);
+        if (i === 0) l -= 1;
+        if (i === this.parent.inputs.length-1) l += 1;
+
+        this.origin.y = l;
+        this.target.y = l;
+        this.prevParentInputLength = this.parent.inputs.length;
+    }
+    onTransformChange() {
+        if (!this.set)
+            this.updatePosition();
+
+        if (this.input !== undefined) {
+            var v = this.getPos();
+            var x = v.x, y = v.y;
+            this.input.curve.c2.x += x - this.input.curve.p2.x;
+            this.input.curve.c2.y += y - this.input.curve.p2.y;
+            this.input.curve.p2.x = x;
+            this.input.curve.p2.y = y;
+        }
+    }
+    activate(on) {
+        if (this.isOn === on)
+            return;
+
+        this.isOn = on;
+        this.parent.activate(this.isOn);
+    }
+    contains(pos) {
+        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0);
+        transform.setParent(this.parent.transform);
+        return circleContains(transform, pos);
+    }
+    draw() {
+        if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
+            this.updatePosition();
+
+        var v = this.target;
+
+        var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
+        strokeLine(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
+
+        var circleFillCol = (this.parent.getCol() === undefined ? this.circleFillColor : this.parent.getCol());
+        var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
+        circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
+    }
+    remove() {
+        if (this.input !== undefined)
+            this.input.remove();
+        this.input = undefined;
+    }
+    setOrigin(v) {
+        this.origin.x = v.x;
+        this.origin.y = v.y;
+        this.set = true;
+    }
+    setTarget(v) {
+        this.target.x = v.x;
+        this.target.y = v.y;
+        this.set = true;
+    }
+    getPos() {
+        return this.parent.transform.getMatrix().mul(this.target);
+    }
+    getDir() {
+        return this.parent.transform.getMatrix().mul(V(-1, 0)).sub(this.parent.getPos()).normalize();
+    }
+}
+
+</script>
+
+
+<script>
+class Wire {
+    constructor(input, t) {
+        this.input = input;
+
+        var p, c;
+        if (input !== undefined) {
+            p = input.getPos(t);
+            c = input.getDir(t).scale(50).add(p);
+            wires.push(this);
+        } else {
+            p = V(0, 0);
+            c = V(0, 0);
+        }
+        this.curve = new BezierCurve(p, V(0,0), c, V(0,0));
+        this.straight = false;
+    }
+    activate(on) {
+        if (this.isOn === on)
+            return;
+
+        this.isOn = on;
+        if (this.connection !== undefined) {
+            if (this.connection instanceof Wire)
+                this.connection.activate(on);
+            else
+                propogationQueue.push(new Propogation(this, this.connection, this.isOn));
+        }
+    }
+    press(t) {
+        var wire = new Wire(this, t);
+        var obj = this.connection;
+        this.disconnect(obj);
+
+        wire.connect(obj);
+        this.connect(wire);
+    }
+    remove() {
+        if (this.input !== undefined) {
+            if (this.input instanceof Wire) {
+                this.input.connection = undefined;
+                this.input.remove();
+            } else {
+                var i = -1;
+                for (i = 0; i < this.input.connections.length && this.input.connections[i] !== this; i++);
+                this.input.connections.splice(i, 1);
+            }
+            this.input = undefined;
+        }
+        if (this.connection !== undefined) {
+            if (this.connection instanceof Wire) {
+                this.connection.input = undefined;
+                this.connection.remove();
+            } else {
+                this.connection.input = undefined;
+            }
+            this.connection = undefined;
+        }
+        wires.splice(getIndexOfWire(this), 1);
+    }
+    draw() {
+        if (this.straight) {
+            var p1 = camera.getScreenPos(this.curve.p1);
+            var p2 = camera.getScreenPos(this.curve.p2);
+            strokeLine(p1.x, p1.y, p2.x, p2.y, this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        } else {
+            this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+        }
+
+        // this.curve.debugDraw(12);
+
+        if (this.connection instanceof Wire) {
+            var v = camera.getScreenPos(this.curve.p2);
+            circle(v.x, v.y, 7 / camera.zoom, '#fff', '#000', 1);
+        }
+    }
+    move(x, y) {
+        // Snap to end points
+        this.straight = false;
+        this.connection.straight = false;
+        if (Math.abs(x - this.curve.p1.x) <= 10) {
+            x = this.curve.p1.x;
+            this.straight = true;
+        }
+        if (Math.abs(y - this.curve.p1.y) <= 10) {
+            y = this.curve.p1.y;
+            this.straight = true;
+        }
+        if (Math.abs(x - this.connection.curve.p2.x) <= 10) {
+            x = this.connection.curve.p2.x;
+            this.connection.straight = true;
+        }
+        if (Math.abs(y - this.connection.curve.p2.y) <= 10) {
+            y = this.connection.curve.p2.y;
+            this.connection.straight = true;
+        }
+
+        this.curve.c2.x += x - this.curve.p2.x;
+        this.curve.c2.y += y - this.curve.p2.y;
+        this.curve.p2.x = x;
+        this.curve.p2.y = y;
+        this.connection.curve.c1.x += x - this.connection.curve.p1.x;
+        this.connection.curve.c1.y += y - this.connection.curve.p1.y;
+        this.connection.curve.p1.x = x;
+        this.connection.curve.p1.y = y;
+    }
+    contains(pos) {
+        return this.curve.getNearestT(pos.x,pos.y) !== -1;
+    }
+    getPos(t) {
+        return this.curve.getPos(t);
+    }
+    getDir(t) {
+        return this.curve.getVel(t).normalize();
+    }
+    getNearestT(mx, my) {
+        return (this.straight) ? (-1) : (this.curve.getNearestT(mx, my));
+    }
+    connect(obj) {
+        if (obj.input !== undefined && obj.input !== this)
+            return false;
+
+        var p = obj.getPos(0);
+        var c = obj.getDir(0).scale(50 * (obj instanceof Wire ? -1 : 1)).add(p);
+
+        this.curve.update(this.curve.p1, p, this.curve.c1, c);
+
+        this.connection = obj;
+        obj.input = this;
+
+        obj.activate(this.isOn);
+
+        return true;
+    }
+    disconnect(obj) {
+        if (this.connection !== obj)
+            return false;
+
+        obj.input = undefined;
+        this.connection = undefined;
+    }
+    getDisplayName() {
+        return "Wire";
+    }
+    writeTo(node, uid) {
+        var wireNode = createChildNode(node, "wire");
+
+        createTextElement(wireNode, "uid", uid);
+
+        var inputNode = createChildNode(wireNode, "input");
+        var inputUID = (this.input instanceof Wire) ? (getIndexOfWire(this.input)+objects.length) : (getIndexOfObject(this.input.parent));
+        var inputIndx = (this.input instanceof Wire) ? (0) : (this.input.getIndexOfParent());
+        createTextElement(inputNode, "uid", inputUID);
+        createTextElement(inputNode, "index", inputIndx);
+
+        var connectionNode = createChildNode(wireNode, "connection");
+        var connectionUID = (this.connection instanceof Wire) ? (getIndexOfWire(this.connection)+objects.length) : (getIndexOfObject(this.connection.parent));
+        var connectionIndx = (this.connection instanceof Wire) ? (0) : (this.connection.getIndexOfParent());
+        createTextElement(connectionNode, "uid", connectionUID);
+        createTextElement(connectionNode, "index", connectionIndx);
+
+        var bezierNode = createChildNode(wireNode, "bezier");
+        createTextElement(bezierNode, "p1x", this.curve.p1.x);
+        createTextElement(bezierNode, "p1y", this.curve.p1.y);
+        createTextElement(bezierNode, "p2x", this.curve.p2.x);
+        createTextElement(bezierNode, "p2y", this.curve.p2.y);
+        createTextElement(bezierNode, "c1x", this.curve.c1.x);
+        createTextElement(bezierNode, "c1y", this.curve.c1.y);
+        createTextElement(bezierNode, "c2x", this.curve.c2.x);
+        createTextElement(bezierNode, "c2y", this.curve.c2.y);
+
+        createTextElement(wireNode, "straight", this.straight);
+    }
+}
+
+function loadWire(node) {
+    var wire = new Wire();
+
+    var uid = getIntValue(getChildNode(node, "uid"));
+    wires[uid-objects.length] = wire;
+
+    var bezier = getChildNode(node, "bezier");
+    var p1 = V(getFloatValue(getChildNode(bezier, "p1x")), getFloatValue(getChildNode(bezier, "p1y")));
+    var p2 = V(getFloatValue(getChildNode(bezier, "p2x")), getFloatValue(getChildNode(bezier, "p2y")));
+    var c1 = V(getFloatValue(getChildNode(bezier, "c1x")), getFloatValue(getChildNode(bezier, "c1y")));
+    var c2 = V(getFloatValue(getChildNode(bezier, "c2x")), getFloatValue(getChildNode(bezier, "c2y")));
+
+    wire.curve.update(p1, p2, c1, c2);
+
+    var straight = getBooleanValue(getChildNode(node, "straight"));
+    wire.straight = straight;
+}
+
+function loadWireConnections(wire, node) {
+    var inputNode = getChildNode(node, "input");
+    var sourceUID = getIntValue(getChildNode(inputNode, "uid"));
+    var sourceIndx = getIntValue(getChildNode(inputNode, "index"));
+    var source = (sourceUID >= objects.length) ? (wires[sourceUID-objects.length]) : (objects[sourceUID].outputs[sourceIndx]);
+
+    var connectionNode = getChildNode(node, "connection");
+    var targetUID = getIntValue(getChildNode(connectionNode, "uid"));
+    var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
+    var target = (targetUID >= objects.length) ? (wires[targetUID-objects.length]) : (objects[targetUID].inputs[targetIndx]);
+
+    wire.input = source;
+    source.connect(wire);
+    wire.connect(target);
+}
+
+</script>
+
+
+<script>
+// key board input inputs
+
+class Button extends IOObject {
+    constructor(x, y) {
+        super(x, y, 50, 50, images["buttonUp.svg"], true, 0, 1, 60, 60);
+        this.curPressed = false;
+    }
+    press() {
+        super.activate(true);
+        this.curPressed = true;
+        this.img = images["buttonDown.svg"];
+    }
+    release() {
+        super.activate(false);
+        this.curPressed = false;
+        this.img = images["buttonUp.svg"];
+    }
+    contains(pos) {
+        return circleContains(this.transform, pos);
+    }
+    getInputPortCount() {
+        return 0;
+    }
+    getDisplayName() {
+        return "Button";
+    }
+    writeTo(node, uid) {
+        var buttonNode = createChildNode(node, "button");
+        super.writeTo(buttonNode, uid);
+    }
+}
+
+function loadButton(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+
+    var o = new Button(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class ConstantHigh extends IOObject {
+    constructor(x, y) {
+        super(x, y, 50, 50, images["constHigh.svg"], false, 0, 1);
+        super.activate(true);
+    }
+    getDisplayName() {
+        return "Constant High";
+    }
+    writeTo(node, uid) {
+        var constantHighNode = createChildNode(node, "constanthigh");
+        super.writeTo(constantHighNode, uid);
+    }
+}
+
+function loadConstantHigh(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+
+    var o = new ConstantHigh(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class ConstantLow extends IOObject {
+    constructor(x, y) {
+        super(x, y, 50, 50, images["constLow.svg"], false, 0, 1);
+        super.activate(false);
+    }
+    getDisplayName() {
+        return "Constant Low";
+    }
+    writeTo(node, uid) {
+        var constantLowNode = createChildNode(node, "constantlow");
+        super.writeTo(constantLowNode, uid);
+    }
+}
+
+function loadConstantLow(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+
+    var o = new ConstantLow(x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class Switch extends IOObject {
+    constructor(x, y) {
+        super(x, y, 60*images["switchUp.svg"].ratio, 60, images["switchUp.svg"], true, 0, 1, 77*images["switchUp.svg"].ratio, 77);
+    }
+    click() {
+        this.activate(!this.outputs[0].isOn);
+        this.img = images[this.outputs[0].isOn ? "switchDown.svg" : "switchUp.svg"];
+    }
+    getInputPortCount() {
+        return 0;
+    }
+    getDisplayName() {
+        return "Switch";
+    }
+    writeTo(node, uid) {
+        var switchNode = createChildNode(node, "switch");
+        super.writeTo(switchNode, uid);
+        createTextElement(switchNode, "isOn", this.outputs[0].isOn);
+    }
+}
+
+function loadSwitch(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var isOn = getBooleanValue(getChildNode(node, "isOn"));
+
+    var o = new Switch(x, y);
+    if (isOn)
+        o.click(isOn);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class LED extends IOObject {
+    constructor(x, y, color) {
+        super(x, y, 50, 50, images["led.svg"], false, 1, 0);
+        this.transform.setPos(V(this.transform.pos.x, this.transform.pos.y - 2*this.transform.size.y));
+        this.color = (color === undefined) ? ("#ffffff") : (color);
+        this.connectorWidth = 5;
+
+        this.setInputAmount(1);
+        this.inputs[0].setOrigin(V(0, 0));
+        this.inputs[0].setTarget(V(0, 2*this.transform.size.y));
+        this.inputs[0].lineColor = '#fff';
+    }
+    getImageTint() {
+        return this.color;
+    }
+    draw() {
+        super.draw();
+
+        this.localSpace();
+        if (this.isOn)
+            drawImage(images["ledLight.svg"], 0, 0, 3*this.transform.size.x, 3*this.transform.size.y, this.color);
+        restoreCtx();
+    }
+    getDisplayName() {
+        return "LED";
+    }
+    writeTo(node, uid) {
+        var LEDNode = createChildNode(node, "led");
+        super.writeTo(LEDNode, uid);
+        console.log(this.color);
+        createTextElement(LEDNode, "color", this.color);
+
+        var yNode = getChildNode(LEDNode, "y");
+        yNode.removeChild(yNode.childNodes[0]);
+        yNode.appendChild(_ROOT.createTextNode(this.getPos().y + 2*this.transform.size.y));
+    }
+}
+
+function loadLED(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var color = getStringValue(getChildNode(node, "color"));
+
+    var o = new LED(x, y, color);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class Gate extends IOObject {
+    constructor(not, x, y, img) {
+        super(x, y, DEFAULT_SIZE*img.ratio, DEFAULT_SIZE, img, false, 999, 999);
+        this.not = not;
+        this.name = this.getDisplayName();
+
+        this.setInputAmount(2);
+    }
+    click() {
+        console.log("ASD");
+    }
+    activate(on, i) {
+        super.activate((this.not ? !on : on), i);
+    }
+    draw() {
+        super.draw();
+
+        this.localSpace();
+        if (this.not) {
+            var l = this.transform.size.x/2+5;
+            circle(l, 0, 5, this.getCol(), this.getBorderColor(), 2);
+        }
+        restoreCtx();
+    }
+    getDisplayName() {
+        return "Gate";
+    }
+    writeTo(node, uid) {
+        super.writeTo(node, uid);
+        createTextElement(node, "not", this.not);
+        createTextElement(node, "inputcount", this.inputs.length);
+    }
+}
+
+</script>
+
+
+<script>
+class BUFGate extends Gate {
+    constructor(not, x, y) {
+        super(not, x, y, images["buffer.svg"]);
+        this.maxInputs = 1;
+
+        this.setInputAmount(1);
+        this.activate(false);
+    }
+    activate(x) {
+        var on = false;
+        for (var i = 0; i < this.inputs.length; i++)
+            on = this.inputs[i].isOn;
+        super.activate(on);
+    }
+    getDisplayName() {
+        return this.not ? "NOT Gate" : "Buffer Gate";
+    }
+    writeTo(node, uid) {
+        var BufferNode = createChildNode(node, "buffergate");
+        super.writeTo(BufferNode, uid);
+    }
+}
+
+function loadBufferGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+
+    var o = new BUFGate(not, x, y);
+    o.setAngle(angle);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class ANDGate extends Gate {
+    constructor(not, x, y) {
+        super(not, x, y, images["and.svg"]);
+    }
+    setInputAmount(target) {
+        super.setInputAmount(target);
+
+        for (var i = 0; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            input.origin = V(-(this.transform.size.x-2)/2, input.origin.y);
+        }
+    }
+    activate(x) {
+        var on = true;
+        for (var i = 0; i < this.inputs.length; i++)
+            on = (on && this.inputs[i].isOn);
+        super.activate(on);
+    }
+    draw() {
+        this.localSpace();
+        var l1 = -(this.transform.size.y/2)*(0.5-this.inputs.length/2);
+        var l2 = -(this.transform.size.y/2)*(this.inputs.length/2-0.5);
+
+        var s = (this.transform.size.x-2)/2;
+        var p1 = V(-s, l1);
+        var p2 = V(-s, l2);
+
+        strokeLine(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
+        restoreCtx();
+
+        super.draw();
+
+    }
+    getDisplayName() {
+        return this.not ? "NAND Gate" : "AND Gate";
+    }
+    writeTo(node, uid) {
+        var ANDNode = createChildNode(node, "andgate");
+        super.writeTo(ANDNode, uid);
+    }
+}
+
+function loadANDGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+    var inputCount = getIntValue(getChildNode(node, "inputcount"));
+
+    var o = new ANDGate(not, x, y);
+    o.setAngle(angle);
+    o.setInputAmount(inputCount);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class ORGate extends Gate {
+    constructor(not, x, y) {
+        super(not, x, y, images["or.svg"]);
+    }
+    quadCurveXAt(t) {
+        var s = this.transform.size.x/2 - 2;
+        var l = this.transform.size.x/5 - 2;
+        var dt = 1 - t;
+        return (dt*dt)*(-s) + 2*t*(dt)*(-l) + (t*t)*(-s);
+    }
+    setInputAmount(target) {
+        super.setInputAmount(target);
+
+        for (var i = 0; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            var t = ((input.origin.y) / this.transform.size.y + 0.5) % 1.0;
+            if (t < 0)
+                t += 1.0;
+            var x = this.quadCurveXAt(t);
+            input.origin = V(x, input.origin.y);
+        }
+    }
+    activate(x) {
+        var on = false;
+        for (var i = 0; i < this.inputs.length; i++)
+            on = (on || this.inputs[i].isOn);
+        super.activate(on);
+    }
+    draw() {
+        this.localSpace();
+        var amt = 2 * Math.floor(this.inputs.length / 4) + 1;
+        for (var i = 0; i < amt; i++) {
+            var d = (i - Math.floor(amt/2)) * this.transform.size.y;
+            var h = 2;
+            var l1 = -this.transform.size.y/2;
+            var l2 = +this.transform.size.y/2;
+
+            var s = this.transform.size.x/2 - h;
+            var l = this.transform.size.x/5 - h;
+
+            var p1 = V(-s, l1 + d);
+            var p2 = V(-s, l2 + d);
+            var c  = V(-l, d);
+
+            strokeQuadCurve(p1.x, p1.y, p2.x, p2.y, c.x, c.y, this.getBorderColor(), 2);
+        }
+        restoreCtx();
+
+        super.draw();
+    }
+    getDisplayName() {
+        return this.not ? "NOR Gate" : "OR Gate";
+    }
+    writeTo(node, uid) {
+        var ORNode = createChildNode(node, "orgate");
+        super.writeTo(ORNode, uid);
+    }
+}
+
+function loadORGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+    var inputCount = getIntValue(getChildNode(node, "inputcount"));
+
+    var o = new ORGate(not, x, y);
+    o.setAngle(angle);
+    o.setInputAmount(inputCount);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class XORGate extends Gate {
+    constructor(not, x, y) {
+        super(not, x, y, images["or.svg"]);
+    }
+    quadCurveXAt(t) {
+        var s = this.transform.size.x/2 - 2;
+        var l = this.transform.size.x/5 - 2;
+        var dt = 1 - t;
+        return (dt*dt)*(-s) + 2*t*(dt)*(-l) + (t*t)*(-s);
+    }
+    setInputAmount(target) {
+        super.setInputAmount(target);
+
+        for (var i = 0; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            var t = ((input.origin.y) / this.transform.size.y + 0.5) % 1.0;
+            if (t < 0)
+                t += 1.0;
+            var x = this.quadCurveXAt(t);
+            input.origin = V(x, input.origin.y);
+        }
+    }
+    activate(x) {
+        var on = false;
+        for (var i = 0; i < this.inputs.length; i++)
+            on = (on !== this.inputs[i].isOn);
+        super.activate(on);
+    }
+    draw() {
+        super.draw();
+
+        this.localSpace();
+        var amt = 2 * Math.floor(this.inputs.length / 4) + 1;
+        for (var i = 0; i < amt; i++) {
+            var d = (i - Math.floor(amt/2)) * this.transform.size.y;
+            var h = 2;
+            var x = 12;
+            var l1 = -this.transform.size.y/2;
+            var l2 = +this.transform.size.y/2;
+
+            var s = this.transform.size.x/2 - h;
+            var l = this.transform.size.x/5 - h;
+
+            var p1 = V(-s, l1 + d);
+            var p2 = V(-s, l2 + d);
+            var c  = V(-l, d);
+
+            strokeQuadCurve(p1.x, p1.y, p2.x, p2.y, c.x, c.y, this.getBorderColor(), 2);
+            strokeQuadCurve(p1.x - x, p1.y, p2.x - x, p2.y, c.x - x, c.y, this.getBorderColor(), 2);
+        }
+
+        restoreCtx();
+    }
+    getDisplayName() {
+        return this.not ? "XNOR Gate" : "XOR Gate";
+    }
+    writeTo(node, uid) {
+        var XORNode = createChildNode(node, "xorgate");
+        super.writeTo(XORNode, uid);
+    }
+}
+
+function loadXORGate(node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var not = getBooleanValue(getChildNode(node, "not"));
+    var inputCount = getIntValue(getChildNode(node, "inputcount"));
+
+    var o = new XORGate(not, x, y);
+    o.setAngle(angle);
+    o.setInputAmount(inputCount);
+
+    objects[uid] = o;
+}
+
+</script>
+
+
+<script>
+class SRFlipFlop extends Gate {
+    constructor(x, y) {
+        super(false, x, y, images["base.svg"]);
+        this.noChange = true;
+        this.setInputAmount(3);
+        this.setOutputAmount(2);
+        this.transform.size = this.transform.size.scale(1.5);
+    }
+    setInputAmount(target) {
+        super.setInputAmount(target);
+
+        for (var i = 0; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            input.origin = V(-(this.transform.size.x-2)/2, input.origin.y);
+        }
+    }
+    activate(x) {
+        var on = this.outputs[0].isOn;
+
+        var set = this.inputs[0].isOn;
+        var clock = this.inputs[1].isOn;
+        var reset = this.inputs[2].isOn;
+        if (clock) {
+            if (set && reset) {
+                // undefined behavior
+            } else if (set) {
+                on = true;
+            } else if (reset) {
+                on = false;
+            }
+        }
+
+        super.activate(on, 0);
+        super.activate(!on, 1);
+    }
+    draw() {
+        this.localSpace();
+        var l1 = -(this.transform.size.y/2)*(0.5-this.inputs.length/2);
+        var l2 = -(this.transform.size.y/2)*(this.inputs.length/2-0.5);
+
+        var s = (this.transform.size.x-2)/2;
+        var p1 = V(-s, l1);
+        var p2 = V(-s, l2);
+
+        strokeLine(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
+        restoreCtx();
+
+        super.draw();
+
+    }
+    getDisplayName() {
+        return "SR Flip Flop";
+    }
+}
+
+</script>
+
+
+
+<script>
+var images = [];
+var objects = [];
+var wires = [];
+
+var propogationQueue = [];
+
+var updateRequests = 0;
+
+var popup;
+
+const UPS = 60;
+
+function getIndexOfObject(obj) {
+    for (var i = 0; i < objects.length; i++) {
+        if (obj === objects[i])
+            return i;
+    }
+    return -1;
+}
+
+function getIndexOfWire(wire) {
+    for (var i = 0; i < wires.length; i++) {
+        if (wire === wires[i])
+            return i;
+    }
+    return -1;
+}
+
+class Propogation {
+    constructor(sender, receiver, signal) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.signal = signal;
+
+        if (updateRequests === 0) {
+            updateRequests++;
+            setTimeout(update, 1000/UPS);
+        }
+    }
+    send() {
+        this.receiver.activate(this.signal);
+    }
+}
+
+function start() {
+    loadImage(images,
+        ["constLow.svg", "constHigh.svg",
+         "buttonUp.svg", "buttonDown.svg",
+         "switchUp.svg", "switchDown.svg",
+         "led.svg", "ledLight.svg",
+         "buffer.svg", "and.svg",
+         "or.svg", "xor.svg",
+         "base.svg"], 0, onFinishLoading);
+}
+
+function wire(source, target) {
+    var wire = new Wire(source);
+    source.connect(wire);
+    wire.connect(target);
+}
+
+function onFinishLoading() {
+    frame.start();
+
+    popup = new SelectionPopup();
+
+    render();
+}
+
+function update() {
+    console.log("UPDATE");
+
+    var tempQueue = [];
+    while (propogationQueue.length > 0)
+        tempQueue.push(propogationQueue.pop());
+
+    while (tempQueue.length > 0)
+        tempQueue.pop().send();
+
+    if (propogationQueue.length > 0)
+        updateRequests++;
+
+    updateRequests--;
+
+    render();
+
+    if (updateRequests > 0) {
+        setTimeout(update, 1000/UPS);
+    }
+}
+
+function render() {
+    console.log("RENDER");
+
+    frame.clear();
+
+    frame.context.strokeStyle = '#999';
+    frame.context.lineWidth = 1 / camera.zoom;
+
+    var step = 50/camera.zoom;
+
+    var cpos = V(camera.pos.x/camera.zoom - frame.canvas.width/2, camera.pos.y/camera.zoom - frame.canvas.height/2);
+
+    var cpx = cpos.x - Math.floor(cpos.x / step) * step;
+    if (cpx < 0) cpx += step;
+    var cpy = cpos.y - Math.floor(cpos.y / step) * step;
+    if (cpy < 0) cpy += step;
+
+    for (var x = -cpx; x <= frame.canvas.width-cpx+step; x += step) {
+        frame.context.beginPath();
+        frame.context.moveTo(x, 0);
+        frame.context.lineTo(x, frame.canvas.height);
+        frame.context.stroke();
+        frame.context.closePath();
+    }
+    for (var y = -cpy; y <= frame.canvas.height-cpy+step; y += step) {
+        frame.context.beginPath();
+        frame.context.moveTo(0, y);
+        frame.context.lineTo(frame.canvas.width, y);
+        frame.context.stroke();
+        frame.context.closePath();
+    }
+
+    for (var i = 0; i < wires.length; i++)
+        wires[i].draw();
+
+    for (var i = 0; i < objects.length; i++)
+        objects[i].draw();
+
+    selectionTool.draw();
+}
+
+function loadImage(imgs, imageNames, index, onFinish) {
+    var img = new Image();
+    img.onload = function() {
+        imgs[imageNames[index]] = img;
+        img.dx = 0;
+        img.dy = 0;
+        img.ratio = img.width / img.height;
+        if (index === imageNames.length-1)
+            onFinish(imgs);
+        else
+            loadImage(imgs, imageNames, index+1, onFinish);
+    }
+    img.src = "images/items/" + imageNames[index];
+}
+
+</script>
+
+
+<script>
+var mousePos = new Vector(0,0);
+var prevMousePos = new Vector(0,0);
+var worldMousePos = new Vector(0,0);
+
+var mouseDown = false;
+var mouseDownPos = undefined;
+
+var z = 0;
+
+var isDragging = false;
+var startTapTime = undefined;
+
+var isSidebarOpen = false;
+
+var selectionTool = new SelectionTool();
+var panTool = new PanTool();
+var wiringTool = new WiringTool();
+var itemTool = new ItemTool();
+
+var currentTool = selectionTool;
+
+
+// sidebar();
+function sidebar() {
+    isSidebarOpen = !isSidebarOpen;
+
+    if (isSidebarOpen) {
+        document.getElementById("items").style.width = "200px";
+        document.getElementById("openItemsTab").style.marginLeft = "200px";
+        document.getElementById("openItemsTab").innerHTML = "<";
+    } else {
+        document.getElementById("items").style.width = "0";
+        document.getElementById("openItemsTab").style.marginLeft = "0";
+        document.getElementById("openItemsTab").innerHTML = ">";
+    }
+}
+
+function setupInput(canvas) {
+    window.addEventListener('keydown',onKeyDown,false);
+    window.addEventListener('keyup',onKeyUp,false);
+    canvas.addEventListener('click', onClick, false);
+    canvas.addEventListener('dblclick', onDoubleClick, false);
+    canvas.addEventListener('wheel', onWheel, false);
+    canvas.addEventListener('mousedown', onMouseDown, false);
+    canvas.addEventListener('mouseup', onMouseUp, false);
+    canvas.addEventListener('mousemove', onMouseMove, false);
+}
+
+function placeItem(item) {
+    itemTool.activate(item);
+}
+
+function onKeyDown(e) {
+    var code = e.keyCode;
+
+    currentTool.onKeyDown(code);
+}
+
+function onKeyUp(e) {
+    var code = e.keyCode;
+
+    currentTool.onKeyUp(code);
+}
+
+function onClick(e) {
+    if (isDragging)
+        return;
+
+    currentTool.onClick();
+}
+
+function onDoubleClick(e) {
+}
+
+function onWheel(e) {
+    var delta = e.wheelDelta / 120.0;
+
+    var factor = 0.95;
+    if (delta < 0)
+        factor = 1 / factor;
+
+    var worldMousePos = camera.getWorldPos(mousePos);
+    camera.zoom *= factor;
+    var newMousePos = camera.getScreenPos(worldMousePos);
+    var dx = (mousePos.x - newMousePos.x) * camera.zoom;
+    var dy = (mousePos.y - newMousePos.y) * camera.zoom;
+
+    camera.pos.x -= dx;
+    camera.pos.y -= dy;
+
+    popup.onWheel();
+
+    render();
+}
+
+function onMouseDown(e) {
+    isDragging = false;
+    startTapTime = Date.now();
+    mouseDown = true;
+    mouseDownPos = new Vector(e.clientX, e.clientY);
+
+    currentTool.onMouseDown();
+}
+
+function onMouseUp(e) {
+    mouseDown = false;
+
+    currentTool.onMouseUp();
+}
+
+function onMouseMove(e) {
+    prevMousePos.x = mousePos.x;
+    prevMousePos.y = mousePos.y;
+
+    mousePos = new Vector(e.clientX, e.clientY);
+    worldMousePos = camera.getWorldPos(mousePos);
+
+    isDragging = (mouseDown && (Date.now() - startTapTime > 50));
+
+    currentTool.onMouseMove();
+}
+
+</script>
+
+
+<script>
+
+function openFile() {
+    var fileInput = document.getElementById('file-input');
+
+    if (fileInput.files.length === 0) {
+        console.log("Select one or more files.");
+    } else {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            // Remove all whitespace from XML file except for header
+            var text = reader.result;
+            var header = text.substring(0, text.indexOf(">")+1);
+            text = header + text.substring(text.indexOf(">")+1).replace(/\s/g,'');
+
+            var xml = new window.DOMParser().parseFromString(text, "text/xml");
+            loadProject(xml);
+        }
+
+        reader.readAsText(fileInput.files[0]);
+    }
+}
+
+function getChildNode(parent, name) {
+    for (var i = 0; i < parent.childNodes.length; i++) {
+        if (parent.childNodes[i].nodeName === name)
+            return parent.childNodes[i];
+    }
+    return undefined;
+}
+
+function getBooleanValue(node) {
+    return node.childNodes[0].nodeValue === "true" ? true : false;
+}
+
+function getIntValue(node) {
+    return parseInt(node.childNodes[0].nodeValue);
+}
+
+function getFloatValue(node) {
+    return parseFloat(node.childNodes[0].nodeValue);
+}
+
+function getStringValue(node) {
+    return node.childNodes[0].nodeValue;
+}
+
+function loadProject(root) {
+    var projectNode = getChildNode(root, "project");
+
+    var objectsNode = getChildNode(projectNode, "objects");
+    var wiresNode = getChildNode(projectNode, "wires");
+
+    var constantLows = objectsNode.getElementsByTagName("constantlow");
+    for (var i = 0; i < constantLows.length; loadConstantLow(constantLows[i++]));
+    var constantHighs = objectsNode.getElementsByTagName("constanthigh");
+    for (var i = 0; i < constantHighs.length; loadConstantHigh(constantHighs[i++]));
+    var buttons = objectsNode.getElementsByTagName("button");
+    for (var i = 0; i < buttons.length; loadButton(buttons[i++]));
+    var switches = objectsNode.getElementsByTagName("switch");
+    for (var i = 0; i < switches.length; loadSwitch(switches[i++]));
+
+    var leds = objectsNode.getElementsByTagName("led");
+    for (var i = 0; i < leds.length; loadLED(leds[i++]));
+
+    var buffergates = objectsNode.getElementsByTagName("buffergate");
+    for (var i = 0; i < buffergates.length; loadBufferGate(buffergates[i++]));
+    var andgates = objectsNode.getElementsByTagName("andgate");
+    for (var i = 0; i < andgates.length; loadANDGate(andgates[i++]));
+    var orgates = objectsNode.getElementsByTagName("orgate");
+    for (var i = 0; i < orgates.length; loadORGate(orgates[i++]));
+    var xorgates = objectsNode.getElementsByTagName("xorgate");
+    for (var i = 0; i < xorgates.length; loadXORGate(xorgates[i++]));
+
+    var wiresArr = wiresNode.getElementsByTagName("wire");
+    for (var i = 0; i < wiresArr.length; i++)
+        loadWire(wiresArr[i]);
+    for (var i = 0; i < wiresArr.length; i++)
+        loadWireConnections(wires[i], wiresArr[i]);
+
+    render();
+}
+
+</script>
+
+
+<script>
+
+var _ROOT = undefined;
+
+function saveFile() {
+    var data = writeFile();
+    var filename = "Untitled.circuit";
+
+    var file = new Blob([data], {type: "text/plain"});
+    if (window.navigator.msSaveOrOpenBlob) { // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    } else { // Others
+        var a = document.createElement("a");
+        var url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+}
+
+function createChildNode(parent, tag) {
+    var child = _ROOT.createElement(tag);
+    parent.appendChild(child);
+    return child;
+}
+
+function createTextElement(node, tag, text) {
+    var a = _ROOT.createElement(tag);
+    var b = _ROOT.createTextNode(text);
+    a.appendChild(b);
+    node.appendChild(a);
+}
+
+function writeFile() {
+    var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
+    _ROOT = root;
+
+    var projectNode = getChildNode(root, "project");
+
+    var objectsNode = createChildNode(projectNode, "objects");
+
+    var uid = 0;
+    for (var i = 0; i < objects.length; i++) {
+        objects[i].writeTo(objectsNode, uid);
+        uid++;
+    }
+
+    var wiresNode = createChildNode(projectNode, "wires");
+
+    for (var i = 0; i < wires.length; i++) {
+        wires[i].writeTo(wiresNode, uid);
+        uid++;
+    }
+
+
+    return root.xml ? root.xml : (new XMLSerializer()).serializeToString(root);
+}
+
+</script>
+
+        </div>
+    </body>
+</html>
