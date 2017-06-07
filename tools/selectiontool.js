@@ -15,6 +15,9 @@ class SelectionTool extends Tool {
     }
     onKeyDown(code) {
         console.log(code);
+        if (!icdesigner.hidden)
+            return;
+
         if (code === 18) { // Option key
             panTool.activate();
         } else if (code === 16) { // Shift key
@@ -33,6 +36,9 @@ class SelectionTool extends Tool {
         this.shift = false;
     }
     onMouseMove() {
+        if (!icdesigner.hidden)
+            return;
+
         if (this.isWirePressed) {
             this.pressedWire.move(worldMousePos.x, worldMousePos.y);
             render();
@@ -102,6 +108,9 @@ class SelectionTool extends Tool {
         }
     }
     onMouseDown() {
+        if (!icdesigner.hidden)
+            return;
+
         this.selBoxDownPos = undefined;
         var pressed = false;
         for (var i = 0; i < objects.length && !pressed; i++) {
@@ -176,6 +185,9 @@ class SelectionTool extends Tool {
         }
     }
     onMouseUp() {
+        if (!icdesigner.hidden)
+            return;
+
         this.selBoxDownPos = undefined;
         if (this.selBoxCurPos !== undefined) {
             this.selBoxCurPos = undefined;
@@ -219,6 +231,9 @@ class SelectionTool extends Tool {
         }
     }
     onClick() {
+        if (!icdesigner.hidden)
+            return;
+
         var clicked = false;
         for (var i = 0; i < objects.length && !clicked; i++) {
             var obj = objects[i];

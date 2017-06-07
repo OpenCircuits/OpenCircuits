@@ -1,6 +1,6 @@
 class Gate extends IOObject {
     constructor(not, x, y, img) {
-        super(x, y, DEFAULT_SIZE*img.ratio, DEFAULT_SIZE, img, false, 999, 999);
+        super(x, y, DEFAULT_SIZE*(img !== undefined ? img.ratio : 1), DEFAULT_SIZE, img, false, 999, 999);
         this.not = not;
         this.name = this.getDisplayName();
 

@@ -87,7 +87,6 @@ class OPort {
     }
     remove() {
         for (var i = 0; i < this.connections.length; i++) {
-            console.log(this.connections[i])
             this.connections[i].remove();
             this.connections[i] = undefined;
         }

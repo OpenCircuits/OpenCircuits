@@ -97,6 +97,10 @@
 
             <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
 
+            <div id="icDesigner" class="icdesigner">
+                <canvas id="designerCanvas"></canvas>
+            </div>
+
             <div id="popupDiv" class="popup">
                 <input type="text" id="nameText" value="Name :" onfocus="popup.onTitleFocus();" onblur="popup.onTitleBlur();">
                 <hr/>
@@ -119,6 +123,9 @@
                 <label class="popup-label" id="color-label" unselectable disabled>
                     <input type="color" id="colorPicker" value="#ffffff" oninput="popup.onColorChange();" />
                 </label>
+                <button type="button" id="createic-button" onclick="icdesigner.show();" style="margin-top: 5px;">
+                    Create IC
+                </button>
             </div>
 
             <script src="utils/vector.js"></script>
@@ -150,9 +157,11 @@
             <script src="items/gates/orgate.js"></script>
             <script src="items/gates/xorgate.js"></script>
             <script src="items/gates/SRFlipFlop.js"></script>
+            <script src="items/gates/ic.js"></script>
 
             <script src="main.js"></script>
             <script src="input.js"></script>
+            <script src="icdesigner.js"></script>
             <script src="importer.js"></script>
             <script src="exporter.js"></script>
         </div>

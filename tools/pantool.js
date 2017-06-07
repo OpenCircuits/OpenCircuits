@@ -5,7 +5,7 @@ class PanTool extends Tool {
         }
     }
     onMouseMove() {
-        if (isDragging) {
+        if (isDragging && icdesigner.hidden) {
             var pos = new Vector(mousePos.x, mousePos.y);
             var dPos = mouseDownPos.sub(pos);
             camera.pos.x += camera.zoom * dPos.x;

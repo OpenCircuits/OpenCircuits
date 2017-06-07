@@ -18,7 +18,8 @@ class IOObject {
         this.outputs = [];
         this.inputs = [];
 
-        this.setOutputAmount(1);
+        if (maxOutputs > 0)
+            this.setOutputAmount(1);
     }
     setInputAmount(target) {
         target = clamp(target, 0, this.maxInputs);
@@ -113,7 +114,8 @@ class IOObject {
             this.outputs[i].draw(i);
         if (this.isPressable && this.selectionBoxTransform !== undefined)
             rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
-        drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
+        if (this.img !== undefined)
+            drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
         restoreCtx();
     }
     remove() {

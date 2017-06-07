@@ -7,6 +7,7 @@ var propogationQueue = [];
 var updateRequests = 0;
 
 var popup;
+var icdesigner;
 
 const UPS = 60;
 
@@ -63,6 +64,10 @@ function onFinishLoading() {
     frame.start();
 
     popup = new SelectionPopup();
+    icdesigner = new ICDesigner();
+
+    objects.push(new Switch(-50, 0));
+    objects.push(new LED(100, 0, '#ffffff'));
 
     render();
 }

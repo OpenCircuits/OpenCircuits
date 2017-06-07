@@ -14,6 +14,8 @@ class SelectionPopup {
         this.colorText = document.getElementById("colorText");
         this.colorPicker = document.getElementById("colorPicker");
 
+        this.createICButton = document.getElementById("createic-button");
+
         this.selections = [];
 
         this.setPos(V(0,0));
@@ -105,6 +107,9 @@ class SelectionPopup {
         this.colorPicker.value = (allLEDs && allSame ? this.selections[0].color : '#ffffff');
         this.colorText.style.display = this.colorPicker.style.display = (allLEDs ? "inherit" : "none");
     }
+    updateICButton() {
+        this.createICButton.style.display = (this.selections.length > 1 ? "inherit" : "none");
+    }
     select(obj) {
         for (var i = 0; i < obj.length; i++)
             this.selections.push(obj[i]);
@@ -113,6 +118,7 @@ class SelectionPopup {
         this.updatePosValue();
         this.updateInputCountValue();
         this.updateColorValue();
+        this.updateICButton();
 
         this.onMove();
         this.show();
