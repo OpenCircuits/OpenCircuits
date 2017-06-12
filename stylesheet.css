@@ -64,6 +64,7 @@ canvas {
     border-radius: 3px;
     border-color: #444;
     color: #888;
+    z-index: 1;
     background-color: rgba(255, 255, 255, 0.9);
 }
 

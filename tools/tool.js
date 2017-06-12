@@ -7,6 +7,7 @@ class Tool {
 
         currentTool = this;
         this.isActive = true;
+        render();
     }
     deactivate() {
         this.isActive = false;

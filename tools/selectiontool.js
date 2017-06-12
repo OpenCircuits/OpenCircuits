@@ -15,8 +15,8 @@ class SelectionTool extends Tool {
     }
     onKeyDown(code) {
         console.log(code);
-        if (!icdesigner.hidden)
-            return;
+        // if (!icdesigner.hidden)
+        //     return;
 
         if (code === 18) { // Option key
             panTool.activate();
@@ -35,7 +35,11 @@ class SelectionTool extends Tool {
     onKeyUp(code) {
         this.shift = false;
     }
-    onMouseMove() {
+    onMouseMove(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
         if (!icdesigner.hidden)
             return;
 
@@ -90,7 +94,7 @@ class SelectionTool extends Tool {
                 this.deselect();
                 var p1 = this.selBoxDownPos;
                 var p2 = this.selBoxCurPos;
-                var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0);
+                var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0, input.camera);
                 this.midpoint = V(0, 0);
                 for (var i = 0; i < objects.length; i++) {
                     var obj = objects[i];
@@ -107,7 +111,11 @@ class SelectionTool extends Tool {
 
         }
     }
-    onMouseDown() {
+    onMouseDown(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
         if (!icdesigner.hidden)
             return;
 
@@ -184,7 +192,11 @@ class SelectionTool extends Tool {
             this.selBoxDownPos = V(worldMousePos.x, worldMousePos.y);
         }
     }
-    onMouseUp() {
+    onMouseUp(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
         if (!icdesigner.hidden)
             return;
 
@@ -230,7 +242,11 @@ class SelectionTool extends Tool {
             }
         }
     }
-    onClick() {
+    onClick(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
         if (!icdesigner.hidden)
             return;
 
@@ -258,7 +274,7 @@ class SelectionTool extends Tool {
             // Check if port was clicked, then activate wire tool
             var ii;
             if ((ii = obj.oPortContains(worldMousePos)) !== -1) {
-                wiringTool.activate(obj.outputs[ii]);
+                wiringTool.activate(obj.outputs[ii], getCurrentContext());
                 clicked = true;
             }
         }
@@ -276,35 +292,36 @@ class SelectionTool extends Tool {
         this.selections = [];
         popup.deselect();
     }
-    draw() {
+    draw(renderer) {
+        var camera = renderer.getCamera();
         if (this.selections.length > 0) {
             var pos = camera.getScreenPos(this.midpoint);
             var r = 75 / camera.zoom, br = 4 / camera.zoom;
             if (this.rotate) {
-                saveCtx();
-                frame.context.fillStyle = '#fff';
-                frame.context.strokeStyle = '#000'
-                frame.context.lineWidth = 5;
-                frame.context.globalAlpha = 0.4;
-                frame.context.beginPath();
-                frame.context.moveTo(pos.x, pos.y);
+                renderer.save();
+                renderer.context.fillStyle = '#fff';
+                renderer.context.strokeStyle = '#000'
+                renderer.context.lineWidth = 5;
+                renderer.context.globalAlpha = 0.4;
+                renderer.context.beginPath();
+                renderer.context.moveTo(pos.x, pos.y);
                 var da = (this.prevAngle - this.startAngle) % (2*Math.PI);
                 if (da < 0) da += 2*Math.PI;
-                frame.context.arc(pos.x, pos.y, r, this.startAngle, this.prevAngle, da > Math.PI);
-                frame.context.fill();
-                frame.context.closePath();
-                restoreCtx();
+                renderer.context.arc(pos.x, pos.y, r, this.startAngle, this.prevAngle, da > Math.PI);
+                renderer.context.fill();
+                renderer.context.closePath();
+                renderer.restore();
             }
-            circle(pos.x, pos.y, r, null, '#ff0000', br, 0.5);
+            renderer.circle(pos.x, pos.y, r, undefined, '#ff0000', br, 0.5);
         }
         if (this.selBoxDownPos !== undefined && this.selBoxCurPos !== undefined) {
             var pos1 = camera.getScreenPos(this.selBoxDownPos);
             var pos2 = camera.getScreenPos(this.selBoxCurPos);
             var w = pos2.x - pos1.x, h = pos2.y - pos1.y;
-            saveCtx();
-            frame.context.globalAlpha = 0.4;
-            rect(pos1.x+w/2, pos1.y+h/2, w, h, '#ffffff', '#6666ff', 2 / camera.zoom);
-            restoreCtx();
+            renderer.save();
+            renderer.context.globalAlpha = 0.4;
+            renderer.rect(pos1.x+w/2, pos1.y+h/2, w, h, '#ffffff', '#6666ff', 2 / camera.zoom);
+            renderer.restore();
         }
     }
 }

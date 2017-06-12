@@ -1,12 +1,12 @@
 class Wire {
-    constructor(input, t) {
+    constructor(context, input, t) {
+        this.context = context;
         this.input = input;
 
         var p, c;
         if (input !== undefined) {
             p = input.getPos(t);
             c = input.getDir(t).scale(50).add(p);
-            wires.push(this);
         } else {
             p = V(0, 0);
             c = V(0, 0);
@@ -23,11 +23,12 @@ class Wire {
             if (this.connection instanceof Wire)
                 this.connection.activate(on);
             else
-                propogationQueue.push(new Propogation(this, this.connection, this.isOn));
+                this.context.propogate(this, this.connection, this.isOn);
         }
     }
     press(t) {
-        var wire = new Wire(this, t);
+        var wire = new Wire(this.context, this, t);
+        context.getWires().push(wire);
         var obj = this.connection;
         this.disconnect(obj);
 
@@ -38,7 +39,7 @@ class Wire {
         if (this.input !== undefined) {
             if (this.input instanceof Wire) {
                 this.input.connection = undefined;
-                this.input.remove();
+                this.input.removeFrom(designer);
             } else {
                 var i = -1;
                 for (i = 0; i < this.input.connections.length && this.input.connections[i] !== this; i++);
@@ -55,22 +56,26 @@ class Wire {
             }
             this.connection = undefined;
         }
-        wires.splice(getIndexOfWire(this), 1);
+        var index = this.context.getIndexOf(this);
+        this.context.getWires().splice(index, 1);
     }
     draw() {
+        var renderer = this.context.getRenderer();
+        var camera = this.context.getCamera();
+
         if (this.straight) {
             var p1 = camera.getScreenPos(this.curve.p1);
             var p2 = camera.getScreenPos(this.curve.p2);
-            strokeLine(p1.x, p1.y, p2.x, p2.y, this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+            renderer.line(p1.x, p1.y, p2.x, p2.y, this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
         } else {
-            this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom);
+            this.curve.draw(this.isOn ? '#3cacf2' : '#fff', 7 / camera.zoom, renderer);
         }
 
         // this.curve.debugDraw(12);
 
         if (this.connection instanceof Wire) {
             var v = camera.getScreenPos(this.curve.p2);
-            circle(v.x, v.y, 7 / camera.zoom, '#fff', '#000', 1);
+            renderer.circle(v.x, v.y, 7 / camera.zoom, '#fff', '#000', 1);
         }
     }
     move(x, y) {

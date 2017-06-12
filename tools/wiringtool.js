@@ -4,18 +4,18 @@ class WiringTool extends Tool {
 
         this.wire = undefined;
     }
-    onKeyUp(code) {
+    onKeyUp(code, input) {
         if (code === 27)  { // Escape key
             this.removeWire();
-            selectionTool.activate();
+            selectionTool.activate(input.parent.wires);
             render();
         }
-
     }
-    activate(object) {
+    activate(object, context) {
         super.activate();
 
-        this.wire = new Wire(object);
+        this.wire = new Wire(context, object);
+        context.getWires().push(this.wire);
         object.connect(this.wire);
     }
     deactivate() {
@@ -23,22 +23,26 @@ class WiringTool extends Tool {
 
         this.wire = undefined;
     }
-    removeWire() {
+    removeWire(wires) {
         var j;
         for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
         wires.splice(j, 1);
         this.wire.input.disconnect(this.wire);
     }
-    onMouseMove() {
-        this.wire.curve.update(this.wire.curve.p1, worldMousePos, this.wire.curve.c1, worldMousePos);
+    onMouseMove(input) {
+        this.wire.curve.update(this.wire.curve.p1, input.worldMousePos, this.wire.curve.c1, input.worldMousePos);
         render();
     }
-    onClick() {
+    onClick(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
         for (var i = 0; i < objects.length; i++) {
             var ii;
             if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
                 if (!this.wire.connect(objects[i].inputs[ii]))
-                    this.removeWire();
+                    this.removeWire(wires);
 
                 selectionTool.activate();
                 render();
@@ -46,7 +50,7 @@ class WiringTool extends Tool {
             }
         }
 
-        this.removeWire();
+        this.removeWire(wires);
         selectionTool.activate();
         render();
     }

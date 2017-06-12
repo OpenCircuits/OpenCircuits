@@ -1,6 +1,6 @@
 class IC extends Gate {
-    constructor(x, y, inputs, outputs, components) {
-        super(false, x, y, undefined);
+    constructor(context, x, y, inputs, outputs, components) {
+        super(context, false, x, y, undefined);
         this.inputObjects = inputs;
         this.outputObjects = outputs;
         this.components = components;
@@ -28,22 +28,22 @@ class IC extends Gate {
         }
     }
     draw() {
+        var renderer = this.context.getRenderer();
+
         super.draw();
 
         this.localSpace();
 
-        rect(0, 0, 50, 50, '#ffffff', '#000000', 1);
+        renderer.rect(0, 0, 50, 50, '#ffffff', '#000000', 1);
 
-        restoreCtx();
+        renderer.restore();
     }
     getDisplayName() {
         return "IC";
     }
 }
 
-function createIC() {
-    var selections = selectionTool.selections;
-
+function createIC(context, selections, pos) {
     var inputs = [];
     var outputs = [];
     var components = [];
@@ -55,26 +55,7 @@ function createIC() {
             outputs.push(selection);
         else
             components.push(selection);
-        objects.splice(getIndexOfObject(selections[i]), 1);
-
-        for (var j = 0; j < selection.outputs.length; j++) {
-            var oport = selection.outputs[j];
-            for (var k = 0; k < oport.connections.length; k++) {
-                wires.splice(getIndexOfWire(oport.connections[k]), 1);
-            }
-        }
-        for (var j = 0; j < selection.inputs.length; j++) {
-            var iport = selection.inputs[j];
-            if (iport.input !== undefined)
-                wires.splice(getIndexOfWire(iport.input), 1);
-        }
     }
 
-    var pos = selectionTool.midpoint;
-
-    selectionTool.deselect();
-
-    objects.push(new IC(pos.x, pos.y, inputs, outputs, components));
-
-    render();
+    return new IC(context, pos.x, pos.y, inputs, outputs, components);
 }

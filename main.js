@@ -1,46 +1,53 @@
 var images = [];
-var objects = [];
-var wires = [];
-
-var propogationQueue = [];
-
-var updateRequests = 0;
 
 var popup;
 var icdesigner;
 
-const UPS = 60;
+var context;
 
-function getIndexOfObject(obj) {
-    for (var i = 0; i < objects.length; i++) {
-        if (obj === objects[i])
-            return i;
+var currentContext;
+
+class Context {
+    constructor(designer) {
+        this.designer = designer;
     }
-    return -1;
+    render() {
+        this.designer.render();
+    }
+    propogate(sender, receiver, signal) {
+        this.designer.propogate(sender, receiver, signal);
+    }
+    getDesigner() {
+        return this.designer;
+    }
+    getRenderer() {
+        return this.designer.renderer;
+    }
+    getCamera() {
+        return this.designer.camera;
+    }
+    getInput() {
+        return this.designer.input;
+    }
+    getObjects() {
+        return this.designer.objects;
+    }
+    getWires() {
+        return this.designer.wires;
+    }
+    getIndexOf(o) {
+        if (o instanceof Wire)
+            return this.designer.getIndexOfWire(o);
+        else
+            return this.designer.getIndexOfObject(o);
+    }
+    getWorldMousePos() {
+        return this.designer.input.worldMousePos;
+    }
 }
 
-function getIndexOfWire(wire) {
-    for (var i = 0; i < wires.length; i++) {
-        if (wire === wires[i])
-            return i;
-    }
-    return -1;
-}
-
-class Propogation {
-    constructor(sender, receiver, signal) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.signal = signal;
-
-        if (updateRequests === 0) {
-            updateRequests++;
-            setTimeout(update, 1000/UPS);
-        }
-    }
-    send() {
-        this.receiver.activate(this.signal);
-    }
+function getCurrentContext() {
+    return currentContext;
 }
 
 function start() {
@@ -55,84 +62,27 @@ function start() {
 }
 
 function wire(source, target) {
-    var wire = new Wire(source);
+    var wire = new Wire(getCurrentContext(), source);
     source.connect(wire);
     wire.connect(target);
 }
 
 function onFinishLoading() {
-    frame.start();
+    var designer = new CircuitDesigner(document.getElementById("canvas"));
+    context = new Context(designer);
+    currentContext = context;
 
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
-    objects.push(new Switch(-50, 0));
-    objects.push(new LED(100, 0, '#ffffff'));
+    // objects.push(new Switch(-50, 0));
+    // objects.push(new LED(100, 0, '#ffffff'));
 
     render();
-}
-
-function update() {
-    console.log("UPDATE");
-
-    var tempQueue = [];
-    while (propogationQueue.length > 0)
-        tempQueue.push(propogationQueue.pop());
-
-    while (tempQueue.length > 0)
-        tempQueue.pop().send();
-
-    if (propogationQueue.length > 0)
-        updateRequests++;
-
-    updateRequests--;
-
-    render();
-
-    if (updateRequests > 0) {
-        setTimeout(update, 1000/UPS);
-    }
 }
 
 function render() {
-    console.log("RENDER");
-
-    frame.clear();
-
-    frame.context.strokeStyle = '#999';
-    frame.context.lineWidth = 1 / camera.zoom;
-
-    var step = 50/camera.zoom;
-
-    var cpos = V(camera.pos.x/camera.zoom - frame.canvas.width/2, camera.pos.y/camera.zoom - frame.canvas.height/2);
-
-    var cpx = cpos.x - Math.floor(cpos.x / step) * step;
-    if (cpx < 0) cpx += step;
-    var cpy = cpos.y - Math.floor(cpos.y / step) * step;
-    if (cpy < 0) cpy += step;
-
-    for (var x = -cpx; x <= frame.canvas.width-cpx+step; x += step) {
-        frame.context.beginPath();
-        frame.context.moveTo(x, 0);
-        frame.context.lineTo(x, frame.canvas.height);
-        frame.context.stroke();
-        frame.context.closePath();
-    }
-    for (var y = -cpy; y <= frame.canvas.height-cpy+step; y += step) {
-        frame.context.beginPath();
-        frame.context.moveTo(0, y);
-        frame.context.lineTo(frame.canvas.width, y);
-        frame.context.stroke();
-        frame.context.closePath();
-    }
-
-    for (var i = 0; i < wires.length; i++)
-        wires[i].draw();
-
-    for (var i = 0; i < objects.length; i++)
-        objects[i].draw();
-
-    selectionTool.draw();
+    getCurrentContext().render();
 }
 
 function loadImage(imgs, imageNames, index, onFinish) {

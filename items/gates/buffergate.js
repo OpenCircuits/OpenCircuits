@@ -1,6 +1,6 @@
 class BUFGate extends Gate {
-    constructor(not, x, y) {
-        super(not, x, y, images["buffer.svg"]);
+    constructor(not, context, x, y) {
+        super(context, not, x, y, images["buffer.svg"]);
         this.maxInputs = 1;
 
         this.setInputAmount(1);

@@ -3,7 +3,10 @@ class ItemTool extends Tool {
         super();
         this.item = undefined;
     }
-    activate(object) {
+    activate(object, context) {
+        var objects = context.getObjects();
+        var wires = context.getWires();
+
         if (this.item !== undefined) {
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] === this.item) {
@@ -15,14 +18,14 @@ class ItemTool extends Tool {
         super.activate();
         this.item = object;
         objects.push(this.item);
-        this.onMouseMove();
+        this.onMouseMove(context.getInput());
     }
     deactivate() {
         super.deactivate();
         this.item = undefined;
     }
-    onMouseMove() {
-        this.item.setPos(worldMousePos);
+    onMouseMove(input) {
+        this.item.setPos(input.worldMousePos);
         render();
     }
     onClick() {

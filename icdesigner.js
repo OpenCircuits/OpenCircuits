@@ -1,12 +1,9 @@
 class ICDesigner {
     constructor() {
-        this.div = document.getElementById("icDesigner");
-
         this.canvas = document.getElementById("designerCanvas");
 
-        this.canvas.width = this.div.clientWidth;
-        this.canvas.height = this.div.clientHeight;
-        this.context = this.canvas.getContext("2d");
+        this.designer = new CircuitDesigner(this.canvas, 0.84, 0.76);
+        this.context = new Context(this.designer);
 
         this.hide();
     }
@@ -27,31 +24,23 @@ class ICDesigner {
         this.onMove();
     }
     show() {
+        currentContext = this.context;
         this.hidden = false;
-        this.div.style.visibility = "visible";
+        this.canvas.style.visibility = "visible";
         popup.hide();
 
-        // Load inputs and outputs
-        var components = selectionTool.selections;
-        this.inputs = [];
-        this.outputs = [];
-        for (var i = 0; i < components.length; i++) {
-            var component = components[i];
-            if (component instanceof Switch || component instanceof Button)
-                this.inputs.push(component);
-            else if (component instanceof LED)
-                this.outputs.push(component);
-        }
+        this.ic = createIC(this.context, selectionTool.selections, V(0, 0));
+        this.designer.addObject(this.ic);
+        selectionTool.deselect();
+        render();
     }
     hide() {
+        currentContext = context;
         this.hidden = true;
-        this.div.style.visibility = "hidden";
-    }
-    setPos(v) {
-        this.pos = V(v.x, v.y);
-        this.clamp();
-
-        this.div.style.left = this.pos.x + "px";
-        this.div.style.top = this.pos.y + "px";
+        this.canvas.style.visibility = "hidden";
+        if (this.ic !== undefined) {
+            this.ic.remove();
+            this.ic = undefined;
+        }
     }
 }

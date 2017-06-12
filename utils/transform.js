@@ -1,17 +1,18 @@
 class Transform {
-    constructor(pos, size, angle) {
+    constructor(pos, size, angle, camera) {
         this.parent = undefined;
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
         this.scale = V(1, 1);
-        this.prevCameraPos = V(0,0);
-        this.prevCameraZoom = 0;
+        this.camera = camera;
+        this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
+        this.prevCameraZoom = this.camera.zoom;
         this.setAngle(angle);
         this.updateMatrix();
     }
     updateMatrix(c) {
-        // Update matrix if camera moved/zoomed
-        if (this.prevCameraPos.x !== camera.pos.x || this.prevCameraPos.y !== camera.pos.y || this.prevCameraZoom !== camera.zoom)
+        // Update matrix if camera zoomed/moved
+        if (this.prevCameraZoom !== this.camera.zoom || this.prevCameraPos.x !== this.camera.pos.x || this.prevCameraPos.y !== this.camera.pos.y)
             this.dirty = true;
 
         if (!this.dirty)
@@ -28,15 +29,15 @@ class Transform {
 
         this.inverse = this.matrix.inverse();
 
-        this.prevCameraPos = V(camera.pos.x, camera.pos.y);
-        this.prevCameraZoom = camera.zoom;
+        this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
+        this.prevCameraZoom = this.camera.zoom;
     }
     transformCtx(ctx) {
         this.updateMatrix();
         var m = new Matrix2x3(this.matrix);
-        var v = camera.getScreenPos(V(m.mat[4], m.mat[5]));
+        var v = this.camera.getScreenPos(V(m.mat[4], m.mat[5]));
         m.mat[4] = v.x, m.mat[5] = v.y;
-        m.scale(V(1/camera.zoom, 1/camera.zoom));
+        m.scale(V(1/this.camera.zoom, 1/this.camera.zoom));
         ctx.setTransform(m.mat[0], m.mat[1], m.mat[2], m.mat[3], m.mat[4], m.mat[5]);
     }
     toLocalSpace(v) { // v must be in world coords

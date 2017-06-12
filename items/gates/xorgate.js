@@ -1,6 +1,6 @@
 class XORGate extends Gate {
-    constructor(not, x, y) {
-        super(not, x, y, images["or.svg"]);
+    constructor(not, context, x, y) {
+        super(context, not, x, y, images["or.svg"]);
     }
     quadCurveXAt(t) {
         var s = this.transform.size.x/2 - 2;
@@ -29,6 +29,8 @@ class XORGate extends Gate {
     draw() {
         super.draw();
 
+        var renderer = this.context.getRenderer();
+
         this.localSpace();
         var amt = 2 * Math.floor(this.inputs.length / 4) + 1;
         for (var i = 0; i < amt; i++) {
@@ -45,11 +47,11 @@ class XORGate extends Gate {
             var p2 = V(-s, l2 + d);
             var c  = V(-l, d);
 
-            strokeQuadCurve(p1.x, p1.y, p2.x, p2.y, c.x, c.y, this.getBorderColor(), 2);
-            strokeQuadCurve(p1.x - x, p1.y, p2.x - x, p2.y, c.x - x, c.y, this.getBorderColor(), 2);
+            renderer.quadCurve(p1.x, p1.y, p2.x, p2.y, c.x, c.y, this.getBorderColor(), 2);
+            renderer.quadCurve(p1.x - x, p1.y, p2.x - x, p2.y, c.x - x, c.y, this.getBorderColor(), 2);
         }
 
-        restoreCtx();
+        renderer.restore();
     }
     getDisplayName() {
         return this.not ? "XNOR Gate" : "XOR Gate";

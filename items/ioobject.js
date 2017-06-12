@@ -1,8 +1,11 @@
 class IOObject {
-    constructor(x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
+    constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
+        if (context === undefined)
+            context = getCurrentContext();
+        this.context = context;
         x = (x === undefined ? 0 : x);
         y = (y === undefined ? 0 : y)
-        this.transform = new Transform(V(x, y), V(w, h), 0);
+        this.transform = new Transform(V(x, y), V(w, h), 0, context.getCamera());
 
         this.name = this.getDisplayName();
         this.img = img;
@@ -13,7 +16,7 @@ class IOObject {
         this.selected = false;
 
         if (this.isPressable)
-            this.selectionBoxTransform = new Transform(V(x, y), V(selectionBoxWidth, selectionBoxHeight), 0);
+            this.selectionBoxTransform = new Transform(V(x, y), V(selectionBoxWidth, selectionBoxHeight), 0, context.getCamera());
 
         this.outputs = [];
         this.inputs = [];
@@ -103,23 +106,29 @@ class IOObject {
             this.outputs[i].activate(on);
     }
     localSpace() {
-        saveCtx();
-        this.transform.transformCtx(frame.context);
+        var renderer = this.context.getRenderer();
+        renderer.save();
+        this.transform.transformCtx(renderer.context);
     }
     draw() {
         this.localSpace();
         for (var i = 0; i < this.inputs.length; i++)
             this.inputs[i].draw();
+
         for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].draw(i);
+
+        var renderer = this.context.getRenderer();
         if (this.isPressable && this.selectionBoxTransform !== undefined)
-            rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
+            renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
+
         if (this.img !== undefined)
-            drawImage(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
-        restoreCtx();
+            renderer.image(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
+        renderer.restore();
     }
     remove() {
-        objects.splice(getIndexOfObject(this), 1);
+        var index = this.context.getIndexOfObject(this);
+        this.context.getObjects().splice(index, 1);
         for (var i = 0; i < this.outputs.length; i++) {
             this.outputs[i].remove();
             this.outputs[i] = undefined;
@@ -151,6 +160,9 @@ class IOObject {
                 return i;
         }
         return -1;
+    }
+    getRenderer() {
+        return this.context.getRenderer();
     }
     getDisplayName() {
         return "IOObject";

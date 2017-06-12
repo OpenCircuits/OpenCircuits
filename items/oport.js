@@ -54,7 +54,7 @@ class OPort {
 
         this.isOn = on;
         for (var i = 0; i < this.connections.length; i++)
-            propogationQueue.push(new Propogation(this, this.connections[i], this.isOn));
+            this.parent.context.propogate(this, this.connections[i], this.isOn);
     }
     connect(obj) {
         this.connections.push(obj);
@@ -68,22 +68,23 @@ class OPort {
         this.connections.splice(i, 1);
     }
     contains(pos) {
-        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0);
+        var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0, this.parent.context.getCamera());
         transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
-    draw() {
+    draw(i) {
         if (this.parent.outputs.length !== this.prevParentOutputLength)
             this.updatePosition();
 
         var v = this.target;
+        var renderer = this.parent.getRenderer();
 
         var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
-        strokeLine(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
+        renderer.line(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
 
         var circleFillCol = (this.parent.getCol() === undefined ? this.circleFillColor : this.parent.getCol());
         var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
-        circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
+        renderer.circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
     remove() {
         for (var i = 0; i < this.connections.length; i++) {

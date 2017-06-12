@@ -94,12 +94,14 @@
 
         <div id="main">
             <canvas id="canvas"></canvas>
+            <canvas id="designerCanvas" class="icdesigner"></canvas>
 
             <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
 
-            <div id="icDesigner" class="icdesigner">
+
+            <!-- <div id="icDesigner" class="icdesigner">
                 <canvas id="designerCanvas"></canvas>
-            </div>
+            </div> -->
 
             <div id="popupDiv" class="popup">
                 <input type="text" id="nameText" value="Name :" onfocus="popup.onTitleFocus();" onblur="popup.onTitleBlur();">
@@ -132,8 +134,11 @@
             <script src="utils/matrix.js"></script>
             <script src="utils/bezier.js"></script>
             <script src="utils/transform.js"></script>
+            <script src="utils/camera.js"></script>
+            <script src="utils/propogation.js"></script>
 
             <script src="helper.js"></script>
+            <script src="renderer.js"></script>
 
             <script src="tools/tool.js"></script>
             <script src="tools/selectiontool.js"></script>
@@ -159,6 +164,7 @@
             <script src="items/gates/SRFlipFlop.js"></script>
             <script src="items/gates/ic.js"></script>
 
+            <script src="circuitdesigner.js"></script>
             <script src="main.js"></script>
             <script src="input.js"></script>
             <script src="icdesigner.js"></script>

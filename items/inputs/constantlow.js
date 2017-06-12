@@ -1,6 +1,6 @@
 class ConstantLow extends IOObject {
-    constructor(x, y) {
-        super(x, y, 50, 50, images["constLow.svg"], false, 0, 1);
+    constructor(context, x, y) {
+        super(context, x, y, 50, 50, images["constLow.svg"], false, 0, 1);
         super.activate(false);
     }
     getDisplayName() {

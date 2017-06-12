@@ -1,6 +1,6 @@
 class SRFlipFlop extends Gate {
-    constructor(x, y) {
-        super(false, x, y, images["base.svg"]);
+    constructor(context, x, y) {
+        super(context, false, x, y, images["base.svg"]);
         this.noChange = true;
         this.setInputAmount(3);
         this.setOutputAmount(2);
@@ -34,6 +34,8 @@ class SRFlipFlop extends Gate {
         super.activate(!on, 1);
     }
     draw() {
+        var renderer = this.context.getRenderer();
+
         this.localSpace();
         var l1 = -(this.transform.size.y/2)*(0.5-this.inputs.length/2);
         var l2 = -(this.transform.size.y/2)*(this.inputs.length/2-0.5);
@@ -42,8 +44,8 @@ class SRFlipFlop extends Gate {
         var p1 = V(-s, l1);
         var p2 = V(-s, l2);
 
-        strokeLine(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
-        restoreCtx();
+        renderer.line(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
+        renderer.restore();
 
         super.draw();
 

@@ -1,8 +1,8 @@
 // key board input inputs
 
 class Button extends IOObject {
-    constructor(x, y) {
-        super(x, y, 50, 50, images["buttonUp.svg"], true, 0, 1, 60, 60);
+    constructor(context, x, y) {
+        super(context, x, y, 50, 50, images["buttonUp.svg"], true, 0, 1, 60, 60);
         this.curPressed = false;
     }
     press() {

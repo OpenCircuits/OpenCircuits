@@ -134,6 +134,7 @@ class SelectionPopup {
         return midpoint.scale(1.0 / this.selections.length);
     }
     onMove() {
+        var camera = getCurrentContext().getCamera();
         if (this.selections.length > 0) {
             var pos = camera.getScreenPos(this.getSelectionPos());
             pos.y -= this.div.clientHeight;
@@ -159,7 +160,7 @@ class SelectionPopup {
         this.div.style.top = this.pos.y + "px";
     }
     clamp() {
-        this.pos.x = Math.max(Math.min(this.pos.x, frame.canvas.width-this.div.clientWidth-1), isSidebarOpen ? 210 : 10);
-        this.pos.y = Math.max(Math.min(this.pos.y, frame.canvas.height-this.div.clientHeight-1), 46);
+        this.pos.x = Math.max(Math.min(this.pos.x, window.innerWidth-this.div.clientWidth-1), isSidebarOpen ? 210 : 10);
+        this.pos.y = Math.max(Math.min(this.pos.y, window.innerHeight-this.div.clientHeight-1), 46);
     }
 }

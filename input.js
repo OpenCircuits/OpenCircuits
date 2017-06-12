@@ -1,14 +1,100 @@
-var mousePos = new Vector(0,0);
-var prevMousePos = new Vector(0,0);
-var worldMousePos = new Vector(0,0);
+var num = 0;
+class Input {
+    constructor(parent) {
+        this.parent = parent;
+        this.canvas = parent.renderer.canvas;
+        this.camera = parent.camera;
 
-var mouseDown = false;
-var mouseDownPos = undefined;
+        this.num = (num++);
 
-var z = 0;
+        this.mousePos = new Vector(0,0);
+        this.prevMousePos = new Vector(0,0);
+        this.worldMousePos = new Vector(0,0);
 
-var isDragging = false;
-var startTapTime = undefined;
+        this.mouseDown = false;
+        this.mouseDownPos = undefined;
+
+        this.z = 0;
+
+        this.isDragging = false;
+        this.startTapTime = undefined;
+        this.setup();
+    }
+
+    setup() {
+        var canvas = this.parent.renderer.canvas;
+        window.addEventListener('keydown', e => this.onKeyDown(e), false);
+        window.addEventListener('keyup', e => this.onKeyUp(e), false);
+        canvas.addEventListener('click', e => this.onClick(e), false);
+        canvas.addEventListener('dblclick', e => this.onDoubleClick(e), false);
+        canvas.addEventListener('wheel', e => this.onWheel(e), false);
+        canvas.addEventListener('mousedown', e => this.onMouseDown(e), false);
+        canvas.addEventListener('mouseup', e => this.onMouseUp(e), false);
+        canvas.addEventListener('mousemove', e => this.onMouseMove(e), false);
+    }
+    onKeyDown(e) {
+        var code = e.keyCode;
+
+        currentTool.onKeyDown(code, this);
+    }
+    onKeyUp(e) {
+        var code = e.keyCode;
+
+        currentTool.onKeyUp(code, this);
+    }
+    onClick(e) {
+        if (this.isDragging)
+            return;
+
+        currentTool.onClick(this);
+    }
+    onDoubleClick(e) {
+    }
+    onWheel(e) {
+        var delta = e.wheelDelta / 120.0;
+
+        var factor = 0.95;
+        if (delta < 0)
+            factor = 1 / factor;
+
+        var worldMousePos = this.camera.getWorldPos(this.mousePos);
+        this.camera.zoom *= factor;
+        var newMousePos = this.camera.getScreenPos(this.worldMousePos);
+        var dx = (this.mousePos.x - newMousePos.x) * this.camera.zoom;
+        var dy = (this.mousePos.y - newMousePos.y) * this.camera.zoom;
+
+        this.camera.pos.x -= dx;
+        this.camera.pos.y -= dy;
+
+        popup.onWheel();
+
+        render();
+    }
+    onMouseDown(e) {
+        this.isDragging = false;
+        this.startTapTime = Date.now();
+        this.mouseDown = true;
+        this.mouseDownPos = new Vector(e.clientX, e.clientY);
+
+        currentTool.onMouseDown(this);
+    }
+    onMouseUp(e) {
+        this.mouseDown = false;
+
+        currentTool.onMouseUp(this);
+    }
+    onMouseMove(e) {
+        this.prevMousePos.x = this.mousePos.x;
+        this.prevMousePos.y = this.mousePos.y;
+
+        this.mousePos = new Vector(e.clientX, e.clientY);
+        this.worldMousePos = this.camera.getWorldPos(this.mousePos);
+
+        this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
+
+        currentTool.onMouseMove(this);
+    }
+}
 
 var isSidebarOpen = false;
 
@@ -35,87 +121,6 @@ function sidebar() {
     }
 }
 
-function setupInput(canvas) {
-    window.addEventListener('keydown',onKeyDown,false);
-    window.addEventListener('keyup',onKeyUp,false);
-    canvas.addEventListener('click', onClick, false);
-    canvas.addEventListener('dblclick', onDoubleClick, false);
-    canvas.addEventListener('wheel', onWheel, false);
-    canvas.addEventListener('mousedown', onMouseDown, false);
-    canvas.addEventListener('mouseup', onMouseUp, false);
-    canvas.addEventListener('mousemove', onMouseMove, false);
-}
-
 function placeItem(item) {
-    itemTool.activate(item);
-}
-
-function onKeyDown(e) {
-    var code = e.keyCode;
-
-    currentTool.onKeyDown(code);
-}
-
-function onKeyUp(e) {
-    var code = e.keyCode;
-
-    currentTool.onKeyUp(code);
-}
-
-function onClick(e) {
-    if (isDragging)
-        return;
-
-    currentTool.onClick();
-}
-
-function onDoubleClick(e) {
-}
-
-function onWheel(e) {
-    var delta = e.wheelDelta / 120.0;
-
-    var factor = 0.95;
-    if (delta < 0)
-        factor = 1 / factor;
-
-    var worldMousePos = camera.getWorldPos(mousePos);
-    camera.zoom *= factor;
-    var newMousePos = camera.getScreenPos(worldMousePos);
-    var dx = (mousePos.x - newMousePos.x) * camera.zoom;
-    var dy = (mousePos.y - newMousePos.y) * camera.zoom;
-
-    camera.pos.x -= dx;
-    camera.pos.y -= dy;
-
-    popup.onWheel();
-
-    render();
-}
-
-function onMouseDown(e) {
-    isDragging = false;
-    startTapTime = Date.now();
-    mouseDown = true;
-    mouseDownPos = new Vector(e.clientX, e.clientY);
-
-    currentTool.onMouseDown();
-}
-
-function onMouseUp(e) {
-    mouseDown = false;
-
-    currentTool.onMouseUp();
-}
-
-function onMouseMove(e) {
-    prevMousePos.x = mousePos.x;
-    prevMousePos.y = mousePos.y;
-
-    mousePos = new Vector(e.clientX, e.clientY);
-    worldMousePos = camera.getWorldPos(mousePos);
-
-    isDragging = (mouseDown && (Date.now() - startTapTime > 50));
-
-    currentTool.onMouseMove();
+    itemTool.activate(item, getCurrentContext());
 }

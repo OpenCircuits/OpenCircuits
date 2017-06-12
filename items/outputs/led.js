@@ -1,6 +1,6 @@
 class LED extends IOObject {
-    constructor(x, y, color) {
-        super(x, y, 50, 50, images["led.svg"], false, 1, 0);
+    constructor(context, x, y, color) {
+        super(context, x, y, 50, 50, images["led.svg"], false, 1, 0);
         this.transform.setPos(V(this.transform.pos.x, this.transform.pos.y - 2*this.transform.size.y));
         this.color = (color === undefined) ? ("#ffffff") : (color);
         this.connectorWidth = 5;
@@ -16,10 +16,12 @@ class LED extends IOObject {
     draw() {
         super.draw();
 
+        var renderer = this.context.getRenderer();
+
         this.localSpace();
         if (this.isOn)
-            drawImage(images["ledLight.svg"], 0, 0, 3*this.transform.size.x, 3*this.transform.size.y, this.color);
-        restoreCtx();
+            renderer.image(images["ledLight.svg"], 0, 0, 3*this.transform.size.x, 3*this.transform.size.y, this.color);
+        renderer.restore();
     }
     getDisplayName() {
         return "LED";

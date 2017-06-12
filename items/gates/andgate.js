@@ -1,6 +1,6 @@
 class ANDGate extends Gate {
-    constructor(not, x, y) {
-        super(not, x, y, images["and.svg"]);
+    constructor(not, context, x, y) {
+        super(context, not, x, y, images["and.svg"]);
     }
     setInputAmount(target) {
         super.setInputAmount(target);
@@ -17,6 +17,8 @@ class ANDGate extends Gate {
         super.activate(on);
     }
     draw() {
+        var renderer = this.context.getRenderer();
+
         this.localSpace();
         var l1 = -(this.transform.size.y/2)*(0.5-this.inputs.length/2);
         var l2 = -(this.transform.size.y/2)*(this.inputs.length/2-0.5);
@@ -25,8 +27,8 @@ class ANDGate extends Gate {
         var p1 = V(-s, l1);
         var p2 = V(-s, l2);
 
-        strokeLine(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
-        restoreCtx();
+        renderer.line(p1.x, p1.y, p2.x, p2.y, this.getBorderColor(), 2);
+        renderer.restore();
 
         super.draw();
 
