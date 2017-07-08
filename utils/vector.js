@@ -52,7 +52,10 @@ Vector.prototype.sub = function(a, b, c, d) {
 
 // Returns a new Vector which is this Vector scaled by the given scalar
 Vector.prototype.scale = function(a) {
-    return new Vector(a * this.x, a * this.y, a * this.z, a * this.w);
+    if (!(a instanceof Vector))
+        return new Vector(a * this.x, a * this.y, a * this.z, a * this.w);
+    else
+        return new Vector(a.x * this.x, a.y * this.y, a.z * this.z, a.w * this.w);
 }
 
 // Returns a normalized version of this Vector
@@ -77,4 +80,9 @@ Vector.prototype.len2 = function() {
 // Returns the distance between this Vector and the given Vector
 Vector.prototype.distanceTo = function(vec) {
     return vec.sub(this).len();
+}
+
+// Copies the Vector
+Vector.prototype.copy = function() {
+    return new Vector(this.x, this.y, this.z, this.w);
 }

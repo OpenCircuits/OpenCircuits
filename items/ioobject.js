@@ -6,6 +6,7 @@ class IOObject {
         x = (x === undefined ? 0 : x);
         y = (y === undefined ? 0 : y)
         this.transform = new Transform(V(x, y), V(w, h), 0, context.getCamera());
+        this.cullTransform = new Transform(this.transform.getPos(), V(0,0), 0, this.context.getCamera());
 
         this.name = this.getDisplayName();
         this.img = img;
@@ -44,6 +45,7 @@ class IOObject {
 
         for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].updatePosition();
+        this.onTransformChange();
     }
     onTransformChange() {
         if (this.isPressable && this.selectionBoxTransform !== undefined) {
@@ -51,10 +53,48 @@ class IOObject {
             this.selectionBoxTransform.setAngle(this.transform.getAngle());
             this.selectionBoxTransform.setScale(this.transform.getScale());
         }
+        this.updateCullTransform();
         for (var i = 0; i < this.inputs.length; i++)
             this.inputs[i].onTransformChange();
         for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].onTransformChange();
+    }
+    updateCullTransform() {
+        // Find min/max points on the object
+        var min = V(-this.transform.size.x/2, -this.transform.size.y/2);
+        var max = V(this.transform.size.x/2, this.transform.size.y/2);
+        if (this.selectionBoxTransform !== undefined) {
+            min.x = Math.min(-this.selectionBoxTransform.size.x/2, min.x);
+            min.y = Math.min(-this.selectionBoxTransform.size.y/2, min.y);
+            max.x = Math.max(this.selectionBoxTransform.size.x/2, max.x);
+            max.y = Math.max(this.selectionBoxTransform.size.y/2, max.y);
+        }
+        for (var i = 0; i < this.inputs.length; i++) {
+            var iport = this.inputs[i];
+            min.x = Math.min(iport.target.x, min.x);
+            min.y = Math.min(iport.target.y, min.y);
+            max.x = Math.max(iport.target.x, max.x);
+            max.y = Math.max(iport.target.y, max.y);
+        }
+        for (var i = 0; i < this.outputs.length; i++) {
+            var oport = this.outputs[i];
+            min.x = Math.min(oport.target.x, min.x);
+            min.y = Math.min(oport.target.y, min.y);
+            max.x = Math.max(oport.target.x, max.x);
+            max.y = Math.max(oport.target.y, max.y);
+        }
+        this.cullTransform.size = V(max.x - min.x, max.y - min.y);
+        var c = Math.cos(this.transform.getAngle());
+        var s = Math.sin(this.transform.getAngle());
+        var x = (min.x - (-this.cullTransform.size.x/2)) * c + (min.y - (-this.cullTransform.size.y/2)) * s;
+        var y = (min.y - (-this.cullTransform.size.y/2)) * c + (min.x - (-this.cullTransform.size.x/2)) * s;
+        this.cullTransform.setPos(this.transform.getPos().add(V(x, y)));
+        this.cullTransform.setAngle(this.transform.getAngle());
+        this.cullTransform.setScale(this.transform.getScale());
+        this.cullTransform.size = this.cullTransform.size.add(V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
+    }
+    getCullBox() {
+        return this.cullTransform;
     }
     getInputAmount() {
         return this.inputs.length;
@@ -90,6 +130,15 @@ class IOObject {
     }
     getAngle() {
         return this.transform.angle;
+    }
+    getSize() {
+        return this.transform.size;
+    }
+    setContext(context) {
+        this.context = context;
+        this.transform.setCamera(this.context.getCamera());
+        if (this.selectionBoxTransform !== undefined)
+            this.selectionBoxTransform.setCamera(this.context.getCamera());
     }
     click() {
     }
@@ -127,7 +176,7 @@ class IOObject {
         renderer.restore();
     }
     remove() {
-        var index = this.context.getIndexOfObject(this);
+        var index = this.context.getIndexOf(this);
         this.context.getObjects().splice(index, 1);
         for (var i = 0; i < this.outputs.length; i++) {
             this.outputs[i].remove();
@@ -173,10 +222,41 @@ class IOObject {
     getName() {
         return this.name;
     }
+    copy() {
+        var copy = new this.constructor(this.context);
+        copy.transform = this.transform.copy();
+        copy.name = this.name;
+        if (this.selectionBoxTransform !== undefined)
+            copy.selectionBoxTransform = this.selectionBoxTransform.copy();
+        for (var i = 0; i < this.inputs.length; i++) {
+            copy.inputs[i] = this.inputs[i].copy();
+            copy.inputs[i].parent = copy;
+        }
+        for (var i = 0; i < this.outputs.length; i++) {
+            copy.outputs[i] = this.outputs[i].copy();
+            copy.outputs[i].parent = copy;
+        }
+        return copy;
+    }
     writeTo(node, uid) {
         createTextElement(node, "uid", uid);
         createTextElement(node, "x", this.getPos().x);
         createTextElement(node, "y", this.getPos().y);
         createTextElement(node, "angle", this.getAngle());
     }
+}
+
+function loadIOObject(obj, node) {
+    var uid = getIntValue(getChildNode(node, "uid"));
+    var x = getFloatValue(getChildNode(node, "x"));
+    var y = getFloatValue(getChildNode(node, "y"));
+    var angle = getFloatValue(getChildNode(node, "angle"));
+    var isOn = getBooleanValue(getChildNode(node, "isOn"), false);
+
+    if (isOn)
+        obj.click(isOn);
+    obj.setPos(V(x, y));
+    obj.setAngle(angle);
+
+    obj.context.getObjects()[uid] = obj;
 }

@@ -20,11 +20,10 @@ class Input {
         this.startTapTime = undefined;
         this.setup();
     }
-
     setup() {
         var canvas = this.parent.renderer.canvas;
-        window.addEventListener('keydown', e => this.onKeyDown(e), false);
-        window.addEventListener('keyup', e => this.onKeyUp(e), false);
+        window.addEventListener('keydown', e => {if (this === getCurrentContext().getInput())this.onKeyDown(e);}, false);
+        window.addEventListener('keyup', e => {if (this === getCurrentContext().getInput())this.onKeyUp(e);}, false);
         canvas.addEventListener('click', e => this.onClick(e), false);
         canvas.addEventListener('dblclick', e => this.onDoubleClick(e), false);
         canvas.addEventListener('wheel', e => this.onWheel(e), false);
@@ -71,28 +70,34 @@ class Input {
         render();
     }
     onMouseDown(e) {
+        var rect = this.canvas.getBoundingClientRect();
         this.isDragging = false;
         this.startTapTime = Date.now();
         this.mouseDown = true;
-        this.mouseDownPos = new Vector(e.clientX, e.clientY);
+        this.mouseDownPos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
         currentTool.onMouseDown(this);
+        icdesigner.onMouseDown(this);
     }
     onMouseUp(e) {
         this.mouseDown = false;
 
         currentTool.onMouseUp(this);
+        icdesigner.onMouseUp(this);
     }
     onMouseMove(e) {
+        var rect = this.canvas.getBoundingClientRect();
+
         this.prevMousePos.x = this.mousePos.x;
         this.prevMousePos.y = this.mousePos.y;
 
-        this.mousePos = new Vector(e.clientX, e.clientY);
+        this.mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
         this.worldMousePos = this.camera.getWorldPos(this.mousePos);
 
         this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
 
         currentTool.onMouseMove(this);
+        icdesigner.onMouseMove(this);
     }
 }
 
@@ -121,6 +126,8 @@ function sidebar() {
     }
 }
 
-function placeItem(item) {
+function placeItem(item, not) {
+    if (not)
+        item.not = not;
     itemTool.activate(item, getCurrentContext());
 }

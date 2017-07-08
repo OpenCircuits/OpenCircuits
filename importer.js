@@ -29,19 +29,27 @@ function getChildNode(parent, name) {
     return undefined;
 }
 
-function getBooleanValue(node) {
+function getBooleanValue(node, def) {
+    if (node === undefined)
+        return def;
     return node.childNodes[0].nodeValue === "true" ? true : false;
 }
 
-function getIntValue(node) {
+function getIntValue(node, def) {
+    if (node === undefined)
+        return def;
     return parseInt(node.childNodes[0].nodeValue);
 }
 
-function getFloatValue(node) {
+function getFloatValue(node, def) {
+    if (node === undefined)
+        return def;
     return parseFloat(node.childNodes[0].nodeValue);
 }
 
-function getStringValue(node) {
+function getStringValue(node, def) {
+    if (node === undefined)
+        return def;
     return node.childNodes[0].nodeValue;
 }
 
@@ -51,32 +59,34 @@ function loadProject(root) {
     var objectsNode = getChildNode(projectNode, "objects");
     var wiresNode = getChildNode(projectNode, "wires");
 
+    var context = getCurrentContext();
+
     var constantLows = objectsNode.getElementsByTagName("constantlow");
-    for (var i = 0; i < constantLows.length; loadConstantLow(constantLows[i++]));
+    for (var i = 0; i < constantLows.length; loadConstantLow(context, constantLows[i++]));
     var constantHighs = objectsNode.getElementsByTagName("constanthigh");
-    for (var i = 0; i < constantHighs.length; loadConstantHigh(constantHighs[i++]));
+    for (var i = 0; i < constantHighs.length; loadConstantHigh(context, constantHighs[i++]));
     var buttons = objectsNode.getElementsByTagName("button");
-    for (var i = 0; i < buttons.length; loadButton(buttons[i++]));
+    for (var i = 0; i < buttons.length; loadButton(context, buttons[i++]));
     var switches = objectsNode.getElementsByTagName("switch");
-    for (var i = 0; i < switches.length; loadSwitch(switches[i++]));
+    for (var i = 0; i < switches.length; loadSwitch(context, switches[i++]));
 
     var leds = objectsNode.getElementsByTagName("led");
-    for (var i = 0; i < leds.length; loadLED(leds[i++]));
+    for (var i = 0; i < leds.length; loadLED(context, leds[i++]));
 
     var buffergates = objectsNode.getElementsByTagName("buffergate");
-    for (var i = 0; i < buffergates.length; loadBufferGate(buffergates[i++]));
+    for (var i = 0; i < buffergates.length; loadBufferGate(context, buffergates[i++]));
     var andgates = objectsNode.getElementsByTagName("andgate");
-    for (var i = 0; i < andgates.length; loadANDGate(andgates[i++]));
+    for (var i = 0; i < andgates.length; loadANDGate(context, andgates[i++]));
     var orgates = objectsNode.getElementsByTagName("orgate");
-    for (var i = 0; i < orgates.length; loadORGate(orgates[i++]));
+    for (var i = 0; i < orgates.length; loadORGate(context, orgates[i++]));
     var xorgates = objectsNode.getElementsByTagName("xorgate");
-    for (var i = 0; i < xorgates.length; loadXORGate(xorgates[i++]));
+    for (var i = 0; i < xorgates.length; loadXORGate(context, xorgates[i++]));
 
     var wiresArr = wiresNode.getElementsByTagName("wire");
     for (var i = 0; i < wiresArr.length; i++)
-        loadWire(wiresArr[i]);
+        loadWire(context, wiresArr[i]);
     for (var i = 0; i < wiresArr.length; i++)
-        loadWireConnections(wires[i], wiresArr[i]);
+        loadWireConnections(context, context.getWires()[i], wiresArr[i]);
 
     render();
 }

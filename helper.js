@@ -1,5 +1,7 @@
 
 const IO_PORT_LENGTH = 60;
+const IO_PORT_RADIUS = 7;
+const IO_PORT_BORDER_WIDTH = 1;
 const DEFAULT_SIZE = 50;
 
 function clamp(x, min, max) {
@@ -15,12 +17,14 @@ function containsPoint(transform, pos) {
     //
     // DEBUG DRAWING
     //
-    // saveCtx();
-    // transform.transformCtx(frame.context);
-    // rect(0, 0, transform.size.x, transform.size.y, '#ff00ff', '#000');
-    // restoreCtx();
+    // var renderer = getCurrentContext().getRenderer();
+    // renderer.save();
+    // transform.transformCtx(renderer.context);
+    // renderer.rect(0, 0, transform.size.x, transform.size.y, '#ff00ff', '#000');
+    // renderer.restore();
+    // var camera = getCurrentContext().getCamera();
     // var mv = camera.getScreenPos(pos);
-    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
+    // renderer.circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
 
     return (p.x > bl.x &&
             p.y > bl.y &&
@@ -45,8 +49,11 @@ function circleContains(transform, pos) {
     return (v.len2() <= transform.size.x*transform.size.x/4);
 }
 
-function transformContains(t1, t2) {
+function transformContains(t1, t2, second) {
     var s = t1.size;
+    var c0 = t1.toWorldSpace(V(0, 0));
+    if (containsPoint(t2, c0))
+        return true;
     var c1 = t1.toWorldSpace(V(s.x/2, s.y/2));
     if (containsPoint(t2, c1))
         return true;
@@ -60,7 +67,26 @@ function transformContains(t1, t2) {
     if (containsPoint(t2, c4))
         return true;
 
+    if (!second)
+        return transformContains(t2, t1, true);
+
     return false;
+}
+
+function getNearestPointOnRect(bl, tr, pos) {
+    if (pos.x < bl.x) {
+        return V(bl.x, clamp(pos.y, bl.y, tr.y));
+    }
+    if (pos.x > tr.x) {
+        return V(tr.x, clamp(pos.y, bl.y, tr.y));
+    }
+    if (pos.y < bl.y) {
+        return V(clamp(pos.x, bl.x, tr.x), bl.y);
+    }
+    if (pos.y > tr.y) {
+        return V(clamp(pos.x, bl.x, tr.x), tr.y);
+    }
+    return V(0, 0);
 }
 
 function ioPort(x1, y1, x2, y2, col, bCol, r, s) {

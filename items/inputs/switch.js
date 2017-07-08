@@ -19,17 +19,7 @@ class Switch extends IOObject {
     }
 }
 
-function loadSwitch(node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
-    var isOn = getBooleanValue(getChildNode(node, "isOn"));
-
-    var o = new Switch(x, y);
-    if (isOn)
-        o.click(isOn);
-    o.setAngle(angle);
-
-    objects[uid] = o;
+function loadSwitch(context, node) {
+    var obj = new Switch(context);
+    loadIOObject(obj, node);
 }

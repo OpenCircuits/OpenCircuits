@@ -150,4 +150,7 @@ class BezierCurve {
 
         return -1;
     }
+    copy() {
+        return new BezierCurve(this.p1.copy(), this.p2.copy(), this.c1.copy(), this.c2.copy());
+    }
 }

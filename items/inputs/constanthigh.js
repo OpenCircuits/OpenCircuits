@@ -12,7 +12,7 @@ class ConstantHigh extends IOObject {
     }
 }
 
-function loadConstantHigh(node) {
+function loadConstantHigh(context, node) {
     var uid = getIntValue(getChildNode(node, "uid"));
     var x = getFloatValue(getChildNode(node, "x"));
     var y = getFloatValue(getChildNode(node, "y"));

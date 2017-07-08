@@ -7,8 +7,8 @@ class OPort {
         this.lineWidth = 2;
         this.lineColor = '#000';
 
-        this.circleRadius = 7;
-        this.circleBorderWidth = 1;
+        this.circleRadius = IO_PORT_RADIUS;
+        this.circleBorderWidth = IO_PORT_BORDER_WIDTH;
         this.circleFillColor = '#fff';
         this.circleBorderColor = '#000';
 
@@ -17,7 +17,8 @@ class OPort {
 
         this.set = false;
 
-        this.updatePosition();
+        if (parent !== undefined)
+            this.updatePosition();
     }
     getIndexOfParent() {
         var i;
@@ -72,6 +73,16 @@ class OPort {
         transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
+    sContains(pos) {
+        if (this.origin.y !== this.target.y)
+            return false;
+
+        var w = Math.abs(this.target.x - this.origin.x);
+        var pos2 = this.target.add(this.origin).scale(0.5);
+        var transform = new Transform(pos2, V(w, this.lineWidth*2), 0, this.parent.context.getCamera());
+        transform.setParent(this.parent.transform);
+        return containsPoint(transform, pos);
+    }
     draw(i) {
         if (this.parent.outputs.length !== this.prevParentOutputLength)
             this.updatePosition();
@@ -106,7 +117,19 @@ class OPort {
     getPos() {
         return this.parent.transform.getMatrix().mul(this.target);
     }
+    getOPos() {
+        return this.parent.transform.getMatrix().mul(this.origin);
+    }
     getDir() {
         return this.parent.transform.getMatrix().mul(V(1, 0)).sub(this.parent.getPos()).normalize();
+    }
+    copy() {
+        var port = new OPort();
+        port.origin = this.origin.copy();
+        port.target = this.target.copy();
+        port.set = this.set;
+        port.lineWidth = this.lineWidth;
+        port.circleRadius = this.circleRadius;
+        return port;
     }
 }

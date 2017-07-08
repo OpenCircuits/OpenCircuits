@@ -84,6 +84,25 @@ class Renderer {
         this.context.drawImage(this.tintCanvas, x - w/2, y - h/2, w, h);
         this.context.globalAlpha = 1.0;
     }
+    text(txt, x, y, w, h, textAlign) {
+        this.save();
+        this.context.font = "lighter 15px arial";
+        this.context.fillStyle = '#000';
+        this.context.textAlign = textAlign;
+        this.context.textBaseline = "middle";
+        this.context.fillText(txt, x, y);
+        this.restore();
+    }
+    getTextWidth(txt) {
+        var width = 0;
+        this.save();
+        this.context.font = "lighter 15px arial";
+        this.context.fillStyle = '#000';
+        this.context.textBaseline = "middle";
+        width = this.context.measureText(txt).width;
+        this.restore();
+        return width;
+    }
     line(x1, y1, x2, y2, style, size) {
         this.save();
         this.setStyles(undefined, style, size);
@@ -119,8 +138,8 @@ class Renderer {
         // this.context.strokeStyle = (borderStyle === undefined ? this.context.strokeStyle : borderStyle);
         // this.context.lineWidth = (borderSize === undefined ? this.context.lineWidth : borderSize);
         this.context.globalAlpha = (alpha === undefined ? this.context.globalAlpha : alpha);
-        this.context.fillStyle = (fillStyle === undefined ? "#fff" : fillStyle);
-        this.context.strokeStyle = (borderStyle === undefined ? "#000" : borderStyle);
+        this.context.fillStyle = (fillStyle === undefined ? "#ffffff" : fillStyle);
+        this.context.strokeStyle = (borderStyle === undefined ? "#000000" : borderStyle);
         this.context.lineWidth = (borderSize === undefined ? 2 : borderSize);
         // this.context.globalAlpha = (alpha === undefined ? 1.0 : alpha);
     }

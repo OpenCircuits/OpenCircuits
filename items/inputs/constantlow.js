@@ -12,7 +12,7 @@ class ConstantLow extends IOObject {
     }
 }
 
-function loadConstantLow(node) {
+function loadConstantLow(context, node) {
     var uid = getIntValue(getChildNode(node, "uid"));
     var x = getFloatValue(getChildNode(node, "x"));
     var y = getFloatValue(getChildNode(node, "y"));

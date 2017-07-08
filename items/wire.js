@@ -146,23 +146,31 @@ class Wire {
     getDisplayName() {
         return "Wire";
     }
+    copy(newInput) {
+        var w = new Wire(this.context, newInput, 0);
+        newInput.connect(w);
+        w.curve = this.curve.copy();
+        w.straight = this.straight;
+        return w;
+    }
     writeTo(node, uid) {
         var wireNode = createChildNode(node, "wire");
 
         createTextElement(wireNode, "uid", uid);
 
         var inputNode = createChildNode(wireNode, "input");
-        var inputUID = (this.input instanceof Wire) ? (getIndexOfWire(this.input)+objects.length) : (getIndexOfObject(this.input.parent));
+        var inputUID  = (this.input instanceof Wire) ? (context.getIndexOf(this.input)+objects.length) : (context.getIndexOf(this.input.parent));
         var inputIndx = (this.input instanceof Wire) ? (0) : (this.input.getIndexOfParent());
         createTextElement(inputNode, "uid", inputUID);
         createTextElement(inputNode, "index", inputIndx);
 
         var connectionNode = createChildNode(wireNode, "connection");
-        var connectionUID = (this.connection instanceof Wire) ? (getIndexOfWire(this.connection)+objects.length) : (getIndexOfObject(this.connection.parent));
+        var connectionUID  = (this.connection instanceof Wire) ? (context.getIndexOf(this.connection)+objects.length) : (context.getIndexOf(this.connection.parent));
         var connectionIndx = (this.connection instanceof Wire) ? (0) : (this.connection.getIndexOfParent());
         createTextElement(connectionNode, "uid", connectionUID);
         createTextElement(connectionNode, "index", connectionIndx);
 
+        // TODO: Make bezier handle its own writing
         var bezierNode = createChildNode(wireNode, "bezier");
         createTextElement(bezierNode, "p1x", this.curve.p1.x);
         createTextElement(bezierNode, "p1y", this.curve.p1.y);
@@ -177,8 +185,11 @@ class Wire {
     }
 }
 
-function loadWire(node) {
-    var wire = new Wire();
+function loadWire(context, node) {
+    var objects = context.getObjects();
+    var wires = context.getWires();
+
+    var wire = new Wire(context);
 
     var uid = getIntValue(getChildNode(node, "uid"));
     wires[uid-objects.length] = wire;
@@ -195,7 +206,10 @@ function loadWire(node) {
     wire.straight = straight;
 }
 
-function loadWireConnections(wire, node) {
+function loadWireConnections(context, wire, node) {
+    var objects = context.getObjects();
+    var wires = context.getWires();
+
     var inputNode = getChildNode(node, "input");
     var sourceUID = getIntValue(getChildNode(inputNode, "uid"));
     var sourceIndx = getIntValue(getChildNode(inputNode, "index"));

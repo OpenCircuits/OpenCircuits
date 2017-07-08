@@ -1,5 +1,5 @@
 class BUFGate extends Gate {
-    constructor(not, context, x, y) {
+    constructor(context, not, x, y) {
         super(context, not, x, y, images["buffer.svg"]);
         this.maxInputs = 1;
 
@@ -21,15 +21,7 @@ class BUFGate extends Gate {
     }
 }
 
-function loadBufferGate(node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
-    var not = getBooleanValue(getChildNode(node, "not"));
-
-    var o = new BUFGate(not, x, y);
-    o.setAngle(angle);
-
-    objects[uid] = o;
+function loadBufferGate(context, node) {
+    var obj = new BUFGate(context);
+    loadGate(obj, node);
 }

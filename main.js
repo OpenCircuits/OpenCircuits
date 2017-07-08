@@ -7,6 +7,8 @@ var context;
 
 var currentContext;
 
+var ICs = [];
+
 class Context {
     constructor(designer) {
         this.designer = designer;
@@ -73,10 +75,38 @@ function onFinishLoading() {
     currentContext = context;
 
     popup = new SelectionPopup();
-    icdesigner = new ICDesigner();
+    icdesigner = new ICDesigner
+
+    // var asd = new Switch(context, -100, 100);
+    // context.getDesigner().addObject(asd);
+    // var asd2 = new asd.constructor(context, 50, 100);
+    // context.getDesigner().addObject(asd2);
 
     // objects.push(new Switch(-50, 0));
     // objects.push(new LED(100, 0, '#ffffff'));
+    var a = new Switch(context, -100, -50);
+    var b = new Switch(context, -100, 50);
+    var c = new ANDGate(context, false, 50, 0);
+    var q = new LED(context, 150, 0, '#ffffff');
+    a.setName("A");
+    b.setName("B");
+    q.setName("Q");
+
+    var a2 = new Switch(context, -100, 250);
+    var b2 = new Switch(context, -100, 350);
+    var q2 = new LED(context, 150, 300, '#ffffff');
+    // i.setName("Switch 1");
+    // i2.setName("Switch 2")
+    // o.setName("LED 1");
+    context.getDesigner().addObject(a);
+    context.getDesigner().addObject(b);
+    context.getDesigner().addObject(c);
+    context.getDesigner().addObject(q);
+    context.getDesigner().addObject(a2);
+    context.getDesigner().addObject(b2);
+    context.getDesigner().addObject(q2);
+
+    // icdesigner.show([i, i2, o]);
 
     render();
 }

@@ -10,12 +10,9 @@ class CircuitDesigner {
         this.propogationQueue = [];
     }
     propogate(sender, receiver, signal) {
-        let self = this;
-        this.propogationQueue.push(new Propogation(sender, receiver, signal, () => this.update()));//() => this.update()));
+        this.propogationQueue.push(new Propogation(sender, receiver, signal, () => this.update(sender, receiver)));//() => this.update()));
     }
-    update() {
-        console.log("UPDATE");
-
+    update(sender, receiver) {
         var tempQueue = [];
         while (this.propogationQueue.length > 0)
             tempQueue.push(this.propogationQueue.pop());
@@ -28,10 +25,20 @@ class CircuitDesigner {
 
         updateRequests--;
 
-        this.render();
+        // See if the sender/receiver is a wire in the scene (not in an IC) to render
+        var inScene = false;
+        for (var i = 0; i < this.wires.length; i++) {
+            if (this.wires[i] === sender || this.wires[i] === receiver) {
+                inScene = true;
+                break;
+            }
+        }
+
+        if (inScene)
+            this.render();
 
         if (updateRequests > 0) {
-            setTimeout(() => this.update(), dt);
+            setTimeout(() => this.update(sender, receiver), dt);
         }
     }
     render() {
@@ -58,8 +65,23 @@ class CircuitDesigner {
         for (var i = 0; i < this.wires.length; i++)
             this.wires[i].draw();
 
-        for (var i = 0; i < this.objects.length; i++)
-            this.objects[i].draw();
+        // Check if object is on the screen before drawing
+        var p1 = this.camera.getWorldPos(V(0, 0));
+        var p2 = this.camera.getWorldPos(V(this.renderer.canvas.width, this.renderer.canvas.height));
+        var screen = new Transform(p2.add(p1).scale(0.5), p2.sub(p1), 0, this.camera);
+        for (var i = 0; i < this.objects.length; i++) {
+            var obj = this.objects[i];
+            var t = obj.getCullBox();
+
+            // this.renderer.save();
+            // t.transformCtx(this.renderer.context);
+            // this.renderer.rect(0, 0, t.size.x, t.size.y, '#ff00ff');
+            // this.renderer.restore();
+
+            if (transformContains(t, screen)) {
+                obj.draw();
+            }
+        }
 
         currentTool.draw(this.renderer);
     }

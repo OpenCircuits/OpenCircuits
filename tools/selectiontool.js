@@ -1,39 +1,64 @@
+var asd = 0;
 class SelectionTool extends Tool {
     constructor() {
         super();
         this.isWirePressed = false;
         this.pressedWire = undefined;
         this.selections = [];
+        this.clipboard = [];
         this.midpoint = V(0, 0);
         this.drag = false;
         this.rotate = false;
         this.startAngle = 0;
         this.prevAngle = 0;
         this.shift = false;
+        this.modiferKeyDown = false;
         this.selBoxDownPos = undefined;
         this.selBoxCurPos = undefined;
     }
-    onKeyDown(code) {
+    onKeyDown(code, input) {
         console.log(code);
         // if (!icdesigner.hidden)
         //     return;
 
-        if (code === 18) { // Option key
-            panTool.activate();
-        } else if (code === 16) { // Shift key
-            this.shift = true;
-        } else if (code === 8 && !popup.focused) { // Delete key
-            while(this.selections.length > 0) {
-                this.selections.splice(0, 1)[0].remove();
-            }
-            popup.deselect();
-            render();
-        } else if (code === 13 && popup.focused) { // Enter key
-            popup.onEnter();
+        switch (code) {
+            case 18: // Option Key
+                panTool.activate();
+                break;
+            case 16: // Shift Key
+                this.shift = true;
+                break;
+            case 8: // Delete Key
+                if (!popup.focused)
+                    this.removeSelections();
+                break;
+            case 13: // Enter Key
+                if (popup.focused)
+                    popup.onEnter();
+                break;
+            case 67: // C Key
+                if (this.modiferKeyDown && this.selections.length > 0)
+                    this.copy();
+                break;
+            case 88: // X key
+                if (this.modiferKeyDown && this.selections.length > 0)
+                    this.cut();
+                break;
+            case 86: // V key
+                if (this.modiferKeyDown && this.clipboard.length > 0)
+                    this.paste(input);
+                break;
+            case 17: // Control
+            case 91: // Command
+                this.modiferKeyDown = true;
+                break;
+            default:
+                break;
         }
     }
     onKeyUp(code) {
         this.shift = false;
+        this.modiferKeyDown = false;
     }
     onMouseMove(input) {
         var objects = input.parent.getObjects();
@@ -53,8 +78,7 @@ class SelectionTool extends Tool {
 
                 // Move selection(s)
                 if (this.drag) {
-                    var dv = V(worldMousePos.x, worldMousePos.y).sub(this.dragObj.getPos());
-                    this.midpoint = V(0, 0);
+                    var dv = V(worldMousePos.x, worldMousePos.y).sub(this.dragObj.getPos()).sub(this.dragPos);
                     for (var i = 0; i < this.selections.length; i++) {
                         var v = this.selections[i].getPos().add(dv);
                         if (this.shift) {
@@ -62,9 +86,8 @@ class SelectionTool extends Tool {
                             v.y = Math.floor(v.y/50+0.5)*50;
                         }
                         this.selections[i].setPos(v);
-                        this.midpoint.translate(this.selections[i].getPos());
                     }
-                    this.midpoint = this.midpoint.scale(1. / this.selections.length);
+                    this.recalculateMidpoint();
                     popup.updatePosValue();
                     render();
                 }
@@ -91,21 +114,18 @@ class SelectionTool extends Tool {
             // TODO: Only calculate ON MOUSE UP!
             if (this.selBoxDownPos !== undefined) {
                 this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
-                this.deselect();
                 var p1 = this.selBoxDownPos;
                 var p2 = this.selBoxCurPos;
                 var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0, input.camera);
-                this.midpoint = V(0, 0);
+                var selections = [];
                 for (var i = 0; i < objects.length; i++) {
                     var obj = objects[i];
                     var t = (obj.selectionBoxTransform !== undefined ? obj.selectionBoxTransform : obj.transform);
-                    if (transformContains(t, trans)) {
-                        obj.selected = true;
-                        this.midpoint.translate(obj.transform.pos);
-                        this.selections.push(obj);
-                    }
+                    if (transformContains(t, trans))
+                        selections.push(obj);
                 }
-                this.midpoint = this.midpoint.scale(1. / this.selections.length);
+                this.deselect();
+                this.select(selections);
                 render();
             }
 
@@ -119,9 +139,28 @@ class SelectionTool extends Tool {
         if (!icdesigner.hidden)
             return;
 
+        // Check if rotation circle was pressed
+        if (this.selections.length > 0) {
+            var o = this.midpoint;
+            var p = worldMousePos;
+            var d = p.sub(o).len2();
+            if (d <= 79*79 && d >= 71*71) {
+                this.rotate = true;
+                this.startAngle = Math.atan2(p.y-o.y, p.x-o.x);
+                this.prevAngle = this.startAngle;
+                this.realAngles = [];
+                for (var i = 0; i < this.selections.length; i++)
+                    this.realAngles[i] = this.selections[i].getAngle();
+                popup.hide();
+                return;
+            }
+        }
+
         this.selBoxDownPos = undefined;
         var pressed = false;
-        for (var i = 0; i < objects.length && !pressed; i++) {
+
+        // Go through objects backwards since objects on top are in the back
+        for (var i = objects.length-1; i >= 0 && !pressed; i--) {
             var obj = objects[i];
 
             // Check if object's selection box was pressed
@@ -130,6 +169,7 @@ class SelectionTool extends Tool {
                     if (this.selections[j] === obj) {
                         this.drag = true;
                         this.dragObj = this.selections[j];
+                        this.dragPos = worldMousePos.copy().sub(this.dragObj.getPos());
                         popup.hide();
                         pressed = true;
                         break;
@@ -155,23 +195,6 @@ class SelectionTool extends Tool {
         if (pressed) {
             render();
         } else {
-
-            // Check if rotation circle was pressed
-            if (this.selections.length > 0) {
-                var o = this.midpoint;
-                var p = worldMousePos;
-                var d = p.sub(o).len2();
-                if (d <= 79*79 && d >= 71*71) {
-                    this.rotate = true;
-                    this.startAngle = Math.atan2(p.y-o.y, p.x-o.x);
-                    this.prevAngle = this.startAngle;
-                    this.realAngles = [];
-                    for (var i = 0; i < this.selections.length; i++)
-                        this.realAngles[i] = this.selections[i].getAngle();
-                    popup.hide();
-                    return;
-                }
-            }
 
             // Check if a wire was pressed
             if (!this.isWirePressed) {
@@ -200,6 +223,7 @@ class SelectionTool extends Tool {
         if (!icdesigner.hidden)
             return;
 
+        // Stop selection box
         this.selBoxDownPos = undefined;
         if (this.selBoxCurPos !== undefined) {
             this.selBoxCurPos = undefined;
@@ -214,19 +238,20 @@ class SelectionTool extends Tool {
             this.isWirePressed = false;
             this.pressedWire = undefined;
         }
+
         // Stop dragging
         if (this.drag) {
             this.drag = false;
             this.dragObj = undefined;
-            render();
         }
+
         // Stop rotating
         if (this.rotate) {
             this.rotate = false;
             render();
         }
 
-        if (this.selections.length === 1 && popup.hidden) {
+        if (this.selections.length > 0 && popup.hidden) {
             popup.show();
             popup.onMove();
         }
@@ -251,16 +276,15 @@ class SelectionTool extends Tool {
             return;
 
         var clicked = false;
-        for (var i = 0; i < objects.length && !clicked; i++) {
+
+        // Go through objects backwards since objects on top are in the back
+        for (var i = objects.length-1; i >= 0 && !clicked; i--) {
             var obj = objects[i];
 
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
                 this.deselect();
-                this.selections = [obj];
-                obj.selected = true;
-                popup.select(this.selections);
-                this.midpoint = obj.getPos();
+                this.select([obj]);
                 clicked = true;
             }
 
@@ -286,11 +310,55 @@ class SelectionTool extends Tool {
             render();
         }
     }
+    select(objects) {
+        if (objects.length === 0)
+            return;
+
+        for (var i = 0; i < objects.length; i++) {
+            var obj = objects[i];
+            obj.selected = true;
+            this.selections.push(obj);
+        }
+        popup.select(objects);
+        this.recalculateMidpoint();
+    }
     deselect() {
         for (var i = 0; i < this.selections.length; i++)
             this.selections[i].selected = false;
         this.selections = [];
         popup.deselect();
+    }
+    removeSelections() {
+        while(this.selections.length > 0) {
+            this.selections.splice(0, 1)[0].remove();
+        }
+        popup.deselect();
+        render();
+    }
+    recalculateMidpoint() {
+        this.midpoint = V(0, 0);
+        for (var i = 0; i < this.selections.length; i++)
+            this.midpoint.translate(this.selections[i].getPos());
+        this.midpoint = this.midpoint.scale(1. / this.selections.length);
+    }
+    copy() {
+        this.clipboard = copyGroup(this.selections);
+    }
+    cut() {
+        this.copy();
+        this.removeSelections();
+    }
+    paste(input) {
+        var copies = copyGroup(this.clipboard[0]);
+        for (var i = 0; i < copies[0].length; i++) {
+            input.parent.addObject(copies[0][i]);
+            copies[0][i].setPos(copies[0][i].getPos().add(V(5,5)));
+        }
+        for (var i = 0; i < copies[1].length; i++)
+            input.parent.addWire(copies[1][i]);
+        this.deselect();
+        this.select(copies[0]);
+        render();
     }
     draw(renderer) {
         var camera = renderer.getCamera();

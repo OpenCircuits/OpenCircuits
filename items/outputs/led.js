@@ -8,7 +8,7 @@ class LED extends IOObject {
         this.setInputAmount(1);
         this.inputs[0].setOrigin(V(0, 0));
         this.inputs[0].setTarget(V(0, 2*this.transform.size.y));
-        this.inputs[0].lineColor = '#fff';
+        this.inputs[0].lineColor = '#ffffff';
     }
     getImageTint() {
         return this.color;
@@ -26,27 +26,23 @@ class LED extends IOObject {
     getDisplayName() {
         return "LED";
     }
+    copy() {
+        var copy = super.copy();
+        copy.color = this.color;
+        copy.connectorWidth = this.connectorWidth;
+        return copy;
+    }
     writeTo(node, uid) {
         var LEDNode = createChildNode(node, "led");
         super.writeTo(LEDNode, uid);
-        console.log(this.color);
         createTextElement(LEDNode, "color", this.color);
-
-        var yNode = getChildNode(LEDNode, "y");
-        yNode.removeChild(yNode.childNodes[0]);
-        yNode.appendChild(_ROOT.createTextNode(this.getPos().y + 2*this.transform.size.y));
     }
 }
 
-function loadLED(node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
+function loadLED(context, node) {
+    var obj = new LED(context);
+    loadIOObject(obj, node);
+
     var color = getStringValue(getChildNode(node, "color"));
-
-    var o = new LED(x, y, color);
-    o.setAngle(angle);
-
-    objects[uid] = o;
+    obj.color = color;
 }

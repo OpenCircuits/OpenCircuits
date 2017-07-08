@@ -5,42 +5,125 @@ class ICDesigner {
         this.designer = new CircuitDesigner(this.canvas, 0.84, 0.76);
         this.context = new Context(this.designer);
 
+        this.drag = false;
+        this.dragObj = undefined;
+
+        this.dragEdge = undefined;
+
+        this.confirmButton = document.getElementById("ic-confirmbutton");
+        this.cancelButton = document.getElementById("ic-cancelbutton");
+
         this.hide();
     }
-    getSelectionPos() {
-        var midpoint = V(0, 0);
-        for (var i = 0; i < this.selections.length; i++)
-            midpoint.translate(this.selections[i].getPos());
-        return midpoint.scale(1.0 / this.selections.length);
-    }
-    onMove() {
-        if (this.selections.length > 0) {
-            var pos = camera.getScreenPos(this.getSelectionPos());
-            pos.y -= this.div.clientHeight;
-            this.setPos(pos);
+    confirm() {
+        if (this.ic !== undefined) {
+            var out = this.ic.copy();
+            out.setContext(context);
+            context.getDesigner().addObject(out);
+            this.hide();
         }
     }
-    onWheel() {
-        this.onMove();
+    cancel() {
+        if (this.ic !== undefined) {
+            this.hide();
+        }
     }
-    show() {
+    show(selections) {
         currentContext = this.context;
         this.hidden = false;
         this.canvas.style.visibility = "visible";
+        this.confirmButton.style.visibility = "visible";
+        this.cancelButton.style.visibility = "visible";
         popup.hide();
 
-        this.ic = createIC(this.context, selectionTool.selections, V(0, 0));
+        this.ic = createIC(this.context, selections, V(0, 0));
         this.designer.addObject(this.ic);
         selectionTool.deselect();
+        this.context.getCamera().zoom = 0.5 + 0.1*(this.ic.transform.size.x-50)/20;
         render();
     }
     hide() {
         currentContext = context;
         this.hidden = true;
         this.canvas.style.visibility = "hidden";
+        this.confirmButton.style.visibility = "hidden";
+        this.cancelButton.style.visibility = "hidden";
         if (this.ic !== undefined) {
             this.ic.remove();
             this.ic = undefined;
+        }
+        render();
+    }
+    onMouseDown(input) {
+        if (this.ic === undefined)
+            return;
+
+        var worldMousePos = input.worldMousePos;
+
+        var inputs = this.ic.inputs;
+        for (var i = 0; i < inputs.length; i++) {
+            var inp = inputs[i];
+            if (inp.sContains(worldMousePos)) {
+                this.drag = true;
+                this.dragObj = inp;
+                return;
+            }
+        }
+        var outputs = this.ic.outputs;
+        for (var i = 0; i < outputs.length; i++) {
+            var out = outputs[i];
+            if (out.sContains(worldMousePos)) {
+                this.drag = true;
+                this.dragObj = out;
+                return;
+            }
+        }
+
+        var pos = this.ic.getPos();
+        var size = this.ic.getSize();
+        var transform1 = new Transform(pos, size.scale(1.1), 0, this.context.getCamera());
+        var transform2 = new Transform(pos, size.scale(0.9), 0, this.context.getCamera());
+        if (containsPoint(transform1, worldMousePos) && !containsPoint(transform2, worldMousePos)) {
+            if (worldMousePos.y < pos.y+size.y/2-4 && worldMousePos.y > pos.y-size.y/2+4) {
+                this.dragEdge = "horizontal";
+            } else {
+                this.dragEdge = "vertical";
+            }
+        }
+    }
+    onMouseUp(input) {
+        if (this.ic === undefined)
+            return;
+
+        this.drag = false;
+        this.dragObj = undefined;
+        this.dragEdge = undefined;
+    }
+    onMouseMove(input) {
+        if (this.ic === undefined)
+            return;
+
+        var worldMousePos = input.worldMousePos;
+
+        if (this.drag) {
+            var size = this.ic.getSize();
+            var p = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), worldMousePos);
+            var v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
+            var v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            this.dragObj.setOrigin(v1);
+            this.dragObj.setTarget(v2);
+
+            render();
+        }
+        if (this.dragEdge !== undefined) {
+            if (this.dragEdge === "horizontal") {
+                this.ic.transform.size.x = Math.abs(2*worldMousePos.x);
+            } else {
+                this.ic.transform.size.y = Math.abs(2*worldMousePos.y);
+            }
+            this.ic.recalculatePorts();
+
+            render();
         }
     }
 }

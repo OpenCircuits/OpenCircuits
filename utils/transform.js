@@ -50,6 +50,10 @@ class Transform {
         this.parent = t;
         this.dirty = true;
     }
+    setCamera(c) {
+        this.camera = c;
+        this.dirty = true;
+    }
     setPos(p) {
         this.pos.x = p.x;
         this.pos.y = p.y;
@@ -93,5 +97,11 @@ class Transform {
     print() {
         this.updateMatrix();
         this.matrix.print();
+    }
+    copy() {
+        var trans = new Transform(this.pos.copy(), this.size.copy(), this.angle, this.camera);
+        trans.scale = this.scale.copy();
+        trans.dirty = true;
+        return trans;
     }
 }

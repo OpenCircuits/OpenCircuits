@@ -1,5 +1,5 @@
 class ORGate extends Gate {
-    constructor(not, context, x, y) {
+    constructor(context, not, x, y) {
         super(context, not, x, y, images["or.svg"]);
     }
     quadCurveXAt(t) {
@@ -53,23 +53,18 @@ class ORGate extends Gate {
     getDisplayName() {
         return this.not ? "NOR Gate" : "OR Gate";
     }
+    // copy() {
+    //     var b = new ORGate(this.not, this.context, this.getPos().x, this.getPos().y);
+    //     super.copy(b);
+    //     return b;
+    // }
     writeTo(node, uid) {
         var ORNode = createChildNode(node, "orgate");
         super.writeTo(ORNode, uid);
     }
 }
 
-function loadORGate(node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
-    var not = getBooleanValue(getChildNode(node, "not"));
-    var inputCount = getIntValue(getChildNode(node, "inputcount"));
-
-    var o = new ORGate(not, x, y);
-    o.setAngle(angle);
-    o.setInputAmount(inputCount);
-
-    objects[uid] = o;
+function loadORGate(context, node) {
+    var obj = new ORGate(context);
+    loadGate(obj, node);
 }

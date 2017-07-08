@@ -1,6 +1,7 @@
-class IC extends Gate {
-    constructor(context, x, y, inputs, outputs, components) {
-        super(context, false, x, y, undefined);
+class IC extends IOObject {
+    constructor(context, x, y, inputs, outputs, components, icuid) {
+        super(context, x, y, 50, 50, undefined, false, 999, 999);
+        this.icuid = icuid;
         this.inputObjects = inputs;
         this.outputObjects = outputs;
         this.components = components;
@@ -11,19 +12,18 @@ class IC extends Gate {
         this.setInputAmount(inputs.length);
         this.setOutputAmount(outputs.length);
 
-        var ic = this;
-        for (var i = 0; i < outputs.length; i++) {
-            var ii = i;
-            outputs[i].activate = function(on, j) {
-                ic.outputs[ii].activate(on);
-            }
-        }
+        var longestName = 0;
+        for (var i = 0; i < this.inputs.length; i++)
+            longestName = Math.max(this.inputObjects[i].getName().length, longestName);
+        for (var i = 0; i < this.outputs.length; i++)
+            longestName = Math.max(this.outputObjects[i].getName().length, longestName);
+        this.transform.size.x = 50 + 20*longestName;
+        this.recalculatePorts();
 
         this.activate();
     }
     activate() {
         for (var i = 0; i < this.inputs.length; i++) {
-            console.log(this.inputs[i].isOn);
             this.inputObjects[i].activate(this.inputs[i].isOn);
         }
     }
@@ -34,12 +34,109 @@ class IC extends Gate {
 
         this.localSpace();
 
-        renderer.rect(0, 0, 50, 50, '#ffffff', '#000000', 1);
+        var size = this.transform.size;
+        renderer.rect(0, 0, size.x, size.y, this.getCol(), '#000000', 1);
+
+        for (var i = 0; i < this.inputs.length; i++) {
+            var name = this.inputObjects[i].getName();
+            var pos1 = this.transform.toLocalSpace(this.inputs[i].getPos());
+            var align = "center";
+            var padding = 8;
+            var ww = renderer.getTextWidth(name)/2;
+            var pos = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos1);
+            pos = pos.sub(pos1).normalize().scale(padding).add(pos);
+            pos.x = clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
+            pos.y = clamp(pos.y, -size.y/2+14, size.y/2-14);
+            renderer.text(name, pos.x, pos.y, 0, 0, align);
+        }
+        for (var i = 0; i < this.outputs.length; i++) {
+            var name = this.outputObjects[i].getName();
+            var pos1 = this.transform.toLocalSpace(this.outputs[i].getPos());
+            var align = "center";
+            var padding = 8;
+            var ww = renderer.getTextWidth(name)/2;
+            var pos = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos1);
+            pos = pos.sub(pos1).normalize().scale(padding).add(pos);
+            pos.x = clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
+            pos.y = clamp(pos.y, -size.y/2+14, size.y/2-14);
+            renderer.text(name, pos.x, pos.y, 0, 0, align);
+        }
 
         renderer.restore();
     }
+    recalculatePorts() {
+        var size = this.getSize();
+
+        var inputs = this.inputs;
+        for (var i = 0; i < inputs.length; i++) {
+            var inp = inputs[i];
+            // Scale by large number to make sure that the target pos is not in the IC
+            var pos = inp.getPos().add(inp.getPos().sub(inp.getOPos()).normalize().scale(10000));
+            var p = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos);
+            var v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
+            var v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            inp.setOrigin(v1);
+            inp.setTarget(v2);
+        }
+        var outputs = this.outputs;
+        for (var i = 0; i < outputs.length; i++) {
+            var out = outputs[i];
+            // Scale by large number to make sure that the target pos is not in the IC
+            var pos = out.getPos().add(out.getPos().sub(out.getOPos()).normalize().scale(10000));
+            var p = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos);
+            var v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
+            var v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            out.setOrigin(v1);
+            out.setTarget(v2);
+        }
+    }
     getDisplayName() {
         return "IC";
+    }
+    copy() {
+        var group = this.inputObjects.concat(this.components, this.outputObjects);
+        var copies = copyGroup(group)[0];
+
+        // Separate each input/output/component
+        var inputs = [];
+        var outputs = [];
+        var components = [];
+        for (var i = 0; i < copies.length; i++) {
+            var copy = copies[i];
+            if (copy instanceof Switch || copy instanceof Button)
+                inputs.push(copy);
+            else if (copy instanceof LED)
+                outputs.push(copy);
+            else
+                components.push(copy);
+        }
+
+        var ic = new IC(this.context, 0, 0, inputs, outputs, components, this.uid);
+        ic.transform = this.transform.copy();
+
+        // Copy inputs of the IC
+        for (var i = 0; i < this.inputs.length; i++) {
+            ic.inputs[i] = this.inputs[i].copy();
+            ic.inputs[i].parent = ic;
+        }
+
+        // Copy outputs of the IC and wire them to activate internal outputs
+        for (var i = 0; i < this.outputs.length; i++) {
+            ic.outputs[i] = this.outputs[i].copy();
+            ic.outputs[i].parent = ic;
+
+            const ii = i;
+            ic.outputObjects[i].activate = function(on) {
+                ic.outputs[ii].activate(on);
+            }
+        }
+
+        return ic;
+    }
+    writeTo(node, uid) {
+        var ICNode = createChildNode(node, "ic");
+        super.writeTo(ICNode, uid);
+        createTextElement(ICNode, "icuid", this.icuid);
     }
 }
 
@@ -57,5 +154,16 @@ function createIC(context, selections, pos) {
             components.push(selection);
     }
 
-    return new IC(context, pos.x, pos.y, inputs, outputs, components);
+    var ic = new IC(context, pos.x, pos.y, inputs, outputs, components, ICs.length);
+    ICs.push(ic);
+    return ic;
+}
+
+function writeICs(node) {
+    for (var icuid = 0; icuid < ICs.length; icuid++) {
+        var ic = ICs[icuid];
+        var ICNode = createChildNode(node, "ic");
+        createTextElement(ICNode, "icuid", icuid);
+        
+    }
 }

@@ -1,5 +1,5 @@
 class ANDGate extends Gate {
-    constructor(not, context, x, y) {
+    constructor(context, not, x, y) {
         super(context, not, x, y, images["and.svg"]);
     }
     setInputAmount(target) {
@@ -42,17 +42,7 @@ class ANDGate extends Gate {
     }
 }
 
-function loadANDGate(node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
-    var not = getBooleanValue(getChildNode(node, "not"));
-    var inputCount = getIntValue(getChildNode(node, "inputcount"));
-
-    var o = new ANDGate(not, x, y);
-    o.setAngle(angle);
-    o.setInputAmount(inputCount);
-
-    objects[uid] = o;
+function loadANDGate(context, node) {
+    var obj = new ANDGate(context);
+    loadGate(obj, node);
 }
