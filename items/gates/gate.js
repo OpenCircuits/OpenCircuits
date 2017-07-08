@@ -1,13 +1,18 @@
 class Gate extends IOObject {
     constructor(context, not, x, y, img) {
         super(context, x, y, DEFAULT_SIZE*(img !== undefined ? img.ratio : 1), DEFAULT_SIZE, img, false, 999, 999);
-        this.not = not;
+        this._not = not;
         this.name = this.getDisplayName();
 
         this.setInputAmount(2);
     }
-    click() {
-        console.log("ASD");
+    set not(value) {
+        this._not = value;
+        if (value)
+            this.outputs[0].isOn = !this.isOn;
+    }
+    get not() {
+        return this._not;
     }
     activate(on, i) {
         super.activate((this.not ? !on : on), i);

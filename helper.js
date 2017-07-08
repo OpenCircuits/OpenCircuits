@@ -3,6 +3,17 @@ const IO_PORT_LENGTH = 60;
 const IO_PORT_RADIUS = 7;
 const IO_PORT_BORDER_WIDTH = 1;
 const DEFAULT_SIZE = 50;
+const GRID_SIZE = 50;
+
+const OPTION_KEY = 18;
+const SHIFT_KEY = 16;
+const DELETE_KEY = 8;
+const ENTER_KEY = 13;
+const C_KEY = 67;
+const X_KEY = 88;
+const V_KEY = 86;
+const CONTROL_KEY = 17;
+const COMMAND_KEY = 91;
 
 function clamp(x, min, max) {
     return Math.min(Math.max(x, min), max);
@@ -92,4 +103,22 @@ function getNearestPointOnRect(bl, tr, pos) {
 function ioPort(x1, y1, x2, y2, col, bCol, r, s) {
     strokeLine(x1, y1, x2, y2, (bCol === undefined ? '#000' : bCol), (s === undefined ? 2 : s));
     circle(x2, y2, (r === undefined ? 7 : r), (col === undefined ? '#fff' : col), (bCol === undefined ? '#000' : bCol), 1);
+}
+
+function getAllWires(objects) {
+    var wires = [];
+    for (var i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        for (var j = 0; j < obj.outputs.length; j++) {
+            var connections = obj.outputs[j].connections;
+            for (var k = 0; k < connections.length; k++) {
+                var wire = connections[k];
+                do {
+                    wires.push(wire);
+                    wire = wire.connection;
+                } while(wire instanceof Wire);
+            }
+        }
+    }
+    return wires;
 }

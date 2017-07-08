@@ -153,19 +153,19 @@ class Wire {
         w.straight = this.straight;
         return w;
     }
-    writeTo(node, uid) {
+    writeTo(node, uid, objects, wires) {
         var wireNode = createChildNode(node, "wire");
 
         createTextElement(wireNode, "uid", uid);
 
         var inputNode = createChildNode(wireNode, "input");
-        var inputUID  = (this.input instanceof Wire) ? (context.getIndexOf(this.input)+objects.length) : (context.getIndexOf(this.input.parent));
+        var inputUID  = (this.input instanceof Wire) ? (this.context.getIndexOf(this.input)+objects.length) : (this.context.getIndexOf(this.input.parent));
         var inputIndx = (this.input instanceof Wire) ? (0) : (this.input.getIndexOfParent());
         createTextElement(inputNode, "uid", inputUID);
         createTextElement(inputNode, "index", inputIndx);
 
         var connectionNode = createChildNode(wireNode, "connection");
-        var connectionUID  = (this.connection instanceof Wire) ? (context.getIndexOf(this.connection)+objects.length) : (context.getIndexOf(this.connection.parent));
+        var connectionUID  = (this.connection instanceof Wire) ? (this.context.getIndexOf(this.connection)+objects.length) : (this.context.getIndexOf(this.connection.parent));
         var connectionIndx = (this.connection instanceof Wire) ? (0) : (this.connection.getIndexOfParent());
         createTextElement(connectionNode, "uid", connectionUID);
         createTextElement(connectionNode, "index", connectionIndx);

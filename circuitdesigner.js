@@ -46,7 +46,7 @@ class CircuitDesigner {
 
         this.renderer.clear();
 
-        var step = 50/this.camera.zoom;
+        var step = GRID_SIZE/this.camera.zoom;
 
         var cpos = V(this.camera.pos.x/this.camera.zoom - this.renderer.canvas.width/2, this.camera.pos.y/this.camera.zoom - this.renderer.canvas.height/2);
 

@@ -132,4 +132,11 @@ class OPort {
         port.circleRadius = this.circleRadius;
         return port;
     }
+    writeTo(node) {
+        var oPortNode = createChildNode(node, "oport");
+        createTextElement(oPortNode, "originx", this.origin.x);
+        createTextElement(oPortNode, "originy", this.origin.y);
+        createTextElement(oPortNode, "targetx", this.target.x);
+        createTextElement(oPortNode, "targety", this.target.y);
+    }
 }

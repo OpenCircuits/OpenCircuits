@@ -1,5 +1,7 @@
+var UID_COUNTER = 0;
 class IOObject {
     constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
+        this.uid = UID_COUNTER++;
         if (context === undefined)
             context = getCurrentContext();
         this.context = context;
@@ -141,6 +143,7 @@ class IOObject {
             this.selectionBoxTransform.setCamera(this.context.getCamera());
     }
     click() {
+        // console.log(this);
     }
     press() {
     }
@@ -239,7 +242,8 @@ class IOObject {
         return copy;
     }
     writeTo(node, uid) {
-        createTextElement(node, "uid", uid);
+        if (uid !== undefined)
+            createTextElement(node, "uid", uid);
         createTextElement(node, "x", this.getPos().x);
         createTextElement(node, "y", this.getPos().y);
         createTextElement(node, "angle", this.getAngle());

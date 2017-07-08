@@ -120,4 +120,11 @@ class IPort {
         port.circleRadius = this.circleRadius;
         return port;
     }
+    writeTo(node) {
+        var iPortNode = createChildNode(node, "iport");
+        createTextElement(iPortNode, "originx", this.origin.x);
+        createTextElement(iPortNode, "originy", this.origin.y);
+        createTextElement(iPortNode, "targetx", this.target.x);
+        createTextElement(iPortNode, "targety", this.target.y);
+    }
 }

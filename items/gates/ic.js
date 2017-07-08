@@ -17,7 +17,7 @@ class IC extends IOObject {
             longestName = Math.max(this.inputObjects[i].getName().length, longestName);
         for (var i = 0; i < this.outputs.length; i++)
             longestName = Math.max(this.outputObjects[i].getName().length, longestName);
-        this.transform.size.x = 50 + 20*longestName;
+        this.transform.size.x = DEFAULT_SIZE + 20*longestName;
         this.recalculatePorts();
 
         this.activate();
@@ -164,6 +164,21 @@ function writeICs(node) {
         var ic = ICs[icuid];
         var ICNode = createChildNode(node, "ic");
         createTextElement(ICNode, "icuid", icuid);
-        
+        createTextElement(ICNode, "width", ic.transform.size.x);
+        createTextElement(ICNode, "height", ic.transform.size.y);
+
+        console.log(ic);
+        var iportNode = createChildNode(ICNode, "iports");
+        for (var i = 0; i < ic.inputs.length; i++)
+            ic.inputs[i].writeTo(iportNode);
+
+        var oportNode = createChildNode(ICNode, "oports");
+        for (var i = 0; i < ic.outputs.length; i++)
+            ic.outputs[i].writeTo(oportNode);
+
+        var componentsNode = createChildNode(ICNode, "components");
+        var objects = ic.inputObjects.concat(ic.components, ic.outputObjects);
+        var wires = getAllWires(objects);
+        writeGroup(componentsNode, objects, wires);
     }
 }
