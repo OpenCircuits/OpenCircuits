@@ -95,8 +95,7 @@ class CircuitDesigner {
             // this.renderer.rect(0, 0, t.size.x, t.size.y, '#ff00ff');
             // this.renderer.restore();
 
-            if (transformContains(t, screen, true)) {
-                console.log("ASD");
+            if (transformContains(t, screen)) {
                 obj.draw();
             }
         }

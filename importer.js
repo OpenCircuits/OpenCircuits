@@ -32,6 +32,15 @@ function getChildNode(parent, name) {
     return undefined;
 }
 
+function getChildrenByTagName(parent, name) {
+    var children = [];
+    for (var i = 0; i < parent.childNodes.length; i++) {
+        if (parent.childNodes[i].nodeName === name)
+            children.push(parent.childNodes[i]);
+    }
+    return children;
+}
+
 function getBooleanValue(node, def) {
     if (node === undefined)
         return def;
@@ -63,7 +72,10 @@ function loadProject(root) {
 
     var maxUID = 0;
 
-    maxUID = loadICs(projectNode, context);
+    var icNode = getChildNode(projectNode, "ics");
+    maxUID = loadICs(icNode, context);
+
+    console.log(ICs.length);
 
     var group = loadGroup(projectNode, context);
     var objects = group[0];
@@ -92,28 +104,31 @@ function loadGroup(node, context) {
     var objects = [];
     var wires = [];
 
-    var constantLows = objectsNode.getElementsByTagName("constantlow");
+    var constantLows = getChildrenByTagName(objectsNode, "constantlow");
     for (var i = 0; i < constantLows.length; objects.push(new ConstantLow(context).load(constantLows[i++])));
-    var constantHighs = objectsNode.getElementsByTagName("constanthigh");
+    var constantHighs = getChildrenByTagName(objectsNode, "constanthigh");
     for (var i = 0; i < constantHighs.length; objects.push(new ConstantHigh(context).load(constantHighs[i++])));
-    var buttons = objectsNode.getElementsByTagName("button");
+    var buttons = getChildrenByTagName(objectsNode, "button");
     for (var i = 0; i < buttons.length; objects.push(new Button(context).load(buttons[i++])));
-    var switches = objectsNode.getElementsByTagName("switch");
+    var switches = getChildrenByTagName(objectsNode, "switch");
     for (var i = 0; i < switches.length; objects.push(new Switch(context).load(switches[i++])));
 
-    var leds = objectsNode.getElementsByTagName("led");
+    var leds = getChildrenByTagName(objectsNode, "led");
     for (var i = 0; i < leds.length; objects.push(new LED(context).load(leds[i++])));
 
-    var buffergates = objectsNode.getElementsByTagName("buffergate");
+    var buffergates = getChildrenByTagName(objectsNode, "buffergate");
     for (var i = 0; i < buffergates.length; objects.push(new BUFGate(context).load(buffergates[i++])));
-    var andgates = objectsNode.getElementsByTagName("andgate");
+    var andgates = getChildrenByTagName(objectsNode, "andgate");
     for (var i = 0; i < andgates.length; objects.push(new ANDGate(context).load(andgates[i++])));
-    var orgates = objectsNode.getElementsByTagName("orgate");
+    var orgates = getChildrenByTagName(objectsNode, "orgate");
     for (var i = 0; i < orgates.length; objects.push(new ORGate(context).load(orgates[i++])));
-    var xorgates = objectsNode.getElementsByTagName("xorgate");
+    var xorgates = getChildrenByTagName(objectsNode, "xorgate");
     for (var i = 0; i < xorgates.length; objects.push(new XORGate(context).load(xorgates[i++])));
 
-    var wiresArr = wiresNode.getElementsByTagName("wire");
+    var ics = getChildrenByTagName(objectsNode, "ic");
+    for (var i = 0; i < ics.length; objects.push(new IC(context).load(ics[i++])));
+
+    var wiresArr = getChildrenByTagName(wiresNode, "wire");
     for (var i = 0; i < wiresArr.length; i++)
         wires.push(new Wire(context).load(wiresArr[i]));
     for (var i = 0; i < wiresArr.length; i++)

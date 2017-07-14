@@ -262,7 +262,6 @@ class IOObject {
         var isOn = getBooleanValue(getChildNode(node, "isOn"), false);
         this.uid = uid;
         this.setName(name);
-        maxUID = Math.max(maxUID, uid);
         if (isOn)
             this.click(isOn);
         this.setPos(V(x, y));

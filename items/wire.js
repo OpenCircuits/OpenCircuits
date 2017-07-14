@@ -179,7 +179,6 @@ class Wire {
 
         var uid = getIntValue(getChildNode(node, "uid"));
         this.uid = uid;
-        maxUID = Math.max(maxUID, uid);
 
         var bezier = getChildNode(node, "bezier");
         this.curve.load(bezier);

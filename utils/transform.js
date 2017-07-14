@@ -111,6 +111,16 @@ class Transform {
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
+    setWidth(w) {
+        this.size.x = w;
+        this.dirtySize = true;
+        this.dirtyCorners = true;
+    }
+    setHeight(h) {
+        this.size.y = h;
+        this.dirtySize = true;
+        this.dirtyCorners = true;
+    }
     getPos() {
         return V(this.pos.x, this.pos.y);
     }

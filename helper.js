@@ -81,7 +81,7 @@ function circleContains(transform, pos) {
  *         True if the two transforms are overlapping,
  *         false otherwise
  */
-function transformContains(A, B, asd) {
+function transformContains(A, B) {
     // Quick check circle-circle intersection
     var r1 = A.getRadius();
     var r2 = B.getRadius();
@@ -169,18 +169,14 @@ function transformContains(A, B, asd) {
  * @param {Vector} pos  The position to get the nearest point on
  */
 function getNearestPointOnRect(bl, tr, pos) {
-    if (pos.x < bl.x) {
+    if (pos.x < bl.x)
         return V(bl.x, clamp(pos.y, bl.y, tr.y));
-    }
-    if (pos.x > tr.x) {
+    if (pos.x > tr.x)
         return V(tr.x, clamp(pos.y, bl.y, tr.y));
-    }
-    if (pos.y < bl.y) {
+    if (pos.y < bl.y)
         return V(clamp(pos.x, bl.x, tr.x), bl.y);
-    }
-    if (pos.y > tr.y) {
+    if (pos.y > tr.y)
         return V(clamp(pos.x, bl.x, tr.x), tr.y);
-    }
     return V(0, 0);
 }
 
@@ -262,8 +258,8 @@ function separateGroup(group) {
     var inputs = [];
     var components = [];
     var outputs = [];
-    for (var i = 0; i < objects.length; i++) {
-        var object = objects[i];
+    for (var i = 0; i < group.length; i++) {
+        var object = group[i];
         if (object instanceof Switch || object instanceof Button)
             inputs.push(object);
         else if (object instanceof LED)

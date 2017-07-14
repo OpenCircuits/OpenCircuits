@@ -2,6 +2,11 @@ class IC extends IOObject {
     constructor(context, x, y, inputs, outputs, components, icuid) {
         super(context, x, y, 50, 50, undefined, false, 999, 999);
         this.icuid = icuid;
+        this.setup(inputs, outputs, components);
+    }
+    setup(inputs, outputs, components) {
+        inputs = (inputs ? inputs : []);
+        outputs = (outputs ? outputs : []);
         this.inputObjects = inputs;
         this.outputObjects = outputs;
         this.components = components;
@@ -94,34 +99,8 @@ class IC extends IOObject {
         return "IC";
     }
     copy() {
-        var group = this.inputObjects.concat(this.components, this.outputObjects);
-        var copies = copyGroup(group)[0];
-
-        // Separate each input/output/component
-        var separate = separateGroup(copies);
-
-        var ic = new IC(this.context, 0, 0, separate[0], separate[2], separate[1], this.icuid);
-        ic.transform = this.transform.copy();
-
-        // Copy inputs of the IC
-        for (var i = 0; i < this.inputs.length; i++) {
-            ic.inputs[i] = this.inputs[i].copy();
-            ic.inputs[i].parent = ic;
-        }
-
-        // Copy outputs of the IC and wire them to activate internal outputs
-        for (var i = 0; i < this.outputs.length; i++) {
-            ic.outputs[i] = this.outputs[i].copy();
-            ic.outputs[i].parent = ic;
-
-            var ii = i;
-            ic.outputObjects[i].activate = function(on) {
-                ic.outputs[ii].activate(on);
-            }
-        }
-
-        ic.recalculatePorts();
-
+        var ic = new IC(this.context);
+        copyIC(this, ic);
         return ic;
     }
     writeTo(node) {
@@ -129,12 +108,13 @@ class IC extends IOObject {
         createTextElement(ICNode, "icuid", this.icuid);
         return ICNode;
     }
-}
-
-function loadIC(node) {
-    var icuid = getIntValue(getChildNode(node, "icuid"));
-    var ic = findIC(icuid);
-
+    load(node) {
+        var icuid = getIntValue(getChildNode(node, "icuid"));
+        var ic = findIC(icuid);
+        copyIC(ic, this);
+        super.load(node);
+        return this;
+    }
 }
 
 function createIC(context, selections, pos) {
@@ -142,6 +122,37 @@ function createIC(context, selections, pos) {
     var separate = seperateGroup(objects);
 
     return new IC(context, pos.x, pos.y, separate[0], separate[2], separate[1], ICs.length);
+}
+
+function copyIC(source, target) {
+    var group = source.inputObjects.concat(source.components, source.outputObjects);
+    var copies = copyGroup(group)[0];
+
+    // Separate each input/output/component
+    var separate = separateGroup(copies);
+
+    target.setup(separate[0], separate[2], separate[1]);
+    target.icuid = source.icuid;
+    target.transform = source.transform.copy();
+
+    // Copy inputs of the IC
+    for (var i = 0; i < source.inputs.length; i++) {
+        target.inputs[i] = source.inputs[i].copy();
+        target.inputs[i].parent = target;
+    }
+
+    // Copy outputs of the IC and wire them to activate internal outputs
+    for (var i = 0; i < source.outputs.length; i++) {
+        target.outputs[i] = source.outputs[i].copy();
+        target.outputs[i].parent = target;
+
+        var ii = i;
+        target.outputObjects[i].activate = function(on) {
+            target.outputs[ii].activate(on);
+        }
+    }
+
+    target.recalculatePorts();
 }
 
 function writeICs(node) {
@@ -168,21 +179,18 @@ function writeICs(node) {
 }
 
 function loadICs(node, context) {
-    var icsNode = objectsNode.getElementsByTagName("ic");
+    var icsNode = getChildrenByTagName(node, "ic");
     var maxUID = 0;
     for (var i = 0; i < icsNode.length; i++) {
         var icNode = icsNode[i];
-        var icuid = getIntValue(getChildNode(node, "icuid"));
-        var width = getIntValue(getChildNode(node, "width"));
-        var height = getIntValue(getChildNode(node, "height"));
-
-        var oportsNode = getChildNode(icNode, "oports");
-        var oports = oportsNode.getElementsByTagName("oport");
+        var icuid = getIntValue(getChildNode(icNode, "icuid"));
+        var width = getIntValue(getChildNode(icNode, "width"));
+        var height = getIntValue(getChildNode(icNode, "height"));
 
         var componentsNode = getChildNode(icNode, "components");
         var components = loadGroup(componentsNode, context);
-        var objects = group[0];
-        var wires = group[1];
+        var objects = components[0];
+        var wires = components[1];
         for (var j = 0; j < objects.length; j++)
             maxUID = Math.max(objects[j].uid, maxUID);
         for (var j = 0; j < wires.length; j++)
@@ -194,7 +202,7 @@ function loadICs(node, context) {
         ic.transform.setSize(V(width, height));
 
         var iportsNode = getChildNode(icNode, "iports");
-        var iports = iportsNode.getElementsByTagName("iport");
+        var iports = getChildrenByTagName(iportsNode, "iport");
         for (var j = 0; j < iports.length; j++) {
             var iportNode = iports[j];
             var origin = V(getFloatValue(getChildNode(iportNode, "originx")), getFloatValue(getChildNode(iportNode, "originy")));
@@ -204,7 +212,7 @@ function loadICs(node, context) {
         }
 
         var oportsNode = getChildNode(icNode, "oports");
-        var oports = oportsNode.getElementsByTagName("oport");
+        var oports = getChildrenByTagName(oportsNode, "oport");
         for (var j = 0; j < oports.length; j++) {
             var oportNode = oports[j];
             var origin = V(getFloatValue(getChildNode(oportNode, "originx")), getFloatValue(getChildNode(oportNode, "originy")));
