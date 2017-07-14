@@ -17,7 +17,7 @@ class IC extends IOObject {
             longestName = Math.max(this.inputObjects[i].getName().length, longestName);
         for (var i = 0; i < this.outputs.length; i++)
             longestName = Math.max(this.outputObjects[i].getName().length, longestName);
-        this.transform.size.x = DEFAULT_SIZE + 20*longestName;
+        this.transform.setWidth(DEFAULT_SIZE + 20*longestName);
         this.recalculatePorts();
 
         this.activate();
@@ -98,20 +98,9 @@ class IC extends IOObject {
         var copies = copyGroup(group)[0];
 
         // Separate each input/output/component
-        var inputs = [];
-        var outputs = [];
-        var components = [];
-        for (var i = 0; i < copies.length; i++) {
-            var copy = copies[i];
-            if (copy instanceof Switch || copy instanceof Button)
-                inputs.push(copy);
-            else if (copy instanceof LED)
-                outputs.push(copy);
-            else
-                components.push(copy);
-        }
+        var separate = separateGroup(copies);
 
-        var ic = new IC(this.context, 0, 0, inputs, outputs, components, this.uid);
+        var ic = new IC(this.context, 0, 0, separate[0], separate[2], separate[1], this.icuid);
         ic.transform = this.transform.copy();
 
         // Copy inputs of the IC
@@ -125,38 +114,34 @@ class IC extends IOObject {
             ic.outputs[i] = this.outputs[i].copy();
             ic.outputs[i].parent = ic;
 
-            const ii = i;
+            var ii = i;
             ic.outputObjects[i].activate = function(on) {
                 ic.outputs[ii].activate(on);
             }
         }
 
+        ic.recalculatePorts();
+
         return ic;
     }
-    writeTo(node, uid) {
-        var ICNode = createChildNode(node, "ic");
-        super.writeTo(ICNode, uid);
+    writeTo(node) {
+        var ICNode = super.writeTo(node);
         createTextElement(ICNode, "icuid", this.icuid);
+        return ICNode;
     }
 }
 
-function createIC(context, selections, pos) {
-    var inputs = [];
-    var outputs = [];
-    var components = [];
-    for (var i = 0; i < selections.length; i++) {
-        var selection = selections[i];
-        if (selection instanceof Switch || selection instanceof Button)
-            inputs.push(selection);
-        else if (selection instanceof LED)
-            outputs.push(selection);
-        else
-            components.push(selection);
-    }
+function loadIC(node) {
+    var icuid = getIntValue(getChildNode(node, "icuid"));
+    var ic = findIC(icuid);
 
-    var ic = new IC(context, pos.x, pos.y, inputs, outputs, components, ICs.length);
-    ICs.push(ic);
-    return ic;
+}
+
+function createIC(context, selections, pos) {
+    var objects = copyGroup(selections)[0];
+    var separate = seperateGroup(objects);
+
+    return new IC(context, pos.x, pos.y, separate[0], separate[2], separate[1], ICs.length);
 }
 
 function writeICs(node) {
@@ -167,7 +152,6 @@ function writeICs(node) {
         createTextElement(ICNode, "width", ic.transform.size.x);
         createTextElement(ICNode, "height", ic.transform.size.y);
 
-        console.log(ic);
         var iportNode = createChildNode(ICNode, "iports");
         for (var i = 0; i < ic.inputs.length; i++)
             ic.inputs[i].writeTo(iportNode);
@@ -181,4 +165,55 @@ function writeICs(node) {
         var wires = getAllWires(objects);
         writeGroup(componentsNode, objects, wires);
     }
+}
+
+function loadICs(node, context) {
+    var icsNode = objectsNode.getElementsByTagName("ic");
+    var maxUID = 0;
+    for (var i = 0; i < icsNode.length; i++) {
+        var icNode = icsNode[i];
+        var icuid = getIntValue(getChildNode(node, "icuid"));
+        var width = getIntValue(getChildNode(node, "width"));
+        var height = getIntValue(getChildNode(node, "height"));
+
+        var oportsNode = getChildNode(icNode, "oports");
+        var oports = oportsNode.getElementsByTagName("oport");
+
+        var componentsNode = getChildNode(icNode, "components");
+        var components = loadGroup(componentsNode, context);
+        var objects = group[0];
+        var wires = group[1];
+        for (var j = 0; j < objects.length; j++)
+            maxUID = Math.max(objects[j].uid, maxUID);
+        for (var j = 0; j < wires.length; j++)
+            maxUID = Math.max(wires[j].uid, maxUID);
+
+        var separate = separateGroup(objects);
+
+        var ic = new IC(this.context, 0, 0, separate[0], separate[2], separate[1], icuid);
+        ic.transform.setSize(V(width, height));
+
+        var iportsNode = getChildNode(icNode, "iports");
+        var iports = iportsNode.getElementsByTagName("iport");
+        for (var j = 0; j < iports.length; j++) {
+            var iportNode = iports[j];
+            var origin = V(getFloatValue(getChildNode(iportNode, "originx")), getFloatValue(getChildNode(iportNode, "originy")));
+            var target = V(getFloatValue(getChildNode(iportNode, "targetx")), getFloatValue(getChildNode(iportNode, "targety")));
+            ic.inputs[j].setOrigin(origin);
+            ic.inputs[j].setTarget(target);
+        }
+
+        var oportsNode = getChildNode(icNode, "oports");
+        var oports = oportsNode.getElementsByTagName("oport");
+        for (var j = 0; j < oports.length; j++) {
+            var oportNode = oports[j];
+            var origin = V(getFloatValue(getChildNode(oportNode, "originx")), getFloatValue(getChildNode(oportNode, "originy")));
+            var target = V(getFloatValue(getChildNode(oportNode, "targetx")), getFloatValue(getChildNode(oportNode, "targety")));
+            ic.outputs[j].setOrigin(origin);
+            ic.outputs[j].setTarget(target);
+        }
+
+        ICs.push(ic);
+    }
+    return maxUID;
 }

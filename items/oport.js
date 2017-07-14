@@ -20,13 +20,12 @@ class OPort {
         if (parent !== undefined)
             this.updatePosition();
     }
-    getIndexOfParent() {
-        var i;
-        for (i = 0; (i < this.parent.outputs.length) && (this.parent.outputs[i] !== this); i++);
+    getIndex() {
+        for (var i = 0; (i < this.parent.outputs.length) && (this.parent.outputs[i] !== this); i++);
         return i;
     }
     updatePosition() {
-        var i = this.getIndexOfParent();
+        var i = this.getIndex();
 
         var l = -this.parent.transform.size.y/2*(i - this.parent.outputs.length/2 + 0.5);
         if (i === 0) l -= 1;
@@ -84,7 +83,7 @@ class OPort {
         return containsPoint(transform, pos);
     }
     draw(i) {
-        if (this.parent.outputs.length !== this.prevParentOutputLength)
+        if (!this.set && this.parent.outputs.length !== this.prevParentOutputLength)
             this.updatePosition();
 
         var v = this.target;
@@ -122,6 +121,9 @@ class OPort {
     }
     getDir() {
         return this.parent.transform.getMatrix().mul(V(1, 0)).sub(this.parent.getPos()).normalize();
+    }
+    get uid() {
+        return this.parent.uid;
     }
     copy() {
         var port = new OPort();

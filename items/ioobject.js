@@ -85,7 +85,7 @@ class IOObject {
             max.x = Math.max(oport.target.x, max.x);
             max.y = Math.max(oport.target.y, max.y);
         }
-        this.cullTransform.size = V(max.x - min.x, max.y - min.y);
+        this.cullTransform.setSize(V(max.x - min.x, max.y - min.y));
         var c = Math.cos(this.transform.getAngle());
         var s = Math.sin(this.transform.getAngle());
         var x = (min.x - (-this.cullTransform.size.x/2)) * c + (min.y - (-this.cullTransform.size.y/2)) * s;
@@ -93,7 +93,7 @@ class IOObject {
         this.cullTransform.setPos(this.transform.getPos().add(V(x, y)));
         this.cullTransform.setAngle(this.transform.getAngle());
         this.cullTransform.setScale(this.transform.getScale());
-        this.cullTransform.size = this.cullTransform.size.add(V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
+        this.cullTransform.setSize(this.cullTransform.size.add(V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS)));
     }
     getCullBox() {
         return this.cullTransform;
@@ -219,6 +219,9 @@ class IOObject {
     getDisplayName() {
         return "IOObject";
     }
+    getXMLName() {
+        return this.getDisplayName().toLowerCase().replace(/\s+/g, '');
+    }
     setName(name) {
         this.name = name;
     }
@@ -241,26 +244,30 @@ class IOObject {
         }
         return copy;
     }
-    writeTo(node, uid) {
-        if (uid !== undefined)
-            createTextElement(node, "uid", uid);
-        createTextElement(node, "x", this.getPos().x);
-        createTextElement(node, "y", this.getPos().y);
-        createTextElement(node, "angle", this.getAngle());
+    writeTo(node) {
+        var objNode = createChildNode(node, this.getXMLName());
+        createTextElement(objNode, "uid", this.uid);
+        createTextElement(objNode, "name", this.getName());
+        createTextElement(objNode, "x", this.getPos().x);
+        createTextElement(objNode, "y", this.getPos().y);
+        createTextElement(objNode, "angle", this.getAngle());
+        return objNode;
     }
-}
-
-function loadIOObject(obj, node) {
-    var uid = getIntValue(getChildNode(node, "uid"));
-    var x = getFloatValue(getChildNode(node, "x"));
-    var y = getFloatValue(getChildNode(node, "y"));
-    var angle = getFloatValue(getChildNode(node, "angle"));
-    var isOn = getBooleanValue(getChildNode(node, "isOn"), false);
-
-    if (isOn)
-        obj.click(isOn);
-    obj.setPos(V(x, y));
-    obj.setAngle(angle);
-
-    obj.context.getObjects()[uid] = obj;
+    load(node) {
+        var uid = getIntValue(getChildNode(node, "uid"));
+        var name = getStringValue(getChildNode(node, "name"));
+        var x = getFloatValue(getChildNode(node, "x"));
+        var y = getFloatValue(getChildNode(node, "y"));
+        var angle = getFloatValue(getChildNode(node, "angle"));
+        var isOn = getBooleanValue(getChildNode(node, "isOn"), false);
+        this.uid = uid;
+        this.setName(name);
+        maxUID = Math.max(maxUID, uid);
+        if (isOn)
+            this.click(isOn);
+        this.setPos(V(x, y));
+        this.setAngle(angle);
+        return this;
+        // this.context.addObject(this);
+    }
 }

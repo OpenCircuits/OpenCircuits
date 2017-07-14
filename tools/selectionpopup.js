@@ -23,12 +23,12 @@ class SelectionPopup {
     }
     onPosXChange() {
         for (var i = 0; i < this.selections.length; i++)
-            this.selections[i].setPos(V(50*(Number(this.posX.value)+0.5), this.selections[i].getPos().y));
+            this.selections[i].setPos(V(GRID_SIZE*(Number(this.posX.value)+0.5), this.selections[i].getPos().y));
         render();
     }
     onPosYChange() {
         for (var i = 0; i < this.selections.length; i++)
-            this.selections[i].setPos(V(this.selections[i].getPos().x, 50*(Number(this.posY.value)+0.5)));
+            this.selections[i].setPos(V(this.selections[i].getPos().x, GRID_SIZE*(Number(this.posY.value)+0.5)));
         render();
     }
     onInputCountChange() {
@@ -82,9 +82,9 @@ class SelectionPopup {
             allXSame = allXSame && this.selections[i].getPos().x === this.selections[0].getPos().x;
             allYSame = allYSame && this.selections[i].getPos().y === this.selections[0].getPos().y;
         }
-        this.posX.value = (allXSame ? this.selections[0].getPos().x/50 - 0.5 : "");
+        this.posX.value = (allXSame ? this.selections[0].getPos().x/GRID_SIZE - 0.5 : "");
         this.posX.placeholder = (allXSame ? "" : "-");
-        this.posY.value = (allYSame ? this.selections[0].getPos().y/50 - 0.5 : "");
+        this.posY.value = (allYSame ? this.selections[0].getPos().y/GRID_SIZE - 0.5 : "");
         this.posY.placeholder = (allYSame ? "" : "-");
     }
     updateInputCountValue() {

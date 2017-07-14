@@ -13,11 +13,20 @@ class Context {
     constructor(designer) {
         this.designer = designer;
     }
+    reset() {
+        this.designer.reset();
+    }
     render() {
         this.designer.render();
     }
     propogate(sender, receiver, signal) {
         this.designer.propogate(sender, receiver, signal);
+    }
+    addObject(o) {
+        this.designer.addObject(o);
+    }
+    addWire(w) {
+        this.designer.addWire(w);
     }
     getDesigner() {
         return this.designer;
@@ -42,6 +51,26 @@ class Context {
             return this.designer.getIndexOfWire(o);
         else
             return this.designer.getIndexOfObject(o);
+    }
+    findByUID(uid) {
+        var obj = findObjectByUID(uid);
+        if (obj === undefined)
+            obj = findWireByUID(uid);
+        return obj;
+    }
+    findObjectByUID(uid) {
+        for (var i = 0; i < this.designer.objects.length; i++) {
+            if (this.designer.objects[i].uid === uid)
+                return this.designer.objects[i];
+        }
+        return undefined;
+    }
+    findWireByUID(uid) {
+        for (var i = 0; i < this.designer.wires.length; i++) {
+            if (this.designer.wires[i].uid === uid)
+                return this.designer.wires[i];
+        }
+        return undefined;
     }
     getWorldMousePos() {
         return this.designer.input.worldMousePos;
@@ -69,13 +98,20 @@ function wire(source, target) {
     wire.connect(target);
 }
 
+function reset() {
+    UID_COUNTER = 0;
+    ICs = [];
+    currentContext = context;
+    context.reset();
+}
+
 function onFinishLoading() {
     var designer = new CircuitDesigner(document.getElementById("canvas"));
     context = new Context(designer);
     currentContext = context;
 
     popup = new SelectionPopup();
-    icdesigner = new ICDesigner
+    icdesigner = new ICDesigner();
 
     // var asd = new Switch(context, -100, 100);
     // context.getDesigner().addObject(asd);
@@ -106,12 +142,41 @@ function onFinishLoading() {
     context.getDesigner().addObject(b2);
     context.getDesigner().addObject(q2);
 
+
+    // context.addObject(new Switch(context, 0, 0));
+
+    // var a = new Transform(V(0, 0), V(20, 20), 0, context.getCamera());
+    // var b = new Transform(V(30, 0), V(20, 20), 0, context.getCamera());
+    //
+    // var renderer = context.getRenderer();
+    //
+    // renderer.save();
+    // a.transformCtx(renderer.context);
+    // renderer.rect(0, 0, a.size.x, a.size.y, '#ff00ff');
+    // renderer.restore();
+    //
+    // renderer.save();
+    // b.transformCtx(renderer.context);
+    // renderer.rect(0, 0, b.size.x, b.size.y, '#ff00ff');
+    // renderer.restore();
+    //
+    // console.log(transformContains(a, b));
+
     // icdesigner.show([i, i2, o]);
 
     render();
 }
 
+var renderQueue = 0;
+
 function render() {
+    if (renderQueue === 0)
+        requestAnimationFrame(actualRender);
+    renderQueue++;
+}
+
+function actualRender() {
+    renderQueue = 0; // Saves (renderQueue - 1) render calls
     getCurrentContext().render();
 }
 

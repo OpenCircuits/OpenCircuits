@@ -82,6 +82,16 @@ Vector.prototype.distanceTo = function(vec) {
     return vec.sub(this).len();
 }
 
+// Returns a scalar representing the dot product between two Vectors
+Vector.prototype.dot = function(v) {
+    return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
+}
+
+// Returns a new Vector which is the projection of the given Vector onto this
+Vector.prototype.project = function(v) {
+    return this.scale(v.dot(this) / this.len2());
+}
+
 // Copies the Vector
 Vector.prototype.copy = function() {
     return new Vector(this.x, this.y, this.z, this.w);

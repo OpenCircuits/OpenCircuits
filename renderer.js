@@ -113,6 +113,10 @@ class Renderer {
         this.context.closePath();
         this.restore();
     }
+    _line(x1, y1, x2, y2) {
+        this.context.moveTo(x1, y1);
+        this.context.lineTo(x2, y2);
+    }
     curve(x1, y1, x2, y2, cx1, cy1, cx2, cy2, style, size) {
         this.save();
         this.setStyles(undefined, style, size);
@@ -134,13 +138,19 @@ class Renderer {
         this.restore();
     }
     setStyles(fillStyle, borderStyle, borderSize, alpha) {
-        // this.context.fillStyle = (fillStyle === undefined ? this.context.fillStyle : fillStyle);
-        // this.context.strokeStyle = (borderStyle === undefined ? this.context.strokeStyle : borderStyle);
-        // this.context.lineWidth = (borderSize === undefined ? this.context.lineWidth : borderSize);
-        this.context.globalAlpha = (alpha === undefined ? this.context.globalAlpha : alpha);
-        this.context.fillStyle = (fillStyle === undefined ? "#ffffff" : fillStyle);
-        this.context.strokeStyle = (borderStyle === undefined ? "#000000" : borderStyle);
-        this.context.lineWidth = (borderSize === undefined ? 2 : borderSize);
-        // this.context.globalAlpha = (alpha === undefined ? 1.0 : alpha);
+        if (alpha !== undefined && alpha !== this.context.globalAlpha)
+            this.context.globalAlpha = alpha;
+
+        fillStyle = (fillStyle === undefined) ? ('#ffffff') : (fillStyle);
+        if (fillStyle !== undefined && fillStyle !== this.context.fillStyle)
+            this.context.fillStyle = fillStyle;
+
+        borderStyle = (borderStyle === undefined) ? ('#000000') : (borderStyle);
+        if (borderStyle !== undefined && borderStyle !== this.context.strokeStyle)
+            this.context.strokeStyle = borderStyle;
+
+        borderSize = (borderSize === undefined) ? (2) : (borderSize);
+        if (borderSize !== undefined && borderSize !== this.context.lineWidth)
+            this.context.lineWidth = borderSize;
     }
 }

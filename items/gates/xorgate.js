@@ -5,8 +5,8 @@ class XORGate extends Gate {
     quadCurveXAt(t) {
         var s = this.transform.size.x/2 - 2;
         var l = this.transform.size.x/5 - 2;
-        var dt = 1 - t;
-        return (dt*dt)*(-s) + 2*t*(dt)*(-l) + (t*t)*(-s);
+        var t2 = 1 - t;
+        return (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
     }
     setInputAmount(target) {
         super.setInputAmount(target);
@@ -56,13 +56,7 @@ class XORGate extends Gate {
     getDisplayName() {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
-    writeTo(node, uid) {
-        var XORNode = createChildNode(node, "xorgate");
-        super.writeTo(XORNode, uid);
+    getXMLName() {
+        return "xorgate";
     }
-}
-
-function loadXORGate(context, node) {
-    var obj = new XORGate(context);
-    loadGate(obj, node);
 }

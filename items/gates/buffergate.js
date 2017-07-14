@@ -15,13 +15,7 @@ class BUFGate extends Gate {
     getDisplayName() {
         return this.not ? "NOT Gate" : "Buffer Gate";
     }
-    writeTo(node, uid) {
-        var BufferNode = createChildNode(node, "buffergate");
-        super.writeTo(BufferNode, uid);
+    getXMLName() {
+        return "bufgate";
     }
-}
-
-function loadBufferGate(context, node) {
-    var obj = new BUFGate(context);
-    loadGate(obj, node);
 }

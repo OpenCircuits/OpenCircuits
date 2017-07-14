@@ -48,7 +48,7 @@ function writeFile() {
     var wires = context.getWires();
 
     writeICs(icNode);
-    writeGroup(icNode, objects, wires);
+    writeGroup(projectNode, objects, wires);
 
     return root.xml ? root.xml : (new XMLSerializer()).serializeToString(root);
 }
@@ -57,14 +57,9 @@ function writeGroup(node, objects, wires) {
     var objectsNode = createChildNode(node, "objects");
     var wiresNode = createChildNode(node, "wires");
 
-    var uid = 0;
-    for (var i = 0; i < objects.length; i++) {
-        objects[i].writeTo(objectsNode, uid);
-        uid++;
-    }
+    for (var i = 0; i < objects.length; i++)
+        objects[i].writeTo(objectsNode);
 
-    for (var i = 0; i < wires.length; i++) {
-        wires[i].writeTo(wiresNode, uid);
-        uid++;
-    }
+    for (var i = 0; i < wires.length; i++)
+        wires[i].writeTo(wiresNode);
 }

@@ -153,4 +153,22 @@ class BezierCurve {
     copy() {
         return new BezierCurve(this.p1.copy(), this.p2.copy(), this.c1.copy(), this.c2.copy());
     }
+    writeTo(node) {
+        var bezierNode = createChildNode(node, "bezier");
+        createTextElement(bezierNode, "p1x", this.p1.x);
+        createTextElement(bezierNode, "p1y", this.p1.y);
+        createTextElement(bezierNode, "p2x", this.p2.x);
+        createTextElement(bezierNode, "p2y", this.p2.y);
+        createTextElement(bezierNode, "c1x", this.c1.x);
+        createTextElement(bezierNode, "c1y", this.c1.y);
+        createTextElement(bezierNode, "c2x", this.c2.x);
+        createTextElement(bezierNode, "c2y", this.c2.y);
+    }
+    load(node) {
+        var p1 = V(getFloatValue(getChildNode(node, "p1x")), getFloatValue(getChildNode(node, "p1y")));
+        var p2 = V(getFloatValue(getChildNode(node, "p2x")), getFloatValue(getChildNode(node, "p2y")));
+        var c1 = V(getFloatValue(getChildNode(node, "c1x")), getFloatValue(getChildNode(node, "c1y")));
+        var c2 = V(getFloatValue(getChildNode(node, "c2x")), getFloatValue(getChildNode(node, "c2y")));
+        this.update(p1, p2, c1, c2);
+    }
 }

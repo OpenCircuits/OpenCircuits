@@ -49,6 +49,7 @@ class ICDesigner {
         this.confirmButton.style.visibility = "hidden";
         this.cancelButton.style.visibility = "hidden";
         if (this.ic !== undefined) {
+            ICs[this.ic.icuid] = this.ic.copy();
             this.ic.remove();
             this.ic = undefined;
         }
@@ -117,9 +118,9 @@ class ICDesigner {
         }
         if (this.dragEdge !== undefined) {
             if (this.dragEdge === "horizontal") {
-                this.ic.transform.size.x = Math.abs(2*worldMousePos.x);
+                this.ic.transform.setWidth(Math.abs(2*worldMousePos.x));
             } else {
-                this.ic.transform.size.y = Math.abs(2*worldMousePos.y);
+                this.ic.transform.setHeight(Math.abs(2*worldMousePos.y));
             }
             this.ic.recalculatePorts();
 

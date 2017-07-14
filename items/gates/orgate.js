@@ -5,8 +5,8 @@ class ORGate extends Gate {
     quadCurveXAt(t) {
         var s = this.transform.size.x/2 - 2;
         var l = this.transform.size.x/5 - 2;
-        var dt = 1 - t;
-        return (dt*dt)*(-s) + 2*t*(dt)*(-l) + (t*t)*(-s);
+        var t2 = 1 - t;
+        return (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
     }
     setInputAmount(target) {
         super.setInputAmount(target);
@@ -53,18 +53,7 @@ class ORGate extends Gate {
     getDisplayName() {
         return this.not ? "NOR Gate" : "OR Gate";
     }
-    // copy() {
-    //     var b = new ORGate(this.not, this.context, this.getPos().x, this.getPos().y);
-    //     super.copy(b);
-    //     return b;
-    // }
-    writeTo(node, uid) {
-        var ORNode = createChildNode(node, "orgate");
-        super.writeTo(ORNode, uid);
+    getXMLName() {
+        return "orgate";
     }
-}
-
-function loadORGate(context, node) {
-    var obj = new ORGate(context);
-    loadGate(obj, node);
 }

@@ -2,9 +2,12 @@
 function openFile() {
     var fileInput = document.getElementById('file-input');
 
-    if (fileInput.files.length === 0) {
-        console.log("Select one or more files.");
-    } else {
+    // TODO: Custom popup w/ option to save
+    var open = confirm("Are you sure you want to overwrite your current scene?");
+
+    if (open) {
+        reset();
+
         var reader = new FileReader();
 
         reader.onload = function(e) {
@@ -56,37 +59,65 @@ function getStringValue(node, def) {
 function loadProject(root) {
     var projectNode = getChildNode(root, "project");
 
-    var objectsNode = getChildNode(projectNode, "objects");
-    var wiresNode = getChildNode(projectNode, "wires");
-
     var context = getCurrentContext();
 
+    var maxUID = 0;
+
+    maxUID = loadICs(projectNode, context);
+
+    var group = loadGroup(projectNode, context);
+    var objects = group[0];
+    var wires = group[1];
+    for (var i = 0; i < objects.length; i++) {
+        maxUID = Math.max(objects[i].uid, maxUID);
+        context.addObject(objects[i]);
+    }
+    for (var i = 0; i < wires.length; i++) {
+        maxUID = Math.max(wires[i].uid, maxUID);
+        context.addWire(wires[i]);
+    }
+
+    UID_COUNTER = maxUID+1;
+
+    console.log(UID_COUNTER);
+    console.log(this.context.getWires().length);
+
+    render();
+}
+
+function loadGroup(node, context) {
+    var objectsNode = getChildNode(node, "objects");
+    var wiresNode = getChildNode(node, "wires");
+
+    var objects = [];
+    var wires = [];
+
     var constantLows = objectsNode.getElementsByTagName("constantlow");
-    for (var i = 0; i < constantLows.length; loadConstantLow(context, constantLows[i++]));
+    for (var i = 0; i < constantLows.length; objects.push(new ConstantLow(context).load(constantLows[i++])));
     var constantHighs = objectsNode.getElementsByTagName("constanthigh");
-    for (var i = 0; i < constantHighs.length; loadConstantHigh(context, constantHighs[i++]));
+    for (var i = 0; i < constantHighs.length; objects.push(new ConstantHigh(context).load(constantHighs[i++])));
     var buttons = objectsNode.getElementsByTagName("button");
-    for (var i = 0; i < buttons.length; loadButton(context, buttons[i++]));
+    for (var i = 0; i < buttons.length; objects.push(new Button(context).load(buttons[i++])));
     var switches = objectsNode.getElementsByTagName("switch");
-    for (var i = 0; i < switches.length; loadSwitch(context, switches[i++]));
+    for (var i = 0; i < switches.length; objects.push(new Switch(context).load(switches[i++])));
 
     var leds = objectsNode.getElementsByTagName("led");
-    for (var i = 0; i < leds.length; loadLED(context, leds[i++]));
+    for (var i = 0; i < leds.length; objects.push(new LED(context).load(leds[i++])));
 
     var buffergates = objectsNode.getElementsByTagName("buffergate");
-    for (var i = 0; i < buffergates.length; loadBufferGate(context, buffergates[i++]));
+    for (var i = 0; i < buffergates.length; objects.push(new BUFGate(context).load(buffergates[i++])));
     var andgates = objectsNode.getElementsByTagName("andgate");
-    for (var i = 0; i < andgates.length; loadANDGate(context, andgates[i++]));
+    for (var i = 0; i < andgates.length; objects.push(new ANDGate(context).load(andgates[i++])));
     var orgates = objectsNode.getElementsByTagName("orgate");
-    for (var i = 0; i < orgates.length; loadORGate(context, orgates[i++]));
+    for (var i = 0; i < orgates.length; objects.push(new ORGate(context).load(orgates[i++])));
     var xorgates = objectsNode.getElementsByTagName("xorgate");
-    for (var i = 0; i < xorgates.length; loadXORGate(context, xorgates[i++]));
+    for (var i = 0; i < xorgates.length; objects.push(new XORGate(context).load(xorgates[i++])));
 
     var wiresArr = wiresNode.getElementsByTagName("wire");
     for (var i = 0; i < wiresArr.length; i++)
-        loadWire(context, wiresArr[i]);
+        wires.push(new Wire(context).load(wiresArr[i]));
     for (var i = 0; i < wiresArr.length; i++)
-        loadWireConnections(context, context.getWires()[i], wiresArr[i]);
+        wires[i].loadConnections(wiresArr[i], objects, wires);
 
-    render();
+    return [objects, wires];
 }

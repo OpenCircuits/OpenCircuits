@@ -13,14 +13,9 @@ class Switch extends IOObject {
     getDisplayName() {
         return "Switch";
     }
-    writeTo(node, uid) {
-        var switchNode = createChildNode(node, "switch");
-        super.writeTo(switchNode, uid);
+    writeTo(node) {
+        var switchNode = super.writeTo(node);
         createTextElement(switchNode, "isOn", this.outputs[0].isOn);
+        return switchNode;
     }
-}
-
-function loadSwitch(context, node) {
-    var obj = new Switch(context);
-    loadIOObject(obj, node);
 }

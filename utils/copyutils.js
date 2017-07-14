@@ -14,12 +14,14 @@ function copyGroup(objects) {
         for (var j = 0; j < obj.outputs.length; j++) {
             var wires = obj.outputs[j].connections;
             for (var k = 0; k < wires.length; k++) {
-                var wire = wires[k].copy(copies[i].outputs[j]);
+                var wire = wires[k].copy();
+                copies[i].outputs[j].connect(wire);
                 var w = wires[k];
                 // Iterate through all wires connected to other wires
                 while(w.connection instanceof Wire) {
                     w = w.connection;
-                    var w2 = w.copy(wire);
+                    var w2 = w.copy();
+                    wire.connect(w2);
                     wire = w2;
                 }
                 var lastConnection = findIPort(objects, w.connection, copies);

@@ -9,6 +9,15 @@ class CircuitDesigner {
 
         this.propogationQueue = [];
     }
+    reset() {
+        for (var i = 0; i < this.objects.length; i++)
+            this.objects[i].remove();
+        for (var i = 0; i < this.wires.length; i++)
+            this.wires[i].remove();
+        this.objects = [];
+        this.wires = [];
+        this.propogationQueue = [];
+    }
     propogate(sender, receiver, signal) {
         this.propogationQueue.push(new Propogation(sender, receiver, signal, () => this.update(sender, receiver)));//() => this.update()));
     }
@@ -38,11 +47,11 @@ class CircuitDesigner {
             this.render();
 
         if (updateRequests > 0) {
-            setTimeout(() => this.update(sender, receiver), dt);
+            setTimeout(() => this.update(sender, receiver), PROPOGATION_TIME);
         }
     }
     render() {
-        console.log("RENDER");
+        // console.log("RENDER");
 
         this.renderer.clear();
 
@@ -55,12 +64,19 @@ class CircuitDesigner {
         var cpy = cpos.y - Math.floor(cpos.y / step) * step;
         if (cpy < 0) cpy += step;
 
+        // Batch-render the lines = uglier code
+        this.renderer.save();
+        this.renderer.setStyles(undefined, '#999', 1 / this.camera.zoom);
+        this.renderer.context.beginPath();
         for (var x = -cpx; x <= this.renderer.canvas.width-cpx+step; x += step) {
-            this.renderer.line(x, 0, x, this.renderer.canvas.height, '#999', 1 / this.camera.zoom);
+            this.renderer._line(x, 0, x, this.renderer.canvas.height);
         }
         for (var y = -cpy; y <= this.renderer.canvas.height-cpy+step; y += step) {
-            this.renderer.line(0, y, this.renderer.canvas.width, y, '#999', 1 / this.camera.zoom);
+            this.renderer._line(0, y, this.renderer.canvas.width, y);
         }
+        this.renderer.context.closePath();
+        this.renderer.context.stroke();
+        this.renderer.restore();
 
         for (var i = 0; i < this.wires.length; i++)
             this.wires[i].draw();
@@ -69,6 +85,7 @@ class CircuitDesigner {
         var p1 = this.camera.getWorldPos(V(0, 0));
         var p2 = this.camera.getWorldPos(V(this.renderer.canvas.width, this.renderer.canvas.height));
         var screen = new Transform(p2.add(p1).scale(0.5), p2.sub(p1), 0, this.camera);
+        var radius = Math.sqrt(screen.size.x*screen.size.x + screen.size.y*screen.size.y)/2;
         for (var i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             var t = obj.getCullBox();
@@ -78,7 +95,8 @@ class CircuitDesigner {
             // this.renderer.rect(0, 0, t.size.x, t.size.y, '#ff00ff');
             // this.renderer.restore();
 
-            if (transformContains(t, screen)) {
+            if (transformContains(t, screen, true)) {
+                console.log("ASD");
                 obj.draw();
             }
         }

@@ -36,13 +36,7 @@ class ANDGate extends Gate {
     getDisplayName() {
         return this.not ? "NAND Gate" : "AND Gate";
     }
-    writeTo(node, uid) {
-        var ANDNode = createChildNode(node, "andgate");
-        super.writeTo(ANDNode, uid);
+    getXMLName() {
+        return "andgate";
     }
-}
-
-function loadANDGate(context, node) {
-    var obj = new ANDGate(context);
-    loadGate(obj, node);
 }

@@ -37,19 +37,18 @@ class Gate extends IOObject {
         copy.not = this.not;
         return copy;
     }
-    writeTo(node, uid) {
-        super.writeTo(node, uid);
-        createTextElement(node, "not", this.not);
-        createTextElement(node, "inputcount", this.inputs.length);
+    writeTo(node) {
+        var gateNode = super.writeTo(node);
+        createTextElement(gateNode, "not", this.not);
+        createTextElement(gateNode, "inputcount", this.inputs.length);
+        return gateNode;
     }
-}
-
-function loadGate(obj, node) {
-    loadIOObject(obj, node);
-
-    var not = getBooleanValue(getChildNode(node, "not"));
-    var inputCount = getIntValue(getChildNode(node, "inputcount"), 1);
-
-    obj.not = not;
-    obj.setInputAmount(inputCount);
+    load(node) {
+        super.load(node);
+        var not = getBooleanValue(getChildNode(node, "not"));
+        var inputCount = getIntValue(getChildNode(node, "inputcount"), 1);
+        this.not = not;
+        this.setInputAmount(inputCount);
+        return this;
+    }
 }

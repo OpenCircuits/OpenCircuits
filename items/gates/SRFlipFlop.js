@@ -4,7 +4,7 @@ class SRFlipFlop extends Gate {
         this.noChange = true;
         this.setInputAmount(3);
         this.setOutputAmount(2);
-        this.transform.size = this.transform.size.scale(1.5);
+        this.transform.setSize(this.transform.size.scale(1.5));
     }
     setInputAmount(target) {
         super.setInputAmount(target);

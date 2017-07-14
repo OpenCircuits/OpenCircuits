@@ -1,4 +1,6 @@
-const dt = 16;
+/* Should be const instead of var
+   but Safari does not allow it */
+var PROPOGATION_TIME = 16;
 
 var updateRequests = 0;
 
@@ -10,7 +12,7 @@ class Propogation {
 
         if (updateRequests === 0) {
             updateRequests++;
-            setTimeout(update, dt);
+            setTimeout(update, PROPOGATION_TIME);
         }
     }
     send() {

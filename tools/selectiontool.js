@@ -333,7 +333,7 @@ class SelectionTool extends Tool {
                 newAngle = Math.floor(newAngle/(Math.PI/4))*Math.PI/4;
             this.selections[i].setRotationAbout(newAngle, origin);
         }
-        this.prevAngle = dAngle;
+        this.prevAngle = dAngle + this.prevAngle;
     }
     removeSelections() {
         while(this.selections.length > 0) {

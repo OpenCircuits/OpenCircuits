@@ -1,6 +1,6 @@
 class LED extends IOObject {
     constructor(context, x, y, color) {
-        super(context, x, y, 50, 50, images["led.svg"], false, 1, 0);
+        super(context, x, y, DEFAULT_SIZE, DEFAULT_SIZE, images["led.svg"], false, 1, 0);
         this.transform.setPos(V(this.transform.pos.x, this.transform.pos.y - 2*this.transform.size.y));
         this.color = (color === undefined) ? ("#ffffff") : (color);
         this.connectorWidth = 5;
@@ -32,17 +32,15 @@ class LED extends IOObject {
         copy.connectorWidth = this.connectorWidth;
         return copy;
     }
-    writeTo(node, uid) {
-        var LEDNode = createChildNode(node, "led");
-        super.writeTo(LEDNode, uid);
+    writeTo(node) {
+        var LEDNode = super.writeTo(node);
         createTextElement(LEDNode, "color", this.color);
+        return LEDNode;
     }
-}
-
-function loadLED(context, node) {
-    var obj = new LED(context);
-    loadIOObject(obj, node);
-
-    var color = getStringValue(getChildNode(node, "color"));
-    obj.color = color;
+    load(node) {
+        super.load(node);
+        var color = getStringValue(getChildNode(node, "color"));
+        this.color = color;
+        return this;
+    }
 }

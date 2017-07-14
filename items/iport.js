@@ -20,13 +20,12 @@ class IPort {
         if (parent !== undefined)
             this.updatePosition();
     }
-    getIndexOfParent() {
-        var i;
-        for (i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
+    getIndex() {
+        for (var i = 0; (i < this.parent.inputs.length) && (this.parent.inputs[i] !== this); i++);
         return i;
     }
     updatePosition() {
-        var i = this.getIndexOfParent();
+        var i = this.getIndex();
 
         var l = -this.parent.transform.size.y/2*(i - this.parent.inputs.length/2 + 0.5);
         if (i === 0) l -= 1;
@@ -110,6 +109,9 @@ class IPort {
     }
     getDir() {
         return this.parent.transform.getMatrix().mul(V(-1, 0)).sub(this.parent.getPos()).normalize();
+    }
+    get uid() {
+        return this.parent.uid;
     }
     copy() {
         var port = new IPort();

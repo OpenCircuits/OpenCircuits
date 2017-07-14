@@ -4,9 +4,14 @@ class Transform {
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
         this.scale = V(1, 1);
+        this.corners = [];
+        this.localCorners = [];
         this.camera = camera;
         this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
         this.prevCameraZoom = this.camera.zoom;
+        this.dirty = true;
+        this.dirtySize = true;
+        this.dirtyCorners = true;
         this.setAngle(angle);
         this.updateMatrix();
     }
@@ -32,6 +37,25 @@ class Transform {
         this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
         this.prevCameraZoom = this.camera.zoom;
     }
+    updateSize() {
+        if (!this.dirtySize)
+            return;
+        this.dirtySize = false;
+
+        this.localCorners = [this.size.scale(V(-0.5, 0.5)), this.size.scale(V(0.5, 0.5)),
+                             this.size.scale(V(0.5, -0.5)), this.size.scale(V(-0.5, -0.5))];
+
+        this.radius = Math.sqrt(this.size.x*this.size.x + this.size.y*this.size.y)/2;
+    }
+    updateCorners() {
+        if (!this.dirtyCorners)
+            return;
+        this.dirtyCorners = false;
+
+        var corners = this.getLocalCorners();
+        for (var i = 0; i < 4; i++)
+            this.corners[i] = this.toWorldSpace(corners[i]);
+    }
     transformCtx(ctx) {
         this.updateMatrix();
         var m = new Matrix2x3(this.matrix);
@@ -49,6 +73,7 @@ class Transform {
     setParent(t) {
         this.parent = t;
         this.dirty = true;
+        this.dirtyCorners = true;
     }
     setCamera(c) {
         this.camera = c;
@@ -58,10 +83,12 @@ class Transform {
         this.pos.x = p.x;
         this.pos.y = p.y;
         this.dirty = true;
+        this.dirtyCorners = true;
     }
     setAngle(a) {
         this.angle = a;
         this.dirty = true;
+        this.dirtyCorners = true;
     }
     rotateAbout(a, c) {
         this.setAngle(a);
@@ -71,11 +98,18 @@ class Transform {
         var yy = this.pos.y * cos + this.pos.x * sin;
         this.setPos(V(xx, yy).add(c));
         this.dirty = true;
+        this.dirtyCorners = true;
     }
     setScale(s) {
         this.scale.x = s.x;
         this.scale.y = s.y;
         this.dirty = true;
+    }
+    setSize(s) {
+        this.size.x = s.x;
+        this.size.y = s.y;
+        this.dirtySize = true;
+        this.dirtyCorners = true;
     }
     getPos() {
         return V(this.pos.x, this.pos.y);
@@ -86,6 +120,13 @@ class Transform {
     getScale() {
         return V(this.scale.x, this.scale.y);
     }
+    getSize() {
+        return this.size;
+    }
+    getRadius() {
+        this.updateSize();
+        return this.radius;
+    }
     getMatrix() {
         this.updateMatrix();
         return this.matrix;
@@ -93,6 +134,30 @@ class Transform {
     getInverseMatrix() {
         this.updateMatrix();
         return this.inverse;
+    }
+    getBottomLeft() {
+        this.updateCorners();
+        return this.corners[0];
+    }
+    getBottomRight() {
+        this.updateCorners();
+        return this.corners[1];
+    }
+    getTopRight() {
+        this.updateCorners();
+        return this.corners[2];
+    }
+    getTopLeft() {
+        this.updateCorners();
+        return this.corners[3];
+    }
+    getCorners() {
+        this.updateCorners();
+        return this.corners;
+    }
+    getLocalCorners() {
+        this.updateSize();
+        return this.localCorners;
     }
     print() {
         this.updateMatrix();
