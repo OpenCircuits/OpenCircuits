@@ -75,8 +75,6 @@ function loadProject(root) {
     var icNode = getChildNode(projectNode, "ics");
     maxUID = loadICs(icNode, context);
 
-    console.log(ICs.length);
-
     var group = loadGroup(projectNode, context);
     var objects = group[0];
     var wires = group[1];
@@ -90,9 +88,6 @@ function loadProject(root) {
     }
 
     UID_COUNTER = maxUID+1;
-
-    console.log(UID_COUNTER);
-    console.log(this.context.getWires().length);
 
     render();
 }

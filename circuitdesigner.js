@@ -3,6 +3,7 @@ class CircuitDesigner {
         this.renderer = new Renderer(this, canvas, vw, vh);
         this.camera = new Camera(this);
         this.input = new Input(this);
+        this.history = new HistoryManager();
 
         this.wires = [];
         this.objects = [];

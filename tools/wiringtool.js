@@ -41,8 +41,12 @@ class WiringTool extends Tool {
         for (var i = 0; i < objects.length; i++) {
             var ii;
             if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
-                if (!this.wire.connect(objects[i].inputs[ii]))
+                if (!this.wire.connect(objects[i].inputs[ii])) {
                     this.removeWire(wires);
+                } else {
+                    var action = new PlaceWireAction(this.wire);
+                    getCurrentContext().addAction(action);
+                }
 
                 selectionTool.activate();
                 render();

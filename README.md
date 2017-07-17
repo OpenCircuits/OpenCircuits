@@ -7,6 +7,8 @@ The website can be found
 [here](http://www.opencircuits.io)
 or
 [here](http://www.opencircuit.design)
+or
+[here](http://www.opencircuitry.com)
 
 The purpose of this project being open source is to be something that people can learn from.
 

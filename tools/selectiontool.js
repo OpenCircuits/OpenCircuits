@@ -8,8 +8,6 @@ class SelectionTool extends Tool {
         this.midpoint = V(0, 0);
         this.drag = false;
         this.rotate = false;
-        this.startAngle = 0;
-        this.prevAngle = 0;
         this.shift = false;
         this.modiferKeyDown = false;
         this.selBoxDownPos = undefined;
@@ -36,16 +34,28 @@ class SelectionTool extends Tool {
                     popup.onEnter();
                 break;
             case C_KEY:
-                if (this.modiferKeyDown && this.selections.length > 0)
+                if (this.modiferKeyDown)
                     this.copy();
                 break;
             case X_KEY:
-                if (this.modiferKeyDown && this.selections.length > 0)
+                if (this.modiferKeyDown)
                     this.cut();
                 break;
             case V_KEY:
-                if (this.modiferKeyDown && this.clipboard.length > 0)
+                if (this.modiferKeyDown)
                     this.paste(input);
+                break;
+            case Z_KEY:
+                if (this.modiferKeyDown) {
+                    if (this.shift)
+                        getCurrentContext().redo();
+                    else
+                        getCurrentContext().undo();
+                }
+                break;
+            case Y_KEY:
+                if (this.modiferKeyDown)
+                    getCurrentContext().redo();
                 break;
             case CONTROL_KEY:
             case COMMAND_KEY:
@@ -76,7 +86,7 @@ class SelectionTool extends Tool {
 
         // Transform selection(s)
         if (this.selections.length > 0) {
-
+            // Move selection(s)
             if (this.drag) {
                 this.moveSelections(worldMousePos);
                 render();
@@ -118,7 +128,7 @@ class SelectionTool extends Tool {
             return;
 
         // Check if rotation circle was pressed
-        if (this.selections.length > 0) {
+        if (!this.rotate && this.selections.length > 0) {
             var o = this.midpoint;
             var p = worldMousePos;
             var d = p.sub(o).len2();
@@ -126,9 +136,12 @@ class SelectionTool extends Tool {
                 this.rotate = true;
                 this.startAngle = Math.atan2(p.y-o.y, p.x-o.x);
                 this.prevAngle = this.startAngle;
+                this.oTransform = [];
                 this.realAngles = [];
-                for (var i = 0; i < this.selections.length; i++)
+                for (var i = 0; i < this.selections.length; i++) {
                     this.realAngles[i] = this.selections[i].getAngle();
+                    this.oTransform[i] = this.selections[i].transform.copy();
+                }
                 popup.hide();
                 return;
             }
@@ -142,15 +155,16 @@ class SelectionTool extends Tool {
             var obj = objects[i];
 
             // Check if object's selection box was pressed
-            if (obj.sContains(worldMousePos)) {
+            if (!this.drag && obj.sContains(worldMousePos)) {
+                this.oTransform = [];
                 for (var j = 0; j < this.selections.length; j++) {
+                    this.oTransform[j] = this.selections[j].transform.copy();
                     if (this.selections[j] === obj) {
                         this.drag = true;
                         this.dragObj = this.selections[j];
                         this.dragPos = worldMousePos.copy().sub(this.dragObj.getPos());
                         popup.hide();
                         pressed = true;
-                        break;
                     }
                 }
             }
@@ -178,13 +192,15 @@ class SelectionTool extends Tool {
             if (!this.isWirePressed) {
                 for (var i = 0; i < wires.length; i++) {
                     var wire = wires[i];
-                    console.log(wire);
                     var t;
                     if ((t = wire.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
                         this.isWirePressed = true;
                         this.pressedWire = wires[i];
                         console.log("press-arooney " + t);
+                        var action = new PressWireAction(wire);
+                        getCurrentContext().addAction(action);
                         wire.press(t);
+                        this.pressedWirePos = wires[i].curve.p2.copy();
                         render();
                         return;
                     }
@@ -214,18 +230,24 @@ class SelectionTool extends Tool {
 
         // Stop moving wire
         if (this.isWirePressed) {
+            var p0 = this.pressedWirePos;
+            var p1 = this.pressedWire.curve.p2.copy();
+            var action = new MoveWireConnectionAction(this.pressedWire, p0, p1);
+            getCurrentContext().addAction(action);
             this.isWirePressed = false;
             this.pressedWire = undefined;
         }
 
         // Stop dragging
         if (this.drag) {
+            this.addTransformAction();
             this.drag = false;
             this.dragObj = undefined;
         }
 
         // Stop rotating
         if (this.rotate) {
+            this.addTransformAction();
             this.rotate = false;
             render();
         }
@@ -292,6 +314,15 @@ class SelectionTool extends Tool {
             render();
         }
     }
+    addTransformAction() {
+        var action = new GroupAction();
+        for (var i = 0; i < this.selections.length; i++) {
+            var origin = this.oTransform[i];
+            var target = this.selections[i].transform.copy();
+            action.add(new TransformAction(this.selections[i], origin, target));
+        }
+        getCurrentContext().addAction(action);
+    }
     select(objects) {
         if (objects.length === 0)
             return;
@@ -350,23 +381,28 @@ class SelectionTool extends Tool {
         this.midpoint = this.midpoint.scale(1. / this.selections.length);
     }
     copy() {
-        this.clipboard = copyGroup(this.selections);
+        if (this.selections.length > 0)
+            this.clipboard = copyGroup(this.selections);
     }
     cut() {
-        this.copy();
-        this.removeSelections();
+        if (this.selections.length > 0) {
+            this.copy();
+            this.removeSelections();
+        }
     }
     paste(input) {
-        var copies = copyGroup(this.clipboard[0]);
-        for (var i = 0; i < copies[0].length; i++) {
-            input.parent.addObject(copies[0][i]);
-            copies[0][i].setPos(copies[0][i].getPos().add(V(5,5)));
+        if (this.selections.length > 0) {
+            var copies = copyGroup(this.clipboard[0]);
+            for (var i = 0; i < copies[0].length; i++) {
+                input.parent.addObject(copies[0][i]);
+                copies[0][i].setPos(copies[0][i].getPos().add(V(5,5)));
+            }
+            for (var i = 0; i < copies[1].length; i++)
+                input.parent.addWire(copies[1][i]);
+            this.deselect();
+            this.select(copies[0]);
+            render();
         }
-        for (var i = 0; i < copies[1].length; i++)
-            input.parent.addWire(copies[1][i]);
-        this.deselect();
-        this.select(copies[0]);
-        render();
     }
     draw(renderer) {
         var camera = renderer.getCamera();

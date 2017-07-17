@@ -110,12 +110,13 @@ class IOObject {
     getBorderColor() {
         return (this.selected ? '#0d7f1f' : undefined);
     }
+    setTransform(t) {
+        this.transform = t;
+        this.onTransformChange();
+    }
     setPos(v) {
         this.transform.setPos(v);
         this.onTransformChange();
-    }
-    getPos() {
-        return V(this.transform.pos.x, this.transform.pos.y);
     }
     setAngle(a) {
         this.transform.setAngle(a);
@@ -129,6 +130,9 @@ class IOObject {
         this.transform.rotateAbout(-this.getAngle(), c);
         this.transform.rotateAbout(a, c);
         this.onTransformChange();
+    }
+    getPos() {
+        return V(this.transform.pos.x, this.transform.pos.y);
     }
     getAngle() {
         return this.transform.angle;

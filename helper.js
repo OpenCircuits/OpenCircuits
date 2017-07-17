@@ -12,8 +12,10 @@ var SHIFT_KEY = 16;
 var DELETE_KEY = 8;
 var ENTER_KEY = 13;
 var C_KEY = 67;
-var X_KEY = 88;
 var V_KEY = 86;
+var X_KEY = 88;
+var Y_KEY = 89;
+var Z_KEY = 90;
 var CONTROL_KEY = 17;
 var COMMAND_KEY = 91;
 

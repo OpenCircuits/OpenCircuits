@@ -1,20 +1,26 @@
 class HistoryManager {
     constructor() {
-        this.undoQueue = [];
-        this.redoQueue = [];
+        this.undoStack = [];
+        this.redoStack = [];
+    }
+    add(action) {
+        this.redoStack = [];
+        this.undoStack.push(action);
     }
     undo() {
-        if (this.undoQueue.length > 0) {
-            this.undoQueue[0].undo();
-            this.redoQueue.push(this.undoQueue[0]);
-            this.undoQueue[0].shift();
+        if (this.undoStack.length > 0) {
+            var action = this.undoStack.pop();
+            action.undo();
+            this.redoStack.push(action);
+            render();
         }
     }
     redo() {
-        if (this.redoQueue.length > 0) {
-            this.redoQueue[0].redo();
-            this.undoQueue.push(this.redoQueue[0]);
-            this.redoQueue[0].shift();
+        if (this.redoStack.length > 0) {
+            var action = this.redoStack.pop();
+            action.redo();
+            this.undoStack.push(action);
+            render();
         }
     }
 }

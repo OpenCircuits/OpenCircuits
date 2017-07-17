@@ -29,6 +29,8 @@ class ItemTool extends Tool {
         render();
     }
     onClick() {
+        var action = new PlaceAction(this.item);
+        getCurrentContext().addAction(action);
         selectionTool.activate();
     }
 }
