@@ -111,7 +111,7 @@ class BezierCurve {
                 minDist = dist;
             }
         }
-
+        
         // Newton's method to find root for when slope is undefined
         {
             var amt = 5;

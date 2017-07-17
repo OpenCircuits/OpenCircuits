@@ -250,6 +250,43 @@ function findIC(id) {
     return undefined;
 }
 
+/**
+ * Finds and returns the closest 't' value
+ * of the parametric equation for a line.
+ *
+ * Parametric function defined by
+ * X(t) = t(p2.x - p1.x) + p1.x
+ * Y(t) = t(p2.y - p1.y) + p1.y
+ *
+ * Solves for 't' from root of the derivative of
+ * the distance function between the line and <mx, my>
+ * D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)
+ *
+ * @param  {Vector} p1
+ *         The first point of the line
+ *
+ * @param  {Vector} p2
+ *         The second point of the line
+ *
+ * @param  {Number} mx
+ *         The x-value of the point
+ *         to determine the 't' value
+ *
+ * @param  {Number} my
+ *         The y-value of the point
+ *         to determine the 't' value
+ *
+ * @return {Number}
+ *         The nearest 't' value of <mx, my>
+ *         on the line p1->p2
+ */
+function getNearestT(p1, p2, mx, my) {
+    var dx = p2.x - p1.x;
+    var dy = p2.y - p1.y;
+    var t = (dx*(mx - p1.x) + dy*(my - p1.y))/(dx*dx + dy*dy);
+    return clamp(t, 0, 1);
+}
+
 // Separates an array of objects into three sub-groups
 // of input-type objects (switch and buttons),
 // output-type objects (LEDs),

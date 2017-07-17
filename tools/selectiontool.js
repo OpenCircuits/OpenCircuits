@@ -178,6 +178,7 @@ class SelectionTool extends Tool {
             if (!this.isWirePressed) {
                 for (var i = 0; i < wires.length; i++) {
                     var wire = wires[i];
+                    console.log(wire);
                     var t;
                     if ((t = wire.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
                         this.isWirePressed = true;

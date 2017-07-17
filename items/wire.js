@@ -119,7 +119,7 @@ class Wire {
         return this.curve.getVel(t).normalize();
     }
     getNearestT(mx, my) {
-        return (this.straight) ? (-1) : (this.curve.getNearestT(mx, my));
+        return (this.straight) ? (getNearestT(this.curve.p1, this.curve.p2, mx, my)) : (this.curve.getNearestT(mx, my));
     }
     connect(obj) {
         if (obj.input !== undefined && obj.input !== this)
@@ -184,7 +184,7 @@ class Wire {
         this.curve.load(bezier);
 
         var straight = getBooleanValue(getChildNode(node, "straight"));
-        wire.straight = straight;
+        this.straight = straight;
 
         return this;
         // this.context.addWire(this);
