@@ -194,14 +194,21 @@ class SelectionTool extends Tool {
                     var wire = wires[i];
                     var t;
                     if ((t = wire.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
-                        this.isWirePressed = true;
-                        this.pressedWire = wires[i];
-                        console.log("press-arooney " + t);
-                        var action = new PressWireAction(wire);
-                        getCurrentContext().addAction(action);
-                        wire.press(t);
-                        this.pressedWirePos = wires[i].curve.p2.copy();
-                        render();
+                        // Select connection point if clicked
+                        if ((t < 0.05 && wire.input instanceof Wire) || (t > 0.95 && wire.connection instanceof Wire)) {
+                            this.isWirePressed = true;
+                            this.pressedWire = (wire.connection instanceof Wire ? wire : wire.input);
+                            this.pressedWirePos = wires[i].curve.p2.copy();
+                        } else {
+                            this.isWirePressed = true;
+                            this.pressedWire = wires[i];
+                            console.log("press-arooney " + t);
+                            var action = new PressWireAction(wire);
+                            getCurrentContext().addAction(action);
+                            wire.press(t);
+                            this.pressedWirePos = wires[i].curve.p2.copy();
+                            render();
+                        }
                         return;
                     }
                 }
