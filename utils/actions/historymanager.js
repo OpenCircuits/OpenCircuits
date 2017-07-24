@@ -3,6 +3,14 @@ class HistoryManager {
         this.undoStack = [];
         this.redoStack = [];
     }
+    onKeyDown(code, input) {
+        if (input.modiferKeyDown) {
+            if (code === Y_KEY || (code === Z_KEY && input.shiftKeyDown))
+                this.redo();
+            else if (code === Z_KEY)
+                this.undo();
+        }
+    }
     add(action) {
         this.redoStack = [];
         this.undoStack.push(action);

@@ -57,7 +57,7 @@ class ICDesigner {
     }
     onMouseDown(input) {
         if (this.ic === undefined)
-            return;
+            return false;
 
         var worldMousePos = input.worldMousePos;
 
@@ -67,7 +67,7 @@ class ICDesigner {
             if (inp.sContains(worldMousePos)) {
                 this.drag = true;
                 this.dragObj = inp;
-                return;
+                return false;
             }
         }
         var outputs = this.ic.outputs;
@@ -76,7 +76,7 @@ class ICDesigner {
             if (out.sContains(worldMousePos)) {
                 this.drag = true;
                 this.dragObj = out;
-                return;
+                return false;
             }
         }
 
@@ -84,7 +84,7 @@ class ICDesigner {
         var size = this.ic.getSize();
         var transform1 = new Transform(pos, size.scale(1.1), 0, this.context.getCamera());
         var transform2 = new Transform(pos, size.scale(0.9), 0, this.context.getCamera());
-        if (containsPoint(transform1, worldMousePos) && !containsPoint(transform2, worldMousePos)) {
+        if (rectContains(transform1, worldMousePos) && !rectContains(transform2, worldMousePos)) {
             if (worldMousePos.y < pos.y+size.y/2-4 && worldMousePos.y > pos.y-size.y/2+4) {
                 this.dragEdge = "horizontal";
             } else {
@@ -94,7 +94,7 @@ class ICDesigner {
     }
     onMouseUp(input) {
         if (this.ic === undefined)
-            return;
+            return false;
 
         this.drag = false;
         this.dragObj = undefined;
@@ -102,7 +102,7 @@ class ICDesigner {
     }
     onMouseMove(input) {
         if (this.ic === undefined)
-            return;
+            return false;
 
         var worldMousePos = input.worldMousePos;
 
@@ -114,7 +114,7 @@ class ICDesigner {
             this.dragObj.setOrigin(v1);
             this.dragObj.setTarget(v2);
 
-            render();
+            return true;
         }
         if (this.dragEdge !== undefined) {
             if (this.dragEdge === "horizontal") {
@@ -124,7 +124,7 @@ class ICDesigner {
             }
             this.ic.recalculatePorts();
 
-            render();
+            return true;
         }
     }
 }

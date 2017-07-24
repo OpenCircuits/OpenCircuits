@@ -118,20 +118,20 @@ class IC extends IOObject {
 }
 
 function createIC(context, selections, pos) {
-    var objects = copyGroup(selections)[0];
-    var separate = seperateGroup(objects);
+    var objects = copyGroup(selections).objects;
+    var separate = separateGroup(objects);
 
-    return new IC(context, pos.x, pos.y, separate[0], separate[2], separate[1], ICs.length);
+    return new IC(context, pos.x, pos.y, separate.inputs, separate.outputs, separate.components, ICs.length);
 }
 
 function copyIC(source, target) {
     var group = source.inputObjects.concat(source.components, source.outputObjects);
-    var copies = copyGroup(group)[0];
+    var copies = copyGroup(group).objects;
 
     // Separate each input/output/component
     var separate = separateGroup(copies);
 
-    target.setup(separate[0], separate[2], separate[1]);
+    target.setup(separate.inputs, separate.outputs, separate.components);
     target.icuid = source.icuid;
     target.transform = source.transform.copy();
 
@@ -198,7 +198,7 @@ function loadICs(node, context) {
 
         var separate = separateGroup(objects);
 
-        var ic = new IC(this.context, 0, 0, separate[0], separate[2], separate[1], icuid);
+        var ic = new IC(this.context, 0, 0, separate.inputs, separate.outputs, separate.components, icuid);
         ic.transform.setSize(V(width, height));
 
         var iportsNode = getChildNode(icNode, "iports");

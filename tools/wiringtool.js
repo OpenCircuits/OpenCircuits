@@ -31,7 +31,7 @@ class WiringTool extends Tool {
     }
     onMouseMove(input) {
         this.wire.curve.update(this.wire.curve.p1, input.worldMousePos, this.wire.curve.c1, input.worldMousePos);
-        render();
+        return true;
     }
     onClick(input) {
         var objects = input.parent.getObjects();
@@ -49,13 +49,12 @@ class WiringTool extends Tool {
                 }
 
                 selectionTool.activate();
-                render();
-                return;
+                return true;
             }
         }
 
         this.removeWire(wires);
         selectionTool.activate();
-        render();
+        return true;
     }
 }

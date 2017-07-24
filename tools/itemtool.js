@@ -26,7 +26,7 @@ class ItemTool extends Tool {
     }
     onMouseMove(input) {
         this.item.setPos(input.worldMousePos);
-        render();
+        return true;
     }
     onClick() {
         var action = new PlaceAction(this.item);

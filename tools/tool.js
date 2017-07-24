@@ -16,9 +16,9 @@ class Tool {
     }
     onKeyUp(code) {
     }
-    onMouseMove() {
-    }
     onMouseDown() {
+    }
+    onMouseMove() {
     }
     onMouseUp() {
     }

@@ -53,6 +53,7 @@ class Wire {
                 this.connection.input = undefined;
                 this.connection.remove();
             } else {
+                this.connection.activate(false);
                 this.connection.input = undefined;
             }
             this.connection = undefined;

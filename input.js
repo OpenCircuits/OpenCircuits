@@ -16,6 +16,9 @@ class Input {
 
         this.z = 0;
 
+        this.shiftKeyDown = false;
+        this.modiferKeyDown = false;
+
         this.isDragging = false;
         this.startTapTime = undefined;
         this.setup();
@@ -34,18 +37,24 @@ class Input {
     onKeyDown(e) {
         var code = e.keyCode;
 
+        if (code === SHIFT_KEY)
+            this.shiftKeyDown = true;
+        else if (code === CONTROL_KEY || code === COMMAND_KEY)
+            this.modiferKeyDown = true;
+
+        this.parent.history.onKeyDown(code, this);
+        clipboard.onKeyDown(code, this);
         currentTool.onKeyDown(code, this);
     }
     onKeyUp(e) {
         var code = e.keyCode;
 
-        currentTool.onKeyUp(code, this);
-    }
-    onClick(e) {
-        if (this.isDragging)
-            return;
+        if (code === SHIFT_KEY)
+            this.shiftKeyDown = false;
+        else if (code === CONTROL_KEY || code === COMMAND_KEY)
+            this.modiferKeyDown = false;
 
-        currentTool.onClick(this);
+        currentTool.onKeyUp(code, this);
     }
     onDoubleClick(e) {
     }
@@ -76,14 +85,11 @@ class Input {
         this.mouseDown = true;
         this.mouseDownPos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
-        currentTool.onMouseDown(this);
-        icdesigner.onMouseDown(this);
-    }
-    onMouseUp(e) {
-        this.mouseDown = false;
-
-        currentTool.onMouseUp(this);
-        icdesigner.onMouseUp(this);
+        var shouldRender = false;
+        shouldRender = currentTool.onMouseDown(this);
+        shouldRender = icdesigner.onMouseDown(this) || shouldRender;
+        if (shouldRender)
+            render();
     }
     onMouseMove(e) {
         var rect = this.canvas.getBoundingClientRect();
@@ -96,17 +102,39 @@ class Input {
 
         this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
 
-        currentTool.onMouseMove(this);
-        icdesigner.onMouseMove(this);
+        var shouldRender = false;
+        shouldRender = currentTool.onMouseMove(this);
+        shouldRender = icdesigner.onMouseMove(this) || shouldRender;
+        if (shouldRender)
+            render();
+    }
+    onMouseUp(e) {
+        this.mouseDown = false;
+
+        var shouldRender = false;
+        shouldRender = currentTool.onMouseUp(this);
+        shouldRender = icdesigner.onMouseUp(this) || shouldRender;
+        if (shouldRender)
+            render();
+    }
+    onClick(e) {
+        if (this.isDragging)
+            return;
+
+        if (currentTool.onClick(this))
+            render();
     }
 }
 
 var isSidebarOpen = false;
 
-var selectionTool = new SelectionTool();
 var panTool = new PanTool();
+var wireTool = new WireTool();
 var wiringTool = new WiringTool();
 var itemTool = new ItemTool();
+var selectionTool = new SelectionTool();
+
+var clipboard = new Clipboard();
 
 var currentTool = selectionTool;
 

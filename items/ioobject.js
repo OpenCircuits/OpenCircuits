@@ -197,11 +197,11 @@ class IOObject {
         this.inputs = [];
     }
     contains(pos) {
-        return containsPoint(this.transform, pos);
+        return rectContains(this.transform, pos);
     }
     sContains(pos) {
         return (!this.isPressable &&  this.contains(pos)) ||
-                (this.isPressable && !this.contains(pos) && containsPoint(this.selectionBoxTransform, pos));
+                (this.isPressable && !this.contains(pos) && rectContains(this.selectionBoxTransform, pos));
     }
     iPortContains(pos) {
         for (var i = 0; i < this.inputs.length; i++) {

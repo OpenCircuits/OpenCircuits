@@ -6,6 +6,10 @@ var IO_PORT_RADIUS = 7;
 var IO_PORT_BORDER_WIDTH = 1;
 var DEFAULT_SIZE = 50;
 var GRID_SIZE = 50;
+var WIRE_DIST_THRESHOLD = 5;
+var WIRE_DIST_THRESHOLD2 = WIRE_DIST_THRESHOLD*WIRE_DIST_THRESHOLD;
+var WIRE_DIST_ITERATIONS = 10;
+var WIRE_NEWTON_ITERATIONS = 5;
 
 var OPTION_KEY = 18;
 var SHIFT_KEY = 16;
@@ -19,27 +23,27 @@ var Z_KEY = 90;
 var CONTROL_KEY = 17;
 var COMMAND_KEY = 91;
 
-function clamp(x, min, max) {
-    return Math.min(Math.max(x, min), max);
-}
-
-// Pos must be in world coords
-function containsPoint(transform, pos) {
+/**
+ * Determines whether the given point is
+ * within the rectangle defined by the
+ * given transform
+ *
+ * @param  {Transform} transform
+ *         The transform that represents the rectangle
+ *
+ * @param  {Vector} pos
+ *         * Must be in world coordinates *
+ *         The point to determine whether or not
+ *         it's within the rectangle
+ *
+ * @return {Boolean}
+ *         True if the point is within the rectangle,
+ *         false otherwise
+ */
+function rectContains(transform, pos) {
     var tr = transform.size.scale(0.5);
     var bl = transform.size.scale(-0.5);
     var p  = transform.toLocalSpace(pos);
-
-    //
-    // DEBUG DRAWING
-    //
-    // var renderer = getCurrentContext().getRenderer();
-    // renderer.save();
-    // transform.transformCtx(renderer.context);
-    // renderer.rect(0, 0, transform.size.x, transform.size.y, '#ff00ff', '#000');
-    // renderer.restore();
-    // var camera = getCurrentContext().getCamera();
-    // var mv = camera.getScreenPos(pos);
-    // renderer.circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
 
     return (p.x > bl.x &&
             p.y > bl.y &&
@@ -47,20 +51,25 @@ function containsPoint(transform, pos) {
             p.y < tr.y);
 }
 
-// Pos must be in world coords
+/**
+ * Determines whether the given point
+ * is within the circle defined by the
+ * given transform
+ *
+ * @param  {Transform} transform
+ *         The transform that represents the circle
+ *
+ * @param  {Vector} pos
+ *         * Must be in world coordinates *
+ *         The point to determine whether or not
+ *         it's within the rectangle
+ *
+ * @return {Boolean}
+ *          True if the point is within the rectangle,
+ *          false otherwise
+ */
 function circleContains(transform, pos) {
     var v = transform.toLocalSpace(pos);
-
-    //
-    // DEBUG DRAWING
-    //
-    // saveCtx();
-    // transform.transfomCtx(frame.context);
-    // circle(0, 0, transform.size.x, '#ff00ff', '#000');
-    // restoreCtx();
-    // var mv = camera.getScreenPos(pos);
-    // circle(mv.x, mv.y, 5, '#00ff00', '#000', 1 / camera.zoom);
-
     return (v.len2() <= transform.size.x*transform.size.x/4);
 }
 
@@ -166,9 +175,18 @@ function transformContains(A, B) {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param {Vector} bl   Bottom left corner of the rectangle
- * @param {Vector} tr   Top right corner of the rectangle
- * @param {Vector} pos  The position to get the nearest point on
+ * @param  {Vector} bl
+ *         Bottom left corner of the rectangle
+ *
+ * @param  {Vector} tr
+ *         Top right corner of the rectangle
+ *
+ * @param  {Vector} pos
+ *         The position to get the nearest point on
+ *
+ * @return {Vector}
+ *         The closest position on the edge of
+ *         the rectangle from 'pos'
  */
 function getNearestPointOnRect(bl, tr, pos) {
     if (pos.x < bl.x)
@@ -186,7 +204,7 @@ function getNearestPointOnRect(bl, tr, pos) {
  * Finds and returns all the inter-connected wires
  * in a given group of objects
  *
- * @param  {Array}  objects
+ * @param  {Array} objects
  *         The group of objects to find the wires
  *         in between
  *
@@ -280,13 +298,61 @@ function findIC(id) {
  *
  * @return {Number}
  *         The nearest 't' value of <mx, my>
- *         on the line p1->p2
+ *         on the line p1->p2 or -1 if the
+ *         dist < WIRE_DIST_THRESHOLD
  */
 function getNearestT(p1, p2, mx, my) {
     var dx = p2.x - p1.x;
     var dy = p2.y - p1.y;
     var t = (dx*(mx - p1.x) + dy*(my - p1.y))/(dx*dx + dy*dy);
-    return clamp(t, 0, 1);
+    var pos = V(dx * t + p1.x, dy * t + p1.y);
+    if (pos.sub(V(mx, my)).len2() < WIRE_DIST_THRESHOLD2)
+        return clamp(t, 0, 1);
+    else
+        return -1;
+}
+
+/**
+ * Uses Newton's method to find the roots of
+ * the function 'f' given a derivative 'df'
+ *
+ * @param  {Number} iterations
+ *         The number of iterations to perform
+ *         Newton's method with; the smaller
+ *         the better but less accurate
+ *
+ * @param  {Number} t0
+ *         The starting root value parameter
+ *
+ * @param  {Number} x
+ *         Parameter 1 for the function
+ *
+ * @param  {Number} y
+ *         Parameter 2 for the function
+ *
+ * @param  {Function} f
+ *         The function to find the roots of
+ *         In the form f(t, x, y) = ...
+ *
+ * @param  {Function} df
+ *         The derivative of the function
+ *         In the form of df(t, x, y)
+ *
+ * @return {Number}
+ *         The parameter 't' that results in
+ *         f(t, x, y) = 0
+ */
+function findRoots(iterations, t0, x, y, f, df) {
+    var t = t0;
+    do {
+        var v = f(t, x, y);
+        var dv = df(t, x, y);
+        if (dv === 0)
+            break;
+        t = t - v / dv;
+        t = clamp(t, 0.01, 0.99);
+    } while((iterations--) > 0);
+    return t;
 }
 
 // Separates an array of objects into three sub-groups
@@ -306,7 +372,26 @@ function separateGroup(group) {
         else
             components.push(object);
     }
-    return [inputs, components, outputs];
+    return {inputs:inputs, components:components, outputs:outputs};
+}
+
+/**
+ * Clamps a number between a given min and max
+ *
+ * @param  {Number} x
+ *         The number to clamp
+ *
+ * @param  {Number} min
+ *         The minimum
+ *
+ * @param  {Number} max
+ *         The maximum
+ *
+ * @return {Number}
+ *         The clamped number
+ */
+function clamp(x, min, max) {
+    return Math.min(Math.max(x, min), max);
 }
 
 // Code from https://stackoverflow.com/questions/5916900/how-can-you-detect-the-version-of-a-browser

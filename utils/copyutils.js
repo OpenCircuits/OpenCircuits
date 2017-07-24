@@ -31,7 +31,7 @@ function copyGroup(objects) {
         }
     }
 
-    return [copies, wireCopies];
+    return {objects:copies, wires:wireCopies};
 }
 
 function findIPort(objects, target, copies) {

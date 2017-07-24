@@ -70,13 +70,15 @@ class BezierCurve {
         var b = this.p1.y - 2*this.c1.y + this.c2.y;
         return 6*(m * t + b);
     }
-    getAcc(t) {
-        return V(this.getDDX(t), this.getDDY(t));
-    }
     getDist(t, mx, my) {
         var dx = this.getX(t) - mx;
         var dy = this.getY(t) - my;
         return Math.sqrt(dx*dx + dy*dy);
+    }
+    getDist2(t, mx, my) {
+        var dx = this.getX(t) - mx;
+        var dy = this.getY(t) - my;
+        return dx*dx + dy*dy;
     }
     getDistDenominator(t, mx, my) {
         var dx = this.getX(t) - mx;
@@ -104,49 +106,23 @@ class BezierCurve {
     getNearestT(mx, my) {
         var minDist = 1e20;
         var t0 = -1;
-        for (var tt = 0; tt <= 1.0; tt += 0.1) {
+        for (var tt = 0; tt <= 1.0; tt += 1.0 / WIRE_DIST_ITERATIONS) {
             var dist = this.getDist(tt, mx, my);
             if (dist < minDist) {
                 t0 = tt;
                 minDist = dist;
             }
         }
-        
-        // Newton's method to find root for when slope is undefined
-        {
-            var amt = 5;
-            var t = t0;
-            do {
-                var f = this.getDistDenominator(t, mx, my);
-                var df = this.getDistDenominatorDerivative(t, mx, my);
-                if (df === 0)
-                    break;
-                t = t - f / df;
-                if (t > 1.0) t = 0.9;
-                if (t < 0.0) t = 0.1;
-            } while((amt--) > 0);
 
-            if (this.getDist(t, mx, my) < 5)
-                return t;
-        }
+        // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
+        var t1 = findRoots(WIRE_NEWTON_ITERATIONS, t0, mx, my, (t,x,y)=>this.getDistDenominator(t,x,y), (t,x,y)=>this.getDistDenominatorDerivative(t,x,y));
+        if (this.getDist2(t1, mx, my) < WIRE_DIST_THRESHOLD2)
+            return t1;
 
-        // Newton's method to find root for when slope is 0
-        {
-            var amt = 5;
-            var t = t0;
-            do {
-                var f = this.getDistNumerator(t, mx, my);
-                var df = this.getDistNumeratorDerivative(t, mx, my);
-                if (df === 0)
-                    break;
-                t = t - f / df;
-                if (t > 1.0) t = 0.9;
-                if (t < 0.0) t = 0.1;
-            } while((amt--) > 0);
-
-            if (this.getDist(t, mx, my) < 5)
-                return t;
-        }
+        // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
+        var t2 = findRoots(WIRE_NEWTON_ITERATIONS, t0, mx, my, (t,x,y)=>this.getDistNumerator(t,x,y), (t,x,y)=>this.getDistNumeratorDerivative(t,x,y));
+        if (this.getDist2(t2, mx, my) < WIRE_DIST_THRESHOLD2)
+            return t2;
 
         return -1;
     }

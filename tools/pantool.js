@@ -1,6 +1,6 @@
 class PanTool extends Tool {
     onKeyUp(code) {
-        if (code === 18) { // Option key
+        if (code === OPTION_KEY) { // Option key
             selectionTool.activate();
         }
     }
@@ -14,7 +14,7 @@ class PanTool extends Tool {
 
             popup.onMove();
 
-            render();
+            return true;
         }
     }
 }

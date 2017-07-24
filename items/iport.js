@@ -68,7 +68,7 @@ class IPort {
         var pos2 = this.target.add(this.origin).scale(0.5);
         var transform = new Transform(pos2, V(w, this.lineWidth*2), 0, this.parent.context.getCamera());
         transform.setParent(this.parent.transform);
-        return containsPoint(transform, pos);
+        return rectContains(transform, pos);
     }
     draw() {
         if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
