@@ -305,9 +305,10 @@ function getNearestT(p1, p2, mx, my) {
     var dx = p2.x - p1.x;
     var dy = p2.y - p1.y;
     var t = (dx*(mx - p1.x) + dy*(my - p1.y))/(dx*dx + dy*dy);
+    t = clamp(t, 0, 1);
     var pos = V(dx * t + p1.x, dy * t + p1.y);
     if (pos.sub(V(mx, my)).len2() < WIRE_DIST_THRESHOLD2)
-        return clamp(t, 0, 1);
+        return t;
     else
         return -1;
 }

@@ -12,7 +12,7 @@ class SelectionBox {
         var worldMousePos = input.worldMousePos;
 
         // TODO: Only calculate ON MOUSE UP!
-        if (this.selBoxDownPos !== undefined) {
+        if (this.selBoxDownPos != undefined) {
             this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
             var p1 = this.selBoxDownPos;
             var p2 = this.selBoxCurPos;
@@ -20,7 +20,7 @@ class SelectionBox {
             var selections = [];
             for (var i = 0; i < objects.length; i++) {
                 var obj = objects[i];
-                var t = (obj.selectionBoxTransform !== undefined ? obj.selectionBoxTransform : obj.transform);
+                var t = (obj.selectionBoxTransform != undefined ? obj.selectionBoxTransform : obj.transform);
                 if (transformContains(t, trans))
                     selections.push(obj);
             }
@@ -32,7 +32,7 @@ class SelectionBox {
     onMouseUp(input) {
         // Stop selection box
         this.selBoxDownPos = undefined;
-        if (this.selBoxCurPos !== undefined) {
+        if (this.selBoxCurPos != undefined) {
             this.selBoxCurPos = undefined;
             popup.deselect();
             if (selectionTool.selections.length > 0)
@@ -42,7 +42,7 @@ class SelectionBox {
     }
     draw(renderer) {
         var camera = renderer.getCamera();
-        if (this.selBoxDownPos !== undefined && this.selBoxCurPos !== undefined) {
+        if (this.selBoxDownPos != undefined && this.selBoxCurPos != undefined) {
             var pos1 = camera.getScreenPos(this.selBoxDownPos);
             var pos2 = camera.getScreenPos(this.selBoxCurPos);
             var w = pos2.x - pos1.x, h = pos2.y - pos1.y;

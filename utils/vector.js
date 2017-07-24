@@ -6,26 +6,26 @@ function V(x, y, z, w) {
 
 // Constructor for a Vector object
 function Vector(x, y, z, w) {
-    if (y === undefined) {
-        this.x = (x.x === undefined ? 0 : x.x);
-        this.y = (x.y === undefined ? 0 : x.y);
-        this.z = (x.z === undefined ? 0 : x.z);
-        this.w = (x.w === undefined ? 0 : x.w);
+    if (y == undefined) {
+        this.x = (x.x == undefined ? 0 : x.x);
+        this.y = (x.y == undefined ? 0 : x.y);
+        this.z = (x.z == undefined ? 0 : x.z);
+        this.w = (x.w == undefined ? 0 : x.w);
     } else {
-        this.x = (x === undefined ? 0 : x);
-        this.y = (y === undefined ? 0 : y);
-        this.z = (z === undefined ? 0 : z);
-        this.w = (w === undefined ? 0 : w);
+        this.x = (x == undefined ? 0 : x);
+        this.y = (y == undefined ? 0 : y);
+        this.z = (z == undefined ? 0 : z);
+        this.w = (w == undefined ? 0 : w);
     }
 }
 
 // Mutator; translates the Vector
 Vector.prototype.translate = function(dx, dy, dz, dw) {
-    if (dy !== undefined) {
+    if (dy != undefined) {
         this.x += dx;
         this.y += dy;
-        this.z += (dz === undefined ? 0 : dz);
-        this.w += (dw === undefined ? 0 : dw);
+        this.z += (dz == undefined ? 0 : dz);
+        this.w += (dw == undefined ? 0 : dw);
     } else {
         this.x += dx.x;
         this.y += dx.y;
@@ -36,18 +36,18 @@ Vector.prototype.translate = function(dx, dy, dz, dw) {
 
 // Returns a new Vector which is a composite of this one and the given one
 Vector.prototype.add = function(a, b, c, d) {
-    if (b === undefined)
+    if (b == undefined)
         return new Vector(this.x + a.x, this.y + a.y, this.z + a.z, this.w + a.w);
     else
-        return new Vector(this.x + a, this.y + b, this.z + (c === undefined ? 0 : c), this.w + (d === undefined ? 0 : d));
+        return new Vector(this.x + a, this.y + b, this.z + (c == undefined ? 0 : c), this.w + (d == undefined ? 0 : d));
 }
 
 // Returns a new Vector which is the difference of this one and the given one
 Vector.prototype.sub = function(a, b, c, d) {
-    if (b === undefined)
+    if (b == undefined)
         return new Vector(this.x - a.x, this.y - a.y, this.z - a.z, this.w - a.w);
     else
-        return new Vector(this.x - a, this.y - b, this.z - (c === undefined ? 0 : c), this.w - (d === undefined ? 0 : d));
+        return new Vector(this.x - a, this.y - b, this.z - (c == undefined ? 0 : c), this.w - (d == undefined ? 0 : d));
 }
 
 // Returns a new Vector which is this Vector scaled by the given scalar

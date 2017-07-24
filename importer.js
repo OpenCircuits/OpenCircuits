@@ -42,25 +42,25 @@ function getChildrenByTagName(parent, name) {
 }
 
 function getBooleanValue(node, def) {
-    if (node === undefined)
+    if (node == undefined)
         return def;
     return node.childNodes[0].nodeValue === "true" ? true : false;
 }
 
 function getIntValue(node, def) {
-    if (node === undefined)
+    if (node == undefined)
         return def;
     return parseInt(node.childNodes[0].nodeValue);
 }
 
 function getFloatValue(node, def) {
-    if (node === undefined)
+    if (node == undefined)
         return def;
     return parseFloat(node.childNodes[0].nodeValue);
 }
 
 function getStringValue(node, def) {
-    if (node === undefined)
+    if (node == undefined)
         return def;
     return node.childNodes[0].nodeValue;
 }

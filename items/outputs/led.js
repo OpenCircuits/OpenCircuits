@@ -2,13 +2,14 @@ class LED extends IOObject {
     constructor(context, x, y, color) {
         super(context, x, y, DEFAULT_SIZE, DEFAULT_SIZE, images["led.svg"], false, 1, 0);
         this.transform.setPos(V(this.transform.pos.x, this.transform.pos.y - 2*this.transform.size.y));
-        this.color = (color === undefined) ? ("#ffffff") : (color);
+        this.color = (color == undefined) ? ("#ffffff") : (color);
         this.connectorWidth = 5;
 
         this.setInputAmount(1);
         this.inputs[0].setOrigin(V(0, 0));
         this.inputs[0].setTarget(V(0, 2*this.transform.size.y));
         this.inputs[0].lineColor = '#ffffff';
+        console.log(this.inputs[0].lineColor);
     }
     getImageTint() {
         return this.color;

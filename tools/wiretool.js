@@ -22,6 +22,7 @@ class WireTool extends Tool {
                 this.split = this.shouldSplit(worldMousePos);
                 this.moved = false;
                 this.startPos = (this.split) ? (undefined) : (wire.curve.p2.copy());
+                this.action = new GroupAction();
                 super.activate();
                 return;
             }
@@ -33,7 +34,7 @@ class WireTool extends Tool {
         // Split and push to history
         if (this.split && !this.moved) {
             var action = new PressWireAction(this.wire);
-            getCurrentContext().addAction(action);
+            this.action.add(action);
             this.wire.press(this.t);
             this.startPos = this.wire.curve.p2.copy();
         }
@@ -48,7 +49,8 @@ class WireTool extends Tool {
             var p0 = this.startPos;
             var p1 = this.wire.curve.p2.copy();
             var action = new MoveWireConnectionAction(this.wire, p0, p1);
-            getCurrentContext().addAction(action);
+            this.action.add(action);
+            getCurrentContext().addAction(this.action);
         }
         // Select wire
         else {
@@ -68,7 +70,7 @@ class WireTool extends Tool {
         var dist2 = wire.getPos(1).sub(pos).len2();
         if ((t <  0.5 && wire.input      instanceof Wire && dist1 < 100) ||
             (t >= 0.5 && wire.connection instanceof Wire && dist2 < 100)) {
-            this.pressedWire = (t >= 0.5 ? wire : wire.input);
+            this.wire = (t >= 0.5 ? wire : wire.input);
             return false;
         }
         return true;

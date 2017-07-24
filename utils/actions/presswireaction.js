@@ -5,7 +5,7 @@ class PressWireAction {
         this.connection = this.wire.connection;
     }
     undo() {
-        if (this.oldwire === undefined)
+        if (this.oldwire == undefined)
             this.oldwire = this.wire.connection;
         var index = this.context.getIndexOf(this.oldwire);
         this.context.getWires().splice(index, 1);

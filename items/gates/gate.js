@@ -1,6 +1,6 @@
 class Gate extends IOObject {
     constructor(context, not, x, y, img) {
-        super(context, x, y, DEFAULT_SIZE*(img !== undefined ? img.ratio : 1), DEFAULT_SIZE, img, false, 999, 999);
+        super(context, x, y, DEFAULT_SIZE*(img != undefined ? img.ratio : 1), DEFAULT_SIZE, img, false, 999, 999);
         this._not = (not ? true : false);
         this.name = this.getDisplayName();
 
@@ -25,7 +25,7 @@ class Gate extends IOObject {
         this.localSpace();
         if (this.not) {
             var l = this.transform.size.x/2+5;
-            renderer.circle(l, 0, 5, (this.getCol() === undefined ? '#fff' : this.getCol()), this.getBorderColor(), 2);
+            renderer.circle(l, 0, 5, (this.getCol() == undefined ? '#fff' : this.getCol()), this.getBorderColor(), 2);
         }
         renderer.restore();
     }

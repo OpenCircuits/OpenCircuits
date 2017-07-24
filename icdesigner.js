@@ -16,7 +16,7 @@ class ICDesigner {
         this.hide();
     }
     confirm() {
-        if (this.ic !== undefined) {
+        if (this.ic != undefined) {
             var out = this.ic.copy();
             out.setContext(context);
             context.getDesigner().addObject(out);
@@ -24,7 +24,7 @@ class ICDesigner {
         }
     }
     cancel() {
-        if (this.ic !== undefined) {
+        if (this.ic != undefined) {
             this.hide();
         }
     }
@@ -48,7 +48,7 @@ class ICDesigner {
         this.canvas.style.visibility = "hidden";
         this.confirmButton.style.visibility = "hidden";
         this.cancelButton.style.visibility = "hidden";
-        if (this.ic !== undefined) {
+        if (this.ic != undefined) {
             ICs[this.ic.icuid] = this.ic.copy();
             this.ic.remove();
             this.ic = undefined;
@@ -56,7 +56,7 @@ class ICDesigner {
         render();
     }
     onMouseDown(input) {
-        if (this.ic === undefined)
+        if (this.ic == undefined)
             return false;
 
         var worldMousePos = input.worldMousePos;
@@ -93,7 +93,7 @@ class ICDesigner {
         }
     }
     onMouseUp(input) {
-        if (this.ic === undefined)
+        if (this.ic == undefined)
             return false;
 
         this.drag = false;
@@ -101,7 +101,7 @@ class ICDesigner {
         this.dragEdge = undefined;
     }
     onMouseMove(input) {
-        if (this.ic === undefined)
+        if (this.ic == undefined)
             return false;
 
         var worldMousePos = input.worldMousePos;
@@ -116,7 +116,7 @@ class ICDesigner {
 
             return true;
         }
-        if (this.dragEdge !== undefined) {
+        if (this.dragEdge != undefined) {
             if (this.dragEdge === "horizontal") {
                 this.ic.transform.setWidth(Math.abs(2*worldMousePos.x));
             } else {

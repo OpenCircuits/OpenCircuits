@@ -22,6 +22,7 @@ function copyGroup(objects) {
                     w = w.connection;
                     var w2 = w.copy();
                     wire.connect(w2);
+                    wireCopies.push(wire);
                     wire = w2;
                 }
                 var lastConnection = findIPort(objects, w.connection, copies);

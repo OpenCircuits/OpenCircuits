@@ -17,7 +17,7 @@ class OPort {
 
         this.set = false;
 
-        if (parent !== undefined)
+        if (parent != undefined)
             this.updatePosition();
     }
     getIndex() {
@@ -42,8 +42,10 @@ class OPort {
         for (var i = 0; i < this.connections.length; i++) {
             var v = this.getPos();
             var x = v.x, y = v.y;
-            this.connections[i].curve.c1.x += x - this.connections[i].curve.p1.x;
-            this.connections[i].curve.c1.y += y - this.connections[i].curve.p1.y;
+            var dx = x - this.connections[i].curve.p1.x;
+            var dy = y - this.connections[i].curve.p1.y;
+            this.connections[i].curve.c1.x += dx;
+            this.connections[i].curve.c1.y += dy;
             this.connections[i].curve.p1.x = x;
             this.connections[i].curve.p1.y = y;
         }
@@ -89,11 +91,11 @@ class OPort {
         var v = this.target;
         var renderer = this.parent.getRenderer();
 
-        var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
+        var lineCol = (this.parent.getBorderColor() == undefined ? this.lineColor : this.parent.getBorderColor());
         renderer.line(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
 
-        var circleFillCol = (this.parent.getCol() === undefined ? this.circleFillColor : this.parent.getCol());
-        var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
+        var circleFillCol = (this.parent.getCol() == undefined ? this.circleFillColor : this.parent.getCol());
+        var circleBorderCol = (this.parent.getBorderColor() == undefined ? this.circleBorderColor : this.parent.getBorderColor());
         renderer.circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
     remove() {

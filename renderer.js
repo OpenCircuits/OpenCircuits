@@ -3,8 +3,8 @@ class Renderer {
         this.parent = parent;
         this.canvas = canvas;
         this.tintCanvas = document.createElement("canvas");
-        this.vw = (vw === undefined ? 1 : vw);
-        this.vh = (vh === undefined ? 1 : vh);
+        this.vw = (vw == undefined ? 1 : vw);
+        this.vh = (vh == undefined ? 1 : vh);
 
         this.canvas.width = window.innerWidth * this.vw;
         this.canvas.height = window.innerHeight * this.vh;
@@ -51,7 +51,7 @@ class Renderer {
         this.context.beginPath();
         this.context.rect(x - w/2, y - h/2, w, h);
         this.context.fill();
-        if (borderSize > 0 || borderSize === undefined)
+        if (borderSize > 0 || borderSize == undefined)
             this.context.stroke();
         this.context.closePath();
         this.restore();
@@ -61,16 +61,16 @@ class Renderer {
         this.setStyles(fillStyle, borderStyle, borderSize, alpha);
         this.context.beginPath();
         this.context.arc(x, y, r, 0, 2*Math.PI);
-        if (fillStyle !== undefined)
+        if (fillStyle != undefined)
             this.context.fill();
-        if (borderSize > 0 || borderSize === undefined)
+        if (borderSize > 0 || borderSize == undefined)
             this.context.stroke();
         this.context.closePath();
         this.restore();
     }
     image(img, x, y, w, h, tint) {
         this.context.drawImage(img, x - w/2, y - h/2, w, h);
-        if (tint !== undefined)
+        if (tint != undefined)
             this.tintImage(img, x, y, w, h, tint);
     }
     tintImage(img, x, y, w, h, tint) {
@@ -138,19 +138,19 @@ class Renderer {
         this.restore();
     }
     setStyles(fillStyle, borderStyle, borderSize, alpha) {
-        if (alpha !== undefined && alpha !== this.context.globalAlpha)
+        if (alpha != undefined && alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;
 
-        fillStyle = (fillStyle === undefined) ? ('#ffffff') : (fillStyle);
-        if (fillStyle !== undefined && fillStyle !== this.context.fillStyle)
+        fillStyle = (fillStyle == undefined) ? ('#ffffff') : (fillStyle);
+        if (fillStyle != undefined && fillStyle !== this.context.fillStyle)
             this.context.fillStyle = fillStyle;
 
-        borderStyle = (borderStyle === undefined) ? ('#000000') : (borderStyle);
-        if (borderStyle !== undefined && borderStyle !== this.context.strokeStyle)
+        borderStyle = (borderStyle == undefined) ? ('#000000') : (borderStyle);
+        if (borderStyle != undefined && borderStyle !== this.context.strokeStyle)
             this.context.strokeStyle = borderStyle;
 
-        borderSize = (borderSize === undefined) ? (2) : (borderSize);
-        if (borderSize !== undefined && borderSize !== this.context.lineWidth)
+        borderSize = (borderSize == undefined) ? (2) : (borderSize);
+        if (borderSize != undefined && borderSize !== this.context.lineWidth)
             this.context.lineWidth = borderSize;
     }
 }

@@ -43,8 +43,8 @@ class SelectionTool extends Tool {
                 this.rotate = true;
                 this.startAngle = Math.atan2(p.y-o.y, p.x-o.x);
                 this.prevAngle = this.startAngle;
-                this.oTransform = [];
                 this.realAngles = [];
+                this.oTransform = [];
                 for (var i = 0; i < this.selections.length; i++) {
                     this.realAngles[i] = this.selections[i].getAngle();
                     this.oTransform[i] = this.selections[i].transform.copy();
@@ -91,7 +91,6 @@ class SelectionTool extends Tool {
         }
 
         wireTool.activate(input);
-        // this.wireTool.onMouseDown(input);
         if (this.isActive)
             return this.selectionBox.onMouseDown(input);
     }
@@ -107,13 +106,13 @@ class SelectionTool extends Tool {
         if (this.selections.length > 0) {
             // Move selection(s)
             if (this.drag) {
-                this.moveSelections(worldMousePos);
+                this.moveSelections(worldMousePos, input.shiftKeyDown);
                 return true;
             }
 
             // Rotate selection(s)
             if (this.rotate) {
-                this.rotateSelections(worldMousePos);
+                this.rotateSelections(worldMousePos, input.shiftKeyDown);
                 return true;
             }
         }
@@ -233,12 +232,12 @@ class SelectionTool extends Tool {
         popup.deselect();
         render();
     }
-    moveSelections(pos) {
+    moveSelections(pos, shift) {
         var dPos = V(pos.x, pos.y).sub(this.dragObj.getPos()).sub(this.dragPos);
         for (var i = 0; i < this.selections.length; i++) {
             var selection = this.selections[i];
             var newPos = selection.getPos().add(dPos);
-            if (this.shift) {
+            if (shift) {
                 newPos = V(Math.floor(newPos.x/GRID_SIZE+0.5)*GRID_SIZE,
                            Math.floor(newPos.y/GRID_SIZE+0.5)*GRID_SIZE);
             }
@@ -247,13 +246,13 @@ class SelectionTool extends Tool {
         this.recalculateMidpoint();
         popup.updatePosValue();
     }
-    rotateSelections(pos) {
+    rotateSelections(pos, shift) {
         var origin = this.midpoint;
         var dAngle = Math.atan2(pos.y - origin.y, pos.x - origin.x) - this.prevAngle;
         for (var i = 0; i < this.selections.length; i++) {
             var newAngle = this.realAngles[i] + dAngle;
             this.realAngles[i] = newAngle;
-            if (this.shift)
+            if (shift)
                 newAngle = Math.floor(newAngle/(Math.PI/4))*Math.PI/4;
             this.selections[i].setRotationAbout(newAngle, origin);
         }

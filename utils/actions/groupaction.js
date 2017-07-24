@@ -7,7 +7,7 @@ class GroupAction {
         this.actions.push(action);
     }
     undo() {
-        for (var i = 0; i < this.actions.length; i++)
+        for (var i = this.actions.length-1; i >= 0; i--)
             this.actions[i].undo();
     }
     redo() {

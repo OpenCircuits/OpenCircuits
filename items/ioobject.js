@@ -2,11 +2,11 @@ var UID_COUNTER = 0;
 class IOObject {
     constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
         this.uid = UID_COUNTER++;
-        if (context === undefined)
+        if (context == undefined)
             context = getCurrentContext();
         this.context = context;
-        x = (x === undefined ? 0 : x);
-        y = (y === undefined ? 0 : y)
+        x = (x == undefined ? 0 : x);
+        y = (y == undefined ? 0 : y)
         this.transform = new Transform(V(x, y), V(w, h), 0, context.getCamera());
         this.cullTransform = new Transform(this.transform.getPos(), V(0,0), 0, this.context.getCamera());
 
@@ -50,7 +50,7 @@ class IOObject {
         this.onTransformChange();
     }
     onTransformChange() {
-        if (this.isPressable && this.selectionBoxTransform !== undefined) {
+        if (this.isPressable && this.selectionBoxTransform != undefined) {
             this.selectionBoxTransform.setPos(this.transform.getPos());
             this.selectionBoxTransform.setAngle(this.transform.getAngle());
             this.selectionBoxTransform.setScale(this.transform.getScale());
@@ -65,7 +65,7 @@ class IOObject {
         // Find min/max points on the object
         var min = V(-this.transform.size.x/2, -this.transform.size.y/2);
         var max = V(this.transform.size.x/2, this.transform.size.y/2);
-        if (this.selectionBoxTransform !== undefined) {
+        if (this.selectionBoxTransform != undefined) {
             min.x = Math.min(-this.selectionBoxTransform.size.x/2, min.x);
             min.y = Math.min(-this.selectionBoxTransform.size.y/2, min.y);
             max.x = Math.max(this.selectionBoxTransform.size.x/2, max.x);
@@ -143,7 +143,7 @@ class IOObject {
     setContext(context) {
         this.context = context;
         this.transform.setCamera(this.context.getCamera());
-        if (this.selectionBoxTransform !== undefined)
+        if (this.selectionBoxTransform != undefined)
             this.selectionBoxTransform.setCamera(this.context.getCamera());
     }
     click() {
@@ -154,11 +154,11 @@ class IOObject {
     release() {
     }
     activate(on, i) {
-        if (i === undefined)
+        if (i == undefined)
             i = 0;
 
         this.isOn = on;
-        if (this.outputs[i] !== undefined)
+        if (this.outputs[i] != undefined)
             this.outputs[i].activate(on);
     }
     localSpace() {
@@ -175,10 +175,10 @@ class IOObject {
             this.outputs[i].draw(i);
 
         var renderer = this.context.getRenderer();
-        if (this.isPressable && this.selectionBoxTransform !== undefined)
+        if (this.isPressable && this.selectionBoxTransform != undefined)
             renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
 
-        if (this.img !== undefined)
+        if (this.img != undefined)
             renderer.image(this.img, 0, 0, this.transform.size.x, this.transform.size.y, this.getImageTint());
         renderer.restore();
     }
@@ -236,7 +236,7 @@ class IOObject {
         var copy = new this.constructor(this.context);
         copy.transform = this.transform.copy();
         copy.name = this.name;
-        if (this.selectionBoxTransform !== undefined)
+        if (this.selectionBoxTransform != undefined)
             copy.selectionBoxTransform = this.selectionBoxTransform.copy();
         for (var i = 0; i < this.inputs.length; i++) {
             copy.inputs[i] = this.inputs[i].copy();

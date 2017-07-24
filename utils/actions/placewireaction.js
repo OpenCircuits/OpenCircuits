@@ -4,9 +4,9 @@ class PlaceWireAction {
         this.wire = wire;
     }
     undo() {
-        if (this.input === undefined)
+        if (this.input == undefined)
             this.input = this.wire.input;
-        if (this.connection === undefined)
+        if (this.connection == undefined)
             this.connection = this.wire.connection;
         var index = this.context.getIndexOf(this.wire);
         this.context.getWires().splice(index, 1);

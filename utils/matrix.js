@@ -2,7 +2,7 @@ class Matrix2x3 {
     constructor(other) {
         this.mat = [];
         this.identity();
-        if (other !== undefined) {
+        if (other != undefined) {
             for (var i = 0; i < 2*3; i++)
                 this.mat[i] = other.mat[i];
         }

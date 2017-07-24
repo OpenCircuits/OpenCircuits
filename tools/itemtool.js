@@ -7,7 +7,7 @@ class ItemTool extends Tool {
         var objects = context.getObjects();
         var wires = context.getWires();
 
-        if (this.item !== undefined) {
+        if (this.item != undefined) {
             for (var i = 0; i < objects.length; i++) {
                 if (objects[i] === this.item) {
                     objects.splice(i, 1);

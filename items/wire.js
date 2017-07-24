@@ -5,7 +5,7 @@ class Wire {
         this.input = input;
 
         var p, c;
-        if (input !== undefined) {
+        if (input != undefined) {
             p = input.getPos(t);
             c = input.getDir(t).scale(50).add(p);
         } else {
@@ -20,7 +20,7 @@ class Wire {
             return;
 
         this.isOn = on;
-        if (this.connection !== undefined) {
+        if (this.connection != undefined) {
             if (this.connection instanceof Wire)
                 this.connection.activate(on);
             else
@@ -37,7 +37,7 @@ class Wire {
         this.connect(wire);
     }
     remove() {
-        if (this.input !== undefined) {
+        if (this.input != undefined) {
             if (this.input instanceof Wire) {
                 this.input.connection = undefined;
                 this.input.removeFrom(designer);
@@ -48,7 +48,7 @@ class Wire {
             }
             this.input = undefined;
         }
-        if (this.connection !== undefined) {
+        if (this.connection != undefined) {
             if (this.connection instanceof Wire) {
                 this.connection.input = undefined;
                 this.connection.remove();
@@ -123,7 +123,7 @@ class Wire {
         return (this.straight) ? (getNearestT(this.curve.p1, this.curve.p2, mx, my)) : (this.curve.getNearestT(mx, my));
     }
     connect(obj) {
-        if (obj.input !== undefined && obj.input !== this)
+        if (obj.input != undefined && obj.input !== this)
             return false;
 
         var p = obj.getPos(0);
@@ -195,20 +195,20 @@ class Wire {
         var sourceUID = getIntValue(getChildNode(inputNode, "uid"));
         var sourceIndx = getIntValue(getChildNode(inputNode, "index"));
         var source = findByUID(wires, sourceUID);
-        if (source === undefined)
+        if (source == undefined)
             source = findByUID(objects, sourceUID).outputs[sourceIndx];
         // var source = this.context.findWireByUID(sourceUID);
-        // if (source === undefined)
+        // if (source == undefined)
         //     source = this.context.findObjectByUID(sourceUID).outputs[sourceIndx];
 
         var connectionNode = getChildNode(node, "connection");
         var targetUID = getIntValue(getChildNode(connectionNode, "uid"));
         var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
         var target = findByUID(wires, targetUID);
-        if (target === undefined)
+        if (target == undefined)
             target = findByUID(objects, targetUID).inputs[targetIndx];
         // var target = this.context.findWireByUID(targetUID);
-        // if (target === undefined)
+        // if (target == undefined)
         //     target = this.context.findObjectByUID(targetUID).inputs[targetIndx];
 
         this.input = source;

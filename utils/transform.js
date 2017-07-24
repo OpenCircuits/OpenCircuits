@@ -29,7 +29,7 @@ class Transform {
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
 
-        if (this.parent !== undefined)
+        if (this.parent != undefined)
             this.matrix = this.parent.getMatrix().mult(this.matrix);
 
         this.inverse = this.matrix.inverse();

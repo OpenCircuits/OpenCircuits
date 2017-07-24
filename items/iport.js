@@ -17,7 +17,7 @@ class IPort {
 
         this.set = false;
 
-        if (parent !== undefined)
+        if (parent != undefined)
             this.updatePosition();
     }
     getIndex() {
@@ -39,7 +39,7 @@ class IPort {
         if (!this.set)
             this.updatePosition();
 
-        if (this.input !== undefined) {
+        if (this.input != undefined) {
             var v = this.getPos();
             var x = v.x, y = v.y;
             this.input.curve.c2.x += x - this.input.curve.p2.x;
@@ -77,15 +77,15 @@ class IPort {
         var v = this.target;
         var renderer = this.parent.getRenderer();
 
-        var lineCol = (this.parent.getBorderColor() === undefined ? this.lineColor : this.parent.getBorderColor());
+        var lineCol = (this.parent.getBorderColor() == undefined ? this.lineColor : this.parent.getBorderColor());
         renderer.line(this.origin.x, this.origin.y, v.x, v.y, lineCol, this.lineWidth);
 
-        var circleFillCol = (this.parent.getCol() === undefined ? this.circleFillColor : this.parent.getCol());
-        var circleBorderCol = (this.parent.getBorderColor() === undefined ? this.circleBorderColor : this.parent.getBorderColor());
+        var circleFillCol = (this.parent.getCol() == undefined ? this.circleFillColor : this.parent.getCol());
+        var circleBorderCol = (this.parent.getBorderColor() == undefined ? this.circleBorderColor : this.parent.getBorderColor());
         renderer.circle(v.x, v.y, this.circleRadius, circleFillCol, circleBorderCol, this.circleBorderWidth);
     }
     remove() {
-        if (this.input !== undefined)
+        if (this.input != undefined)
             this.input.remove();
         this.input = undefined;
     }
@@ -119,6 +119,7 @@ class IPort {
         port.target = this.target.copy();
         port.set = this.set;
         port.lineWidth = this.lineWidth;
+        port.lineColor = this.lineColor;
         port.circleRadius = this.circleRadius;
         return port;
     }

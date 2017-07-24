@@ -32,7 +32,7 @@ class Clipboard {
     }
     paste(input) {
         var context = getCurrentContext();
-        if (this.clipboard !== undefined) {
+        if (this.clipboard != undefined) {
             var copy = copyGroup(this.clipboard.objects);
             var objects = copy.objects;
             var wires = copy.wires;

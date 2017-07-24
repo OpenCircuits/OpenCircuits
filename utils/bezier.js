@@ -28,7 +28,7 @@ class BezierCurve {
     debugDraw(r, renderer) {
         var camera = renderer.parent.camera;
 
-        r = (r === undefined ? 3 : r);
+        r = (r == undefined ? 3 : r);
         var p1 = camera.getScreenPos(this.p1);
         var p2 = camera.getScreenPos(this.p2);
         var c1 = camera.getScreenPos(this.c1);

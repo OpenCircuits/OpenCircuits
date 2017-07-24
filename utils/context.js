@@ -53,7 +53,7 @@ class Context {
     }
     findByUID(uid) {
         var obj = findObjectByUID(uid);
-        if (obj === undefined)
+        if (obj == undefined)
             obj = findWireByUID(uid);
         return obj;
     }
