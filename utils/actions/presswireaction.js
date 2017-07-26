@@ -1,22 +1,25 @@
-class PressWireAction {
+class SplitWireAction {
     constructor(wire) {
         this.context = getCurrentContext();
+        this.wireport = wire.connection;
         this.wire = wire;
-        this.connection = this.wire.connection;
+        this.newwire = this.wireport.connection;
+        this.connection = this.newwire.connection;
     }
     undo() {
-        if (this.oldwire == undefined)
-            this.oldwire = this.wire.connection;
-        var index = this.context.getIndexOf(this.oldwire);
-        this.context.getWires().splice(index, 1);
-        this.wire.disconnect(this.oldwire);
-        this.oldwire.disconnect(this.connection);
+        var index1 = this.context.getIndexOf(this.wireport);
+        this.context.getObjects().splice(index1, 1);
+        var index2 = this.context.getIndexOf(this.newwire);
+        this.context.getWires().splice(idnex2, 1);
+        this.wire.disconnect(wireport);
+        this.newwire.disconnect(this.connection);
         this.wire.connect(this.connection);
     }
     redo() {
+        this.context.getObjects().push(this.wireport);
         this.context.getWires().push(this.oldwire);
         this.wire.disconnect(this.connection);
-        this.wire.connect(this.oldwire);
-        this.oldwire.connect(this.connection);
+        this.wire.connect(this.wireport);
+        this.newwire.connect(this.connection);
     }
 }

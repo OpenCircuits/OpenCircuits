@@ -1,3 +1,4 @@
+
 var images = [];
 
 var popup;
@@ -104,7 +105,8 @@ function render() {
 }
 
 function actualRender() {
-    renderQueue = 0; // Saves (renderQueue - 1) render calls
+    // console.log("Saved : " + (renderQueue - 1) + " render calls!");
+    renderQueue = 0;
     getCurrentContext().render();
 }
 

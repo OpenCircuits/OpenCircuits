@@ -53,7 +53,7 @@ class IPort {
             return;
 
         this.isOn = on;
-        this.parent.activate(this.isOn);
+        this.parent.context.propogate(this, this.parent, this.isOn);
     }
     contains(pos) {
         var transform = new Transform(this.target, V(this.circleRadius, this.circleRadius).scale(1.5), 0, this.parent.context.getCamera());

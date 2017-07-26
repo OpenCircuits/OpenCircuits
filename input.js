@@ -129,7 +129,6 @@ class Input {
 var isSidebarOpen = false;
 
 var panTool = new PanTool();
-var wireTool = new WireTool();
 var wiringTool = new WiringTool();
 var itemTool = new ItemTool();
 var selectionTool = new SelectionTool();

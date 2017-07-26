@@ -2,6 +2,8 @@ class PlaceWireAction {
     constructor(wire) {
         this.context = getCurrentContext();
         this.wire = wire;
+        this.input = undefined;
+        this.connection = undefined;
     }
     undo() {
         if (this.input == undefined)

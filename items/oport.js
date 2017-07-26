@@ -39,16 +39,8 @@ class OPort {
         if (!this.set && this.parent.inputs.length !== this.prevParentInputLength)
             this.updatePosition();
 
-        for (var i = 0; i < this.connections.length; i++) {
-            var v = this.getPos();
-            var x = v.x, y = v.y;
-            var dx = x - this.connections[i].curve.p1.x;
-            var dy = y - this.connections[i].curve.p1.y;
-            this.connections[i].curve.c1.x += dx;
-            this.connections[i].curve.c1.y += dy;
-            this.connections[i].curve.p1.x = x;
-            this.connections[i].curve.p1.y = y;
-        }
+        for (var i = 0; i < this.connections.length; i++)
+            this.connections[i].onTransformChange();
     }
     activate(on) {
         if (this.isOn === on)
@@ -58,10 +50,11 @@ class OPort {
         for (var i = 0; i < this.connections.length; i++)
             this.parent.context.propogate(this, this.connections[i], this.isOn);
     }
-    connect(obj) {
-        this.connections.push(obj);
-        obj.input = this;
-        obj.activate(this.isOn);
+    connect(wire) {
+        this.connections.push(wire);
+        wire.input = this;
+        wire.onTransformChange();
+        wire.activate(this.isOn);
     }
     disconnect(obj) {
         var i;

@@ -37,15 +37,17 @@ class CircuitDesigner {
 
         // See if the sender/receiver is a wire in the scene (not in an IC) to render
         var inScene = false;
-        for (var i = 0; i < this.wires.length; i++) {
-            if (this.wires[i] === sender || this.wires[i] === receiver) {
-                inScene = true;
-                break;
+        if (sender instanceof Wire || receiver instanceof Wire) {
+            for (var i = 0; i < this.wires.length; i++) {
+                if (this.wires[i] === sender || this.wires[i] === receiver) {
+                    inScene = true;
+                    break;
+                }
             }
         }
 
         if (inScene)
-            this.render();
+            render();
 
         if (updateRequests > 0) {
             setTimeout(() => this.update(sender, receiver), PROPOGATION_TIME);

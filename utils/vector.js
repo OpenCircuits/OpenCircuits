@@ -1,98 +1,71 @@
 
-// Quick, easy constructor for a new Vector
-function V(x, y, z, w) {
-    return new Vector(x, y, z, w);
+// Utility method for a new Vector
+function V(x, y) {
+    return new Vector(x, y);
 }
 
-// Constructor for a Vector object
-function Vector(x, y, z, w) {
-    if (y == undefined) {
-        this.x = (x.x == undefined ? 0 : x.x);
-        this.y = (x.y == undefined ? 0 : x.y);
-        this.z = (x.z == undefined ? 0 : x.z);
-        this.w = (x.w == undefined ? 0 : x.w);
-    } else {
-        this.x = (x == undefined ? 0 : x);
-        this.y = (y == undefined ? 0 : y);
-        this.z = (z == undefined ? 0 : z);
-        this.w = (w == undefined ? 0 : w);
+class Vector {
+    constructor(x, y) {
+        this.set(x, y);
     }
-}
-
-// Mutator; translates the Vector
-Vector.prototype.translate = function(dx, dy, dz, dw) {
-    if (dy != undefined) {
-        this.x += dx;
-        this.y += dy;
-        this.z += (dz == undefined ? 0 : dz);
-        this.w += (dw == undefined ? 0 : dw);
-    } else {
-        this.x += dx.x;
-        this.y += dx.y;
-        this.z += dx.z;
-        this.w += dx.w;
+    set(x, y) {
+        if (x instanceof Vector) {
+            this.x = (x.x ? x.x : 0);
+            this.y = (x.y ? x.y : 0);
+        } else {
+            this.x = (x ? x : 0);
+            this.y = (y ? y : 0);
+        }
     }
-}
-
-// Returns a new Vector which is a composite of this one and the given one
-Vector.prototype.add = function(a, b, c, d) {
-    if (b == undefined)
-        return new Vector(this.x + a.x, this.y + a.y, this.z + a.z, this.w + a.w);
-    else
-        return new Vector(this.x + a, this.y + b, this.z + (c == undefined ? 0 : c), this.w + (d == undefined ? 0 : d));
-}
-
-// Returns a new Vector which is the difference of this one and the given one
-Vector.prototype.sub = function(a, b, c, d) {
-    if (b == undefined)
-        return new Vector(this.x - a.x, this.y - a.y, this.z - a.z, this.w - a.w);
-    else
-        return new Vector(this.x - a, this.y - b, this.z - (c == undefined ? 0 : c), this.w - (d == undefined ? 0 : d));
-}
-
-// Returns a new Vector which is this Vector scaled by the given scalar
-Vector.prototype.scale = function(a) {
-    if (!(a instanceof Vector))
-        return new Vector(a * this.x, a * this.y, a * this.z, a * this.w);
-    else
-        return new Vector(a.x * this.x, a.y * this.y, a.z * this.z, a.w * this.w);
-}
-
-// Returns a normalized version of this Vector
-Vector.prototype.normalize = function() {
-    var len = this.len();
-    if (len === 0)
-        return new Vector(0, 0);
-    else
-        return new Vector(this.x / len, this.y / len, this.z / len, this.w / len);
-}
-
-// Returns the length of this Vector
-Vector.prototype.len = function() {
-    return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w);
-}
-
-// Returns the length^2 of this Vector
-Vector.prototype.len2 = function() {
-    return this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w;
-}
-
-// Returns the distance between this Vector and the given Vector
-Vector.prototype.distanceTo = function(vec) {
-    return vec.sub(this).len();
-}
-
-// Returns a scalar representing the dot product between two Vectors
-Vector.prototype.dot = function(v) {
-    return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
-}
-
-// Returns a new Vector which is the projection of the given Vector onto this
-Vector.prototype.project = function(v) {
-    return this.scale(v.dot(this) / this.len2());
-}
-
-// Copies the Vector
-Vector.prototype.copy = function() {
-    return new Vector(this.x, this.y, this.z, this.w);
+    translate(dx, dy) {
+        if (dx instanceof Vector)
+            this.set(this.add(dx));
+        else
+            this.set(this.x + dx, this.y + dy);
+    }
+    add(x, y) {
+        if (x instanceof Vector)
+            return new Vector(this.x + x.x, this.y + x.y);
+        else
+            return new Vector(this.x + x, this.y + y);
+    }
+    sub(x, y) {
+        if (x instanceof Vector)
+            return new Vector(this.x - x.x, this.y - x.y);
+        else
+            return new Vector(this.x - x, this.y - y);
+    }
+    scale(a) {
+        if (a instanceof Vector)
+            return new Vector(a.x * this.x, a.y * this.y);
+        else
+            return new Vector(a * this.x, a * this.y);
+    }
+    normalize() {
+        var len = this.len();
+        if (len === 0) {
+            return new Vector(0, 0);
+        } else {
+            var invLen = 1 / len;
+            return new Vector(this.x * invLen, this.y * invLen);
+        }
+    }
+    len() {
+        return Math.sqrt(this.x*this.x + this.y*this.y);
+    }
+    len2() {
+        return this.x*this.x + this.y*this.y;
+    }
+    distanceTo(v) {
+        return this.sub(v).len();
+    }
+    dot(v) {
+        return this.x * v.x + this.y * v.y;
+    }
+    project(v) {
+        return this.scale(v.dot(this) / this.len2());
+    }
+    copy() {
+        return new Vector(this.x, this.y);
+    }
 }
