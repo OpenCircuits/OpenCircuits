@@ -95,57 +95,6 @@ class IOObject {
         this.cullTransform.setScale(this.transform.getScale());
         this.cullTransform.setSize(this.cullTransform.size.add(V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS)));
     }
-    getCullBox() {
-        return this.cullTransform;
-    }
-    getInputAmount() {
-        return this.inputs.length;
-    }
-    getImageTint() {
-        return this.getCol();
-    }
-    getCol() {
-        return (this.selected ? '#1cff3e' : undefined);
-    }
-    getBorderColor() {
-        return (this.selected ? '#0d7f1f' : undefined);
-    }
-    setTransform(t) {
-        this.transform = t;
-        this.onTransformChange();
-    }
-    setPos(v) {
-        this.transform.setPos(v);
-        this.onTransformChange();
-    }
-    setAngle(a) {
-        this.transform.setAngle(a);
-        this.onTransformChange();
-    }
-    // setRotationAbout(a, c) {
-    //     this.transform.rotateAbout(a-this.getAngle(), c);
-    //     this.onTransformChange();
-    // }
-    setRotationAbout(a, c) {
-        this.transform.rotateAbout(-this.getAngle(), c);
-        this.transform.rotateAbout(a, c);
-        this.onTransformChange();
-    }
-    getPos() {
-        return V(this.transform.pos.x, this.transform.pos.y);
-    }
-    getAngle() {
-        return this.transform.angle;
-    }
-    getSize() {
-        return this.transform.size;
-    }
-    setContext(context) {
-        this.context = context;
-        this.transform.setCamera(this.context.getCamera());
-        if (this.selectionBoxTransform != undefined)
-            this.selectionBoxTransform.setCamera(this.context.getCamera());
-    }
     click() {
         // console.log(this);
     }
@@ -185,16 +134,10 @@ class IOObject {
     remove() {
         var index = this.context.getIndexOf(this);
         this.context.getObjects().splice(index, 1);
-        for (var i = 0; i < this.outputs.length; i++) {
+        for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].remove();
-            this.outputs[i] = undefined;
-        }
-        this.outputs = [];
-        for (var i = 0; i < this.inputs.length; i++) {
+        for (var i = 0; i < this.inputs.length; i++)
             this.inputs[i].remove();
-            this.inputs[i] = undefined;
-        }
-        this.inputs = [];
     }
     contains(pos) {
         return rectContains(this.transform, pos);
@@ -217,8 +160,62 @@ class IOObject {
         }
         return -1;
     }
-    getRenderer() {
-        return this.context.getRenderer();
+    setContext(context) {
+        this.context = context;
+        this.transform.setCamera(this.context.getCamera());
+        if (this.selectionBoxTransform != undefined)
+            this.selectionBoxTransform.setCamera(this.context.getCamera());
+    }
+    setTransform(t) {
+        this.transform = t;
+        this.onTransformChange();
+    }
+    setPos(v) {
+        this.transform.setPos(v);
+        this.onTransformChange();
+    }
+    setAngle(a) {
+        this.transform.setAngle(a);
+        this.onTransformChange();
+    }
+    // setRotationAbout(a, c) {
+    //     this.transform.rotateAbout(a-this.getAngle(), c);
+    //     this.onTransformChange();
+    // }
+    setRotationAbout(a, c) {
+        this.transform.rotateAbout(-this.getAngle(), c);
+        this.transform.rotateAbout(a, c);
+        this.onTransformChange();
+    }
+    setName(name) {
+        this.name = name;
+    }
+    getCullBox() {
+        return this.cullTransform;
+    }
+    getInputAmount() {
+        return this.inputs.length;
+    }
+    getImageTint() {
+        return this.getCol();
+    }
+    getCol() {
+        return (this.selected ? '#1cff3e' : undefined);
+    }
+    getBorderColor() {
+        return (this.selected ? '#0d7f1f' : undefined);
+    }
+    getPos() {
+        return this.transform.pos.copy();
+    }
+    getAngle() {
+        return this.transform.angle;
+    }
+    getSize() {
+        return this.transform.size;
+    }
+    getName() {
+        return this.name;
     }
     getDisplayName() {
         return "IOObject";
@@ -226,11 +223,8 @@ class IOObject {
     getXMLName() {
         return this.getDisplayName().toLowerCase().replace(/\s+/g, '');
     }
-    setName(name) {
-        this.name = name;
-    }
-    getName() {
-        return this.name;
+    getRenderer() {
+        return this.context.getRenderer();
     }
     copy() {
         var copy = new this.constructor(this.context);

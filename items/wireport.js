@@ -1,18 +1,35 @@
-class WirePort {
-    constructor(wire1) {
-        this.context = wire1.context;
-        this.input = wire1;
+class WirePort extends IOObject {
+    constructor(context) {
+        super(context, 0, 0, 2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS);
+        this._input = undefined;
         this.connection = undefined;
         this.isOn = false;
-        this.transform = new Transform(this.input.curve.p2.copy(), V(15,15), 0, this.context.getCamera());
         this.selected = false;
+        this.hasSetTransform = false;
+    }
+    set input(input) {
+        this._input = input;
+        if (!this.hasSetTransform) {
+            this.hasSetTransform = true;
+            this.transform = new Transform(input.curve.p2.copy(), V(15,15), 0, this.context.getCamera());
+        }
+    }
+    get input() {
+        return this._input;
     }
     activate(on) {
-        this.connection.activate(on);
+        if (this.connection != undefined)
+            this.connection.activate(on);
+    }
+    remove() {
+        var index = this.context.getIndexOf(this);
+        this.context.getObjects().splice(index, 1);
     }
     onTransformChange() {
-        this.input.onTransformChange();
-        this.connection.onTransformChange();
+        if (this.input != undefined)
+            this.input.onTransformChange();
+        if (this.connection != undefined)
+            this.connection.onTransformChange();
     }
     connect(wire) {
         if (this.connection != undefined)
@@ -45,38 +62,21 @@ class WirePort {
     sContains(pos) {
         return this.contains(pos);
     }
-    setTransform(t) {
-        this.transform = t;
-        this.onTransformChange();
-    }
     setPos(v) {
-        // Snap to end points of wires
-        this.input.straight = false;
-        this.connection.straight = false;
-        v.x = snap(this.input, v.x, this.input.curve.p1.x);
-        v.y = snap(this.input, v.y, this.input.curve.p1.y);
-        v.x = snap(this.connection, v.x, this.connection.curve.p2.x);
-        v.y = snap(this.connection, v.y, this.connection.curve.p2.y);
+        if (this.input != undefined && this.connection != undefined) {
+            // Snap to end points of wires
+            this.input.straight = false;
+            this.connection.straight = false;
+            v.x = snap(this.input, v.x, this.input.curve.p1.x);
+            v.y = snap(this.input, v.y, this.input.curve.p1.y);
+            v.x = snap(this.connection, v.x, this.connection.curve.p2.x);
+            v.y = snap(this.connection, v.y, this.connection.curve.p2.y);
+        }
 
-        this.transform.setPos(v);
-        this.onTransformChange();
+        super.setPos(v);
     }
-    setRotationAbout(a, c) {
-        this.transform.rotateAbout(-this.getAngle(), c);
-        this.transform.rotateAbout(a, c);
-        this.onTransformChange();
-    }
-    oPortContains() {
-        return -1;
-    }
-    iPortContains() {
-        return -1;
-    }
-    getPos() {
-        return this.transform.pos.copy();
-    }
-    getAngle() {
-        return this.transform.angle;
+    getIndex() {
+        return 0;
     }
     getDir() {
         return this.transform.getMatrix().mul(V(-1, 0)).sub(this.transform.pos).normalize();
@@ -87,17 +87,14 @@ class WirePort {
     getCullBox() {
         return this.transform;
     }
-    getDisplayName() {
-        return "Port";
-    }
-    getInputPortCount() {
-        return 1;
-    }
     getInputAmount() {
         return 1;
     }
     getName() {
         return this.getDisplayName();
+    }
+    getDisplayName() {
+        return "Port";
     }
 }
 

@@ -18,9 +18,6 @@ class Button extends IOObject {
     contains(pos) {
         return circleContains(this.transform, pos);
     }
-    getInputPortCount() {
-        return 0;
-    }
     getDisplayName() {
         return "Button";
     }

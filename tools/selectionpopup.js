@@ -110,9 +110,9 @@ class SelectionPopup {
     updateICButton() {
         this.createICButton.style.display = (this.selections.length > 1 ? "inherit" : "none");
     }
-    select(obj) {
-        for (var i = 0; i < obj.length; i++)
-            this.selections.push(obj[i]);
+    select(objs) {
+        for (var i = 0; i < objs.length; i++)
+            this.selections.push(objs[i]);
 
         this.updateTitleValue();
         this.updatePosValue();

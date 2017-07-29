@@ -7,9 +7,6 @@ class Switch extends IOObject {
         this.activate(!this.outputs[0].isOn);
         this.img = images[this.outputs[0].isOn ? "switchDown.svg" : "switchUp.svg"];
     }
-    getInputPortCount() {
-        return 0;
-    }
     getDisplayName() {
         return "Switch";
     }

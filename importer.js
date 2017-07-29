@@ -120,6 +120,9 @@ function loadGroup(node, context) {
     var xorgates = getChildrenByTagName(objectsNode, "xorgate");
     for (var i = 0; i < xorgates.length; objects.push(new XORGate(context).load(xorgates[i++])));
 
+    var ports = getChildrenByTagName(objectsNode, "port");
+    for (var i = 0; i < ports.length; objects.push(new WirePort(context).load(ports[i++])));
+
     var ics = getChildrenByTagName(objectsNode, "ic");
     for (var i = 0; i < ics.length; objects.push(new IC(context).load(ics[i++])));
 

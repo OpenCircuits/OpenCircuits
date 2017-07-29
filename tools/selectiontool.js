@@ -87,6 +87,7 @@ class SelectionTool extends Tool {
             this.wire.split(this.wireSplitPoint);
             var action = new SplitWireAction(this.wire);
             getCurrentContext().addAction(action);
+            this.deselect();
             this.select([this.wire.connection]);
             this.startDrag(this.wire.connection, worldMousePos);
         }
@@ -116,14 +117,23 @@ class SelectionTool extends Tool {
         if (!icdesigner.hidden)
             return false;
 
-        if (this.selectionBox.onMouseUp(input))
+        if (this.selectionBox.onMouseUp(input)) {
+            for (var i = 0; i < this.selections.length; i++)
+                this.sendToFront(this.selections[i]);
             return true;
+        }
+
+        if (this.selections.length > 0 && popup.hidden) {
+            popup.show();
+            popup.onMove();
+        }
 
         // Stop dragging
         if (this.drag) {
             this.addTransformAction();
             this.drag = false;
             this.dragObj = undefined;
+            return true;
         }
 
         // Stop rotating
@@ -131,11 +141,6 @@ class SelectionTool extends Tool {
             this.addTransformAction();
             this.rotate = false;
             return true;
-        }
-
-        if (this.selections.length > 0 && popup.hidden) {
-            popup.show();
-            popup.onMove();
         }
 
         for (var i = 0; i < objects.length; i++) {
@@ -164,6 +169,8 @@ class SelectionTool extends Tool {
             if (obj.sContains(worldMousePos)) {
                 this.deselect();
                 this.select([obj]);
+
+                this.sendToFront(obj);
                 return true;
             }
 
@@ -287,6 +294,11 @@ class SelectionTool extends Tool {
         }
         return false;
     }
+    sendToFront(obj) {
+        var index = getCurrentContext().getIndexOf(obj);
+        getCurrentContext().getObjects().splice(index, 1);
+        getCurrentContext().getObjects().push(obj);
+    }
     recalculateMidpoint() {
         this.midpoint = V(0, 0);
         for (var i = 0; i < this.selections.length; i++)
@@ -295,7 +307,7 @@ class SelectionTool extends Tool {
     }
     draw(renderer) {
         var camera = renderer.getCamera();
-        if (this.selections.length > 0) {
+        if (this.selections.length > 0 && !this.drag) {
             var pos = camera.getScreenPos(this.midpoint);
             var r = ROTATION_CIRCLE_RADIUS / camera.zoom;
             var br = ROTATION_CIRCLE_THICKNESS / camera.zoom;
