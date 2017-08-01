@@ -55,15 +55,4 @@ class SevenSegmentDisplay extends IOObject {
     getDisplayName() {
         return "7 Segment Display";
     }
-    // writeTo(node) {
-    //     var LEDNode = super.writeTo(node);
-    //     createTextElement(LEDNode, "color", this.color);
-    //     return LEDNode;
-    // }
-    // load(node) {
-    //     super.load(node);
-    //     var color = getStringValue(getChildNode(node, "color"));
-    //     this.color = color;
-    //     return this;
-    // }
 }
