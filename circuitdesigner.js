@@ -44,6 +44,8 @@ class CircuitDesigner {
                     break;
                 }
             }
+        } else {
+            render();
         }
 
         if (inScene)

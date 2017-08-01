@@ -69,7 +69,7 @@ class Wire {
         }
     }
     connect(obj) {
-        if (this.connection != undefined)
+        if (this.connection != undefined || obj.input != undefined)
             return false;
 
         this.connection = obj;

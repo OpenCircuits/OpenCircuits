@@ -1,23 +1,20 @@
 class IPort extends IOPort {
     constructor(parent) {
         super(parent, V(-1, 0))
-        this.input = undefined;
     }
-    // set input(obj) {
-    //     if (obj == undefined)
-    //         this.connections = [];
-    //     else
-    //         this.connections[0] = obj;
-    // }
-    // get input() {
-    //     console.log(this);
-    //     if (this.connections.length > 0)
-    //         return this.connections[0];
-    //     else
-    //         return undefined;
-    // }
+    set input(obj) {
+        if (obj == undefined)
+            this.connections = [];
+        else
+            this.connections[0] = obj;
+    }
+    get input() {
+        if (this.connections.length > 0)
+            return this.connections[0];
+        else
+            return undefined;
+    }
     onTransformChange() {
-        this.connections[0] = this.input;
         super.onTransformChange();
     }
     activate(on) {

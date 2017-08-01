@@ -23,7 +23,8 @@ class WirePort extends IOObject {
     }
     remove() {
         var index = this.context.getIndexOf(this);
-        this.context.getObjects().splice(index, 1);
+        if (index != -1)
+            this.context.getObjects().splice(index, 1);
     }
     onTransformChange() {
         if (this.input != undefined)

@@ -16,11 +16,10 @@ class OPort extends IOPort {
     remove() {
         for (var i = 0; i < this.connections.length; i++) {
             var obj = this.connections[i];
-            obj.remove();
-            // do {
-            //     obj.remove();
-            //     obj = obj.connection;
-            // } while (obj != undefined && !(obj instanceof IPort));
+            do {
+                obj.remove();
+                obj = obj.connection;
+            } while (obj != undefined && !(obj instanceof IPort));
         }
     }
     connect(wire) {
