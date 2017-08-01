@@ -22,7 +22,8 @@ function start() {
          "or.svg", "xor.svg",
          "base.svg", "segment1.svg",
          "segment2.svg", "segment3.svg",
-         "segment4.svg"], 0, onFinishLoading);
+         "segment4.svg", "clock.svg",
+         "clockOn.svg"], 0, onFinishLoading);
 }
 
 function wire(source, target) {
@@ -46,11 +47,12 @@ function onFinishLoading() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
-    var sw = new Switch(context, -50, 0);
-    var s = new SevenSegmentDisplay(context, 100, 0);
+    var c = new Clock(context, -50, 0);
 
-    getCurrentContext().addObject(sw);
-    getCurrentContext().addObject(s);
+    var l = new LED(context, 100, 0, '#ff00ff');
+
+    getCurrentContext().addObject(c);
+    getCurrentContext().addObject(l);
 
     render();
 }

@@ -77,7 +77,6 @@ class Renderer {
         this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
         this.tintContext.fillStyle = tint;
         this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
-        console.log(browser.name);
         if (browser.name !== "Firefox")
             this.tintContext.globalCompositeOperation = "destination-atop";
         else
