@@ -29,7 +29,10 @@ class Input {
         window.addEventListener('keyup', e => {if (this === getCurrentContext().getInput())this.onKeyUp(e);}, false);
         canvas.addEventListener('click', e => this.onClick(e), false);
         canvas.addEventListener('dblclick', e => this.onDoubleClick(e), false);
-        canvas.addEventListener('wheel', e => this.onWheel(e), false);
+        // if (browser.name !== "Firefox")
+            canvas.addEventListener('wheel', e => this.onWheel(e), false);
+        // else
+        //     canvas.addEventListener('DOMMouseScroll', e => this.onWheel(e), false);
         canvas.addEventListener('mousedown', e => this.onMouseDown(e), false);
         canvas.addEventListener('mouseup', e => this.onMouseUp(e), false);
         canvas.addEventListener('mousemove', e => this.onMouseMove(e), false);
@@ -59,7 +62,7 @@ class Input {
     onDoubleClick(e) {
     }
     onWheel(e) {
-        var delta = e.wheelDelta / 120.0;
+        var delta = -e.deltaY / 120.0;
 
         var factor = 0.95;
         if (delta < 0)

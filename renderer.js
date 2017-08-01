@@ -77,7 +77,11 @@ class Renderer {
         this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
         this.tintContext.fillStyle = tint;
         this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
-        this.tintContext.globalCompositeOperation = "destination-atop";
+        console.log(browser.name);
+        if (browser.name !== "Firefox")
+            this.tintContext.globalCompositeOperation = "destination-atop";
+        else
+            this.tintContext.globalCompositeOperation = "source-atop";
         this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
 
         this.context.globalAlpha = 0.5;
