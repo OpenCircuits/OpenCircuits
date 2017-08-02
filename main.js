@@ -47,12 +47,9 @@ function onFinishLoading() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
-    var c = new Clock(context, -50, 0);
+    var m = new Demultiplexer(context, -50, 0);
 
-    var l = new LED(context, 100, 0, '#ff00ff');
-
-    getCurrentContext().addObject(c);
-    getCurrentContext().addObject(l);
+    getCurrentContext().addObject(m);
 
     render();
 }

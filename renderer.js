@@ -140,6 +140,20 @@ class Renderer {
         this.context.closePath();
         this.restore();
     }
+    shape(points, fillStyle, borderStyle, borderSize) {
+        this.save();
+        this.setStyles(fillStyle, borderStyle, borderSize);
+        this.context.beginPath();
+        this.context.moveTo(points[0].x, points[0].y);
+        for (var i = 1; i < points.length; i++)
+            this.context.lineTo(points[i].x, points[i].y);
+        this.context.lineTo(points[0].x, points[0].y);
+        this.context.fill();
+        this.context.closePath();
+        if (borderSize > 0)
+            this.context.stroke();
+        this.restore();
+    }
     setStyles(fillStyle, borderStyle, borderSize, alpha) {
         if (alpha != undefined && alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;

@@ -89,13 +89,19 @@ class SelectionPopup {
     }
     updateInputCountValue() {
         var allSame = true, display = true;
+        var maxMinValue = 0;
+        var minMaxValue = 1000;
         for (var i = 0; i < this.selections.length; i++) {
             display = display && (this.selections[i].maxInputs > 1 && this.selections[i].noChange !== true);
             allSame = allSame && this.selections[i].getInputAmount() === this.selections[0].getInputAmount();
+            maxMinValue = Math.max(this.selections[i].getMinInputFieldCount(), maxMinValue);
+            minMaxValue = Math.min(this.selections[i].getMaxInputFieldCount(), minMaxValue);
         }
         this.inputCount.value = (allSame ? this.selections[0].getInputAmount() : "");
         this.inputCount.placeholder = (allSame ? "" : "-");
         this.inputCountText.style.display = this.inputCount.style.display = (display ? "inherit" : "none");
+        this.inputCount.min = maxMinValue;
+        this.inputCount.max = minMaxValue;
     }
     updateColorValue() {
         var allLEDs = true, allSame = true;

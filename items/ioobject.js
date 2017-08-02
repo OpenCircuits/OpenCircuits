@@ -214,6 +214,12 @@ class IOObject {
     getSize() {
         return this.transform.size;
     }
+    getMaxInputFieldCount() {
+        return 8;
+    }
+    getMinInputFieldCount() {
+        return 2;
+    }
     getName() {
         return this.name;
     }
