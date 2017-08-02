@@ -20,10 +20,9 @@ function start() {
          "led.svg", "ledLight.svg",
          "buffer.svg", "and.svg",
          "or.svg", "xor.svg",
-         "base.svg", "segment1.svg",
-         "segment2.svg", "segment3.svg",
-         "segment4.svg", "clock.svg",
-         "clockOn.svg"], 0, onFinishLoading);
+         "segment1.svg", "segment2.svg",
+         "segment3.svg", "segment4.svg",
+         "clock.svg", "clockOn.svg"], 0, onFinishLoading);
 }
 
 function wire(source, target) {
@@ -47,7 +46,7 @@ function onFinishLoading() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
-    var m = new Demultiplexer(context, -50, 0);
+    var m = new Decoder(context, -50, 0);
 
     getCurrentContext().addObject(m);
 
