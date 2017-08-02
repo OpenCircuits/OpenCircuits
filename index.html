@@ -11,12 +11,92 @@
 
     <body onload="start();">
         <div id="container">
-            <!-- <div id="scenes" class="scenebar">
-                <button type="button">
-                    Untitled.circuit*
+            <div id="items" class="sidenav">
+                <h4 unselectable>Inputs</h4>
+                <button type="button" onclick="placeItem(new ConstantLow());">
+                    <img src="images/items/constLow.svg" ondragend="onDragEnd(event);" width="100%" alt="Constant low"/>
+                    <br/>Constant Low
                 </button>
-            </div> -->
+                <button type="button" onclick="placeItem(new ConstantHigh());">
+                    <img src="images/items/constHigh.svg" ondragend="onDragEnd(event);" width="100%" alt="Constant high"/>
+                    <br/>Constant High
+                </button>
+                <button type="button" onclick="placeItem(new Button());">
+                    <img src="images/items/buttonUp.svg" ondragend="onDragEnd(event);" width="100%" alt="Button"/>
+                    <br/>Button
+                </button>
+                <button type="button" onclick="placeItem(new Switch());">
+                    <img src="images/items/switchUp.svg" ondragend="onDragEnd(event);" width="100%" alt="Switch"/>
+                    <br/>Switch
+                </button>
+                <button type="button" onclick="placeItem(new Clock());">
+                    <img src="images/items/clock.svg" ondragend="onDragEnd(event);" width="100%" height="10%" alt="Clock"/>
+                    <br/>Clock
+                </button>
+
+                <h4 unselectable>Ouputs</h4>
+                <button type="button" onclick="placeItem(new LED());">
+                    <img src="images/items/led.svg" ondragend="onDragEnd(event);" width="100%" alt="LED"/>
+                    <br/>LED
+                </button>
+                <button type="button" onclick="placeItem(new SevenSegmentDisplay());">
+                    <img src="images/icons/7segmentdisplay.svg" ondragend="onDragEnd(event);" width="70%" alt="7 Segment Display"/>
+                    <br/>7 Segment Display
+                </button>
+
+                <h4 unselectable>Logic Gates</h4>
+                <button type="button" onclick="placeItem(new BUFGate());">
+                    <img src="images/icons/buffer.svg" ondragend="onDragEnd(event);" width="100%" alt="Buffer gate"/>
+                    <br/>BUFFER
+                </button>
+                <button type="button" onclick="placeItem(new BUFGate(), true);">
+                    <img src="images/icons/not.svg" ondragend="onDragEnd(event);" width="100%" alt="NOT gate"/>
+                    <br/>NOT
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate());">
+                    <img src="images/icons/and.svg" ondragend="onDragEnd(event);" width="100%" alt="AND gate"/>
+                    <br/>AND
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate(), true);">
+                    <img src="images/icons/nand.svg" ondragend="onDragEnd(event);" width="100%" alt="NAND gate"/>
+                    <br/>NAND
+                </button>
+                <button type="button" onclick="placeItem(new ORGate());">
+                    <img src="images/icons/or.svg" ondragend="onDragEnd(event);" width="100%" alt="OR gate"/>
+                    <br/>OR
+                </button>
+                <button type="button" onclick="placeItem(new ORGate(), true);">
+                    <img src="images/icons/nor.svg" ondragend="onDragEnd(event);" width="100%" alt="NOR gate"/>
+                    <br/>NOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate());">
+                    <img src="images/icons/xor.svg" ondragend="onDragEnd(event);" width="100%" alt="XOR gate"/>
+                    <br/>XOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate(), true);">
+                    <img src="images/icons/xnor.svg" ondragend="onDragEnd(event);" width="100%" alt="XNOR gate"/>
+                    <br/>XNOR
+                </button>
+                <button type="button" onclick="placeItem(new Multiplexer());">
+                    <img src="images/icons/multiplexer.svg" ondragend="onDragEnd(event);" width="100%" alt="Multiplexer"/>
+                    <br/>Mux
+                </button>
+                <button type="button" onclick="placeItem(new Demultiplexer());">
+                    <img src="images/icons/demultiplexer.svg" ondragend="onDragEnd(event);" width="100%" alt="Demultiplexer"/>
+                    <br/>Demux
+                </button>
+                <button type="button" onclick="placeItem(new Encoder());">
+                    <img src="images/icons/encoder.svg" ondragend="onDragEnd(event);" width="100%" alt="Encoder"/>
+                    <br/>Encoder
+                </button>
+                <button type="button" onclick="placeItem(new Decoder());">
+                    <img src="images/icons/encoder.svg" ondragend="onDragEnd(event);" width="100%" alt="Decoder"/>
+                    <br/>Decoder
+                </button>
+            </div>
+
             <div id="tools" class="toolbar">
+                <input type="text" id="projectName" alt="Name of project" value="Untitled Circuit*" >
                 <button type="button" onclick="document.getElementById('file-input').click();">
                     <img src="images/icons/open.svg" height="100%" alt="Open a file"/>
                 </button>
@@ -24,96 +104,7 @@
                 <button type="button" onclick="saveFile();">
                     <img src="images/icons/save.svg" height="100%" alt="Save current scene"/>
                 </button>
-                <button type="button">
-                    <img src="images/icons/cursor.svg" height="100%" alt="Selection tool"/>
-                </button>
-                <button type="button">
-                    <img src="images/icons/hand.svg" height="100%" alt="Pan tool"/>
-                </button>
-            </div>
-
-            <div id="items" class="sidenav">
-                <h4 unselectable>Inputs</h4>
-                <button type="button" onclick="placeItem(new ConstantLow());">
-                    <img src="images/items/constLow.svg" width="100%" alt="Constant low"/>
-                    <br/>Constant Low
-                </button>
-                <button type="button" onclick="placeItem(new ConstantHigh());">
-                    <img src="images/items/constHigh.svg" width="100%" alt="Constant high"/>
-                    <br/>Constant High
-                </button>
-                <button type="button" onclick="placeItem(new Button());">
-                    <img src="images/items/buttonUp.svg" width="100%" alt="Button"/>
-                    <br/>Button
-                </button>
-                <button type="button" onclick="placeItem(new Switch());">
-                    <img src="images/items/switchUp.svg" width="100%" alt="Switch"/>
-                    <br/>Switch
-                </button>
-                <button type="button" onclick="placeItem(new Clock());">
-                    <img src="images/items/clock.svg" width="100%" height="10%" alt="Clock"/>
-                    <br/>Clock
-                </button>
-
-                <h4 unselectable>Ouputs</h4>
-                <button type="button" onclick="placeItem(new LED());">
-                    <img src="images/items/led.svg" width="100%" alt="LED"/>
-                    <br/>LED
-                </button>
-                <button type="button" onclick="placeItem(new SevenSegmentDisplay());">
-                    <img src="images/icons/7segmentdisplay.svg" width="70%" alt="7 Segment Display"/>
-                    <br/>7 Segment Display
-                </button>
-
-                <h4 unselectable>Logic Gates</h4>
-                <button type="button" onclick="placeItem(new BUFGate());">
-                    <img src="images/icons/buffer.svg" width="100%" alt="Buffer gate"/>
-                    <br/>BUFFER
-                </button>
-                <button type="button" onclick="placeItem(new BUFGate(), true);">
-                    <img src="images/icons/not.svg" width="100%" alt="NOT gate"/>
-                    <br/>NOT
-                </button>
-                <button type="button" onclick="placeItem(new ANDGate());">
-                    <img src="images/icons/and.svg" width="100%" alt="AND gate"/>
-                    <br/>AND
-                </button>
-                <button type="button" onclick="placeItem(new ANDGate(), true);">
-                    <img src="images/icons/nand.svg" width="100%" alt="NAND gate"/>
-                    <br/>NAND
-                </button>
-                <button type="button" onclick="placeItem(new ORGate());">
-                    <img src="images/icons/or.svg" width="100%" alt="OR gate"/>
-                    <br/>OR
-                </button>
-                <button type="button" onclick="placeItem(new ORGate(), true);">
-                    <img src="images/icons/nor.svg" width="100%" alt="NOR gate"/>
-                    <br/>NOR
-                </button>
-                <button type="button" onclick="placeItem(new XORGate());">
-                    <img src="images/icons/xor.svg" width="100%" alt="XOR gate"/>
-                    <br/>XOR
-                </button>
-                <button type="button" onclick="placeItem(new XORGate(), true);">
-                    <img src="images/icons/xnor.svg" width="100%" alt="XNOR gate"/>
-                    <br/>XNOR
-                </button>
-                <button type="button" onclick="placeItem(new Multiplexer());">
-                    <img src="images/icons/multiplexer.svg" width="100%" alt="Multiplexer"/>
-                    <br/>Mux
-                </button>
-                <button type="button" onclick="placeItem(new Demultiplexer());">
-                    <img src="images/icons/demultiplexer.svg" width="100%" alt="Demultiplexer"/>
-                    <br/>Demux
-                </button>
-                <button type="button" onclick="placeItem(new Encoder());">
-                    <img src="images/icons/encoder.svg" width="100%" alt="Encoder"/>
-                    <br/>Encoder
-                </button>
-                <button type="button" onclick="placeItem(new Decoder());">
-                    <img src="images/icons/encoder.svg" width="100%" alt="Decoder"/>
-                    <br/>Decoder
-                </button>
+                <img id="logo" src="images/icons/logo.svg" height="100%" alt="OpenCircuits logo"/>
             </div>
         </div>
 
@@ -127,7 +118,7 @@
             <button id="ic-cancelbutton" alt="Cancel IC" class="icbutton" onclick="icdesigner.cancel();">Cancel</button>
             <script>document.getElementById('ic-cancelbutton').style.visibility = 'hidden';</script>
 
-            <div id="openItemsTab" class="tab" onclick="sidebar();"> > </div>
+            <div id="openItemsTab" class="tab" onclick="sidebar();"> &#9776; </div>
 
             <div id="popupDiv" class="popup">
                 <input type="text" id="nameText" alt="Name of object(s)" value="Name :" onfocus="popup.onTitleFocus();" onblur="popup.onTitleBlur();">

@@ -46,10 +46,6 @@ function onFinishLoading() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
-    var m = new Decoder(context, -50, 0);
-
-    getCurrentContext().addObject(m);
-
     render();
 }
 

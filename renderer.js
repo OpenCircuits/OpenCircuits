@@ -14,7 +14,7 @@ class Renderer {
         this.tintCanvas.height = 1000;
         this.tintContext = this.tintCanvas.getContext("2d");
 
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        // document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 
         window.addEventListener('resize', e => this.resize(), false);
     }

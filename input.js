@@ -141,23 +141,42 @@ var clipboard = new Clipboard();
 var currentTool = selectionTool;
 
 
-// sidebar();
+sidebar();
 function sidebar() {
     isSidebarOpen = !isSidebarOpen;
 
     if (isSidebarOpen) {
         document.getElementById("items").style.width = "200px";
-        document.getElementById("openItemsTab").style.marginLeft = "200px";
-        document.getElementById("openItemsTab").innerHTML = "<";
+        document.getElementById("openItemsTab").style.marginLeft = "145px";
+        document.getElementById("openItemsTab").style.borderColor = "rgba(153, 153, 153, 0.0)";
+        document.getElementById("openItemsTab").style.backgroundColor = "rgba(200, 200, 200, 0.0)";
+        document.getElementById("openItemsTab").style.fontSize = "2.5em";
+        document.getElementById("openItemsTab").innerHTML = "&times;";
     } else {
         document.getElementById("items").style.width = "0";
         document.getElementById("openItemsTab").style.marginLeft = "0";
-        document.getElementById("openItemsTab").innerHTML = ">";
+        document.getElementById("openItemsTab").style.borderColor = "rgba(153, 153, 153, 0.7)";
+        document.getElementById("openItemsTab").style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+        document.getElementById("openItemsTab").style.fontSize = "2em";
+        document.getElementById("openItemsTab").innerHTML = "&#9776;";
     }
 }
+
+var justDragged = false;
 
 function placeItem(item, not) {
     if (not)
         item.not = not;
     itemTool.activate(item, getCurrentContext());
+    if (justDragged) {
+        getCurrentContext().getInput().onMouseMove(event);
+        itemTool.onMouseMove(getCurrentContext().getInput())
+        itemTool.onClick();
+    }
+    justDragged = false;
+}
+
+function onDragEnd(event) {
+    justDragged = true;
+    event.srcElement.parentElement.onclick();
 }
