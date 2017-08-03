@@ -213,6 +213,58 @@ function getNearestPointOnRect(bl, tr, pos) {
     return V(0, 0);
 }
 
+// Okay, I know this is awful but it's like 5:47 am and I'm tired
+function getAllThingsBetween(things) {
+    var objects = [];
+    var wiresAndPorts = [];
+    for (var i = 0; i < things.length; i++) {
+        if (things[i] instanceof Wire || things[i] instanceof WirePort)
+            wiresAndPorts.push(things[i]);
+        else
+            objects.push(things[i]);
+    }
+    var allTheThings = [];
+    for (var i = 0; i < objects.length; i++) {
+        allTheThings.push(objects[i]);
+        for (var j = 0; j < objects[i].inputs.length; j++) {
+            var iport = objects[i].inputs[j];
+            obj = iport.input;
+            while (obj != undefined && !(obj instanceof OPort)) {
+                if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                    allTheThings.push(obj);
+                obj = obj.input;
+            }
+        }
+        for (var j = 0; j < objects[i].outputs.length; j++) {
+            var oport = objects[i].outputs[j];
+            for (var k = 0; k < oport.connections.length; k++) {
+                obj = oport.connections[k];
+                while (obj != undefined && !(obj instanceof IPort)) {
+                    if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                        allTheThings.push(obj);
+                    obj = obj.connection;
+                }
+            }
+        }
+    }
+    for (var i = 0; i < wiresAndPorts.length; i++) {
+        allTheThings.push(wiresAndPorts[i]);
+        var obj = wiresAndPorts[i].input;
+        while (obj != undefined && !(obj instanceof OPort)) {
+            if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                allTheThings.push(obj);
+            obj = obj.input;
+        }
+        obj = wiresAndPorts[i].connection;
+        while (obj != undefined && !(obj instanceof IPort)) {
+            if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                allTheThings.push(obj);
+            obj = obj.connection;
+        }
+    }
+    return allTheThings;
+}
+
 /**
  * Finds and returns all the inter-connected wires
  * in a given group of objects

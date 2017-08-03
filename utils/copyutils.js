@@ -11,8 +11,6 @@ function copyGroup(objects) {
             copies[i] = objects[i].copy();
     }
 
-    console.log(objects);
-
     // Copy and reconnect all wires
     wireCopies = [];
     for (var i = 0; i < objects.length; i++) {
@@ -20,6 +18,13 @@ function copyGroup(objects) {
         for (var j = 0; j < obj.outputs.length; j++) {
             var wires = obj.outputs[j].connections;
             for (var k = 0; k < wires.length; k++) {
+                // See if connection was also copied
+                var ww = wires[k];
+                while (ww instanceof Wire || ww instanceof WirePort)
+                    ww = ww.connection;
+                if (findIPort(objects, ww, copies) == undefined)
+                    break;
+
                 var wire = wires[k].copy();
                 copies[i].outputs[j].connect(wire);
                 var w = wires[k];
@@ -39,8 +44,6 @@ function copyGroup(objects) {
             }
         }
     }
-
-    console.log(copies);
 
     return {objects:copies, wires:wireCopies};
 }

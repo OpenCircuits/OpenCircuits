@@ -4,8 +4,7 @@ class PlaceAction {
         this.obj = obj;
     }
     undo() {
-        var index = this.context.getIndexOf(this.obj);
-        this.context.getObjects().splice(index, 1);
+        this.context.remove(this.obj);
     }
     redo() {
         this.context.addObject(this.obj);

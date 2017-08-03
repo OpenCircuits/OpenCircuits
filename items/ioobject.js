@@ -132,8 +132,7 @@ class IOObject {
         renderer.restore();
     }
     remove() {
-        var index = this.context.getIndexOf(this);
-        this.context.getObjects().splice(index, 1);
+        this.context.remove(this);
         for (var i = 0; i < this.outputs.length; i++)
             this.outputs[i].remove();
         for (var i = 0; i < this.inputs.length; i++)

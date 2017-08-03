@@ -18,13 +18,19 @@ class WirePort extends IOObject {
         return this._input;
     }
     activate(on) {
+        if (this.isOn === on)
+            return;
+
+        this.isOn = on;
         if (this.connection != undefined)
             this.connection.activate(on);
     }
     remove() {
-        var index = this.context.getIndexOf(this);
-        if (index != -1)
-            this.context.getObjects().splice(index, 1);
+        this.context.remove(this);
+        if (this.input != undefined)
+            this.input.disconnect(this);
+        if (this.connection != undefined)
+            this.disconnect(this.connection);
     }
     onTransformChange() {
         if (this.input != undefined)

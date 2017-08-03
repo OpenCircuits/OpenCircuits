@@ -84,33 +84,56 @@ class Wire {
             return false;
 
         this.connection.input = undefined;
+        this.connection.activate(false);
         this.connection = undefined;
     }
     draw() {
         var renderer = this.context.getRenderer();
         var camera = this.context.getCamera();
 
+        var color = (this.isOn ? '#3cacf2' : (this.selected ? '#1cff3e' : DEFAULT_FILL_COLOR));
         if (this.straight) {
             var p1 = camera.getScreenPos(this.curve.p1);
             var p2 = camera.getScreenPos(this.curve.p2);
-            renderer.line(p1.x, p1.y, p2.x, p2.y, this.isOn ? '#3cacf2' : DEFAULT_FILL_COLOR, 7 / camera.zoom);
+            renderer.line(p1.x, p1.y, p2.x, p2.y, color, 7 / camera.zoom);
         } else {
-            this.curve.draw(this.isOn ? '#3cacf2' : DEFAULT_FILL_COLOR, 7 / camera.zoom, renderer);
+            this.curve.draw(color, 7 / camera.zoom, renderer);
         }
     }
     remove() {
-        var index = this.context.getIndexOf(this);
-        if (index !== -1)
-            this.context.getWires().splice(index, 1);
+        this.context.remove(this);
+        if (this.input != undefined)
+            this.input.disconnect(this);
+        if (this.connection != undefined)
+            this.disconnect(this.connection);
     }
     contains(pos) {
         return this.curve.getNearestT(pos.x, pos.y) !== -1;
     }
+    setName(n) {
+    }
     getPos(t) {
+        if (t == undefined)
+            t = 0.5;
         return this.curve.getPos(t);
     }
     getNearestT(mx, my) {
         return (this.straight) ? (getNearestT(this.curve.p1, this.curve.p2, mx, my)) : (this.curve.getNearestT(mx, my));
+    }
+    getInputAmount() {
+        return 1;
+    }
+    getMaxInputFieldCount() {
+        return 1;
+    }
+    getMinInputFieldCount() {
+        return 1;
+    }
+    getName() {
+        return this.getDisplayName();
+    }
+    getDisplayName() {
+        return "Wire";
     }
     copy() {
         var copy = new Wire(this.context);

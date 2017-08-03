@@ -12,6 +12,12 @@ class Context {
     propogate(sender, receiver, signal) {
         this.designer.propogate(sender, receiver, signal);
     }
+    add(o) {
+        if (o instanceof Wire)
+            this.addWire(o);
+        else
+            this.addObject(o);
+    }
     addObject(o) {
         this.designer.addObject(o);
     }
@@ -20,6 +26,15 @@ class Context {
     }
     addAction(action) {
         this.designer.history.add(action);
+    }
+    remove(o) {
+        var index = this.getIndexOf(o);
+        if (index === -1)
+            return;
+        if (o instanceof Wire)
+            this.getWires().splice(index, 1);
+        else
+            this.getObjects().splice(index, 1);
     }
     undo() {
         this.designer.history.undo();

@@ -90,6 +90,7 @@ class SelectionTool extends Tool {
             this.deselect();
             this.select([this.wire.connection]);
             this.startDrag(this.wire.connection, worldMousePos);
+            this.wire = undefined;
         }
 
         // Transform selection(s)
@@ -188,6 +189,15 @@ class SelectionTool extends Tool {
             }
         }
 
+        // Select wire
+        if (this.wire != undefined) {
+            this.shouldSplit = false;
+            this.deselect();
+            this.select([this.wire]);
+            this.wire = undefined;
+            return true;
+        }
+
         // Didn't click on anything so deselect everything
         if (this.selections.length > 0) {
             this.deselect();
@@ -222,9 +232,26 @@ class SelectionTool extends Tool {
         popup.deselect();
     }
     removeSelections() {
-        while(this.selections.length > 0) {
-            this.selections.splice(0, 1)[0].remove();
+        var action = new GroupAction();
+        var things = getAllThingsBetween(this.selections);
+        for (var i = 0; i < things.length; i++) {
+            if (things[i] instanceof Wire || things[i] instanceof WirePort) {
+                var oldinput = things[i].input;
+                var oldconnection = things[i].connection;
+                things[i].remove();
+                things[i].selected = false;
+                action.add(new DeleteAction(things[i], oldinput, oldconnection));
+            }
         }
+        for (var i = 0; i < things.length; i++) {
+            if (!(things[i] instanceof Wire || things[i] instanceof WirePort)) {
+                things[i].remove();
+                things[i].selected = false;
+                action.add(new DeleteAction(things[i]));
+            }
+        }
+        this.selections = [];
+        getCurrentContext().addAction(action);
         popup.deselect();
         render();
     }

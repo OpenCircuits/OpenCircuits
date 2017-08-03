@@ -25,13 +25,15 @@ class IPort extends IOPort {
         this.parent.context.propogate(this, this.parent, this.isOn);
     }
     remove() {
-        var obj = this.input;
-        if (obj != undefined) {
-            do {
-                obj.remove();
-                obj = obj.input;
-            } while (obj != undefined && !(obj instanceof OPort));
-        }
+        if (this.input != undefined)
+            this.input.disconnect(this);
+        // var obj = this.input;
+        // if (obj != undefined) {
+        //     do {
+        //         obj.remove();
+        //         obj = obj.input;
+        //     } while (obj != undefined && !(obj instanceof OPort));
+        // }
     }
     getArray() {
         return this.parent.inputs;

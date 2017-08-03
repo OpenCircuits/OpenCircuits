@@ -108,10 +108,16 @@ class CircuitDesigner {
         currentTool.draw(this.renderer);
     }
     addObject(o) {
-        this.objects.push(o);
+        if (this.getIndexOfObject(o) === -1)
+            this.objects.push(o);
+        else
+            console.log(new Error());
     }
     addWire(w) {
-        this.wires.push(w);
+        if (this.getIndexOfWire(w) === -1)
+            this.wires.push(w);
+        else
+            console.log(new Error());
     }
     getRenderer() {
         return this.renderer;

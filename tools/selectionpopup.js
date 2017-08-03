@@ -143,7 +143,7 @@ class SelectionPopup {
         var camera = getCurrentContext().getCamera();
         if (this.selections.length > 0) {
             var pos = camera.getScreenPos(this.getSelectionPos());
-            pos.y -= this.div.clientHeight;
+            pos.y -= this.div.clientHeight/2;
             this.setPos(pos);
         }
     }
