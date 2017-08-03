@@ -56,7 +56,7 @@ class Multiplexer extends Gate {
         var p3 = V(this.transform.size.x/2, -this.transform.size.y/2+20);
         var p4 = V(this.transform.size.x/2, this.transform.size.y/2-20);
 
-        renderer.shape([p1, p2, p3, p4], DEFAULT_FILL_COLOR, DEFAULT_BORDER_COLOR, 2);
+        renderer.shape([p1, p2, p3, p4], this.getCol(), this.getBorderColor(), 2);
 
         renderer.restore();
     }

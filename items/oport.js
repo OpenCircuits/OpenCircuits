@@ -14,14 +14,8 @@ class OPort extends IOPort {
             this.parent.context.propogate(this, this.connections[i], this.isOn);
     }
     remove() {
-        for (var i = 0; i < this.connections.length; i++) {
+        for (var i = 0; i < this.connections.length; i++)
             this.disconnect(this.connections[i]);
-            // var obj = this.connections[i];
-            // do {
-            //     obj.remove();
-            //     obj = obj.connection;
-            // } while (obj != undefined && !(obj instanceof IPort));
-        }
     }
     connect(wire) {
         this.connections.push(wire);

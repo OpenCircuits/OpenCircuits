@@ -49,7 +49,4 @@ class Encoder extends Gate {
     getDisplayName() {
         return "Encoder";
     }
-    getXMLName() {
-        return "encoder";
-    }
 }

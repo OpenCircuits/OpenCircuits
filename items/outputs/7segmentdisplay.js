@@ -55,4 +55,7 @@ class SevenSegmentDisplay extends IOObject {
     getDisplayName() {
         return "7 Segment Display";
     }
+    getXMLName() {
+        return "sevensegmentdisplay";
+    }
 }

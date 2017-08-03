@@ -40,7 +40,7 @@ class Gate extends IOObject {
     writeTo(node) {
         var gateNode = super.writeTo(node);
         createTextElement(gateNode, "not", this.not);
-        createTextElement(gateNode, "inputcount", this.inputs.length);
+        createTextElement(gateNode, "inputcount", this.getInputAmount());
         return gateNode;
     }
     load(node) {

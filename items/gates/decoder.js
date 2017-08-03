@@ -35,7 +35,4 @@ class Decoder extends Gate {
     getDisplayName() {
         return "Decoder";
     }
-    getXMLName() {
-        return "decoder";
-    }
 }

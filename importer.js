@@ -107,9 +107,13 @@ function loadGroup(node, context) {
     for (var i = 0; i < buttons.length; objects.push(new Button(context).load(buttons[i++])));
     var switches = getChildrenByTagName(objectsNode, "switch");
     for (var i = 0; i < switches.length; objects.push(new Switch(context).load(switches[i++])));
+    var clocks = getChildrenByTagName(objectsNode, "clock");
+    for (var i = 0; i < clocks.length; objects.push(new Clock(context).load(clocks[i++])));
 
     var leds = getChildrenByTagName(objectsNode, "led");
     for (var i = 0; i < leds.length; objects.push(new LED(context).load(leds[i++])));
+    var ssds = getChildrenByTagName(objectsNode, "sevensegmentdisplay");
+    for (var i = 0; i < ssds.length; objects.push(new SevenSegmentDisplay(context).load(ssds[i++])));
 
     var buffergates = getChildrenByTagName(objectsNode, "buffergate");
     for (var i = 0; i < buffergates.length; objects.push(new BUFGate(context).load(buffergates[i++])));
@@ -119,6 +123,14 @@ function loadGroup(node, context) {
     for (var i = 0; i < orgates.length; objects.push(new ORGate(context).load(orgates[i++])));
     var xorgates = getChildrenByTagName(objectsNode, "xorgate");
     for (var i = 0; i < xorgates.length; objects.push(new XORGate(context).load(xorgates[i++])));
+    var muxs = getChildrenByTagName(objectsNode, "mux");
+    for (var i = 0; i < muxs.length; objects.push(new Multiplexer(context).load(muxs[i++])));
+    var demuxs = getChildrenByTagName(objectsNode, "demux");
+    for (var i = 0; i < demuxs.length; objects.push(new Demultiplexer(context).load(demuxs[i++])));
+    var encoders = getChildrenByTagName(objectsNode, "encoder");
+    for (var i = 0; i < encoders.length; objects.push(new Encoder(context).load(encoders[i++])));
+    var decoders = getChildrenByTagName(objectsNode, "decoder");
+    for (var i = 0; i < decoders.length; objects.push(new Decoder(context).load(decoders[i++])));
 
     var ports = getChildrenByTagName(objectsNode, "port");
     for (var i = 0; i < ports.length; objects.push(new WirePort(context).load(ports[i++])));
