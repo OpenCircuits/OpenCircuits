@@ -120,6 +120,11 @@ class IC extends IOObject {
 function createIC(context, selections, pos) {
     var objects = copyGroup(selections).objects;
     var separate = separateGroup(objects);
+    for (var i = 0; i < separate.inputs.length; i++) {
+        var input = separate.inputs[i];
+        if (input instanceof Clock && input.getName() === input.getDisplayName())
+            input.setName(">");
+    }
 
     return new IC(context, pos.x, pos.y, separate.inputs, separate.outputs, separate.components, ICs.length);
 }

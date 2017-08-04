@@ -44,6 +44,8 @@ class Input {
             this.shiftKeyDown = true;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
             this.modiferKeyDown = true;
+        else if (code === ENTER_KEY && document.activeElement === projectNameInput)
+            projectNameInput.blur();
 
         this.parent.history.onKeyDown(code, this);
         clipboard.onKeyDown(code, this);
@@ -140,6 +142,7 @@ var clipboard = new Clipboard();
 
 var currentTool = selectionTool;
 
+var projectNameInput = document.getElementById("projectName");
 
 sidebar();
 function sidebar() {

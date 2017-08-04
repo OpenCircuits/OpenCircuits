@@ -46,6 +46,8 @@ function onFinishLoading() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
 
+    // context.addObject(new SRFlipFlop(context));
+
     render();
 }
 

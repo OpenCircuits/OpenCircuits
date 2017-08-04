@@ -3,7 +3,10 @@ var _ROOT = undefined;
 
 function saveFile() {
     var data = writeFile();
-    var filename = "Untitled.circuit";
+    var projectName = projectNameInput.value;
+    if (projectName === "Untitled Circuit*")
+        projectName = "Untitled Circuit";
+    var filename = projectName + ".circuit";
 
     var file = new Blob([data], {type: "text/plain"});
     if (window.navigator.msSaveOrOpenBlob) { // IE10+

@@ -431,7 +431,7 @@ function separateGroup(group) {
     var outputs = [];
     for (var i = 0; i < group.length; i++) {
         var object = group[i];
-        if (object instanceof Switch || object instanceof Button)
+        if (object instanceof Switch || object instanceof Button || object instanceof Clock)
             inputs.push(object);
         else if (object instanceof LED)
             outputs.push(object);
