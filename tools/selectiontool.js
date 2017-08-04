@@ -168,7 +168,8 @@ class SelectionTool extends Tool {
 
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
-                this.deselect();
+                if (!input.shiftKeyDown)
+                    this.deselect();
                 this.select([obj]);
 
                 this.sendToFront(obj);
@@ -192,7 +193,8 @@ class SelectionTool extends Tool {
         // Select wire
         if (this.wire != undefined) {
             this.shouldSplit = false;
-            this.deselect();
+            if (!input.shiftKeyDown)
+                this.deselect();
             this.select([this.wire]);
             this.wire = undefined;
             return true;
@@ -239,20 +241,17 @@ class SelectionTool extends Tool {
                 var oldinput = things[i].input;
                 var oldconnection = things[i].connection;
                 things[i].remove();
-                things[i].selected = false;
                 action.add(new DeleteAction(things[i], oldinput, oldconnection));
             }
         }
         for (var i = 0; i < things.length; i++) {
             if (!(things[i] instanceof Wire || things[i] instanceof WirePort)) {
                 things[i].remove();
-                things[i].selected = false;
                 action.add(new DeleteAction(things[i]));
             }
         }
-        this.selections = [];
+        this.deselect();
         getCurrentContext().addAction(action);
-        popup.deselect();
         render();
     }
     moveSelections(pos, shift) {
@@ -321,10 +320,52 @@ class SelectionTool extends Tool {
         }
         return false;
     }
+    createBus() {
+        var iports = [], oports = [];
+        for (var i = 0; i < this.selections.length; i++) {
+            if (this.selections[i] instanceof IPort)
+                iports.push(this.selections[i]);
+            else
+                oports.push(this.selections[i]);
+        }
+
+        while (oports.length > 0) {
+            var maxDist = 0, maxDistIndex = -1, maxMinDistIndex = -1;
+            for (var i = 0; i < oports.length; i++) {
+                var oport = oports[i];
+                var opos = oport.getPos();
+                var minDist = 1000000, minDistIndex = -1;
+                for (var j = 0; j < iports.length; j++) {
+                    var iport = iports[j];
+                    var dist = opos.sub(iport.getPos()).len2();
+                    if (dist < minDist) {
+                        minDist = dist;
+                        minDistIndex = j;
+                    }
+                }
+                if (minDist > maxDist) {
+                    maxDist = minDist;
+                    maxDistIndex = i;
+                    maxMinDistIndex = minDistIndex;
+                }
+            }
+            var wire = new Wire(context);
+            getCurrentContext().add(wire);
+            oports[maxDistIndex].connect(wire);
+            wire.connect(iports[maxMinDistIndex]);
+            wire.set = true;
+            wire.straight = true;
+            oports.splice(maxDistIndex, 1);
+            iports.splice(maxMinDistIndex, 1);
+        }
+        render();
+    }
     sendToFront(obj) {
-        var index = getCurrentContext().getIndexOf(obj);
-        getCurrentContext().getObjects().splice(index, 1);
-        getCurrentContext().getObjects().push(obj);
+        if (obj instanceof IOObject || obj instanceof Wire) {
+            var index = getCurrentContext().getIndexOf(obj);
+            getCurrentContext().getObjects().splice(index, 1);
+            getCurrentContext().getObjects().push(obj);
+        }
     }
     recalculateMidpoint() {
         this.midpoint = V(0, 0);

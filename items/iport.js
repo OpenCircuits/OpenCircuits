@@ -31,7 +31,7 @@ class IPort extends IOPort {
     getArray() {
         return this.parent.inputs;
     }
-    getXMLName() {
+    getDisplayName() {
         return "iport";
     }
 }

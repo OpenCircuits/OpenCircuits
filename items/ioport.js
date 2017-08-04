@@ -21,6 +21,12 @@ class IOPort {
         for (var i = 0; (i < this.getArray().length) && (this.getArray()[i] !== this); i++);
         return i;
     }
+    getCol() {
+        return (this.parent.selected || this.selected ? '#1cff3e' : undefined);
+    }
+    getBorderColor() {
+        return (this.parent.selected || this.selected ? '#0d7f1f' : undefined);
+    }
     updatePosition() {
         var i = this.getIndex();
 
@@ -69,8 +75,8 @@ class IOPort {
         var lineCol = (this.parent.getBorderColor() ? this.parent.getBorderColor() : this.lineColor);
         renderer.line(o.x, o.y, v.x, v.y, lineCol, IO_PORT_LINE_WIDTH);
 
-        var circleFillCol = (this.parent.getCol() ? this.parent.getCol() : DEFAULT_FILL_COLOR);
-        var circleBorderCol = (this.parent.getBorderColor() ? this.parent.getBorderColor() : DEFAULT_BORDER_COLOR);
+        var circleFillCol = (this.getCol() ? this.getCol() : DEFAULT_FILL_COLOR);
+        var circleBorderCol = (this.getBorderColor() ? this.getBorderColor() : DEFAULT_BORDER_COLOR);
         renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, circleBorderCol, IO_PORT_BORDER_WIDTH);
     }
     remove() {
@@ -99,8 +105,27 @@ class IOPort {
     get uid() {
         return this.parent.uid;
     }
-    getXMLName() {
+    setName(n) {
+    }
+    setPos() {
+    }
+    getInputAmount() {
+        return 1;
+    }
+    getMaxInputFieldCount() {
+        return 1;
+    }
+    getMinInputFieldCount() {
+        return 1;
+    }
+    getName() {
+        return this.getDisplayName();
+    }
+    getDisplayName() {
         return "ioport";
+    }
+    getXMLName() {
+        return this.getDisplayName().toLowerCase().replace(/\s+/g, '');
     }
     copy() {
         var port = new this.constructor();

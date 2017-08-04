@@ -220,7 +220,7 @@ function getAllThingsBetween(things) {
     for (var i = 0; i < things.length; i++) {
         if (things[i] instanceof Wire || things[i] instanceof WirePort)
             wiresAndPorts.push(things[i]);
-        else
+        else if (things[i] instanceof IOObject)
             objects.push(things[i]);
     }
     var allTheThings = [];

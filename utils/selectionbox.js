@@ -6,6 +6,7 @@ class SelectionBox {
     onMouseDown(input) {
         var worldMousePos = input.worldMousePos;
         this.selBoxDownPos = V(worldMousePos.x, worldMousePos.y);
+        popup.hide();
     }
     onMouseMove(input) {
         var objects = input.parent.getObjects();
@@ -21,11 +22,26 @@ class SelectionBox {
             for (var i = 0; i < objects.length; i++) {
                 var obj = objects[i];
                 var t = (obj.selectionBoxTransform != undefined ? obj.selectionBoxTransform : obj.transform);
-                if (transformContains(t, trans))
+                if (transformContains(t, trans)) {
                     selections.push(obj);
+                } else if (obj.inputs != undefined && obj.outputs != undefined) {
+                    // Check if an iport or oport is selected
+                    for (var j = 0; j < obj.inputs.length; j++) {
+                        var input = obj.inputs[j];
+                        if (rectContains(trans, input.getPos()))
+                            selections.push(input);
+                    }
+                    for (var j = 0; j < obj.outputs.length; j++) {
+                        var output = obj.outputs[j];
+                        if (rectContains(trans, output.getPos()))
+                            selections.push(output);
+                    }
+                }
             }
-            selectionTool.deselect();
+            if (!input.shiftKeyDown)
+                selectionTool.deselect();
             selectionTool.select(selections);
+            popup.hide();
             return true;
         }
     }

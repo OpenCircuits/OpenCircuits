@@ -15,6 +15,7 @@ class SelectionPopup {
         this.colorPicker = document.getElementById("colorPicker");
 
         this.createICButton = document.getElementById("createic-button");
+        this.busButton = document.getElementById("bus-button");
 
         this.selections = [];
 
@@ -24,11 +25,13 @@ class SelectionPopup {
     onPosXChange() {
         for (var i = 0; i < this.selections.length; i++)
             this.selections[i].setPos(V(GRID_SIZE*(Number(this.posX.value)+0.5), this.selections[i].getPos().y));
+        this.updatePosValue();
         render();
     }
     onPosYChange() {
         for (var i = 0; i < this.selections.length; i++)
             this.selections[i].setPos(V(this.selections[i].getPos().x, GRID_SIZE*(Number(this.posY.value)+0.5)));
+        this.updatePosValue();
         render();
     }
     onInputCountChange() {
@@ -114,7 +117,26 @@ class SelectionPopup {
         this.colorText.style.display = this.colorPicker.style.display = (allLEDs ? "inherit" : "none");
     }
     updateICButton() {
-        this.createICButton.style.display = (this.selections.length > 1 ? "inherit" : "none");
+        var count = 0;
+        for (var i = 0; i < this.selections.length; i++) {
+            if (this.selections[i] instanceof IOObject && !(this.selections[i] instanceof WirePort))
+                count++;
+        }
+        this.createICButton.style.display = (count >= 2 ? "inherit" : "none");
+    }
+    updateBusButton() {
+        var iports = 0, oports = 0;
+        for (var i = 0; i < this.selections.length; i++) {
+            if (this.selections[i] instanceof IPort) {
+                iports++;
+            } else if (this.selections[i] instanceof OPort) {
+                oports++;
+            } else {
+                this.busButton.style.display = "none";
+                return;
+            }
+        }
+        this.busButton.style.display = (iports === oports ? "inherit" : "none");
     }
     select(objs) {
         for (var i = 0; i < objs.length; i++)
@@ -125,6 +147,7 @@ class SelectionPopup {
         this.updateInputCountValue();
         this.updateColorValue();
         this.updateICButton();
+        this.updateBusButton();
 
         this.onMove();
         this.show();

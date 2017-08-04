@@ -112,6 +112,8 @@ class Wire {
     }
     setName(n) {
     }
+    setPos() {
+    }
     getPos(t) {
         if (t == undefined)
             t = 0.5;

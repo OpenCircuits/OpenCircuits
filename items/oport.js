@@ -28,7 +28,7 @@ class OPort extends IOPort {
         this.connections[i].input = undefined;
         this.connections.splice(i, 1);
     }
-    getXMLName() {
+    getDisplayName() {
         return "oport";
     }
 }
