@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 
         <link rel="stylesheet" href="stylesheet.css">
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
         <title>Open Circuits</title>
     </head>
 
@@ -14,83 +15,83 @@
             <div id="items" class="sidenav">
                 <h4 unselectable>Inputs</h4>
                 <button type="button" onclick="placeItem(new ConstantLow());">
-                    <img src="images/items/constLow.svg" ondragend="onDragEnd(event);" width="100%" alt="Constant low"/>
+                    <img src="images/icons/inputs/constLow.svg" ondragend="onDragEnd(event);" alt="Constant low"/>
                     <br/>Constant Low
                 </button>
                 <button type="button" onclick="placeItem(new ConstantHigh());">
-                    <img src="images/items/constHigh.svg" ondragend="onDragEnd(event);" width="100%" alt="Constant high"/>
+                    <img src="images/icons/inputs/constHigh.svg" ondragend="onDragEnd(event);" alt="Constant high"/>
                     <br/>Constant High
                 </button>
                 <button type="button" onclick="placeItem(new Button());">
-                    <img src="images/items/buttonUp.svg" ondragend="onDragEnd(event);" width="100%" alt="Button"/>
+                    <img src="images/icons/inputs/button.svg" ondragend="onDragEnd(event);" alt="Button"/>
                     <br/>Button
                 </button>
                 <button type="button" onclick="placeItem(new Switch());">
-                    <img src="images/items/switchUp.svg" ondragend="onDragEnd(event);" width="100%" alt="Switch"/>
+                    <img src="images/icons/inputs/switch.svg" ondragend="onDragEnd(event);" alt="Switch"/>
                     <br/>Switch
                 </button>
                 <button type="button" onclick="placeItem(new Clock());">
-                    <img src="images/items/clock.svg" ondragend="onDragEnd(event);" width="100%" height="10%" alt="Clock"/>
+                    <img src="images/icons/inputs/clock.svg" ondragend="onDragEnd(event);" alt="Clock"/>
                     <br/>Clock
                 </button>
 
                 <h4 unselectable>Ouputs</h4>
                 <button type="button" onclick="placeItem(new LED());">
-                    <img src="images/items/led.svg" ondragend="onDragEnd(event);" width="100%" alt="LED"/>
+                    <img src="images/icons/outputs/led.svg" ondragend="onDragEnd(event);" alt="LED"/>
                     <br/>LED
                 </button>
                 <button type="button" onclick="placeItem(new SevenSegmentDisplay());">
-                    <img src="images/icons/7segmentdisplay.svg" ondragend="onDragEnd(event);" width="70%" alt="7 Segment Display"/>
+                    <img src="images/icons/outputs/sevensegmentdisplay.svg" ondragend="onDragEnd(event);" alt="7 Segment Display"/>
                     <br/>7 Segment Display
                 </button>
 
                 <h4 unselectable>Logic Gates</h4>
                 <button type="button" onclick="placeItem(new BUFGate());">
-                    <img src="images/icons/buffer.svg" ondragend="onDragEnd(event);" width="100%" alt="Buffer gate"/>
+                    <img src="images/icons/logicgates/buffer.svg" ondragend="onDragEnd(event);" alt="Buffer gate"/>
                     <br/>BUFFER
                 </button>
                 <button type="button" onclick="placeItem(new BUFGate(), true);">
-                    <img src="images/icons/not.svg" ondragend="onDragEnd(event);" width="100%" alt="NOT gate"/>
+                    <img src="images/icons/logicgates/not.svg" ondragend="onDragEnd(event);" alt="NOT gate"/>
                     <br/>NOT
                 </button>
                 <button type="button" onclick="placeItem(new ANDGate());">
-                    <img src="images/icons/and.svg" ondragend="onDragEnd(event);" width="100%" alt="AND gate"/>
+                    <img src="images/icons/logicgates/and.svg" ondragend="onDragEnd(event);" alt="AND gate"/>
                     <br/>AND
                 </button>
                 <button type="button" onclick="placeItem(new ANDGate(), true);">
-                    <img src="images/icons/nand.svg" ondragend="onDragEnd(event);" width="100%" alt="NAND gate"/>
+                    <img src="images/icons/logicgates/nand.svg" ondragend="onDragEnd(event);" alt="NAND gate"/>
                     <br/>NAND
                 </button>
                 <button type="button" onclick="placeItem(new ORGate());">
-                    <img src="images/icons/or.svg" ondragend="onDragEnd(event);" width="100%" alt="OR gate"/>
+                    <img src="images/icons/logicgates/or.svg" ondragend="onDragEnd(event);" alt="OR gate"/>
                     <br/>OR
                 </button>
                 <button type="button" onclick="placeItem(new ORGate(), true);">
-                    <img src="images/icons/nor.svg" ondragend="onDragEnd(event);" width="100%" alt="NOR gate"/>
+                    <img src="images/icons/logicgates/nor.svg" ondragend="onDragEnd(event);" alt="NOR gate"/>
                     <br/>NOR
                 </button>
                 <button type="button" onclick="placeItem(new XORGate());">
-                    <img src="images/icons/xor.svg" ondragend="onDragEnd(event);" width="100%" alt="XOR gate"/>
+                    <img src="images/icons/logicgates/xor.svg" ondragend="onDragEnd(event);" alt="XOR gate"/>
                     <br/>XOR
                 </button>
                 <button type="button" onclick="placeItem(new XORGate(), true);">
-                    <img src="images/icons/xnor.svg" ondragend="onDragEnd(event);" width="100%" alt="XNOR gate"/>
+                    <img src="images/icons/logicgates/xnor.svg" ondragend="onDragEnd(event);" alt="XNOR gate"/>
                     <br/>XNOR
                 </button>
                 <button type="button" onclick="placeItem(new Multiplexer());">
-                    <img src="images/icons/multiplexer.svg" ondragend="onDragEnd(event);" width="100%" alt="Multiplexer"/>
+                    <img src="images/icons/logicgates/multiplexer.svg" ondragend="onDragEnd(event);" alt="Multiplexer"/>
                     <br/>Mux
                 </button>
                 <button type="button" onclick="placeItem(new Demultiplexer());">
-                    <img src="images/icons/demultiplexer.svg" ondragend="onDragEnd(event);" width="100%" alt="Demultiplexer"/>
+                    <img src="images/icons/logicgates/demultiplexer.svg" ondragend="onDragEnd(event);" alt="Demultiplexer"/>
                     <br/>Demux
                 </button>
                 <button type="button" onclick="placeItem(new Encoder());">
-                    <img src="images/icons/encoder.svg" ondragend="onDragEnd(event);" width="100%" alt="Encoder"/>
+                    <img src="images/icons/logicgates/encoder.svg" ondragend="onDragEnd(event);" alt="Encoder"/>
                     <br/>Encoder
                 </button>
                 <button type="button" onclick="placeItem(new Decoder());">
-                    <img src="images/icons/encoder.svg" ondragend="onDragEnd(event);" width="100%" alt="Decoder"/>
+                    <img src="images/icons/logicgates/encoder.svg" ondragend="onDragEnd(event);" alt="Decoder"/>
                     <br/>Decoder
                 </button>
             </div>

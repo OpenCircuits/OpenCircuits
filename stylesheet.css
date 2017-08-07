@@ -23,15 +23,13 @@ canvas {
 
 .popup {
     position: fixed;
-    padding: 1em;
+    width: 100px;
     left: 0;
     top: 0;
-    width: 100px;
+    padding: 1em;
     font-size: 16;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid #444;
     border-radius: 3px;
-    border-color: #444;
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }
@@ -45,21 +43,16 @@ canvas {
 
 .icdesigner {
     position: fixed;
-    left: 0;
-    top: 0;
-    margin-left: 8vw;
-    margin-right: 8vw;
-    margin-top: 14vh;
-    margin-bottom: 8vh;
     width: 84vw;
     height: 76vh;
-    font-size: 16;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 3px;
-    border-color: #444;
-    color: #888;
+    left: 0;
+    top: 0;
     z-index: 1;
+    margin: 14vh 8vw 8vh 8vw;
+    font-size: 16;
+    border: 1px solid #444;
+    border-radius: 3px;
+    color: #888;
     background-color: rgba(255, 255, 255, 0.9);
 }
 .icbutton {
@@ -96,20 +89,16 @@ canvas {
 }
 
 .toolbar {
+    position: relative;
     width: 100%;
     height: 5vh;
-    position: relative;
     z-index: 1;
     background-color: #222;
-    border-style: solid;
-    border-width: 5px;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-    border-color: #999;
+    border: 0px solid #999;
+    border-bottom-width: 5px;
+    padding: 1vh;
     overflow: hidden;
     transition: 0.5s;
-    padding: 1vh;
 }
 .toolbar button {
     background-color: rgba(0, 0, 0, 0.0);
@@ -151,47 +140,38 @@ canvas {
     font-size: 2em;
     color: #000;
     background-color: rgba(200, 200, 200, 0.7);
+    border: 5px solid #999;
+    padding: 0px 8px 2px 8px;
     transition: .5s;
-    border-color: #999;
-    border-style: solid;
-    border-width: 5px;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-bottom: 2px;
 }
 .sidenav {
-    height: 93vh;
-    width: 0;
+    display: block;
     position: fixed;
+    width: 0;
+    height: 93vh;
     z-index: 1;
     bottom: 0;
     left: 0;
+    padding: 0px;
     background-color: rgba(200, 200, 200, 0.7);
-    border-style: solid;
-    border-width: 5px;
-    border-color: #999;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-left: 0px;
+    border: 0px solid #999;
+    border-right-width: 5px;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 0px;
 }
 .sidenav h4 {
+    display: block;
     padding-left: 0.5em;
     padding-right: 1em;
     font-size: 24px;
     color: #fff;
-    display: block;
     transition: 0.5s;
 }
 .sidenav label.sidenav-label {
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0.25em;
+    display: block;
+    padding: 0em 1em 0.25em 1em;
     font-size: 18px;
     color: #ddd;
-    display: block;
     transition: 0.5s;
 }
 .sidenav label[unselectable], h4[unselectable] {
@@ -205,11 +185,15 @@ canvas {
 .sidenav button {
     background-color: transparent;
     border-color: transparent;
-    width: 45%;
+    width: 49%;
     color: #777;
     font-weight: bold;
     font-size: 1em;
     box-sizing: border-box;
     transition: 0.3s;
     outline: none;
+}
+.sidenav img {
+    float: left;
+    width: 100%;
 }
