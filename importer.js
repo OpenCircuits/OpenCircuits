@@ -115,7 +115,7 @@ function loadGroup(node, context) {
     var ssds = getChildrenByTagName(objectsNode, "sevensegmentdisplay");
     for (var i = 0; i < ssds.length; objects.push(new SevenSegmentDisplay(context).load(ssds[i++])));
 
-    var buffergates = getChildrenByTagName(objectsNode, "buffergate");
+    var buffergates = getChildrenByTagName(objectsNode, "bufgate");
     for (var i = 0; i < buffergates.length; objects.push(new BUFGate(context).load(buffergates[i++])));
     var andgates = getChildrenByTagName(objectsNode, "andgate");
     for (var i = 0; i < andgates.length; objects.push(new ANDGate(context).load(andgates[i++])));

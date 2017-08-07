@@ -50,7 +50,8 @@ class SelectionBox {
         this.selBoxDownPos = undefined;
         if (this.selBoxCurPos != undefined) {
             this.selBoxCurPos = undefined;
-            popup.deselect();
+            if (!input.shiftKeyDown)
+                popup.deselect();
             if (selectionTool.selections.length > 0)
                 popup.select(selectionTool.selections);
             return true;

@@ -85,9 +85,9 @@ class SelectionPopup {
             allXSame = allXSame && this.selections[i].getPos().x === this.selections[0].getPos().x;
             allYSame = allYSame && this.selections[i].getPos().y === this.selections[0].getPos().y;
         }
-        this.posX.value = (allXSame ? this.selections[0].getPos().x/GRID_SIZE - 0.5 : "");
+        this.posX.value = (allXSame ? +(this.selections[0].getPos().x/GRID_SIZE - 0.5).toFixed(3) : "");
         this.posX.placeholder = (allXSame ? "" : "-");
-        this.posY.value = (allYSame ? this.selections[0].getPos().y/GRID_SIZE - 0.5 : "");
+        this.posY.value = (allYSame ? +(this.selections[0].getPos().y/GRID_SIZE - 0.5).toFixed(3) : "");
         this.posY.placeholder = (allYSame ? "" : "-");
     }
     updateInputCountValue() {

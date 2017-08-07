@@ -18,6 +18,7 @@ class Input {
 
         this.shiftKeyDown = false;
         this.modiferKeyDown = false;
+        this.optionKeyDown = false;
 
         this.isDragging = false;
         this.startTapTime = undefined;
@@ -44,6 +45,8 @@ class Input {
             this.shiftKeyDown = true;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
             this.modiferKeyDown = true;
+        else if (code === OPTION_KEY)
+            this.optionKeyDown = true;
         else if (code === ENTER_KEY && document.activeElement === projectNameInput)
             projectNameInput.blur();
 
@@ -58,6 +61,8 @@ class Input {
             this.shiftKeyDown = false;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
             this.modiferKeyDown = false;
+        else if (code === OPTION_KEY)
+            this.optionKeyDown = false;
 
         currentTool.onKeyUp(code, this);
     }
@@ -108,6 +113,18 @@ class Input {
         this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
 
         var shouldRender = false;
+
+        if (this.optionKeyDown && this.isDragging) {
+            var pos = new Vector(this.mousePos.x, this.mousePos.y);
+            var dPos = this.mouseDownPos.sub(pos);
+            this.camera.pos.x += this.camera.zoom * dPos.x;
+            this.camera.pos.y += this.camera.zoom * dPos.y;
+            this.mouseDownPos = this.mousePos;
+
+            popup.onMove();
+            shouldRender = true;
+        }
+
         shouldRender = currentTool.onMouseMove(this);
         shouldRender = icdesigner.onMouseMove(this) || shouldRender;
         if (shouldRender)
@@ -133,7 +150,6 @@ class Input {
 
 var isSidebarOpen = false;
 
-var panTool = new PanTool();
 var wiringTool = new WiringTool();
 var itemTool = new ItemTool();
 var selectionTool = new SelectionTool();

@@ -16,10 +16,6 @@ class SelectionTool extends Tool {
         // if (!icdesigner.hidden)
         //     return;
 
-        if (code === OPTION_KEY) {
-            panTool.activate();
-            return;
-        }
         if (code === DELETE_KEY && !popup.focused) {
             this.removeSelections();
             return;
@@ -330,11 +326,11 @@ class SelectionTool extends Tool {
         }
 
         while (oports.length > 0) {
-            var maxDist = 0, maxDistIndex = -1, maxMinDistIndex = -1;
+            var maxDist = -Infinity, maxDistIndex = -1, maxMinDistIndex = -1;
             for (var i = 0; i < oports.length; i++) {
                 var oport = oports[i];
                 var opos = oport.getPos();
-                var minDist = 1000000, minDistIndex = -1;
+                var minDist = Infinity, minDistIndex = -1;
                 for (var j = 0; j < iports.length; j++) {
                     var iport = iports[j];
                     var dist = opos.sub(iport.getPos()).len2();

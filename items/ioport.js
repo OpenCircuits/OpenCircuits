@@ -50,7 +50,7 @@ class IOPort {
     activate(on) {
     }
     contains(pos) {
-        var transform = new Transform(this.target, V(IO_PORT_RADIUS, IO_PORT_RADIUS).scale(1.5), 0, this.parent.context.getCamera());
+        var transform = new Transform(this.target, V(IO_PORT_RADIUS, IO_PORT_RADIUS).scale(2), 0, this.parent.context.getCamera());
         transform.setParent(this.parent.transform);
         return circleContains(transform, pos);
     }
