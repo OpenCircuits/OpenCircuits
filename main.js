@@ -13,6 +13,13 @@ var ICs = [];
 var browser = getBrowser();
 
 function start() {
+    var designer = new CircuitDesigner(document.getElementById("canvas"));
+    context = new Context(designer);
+    currentContext = context;
+
+    popup = new SelectionPopup();
+    icdesigner = new ICDesigner();
+
     loadImage(images,
         ["constLow.svg", "constHigh.svg",
          "buttonUp.svg", "buttonDown.svg",
@@ -39,13 +46,6 @@ function reset() {
 }
 
 function onFinishLoading() {
-    var designer = new CircuitDesigner(document.getElementById("canvas"));
-    context = new Context(designer);
-    currentContext = context;
-
-    popup = new SelectionPopup();
-    icdesigner = new ICDesigner();
-
     // context.addObject(new SRFlipFlop(context));
 
     render();
