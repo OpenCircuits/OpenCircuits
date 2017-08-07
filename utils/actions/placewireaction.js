@@ -1,6 +1,6 @@
-class PlaceWireAction {
+class PlaceWireAction extends Action {
     constructor(wire) {
-        this.context = getCurrentContext();
+        super();
         this.wire = wire;
         this.input = undefined;
         this.connection = undefined;

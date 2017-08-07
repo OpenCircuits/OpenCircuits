@@ -1,6 +1,6 @@
-class PlaceAction {
+class PlaceAction extends Action {
     constructor(obj) {
-        this.context = getCurrentContext();
+        super();
         this.obj = obj;
     }
     undo() {

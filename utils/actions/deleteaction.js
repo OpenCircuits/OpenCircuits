@@ -1,6 +1,6 @@
-class DeleteAction {
+class DeleteAction extends Action {
     constructor(obj, oldinput, oldconnection) {
-        this.context = getCurrentContext();
+        super();
         this.obj = obj;
         this.oldinput = oldinput;
         this.oldconnection = oldconnection;

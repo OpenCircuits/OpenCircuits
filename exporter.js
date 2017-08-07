@@ -11,6 +11,7 @@ function saveFile() {
     var file = new Blob([data], {type: "text/plain"});
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
+        saved = true;
     } else { // Others
         var a = document.createElement("a");
         var url = URL.createObjectURL(file);
@@ -21,6 +22,7 @@ function saveFile() {
         setTimeout(function() {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
+            saved = true;
         }, 0);
     }
 }

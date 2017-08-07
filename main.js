@@ -12,6 +12,17 @@ var ICs = [];
 
 var browser = getBrowser();
 
+var saved = true;
+
+// Prompt for exit
+window.onbeforeunload = function(e) {
+    if (!saved) {
+        var dialogText = "You have unsaved changes.";
+        e.returnValue = dialogText;
+        return dialogText;
+    }
+};
+
 function start() {
     var designer = new CircuitDesigner(document.getElementById("canvas"));
     context = new Context(designer);

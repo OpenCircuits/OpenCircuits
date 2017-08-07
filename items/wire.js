@@ -11,6 +11,8 @@ class Wire {
         this.set = false; // Manually set bezier control points
 
         this.straight = false;
+        this.dirty = true;
+        this.boundingBox = new Transform(0,0,0,context.getCamera());
     }
     activate(on) {
         if (this.isOn === on)
@@ -38,6 +40,18 @@ class Wire {
         getCurrentContext().addObject(port);
         getCurrentContext().addWire(wire);
     }
+    updateBoundingBox() {
+        if (!this.dirty)
+            return;
+        this.dirty = false;
+
+        var end1 = this.getPos(0);
+        var end2 = this.getPos(1);
+        var min = V(Math.min(end1.x, end2.x), Math.min(end1.y, end2.y));
+        var max = V(Math.max(end1.x, end2.x), Math.max(end1.y, end2.y));
+        this.boundingBox.setSize(V(max.x - min.x + 2, max.y - min.y + 2));
+        this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));
+    }
     onTransformChange() {
         if (this.input != undefined) {
             var pos = this.input.getPos();
@@ -52,6 +66,8 @@ class Wire {
             }
             this.curve.p1.x = pos.x;
             this.curve.p1.y = pos.y;
+            this.curve.dirty = true;
+            this.dirty = true;
         }
         if (this.connection != undefined) {
             var pos = this.connection.getPos();
@@ -66,6 +82,8 @@ class Wire {
             }
             this.curve.p2.x = pos.x;
             this.curve.p2.y = pos.y;
+            this.curve.dirty = true;
+            this.dirty = true;
         }
     }
     connect(obj) {
@@ -121,6 +139,16 @@ class Wire {
     }
     getNearestT(mx, my) {
         return (this.straight) ? (getNearestT(this.curve.p1, this.curve.p2, mx, my)) : (this.curve.getNearestT(mx, my));
+    }
+    getCullBox() {
+        return (this.straight) ? (this.getBoundingBox()) : (this.curve.getBoundingBox());
+    }
+    getBoundingBox() {
+        if (!this.straight)
+            return undefined;
+
+        this.updateBoundingBox();
+        return this.boundingBox;
     }
     getInputAmount() {
         return 1;
@@ -186,10 +214,6 @@ class Wire {
         var targetUID = getIntValue(getChildNode(connectionNode, "uid"));
         var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
         var target = findByUID(objects, targetUID);
-        if (target === undefined) {
-            console.log(node);
-            console.log(objects);
-        }
         target = (target instanceof WirePort ? target : target.inputs[targetIndx]);
 
         source.connect(this);

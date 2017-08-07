@@ -1,6 +1,6 @@
-class GroupAction {
+class GroupAction extends Action {
     constructor() {
-        this.context = getCurrentContext();
+        super();
         this.actions = [];
     }
     add(action) {

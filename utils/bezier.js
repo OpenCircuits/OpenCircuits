@@ -4,6 +4,8 @@ class BezierCurve {
         this.p2 = V(p2.x,p2.y);
         this.c1 = V(c1.x,c1.y);
         this.c2 = V(c2.x,c2.y);
+        this.dirty = true;
+        this.boundingBox = new Transform(0,0,0,getCurrentContext().getCamera());
     }
     update(p1, p2, c1, c2) {
         this.p1.x = p1.x;
@@ -14,6 +16,36 @@ class BezierCurve {
         this.c1.y = c1.y;
         this.c2.x = c2.x;
         this.c2.y = c2.y;
+    }
+    updateBoundingBox() {
+        if (!this.dirty)
+            return;
+        this.dirty = false;
+
+        var min = V(0, 0);
+        var max = V(0, 0);
+        var end1 = this.getPos(0);
+        var end2 = this.getPos(1);
+        var a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
+        var b = this.p1.sub(this.c1.scale(2).add(this.c2)).scale(2);
+        var c = this.c1.sub(this.p1);
+
+        var discriminant1 = b.y*b.y - 4*a.y*c.y;
+        discriminant1 = (discriminant1 >= 0 ? Math.sqrt(discriminant1) : -1);
+        var t1 = (discriminant1 !== -1 ? clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
+        var t2 = (discriminant1 !== -1 ? clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
+        max.y = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
+        min.y = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
+
+        var discriminant2 = b.x*b.x - 4*a.x*c.x;
+        discriminant2 = (discriminant2 >= 0 ? Math.sqrt(discriminant2) : -1);
+        var t3 = (discriminant2 !== -1 ? clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
+        var t4 = (discriminant2 !== -1 ? clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
+        max.x = Math.max(this.getX(t1), this.getX(t2), end1.x, end2.x);
+        min.x = Math.min(this.getX(t1), this.getX(t2), end1.x, end2.x);
+
+        this.boundingBox.setSize(V(max.x - min.x, max.y - min.y));
+        this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));
     }
     draw(style, size, renderer) {
         var camera = renderer.parent.camera;
@@ -112,6 +144,10 @@ class BezierCurve {
             return t2;
 
         return -1;
+    }
+    getBoundingBox() {
+        this.updateBoundingBox();
+        return this.boundingBox;
     }
     copy() {
         return new BezierCurve(this.p1.copy(), this.p2.copy(), this.c1.copy(), this.c2.copy());

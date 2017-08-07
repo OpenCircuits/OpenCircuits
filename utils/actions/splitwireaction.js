@@ -1,6 +1,6 @@
-class SplitWireAction {
+class SplitWireAction extends Action {
     constructor(wire) {
-        this.context = getCurrentContext();
+        super();
         this.wireport = wire.connection;
         this.wire = wire;
         this.newwire = this.wireport.connection;
