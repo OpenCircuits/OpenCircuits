@@ -10,6 +10,17 @@ class LED extends IOObject {
         this.inputs[0].setTarget(V(0, 2*this.transform.size.y));
         this.inputs[0].lineColor = '#ffffff';
     }
+    updateCullTransform() {
+        super.updateCullTransform();
+        if (this.isOn) {
+            this.cullTransform.setSize(V(3*this.transform.size.x, 4*this.transform.size.y));
+            this.cullTransform.setPos(this.transform.pos.add(V(0, (this.inputs[0].target.y - this.transform.size.y*3/2)/2)));
+        }
+    }
+    activate(on, i) {
+        super.activate(on, i);
+        this.updateCullTransform();
+    }
     getImageTint() {
         return this.color;
     }

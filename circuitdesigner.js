@@ -9,6 +9,10 @@ class CircuitDesigner {
         this.objects = [];
 
         this.propogationQueue = [];
+
+        window.addEventListener('resize', e => this.resize(), false);
+
+        this.resize();
     }
     reset() {
         for (var i = 0; i < this.objects.length; i++)
@@ -84,39 +88,22 @@ class CircuitDesigner {
         this.renderer.restore();
 
         // Cull objects/wires if they aren't on the screen
-        var p1 = this.camera.getWorldPos(V(0, 0));
-        var p2 = this.camera.getWorldPos(V(this.renderer.canvas.width, this.renderer.canvas.height));
-        var screen = new Transform(p2.add(p1).scale(0.5), p2.sub(p1), 0, this.camera);
-        var radius = Math.sqrt(screen.size.x*screen.size.x + screen.size.y*screen.size.y)/2;
-
         for (var i = 0; i < this.wires.length; i++) {
-            var wire = this.wires[i];
-            var trans = wire.getCullBox();
-
-            // this.renderer.save();
-            // trans.transformCtx(this.renderer.context);
-            // this.renderer.rect(0, 0, trans.size.x, trans.size.y, '#ff00ff');
-            // this.renderer.restore();
-
-            if (transformContains(trans, screen)) {
-                wire.draw();
-            }
+            if (this.camera.cull(this.wires[i].getCullBox()))
+                this.wires[i].draw();
         }
         for (var i = 0; i < this.objects.length; i++) {
-            var obj = this.objects[i];
-            var trans = obj.getCullBox();
-
-            // this.renderer.save();
-            // t.transformCtx(this.renderer.context);
-            // this.renderer.rect(0, 0, t.size.x, t.size.y, '#ff00ff');
-            // this.renderer.restore();
-
-            if (transformContains(trans, screen)) {
-                obj.draw();
-            }
+            if (this.camera.cull(this.objects[i].getCullBox()))
+                this.objects[i].draw();
         }
 
         currentTool.draw(this.renderer);
+    }
+    resize() {
+        this.renderer.resize();
+        this.camera.resize();
+
+        render();
     }
     addObject(o) {
         if (this.getIndexOfObject(o) === -1)

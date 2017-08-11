@@ -1,6 +1,6 @@
 /* Should be const instead of var
    but Safari does not allow it */
-var PROPOGATION_TIME = 16;
+var PROPOGATION_TIME = 1;
 
 var updateRequests = 0;
 

@@ -106,6 +106,14 @@ function circleContains(transform, pos) {
  *         false otherwise
  */
 function transformContains(A, B) {
+    // If both transforms are non-rotated
+    if (Math.abs(A.getAngle()) <= 1e-5 && Math.abs(B.getAngle()) <= 1e-5) {
+        var aPos = A.getPos(), aSize = A.getSize();
+        var bPos = B.getPos(), bSize = B.getSize();
+        return (Math.abs(aPos.x - bPos.x) * 2 < (aSize.x + bSize.x)) &&
+               (Math.abs(aPos.y - bPos.y) * 2 < (aSize.y + bSize.y));
+    }
+
     // Quick check circle-circle intersection
     var r1 = A.getRadius();
     var r2 = B.getRadius();

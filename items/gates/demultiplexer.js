@@ -41,9 +41,14 @@ class Demultiplexer extends Gate {
     }
     activate(x) {
         var num = 0;
-        for (var i = 0; i < this.selectLines.length; i++)
+        for (var i = 0; i < this.selectLines.length; i++) {
             num = num | ((this.selectLines[i].isOn ? 1 : 0) << i);
-        super.activate(this.inputs[num + this.selectLines.length].isOn);
+        }
+        super.activate(this.inputs[this.inputs.length-1].isOn, num);
+        // var num = 0;
+        // for (var i = 0; i < this.selectLines.length; i++)
+        //     num = num | ((this.selectLines[i].isOn ? 1 : 0) << i);
+        // super.activate(this.inputs[num + this.selectLines.length].isOn);
     }
     draw() {
         super.draw();

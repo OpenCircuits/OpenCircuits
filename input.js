@@ -76,13 +76,12 @@ class Input {
             factor = 1 / factor;
 
         var worldMousePos = this.camera.getWorldPos(this.mousePos);
-        this.camera.zoom *= factor;
+        this.camera.zoomBy(factor);
         var newMousePos = this.camera.getScreenPos(this.worldMousePos);
         var dx = (this.mousePos.x - newMousePos.x) * this.camera.zoom;
         var dy = (this.mousePos.y - newMousePos.y) * this.camera.zoom;
 
-        this.camera.pos.x -= dx;
-        this.camera.pos.y -= dy;
+        this.camera.translate(-dx, -dy);
 
         popup.onWheel();
 
@@ -117,15 +116,14 @@ class Input {
         if (this.optionKeyDown && this.isDragging) {
             var pos = new Vector(this.mousePos.x, this.mousePos.y);
             var dPos = this.mouseDownPos.sub(pos);
-            this.camera.pos.x += this.camera.zoom * dPos.x;
-            this.camera.pos.y += this.camera.zoom * dPos.y;
+            this.camera.translate(this.camera.zoom * dPos.x, this.camera.zoom * dPos.y);
             this.mouseDownPos = this.mousePos;
 
             popup.onMove();
             shouldRender = true;
         }
 
-        shouldRender = currentTool.onMouseMove(this);
+        shouldRender = currentTool.onMouseMove(this) || shouldRender;
         shouldRender = icdesigner.onMouseMove(this) || shouldRender;
         if (shouldRender)
             render();

@@ -6,17 +6,11 @@ class Renderer {
         this.vw = (vw == undefined ? 1 : vw);
         this.vh = (vh == undefined ? 1 : vh);
 
-        this.canvas.width = window.innerWidth * this.vw;
-        this.canvas.height = window.innerHeight * this.vh;
         this.context = this.canvas.getContext("2d");
 
         this.tintCanvas.width = 1000;
         this.tintCanvas.height = 1000;
         this.tintContext = this.tintCanvas.getContext("2d");
-
-        // document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-
-        window.addEventListener('resize', e => this.resize(), false);
     }
     getCamera() {
         return this.parent.camera;
@@ -24,8 +18,6 @@ class Renderer {
     resize() {
         this.canvas.width = window.innerWidth * this.vw;
         this.canvas.height = window.innerHeight * this.vh;
-
-        render();
     }
     clear() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);

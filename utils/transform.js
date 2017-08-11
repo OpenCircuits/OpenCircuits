@@ -7,8 +7,6 @@ class Transform {
         this.corners = [];
         this.localCorners = [];
         this.camera = camera;
-        this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
-        this.prevCameraZoom = this.camera.zoom;
         this.dirty = true;
         this.dirtySize = true;
         this.dirtyCorners = true;
@@ -16,10 +14,6 @@ class Transform {
         this.updateMatrix();
     }
     updateMatrix(c) {
-        // Update matrix if camera zoomed/moved
-        if (this.prevCameraZoom !== this.camera.zoom || this.prevCameraPos.x !== this.camera.pos.x || this.prevCameraPos.y !== this.camera.pos.y)
-            this.dirty = true;
-
         if (!this.dirty)
             return;
         this.dirty = false;
@@ -33,9 +27,6 @@ class Transform {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
 
         this.inverse = this.matrix.inverse();
-
-        this.prevCameraPos = V(this.camera.pos.x, this.camera.pos.y);
-        this.prevCameraZoom = this.camera.zoom;
     }
     updateSize() {
         if (!this.dirtySize)
@@ -77,7 +68,6 @@ class Transform {
     }
     setCamera(c) {
         this.camera = c;
-        this.dirty = true;
     }
     setPos(p) {
         this.pos.x = p.x;

@@ -5,8 +5,10 @@ class SelectionBox {
     }
     onMouseDown(input) {
         var worldMousePos = input.worldMousePos;
-        this.selBoxDownPos = V(worldMousePos.x, worldMousePos.y);
-        popup.hide();
+        if (!input.optionKeyDown) {
+            this.selBoxDownPos = V(worldMousePos.x, worldMousePos.y);
+            popup.hide();
+        }
     }
     onMouseMove(input) {
         var objects = input.parent.getObjects();
