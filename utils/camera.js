@@ -35,10 +35,10 @@ class Camera {
         this.zoom *= s;
     }
     cull(transform) {
-        getCurrentContext().getRenderer().save();
-        transform.transformCtx(getCurrentContext().getRenderer().context);
-        getCurrentContext().getRenderer().rect(0, 0, transform.size.x, transform.size.y, '#ff00ff');
-        getCurrentContext().getRenderer().restore();
+        // getCurrentContext().getRenderer().save();
+        // transform.transformCtx(getCurrentContext().getRenderer().context);
+        // getCurrentContext().getRenderer().rect(0, 0, transform.size.x, transform.size.y, '#ff00ff');
+        // getCurrentContext().getRenderer().restore();
 
         return (transformContains(transform, this.getTransform()));
     }
