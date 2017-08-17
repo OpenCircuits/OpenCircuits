@@ -213,6 +213,9 @@ class Wire {
         var targetUID = getIntValue(getChildNode(connectionNode, "uid"));
         var targetIndx = getIntValue(getChildNode(connectionNode, "index"));
         var target = findByUID(objects, targetUID);
+        console.log(targetUID);
+        console.log(targetIndx);
+        console.log(target);
         target = (target instanceof WirePort ? target : target.inputs[targetIndx]);
 
         source.connect(this);

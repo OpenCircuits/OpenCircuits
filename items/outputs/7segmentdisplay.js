@@ -59,5 +59,5 @@ class SevenSegmentDisplay extends IOObject {
         return "sevensegmentdisplay";
     }
 }
-SevenSegmentDisplay.getXMLName = function() { return "ssd"; }
+SevenSegmentDisplay.getXMLName = function() { return "sevensegmentdisplay"; }
 Importer.types.push(SevenSegmentDisplay);

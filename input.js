@@ -50,6 +50,12 @@ class Input {
         else if (code === ENTER_KEY && document.activeElement === projectNameInput)
             projectNameInput.blur();
 
+        var objects = this.parent.getObjects();
+        for (var i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof Keyboard)
+                objects[i].onKeyDown(code);
+        }
+
         this.parent.history.onKeyDown(code, this);
         if (currentTool.onKeyDown(code, this))
             render();
@@ -63,6 +69,12 @@ class Input {
             this.modiferKeyDown = false;
         else if (code === OPTION_KEY)
             this.optionKeyDown = false;
+
+        var objects = this.parent.getObjects();
+        for (var i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof Keyboard)
+                objects[i].onKeyUp(code);
+        }
 
         currentTool.onKeyUp(code, this);
     }

@@ -8,8 +8,8 @@ class Renderer {
 
         this.context = this.canvas.getContext("2d");
 
-        this.tintCanvas.width = 1000;
-        this.tintCanvas.height = 1000;
+        this.tintCanvas.width = 100;
+        this.tintCanvas.height = 100;
         this.tintContext = this.tintCanvas.getContext("2d");
     }
     getCamera() {

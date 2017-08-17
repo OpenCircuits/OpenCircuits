@@ -38,7 +38,8 @@ function start() {
          "or.svg", "xor.svg",
          "segment1.svg", "segment2.svg",
          "segment3.svg", "segment4.svg",
-         "clock.svg", "clockOn.svg"], 0, onFinishLoading);
+         "clock.svg", "clockOn.svg",
+         "keyboard.svg"], 0, onFinishLoading);
 }
 
 function wire(source, target) {
