@@ -28,6 +28,7 @@ var OPTION_KEY = 18;
 var SHIFT_KEY = 16;
 var DELETE_KEY = 8;
 var ENTER_KEY = 13;
+var A_KEY = 65;
 var C_KEY = 67;
 var V_KEY = 86;
 var X_KEY = 88;

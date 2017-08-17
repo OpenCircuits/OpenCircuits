@@ -51,7 +51,8 @@ class Input {
             projectNameInput.blur();
 
         this.parent.history.onKeyDown(code, this);
-        currentTool.onKeyDown(code, this);
+        if (currentTool.onKeyDown(code, this))
+            render();
     }
     onKeyUp(e) {
         var code = e.keyCode;

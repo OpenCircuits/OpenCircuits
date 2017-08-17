@@ -24,6 +24,10 @@ class SelectionTool extends Tool {
             popup.onEnter();
             return;
         }
+        if (code === A_KEY && input.modiferKeyDown) {
+            this.selectAll();
+            return true;
+        }
     }
     onMouseDown(input) {
         var objects = input.parent.getObjects();
@@ -317,6 +321,10 @@ class SelectionTool extends Tool {
             }
         }
         return false;
+    }
+    selectAll() {
+        this.deselect();
+        this.select(getCurrentContext().getObjects());
     }
     createBus() {
         var iports = [], oports = [];
