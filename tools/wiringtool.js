@@ -2,6 +2,7 @@ class WiringTool extends Tool {
     constructor() {
         super();
 
+        this.clickOPort = false;
         this.wire = undefined;
     }
     onKeyUp(code, input) {
@@ -14,10 +15,14 @@ class WiringTool extends Tool {
     activate(object, context) {
         super.activate();
 
-        this.wire = new Wire(context, object);
+        this.wire = new Wire(context);
+        this.clickOPort = (object instanceof OPort);
+        if (this.clickOPort)
+            object.connect(this.wire);
+        else
+            this.wire.connect(object);
+        this.onMouseMove(context.getInput());
         context.addWire(this.wire);
-        object.connect(this.wire);
-        this.wire.curve.update(this.wire.curve.p1, context.getInput().worldMousePos, this.wire.curve.c1, context.getInput().worldMousePos);
     }
     deactivate() {
         super.deactivate();
@@ -28,10 +33,16 @@ class WiringTool extends Tool {
         var j;
         for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
         wires.splice(j, 1);
-        this.wire.input.disconnect(this.wire);
+        if (this.clickOPort)
+            this.wire.input.disconnect(this.wire);
+        else
+            this.wire.disconnect();
     }
     onMouseMove(input) {
-        this.wire.curve.update(this.wire.curve.p1, input.worldMousePos, this.wire.curve.c1, input.worldMousePos);
+        if (this.clickOPort)
+            this.wire.curve.update(this.wire.curve.p1, input.worldMousePos, this.wire.curve.c1, input.worldMousePos);
+        else
+            this.wire.curve.update(context.getInput().worldMousePos, this.wire.curve.p2, context.getInput().worldMousePos, this.wire.curve.c2);
         return true;
     }
     onClick(input) {
@@ -40,19 +51,23 @@ class WiringTool extends Tool {
         var worldMousePos = input.worldMousePos;
 
         for (var i = 0; i < objects.length; i++) {
-            var ii;
-            if ((ii = objects[i].iPortContains(worldMousePos)) !== -1) {
-                if (!this.wire.connect(objects[i].inputs[ii])) {
+            var ii = -1;
+            if (this.clickOPort && (ii = objects[i].iPortContains(worldMousePos)) !== -1) {
+                if (!this.wire.connect(objects[i].inputs[ii]))
                     this.removeWire(wires);
-                } else {
-                    var action = new PlaceWireAction(this.wire);
-                    getCurrentContext().addAction(action);
-                }
+            }
+            if (!this.clickOPort && (ii = objects[i].oPortContains(worldMousePos)) !== -1) {
+                if (!objects[i].outputs[ii].connect(this.wire))
+                    this.removeWire(wires);
+            }
+            if (ii !== -1) {
+                var action = new PlaceWireAction(this.wire);
+                getCurrentContext().addAction(action);
 
                 selectionTool.activate();
                 return true;
             }
-        }
+         }
 
         this.removeWire(wires);
         selectionTool.activate();

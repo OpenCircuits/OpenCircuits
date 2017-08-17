@@ -22,6 +22,7 @@ class OPort extends IOPort {
         wire.input = this;
         wire.onTransformChange();
         wire.activate(this.isOn);
+        return true;
     }
     disconnect(obj) {
         for (var i = 0; (i < this.connections.length) && (this.connections[i] !== obj); i++);

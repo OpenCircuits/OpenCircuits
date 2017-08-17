@@ -188,6 +188,10 @@ class SelectionTool extends Tool {
                 wiringTool.activate(obj.outputs[ii], getCurrentContext());
                 return true;
             }
+            if ((ii = obj.iPortContains(worldMousePos)) !== -1) {
+                wiringTool.activate(obj.inputs[ii], getCurrentContext());
+                return true;
+            }
         }
 
         // Select wire
