@@ -2,6 +2,9 @@ class IPort extends IOPort {
     constructor(parent) {
         super(parent, V(-1, 0))
     }
+    getArray() {
+        return this.parent.inputs;
+    }
     set input(obj) {
         if (obj == undefined)
             this.connections = [];
@@ -14,9 +17,6 @@ class IPort extends IOPort {
         else
             return undefined;
     }
-    onTransformChange() {
-        super.onTransformChange();
-    }
     activate(on) {
         if (this.isOn === on)
             return;
@@ -27,9 +27,6 @@ class IPort extends IOPort {
     remove() {
         if (this.input != undefined)
             this.input.disconnect(this);
-    }
-    getArray() {
-        return this.parent.inputs;
     }
     getDisplayName() {
         return "iport";

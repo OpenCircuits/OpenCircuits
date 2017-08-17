@@ -71,7 +71,6 @@ class Demultiplexer extends Gate {
     getDisplayName() {
         return "Demultiplexer";
     }
-    getXMLName() {
-        return "demux";
-    }
 }
+Demultiplexer.getXMLName = function() { return "demux"; }
+Importer.types.push(Demultiplexer);

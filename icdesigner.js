@@ -5,6 +5,9 @@ class ICDesigner {
         this.designer = new CircuitDesigner(this.canvas, 0.84, 0.76);
         this.context = new Context(this.designer);
 
+        this.ic = undefined;
+        this.data = undefined;
+
         this.drag = false;
         this.dragObj = undefined;
 
@@ -17,6 +20,7 @@ class ICDesigner {
     }
     confirm() {
         if (this.ic != undefined) {
+            ICData.add(this.data);
             var out = this.ic.copy();
             out.setContext(context);
             context.getDesigner().addObject(out);
@@ -36,7 +40,9 @@ class ICDesigner {
         this.cancelButton.style.visibility = "visible";
         popup.hide();
 
-        this.ic = createIC(this.context, selections, V(0, 0));
+        this.data = ICData.create(selections);
+        this.ic = new IC(this.context, this.data, 0, 0);
+
         this.designer.addObject(this.ic);
         selectionTool.deselect();
         this.context.getCamera().zoom = 0.5 + 0.1*(this.ic.transform.size.x-50)/20;
@@ -49,9 +55,9 @@ class ICDesigner {
         this.confirmButton.style.visibility = "hidden";
         this.cancelButton.style.visibility = "hidden";
         if (this.ic != undefined) {
-            ICs[this.ic.icuid] = this.ic.copy();
             this.ic.remove();
             this.ic = undefined;
+            this.data = undefined;
         }
         render();
     }
@@ -66,7 +72,7 @@ class ICDesigner {
             var inp = inputs[i];
             if (inp.sContains(worldMousePos)) {
                 this.drag = true;
-                this.dragObj = inp;
+                this.dragObj = this.data.iports[i];
                 return false;
             }
         }
@@ -75,7 +81,7 @@ class ICDesigner {
             var out = outputs[i];
             if (out.sContains(worldMousePos)) {
                 this.drag = true;
-                this.dragObj = out;
+                this.dragObj = this.data.oports[i];
                 return false;
             }
         }
@@ -114,15 +120,19 @@ class ICDesigner {
             this.dragObj.setOrigin(v1);
             this.dragObj.setTarget(v2);
 
+            this.ic.update();
+
             return true;
         }
         if (this.dragEdge != undefined) {
             if (this.dragEdge === "horizontal") {
-                this.ic.transform.setWidth(Math.abs(2*worldMousePos.x));
+                this.data.transform.setWidth(Math.abs(2*worldMousePos.x));
             } else {
-                this.ic.transform.setHeight(Math.abs(2*worldMousePos.y));
+                this.data.transform.setHeight(Math.abs(2*worldMousePos.y));
             }
-            this.ic.recalculatePorts();
+            this.data.recalculatePorts();
+
+            this.ic.update();
 
             return true;
         }

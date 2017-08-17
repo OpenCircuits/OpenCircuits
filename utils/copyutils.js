@@ -1,9 +1,8 @@
-
 function copyGroup(objects) {
     if (objects.length === 0)
         return [];
 
-    copies = [];
+    var copies = [];
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] instanceof WirePort)
             objects.splice(i--, 1);
@@ -12,7 +11,7 @@ function copyGroup(objects) {
     }
 
     // Copy and reconnect all wires
-    wireCopies = [];
+    var wireCopies = [];
     for (var i = 0; i < objects.length; i++) {
         var obj = objects[i];
         for (var j = 0; j < obj.outputs.length; j++) {
@@ -43,6 +42,15 @@ function copyGroup(objects) {
                 wireCopies.push(wire);
             }
         }
+    }
+    for (var i = 0; i < objects.length; i++) {
+        copies[i].isOn = objects[i].isOn;
+        if (objects[i].inputs.length === 0)
+            copies[i].activate(objects[i].isOn);
+    }
+    for (var i = 0; i < wireCopies.length; i++) {
+        if (objects[i].inputs.length === 0)
+            copies[i].activate(objects[i].isOn);
     }
 
     return {objects:copies, wires:wireCopies};

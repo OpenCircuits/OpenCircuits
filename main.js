@@ -8,8 +8,6 @@ var context;
 
 var currentContext;
 
-var ICs = [];
-
 var browser = getBrowser();
 
 var saved = true;

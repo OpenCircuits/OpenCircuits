@@ -50,3 +50,5 @@ class Encoder extends Gate {
         return "Encoder";
     }
 }
+Encoder.getXMLName = function() { return "encoder"; }
+Importer.types.push(Encoder);

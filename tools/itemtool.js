@@ -4,20 +4,13 @@ class ItemTool extends Tool {
         this.item = undefined;
     }
     activate(object, context) {
-        var objects = context.getObjects();
-        var wires = context.getWires();
+        // If already active, remove current
+        if (this.item != undefined)
+            context.remove(this.item);
 
-        if (this.item != undefined) {
-            for (var i = 0; i < objects.length; i++) {
-                if (objects[i] === this.item) {
-                    objects.splice(i, 1);
-                    break;
-                }
-            }
-        }
         super.activate();
         this.item = object;
-        objects.push(this.item);
+        context.addObject(this.item);
         this.onMouseMove(context.getInput());
     }
     deactivate() {

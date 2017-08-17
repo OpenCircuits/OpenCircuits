@@ -1,6 +1,7 @@
 
 class Context {
     constructor(designer) {
+        this.uidmanager = new UIDManager(this);
         this.designer = designer;
     }
     reset() {
@@ -20,9 +21,19 @@ class Context {
     }
     addObject(o) {
         this.designer.addObject(o);
+        this.uidmanager.giveUIDTo(o);
+    }
+    addObjects(arr) {
+        for (var i = 0; i < arr.length; i++)
+            this.addObject(arr[i]);
     }
     addWire(w) {
         this.designer.addWire(w);
+        this.uidmanager.giveUIDTo(w);
+    }
+    addWires(arr) {
+        for (var i = 0; i < arr.length; i++)
+            this.addWire(arr[i]);
     }
     addAction(action) {
         this.designer.history.add(action);
@@ -41,6 +52,9 @@ class Context {
     }
     redo() {
         this.designer.history.redo();
+    }
+    redistributeUIDs() {
+        this.uidmanager.redistribute();
     }
     getDesigner() {
         return this.designer;
@@ -67,24 +81,13 @@ class Context {
             return this.designer.getIndexOfObject(o);
     }
     findByUID(uid) {
-        var obj = findObjectByUID(uid);
-        if (obj == undefined)
-            obj = findWireByUID(uid);
-        return obj;
+        return findObjectByUID(uid) || findWireByUID(uid);
     }
     findObjectByUID(uid) {
-        for (var i = 0; i < this.designer.objects.length; i++) {
-            if (this.designer.objects[i].uid === uid)
-                return this.designer.objects[i];
-        }
-        return undefined;
+        return UIDManager.find(this.getObjects(), uid);
     }
     findWireByUID(uid) {
-        for (var i = 0; i < this.designer.wires.length; i++) {
-            if (this.designer.wires[i].uid === uid)
-                return this.designer.wires[i];
-        }
-        return undefined;
+        return UIDManager.find(this.getWires(), uid);
     }
     getWorldMousePos() {
         return this.designer.input.worldMousePos;

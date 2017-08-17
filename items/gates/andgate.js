@@ -36,7 +36,6 @@ class ANDGate extends Gate {
     getDisplayName() {
         return this.not ? "NAND Gate" : "AND Gate";
     }
-    getXMLName() {
-        return "andgate";
-    }
 }
+ANDGate.getXMLName = function() { return "andgate"; }
+Importer.types.push(ANDGate);

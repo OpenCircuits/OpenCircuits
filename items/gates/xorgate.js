@@ -60,3 +60,5 @@ class XORGate extends Gate {
         return "xorgate";
     }
 }
+XORGate.getXMLName = function() { return "xorgate"; }
+Importer.types.push(XORGate);

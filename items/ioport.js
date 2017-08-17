@@ -85,13 +85,15 @@ class IOPort {
         this.origin.x = v.x;
         this.origin.y = v.y;
         this.set = true;
-        this.parent.onTransformChange();
+        if (this.parent != undefined)
+            this.parent.onTransformChange();
     }
     setTarget(v) {
         this.target.x = v.x;
         this.target.y = v.y;
         this.set = true;
-        this.parent.onTransformChange();
+        if (this.parent != undefined)
+            this.parent.onTransformChange();
     }
     getPos() {
         return this.parent.transform.getMatrix().mul(this.target);
@@ -141,5 +143,14 @@ class IOPort {
         createTextElement(ioPortNode, "originy", this.origin.y);
         createTextElement(ioPortNode, "targetx", this.target.x);
         createTextElement(ioPortNode, "targety", this.target.y);
+    }
+    load(node) {
+        var originx = getFloatValue(getChildNode(node, "originx"));
+        var originy = getFloatValue(getChildNode(node, "originy"));
+        var targetx = getFloatValue(getChildNode(node, "targetx"));
+        var targety = getFloatValue(getChildNode(node, "targety"));
+        this.setOrigin(V(originx, originy));
+        this.setTarget(V(targetx, targety));
+        return this;
     }
 }

@@ -39,6 +39,8 @@ class CircuitDesigner {
 
         updateRequests--;
 
+        console.log("update");
+
         // See if the sender/receiver is a wire in the scene (not in an IC) to render
         var inScene = false;
         if (sender instanceof Wire || receiver instanceof Wire) {

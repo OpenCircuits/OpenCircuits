@@ -144,7 +144,7 @@ class SelectionTool extends Tool {
             var obj = objects[i];
 
             // Release pressed object
-            if (obj.isPressable && obj.curPressed) {
+            if (obj.isPressable && obj.isOn) {
                 obj.release();
                 return true;
             }
@@ -230,6 +230,8 @@ class SelectionTool extends Tool {
         popup.deselect();
     }
     removeSelections() {
+        if (this.selections.length === 0)
+            return;
         var action = new GroupAction();
         var things = getAllThingsBetween(this.selections);
         for (var i = 0; i < things.length; i++) {
@@ -358,9 +360,8 @@ class SelectionTool extends Tool {
     }
     sendToFront(obj) {
         if (obj instanceof IOObject || obj instanceof Wire) {
-            var index = getCurrentContext().getIndexOf(obj);
-            getCurrentContext().getObjects().splice(index, 1);
-            getCurrentContext().getObjects().push(obj);
+            getCurrentContext().remove(obj);
+            getCurrentContext().add(obj);
         }
     }
     recalculateMidpoint() {

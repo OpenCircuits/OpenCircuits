@@ -1,8 +1,6 @@
 
-var _ROOT = undefined;
-
 function saveFile() {
-    var data = writeFile();
+    var data = Exporter.write(getCurrentContext());
     var projectName = projectNameInput.value;
     if (projectName === "Untitled Circuit*")
         projectName = "Untitled Circuit";
@@ -27,38 +25,26 @@ function saveFile() {
     }
 }
 
-function createChildNode(parent, tag) {
-    var child = _ROOT.createElement(tag);
-    parent.appendChild(child);
-    return child;
-}
+var Exporter = {};
 
-function createTextElement(node, tag, text) {
-    var a = _ROOT.createElement(tag);
-    var b = _ROOT.createTextNode(text);
-    a.appendChild(b);
-    node.appendChild(a);
-}
-
-function writeFile() {
+Exporter.ROOT = undefined;
+Exporter.write = function(context) {
     var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
-    _ROOT = root;
+    Exporter.ROOT = root;
+
+    var objects = context.getObjects();
+    var wires = context.getWires();
 
     var projectNode = getChildNode(root, "project");
 
     var icNode = createChildNode(projectNode, "ics");
 
-    var context = getCurrentContext();
-    var objects = context.getObjects();
-    var wires = context.getWires();
-
-    writeICs(icNode);
-    writeGroup(projectNode, objects, wires);
+    Exporter.writeICs(icNode);
+    Exporter.writeGroup(projectNode, objects, wires);
 
     return root.xml ? root.xml : (new XMLSerializer()).serializeToString(root);
 }
-
-function writeGroup(node, objects, wires) {
+Exporter.writeGroup = function(node, objects, wires) {
     var objectsNode = createChildNode(node, "objects");
     var wiresNode = createChildNode(node, "wires");
 
@@ -67,4 +53,39 @@ function writeGroup(node, objects, wires) {
 
     for (var i = 0; i < wires.length; i++)
         wires[i].writeTo(wiresNode);
+}
+Exporter.writeICs = function(node) {
+    for (var i = 0; i < ICData.ICs.length; i++) {
+        var ic = ICData.ICs[i];
+        var ICNode = createChildNode(node, "ic");
+        createTextElement(ICNode, "icuid", ic.icuid);
+        createTextElement(ICNode, "width", ic.transform.size.x);
+        createTextElement(ICNode, "height", ic.transform.size.y);
+
+        var iportNode = createChildNode(ICNode, "iports");
+        for (var j = 0; j < ic.iports.length; j++)
+            ic.iports[j].writeTo(iportNode);
+
+        var oportNode = createChildNode(ICNode, "oports");
+        for (var j = 0; j < ic.oports.length; j++)
+            ic.oports[j].writeTo(oportNode);
+
+        var componentsNode = createChildNode(ICNode, "components");
+        var objects = ic.inputs.concat(ic.components, ic.outputs);
+        var wires = getAllWires(objects);
+        Exporter.writeGroup(componentsNode, objects, wires);
+    }
+}
+
+function createChildNode(parent, tag) {
+    var child = Exporter.ROOT.createElement(tag);
+    parent.appendChild(child);
+    return child;
+}
+
+function createTextElement(node, tag, text) {
+    var a = Exporter.ROOT.createElement(tag);
+    var b = Exporter.ROOT.createTextNode(text);
+    a.appendChild(b);
+    node.appendChild(a);
 }

@@ -11,17 +11,93 @@ function openFile() {
         var reader = new FileReader();
 
         reader.onload = function(e) {
-            // Remove all whitespace from XML file except for header
-            var text = reader.result;
-            var header = text.substring(0, text.indexOf(">")+1);
-            text = header + text.substring(text.indexOf(">")+1).replace(/\s/g,'');
-
-            var xml = new window.DOMParser().parseFromString(text, "text/xml");
-            loadProject(xml);
+            Importer.load(reader.result, getCurrentContext());
+            render();
         }
 
         reader.readAsText(fileInput.files[0]);
     }
+}
+
+var Importer = {};
+
+Importer.types = [];
+Importer.load = function(text, context) {
+    // Remove all whitespace from XML file except for header
+    var header = text.substring(0, text.indexOf(">")+1);
+    text = header + text.substring(text.indexOf(">")+1).replace(/\s/g,'');
+
+    var root = new window.DOMParser().parseFromString(text, "text/xml");
+    if (root.documentElement.nodeName == "parsererror")
+        return;
+
+    var project = getChildNode(root, "project");
+    var icsNode = getChildNode(project, "ics");
+
+    var ics = Importer.loadICs(icsNode, context);
+
+    var group = Importer.loadGroup(project, context, ics);
+    context.addObjects(group.objects);
+    context.addWires(group.wires);
+
+    for (var i = 0; i < ics.length; i++)
+        ICData.add(ics[i]);
+
+    context.redistributeUIDs();
+    ICData.redistributeUIDs();
+
+    return group;
+}
+Importer.loadGroup = function(node, context, ics) {
+    var objectsNode = getChildNode(node, "objects");
+    var wiresNode = getChildNode(node, "wires");
+
+    var objects = [];
+    var wires = [];
+
+    for (var i = 0; i < Importer.types.length; i++) {
+        var type = Importer.types[i];
+        var nodes = getChildrenByTagName(objectsNode, type.getXMLName());
+        for (var j = 0; j < nodes.length; j++)
+            objects.push(new type(context).load(nodes[j], ics));
+    }
+
+    var wiresArr = getChildrenByTagName(wiresNode, "wire");
+    for (var i = 0; i < wiresArr.length; i++)
+        wires.push(new Wire(context).load(wiresArr[i]));
+
+    for (var i = 0; i < wires.length; i++)
+        wires[i].loadConnections(wiresArr[i], objects);
+
+    return {objects:objects, wires:wires};
+}
+Importer.loadICs = function(node, context) {
+    var ics = [];
+    var icNodes = getChildrenByTagName(node, "ic");
+    for (var i = 0; i < icNodes.length; i++) {
+        var icNode = icNodes[i];
+        var icuid = getIntValue(getChildNode(icNode, "icuid"));
+        var width = getIntValue(getChildNode(icNode, "width"));
+        var height = getIntValue(getChildNode(icNode, "height"));
+
+        var componentsNode = getChildNode(icNode, "components");
+        var group = Importer.loadGroup(componentsNode, context, ics);
+        var data = ICData.create(group.objects);
+
+        data.icuid = icuid;
+        data.transform.setSize(V(width, height));
+
+        var iports = getChildrenByTagName(getChildNode(icNode, "iports"), "iport");
+        for (var j = 0; j < iports.length; j++)
+            data.iports[j] = new IPort().load(iports[j]);
+
+        var oports = getChildrenByTagName(getChildNode(icNode, "oports"), "oport");
+        for (var j = 0; j < oports.length; j++)
+            data.oports[j] = new OPort().load(oports[j]);
+
+        ics.push(data);
+    }
+    return ics;
 }
 
 function getChildNode(parent, name) {
@@ -31,7 +107,6 @@ function getChildNode(parent, name) {
     }
     return undefined;
 }
-
 function getChildrenByTagName(parent, name) {
     var children = [];
     for (var i = 0; i < parent.childNodes.length; i++) {
@@ -40,109 +115,23 @@ function getChildrenByTagName(parent, name) {
     }
     return children;
 }
-
 function getBooleanValue(node, def) {
     if (node == undefined)
         return def;
     return node.childNodes[0].nodeValue === "true" ? true : false;
 }
-
 function getIntValue(node, def) {
     if (node == undefined)
         return def;
     return parseInt(node.childNodes[0].nodeValue);
 }
-
 function getFloatValue(node, def) {
     if (node == undefined)
         return def;
     return parseFloat(node.childNodes[0].nodeValue);
 }
-
 function getStringValue(node, def) {
     if (node == undefined)
         return def;
     return node.childNodes[0].nodeValue;
-}
-
-function loadProject(root) {
-    var projectNode = getChildNode(root, "project");
-
-    var context = getCurrentContext();
-
-    var maxUID = 0;
-
-    var icNode = getChildNode(projectNode, "ics");
-    maxUID = loadICs(icNode, context);
-
-    var group = loadGroup(projectNode, context);
-    var objects = group[0];
-    var wires = group[1];
-    for (var i = 0; i < objects.length; i++) {
-        maxUID = Math.max(objects[i].uid, maxUID);
-        context.addObject(objects[i]);
-    }
-    for (var i = 0; i < wires.length; i++) {
-        maxUID = Math.max(wires[i].uid, maxUID);
-        context.addWire(wires[i]);
-    }
-
-    UID_COUNTER = maxUID+1;
-
-    render();
-}
-
-function loadGroup(node, context) {
-    var objectsNode = getChildNode(node, "objects");
-    var wiresNode = getChildNode(node, "wires");
-
-    var objects = [];
-    var wires = [];
-
-    var constantLows = getChildrenByTagName(objectsNode, "constantlow");
-    for (var i = 0; i < constantLows.length; objects.push(new ConstantLow(context).load(constantLows[i++])));
-    var constantHighs = getChildrenByTagName(objectsNode, "constanthigh");
-    for (var i = 0; i < constantHighs.length; objects.push(new ConstantHigh(context).load(constantHighs[i++])));
-    var buttons = getChildrenByTagName(objectsNode, "button");
-    for (var i = 0; i < buttons.length; objects.push(new Button(context).load(buttons[i++])));
-    var switches = getChildrenByTagName(objectsNode, "switch");
-    for (var i = 0; i < switches.length; objects.push(new Switch(context).load(switches[i++])));
-    var clocks = getChildrenByTagName(objectsNode, "clock");
-    for (var i = 0; i < clocks.length; objects.push(new Clock(context).load(clocks[i++])));
-
-    var leds = getChildrenByTagName(objectsNode, "led");
-    for (var i = 0; i < leds.length; objects.push(new LED(context).load(leds[i++])));
-    var ssds = getChildrenByTagName(objectsNode, "sevensegmentdisplay");
-    for (var i = 0; i < ssds.length; objects.push(new SevenSegmentDisplay(context).load(ssds[i++])));
-
-    var buffergates = getChildrenByTagName(objectsNode, "bufgate");
-    for (var i = 0; i < buffergates.length; objects.push(new BUFGate(context).load(buffergates[i++])));
-    var andgates = getChildrenByTagName(objectsNode, "andgate");
-    for (var i = 0; i < andgates.length; objects.push(new ANDGate(context).load(andgates[i++])));
-    var orgates = getChildrenByTagName(objectsNode, "orgate");
-    for (var i = 0; i < orgates.length; objects.push(new ORGate(context).load(orgates[i++])));
-    var xorgates = getChildrenByTagName(objectsNode, "xorgate");
-    for (var i = 0; i < xorgates.length; objects.push(new XORGate(context).load(xorgates[i++])));
-    var muxs = getChildrenByTagName(objectsNode, "mux");
-    for (var i = 0; i < muxs.length; objects.push(new Multiplexer(context).load(muxs[i++])));
-    var demuxs = getChildrenByTagName(objectsNode, "demux");
-    for (var i = 0; i < demuxs.length; objects.push(new Demultiplexer(context).load(demuxs[i++])));
-    var encoders = getChildrenByTagName(objectsNode, "encoder");
-    for (var i = 0; i < encoders.length; objects.push(new Encoder(context).load(encoders[i++])));
-    var decoders = getChildrenByTagName(objectsNode, "decoder");
-    for (var i = 0; i < decoders.length; objects.push(new Decoder(context).load(decoders[i++])));
-
-    var ports = getChildrenByTagName(objectsNode, "port");
-    for (var i = 0; i < ports.length; objects.push(new WirePort(context).load(ports[i++])));
-
-    var ics = getChildrenByTagName(objectsNode, "ic");
-    for (var i = 0; i < ics.length; objects.push(new IC(context).load(ics[i++])));
-
-    var wiresArr = getChildrenByTagName(wiresNode, "wire");
-    for (var i = 0; i < wiresArr.length; i++)
-        wires.push(new Wire(context).load(wiresArr[i]));
-    for (var i = 0; i < wiresArr.length; i++)
-        wires[i].loadConnections(wiresArr[i], objects, wires);
-
-    return [objects, wires];
 }

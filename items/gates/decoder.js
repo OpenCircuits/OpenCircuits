@@ -36,3 +36,5 @@ class Decoder extends Gate {
         return "Decoder";
     }
 }
+Decoder.getXMLName = function() { return "decoder"; }
+Importer.types.push(Decoder);

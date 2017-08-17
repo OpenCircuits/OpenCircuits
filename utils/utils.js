@@ -238,7 +238,7 @@ function getAllThingsBetween(things) {
             var iport = objects[i].inputs[j];
             obj = iport.input;
             while (obj != undefined && !(obj instanceof OPort)) {
-                if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                if (findByUID(allTheThings, obj.uid) == undefined) // If not added yet
                     allTheThings.push(obj);
                 obj = obj.input;
             }
@@ -248,7 +248,7 @@ function getAllThingsBetween(things) {
             for (var k = 0; k < oport.connections.length; k++) {
                 obj = oport.connections[k];
                 while (obj != undefined && !(obj instanceof IPort)) {
-                    if (findByUID(allTheThings, obj) == undefined) // If not added yet
+                    if (findByUID(allTheThings, obj.uid) == undefined) // If not added yet
                         allTheThings.push(obj);
                     obj = obj.connection;
                 }
@@ -259,13 +259,13 @@ function getAllThingsBetween(things) {
         allTheThings.push(wiresAndPorts[i]);
         var obj = wiresAndPorts[i].input;
         while (obj != undefined && !(obj instanceof OPort)) {
-            if (findByUID(allTheThings, obj) == undefined) // If not added yet
+            if (findByUID(allTheThings, obj.uid) == undefined) // If not added yet
                 allTheThings.push(obj);
             obj = obj.input;
         }
         obj = wiresAndPorts[i].connection;
         while (obj != undefined && !(obj instanceof IPort)) {
-            if (findByUID(allTheThings, obj) == undefined) // If not added yet
+            if (findByUID(allTheThings, obj.uid) == undefined) // If not added yet
                 allTheThings.push(obj);
             obj = obj.connection;
         }
@@ -292,36 +292,15 @@ function getAllWires(objects) {
             var connections = obj.outputs[j].connections;
             for (var k = 0; k < connections.length; k++) {
                 var wire = connections[k];
-                do {
+                while (wire.connection instanceof WirePort) {
                     wires.push(wire);
-                    wire = wire.connection;
-                } while(wire instanceof Wire);
+                    wire = wire.connection.connection;
+                }
+                wires.push(wire);
             }
         }
     }
     return wires;
-}
-
-/**
- * Finds and returns the object in the given
- * array that has the given uid (Unique Identification)
- *
- * @param  {Array} objects
- *         The group of objects the search
- *
- * @param  {Integer} uid
- *         The target unique identification to search for
- *
- * @return {IOObject}
- *         The object with the given uid or undefined if
- *         the object is not found
- */
-function findByUID(objects, uid) {
-    for (var i = 0; i < objects.length; i++) {
-        if (objects[i].uid === uid)
-            return objects[i];
-    }
-    return undefined;
 }
 
 /**
@@ -335,10 +314,18 @@ function findByUID(objects, uid) {
  *         The ic with the given icuid or undefined if
  *         the IC is not found
  */
-function findIC(id) {
-    for (var i = 0; i < ICs.length; i++) {
-        if (ICs[i].icuid === id)
-            return ICs[i];
+function findIC(id, ics) {
+    for (var i = 0; i < ics.length; i++) {
+        if (ics[i].icuid === id)
+            return ics[i];
+    }
+    return undefined;
+}
+
+function findByUID(objects, id) {
+    for (var i = 0; i < objects.length; i++) {
+        if (objects[i].uid === id)
+            return objects[i];
     }
     return undefined;
 }

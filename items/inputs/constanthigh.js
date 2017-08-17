@@ -7,3 +7,5 @@ class ConstantHigh extends IOObject {
         return "Constant High";
     }
 }
+ConstantHigh.getXMLName = function() { return "consthigh"; }
+Importer.types.push(ConstantHigh);

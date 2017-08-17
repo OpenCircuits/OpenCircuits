@@ -70,3 +70,5 @@ class Multiplexer extends Gate {
         return "mux";
     }
 }
+Multiplexer.getXMLName = function() { return "mux"; }
+Importer.types.push(Multiplexer);

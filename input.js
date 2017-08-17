@@ -51,7 +51,6 @@ class Input {
             projectNameInput.blur();
 
         this.parent.history.onKeyDown(code, this);
-        clipboard.onKeyDown(code, this);
         currentTool.onKeyDown(code, this);
     }
     onKeyUp(e) {

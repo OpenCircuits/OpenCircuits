@@ -2,10 +2,13 @@ class Switch extends IOObject {
     constructor(context, x, y) {
         super(context, x, y, 60*images["switchUp.svg"].ratio, 60, images["switchUp.svg"], true, 0, 1, 77*images["switchUp.svg"].ratio, 77);
     }
+    activate(on) {
+        super.activate(on);
+        this.img = images[this.isOn ? "switchDown.svg" : "switchUp.svg"];
+    }
     click() {
         super.click();
-        this.activate(!this.outputs[0].isOn);
-        this.img = images[this.outputs[0].isOn ? "switchDown.svg" : "switchUp.svg"];
+        this.activate(!this.isOn);
     }
     getDisplayName() {
         return "Switch";
@@ -16,3 +19,5 @@ class Switch extends IOObject {
         return switchNode;
     }
 }
+Switch.getXMLName = function() { return "switch"; }
+Importer.types.push(Switch);

@@ -17,3 +17,5 @@ class Clock extends IOObject {
         return "Clock";
     }
 }
+Clock.getXMLName = function() { return "clock"; }
+Importer.types.push(Clock);

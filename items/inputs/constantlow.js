@@ -7,3 +7,5 @@ class ConstantLow extends IOObject {
         return "Constant Low";
     }
 }
+ConstantLow.getXMLName = function() { return "constlow"; }
+Importer.types.push(ConstantLow);

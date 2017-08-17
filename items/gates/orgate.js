@@ -53,7 +53,6 @@ class ORGate extends Gate {
     getDisplayName() {
         return this.not ? "NOR Gate" : "OR Gate";
     }
-    getXMLName() {
-        return "orgate";
-    }
 }
+ORGate.getXMLName = function() { return "orgate"; }
+Importer.types.push(ORGate);

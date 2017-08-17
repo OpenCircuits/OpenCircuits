@@ -15,7 +15,7 @@ class WiringTool extends Tool {
         super.activate();
 
         this.wire = new Wire(context, object);
-        context.getWires().push(this.wire);
+        context.addWire(this.wire);
         object.connect(this.wire);
         this.wire.curve.update(this.wire.curve.p1, context.getInput().worldMousePos, this.wire.curve.c1, context.getInput().worldMousePos);
     }

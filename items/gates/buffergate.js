@@ -15,7 +15,6 @@ class BUFGate extends Gate {
     getDisplayName() {
         return this.not ? "NOT Gate" : "Buffer Gate";
     }
-    getXMLName() {
-        return "bufgate";
-    }
 }
+BUFGate.getXMLName = function() { return "bufgate"; }
+Importer.types.push(BUFGate);

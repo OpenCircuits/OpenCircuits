@@ -104,6 +104,8 @@ class WirePort extends IOObject {
         return "Port";
     }
 }
+WirePort.getXMLName = function() { return "port"; }
+Importer.types.push(WirePort);
 
 function snap(wire, x, c) {
     if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {

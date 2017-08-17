@@ -1,7 +1,5 @@
-var UID_COUNTER = 0;
 class IOObject {
     constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
-        this.uid = UID_COUNTER++;
         if (context == undefined)
             context = getCurrentContext();
         this.context = context;
@@ -225,9 +223,6 @@ class IOObject {
     getDisplayName() {
         return "IOObject";
     }
-    getXMLName() {
-        return this.getDisplayName().toLowerCase().replace(/\s+/g, '');
-    }
     getRenderer() {
         return this.context.getRenderer();
     }
@@ -248,7 +243,7 @@ class IOObject {
         return copy;
     }
     writeTo(node) {
-        var objNode = createChildNode(node, this.getXMLName());
+        var objNode = createChildNode(node, this.constructor.getXMLName());
         createTextElement(objNode, "uid", this.uid);
         createTextElement(objNode, "name", this.getName());
         createTextElement(objNode, "x", this.getPos().x);
@@ -270,6 +265,5 @@ class IOObject {
         this.setPos(V(x, y));
         this.setAngle(angle);
         return this;
-        // this.context.addObject(this);
     }
 }

@@ -1,6 +1,5 @@
 class Wire {
     constructor(context) {
-        this.uid = UID_COUNTER++;
         this.context = context;
 
         this.input = undefined;
