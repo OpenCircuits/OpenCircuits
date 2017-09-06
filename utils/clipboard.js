@@ -21,7 +21,7 @@ class Clipboard {
         e.preventDefault();
     }
     cut(e) {
-        copy(e);
+        this.copy(e);
         selectionTool.removeSelections();
         e.preventDefault();
     }

@@ -2,6 +2,7 @@
 var images = [];
 
 var popup;
+var contextmenu;
 var icdesigner;
 
 var context;
@@ -28,6 +29,7 @@ function start() {
 
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
+    contextmenu = new ContextMenu();
 
     loadImage(images,
         ["constLow.svg", "constHigh.svg",

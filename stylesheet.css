@@ -41,6 +41,39 @@ canvas {
     background-color: rgba(255, 255, 255, 0);
 }
 
+.contextmenu {
+    position: fixed;
+    width: 100px;
+    left: 0;
+    top: 0;
+    padding: 1em;
+    font-size: 16;
+    border: 1px solid #444;
+    border-radius: 3px;
+    color: #888;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.contextmenu button {
+    display: inline;
+    border: 0;
+    width: 100%;
+    color: #888;
+    border-style: none;
+    padding: 0.4em;
+    margin-top: 0.1em;
+    outline: none;
+    text-align: left;
+    color: #555;
+    background-color: rgba(0, 0, 0, 0.0);
+}
+.contextmenu button:hover {
+    background-color: rgba(51, 103, 214, 0.5);
+}
+.contextmenu button:disabled {
+    color: #aaa;
+    background-color: rgba(0, 0, 0, 0.0);
+}
+
 .icdesigner {
     position: fixed;
     width: 84vw;

@@ -161,6 +161,28 @@
             </div>
             <script>document.getElementById('popupDiv').style.visibility = 'hidden';</script>
 
+            <div id="contextMenu" class="contextmenu">
+                <button id="contextCut" alt="Cut" onclick="contextmenu.hide(); document.execCommand('cut');">
+                    Cut
+                </button>
+                <button id="contextCopy" alt="Copy" onclick="contextmenu.hide(); document.execCommand('copy');">
+                    Copy
+                </button>
+                <button id="contextPaste" alt="Paste" onclick="contextmenu.hide(); document.execCommand('paste');">
+                    Paste
+                </button>
+                <button id="contextSelectAll" alt="Select All" onclick="contextmenu.hide(); selectionTool.selectAll(); render();">
+                    Select All
+                </button>
+                <hr/>
+                <button id="contextUndo" alt="Undo" onclick="contextmenu.hide(); getCurrentContext().designer.history.undo();">
+                    Undo
+                </button>
+                <button id="contextRedo" alt="Redo" onclick="contextmenu.hide(); getCurrentContext().designer.history.redo();">
+                    Redo
+                </button>
+            </div>
+
             <script src="utils/vector.js"></script>
             <script src="utils/matrix.js"></script>
             <script src="utils/bezier.js"></script>
@@ -173,6 +195,7 @@
             <script src="utils/propogation.js"></script>
             <script src="utils/context.js"></script>
             <script src="utils/copyutils.js"></script>
+            <script src="utils/menu.js"></script>
             <script src="utils/actions/historymanager.js"></script>
             <script src="utils/actions/action.js"></script>
             <script src="utils/actions/placeaction.js"></script>
@@ -225,6 +248,7 @@
             <script src="main.js"></script>
             <script src="input.js"></script>
             <script src="icdesigner.js"></script>
+            <script src="contextmenu.js"></script>
         </div>
     </body>
 </html>

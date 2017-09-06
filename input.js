@@ -37,6 +37,11 @@ class Input {
         canvas.addEventListener('mousedown', e => this.onMouseDown(e), false);
         canvas.addEventListener('mouseup', e => this.onMouseUp(e), false);
         canvas.addEventListener('mousemove', e => this.onMouseMove(e), false);
+
+        canvas.addEventListener("contextmenu", function(e) {
+            contextmenu.show(e);
+            e.preventDefault();
+        });
     }
     onKeyDown(e) {
         var code = e.keyCode;
@@ -106,11 +111,14 @@ class Input {
         this.mouseDown = true;
         this.mouseDownPos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
-        var shouldRender = false;
-        shouldRender = currentTool.onMouseDown(this);
-        shouldRender = icdesigner.onMouseDown(this) || shouldRender;
-        if (shouldRender)
-            render();
+        if (e.button === 0) { // Left mouse down
+            var shouldRender = false;
+            contextmenu.hide();
+            shouldRender = currentTool.onMouseDown(this);
+            shouldRender = icdesigner.onMouseDown(this) || shouldRender;
+            if (shouldRender)
+                render();
+        }
     }
     onMouseMove(e) {
         var rect = this.canvas.getBoundingClientRect();

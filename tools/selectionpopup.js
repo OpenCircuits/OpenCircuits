@@ -1,9 +1,7 @@
-class SelectionPopup {
+class SelectionPopup extends Menu {
     constructor() {
-        this.div = document.getElementById("popupDiv");
-        this.div.style.position = "absolute";
+        super("popupDiv");
         this.title = document.getElementById("nameText");
-        this.focused = false;
 
         this.posX = document.getElementById("positionx");
         this.posY = document.getElementById("positiony");
@@ -18,9 +16,6 @@ class SelectionPopup {
         this.busButton = document.getElementById("bus-button");
 
         this.selections = [];
-
-        this.setPos(V(0,0));
-        this.hide();
     }
     onPosXChange() {
         for (var i = 0; i < this.selections.length; i++)
@@ -172,24 +167,5 @@ class SelectionPopup {
     }
     onWheel() {
         this.onMove();
-    }
-    show() {
-        this.hidden = false;
-        this.div.style.visibility = "visible";
-    }
-    hide() {
-        this.hidden = true;
-        this.div.style.visibility = "hidden";
-    }
-    setPos(v) {
-        this.pos = V(v.x, v.y);
-        this.clamp();
-
-        this.div.style.left = this.pos.x + "px";
-        this.div.style.top = this.pos.y + "px";
-    }
-    clamp() {
-        this.pos.x = Math.max(Math.min(this.pos.x, window.innerWidth-this.div.clientWidth-1), isSidebarOpen ? 210 : 10);
-        this.pos.y = Math.max(Math.min(this.pos.y, window.innerHeight-this.div.clientHeight-1), 46);
     }
 }
