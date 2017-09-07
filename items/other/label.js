@@ -1,7 +1,7 @@
 class Label extends IOObject {
     constructor(context, x, y) {
         super(context, x, y, 0, 0, undefined, true, 0, 0, 60, 30);
-        this.setName("Label");
+        this.setName("LABEL");
 
         this.setInputAmount(0);
         this.setOutputAmount(0);
@@ -29,6 +29,7 @@ class Label extends IOObject {
         var width = renderer.getTextWidth(this.name) + 20;
         this.selectionBoxTransform.setSize(V(width, this.selectionBoxTransform.size.y));
         this.onTransformChange();
+        render();
     }
     getDisplayName() {
         return this.name;

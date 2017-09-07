@@ -1,8 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg>
-<svg xmlns="http://www.w3.org/2000/svg" enable-background="new -199.5 250.5 400 500" viewBox="-199.5 250.5 400 500">
-<polyline fill="#F0F0F0" points="157.141,320 137.206,455 -143.206,455 -163.141,320 "/>
-<rect x="-143" y="455" fill="#E3E3E3" width="280" height="264.607"/>
-<ellipse fill="none" stroke="#000000" stroke-width="10" stroke-miterlimit="10" cx="-3" cy="587.303" rx="27.5" ry="55.769"/>
-<rect x="-163.141" y="281.625" fill="#E3E3E3" width="320.282" height="38.375"/>
-</svg>
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 400 500" viewBox="0 0 400 500"><polyline fill="#F0F0F0" points="360,70 340,200 60,200 40,70"/><rect x="60" y="200" fill="#E3E3E3" width="280" height="260"/><rect x="40" y="30" fill="#E3E3E3" width="320" height="40"/></svg>

@@ -174,7 +174,7 @@
                 <button id="contextCopy" alt="Copy" onclick="contextmenu.hide(); document.execCommand('copy');">
                     Copy
                 </button>
-                <button id="contextPaste" alt="Paste" onclick="contextmenu.hide(); document.execCommand('paste');">
+                <button id="contextPaste" alt="Paste" onclick="contextmenu.hide(); console.log('1'); document.execCommand('paste'); console.log('2');">
                     Paste
                 </button>
                 <button id="contextSelectAll" alt="Select All" onclick="contextmenu.hide(); selectionTool.selectAll(); render();">
