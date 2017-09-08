@@ -41,7 +41,7 @@ function start() {
          "segment1.svg", "segment2.svg",
          "segment3.svg", "segment4.svg",
          "clock.svg", "clockOn.svg",
-         "keyboard.svg"], 0, onFinishLoading);
+         "keyboard.svg", "base.svg"], 0, onFinishLoading);
 }
 
 function wire(source, target) {
@@ -58,8 +58,6 @@ function reset() {
 }
 
 function onFinishLoading() {
-    // context.addObject(new SRFlipFlop(context));
-
     render();
 }
 
