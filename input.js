@@ -129,6 +129,8 @@ class Input {
         this.mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
         this.worldMousePos = this.camera.getWorldPos(this.mousePos);
 
+        console.log("Move : " + (e.clientX - rect.left) + ", " + (e.clientY - rect.top));
+
         this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
 
         var shouldRender = false;
@@ -204,6 +206,7 @@ var justDragged = false;
 function placeItem(item, not) {
     if (not)
         item.not = not;
+    var rect = getCurrentContext().getInput().canvas.getBoundingClientRect();
     itemTool.activate(item, getCurrentContext());
     if (justDragged) {
         getCurrentContext().getInput().onMouseMove(event);

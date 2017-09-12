@@ -205,7 +205,7 @@ class SelectionTool extends Tool {
         }
 
         // Didn't click on anything so deselect everything
-        if (this.selections.length > 0) {
+        if (!input.shiftKeyDown && this.selections.length > 0) {
             this.deselect();
             return true;
         }
@@ -225,6 +225,8 @@ class SelectionTool extends Tool {
 
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
+            if (obj.selected)
+                continue;
             obj.selected = true;
             this.selections.push(obj);
         }
