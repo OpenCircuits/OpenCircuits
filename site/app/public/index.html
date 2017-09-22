@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="description" content="Open Circuits">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+
+        <link rel="stylesheet" href="css/stylesheet.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+        <link rel="manifest" href="img/manifest.json">
+        <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+        <title>Open Circuits</title>
+    </head>
+
+    <body onload="start();">
+        <div id="container">
+            <div id="items" class="sidenav">
+                <h4 unselectable>Inputs</h4>
+                <button type="button" onclick="placeItem(new ConstantLow());">
+                    <img src="img/icons/inputs/constLow.svg" ondragend="onDragEnd(event);" alt="Constant low" />
+                    <br/>Constant Low
+                </button>
+                <button type="button" onclick="placeItem(new ConstantHigh());">
+                    <img src="img/icons/inputs/constHigh.svg" ondragend="onDragEnd(event);" alt="Constant high" />
+                    <br/>Constant High
+                </button>
+                <button type="button" onclick="placeItem(new Button());">
+                    <img src="img/icons/inputs/button.svg" ondragend="onDragEnd(event);" alt="Button" />
+                    <br/>Button
+                </button>
+                <button type="button" onclick="placeItem(new Switch());">
+                    <img src="img/icons/inputs/switch.svg" ondragend="onDragEnd(event);" alt="Switch" />
+                    <br/>Switch
+                </button>
+                <button type="button" onclick="placeItem(new Clock());">
+                    <img src="img/icons/inputs/clock.svg" ondragend="onDragEnd(event);" alt="Clock" />
+                    <br/>Clock
+                </button>
+                <button type="button" onclick="placeItem(new Keyboard());">
+                    <img src="img/icons/inputs/keyboard.svg" ondragend="onDragEnd(event);" alt="Keyboard" />
+                    <br/>Keyboard
+                </button>
+
+                <h4 unselectable>Ouputs</h4>
+                <button type="button" onclick="placeItem(new LED());">
+                    <img src="img/icons/outputs/led.svg" ondragend="onDragEnd(event);" alt="LED" />
+                    <br/>LED
+                </button>
+                <button type="button" onclick="placeItem(new SevenSegmentDisplay());">
+                    <img src="img/icons/outputs/sevensegmentdisplay.svg" ondragend="onDragEnd(event);" alt="7 Segment Display" />
+                    <br/>7 Segment Display
+                </button>
+
+                <h4 unselectable>Logic Gates</h4>
+                <button type="button" onclick="placeItem(new BUFGate());">
+                    <img src="img/icons/logicgates/buffer.svg" ondragend="onDragEnd(event);" alt="Buffer gate" />
+                    <br/>BUFFER
+                </button>
+                <button type="button" onclick="placeItem(new BUFGate(), true);">
+                    <img src="img/icons/logicgates/not.svg" ondragend="onDragEnd(event);" alt="NOT gate" />
+                    <br/>NOT
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate());">
+                    <img src="img/icons/logicgates/and.svg" ondragend="onDragEnd(event);" alt="AND gate" />
+                    <br/>AND
+                </button>
+                <button type="button" onclick="placeItem(new ANDGate(), true);">
+                    <img src="img/icons/logicgates/nand.svg" ondragend="onDragEnd(event);" alt="NAND gate" />
+                    <br/>NAND
+                </button>
+                <button type="button" onclick="placeItem(new ORGate());">
+                    <img src="img/icons/logicgates/or.svg" ondragend="onDragEnd(event);" alt="OR gate" />
+                    <br/>OR
+                </button>
+                <button type="button" onclick="placeItem(new ORGate(), true);">
+                    <img src="img/icons/logicgates/nor.svg" ondragend="onDragEnd(event);" alt="NOR gate" />
+                    <br/>NOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate());">
+                    <img src="img/icons/logicgates/xor.svg" ondragend="onDragEnd(event);" alt="XOR gate" />
+                    <br/>XOR
+                </button>
+                <button type="button" onclick="placeItem(new XORGate(), true);">
+                    <img src="img/icons/logicgates/xnor.svg" ondragend="onDragEnd(event);" alt="XNOR gate" />
+                    <br/>XNOR
+                </button>
+
+                <h4 unselectable>Flip Flops</h4>
+                <button type="button" onclick="placeItem(new SRFlipFlop());">
+                    <img src="img/icons/base.svg" ondragend="onDragEnd(event);" alt="SR Flip Flop" />
+                    <br/>SR Flip Flop
+                </button>
+
+                <h4 unselectable>Other</h4>
+                <button type="button" onclick="placeItem(new Multiplexer());">
+                    <img src="img/icons/other/multiplexer.svg" ondragend="onDragEnd(event);" alt="Multiplexer" />
+                    <br/>Mux
+                </button>
+                <button type="button" onclick="placeItem(new Demultiplexer());">
+                    <img src="img/icons/other/demultiplexer.svg" ondragend="onDragEnd(event);" alt="Demultiplexer" />
+                    <br/>Demux
+                </button>
+                <button type="button" onclick="placeItem(new Encoder());">
+                    <img src="img/icons/other/encoder.svg" ondragend="onDragEnd(event);" alt="Encoder" />
+                    <br/>Encoder
+                </button>
+                <button type="button" onclick="placeItem(new Decoder());">
+                    <img src="img/icons/other/encoder.svg" ondragend="onDragEnd(event);" alt="Decoder" />
+                    <br/>Decoder
+                </button>
+                <button type="button" onclick="placeItem(new Label());">
+                    <img src="img/icons/other/label.svg" ondragend="onDragEnd(event);" alt="Label" />
+                    <br/>Label
+                </button>
+            </div>
+
+            <div id="tools" class="toolbar">
+                <input id="project-name" class="toolbar__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
+                <button type="button" onclick="document.getElementById('file-input').click();">
+                    <img src="img/icons/open.svg" height="100%" alt="Open a file" />
+                </button>
+                <input id="file-input" type="file" name="name" style="display: none;" onchange="openFile();" multiple="false" required="true" accept=".circuit,.xml" />
+                <button type="button" onclick="saveFile();">
+                    <img src="img/icons/save.svg" height="100%" alt="Save current scene" />
+                </button>
+                <img id="logo" class="toolbar__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
+            </div>
+        </div>
+
+        <div id="main">
+            <canvas id="canvas"></canvas>
+            <canvas id="designer-canvas" class="icdesigner" hidden></canvas>
+            <!-- <script>document.getElementById('designerCanvas').style.visibility = 'hidden';</script> -->
+
+            <div class="icbuttons">
+                <button id="ic-confirmbutton" class="icbuttons__confirm" onclick="icdesigner.confirm();" alt="Submit IC" hidden>Confirm</button>
+                <!-- <script>document.getElementById('ic-confirmbutton').style.visibility = 'hidden';</script> -->
+                <button id="ic-cancelbutton"  class="icbuttons__cancel" onclick="icdesigner.cancel();"  alt="Cancel IC" hidden>Cancel</button>
+                <!-- <script>document.getElementById('ic-cancelbutton').style.visibility = 'hidden';</script> -->
+            </div>
+
+            <div id="open-items-tab" class="tab" onclick="sidebar();"> &#9776; </div>
+
+            <div id="popup" class="popup">
+                <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
+                <hr/>
+                <div id="popup-pos-text">
+                    Position
+                </div>
+                <label id="popup-position-label" class="popup__label" unselectable disabled>
+                    <input id="popup-position-x" type="number" value="0" min="-10000" max="10000" step="0.5" alt="X-Position of object(s)" />
+                    <input id="popup-position-y" type="number" value="0" min="-10000" max="10000" step="0.5" alt="Y-Position of object(s)" />
+                </label>
+                <div id="popup-input-count-text">
+                    Input Count
+                </div>
+                <label id="popup-input-count-label" class="popup__label" unselectable disabled>
+                    <input id="popup-input-count" type="number" value="2" min="2" max="8" step="1" alt="Number of inputs object(s) have" />
+                </label>
+                <div id="popup-color-text">
+                    Color
+                </div>
+                <label id="popup-color-label" class="popup__label" unselectable disabled>
+                    <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
+                </label>
+                <button id="popup-ic-button" type="button" alt="Create ">
+                    Create IC
+                </button>
+                <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">
+                    Bus
+                </button>
+            </div>
+
+            <div id="context-menu" class="contextmenu">
+                <button id="context-menu-cut" alt="Cut">
+                    Cut
+                </button>
+                <button id="context-menu-copy" alt="Copy">
+                    Copy
+                </button>
+                <button id="context-menu-paste" alt="Paste">
+                    Paste
+                </button>
+                <button id="context-menu-select-all" alt="Select All">
+                    Select All
+                </button>
+                <hr/>
+                <button id="context-menu-undo" alt="Undo">
+                    Undo
+                </button>
+                <button id="context-menu-redo" alt="Redo">
+                    Redo
+                </button>
+            </div>
+
+            <script src="js/utils/vector.js"></script>
+            <script src="js/utils/matrix.js"></script>
+            <script src="js/utils/bezier.js"></script>
+            <script src="js/utils/transform.js"></script>
+            <script src="js/utils/camera.js"></script>
+            <script src="js/utils/uidmanager.js"></script>
+            <script src="js/utils/utils.js"></script>
+            <script src="js/utils/clipboard.js"></script>
+            <script src="js/utils/selectionbox.js"></script>
+            <script src="js/utils/propogation.js"></script>
+            <script src="js/utils/context.js"></script>
+            <script src="js/utils/copyutils.js"></script>
+
+            <script src="js/utils/actions/historymanager.js"></script>
+            <script src="js/utils/actions/action.js"></script>
+            <script src="js/utils/actions/placeaction.js"></script>
+            <script src="js/utils/actions/deleteaction.js"></script>
+            <script src="js/utils/actions/placewireaction.js"></script>
+            <script src="js/utils/actions/splitwireaction.js"></script>
+            <script src="js/utils/actions/transformaction.js"></script>
+            <script src="js/utils/actions/groupaction.js"></script>
+
+            <script src="js/utils/popup/popup.js"></script>
+            <script src="js/utils/popup/module.js"></script>
+
+            <script src="js/utils/popup/selectionpopup/selectionpopup.js"></script>
+            <script src="js/utils/popup/selectionpopup/positionxmodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/positionymodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/titlemodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/inputcountmodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/colorpickermodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/icbuttonmodule.js"></script>
+            <script src="js/utils/popup/selectionpopup/busbuttonmodule.js"></script>
+
+            <script src="js/utils/popup/contextmenu/contextmenu.js"></script>
+            <script src="js/utils/popup/contextmenu/cutmodule.js"></script>
+            <script src="js/utils/popup/contextmenu/copymodule.js"></script>
+            <script src="js/utils/popup/contextmenu/pastemodule.js"></script>
+            <script src="js/utils/popup/contextmenu/selectallmodule.js"></script>
+            <script src="js/utils/popup/contextmenu/undomodule.js"></script>
+            <script src="js/utils/popup/contextmenu/redomodule.js"></script>
+
+            <script src="js/importer.js"></script>
+            <script src="js/exporter.js"></script>
+
+            <script src="js/renderer.js"></script>
+
+            <script src="js/tools/tool.js"></script>
+            <script src="js/tools/wiringtool.js"></script>
+            <script src="js/tools/itemtool.js"></script>
+            <script src="js/tools/selectiontool.js"></script>
+
+            <script src="js/items/ioobject.js"></script>
+            <script src="js/items/ioport.js"></script>
+            <script src="js/items/oport.js"></script>
+            <script src="js/items/iport.js"></script>
+            <script src="js/items/wireport.js"></script>
+            <script src="js/items/wire.js"></script>
+            <script src="js/items/inputs/button.js"></script>
+            <script src="js/items/inputs/constanthigh.js"></script>
+            <script src="js/items/inputs/constantlow.js"></script>
+            <script src="js/items/inputs/switch.js"></script>
+            <script src="js/items/inputs/clock.js"></script>
+            <script src="js/items/inputs/keyboard.js"></script>
+            <script src="js/items/outputs/led.js"></script>
+            <script src="js/items/outputs/7segmentdisplay.js"></script>
+            <script src="js/items/gates/gate.js"></script>
+            <script src="js/items/gates/buffergate.js"></script>
+            <script src="js/items/gates/andgate.js"></script>
+            <script src="js/items/gates/orgate.js"></script>
+            <script src="js/items/gates/xorgate.js"></script>
+            <script src="js/items/flipflops/SRFlipFlop.js"></script>
+            <script src="js/items/other/label.js"></script>
+            <script src="js/items/other/multiplexer.js"></script>
+            <script src="js/items/other/demultiplexer.js"></script>
+            <script src="js/items/other/encoder.js"></script>
+            <script src="js/items/other/decoder.js"></script>
+
+            <script src="js/items/ics/ic.js"></script>
+            <script src="js/items/ics/icdata.js"></script>
+
+            <script src="js/circuitdesigner.js"></script>
+            <script src="js/main.js"></script>
+            <script src="js/input.js"></script>
+            <script src="js/icdesigner.js"></script>
+        </div>
+    </body>
+</html>
