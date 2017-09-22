@@ -86,6 +86,6 @@ function loadImage(imgs, imageNames, index, onFinish) {
             onFinish(imgs);
         else
             loadImage(imgs, imageNames, index+1, onFinish);
-    }
+    };
     img.src = "img/items/" + imageNames[index];
 }
