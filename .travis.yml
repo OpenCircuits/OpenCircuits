@@ -1,2 +1,6 @@
-language: javascript
-sudo: true
+language: node_js
+node_js:
+ - "node"
+
+notifications:
+  email: false
