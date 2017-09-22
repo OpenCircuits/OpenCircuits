@@ -1,0 +1,12 @@
+{
+  "name": "OpenCircuits",
+  "description": "Travis-CI check for OpenCircuits",
+  "author": "Leon Montealegre",
+  "version": "0.0.1",
+  "devDependencies": {
+    "jshint": "^2.6.0"
+  },
+  "scripts": {
+    "test": "./node_modules/jshint/bin/jshint site/app/public/js/main.js"
+  }
+}
