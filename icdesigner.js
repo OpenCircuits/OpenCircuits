@@ -1,6 +1,6 @@
 class ICDesigner {
     constructor() {
-        this.canvas = document.getElementById("designerCanvas");
+        this.canvas = document.getElementById("designer-canvas");
 
         this.designer = new CircuitDesigner(this.canvas, 0.84, 0.76);
         this.context = new Context(this.designer);

@@ -7,6 +7,7 @@ class Input {
 
         this.num = (num++);
 
+        this.rawMousePos = new Vector(0, 0);
         this.mousePos = new Vector(0,0);
         this.prevMousePos = new Vector(0,0);
         this.worldMousePos = new Vector(0,0);
@@ -126,10 +127,11 @@ class Input {
         this.prevMousePos.x = this.mousePos.x;
         this.prevMousePos.y = this.mousePos.y;
 
+        this.rawMousePos = new Vector(e.clientX, e.clientY);
         this.mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
         this.worldMousePos = this.camera.getWorldPos(this.mousePos);
 
-        console.log("Move : " + (e.clientX - rect.left) + ", " + (e.clientY - rect.top));
+        // console.log("Move : " + (e.clientX - rect.left) + ", " + (e.clientY - rect.top));
 
         this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
 
@@ -168,37 +170,41 @@ class Input {
     }
 }
 
-var isSidebarOpen = false;
+var clipboard = new Clipboard();
 
 var wiringTool = new WiringTool();
 var itemTool = new ItemTool();
 var selectionTool = new SelectionTool();
-
-var clipboard = new Clipboard();
-
 var currentTool = selectionTool;
 
-var projectNameInput = document.getElementById("projectName");
+var toolBar = document.getElementById("tools");
+var projectNameInput = document.getElementById("project-name");
+var tab = document.getElementById("open-items-tab");
+var sidebarItems = document.getElementById("items");
+
+var isSidebarOpen = false;
 
 sidebar();
 function sidebar() {
     isSidebarOpen = !isSidebarOpen;
 
     if (isSidebarOpen) {
-        document.getElementById("items").style.width = "200px";
-        document.getElementById("openItemsTab").style.marginLeft = "145px";
-        document.getElementById("openItemsTab").style.borderColor = "rgba(153, 153, 153, 0.0)";
-        document.getElementById("openItemsTab").style.backgroundColor = "rgba(200, 200, 200, 0.0)";
-        document.getElementById("openItemsTab").style.fontSize = "2.5em";
-        document.getElementById("openItemsTab").innerHTML = "&times;";
+        sidebarItems.style.width    = SIDEBAR_WIDTH + "px";
+        tab.style.marginLeft        = "145px";
+        tab.style.borderColor       = "rgba(153, 153, 153, 0.0)";
+        tab.style.backgroundColor   = "rgba(200, 200, 200, 0.0)";
+        tab.style.fontSize          = "2.5em";
+        tab.innerHTML               = "&times;";
     } else {
-        document.getElementById("items").style.width = "0";
-        document.getElementById("openItemsTab").style.marginLeft = "0";
-        document.getElementById("openItemsTab").style.borderColor = "rgba(153, 153, 153, 0.7)";
-        document.getElementById("openItemsTab").style.backgroundColor = "rgba(200, 200, 200, 0.7)";
-        document.getElementById("openItemsTab").style.fontSize = "2em";
-        document.getElementById("openItemsTab").innerHTML = "&#9776;";
+        sidebarItems.style.width    = "0px";
+        tab.style.marginLeft        = "0px";
+        tab.style.borderColor       = "rgba(153, 153, 153, 0.7)";
+        tab.style.backgroundColor   = "rgba(200, 200, 200, 0.7)";
+        tab.style.fontSize          = "2em";
+        tab.innerHTML               = "&#9776;";
     }
+    if (popup)
+        popup.onMove();
 }
 
 var justDragged = false;

@@ -274,7 +274,8 @@ class SelectionTool extends Tool {
             selection.setPos(newPos);
         }
         this.recalculateMidpoint();
-        popup.updatePosValue();
+        // popup.onMove();
+        // popup.updatePosValue();
     }
     rotateSelections(pos, shift) {
         var origin = this.midpoint;
