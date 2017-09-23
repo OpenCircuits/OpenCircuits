@@ -17,6 +17,10 @@ class SelectionPopup extends Popup {
     onEnter() {
         this.blur();
     }
+    update() {
+        super.update();
+        this.onMove();
+    }
     select(objs) {
         this.show();
         this.onMove();
