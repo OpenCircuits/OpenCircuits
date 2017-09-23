@@ -20,6 +20,8 @@ class HistoryManager {
             var action = this.undoStack.pop();
             action.undo();
             this.redoStack.push(action);
+            // Update popup's values
+            popup.update();
             render();
         }
     }
@@ -28,6 +30,8 @@ class HistoryManager {
             var action = this.redoStack.pop();
             action.redo();
             this.undoStack.push(action);
+            // Update popup's values
+            popup.update();
             render();
         }
     }

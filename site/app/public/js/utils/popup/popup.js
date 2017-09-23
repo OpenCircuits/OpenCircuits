@@ -12,6 +12,9 @@ class Popup {
     add(m) {
         this.modules.push(m);
     }
+    update() {
+        this.onShow();
+    }
     onShow() {
         for (var i = 0; i < this.modules.length; i++)
             this.modules[i].onShow();
