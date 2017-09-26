@@ -87,7 +87,7 @@ class SelectionTool extends Tool {
             this.wire.split(this.wireSplitPoint);
             var action = new SplitWireAction(this.wire);
             getCurrentContext().addAction(action);
-            this.deselect();
+            this.deselect(this.selections);
             this.select([this.wire.connection]);
             this.startDrag(this.wire.connection, worldMousePos);
             this.wire = undefined;
@@ -124,10 +124,7 @@ class SelectionTool extends Tool {
             return true;
         }
 
-        if (this.selections.length > 0 && popup.hidden) {
-            popup.show();
-            popup.onMove();
-        }
+        popup.update();
 
         // Stop dragging
         if (this.drag) {
@@ -169,8 +166,8 @@ class SelectionTool extends Tool {
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
                 if (!input.shiftKeyDown)
-                    this.deselect();
-                this.select([obj]);
+                    this.deselect(this.selections, true);
+                this.select([obj], true);
 
                 this.sendToFront(obj);
                 return true;
@@ -198,15 +195,16 @@ class SelectionTool extends Tool {
         if (this.wire != undefined) {
             this.shouldSplit = false;
             if (!input.shiftKeyDown)
-                this.deselect();
-            this.select([this.wire]);
+                this.deselect(this.selections, true);
+            this.select([this.wire], true);
             this.wire = undefined;
             return true;
         }
 
         // Didn't click on anything so deselect everything
+        // And add a deselect action
         if (!input.shiftKeyDown && this.selections.length > 0) {
-            this.deselect();
+            this.deselect(this.selections, true);
             return true;
         }
     }
@@ -215,29 +213,49 @@ class SelectionTool extends Tool {
         for (var i = 0; i < this.selections.length; i++) {
             var origin = this.oTransform[i];
             var target = this.selections[i].transform.copy();
+            if (origin.equals(target))
+                continue;
             action.add(new TransformAction(this.selections[i], origin, target));
         }
         getCurrentContext().addAction(action);
     }
-    select(objects) {
+    select(objects, doAction) {
         if (objects.length === 0)
             return;
 
+        var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
             if (obj.selected)
                 continue;
             obj.selected = true;
             this.selections.push(obj);
+            if (doAction)
+                action.add(new SelectAction(obj));
         }
-        popup.select(objects);
+        if (doAction)
+            getCurrentContext().addAction(action);
+        popup.update();
         this.recalculateMidpoint();
     }
-    deselect() {
-        for (var i = 0; i < this.selections.length; i++)
-            this.selections[i].selected = false;
-        this.selections = [];
-        popup.deselect();
+    deselect(objects, doAction) {
+        if (objects.length === 0)
+            return;
+
+        var action = new GroupAction();
+        for (var i = 0; i < objects.length; i++) {
+            var obj = objects[i];
+            if (!obj.selected)
+                continue;
+            obj.selected = false;
+            this.selections.splice(this.selections.indexOf(obj), 1);
+            if (doAction)
+                action.add(new SelectAction(obj, true));
+        }
+        if (doAction)
+            getCurrentContext().addAction(action);
+        popup.update();
+        this.recalculateMidpoint();
     }
     removeSelections() {
         if (this.selections.length === 0)
@@ -258,7 +276,7 @@ class SelectionTool extends Tool {
                 action.add(new DeleteAction(things[i]));
             }
         }
-        this.deselect();
+        this.deselect(this.selections);
         getCurrentContext().addAction(action);
         render();
     }
@@ -274,8 +292,6 @@ class SelectionTool extends Tool {
             selection.setPos(newPos);
         }
         this.recalculateMidpoint();
-        // popup.onMove();
-        // popup.updatePosValue();
     }
     rotateSelections(pos, shift) {
         var origin = this.midpoint;
@@ -330,8 +346,8 @@ class SelectionTool extends Tool {
         return false;
     }
     selectAll() {
-        this.deselect();
-        this.select(getCurrentContext().getObjects());
+        this.deselect(this.selections, true);
+        this.select(getCurrentContext().getObjects(), true);
     }
     createBus() {
         var iports = [], oports = [];

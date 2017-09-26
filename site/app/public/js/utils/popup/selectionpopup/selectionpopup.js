@@ -18,15 +18,13 @@ class SelectionPopup extends Popup {
         this.blur();
     }
     update() {
-        super.update();
-        this.onMove();
-    }
-    select(objs) {
-        this.show();
-        this.onMove();
-    }
-    deselect() {
-        this.hide();
+        var selections = selectionTool.selections;
+        if (selections.length > 0) {
+            this.show();
+            this.onMove();
+        } else {
+            this.hide();
+        }
     }
     onMove() {
         var camera = getCurrentContext().getCamera();

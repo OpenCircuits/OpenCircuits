@@ -17,9 +17,36 @@ class SelectionBox {
         // TODO: Only calculate ON MOUSE UP!
         if (this.selBoxDownPos != undefined) {
             this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
+        //     var selections = this.getSelections(objects);
+        //     if (!input.shiftKeyDown)
+        //         selectionTool.deselect(selectionTool.selections);
+        //     selectionTool.select(selections);
+            popup.hide();
+            return true;
+        }
+    }
+    onMouseUp(input) {
+        var objects = input.parent.getObjects();
+        var worldMousePos = input.worldMousePos;
+
+        // Stop selection box
+        if (this.selBoxDownPos != undefined) {
+            this.selBoxCurPos = V(worldMousePos.x, worldMousePos.y);
+            var selections = this.getSelections(objects);
+            if (!input.shiftKeyDown)
+                selectionTool.deselect(selectionTool.selections, true);
+                console.log(selections);
+            selectionTool.select(selections, true);
+            this.selBoxDownPos = undefined;
+            this.selBoxCurPos = undefined;
+            return true;
+        }
+    }
+    getSelections(objects) {
+        if (this.selBoxDownPos != undefined) {
             var p1 = this.selBoxDownPos;
             var p2 = this.selBoxCurPos;
-            var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0, input.camera);
+            var trans = new Transform(V((p1.x+p2.x)/2, (p1.y+p2.y)/2), V(Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y)), 0, getCurrentContext().getCamera());
             var selections = [];
             for (var i = 0; i < objects.length; i++) {
                 var obj = objects[i];
@@ -40,24 +67,9 @@ class SelectionBox {
                     }
                 }
             }
-            if (!input.shiftKeyDown)
-                selectionTool.deselect();
-            selectionTool.select(selections);
-            popup.hide();
-            return true;
+            return selections;
         }
-    }
-    onMouseUp(input) {
-        // Stop selection box
-        this.selBoxDownPos = undefined;
-        if (this.selBoxCurPos != undefined) {
-            this.selBoxCurPos = undefined;
-            if (!input.shiftKeyDown)
-                popup.deselect();
-            if (selectionTool.selections.length > 0)
-                popup.select(selectionTool.selections);
-            return true;
-        }
+        return [];
     }
     draw(renderer) {
         var camera = renderer.getCamera();

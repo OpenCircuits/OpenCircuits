@@ -12,8 +12,6 @@ class SplitWireAction extends Action {
         this.wire.disconnect(this.wireport);
         this.newwire.disconnect(this.connection);
         this.wire.connect(this.connection);
-        if (this.wireport.selected)
-            selectionTool.deselect();
     }
     redo() {
         this.context.addObject(this.wireport);
