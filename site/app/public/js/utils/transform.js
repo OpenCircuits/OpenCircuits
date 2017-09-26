@@ -159,6 +159,18 @@ class Transform {
         this.updateSize();
         return this.localCorners;
     }
+    equals(other) {
+        if (!(other instanceof Transform))
+            return false;
+
+        var m1 = this.getMatrix();
+        var m2 = other.getMatrix();
+        for (var i = 0; i < m1.mat.length; i++) {
+            if (m1[i] !== m2[i])
+                return false;
+        }
+        return true;
+    }
     print() {
         this.updateMatrix();
         this.matrix.print();

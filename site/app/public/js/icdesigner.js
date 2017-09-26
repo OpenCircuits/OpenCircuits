@@ -44,7 +44,7 @@ class ICDesigner {
         this.ic = new IC(this.context, this.data, 0, 0);
 
         this.designer.addObject(this.ic);
-        selectionTool.deselect();
+        selectionTool.deselect(selections);
         this.context.getCamera().zoom = 0.5 + 0.1*(this.ic.transform.size.x-50)/20;
         render();
     }
