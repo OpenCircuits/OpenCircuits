@@ -1,12 +1,9 @@
-body, html {
+body {
     background-color: #ccc;
     color: #fff;
-    width: 100%;
-    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    position: absolute;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -17,112 +14,51 @@ body, html {
     outline: none;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
 }
-canvas {
-    position:absolute;
-}
-
-#container {
-    transition: margin-left .5s;
-}
-
-/*
-
-    SIDENAV
-
- */
-.sidenav {
-    display: block;
-    position: fixed;
-    width: 0;
-    height: 93vh;
-    z-index: 1;
-    bottom: 0;
-    left: 0;
-    padding: 0px;
-    background-color: rgba(200, 200, 200, 0.7);
-    border: 0px solid #999;
-    border-right-width: 5px;
-    overflow-x: hidden;
-    transition: 0.5s;
-}
-.sidenav h4 {
-    display: block;
-    padding-left: 0.5em;
-    padding-right: 1em;
-    font-size: 24px;
-    color: #fff;
-    transition: 0.5s;
-}
-.sidenav label.sidenav-label {
-    display: block;
-    padding: 0em 1em 0.25em 1em;
-    font-size: 18px;
-    color: #ddd;
-    transition: 0.5s;
-}
-.sidenav label[unselectable], h4[unselectable] {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-.sidenav button {
-    background-color: transparent;
-    border-color: transparent;
-    width: 49%;
-    color: #777;
-    font-weight: bold;
-    font-size: 1em;
-    box-sizing: border-box;
-    transition: 0.3s;
+button, input {
+    background-color: rgba(0, 0, 0, 0);
+    border-style: none;
+    padding: 0;
     outline: none;
 }
-.sidenav img {
-    float: left;
-    width: 100%;
-}
+
 
 /*
 
-    TOOLBAR
+    HEADER
 
  */
-.toolbar {
-    position: relative;
+header {
+    position: fixed;
+    overflow: hidden;
     width: 100%;
-    height: 5vh;
-    z-index: 1;
+    height: 50px;
+    z-index: 3;
     background-color: #222;
     border: 0px solid #999;
     border-bottom-width: 5px;
-    padding: 1vh;
-    overflow: hidden;
-    transition: 0.5s;
+    padding: 5px;
 }
-.toolbar button {
-    background-color: rgba(0, 0, 0, 0.0);
-    margin-right: 1%;
-    border-style: none;
-    padding: 0;
-    height: 100%;
-    transition: 0.3s;
-    outline: none;
-    float: right;
-}
-.toolbar__projectname {
-    padding: 0;
-    border: 0;
-    width: 20%;
-    height: 100%;
-    font-size: 5vh;
-    color: #888;
-    background-color: rgba(255, 255, 255, 0.0);
+.header__left {
     float: left;
-    transition: 0.3s;
 }
-.toolbar__logo {
+.header__left__sidenavbutton {
+    width: 10%;
+    height: 100%;
+    border: 0;
+    font-size: 1.5em;
+    color: #888;
+    cursor: pointer;
+}
+.header__left__projectname {
+    width: 20vw;
+    height: 100%;
+    border: 0;
+    font-size: 1.5em;
+    color: #888;
+}
+.header__center {
+}
+.header__center__logo {
     position: absolute;
     width: 200px;
     left: 50%;
@@ -131,6 +67,165 @@ canvas {
     bottom: 0px;
     color: #888;
 }
+.header__right {
+    margin-right: 1%;
+}
+.header__right button {
+    float: right;
+    height: 40px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+@media (max-width: 512px) {
+    .header__center__logo {
+        display: none;
+    }
+}
+
+
+/*
+
+    NAV MENU
+
+ */
+nav {
+    position: fixed;
+    width: 0;
+    height: 100%;
+    z-index: 6;
+    background-color: #111;
+}
+.sidenav {
+    width: 100%;
+    height: 100%;
+    background-color: #111;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    transition: 0.5s;
+}
+.sidenav h4 {
+    display: block;
+    padding: 0.5em 1em 0.5em 0.5em;
+    margin: 0;
+    border: 0px solid #888;
+    border-bottom-width: 3px;
+    font-size: 24px;
+    color: #888;
+    background-color: #222;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.sidenav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.sidenav li {
+    padding: 10px 0 10px 0;
+    border: 0px solid #222;
+    border-bottom-width: 1px;
+}
+.sidenav__accountinfo {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 0.5em;
+    font-size: 16px;
+    font-weight: bold;
+    color: #888;
+    background-color: #444;
+    border: 0px solid #888;
+    border-bottom-width: 3px;
+}
+.sidenav__content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    background-color: rgba(200, 200, 200, 0.5);
+    cursor: pointer;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+
+/*
+
+    MAIN CONTENT
+
+ */
+.content {
+    transition: 0.5s;
+}
+main {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.itemnav {
+    position: fixed;
+    display: block;
+    height: calc(100% - 50px);
+    height: -o-calc(100% - 65px); /* opera */
+    height: -webkit-calc(100% - 65px); /* google, safari */
+    height: -moz-calc(100% - 65px); /* firefox */
+    bottom: 0;
+    z-index: 2;
+    background-color: rgba(200, 200, 200, 0.7);
+    border: 0px solid #999;
+    border-right-width: 5px;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+.itemnav h4 {
+    display: block;
+    padding-left: 0.5em;
+    padding-right: 1em;
+    font-size: 24px;
+    color: #fff;
+    cursor: default;
+    transition: 0.5s;
+}
+.itemnav button {
+    width: 49%;
+    padding: 1vh 1vh 1vh 1vh;
+    color: #777;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.itemnav img {
+    width: 100%;
+}
+.tab {
+    position: fixed;
+    z-index: 4;
+    top: 60px;
+    color: #000;
+    background-color: rgba(200, 200, 200, 0.7);
+    border: 5px solid #999;
+    border-bottom-right-radius: 15px;
+    padding: 0px 8px 2px 8px;
+    font-size: 2em;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    cursor: default;
+}
+
 
 /*
 
@@ -180,24 +275,6 @@ canvas {
     background-color: #BA000D;
 }
 
-/*
-
-    TAB
-
- */
-.tab {
-    position: fixed;
-    z-index: 5;
-    left: 0;
-    top: 7vh;
-    border-bottom-right-radius: 15px;
-    font-size: 2em;
-    color: #000;
-    background-color: rgba(200, 200, 200, 0.7);
-    border: 5px solid #999;
-    padding: 0px 8px 2px 8px;
-    transition: .5s;
-}
 
 /*
 
@@ -223,6 +300,7 @@ canvas {
     color: #888;
     background-color: rgba(255, 255, 255, 0);
 }
+
 
 /*
 

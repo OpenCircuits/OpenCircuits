@@ -15,6 +15,9 @@ class Renderer {
     getCamera() {
         return this.parent.camera;
     }
+    setCursor(cursor) {
+        this.canvas.style.cursor = cursor;
+    }
     resize() {
         this.canvas.width = window.innerWidth * this.vw;
         this.canvas.height = window.innerHeight * this.vh;
