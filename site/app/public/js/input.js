@@ -51,9 +51,10 @@ class Input {
             this.shiftKeyDown = true;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
             this.modiferKeyDown = true;
-        else if (code === OPTION_KEY)
+        else if (code === OPTION_KEY) {
             this.optionKeyDown = true;
-        else if (code === ENTER_KEY && document.activeElement === projectNameInput)
+            getCurrentContext().setCursor("pointer");
+        } else if (code === ENTER_KEY && document.activeElement === projectNameInput)
             projectNameInput.blur();
 
         var objects = this.parent.getObjects();
@@ -73,8 +74,10 @@ class Input {
             this.shiftKeyDown = false;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
             this.modiferKeyDown = false;
-        else if (code === OPTION_KEY)
+        else if (code === OPTION_KEY) {
             this.optionKeyDown = false;
+            getCurrentContext().setCursor("default");
+        }
 
         var objects = this.parent.getObjects();
         for (var i = 0; i < objects.length; i++) {
@@ -177,35 +180,8 @@ var itemTool = new ItemTool();
 var selectionTool = new SelectionTool();
 var currentTool = selectionTool;
 
-var toolBar = document.getElementById("tools");
+var header = document.getElementById("header");
 var projectNameInput = document.getElementById("project-name");
-var tab = document.getElementById("open-items-tab");
-var sidebarItems = document.getElementById("items");
-
-var isSidebarOpen = false;
-
-sidebar();
-function sidebar() {
-    isSidebarOpen = !isSidebarOpen;
-
-    if (isSidebarOpen) {
-        sidebarItems.style.width    = SIDEBAR_WIDTH + "px";
-        tab.style.marginLeft        = "145px";
-        tab.style.borderColor       = "rgba(153, 153, 153, 0.0)";
-        tab.style.backgroundColor   = "rgba(200, 200, 200, 0.0)";
-        tab.style.fontSize          = "2.5em";
-        tab.innerHTML               = "&times;";
-    } else {
-        sidebarItems.style.width    = "0px";
-        tab.style.marginLeft        = "0px";
-        tab.style.borderColor       = "rgba(153, 153, 153, 0.7)";
-        tab.style.backgroundColor   = "rgba(200, 200, 200, 0.7)";
-        tab.style.fontSize          = "2em";
-        tab.innerHTML               = "&#9776;";
-    }
-    if (popup)
-        popup.onMove();
-}
 
 var justDragged = false;
 

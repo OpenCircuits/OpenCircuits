@@ -38,6 +38,9 @@ class Context {
     addAction(action) {
         this.designer.history.add(action);
     }
+    setCursor(cursor) {
+        this.designer.renderer.setCursor(cursor);
+    }
     remove(o) {
         var index = this.getIndexOf(o);
         if (index === -1)
