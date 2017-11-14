@@ -74,3 +74,4 @@ class WiringTool extends Tool {
         return true;
     }
 }
+var wiringTool = new WiringTool();

@@ -27,3 +27,4 @@ class Tool {
     draw() {
     }
 }
+var currentTool;

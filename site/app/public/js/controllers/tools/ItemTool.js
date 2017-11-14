@@ -4,7 +4,7 @@ class ItemTool extends Tool {
         this.item = undefined;
     }
     activate(object, context) {
-        // If already active, remove current
+        // If already active, remove current item
         if (this.item != undefined)
             context.remove(this.item);
 
@@ -27,3 +27,4 @@ class ItemTool extends Tool {
         selectionTool.activate();
     }
 }
+var itemTool = new ItemTool();
