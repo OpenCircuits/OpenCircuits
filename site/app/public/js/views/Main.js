@@ -30,6 +30,8 @@ function start() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
     contextmenu = new ContextMenu();
+    
+    currentTool = selectionTool;
 
     loadImage(images,
         ["constLow.svg", "constHigh.svg",

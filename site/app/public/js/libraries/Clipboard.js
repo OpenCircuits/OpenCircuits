@@ -47,3 +47,4 @@ class Clipboard {
         e.preventDefault();
     }
 }
+var clipboard = new Clipboard();

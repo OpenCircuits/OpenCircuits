@@ -55,100 +55,100 @@
             <main>
                 <nav id="items" class="itemnav">
                     <h4 unselectable>Inputs</h4>
-                    <button type="button" onclick="placeItem(new ConstantLow());">
-                        <img src="img/icons/inputs/constLow.svg" ondragend="onDragEnd(event);" alt="Constant low" />
+                    <button type="button" onclick="PlaceItemController.place(new ConstantLow());">
+                        <img src="img/icons/inputs/constLow.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant low" />
                         <br/>Constant Low
                     </button>
-                    <button type="button" onclick="placeItem(new ConstantHigh());">
-                        <img src="img/icons/inputs/constHigh.svg" ondragend="onDragEnd(event);" alt="Constant high" />
+                    <button type="button" onclick="PlaceItemController.place(new ConstantHigh());">
+                        <img src="img/icons/inputs/constHigh.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant high" />
                         <br/>Constant High
                     </button>
-                    <button type="button" onclick="placeItem(new Button());">
-                        <img src="img/icons/inputs/button.svg" ondragend="onDragEnd(event);" alt="Button" />
+                    <button type="button" onclick="PlaceItemController.place(new Button());">
+                        <img src="img/icons/inputs/button.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Button" />
                         <br/>Button
                     </button>
-                    <button type="button" onclick="placeItem(new Switch());">
-                        <img src="img/icons/inputs/switch.svg" ondragend="onDragEnd(event);" alt="Switch" />
+                    <button type="button" onclick="PlaceItemController.place(new Switch());">
+                        <img src="img/icons/inputs/switch.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Switch" />
                         <br/>Switch
                     </button>
-                    <button type="button" onclick="placeItem(new Clock());">
-                        <img src="img/icons/inputs/clock.svg" ondragend="onDragEnd(event);" alt="Clock" />
+                    <button type="button" onclick="PlaceItemController.place(new Clock());">
+                        <img src="img/icons/inputs/clock.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Clock" />
                         <br/>Clock
                     </button>
-                    <button type="button" onclick="placeItem(new Keyboard());">
-                        <img src="img/icons/inputs/keyboard.svg" ondragend="onDragEnd(event);" alt="Keyboard" />
+                    <button type="button" onclick="PlaceItemController.place(new Keyboard());">
+                        <img src="img/icons/inputs/keyboard.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Keyboard" />
                         <br/>Keyboard
                     </button>
 
                     <h4 unselectable>Ouputs</h4>
-                    <button type="button" onclick="placeItem(new LED());">
-                        <img src="img/icons/outputs/led.svg" ondragend="onDragEnd(event);" alt="LED" />
+                    <button type="button" onclick="PlaceItemController.place(new LED());">
+                        <img src="img/icons/outputs/led.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="LED" />
                         <br/>LED
                     </button>
-                    <button type="button" onclick="placeItem(new SevenSegmentDisplay());">
-                        <img src="img/icons/outputs/sevensegmentdisplay.svg" ondragend="onDragEnd(event);" alt="7 Segment Display" />
+                    <button type="button" onclick="PlaceItemController.place(new SevenSegmentDisplay());">
+                        <img src="img/icons/outputs/sevensegmentdisplay.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="7 Segment Display" />
                         <br/>7 Segment Display
                     </button>
 
                     <h4 unselectable>Logic Gates</h4>
-                    <button type="button" onclick="placeItem(new BUFGate());">
-                        <img src="img/icons/logicgates/buffer.svg" ondragend="onDragEnd(event);" alt="Buffer gate" />
+                    <button type="button" onclick="PlaceItemController.place(new BUFGate());">
+                        <img src="img/icons/logicgates/buffer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Buffer gate" />
                         <br/>BUFFER
                     </button>
-                    <button type="button" onclick="placeItem(new BUFGate(), true);">
-                        <img src="img/icons/logicgates/not.svg" ondragend="onDragEnd(event);" alt="NOT gate" />
+                    <button type="button" onclick="PlaceItemController.place(new BUFGate(), true);">
+                        <img src="img/icons/logicgates/not.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NOT gate" />
                         <br/>NOT
                     </button>
-                    <button type="button" onclick="placeItem(new ANDGate());">
-                        <img src="img/icons/logicgates/and.svg" ondragend="onDragEnd(event);" alt="AND gate" />
+                    <button type="button" onclick="PlaceItemController.place(new ANDGate());">
+                        <img src="img/icons/logicgates/and.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="AND gate" />
                         <br/>AND
                     </button>
-                    <button type="button" onclick="placeItem(new ANDGate(), true);">
-                        <img src="img/icons/logicgates/nand.svg" ondragend="onDragEnd(event);" alt="NAND gate" />
+                    <button type="button" onclick="PlaceItemController.place(new ANDGate(), true);">
+                        <img src="img/icons/logicgates/nand.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NAND gate" />
                         <br/>NAND
                     </button>
-                    <button type="button" onclick="placeItem(new ORGate());">
-                        <img src="img/icons/logicgates/or.svg" ondragend="onDragEnd(event);" alt="OR gate" />
+                    <button type="button" onclick="PlaceItemController.place(new ORGate());">
+                        <img src="img/icons/logicgates/or.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="OR gate" />
                         <br/>OR
                     </button>
-                    <button type="button" onclick="placeItem(new ORGate(), true);">
-                        <img src="img/icons/logicgates/nor.svg" ondragend="onDragEnd(event);" alt="NOR gate" />
+                    <button type="button" onclick="PlaceItemController.place(new ORGate(), true);">
+                        <img src="img/icons/logicgates/nor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NOR gate" />
                         <br/>NOR
                     </button>
-                    <button type="button" onclick="placeItem(new XORGate());">
-                        <img src="img/icons/logicgates/xor.svg" ondragend="onDragEnd(event);" alt="XOR gate" />
+                    <button type="button" onclick="PlaceItemController.place(new XORGate());">
+                        <img src="img/icons/logicgates/xor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="XOR gate" />
                         <br/>XOR
                     </button>
-                    <button type="button" onclick="placeItem(new XORGate(), true);">
-                        <img src="img/icons/logicgates/xnor.svg" ondragend="onDragEnd(event);" alt="XNOR gate" />
+                    <button type="button" onclick="PlaceItemController.place(new XORGate(), true);">
+                        <img src="img/icons/logicgates/xnor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="XNOR gate" />
                         <br/>XNOR
                     </button>
 
                     <h4 unselectable>Flip Flops</h4>
-                    <button type="button" onclick="placeItem(new SRFlipFlop());">
-                        <img src="img/icons/base.svg" ondragend="onDragEnd(event);" alt="SR Flip Flop" />
+                    <button type="button" onclick="PlaceItemController.place(new SRFlipFlop());">
+                        <img src="img/icons/base.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="SR Flip Flop" />
                         <br/>SR Flip Flop
                     </button>
 
                     <h4 unselectable>Other</h4>
-                    <button type="button" onclick="placeItem(new Multiplexer());">
-                        <img src="img/icons/other/multiplexer.svg" ondragend="onDragEnd(event);" alt="Multiplexer" />
+                    <button type="button" onclick="PlaceItemController.place(new Multiplexer());">
+                        <img src="img/icons/other/multiplexer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Multiplexer" />
                         <br/>Mux
                     </button>
-                    <button type="button" onclick="placeItem(new Demultiplexer());">
-                        <img src="img/icons/other/demultiplexer.svg" ondragend="onDragEnd(event);" alt="Demultiplexer" />
+                    <button type="button" onclick="PlaceItemController.place(new Demultiplexer());">
+                        <img src="img/icons/other/demultiplexer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Demultiplexer" />
                         <br/>Demux
                     </button>
-                    <button type="button" onclick="placeItem(new Encoder());">
-                        <img src="img/icons/other/encoder.svg" ondragend="onDragEnd(event);" alt="Encoder" />
+                    <button type="button" onclick="PlaceItemController.place(new Encoder());">
+                        <img src="img/icons/other/encoder.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Encoder" />
                         <br/>Encoder
                     </button>
-                    <button type="button" onclick="placeItem(new Decoder());">
-                        <img src="img/icons/other/encoder.svg" ondragend="onDragEnd(event);" alt="Decoder" />
+                    <button type="button" onclick="PlaceItemController.place(new Decoder());">
+                        <img src="img/icons/other/encoder.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Decoder" />
                         <br/>Decoder
                     </button>
-                    <button type="button" onclick="placeItem(new Label());">
-                        <img src="img/icons/other/label.svg" ondragend="onDragEnd(event);" alt="Label" />
+                    <button type="button" onclick="PlaceItemController.place(new Label());">
+                        <img src="img/icons/other/label.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Label" />
                         <br/>Label
                     </button>
                 </nav>
@@ -218,94 +218,100 @@
             </main>
         </div>
         
-        <script src="js/utils/vector.js"></script>
-        <script src="js/utils/matrix.js"></script>
-        <script src="js/utils/bezier.js"></script>
-        <script src="js/utils/transform.js"></script>
-        <script src="js/utils/camera.js"></script>
-        <script src="js/utils/uidmanager.js"></script>
-        <script src="js/utils/utils.js"></script>
-        <script src="js/utils/clipboard.js"></script>
-        <script src="js/utils/selectionbox.js"></script>
-        <script src="js/utils/propogation.js"></script>
-        <script src="js/utils/context.js"></script>
-        <script src="js/utils/copyutils.js"></script>
+        <script src="js/libraries/math/Vector.js"></script>
+        <script src="js/libraries/math/Matrix.js"></script>
+        <script src="js/libraries/math/Bezier.js"></script>
+        <script src="js/libraries/math/Transform.js"></script>
 
-        <script src="js/utils/actions/historymanager.js"></script>
-        <script src="js/utils/actions/action.js"></script>
-        <script src="js/utils/actions/placeaction.js"></script>
-        <script src="js/utils/actions/deleteaction.js"></script>
-        <script src="js/utils/actions/selectaction.js"></script>
-        <script src="js/utils/actions/placewireaction.js"></script>
-        <script src="js/utils/actions/splitwireaction.js"></script>
-        <script src="js/utils/actions/transformaction.js"></script>
-        <script src="js/utils/actions/groupaction.js"></script>
+        <script src="js/libraries/HistoryManager.js"></script>
+        <script src="js/libraries/actions/Action.js"></script>
+        <script src="js/libraries/actions/PlaceAction.js"></script>
+        <script src="js/libraries/actions/DeleteAction.js"></script>
+        <script src="js/libraries/actions/SelectAction.js"></script>
+        <script src="js/libraries/actions/PlaceWireAction.js"></script>
+        <script src="js/libraries/actions/SplitWireAction.js"></script>
+        <script src="js/libraries/actions/TransformAction.js"></script>
+        <script src="js/libraries/actions/GroupAction.js"></script>
 
-        <script src="js/utils/popup/popup.js"></script>
-        <script src="js/utils/popup/module.js"></script>
+        <script src="js/libraries/popup/Popup.js"></script>
+        <script src="js/libraries/popup/Module.js"></script>
+        
+        <script src="js/libraries/Camera.js"></script>
+        <script src="js/libraries/Clipboard.js"></script>
+        <script src="js/libraries/Context.js"></script>
+        <script src="js/libraries/CopyUtils.js"></script>
+        <script src="js/libraries/Propogation.js"></script>
+        <script src="js/libraries/SelectionBox.js"></script>
+        <script src="js/libraries/UIDManager.js"></script>
+        <script src="js/libraries/Utils.js"></script>
 
-        <script src="js/utils/popup/selectionpopup/selectionpopup.js"></script>
-        <script src="js/utils/popup/selectionpopup/positionxmodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/positionymodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/titlemodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/inputcountmodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/colorpickermodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/icbuttonmodule.js"></script>
-        <script src="js/utils/popup/selectionpopup/busbuttonmodule.js"></script>
+        <script src="js/controllers/selectionpopup/SelectionPopup.js"></script>
+        <script src="js/controllers/selectionpopup/PositionXModule.js"></script>
+        <script src="js/controllers/selectionpopup/PositionYModule.js"></script>
+        <script src="js/controllers/selectionpopup/TitleModule.js"></script>
+        <script src="js/controllers/selectionpopup/InputCountModule.js"></script>
+        <script src="js/controllers/selectionpopup/ColorPickerModule.js"></script>
+        <script src="js/controllers/selectionpopup/ICButtonModule.js"></script>
+        <script src="js/controllers/selectionpopup/BusButtonModule.js"></script>
 
-        <script src="js/utils/popup/contextmenu/contextmenu.js"></script>
-        <script src="js/utils/popup/contextmenu/cutmodule.js"></script>
-        <script src="js/utils/popup/contextmenu/copymodule.js"></script>
-        <script src="js/utils/popup/contextmenu/pastemodule.js"></script>
-        <script src="js/utils/popup/contextmenu/selectallmodule.js"></script>
-        <script src="js/utils/popup/contextmenu/undomodule.js"></script>
-        <script src="js/utils/popup/contextmenu/redomodule.js"></script>
+        <script src="js/controllers/contextmenu/ContextMenu.js"></script>
+        <script src="js/controllers/contextmenu/CutModule.js"></script>
+        <script src="js/controllers/contextmenu/CopyModule.js"></script>
+        <script src="js/controllers/contextmenu/PasteModule.js"></script>
+        <script src="js/controllers/contextmenu/SelectAllmodule.js"></script>
+        <script src="js/controllers/contextmenu/UndoModule.js"></script>
+        <script src="js/controllers/contextmenu/RedoModule.js"></script>
 
-        <script src="js/controllers/sidenavcontroller.js"></script>
-        <script src="js/controllers/itemnavcontroller.js"></script>
+        <script src="js/controllers/SideNavController.js"></script>
+        <script src="js/controllers/ItemNavController.js"></script>
+        <script src="js/controllers/PlaceItemController.js"></script>
 
-        <script src="js/importer.js"></script>
-        <script src="js/exporter.js"></script>
+        <script src="js/controllers/tools/Tool.js"></script>
+        <script src="js/controllers/tools/WiringTool.js"></script>
+        <script src="js/controllers/tools/ItemTool.js"></script>
+        <script src="js/controllers/tools/SelectionTool.js"></script>
 
-        <script src="js/renderer.js"></script>
+        <script src="js/controllers/Importer.js"></script>
+        <script src="js/controllers/Exporter.js"></script>
+        
+        <script src="js/controllers/Input.js"></script>
 
-        <script src="js/tools/tool.js"></script>
-        <script src="js/tools/wiringtool.js"></script>
-        <script src="js/tools/itemtool.js"></script>
-        <script src="js/tools/selectiontool.js"></script>
+        <script src="js/models/IOObject.js"></script>
+        <script src="js/models/IOPort.js"></script>
+        <script src="js/models/OPort.js"></script>
+        <script src="js/models/IPort.js"></script>
+        <script src="js/models/Wire.js"></script>
+        <script src="js/models/WirePort.js"></script>
+        
+        <script src="js/models/ioobjects/inputs/Button.js"></script>
+        <script src="js/models/ioobjects/inputs/ConstantHigh.js"></script>
+        <script src="js/models/ioobjects/inputs/ConstantLow.js"></script>
+        <script src="js/models/ioobjects/inputs/Switch.js"></script>
+        <script src="js/models/ioobjects/inputs/Clock.js"></script>
+        <script src="js/models/ioobjects/inputs/Keyboard.js"></script>
+        
+        <script src="js/models/ioobjects/outputs/LED.js"></script>
+        <script src="js/models/ioobjects/outputs/7SegmentDisplay.js"></script>
+        
+        <script src="js/models/ioobjects/gates/Gate.js"></script>
+        <script src="js/models/ioobjects/gates/BUFGate.js"></script>
+        <script src="js/models/ioobjects/gates/ANDGate.js"></script>
+        <script src="js/models/ioobjects/gates/ORGate.js"></script>
+        <script src="js/models/ioobjects/gates/XORGate.js"></script>
+        
+        <script src="js/models/ioobjects/flipflops/SRFlipFlop.js"></script>
+        
+        <script src="js/models/ioobjects/other/Label.js"></script>
+        <script src="js/models/ioobjects/other/Multiplexer.js"></script>
+        <script src="js/models/ioobjects/other/Demultiplexer.js"></script>
+        <script src="js/models/ioobjects/other/Encoder.js"></script>
+        <script src="js/models/ioobjects/other/Decoder.js"></script>
+        <script src="js/models/ioobjects/other/IC.js"></script>
+        <script src="js/models/ioobjects/other/ICData.js"></script>
 
-        <script src="js/items/ioobject.js"></script>
-        <script src="js/items/ioport.js"></script>
-        <script src="js/items/oport.js"></script>
-        <script src="js/items/iport.js"></script>
-        <script src="js/items/wireport.js"></script>
-        <script src="js/items/wire.js"></script>
-        <script src="js/items/inputs/button.js"></script>
-        <script src="js/items/inputs/constanthigh.js"></script>
-        <script src="js/items/inputs/constantlow.js"></script>
-        <script src="js/items/inputs/switch.js"></script>
-        <script src="js/items/inputs/clock.js"></script>
-        <script src="js/items/inputs/keyboard.js"></script>
-        <script src="js/items/outputs/led.js"></script>
-        <script src="js/items/outputs/7segmentdisplay.js"></script>
-        <script src="js/items/gates/gate.js"></script>
-        <script src="js/items/gates/buffergate.js"></script>
-        <script src="js/items/gates/andgate.js"></script>
-        <script src="js/items/gates/orgate.js"></script>
-        <script src="js/items/gates/xorgate.js"></script>
-        <script src="js/items/flipflops/SRFlipFlop.js"></script>
-        <script src="js/items/other/label.js"></script>
-        <script src="js/items/other/multiplexer.js"></script>
-        <script src="js/items/other/demultiplexer.js"></script>
-        <script src="js/items/other/encoder.js"></script>
-        <script src="js/items/other/decoder.js"></script>
-
-        <script src="js/items/ics/ic.js"></script>
-        <script src="js/items/ics/icdata.js"></script>
-
-        <script src="js/circuitdesigner.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/input.js"></script>
-        <script src="js/icdesigner.js"></script>
+        <script src="js/views/Renderer.js"></script>
+        <script src="js/views/CircuitDesigner.js"></script>
+        <script src="js/views/ICDesigner.js"></script>
+        <script src="js/views/Main.js"></script>
     </body>
 </html>

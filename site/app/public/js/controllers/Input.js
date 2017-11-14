@@ -1,11 +1,8 @@
-var num = 0;
 class Input {
     constructor(parent) {
         this.parent = parent;
         this.canvas = parent.renderer.canvas;
         this.camera = parent.camera;
-
-        this.num = (num++);
 
         this.rawMousePos = new Vector(0, 0);
         this.mousePos = new Vector(0,0);
@@ -171,34 +168,4 @@ class Input {
         if (currentTool.onClick(this))
             render();
     }
-}
-
-var clipboard = new Clipboard();
-
-var wiringTool = new WiringTool();
-var itemTool = new ItemTool();
-var selectionTool = new SelectionTool();
-var currentTool = selectionTool;
-
-var header = document.getElementById("header");
-var projectNameInput = document.getElementById("project-name");
-
-var justDragged = false;
-
-function placeItem(item, not) {
-    if (not)
-        item.not = not;
-    var rect = getCurrentContext().getInput().canvas.getBoundingClientRect();
-    itemTool.activate(item, getCurrentContext());
-    if (justDragged) {
-        getCurrentContext().getInput().onMouseMove(event);
-        itemTool.onMouseMove(getCurrentContext().getInput())
-        itemTool.onClick();
-    }
-    justDragged = false;
-}
-
-function onDragEnd(event) {
-    justDragged = true;
-    event.srcElement.parentElement.onclick();
 }

@@ -427,3 +427,4 @@ class SelectionTool extends Tool {
         this.selectionBox.draw(renderer);
     }
 }
+var selectionTool = new SelectionTool();
