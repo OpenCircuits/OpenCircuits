@@ -3,6 +3,7 @@ class Transform {
         this.parent = undefined;
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
+        this.angle = angle;
         this.scale = V(1, 1);
         this.corners = [];
         this.localCorners = [];
@@ -10,7 +11,6 @@ class Transform {
         this.dirty = true;
         this.dirtySize = true;
         this.dirtyCorners = true;
-        this.setAngle(angle);
         this.updateMatrix();
     }
     updateMatrix(c) {
@@ -55,11 +55,15 @@ class Transform {
         m.scale(V(1/this.camera.zoom, 1/this.camera.zoom));
         ctx.setTransform(m.mat[0], m.mat[1], m.mat[2], m.mat[3], m.mat[4], m.mat[5]);
     }
-    toLocalSpace(v) { // v must be in world coords
-        return this.getInverseMatrix().mul(v);
-    }
-    toWorldSpace(v) { // v must be in local coords
-        return this.getMatrix().mul(v);
+    rotateAbout(a, c) {
+        this.setAngle(a);
+        this.setPos(this.pos.sub(c));
+        var cos = Math.cos(a), sin = Math.sin(a);
+        var xx = this.pos.x * cos - this.pos.y * sin;
+        var yy = this.pos.y * cos + this.pos.x * sin;
+        this.setPos(V(xx, yy).add(c));
+        this.dirty = true;
+        this.dirtyCorners = true;
     }
     setParent(t) {
         this.parent = t;
@@ -77,16 +81,6 @@ class Transform {
     }
     setAngle(a) {
         this.angle = a;
-        this.dirty = true;
-        this.dirtyCorners = true;
-    }
-    rotateAbout(a, c) {
-        this.setAngle(a);
-        this.setPos(this.pos.sub(c));
-        var cos = Math.cos(a), sin = Math.sin(a);
-        var xx = this.pos.x * cos - this.pos.y * sin;
-        var yy = this.pos.y * cos + this.pos.x * sin;
-        this.setPos(V(xx, yy).add(c));
         this.dirty = true;
         this.dirtyCorners = true;
     }
@@ -110,6 +104,12 @@ class Transform {
         this.size.y = h;
         this.dirtySize = true;
         this.dirtyCorners = true;
+    }
+    toLocalSpace(v) { // v must be in world coords
+        return this.getInverseMatrix().mul(v);
+    }
+    toWorldSpace(v) { // v must be in local coords
+        return this.getMatrix().mul(v);
     }
     getPos() {
         return V(this.pos.x, this.pos.y);

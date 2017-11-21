@@ -1,6 +1,10 @@
 language: node_js
-node_js:
- - "node"
 
-notifications:
-  email: false
+node_js:
+    - 0.10
+    
+before_install:
+    npm install gulp
+ 
+script:
+    - gulp test

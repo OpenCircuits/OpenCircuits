@@ -66,6 +66,9 @@ function onFinishLoading() {
 var renderQueue = 0;
 
 function render() {
+    if (__TESTING__) // Never render while unit testing
+        return;
+        
     if (renderQueue === 0)
         requestAnimationFrame(actualRender);
     renderQueue++;
