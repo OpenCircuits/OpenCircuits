@@ -3,7 +3,11 @@ language: node_js
 node_js:
     - 0.10
     
-before_install:
+cache:
+  directories:
+    - node_modules
+    
+install:
     npm install gulp
  
 script:
