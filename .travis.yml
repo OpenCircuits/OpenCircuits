@@ -1,7 +1,10 @@
 language: node_js
 
 node_js:
-    - 0.10
+    - 8.9.1
+    
+npm:
+    - 5.5.1
     
 cache:
   directories:
@@ -12,3 +15,6 @@ install:
  
 script:
     - gulp test
+
+notifications:
+  email: false
