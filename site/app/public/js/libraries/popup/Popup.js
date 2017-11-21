@@ -41,6 +41,6 @@ class Popup {
     }
     clamp() {
         this.pos.x = Math.max(Math.min(this.pos.x, window.innerWidth -this.div.clientWidth -1), ItemNavController.isOpen ? ITEMNAV_WIDTH+5 : 5);
-        this.pos.y = Math.max(Math.min(this.pos.y, window.innerHeight-this.div.clientHeight-1), header.clientHeight+5);
+        this.pos.y = Math.max(Math.min(this.pos.y, window.innerHeight-this.div.clientHeight-1), (header ? header.clientHeight : 0)+5);
     }
 }

@@ -4,11 +4,13 @@ var SideNavController = (function() {
     var container = document.getElementById("sidenav");
     var otherContent = document.getElementById("content");
     var overlay = document.getElementById("overlay");
-    overlay.addEventListener("transitionend", function(event) {
-        if (!SideNavController.isOpen)
-            overlay.style.visibility = "hidden";        
-    }, false);
-
+    if (overlay) {
+        overlay.addEventListener("transitionend", function(event) {
+            if (!SideNavController.isOpen)
+                overlay.style.visibility = "hidden";        
+        }, false);
+    }
+    
     var open = function() {
         container.style.width           = SIDENAV_WIDTH + "px";
         otherContent.style.marginLeft   = SIDENAV_WIDTH + "px";
