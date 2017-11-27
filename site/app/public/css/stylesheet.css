@@ -290,6 +290,7 @@ main {
     font-size: 16;
     border: 1px solid #444;
     border-radius: 3px;
+    outline: none;
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }
@@ -316,6 +317,7 @@ main {
     font-size: 16;
     border: 1px solid #444;
     border-radius: 3px;
+    outline: none;
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }

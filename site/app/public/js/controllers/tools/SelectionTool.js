@@ -16,14 +16,6 @@ class SelectionTool extends Tool {
         // if (!icdesigner.hidden)
         //     return;
 
-        if (code === DELETE_KEY && !popup.focused) {
-            this.removeSelections();
-            return;
-        }
-        if (code === ENTER_KEY && popup.focused) {
-            popup.onEnter();
-            return;
-        }
         if (code === A_KEY && input.modiferKeyDown) {
             this.selectAll();
             return true;
@@ -87,7 +79,7 @@ class SelectionTool extends Tool {
             this.wire.split(this.wireSplitPoint);
             var action = new SplitWireAction(this.wire);
             getCurrentContext().addAction(action);
-            this.deselect(this.selections);
+            this.deselectAll();
             this.select([this.wire.connection]);
             this.startDrag(this.wire.connection, worldMousePos);
             this.wire = undefined;
@@ -166,7 +158,7 @@ class SelectionTool extends Tool {
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
                 if (!input.shiftKeyDown)
-                    this.deselect(this.selections, true);
+                    this.deselectAll(true);
                 this.select([obj], true);
 
                 this.sendToFront(obj);
@@ -195,7 +187,7 @@ class SelectionTool extends Tool {
         if (this.wire != undefined) {
             this.shouldSplit = false;
             if (!input.shiftKeyDown)
-                this.deselect(this.selections, true);
+                this.deselectAll(true);
             this.select([this.wire], true);
             this.wire = undefined;
             return true;
@@ -204,7 +196,7 @@ class SelectionTool extends Tool {
         // Didn't click on anything so deselect everything
         // And add a deselect action
         if (!input.shiftKeyDown && this.selections.length > 0) {
-            this.deselect(this.selections, true);
+            this.deselectAll(true);
             return true;
         }
     }
@@ -238,6 +230,12 @@ class SelectionTool extends Tool {
         popup.update();
         this.recalculateMidpoint();
     }
+    deselectAll(doAction) {
+        var objects = [];
+        for (var i = 0; i < this.selections.length; i++)
+            objects.push(this.selections[i]);
+        this.deselect(objects, doAction);
+    }
     deselect(objects, doAction) {
         if (objects.length === 0)
             return;
@@ -245,8 +243,10 @@ class SelectionTool extends Tool {
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
-            if (!obj.selected)
+            if (!obj.selected) {
+                console.error("Can't deselect an unselected object! " + obj);
                 continue;
+            }
             obj.selected = false;
             this.selections.splice(this.selections.indexOf(obj), 1);
             if (doAction)
@@ -276,7 +276,7 @@ class SelectionTool extends Tool {
                 action.add(new DeleteAction(things[i]));
             }
         }
-        this.deselect(this.selections);
+        this.deselectAll();
         getCurrentContext().addAction(action);
         render();
     }
@@ -346,7 +346,7 @@ class SelectionTool extends Tool {
         return false;
     }
     selectAll() {
-        this.deselect(this.selections, true);
+        this.deselectAll(true);
         this.select(getCurrentContext().getObjects(), true);
     }
     createBus() {

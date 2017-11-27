@@ -1,4 +1,4 @@
-/* Built at: Mon Nov 20 2017 16:41:27 GMT-0800 (PST) */
+/* Built at: Mon Nov 27 2017 00:25:34 GMT-0500 (EST) */
 var __TESTING__ = true;
 
 var assert = require('assert');
@@ -11,6 +11,7 @@ class DOMTestingObject {
         this.listeners = [];
         this.children = [];
         this.style = {position: '', left: '', top: '', visibility: ''}
+        this.focused = false;
     }
     addEventListener(l) {
         this.listeners.push(l);
@@ -31,6 +32,8 @@ class DOMTestingObject {
         return new DOMTestingObject(id);
     }
     getContext() { return {}; }
+    blur() { this.focused = false; }
+    focus() { this.focused = true; }
 }
 
 class Image {
@@ -585,6 +588,7 @@ var OPTION_KEY = 18;
 var SHIFT_KEY = 16;
 var DELETE_KEY = 8;
 var ENTER_KEY = 13;
+var ESC_KEY = 27;
 var A_KEY = 65;
 var C_KEY = 67;
 var V_KEY = 86;
@@ -1760,6 +1764,8 @@ class Module {
 class Popup {
     constructor(divName) {
         this.div = document.getElementById(divName);
+        this.div.addEventListener('keydown', e => {this.onKeyDown(e.keyCode);}, false);
+        this.div.addEventListener('keyup', e => {this.onKeyUp(e.keyCode);}, false);
         this.div.style.position = "absolute";
         this.focused = false;
 
@@ -1767,6 +1773,10 @@ class Popup {
 
         this.setPos(V(0,0));
         this.hide();
+    }
+    onKeyDown(code) {
+    }
+    onKeyUp(code) {
     }
     add(m) {
         this.modules.push(m);
@@ -1785,11 +1795,13 @@ class Popup {
     show() {
         this.hidden = false;
         this.div.style.visibility = "visible";
+        this.div.focus();
         this.onShow();
     }
     hide() {
         this.hidden = true;
         this.div.style.visibility = "hidden";
+        this.div.blur();
     }
     setPos(v) {
         this.pos = V(v.x, v.y);
@@ -2205,6 +2217,64 @@ class Input {
             render();
     }
 }
+var PlaceItemController = (function() {
+    var header = document.getElementById("header");
+    var projectNameInput = document.getElementById("project-name");
+
+    var justDragged = false;
+    var evt;
+
+    return {
+        place: function(item, not) {
+            if (not)
+                item.not = not;
+            var rect = getCurrentContext().getInput().canvas.getBoundingClientRect();
+            itemTool.activate(item, getCurrentContext());
+            if (justDragged) {
+                getCurrentContext().getInput().onMouseMove(evt);
+                itemTool.onMouseMove(getCurrentContext().getInput())
+                itemTool.onClick();
+            }
+            justDragged = false;
+        },
+        onDragEnd: function(event) {
+            justDragged = true;
+            evt = event;
+            event.srcElement.parentElement.onclick();
+        }
+    };
+})();
+
+class Tool {
+    constructor() {
+        this.isActive = false;
+    }
+    activate() {
+        currentTool.deactivate();
+
+        currentTool = this;
+        this.isActive = true;
+        render();
+    }
+    deactivate() {
+        this.isActive = false;
+    }
+    onKeyDown(code) {
+    }
+    onKeyUp(code) {
+    }
+    onMouseDown() {
+    }
+    onMouseMove() {
+    }
+    onMouseUp() {
+    }
+    onClick() {
+    }
+    draw() {
+    }
+}
+var currentTool;
 var ItemNavController = (function() {
     var tab = document.getElementById("open-items-tab");
     var container = document.getElementById("items");
@@ -2246,34 +2316,6 @@ var ItemNavController = (function() {
     };
 })();
 // ItemNavController.toggle();
-
-var PlaceItemController = (function() {
-    var header = document.getElementById("header");
-    var projectNameInput = document.getElementById("project-name");
-
-    var justDragged = false;
-    var evt;
-
-    return {
-        place: function(item, not) {
-            if (not)
-                item.not = not;
-            var rect = getCurrentContext().getInput().canvas.getBoundingClientRect();
-            itemTool.activate(item, getCurrentContext());
-            if (justDragged) {
-                getCurrentContext().getInput().onMouseMove(evt);
-                itemTool.onMouseMove(getCurrentContext().getInput())
-                itemTool.onClick();
-            }
-            justDragged = false;
-        },
-        onDragEnd: function(event) {
-            justDragged = true;
-            evt = event;
-            event.srcElement.parentElement.onclick();
-        }
-    };
-})();
 
 var SideNavController = (function() {
     var tab = document.getElementById("open-sive-nav-button");
@@ -2320,36 +2362,6 @@ var SideNavController = (function() {
 })();
 // SideNavController.toggle();
 
-class Tool {
-    constructor() {
-        this.isActive = false;
-    }
-    activate() {
-        currentTool.deactivate();
-
-        currentTool = this;
-        this.isActive = true;
-        render();
-    }
-    deactivate() {
-        this.isActive = false;
-    }
-    onKeyDown(code) {
-    }
-    onKeyUp(code) {
-    }
-    onMouseDown() {
-    }
-    onMouseMove() {
-    }
-    onMouseUp() {
-    }
-    onClick() {
-    }
-    draw() {
-    }
-}
-var currentTool;
 class ContextMenu extends Popup {
     constructor() {
         super("context-menu");
@@ -2361,6 +2373,12 @@ class ContextMenu extends Popup {
 
         this.add(new UndoModule(this, "context-menu-undo"));
         this.add(new RedoModule(this, "context-menu-redo"))
+    }
+    onKeyDown(code) {
+        if (code === ESC_KEY && !this.hidden) {
+            this.hide();
+            return;
+        }
     }
     onShow() {
         super.onShow();
@@ -2614,6 +2632,21 @@ class SelectionPopup extends Popup {
         this.add(new ICButtonModule(this, "popup-ic-button"));
         this.add(new BusButtonModule(this, "popup-bus-button"));
     }
+    onKeyDown(code) {
+        if (code === DELETE_KEY && !this.focused) {
+            selectionTool.removeSelections();
+            return;
+        }
+        if (code === ENTER_KEY && this.focused) {
+            this.onEnter();
+            return;
+        }
+        if (code === ESC_KEY && !this.hidden) {
+            selectionTool.deselectAll();
+            render();
+            return;
+        }
+    }
     onEnter() {
         this.blur();
     }
@@ -2714,14 +2747,6 @@ class SelectionTool extends Tool {
         // if (!icdesigner.hidden)
         //     return;
 
-        if (code === DELETE_KEY && !popup.focused) {
-            this.removeSelections();
-            return;
-        }
-        if (code === ENTER_KEY && popup.focused) {
-            popup.onEnter();
-            return;
-        }
         if (code === A_KEY && input.modiferKeyDown) {
             this.selectAll();
             return true;
@@ -2785,7 +2810,7 @@ class SelectionTool extends Tool {
             this.wire.split(this.wireSplitPoint);
             var action = new SplitWireAction(this.wire);
             getCurrentContext().addAction(action);
-            this.deselect(this.selections);
+            this.deselectAll();
             this.select([this.wire.connection]);
             this.startDrag(this.wire.connection, worldMousePos);
             this.wire = undefined;
@@ -2864,7 +2889,7 @@ class SelectionTool extends Tool {
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
                 if (!input.shiftKeyDown)
-                    this.deselect(this.selections, true);
+                    this.deselectAll(true);
                 this.select([obj], true);
 
                 this.sendToFront(obj);
@@ -2893,7 +2918,7 @@ class SelectionTool extends Tool {
         if (this.wire != undefined) {
             this.shouldSplit = false;
             if (!input.shiftKeyDown)
-                this.deselect(this.selections, true);
+                this.deselectAll(true);
             this.select([this.wire], true);
             this.wire = undefined;
             return true;
@@ -2902,7 +2927,7 @@ class SelectionTool extends Tool {
         // Didn't click on anything so deselect everything
         // And add a deselect action
         if (!input.shiftKeyDown && this.selections.length > 0) {
-            this.deselect(this.selections, true);
+            this.deselectAll(true);
             return true;
         }
     }
@@ -2936,6 +2961,12 @@ class SelectionTool extends Tool {
         popup.update();
         this.recalculateMidpoint();
     }
+    deselectAll(doAction) {
+        var objects = [];
+        for (var i = 0; i < this.selections.length; i++)
+            objects.push(this.selections[i]);
+        this.deselect(objects, doAction);
+    }
     deselect(objects, doAction) {
         if (objects.length === 0)
             return;
@@ -2943,8 +2974,10 @@ class SelectionTool extends Tool {
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
-            if (!obj.selected)
+            if (!obj.selected) {
+                console.error("Can't deselect an unselected object! " + obj);
                 continue;
+            }
             obj.selected = false;
             this.selections.splice(this.selections.indexOf(obj), 1);
             if (doAction)
@@ -2974,7 +3007,7 @@ class SelectionTool extends Tool {
                 action.add(new DeleteAction(things[i]));
             }
         }
-        this.deselect(this.selections);
+        this.deselectAll();
         getCurrentContext().addAction(action);
         render();
     }
@@ -3044,7 +3077,7 @@ class SelectionTool extends Tool {
         return false;
     }
     selectAll() {
-        this.deselect(this.selections, true);
+        this.deselectAll(true);
         this.select(getCurrentContext().getObjects(), true);
     }
     createBus() {
@@ -3134,7 +3167,7 @@ class WiringTool extends Tool {
         this.wire = undefined;
     }
     onKeyUp(code, input) {
-        if (code === 27)  { // Escape key
+        if (code === ESC_KEY)  {
             this.removeWire(input.parent.wires);
             selectionTool.activate();
             render();

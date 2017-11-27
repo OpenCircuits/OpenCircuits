@@ -1,6 +1,8 @@
 class Popup {
     constructor(divName) {
         this.div = document.getElementById(divName);
+        this.div.addEventListener('keydown', e => {this.onKeyDown(e.keyCode);}, false);
+        this.div.addEventListener('keyup', e => {this.onKeyUp(e.keyCode);}, false);
         this.div.style.position = "absolute";
         this.focused = false;
 
@@ -8,6 +10,10 @@ class Popup {
 
         this.setPos(V(0,0));
         this.hide();
+    }
+    onKeyDown(code) {
+    }
+    onKeyUp(code) {
     }
     add(m) {
         this.modules.push(m);
@@ -26,11 +32,13 @@ class Popup {
     show() {
         this.hidden = false;
         this.div.style.visibility = "visible";
+        this.div.focus();
         this.onShow();
     }
     hide() {
         this.hidden = true;
         this.div.style.visibility = "hidden";
+        this.div.blur();
     }
     setPos(v) {
         this.pos = V(v.x, v.y);
