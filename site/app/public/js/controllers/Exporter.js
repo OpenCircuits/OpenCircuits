@@ -1,82 +1,85 @@
+var Exporter = (function() {    
+    var projectNameInput = document.getElementById("project-name");
 
-function saveFile() {
-    var data = Exporter.write(getCurrentContext());
-    var projectName = projectNameInput.value;
-    if (projectName === "Untitled Circuit*")
-        projectName = "Untitled Circuit";
-    var filename = projectName + ".circuit";
+    return {
+        ROOT: undefined,
+        saveFile: function() {
+            var data = this.write(getCurrentContext());
+            var projectName = projectNameInput.value;
+            if (projectName === "Untitled Circuit*")
+                projectName = "Untitled Circuit";
+            var filename = projectName + ".circuit";
 
-    var file = new Blob([data], {type: "text/plain"});
-    if (window.navigator.msSaveOrOpenBlob) { // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-        saved = true;
-    } else { // Others
-        var a = document.createElement("a");
-        var url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            saved = true;
-        }, 0);
-    }
-}
+            var file = new Blob([data], {type: "text/plain"});
+            if (window.navigator.msSaveOrOpenBlob) { // IE10+
+                window.navigator.msSaveOrOpenBlob(file, filename);
+                saved = true;
+            } else { // Others
+                var a = document.createElement("a");
+                var url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    saved = true;
+                }, 0);
+            }
+        },
+        write: function(context) {
+            var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
+            this.ROOT = root;
 
-var Exporter = {};
+            var objects = context.getObjects();
+            var wires = context.getWires();
 
-Exporter.ROOT = undefined;
-Exporter.write = function(context) {
-    var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
-    Exporter.ROOT = root;
+            var projectNode = getChildNode(root, "project");
 
-    var objects = context.getObjects();
-    var wires = context.getWires();
+            var icNode = createChildNode(projectNode, "ics");
 
-    var projectNode = getChildNode(root, "project");
+            this.writeICs(icNode);
+            this.writeGroup(projectNode, objects, wires);
 
-    var icNode = createChildNode(projectNode, "ics");
+            return root.xml ? root.xml : (new XMLSerializer()).serializeToString(root);
+        },
+        writeGroup: function(node, objects, wires) {
+            var objectsNode = createChildNode(node, "objects");
+            var wiresNode = createChildNode(node, "wires");
 
-    Exporter.writeICs(icNode);
-    Exporter.writeGroup(projectNode, objects, wires);
+            for (var i = 0; i < objects.length; i++)
+                objects[i].writeTo(objectsNode);
 
-    return root.xml ? root.xml : (new XMLSerializer()).serializeToString(root);
-}
-Exporter.writeGroup = function(node, objects, wires) {
-    var objectsNode = createChildNode(node, "objects");
-    var wiresNode = createChildNode(node, "wires");
+            for (var i = 0; i < wires.length; i++)
+                wires[i].writeTo(wiresNode);
+        },
+        writeICs: function(node) {
+            for (var i = 0; i < ICData.ICs.length; i++) {
+                var ic = ICData.ICs[i];
+                var ICNode = createChildNode(node, "ic");
+                createTextElement(ICNode, "icuid", ic.icuid);
+                createTextElement(ICNode, "width", ic.transform.size.x);
+                createTextElement(ICNode, "height", ic.transform.size.y);
 
-    for (var i = 0; i < objects.length; i++)
-        objects[i].writeTo(objectsNode);
+                var iportNode = createChildNode(ICNode, "iports");
+                for (var j = 0; j < ic.iports.length; j++)
+                    ic.iports[j].writeTo(iportNode);
 
-    for (var i = 0; i < wires.length; i++)
-        wires[i].writeTo(wiresNode);
-}
-Exporter.writeICs = function(node) {
-    for (var i = 0; i < ICData.ICs.length; i++) {
-        var ic = ICData.ICs[i];
-        var ICNode = createChildNode(node, "ic");
-        createTextElement(ICNode, "icuid", ic.icuid);
-        createTextElement(ICNode, "width", ic.transform.size.x);
-        createTextElement(ICNode, "height", ic.transform.size.y);
+                var oportNode = createChildNode(ICNode, "oports");
+                for (var j = 0; j < ic.oports.length; j++)
+                    ic.oports[j].writeTo(oportNode);
 
-        var iportNode = createChildNode(ICNode, "iports");
-        for (var j = 0; j < ic.iports.length; j++)
-            ic.iports[j].writeTo(iportNode);
+                var componentsNode = createChildNode(ICNode, "components");
+                var objects = ic.inputs.concat(ic.components, ic.outputs);
+                var wires = getAllWires(objects);
+                this.writeGroup(componentsNode, objects, wires);
+            }
+        }
+    };
+})();
 
-        var oportNode = createChildNode(ICNode, "oports");
-        for (var j = 0; j < ic.oports.length; j++)
-            ic.oports[j].writeTo(oportNode);
-
-        var componentsNode = createChildNode(ICNode, "components");
-        var objects = ic.inputs.concat(ic.components, ic.outputs);
-        var wires = getAllWires(objects);
-        Exporter.writeGroup(componentsNode, objects, wires);
-    }
-}
-
+// UTILS
 function createChildNode(parent, tag) {
     var child = Exporter.ROOT.createElement(tag);
     parent.appendChild(child);

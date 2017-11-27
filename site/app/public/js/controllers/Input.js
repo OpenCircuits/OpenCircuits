@@ -43,7 +43,7 @@ class Input {
     }
     onKeyDown(e) {
         var code = e.keyCode;
-
+        
         if (code === SHIFT_KEY)
             this.shiftKeyDown = true;
         else if (code === CONTROL_KEY || code === COMMAND_KEY)
@@ -51,8 +51,8 @@ class Input {
         else if (code === OPTION_KEY) {
             this.optionKeyDown = true;
             getCurrentContext().setCursor("pointer");
-        } else if (code === ENTER_KEY && document.activeElement === projectNameInput)
-            projectNameInput.blur();
+        } else if (code === ENTER_KEY && document.activeElement !== document.body)
+            document.activeElement.blur();
 
         var objects = this.parent.getObjects();
         for (var i = 0; i < objects.length; i++) {

@@ -1,7 +1,4 @@
 var PlaceItemController = (function() {
-    var header = document.getElementById("header");
-    var projectNameInput = document.getElementById("project-name");
-
     var justDragged = false;
     var evt;
 

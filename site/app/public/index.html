@@ -43,10 +43,11 @@
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
                 </div>
                 <div class="header__right">
-                    <button type="button">
+                    <button type="button" onclick="document.getElementById('file-input').click();">
                         <img src="img/icons/open.svg" height="100%" alt="Open a file" />
                     </button>
-                    <button type="button">
+                    <input id="file-input" type="file" name="name" style="display: none;" onchange="openFile();" multiple="false" required="true" accept=".circuit,.xml" />
+                    <button type="button" onclick="Exporter.saveFile();">
                         <img src="img/icons/save.svg" height="100%" alt="Save current scene" />
                     </button>
                 </div>
