@@ -69,7 +69,7 @@ var Importer = (function() {
 
             return {objects:objects, wires:wires};
         },
-        loadICs = function(node, context) {
+        loadICs: function(node, context) {
             var ics = [];
             var icNodes = getChildrenByTagName(node, "ic");
             for (var i = 0; i < icNodes.length; i++) {
