@@ -19,10 +19,6 @@ class SelectionPopup extends Popup {
             selectionTool.removeSelections();
             return;
         }
-        if (code === ENTER_KEY && this.focused) {
-            this.onEnter();
-            return;
-        }
         if (code === ESC_KEY && !this.hidden) {
             selectionTool.deselectAll();
             render();
