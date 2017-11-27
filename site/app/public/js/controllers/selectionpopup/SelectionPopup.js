@@ -14,6 +14,21 @@ class SelectionPopup extends Popup {
         this.add(new ICButtonModule(this, "popup-ic-button"));
         this.add(new BusButtonModule(this, "popup-bus-button"));
     }
+    onKeyDown(code) {
+        if (code === DELETE_KEY && !this.focused) {
+            selectionTool.removeSelections();
+            return;
+        }
+        if (code === ENTER_KEY && this.focused) {
+            this.onEnter();
+            return;
+        }
+        if (code === ESC_KEY && !this.hidden) {
+            selectionTool.deselectAll();
+            render();
+            return;
+        }
+    }
     onEnter() {
         this.blur();
     }

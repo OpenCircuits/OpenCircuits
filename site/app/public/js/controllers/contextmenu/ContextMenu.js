@@ -10,6 +10,12 @@ class ContextMenu extends Popup {
         this.add(new UndoModule(this, "context-menu-undo"));
         this.add(new RedoModule(this, "context-menu-redo"))
     }
+    onKeyDown(code) {
+        if (code === ESC_KEY && !this.hidden) {
+            this.hide();
+            return;
+        }
+    }
     onShow() {
         super.onShow();
 

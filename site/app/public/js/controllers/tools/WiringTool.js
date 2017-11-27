@@ -6,7 +6,7 @@ class WiringTool extends Tool {
         this.wire = undefined;
     }
     onKeyUp(code, input) {
-        if (code === 27)  { // Escape key
+        if (code === ESC_KEY)  {
             this.removeWire(input.parent.wires);
             selectionTool.activate();
             render();
