@@ -1,5 +1,5 @@
 var __TESTING__ = false;
-/* Built at: Mon Nov 27 2017 00:17:57 GMT-0500 (EST) */
+/* Built at: Mon Nov 27 2017 00:25:34 GMT-0500 (EST) */
 class Camera {
     constructor(designer, startPos, startZoom) {
         this.canvas = designer.renderer.canvas;
@@ -4073,6 +4073,53 @@ class Gate extends IOObject {
     }
 }
 
+class SRFlipFlop extends Gate {
+    constructor(context, x, y) {
+        super(context, false, x, y, undefined);
+        this.noChange = true;
+        this.setInputAmount(3);
+        this.setOutputAmount(2);
+        this.transform.setSize(this.transform.size.scale(1.5));
+    }
+    onTransformChange() {
+        this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
+        super.onTransformChange();
+        this.transform.setSize(V(DEFAULT_SIZE*1.5, DEFAULT_SIZE*1.5));
+    }
+    activate(x) {
+        var on = this.outputs[0].isOn;
+
+        var set = this.inputs[0].isOn;
+        var clock = this.inputs[1].isOn;
+        var reset = this.inputs[2].isOn;
+        if (clock) {
+            if (set && reset) {
+                // undefined behavior
+            } else if (set) {
+                on = true;
+            } else if (reset) {
+                on = false;
+            }
+        }
+
+        super.activate(on, 0);
+        super.activate(!on, 1);
+    }
+    draw() {
+        super.draw();
+
+        var renderer = this.context.getRenderer();
+        this.localSpace();
+        renderer.rect(0, 0, this.transform.size.x, this.transform.size.y, this.getCol(), this.getBorderColor());
+        renderer.restore();
+    }
+    getDisplayName() {
+        return "SR Flip Flop";
+    }
+}
+SRFlipFlop.getXMLName = function() { return "srff"; }
+Importer.types.push(SRFlipFlop);
+
 class ANDGate extends Gate {
     constructor(context, not, x, y) {
         super(context, not, x, y, images["and.svg"]);
@@ -4259,53 +4306,6 @@ class XORGate extends Gate {
 }
 XORGate.getXMLName = function() { return "xorgate"; }
 Importer.types.push(XORGate);
-
-class SRFlipFlop extends Gate {
-    constructor(context, x, y) {
-        super(context, false, x, y, undefined);
-        this.noChange = true;
-        this.setInputAmount(3);
-        this.setOutputAmount(2);
-        this.transform.setSize(this.transform.size.scale(1.5));
-    }
-    onTransformChange() {
-        this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
-        super.onTransformChange();
-        this.transform.setSize(V(DEFAULT_SIZE*1.5, DEFAULT_SIZE*1.5));
-    }
-    activate(x) {
-        var on = this.outputs[0].isOn;
-
-        var set = this.inputs[0].isOn;
-        var clock = this.inputs[1].isOn;
-        var reset = this.inputs[2].isOn;
-        if (clock) {
-            if (set && reset) {
-                // undefined behavior
-            } else if (set) {
-                on = true;
-            } else if (reset) {
-                on = false;
-            }
-        }
-
-        super.activate(on, 0);
-        super.activate(!on, 1);
-    }
-    draw() {
-        super.draw();
-
-        var renderer = this.context.getRenderer();
-        this.localSpace();
-        renderer.rect(0, 0, this.transform.size.x, this.transform.size.y, this.getCol(), this.getBorderColor());
-        renderer.restore();
-    }
-    getDisplayName() {
-        return "SR Flip Flop";
-    }
-}
-SRFlipFlop.getXMLName = function() { return "srff"; }
-Importer.types.push(SRFlipFlop);
 
 // key board input inputs
 

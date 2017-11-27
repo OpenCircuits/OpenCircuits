@@ -10,6 +10,7 @@ class DOMTestingObject {
         this.listeners = [];
         this.children = [];
         this.style = {position: '', left: '', top: '', visibility: ''}
+        this.focused = false;
     }
     addEventListener(l) {
         this.listeners.push(l);
@@ -30,6 +31,8 @@ class DOMTestingObject {
         return new DOMTestingObject(id);
     }
     getContext() { return {}; }
+    blur() { this.focused = false; }
+    focus() { this.focused = true; }
 }
 
 class Image {
