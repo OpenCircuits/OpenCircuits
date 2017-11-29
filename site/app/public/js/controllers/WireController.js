@@ -42,6 +42,8 @@ var WireController = (function() {
             }
         },
         onMouseMove: function(somethingHappened) {
+            var worldMousePos = Input.getWorldMousePos();
+            
             // Make sure nothing else has happened
             if (somethingHappened)
                 return;
