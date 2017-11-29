@@ -1,171 +1,215 @@
-class Input {
-    constructor(parent) {
-        this.parent = parent;
-        this.canvas = parent.renderer.canvas;
-        this.camera = parent.camera;
+var Input = (function () {
+    rawMousePos = new Vector(0, 0);
+    mousePos = new Vector(0,0);
+    prevMousePos = new Vector(0,0);
+    worldMousePos = new Vector(0,0);
 
-        this.rawMousePos = new Vector(0, 0);
-        this.mousePos = new Vector(0,0);
-        this.prevMousePos = new Vector(0,0);
-        this.worldMousePos = new Vector(0,0);
+    mouseDown = false;
+    mouseDownPos = undefined;
+    
+    mouseListeners = [];
 
-        this.mouseDown = false;
-        this.mouseDownPos = undefined;
+    z = 0;
 
-        this.z = 0;
+    shiftKeyDown = false;
+    modifierKeyDown = false;
+    optionKeyDown = false;
 
-        this.shiftKeyDown = false;
-        this.modiferKeyDown = false;
-        this.optionKeyDown = false;
-
-        this.isDragging = false;
-        this.startTapTime = undefined;
-        this.setup();
-    }
-    setup() {
-        var canvas = this.parent.renderer.canvas;
-        window.addEventListener('keydown', e => {if (this === getCurrentContext().getInput())this.onKeyDown(e);}, false);
-        window.addEventListener('keyup', e => {if (this === getCurrentContext().getInput())this.onKeyUp(e);}, false);
-        canvas.addEventListener('click', e => this.onClick(e), false);
-        canvas.addEventListener('dblclick', e => this.onDoubleClick(e), false);
-        // if (browser.name !== "Firefox")
-            canvas.addEventListener('wheel', e => this.onWheel(e), false);
-        // else
-        //     canvas.addEventListener('DOMMouseScroll', e => this.onWheel(e), false);
-        canvas.addEventListener('mousedown', e => this.onMouseDown(e), false);
-        canvas.addEventListener('mouseup', e => this.onMouseUp(e), false);
-        canvas.addEventListener('mousemove', e => this.onMouseMove(e), false);
-
-        canvas.addEventListener("contextmenu", function(e) {
-            contextmenu.show(e);
-            e.preventDefault();
-        });
-    }
-    onKeyDown(e) {
+    isDragging = false;
+    startTapTime = undefined;
+    
+    var onKeyDown = function(e) {
         var code = e.keyCode;
         
-        if (code === SHIFT_KEY)
-            this.shiftKeyDown = true;
-        else if (code === CONTROL_KEY || code === COMMAND_KEY)
-            this.modiferKeyDown = true;
-        else if (code === OPTION_KEY) {
-            this.optionKeyDown = true;
-            getCurrentContext().setCursor("pointer");
-        } else if (code === ENTER_KEY && document.activeElement !== document.body)
-            document.activeElement.blur();
+        switch (code) {
+            case SHIFT_KEY:
+                shiftKeyDown = true;
+                break;
+            case CONTROL_KEY:
+            case COMMAND_KEY:
+                modifierKeyDown = true;
+                break;
+            case OPTION_KEY:
+                optionKeyDown = true;
+                getCurrentContext().setCursor("pointer");
+                break;
+            case ENTER_KEY:
+                if (document.activeElement !== document.body)
+                    document.activeElement.blur();
+                break;
+        }
 
-        var objects = this.parent.getObjects();
+        var objects = getCurrentContext().getObjects();
         for (var i = 0; i < objects.length; i++) {
             if (objects[i] instanceof Keyboard)
                 objects[i].onKeyDown(code);
         }
 
-        this.parent.history.onKeyDown(code, this);
-        if (currentTool.onKeyDown(code, this))
+        getCurrentContext().getHistoryManager().onKeyDown(code);
+        if (CurrentTool.onKeyDown(code))
             render();
     }
-    onKeyUp(e) {
+    var onKeyUp = function(e) {
         var code = e.keyCode;
 
-        if (code === SHIFT_KEY)
-            this.shiftKeyDown = false;
-        else if (code === CONTROL_KEY || code === COMMAND_KEY)
-            this.modiferKeyDown = false;
-        else if (code === OPTION_KEY) {
-            this.optionKeyDown = false;
-            getCurrentContext().setCursor("default");
+        switch (code) {
+            case SHIFT_KEY:
+                shiftKeyDown = false;
+                break;
+            case CONTROL_KEY:
+            case COMMAND_KEY:
+                modifierKeyDown = false;
+                break;
+            case OPTION_KEY:
+                optionKeyDown = false;
+                getCurrentContext().setCursor("default");
+                break;
         }
 
-        var objects = this.parent.getObjects();
+        var objects = getCurrentContext().getObjects();
         for (var i = 0; i < objects.length; i++) {
             if (objects[i] instanceof Keyboard)
                 objects[i].onKeyUp(code);
         }
 
-        currentTool.onKeyUp(code, this);
+        if (CurrentTool.onKeyUp(code))
+            render();
     }
-    onDoubleClick(e) {
+    var onDoubleClick = function(e) {
     }
-    onWheel(e) {
+    var onWheel = function(e) {
+        var camera = getCurrentContext().getCamera();
         var delta = -e.deltaY / 120.0;
 
         var factor = 0.95;
         if (delta < 0)
             factor = 1 / factor;
 
-        var worldMousePos = this.camera.getWorldPos(this.mousePos);
-        this.camera.zoomBy(factor);
-        var newMousePos = this.camera.getScreenPos(this.worldMousePos);
-        var dx = (this.mousePos.x - newMousePos.x) * this.camera.zoom;
-        var dy = (this.mousePos.y - newMousePos.y) * this.camera.zoom;
+        var worldMousePos = camera.getWorldPos(mousePos);
+        camera.zoomBy(factor);
+        var newMousePos = camera.getScreenPos(worldMousePos);
+        var dx = (mousePos.x - newMousePos.x) * camera.zoom;
+        var dy = (mousePos.y - newMousePos.y) * camera.zoom;
 
-        this.camera.translate(-dx, -dy);
+        camera.translate(-dx, -dy);
 
         popup.onWheel();
 
         render();
     }
-    onMouseDown(e) {
-        var rect = this.canvas.getBoundingClientRect();
-        this.isDragging = false;
-        this.startTapTime = Date.now();
-        this.mouseDown = true;
-        this.mouseDownPos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
+    var onMouseDown = function(e) {
+        var canvas = getCurrentContext().getRenderer().canvas;
+        var rect = canvas.getBoundingClientRect();
+        isDragging = false;
+        startTapTime = Date.now();
+        mouseDown = true;
+        mouseDownPos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
-        if (e.button === 0) { // Left mouse down
+        if (e.button === LEFT_MOUSE_BUTTON) {
             var shouldRender = false;
             contextmenu.hide();
-            shouldRender = currentTool.onMouseDown(this);
-            shouldRender = icdesigner.onMouseDown(this) || shouldRender;
+            shouldRender = CurrentTool.onMouseDown(shouldRender);
+            for (var i = 0; i < mouseListeners.length; i++)
+                shouldRender = mouseListeners[i].onMouseDown(shouldRender) || shouldRender;
             if (shouldRender)
                 render();
         }
     }
-    onMouseMove(e) {
-        var rect = this.canvas.getBoundingClientRect();
+    var onMouseMove = function(e) {
+        var canvas = getCurrentContext().getRenderer().canvas;
+        var camera = getCurrentContext().getCamera();
+        var rect = canvas.getBoundingClientRect();
 
-        this.prevMousePos.x = this.mousePos.x;
-        this.prevMousePos.y = this.mousePos.y;
+        prevMousePos.x = mousePos.x;
+        prevMousePos.y = mousePos.y;
 
-        this.rawMousePos = new Vector(e.clientX, e.clientY);
-        this.mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
-        this.worldMousePos = this.camera.getWorldPos(this.mousePos);
+        rawMousePos = new Vector(e.clientX, e.clientY);
+        mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
+        worldMousePos = camera.getWorldPos(mousePos);
 
         // console.log("Move : " + (e.clientX - rect.left) + ", " + (e.clientY - rect.top));
 
-        this.isDragging = (this.mouseDown && (Date.now() - this.startTapTime > 50));
+        isDragging = (mouseDown && (Date.now() - startTapTime > 50));
 
         var shouldRender = false;
 
-        if (this.optionKeyDown && this.isDragging) {
-            var pos = new Vector(this.mousePos.x, this.mousePos.y);
-            var dPos = this.mouseDownPos.sub(pos);
-            this.camera.translate(this.camera.zoom * dPos.x, this.camera.zoom * dPos.y);
-            this.mouseDownPos = this.mousePos;
+        if (optionKeyDown && isDragging) {
+            var pos = new Vector(mousePos.x, mousePos.y);
+            var dPos = mouseDownPos.sub(pos);
+            camera.translate(camera.zoom * dPos.x, camera.zoom * dPos.y);
+            mouseDownPos = mousePos;
 
             popup.onMove();
             shouldRender = true;
         }
 
-        shouldRender = currentTool.onMouseMove(this) || shouldRender;
-        shouldRender = icdesigner.onMouseMove(this) || shouldRender;
+        shouldRender = CurrentTool.onMouseMove(shouldRender) || shouldRender;
+        for (var i = 0; i < mouseListeners.length; i++)
+            shouldRender = mouseListeners[i].onMouseMove(shouldRender) || shouldRender;
         if (shouldRender)
             render();
     }
-    onMouseUp(e) {
-        this.mouseDown = false;
+    var onMouseUp = function(e) {
+        mouseDown = false;
 
         var shouldRender = false;
-        shouldRender = currentTool.onMouseUp(this);
-        shouldRender = icdesigner.onMouseUp(this) || shouldRender;
+        shouldRender = CurrentTool.onMouseUp(shouldRender);
+        for (var i = 0; i < mouseListeners.length; i++)
+            shouldRender = mouseListeners[i].onMouseUp(shouldRender) || shouldRender;
         if (shouldRender)
             render();
     }
-    onClick(e) {
-        if (this.isDragging)
-            return;
-
-        if (currentTool.onClick(this))
+    var onClick = function(e) {
+        var shouldRender = false;
+        shouldRender = CurrentTool.onClick(shouldRender);
+        // console.log(mouseListeners);
+        for (var i = 0; i < mouseListeners.length; i++)
+            shouldRender = mouseListeners[i].onClick(shouldRender) || shouldRender;
+        if (shouldRender)
             render();
     }
-}
+    
+    window.addEventListener('keydown', e => {onKeyDown(e);}, false);
+    window.addEventListener('keyup', e => {onKeyUp(e);}, false);
+    
+    return {
+        registerContext: function(ctx) {
+            var canvas = ctx.getRenderer().canvas;
+            canvas.addEventListener('click', e => onClick(e), false);
+            canvas.addEventListener('dblclick', e => onDoubleClick(e), false);
+            // if (browser.name !== "Firefox")
+                canvas.addEventListener('wheel', e => onWheel(e), false);
+            // else
+            //     canvas.addEventListener('DOMMouseScroll', e => onWheel(e), false);
+            canvas.addEventListener('mousedown', e => onMouseDown(e), false);
+            canvas.addEventListener('mouseup', e => onMouseUp(e), false);
+            canvas.addEventListener('mousemove', e => onMouseMove(e), false);
+
+            canvas.addEventListener("contextmenu", function(e) {
+                contextmenu.show(e);
+                e.preventDefault();
+            });
+        },
+        addMouseListener: function(l) {
+            mouseListeners.push(l);
+        },
+        getWorldMousePos() {
+            return V(worldMousePos);
+        },
+        getRawMousePos() {
+            return V(rawMousePos);
+        },
+        getShiftKeyDown() {
+            return shiftKeyDown;
+        },
+        getModifierKeyDown() {
+            return modifierKeyDown;
+        },
+        getOptionKeyDown() {
+            return optionKeyDown;
+        },
+        getIsDragging() {
+            return isDragging;
+        }
+    }
+})();

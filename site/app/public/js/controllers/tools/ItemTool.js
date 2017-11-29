@@ -11,20 +11,21 @@ class ItemTool extends Tool {
         super.activate();
         this.item = object;
         context.addObject(this.item);
-        this.onMouseMove(context.getInput());
+        this.onMouseMove();
     }
     deactivate() {
         super.deactivate();
         this.item = undefined;
     }
-    onMouseMove(input) {
-        this.item.setPos(input.worldMousePos);
+    onMouseMove() {
+        this.item.setPos(Input.getWorldMousePos());
         return true;
     }
     onClick() {
         var action = new PlaceAction(this.item);
         getCurrentContext().addAction(action);
         selectionTool.activate();
+        return true;
     }
 }
 var itemTool = new ItemTool();

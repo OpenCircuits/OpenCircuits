@@ -2,7 +2,6 @@ class CircuitDesigner {
     constructor(canvas, vw, vh) {
         this.renderer = new Renderer(this, canvas, vw, vh);
         this.camera = new Camera(this);
-        this.input = new Input(this);
         this.history = new HistoryManager();
 
         this.wires = [];
@@ -99,7 +98,7 @@ class CircuitDesigner {
                 this.objects[i].draw();
         }
 
-        currentTool.draw(this.renderer);
+        CurrentTool.draw(this.renderer);
     }
     resize() {
         this.renderer.resize();

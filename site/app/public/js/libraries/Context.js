@@ -1,4 +1,3 @@
-
 class Context {
     constructor(designer) {
         this.uidmanager = new UIDManager(this);
@@ -68,8 +67,8 @@ class Context {
     getCamera() {
         return this.designer.camera;
     }
-    getInput() {
-        return this.designer.input;
+    getHistoryManager() {
+        return this.designer.history;
     }
     getObjects() {
         return this.designer.objects;
@@ -91,9 +90,6 @@ class Context {
     }
     findWireByUID(uid) {
         return UIDManager.find(this.getWires(), uid);
-    }
-    getWorldMousePos() {
-        return this.designer.input.worldMousePos;
     }
 }
 
