@@ -19,7 +19,7 @@ class ContextMenu extends Popup {
     onShow() {
         super.onShow();
 
-        var pos = getCurrentContext().getInput().rawMousePos;
+        var pos = Input.getRawMousePos();
         this.setPos(V(pos.x, pos.y));
     }
 }

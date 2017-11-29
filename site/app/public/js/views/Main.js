@@ -31,7 +31,15 @@ function start() {
     icdesigner = new ICDesigner();
     contextmenu = new ContextMenu();
     
-    currentTool = selectionTool;
+    Input.registerContext(context);
+    Input.registerContext(icdesigner.context);
+    Input.addMouseListener(MoveItemController);
+    Input.addMouseListener(WireController);
+    Input.addMouseListener(SelectionBox);
+    
+    Input.addMouseListener(icdesigner);
+    
+    CurrentTool = selectionTool;
 
     loadImage(images,
         ["constLow.svg", "constHigh.svg",

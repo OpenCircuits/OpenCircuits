@@ -27,6 +27,9 @@ var ROTATION_CIRCLE_R2 = Math.pow(ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRES
 var SIDENAV_WIDTH = 200;
 var ITEMNAV_WIDTH = 200;
 
+var LEFT_MOUSE_BUTTON = 0;
+var RIGHT_MOUSE_BUTTON = 1;
+
 var OPTION_KEY = 18;
 var SHIFT_KEY = 16;
 var DELETE_KEY = 8;
@@ -333,6 +336,30 @@ function findByUID(objects, id) {
             return objects[i];
     }
     return undefined;
+}
+
+/**
+ * Creates a group transform action given
+ * the relevant objects and their original
+ * transforms
+ * 
+ * @param  {Array} objects
+ *         The array of objects who have been transformed
+ * 
+ * @param  {Array} t0
+ *         The array of transforms that correspond to
+ *         the original transform of the object in objects
+ */
+function createTransformAction(objects, t0) {
+    var action = new GroupAction();
+    for (var i = 0; i < objects.length; i++) {
+        var origin = t0[i];
+        var target = objects[i].transform.copy();
+        if (origin.equals(target))
+            continue;
+        action.add(new TransformAction(objects[i], origin, target));
+    }
+    return action;
 }
 
 /**

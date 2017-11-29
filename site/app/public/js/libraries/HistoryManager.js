@@ -4,8 +4,8 @@ class HistoryManager {
         this.redoStack = [];
     }
     onKeyDown(code, input) {
-        if (input.modiferKeyDown) {
-            if (code === Y_KEY || (code === Z_KEY && input.shiftKeyDown))
+        if (Input.getModifierKeyDown()) {
+            if (code === Y_KEY || (code === Z_KEY && Input.getShiftKeyDown()))
                 this.redo();
             else if (code === Z_KEY)
                 this.undo();
