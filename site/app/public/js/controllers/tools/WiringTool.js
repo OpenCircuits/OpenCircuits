@@ -7,29 +7,22 @@ class WiringTool extends Tool {
     }
     onKeyUp(code, input) {
         if (code === ESC_KEY)  {
-            this.removeWire(getCurrentContext().getWires());
+            this.removeWire(input.parent.wires);
             selectionTool.activate();
             render();
         }
     }
     activate(object, context) {
         super.activate();
-        
-        console.log(object);
 
         this.wire = new Wire(context);
         this.clickOPort = (object instanceof OPort);
-        var success;
         if (this.clickOPort)
-            success = object.connect(this.wire);
+            object.connect(this.wire);
         else
-            success = this.wire.connect(object);
-        if (success) {
-            this.onMouseMove();
-            context.addWire(this.wire);
-        } else { // Illegal connection (ex. two inputs to IPort)
-            selectionTool.activate();
-        }
+            this.wire.connect(object);
+        this.onMouseMove(context.getInput());
+        context.addWire(this.wire);
     }
     deactivate() {
         super.deactivate();
@@ -45,17 +38,17 @@ class WiringTool extends Tool {
         else
             this.wire.disconnect();
     }
-    onMouseMove() {
+    onMouseMove(input) {
         if (this.clickOPort)
-            this.wire.curve.update(this.wire.curve.p1, Input.getWorldMousePos(), this.wire.curve.c1, Input.getWorldMousePos());
+            this.wire.curve.update(this.wire.curve.p1, input.worldMousePos, this.wire.curve.c1, input.worldMousePos);
         else
-            this.wire.curve.update(Input.getWorldMousePos(), this.wire.curve.p2, Input.getWorldMousePos(), this.wire.curve.c2);
+            this.wire.curve.update(context.getInput().worldMousePos, this.wire.curve.p2, context.getInput().worldMousePos, this.wire.curve.c2);
         return true;
     }
-    onClick() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
+    onClick(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
 
         for (var i = 0; i < objects.length; i++) {
             var ii = -1;

@@ -3,9 +3,9 @@ class Tool {
         this.isActive = false;
     }
     activate() {
-        CurrentTool.deactivate();
+        currentTool.deactivate();
 
-        CurrentTool = this;
+        currentTool = this;
         this.isActive = true;
         render();
     }
@@ -27,4 +27,4 @@ class Tool {
     draw() {
     }
 }
-var CurrentTool;
+var currentTool;
