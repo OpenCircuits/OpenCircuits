@@ -1,22 +1,22 @@
 var Input = (function () {
-    rawMousePos = new Vector(0, 0);
-    mousePos = new Vector(0,0);
-    prevMousePos = new Vector(0,0);
-    worldMousePos = new Vector(0,0);
+    var rawMousePos = new Vector(0, 0);
+    var mousePos = new Vector(0,0);
+    var prevMousePos = new Vector(0,0);
+    var worldMousePos = new Vector(0,0);
 
-    mouseDown = false;
-    mouseDownPos = undefined;
+    var mouseDown = false;
+    var mouseDownPos = undefined;
     
-    mouseListeners = [];
+    var mouseListeners = [];
 
-    z = 0;
+    var z = 0;
 
-    shiftKeyDown = false;
-    modifierKeyDown = false;
-    optionKeyDown = false;
+    var shiftKeyDown = false;
+    var modifierKeyDown = false;
+    var optionKeyDown = false;
 
-    isDragging = false;
-    startTapTime = undefined;
+    var isDragging = false;
+    var startTapTime = undefined;
     
     var onKeyDown = function(e) {
         var code = e.keyCode;
