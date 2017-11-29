@@ -3,38 +3,50 @@ class SelectionTool extends Tool {
         super();
         this.selections = [];
         this.midpoint = V(0, 0);
-        this.isRotating = false;
+        this.drag = false;
+        this.rotate = false;
+        this.selectionBox = new SelectionBox();
+
+        this.wire = undefined;
+        this.wireSplitPoint = -1;
+        this.shouldSplit = false;
     }
     onKeyDown(code, input) {
         console.log(code);
         // if (!icdesigner.hidden)
         //     return;
 
-        if (code === A_KEY && Input.getModifierKeyDown()) {
+        if (code === A_KEY && input.modiferKeyDown) {
             this.selectAll();
             return true;
         }
     }
-    onMouseDown() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
+    onMouseDown(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
 
         if (!icdesigner.hidden)
             return false;
 
         // Check if rotation circle was pressed
-        if (!this.isRotating && this.selections.length > 0) {
+        if (!this.rotate && this.selections.length > 0) {
             var d = worldMousePos.sub(this.midpoint).len2();
             if (d <= ROTATION_CIRCLE_R2 && d >= ROTATION_CIRCLE_R1)
                 return this.startRotation(worldMousePos);
         }
 
+        this.selectionBox.selBoxDownPos = undefined;
         var pressed = false;
 
         // Go through objects backwards since objects on top are in the back
         for (var i = objects.length-1; i >= 0; i--) {
             var obj = objects[i];
+
+            // Check if object's selection box was pressed
+            if (!this.drag && obj.sContains(worldMousePos)) {
+                return this.startDrag(obj, worldMousePos);
+            }
 
             // Check if object was pressed
             if (obj.contains(worldMousePos)) {
@@ -42,79 +54,114 @@ class SelectionTool extends Tool {
                     obj.press();
                 return true;
             }
-            
-            // Ignore if object's selection box was pressed
-            if (obj.sContains(worldMousePos))
-                return;
 
             // Ignore if a port was pressed
             if (obj.oPortContains(worldMousePos) !== -1 ||
                     obj.iPortContains(worldMousePos) !== -1) {
-                return;
-            }
-        }
-    }
-    onMouseMove() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
-
-        if (!icdesigner.hidden)
-            return false;
-
-        // Transform selection(s)
-        if (this.selections.length > 0) {
-            // Rotate selection(s)
-            if (this.isRotating) {
-                this.rotateSelections(worldMousePos, Input.getShiftKeyDown());
                 return true;
             }
         }
+
+        return this.pressedWire(input) ||
+                this.selectionBox.onMouseDown(input);
     }
-    onMouseUp() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
+    onMouseMove(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
 
         if (!icdesigner.hidden)
             return false;
 
-        popup.update();
+        // Split wire
+        if (this.shouldSplit) {
+            this.shouldSplit = false;
+            this.wire.split(this.wireSplitPoint);
+            var action = new SplitWireAction(this.wire);
+            getCurrentContext().addAction(action);
+            this.deselectAll();
+            this.select([this.wire.connection]);
+            this.startDrag(this.wire.connection, worldMousePos);
+            this.wire = undefined;
+        }
 
-        // Stop rotating
-        if (this.isRotating) {
-            this.addTransformAction();
-            this.isRotating = false;
+        // Transform selection(s)
+        if (this.selections.length > 0) {
+            // Move selection(s)
+            if (this.drag) {
+                this.moveSelections(worldMousePos, input.shiftKeyDown);
+                return true;
+            }
+
+            // Rotate selection(s)
+            if (this.rotate) {
+                this.rotateSelections(worldMousePos, input.shiftKeyDown);
+                return true;
+            }
+        }
+
+        return this.selectionBox.onMouseMove(input);
+    }
+    onMouseUp(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
+        if (!icdesigner.hidden)
+            return false;
+
+        if (this.selectionBox.onMouseUp(input)) {
+            for (var i = 0; i < this.selections.length; i++)
+                this.sendToFront(this.selections[i]);
             return true;
         }
-        
+
+        popup.update();
+
+        // Stop dragging
+        if (this.drag) {
+            this.addTransformAction();
+            this.drag = false;
+            this.dragObj = undefined;
+            return true;
+        }
+
+        // Stop rotating
+        if (this.rotate) {
+            this.addTransformAction();
+            this.rotate = false;
+            return true;
+        }
+
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
 
             // Release pressed object
-            if (obj.isPressable && obj.isOn && !Input.isDragging) {
+            if (obj.isPressable && obj.isOn) {
                 obj.release();
                 return true;
             }
         }
     }
-    onClick() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
+    onClick(input) {
+        var objects = input.parent.getObjects();
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
 
-        if (!icdesigner.hidden || Input.getIsDragging())
+        if (!icdesigner.hidden)
             return false;
-            
+
         // Go through objects backwards since objects on top are in the back
         for (var i = objects.length-1; i >= 0; i--) {
             var obj = objects[i];
 
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
-                if (!Input.getShiftKeyDown())
+                if (!input.shiftKeyDown)
                     this.deselectAll(true);
                 this.select([obj], true);
+
+                this.sendToFront(obj);
                 return true;
             }
 
@@ -123,11 +170,32 @@ class SelectionTool extends Tool {
                 obj.click();
                 return true;
             }
+
+            // Check if port was clicked, then activate wire tool
+            var ii;
+            if ((ii = obj.oPortContains(worldMousePos)) !== -1) {
+                wiringTool.activate(obj.outputs[ii], getCurrentContext());
+                return true;
+            }
+            if ((ii = obj.iPortContains(worldMousePos)) !== -1) {
+                wiringTool.activate(obj.inputs[ii], getCurrentContext());
+                return true;
+            }
+        }
+
+        // Select wire
+        if (this.wire != undefined) {
+            this.shouldSplit = false;
+            if (!input.shiftKeyDown)
+                this.deselectAll(true);
+            this.select([this.wire], true);
+            this.wire = undefined;
+            return true;
         }
 
         // Didn't click on anything so deselect everything
         // And add a deselect action
-        if (!Input.getShiftKeyDown() && this.selections.length > 0) {
+        if (!input.shiftKeyDown && this.selections.length > 0) {
             this.deselectAll(true);
             return true;
         }
@@ -146,7 +214,7 @@ class SelectionTool extends Tool {
     select(objects, doAction) {
         if (objects.length === 0)
             return;
-            
+
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
@@ -154,7 +222,6 @@ class SelectionTool extends Tool {
                 continue;
             obj.selected = true;
             this.selections.push(obj);
-            this.sendToFront(obj);
             if (doAction)
                 action.add(new SelectAction(obj));
         }
@@ -172,7 +239,7 @@ class SelectionTool extends Tool {
     deselect(objects, doAction) {
         if (objects.length === 0)
             return;
-        
+
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
@@ -213,6 +280,19 @@ class SelectionTool extends Tool {
         getCurrentContext().addAction(action);
         render();
     }
+    moveSelections(pos, shift) {
+        var dPos = V(pos.x, pos.y).sub(this.dragObj.getPos()).sub(this.dragPos);
+        for (var i = 0; i < this.selections.length; i++) {
+            var selection = this.selections[i];
+            var newPos = selection.getPos().add(dPos);
+            if (shift) {
+                newPos = V(Math.floor(newPos.x/GRID_SIZE+0.5)*GRID_SIZE,
+                           Math.floor(newPos.y/GRID_SIZE+0.5)*GRID_SIZE);
+            }
+            selection.setPos(newPos);
+        }
+        this.recalculateMidpoint();
+    }
     rotateSelections(pos, shift) {
         var origin = this.midpoint;
         var dAngle = Math.atan2(pos.y - origin.y, pos.x - origin.x) - this.prevAngle;
@@ -225,8 +305,18 @@ class SelectionTool extends Tool {
         }
         this.prevAngle = dAngle + this.prevAngle;
     }
+    startDrag(obj, worldMousePos) {
+        this.oTransform = [];
+        for (var j = 0; j < this.selections.length; j++)
+            this.oTransform[j] = this.selections[j].transform.copy();
+        this.drag = true;
+        this.dragObj = obj;
+        this.dragPos = worldMousePos.copy().sub(obj.getPos());
+        popup.hide();
+        return true;
+    }
     startRotation(worldMousePos) {
-        this.isRotating = true;
+        this.rotate = true;
         this.startAngle = Math.atan2(worldMousePos.y-this.midpoint.y, worldMousePos.x-this.midpoint.x);
         this.prevAngle = this.startAngle;
         this.realAngles = [];
@@ -236,6 +326,23 @@ class SelectionTool extends Tool {
             this.oTransform[i] = this.selections[i].transform.copy();
         }
         popup.hide();
+        return false;
+    }
+    pressedWire(input) {
+        var wires = input.parent.getWires();
+        var worldMousePos = input.worldMousePos;
+
+        // Check if a wire was pressed
+        for (var i = 0; i < wires.length; i++) {
+            var wire = wires[i];
+            var t;
+            if ((t = wire.getNearestT(worldMousePos.x, worldMousePos.y)) !== -1) {
+                this.wire = wire;
+                this.wireSplitPoint = t;
+                this.shouldSplit = true;
+                return true;
+            }
+        }
         return false;
     }
     selectAll() {
@@ -300,7 +407,7 @@ class SelectionTool extends Tool {
             var pos = camera.getScreenPos(this.midpoint);
             var r = ROTATION_CIRCLE_RADIUS / camera.zoom;
             var br = ROTATION_CIRCLE_THICKNESS / camera.zoom;
-            if (this.isRotating) {
+            if (this.rotate) {
                 renderer.save();
                 renderer.context.fillStyle = '#fff';
                 renderer.context.strokeStyle = '#000'
@@ -317,7 +424,7 @@ class SelectionTool extends Tool {
             }
             renderer.circle(pos.x, pos.y, r, undefined, '#ff0000', br, 0.5);
         }
-        SelectionBox.draw(renderer);
+        this.selectionBox.draw(renderer);
     }
 }
 var selectionTool = new SelectionTool();

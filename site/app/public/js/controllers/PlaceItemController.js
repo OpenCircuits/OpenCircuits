@@ -6,12 +6,11 @@ var PlaceItemController = (function() {
         place: function(item, not) {
             if (not)
                 item.not = not;
-            var canvas = getCurrentContext().getRenderer().canvas;
-            var rect = canvas.getBoundingClientRect();
+            var rect = getCurrentContext().getInput().canvas.getBoundingClientRect();
             itemTool.activate(item, getCurrentContext());
             if (justDragged) {
-                // Input.onMouseMove(evt);
-                itemTool.onMouseMove(Input)
+                getCurrentContext().getInput().onMouseMove(evt);
+                itemTool.onMouseMove(getCurrentContext().getInput())
                 itemTool.onClick();
             }
             justDragged = false;

@@ -61,11 +61,11 @@ class ICDesigner {
         }
         render();
     }
-    onMouseDown() {
+    onMouseDown(input) {
         if (this.ic == undefined)
             return false;
 
-        var worldMousePos = Input.getWorldMousePos();
+        var worldMousePos = input.worldMousePos;
 
         var inputs = this.ic.inputs;
         for (var i = 0; i < inputs.length; i++) {
@@ -98,7 +98,7 @@ class ICDesigner {
             }
         }
     }
-    onMouseUp() {
+    onMouseUp(input) {
         if (this.ic == undefined)
             return false;
 
@@ -106,11 +106,11 @@ class ICDesigner {
         this.dragObj = undefined;
         this.dragEdge = undefined;
     }
-    onMouseMove() {
+    onMouseMove(input) {
         if (this.ic == undefined)
             return false;
 
-        var worldMousePos = Input.getWorldMousePos();
+        var worldMousePos = input.worldMousePos;
 
         if (this.drag) {
             var size = this.ic.getSize();
@@ -136,7 +136,5 @@ class ICDesigner {
 
             return true;
         }
-    }
-    onClick() {
     }
 }
