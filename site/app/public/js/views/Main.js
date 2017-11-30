@@ -33,7 +33,7 @@ function start() {
     
     Input.registerContext(context);
     Input.registerContext(icdesigner.context);
-    Input.addMouseListener(MoveItemController);
+    Input.addMouseListener(TransformController);
     Input.addMouseListener(WireController);
     Input.addMouseListener(SelectionBox);
     
