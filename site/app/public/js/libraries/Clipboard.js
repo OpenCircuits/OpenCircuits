@@ -22,7 +22,7 @@ class Clipboard {
     }
     cut(e) {
         this.copy(e);
-        selectionTool.removeSelections();
+        RemoveObjects(getCurrentContext(), selectionTool.selections, true);
         e.preventDefault();
     }
     paste(e) {

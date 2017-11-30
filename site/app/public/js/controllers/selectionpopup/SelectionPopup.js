@@ -16,7 +16,7 @@ class SelectionPopup extends Popup {
     }
     onKeyDown(code) {
         if (code === DELETE_KEY && !this.focused) {
-            selectionTool.removeSelections();
+            RemoveObjects(getCurrentContext(), selectionTool.selections, true);
             return;
         }
         if (code === ESC_KEY && !this.hidden) {

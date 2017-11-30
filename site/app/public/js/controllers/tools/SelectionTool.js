@@ -3,12 +3,11 @@ class SelectionTool extends Tool {
         super();
         this.selections = [];
         this.midpoint = V(0, 0);
-        this.isRotating = false;
     }
     onKeyDown(code, input) {
         console.log(code);
-        // if (!icdesigner.hidden)
-        //     return;
+        if (!icdesigner.hidden)
+            return false;
 
         if (code === A_KEY && Input.getModifierKeyDown()) {
             this.selectAll();
@@ -22,8 +21,6 @@ class SelectionTool extends Tool {
 
         if (!icdesigner.hidden)
             return false;
-
-        var pressed = false;
 
         // Go through objects backwards since objects on top are in the back
         for (var i = objects.length-1; i >= 0; i--) {
@@ -47,18 +44,7 @@ class SelectionTool extends Tool {
             }
         }
     }
-    onMouseMove() {
-        var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
-        var worldMousePos = Input.getWorldMousePos();
-
-        if (!icdesigner.hidden)
-            return false;
-
-        // Transform selection(s)
-        if (this.selections.length > 0) {
-        }
-    }
+    onMouseMove() {}
     onMouseUp() {
         var objects = getCurrentContext().getObjects();
         var wires = getCurrentContext().getWires();
@@ -113,17 +99,6 @@ class SelectionTool extends Tool {
             return true;
         }
     }
-    addTransformAction() {
-        var action = new GroupAction();
-        for (var i = 0; i < this.selections.length; i++) {
-            var origin = this.oTransform[i];
-            var target = this.selections[i].transform.copy();
-            if (origin.equals(target))
-                continue;
-            action.add(new TransformAction(this.selections[i], origin, target));
-        }
-        getCurrentContext().addAction(action);
-    }
     select(objects, doAction) {
         if (objects.length === 0)
             return;
@@ -143,12 +118,6 @@ class SelectionTool extends Tool {
             getCurrentContext().addAction(action);
         popup.update();
         this.recalculateMidpoint();
-    }
-    deselectAll(doAction) {
-        var objects = [];
-        for (var i = 0; i < this.selections.length; i++)
-            objects.push(this.selections[i]);
-        this.deselect(objects, doAction);
     }
     deselect(objects, doAction) {
         if (objects.length === 0)
@@ -171,72 +140,15 @@ class SelectionTool extends Tool {
         popup.update();
         this.recalculateMidpoint();
     }
-    removeSelections() {
-        if (this.selections.length === 0)
-            return;
-        var action = new GroupAction();
-        var things = getAllThingsBetween(this.selections);
-        for (var i = 0; i < things.length; i++) {
-            if (things[i] instanceof Wire || things[i] instanceof WirePort) {
-                var oldinput = things[i].input;
-                var oldconnection = things[i].connection;
-                things[i].remove();
-                action.add(new DeleteAction(things[i], oldinput, oldconnection));
-            }
-        }
-        for (var i = 0; i < things.length; i++) {
-            if (!(things[i] instanceof Wire || things[i] instanceof WirePort)) {
-                things[i].remove();
-                action.add(new DeleteAction(things[i]));
-            }
-        }
-        this.deselectAll();
-        getCurrentContext().addAction(action);
-        render();
-    }
     selectAll() {
         this.deselectAll(true);
         this.select(getCurrentContext().getObjects(), true);
     }
-    createBus() {
-        var iports = [], oports = [];
-        for (var i = 0; i < this.selections.length; i++) {
-            if (this.selections[i] instanceof IPort)
-                iports.push(this.selections[i]);
-            else
-                oports.push(this.selections[i]);
-        }
-
-        while (oports.length > 0) {
-            var maxDist = -Infinity, maxDistIndex = -1, maxMinDistIndex = -1;
-            for (var i = 0; i < oports.length; i++) {
-                var oport = oports[i];
-                var opos = oport.getPos();
-                var minDist = Infinity, minDistIndex = -1;
-                for (var j = 0; j < iports.length; j++) {
-                    var iport = iports[j];
-                    var dist = opos.sub(iport.getPos()).len2();
-                    if (dist < minDist) {
-                        minDist = dist;
-                        minDistIndex = j;
-                    }
-                }
-                if (minDist > maxDist) {
-                    maxDist = minDist;
-                    maxDistIndex = i;
-                    maxMinDistIndex = minDistIndex;
-                }
-            }
-            var wire = new Wire(context);
-            getCurrentContext().add(wire);
-            oports[maxDistIndex].connect(wire);
-            wire.connect(iports[maxMinDistIndex]);
-            wire.set = true;
-            wire.straight = true;
-            oports.splice(maxDistIndex, 1);
-            iports.splice(maxMinDistIndex, 1);
-        }
-        render();
+    deselectAll(doAction) {
+        var objects = [];
+        for (var i = 0; i < this.selections.length; i++)
+            objects.push(this.selections[i]);
+        this.deselect(objects, doAction);
     }
     sendToFront(obj) {
         if (obj instanceof IOObject || obj instanceof Wire) {

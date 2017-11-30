@@ -312,6 +312,49 @@ function getAllWires(objects) {
 }
 
 /**
+ * Removes all objects and wires+wireports
+ * between them
+ * 
+ * @param  {Context} ctx
+ *         The context which the objects are apart of
+ *         
+ * @param  {Array} objects
+ *         The array of objects in which to remove
+ *         
+ * @param  {Boolean} doAction
+ *         True if the action should be re/undoable,
+ *         False otherwise
+ */
+function RemoveObjects(ctx, objects, doAction) {
+    if (objects.length === 0)
+        return;
+        
+    var action = new GroupAction();
+    var things = getAllThingsBetween(objects);
+    for (var i = 0; i < things.length; i++) {
+        if (things[i].selected)
+            selectionTool.deselect([things[i]]);
+        if (things[i] instanceof Wire || things[i] instanceof WirePort) {
+            var oldinput = things[i].input;
+            var oldconnection = things[i].connection;
+            things[i].remove();
+            if (doAction)
+                action.add(new DeleteAction(things[i], oldinput, oldconnection));
+        }
+    }
+    for (var i = 0; i < things.length; i++) {
+        if (!(things[i] instanceof Wire || things[i] instanceof WirePort)) {
+            things[i].remove();
+            if (doAction)
+                action.add(new DeleteAction(things[i]));
+        }
+    }
+    if (doAction)
+        ctx.addAction(action);
+    render();
+}
+
+/**
  * Finds and returns the IC from a given icuid
  *
  * @param  {Integer} id
