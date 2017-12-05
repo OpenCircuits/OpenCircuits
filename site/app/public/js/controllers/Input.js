@@ -159,7 +159,7 @@ var Input = (function () {
         if (shouldRender)
             render();
     }
-    var onClick = function(e) {
+    var onClick = function(e) {        
         var shouldRender = false;
         shouldRender = CurrentTool.onClick(shouldRender);
         // console.log(mouseListeners);
@@ -184,6 +184,7 @@ var Input = (function () {
             canvas.addEventListener('mousedown', e => onMouseDown(e), false);
             canvas.addEventListener('mouseup', e => onMouseUp(e), false);
             canvas.addEventListener('mousemove', e => onMouseMove(e), false);
+            canvas.addEventListener("mouseleave", e => {onMouseUp(e); onClick(e)});
 
             canvas.addEventListener("contextmenu", function(e) {
                 contextmenu.show(e);
