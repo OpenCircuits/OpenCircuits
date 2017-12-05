@@ -19,6 +19,7 @@ button, input {
     border-style: none;
     padding: 0;
     outline: none;
+    box-shadow: none;
 }
 
 
@@ -294,11 +295,21 @@ main {
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }
-.popup input[type="text"] {
+.popup div {
+    margin-top: 6px;
+    margin-bottom: 2px;
+}
+.popup input {
     display: inline;
-    border: 0;
+    padding: 2px;
+    border: solid 2px rgba(200,200,200,0.5);
+    margin-bottom: 1px;
     width: 100%;
     color: #888;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.popup input[type="text"], input[type="color"] {
+    border: 0;
     background-color: rgba(255, 255, 255, 0);
 }
 

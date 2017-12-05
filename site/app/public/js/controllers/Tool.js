@@ -3,7 +3,8 @@ class Tool {
         this.isActive = false;
     }
     activate() {
-        CurrentTool.deactivate();
+        if (CurrentTool)
+            CurrentTool.deactivate();
 
         CurrentTool = this;
         this.isActive = true;

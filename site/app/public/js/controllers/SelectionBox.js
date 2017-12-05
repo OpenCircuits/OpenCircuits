@@ -39,8 +39,8 @@ var SelectionBox = (function () {
             var worldMousePos = Input.getWorldMousePos();
             
             // Make sure nothing but blank canvas was clicked
-            if (somethingHappened || !selectionTool.isActive ||
-                selectionTool.isRotating || Input.getOptionKeyDown())
+            if (somethingHappened || !selectionTool.isActive 
+                || Input.getOptionKeyDown())
                 return;
             for (var i = 0; i < objects.length; i++) {
                 var obj = objects[i];

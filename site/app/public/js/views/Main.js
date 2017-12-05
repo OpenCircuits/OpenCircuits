@@ -39,7 +39,7 @@ function start() {
     
     Input.addMouseListener(icdesigner);
     
-    CurrentTool = selectionTool;
+    selectionTool.activate();
 
     loadImage(images,
         ["constLow.svg", "constHigh.svg",
