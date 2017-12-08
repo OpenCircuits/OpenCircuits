@@ -61,7 +61,7 @@
                         <br/>Constant Low
                     </button>
                     <button type="button" onclick="PlaceItemController.place(new ConstantHigh());">
-                        <img src="img/icons/inputs/constHigh.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant high" />
+                        <img draggable="true" src="img/icons/inputs/constHigh.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant high" />
                         <br/>Constant High
                     </button>
                     <button type="button" onclick="PlaceItemController.place(new Button());">
@@ -155,7 +155,7 @@
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
 
-                <canvas id="canvas" class="canvas"></canvas>
+                <canvas id="canvas" class="canvas" ondrop="console.log('asd');"></canvas>
                 
                 <canvas id="designer-canvas" class="icdesigner" hidden></canvas>
                 

@@ -127,8 +127,6 @@ var Input = (function () {
         mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
         worldMousePos = camera.getWorldPos(mousePos);
 
-        // console.log("Move : " + (e.clientX - rect.left) + ", " + (e.clientY - rect.top));
-
         isDragging = (mouseDown && (Date.now() - startTapTime > 50));
 
         var shouldRender = false;
@@ -159,10 +157,9 @@ var Input = (function () {
         if (shouldRender)
             render();
     }
-    var onClick = function(e) {        
+    var onClick = function(e) {
         var shouldRender = false;
         shouldRender = CurrentTool.onClick(shouldRender);
-        // console.log(mouseListeners);
         for (var i = 0; i < mouseListeners.length; i++)
             shouldRender = mouseListeners[i].onClick(shouldRender) || shouldRender;
         if (shouldRender)
@@ -184,7 +181,8 @@ var Input = (function () {
             canvas.addEventListener('mousedown', e => onMouseDown(e), false);
             canvas.addEventListener('mouseup', e => onMouseUp(e), false);
             canvas.addEventListener('mousemove', e => onMouseMove(e), false);
-            canvas.addEventListener("mouseleave", e => {onMouseUp(e); onClick(e)});
+            canvas.addEventListener('mouseenter', e => {onMouseMove(e); onClick(e);}, false);
+            canvas.addEventListener("mouseleave", e => {onMouseUp(e); onClick(e);});
 
             canvas.addEventListener("contextmenu", function(e) {
                 contextmenu.show(e);
