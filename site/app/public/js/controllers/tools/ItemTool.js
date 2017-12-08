@@ -22,6 +22,7 @@ class ItemTool extends Tool {
         return true;
     }
     onClick() {
+        this.item.setPos(Input.getWorldMousePos());
         var action = new PlaceAction(this.item);
         getCurrentContext().addAction(action);
         selectionTool.activate();
