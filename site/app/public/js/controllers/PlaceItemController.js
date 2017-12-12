@@ -1,5 +1,6 @@
 var PlaceItemController = (function() {
     return {
+        drag: false,
         place: function(item, not) {
             if (not)
                 item.not = not;
@@ -8,6 +9,7 @@ var PlaceItemController = (function() {
             itemTool.activate(item, getCurrentContext());
         },
         onDragEnd: function(event) {
+            this.drag = true;
             event.srcElement.parentElement.onclick();
         }
     };

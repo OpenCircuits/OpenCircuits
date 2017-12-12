@@ -18,8 +18,12 @@ var Input = (function () {
     var isDragging = false;
     var startTapTime = undefined;
     
+    console.log(shiftKeyDown);
+    
     var onKeyDown = function(e) {
         var code = e.keyCode;
+        
+        console.log(shiftKeyDown);
         
         switch (code) {
             case SHIFT_KEY:
@@ -181,8 +185,8 @@ var Input = (function () {
             canvas.addEventListener('mousedown', e => onMouseDown(e), false);
             canvas.addEventListener('mouseup', e => onMouseUp(e), false);
             canvas.addEventListener('mousemove', e => onMouseMove(e), false);
-            canvas.addEventListener('mouseenter', e => {onMouseMove(e); onClick(e);}, false);
-            canvas.addEventListener("mouseleave", e => {onMouseUp(e); onClick(e);});
+            canvas.addEventListener('mouseenter', e => { if (PlaceItemController.drag) { onMouseMove(e); onClick(e); PlaceItemController.drag = false; }}, false);
+            canvas.addEventListener("mouseleave", e => { if (mouseDown) { onMouseUp(e); onClick(e); } });
 
             canvas.addEventListener("contextmenu", function(e) {
                 contextmenu.show(e);
