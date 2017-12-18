@@ -4,7 +4,7 @@
 
 # Website
 
-Found at [OpenCircuits.io](https://www.opencircuits.io/)
+Found at [OpenCircuits.io](http://www.opencircuits.io/)
 
 # Usage
 
