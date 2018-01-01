@@ -12,21 +12,17 @@ class PositionYModule extends Module {
     }
     onChange() {
         var action = new GroupAction();
-        var anyIOPorts = true;
         var selections = selectionTool.selections;
         for (var i = 0; i < selections.length; i++) {
-            if (selections[i] instanceof IOPort) {
-                anyIOPorts = true;
-                break;
+            if (!selections[i].transform) {
+                this.onShow(); // Update value before exiting
+                return;
             }
             var origin = selections[i].transform.copy();
             selections[i].setPos(V(selections[i].transform.getPos().x, GRID_SIZE*(Number(this.getValue())+0.5)));
             var target = selections[i].transform.copy();
             action.add(new TransformAction(selections[i], origin, target));
         }
-        if (anyIOPorts)
-            this.onShow(); // Update value
-        else
-            getCurrentContext().addAction(action);
+        getCurrentContext().addAction(action);
     }
 }

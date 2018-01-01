@@ -62,8 +62,7 @@ var WireController = (function() {
                 getCurrentContext().addAction(action);
                 selectionTool.deselectAll();
                 selectionTool.select([pressedWire.connection]);
-                MoveItemController.startDrag(pressedWire.connection, worldMousePos);
-                console.log(pressedWire);
+                TransformController.startDrag(pressedWire.connection, worldMousePos);
                 pressedWire = undefined;
                 return true;
             }
