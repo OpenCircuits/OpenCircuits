@@ -195,7 +195,7 @@ main {
     transition: 0.5s;
 }
 .itemnav button {
-    width: 49%;
+    width: calc(49% - 5px);
     padding: 1vh 1vh 1vh 1vh;
     color: #777;
     font-weight: bold;
