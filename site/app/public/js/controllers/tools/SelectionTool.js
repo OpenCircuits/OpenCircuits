@@ -103,17 +103,23 @@ class SelectionTool extends Tool {
         if (objects.length === 0)
             return;
             
+        console.log(objects);
+        console.log(this.selections);
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
+            console.log(i);
+            console.log(obj.getPos());
             if (obj.selected)
                 continue;
+            console.log(this.selections);
             obj.selected = true;
             this.selections.push(obj);
             this.sendToFront(obj);
             if (doAction)
                 action.add(new SelectAction(obj));
         }
+        console.log(this.selections);
         if (doAction)
             getCurrentContext().addAction(action);
         popup.update();
@@ -145,6 +151,8 @@ class SelectionTool extends Tool {
         this.select(getCurrentContext().getObjects(), true);
     }
     deselectAll(doAction) {
+        // Copy selections array because just passing selections
+        // causes it to get mutated mid-loop at causes weirdness
         var objects = [];
         for (var i = 0; i < this.selections.length; i++)
             objects.push(this.selections[i]);

@@ -355,6 +355,24 @@ function RemoveObjects(ctx, objects, doAction) {
 }
 
 /**
+ * Simply copies all elements of an array into
+ * another array and returns that array
+ * [DOES NOT COPY EACH OBJECT IN THE ARRAY]
+ * 
+ * @param  {Array} arr
+ *         The array to copy
+ *
+ * @return {Array}
+ *         The copied array
+ */
+function CopyArray(arr) {
+    var copy = [];
+    for (var i = 0; i < arr.length; i++)
+        copy.push(arr[i]);
+    return copy;
+}
+
+/**
  * Finds and returns the IC from a given icuid
  *
  * @param  {Integer} id
