@@ -44,7 +44,8 @@ header {
 }
 .header__left__sidenavbutton {
     width: 10%;
-    height: 100%;
+    height: 40px;
+    margin-top: 5px;
     border: 0;
     font-size: 1.5em;
     color: #888;
@@ -52,7 +53,8 @@ header {
 }
 .header__left__projectname {
     width: 20vw;
-    height: 100%;
+    height: 40px;
+    margin-top: 5px;
     border: 0;
     font-size: 1.5em;
     color: #888;
