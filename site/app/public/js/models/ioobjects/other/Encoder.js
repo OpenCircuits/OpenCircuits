@@ -8,6 +8,7 @@ class Encoder extends Gate {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*(2 << (this.outputs.length-1))));
     }
     setInputAmount(target) {
+        target = clamp(target, 0, 8);
         super.setInputAmount(2 << (target-1));
         super.setOutputAmount(target);
     }
