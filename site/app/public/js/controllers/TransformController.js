@@ -49,8 +49,11 @@ var TransformController = (function() {
             dragObjects = selectionTool.selections;
             
             startTransforms = [];
-            for (var i = 0; i < dragObjects.length; i++)
+            for (var i = 0; i < dragObjects.length; i++) {
+                if (!dragObjects[i].transform)
+                    return true;
                 startTransforms[i] = dragObjects[i].transform.copy();
+            }
             isDragging = true;
             dragPos = worldMousePos.copy().sub(obj.getPos());
             pressedObj = obj;
@@ -62,6 +65,8 @@ var TransformController = (function() {
             realAngles = [];
             startTransforms = [];
             for (var i = 0; i < rotateObjects.length; i++) {
+                if (!rotateObjects[i].transform)
+                    return true;
                 realAngles[i] = rotateObjects[i].getAngle();
                 startTransforms[i] = rotateObjects[i].transform.copy();
             }
