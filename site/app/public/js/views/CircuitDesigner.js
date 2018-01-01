@@ -110,13 +110,13 @@ class CircuitDesigner {
         if (this.getIndexOfObject(o) === -1)
             this.objects.push(o);
         else
-            console.log(new Error());
+            console.error("Attempted to add an object that already existed!");
     }
     addWire(w) {
         if (this.getIndexOfWire(w) === -1)
             this.wires.push(w);
         else
-            console.log(new Error());
+            console.error("Attempted to add a wire that already existed!");
     }
     getRenderer() {
         return this.renderer;

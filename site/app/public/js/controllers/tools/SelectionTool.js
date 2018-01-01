@@ -145,6 +145,8 @@ class SelectionTool extends Tool {
         this.select(getCurrentContext().getObjects(), true);
     }
     deselectAll(doAction) {
+        // Copy selections array because just passing selections
+        // causes it to get mutated mid-loop at causes weirdness
         var objects = [];
         for (var i = 0; i < this.selections.length; i++)
             objects.push(this.selections[i]);

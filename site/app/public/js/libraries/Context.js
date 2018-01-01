@@ -45,9 +45,9 @@ class Context {
         if (index === -1)
             return;
         if (o instanceof Wire)
-            this.getWires().splice(index, 1);
+            this.designer.getWires().splice(index, 1);
         else
-            this.getObjects().splice(index, 1);
+            this.designer.getObjects().splice(index, 1);
     }
     undo() {
         this.designer.history.undo();
@@ -71,10 +71,16 @@ class Context {
         return this.designer.history;
     }
     getObjects() {
-        return this.designer.objects;
+        // Copy to avoid confusing bugs when
+        // modifying the objects through add/remove
+        // and have it edit the returned array
+        return CopyArray(this.designer.objects);
     }
     getWires() {
-        return this.designer.wires;
+        // Copy to avoid confusing bugs when
+        // modifying the objects through add/remove
+        // and have it edit the returned array
+        return CopyArray(this.designer.wires);
     }
     getIndexOf(o) {
         if (o instanceof Wire)
