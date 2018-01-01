@@ -1,10 +1,10 @@
 language: node_js
 
 node_js:
-    - 8.9.1
+    - 9.3.0
     
 npm:
-    - 5.5.1
+    - 5.6.0
     
 cache:
   directories:
