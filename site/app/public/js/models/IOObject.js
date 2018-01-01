@@ -26,9 +26,6 @@ class IOObject {
             this.setOutputAmount(1);
     }
     setInputAmount(target) {
-        console.log(target);
-        console.log(this);
-        console.log(this.maxInputs);
         target = clamp(target, 0, this.maxInputs);
         while (this.inputs.length > target)
             this.inputs.splice(this.inputs.length-1, 1);
