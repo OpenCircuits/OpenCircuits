@@ -40,7 +40,7 @@ class Clipboard {
 
         getCurrentContext().addAction(action);
 
-        selectionTool.deselect(selectionTool.selections);
+        selectionTool.deselectAll();
         selectionTool.select(objects);
 
         render();
