@@ -58,4 +58,4 @@ var header = undefined;
 document.addElement(new DOMTestingObject("canvas", 100, 100));
 document.addElement(new DOMTestingObject("designer-canvas", 100, 100));
 
-
+function requestAnimationFrame() {}

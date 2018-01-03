@@ -43,8 +43,8 @@ var TransformController = (function() {
     return {
         startDrag: function(obj, worldMousePos) {
             if (!obj.selected) {
-                selectionTool.deselectAll();
-                selectionTool.select([obj]);
+                selectionTool.deselectAll(true);
+                selectionTool.select([obj], true);
             }
             dragObjects = selectionTool.selections;
             
@@ -131,7 +131,7 @@ var TransformController = (function() {
 
             // Stop rotating
             if (isRotating) {
-                // ADd transform action
+                // Add transform action
                 getCurrentContext().addAction(createTransformAction(rotateObjects, startTransforms));
                 isRotating = false;
                 return true;

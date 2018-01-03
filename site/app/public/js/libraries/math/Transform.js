@@ -163,9 +163,9 @@ class Transform {
         if (!(other instanceof Transform))
             return false;
 
-        var m1 = this.getMatrix();
-        var m2 = other.getMatrix();
-        for (var i = 0; i < m1.mat.length; i++) {
+        var m1 = this.getMatrix().mat;
+        var m2 = other.getMatrix().mat;
+        for (var i = 0; i < m1.length; i++) {
             if (m1[i] !== m2[i])
                 return false;
         }

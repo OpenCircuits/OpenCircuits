@@ -26,11 +26,12 @@ function build() {
       .pipe(concat(dest_min))
       .pipe(gulp.dest("."));
       
-    gulp.src(paths.concat(test_paths))
+    gulp.src(test_paths)     
       .pipe(concat("tests/index.js"))
+      .pipe(gap.prependText("start();"))
+      .pipe(gap.prependFile(dest))
       .pipe(gap.prependFile("tests/prepend.js"))
       .pipe(gap.prependText("/* Built at: " + (new Date()).toString() + " */\n"))
-      .pipe(gap.appendText("start();"))
       .pipe(gulp.dest("."));
 }
 

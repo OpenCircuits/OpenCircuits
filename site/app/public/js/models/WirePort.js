@@ -32,6 +32,10 @@ class WirePort extends IOObject {
         if (this.connection != undefined)
             this.disconnect(this.connection);
     }
+    setTransform(t) {
+        this.transform = t;
+        this.setPos(t.pos);
+    }
     onTransformChange() {
         if (this.input != undefined)
             this.input.onTransformChange();
