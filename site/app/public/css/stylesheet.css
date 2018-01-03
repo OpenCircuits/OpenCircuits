@@ -252,8 +252,13 @@ main {
 .icbuttons {
     position: absolute;
     z-index: 2;
-    width: 30vw;
     top: 90vh;
+    width: 100vw;
+}
+.icbuttons__button {
+    position: absolute;
+    z-index: 2;
+    width: 30vw;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -263,18 +268,18 @@ main {
     font-size: 16px;
     outline: none;
 }
-.icbuttons__confirm {
-     left: 8vw;
-     background-color: #4CAF50;
+#ic-confirmbutton {
+    left: 8vw;
+    background-color: #4CAF50;
 }
-.icbuttons__confirm:active {
+#ic-confirmbutton:active {
     background-color: #3e8e41;
 }
-.icbuttons__cancel {
-     right: 8vw;
-     background-color: #F44336;
+#ic-cancelbutton {
+    right: calc(8vw - 2px);
+    background-color: #F44336;
 }
-.icbuttons__cancel:active {
+#ic-cancelbutton:active {
     background-color: #BA000D;
 }
 

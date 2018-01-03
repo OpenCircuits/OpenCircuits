@@ -38,13 +38,15 @@ class ICDesigner {
         this.canvas.style.visibility = "visible";
         this.confirmButton.style.visibility = "visible";
         this.cancelButton.style.visibility = "visible";
+        if (ItemNavController.isOpen)
+            ItemNavController.toggle();
         popup.hide();
 
         this.data = ICData.create(selections);
         this.ic = new IC(this.context, this.data, 0, 0);
 
         this.designer.addObject(this.ic);
-        selectionTool.deselect(selections);
+        selectionTool.deselectAll();
         this.context.getCamera().zoom = 0.5 + 0.1*(this.ic.transform.size.x-50)/20;
         render();
     }
@@ -73,16 +75,19 @@ class ICDesigner {
             if (inp.sContains(worldMousePos)) {
                 this.drag = true;
                 this.dragObj = this.data.iports[i];
-                return false;
+                return true;
             }
         }
         var outputs = this.ic.outputs;
         for (var i = 0; i < outputs.length; i++) {
             var out = outputs[i];
+            console.log(out);
+            console.log(worldMousePos);
             if (out.sContains(worldMousePos)) {
+            console.log("yes");
                 this.drag = true;
                 this.dragObj = this.data.oports[i];
-                return false;
+                return true;
             }
         }
 
@@ -96,6 +101,7 @@ class ICDesigner {
             } else {
                 this.dragEdge = "vertical";
             }
+            return true;
         }
     }
     onMouseUp() {

@@ -33,11 +33,10 @@ function start() {
     
     Input.registerContext(context);
     Input.registerContext(icdesigner.context);
+    Input.addMouseListener(icdesigner);
     Input.addMouseListener(TransformController);
     Input.addMouseListener(WireController);
     Input.addMouseListener(SelectionBox);
-    
-    Input.addMouseListener(icdesigner);
     
     selectionTool.activate();
 
