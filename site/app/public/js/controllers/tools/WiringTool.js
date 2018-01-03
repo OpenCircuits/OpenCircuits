@@ -7,7 +7,7 @@ class WiringTool extends Tool {
     }
     onKeyUp(code, input) {
         if (code === ESC_KEY)  {
-            this.removeWire(getCurrentContext().getWires());
+            this.removeWire();
             selectionTool.activate();
             render();
         }
@@ -36,10 +36,8 @@ class WiringTool extends Tool {
 
         this.wire = undefined;
     }
-    removeWire(wires) {
-        var j;
-        for (var j = 0; j < wires.length && wires[j] !== this.wire; j++);
-        wires.splice(j, 1);
+    removeWire() {
+        getCurrentContext().remove(this.wire);
         if (this.clickOPort)
             this.wire.input.disconnect(this.wire);
         else
@@ -54,18 +52,17 @@ class WiringTool extends Tool {
     }
     onClick() {
         var objects = getCurrentContext().getObjects();
-        var wires = getCurrentContext().getWires();
         var worldMousePos = Input.getWorldMousePos();
 
         for (var i = 0; i < objects.length; i++) {
             var ii = -1;
             if (this.clickOPort && (ii = objects[i].iPortContains(worldMousePos)) !== -1) {
                 if (!this.wire.connect(objects[i].inputs[ii]))
-                    this.removeWire(wires);
+                    this.removeWire();
             }
             if (!this.clickOPort && (ii = objects[i].oPortContains(worldMousePos)) !== -1) {
                 if (!objects[i].outputs[ii].connect(this.wire))
-                    this.removeWire(wires);
+                    this.removeWire();
             }
             if (ii !== -1) {
                 var action = new PlaceWireAction(this.wire);
@@ -76,7 +73,7 @@ class WiringTool extends Tool {
             }
          }
 
-        this.removeWire(wires);
+        this.removeWire();
         selectionTool.activate();
         return true;
     }

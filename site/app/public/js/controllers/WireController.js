@@ -60,8 +60,8 @@ var WireController = (function() {
                 pressedWire.split(wireSplitPoint);
                 var action = new SplitWireAction(pressedWire);
                 getCurrentContext().addAction(action);
-                selectionTool.deselectAll();
-                selectionTool.select([pressedWire.connection]);
+                selectionTool.deselectAll(true);
+                selectionTool.select([pressedWire.connection], true);
                 TransformController.startDrag(pressedWire.connection, worldMousePos);
                 pressedWire = undefined;
                 return true;

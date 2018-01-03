@@ -9,14 +9,18 @@ class SplitWireAction extends Action {
     undo() {
         this.context.remove(this.wireport);
         this.context.remove(this.newwire);
-        this.wire.disconnect(this.wireport);
-        this.newwire.disconnect(this.connection);
+        
+        this.wire.disconnect();
+        this.newwire.disconnect();
+        
         this.wire.connect(this.connection);
     }
     redo() {
-        this.context.addObject(this.wireport);
-        this.context.addWire(this.newwire);
-        this.wire.disconnect(this.connection);
+        this.context.add(this.wireport);
+        this.context.add(this.newwire);
+        
+        this.wire.disconnect();
+        
         this.wire.connect(this.wireport);
         this.newwire.connect(this.connection);
     }

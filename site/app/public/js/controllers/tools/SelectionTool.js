@@ -79,9 +79,25 @@ class SelectionTool extends Tool {
 
             // Check if object's selection box was clicked
             if (obj.sContains(worldMousePos)) {
-                if (!Input.getShiftKeyDown())
+                if (obj.selected)
+                    return false;
+                
+                if (!Input.getShiftKeyDown() && this.selections.length > 0) {
                     this.deselectAll(true);
-                this.select([obj], true);
+                    
+                    // Combine deselect and select actions
+                    var deselectAction = getCurrentContext().designer.history.undoStack.pop();
+                    this.select([obj], true);
+                    var selectAction = getCurrentContext().designer.history.undoStack.pop();
+                    var combined = new GroupAction();
+                    if (deselectAction != undefined)
+                        combined.add(deselectAction);
+                    combined.add(selectAction);
+                    getCurrentContext().addAction(combined);
+                } else {
+                    this.select([obj], true);
+                }
+                                
                 return true;
             }
 
