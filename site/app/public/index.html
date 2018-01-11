@@ -46,7 +46,7 @@
                     <button type="button" onclick="document.getElementById('file-input').click();">
                         <img src="img/icons/open.svg" height="100%" alt="Open a file" />
                     </button>
-                    <input id="file-input" type="file" name="name" style="display: none;" onchange="openFile();" multiple="false" required="true" accept=".circuit,.xml" />
+                    <input id="file-input" type="file" name="name" style="display: none;" onchange="Importer.openFile();" multiple="false" required="true" accept=".circuit,.xml" />
                     <button type="button" onclick="Exporter.saveFile();">
                         <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                     </button>
@@ -155,16 +155,16 @@
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
 
-                <canvas id="canvas" class="canvas" ondrop="console.log('asd');"></canvas>
+                <canvas id="canvas" class="canvas"></canvas>
                 
-                <canvas id="designer-canvas" class="icdesigner" hidden></canvas>
+                <canvas id="designer-canvas" class="icdesigner" style="visibility: hidden;"></canvas>
                 
                 <div class="icbuttons">
-                    <button id="ic-confirmbutton" class="icbuttons__confirm" onclick="icdesigner.confirm();" alt="Submit IC" hidden>Confirm</button>
-                    <button id="ic-cancelbutton"  class="icbuttons__cancel" onclick="icdesigner.cancel();"  alt="Cancel IC" hidden>Cancel</button>
+                    <button id="ic-confirmbutton" class="icbuttons__button" onclick="icdesigner.confirm();" alt="Submit IC" style="visibility: hidden;">Confirm</button>
+                    <button id="ic-cancelbutton"  class="icbuttons__button" onclick="icdesigner.cancel();"  alt="Cancel IC" style="visibility: hidden;">Cancel</button>
                 </div>
                 
-                <div id="popup" class="popup" tabindex="-1">
+                <div id="popup" class="popup" tabindex="-1" style="visibility: hidden;">
                     <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
                     <hr/>
                     <div id="popup-pos-text">
@@ -194,7 +194,7 @@
                     </button>
                 </div>
 
-                <div id="context-menu" class="contextmenu" tabindex="-1">
+                <div id="context-menu" class="contextmenu" tabindex="-1" style="visibility: hidden;">
                     <button id="context-menu-cut" alt="Cut">
                         Cut
                     </button>

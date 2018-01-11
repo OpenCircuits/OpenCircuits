@@ -13,7 +13,7 @@ var Importer = (function() {
                 var reader = new FileReader();
 
                 reader.onload = function(e) {
-                    this.load(reader.result, getCurrentContext());
+                    Importer.load(reader.result, getCurrentContext());
                     render();
                 }
 

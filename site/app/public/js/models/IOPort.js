@@ -55,12 +55,10 @@ class IOPort {
         return circleContains(transform, pos);
     }
     sContains(pos) {
-        if (this.origin.y !== this.target.y)
-            return false;
-
-        var w = Math.abs(this.target.x - this.origin.x);
-        var pos2 = this.target.add(this.origin).scale(0.5);
-        var transform = new Transform(pos2, V(w, IO_PORT_LINE_WIDTH*2), 0, this.parent.context.getCamera());
+        var angle = Math.atan2(this.target.y - this.origin.y, this.target.x - this.origin.x);
+        var len = this.origin.distanceTo(this.target);
+        var pos = this.target.add(this.origin).scale(0.5);
+        var transform = new Transform(pos, V(len, IO_PORT_LINE_WIDTH*2), angle, this.parent.context.getCamera());
         transform.setParent(this.parent.transform);
         return rectContains(transform, pos);
     }
