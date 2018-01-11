@@ -7,6 +7,7 @@
     "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "gulp-append-prepend": "^1.0.4",
+    "gulp-babel": "^7.0.0",
     "jshint": "^2.6.0"
   },
   "scripts": {
