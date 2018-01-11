@@ -20,6 +20,7 @@ var ItemNavController = (function() {
     }
 
     return {
+        disabled: false,
         isOpen: false,
         toggle: function() {
             if (this.isOpen) {

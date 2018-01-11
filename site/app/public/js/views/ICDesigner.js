@@ -12,6 +12,8 @@ class ICDesigner {
         this.dragObj = undefined;
 
         this.dragEdge = undefined;
+        
+        this.disabled = true;
 
         this.confirmButton = document.getElementById("ic-confirmbutton");
         this.cancelButton = document.getElementById("ic-cancelbutton");
@@ -34,6 +36,11 @@ class ICDesigner {
     }
     show(selections) {
         currentContext = this.context;
+        this.disabled = false;
+        TransformController.disabled = true;
+        WireController.disabled = true;
+        SelectionBox.disabled = true;
+        
         this.hidden = false;
         this.canvas.style.visibility = "visible";
         this.confirmButton.style.visibility = "visible";
@@ -52,6 +59,11 @@ class ICDesigner {
     }
     hide() {
         currentContext = context;
+        this.disabled = true;
+        TransformController.disabled = false;
+        WireController.disabled = false;
+        SelectionBox.disabled = false;
+        
         this.hidden = true;
         this.canvas.style.visibility = "hidden";
         this.confirmButton.style.visibility = "hidden";
@@ -81,10 +93,7 @@ class ICDesigner {
         var outputs = this.ic.outputs;
         for (var i = 0; i < outputs.length; i++) {
             var out = outputs[i];
-            console.log(out);
-            console.log(worldMousePos);
             if (out.sContains(worldMousePos)) {
-            console.log("yes");
                 this.drag = true;
                 this.dragObj = this.data.oports[i];
                 return true;
@@ -93,8 +102,8 @@ class ICDesigner {
 
         var pos = this.ic.getPos();
         var size = this.ic.getSize();
-        var transform1 = new Transform(pos, size.scale(1.1), 0, this.context.getCamera());
-        var transform2 = new Transform(pos, size.scale(0.9), 0, this.context.getCamera());
+        var transform1 = new Transform(pos, size.scale(1.2), 0, this.context.getCamera());
+        var transform2 = new Transform(pos, size.scale(0.8), 0, this.context.getCamera());
         if (rectContains(transform1, worldMousePos) && !rectContains(transform2, worldMousePos)) {
             if (worldMousePos.y < pos.y+size.y/2-4 && worldMousePos.y > pos.y-size.y/2+4) {
                 this.dragEdge = "horizontal";

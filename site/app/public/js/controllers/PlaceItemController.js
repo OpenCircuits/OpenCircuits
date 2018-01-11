@@ -1,5 +1,6 @@
 var PlaceItemController = (function() {
     return {
+        disabled: false,
         drag: false,
         place: function(item, not) {
             if (not)
