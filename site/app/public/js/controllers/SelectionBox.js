@@ -33,6 +33,7 @@ var SelectionBox = (function () {
     }
     
     return {
+        disabled: false,
         onMouseDown: function(somethingHappened) {
             var objects = getCurrentContext().getObjects();
             var wires = getCurrentContext().getWires();

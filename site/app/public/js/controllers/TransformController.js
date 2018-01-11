@@ -41,6 +41,7 @@ var TransformController = (function() {
     }
 
     return {
+        disabled: false,
         startDrag: function(obj, worldMousePos) {
             if (!obj.selected) {
                 selectionTool.deselectAll(true);

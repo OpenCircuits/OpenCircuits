@@ -113,8 +113,11 @@ var Input = (function () {
             var shouldRender = false;
             contextmenu.hide();
             shouldRender = CurrentTool.onMouseDown(shouldRender);
-            for (var i = 0; i < mouseListeners.length; i++)
-                shouldRender = mouseListeners[i].onMouseDown(shouldRender) || shouldRender;
+            for (var i = 0; i < mouseListeners.length; i++) {
+                var listener = mouseListeners[i];
+                if (!listener.disabled && listener.onMouseDown(shouldRender))
+                    shouldRender = true;
+            }
             if (shouldRender)
                 render();
         }
@@ -146,8 +149,11 @@ var Input = (function () {
         }
 
         shouldRender = CurrentTool.onMouseMove(shouldRender) || shouldRender;
-        for (var i = 0; i < mouseListeners.length; i++)
-            shouldRender = mouseListeners[i].onMouseMove(shouldRender) || shouldRender;
+        for (var i = 0; i < mouseListeners.length; i++) {
+            var listener = mouseListeners[i];
+            if (!listener.disabled && listener.onMouseMove(shouldRender))
+                shouldRender = true;
+        }       
         if (shouldRender)
             render();
     }
@@ -156,16 +162,22 @@ var Input = (function () {
 
         var shouldRender = false;
         shouldRender = CurrentTool.onMouseUp(shouldRender);
-        for (var i = 0; i < mouseListeners.length; i++)
-            shouldRender = mouseListeners[i].onMouseUp(shouldRender) || shouldRender;
+        for (var i = 0; i < mouseListeners.length; i++) {
+            var listener = mouseListeners[i];
+            if (!listener.disabled && listener.onMouseUp(shouldRender))
+                shouldRender = true;
+        }       
         if (shouldRender)
             render();
     }
     var onClick = function(e) {
         var shouldRender = false;
         shouldRender = CurrentTool.onClick(shouldRender);
-        for (var i = 0; i < mouseListeners.length; i++)
-            shouldRender = mouseListeners[i].onClick(shouldRender) || shouldRender;
+        for (var i = 0; i < mouseListeners.length; i++) {
+            var listener = mouseListeners[i];
+            if (!listener.disabled && listener.onClick(shouldRender))
+                shouldRender = true;
+        }
         if (shouldRender)
             render();
     }

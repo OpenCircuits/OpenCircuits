@@ -26,6 +26,7 @@ var SideNavController = (function() {
     }
 
     return {
+        disabled: false,
         isOpen: false,
         toggle: function() {
             if (this.isOpen) {

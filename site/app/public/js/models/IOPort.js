@@ -57,8 +57,8 @@ class IOPort {
     sContains(pos) {
         var angle = Math.atan2(this.target.y - this.origin.y, this.target.x - this.origin.x);
         var len = this.origin.distanceTo(this.target);
-        var pos = this.target.add(this.origin).scale(0.5);
-        var transform = new Transform(pos, V(len, IO_PORT_LINE_WIDTH*2), angle, this.parent.context.getCamera());
+        var pos0 = this.target.add(this.origin).scale(0.5);
+        var transform = new Transform(pos0, V(len, IO_PORT_LINE_WIDTH*2), angle, this.parent.context.getCamera());
         transform.setParent(this.parent.transform);
         return rectContains(transform, pos);
     }
