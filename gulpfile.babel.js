@@ -21,6 +21,7 @@ function build() {
       .pipe(concat(dest))
       .pipe(gap.prependText("/* Built at: " + (new Date()).toString() + " */\n"))
       .pipe(gap.prependText("var __TESTING__ = false;\n\n"))
+      .pipe(gap.prependText("\"use strict\";"))
       .pipe(gulp.dest("."))
       .pipe(uglify())
       .pipe(concat(dest_min))
