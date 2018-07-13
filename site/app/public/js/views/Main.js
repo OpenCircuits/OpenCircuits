@@ -30,14 +30,14 @@ function start() {
     popup = new SelectionPopup();
     icdesigner = new ICDesigner();
     contextmenu = new ContextMenu();
-    
+
     Input.registerContext(context);
     Input.registerContext(icdesigner.context);
     Input.addMouseListener(icdesigner);
     Input.addMouseListener(TransformController);
     Input.addMouseListener(WireController);
     Input.addMouseListener(SelectionBox);
-    
+
     selectionTool.activate();
 
     loadImage(images,
@@ -72,9 +72,6 @@ function onFinishLoading() {
 var renderQueue = 0;
 
 function render() {
-    if (__TESTING__) // Never render while unit testing
-        return;
-        
     if (renderQueue === 0)
         requestAnimationFrame(actualRender);
     renderQueue++;

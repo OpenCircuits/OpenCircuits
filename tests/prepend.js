@@ -1,5 +1,3 @@
-var __TESTING__ = true;
-
 var assert = require('assert');
 
 class DOMTestingObject {
