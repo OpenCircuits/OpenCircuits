@@ -8,7 +8,7 @@ Found at [OpenCircuits.io](http://www.opencircuits.io/)
 
 # Usage
 
-Instructions and tutorials located at (TODO)
+Instructions and tutorials located in the [wiki](https://github.com/LeonMontealegre/OpenCircuits/wiki)
 
 # Background
 
