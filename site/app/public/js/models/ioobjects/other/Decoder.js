@@ -1,6 +1,7 @@
 class Decoder extends Gate {
     constructor(context, x, y) {
         super(context, false, x, y, undefined);
+        this.activate(0);
     }
     onTransformChange() {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
