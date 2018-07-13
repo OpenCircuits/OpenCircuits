@@ -32,7 +32,8 @@ var RIGHT_MOUSE_BUTTON = 1;
 
 var OPTION_KEY = 18;
 var SHIFT_KEY = 16;
-var DELETE_KEY = 8;
+var BACKSPACE_KEY = 8;
+var DELETE_KEY = 46;
 var ENTER_KEY = 13;
 var ESC_KEY = 27;
 var A_KEY = 65;
@@ -314,13 +315,13 @@ function getAllWires(objects) {
 /**
  * Removes all objects and wires+wireports
  * between them
- * 
+ *
  * @param  {Context} ctx
  *         The context which the objects are apart of
- *         
+ *
  * @param  {Array} objects
  *         The array of objects in which to remove
- *         
+ *
  * @param  {Boolean} doAction
  *         True if the action should be re/undoable,
  *         False otherwise
@@ -328,7 +329,7 @@ function getAllWires(objects) {
 function RemoveObjects(ctx, objects, doAction) {
     if (objects.length === 0)
         return;
-        
+
     var action = new GroupAction();
     var things = getAllThingsBetween(objects);
     for (var i = 0; i < things.length; i++) {
@@ -358,7 +359,7 @@ function RemoveObjects(ctx, objects, doAction) {
  * Simply copies all elements of an array into
  * another array and returns that array
  * [DOES NOT COPY EACH OBJECT IN THE ARRAY]
- * 
+ *
  * @param  {Array} arr
  *         The array to copy
  *
@@ -403,10 +404,10 @@ function findByUID(objects, id) {
  * Creates a group transform action given
  * the relevant objects and their original
  * transforms
- * 
+ *
  * @param  {Array} objects
  *         The array of objects who have been transformed
- * 
+ *
  * @param  {Array} t0
  *         The array of transforms that correspond to
  *         the original transform of the object in objects

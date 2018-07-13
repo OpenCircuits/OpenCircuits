@@ -15,7 +15,7 @@ class SelectionPopup extends Popup {
         this.add(new BusButtonModule(this, "popup-bus-button"));
     }
     onKeyDown(code) {
-        if (code === DELETE_KEY && !this.focused) {
+        if ((code === DELETE_KEY || code === BACKSPACE_KEY) && !this.focused) {
             RemoveObjects(getCurrentContext(), selectionTool.selections, true);
             return;
         }
