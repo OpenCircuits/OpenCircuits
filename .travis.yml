@@ -2,18 +2,19 @@ language: node_js
 
 node_js:
     - 9.3.0
-    
+
 npm:
     - 5.6.0
-    
+
 cache:
   directories:
     - node_modules
-    
+
 install:
     npm install gulp
- 
+
 script:
+    - gulp build --tests
     - gulp test
 
 notifications:
