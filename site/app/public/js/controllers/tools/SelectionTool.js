@@ -32,7 +32,7 @@ class SelectionTool extends Tool {
                     obj.press();
                 return true;
             }
-            
+
             // Ignore if object's selection box was pressed
             if (obj.sContains(worldMousePos))
                 return;
@@ -54,7 +54,7 @@ class SelectionTool extends Tool {
             return false;
 
         popup.update();
-        
+
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
 
@@ -72,7 +72,7 @@ class SelectionTool extends Tool {
 
         if (!icdesigner.hidden || Input.getIsDragging())
             return false;
-            
+
         // Go through objects backwards since objects on top are in the back
         for (var i = objects.length-1; i >= 0; i--) {
             var obj = objects[i];
@@ -81,10 +81,10 @@ class SelectionTool extends Tool {
             if (obj.sContains(worldMousePos)) {
                 if (obj.selected)
                     return false;
-                
+
                 if (!Input.getShiftKeyDown() && this.selections.length > 0) {
                     this.deselectAll(true);
-                    
+
                     // Combine deselect and select actions
                     var deselectAction = getCurrentContext().designer.history.undoStack.pop();
                     this.select([obj], true);
@@ -97,7 +97,7 @@ class SelectionTool extends Tool {
                 } else {
                     this.select([obj], true);
                 }
-                                
+
                 return true;
             }
 
@@ -118,7 +118,7 @@ class SelectionTool extends Tool {
     select(objects, doAction) {
         if (objects.length === 0)
             return;
-            
+
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
@@ -138,7 +138,7 @@ class SelectionTool extends Tool {
     deselect(objects, doAction) {
         if (objects.length === 0)
             return;
-        
+
         var action = new GroupAction();
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
