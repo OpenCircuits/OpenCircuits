@@ -21,9 +21,12 @@ var Importer = (function() {
             }
         },
         load: function(text, context) {
-            // Remove all whitespace from XML file except for header
-            var header = text.substring(0, text.indexOf(">")+1);
-            text = header + text.substring(text.indexOf(">")+1).replace(/\s/g,'');
+            //
+            // Why?!?!
+            // 
+            // // Remove all whitespace from XML file except for header
+            // var header = text.substring(0, text.indexOf(">")+1);
+            // text = header + text.substring(text.indexOf(">")+1).replace(/\s/g,'');
 
             var root = new window.DOMParser().parseFromString(text, "text/xml");
             if (root.documentElement.nodeName == "parsererror")
