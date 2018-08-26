@@ -15,10 +15,6 @@ abstract class AbstractDatabase {
 	/** @var int */
 	protected $query_count = 0;
 
-	public function __construct() {
-		
-	}
-
 	abstract public function getDSN();
 
     /**
