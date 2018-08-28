@@ -10,11 +10,11 @@ use app\controllers\CircuitPageController;
 
 
 $core = new Core();
-// $core->loadDatabase();
+$core->loadDatabase();
 
 
-// $control = new CircuitPageController($core);
-// $control->run();
+$control = new CircuitPageController($core);
+$control->run();
 
 
-// $core->displayOutput();
+$core->displayOutput();

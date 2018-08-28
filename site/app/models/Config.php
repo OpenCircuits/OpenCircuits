@@ -8,8 +8,11 @@ namespace app\models;
  */
 class Config {
     
-    /** @property @var boolean If the app is in debug mode */
+    /** @property @var boolean */
     protected $debugMode;
+    
+    /** @property @var array */
+    protected $scripts;
     
     /**
      * Config constructor
@@ -41,10 +44,15 @@ class Config {
         fclose($file);
         
         $this->debugMode = ($properties['DebugMode'] === "true");
+        $this->scripts = explode("|", $properties['Scripts']);
     }
     
     public function isDebugMode() {
         return $debugMode;
+    }
+    
+    public function getScripts() {
+        return $this->scripts;
     }
     
 }

@@ -20,8 +20,9 @@ class CircuitPageController {
 
     public function run() {
         $user = $this->core->getUser();
+        $config = $this->core->getConfig();
         
-        $this->core->renderOutput($this->view->getOutput($user), $this->core->getConfig());
+        $this->core->renderOutput($this->view->getOutput($user, $config));
     }
     
 }
