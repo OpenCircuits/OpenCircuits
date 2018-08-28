@@ -1,4 +1,4 @@
-<img src="https://github.com/LeonMontealegre/OpenCircuits/blob/master/site/app/public/img/icons/logo.svg" alt="OpenCircuits Logo" style="width: 500px;"/>
+<img src="https://github.com/LeonMontealegre/OpenCircuits/blob/master/site/public/img/icons/logo.svg" alt="OpenCircuits Logo" style="width: 500px;"/>
 
 [![Build Status](https://travis-ci.org/LeonMontealegre/OpenCircuits.svg?branch=master)](https://travis-ci.org/LeonMontealegre/OpenCircuits)
 
