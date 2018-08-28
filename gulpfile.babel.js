@@ -4,8 +4,6 @@ var concat = require('gulp-concat');
 var gap    = require('gulp-append-prepend');
 var mocha  = require('gulp-mocha');
 var babel  = require('gulp-babel');
-var inject = require('gulp-inject');
-var clean  = require('gulp-clean');
 var addsrc = require('gulp-add-src');
 var fs     = require('fs');
 
@@ -16,67 +14,38 @@ var argv = require('yargs').argv;
 var dirs = ['libraries', 'controllers', 'models', 'views'];
 
 var paths = [];
-function getJSPaths(prepend, cur) {
+var test_paths = [];
+function getJSPaths(prepend, cur, arr, homeDir) {
     var dir = prepend+cur+"/";
-    var files = fs.readdirSync("site/public/"+dir);
+    if (!fs.existsSync(homeDir+dir))
+        return;
+    var files = fs.readdirSync(homeDir+dir);
     for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        if (file.endsWith(".js")) // If js file
-            paths.push(dir+file);
-        else if (!files.includes(".")) // If a directory
-            getJSPaths(dir, file);
+        if (file.endsWith('.js')) // If js file
+            arr.push(dir+file);
+        else if (!files.includes('.')) // If a directory
+            getJSPaths(dir, file, arr, homeDir);
     }
 }
-for (var i = 0; i < dirs.length; i++)
-    getJSPaths("js/", dirs[i]);
-
-// var paths      = jspaths.map(function(file) { return 'site/public/js/' + file + ''; });
-// var test_paths = jspaths.map(function(file) { return 'tests/public/js/' + file + ''; });
-
+for (var i = 0; i < dirs.length; i++) {
+    getJSPaths('js/', dirs[i], paths, 'site/public/');
+    getJSPaths('js/', dirs[i], test_paths, 'tests/public/');
+}
 
 var isReleaseBuild = (argv.release === undefined ? false : true);
 var buildTests     = (argv.tests === undefined ? false : true);
 
 function devBuild(cb) {
-    // var src = 'site/app/public/build.html';
-
-    // return gulp.src(src)
-    //   .pipe(inject(gulp.src(paths, {read: false}), {relative: true}))
-    //   .pipe(concat('site/app/public/index.html'))
-    //   .pipe(gulp.dest('.'));
-      
     var config = 'site/data/config.txt';
     
-    var contents = "DebugMode=true\n";
-    contents += "Scripts=" + paths.join("|") + "\n";
+    var contents = 'DebugMode=true\n';
+    contents += 'Scripts=' + paths.join('|') + '\n';
         
     return fs.writeFile(config, contents, cb);
 }
 
 function releaseBuild(cb) {
-    // var src = 'site/app/public/build.html';
-    // 
-    // // Create temporary combined js files
-    // var combined = gulp.src(paths)
-    //   .pipe(babel({presets: ['es2015']}))
-    //   .pipe(uglify())
-    //   .pipe(concat('./tmp.combined.js'))
-    //   .pipe(gulp.dest('.'));
-    // 
-    // // Inject combined js file into HTML
-    // var html = gulp.src(src)
-    //   .pipe(inject(combined, {
-    //       relative: true,
-    //       transform: function(filePath, file) {
-    //         return '<script>' + file.contents.toString('utf8') + '</script>';
-    //       }
-    //     }))
-    //     .pipe(concat('site/app/public/index.html'))
-    //   .pipe(gulp.dest('.'));
-    // 
-    // // Clean up temporary js file
-    // return combined.pipe(clean());
-    
     gulp.src(paths.map(function(f) { return 'site/public/' + f; }))
         .pipe(babel({presets: ['es2015']}))
         .pipe(uglify())
@@ -85,19 +54,19 @@ function releaseBuild(cb) {
     
     var config = 'site/data/config.txt';
     
-    var contents = "DebugMode=false\n";
-    contents += "Scripts=js/combined-min.js\n";
+    var contents = 'DebugMode=false\n';
+    contents += 'Scripts=js/combined-min.js\n';
         
     return fs.writeFile(config, contents, cb);
 }
 
 function testsBuild() {
     // Combine js files and append tests
-    return gulp.src(paths) // Get rid of prepend
+    return gulp.src(paths.map(function(f) { return 'site/public/' + f; })) // Get rid of prepend
       .pipe(concat('tests/index.js'))
       .pipe(gap.prependFile('tests/prepend.js'))
       .pipe(gap.appendText('start();'))
-      .pipe(addsrc.append(test_paths))
+      .pipe(addsrc.append(test_paths.map(function (f) { return 'tests/public/' + f; })))
       .pipe(concat('tests/index.js'))
       .pipe(gulp.dest('.'));
 }

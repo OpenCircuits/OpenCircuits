@@ -1,2 +1,0 @@
-DebugMode=false
-Scripts=js/combined-min.js

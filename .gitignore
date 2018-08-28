@@ -6,6 +6,6 @@
 # Thumbnails
 ._*
 node_modules
-site/app/public/js/combined.js
-site/app/public/js/combined-min.js
+site/data/config.txt
+site/public/js/combined-min.js
 tests/index.js
