@@ -3,6 +3,7 @@
 namespace app\libraries;
 
 use app\libraries\database\SQLiteDatabase;
+use app\models\Config;
 
 /**
  * Class core
@@ -19,12 +20,16 @@ class Core {
 	
 	/** @var string */
 	private $output;
+	
+	/** @var Config */
+	private $config;
 
 	/**
 	 * Core constructor
 	 */
 	public function __construct() {
-		$output = "";
+		$this->config = new Config();
+		$this->output = "";
 	}
 	
 	/**
@@ -56,6 +61,10 @@ class Core {
 	
 	public function getOutput() {
 		return $this->output;
+	}
+	
+	public function getConfig() {
+		return $this->config;
 	}
 
 }

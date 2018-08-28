@@ -1,24 +1,24 @@
-var gulp = require('gulp');
+var gulp   = require('gulp');
 var uglify = require('gulp-uglify-es').default;
 var concat = require('gulp-concat');
-var gap = require('gulp-append-prepend');
-var mocha = require('gulp-mocha');
-var babel = require('gulp-babel');
+var gap    = require('gulp-append-prepend');
+var mocha  = require('gulp-mocha');
+var babel  = require('gulp-babel');
 var inject = require('gulp-inject');
-var clean = require('gulp-clean');
+var clean  = require('gulp-clean');
 var addsrc = require('gulp-add-src');
 
 var argv = require('yargs').argv;
 
 
 // Get all JS file locations
-var lib = ['libraries/**/*'];
+var lib        = ['libraries/**/*'];
 var controller = ['controllers/**/*'];
-var model = ['models/*', 'models/ioobjects/**/*'];
-var view = ['views/*'];
+var model      = ['models/*', 'models/ioobjects/**/*'];
+var view       = ['views/*'];
 
-var files = lib.concat(controller, model, view);
-var paths = files.map(function(file) { return 'site/app/public/js/' + file + '.js'; });
+var files      = lib.concat(controller, model, view);
+var paths      = files.map(function(file) { return 'site/app/public/js/' + file + '.js'; });
 var test_paths = files.map(function(file) { return 'tests/app/public/js/' + file + '.js'; });
 
 
