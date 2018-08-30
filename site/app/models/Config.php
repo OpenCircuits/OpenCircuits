@@ -14,6 +14,9 @@ class Config {
     /** @property @var array */
     protected $scripts;
     
+    /** @property @var array */
+    protected $items;
+    
     /**
      * Config constructor
      * 
@@ -45,6 +48,7 @@ class Config {
         
         $this->debugMode = ($properties['DebugMode'] === "true");
         $this->scripts = explode("|", $properties['Scripts']);
+        $this->items = explode("|", $properties['Items']);
     }
     
     public function isDebugMode() {
@@ -53,6 +57,10 @@ class Config {
     
     public function getScripts() {
         return $this->scripts;
+    }
+    
+    public function getItems() {
+        return $this->items;
     }
     
 }

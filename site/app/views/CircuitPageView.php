@@ -63,103 +63,33 @@ class CircuitPageView {
 
             <main>
                 <nav id="items" class="itemnav">
-                    <h4 unselectable>Inputs</h4>
-                    <button type="button" onclick="PlaceItemController.place(new ConstantLow());">
-                        <img src="img/icons/inputs/constLow.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant low" />
-                        <br/>Constant Low
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new ConstantHigh());">
-                        <img draggable="true" src="img/icons/inputs/constHigh.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Constant high" />
-                        <br/>Constant High
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Button());">
-                        <img src="img/icons/inputs/button.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Button" />
-                        <br/>Button
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Switch());">
-                        <img src="img/icons/inputs/switch.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Switch" />
-                        <br/>Switch
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Clock());">
-                        <img src="img/icons/inputs/clock.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Clock" />
-                        <br/>Clock
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Keyboard());">
-                        <img src="img/icons/inputs/keyboard.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Keyboard" />
-                        <br/>Keyboard
-                    </button>
-
-                    <h4 unselectable>Outputs</h4>
-                    <button type="button" onclick="PlaceItemController.place(new LED());">
-                        <img src="img/icons/outputs/led.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="LED" />
-                        <br/>LED
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new SevenSegmentDisplay());">
-                        <img src="img/icons/outputs/sevensegmentdisplay.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="7 Segment Display" />
-                        <br/>7 Segment Display
-                    </button>
-
-                    <h4 unselectable>Logic Gates</h4>
-                    <button type="button" onclick="PlaceItemController.place(new BUFGate());">
-                        <img src="img/icons/logicgates/buffer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Buffer gate" />
-                        <br/>BUFFER
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new BUFGate(), true);">
-                        <img src="img/icons/logicgates/not.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NOT gate" />
-                        <br/>NOT
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new ANDGate());">
-                        <img src="img/icons/logicgates/and.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="AND gate" />
-                        <br/>AND
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new ANDGate(), true);">
-                        <img src="img/icons/logicgates/nand.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NAND gate" />
-                        <br/>NAND
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new ORGate());">
-                        <img src="img/icons/logicgates/or.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="OR gate" />
-                        <br/>OR
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new ORGate(), true);">
-                        <img src="img/icons/logicgates/nor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="NOR gate" />
-                        <br/>NOR
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new XORGate());">
-                        <img src="img/icons/logicgates/xor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="XOR gate" />
-                        <br/>XOR
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new XORGate(), true);">
-                        <img src="img/icons/logicgates/xnor.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="XNOR gate" />
-                        <br/>XNOR
-                    </button>
-
-                    <h4 unselectable>Flip Flops</h4>
-                    <button type="button" onclick="PlaceItemController.place(new SRFlipFlop());">
-                        <img src="img/icons/base.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="SR Flip Flop" />
-                        <br/>SR Flip Flop
-                    </button>
-
-                    <h4 unselectable>Other</h4>
-                    <button type="button" onclick="PlaceItemController.place(new Multiplexer());">
-                        <img src="img/icons/other/multiplexer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Multiplexer" />
-                        <br/>Mux
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Demultiplexer());">
-                        <img src="img/icons/other/demultiplexer.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Demultiplexer" />
-                        <br/>Demux
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Encoder());">
-                        <img src="img/icons/other/encoder.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Encoder" />
-                        <br/>Encoder
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Decoder());">
-                        <img src="img/icons/other/encoder.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Decoder" />
-                        <br/>Decoder
-                    </button>
-                    <button type="button" onclick="PlaceItemController.place(new Label());">
-                        <img src="img/icons/other/label.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="Label" />
-                        <br/>Label
-                    </button>
+HTML;
+                    $itemTypes = $config->getItems();
+                    
+                    // Output all items in the ItemNav menu
+                    foreach($itemTypes as $itemType) {
+                        $items = explode("&", $itemType);
+                        $type = preg_replace("/([A-Z][a-z])/", " $1", $items[0]);
+                        $dir = strtolower($items[0]);
+                        $items = array_slice($items, 1);
+                        
+                        $return .= <<<HTML
+                    <h4 unselectable>{$type}</h4>
+HTML;
+                        foreach ($items as $item) {
+                            $ioobjectName = $item;
+                            $imageName = strtolower($item);
+                            $displayName = preg_replace("/([A-Z][a-z])/", " $1", $item);
+                            $return .= <<<HTML
+                        <button type="button" onclick="PlaceItemController.place(new {$ioobjectName});">
+                            <img src="img/icons/{$dir}/{$imageName}.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
+                            <br/>{$displayName}
+                        </button>
+HTML;
+                        }
+                    }
+                    
+                    $return .= <<<HTML
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
 
@@ -175,53 +105,31 @@ class CircuitPageView {
                 <div id="popup" class="popup" tabindex="-1" style="visibility: hidden;">
                     <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
                     <hr/>
-                    <div id="popup-pos-text">
-                        Position
-                    </div>
+                    <div id="popup-pos-text">Position</div>
                     <label id="popup-position-label" class="popup__label" unselectable disabled>
                         <input id="popup-position-x" type="number" value="0" min="-10000" max="10000" step="0.5" alt="X-Position of object(s)" />
                         <input id="popup-position-y" type="number" value="0" min="-10000" max="10000" step="0.5" alt="Y-Position of object(s)" />
                     </label>
-                    <div id="popup-input-count-text">
-                        Input Count
-                    </div>
+                    <div id="popup-input-count-text">Input Count</div>
                     <label id="popup-input-count-label" class="popup__label" unselectable disabled>
                         <input id="popup-input-count" type="number" value="2" min="2" max="8" step="1" alt="Number of inputs object(s) have" />
                     </label>
-                    <div id="popup-color-text">
-                        Color
-                    </div>
+                    <div id="popup-color-text">Color</div>
                     <label id="popup-color-label" class="popup__label" unselectable disabled>
                         <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
                     </label>
-                    <button id="popup-ic-button" type="button" alt="Create ">
-                        Create IC
-                    </button>
-                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">
-                        Bus
-                    </button>
+                    <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
+                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
                 </div>
 
                 <div id="context-menu" class="contextmenu" tabindex="-1" style="visibility: hidden;">
-                    <button id="context-menu-cut" alt="Cut">
-                        Cut
-                    </button>
-                    <button id="context-menu-copy" alt="Copy">
-                        Copy
-                    </button>
-                    <button id="context-menu-paste" alt="Paste">
-                        Paste
-                    </button>
-                    <button id="context-menu-select-all" alt="Select All">
-                        Select All
-                    </button>
+                    <button id="context-menu-cut" alt="Cut">Cut</button>
+                    <button id="context-menu-copy" alt="Copy">Copy</button>
+                    <button id="context-menu-paste" alt="Paste">Paste</button>
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>
                     <hr/>
-                    <button id="context-menu-undo" alt="Undo">
-                        Undo
-                    </button>
-                    <button id="context-menu-redo" alt="Redo">
-                        Redo
-                    </button>
+                    <button id="context-menu-undo" alt="Undo">Undo</button>
+                    <button id="context-menu-redo" alt="Redo">Redo</button>
                 </div>
 
             </main>
