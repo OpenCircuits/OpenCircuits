@@ -1,1 +1,1 @@
-docker build opencircuits/opencircuits .
+docker build -t opencircuits/opencircuits .
