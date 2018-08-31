@@ -1,1 +1,1 @@
-docker run -p 8080:8080 opencircuits/copencircuits
+docker run -p 8080:8080 --name octest opencircuits/copencircuits
