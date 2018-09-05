@@ -1,0 +1,1 @@
+docker run -p 8080:8080 --name octest opencircuits/opencircuits php -S 0.0.0.0:8080
