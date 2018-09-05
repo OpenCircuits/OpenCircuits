@@ -68,6 +68,7 @@ HTML;
                     
                     // Output all items in the ItemNav menu
                     foreach($itemTypes as $itemType) {
+                        // Get each tab (ex. Inputs, Outputs, Gates, etc.)
                         $items = explode("&", $itemType);
                         $type = preg_replace("/([A-Z][a-z])/", " $1", $items[0]);
                         $dir = strtolower($items[0]);
@@ -77,6 +78,7 @@ HTML;
                     <h4 unselectable>{$type}</h4>
 HTML;
                         foreach ($items as $item) {
+                            // Get each item in the tab (ex. Button, Switch, etc.)
                             $ioobjectName = $item;
                             $imageName = strtolower($item);
                             $displayName = preg_replace("/([A-Z][a-z])/", " $1", $item);
