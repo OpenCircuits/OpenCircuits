@@ -21,8 +21,9 @@ class CircuitPageController {
     public function run() {
         $user = $this->core->getUser();
         $config = $this->core->getConfig();
+        $itemNavConfig = $this->core->getItemNavConfig();
         
-        $this->core->renderOutput($this->view->getOutput($user, $config));
+        $this->core->renderOutput($this->view->getOutput($user, $config, $itemNavConfig));
     }
     
 }

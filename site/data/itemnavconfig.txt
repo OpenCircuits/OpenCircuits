@@ -1,0 +1,31 @@
+[Inputs=inputs]
+Constant Low & constantlow.svg & ConstantLow.js
+Constant High & constanthigh.svg & ConstantHigh.js
+Button & button.svg & Button.js
+Switch & switch.svg & Button.js
+Clock & clock.svg & Clock.js
+Keyboard & keyboard.svg & Keyboard.js
+
+[Outputs=outputs]
+LED & led.svg & LED.js
+7 Segment Display & sevensegmentdisplay.svg & SevenSegmentDisplay.js
+
+[Logic Gates=gates]
+Buffer & bufgate.svg & BUFGate.js
+NOT & notgate.svg & BUFGate.js & true
+AND & andgate.svg & ANDGate.js
+NAND & nandgate.svg & ANDGate.js & true
+OR & orgate.svg & ORGate.js
+NOR & norgate.svg & ORGate.js & true
+XOR & xorgate.svg & XORGate.js
+XNOR & xnorgate.svg & XORGate.js & true
+
+[Flip Flops=flipflops]
+SR Flip Flop & srflipflop.svg & SRFlipFlop.js
+
+[Other=other]
+Mux & multiplexer.svg & Multiplexer.js
+Demux & demultiplexer.svg & Demuliplexer.js
+Encoder & encoder.svg & Encoder.js
+Decoder & decoder.svg & Decoder.js
+Label & label.svg & Label.js

@@ -4,6 +4,7 @@ namespace app\libraries;
 
 use app\libraries\database\SQLiteDatabase;
 use app\models\Config;
+use app\models\ItemNavConfig;
 
 /**
  * Class core
@@ -23,12 +24,16 @@ class Core {
 	
 	/** @var Config */
 	private $config;
+	
+	/** @var ItemNavConfig */
+	private $itemNavConfig;
 
 	/**
 	 * Core constructor
 	 */
 	public function __construct() {
 		$this->config = new Config();
+		$this->$itemNavConfig = new ItemNavConfig();
 		$this->output = "";
 	}
 	
@@ -65,6 +70,10 @@ class Core {
 	
 	public function getConfig() {
 		return $this->config;
+	}
+	
+	public function getItemNavConfig() {
+		return $this->$itemNavConfig;
 	}
 
 }

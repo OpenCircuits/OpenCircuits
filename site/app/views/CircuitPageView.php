@@ -4,7 +4,7 @@ namespace app\views;
 
 class CircuitPageView {
     
-    public function getOutput($user, $config) {
+    public function getOutput($user, $config, $itemNavConfig) {
         $return = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -64,27 +64,33 @@ class CircuitPageView {
             <main>
                 <nav id="items" class="itemnav">
 HTML;
-                    $itemTypes = $config->getItems();
+                    $sections = $itemNavConfig->getSections();
                     
                     // Output all items in the ItemNav menu
-                    foreach($itemTypes as $itemType) {
+                    foreach($sections as $section) {
                         // Get each tab (ex. Inputs, Outputs, Gates, etc.)
-                        $items = explode("&", $itemType);
-                        $type = preg_replace("/([A-Z][a-z])/", " $1", $items[0]);
-                        $dir = strtolower($items[0]);
-                        $items = array_slice($items, 1);
+                        $name  = $section["name"];
+                        $dir   = $section["dir"];
+                        $items = $section["items"];
                         
                         $return .= <<<HTML
-                    <h4 unselectable>{$type}</h4>
+                    <h4 unselectable>{$name}</h4>
 HTML;
                         foreach ($items as $item) {
                             // Get each item in the tab (ex. Button, Switch, etc.)
-                            $ioobjectName = $item;
-                            $imageName = strtolower($item);
-                            $displayName = preg_replace("/([A-Z][a-z])/", " $1", $item);
+                            $displayName = $item["display"];
+                            $imageName   = $item["img"];
+                            $jsName      = $item["js"];
+                            
+                            if (isset($item["not"])) {
+                                $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
+                            } else {
+                                $not = $item["not"];
+                                $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}(), {$not});\">";
+                            }
+                            
                             $return .= <<<HTML
-                        <button type="button" onclick="PlaceItemController.place(new {$ioobjectName});">
-                            <img src="img/icons/{$dir}/{$imageName}.svg" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
+                            <img src="img/icons/{$dir}/{$imageName}" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
                             <br/>{$displayName}
                         </button>
 HTML;

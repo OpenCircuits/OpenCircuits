@@ -52,7 +52,7 @@ class Config {
     }
     
     public function isDebugMode() {
-        return $debugMode;
+        return $this->debugMode;
     }
     
     public function getScripts() {
