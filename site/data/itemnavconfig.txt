@@ -1,31 +1,31 @@
 [Inputs=inputs]
-Constant Low & constantlow.svg & ConstantLow.js
-Constant High & constanthigh.svg & ConstantHigh.js
-Button & button.svg & Button.js
-Switch & switch.svg & Button.js
-Clock & clock.svg & Clock.js
-Keyboard & keyboard.svg & Keyboard.js
+Constant Low & constantlow.svg & ConstantLow
+Constant High & constanthigh.svg & ConstantHigh
+Button & button.svg & Button
+Switch & switch.svg & Switch
+Clock & clock.svg & Clock
+Keyboard & keyboard.svg & Keyboard
 
 [Outputs=outputs]
-LED & led.svg & LED.js
-7 Segment Display & sevensegmentdisplay.svg & SevenSegmentDisplay.js
+LED & led.svg & LED
+7 Segment Display & sevensegmentdisplay.svg & SevenSegmentDisplay
 
 [Logic Gates=gates]
-Buffer & bufgate.svg & BUFGate.js
-NOT & notgate.svg & BUFGate.js & true
-AND & andgate.svg & ANDGate.js
-NAND & nandgate.svg & ANDGate.js & true
-OR & orgate.svg & ORGate.js
-NOR & norgate.svg & ORGate.js & true
-XOR & xorgate.svg & XORGate.js
-XNOR & xnorgate.svg & XORGate.js & true
+Buffer & bufgate.svg & BUFGate
+NOT & notgate.svg & BUFGate & true
+AND & andgate.svg & ANDGate
+NAND & nandgate.svg & ANDGate & true
+OR & orgate.svg & ORGate
+NOR & norgate.svg & ORGate & true
+XOR & xorgate.svg & XORGate
+XNOR & xnorgate.svg & XORGate & true
 
 [Flip Flops=flipflops]
-SR Flip Flop & srflipflop.svg & SRFlipFlop.js
+SR Flip Flop & srflipflop.svg & SRFlipFlop
 
 [Other=other]
-Mux & multiplexer.svg & Multiplexer.js
-Demux & demultiplexer.svg & Demuliplexer.js
-Encoder & encoder.svg & Encoder.js
-Decoder & decoder.svg & Decoder.js
-Label & label.svg & Label.js
+Mux & multiplexer.svg & Multiplexer
+Demux & demultiplexer.svg & Demuliplexer
+Encoder & encoder.svg & Encoder
+Decoder & decoder.svg & Decoder
+Label & label.svg & Label

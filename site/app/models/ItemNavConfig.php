@@ -38,7 +38,7 @@ class ItemNavConfig {
                 $section["dir"]   = substr($title, strpos($title, "=")+1);
                 $section["items"] = array();
                 $this->sections[] = $section;
-            } else if (!empty($line)) {
+            } else if (!empty(trim($line))) {
                 $props = explode("&", $line);
                 $item = array();
                 $item["display"] = trim($props[0]);

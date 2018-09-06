@@ -83,10 +83,10 @@ HTML;
                             $jsName      = $item["js"];
                             
                             if (isset($item["not"])) {
-                                $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
-                            } else {
                                 $not = $item["not"];
                                 $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}(), {$not});\">";
+                            } else {
+                                $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
                             }
                             
                             $return .= <<<HTML
