@@ -17,14 +17,16 @@ var Input = (function () {
 
     var isDragging = false;
     var startTapTime = undefined;
-    
-    console.log(shiftKeyDown);
-    
+        
+    var allKeysUp = function() {
+        shiftKeyDown = false;
+        modifierKeyDown = false;
+        optionKeyDown = false;
+        getCurrentContext().setCursor("default");
+    }
     var onKeyDown = function(e) {
         var code = e.keyCode;
-        
-        console.log(shiftKeyDown);
-        
+                
         switch (code) {
             case SHIFT_KEY:
                 shiftKeyDown = true;
@@ -198,7 +200,7 @@ var Input = (function () {
             canvas.addEventListener('mouseup', e => onMouseUp(e), false);
             canvas.addEventListener('mousemove', e => onMouseMove(e), false);
             canvas.addEventListener('mouseenter', e => { if (PlaceItemController.drag) { onMouseMove(e); onClick(e); PlaceItemController.drag = false; }}, false);
-            canvas.addEventListener("mouseleave", e => { if (mouseDown) { onMouseUp(e); onClick(e); } });
+            canvas.addEventListener("mouseleave", e => { allKeysUp(); if (mouseDown) { onMouseUp(e); onClick(e); } });
 
             canvas.addEventListener("contextmenu", function(e) {
                 contextmenu.show(e);
