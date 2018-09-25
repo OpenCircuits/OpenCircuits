@@ -2,6 +2,11 @@
 
 [![Build Status](https://travis-ci.org/LeonMontealegre/OpenCircuits.svg?branch=master)](https://travis-ci.org/LeonMontealegre/OpenCircuits) [![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=opencircuits&repository=opencircuits)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
 
+
+# Branch
+
+This branch will be used to fix [this bug](https://github.com/LeonMontealegre/OpenCircuits/issues/98).  It will be deleted (along with this section of the README) once said bug is fixed.
+
 # Website
 
 Found at [OpenCircuits.io](http://www.opencircuits.io/)
@@ -30,6 +35,7 @@ OpenCircuits is hosted on [GitHub](https://github.com/LeonMontealegre/OpenCircui
 # Contact Us
 
 If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io
+
 
 ### LICENSING
 OpenCircuits is currently without a license.
