@@ -20,8 +20,9 @@ NOR & norgate.svg & ORGate & true
 XOR & xorgate.svg & XORGate
 XNOR & xnorgate.svg & XORGate & true
 
-[Flip Flops=flipflops]
-SR Flip Flop & srflipflop.svg & SRFlipFlop
+[Latches=latches]
+SR Latch & srlatch.svg & SRLatch
+D Latch & srlatch.svg & DLatch
 
 [Other=other]
 Mux & multiplexer.svg & Multiplexer

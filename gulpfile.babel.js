@@ -39,7 +39,7 @@ function getTestPaths() {
 }
 
 function getItems() {
-    var dirs = ['Inputs', 'Outputs', 'Gates', 'FlipFlops', 'Other'];
+    var dirs = ['Inputs', 'Outputs', 'Gates', 'Latches', 'Other'];
     var items = [];
     for (var i = 0; i < dirs.length; i++) {
         var dir = dirs[i].toLowerCase();
