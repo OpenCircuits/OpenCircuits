@@ -1,6 +1,6 @@
 <img src="https://github.com/LeonMontealegre/OpenCircuits/blob/master/site/public/img/icons/logo.svg" alt="OpenCircuits Logo" style="width: 500px;"/>
 
-[![Build Status](https://travis-ci.org/LeonMontealegre/OpenCircuits.svg?branch=master)](https://travis-ci.org/LeonMontealegre/OpenCircuits)
+[![Build Status](https://travis-ci.org/LeonMontealegre/OpenCircuits.svg?branch=master)](https://travis-ci.org/LeonMontealegre/OpenCircuits) [![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=opencircuits&repository=opencircuits)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
 
 # Website
 
