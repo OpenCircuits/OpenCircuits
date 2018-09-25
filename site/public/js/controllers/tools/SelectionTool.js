@@ -55,15 +55,18 @@ class SelectionTool extends Tool {
 
         popup.update();
 
+        var found = false;
+
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
 
             // Release pressed object
             if (obj.isPressable && obj.isOn && !Input.isDragging) {
                 obj.release();
-                return true;
+                found = true;
             }
         }
+        return found;
     }
     onClick() {
         var objects = getCurrentContext().getObjects();
