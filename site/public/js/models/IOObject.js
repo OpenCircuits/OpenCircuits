@@ -100,7 +100,7 @@ class IOObject {
     }
     release() {
     }
-    activate(on, i) {
+    activate(on, i) {                       //i is index of coresponding output port
         if (i == undefined)
             i = 0;
 
