@@ -2,11 +2,6 @@
 
 [![Build Status](https://travis-ci.org/LeonMontealegre/OpenCircuits.svg?branch=master)](https://travis-ci.org/LeonMontealegre/OpenCircuits) [![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=opencircuits&repository=opencircuits)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
 
-
-# Branch
-
-This branch will be used to fix [this bug](https://github.com/LeonMontealegre/OpenCircuits/issues/98).  It will be deleted (along with this section of the README) once said bug is fixed.
-
 # Website
 
 Found at [OpenCircuits.io](http://www.opencircuits.io/)
