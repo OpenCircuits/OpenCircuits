@@ -44,7 +44,7 @@ class CircuitPageView {
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
-                    <span id="open-sive-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
+                    <span id="open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
                     <input id="project-name" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
                 <div class="header__center">
@@ -100,6 +100,45 @@ HTML;
                     $return .= <<<HTML
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
+
+                <nav id="save-options" class="savenav">
+HTML;
+                    // $sections = $itemNavConfig->getSections();
+                    
+                    // // Output all items in the ItemNav menu
+                    // foreach($sections as $section) {
+                    //     // Get each tab (ex. Inputs, Outputs, Gates, etc.)
+                    //     $name  = $section["name"];
+                    //     $dir   = $section["dir"];
+                    //     $items = $section["items"];
+                        
+                        $return .= <<<HTML
+                    <h4 unselectable>{$name}</h4>
+HTML;
+                        // foreach ($items as $item) {
+                        //     // Get each item in the tab (ex. Button, Switch, etc.)
+                        //     $displayName = $item["display"];
+                        //     $imageName   = $item["img"];
+                        //     $jsName      = $item["js"];
+                            
+                        //     if (isset($item["not"])) {
+                        //         $not = $item["not"];
+                        //         $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}(), {$not});\">";
+                        //     } else {
+                        //         $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
+                        //     }
+                            
+                            $return .= <<<HTML
+                            <img src="img/icons/{$dir}/{$imageName}" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
+                            <br/>{$displayName}
+                        </button>
+HTML;
+                    //     }
+                    // }
+                    
+                    $return .= <<<HTML
+                </nav>
+                <div id="open-save-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
 
                 <canvas id="canvas" class="canvas"></canvas>
 
