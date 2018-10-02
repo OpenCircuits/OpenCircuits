@@ -45,7 +45,7 @@ class CircuitPageView {
             <header id="header">
                 <div class="header__left">
                     <span id="open-sive-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
-                    <input id="project-name" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
+                    <input id="project-name" class="header__left__projectname" type="text" placeholder="Untitled Circuit*" alt="Name of project">
                 </div>
                 <div class="header__center">
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
