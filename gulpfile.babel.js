@@ -21,7 +21,10 @@ function getJSPaths(dir) {
             var file = files[i];
             if (file.endsWith('.js')) // If js file
                 arr.push(dir+file);
-            else if (!files.includes('.')) // If a directory
+        }
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (!file.includes('.')) // If a directory
                 getJSPaths2(dir, file, arr, homeDir);
         }
     }
