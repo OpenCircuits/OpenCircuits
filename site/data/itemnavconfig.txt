@@ -25,7 +25,7 @@ SR Flip Flop & srflipflop.svg & SRFlipFlop
 
 [Other=other]
 Mux & multiplexer.svg & Multiplexer
-Demux & demultiplexer.svg & Demuliplexer
+Demux & demultiplexer.svg & Demultiplexer
 Encoder & encoder.svg & Encoder
 Decoder & decoder.svg & Decoder
 Label & label.svg & Label
