@@ -19,9 +19,9 @@ class DLatch extends Gate {
 
         if (clock) {
             if (set) {
-            		on = true;
+                on = true;
             } else {
-            		on = false;
+            	on = false;
             }
         }
 
