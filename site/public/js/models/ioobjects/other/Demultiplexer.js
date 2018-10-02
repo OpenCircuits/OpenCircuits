@@ -3,6 +3,9 @@ class Demultiplexer extends Gate {
         super(context, false, x, y, undefined);
     }
     setInputAmount(target) {
+        // if input was zero or negative, demux would glitch
+        target = clamp(target, 1, 8);
+
         super.setInputAmount(target + 1);
         super.setOutputAmount(2 << (target-1));
 

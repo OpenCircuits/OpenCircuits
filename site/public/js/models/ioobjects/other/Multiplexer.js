@@ -3,6 +3,9 @@ class Multiplexer extends Gate {
         super(context, false, x, y, undefined);
     }
     setInputAmount(target) {
+        // if input was zero or negative, mux would glitch
+        target = clamp(target, 1, 8);
+
         super.setInputAmount(target + (2 << (target-1)));
 
         var width = Math.max(DEFAULT_SIZE/2*(target-1), DEFAULT_SIZE);

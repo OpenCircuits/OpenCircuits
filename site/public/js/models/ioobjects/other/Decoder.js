@@ -9,7 +9,7 @@ class Decoder extends Gate {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*(2 << (this.inputs.length-1))));
     }
     setInputAmount(target) {
-        target = clamp(target, 0, 8);
+        target = clamp(target, 1, 8);
         super.setInputAmount(target);
         super.setOutputAmount(2 << (target-1));
     }
