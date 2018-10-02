@@ -39,7 +39,7 @@ class SRLatch extends Gate {
         renderer.restore();
     }
     getDisplayName() {
-        return "SR Flip Flop";
+        return "SR Latch";
     }
 }
 SRLatch.getXMLName = function() { return "srl"; }
