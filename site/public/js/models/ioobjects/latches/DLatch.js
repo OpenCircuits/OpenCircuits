@@ -13,7 +13,6 @@ class DLatch extends Gate {
     }
     activate(x) {
         var on = this.outputs[1].isOn;
-        var on_ = this.outputs[0].isOn;
 
         var set = this.inputs[1].isOn;
         var clock = this.inputs[0].isOn;
@@ -21,10 +20,8 @@ class DLatch extends Gate {
         if (clock) {
             if (set) {
                 on = true;
-                on_ = false;
             } else {
-            	on = false;
-              on_ = true;
+            		on = false;
             }
         }
 
@@ -40,8 +37,8 @@ class DLatch extends Gate {
         renderer.restore();
     }
     getDisplayName() {
-        return "D Flip Flop";
+        return "D Latch";
     }
 }
-DFlipFlop.getXMLName = function() { return "dff"; }
-Importer.types.push(DFlipFlop);
+DLatch.getXMLName = function() { return "dl"; }
+Importer.types.push(DLatch);
