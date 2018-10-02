@@ -5,6 +5,8 @@ class SRFlipFlop extends Gate {
         this.setInputAmount(3);
         this.setOutputAmount(2);
         this.transform.setSize(this.transform.size.scale(1.5));
+		this.clock = false;
+		this.last_clock = false;
     }
     onTransformChange() {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
@@ -15,10 +17,10 @@ class SRFlipFlop extends Gate {
         var on = this.outputs[0].isOn;
 
         var set = this.inputs[0].isOn;
-		var last_clock = clock;
-        var clock = this.inputs[1].isOn;
+		this.last_clock = this.clock;
+        this.clock = this.inputs[1].isOn;
         var reset = this.inputs[2].isOn;
-        if (clock && !last_clock) {
+        if (this.clock && !this.last_clock) {
             if (set && reset) {
                 // undefined behavior
             } else if (set) {

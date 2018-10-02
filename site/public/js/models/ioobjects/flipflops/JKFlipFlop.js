@@ -17,9 +17,10 @@ class JKFlipFlop extends Gate {
         var on = this.outputs[0].isOn;
 
         var set = this.inputs[0].isOn;
-        var clock = this.inputs[1].isOn;
+		this.last_clock = this.clock;
+        this.clock = this.inputs[1].isOn;
         var reset = this.inputs[2].isOn;
-        if (clock && !last_clock) {
+        if (this.clock && !this.last_clock) {
             if (set && reset) {
                 on = !on;
             } else if (set) {
@@ -31,8 +32,6 @@ class JKFlipFlop extends Gate {
 
         super.activate(on, 0);
         super.activate(!on, 1);
-		
-		var last_clock = clock;
     }
     draw() {
         super.draw();
