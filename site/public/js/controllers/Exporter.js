@@ -1,4 +1,4 @@
-var Exporter = (function() {    
+var Exporter = (function() {
     var projectNameInput = document.getElementById("project-name");
 
     return {
@@ -6,7 +6,7 @@ var Exporter = (function() {
         saveFile: function() {
             var data = this.write(getCurrentContext());
             var projectName = projectNameInput.value;
-            if (projectName === "Untitled Circuit*")
+            if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".circuit";
 
