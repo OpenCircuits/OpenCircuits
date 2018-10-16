@@ -22,6 +22,9 @@ XNOR & xnorgate.svg & XORGate & true
 
 [Flip Flops=flipflops]
 SR Flip Flop & srflipflop.svg & SRFlipFlop
+JK Flip Flop & srflipflop.svg & JKFlipFlop
+D Flip Flop & srflipflop.svg & DFlipFlop
+T Flip Flop & srflipflop.svg & TFlipFlop
 
 [Other=other]
 Mux & multiplexer.svg & Multiplexer
