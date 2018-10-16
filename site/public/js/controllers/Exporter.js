@@ -55,29 +55,17 @@ var Exporter = (function() {
             }
         },
         savePDF: function() {
-            var data = this.write(getCurrentContext());
+            var data = canvas.toDataURL("image/png");
+            var pdf = new jsPDF();
+
+            pdf.addImage(data, 'PNG', 0, 0);
+
             var projectName = projectNameInput.value;
             if (projectName === "Untitled Circuit*")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".pdf";
 
-            var file = new Blob([data], {type: "text/plain"});
-            if (window.navigator.msSaveOrOpenBlob) { // IE10+
-                window.navigator.msSaveOrOpenBlob(file, filename);
-                saved = true;
-            } else { // Others
-                var a = document.createElement("a");
-                var url = URL.createObjectURL(file);
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(function() {
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                    saved = true;
-                }, 0);
-            }
+            pdf.save(filename);
         },
         write: function(context) {
             var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
