@@ -23,8 +23,12 @@ function getJSPaths(dir) {
             if (file.endsWith('.js')) // If js file
                 arr.push(dir+file);
         }
+<<<<<<< HEAD
 		// Push subdirectories
 		for (var i = 0; i < files.length; i++) {
+=======
+        for (var i = 0; i < files.length; i++) {
+>>>>>>> origin/master
             var file = files[i];
             if (!file.includes('.')) // If a directory
                 getJSPaths2(dir, file, arr, homeDir);
@@ -44,7 +48,7 @@ function getTestPaths() {
 }
 
 function getItems() {
-    var dirs = ['Inputs', 'Outputs', 'Gates', 'FlipFlops', 'Other'];
+    var dirs = ['Inputs', 'Outputs', 'Gates', 'Latches', 'Other'];
     var items = [];
     for (var i = 0; i < dirs.length; i++) {
         var dir = dirs[i].toLowerCase();

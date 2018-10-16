@@ -20,6 +20,10 @@ NOR & norgate.svg & ORGate & true
 XOR & xorgate.svg & XORGate
 XNOR & xnorgate.svg & XORGate & true
 
+[Latches=latches]
+SR Latch & srlatch.svg & SRLatch
+D Latch & srlatch.svg & DLatch
+
 [Flip Flops=flipflops]
 SR Flip Flop & srflipflop.svg & SRFlipFlop
 JK Flip Flop & srflipflop.svg & JKFlipFlop

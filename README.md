@@ -33,4 +33,4 @@ If you have a question or would like to recommend a feature, please reach out to
 
 
 ### LICENSING
-OpenCircuits is currently without a license.
+OpenCircuits is under the BSD-3 clause license
