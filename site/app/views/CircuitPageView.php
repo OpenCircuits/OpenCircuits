@@ -58,10 +58,10 @@ class CircuitPageView {
                     <button type="button" onclick="Exporter.saveFile();">
                         <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                     </button>
-                    <button type="button" onclick="Exporter.savePdf();">
+                    <button type="button" onclick="Exporter.savePDF();">
                         <img src="img/icons/pdf_download.svg" height="100%" alt="Save current scene as PDF" />
                     </button>
-                    <button type="button" onclick="Exporter.savePng();">
+                    <button type="button" onclick="Exporter.savePNG();">
                         <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
                     </button>
                 </div>
