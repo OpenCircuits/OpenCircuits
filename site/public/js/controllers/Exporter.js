@@ -30,7 +30,7 @@ var Exporter = (function() {
         },
         savePNG: function() {
             var data = canvas.toDataURL("image/png");
-            
+
             var projectName = projectNameInput.value;
             if (projectName === "Untitled Circuit*")
                 projectName = "Untitled Circuit";
@@ -42,7 +42,7 @@ var Exporter = (function() {
                 saved = true;
             } else { // Others
                 var a = document.createElement("a");
-                var url = URL.createObjectURL(file);
+                var url = data;
                 a.href = url;
                 a.download = filename;
                 document.body.appendChild(a);
