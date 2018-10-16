@@ -7,6 +7,7 @@ class JKFlipFlop extends Gate {
         this.transform.setSize(this.transform.size.scale(1.5));
 		this.clock = false;
 		this.last_clock = false;
+		this.state = false;
     }
     onTransformChange() {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
@@ -14,24 +15,22 @@ class JKFlipFlop extends Gate {
         this.transform.setSize(V(DEFAULT_SIZE*1.5, DEFAULT_SIZE*1.5));
     }
     activate(x) {
-        var on = this.outputs[0].isOn;
-
-        var set = this.inputs[0].isOn;
 		this.last_clock = this.clock;
         this.clock = this.inputs[1].isOn;
+        var set = this.inputs[0].isOn;
         var reset = this.inputs[2].isOn;
         if (this.clock && !this.last_clock) {
             if (set && reset) {
-                on = !on;
+                this.state = !this.state;
             } else if (set) {
-                on = true;
+                this.state = true;
             } else if (reset) {
-                on = false;
+                this.state = false;
             }
         }
 
-        super.activate(on, 0);
-        super.activate(!on, 1);
+        super.activate(this.state, 0);
+        super.activate(!this.state, 1);
     }
     draw() {
         super.draw();

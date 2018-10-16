@@ -7,6 +7,7 @@ class DFlipFlop extends Gate {
         this.transform.setSize(this.transform.size.scale(1.5));
 		this.clock = false;
 		this.last_clock = false;
+		this.state = false;
     }
     onTransformChange() {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
@@ -14,17 +15,15 @@ class DFlipFlop extends Gate {
         this.transform.setSize(V(DEFAULT_SIZE*1.5, DEFAULT_SIZE*1.5));
     }
     activate(x) {
-        var on = this.outputs[0].isOn;
-
-        var data = this.inputs[0].isOn;
 		this.last_clock = this.clock;
-        this.clock = this.inputs[1].isOn;
+        this.clock = this.inputs[0].isOn;
+        var data = this.inputs[1].isOn;
         if (this.clock && !this.last_clock) {
-            on = data;
+            this.state = data;
         }
-
-        super.activate(on, 0);
-        super.activate(!on, 1);
+		
+        super.activate(this.state, 1);
+        super.activate(!this.state, 0);
     }
     draw() {
         super.draw();
