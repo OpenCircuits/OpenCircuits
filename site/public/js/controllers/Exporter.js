@@ -29,14 +29,14 @@ var Exporter = (function() {
             }
         },
         savePNG: function() {
-            var data = canvas.toDataURL("image/png");
+            var data = canvas.toDataURL("image/png");               //turn canvas into data
 
-            var projectName = projectNameInput.value;
+            var projectName = projectNameInput.value;               //get name for file
             if (projectName === "Untitled Circuit*")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".png";
 
-            var file = new Blob([data], {type: "image/png"});
+            var file = new Blob([data], {type: "image/png"});               //save file
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
                 window.navigator.msSaveOrOpenBlob(file, filename);
                 saved = true;
@@ -55,17 +55,17 @@ var Exporter = (function() {
             }
         },
         savePDF: function() {
-            var data = canvas.toDataURL("image/png");
-            var pdf = new jsPDF();
+            var data = canvas.toDataURL("image/png");               //turn canvas to file
+            var pdf = new jsPDF();                                  //make pdf via jsPDF
 
-            pdf.addImage(data, 'PNG', 0, 0);
+            pdf.addImage(data, 'PNG', 0, 0);                        //add image
 
-            var projectName = projectNameInput.value;
+            var projectName = projectNameInput.value;               //get name
             if (projectName === "Untitled Circuit*")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".pdf";
 
-            pdf.save(filename);
+            pdf.save(filename);                                     //save
         },
         write: function(context) {
             var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
