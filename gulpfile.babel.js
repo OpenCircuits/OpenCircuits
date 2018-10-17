@@ -23,12 +23,8 @@ function getJSPaths(dir) {
             if (file.endsWith('.js')) // If js file
                 arr.push(dir+file);
         }
-<<<<<<< HEAD
 		// Push subdirectories
-		for (var i = 0; i < files.length; i++) {
-=======
         for (var i = 0; i < files.length; i++) {
->>>>>>> origin/master
             var file = files[i];
             if (!file.includes('.')) // If a directory
                 getJSPaths2(dir, file, arr, homeDir);
