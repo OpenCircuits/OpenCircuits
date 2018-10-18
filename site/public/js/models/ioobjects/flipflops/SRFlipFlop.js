@@ -1,4 +1,4 @@
-class SRLatch extends Gate {
+class SRFlipFlop extends Gate {
     constructor(context, x, y) {
         super(context, false, x, y, undefined);
         this.noChange = true;
@@ -41,8 +41,8 @@ class SRLatch extends Gate {
         renderer.restore();
     }
     getDisplayName() {
-        return "SR Latch";
+        return "SR Flip Flop";
     }
 }
-SRLatch.getXMLName = function() { return "srl"; }
-Importer.types.push(SRLatch);
+SRFlipFlop.getXMLName = function() { return "srff"; }
+Importer.types.push(SRFlipFlop);

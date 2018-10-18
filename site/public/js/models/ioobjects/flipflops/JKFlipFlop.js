@@ -1,4 +1,4 @@
-class SRLatch extends Gate {
+class JKFlipFlop extends Gate {
     constructor(context, x, y) {
         super(context, false, x, y, undefined);
         this.noChange = true;
@@ -21,7 +21,7 @@ class SRLatch extends Gate {
         var reset = this.inputs[2].isOn;
         if (this.clock && !this.last_clock) {
             if (set && reset) {
-                // undefined behavior
+                this.state = !this.state;
             } else if (set) {
                 this.state = true;
             } else if (reset) {
@@ -41,8 +41,8 @@ class SRLatch extends Gate {
         renderer.restore();
     }
     getDisplayName() {
-        return "SR Latch";
+        return "JK Flip Flop";
     }
 }
-SRLatch.getXMLName = function() { return "srl"; }
-Importer.types.push(SRLatch);
+JKFlipFlop.getXMLName = function() { return "srff"; }
+Importer.types.push(JKFlipFlop);
