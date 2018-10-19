@@ -3,7 +3,7 @@
 namespace app\views;
 
 class CircuitPageView {
-    
+
     public function getOutput($user, $config, $itemNavConfig) {
         $return = <<<HTML
 <!DOCTYPE HTML>
@@ -49,6 +49,7 @@ class CircuitPageView {
                     <span id="open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
                     <input id="project-name" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
+
                 <div class="header__center">
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
                 </div>
@@ -73,14 +74,14 @@ class CircuitPageView {
                 <nav id="items" class="itemnav">
 HTML;
                     $sections = $itemNavConfig->getSections();
-                    
+
                     // Output all items in the ItemNav menu
                     foreach($sections as $section) {
                         // Get each tab (ex. Inputs, Outputs, Gates, etc.)
                         $name  = $section["name"];
                         $dir   = $section["dir"];
                         $items = $section["items"];
-                        
+
                         $return .= <<<HTML
                     <h4 unselectable>{$name}</h4>
 HTML;
@@ -89,14 +90,14 @@ HTML;
                             $displayName = $item["display"];
                             $imageName   = $item["img"];
                             $jsName      = $item["js"];
-                            
+
                             if (isset($item["not"])) {
                                 $not = $item["not"];
                                 $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}(), {$not});\">";
                             } else {
                                 $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
                             }
-                            
+
                             $return .= <<<HTML
                             <img src="img/icons/{$dir}/{$imageName}" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
                             <br/>{$displayName}
@@ -104,7 +105,7 @@ HTML;
 HTML;
                         }
                     }
-                    
+
                     $return .= <<<HTML
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
@@ -151,7 +152,7 @@ HTML;
             </main>
         </div>
 HTML;
-        
+
         foreach ($config->getScripts() as $script) {
             $return .= <<<HTML
             <script src="{$script}"></script>
@@ -164,5 +165,5 @@ HTML;
 HTML;
         return $return;
     }
-    
+
 }
