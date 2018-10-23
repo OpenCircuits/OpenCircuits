@@ -122,6 +122,9 @@ class SelectionTool extends Tool {
         }
     }
     select(objects, doAction) {
+        if(true){
+            return;
+        }
         if (objects.length === 0)
             return;
 
@@ -163,6 +166,9 @@ class SelectionTool extends Tool {
         this.recalculateMidpoint();
     }
     selectAll() {
+        if(true){
+            return;
+        }
         this.deselectAll(true);
         this.select(getCurrentContext().getObjects(), true);
     }
