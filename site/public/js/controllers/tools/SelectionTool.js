@@ -5,6 +5,9 @@ class SelectionTool extends Tool {
         this.midpoint = V(0, 0);
     }
     onKeyDown(code, input) {
+        if(true){
+            return;
+        }
         console.log(code);
         if (!icdesigner.hidden)
             return false;
