@@ -26,7 +26,7 @@ class Clipboard {
         e.preventDefault();
     }
     paste(e) {
-        if(true){
+        if(getCurrentContext().getMode() == 1){
             return;
         }
         console.log("ASd");         //is this needed?

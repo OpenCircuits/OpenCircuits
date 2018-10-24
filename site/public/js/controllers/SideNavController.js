@@ -25,6 +25,12 @@ var SideNavController = (function() {
         overlay.onclick = function() {  }
     }
 
+    if (getCurrentContext().getMode() == 0) {
+        getCurrentContext().setMode(1);
+    } else {
+        getCurrentContext().setMode(0);
+    }
+
     return {
         disabled: false,
         isOpen: false,
