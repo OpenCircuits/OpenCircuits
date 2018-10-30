@@ -15,16 +15,16 @@ class Core {
 
 	/** @var AbstractDatabase */
 	private $db = null;
-	
+
 	/** @var User */
 	private $user = null;
-	
+
 	/** @var string */
 	private $output;
-	
+
 	/** @var Config */
 	private $config;
-	
+
 	/** @var ItemNavConfig */
 	private $itemNavConfig;
 
@@ -33,10 +33,10 @@ class Core {
 	 */
 	public function __construct() {
 		$this->config = new Config();
-		$this->$itemNavConfig = new ItemNavConfig();
+		$this->itemNavConfig = new ItemNavConfig();
 		$this->output = "";
 	}
-	
+
 	/**
 	 * Loads and connects to the database
 	 */
@@ -44,11 +44,11 @@ class Core {
 		$this->db = new SQLiteDatabase(['db_path' => 'data/opencircuits.db']);
 		$this->db->connect();
 	}
-	
+
 	public function renderOutput($output) {
 		$this->output .= $output;
 	}
-	
+
 	/**
 	 * Echos the stored output buffer that we've been building
 	 */
@@ -59,21 +59,21 @@ class Core {
 	public function getDB() {
 		return $this->db;
 	}
-	
+
 	public function getUser() {
 		return $this->user;
 	}
-	
+
 	public function getOutput() {
 		return $this->output;
 	}
-	
+
 	public function getConfig() {
 		return $this->config;
 	}
-	
+
 	public function getItemNavConfig() {
-		return $this->$itemNavConfig;
+		return $this->itemNavConfig;
 	}
 
 }

@@ -13,6 +13,8 @@ class CircuitPageView {
         <meta name="description" content="Open Circuits">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js" integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
+
         <link rel="stylesheet" href="css/stylesheet.css">
         <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
@@ -44,8 +46,8 @@ class CircuitPageView {
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
-                    <span id="open-sive-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
-                    <input id="project-name" class="header__left__projectname" type="text" placeholder="Untitled Circuit*" alt="Name of project">
+                    <span id="open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
+                    <input id="project-name" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
 
                 <div class="header__center">
@@ -58,6 +60,12 @@ class CircuitPageView {
                     <input id="file-input" type="file" name="name" style="display: none;" onchange="Importer.openFile();" multiple="false" required="true" accept=".circuit,.xml" />
                     <button type="button" onclick="Exporter.saveFile();">
                         <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                    </button>
+                    <button type="button" onclick="Exporter.savePDF();">
+                        <img src="img/icons/pdf_download.svg" height="100%" alt="Save current scene as PDF" />
+                    </button>
+                    <button type="button" onclick="Exporter.savePNG();">
+                        <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
                     </button>
                 </div>
             </header>
