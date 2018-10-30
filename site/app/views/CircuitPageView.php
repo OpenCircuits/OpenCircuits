@@ -3,7 +3,7 @@
 namespace app\views;
 
 class CircuitPageView {
-    
+
     public function getOutput($user, $config, $itemNavConfig) {
         $return = <<<HTML
 <!DOCTYPE HTML>
@@ -12,6 +12,8 @@ class CircuitPageView {
         <meta charset="utf-8"/>
         <meta name="description" content="Open Circuits">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js" integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
 
         <link rel="stylesheet" href="css/stylesheet.css">
         <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
@@ -44,9 +46,10 @@ class CircuitPageView {
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
-                    <span id="open-sive-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
+                    <span id="open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
                     <input id="project-name" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
+
                 <div class="header__center">
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
                 </div>
@@ -58,6 +61,12 @@ class CircuitPageView {
                     <button type="button" onclick="Exporter.saveFile();">
                         <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                     </button>
+                    <button type="button" onclick="Exporter.savePDF();">
+                        <img src="img/icons/pdf_download.svg" height="100%" alt="Save current scene as PDF" />
+                    </button>
+                    <button type="button" onclick="Exporter.savePNG();">
+                        <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
+                    </button>
                 </div>
             </header>
 
@@ -65,30 +74,30 @@ class CircuitPageView {
                 <nav id="items" class="itemnav">
 HTML;
                     $sections = $itemNavConfig->getSections();
-                    
+
                     // Output all items in the ItemNav menu
                     foreach($sections as $section) {
                         // Get each tab (ex. Inputs, Outputs, Gates, etc.)
                         $name  = $section["name"];
                         $dir   = $section["dir"];
                         $items = $section["items"];
-                        
+
                         $return .= <<<HTML
                     <h4 unselectable>{$name}</h4>
 HTML;
                         foreach ($items as $item) {
-                            // Get  each item in the tab (ex. Button, Switch, etc.)
+                            // Get each item in the tab (ex. Button, Switch, etc.)
                             $displayName = $item["display"];
                             $imageName   = $item["img"];
                             $jsName      = $item["js"];
-                            
+
                             if (isset($item["not"])) {
                                 $not = $item["not"];
                                 $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}(), {$not});\">";
                             } else {
                                 $return .= "<button type=\"button\" onclick=\"PlaceItemController.place(new {$jsName}());\">";
                             }
-                            
+
                             $return .= <<<HTML
                             <img src="img/icons/{$dir}/{$imageName}" ondragend="PlaceItemController.onDragEnd(event);" alt="{$displayName}" />
                             <br/>{$displayName}
@@ -96,7 +105,7 @@ HTML;
 HTML;
                         }
                     }
-                    
+
                     $return .= <<<HTML
                 </nav>
                 <div id="open-items-tab" class="tab" onclick="ItemNavController.toggle();"> &#9776; </div>
@@ -132,9 +141,7 @@ HTML;
                     </label>
                     <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
                     <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
-
                 </div>
-
 
                 <div id="context-menu" class="contextmenu" tabindex="-1" style="visibility: hidden;">
                     <button id="context-menu-cut" alt="Cut">Cut</button>
@@ -149,7 +156,7 @@ HTML;
             </main>
         </div>
 HTML;
-        
+
         foreach ($config->getScripts() as $script) {
             $return .= <<<HTML
             <script src="{$script}"></script>
@@ -162,5 +169,5 @@ HTML;
 HTML;
         return $return;
     }
-    
+
 }
