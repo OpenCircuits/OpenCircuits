@@ -49,8 +49,16 @@ class Component extends IOObject {
 		return this.inputs[i];
 	}
 
+	getInputCount() {
+		return this.inputs.length;
+	}
+
 	getOutput(i) {
 		return this.outputs[i];
+	}
+
+	getOutputCount() {
+		return this.outputs.length;
 	}
 
 	getTransform() {

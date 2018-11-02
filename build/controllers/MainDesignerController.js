@@ -50,7 +50,7 @@ var MainDesignerController = function () {
             console.log("LED active: " + l1.isOn().toString());
         },
         Render: function () {
-            view.render(designer);
+            view.render(designer, []);
         }
     };
 }();

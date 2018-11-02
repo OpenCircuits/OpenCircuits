@@ -6,6 +6,7 @@ var WireRenderer      = require("../utils/rendering/ioobjects/WireRenderer");
 var ComponentRenderer = require("../utils/rendering/ioobjects/ComponentRenderer");
 
 var CircuitDesigner = require("../models/CircuitDesigner");
+var IOObject        = require("../models/ioobjects/IOObject");
 var Wire            = require("../models/ioobjects/Wire");
 var Component       = require("../models/ioobjects/Component");
 
@@ -25,18 +26,22 @@ class MainDesignerView {
         window.addEventListener('resize', e => this.resize(), false);
         this.resize();
     }
-    render(designer: CircuitDesigner) {
+    render(designer: CircuitDesigner, selections: Array<IOObject>) {
         this.renderer.clear();
         
         Grid.render(this.renderer, this.camera);
         
         var wires = designer.getWires();
-        for (var wire: Wire of wires)
-            WireRenderer.render(this.renderer, this.camera, wire);
+        for (var wire: Wire of wires) {
+            var selected = selections.includes(wire);
+            WireRenderer.render(this.renderer, this.camera, wire, selected);
+        }
         
         var objects = designer.getObjects();
-        for (var object: Component of objects)
-            ComponentRenderer.render(this.renderer, this.camera, object);
+        for (var object: Component of objects) {
+            var selected = selections.includes(object);
+            ComponentRenderer.render(this.renderer, this.camera, object, selected);
+        }
     }
     resize(): void {
         this.renderer.resize();

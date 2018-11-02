@@ -6,7 +6,7 @@ var Wire = require("../../../models/ioobjects/Wire");
 
 var WireRenderer = (function() {
     return {
-        render(renderer: Renderer, camera: Camera, wire: Wire) {
+        render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean) {
             
         }
     };

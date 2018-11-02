@@ -1,5 +1,9 @@
 "use strict";
 
+var IO_PORT_LENGTH = require("../../utils/Constants").IO_PORT_LENGTH;
+var Vector = require("../../utils/math/Vector");
+var V = Vector.V;
+
 var Component = require("./Component");
 var Wire = require("./Wire");
 
@@ -7,8 +11,11 @@ class OutputPort {
 
 	constructor(parent) {
 		this.parent = parent;
-		this.isOn = false;
 		this.connections = [];
+		this.isOn = false;
+
+		this.origin = V(0, 0);
+		this.target = V(IO_PORT_LENGTH, 0);
 	}
 
 	activate(signal) {
@@ -21,6 +28,13 @@ class OutputPort {
 
 	connect(w) {
 		this.connections.push(w);
+	}
+
+	getOrigin() {
+		return this.origin;
+	}
+	getTarget() {
+		return this.target;
 	}
 
 }

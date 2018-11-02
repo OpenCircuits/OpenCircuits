@@ -2,31 +2,30 @@
 
 var V = require("../../math/Vector").V;
 var Renderer = require("../Renderer");
+var IOPortRenderer = require("./IOPortRenderer");
 var Camera = require("../../Camera");
 var Component = require("../../../models/ioobjects/Component");
 
 var Images = require("../../Images");
 
-var ANDGate = require("../../../models/ioobjects/gates/ANDGate");
-var Switch = require("../../../models/ioobjects/inputs/Switch");
-var LED = require("../../../models/ioobjects/outputs/LED");
+// var ANDGate = require("../../../models/ioobjects/gates/ANDGate");
+// var Switch = require("../../../models/ioobjects/inputs/Switch");
+// var LED = require("../../../models/ioobjects/outputs/LED");
 
 var ComponentRenderer = function () {
     var images = [];
 
     return {
-        render(renderer, camera, object) {
+        render(renderer, camera, object, selected) {
             renderer.save();
 
             var transform = object.getTransform();
 
             renderer.transform(camera, transform);
 
-            // for (var i = 0; i < this.inputs.length; i++)
-            //     this.inputs[i].draw();
-            // 
-            // for (var i = 0; i < this.outputs.length; i++)
-            //     this.outputs[i].draw(i);
+            for (var i = 0; i < object.getInputCount(); i++) IOPortRenderer.renderIPort(renderer, camera, object.getInput(i), selected);
+
+            for (var i = 0; i < object.getOutputCount(); i++) IOPortRenderer.renderOPort(renderer, camera, object.getOutput(i), selected);
 
             // if (this.isPressable && this.selectionBoxTransform != undefined)
             //     renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());

@@ -24,7 +24,7 @@ function Init() {
 }
 
 Start();
-},{"./controllers/MainDesignerController":2,"./utils/Images":16}],2:[function(require,module,exports){
+},{"./controllers/MainDesignerController":2,"./utils/Images":17}],2:[function(require,module,exports){
 "use strict";
 
 var V = require("../utils/math/Vector").V;
@@ -77,13 +77,13 @@ var MainDesignerController = function () {
             console.log("LED active: " + l1.isOn().toString());
         },
         Render: function () {
-            view.render(designer);
+            view.render(designer, []);
         }
     };
 }();
 
 module.exports = MainDesignerController;
-},{"../models/CircuitDesigner":3,"../models/ioobjects/gates/ANDGate":11,"../models/ioobjects/inputs/Switch":12,"../models/ioobjects/outputs/LED":13,"../utils/math/Vector":20,"../views/MainDesignerView":25}],3:[function(require,module,exports){
+},{"../models/CircuitDesigner":3,"../models/ioobjects/gates/ANDGate":11,"../models/ioobjects/inputs/Switch":12,"../models/ioobjects/outputs/LED":13,"../utils/math/Vector":21,"../views/MainDesignerView":27}],3:[function(require,module,exports){
 "use strict";
 
 var Propagation = require("./Propagation");
@@ -259,8 +259,16 @@ class Component extends IOObject {
 		return this.inputs[i];
 	}
 
+	getInputCount() {
+		return this.inputs.length;
+	}
+
 	getOutput(i) {
 		return this.outputs[i];
+	}
+
+	getOutputCount() {
+		return this.outputs.length;
 	}
 
 	getTransform() {
@@ -273,7 +281,7 @@ class Component extends IOObject {
 }
 
 module.exports = Component;
-},{"../../utils/math/Transform":19,"../../utils/math/Vector":20,"./IOObject":7,"./InputPort":8,"./OutputPort":9,"./Wire":10}],6:[function(require,module,exports){
+},{"../../utils/math/Transform":20,"../../utils/math/Vector":21,"./IOObject":7,"./InputPort":8,"./OutputPort":9,"./Wire":10}],6:[function(require,module,exports){
 "use strict";
 
 var Vector = require("../../utils/math/Vector");
@@ -289,7 +297,7 @@ class Gate extends Component {
 }
 
 module.exports = Gate;
-},{"../../utils/math/Vector":20,"./Component":5}],7:[function(require,module,exports){
+},{"../../utils/math/Vector":21,"./Component":5}],7:[function(require,module,exports){
 "use strict";
 
 var CircuitDesigner = require("../CircuitDesigner");
@@ -314,6 +322,10 @@ module.exports = IOObject;
 },{"../CircuitDesigner":3}],8:[function(require,module,exports){
 "use strict";
 
+var IO_PORT_LENGTH = require("../../utils/Constants").IO_PORT_LENGTH;
+var Vector = require("../../utils/math/Vector");
+var V = Vector.V;
+
 var Component = require("./Component");
 var Wire = require("./Wire");
 
@@ -323,6 +335,9 @@ class InputPort {
 		this.parent = parent;
 		this.input = undefined;
 		this.isOn = false;
+
+		this.origin = V(0, 0);
+		this.target = V(-IO_PORT_LENGTH, 0);
 	}
 
 	activate(signal) {
@@ -337,11 +352,22 @@ class InputPort {
 		this.input = input;
 	}
 
+	getOrigin() {
+		return this.origin;
+	}
+	getTarget() {
+		return this.target;
+	}
+
 }
 
 module.exports = InputPort;
-},{"./Component":5,"./Wire":10}],9:[function(require,module,exports){
+},{"../../utils/Constants":16,"../../utils/math/Vector":21,"./Component":5,"./Wire":10}],9:[function(require,module,exports){
 "use strict";
+
+var IO_PORT_LENGTH = require("../../utils/Constants").IO_PORT_LENGTH;
+var Vector = require("../../utils/math/Vector");
+var V = Vector.V;
 
 var Component = require("./Component");
 var Wire = require("./Wire");
@@ -350,8 +376,11 @@ class OutputPort {
 
 	constructor(parent) {
 		this.parent = parent;
-		this.isOn = false;
 		this.connections = [];
+		this.isOn = false;
+
+		this.origin = V(0, 0);
+		this.target = V(IO_PORT_LENGTH, 0);
 	}
 
 	activate(signal) {
@@ -366,10 +395,17 @@ class OutputPort {
 		this.connections.push(w);
 	}
 
+	getOrigin() {
+		return this.origin;
+	}
+	getTarget() {
+		return this.target;
+	}
+
 }
 
 module.exports = OutputPort;
-},{"./Component":5,"./Wire":10}],10:[function(require,module,exports){
+},{"../../utils/Constants":16,"../../utils/math/Vector":21,"./Component":5,"./Wire":10}],10:[function(require,module,exports){
 "use strict";
 
 var IOObject = require("./IOObject");
@@ -437,7 +473,7 @@ class ANDGate extends Gate {
 }
 
 module.exports = ANDGate;
-},{"../../../utils/math/Vector":20,"../Gate":6}],12:[function(require,module,exports){
+},{"../../../utils/math/Vector":21,"../Gate":6}],12:[function(require,module,exports){
 "use strict";
 
 var V = require("../../../utils/math/Vector").V;
@@ -460,7 +496,7 @@ class Switch extends Component {
 }
 
 module.exports = Switch;
-},{"../../../utils/math/Vector":20,"../Component":5}],13:[function(require,module,exports){
+},{"../../../utils/math/Vector":21,"../Component":5}],13:[function(require,module,exports){
 "use strict";
 
 var V = require("../../../utils/math/Vector").V;
@@ -482,7 +518,7 @@ class LED extends Component {
 }
 
 module.exports = LED;
-},{"../../../utils/math/Vector":20,"../Component":5}],14:[function(require,module,exports){
+},{"../../../utils/math/Vector":21,"../Component":5}],14:[function(require,module,exports){
 "use strict";
 
 // Code from https://stackoverflow.com/questions/5916900/how-can-you-detect-the-version-of-a-browser
@@ -590,7 +626,59 @@ class Camera {
 }
 
 module.exports = Camera;
-},{"./math/MathUtils":17,"./math/Matrix":18,"./math/Transform":19,"./math/Vector":20}],16:[function(require,module,exports){
+},{"./math/MathUtils":18,"./math/Matrix":19,"./math/Transform":20,"./math/Vector":21}],16:[function(require,module,exports){
+"use strict";
+
+var Constants = {};
+
+Constants.DEFAULT_SIZE = 50;
+Constants.GRID_SIZE = 50;
+Constants.DEFAULT_FILL_COLOR = "#ffffff";
+Constants.DEFAULT_BORDER_COLOR = "#000000";
+Constants.DEFAULT_ON_COLOR = "#3cacf2";
+Constants.SELECTED_FILL_COLOR = "#1cff3e";
+Constants.SELECTED_BORDER_COLOR = "#0d7f1f";
+
+Constants.IO_PORT_LENGTH = 60;
+Constants.IO_PORT_RADIUS = 7;
+Constants.IO_PORT_BORDER_WIDTH = 1;
+Constants.IO_PORT_LINE_WIDTH = 2;
+
+Constants.WIRE_DIST_THRESHOLD = 5;
+Constants.WIRE_DIST_THRESHOLD2 = Math.pow(Constants.WIRE_DIST_THRESHOLD, 2);
+Constants.WIRE_DIST_ITERATIONS = 10;
+Constants.WIRE_NEWTON_ITERATIONS = 5;
+Constants.WIRE_SNAP_THRESHOLD = 10;
+
+Constants.ROTATION_CIRCLE_RADIUS = 75;
+Constants.ROTATION_CIRCLE_THICKNESS = 5;
+Constants.ROTATION_CIRCLE_THRESHOLD = 5;
+Constants.ROTATION_CIRCLE_R1 = Math.pow(Constants.ROTATION_CIRCLE_RADIUS - Constants.ROTATION_CIRCLE_THRESHOLD, 2);
+Constants.ROTATION_CIRCLE_R2 = Math.pow(Constants.ROTATION_CIRCLE_RADIUS + Constants.ROTATION_CIRCLE_THRESHOLD, 2);
+
+Constants.SIDENAV_WIDTH = 200;
+Constants.ITEMNAV_WIDTH = 200;
+
+Constants.LEFT_MOUSE_BUTTON = 0;
+Constants.RIGHT_MOUSE_BUTTON = 1;
+
+Constants.OPTION_KEY = 18;
+Constants.SHIFT_KEY = 16;
+Constants.BACKSPACE_KEY = 8;
+Constants.DELETE_KEY = 46;
+Constants.ENTER_KEY = 13;
+Constants.ESC_KEY = 27;
+Constants.A_KEY = 65;
+Constants.C_KEY = 67;
+Constants.V_KEY = 86;
+Constants.X_KEY = 88;
+Constants.Y_KEY = 89;
+Constants.Z_KEY = 90;
+Constants.CONTROL_KEY = 17;
+Constants.COMMAND_KEY = 91;
+
+module.exports = Constants;
+},{}],17:[function(require,module,exports){
 "use strict";
 
 // 
@@ -622,7 +710,7 @@ var Images = function () {
 }();
 
 module.exports = Images;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 var Transform = require("./Transform");
@@ -737,7 +825,7 @@ var MathUtils = function () {
 }();
 
 module.exports = MathUtils;
-},{"./Transform":19}],18:[function(require,module,exports){
+},{"./Transform":20}],19:[function(require,module,exports){
 "use strict";
 
 var Vector = require("./Vector");
@@ -833,7 +921,7 @@ class Matrix2x3 {
 }
 
 module.exports = Matrix2x3;
-},{"./Vector":20}],19:[function(require,module,exports){
+},{"./Vector":21}],20:[function(require,module,exports){
 "use strict";
 
 var Vector = require("./Vector");
@@ -1011,7 +1099,7 @@ class Transform {
 }
 
 module.exports = Transform;
-},{"./Matrix":18,"./Vector":20}],20:[function(require,module,exports){
+},{"./Matrix":19,"./Vector":21}],21:[function(require,module,exports){
 "use strict";
 
 class Vector {
@@ -1081,7 +1169,7 @@ class Vector {
 }
 
 module.exports = Vector;
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 var V = require("../math/Vector").V;
@@ -1121,7 +1209,7 @@ var Grid = function () {
 }();
 
 module.exports = Grid;
-},{"../Camera":15,"../math/Vector":20,"./Renderer":22}],22:[function(require,module,exports){
+},{"../Camera":15,"../math/Vector":21,"./Renderer":23}],23:[function(require,module,exports){
 "use strict";
 
 var Vector = require("../math/Vector");
@@ -1287,36 +1375,35 @@ class Renderer {
 }
 
 module.exports = Renderer;
-},{"../Browser":14,"../Camera":15,"../math/Transform":19,"../math/Vector":20}],23:[function(require,module,exports){
+},{"../Browser":14,"../Camera":15,"../math/Transform":20,"../math/Vector":21}],24:[function(require,module,exports){
 "use strict";
 
 var V = require("../../math/Vector").V;
 var Renderer = require("../Renderer");
+var IOPortRenderer = require("./IOPortRenderer");
 var Camera = require("../../Camera");
 var Component = require("../../../models/ioobjects/Component");
 
 var Images = require("../../Images");
 
-var ANDGate = require("../../../models/ioobjects/gates/ANDGate");
-var Switch = require("../../../models/ioobjects/inputs/Switch");
-var LED = require("../../../models/ioobjects/outputs/LED");
+// var ANDGate = require("../../../models/ioobjects/gates/ANDGate");
+// var Switch = require("../../../models/ioobjects/inputs/Switch");
+// var LED = require("../../../models/ioobjects/outputs/LED");
 
 var ComponentRenderer = function () {
     var images = [];
 
     return {
-        render(renderer, camera, object) {
+        render(renderer, camera, object, selected) {
             renderer.save();
 
             var transform = object.getTransform();
 
             renderer.transform(camera, transform);
 
-            // for (var i = 0; i < this.inputs.length; i++)
-            //     this.inputs[i].draw();
-            // 
-            // for (var i = 0; i < this.outputs.length; i++)
-            //     this.outputs[i].draw(i);
+            for (var i = 0; i < object.getInputCount(); i++) IOPortRenderer.renderIPort(renderer, camera, object.getInput(i), selected);
+
+            for (var i = 0; i < object.getOutputCount(); i++) IOPortRenderer.renderOPort(renderer, camera, object.getOutput(i), selected);
 
             // if (this.isPressable && this.selectionBoxTransform != undefined)
             //     renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
@@ -1329,7 +1416,51 @@ var ComponentRenderer = function () {
 }();
 
 module.exports = ComponentRenderer;
-},{"../../../models/ioobjects/Component":5,"../../../models/ioobjects/gates/ANDGate":11,"../../../models/ioobjects/inputs/Switch":12,"../../../models/ioobjects/outputs/LED":13,"../../Camera":15,"../../Images":16,"../../math/Vector":20,"../Renderer":22}],24:[function(require,module,exports){
+},{"../../../models/ioobjects/Component":5,"../../Camera":15,"../../Images":17,"../../math/Vector":21,"../Renderer":23,"./IOPortRenderer":25}],25:[function(require,module,exports){
+"use strict";
+
+var DEFAULT_FILL_COLOR = require("../../Constants").DEFAULT_FILL_COLOR;
+var DEFAULT_BORDER_COLOR = require("../../Constants").DEFAULT_BORDER_COLOR;
+var DEFAULT_ON_COLOR = require("../../Constants").DEFAULT_ON_COLOR;
+var SELECTED_FILL_COLOR = require("../../Constants").SELECTED_FILL_COLOR;
+var SELECTED_BORDER_COLOR = require("../../Constants").SELECTED_BORDER_COLOR;
+var IO_PORT_LINE_WIDTH = require("../../Constants").IO_PORT_LINE_WIDTH;
+var IO_PORT_RADIUS = require("../../Constants").IO_PORT_RADIUS;
+var IO_PORT_BORDER_WIDTH = require("../../Constants").IO_PORT_BORDER_WIDTH;
+
+var V = require("../../math/Vector").V;
+var Renderer = require("../Renderer");
+var Camera = require("../../Camera");
+var InputPort = require("../../../models/ioobjects/InputPort");
+var OutputPort = require("../../../models/ioobjects/OutputPort");
+
+var IOPortRenderer = function () {
+    return {
+        renderIPort(renderer, camera, iport, selected) {
+            var o = iport.getOrigin();
+            var v = iport.getTarget();
+
+            var borderCol = selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR;
+            renderer.line(o.x, o.y, v.x, v.y, borderCol, IO_PORT_LINE_WIDTH);
+
+            var circleFillCol = selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR;
+            renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
+        },
+        renderOPort(renderer, camera, oport, selected) {
+            var o = oport.getOrigin();
+            var v = oport.getTarget();
+
+            var borderCol = selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR;
+            renderer.line(o.x, o.y, v.x, v.y, borderCol, IO_PORT_LINE_WIDTH);
+
+            var circleFillCol = selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR;
+            renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
+        }
+    };
+}();
+
+module.exports = IOPortRenderer;
+},{"../../../models/ioobjects/InputPort":8,"../../../models/ioobjects/OutputPort":9,"../../Camera":15,"../../Constants":16,"../../math/Vector":21,"../Renderer":23}],26:[function(require,module,exports){
 "use strict";
 
 var V = require("../../math/Vector").V;
@@ -1339,12 +1470,12 @@ var Wire = require("../../../models/ioobjects/Wire");
 
 var WireRenderer = function () {
     return {
-        render(renderer, camera, wire) {}
+        render(renderer, camera, wire, selected) {}
     };
 }();
 
 module.exports = WireRenderer;
-},{"../../../models/ioobjects/Wire":10,"../../Camera":15,"../../math/Vector":20,"../Renderer":22}],25:[function(require,module,exports){
+},{"../../../models/ioobjects/Wire":10,"../../Camera":15,"../../math/Vector":21,"../Renderer":23}],27:[function(require,module,exports){
 "use strict";
 
 var Camera = require("../utils/Camera");
@@ -1354,6 +1485,7 @@ var WireRenderer = require("../utils/rendering/ioobjects/WireRenderer");
 var ComponentRenderer = require("../utils/rendering/ioobjects/ComponentRenderer");
 
 var CircuitDesigner = require("../models/CircuitDesigner");
+var IOObject = require("../models/ioobjects/IOObject");
 var Wire = require("../models/ioobjects/Wire");
 var Component = require("../models/ioobjects/Component");
 
@@ -1369,16 +1501,22 @@ class MainDesignerView {
         window.addEventListener('resize', e => this.resize(), false);
         this.resize();
     }
-    render(designer) {
+    render(designer, selections) {
         this.renderer.clear();
 
         Grid.render(this.renderer, this.camera);
 
         var wires = designer.getWires();
-        for (var wire of wires) WireRenderer.render(this.renderer, this.camera, wire);
+        for (var wire of wires) {
+            var selected = selections.includes(wire);
+            WireRenderer.render(this.renderer, this.camera, wire, selected);
+        }
 
         var objects = designer.getObjects();
-        for (var object of objects) ComponentRenderer.render(this.renderer, this.camera, object);
+        for (var object of objects) {
+            var selected = selections.includes(object);
+            ComponentRenderer.render(this.renderer, this.camera, object, selected);
+        }
     }
     resize() {
         this.renderer.resize();
@@ -1387,4 +1525,4 @@ class MainDesignerView {
 }
 
 module.exports = MainDesignerView;
-},{"../models/CircuitDesigner":3,"../models/ioobjects/Component":5,"../models/ioobjects/Wire":10,"../utils/Camera":15,"../utils/rendering/Grid":21,"../utils/rendering/Renderer":22,"../utils/rendering/ioobjects/ComponentRenderer":23,"../utils/rendering/ioobjects/WireRenderer":24}]},{},[1]);
+},{"../models/CircuitDesigner":3,"../models/ioobjects/Component":5,"../models/ioobjects/IOObject":7,"../models/ioobjects/Wire":10,"../utils/Camera":15,"../utils/rendering/Grid":22,"../utils/rendering/Renderer":23,"../utils/rendering/ioobjects/ComponentRenderer":24,"../utils/rendering/ioobjects/WireRenderer":26}]},{},[1]);

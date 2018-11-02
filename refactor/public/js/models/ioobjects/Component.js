@@ -54,10 +54,18 @@ class Component extends IOObject {
 	getInput(i: number): InputPort {
 		return this.inputs[i];
 	}
+    
+    getInputCount(): number {
+        return this.inputs.length;
+    }
 	
 	getOutput(i: number): OutputPort {
 		return this.outputs[i];
 	}
+    
+    getOutputCount(): number {
+        return this.outputs.length;
+    }
     
     getTransform(): Transform {
         return this.transform;
