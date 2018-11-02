@@ -135,6 +135,10 @@ HTML;
                     <label id="popup-color-label" class="popup__label" unselectable disabled>
                         <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
                     </label>
+                    <div id="popup-clock-delay-text">Clock Delay</div>
+                    <label id="popup-clock-delay-label" class="popup__label" unselectable disabled>
+                        <input id="popup-clock-delay" type="number" value="1000" min="200" max="10000" step="100" alt="Clock delay in milliseconds" />
+                    </label>
                     <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
                     <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
                 </div>
