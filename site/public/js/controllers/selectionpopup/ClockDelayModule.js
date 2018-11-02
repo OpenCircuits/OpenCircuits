@@ -3,7 +3,15 @@ class ClockDelayModule extends Module {
         super(parent, divName, divTextName);
     }
     onShow() {
-        
+        var allClocks = true, allSame = true;
+        var selections = selectionTool.selections;
+        for (var i = 0; i < selections.length; i++) {
+            allClocks = allClocks && selections[i] instanceof Clock;
+            if (allClocks)
+                allSame = allSame && selections[i].frequency === selections[0].frequency;
+        }
+        this.setVisibility(allClocks ? "inherit" : "none");
+        this.setValue(allClocks && allSame ? selections[0].frequency : 1000);
     }
     onClick() {
     }
