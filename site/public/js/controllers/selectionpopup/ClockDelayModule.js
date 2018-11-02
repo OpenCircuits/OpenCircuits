@@ -3,6 +3,7 @@ class ClockDelayModule extends Module {
         super(parent, divName, divTextName);
     }
     onShow() {
+        console.log("Aaaaaaa");
         var allClocks = true, allSame = true;
         var selections = selectionTool.selections;
         for (var i = 0; i < selections.length; i++) {
@@ -10,6 +11,7 @@ class ClockDelayModule extends Module {
             if (allClocks)
                 allSame = allSame && selections[i].frequency === selections[0].frequency;
         }
+        console.log("clcoks: " + allClocks + " : " + allSame);
         this.setVisibility(allClocks ? "inherit" : "none");
         this.setValue(allClocks && allSame ? selections[0].frequency : 1000);
     }

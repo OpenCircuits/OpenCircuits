@@ -22,8 +22,10 @@ class Popup {
         this.onShow();
     }
     onShow() {
-        for (var i = 0; i < this.modules.length; i++)
+        for (var i = 0; i < this.modules.length; i++) {
+            console.log(this.modules[i])
             this.modules[i].onShow();
+        }
     }
     blur() {
         for (var i = 0; i < this.modules.length; i++)
