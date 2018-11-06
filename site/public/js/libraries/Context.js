@@ -2,7 +2,7 @@ class Context {
     constructor(designer) {
         this.uidmanager = new UIDManager(this);
         this.designer = designer;
-        this.mode = 1;
+        this.mode = 0;
     }
     reset() {
         this.designer.reset();
@@ -87,7 +87,7 @@ class Context {
         return this.mode;
     }
     setMode(m){
-        Console.log(m);
+        console.log(m);
         this.mode = m;
     }
     getIndexOf(o) {

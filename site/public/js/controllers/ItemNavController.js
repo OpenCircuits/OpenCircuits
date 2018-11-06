@@ -3,6 +3,9 @@ var ItemNavController = (function() {
     var container = document.getElementById("items");
 
     var open = function() {
+        if(getCurrentContext().getMode() == 1){
+            return;
+        }
         container.style.width       = ITEMNAV_WIDTH + "px";
         tab.style.marginLeft        = (ItemNavController.getTabOffset()) + "px";
         tab.style.borderColor       = "rgba(153, 153, 153, 0.0)";
