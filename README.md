@@ -3,7 +3,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/blob/master/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/graphs/contributors)
-![GitHub top language](https://img.shields.io/github/languages/top/OpenCircuits/OpenCircuits.svg)
+[![GitHub top language](https://img.shields.io/github/languages/top/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/search?l=javascript)
 [![GitHub issues](https://img.shields.io/github/issues/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
 
