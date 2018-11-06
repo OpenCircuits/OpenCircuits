@@ -34,6 +34,7 @@ class CircuitPageView {
                     User
                 </div>
                 <div class="sidenav__content">
+                    <h4 id="debugToggle" onclick="SideNavController.toggleDebugMode();">Debug Mode</h4>
                     <h4 unselectable>My Graphs</h4>
                     <h4 unselectable>Examples</h4>
                     <ul id="sidenav-content-example-list">

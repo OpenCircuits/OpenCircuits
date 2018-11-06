@@ -24,16 +24,26 @@ var SideNavController = (function() {
         overlay.style.opacity           = "0"; 
         overlay.onclick = function() {  }
     }
-
-    if (getCurrentContext().getMode() == 0) {
-        getCurrentContext().setMode(1);
-    } else {
-        getCurrentContext().setMode(0);
+    var activateDebugMode = function() {
+        console.log("activate");
+        getCurrentContext().setDisabled(true);
+        getElementById("debugToggle").class = "adaasda";
+        getElementById("debugToggle").style.color = "#222";
+        getElementById("debugToggle").style.background = "#888";
+        overlay.onclick = function() { SideNavController.toggleDebugMode(); }
+    }
+    var deactivateDebugMode = function() {
+        console.log("activate");
+        getCurrentContext().setDisabled(false);
+        getElementById("debugToggle").style.color = "#888";
+        getElementById("debugToggle").style.background = "#222";
+        overlay.onclick = function() { SideNavController.toggleDebugMode(); }
     }
 
     return {
         disabled: false,
         isOpen: false,
+        debugModeOn: false,
         toggle: function() {
             if (this.isOpen) {
                 this.isOpen = false;
@@ -41,6 +51,15 @@ var SideNavController = (function() {
             } else {
                 this.isOpen = true;
                 open();
+            }
+        },
+        toggleDebugMode: function() {
+            if (this.debugModeOn) {
+                this.debugModeOn = false;
+                activateDebugMode();
+            } else {
+                this.debugModeOn = true;
+                deactivateDebugMode();
             }
         },
         getWidth: function() {
