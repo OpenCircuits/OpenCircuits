@@ -9,3 +9,4 @@ node_modules
 site/data/config.txt
 site/public/js/combined-min.js
 tests/index.js
+package-lock.json
