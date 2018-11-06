@@ -1,14 +1,22 @@
 <img src="https://github.com/OpenCircuits/OpenCircuits/blob/master/site/public/img/icons/logo.svg" alt="OpenCircuits Logo" style="width: 500px;"/>
 
-[![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits) [![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=opencircuits&repository=opencircuits)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
+
+[![GitHub license](https://img.shields.io/github/license/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/blob/master/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/graphs/contributors)
+![GitHub top language](https://img.shields.io/github/languages/top/OpenCircuits/OpenCircuits.svg)
+[![GitHub issues](https://img.shields.io/github/issues/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
+
+[![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits)
+[![Docker Build Status](https://img.shields.io/docker/build/opencircuits/opencircuits.svg)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
 
 # Website
 
-Found at [OpenCircuits.io](http://www.opencircuits.io/)
+Found at [OpenCircuits.io](http://www.opencircuits.io/).
 
 # Usage
 
-Instructions and tutorials located in the [wiki](https://github.com/OpenCircuits/OpenCircuits/wiki)
+Instructions and tutorials located in the [wiki](https://github.com/OpenCircuits/OpenCircuits/wiki).
 
 # Background
 
@@ -29,8 +37,8 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 
 # Contact Us
 
-If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io
+If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io.
 
 
 ### LICENSING
-OpenCircuits is under the BSD-3 clause license
+OpenCircuits is under the BSD-3 clause license.
