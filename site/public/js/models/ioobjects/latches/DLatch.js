@@ -1,13 +1,10 @@
-class SRFlipFlop extends Gate {
+class DLatch extends Gate {
     constructor(context, x, y) {
         super(context, false, x, y, undefined);
         this.noChange = true;
-        this.setInputAmount(3);
+        this.setInputAmount(2);
         this.setOutputAmount(2);
         this.transform.setSize(this.transform.size.scale(1.5));
-		this.clock = false;
-		this.last_clock = false;
-		this.state = false;
     }
     onTransformChange() {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE));
@@ -15,22 +12,21 @@ class SRFlipFlop extends Gate {
         this.transform.setSize(V(DEFAULT_SIZE*1.5, DEFAULT_SIZE*1.5));
     }
     activate(x) {
-		this.last_clock = this.clock;
-        this.clock = this.inputs[1].isOn;
-        var set = this.inputs[0].isOn;
-        var reset = this.inputs[2].isOn;
-        if (this.clock && !this.last_clock) {
-            if (set && reset) {
-                // undefined behavior
-            } else if (set) {
-                this.state = true;
-            } else if (reset) {
-                this.state = false;
+        var on = this.outputs[1].isOn;
+
+        var set = this.inputs[1].isOn;
+        var clock = this.inputs[0].isOn;
+
+        if (clock) {
+            if (set) {
+                on = true;
+            } else {
+            	on = false;
             }
         }
 
-        super.activate(this.state, 0);
-        super.activate(!this.state, 1);
+        super.activate(on, 1);
+        super.activate(!on, 0);
     }
     draw() {
         super.draw();
@@ -41,8 +37,8 @@ class SRFlipFlop extends Gate {
         renderer.restore();
     }
     getDisplayName() {
-        return "SR Flip Flop";
+        return "D Latch";
     }
 }
-SRFlipFlop.getXMLName = function() { return "srff"; }
-Importer.types.push(SRFlipFlop);
+DLatch.getXMLName = function() { return "dl"; }
+Importer.types.push(DLatch);

@@ -1,4 +1,4 @@
-var Exporter = (function() {    
+var Exporter = (function() {
     var projectNameInput = document.getElementById("project-name");
 
     return {
@@ -6,7 +6,7 @@ var Exporter = (function() {
         saveFile: function() {
             var data = this.write(getCurrentContext());
             var projectName = projectNameInput.value;
-            if (projectName === "Untitled Circuit*")
+            if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".circuit";
 
@@ -27,6 +27,45 @@ var Exporter = (function() {
                     saved = true;
                 }, 0);
             }
+        },
+        savePNG: function() {
+            var data = canvas.toDataURL("image/png");               //turn canvas into data
+
+            var projectName = projectNameInput.value;               //get name for file
+            if (projectName === "Untitled Circuit*")
+                projectName = "Untitled Circuit";
+            var filename = projectName + ".png";
+
+            var file = new Blob([data], {type: "image/png"});               //save file
+            if (window.navigator.msSaveOrOpenBlob) { // IE10+
+                window.navigator.msSaveOrOpenBlob(file, filename);
+                saved = true;
+            } else { // Others
+                var a = document.createElement("a");
+                var url = data;
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    saved = true;
+                }, 0);
+            }
+        },
+        savePDF: function() {
+            var data = canvas.toDataURL("image/png");               //turn canvas to file
+            var pdf = new jsPDF();                                  //make pdf via jsPDF
+
+            pdf.addImage(data, 'PNG', 0, 0);                        //add image
+
+            var projectName = projectNameInput.value;               //get name
+            if (projectName === "Untitled Circuit*")
+                projectName = "Untitled Circuit";
+            var filename = projectName + ".pdf";
+
+            pdf.save(filename);                                     //save
         },
         write: function(context) {
             var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");

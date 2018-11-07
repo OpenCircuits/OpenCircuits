@@ -9,18 +9,18 @@ class IOObject {
         this.cullTransform = new Transform(this.transform.getPos(), V(0,0), 0, this.context.getCamera());
 
         this.name = this.getDisplayName();
-        this.img = img;
+        this.img  = img;
         this.isOn = false;
         this.isPressable = isPressable;
-        this.maxInputs = maxInputs;
-        this.maxOutputs = maxOutputs;
+        this.maxInputs   = maxInputs;
+        this.maxOutputs  = maxOutputs;
         this.selected = false;
 
         if (this.isPressable)
             this.selectionBoxTransform = new Transform(V(x, y), V(selectionBoxWidth, selectionBoxHeight), 0, context.getCamera());
 
         this.outputs = [];
-        this.inputs = [];
+        this.inputs  = [];
 
         if (maxOutputs > 0)
             this.setOutputAmount(1);
@@ -100,7 +100,7 @@ class IOObject {
     }
     release() {
     }
-    activate(on, i) {                       //i is index of coresponding output port
+    activate(on, i) {                       //i is index of corresponding output port
         if (i == undefined)
             i = 0;
 
