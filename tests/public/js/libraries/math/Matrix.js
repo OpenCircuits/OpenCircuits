@@ -1,3 +1,6 @@
+var Vector = require("../../../../../refactor/public/js/utils/math/Vector");
+var Matrix2x3 = require("../../../../../refactor/public/js/utils/math/Matrix");
+
 describe("Matrix2x3", () => {
     describe("Constructor", () => {
         it("No parameters", () => {

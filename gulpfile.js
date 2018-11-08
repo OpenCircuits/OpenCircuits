@@ -4,8 +4,13 @@ var concat = require('gulp-concat');
 var gap    = require('gulp-append-prepend');
 var mocha  = require('gulp-mocha');
 var babel  = require('gulp-babel');
+var babelify = require('babelify');
 var addsrc = require('gulp-add-src');
 var fs     = require('fs');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var sourcemaps = require('gulp-sourcemaps');
 
 var argv = require('yargs').argv;
 
@@ -58,8 +63,9 @@ function getItems() {
 
 
 
-var isReleaseBuild = (argv.release === undefined ? false : true);
-var buildTests     = (argv.tests === undefined ? false : true);
+var isReleaseBuild = (argv.release  === undefined ? false : true);
+var buildTests     = (argv.tests    === undefined ? false : true);
+var buildRefactor  = (argv.refactor === undefined ? false : true);
 
 function buildConfig(debugMode, scripts, items, cb) {
     var config = 'site/data/config.txt';
@@ -97,13 +103,35 @@ function testsBuild() {
       .pipe(gulp.dest('.'));
 }
 
-function test() {
-    return gulp.src('tests/index.js')
-      .pipe(mocha());
+function refactorBuild() {
+    var b = browserify({
+            entries: './refactor/public/js/Main.js',
+            debug: true
+        })
+        .transform(babelify.configure({ presets: ['@babel/flow'] }))
+        .transform(babelify.configure({ presets: ['@babel/env'] }))
+        .bundle()
+        .pipe(source('./build/Bundle.js'))
+        .pipe(buffer());
+        
+    if (isReleaseBuild)
+        b.pipe(uglify())
+        
+    return b
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('.'));
 }
 
-if (buildTests)
-  gulp.task('build', testsBuild);
+function test() {
+    return gulp.src(getTestPaths().map(function(f) { return 'tests/public/' + f; }))
+        .pipe(mocha());
+}
+
+if (buildRefactor)
+    gulp.task('build', refactorBuild);
+else if (buildTests)
+    gulp.task('build', testsBuild);
 else
-  gulp.task('build', (isReleaseBuild ? releaseBuild : devBuild));
+    gulp.task('build', (isReleaseBuild ? releaseBuild : devBuild));
 gulp.task('test', test);

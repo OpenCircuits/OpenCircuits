@@ -1,9 +1,5 @@
 {
-  "plugins": [
-      "transform-es2015-modules-commonjs"
-  ],
   "presets": [
-      
-      "flow"
+      "@babel/env", "@babel/preset-flow"
   ]
 }

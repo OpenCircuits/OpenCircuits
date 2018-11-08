@@ -1,3 +1,5 @@
+var Vector = require("../../../../../refactor/public/js/utils/math/Vector");
+
 describe("Vector", () => {
     describe("Constructor", () => {
         it("No parameters", () => {
