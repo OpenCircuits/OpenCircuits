@@ -3,7 +3,7 @@ var uglify = require('gulp-uglify-es').default;
 var concat = require('gulp-concat');
 var gap    = require('gulp-append-prepend');
 var mocha  = require('gulp-mocha');
-var babel  = require('gulp-babel');
+// var babel  = require('gulp-babel');
 var babelify = require('babelify');
 var addsrc = require('gulp-add-src');
 var fs     = require('fs');
@@ -11,6 +11,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var sourcemaps = require('gulp-sourcemaps');
+// var jest = require('gulp-jest');
 
 var argv = require('yargs').argv;
 
