@@ -10,6 +10,8 @@ class SelectionPopup extends Popup {
         this.add(new InputCountModule(this, "popup-input-count", "popup-input-count-text"));
 
         this.add(new ColorPickerModule(this, "popup-color-picker", "popup-color-text"));
+        
+        this.add(new ClockDelayModule(this, "popup-clock-delay", "popup-clock-delay-text"));
 
         this.add(new ICButtonModule(this, "popup-ic-button"));
         this.add(new BusButtonModule(this, "popup-bus-button"));
