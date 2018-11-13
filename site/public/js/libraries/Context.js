@@ -87,7 +87,6 @@ class Context {
         return this.mode;
     }
     setMode(m){
-        console.log(m);
         this.mode = m;
     }
     getIndexOf(o) {

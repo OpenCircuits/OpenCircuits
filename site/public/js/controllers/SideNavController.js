@@ -26,7 +26,6 @@ var SideNavController = (function() {
         overlay.onclick = function() {  }
     }
     var activateDebugMode = function() {
-        console.log("activate debug");
         getCurrentContext().setMode(1);
         debugToggle.style.color = "#222";
         debugToggle.style.background = "#888";
@@ -38,7 +37,6 @@ var SideNavController = (function() {
         debugToggle.onclick = function() { SideNavController.toggleDebugMode(); }
     }
     var deactivateDebugMode = function() {
-        console.log("deactivate debug");
         getCurrentContext().setMode(0);
         debugToggle.style.color = "#888";
         debugToggle.style.background = "#222";
