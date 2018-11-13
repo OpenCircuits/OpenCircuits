@@ -1,0 +1,40 @@
+// @flow
+var V = require("../../../utils/math/Vector").V;
+var Gate = require("../Gate");
+
+class DFlipFlop extends Gate {
+
+    constructor() {
+        super(2, 2, V(60,60))
+        this.clock = false;
+        this.last_clock = false;
+        this.state = false;
+    }
+
+    // @Override
+    activate(x) {
+		    this.last_clock = this.clock;
+        this.clock = this.inputs[0].isOn;
+        var data = this.inputs[1].isOn;
+        if (this.clock && !this.last_clock) {
+            this.state = data;
+        }
+
+        super.activate(this.state, 1);
+        super.activate(!this.state, 0);
+    }
+
+    getDisplayName() {
+        return "D Flip Flop";
+    }
+
+  	getImageName() {
+  		return "flipflop.svg";
+  	}
+
+  	static getXMLName() {
+  		return "dflipflop";
+  	}
+}
+
+modules.exports = DFlipFlop;
