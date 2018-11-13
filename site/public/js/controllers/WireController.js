@@ -6,7 +6,10 @@ var WireController = (function() {
 
     return {
         disabled: false,
-        onMouseDown: function(somethingHappened) {
+        onMouseDown: function(somethingHappened) {    
+            if(getCurrentContext().getMode() == 1){
+                return;
+            }
             var objects = getCurrentContext().getObjects();
             var wires = getCurrentContext().getWires();
             var worldMousePos = Input.getWorldMousePos();
