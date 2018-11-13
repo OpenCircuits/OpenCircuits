@@ -1,11 +1,9 @@
 // @flow
-
-
 class Vector {
     x: number;
     y: number;
-    
-    constructor(x: Vector | number, y: ?number) {
+
+    constructor(x: Vector | number = 0, y: number = 0) {
         this.set(x, y);
     }
     set(x: Vector | number, y: ?number): void {
@@ -16,7 +14,7 @@ class Vector {
             this.x = (x ? x : 0);
             this.y = (y ? y : 0);
         } else {
-            throw new Error("Undefined parameters passed to Vector.set! ${x}, ${y}");
+            throw new Error("Undefined parameters passed to Vector.set! "+x+", "+y);
         }
     }
     translate(dx: Vector | number, dy: ?number): void {
@@ -25,21 +23,21 @@ class Vector {
         else if (dy != null)
             this.set(this.x + dx, this.y + dy);
         else
-            throw new Error("Undefined parameters passed to Vector.translate! ${dx}, ${dy}");
+            throw new Error("Undefined parameters passed to Vector.translate! "+dx+", "+dy);
     }
     add(x: Vector | number, y: ?number): Vector {
         if (x instanceof Vector)
             return new Vector(this.x + x.x, this.y + x.y);
         if (y != null)
             return new Vector(this.x + x, this.y + y);
-        throw new Error("Undefined parameters passed to Vector.add! ${x}, ${y}");
+        throw new Error("Undefined parameters passed to Vector.add! "+x+", "+y);
     }
     sub(x: Vector | number, y: ?number): Vector {
         if (x instanceof Vector)
             return new Vector(this.x - x.x, this.y - x.y);
         if (y != null)
             return new Vector(this.x - x, this.y - y);
-        throw new Error("Undefined parameters passed to Vector.sub! ${x}, ${y}");
+        throw new Error("Undefined parameters passed to Vector.sub! "+x+", "+y);
     }
     scale(a: Vector | number): Vector {
         if (a instanceof Vector)
@@ -73,7 +71,7 @@ class Vector {
     copy(): Vector {
         return new Vector(this.x, this.y);
     }
-    
+
     static V(x: Vector | number, y: ?number): Vector {
         return new Vector(x, y);
     }
