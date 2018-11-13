@@ -43,7 +43,7 @@ class Encoder extends Gate {
         renderer.rect(0, 0, this.transform.size.x+20, this.transform.size.y, this.getCol(), this.getBorderColor());
         var size = this.transform.size;
 
-        for (var i = 0; i < this.inputs.length; i++) {
+        for (var i = 0; i < this.inputs.length; i++) {      //add labels to inputs
             var name = "D" + String(i);
             var pos1 = this.transform.toLocalSpace(this.inputs[i].getPos());
             var align = "center";
@@ -55,7 +55,7 @@ class Encoder extends Gate {
             pos.y = clamp(pos.y, -size.y/2+14, size.y/2-14);
             renderer.text(name, pos.x-15, pos.y, 0, 0, align);
         }
-        for (var i = 0; i < this.outputs.length; i++) {
+        for (var i = 0; i < this.outputs.length; i++) {     //add labels to outputs
             var name = "Q" + String(i);
             var pos1 = this.transform.toLocalSpace(this.outputs[i].getPos());
             var align = "center";

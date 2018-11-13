@@ -68,7 +68,7 @@ class Demultiplexer extends Gate {
 
         var size = this.transform.size;
 
-        for (var i = 0; i < this.inputs.length; i++) {
+        for (var i = 0; i < this.inputs.length; i++) {      //add labels to input and select lines
         		if (i < this.selectLines.length){
         			var name = "S" + String(i);
         		} else {
@@ -83,12 +83,12 @@ class Demultiplexer extends Gate {
             pos.x = clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
             pos.y = clamp(pos.y, -size.y/2, size.y/2);
             if (i < this.selectLines.length) {
-                renderer.text(name, pos.x, pos.y - (i * 2.7) + 10, 0, 0, align);
+                renderer.text(name, pos.x, pos.y - (i * 2.7) + 10, 0, 0, align);        //shift select line labels to look pretty
             } else {
                 renderer.text(name, pos.x, pos.y, 0, 0, align);
             }
         }
-        for (var i = 0; i < this.outputs.length; i++) {
+        for (var i = 0; i < this.outputs.length; i++) {     //add labels to outputs
             var name = "Q" + String(i);
             var pos1 = this.transform.toLocalSpace(this.outputs[i].getPos());
             var align = "center";

@@ -38,7 +38,7 @@ class SRLatch extends Gate {
         var size = this.transform.size;
         renderer.rect(0, 0, size.x, size.y, this.getCol(), '#000000', 1);
 
-        for (var i = 0; i < this.inputs.length; i++) {
+        for (var i = 0; i < this.inputs.length; i++) {          //add input labels and place
             if (i == 1) {
                 var name = ">";
             } else if (i == 0) {
@@ -56,7 +56,7 @@ class SRLatch extends Gate {
             pos.y = clamp(pos.y, -size.y/2+14, size.y/2-14);
             renderer.text(name, pos.x, pos.y, 0, 0, align);
         }
-        for (var i = 0; i < this.outputs.length; i++) {
+        for (var i = 0; i < this.outputs.length; i++) {         //add output labels and place
             if (i == 0) {
                 var name = "Q'";
             } else {
