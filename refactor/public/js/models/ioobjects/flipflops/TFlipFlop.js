@@ -12,7 +12,7 @@ class TFlipFlop extends Gate {
     }
 
     // @Override
-    activate(x) {
+    activate(signal: boolean) {
 		this.last_clock = this.clock;
         this.clock = this.inputs[0].isOn;
         var toggle = this.inputs[1].isOn;

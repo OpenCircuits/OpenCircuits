@@ -3,11 +3,11 @@ var V = require("../../../utils/math/Vector").V;
 var Gate = require("../Gate");
 
 class ANDGate extends Gate {
-	
+
 	constructor() {
 		super(2, 1, V(60, 60));
 	}
-	
+
 	// @Override
 	activate(signal: boolean) {
 		var on = true;
@@ -15,12 +15,11 @@ class ANDGate extends Gate {
 			on = (on && this.inputs[i].isOn);
 		super.activate(on);
 	}
-	
-	
-    getDisplayName() {
-        return this.not ? "NAND Gate" : "AND Gate";
-    }
-	
+
+  getDisplayName() {
+      return this.not ? "NAND Gate" : "AND Gate";
+  }
+
 	getImageName() {
 		return "and.svg";
 	}
