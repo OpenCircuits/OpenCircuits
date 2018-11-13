@@ -1,5 +1,5 @@
 var SideNavController = (function() {
-    var tab = document.getElementById("open-sive-nav-button");
+    var tab = document.getElementById("open-side-nav-button");
     var tab2 = document.getElementById("open-items-tab");
     var container = document.getElementById("sidenav");
     var otherContent = document.getElementById("content");

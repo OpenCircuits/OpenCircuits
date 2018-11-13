@@ -1,13 +1,13 @@
 # Dockerfile
 
-# Use node.js official 10.9.0 image
-FROM node:10.9.0 
+# Use official node.js v8 image
+FROM node:8
 
 # Create work directory
 WORKDIR /www
 
 # Copy repo to work directory
-COPY .babelrc gulpfile.babel.js package.json package-lock.json /www/
+COPY .babelrc gulpfile.babel.js package.json /www/
 COPY site /www/site
 COPY tests /www/tests
 
@@ -26,6 +26,5 @@ RUN gulp build
 # Change work directory for running php
 WORKDIR /www/site/public
 
-# Command to run at start of container (unused for now, 
-# command is currently passed in with 'docker run' 
-#CMD php -S 0.0.0.0:8080
+# Command to run at start of container
+CMD php -S 0.0.0.0:8080

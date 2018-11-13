@@ -24,6 +24,12 @@ XNOR & xnorgate.svg & XORGate & true
 SR Latch & srlatch.svg & SRLatch
 D Latch & srlatch.svg & DLatch
 
+[Flip Flops=flipflops]
+SR Flip Flop & srflipflop.svg & SRFlipFlop
+JK Flip Flop & srflipflop.svg & JKFlipFlop
+D Flip Flop & srflipflop.svg & DFlipFlop
+T Flip Flop & srflipflop.svg & TFlipFlop
+
 [Other=other]
 Mux & multiplexer.svg & Multiplexer
 Demux & demultiplexer.svg & Demultiplexer
