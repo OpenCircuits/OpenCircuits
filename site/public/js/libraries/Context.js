@@ -7,8 +7,8 @@ class Context {
     reset() {
         this.designer.reset();
     }
-    render() {
-        this.designer.render();
+    render(dontClear) {
+        this.designer.render(dontClear);
     }
     propogate(sender, receiver, signal) {
         this.designer.propogate(sender, receiver, signal);

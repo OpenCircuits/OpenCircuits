@@ -29,6 +29,12 @@ var Exporter = (function() {
             }
         },
         savePNG: function() {
+            ctx = canvas.getContext("2d");
+            // ctx.fillStyle = document.body.background;
+            ctx.fillStyle = '#CCC';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            getCurrentContext().render(true);
+
             var data = canvas.toDataURL("image/png");               //turn canvas into data
 
             var projectName = projectNameInput.value;               //get name for file
