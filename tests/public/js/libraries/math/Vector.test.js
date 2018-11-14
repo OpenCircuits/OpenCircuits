@@ -1,5 +1,3 @@
-// @flow
-
 var Vector = require("../../../../../refactor/public/js/utils/math/Vector");
 
 describe("Vector", () => {

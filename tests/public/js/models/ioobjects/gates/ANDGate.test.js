@@ -1,12 +1,10 @@
-// @flow
-
 var CircuitDesigner = require("../../../../../../refactor/public/js/models/CircuitDesigner");
 var Switch          = require("../../../../../../refactor/public/js/models/ioobjects/inputs/Switch");
 var ANDGate         = require("../../../../../../refactor/public/js/models/ioobjects/gates/ANDGate");
 var LED             = require("../../../../../../refactor/public/js/models/ioobjects/outputs/LED");
 
 describe("ANDGate", () => {
-    designer = new CircuitDesigner();
+    var designer = new CircuitDesigner();
 
     var s1 = new Switch();
     var s2 = new Switch();

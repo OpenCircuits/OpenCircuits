@@ -5,6 +5,9 @@ var ANDGate = require("./models/ioobjects/gates/ANDGate");
 var Switch = require("./models/ioobjects/inputs/Switch");
 var LED = require("./models/ioobjects/outputs/LED");
 
+var h: number;
+
+h = "55";
 
 function Start() {
     var d = new CircuitDesigner();
