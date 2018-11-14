@@ -21,7 +21,7 @@ class DFlipFlop extends Gate {
         if (this.clock && !this.last_clock) {
             this.state = data;
         }
-		
+
         super.activate(this.state, 1);
         super.activate(!this.state, 0);
     }

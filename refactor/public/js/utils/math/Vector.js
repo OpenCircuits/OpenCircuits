@@ -6,38 +6,32 @@ class Vector {
     constructor(x: Vector | number = 0, y: number = 0) {
         this.set(x, y);
     }
-    set(x: Vector | number, y: ?number): void {
+    set(x: Vector | number, y: number = 0): void {
         if (x instanceof Vector) {
             this.x = (x.x ? x.x : 0);
             this.y = (x.y ? x.y : 0);
-        } else if (y != null) {
+        } else {
             this.x = (x ? x : 0);
             this.y = (y ? y : 0);
-        } else {
-            throw new Error("Undefined parameters passed to Vector.set! "+x+", "+y);
         }
     }
-    translate(dx: Vector | number, dy: ?number): void {
+    translate(dx: Vector | number, dy: number = 0): void {
         if (dx instanceof Vector)
             this.set(this.add(dx));
-        else if (dy != null)
-            this.set(this.x + dx, this.y + dy);
         else
-            throw new Error("Undefined parameters passed to Vector.translate! "+dx+", "+dy);
+            this.set(this.x + dx, this.y + dy);
     }
-    add(x: Vector | number, y: ?number): Vector {
+    add(x: Vector | number, y: number = 0): Vector {
         if (x instanceof Vector)
             return new Vector(this.x + x.x, this.y + x.y);
-        if (y != null)
+        else
             return new Vector(this.x + x, this.y + y);
-        throw new Error("Undefined parameters passed to Vector.add! "+x+", "+y);
     }
-    sub(x: Vector | number, y: ?number): Vector {
+    sub(x: Vector | number, y: number = 0): Vector {
         if (x instanceof Vector)
             return new Vector(this.x - x.x, this.y - x.y);
-        if (y != null)
+        else (y != null)
             return new Vector(this.x - x, this.y - y);
-        throw new Error("Undefined parameters passed to Vector.sub! "+x+", "+y);
     }
     scale(a: Vector | number): Vector {
         if (a instanceof Vector)
@@ -72,7 +66,7 @@ class Vector {
         return new Vector(this.x, this.y);
     }
 
-    static V(x: Vector | number, y: ?number): Vector {
+    static V(x: Vector | number, y: number = 0): Vector {
         return new Vector(x, y);
     }
 }

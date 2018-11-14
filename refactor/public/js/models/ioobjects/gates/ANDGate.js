@@ -16,9 +16,9 @@ class ANDGate extends Gate {
 		super.activate(on);
 	}
 
-  getDisplayName() {
-      return this.not ? "NAND Gate" : "AND Gate";
-  }
+	getDisplayName() {
+		return this.not ? "NAND Gate" : "AND Gate";
+	}
 
 	getImageName() {
 		return "and.svg";

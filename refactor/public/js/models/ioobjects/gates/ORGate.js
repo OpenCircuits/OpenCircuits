@@ -4,32 +4,28 @@ var Gate = require("../Gate");
 
 class ORGate extends Gate {
 
-    constructor(context, not, x, y) {
-        super(context, not, x, y, images["or.svg"]);
-    }
+	constructor() {
+		super(2, 1, V(60, 60));
+	}
 
-    setInputAmount(target) {
-        super.setInputAmount(target);
+	// @Override
+	activate(signal: boolean) {
+		var on = false;
+		for (var i = 0; i < this.inputs.length; i++)
+			on = (on || this.inputs[i].isOn);
+		super.activate(on);
+	}
 
-        for (var i = 0; i < this.inputs.length; i++) {
-            var input = this.inputs[i];
-            var t = ((input.origin.y) / this.transform.size.y + 0.5) % 1.0;
-            if (t < 0)
-                t += 1.0;
-            var x = this.quadCurveXAt(t);
-            input.origin = V(x, input.origin.y);
-        }
-    }
-    activate(signal: boolean) {
-        var on = false;
-        for (var i = 0; i < this.inputs.length; i++)
-            on = (on || this.inputs[i].isOn);
-        super.activate(on);
-    }
+	getDisplayName() {
+		return this.not ? "NOR Gate" : "OR Gate";
+	}
 
-    getDisplayName() {
-        return this.not ? "NOR Gate" : "OR Gate";
-    }
+	getImageName() {
+		return "or.svg";
+	}
+	static getXMLName() {
+		return "andgate";
+	}
 }
-ORGate.getXMLName = function() { return "orgate"; }
-Importer.types.push(ORGate);
+
+module.exports = ORGate;
