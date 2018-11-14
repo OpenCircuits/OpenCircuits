@@ -1,11 +1,8 @@
 // @flow
 var V = require("../../../utils/math/Vector").V;
-var Gate = require("../Gate");
+var FlipFlop = require("./FlipFlop");
 
-class SRFlipFlop extends Gate {
-	clock: boolean = false;
-	state: boolean = false;
-	last_clock: boolean = false;
+class SRFlipFlop extends FlipFlop {
 
 	constructor() {
 		super(3, 2, V(60, 60));

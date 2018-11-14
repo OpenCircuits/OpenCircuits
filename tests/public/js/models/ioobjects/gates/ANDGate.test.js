@@ -1,42 +1,84 @@
+// @flow
+
 var CircuitDesigner = require("../../../../../../refactor/public/js/models/CircuitDesigner");
 var Switch          = require("../../../../../../refactor/public/js/models/ioobjects/inputs/Switch");
 var ANDGate         = require("../../../../../../refactor/public/js/models/ioobjects/gates/ANDGate");
 var LED             = require("../../../../../../refactor/public/js/models/ioobjects/outputs/LED");
 
 describe("ANDGate", () => {
-    var designer = new CircuitDesigner();
+    describe("ANDGate", () => {
+        var designer = new CircuitDesigner(0);
+        var a = new Switch(), b = new Switch(), g = new ANDGate(), o = new LED();
 
-    var s1 = new Switch();
-    var s2 = new Switch();
-    var g1 = new ANDGate();
-    var l1 = new LED();
+        designer.addObjects([a, b, g, o]);
+        designer.connect(a, 0,  g, 0);
+        designer.connect(b, 0,  g, 1);
+        designer.connect(g, 0,  o, 0);
 
-    designer.addObjects([s1, s2, g1, l1]);
-    designer.connect(s1, 0,  g1, 0);
-    designer.connect(s2, 0,  g1, 1);
-    designer.connect(g1, 0,  l1, 0);
+        it("Initial State", () => {
+            expect(o.isOn()).toBe(false);
+        });
+        it("Input A and B Off", () => {
+            a.activate(false);
+            b.activate(false);
 
-    it("Initial State", () => {
-        expect(l1.isOn()).toBe(false);
+            expect(o.isOn()).toBe(false);
+        });
+        it("Input A On", () => {
+            a.activate(true);
+            b.activate(false);
+
+            expect(o.isOn()).toBe(false);
+        });
+        it("Input B On", () => {
+            a.activate(false);
+            b.activate(true);
+
+            expect(o.isOn()).toBe(false);
+        });
+        it("Input A and B On", () => {
+            a.activate(true);
+            b.activate(true);
+
+            expect(o.isOn()).toBe(true);
+        });
     });
-    it("Input A On", () => {
-        s1.activate(true);
-        s2.activate(false);
 
-        expect(l1.isOn()).toBe(false);
+    describe("NANDGate", () => {
+        var designer = new CircuitDesigner(0);
+        var a = new Switch(), b = new Switch(), g = new ANDGate(true), o = new LED();
 
-        expect(l1.isOn()).toBe(false);
-    });
-    it("Input B On", () => {
-        s1.activate(false);
-        s2.activate(true);
+        designer.addObjects([a, b, g, o]);
+        designer.connect(a, 0,  g, 0);
+        designer.connect(b, 0,  g, 1);
+        designer.connect(g, 0,  o, 0);
 
-        expect(l1.isOn()).toBe(false);
-    });
-    it("Input A and B On", () => {
-        s1.activate(true);
-        s2.activate(true);
+        it("Initial State", () => {
+            expect(o.isOn()).toBe(true);
+        });
+        it("Input A and B Off", () => {
+            a.activate(false);
+            b.activate(false);
 
-        expect(l1.isOn()).toBe(true);
+            expect(o.isOn()).toBe(true);
+        });
+        it("Input A On", () => {
+            a.activate(true);
+            b.activate(false);
+
+            expect(o.isOn()).toBe(true);
+        });
+        it("Input B On", () => {
+            a.activate(false);
+            b.activate(true);
+
+            expect(o.isOn()).toBe(true);
+        });
+        it("Input A and B On", () => {
+            a.activate(true);
+            b.activate(true);
+
+            expect(o.isOn()).toBe(false);
+        });
     });
 });

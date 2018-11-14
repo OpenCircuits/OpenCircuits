@@ -1,11 +1,11 @@
 // @flow
 var V = require("../../../utils/math/Vector").V;
-var Gate = require("../Gate");
+var Gate = require("./Gate");
 
 class ANDGate extends Gate {
 
-	constructor() {
-		super(2, 1, V(60, 60));
+	constructor(not: boolean = false) {
+		super(not, 2, V(60, 60));
 	}
 
 	// @Override

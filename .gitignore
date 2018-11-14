@@ -5,6 +5,7 @@
 
 # Thumbnails
 ._*
+flow-typed
 node_modules
 site/data/config.txt
 site/public/js/combined-min.js
