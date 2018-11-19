@@ -9,18 +9,18 @@ class Transform {
     scale: Vector;
     angle: number;
     size: Vector;
-    
+
     corners: Array<Vector>;
     localCorners: Array<Vector>;
-    
+
     dirty: boolean;
     dirtySize: boolean;
     dirtyCorners: boolean;
-    
+
     matrix: Matrix2x3;
     inverse: Matrix2x3;
     radius: number;
-    
+
     constructor(pos: Vector, size: Vector, angle: number = 0) {
         this.parent = undefined;
         this.pos = V(pos.x, pos.y);
@@ -123,6 +123,9 @@ class Transform {
     }
     toWorldSpace(v: Vector): Vector { // v must be in local coords
         return this.getMatrix().mul(v);
+    }
+    getParent(): ?Transform {
+        return this.parent;
     }
     getPos(): Vector {
         return V(this.pos.x, this.pos.y);
