@@ -3,6 +3,14 @@ var Vector = require("./Vector");
 var Matrix2x3 = require("./Matrix");
 var V = Vector.V;
 
+/**
+ * Class representing a Transform.
+ * A Transform holds all the spacial information about an object.
+ * (ex. position, rotating, size, etc.)
+ *
+ * For performance reasons the transform also stores a list of corners
+ *  to be able to quickly apply intersection testing.
+ */
 class Transform {
     parent: ?Transform;
     pos: Vector;
@@ -21,6 +29,13 @@ class Transform {
     inverse: Matrix2x3;
     radius: number;
 
+    /**
+     * Constructs a new Transform object
+     *
+     * @param  {Vector} pos     The initial position of the transform
+     * @param  {Vector} size    The initial size of the transform
+     * @param  {number} angle   The initial angle of the transform
+     */
     constructor(pos: Vector, size: Vector, angle: number = 0) {
         this.parent = undefined;
         this.pos = V(pos.x, pos.y);
@@ -68,6 +83,13 @@ class Transform {
         for (var i = 0; i < 4; i++)
             this.corners[i] = this.toWorldSpace(corners[i]);
     }
+
+    /**
+     * Rotates this transform 'a' radians about the axis 'c'
+     *
+     * @param {number} a The angle to rotate
+     * @param {number} c The axis to rotate about
+     */
     rotateAbout(a: number, c: Vector): void {
         this.setAngle(a);
         this.setPos(this.pos.sub(c));
@@ -78,14 +100,12 @@ class Transform {
         this.dirty = true;
         this.dirtyCorners = true;
     }
+
     setParent(t: Transform): void {
         this.parent = t;
         this.dirty = true;
         this.dirtyCorners = true;
     }
-    // setCamera(c) {
-    //     this.camera = c;
-    // }
     setPos(p: Vector): void {
         this.pos.x = p.x;
         this.pos.y = p.y;
@@ -118,12 +138,33 @@ class Transform {
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
+
+    /**
+     * Converts the given Vector, v, to local space relative
+     *  to this transform
+     *
+     * @param {Vector} v    The vector to transform
+     *                      Must be in world coordinates
+     *
+     * @return {Vector}     The local space vector
+     */
     toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
     }
-    toWorldSpace(v: Vector): Vector { // v must be in local coords
+
+    /**
+     * Converts the given Vector, v, to world space relative
+     *  to this transform
+     *
+     * @param {Vector} v    The vector to transform
+     *                      Must be in local coordinates
+     *
+     * @return {Vector}     The world space vector
+     */
+    toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);
     }
+
     getParent(): ?Transform {
         return this.parent;
     }
@@ -175,19 +216,7 @@ class Transform {
         this.updateSize();
         return this.localCorners;
     }
-    equals(other: Transform): boolean {
-        var m1 = this.getMatrix().mat;
-        var m2 = other.getMatrix().mat;
-        for (var i = 0; i < m1.length; i++) {
-            if (m1[i] !== m2[i])
-                return false;
-        }
-        return true;
-    }
-    print(): void {
-        this.updateMatrix();
-        this.matrix.print();
-    }
+
     copy(): Transform {
         var trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
         trans.scale = this.scale.copy();
