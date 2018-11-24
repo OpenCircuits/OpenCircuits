@@ -4,7 +4,7 @@ var Name = require("../../utils/Name");
 var CircuitDesigner = require("../CircuitDesigner");
 
 class IOObject {
-    designer: CircuitDesigner;
+    designer: ?CircuitDesigner;
     name: Name;
 
     constructor() {
@@ -14,11 +14,11 @@ class IOObject {
     activate(signal: boolean, i: number = 0): void {
     }
 
-	setDesigner(designer: CircuitDesigner): void {
+	setDesigner(designer: ?CircuitDesigner): void {
 		this.designer = designer;
 	}
 
-	getDesigner(): CircuitDesigner {
+	getDesigner(): ?CircuitDesigner {
 		return this.designer;
 	}
 

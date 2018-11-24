@@ -23,14 +23,25 @@ class OutputPort {
 		this.target = V(IO_PORT_LENGTH, 0);
 	}
 
+	/**
+	 * Active this port and propagate the signal
+	 * 	to all active connections
+	 *
+	 * @param  {boolean} signal 	The signal to send
+	 */
 	activate(signal: boolean): void {
 		// Don't do anything if signal is same as current state
 		if (signal == this.isOn)
 			return;
-
 		this.isOn = signal;
+
+		// Get designer to propagate signal, exit if undefined
+		var designer = this.parent.getDesigner();
+		if (designer == undefined)
+			return;
+
 		for (var w of this.connections)
-			this.parent.getDesigner().propogate(w, this.isOn);
+			designer.propogate(w, this.isOn);
 	}
 
 	connect(w: Wire): void {
@@ -43,6 +54,10 @@ class OutputPort {
 	}
 	getTarget(): Vector {
 		return this.target;
+	}
+
+	getConnections(): Array<Wire> {
+		return this.connections.slice(); // Shallow copy array
 	}
 
 }

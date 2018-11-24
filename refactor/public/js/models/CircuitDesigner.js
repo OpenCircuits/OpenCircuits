@@ -29,7 +29,7 @@ class CircuitDesigner {
 	}
 
 	/**
-	 * Add a propogation request to the queue.
+	 * Add a propagation request to the queue.
 	 * Also checks if there are currently no requests and starts the cycle if
 	 *  there aren't
 	 *
@@ -96,9 +96,10 @@ class CircuitDesigner {
 	}
 
 	connect(c1: Component, i1: number, c2: Component, i2: number): void {
-		var wire = new Wire(c1.getOutput(i1), c2.getInput(i2));
+		var wire = new Wire(c1.getOutputPort(i1), c2.getInputPort(i2));
 		this.wires.push(wire);
 
+		wire.setDesigner(this);
 		c1.connect(i1, wire);
 		c2.setInput(i2, wire);
 	}
@@ -108,6 +109,17 @@ class CircuitDesigner {
 			throw new Error("Attempted to remove object that doesn't exist!");
 
 		// completely disconnect from the circuit
+		this.objects.splice(this.objects.indexOf(obj), 1);
+		obj.setDesigner(undefined);
+	}
+
+	removeWire(wire: Wire): void {
+		if (!this.wires.includes(wire))
+			throw new Error("Attempted to remove wire that doesn't exist!");
+
+		// completely disconnect from the circuit
+		this.wires.splice(this.wires.indexOf(wire), 1);
+		wire.setDesigner(undefined);
 	}
 
 	getObjects(): Array<Component> {
