@@ -14,7 +14,7 @@ class MainDesignerView {
     canvas: HTMLCanvasElement;
     renderer: Renderer;
     camera: Camera;
-    
+
     constructor() {
         var canvas = document.getElementById("canvas");
         if (!(canvas instanceof HTMLCanvasElement))
@@ -22,21 +22,20 @@ class MainDesignerView {
         this.canvas = canvas;
         this.renderer = new Renderer(this.canvas);
         this.camera = new Camera(this.canvas.width, this.canvas.height);
-        
-        window.addEventListener('resize', e => this.resize(), false);
+
         this.resize();
     }
     render(designer: CircuitDesigner, selections: Array<IOObject>) {
         this.renderer.clear();
-        
+
         Grid.render(this.renderer, this.camera);
-        
+
         var wires = designer.getWires();
         for (var wire: Wire of wires) {
             var selected = selections.includes(wire);
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
-        
+
         var objects = designer.getObjects();
         for (var object: Component of objects) {
             var selected = selections.includes(object);
@@ -46,6 +45,9 @@ class MainDesignerView {
     resize(): void {
         this.renderer.resize();
         this.camera.resize(this.canvas.width, this.canvas.height);
+    }
+    getCanvas(): HTMLCanvasElement {
+        return this.canvas;
     }
 }
 

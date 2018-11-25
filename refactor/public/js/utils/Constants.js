@@ -1,4 +1,4 @@
-//@flow 
+//@flow
 var Constants = {};
 
 Constants.DEFAULT_SIZE = 50;
@@ -32,19 +32,19 @@ Constants.ITEMNAV_WIDTH = 200;
 Constants.LEFT_MOUSE_BUTTON  = 0;
 Constants.RIGHT_MOUSE_BUTTON = 1;
 
-Constants.OPTION_KEY = 18;
-Constants.SHIFT_KEY  = 16;
 Constants.BACKSPACE_KEY = 8;
-Constants.DELETE_KEY = 46;
 Constants.ENTER_KEY  = 13;
+Constants.SHIFT_KEY  = 16;
+Constants.CONTROL_KEY = 17;
+Constants.OPTION_KEY = 18;
 Constants.ESC_KEY    = 27;
+Constants.DELETE_KEY = 46;
 Constants.A_KEY = 65;
 Constants.C_KEY = 67;
 Constants.V_KEY = 86;
 Constants.X_KEY = 88;
 Constants.Y_KEY = 89;
 Constants.Z_KEY = 90;
-Constants.CONTROL_KEY = 17;
 Constants.COMMAND_KEY = 91;
 
 module.exports = Constants;
