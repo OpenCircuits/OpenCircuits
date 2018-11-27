@@ -7,15 +7,13 @@ FROM node:8
 WORKDIR /www
 
 # Copy repo to work directory
-COPY .babelrc gulpfile.babel.js package.json /www/
-COPY site /www/site
-COPY tests /www/tests
+COPY ./ /www
 
 # Avoid error
 RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 
 # Install dependencies
-RUN apt-get update && apt-get install -y php5 php5-sqlite
+RUN apt-get update && apt-get install -y php php-sqlite3
 RUN npm install gulp-cli -g
 RUN npm install gulp -D
 RUN npm install
