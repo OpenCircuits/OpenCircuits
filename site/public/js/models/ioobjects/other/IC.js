@@ -64,7 +64,7 @@ class IC extends IOObject {
         renderer.rect(0, 0, size.x, size.y, this.getCol(), '#000000', 1);
 
         for (var i = 0; i < this.inputs.length; i++) {
-            var name = String(i);
+            var name = this.inputObjects[i].getName();
             var pos1 = this.transform.toLocalSpace(this.inputs[i].getPos());
             var align = "center";
             var padding = 8;
@@ -76,7 +76,7 @@ class IC extends IOObject {
             renderer.text(name, pos.x, pos.y, 0, 0, align);
         }
         for (var i = 0; i < this.outputs.length; i++) {
-            var name = "Q" + String(i);
+            var name = this.outputObjects[i].getName();
             var pos1 = this.transform.toLocalSpace(this.outputs[i].getPos());
             var align = "center";
             var padding = 8;
