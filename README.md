@@ -1,5 +1,4 @@
-<img src="https://github.com/OpenCircuits/OpenCircuits/blob/master/site/public/img/icons/logo.svg" alt="OpenCircuits Logo" style="width: 500px;"/>
-
+[![OpenCircuits Repo](https://raw.githubusercontent.com/OpenCircuits/OpenCircuits/master/site/public/img/icons/logo.svg)](https://github.com/OpenCircuits/OpenCircuits)
 
 [![GitHub license](https://img.shields.io/github/license/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/blob/master/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/graphs/contributors)
