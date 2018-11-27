@@ -28,14 +28,17 @@ class MainDesignerView {
     render(designer: CircuitDesigner, selections: Array<IOObject>) {
         this.renderer.clear();
 
+        // Render grid
         Grid.render(this.renderer, this.camera);
 
+        // Render all wires (first so they are underneath objects)
         var wires = designer.getWires();
         for (var wire: Wire of wires) {
             var selected = selections.includes(wire);
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
+        // Render all objects
         var objects = designer.getObjects();
         for (var object: Component of objects) {
             var selected = selections.includes(object);
