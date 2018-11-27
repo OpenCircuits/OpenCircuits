@@ -7,9 +7,10 @@ FROM node:8
 WORKDIR /www
 
 # Copy repo to work directory
-COPY .babelrc gulpfile.babel.js package.json package-lock.json /www/
-COPY site /www/site
-COPY tests /www/tests
+#COPY .babelrc gulpfile.babel.js package.json package-lock.json /www/
+#COPY site /www/site
+#COPY tests /www/tests
+COPY ./ /www
 
 # Avoid error
 RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
@@ -26,5 +27,5 @@ RUN gulp build
 # Change work directory for running php
 WORKDIR /www/site/public
 
-# Command to run at start of container 
+# Command to run at start of container
 CMD php -S 0.0.0.0:8080
