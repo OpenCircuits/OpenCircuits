@@ -13,7 +13,7 @@ COPY ./ /www
 RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 
 # Install dependencies
-RUN apt-get update && apt-get install -y php php-sqlite
+RUN apt-get update && apt-get install -y php php-sqlite3
 RUN npm install gulp-cli -g
 RUN npm install gulp -D
 RUN npm install
