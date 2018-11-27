@@ -60,10 +60,11 @@ class CircuitDesigner {
             setTimeout(() => this.update(sender, receiver), PROPOGATION_TIME);
         }
     }
-    render() {
+    render(dontClear) {
         // console.log("RENDER");
 
-        this.renderer.clear();
+        if (!dontClear)
+            this.renderer.clear();
 
         var step = GRID_SIZE/this.camera.zoom;
 

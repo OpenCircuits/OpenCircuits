@@ -29,6 +29,12 @@ var Exporter = (function() {
             }
         },
         savePNG: function() {
+            ctx = canvas.getContext("2d");
+            // ctx.fillStyle = document.body.background;
+            ctx.fillStyle = '#CCC';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            getCurrentContext().render(true);
+
             var data = canvas.toDataURL("image/png");               //turn canvas into data
 
             var projectName = projectNameInput.value;               //get name for file
@@ -55,17 +61,22 @@ var Exporter = (function() {
             }
         },
         savePDF: function() {
-            var data = canvas.toDataURL("image/png");               //turn canvas to file
-            var pdf = new jsPDF();                                  //make pdf via jsPDF
+            ctx = canvas.getContext("2d");
+            // ctx.fillStyle = document.body.background;
+            ctx.fillStyle = '#CCC';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            getCurrentContext().render(true);
+            var data = canvas.toDataURL("image/png");                               //turn canvas to file
+            var pdf = new jsPDF('p', 'px', [canvas.height, canvas.width]);          //make pdf via jsPDF
 
-            pdf.addImage(data, 'PNG', 0, 0);                        //add image
+            pdf.addImage(data, 'PNG', 0, 0);                                        //add image
 
-            var projectName = projectNameInput.value;               //get name
+            var projectName = projectNameInput.value;                               //get name
             if (projectName === "Untitled Circuit*")
                 projectName = "Untitled Circuit";
             var filename = projectName + ".pdf";
 
-            pdf.save(filename);                                     //save
+            pdf.save(filename);                                                     //save
         },
         write: function(context) {
             var root = new window.DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
