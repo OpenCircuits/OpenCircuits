@@ -140,7 +140,7 @@ var Input = (function () {
 
         var shouldRender = false;
 
-        if (optionKeyDown && isDragging) {
+        if ((optionKeyDown && isDragging) || (getCurrentContext().getMode() == 1 && isDragging)) {
             var pos = new Vector(mousePos.x, mousePos.y);
             var dPos = mouseDownPos.sub(pos);
             camera.translate(camera.zoom * dPos.x, camera.zoom * dPos.y);
