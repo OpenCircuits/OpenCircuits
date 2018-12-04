@@ -1,11 +1,13 @@
 // @flow
+const LEFT_MOUSE_BUTTON = require("../utils/Constants").LEFT_MOUSE_BUTTON;
+
 var V = require("../utils/math/Vector").V;
+var Input = require("../utils/Input");
 
 var CircuitDesigner = require("../models/CircuitDesigner");
 
 var MainDesignerView = require("../views/MainDesignerView");
 
-var Input = require("../utils/Input");
 
 
 var Switch = require("../models/ioobjects/inputs/Switch");
@@ -17,10 +19,27 @@ var MainDesignerController = (function() {
     var view: MainDesignerView;
     var input: Input;
 
+    // var currentTool: Tool;
+
     let resize = function() {
         view.resize();
 
         MainDesignerController.Render();
+    }
+
+    let onMouseDrag = function(button: number) {
+        if (button === LEFT_MOUSE_BUTTON) {
+            var shouldRender = false;
+            // contextmenu.hide();
+            // shouldRender = CurrentTool.onMouseDown(shouldRender);
+            // for (var i = 0; i < mouseListeners.length; i++) {
+            //     var listener = mouseListeners[i];
+            //     if (!listener.disabled && listener.onMouseDown(shouldRender))
+            //         shouldRender = true;
+            // }
+            if (shouldRender)
+                MainDesignerController.Render();
+        }
     }
 
     return {
@@ -28,6 +47,7 @@ var MainDesignerController = (function() {
             designer = new CircuitDesigner();
             view = new MainDesignerView();
             input = new Input(view.getCanvas());
+            input.addListener("mousedrag", onMouseDrag);
 
             window.addEventListener('resize', e => resize(), false);
 

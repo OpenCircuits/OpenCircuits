@@ -1,4 +1,4 @@
-//@flow
+// @flow
 var Constants = {};
 
 Constants.DEFAULT_SIZE = 50;
@@ -8,6 +8,8 @@ Constants.DEFAULT_BORDER_COLOR  = "#000000";
 Constants.DEFAULT_ON_COLOR      = "#3cacf2";
 Constants.SELECTED_FILL_COLOR   = "#1cff3e";
 Constants.SELECTED_BORDER_COLOR = "#0d7f1f";
+
+Constants.DRAG_TIME = 50;
 
 Constants.IO_PORT_LENGTH = 60;
 Constants.IO_PORT_RADIUS = 7;
