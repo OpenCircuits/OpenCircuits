@@ -16,6 +16,7 @@ var FlipFlopRenderer = (function() {
 
     return {
         render(renderer: Renderer, camera: Camera, flipflop: FlipFlop, selected: boolean) {
+            
             ComponentRenderer.render(renderer, camera, flipflop, selected);
 
             renderer.save();

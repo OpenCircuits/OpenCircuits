@@ -18,4 +18,4 @@ class FlipFlp extends Component {
 
 }
 
-module.exports = FlipFlp;
+module.exports = FlipFlop;
