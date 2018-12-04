@@ -54,12 +54,47 @@ class Multiplexer extends Gate {
         var renderer = this.context.getRenderer();
         this.localSpace();
 
-        var p1 = V(-this.transform.size.x/2, this.transform.size.y/2);
-        var p2 = V(-this.transform.size.x/2, -this.transform.size.y/2);
-        var p3 = V(this.transform.size.x/2, -this.transform.size.y/2+20);
-        var p4 = V(this.transform.size.x/2, this.transform.size.y/2-20);
+        var p1 = V(-this.transform.size.x/2 - 5, this.transform.size.y/2 + 25);
+        var p2 = V(-this.transform.size.x/2 - 5, -this.transform.size.y/2 - 25);
+        var p3 = V(this.transform.size.x/2 + 5, -this.transform.size.y/2 - 7);
+        var p4 = V(this.transform.size.x/2 + 5, this.transform.size.y/2 + 7);
 
         renderer.shape([p1, p2, p3, p4], this.getCol(), this.getBorderColor(), 2);
+
+        var size = this.transform.size;
+
+        for (var i = 0; i < this.inputs.length; i++) {      //add labels to input and select lines
+            if (i < this.selectLines.length){
+                var name = "S" + String(i);
+            } else {
+                var name = "D" + String(i-this.selectLines.length);
+            }
+            var pos1 = this.transform.toLocalSpace(this.inputs[i].getPos());
+            var align = "center";
+            var padding = 8;
+            var ww = renderer.getTextWidth(name)/2 - 10;
+            var pos = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos1);
+            pos = pos.sub(pos1).normalize().scale(padding).add(pos);
+            pos.x = clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
+            pos.y = clamp(pos.y, -size.y/2, size.y/2);
+            if (i < this.selectLines.length) {
+                renderer.text(name, pos.x, pos.y + (i * 2.7) + 5, 0, 0, align);     //for select lines, print at am amngle, aligning to bottom
+            } else {
+                renderer.text(name, pos.x, pos.y, 0, 0, align);
+            }
+        }
+        for (var i = 0; i < this.outputs.length; i++) {     //add labels to output
+            var name = "Q" + String(i);
+            var pos1 = this.transform.toLocalSpace(this.outputs[i].getPos());
+            var align = "center";
+            var padding = 8;
+            var ww = renderer.getTextWidth(name)/2 - 10;
+            var pos = getNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos1);
+            pos = pos.sub(pos1).normalize().scale(padding).add(pos);
+            pos.x = clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
+            pos.y = clamp(pos.y, -size.y/2, size.y/2);
+            renderer.text(name, pos.x, pos.y, 0, 0, align);
+        }
 
         renderer.restore();
     }
