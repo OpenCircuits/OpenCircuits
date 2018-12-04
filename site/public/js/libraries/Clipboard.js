@@ -26,7 +26,10 @@ class Clipboard {
         e.preventDefault();
     }
     paste(e) {
-        console.log("ASd");
+        if(getCurrentContext().getMode() == 1){
+            return;
+        }
+        console.log("ASd");         //is this needed?
         var group = Importer.load(e.clipboardData.getData("text/plain"), getCurrentContext());
         var objects = group.objects;
         var wires = group.wires;

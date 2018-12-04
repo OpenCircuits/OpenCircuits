@@ -4,6 +4,7 @@ var SideNavController = (function() {
     var container = document.getElementById("sidenav");
     var otherContent = document.getElementById("content");
     var overlay = document.getElementById("overlay");
+    var debugToggle = document.getElementById("debugToggle");
     if (overlay) {
         overlay.addEventListener("transitionend", function(event) {
             if (!SideNavController.isOpen)
@@ -24,10 +25,28 @@ var SideNavController = (function() {
         overlay.style.opacity           = "0"; 
         overlay.onclick = function() {  }
     }
+    var activateDebugMode = function() {
+        getCurrentContext().setMode(1);
+        debugToggle.style.color = "#222";
+        debugToggle.style.background = "#888";
+
+        if(ItemNavController.isOpen){
+            ItemNavController.toggle();
+        }
+
+        debugToggle.onclick = function() { SideNavController.toggleDebugMode(); }
+    }
+    var deactivateDebugMode = function() {
+        getCurrentContext().setMode(0);
+        debugToggle.style.color = "#888";
+        debugToggle.style.background = "#222";
+        debugToggle.onclick = function() { SideNavController.toggleDebugMode(); }
+    }
 
     return {
         disabled: false,
         isOpen: false,
+        debugModeOn: false,
         toggle: function() {
             if (this.isOpen) {
                 this.isOpen = false;
@@ -35,6 +54,15 @@ var SideNavController = (function() {
             } else {
                 this.isOpen = true;
                 open();
+            }
+        },
+        toggleDebugMode: function() {
+            if (this.debugModeOn) {
+                this.debugModeOn = false;
+                activateDebugMode();
+            } else {
+                this.debugModeOn = true;
+                deactivateDebugMode();
             }
         },
         getWidth: function() {

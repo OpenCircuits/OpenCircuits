@@ -5,9 +5,14 @@ class SelectionTool extends Tool {
         this.midpoint = V(0, 0);
     }
     onKeyDown(code, input) {
+        if(getCurrentContext().getMode() == 1){
+            return;
+        }
+
         console.log(code);
         if (!icdesigner.hidden)
             return false;
+
 
         if (code === A_KEY && Input.getModifierKeyDown()) {
             this.selectAll();
@@ -119,6 +124,9 @@ class SelectionTool extends Tool {
         }
     }
     select(objects, doAction) {
+        if(getCurrentContext().getMode() == 1){
+            return;
+        }
         if (objects.length === 0)
             return;
 
@@ -160,6 +168,9 @@ class SelectionTool extends Tool {
         this.recalculateMidpoint();
     }
     selectAll() {
+        if(getCurrentContext().getMode() == 1){
+            return;
+        }
         this.deselectAll(true);
         this.select(getCurrentContext().getObjects(), true);
     }

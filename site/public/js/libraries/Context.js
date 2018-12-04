@@ -2,12 +2,13 @@ class Context {
     constructor(designer) {
         this.uidmanager = new UIDManager(this);
         this.designer = designer;
+        this.mode = 0;
     }
     reset() {
         this.designer.reset();
     }
-    render() {
-        this.designer.render();
+    render(dontClear) {
+        this.designer.render(dontClear);
     }
     propogate(sender, receiver, signal) {
         this.designer.propogate(sender, receiver, signal);
@@ -81,6 +82,12 @@ class Context {
         // modifying the objects through add/remove
         // and have it edit the returned array
         return CopyArray(this.designer.wires);
+    }
+    getMode(){
+        return this.mode;
+    }
+    setMode(m){
+        this.mode = m;
     }
     getIndexOf(o) {
         if (o instanceof Wire)
