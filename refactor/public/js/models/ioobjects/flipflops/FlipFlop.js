@@ -7,7 +7,7 @@ var Component = require("../Component");
 //
 // FlipFlop is an abstract superclass for general flip flops.
 //
-class FlipFlp extends Component {
+class FlipFlop extends Component {
 	clock: boolean = false;
 	state: boolean = false;
 	last_clock: boolean = false;
