@@ -11,22 +11,25 @@ var Vector = require("../utils/math/Vector");
 var V = Vector.V;
 
 class Input {
-    canvas: HTMLCanvasElement;
-    prevMousePos: Vector;
-    rawMousePos: Vector;
-    mousePos: Vector;
+    #canvas: HTMLCanvasElement;
+    #prevMousePos: Vector;
+    #rawMousePos: Vector;
+    #mousePos: Vector;
 
-    isMouseDown: boolean;
-    mouseDownPos = undefined;
+    #isMouseDown: boolean;
+    #mouseDownPos: Vector;
 
-    isDragging: boolean;
-    startTapTime: number;
+    #isDragging: boolean;
+    #startTapTime: number;
 
-    listeners: Map<string, Array<(b: number) => void> >;
+    #listeners: Map<string, Array<(b: number) => void> >;
+
+    #keysDown: Map<number, boolean>;
 
     constructor(canvas: HTMLCanvasElement) {
-        this.canvas = canvas;
-        this.listeners = new Map();
+        this.#canvas = canvas;
+        this.#listeners = new Map();
+        this.#keysDown = new Map();
 
         window.addEventListener('keydown',  (e: KeyboardEvent) => this.onKeyDown(e), false);
         window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyDown(e), false);
@@ -36,6 +39,7 @@ class Input {
         canvas.addEventListener('wheel',        (e: MouseEvent) => this.onScroll(e),        false);
         canvas.addEventListener('mousedown',    (e: MouseEvent) => this.onMouseDown(e),     false);
         canvas.addEventListener('mouseup',      (e: MouseEvent) => this.onMouseUp(e),       false);
+        canvas.addEventListener('mousemove',    (e: MouseEvent) => this.onMouseMove(e),     false);
         canvas.addEventListener('mouseenter',   (e: MouseEvent) => this.onMouseEnter(e),    false);
         canvas.addEventListener('mouseleave',   (e: MouseEvent) => this.onMouseLeave(e),    false);
 
@@ -52,12 +56,20 @@ class Input {
         //     e.preventDefault();
         // });
     }
-    addListener(type: string, listener: (b: number) => void) {
-        var arr = this.listeners.get(type);
+    addListener(type: string, listener: (b: number) => void): void {
+        var arr = this.#listeners.get(type);
         if (arr == undefined)
-            this.listeners.set(type, arr = []);
+            this.#listeners.set(type, arr = []);
         arr.push(listener);
     }
+    isKeyDown(key: number): boolean {
+        return (this.#keysDown.get(key) != null &&
+                this.#keysDown.get(key) == true);
+    }
+    getMousePos(): Vector {
+        return V(this.#mousePos);
+    }
+
     onKeyDown(event: KeyboardEvent): void {
 
     }
@@ -74,13 +86,14 @@ class Input {
 
     }
     onMouseDown(event: MouseEvent): void {
-        // var rect = this.canvas.getBoundingClientRect();
-        // this.isDragging = false;
-        // this.startTapTime = Date.now();
-        // this.mouseDown = true;
-        // this.mouseDownPos = new Vector(event.clientX - rect.left, event.clientY - rect.top);
+        var rect = this.#canvas.getBoundingClientRect();
 
-        // this.
+        // reset dragging and set mouse stuff
+        this.#isDragging = false;
+        this.#startTapTime = Date.now();
+        this.#isMouseDown = true;
+        this.#mouseDownPos = V(event.clientX - rect.left,
+                               event.clientY - rect.top);
 
         // call each listener
         this.callListeners("mousedown", 0);
@@ -89,18 +102,18 @@ class Input {
 
     }
     onMouseMove(event: MouseEvent): void {
-        var rect = this.canvas.getBoundingClientRect();
+        var rect = this.#canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
-        this.prevMousePos = V(this.mousePos);
-        this.rawMousePos = V(event.clientX, event.clientY);
-        this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
+        this.#prevMousePos = V(this.#mousePos);
+        this.#rawMousePos = V(event.clientX, event.clientY);
+        this.#mousePos = this.#rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.isMouseDown) && (Date.now() - this.startTapTime > DRAG_TIME);
+        this.#isDragging = (this.#isMouseDown) && (Date.now() - this.#startTapTime > DRAG_TIME);
 
         // call listeners
-        if (this.isDragging)
+        if (this.#isDragging)
             this.callListeners("mousedrag", 0);
         this.callListeners("mousemove", 0);
     }
@@ -112,7 +125,7 @@ class Input {
     }
     callListeners(type: string, b: number) {
         // call all listeners of type
-        var listeners = this.listeners.get(type);
+        var listeners = this.#listeners.get(type);
         if (listeners != undefined) {
             for (var listener of listeners)
                 listener(b);

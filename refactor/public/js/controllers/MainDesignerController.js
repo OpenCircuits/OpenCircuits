@@ -1,5 +1,6 @@
 // @flow
 const LEFT_MOUSE_BUTTON = require("../utils/Constants").LEFT_MOUSE_BUTTON;
+const OPTION_KEY        = require("../utils/Constants").OPTION_KEY;
 
 var V = require("../utils/math/Vector").V;
 var Input = require("../utils/Input");
@@ -27,9 +28,24 @@ var MainDesignerController = (function() {
         MainDesignerController.Render();
     }
 
+
+    /**
+     * onMouseDrag - Description
+     *
+     * @param {type} button Description
+     *
+     * @return {type} Description
+     */
     let onMouseDrag = function(button: number) {
         if (button === LEFT_MOUSE_BUTTON) {
             var shouldRender = false;
+
+
+            if (input.isKeyDown(OPTION_KEY)) {
+                var pos = input.getMousePos();
+            }
+
+
             // contextmenu.hide();
             // shouldRender = CurrentTool.onMouseDown(shouldRender);
             // for (var i = 0; i < mouseListeners.length; i++) {
@@ -37,6 +53,7 @@ var MainDesignerController = (function() {
             //     if (!listener.disabled && listener.onMouseDown(shouldRender))
             //         shouldRender = true;
             // }
+
             if (shouldRender)
                 MainDesignerController.Render();
         }
@@ -49,7 +66,7 @@ var MainDesignerController = (function() {
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
 
-            window.addEventListener('resize', e => resize(), false);
+            window.addEventListener("resize", e => resize(), false);
 
 
 

@@ -22,10 +22,10 @@ var config = {
 };
 
 module.exports = (env, argv) => {
-    
+
     if (argv.mode === 'development') {
         // do some different stuff maybe
     }
-    
+
     return config;
 };
