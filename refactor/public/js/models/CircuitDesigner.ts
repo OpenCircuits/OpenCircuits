@@ -5,11 +5,11 @@ import {Component} from "./ioobjects/Component";
 import {Wire}      from"./ioobjects/Wire";
 
 export class CircuitDesigner {
-	objects: Array<Component>;
-	wires: Array<Wire>;
-	propagationQueue: Array<Propagation>;
-	updateRequests: number;
-	propagationTime: number;
+	private objects: Array<Component>;
+	private wires: Array<Wire>;
+	private propagationQueue: Array<Propagation>;
+	private updateRequests: number;
+	private propagationTime: number;
 
 	constructor(propagationTime: number = 1) {
 		this.propagationTime = propagationTime;
@@ -19,7 +19,7 @@ export class CircuitDesigner {
 		this.updateRequests = 0;
 	}
 
-	reset(): void {
+	public reset(): void {
 		this.objects = [];
 		this.wires = [];
 		this.propagationQueue = [];
@@ -35,7 +35,7 @@ export class CircuitDesigner {
 	 * @param receiver
 	 * @param signal
 	 */
-	propogate(receiver: IOObject, signal: boolean): void {
+	public propogate(receiver: IOObject, signal: boolean): void {
 		this.propagationQueue.push(new Propagation(receiver, signal));
 
 		if (this.updateRequests == 0) {
@@ -50,10 +50,9 @@ export class CircuitDesigner {
 	}
 
 	/**
-	 *
 	 * @return True if the updated component(s) require rendering
 	 */
-	update(): boolean {
+	private update(): boolean {
 		// Create temp queue before sending, in the case that sending them triggers
 		//   more propagations to occur
 		var tempQueue = [];
@@ -80,12 +79,12 @@ export class CircuitDesigner {
 		return true;
 	}
 
-	addObjects(objects: Array<Component>): void {
+	public addObjects(objects: Array<Component>): void {
 		for (var i = 0; i < objects.length; i++)
 			this.addObject(objects[i]);
 	}
 
-	addObject(obj: Component): void {
+	public addObject(obj: Component): void {
 		if (this.objects.includes(obj))
 			throw new Error("Attempted to add object that already existed!");
 
@@ -93,39 +92,41 @@ export class CircuitDesigner {
 		this.objects.push(obj);
 	}
 
-	connect(c1: Component, i1: number, c2: Component, i2: number): void {
+	public connect(c1: Component, i1: number, c2: Component, i2: number): void {
+		// Make wire
 		var wire = new Wire(c1.getOutputPort(i1), c2.getInputPort(i2));
 		this.wires.push(wire);
-
 		wire.setDesigner(this);
+
+		// Connect components to wire
 		c1.connect(i1, wire);
 		c2.setInput(i2, wire);
 	}
 
-	removeObject(obj: Component): void {
+	public removeObject(obj: Component): void {
 		if (!this.objects.includes(obj))
 			throw new Error("Attempted to remove object that doesn't exist!");
 
-		// completely disconnect from the circuit
+		// Completely disconnect from the circuit
 		this.objects.splice(this.objects.indexOf(obj), 1);
 		obj.setDesigner(undefined);
 	}
 
-	removeWire(wire: Wire): void {
+	public removeWire(wire: Wire): void {
 		if (!this.wires.includes(wire))
 			throw new Error("Attempted to remove wire that doesn't exist!");
 
-		// completely disconnect from the circuit
+		// Completely disconnect from the circuit
 		this.wires.splice(this.wires.indexOf(wire), 1);
 		wire.setDesigner(undefined);
 	}
 
-	getObjects(): Array<Component> {
-		return this.objects;
+	public getObjects(): Array<Component> {
+		return this.objects.slice(); // Shallow copy array
 	}
 
-	getWires(): Array<Wire> {
-		return this.wires;
+	public getWires(): Array<Wire> {
+		return this.wires.slice(); // Shallow copy array
 	}
 
 }
