@@ -1,9 +1,9 @@
-// @flow
 
-var CircuitDesigner = require("./models/CircuitDesigner");
-var ANDGate = require("./models/ioobjects/gates/ANDGate");
-var Switch = require("./models/ioobjects/inputs/Switch");
-var LED = require("./models/ioobjects/outputs/LED");
+
+import {CircuitDesigner} from "./models/CircuitDesigner";
+import {ANDGate} from "./models/ioobjects/gates/ANDGate";
+import {Switch} from "./models/ioobjects/inputs/Switch";
+import {LED} from "./models/ioobjects/outputs/LED";
 
 function Start() {
     var d = new CircuitDesigner();

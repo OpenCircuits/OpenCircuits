@@ -5,7 +5,6 @@
 
 # Thumbnails
 ._*
-flow-typed
 node_modules
 coverage
 site/data/config.txt

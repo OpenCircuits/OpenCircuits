@@ -1,7 +1,7 @@
 const path = require('path');
 
 var config = {
-    entry: './refactor/public/js/Main.js',
+    entry: './refactor/public/js/Main.ts',
     output: {
         filename: 'Bundle.js',
         path: path.resolve(__dirname, 'build')
@@ -9,15 +9,15 @@ var config = {
     devtool: 'source-map',
     module: {
         rules: [ {
-            test: /\.js$/,
+            test: /\.tsx?$/,
             exclude: /(node_modules)/,
             use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-env', '@babel/preset-flow']
-                }
+                loader: 'ts-loader'
             }
         } ]
+    },
+    resolve: {
+        extensions: [ '.tsx', '.ts', '.js' ]
     }
 };
 

@@ -2,4 +2,13 @@
 
 module.exports = {
     collectCoverage: true,
+    moduleFileExtensions: [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    transform: {
+      "\\.(ts|tsx)$": "ts-jest"
+    },
+    testRegex: "/tests/.*\\.(ts|tsx|js)$"
 };
