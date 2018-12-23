@@ -4,19 +4,19 @@ import {Matrix2x3} from "./math/Matrix";
 import {TransformContains} from "./math/MathUtils";
 
 export class Camera {
-    pos: Vector;
-    zoom: number;
+    private pos: Vector;
+    private zoom: number;
 
-    center: Vector;
-    transform: Transform;
+    private center: Vector;
+    private transform: Transform;
 
-    mat: Matrix2x3;
-    inv: Matrix2x3;
+    private mat: Matrix2x3;
+    private inv: Matrix2x3;
 
-    width: number;
-    height: number;
+    private width: number;
+    private height: number;
 
-    dirty: boolean;
+    private dirty: boolean;
 
     constructor(width: number, height: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
         this.width = width;
@@ -27,12 +27,12 @@ export class Camera {
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
     }
-    resize(width: number, height: number): void {
+    public resize(width: number, height: number): void {
         this.width = width;
         this.height = height;
         this.center = V(this.width, this.height).scale(0.5);
     }
-    updateMatrix(): void {
+    private updateMatrix(): void {
         if (!this.dirty)
             return;
         this.dirty = false;
@@ -47,16 +47,15 @@ export class Camera {
         this.transform.setPos(p2.add(p1).scale(0.5));
         this.transform.setSize(p2.sub(p1));
     }
-    translate(dx: number, dy: number): void {
+    public translate(dx: Vector | number, dy: number = 0): void {
         this.dirty = true;
-        this.pos.x += dx;
-        this.pos.y += dy;
+        this.pos.translate(dx, dy);
     }
-    zoomBy(s: number): void {
+    public zoomBy(s: number): void {
         this.dirty = true;
         this.zoom *= s;
     }
-    cull(transform: Transform): boolean {
+    public cull(transform: Transform): boolean {
         // getCurrentContext().getRenderer().save();
         // transform.transformCtx(getCurrentContext().getRenderer().context);
         // getCurrentContext().getRenderer().rect(0, 0, transform.size.x, transform.size.y, '#ff00ff');
@@ -64,22 +63,28 @@ export class Camera {
 
         return TransformContains(transform, this.getTransform());
     }
-    getTransform(): Transform {
-        this.updateMatrix();
-        return this.transform;
+    public getPos(): Vector {
+        return this.pos.copy();
     }
-    getMatrix(): Matrix2x3 {
-        this.updateMatrix();
-        return this.mat;
+    public getZoom(): number {
+        return this.zoom;
     }
-    getInverseMatrix(): Matrix2x3 {
+    public getTransform(): Transform {
         this.updateMatrix();
-        return this.inv;
+        return this.transform.copy();
     }
-    getScreenPos(v: Vector): Vector {
+    public getMatrix(): Matrix2x3 {
+        this.updateMatrix();
+        return this.mat.copy();
+    }
+    public getInverseMatrix(): Matrix2x3 {
+        this.updateMatrix();
+        return this.inv.copy();
+    }
+    public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.center);
     }
-    getWorldPos(v: Vector): Vector {
+    public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.center));
     }
 }

@@ -8,9 +8,9 @@ export var Grid = (function() {
 
     return {
         render(renderer: Renderer, camera: Camera) {
-            var step = GRID_SIZE/camera.zoom;
+            var step = GRID_SIZE/camera.getZoom();
 
-            var cpos = V(camera.pos.x/camera.zoom - renderer.canvas.width/2, camera.pos.y/camera.zoom - renderer.canvas.height/2);
+            var cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));
 
             var cpx = cpos.x - Math.floor(cpos.x / step) * step;
             if (cpx < 0) cpx += step;
@@ -19,16 +19,16 @@ export var Grid = (function() {
 
             // Batch-render the lines = uglier code + way better performance
             renderer.save();
-            renderer.setStyles(undefined, '#999', 1 / camera.zoom);
-            renderer.context.beginPath();
-            for (var x = -cpx; x <= renderer.canvas.width-cpx+step; x += step) {
-                renderer._line(x, 0, x, renderer.canvas.height);
+            renderer.setStyles(undefined, '#999', 1.0 / camera.getZoom());
+            renderer.beginPath();
+            for (var x = -cpx; x <= renderer.getSize().x-cpx+step; x += step) {
+                renderer.pathLine(x, 0, x, renderer.getSize().y);
             }
-            for (var y = -cpy; y <= renderer.canvas.height-cpy+step; y += step) {
-                renderer._line(0, y, renderer.canvas.width, y);
+            for (var y = -cpy; y <= renderer.getSize().y-cpy+step; y += step) {
+                renderer.pathLine(0, y, renderer.getSize().x, y);
             }
-            renderer.context.closePath();
-            renderer.context.stroke();
+            renderer.closePath();
+            renderer.stroke();
             renderer.restore();
         }
     };

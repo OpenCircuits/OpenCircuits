@@ -46,3 +46,8 @@ export const X_KEY = 88;
 export const Y_KEY = 89;
 export const Z_KEY = 90;
 export const COMMAND_KEY = 91;
+
+const KEYS: Array<number> = [];
+for (let i = 0; i < 256; i++)
+    KEYS.push(i);
+export {KEYS};

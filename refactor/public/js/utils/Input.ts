@@ -8,20 +8,22 @@ import {SHIFT_KEY,
 import {Vector,V} from "../utils/math/Vector";
 
 export class Input {
-    canvas: HTMLCanvasElement;
-    prevMousePos: Vector;
-    rawMousePos: Vector;
-    mousePos: Vector;
+    private canvas: HTMLCanvasElement;
+    private prevMousePos: Vector;
+    private rawMousePos: Vector;
+    private mousePos: Vector;
 
-    isMouseDown: boolean;
-    mouseDownPos: Vector;
+    private mouseDown: boolean;
+    private mouseDownPos: Vector;
 
-    isDragging: boolean;
-    startTapTime: number;
+    private isDragging: boolean;
+    private startTapTime: number;
 
-    listeners: Map<string, Array<(b: number) => void> >;
+    private zoomFactor: number;
 
-    keysDown: Map<number, boolean>;
+    private listeners: Map<string, Array<(b?: number) => void> >;
+
+    private keysDown: Map<number, boolean>;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -29,11 +31,11 @@ export class Input {
         this.keysDown = new Map();
 
         window.addEventListener('keydown',  (e: KeyboardEvent) => this.onKeyDown(e), false);
-        window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyDown(e), false);
+        window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyUp(e), false);
 
         canvas.addEventListener('click',        (e: MouseEvent) => this.onClick(e),         false);
         canvas.addEventListener('dblclick',     (e: MouseEvent) => this.onDoubleClick(e),   false);
-        canvas.addEventListener('wheel',        (e: MouseEvent) => this.onScroll(e),        false);
+        canvas.addEventListener('wheel',        (e: WheelEvent) => this.onScroll(e),        false);
         canvas.addEventListener('mousedown',    (e: MouseEvent) => this.onMouseDown(e),     false);
         canvas.addEventListener('mouseup',      (e: MouseEvent) => this.onMouseUp(e),       false);
         canvas.addEventListener('mousemove',    (e: MouseEvent) => this.onMouseMove(e),     false);
@@ -53,52 +55,87 @@ export class Input {
         //     e.preventDefault();
         // });
     }
-    addListener(type: string, listener: (b: number) => void): void {
+    public addListener(type: string, listener: (b: number) => void): void {
         var arr = this.listeners.get(type);
         if (arr == undefined)
             this.listeners.set(type, arr = []);
         arr.push(listener);
     }
-    isKeyDown(key: number): boolean {
+    public isMouseDown(): boolean {
+        return this.mouseDown;
+    }
+    public isKeyDown(key: number): boolean {
         return (this.keysDown.get(key) != null &&
                 this.keysDown.get(key) == true);
     }
-    getMousePos(): Vector {
+    public getMousePos(): Vector {
         return V(this.mousePos);
     }
-
-    onKeyDown(event: KeyboardEvent): void {
-
+    public getMouseDownPos(): Vector {
+        return V(this.mouseDownPos);
     }
-    onKeyUp(event: KeyboardEvent): void {
-
+    public getDeltaMousePos(): Vector {
+        return this.mousePos.sub(this.prevMousePos);
     }
-    onClick(event: MouseEvent): void {
-
+    public getZoomFactor(): number {
+        return this.zoomFactor;
     }
-    onDoubleClick(event: MouseEvent): void {
 
-    }
-    onScroll(event: MouseEvent): void {
+    private onKeyDown(event: KeyboardEvent): void {
+        var code = event.keyCode;
+        this.keysDown.set(code, true);
 
+        // call each listener
+        this.callListeners("keydown", 0);
     }
-    onMouseDown(event: MouseEvent): void {
+    private onKeyUp(event: KeyboardEvent): void {
+        var code = event.keyCode;
+        this.keysDown.set(code, false);
+
+        // call each listener
+        this.callListeners("keyup", 0);
+    }
+    private onClick(event: MouseEvent): void {
+
+        // call each listener
+        this.callListeners("click", 0);
+    }
+    private onDoubleClick(event: MouseEvent): void {
+
+        // call each listener
+        this.callListeners("dblclick", 0);
+    }
+    private onScroll(event: WheelEvent): void {
+        var delta = -event.deltaY / 120.0;
+
+        // calculate zoom factor
+        this.zoomFactor = 0.95;
+        if (delta < 0)
+            this.zoomFactor = 1.0 / this.zoomFactor;
+
+        // call each listener
+        this.callListeners("scroll", 0);
+    }
+    private onMouseDown(event: MouseEvent): void {
         var rect = this.canvas.getBoundingClientRect();
 
         // reset dragging and set mouse stuff
         this.isDragging = false;
         this.startTapTime = Date.now();
-        this.isMouseDown = true;
+        this.mouseDown = true;
         this.mouseDownPos = V(event.clientX - rect.left,
-                               event.clientY - rect.top);
+                              event.clientY - rect.top);
 
         // call each listener
         this.callListeners("mousedown", 0);
     }
-    onMouseUp(event: MouseEvent): void {
+    private onMouseUp(event: MouseEvent): void {
+        this.mouseDown = false;
 
+        // call each listener
+        this.callListeners("mouseup", 0);
     }
-    onMouseMove(event: MouseEvent): void {
+    private onMouseMove(event: MouseEvent): void {
         var rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
@@ -107,20 +144,24 @@ export class Input {
         this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.isMouseDown) && (Date.now() - this.startTapTime > DRAG_TIME);
+        this.isDragging = (this.mouseDown) && (Date.now() - this.startTapTime > DRAG_TIME);
 
         // call listeners
         if (this.isDragging)
             this.callListeners("mousedrag", 0);
         this.callListeners("mousemove", 0);
     }
-    onMouseEnter(event: MouseEvent): void {
+    private onMouseEnter(event: MouseEvent): void {
 
+        // call each listener
+        this.callListeners("mouseenter", 0);
     }
-    onMouseLeave(event: MouseEvent): void {
+    private onMouseLeave(event: MouseEvent): void {
 
+        // call each listener
+        this.callListeners("mouseleave", 0);
     }
-    callListeners(type: string, b: number) {
+    private callListeners(type: string, b?: number) {
         // call all listeners of type
         var listeners = this.listeners.get(type);
         if (listeners != undefined) {

@@ -2,6 +2,7 @@ import {LEFT_MOUSE_BUTTON, OPTION_KEY} from "../utils/Constants";
 
 import {V} from "../utils/math/Vector";
 import {Input} from "../utils/Input";
+import {RenderQueue} from "../utils/RenderQueue";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -16,12 +17,14 @@ export var MainDesignerController = (function() {
     var view: MainDesignerView;
     var input: Input;
 
+    var renderQueue: RenderQueue;
+
     // var currentTool: Tool;
 
     let resize = function() {
         view.resize();
 
-        MainDesignerController.Render();
+        renderQueue.render();
     }
 
 
@@ -37,8 +40,11 @@ export var MainDesignerController = (function() {
             var shouldRender = false;
 
 
+            // @todo move this to a PanTool class or something
             if (input.isKeyDown(OPTION_KEY)) {
-                // var pos = input.getMousePos();
+                var dPos = input.getDeltaMousePos();
+                view.camera.translate(dPos.scale(-1*view.camera.getZoom()));
+                shouldRender = true;
             }
 
 
@@ -51,16 +57,32 @@ export var MainDesignerController = (function() {
             // }
 
             if (shouldRender)
-                MainDesignerController.Render();
+                renderQueue.render();
         }
+    }
+
+    let onScroll = function(): void {
+        // @todo move this stuff as well
+        var zoomFactor = input.getZoomFactor();
+
+        // Calculate position to zoom in/out of
+        var pos0 = view.camera.getWorldPos(input.getMousePos());
+        view.camera.zoomBy(zoomFactor);
+        var pos1 = view.camera.getScreenPos(pos0);
+        var dPos = pos1.sub(input.getMousePos());
+        view.camera.translate(dPos.scale(view.camera.getZoom()));
+
+        renderQueue.render();
     }
 
     return {
         Init: function(): void {
             designer = new CircuitDesigner();
             view = new MainDesignerView();
+            renderQueue = new RenderQueue(() => this.Render());
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
+            input.addListener("scroll", onScroll);
 
             window.addEventListener("resize", _e => resize(), false);
 

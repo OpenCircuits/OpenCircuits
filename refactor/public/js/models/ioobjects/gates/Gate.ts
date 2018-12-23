@@ -1,4 +1,5 @@
 import {Vector} from "../../../utils/math/Vector";
+import {Name} from "../../../utils/Name";
 import {Component} from "../Component";
 
 //
@@ -26,7 +27,7 @@ export abstract class Gate extends Component {
 
         // change name to be the not'd name if name wasn't manually set by user
         if (!this.name.isSet())
-            this.name.changeName(this.getDisplayName());
+            this.name = new Name(this.getDisplayName());
     }
 
 }

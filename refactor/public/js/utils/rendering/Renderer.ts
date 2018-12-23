@@ -4,13 +4,13 @@ import {Browser} from "../Browser";
 import {Camera} from "../Camera";
 
 export class Renderer {
-    canvas: HTMLCanvasElement;
-    tintCanvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    tintContext: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement;
+    private tintCanvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
+    private tintContext: CanvasRenderingContext2D;
 
-    vw: number;
-    vh: number;
+    private vw: number;
+    private vh: number;
 
     constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0) {
         this.canvas = canvas;
@@ -24,39 +24,51 @@ export class Renderer {
         this.tintCanvas.height = 100;
         this.tintContext = this.tintCanvas.getContext("2d");
     }
-    setCursor(cursor: string): void {
+    public setCursor(cursor: string): void {
         this.canvas.style.cursor = cursor;
     }
-    resize(): void {
+    public getSize(): Vector {
+        return V(this.canvas.width, this.canvas.height);
+    }
+    public resize(): void {
         this.canvas.width = window.innerWidth * this.vw;
         this.canvas.height = window.innerHeight * this.vh;
     }
-    clear(): void {
+    public clear(): void {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    save(): void {
+    public save(): void {
         this.context.save();
     }
-    restore(): void {
+    public restore(): void {
         this.context.restore();
     }
-    transform(camera: Camera, transform: Transform) {
+    public transform(camera: Camera, transform: Transform) {
         var m = transform.getMatrix().copy();
-        var v = camera.getScreenPos(V(m.mat[4], m.mat[5]));
-        m.mat[4] = v.x, m.mat[5] = v.y;
-        m.scale(V(1/camera.zoom, 1/camera.zoom));
-        this.context.setTransform(m.mat[0], m.mat[1], m.mat[2], m.mat[3], m.mat[4], m.mat[5]);
+        m.setTranslation(camera.getScreenPos(m.getTranslation()));
+        m.scale(1.0/camera.getZoom());
+        this.context.setTransform(m.get(0), m.get(1), m.get(2),
+                                  m.get(3), m.get(4), m.get(5));
     }
-    translate(v: Vector): void {
+    public translate(v: Vector): void {
         this.context.translate(v.x, v.y);
     }
-    scale(s: Vector): void {
+    public scale(s: Vector): void {
         this.context.scale(s.x, s.y);
     }
-    rotate(a: number): void {
+    public rotate(a: number): void {
         this.context.rotate(a);
     }
-    rect(x: number, y: number, w: number, h: number,
+    public beginPath(): void {
+        this.context.beginPath();
+    }
+    public closePath(): void {
+        this.context.closePath();
+    }
+    public stroke(): void {
+        this.context.stroke();
+    }
+    public rect(x: number, y: number, w: number, h: number,
         fillStyle: string, borderStyle: string,
         borderSize: number, alpha?: number): void {
         this.save();
@@ -69,7 +81,7 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    circle(x: number, y: number, r: number,
+    public circle(x: number, y: number, r: number,
         fillStyle: string, borderStyle: string,
         borderSize: number, alpha?: number): void {
         this.save();
@@ -83,12 +95,12 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    image(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint?: string): void {
+    public image(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint?: string): void {
         this.context.drawImage(img, x - w/2, y - h/2, w, h);
         if (tint != undefined)
             this.tintImage(img, x, y, w, h, tint);
     }
-    tintImage(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint: string): void {
+    public tintImage(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint: string): void {
         this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
         this.tintContext.fillStyle = tint;
         this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
@@ -101,7 +113,7 @@ export class Renderer {
         this.context.drawImage(this.tintCanvas, x - w/2, y - h/2, w, h);
         this.context.globalAlpha = 1.0;
     }
-    text(txt: string, x: number, y: number, w: number, h: number, textAlign: CanvasTextAlign): void {
+    public text(txt: string, x: number, y: number, w: number, h: number, textAlign: CanvasTextAlign): void {
         this.save();
         this.context.font = "lighter 15px arial";
         this.context.fillStyle = '#000';
@@ -110,7 +122,7 @@ export class Renderer {
         this.context.fillText(txt, x, y);
         this.restore();
     }
-    getTextWidth(txt: string): number {
+    public getTextWidth(txt: string): number {
         var width = 0;
         this.save();
         this.context.font = "lighter 15px arial";
@@ -120,7 +132,7 @@ export class Renderer {
         this.restore();
         return width;
     }
-    line(x1: number, y1: number, x2: number, y2: number, style: string, size: number): void {
+    public line(x1: number, y1: number, x2: number, y2: number, style: string, size: number): void {
         this.save();
         this.setStyles(undefined, style, size);
         this.context.beginPath();
@@ -130,11 +142,11 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    _line(x1: number, y1: number, x2: number, y2: number): void {
+    public pathLine(x1: number, y1: number, x2: number, y2: number): void {
         this.context.moveTo(x1, y1);
         this.context.lineTo(x2, y2);
     }
-    curve(x1: number, y1: number, x2: number, y2: number,
+    public curve(x1: number, y1: number, x2: number, y2: number,
           cx1: number, cy1: number, cx2: number, cy2: number,
           style: string, size: number): void {
         this.save();
@@ -146,7 +158,7 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    quadCurve(x1: number, y1: number, x2: number, y2: number,
+    public quadCurve(x1: number, y1: number, x2: number, y2: number,
               cx: number, cy: number, style: string, size: number): void {
         this.save();
         this.setStyles(undefined, style, size);
@@ -157,7 +169,7 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    shape(points: Array<Vector>, fillStyle: string, borderStyle: string, borderSize: number): void {
+    public shape(points: Array<Vector>, fillStyle: string, borderStyle: string, borderSize: number): void {
         this.save();
         this.setStyles(fillStyle, borderStyle, borderSize);
         this.context.beginPath();
@@ -171,7 +183,7 @@ export class Renderer {
             this.context.stroke();
         this.restore();
     }
-    setStyles(fillStyle: string = '#ffffff', borderStyle: string = '#000000',
+    public setStyles(fillStyle: string = '#ffffff', borderStyle: string = '#000000',
               borderSize: number = 2, alpha?: number): void {
         if (alpha != undefined && alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;

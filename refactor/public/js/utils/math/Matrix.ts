@@ -1,9 +1,9 @@
 import {Vector,V} from "./Vector";
 
 export class Matrix2x3 {
-    mat: Array<number>
+    private mat: Array<number>
 
-    constructor(other?: Matrix2x3) {
+    public constructor(other?: Matrix2x3) {
         this.mat = [];
         this.identity();
         if (other instanceof Matrix2x3) {
@@ -11,12 +11,15 @@ export class Matrix2x3 {
                 this.mat[i] = other.mat[i];
         }
     }
-    zero(): Matrix2x3 {
+    public get(i: number): number {
+        return this.mat[i];
+    }
+    public zero(): Matrix2x3 {
         for (var i = 0; i < 2*3; i++)
             this.mat[i] = 0;
         return this;
     }
-    identity(): Matrix2x3 {
+    public identity(): Matrix2x3 {
         this.zero();
 
         this.mat[0] = 1.0;
@@ -24,13 +27,13 @@ export class Matrix2x3 {
 
         return this;
     }
-    mul(v: Vector): Vector {
+    public mul(v: Vector): Vector {
         var result = V(0,0);
         result.x = this.mat[0] * v.x + this.mat[2] * v.y + this.mat[4];
         result.y = this.mat[1] * v.x + this.mat[3] * v.y + this.mat[5];
         return result;
     }
-    mult(m: Matrix2x3): Matrix2x3 {
+    public mult(m: Matrix2x3): Matrix2x3 {
         var result = new Matrix2x3();
         result.mat[0] = this.mat[0]*m.mat[0] + this.mat[2]*m.mat[1];
         result.mat[1] = this.mat[1]*m.mat[0] + this.mat[3]*m.mat[1];
@@ -40,11 +43,18 @@ export class Matrix2x3 {
         result.mat[5] = this.mat[1]*m.mat[4] + this.mat[3]*m.mat[5] + this.mat[5];
         return result;
     }
-    translate(v: Vector): void {
+    public setTranslation(v: Vector): void {
+        this.mat[4] = v.x;
+        this.mat[5] = v.y;
+    }
+    public getTranslation(): Vector {
+        return V(this.mat[4], this.mat[5]);
+    }
+    public translate(v: Vector): void {
         this.mat[4] += this.mat[0] * v.x + this.mat[2] * v.y;
         this.mat[5] += this.mat[1] * v.x + this.mat[3] * v.y;
     }
-    rotate(theta: number): void {
+    public rotate(theta: number): void {
         var c = Math.cos(theta);
         var s = Math.sin(theta);
         var m11 = this.mat[0] * c + this.mat[2] * s;
@@ -56,13 +66,20 @@ export class Matrix2x3 {
         this.mat[2] = m21;
         this.mat[3] = m22;
     }
-    scale(s: Vector): void {
-        this.mat[0] *= s.x;
-        this.mat[1] *= s.x;
-        this.mat[2] *= s.y;
-        this.mat[3] *= s.y;
+    public scale(s: Vector | number): void {
+        if (s instanceof Vector) {
+            this.mat[0] *= s.x;
+            this.mat[1] *= s.x;
+            this.mat[2] *= s.y;
+            this.mat[3] *= s.y;
+        } else {
+            this.mat[0] *= s;
+            this.mat[1] *= s;
+            this.mat[2] *= s;
+            this.mat[3] *= s;
+        }
     }
-    inverse(): Matrix2x3 {
+    public inverse(): Matrix2x3 {
         var inv = new Array(3*2);
         var det;
 
@@ -88,11 +105,11 @@ export class Matrix2x3 {
 
         return m;
     }
-    print(): void {
+    public print(): void {
         console.log("[" + this.mat[0].toFixed(3) + ", " + this.mat[2].toFixed(3) + ", " + this.mat[4].toFixed(3) + "]\n" +
                     "[" + this.mat[1].toFixed(3) + ", " + this.mat[3].toFixed(3) + ", " + this.mat[5].toFixed(3) + "]");
     }
-    copy(): Matrix2x3 {
+    public copy(): Matrix2x3 {
         return new Matrix2x3(this);
     }
 }
