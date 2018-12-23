@@ -10,22 +10,22 @@ import {Matrix2x3} from "./Matrix";
  *  to be able to quickly apply intersection testing.
  */
 export class Transform {
-    parent?: Transform;
-    pos: Vector;
-    scale: Vector;
-    angle: number;
-    size: Vector;
+    private parent?: Transform;
+    private pos: Vector;
+    private scale: Vector;
+    private angle: number;
+    private size: Vector;
 
-    corners: Array<Vector>;
-    localCorners: Array<Vector>;
+    private corners: Array<Vector>;
+    private localCorners: Array<Vector>;
 
-    dirty: boolean;
-    dirtySize: boolean;
-    dirtyCorners: boolean;
+    private dirty: boolean;
+    private dirtySize: boolean;
+    private dirtyCorners: boolean;
 
-    matrix: Matrix2x3;
-    inverse: Matrix2x3;
-    radius: number;
+    private matrix: Matrix2x3;
+    private inverse: Matrix2x3;
+    private radius: number;
 
     /**
      * Constructs a new Transform object
@@ -47,7 +47,7 @@ export class Transform {
         this.dirtyCorners = true;
         this.updateMatrix();
     }
-    updateMatrix(): void {
+    private updateMatrix(): void {
         if (!this.dirty)
             return;
         this.dirty = false;
@@ -62,7 +62,7 @@ export class Transform {
 
         this.inverse = this.matrix.inverse();
     }
-    updateSize(): void {
+    private updateSize(): void {
         if (!this.dirtySize)
             return;
         this.dirtySize = false;
@@ -72,7 +72,7 @@ export class Transform {
 
         this.radius = Math.sqrt(this.size.x*this.size.x + this.size.y*this.size.y)/2;
     }
-    updateCorners(): void {
+    private updateCorners(): void {
         if (!this.dirtyCorners)
             return;
         this.dirtyCorners = false;
@@ -88,7 +88,7 @@ export class Transform {
      * @param {number} a The angle to rotate
      * @param {number} c The axis to rotate about
      */
-    rotateAbout(a: number, c: Vector): void {
+    public rotateAbout(a: number, c: Vector): void {
         this.setAngle(a);
         this.setPos(this.pos.sub(c));
         var cos = Math.cos(a), sin = Math.sin(a);
@@ -99,39 +99,39 @@ export class Transform {
         this.dirtyCorners = true;
     }
 
-    setParent(t: Transform): void {
+    public setParent(t: Transform): void {
         this.parent = t;
         this.dirty = true;
         this.dirtyCorners = true;
     }
-    setPos(p: Vector): void {
+    public setPos(p: Vector): void {
         this.pos.x = p.x;
         this.pos.y = p.y;
         this.dirty = true;
         this.dirtyCorners = true;
     }
-    setAngle(a: number): void {
+    public setAngle(a: number): void {
         this.angle = a;
         this.dirty = true;
         this.dirtyCorners = true;
     }
-    setScale(s: Vector): void {
+    public setScale(s: Vector): void {
         this.scale.x = s.x;
         this.scale.y = s.y;
         this.dirty = true;
     }
-    setSize(s: Vector): void {
+    public setSize(s: Vector): void {
         this.size.x = s.x;
         this.size.y = s.y;
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
-    setWidth(w: number): void {
+    public setWidth(w: number): void {
         this.size.x = w;
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
-    setHeight(h: number): void {
+    public setHeight(h: number): void {
         this.size.y = h;
         this.dirtySize = true;
         this.dirtyCorners = true;
@@ -146,7 +146,7 @@ export class Transform {
      *
      * @return {Vector}     The local space vector
      */
-    toLocalSpace(v: Vector): Vector { // v must be in world coords
+    public toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
     }
 
@@ -159,63 +159,63 @@ export class Transform {
      *
      * @return {Vector}     The world space vector
      */
-    toWorldSpace(v: Vector): Vector {
+    public toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);
     }
 
-    getParent(): Transform {
+    public getParent(): Transform {
         return this.parent;
     }
-    getPos(): Vector {
+    public getPos(): Vector {
         return V(this.pos.x, this.pos.y);
     }
-    getAngle(): number {
+    public getAngle(): number {
         return this.angle;
     }
-    getScale(): Vector {
+    public getScale(): Vector {
         return V(this.scale.x, this.scale.y);
     }
-    getSize(): Vector {
+    public getSize(): Vector {
         return this.size;
     }
-    getRadius(): number {
+    public getRadius(): number {
         this.updateSize();
         return this.radius;
     }
-    getMatrix(): Matrix2x3 {
+    public getMatrix(): Matrix2x3 {
         this.updateMatrix();
         return this.matrix;
     }
-    getInverseMatrix(): Matrix2x3 {
+    public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();
         return this.inverse;
     }
-    getBottomLeft(): Vector {
+    public getBottomLeft(): Vector {
         this.updateCorners();
         return this.corners[0];
     }
-    getBottomRight(): Vector {
+    public getBottomRight(): Vector {
         this.updateCorners();
         return this.corners[1];
     }
-    getTopRight(): Vector {
+    public getTopRight(): Vector {
         this.updateCorners();
         return this.corners[2];
     }
-    getTopLeft(): Vector {
+    public getTopLeft(): Vector {
         this.updateCorners();
         return this.corners[3];
     }
-    getCorners(): Array<Vector> {
+    public getCorners(): Array<Vector> {
         this.updateCorners();
-        return this.corners;
+        return this.corners.slice(); // Shallow copy array
     }
-    getLocalCorners(): Array<Vector> {
+    public getLocalCorners(): Array<Vector> {
         this.updateSize();
-        return this.localCorners;
+        return this.localCorners.slice(); // Shallow copy array
     }
 
-    copy(): Transform {
+    public copy(): Transform {
         var trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
         trans.scale = this.scale.copy();
         trans.dirty = true;

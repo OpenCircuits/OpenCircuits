@@ -2,6 +2,7 @@
 
 module.exports = {
     collectCoverage: true,
+    testEnvironment: "node",
     moduleFileExtensions: [
       "ts",
       "tsx",

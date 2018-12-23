@@ -30,7 +30,7 @@ export var ComponentRenderer = (function() {
             // if (this.isPressable && this.selectionBoxTransform != undefined)
             //     renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());
 
-            renderer.image(Images.GetImage(object.getImageName()), 0, 0, transform.size.x, transform.size.y);
+            renderer.image(Images.GetImage(object.getImageName()), 0, 0, transform.getSize().x, transform.getSize().y);
 
             renderer.restore();
         }

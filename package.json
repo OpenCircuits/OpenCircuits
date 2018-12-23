@@ -19,6 +19,6 @@
   },
   "scripts": {
     "build": "webpack --mode=development",
-    "test": "jest"
+    "test": "jest --runInBand"
   }
 }
