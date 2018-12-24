@@ -89,8 +89,8 @@ export abstract class Component extends IOObject {
     public setInputPortCount(val: number): void {
         // no need to update if value is already
         //  the current amount
-        if (val == this.inputPortCount.getValue())
-            return;
+        // if (val == this.inputPortCount.getValue())
+        //     return;
 
         // set count (will auto-clamp)
         this.inputPortCount.setValue(val);
