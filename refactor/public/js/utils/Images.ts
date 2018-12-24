@@ -16,7 +16,7 @@ export var Images = (function() {
                 loadImages(imageNames, index+1, onFinish);
         };
         img.src = "img/items/" + imageNames[index];
-        console.log(img.src);
+        // console.log(img.src);
     }
 
     return {

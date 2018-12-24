@@ -1,4 +1,5 @@
 import {Vector} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
 //
@@ -10,7 +11,7 @@ export abstract class FlipFlop extends Component {
 	protected last_clock: boolean = false;
 
     constructor(numInputs: number, numOutputs: number, size: Vector) {
-        super(numInputs, numOutputs, false, size);
+        super(new ClampedValue(numInputs), new ClampedValue(numInputs), size);
     }
 
 }

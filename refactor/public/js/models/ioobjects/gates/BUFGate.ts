@@ -1,10 +1,11 @@
 import {V} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Gate} from "./Gate";
 
 export class BUFGate extends Gate {
 
 	constructor(not: boolean = false) {
-		super(not, 1, V(60, 60));
+		super(not, new ClampedValue(1,1,1), V(60, 60));
 	}
 
 	// @Override

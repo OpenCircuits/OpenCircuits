@@ -1,24 +1,15 @@
-import {IO_PORT_LENGTH} from "../../utils/Constants";
-import {Vector,V} from "../../utils/math/Vector";
+import {V} from "../../utils/math/Vector";
 
 import {Component} from "./Component";
+import {Port}	   from "./Port";
 import {Wire}      from "./Wire";
 
-export class InputPort {
-	private parent: Component;
+export class InputPort extends Port {
 	private input?: Wire;
-	private isOn: boolean;
 
-	private origin: Vector;
-	private target: Vector;
-
-	constructor(parent: Component) {
-		this.parent = parent;
+	public constructor(parent: Component) {
+		super(parent, V(-1, 0));
 		this.input = undefined;
-		this.isOn = false;
-
-		this.origin = V(0, 0);
-		this.target = V(-IO_PORT_LENGTH, 0);
 	}
 
 	public activate(signal: boolean) {
@@ -37,21 +28,6 @@ export class InputPort {
 
 	public setInput(input: Wire): void {
 		this.input = input;
-	}
-
-	public getParent(): Component {
-		return this.parent;
-	}
-
-	public getOrigin(): Vector {
-		return this.origin;
-	}
-	public getTarget(): Vector {
-		return this.target;
-	}
-
-	public getIsOn(): boolean {
-		return this.isOn;
 	}
 
 	public getInput(): Wire {

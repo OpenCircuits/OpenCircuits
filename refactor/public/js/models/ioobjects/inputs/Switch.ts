@@ -1,10 +1,13 @@
 import {V} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
 export class Switch extends Component {
 
 	constructor() {
-		super(0, 1, true, V(60, 60));
+		super(new ClampedValue(0),
+			  new ClampedValue(1),
+			  V(60, 60));
 	}
 
     // @Override

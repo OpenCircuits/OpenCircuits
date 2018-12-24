@@ -1,24 +1,15 @@
-import {IO_PORT_LENGTH} from "../../utils/Constants";
-import {Vector,V} from "../../utils/math/Vector";
+import {V} from "../../utils/math/Vector";
 
 import {Component} from "./Component";
+import {Port}	   from "./Port";
 import {Wire}      from "./Wire";
 
-export class OutputPort {
-	private parent: Component;
+export class OutputPort extends Port {
     private connections: Array<Wire>;
-    private isOn: boolean;
 
-	private origin: Vector;
-	private target: Vector;
-
-	constructor(parent: Component) {
-		this.parent = parent;
+	public constructor(parent: Component) {
+		super(parent, V(1, 0));
 		this.connections = [];
-		this.isOn = false;
-
-		this.origin = V(0, 0);
-		this.target = V(IO_PORT_LENGTH, 0);
 	}
 
 	/**
@@ -45,21 +36,6 @@ export class OutputPort {
 	public connect(w: Wire): void {
 		this.connections.push(w);
 		w.activate(this.isOn);
-	}
-
-	public getParent(): Component {
-		return this.parent;
-	}
-
-	public getOrigin(): Vector {
-		return this.origin;
-	}
-	public getTarget(): Vector {
-		return this.target;
-	}
-
-	public getIsOn(): boolean {
-		return this.isOn;
 	}
 
 	public getConnections(): Array<Wire> {

@@ -1,10 +1,13 @@
 import {V} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
 export class LED extends Component {
 
 	constructor() {
-		super(1, 0, false, V(60, 60));
+		super(new ClampedValue(1),
+			  new ClampedValue(0),
+			  V(60, 60));
 	}
 
 	public isOn(): boolean {

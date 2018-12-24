@@ -1,4 +1,5 @@
 import {Vector} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Name} from "../../../utils/Name";
 import {Component} from "../Component";
 
@@ -9,8 +10,8 @@ import {Component} from "../Component";
 export abstract class Gate extends Component {
     protected not: boolean = false;
 
-    constructor(not: boolean, numInputs: number, size: Vector) {
-        super(numInputs, 1, false, size);
+    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector) {
+        super(inputPortCount, new ClampedValue(1), size);
         this.setNot(not);
     }
 

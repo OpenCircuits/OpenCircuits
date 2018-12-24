@@ -1,10 +1,11 @@
 import {V} from "../../../utils/math/Vector";
+import {ClampedValue} from "../../../utils/ClampedValue";
 import {Gate} from "./Gate";
 
 export class XORGate extends Gate {
 
 	constructor(not: boolean = false) {
-		super(not, 2, V(60, 60));
+		super(not, new ClampedValue(2,2,8), V(60, 60));
 	}
 
 	// @Override

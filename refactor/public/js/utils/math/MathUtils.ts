@@ -1,6 +1,25 @@
 import {Transform} from "./Transform";
 
 /**
+ * Clamps a number between a given min and max
+ *
+ * @param  {Number} x
+ *         The number to clamp
+ *
+ * @param  {Number} min
+ *         The minimum
+ *
+ * @param  {Number} max
+ *         The maximum
+ *
+ * @return {Number}
+ *         The clamped number
+ */
+export function Clamp(x: number, min: number, max: number) {
+    return Math.max(Math.min(x, max), min);
+}
+
+/**
  * Compares two transforms to see if they overlap.
  * First tests it using a quick circle-circle
  * intersection using the 'radius' of the transform

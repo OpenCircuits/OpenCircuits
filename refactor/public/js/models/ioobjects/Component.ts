@@ -1,8 +1,10 @@
-import {Vector,V}  from "../../utils/math/Vector";
-import {Transform} from "../../utils/math/Transform";
+import {Vector,V}     from "../../utils/math/Vector";
+import {Transform}    from "../../utils/math/Transform";
+import {ClampedValue} from "../../utils/ClampedValue";
 
 import {IOObject}   from "./IOObject";
 import {Wire}       from "./Wire";
+import {Port}       from "./Port";
 import {InputPort}  from "./InputPort";
 import {OutputPort} from "./OutputPort";
 
@@ -10,11 +12,17 @@ export abstract class Component extends IOObject {
     protected inputs: Array<InputPort>;
     protected outputs: Array<OutputPort>;
 
+    protected inputPortCount: ClampedValue;
+    protected outputPortCount: ClampedValue;
+
     protected transform: Transform;
 
     // constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
-	constructor(numInputs: number, numOutputs: number, isPressable: boolean, size: Vector = V(1, 1)) {
+	public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector) {
         super();
+
+        this.inputPortCount = inputPortCount;
+        this.outputPortCount = outputPortCount;
 
 		this.inputs = [];
 		this.outputs = [];
@@ -22,12 +30,40 @@ export abstract class Component extends IOObject {
         this.transform = new Transform(V(0,0), size, 0);
 
 		// Create and initialize each port
-		for (var i = 0; i < numInputs; i++)
-			this.inputs.push(new InputPort(this));
-		for (var i = 0; i < numOutputs; i++)
+		// for (var i = 0; i < inputPortCount.getValue(); i++)
+		// 	this.inputs.push(new InputPort(this));
+        this.setInputPortCount(inputPortCount.getValue());
+		for (var i = 0; i < outputPortCount.getValue(); i++)
 			this.outputs.push(new OutputPort(this));
 	}
 
+    /**
+     * Default behavior for port positioning to
+     *  be evenly spaced along the height of this
+     *  component.
+     * @param arr The array of ports (either in or out ports)
+     */
+    protected updatePortPositions(arr: Array<Port>): void {
+        for (var i = 0; i < arr.length; i++) {
+            // Calculate y position of port
+            var l = -this.transform.getSize().y/2*(i - arr.length/2 + 0.5);
+            if (i === 0) l--;
+            if (i === arr.length-1) l++;
+
+            // Set y positions
+            var port = arr[i];
+            port.setOriginPos(V(port.getOriginPos().x, l));
+            port.setTargetPos(V(port.getTargetPos().x, l));
+        }
+    }
+
+    /**
+     * Activates this component with the given signal
+     *  through the output port at index i
+     * @param signal The signal (on or off)
+     * @param i      The index of the output port
+     *               Must be 0 <= i < outputs.length
+     */
 	public activate(signal: boolean, i: number = 0): void {
 		// Don't try to activate an Output component since it has no outputs
 		if (this.outputs.length == 0)
@@ -43,6 +79,31 @@ export abstract class Component extends IOObject {
 	public setInput(i: number, w: Wire): void {
 		this.inputs[i].setInput(w);
 	}
+
+    /**
+     * Set the number of InputPorts of this component.
+     *  The value will be clamped and positions of ports
+     *  will be updated.
+     * @param val The new number of ports
+     */
+    public setInputPortCount(val: number): void {
+        // no need to update if value is already
+        //  the current amount
+        if (val == this.inputPortCount.getValue())
+            return;
+
+        // set count (will auto-clamp)
+        this.inputPortCount.setValue(val);
+
+        // add or remove ports to meet target
+        while (this.inputs.length > this.inputPortCount.getValue())
+            this.inputs.pop();
+        while (this.inputs.length < this.inputPortCount.getValue())
+            this.inputs.push(new InputPort(this));
+
+        // update positions
+        this.updatePortPositions(this.inputs);
+    }
 
     public setPos(v: Vector): void {
         this.transform.setPos(v);
