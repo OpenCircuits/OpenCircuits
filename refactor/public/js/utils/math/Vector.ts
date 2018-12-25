@@ -70,6 +70,6 @@ export class Vector {
     // }
 }
 
-export function V(x: Vector | number, y: number = 0): Vector {
+export function V(x: Vector | number = 0, y: number = 0): Vector {
     return new Vector(x, y);
 }

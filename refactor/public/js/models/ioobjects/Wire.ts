@@ -1,3 +1,5 @@
+import {Vector,V} from "../../utils/math/Vector";
+import {BezierCurve} from "../../utils/math/BezierCurve";
 import {IOObject}   from "./IOObject";
 import {Component}  from "./Component";
 import {OutputPort} from "./OutputPort";
@@ -6,13 +8,22 @@ import {InputPort}  from "./InputPort";
 export class Wire extends IOObject {
     private input: OutputPort;
     private output: InputPort;
+
     private isOn: boolean;
 
-	constructor(input: OutputPort, output: InputPort) {
+    private shape: BezierCurve;
+    private straight: boolean;
+
+	public constructor(input: OutputPort, output: InputPort) {
         super();
 
 		this.input = input;
 		this.output = output;
+
+        this.isOn = false;
+
+        this.shape = new BezierCurve(V(),V(),V(),V());
+        this.straight = false;
 	}
 
 	public activate(signal: boolean): void {
@@ -39,6 +50,18 @@ export class Wire extends IOObject {
 
     public getOutputComponent(): Component {
         return this.output.getParent();
+    }
+
+    public getIsOn(): boolean {
+        return this.isOn;
+    }
+
+    public getShape(): BezierCurve {
+        return this.shape;
+    }
+
+    public isStraight(): boolean {
+        return this.straight;
     }
 
     public getDisplayName(): string {
