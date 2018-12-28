@@ -7,6 +7,8 @@ export abstract class Port {
     protected parent: Component;
     protected isOn: boolean;
 
+    protected dir: Vector;
+
 	protected origin: Vector;
 	protected target: Vector;
 
@@ -14,6 +16,7 @@ export abstract class Port {
         this.parent = parent;
 		this.isOn = false;
 
+        this.dir = dir;
 		this.origin = V(0, 0);
 		this.target = dir.scale(IO_PORT_LENGTH);
     }
@@ -31,10 +34,25 @@ export abstract class Port {
 	public getIsOn(): boolean {
 		return this.isOn;
 	}
+
+    public getDir(): Vector {
+        return this.dir.copy();
+    }
 	public getOriginPos(): Vector {
-		return this.origin;
+		return this.origin.copy();
 	}
 	public getTargetPos(): Vector {
-		return this.target;
+        return this.target.copy();
 	}
+
+    public getWorldDir(): Vector {
+        return this.parent.transformPoint(this.dir).sub(this.parent.getPos()).normalize();
+    }
+	public getWorldOriginPos(): Vector {
+		return this.parent.transformPoint(this.origin);
+	}
+	public getWorldTargetPos(): Vector {
+        return this.parent.transformPoint(this.target);
+	}
+
 }

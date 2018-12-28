@@ -93,8 +93,8 @@ export var MainDesignerController = (function() {
             var g1 = new ANDGate();
             var l1 = new LED();
 
-            s1.setPos(V(-200, -100));
-            s2.setPos(V(-200, 100));
+            s1.setPos(V(-200, 100));
+            s2.setPos(V(-200, -100));
             g1.setPos(V(0, 0));
             l1.setPos(V(200, 0));
 

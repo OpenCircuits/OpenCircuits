@@ -51,6 +51,26 @@ export class BezierCurve {
         this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));
     }
 
+    public setP1(v: Vector): void {
+        this.dirty = true;
+        this.p1 = v;
+    }
+
+    public setP2(v: Vector): void {
+        this.dirty = true;
+        this.p2 = v;
+    }
+
+    public setC1(v: Vector): void {
+        this.dirty = true;
+        this.c1 = v;
+    }
+
+    public setC2(v: Vector): void {
+        this.dirty = true;
+        this.c2 = v;
+    }
+
     public getP1(): Vector {
         return this.p1.copy();
     }

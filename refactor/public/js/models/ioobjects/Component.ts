@@ -109,6 +109,15 @@ export abstract class Component extends IOObject {
         this.transform.setPos(v);
     }
 
+    /**
+     * Transform the given local-space vector
+     *  to world space relative to this transform
+     * @param v The point relative to this component
+     */
+    public transformPoint(v: Vector): Vector {
+        return this.transform.getMatrix().mul(v);
+    }
+
 	public getInputPort(i: number): InputPort {
 		return this.inputs[i];
 	}
@@ -140,6 +149,10 @@ export abstract class Component extends IOObject {
         for (var i = 0; i < this.outputs.length; i++)
             arr = arr.concat(this.outputs[i].getConnections());
         return arr;
+    }
+
+    public getPos(): Vector {
+        return this.transform.getPos();
     }
 
     public getTransform(): Transform {
