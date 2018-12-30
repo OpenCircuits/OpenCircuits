@@ -1,9 +1,7 @@
 import "jest";
 
-import {Vector,V}        from "../../../../refactor/public/js/utils/Math/Vector";
 import {CircuitDesigner} from "../../../../refactor/public/js/models/CircuitDesigner";
 import {Switch}          from "../../../../refactor/public/js/models/ioobjects/inputs/Switch";
-import {ANDGate}         from "../../../../refactor/public/js/models/ioobjects/gates/ANDGate";
 import {LED}             from "../../../../refactor/public/js/models/ioobjects/outputs/LED";
 
 describe("CircuitDesigner", () => {

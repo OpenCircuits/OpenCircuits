@@ -1,4 +1,3 @@
-import {V} from "../math/Vector";
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
 

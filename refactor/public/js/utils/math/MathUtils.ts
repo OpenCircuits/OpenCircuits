@@ -15,7 +15,7 @@ import {Transform} from "./Transform";
  * @return {Number}
  *         The clamped number
  */
-export function Clamp(x: number, min: number, max: number) {
+export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
 }
 

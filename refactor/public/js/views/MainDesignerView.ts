@@ -7,8 +7,6 @@ import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer"
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {IOObject}  from "../models/ioobjects/IOObject";
-import {Wire}      from "../models/ioobjects/Wire";
-import {Component} from "../models/ioobjects/Component";
 
 export class MainDesignerView {
     canvas: HTMLCanvasElement;
@@ -33,14 +31,14 @@ export class MainDesignerView {
 
         // Render all wires (first so they are underneath objects)
         var wires = designer.getWires();
-        for (var wire of wires) {
+        for (let wire of wires) {
             var selected = selections.includes(wire);
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
         // Render all objects
         var objects = designer.getObjects();
-        for (var object of objects) {
+        for (let object of objects) {
             var selected = selections.includes(object);
             ComponentRenderer.render(this.renderer, this.camera, object, selected);
         }

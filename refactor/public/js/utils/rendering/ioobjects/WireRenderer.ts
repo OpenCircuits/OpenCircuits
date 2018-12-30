@@ -1,7 +1,6 @@
 import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR} from "../../Constants";
-import {BezierCurve} from "../../math/BezierCurve";
 import {Renderer} from "../Renderer";
 import {Camera} from "../../Camera";
 import {Wire} from "../../../models/ioobjects/Wire";

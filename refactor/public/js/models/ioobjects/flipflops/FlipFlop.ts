@@ -11,7 +11,7 @@ export abstract class FlipFlop extends Component {
 	protected last_clock: boolean = false;
 
     constructor(numInputs: number, numOutputs: number, size: Vector) {
-        super(new ClampedValue(numInputs), new ClampedValue(numInputs), size);
+        super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
     }
 
 }

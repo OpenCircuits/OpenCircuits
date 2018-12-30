@@ -1,9 +1,4 @@
-import {SHIFT_KEY,
-        ENTER_KEY,
-        CONTROL_KEY,
-        OPTION_KEY,
-        COMMAND_KEY,
-        DRAG_TIME} from "./Constants";
+import {DRAG_TIME} from "./Constants";
 
 import {Vector,V} from "../utils/math/Vector";
 

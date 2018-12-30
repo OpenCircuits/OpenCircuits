@@ -1,4 +1,3 @@
-import {Vector,V} from "../../math/Vector";
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {Camera} from "../../Camera";
@@ -11,8 +10,6 @@ import {Images} from "../../Images";
 // import {LED} from "../../../models/ioobjects/outputs/LED";
 
 export var ComponentRenderer = (function() {
-    var images = [];
-
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
             renderer.save();
@@ -22,10 +19,10 @@ export var ComponentRenderer = (function() {
             renderer.transform(camera, transform);
 
             for (var i = 0; i < object.getInputPortCount(); i++)
-                IOPortRenderer.renderIPort(renderer, camera, object.getInputPort(i),  selected);
+                IOPortRenderer.renderIPort(renderer, object.getInputPort(i),  selected);
 
             for (var i = 0; i < object.getOutputPortCount(); i++)
-                IOPortRenderer.renderOPort(renderer, camera, object.getOutputPort(i), selected);
+                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected);
 
             // if (this.isPressable && this.selectionBoxTransform != undefined)
             //     renderer.rect(0, 0, this.selectionBoxTransform.size.x, this.selectionBoxTransform.size.y, this.getCol(), this.getBorderColor());

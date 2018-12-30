@@ -1,6 +1,6 @@
 import {DEFAULT_SIZE} from "../../utils/Constants";
 
-import {Vector,V} from "../../utils/math/Vector";
+import {V} from "../../utils/math/Vector";
 import {BezierCurve} from "../../utils/math/BezierCurve";
 import {IOObject}   from "./IOObject";
 import {Component}  from "./Component";

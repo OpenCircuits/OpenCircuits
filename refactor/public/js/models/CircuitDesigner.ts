@@ -2,7 +2,6 @@ import {Propagation} from "./Propagation";
 
 import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
-import {Port}      from "./ioobjects/Port";
 import {Wire}      from "./ioobjects/Wire";
 
 export class CircuitDesigner {

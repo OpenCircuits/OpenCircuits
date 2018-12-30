@@ -113,7 +113,7 @@ export class Renderer {
         this.context.drawImage(this.tintCanvas, x - w/2, y - h/2, w, h);
         this.context.globalAlpha = 1.0;
     }
-    public text(txt: string, x: number, y: number, w: number, h: number, textAlign: CanvasTextAlign): void {
+    public text(txt: string, x: number, y: number, textAlign: CanvasTextAlign): void {
         this.save();
         this.context.font = "lighter 15px arial";
         this.context.fillStyle = '#000';

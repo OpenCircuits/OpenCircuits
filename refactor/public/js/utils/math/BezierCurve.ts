@@ -42,8 +42,6 @@ export class BezierCurve {
 
         var discriminant2 = b.x*b.x - 4*a.x*c.x;
         discriminant2 = (discriminant2 >= 0 ? Math.sqrt(discriminant2) : -1);
-        var t3 = (discriminant2 !== -1 ? clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
-        var t4 = (discriminant2 !== -1 ? clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
         max.x = Math.max(this.getX(t1), this.getX(t2), end1.x, end2.x);
         min.x = Math.min(this.getX(t1), this.getX(t2), end1.x, end2.x);
 

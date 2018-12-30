@@ -84,6 +84,7 @@ export var MainDesignerController = (function() {
             view = new MainDesignerView();
             renderQueue = new RenderQueue(() => this.Render());
             actions = new ActionManager();
+            
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
             input.addListener("scroll", onScroll);
