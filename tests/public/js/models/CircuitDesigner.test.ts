@@ -111,7 +111,6 @@ describe("CircuitDesigner", () => {
             expect(o.getInputs().length).toBe(0);
 
             expect(() => designer.removeObject(a)).toThrowError();
-            expect(() => designer.removeObject(o)).toThrowError();
         });
     });
     describe("Reset Circuit", () => {

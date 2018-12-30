@@ -110,7 +110,13 @@ export class CircuitDesigner {
 		if (!this.objects.includes(obj))
 			throw new Error("Attempted to remove object that doesn't exist!");
 
-		// Completely disconnect from the circuit
+		// Remove all input and output wires
+		var inputs = obj.getInputs();
+		var outputs = obj.getOutputs();
+		var wires = inputs.concat(outputs);
+		for (let wire of wires)
+			this.removeWire(wire);
+
 		this.objects.splice(this.objects.indexOf(obj), 1);
 		obj.setDesigner(undefined);
 	}
