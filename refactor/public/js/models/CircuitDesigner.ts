@@ -2,7 +2,8 @@ import {Propagation} from "./Propagation";
 
 import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
-import {Wire}      from"./ioobjects/Wire";
+import {Port}      from "./ioobjects/Port";
+import {Wire}      from "./ioobjects/Wire";
 
 export class CircuitDesigner {
 	private objects: Array<Component>;
@@ -92,7 +93,7 @@ export class CircuitDesigner {
 		this.objects.push(obj);
 	}
 
-	public connect(c1: Component, i1: number, c2: Component, i2: number): void {
+	public connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
 		// Make wire
 		var wire = new Wire(c1.getOutputPort(i1), c2.getInputPort(i2));
 		this.wires.push(wire);
@@ -101,6 +102,8 @@ export class CircuitDesigner {
 		// Connect components to wire
 		c1.connect(i1, wire);
 		c2.setInput(i2, wire);
+
+		return wire;
 	}
 
 	public removeObject(obj: Component): void {
@@ -117,6 +120,9 @@ export class CircuitDesigner {
 			throw new Error("Attempted to remove wire that doesn't exist!");
 
 		// Completely disconnect from the circuit
+		wire.getInput().disconnect(wire);
+		wire.getOutput().disconnect();
+
 		this.wires.splice(this.wires.indexOf(wire), 1);
 		wire.setDesigner(undefined);
 	}

@@ -18,12 +18,18 @@ export class InputPort extends Port {
 			return;
 		this.isOn = signal;
 
-		// Get designer to propagte signal, exit if undefined
+		// Get designer to propagate signal, exit if undefined
 		var designer = this.parent.getDesigner();
 		if (designer == undefined)
 			return;
 
 		designer.propogate(this.parent, this.isOn);
+	}
+
+	public disconnect(): void {
+		// remove input and propagate false signal
+		this.input = undefined;
+		this.activate(false);
 	}
 
 	public setInput(input: Wire): void {

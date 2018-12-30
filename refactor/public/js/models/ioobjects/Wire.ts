@@ -67,8 +67,16 @@ export class Wire extends IOObject {
 		this.output = c;
 	}
 
+    public getInput(): OutputPort {
+        return this.input;
+    }
+
     public getInputComponent(): Component {
         return this.input.getParent();
+    }
+
+    public getOutput(): InputPort {
+        return this.output;
     }
 
     public getOutputComponent(): Component {

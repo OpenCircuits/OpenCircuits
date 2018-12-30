@@ -3,6 +3,7 @@ import {LEFT_MOUSE_BUTTON, OPTION_KEY} from "../utils/Constants";
 import {V} from "../utils/math/Vector";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
+import {ActionManager} from "../utils/actions/ActionManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -16,6 +17,8 @@ export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
     var view: MainDesignerView;
     var input: Input;
+
+    var actions: ActionManager;
 
     var renderQueue: RenderQueue;
 
@@ -80,12 +83,12 @@ export var MainDesignerController = (function() {
             designer = new CircuitDesigner();
             view = new MainDesignerView();
             renderQueue = new RenderQueue(() => this.Render());
+            actions = new ActionManager();
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
             input.addListener("scroll", onScroll);
 
             window.addEventListener("resize", _e => resize(), false);
-
 
 
             var s1 = new Switch();

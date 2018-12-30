@@ -38,6 +38,13 @@ export class OutputPort extends Port {
 		w.activate(this.isOn);
 	}
 
+    public disconnect(w: Wire): void {
+        // find index and splice
+        var i = this.connections.indexOf(w);
+        if (i != -1)
+            this.connections.splice(i, 1);
+    }
+
 	public getConnections(): Array<Wire> {
 		return this.connections.slice(); // Shallow copy array
 	}
