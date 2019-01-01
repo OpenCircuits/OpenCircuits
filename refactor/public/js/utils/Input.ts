@@ -1,4 +1,5 @@
-import {DRAG_TIME} from "./Constants";
+import {DRAG_TIME,
+        LEFT_MOUSE_BUTTON} from "./Constants";
 
 import {Vector,V} from "../utils/math/Vector";
 
@@ -91,9 +92,14 @@ export class Input {
         this.callListeners("keyup", 0);
     }
     private onClick(event: MouseEvent): void {
+        // Don't call onclick if was dragging
+        if (this.isDragging) {
+            this.isDragging = false;
+            return;
+        }
 
         // call each listener
-        this.callListeners("click", 0);
+        this.callListeners("click", event.button);
     }
     private onDoubleClick(event: MouseEvent): void {
 
@@ -143,7 +149,7 @@ export class Input {
 
         // call listeners
         if (this.isDragging)
-            this.callListeners("mousedrag", 0);
+            this.callListeners("mousedrag", LEFT_MOUSE_BUTTON);
         this.callListeners("mousemove", 0);
     }
     private onMouseEnter(event: MouseEvent): void {

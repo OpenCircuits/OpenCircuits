@@ -37,6 +37,9 @@ export class Vector {
             return new Vector(a.x * this.x, a.y * this.y);
         return new Vector(a * this.x, a * this.y);
     }
+    abs(): Vector {
+        return new Vector(Math.abs(this.x), Math.abs(this.y));
+    }
     normalize(): Vector {
         var len = this.len();
         if (len === 0) {

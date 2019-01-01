@@ -1,17 +1,22 @@
-import {LEFT_MOUSE_BUTTON, OPTION_KEY} from "../utils/Constants";
+import {LEFT_MOUSE_BUTTON,
+        OPTION_KEY,
+        SHIFT_KEY} from "../utils/Constants";
 
 import {V} from "../utils/math/Vector";
+import {Transform} from "../utils/math/Transform";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
 import {ActionManager} from "../utils/actions/ActionManager";
+import {TransformContains} from "../utils/math/MathUtils";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Switch}  from "../models/ioobjects/inputs/Switch";
-import {ANDGate} from "../models/ioobjects/gates/ANDGate";
-import {LED}     from "../models/ioobjects/outputs/LED";
+import {IOObject} from "../models/ioobjects/IOObject";
+import {Switch}   from "../models/ioobjects/inputs/Switch";
+import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
+import {LED}      from "../models/ioobjects/outputs/LED";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
@@ -22,6 +27,9 @@ export var MainDesignerController = (function() {
 
     var renderQueue: RenderQueue;
 
+    var selections: Array<IOObject> = [];
+    var selecting: boolean = false;
+
     // var currentTool: Tool;
 
     let resize = function() {
@@ -30,26 +38,19 @@ export var MainDesignerController = (function() {
         renderQueue.render();
     }
 
-
-    /**
-     * onMouseDrag - Description
-     *
-     * @param {type} button Description
-     *
-     * @return {type} Description
-     */
     let onMouseDrag = function(button: number): void {
         if (button === LEFT_MOUSE_BUTTON) {
             var shouldRender = false;
 
 
-            // @todo move this to a PanTool class or something
-            if (input.isKeyDown(OPTION_KEY)) {
+            // @TODO Move this to a PanTool class or something
+            if (!selecting && input.isKeyDown(OPTION_KEY)) {
                 var dPos = input.getDeltaMousePos();
-                view.camera.translate(dPos.scale(-1*view.camera.getZoom()));
+                view.getCamera().translate(dPos.scale(-1*view.getCamera().getZoom()));
                 shouldRender = true;
+            } else {
+                selecting = true;
             }
-
 
             // contextmenu.hide();
             // shouldRender = CurrentTool.onMouseDown(shouldRender);
@@ -64,16 +65,71 @@ export var MainDesignerController = (function() {
         }
     }
 
+    let onMouseUp = function(button: number): void {
+        if (button === LEFT_MOUSE_BUTTON) {
+
+            // Stop selection box
+            if (selecting) {
+                selecting = false;
+
+                // Clear selections if no shift key
+                if (!input.isKeyDown(SHIFT_KEY))
+                    selections = [];
+
+                // Calculate transform rectangle of the selection box
+                var p1 = view.getCamera().getWorldPos(input.getMouseDownPos());
+                var p2 = view.getCamera().getWorldPos(input.getMousePos());
+                var box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+
+                // Go through each object and see if it's within
+                //  the selection box
+                var objects = designer.getObjects();
+                for (let obj of objects) {
+                    // Check if object is in box
+                    if (TransformContains(box, obj.getTransform())) {
+                        // Add to selections if not already selected
+                        if (!selections.includes(obj))
+                            selections.push(obj);
+                    }
+                }
+
+                renderQueue.render();
+            }
+
+        }
+    }
+
+    let onClick = function(button: number): void {
+        if (button === LEFT_MOUSE_BUTTON) {
+
+            // Clear selections if no shift key
+            if (!input.isKeyDown(SHIFT_KEY))
+                selections = [];
+
+            // Check if an object/wire was clicked
+            //  and add to selections
+            let objects = designer.getObjects();
+            for (let i = objects.length-1; i >= 0; i--) {
+                var obj = objects[i];
+
+                // @TODO figure out how to differentiate between
+                //  'selection box' and 'pressable box thing'
+
+            }
+
+        }
+    }
+
     let onScroll = function(): void {
-        // @todo move this stuff as well
+        // @TODO move this stuff as well
         var zoomFactor = input.getZoomFactor();
 
         // Calculate position to zoom in/out of
-        var pos0 = view.camera.getWorldPos(input.getMousePos());
-        view.camera.zoomBy(zoomFactor);
-        var pos1 = view.camera.getScreenPos(pos0);
+        var pos0 = view.getCamera().getWorldPos(input.getMousePos());
+        view.getCamera().zoomBy(zoomFactor);
+        var pos1 = view.getCamera().getScreenPos(pos0);
         var dPos = pos1.sub(input.getMousePos());
-        view.camera.translate(dPos.scale(view.camera.getZoom()));
+        view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
         renderQueue.render();
     }
@@ -84,9 +140,11 @@ export var MainDesignerController = (function() {
             view = new MainDesignerView();
             renderQueue = new RenderQueue(() => this.Render());
             actions = new ActionManager();
-            
+
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
+            input.addListener("mouseup", onMouseUp);
+            input.addListener("click", onClick);
             input.addListener("scroll", onScroll);
 
             window.addEventListener("resize", _e => resize(), false);
@@ -123,7 +181,7 @@ export var MainDesignerController = (function() {
             console.log("LED active: " + l1.isOn().toString());
         },
         Render: function(): void {
-            view.render(designer, []);
+            view.render(designer, selections);
         }
     };
 })();

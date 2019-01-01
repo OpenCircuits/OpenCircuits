@@ -9,11 +9,11 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 import {IOObject}  from "../models/ioobjects/IOObject";
 
 export class MainDesignerView {
-    canvas: HTMLCanvasElement;
-    renderer: Renderer;
-    camera: Camera;
+    private canvas: HTMLCanvasElement;
+    private renderer: Renderer;
+    private camera: Camera;
 
-    constructor() {
+    public constructor() {
         var canvas = document.getElementById("canvas");
         if (!(canvas instanceof HTMLCanvasElement))
             throw new Error("Canvas element not found!");
@@ -23,7 +23,7 @@ export class MainDesignerView {
 
         this.resize();
     }
-    render(designer: CircuitDesigner, selections: Array<IOObject>) {
+    public render(designer: CircuitDesigner, selections: Array<IOObject>) {
         this.renderer.clear();
 
         // Render grid
@@ -36,18 +36,25 @@ export class MainDesignerView {
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
+        console.log(selections);
+
         // Render all objects
         var objects = designer.getObjects();
         for (let object of objects) {
             var selected = selections.includes(object);
+            console.log(object + " is " + selected);
             ComponentRenderer.render(this.renderer, this.camera, object, selected);
         }
+
     }
-    resize(): void {
+    public resize(): void {
         this.renderer.resize();
         this.camera.resize(this.canvas.width, this.canvas.height);
     }
-    getCanvas(): HTMLCanvasElement {
+    public getCanvas(): HTMLCanvasElement {
         return this.canvas;
+    }
+    public getCamera(): Camera {
+        return this.camera;
     }
 }
