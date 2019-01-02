@@ -13,6 +13,9 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
+import {Tool} from "../utils/tools/Tool";
+import {PanTool} from "../utils/tools/PanTool";
+
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
@@ -30,7 +33,9 @@ export var MainDesignerController = (function() {
     var selections: Array<IOObject> = [];
     var selecting: boolean = false;
 
-    // var currentTool: Tool;
+    // tools
+    var panTool: PanTool;
+    var currentTool: Tool;
 
     let resize = function() {
         view.resize();

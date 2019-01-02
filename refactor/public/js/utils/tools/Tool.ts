@@ -5,9 +5,10 @@ export abstract class Tool implements MouseListener, KeyboardListener {
 
     abstract onKeyDown(key: number): void;
     abstract onKeyUp(key: number): void;
-    abstract onMouseDown(): void;
-    abstract onMouseMove(): void;
-    abstract onMouseUp(): void;
-    abstract onClick(): void;
+    abstract onMouseDown(button: number): void;
+    abstract onMouseMove(button: number): void;
+    abstract onMouseDrag(button: number): void;
+    abstract onMouseUp(button: number): void;
+    abstract onClick(button: number): void;
 
 }

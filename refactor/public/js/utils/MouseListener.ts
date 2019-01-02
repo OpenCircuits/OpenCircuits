@@ -1,9 +1,10 @@
 
 export interface MouseListener {
 
-    onMouseDown(): void
-    onMouseMove(): void
-    onMouseUp(): void;
-    onClick(): void;
+    onMouseDown(button: number): void;
+    onMouseMove(button: number): void;
+    onMouseDrag(button: number): void;
+    onMouseUp(button: number): void;
+    onClick(button: number): void;
 
 }
