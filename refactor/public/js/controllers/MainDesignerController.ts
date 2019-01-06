@@ -45,23 +45,6 @@ export var MainDesignerController = (function() {
         // If current tool did something, then render
         if (currentTool.onMouseDrag(input, button))
             renderQueue.render();
-
-        // if (button === LEFT_MOUSE_BUTTON) {
-        //     var shouldRender = false;
-        //
-        //
-        //     // @TODO Move this to a PanTool class or something
-        //     if (!selecting && input.isKeyDown(OPTION_KEY)) {
-        //         var dPos = input.getDeltaMousePos();
-        //         view.getCamera().translate(dPos.scale(-1*view.getCamera().getZoom()));
-        //         shouldRender = true;
-        //     } else {
-        //         selecting = true;
-        //     }
-        //
-        //     if (shouldRender)
-        //         renderQueue.render();
-        // }
     }
 
     let onMouseUp = function(button: number): void {
