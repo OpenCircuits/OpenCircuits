@@ -5,7 +5,7 @@ import {Gate} from "./Gate";
 export class BUFGate extends Gate {
 
 	constructor(not: boolean = false) {
-		super(not, new ClampedValue(1,1,1), V(60, 60));
+		super(not, new ClampedValue(1,1,1), V(50, 50));
 	}
 
 	// @Override

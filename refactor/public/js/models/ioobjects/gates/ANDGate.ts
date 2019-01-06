@@ -5,7 +5,7 @@ import {Gate} from "./Gate";
 export class ANDGate extends Gate {
 
 	public constructor(not: boolean = false) {
-		super(not, new ClampedValue(2,2,8), V(60, 60));
+		super(not, new ClampedValue(2,2,8), V(50, 50));
 	}
 
 	// @Override

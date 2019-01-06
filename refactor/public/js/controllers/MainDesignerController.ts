@@ -4,6 +4,7 @@ import {LEFT_MOUSE_BUTTON,
 
 import {V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
+import {RectContains} from "../utils/math/MathUtils";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
 import {ActionManager} from "../utils/actions/ActionManager";
@@ -16,6 +17,7 @@ import {Tool} from "../utils/tools/Tool";
 import {PanTool} from "../utils/tools/PanTool";
 import {SelectionTool} from "../utils/tools/SelectionTool";
 
+import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
@@ -54,35 +56,40 @@ export var MainDesignerController = (function() {
     }
 
     let onClick = function(button: number): void {
-        // if (button === LEFT_MOUSE_BUTTON) {
-        //
-        //     // Clear selections if no shift key
-        //     if (!input.isKeyDown(SHIFT_KEY))
-        //         selections = [];
-        //
-        //     // Check if an object/wire was clicked
-        //     //  and add to selections
-        //     let objects = designer.getObjects();
-        //     for (let i = objects.length-1; i >= 0; i--) {
-        //         var obj = objects[i];
-        //
-        //         // @TODO figure out how to differentiate between
-        //         //  'selection box' and 'pressable box thing'
-        //
-        //     }
-        //
-        // }
+        // Check to see if any component was clicked
+        if (button === LEFT_MOUSE_BUTTON) {
+            let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+
+            let objects = designer.getObjects();
+            for (let i = objects.length-1; i >= 0; i--) {
+                let obj = objects[i];
+
+                if (obj instanceof PressableComponent) {
+                    // Check if mouse is within bounds of the object
+                    if (RectContains(obj.getTransform(), worldMousePos)) {
+                        obj.click();
+
+                        MainDesignerController.Render();
+                        return;
+                    }
+                }
+            }
+        }
+
+        // If current tool did something, then render
+        if (currentTool.onClick(input, button))
+            MainDesignerController.Render();
     }
 
     let onScroll = function(): void {
         // @TODO move this stuff as well
-        var zoomFactor = input.getZoomFactor();
+        let zoomFactor = input.getZoomFactor();
 
         // Calculate position to zoom in/out of
-        var pos0 = view.getCamera().getWorldPos(input.getMousePos());
+        let pos0 = view.getCamera().getWorldPos(input.getMousePos());
         view.getCamera().zoomBy(zoomFactor);
-        var pos1 = view.getCamera().getScreenPos(pos0);
-        var dPos = pos1.sub(input.getMousePos());
+        let pos1 = view.getCamera().getScreenPos(pos0);
+        let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
         MainDesignerController.Render();
@@ -121,6 +128,7 @@ export var MainDesignerController = (function() {
             actions = new ActionManager();
 
             // tools
+            // @TODO maybe a tool manager thing that handles switching between tools
             panTool = new PanTool(view.getCamera());
             selectionTool = new SelectionTool(designer, view.getCamera());
             currentTool = selectionTool;

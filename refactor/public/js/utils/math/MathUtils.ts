@@ -1,3 +1,4 @@
+import {Vector} from "./Vector";
 import {Transform} from "./Transform";
 
 /**
@@ -17,6 +18,35 @@ import {Transform} from "./Transform";
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
+}
+
+/**
+ * Determines whether the given point is
+ * within the rectangle defined by the
+ * given transform
+ *
+ * @param  {Transform} transform
+ *         The transform that represents the rectangle
+ *
+ * @param  {Vector} pos
+ *         * Must be in world coordinates *
+ *         The point to determine whether or not
+ *         it's within the rectangle
+ *
+ * @return {Boolean}
+ *         True if the point is within the rectangle,
+ *         false otherwise
+ */
+export function RectContains(transform: Transform, pos: Vector): boolean {
+    var tr = transform.getSize().scale(0.5);  // top right corner
+    var bl = transform.getSize().scale(-0.5); // bottom left corner
+    var p  = transform.toLocalSpace(pos);
+
+    // Check if point is within bounds
+    return (p.x > bl.x &&
+            p.y > bl.y &&
+            p.x < tr.x &&
+            p.y < tr.y);
 }
 
 /**

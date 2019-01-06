@@ -1,16 +1,20 @@
 import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
-import {Component} from "../Component";
+import {PressableComponent} from "../PressableComponent";
 
-export class Switch extends Component {
+export class Switch extends PressableComponent {
 
-	constructor() {
+	public constructor() {
 		super(new ClampedValue(0),
 			  new ClampedValue(1),
-			  V(60, 60));
+			  V(48, 60),
+		  	  V(62, 77));
 	}
 
-    // @Override
+	public click(): void {
+		this.activate(!this.on);
+	}
+
 	public activate(signal: boolean): void {
 		super.activate(signal, 0);
 	}
@@ -21,5 +25,9 @@ export class Switch extends Component {
 
 	public getImageName(): string {
 		return "switchUp.svg";
+	}
+
+	public getOnImageName(): string {
+		return "switchDown.svg";
 	}
 }

@@ -18,7 +18,7 @@ export abstract class Component extends IOObject {
     protected transform: Transform;
 
     // constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
-	public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector) {
+	protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector) {
         super();
 
         this.inputPortCount = inputPortCount;
@@ -89,8 +89,8 @@ export abstract class Component extends IOObject {
     public setInputPortCount(val: number): void {
         // no need to update if value is already
         //  the current amount
-        // if (val == this.inputPortCount.getValue())
-        //     return;
+        if (val == this.inputs.length)
+            return;
 
         // set count (will auto-clamp)
         this.inputPortCount.setValue(val);

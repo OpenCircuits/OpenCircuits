@@ -4,10 +4,12 @@ import {LEFT_MOUSE_BUTTON,
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
+import {Component} from "../../models/ioobjects/Component";
+import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 
 import {Vector} from "../math/Vector";
 import {Transform} from "../math/Transform";
-import {TransformContains} from "../math/MathUtils";
+import {TransformContains,RectContains} from "../math/MathUtils";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
@@ -81,6 +83,47 @@ export class SelectionTool extends Tool {
 
                 return true; // should render
             }
+        }
+
+        return false;
+    }
+
+    public onClick(input: Input, button: number): boolean {
+        if (button === LEFT_MOUSE_BUTTON) {
+            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+            // Clear selections if no shift key
+            if (!input.isKeyDown(SHIFT_KEY))
+                this.selections = [];
+
+            // Check if an object was clicked
+            //  and add to selections
+            let objects = this.designer.getObjects();
+            for (let i = objects.length-1; i >= 0; i--) {
+                let obj = objects[i];
+
+                if (obj instanceof PressableComponent) {
+                    // var selectionBox = obj.getSelectionBox();
+
+                    // Make sure mouse is within selection box,
+                    //  but not within regular transform
+                    if (RectContains(obj.getSelectionBox(), worldMousePos) &&
+                        !RectContains(obj.getTransform(), worldMousePos)) {
+                        // Add to selections if not already selected
+                        if (!this.selections.includes(obj))
+                            this.selections.push(obj);
+                    }
+                } else {
+                    // Check if mouse is within bounds of the object
+                    if (RectContains(obj.getTransform(), worldMousePos)) {
+                        // Add to selections if not already selected
+                        if (!this.selections.includes(obj))
+                            this.selections.push(obj);
+                    }
+                }
+            }
+
+            return true;
         }
 
         return false;

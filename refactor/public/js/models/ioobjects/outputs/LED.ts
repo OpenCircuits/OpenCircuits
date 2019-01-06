@@ -9,7 +9,7 @@ export class LED extends Component {
 	constructor() {
 		super(new ClampedValue(1),
 			  new ClampedValue(0),
-			  V(60, 60));
+			  V(50, 50));
 
 		// Make port face down instead of sideways
 		this.inputs[0].setTargetPos(V(0, 2*DEFAULT_SIZE));
