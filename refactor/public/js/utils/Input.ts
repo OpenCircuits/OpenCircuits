@@ -82,14 +82,14 @@ export class Input {
         this.keysDown.set(code, true);
 
         // call each listener
-        this.callListeners("keydown", 0);
+        this.callListeners("keydown", code);
     }
     private onKeyUp(event: KeyboardEvent): void {
         var code = event.keyCode;
         this.keysDown.set(code, false);
 
         // call each listener
-        this.callListeners("keyup", 0);
+        this.callListeners("keyup", code);
     }
     private onClick(event: MouseEvent): void {
         // Don't call onclick if was dragging

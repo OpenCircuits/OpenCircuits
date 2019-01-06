@@ -2,35 +2,29 @@ import {LEFT_MOUSE_BUTTON,
         OPTION_KEY,
         SHIFT_KEY} from "../Constants";
 import {Tool} from "./Tool";
+import {Input} from "../Input";
+import {Camera} from "../Camera";
 
 export class PanTool extends Tool {
 
-    onKeyDown(key: number): void {
+    private camera: Camera;
 
+    public constructor(camera: Camera) {
+        super();
+
+        this.camera = camera;
     }
 
-    onKeyUp(key: number): void {
+    public onMouseDrag(input: Input, button: number): boolean {
+        if (button === LEFT_MOUSE_BUTTON) {
 
-    }
+            var dPos = input.getDeltaMousePos();
+            this.camera.translate(dPos.scale(-1*this.camera.getZoom()));
 
-    onMouseDown(button: number): void {
+            return true;
+        }
 
-    }
-
-    onMouseMove(button: number): void {
-
-    }
-
-    onMouseDrag(button: number): void {
-        if (button === )
-    }
-
-    onMouseUp(button: number): void {
-
-    }
-
-    onClick(button: number): void {
-
+        return false;
     }
 
 }

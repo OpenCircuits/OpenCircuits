@@ -1,7 +1,8 @@
+import {Input} from "./Input";
 
 export interface KeyboardListener {
 
-    onKeyDown(key: number): void;
-    onKeyUp(key: number): void;
+    onKeyDown(input: Input, key: number): boolean;
+    onKeyUp(input: Input, key: number): boolean;
 
 }

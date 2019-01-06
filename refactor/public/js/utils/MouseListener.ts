@@ -1,10 +1,11 @@
+import {Input} from "./Input";
 
 export interface MouseListener {
 
-    onMouseDown(button: number): void;
-    onMouseMove(button: number): void;
-    onMouseDrag(button: number): void;
-    onMouseUp(button: number): void;
-    onClick(button: number): void;
+    onMouseDown(input: Input, button: number): boolean;
+    onMouseMove(input: Input, button: number): boolean;
+    onMouseDrag(input: Input, button: number): boolean;
+    onMouseUp(input: Input, button: number): boolean;
+    onClick(input: Input, button: number): boolean;
 
 }

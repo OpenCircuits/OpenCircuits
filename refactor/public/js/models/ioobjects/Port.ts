@@ -23,9 +23,11 @@ export abstract class Port {
 
     public setOriginPos(pos: Vector): void {
         this.origin = pos;
+        this.dir = this.target.sub(this.origin).normalize();
     }
     public setTargetPos(pos: Vector): void {
         this.target = pos;
+        this.dir = this.target.sub(this.origin).normalize();
     }
 
 	public getParent(): Component {

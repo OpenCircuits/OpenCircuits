@@ -1,8 +1,11 @@
 import {Camera}            from "../utils/Camera";
 import {Renderer}          from "../utils/rendering/Renderer";
 import {Grid}              from "../utils/rendering/Grid";
+import {ToolRenderer}      from "../utils/rendering/ToolRenderer";
 import {WireRenderer}      from "../utils/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer";
+
+import {Tool} from "../utils/tools/Tool";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -23,7 +26,8 @@ export class MainDesignerView {
 
         this.resize();
     }
-    public render(designer: CircuitDesigner, selections: Array<IOObject>) {
+
+    public render(designer: CircuitDesigner, selections: Array<IOObject>, currentTool: Tool) {
         this.renderer.clear();
 
         // Render grid
@@ -36,21 +40,22 @@ export class MainDesignerView {
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
-        console.log(selections);
-
         // Render all objects
         var objects = designer.getObjects();
         for (let object of objects) {
             var selected = selections.includes(object);
-            console.log(object + " is " + selected);
             ComponentRenderer.render(this.renderer, this.camera, object, selected);
         }
 
+        // Render current tool
+        ToolRenderer.render(this.renderer, this.camera, currentTool);
     }
+
     public resize(): void {
         this.renderer.resize();
         this.camera.resize(this.canvas.width, this.canvas.height);
     }
+
     public getCanvas(): HTMLCanvasElement {
         return this.canvas;
     }
