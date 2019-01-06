@@ -38,19 +38,19 @@ export var MainDesignerController = (function() {
     let resize = function() {
         view.resize();
 
-        renderQueue.render();
+        MainDesignerController.Render();
     }
 
     let onMouseDrag = function(button: number): void {
         // If current tool did something, then render
         if (currentTool.onMouseDrag(input, button))
-            renderQueue.render();
+            MainDesignerController.Render();
     }
 
     let onMouseUp = function(button: number): void {
         // If current tool did something, then render
         if (currentTool.onMouseUp(input, button))
-            renderQueue.render();
+            MainDesignerController.Render();
     }
 
     let onClick = function(button: number): void {
@@ -85,7 +85,7 @@ export var MainDesignerController = (function() {
         var dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
-        renderQueue.render();
+        MainDesignerController.Render();
     }
 
     let onKeyDown = function(key: number): void {
@@ -94,7 +94,6 @@ export var MainDesignerController = (function() {
         if (currentTool === selectionTool &&
             key === OPTION_KEY) {
             currentTool = panTool;
-            console.log("switch to pan");
         }
 
     }
@@ -105,19 +104,20 @@ export var MainDesignerController = (function() {
         if (currentTool === panTool &&
             key === OPTION_KEY) {
             currentTool = selectionTool;
-            console.log("switch to sel");
         }
 
     }
 
     return {
         Init: function(): void {
-            // model/view
-            designer = new CircuitDesigner();
+            // pass Render function so that
+            //  the circuit is redrawn every
+            //  time its updated
+            designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
 
             // utils
-            renderQueue = new RenderQueue(() => this.Render());
+            renderQueue = new RenderQueue(() => view.render(designer, selectionTool.getSelections(), currentTool));
             actions = new ActionManager();
 
             // tools
@@ -128,11 +128,11 @@ export var MainDesignerController = (function() {
             // input
             input = new Input(view.getCanvas());
             input.addListener("mousedrag", onMouseDrag);
-            input.addListener("mouseup", onMouseUp);
-            input.addListener("click", onClick);
-            input.addListener("scroll", onScroll);
-            input.addListener("keydown", onKeyDown);
-            input.addListener("keyup", onKeyUp);
+            input.addListener("mouseup",   onMouseUp);
+            input.addListener("click",     onClick);
+            input.addListener("scroll",    onScroll);
+            input.addListener("keydown",   onKeyDown);
+            input.addListener("keyup",     onKeyUp);
 
             window.addEventListener("resize", _e => resize(), false);
 
@@ -168,7 +168,7 @@ export var MainDesignerController = (function() {
             console.log("LED active: " + l1.isOn().toString());
         },
         Render: function(): void {
-            view.render(designer, selectionTool.getSelections(), currentTool);
+            renderQueue.render();
         }
     };
 })();

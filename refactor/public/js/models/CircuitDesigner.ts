@@ -11,8 +11,12 @@ export class CircuitDesigner {
 	private updateRequests: number;
 	private propagationTime: number;
 
-	constructor(propagationTime: number = 1) {
+	private updateCallback: () => void;
+
+	public constructor(propagationTime: number = 1, callback: () => void = function(){}) {
 		this.propagationTime = propagationTime;
+		this.updateCallback = callback;
+
 		this.objects = [];
 		this.wires   = [];
 		this.propagationQueue = [];
@@ -68,6 +72,8 @@ export class CircuitDesigner {
 
 
 		this.updateRequests--;
+
+		this.updateCallback();
 
 		if (this.updateRequests > 0) {
 			if (this.propagationTime == 0)

@@ -141,11 +141,12 @@ export class Input {
 
         // get raw and relative mouse positions
         this.prevMousePos = V(this.mousePos);
-        this.rawMousePos = V(event.clientX, event.clientY);
+        this.rawMousePos  = V(event.clientX, event.clientY);
         this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.mouseDown) && (Date.now() - this.startTapTime > DRAG_TIME);
+        this.isDragging = (this.mouseDown) &&
+                          (Date.now() - this.startTapTime > DRAG_TIME);
 
         // call listeners
         if (this.isDragging)
@@ -153,20 +154,25 @@ export class Input {
         this.callListeners("mousemove", 0);
     }
     private onMouseEnter(event: MouseEvent): void {
-
         // call each listener
         this.callListeners("mouseenter", 0);
     }
     private onMouseLeave(event: MouseEvent): void {
+        this.mouseDown = false;
 
         // call each listener
         this.callListeners("mouseleave", 0);
+
+        // call mouse up as well so that
+        //  up events get called when the
+        //  mouse leaves
+        this.callListeners("mouseup", 0);
     }
     private callListeners(type: string, b?: number) {
         // call all listeners of type
         var listeners = this.listeners.get(type);
         if (listeners != undefined) {
-            for (var listener of listeners)
+            for (let listener of listeners)
                 listener(b);
         }
     }
