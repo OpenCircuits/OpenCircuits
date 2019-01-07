@@ -17,6 +17,8 @@ import {Tool} from "../utils/tools/Tool";
 import {PanTool} from "../utils/tools/PanTool";
 import {SelectionTool} from "../utils/tools/SelectionTool";
 
+import {TransformController} from "../utils/TransformController";
+
 import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
@@ -37,10 +39,18 @@ export var MainDesignerController = (function() {
     var selectionTool: SelectionTool;
     var currentTool: Tool;
 
+    var transformController: TransformController;
+
+
     let resize = function() {
         view.resize();
 
         MainDesignerController.Render();
+    }
+
+    let onMouseDown = function(button: number): void {
+        transformController.onMouseDown(input, button);
+        
     }
 
     let onMouseDrag = function(button: number): void {
@@ -56,6 +66,8 @@ export var MainDesignerController = (function() {
     }
 
     let onClick = function(button: number): void {
+        transformController.onClick(input, button);
+
         // Check to see if any component was clicked
         if (button === LEFT_MOUSE_BUTTON) {
             let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
@@ -126,6 +138,7 @@ export var MainDesignerController = (function() {
             // utils
             renderQueue = new RenderQueue(() => view.render(designer, selectionTool.getSelections(), currentTool));
             actions = new ActionManager();
+            transformController = new TransformController();
 
             // tools
             // @TODO maybe a tool manager thing that handles switching between tools
@@ -135,6 +148,7 @@ export var MainDesignerController = (function() {
 
             // input
             input = new Input(view.getCanvas());
+            input.addListener("mousedown", onMouseDown);
             input.addListener("mousedrag", onMouseDrag);
             input.addListener("mouseup",   onMouseUp);
             input.addListener("click",     onClick);
