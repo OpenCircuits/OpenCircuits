@@ -23,6 +23,8 @@ export class Transform {
     private dirtySize: boolean;
     private dirtyCorners: boolean;
 
+    private prevParentMatrix: Matrix2x3;
+
     private matrix: Matrix2x3;
     private inverse: Matrix2x3;
     private radius: number;
@@ -42,12 +44,18 @@ export class Transform {
         this.scale = V(1, 1);
         this.corners = [];
         this.localCorners = [];
+        this.prevParentMatrix = undefined;
         this.dirty = true;
         this.dirtySize = true;
         this.dirtyCorners = true;
         this.updateMatrix();
     }
     private updateMatrix(): void {
+        // If parent changed then we need to recalculate matrix
+        if (this.parent != undefined &&
+            !this.parent.getMatrix().equals(this.prevParentMatrix))
+            this.dirty = true;
+
         if (!this.dirty)
             return;
         this.dirty = false;

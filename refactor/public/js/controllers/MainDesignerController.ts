@@ -19,6 +19,7 @@ import {Tool} from "../utils/tools/Tool";
 import {PanTool} from "../utils/tools/PanTool";
 import {SelectionTool} from "../utils/tools/SelectionTool";
 import {RotateTool} from "../utils/tools/RotateTool";
+import {TranslateTool} from "../utils/tools/TranslateTool";
 
 import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {IOObject} from "../models/ioobjects/IOObject";
@@ -39,8 +40,11 @@ export var MainDesignerController = (function() {
     var panTool: PanTool;
     var selectionTool: SelectionTool;
     var rotateTool: RotateTool;
+    var translateTool: TranslateTool;
     var currentTool: Tool;
 
+    var currentPressedObj: IOObject;
+    var pressedObj: boolean;
 
     let resize = function() {
         view.resize();
@@ -63,9 +67,51 @@ export var MainDesignerController = (function() {
                 return;
             }
         }
+
+        // Check to see if any component was pressed
+        if (button === LEFT_MOUSE_BUTTON) {
+            let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+
+            let objects = designer.getObjects();
+            for (let i = objects.length-1; i >= 0; i--) {
+                let obj = objects[i];
+
+                // Check if mouse is within bounds of the object
+                if (RectContains(obj.getTransform(), worldMousePos)) {
+                    if (obj instanceof PressableComponent) {
+                        obj.press();
+                        pressedObj = true;
+                        MainDesignerController.Render();
+                    }
+                    currentPressedObj = obj;
+                    return;
+                }
+                // If just the selection box was hit then
+                //  don't call the press() method, just set
+                //  currentPressedObj to potentially drag
+                else if (obj instanceof PressableComponent && RectContains(obj.getSelectionBox(), worldMousePos)) {
+                    currentPressedObj = obj;
+                    pressedObj = false;
+                    return;
+                }
+            }
+        }
     }
 
     let onMouseDrag = function(button: number): void {
+        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+
+        // Check if dragging object
+        if (currentTool === selectionTool && currentPressedObj != undefined) {
+            let objs = [currentPressedObj];
+            // Translate multiple objects if they are all selected
+            if (selectionTool.getSelections().length > 0 && objs.includes(currentPressedObj))
+                objs = selectionTool.getSelections();
+
+            translateTool.startDragging(objs, worldMousePos, currentPressedObj);
+            currentTool = translateTool;
+        }
+
         // If current tool did something, then render
         if (currentTool.onMouseDrag(input, button))
             MainDesignerController.Render();
@@ -79,6 +125,15 @@ export var MainDesignerController = (function() {
         // Switch from rotate tool to selection tool
         if (currentTool === rotateTool)
             currentTool = selectionTool;
+
+        // Switch from translate tool to selection tool
+        if (currentTool === translateTool)
+            currentTool = selectionTool;
+
+        // Release currently pressed object
+        if (pressedObj && currentPressedObj != undefined && currentPressedObj instanceof PressableComponent)
+            currentPressedObj.release();
+        currentPressedObj = undefined;
     }
 
     let onClick = function(button: number): void {
@@ -90,14 +145,13 @@ export var MainDesignerController = (function() {
             for (let i = objects.length-1; i >= 0; i--) {
                 let obj = objects[i];
 
-                if (obj instanceof PressableComponent) {
-                    // Check if mouse is within bounds of the object
-                    if (RectContains(obj.getTransform(), worldMousePos)) {
+                // Check if mouse is within bounds of the object
+                if (RectContains(obj.getTransform(), worldMousePos)) {
+                    if (obj instanceof PressableComponent) {
                         obj.click();
-
                         MainDesignerController.Render();
-                        return;
                     }
+                    return;
                 }
             }
         }
@@ -158,6 +212,7 @@ export var MainDesignerController = (function() {
             panTool = new PanTool(view.getCamera());
             selectionTool = new SelectionTool(designer, view.getCamera());
             rotateTool = new RotateTool(view.getCamera());
+            translateTool = new TranslateTool(view.getCamera());
             currentTool = selectionTool;
 
             // input

@@ -109,6 +109,16 @@ export class Matrix2x3 {
         console.log("[" + this.mat[0].toFixed(3) + ", " + this.mat[2].toFixed(3) + ", " + this.mat[4].toFixed(3) + "]\n" +
                     "[" + this.mat[1].toFixed(3) + ", " + this.mat[3].toFixed(3) + ", " + this.mat[5].toFixed(3) + "]");
     }
+    public equals(other: Matrix2x3): boolean {
+        if (other == null)
+            return false;
+        
+        for (var i = 0; i < 2*3; i++) {
+            if (this.mat[i] !== other.mat[i])
+                return false;
+        }
+        return true;
+    }
     public copy(): Matrix2x3 {
         return new Matrix2x3(this);
     }

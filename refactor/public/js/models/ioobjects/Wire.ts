@@ -36,7 +36,7 @@ export class Wire extends IOObject {
         if (this.input != null) {
             // If transform matrix differs then update curve
             let mat = this.input.getParent().getTransform().getMatrix();
-            if (mat !== this.prevInputTransform) {
+            if (!mat.equals(this.prevInputTransform)) {
                 this.prevInputTransform = mat;
                 var pos = this.input.getWorldTargetPos();
                 var dir = this.input.getWorldDir();
@@ -47,7 +47,7 @@ export class Wire extends IOObject {
         if (this.output != null) {
             // If transform matrix differs then update curve
             let mat = this.output.getParent().getTransform().getMatrix();
-            if (mat !== this.prevOutputTransform) {
+            if (!mat.equals(this.prevOutputTransform)) {
                 this.prevOutputTransform = mat;
                 var pos = this.output.getWorldTargetPos();
                 var dir = this.output.getWorldDir();
