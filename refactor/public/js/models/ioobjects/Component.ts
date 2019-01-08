@@ -159,5 +159,9 @@ export abstract class Component extends IOObject {
         return this.transform;
     }
 
+    public save(node: HTMLElement): HTMLElement {
+        let componentNode =
+    }
+
 	abstract getImageName(): string;
 }

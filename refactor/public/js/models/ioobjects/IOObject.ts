@@ -19,5 +19,8 @@ export abstract class IOObject {
 
     public abstract activate(signal: boolean, i?: number): void;
 
+    public abstract save(node: HTMLElement): HTMLElement;
+    public abstract load(node: HTMLElement): void;
+
     public abstract getDisplayName(): string;
 }
