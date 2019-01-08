@@ -95,6 +95,21 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
+    public arcCircle(x: number, y: number, r: number, a0: number, a1: number,
+        fillStyle: string, borderStyle: string,
+        borderSize: number, alpha?: number): void {
+        this.save();
+        this.setStyles(fillStyle, borderStyle, borderSize, alpha);
+        this.context.beginPath();
+        this.context.moveTo(x, y);
+        let da = (a1 - a0) % (2*Math.PI);
+        if (da < 0) da += 2*Math.PI;
+        this.context.arc(x, y, r, a0, a1, da > Math.PI);
+        if (fillStyle != undefined)
+            this.context.fill();
+        this.context.closePath();
+        this.restore();
+    }
     public image(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint?: string): void {
         this.context.drawImage(img, x - w/2, y - h/2, w, h);
         if (tint != undefined)

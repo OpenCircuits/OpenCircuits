@@ -7,7 +7,7 @@ import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 
-import {Vector} from "../math/Vector";
+import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
 import {TransformContains,RectContains} from "../math/MathUtils";
 
@@ -103,8 +103,6 @@ export class SelectionTool extends Tool {
                 let obj = objects[i];
 
                 if (obj instanceof PressableComponent) {
-                    // var selectionBox = obj.getSelectionBox();
-
                     // Make sure mouse is within selection box,
                     //  but not within regular transform
                     if (RectContains(obj.getSelectionBox(), worldMousePos) &&
@@ -127,6 +125,16 @@ export class SelectionTool extends Tool {
         }
 
         return false;
+    }
+
+    public calculateMidpoint(): Vector {
+        let selections = this.selections;
+        let midpoint = V();
+        for (let obj of selections) {
+            if (obj instanceof Component)
+                midpoint.translate(obj.getPos());
+        }
+        return midpoint.scale(1. / selections.length);
     }
 
     public getSelections(): Array<IOObject> {

@@ -89,7 +89,7 @@ export class Transform {
      * @param {number} c The axis to rotate about
      */
     public rotateAbout(a: number, c: Vector): void {
-        this.setAngle(a);
+        this.setAngle(this.getAngle() + a);
         this.setPos(this.pos.sub(c));
         var cos = Math.cos(a), sin = Math.sin(a);
         var xx = this.pos.x * cos - this.pos.y * sin;
@@ -167,16 +167,16 @@ export class Transform {
         return this.parent;
     }
     public getPos(): Vector {
-        return V(this.pos.x, this.pos.y);
+        return this.pos.copy();
     }
     public getAngle(): number {
         return this.angle;
     }
     public getScale(): Vector {
-        return V(this.scale.x, this.scale.y);
+        return this.scale.copy();
     }
     public getSize(): Vector {
-        return this.size;
+        return this.size.copy();
     }
     public getRadius(): number {
         this.updateSize();
@@ -184,7 +184,7 @@ export class Transform {
     }
     public getMatrix(): Matrix2x3 {
         this.updateMatrix();
-        return this.matrix;
+        return this.matrix.copy();
     }
     public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();

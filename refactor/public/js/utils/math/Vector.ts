@@ -55,6 +55,9 @@ export class Vector {
     len2(): number {
         return this.x*this.x + this.y*this.y;
     }
+    angle(): number {
+        return Math.atan2(this.y, this.x);
+    }
     distanceTo(v: Vector): number {
         return this.sub(v).len();
     }

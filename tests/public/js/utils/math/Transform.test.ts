@@ -85,6 +85,13 @@ describe("Transform", () => {
                 expect(t.getPos().x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
                 expect(t.getPos().y).toBeCloseTo(0, 1e-3);
             }
+            {
+                var t = new Transform(V(0,5), V(0,0), Math.PI/4);
+                t.rotateAbout(3*Math.PI/4, V(-5,0));
+                expect(t.getAngle()).toBeCloseTo(Math.PI, 1e-3);
+                expect(t.getPos().x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
+                expect(t.getPos().y).toBeCloseTo(0, 1e-3);
+            }
         });
         it("Set Parent", () => {
             var t1 = new Transform(V(0,0), V(0,0), 0);

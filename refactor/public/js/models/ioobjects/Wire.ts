@@ -1,6 +1,7 @@
 import {DEFAULT_SIZE} from "../../utils/Constants";
 
 import {V} from "../../utils/math/Vector";
+import {Matrix2x3} from "../../utils/math/Matrix";
 import {BezierCurve} from "../../utils/math/BezierCurve";
 import {IOObject}   from "./IOObject";
 import {Component}  from "./Component";
@@ -15,7 +16,9 @@ export class Wire extends IOObject {
 
     private shape: BezierCurve;
     private straight: boolean;
-    private dirty: boolean;
+
+    private prevInputTransform: Matrix2x3;
+    private prevOutputTransform: Matrix2x3;
 
 	public constructor(input: OutputPort, output: InputPort) {
         super();
@@ -27,25 +30,30 @@ export class Wire extends IOObject {
 
         this.shape = new BezierCurve(V(),V(),V(),V());
         this.straight = false;
-        this.dirty = true;
 	}
 
     private updateCurve(): void {
-        if (!this.dirty)
-            return;
-        this.dirty = false;
-
         if (this.input != null) {
-            var pos = this.input.getWorldTargetPos();
-            var dir = this.input.getWorldDir();
-            this.shape.setP1(pos);
-            this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
+            // If transform matrix differs then update curve
+            let mat = this.input.getParent().getTransform().getMatrix();
+            if (mat !== this.prevInputTransform) {
+                this.prevInputTransform = mat;
+                var pos = this.input.getWorldTargetPos();
+                var dir = this.input.getWorldDir();
+                this.shape.setP1(pos);
+                this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
+            }
         }
         if (this.output != null) {
-            var pos = this.output.getWorldTargetPos();
-            var dir = this.output.getWorldDir();
-            this.shape.setP2(pos);
-            this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
+            // If transform matrix differs then update curve
+            let mat = this.output.getParent().getTransform().getMatrix();
+            if (mat !== this.prevOutputTransform) {
+                this.prevOutputTransform = mat;
+                var pos = this.output.getWorldTargetPos();
+                var dir = this.output.getWorldDir();
+                this.shape.setP2(pos);
+                this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
+            }
         }
     }
 

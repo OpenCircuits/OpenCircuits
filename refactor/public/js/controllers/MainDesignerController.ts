@@ -1,6 +1,8 @@
 import {LEFT_MOUSE_BUTTON,
         OPTION_KEY,
-        SHIFT_KEY} from "../utils/Constants";
+        SHIFT_KEY,
+        ROTATION_CIRCLE_R1,
+        ROTATION_CIRCLE_R2} from "../utils/Constants";
 
 import {V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
@@ -16,8 +18,7 @@ import {MainDesignerView} from "../views/MainDesignerView";
 import {Tool} from "../utils/tools/Tool";
 import {PanTool} from "../utils/tools/PanTool";
 import {SelectionTool} from "../utils/tools/SelectionTool";
-
-import {TransformController} from "../utils/TransformController";
+import {RotateTool} from "../utils/tools/RotateTool";
 
 import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {IOObject} from "../models/ioobjects/IOObject";
@@ -37,9 +38,8 @@ export var MainDesignerController = (function() {
     // tools
     var panTool: PanTool;
     var selectionTool: SelectionTool;
+    var rotateTool: RotateTool;
     var currentTool: Tool;
-
-    var transformController: TransformController;
 
 
     let resize = function() {
@@ -49,8 +49,20 @@ export var MainDesignerController = (function() {
     }
 
     let onMouseDown = function(button: number): void {
-        transformController.onMouseDown(input, button);
-        
+        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+
+        // Check if rotation circle was pressed
+        if (currentTool === selectionTool && selectionTool.getSelections().length > 0) {
+            let midpoint = selectionTool.calculateMidpoint();
+            let d = worldMousePos.sub(midpoint).len2();
+            if (d <= ROTATION_CIRCLE_R2 && d >= ROTATION_CIRCLE_R1) {
+                rotateTool.startRotation(selectionTool.getSelections(), midpoint, worldMousePos);
+                currentTool = rotateTool;
+
+                MainDesignerController.Render();
+                return;
+            }
+        }
     }
 
     let onMouseDrag = function(button: number): void {
@@ -63,11 +75,13 @@ export var MainDesignerController = (function() {
         // If current tool did something, then render
         if (currentTool.onMouseUp(input, button))
             MainDesignerController.Render();
+
+        // Switch from rotate tool to selection tool
+        if (currentTool === rotateTool)
+            currentTool = selectionTool;
     }
 
     let onClick = function(button: number): void {
-        transformController.onClick(input, button);
-
         // Check to see if any component was clicked
         if (button === LEFT_MOUSE_BUTTON) {
             let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
@@ -138,12 +152,12 @@ export var MainDesignerController = (function() {
             // utils
             renderQueue = new RenderQueue(() => view.render(designer, selectionTool.getSelections(), currentTool));
             actions = new ActionManager();
-            transformController = new TransformController();
 
             // tools
             // @TODO maybe a tool manager thing that handles switching between tools
             panTool = new PanTool(view.getCamera());
             selectionTool = new SelectionTool(designer, view.getCamera());
+            rotateTool = new RotateTool(view.getCamera());
             currentTool = selectionTool;
 
             // input
