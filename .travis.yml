@@ -11,11 +11,10 @@ cache:
     - node_modules
 
 install:
-    npm install gulp
+    npm install
 
 script:
-    - gulp build --tests
-    - gulp test
+    - npm run test
 
 notifications:
   email: false
