@@ -260,6 +260,9 @@ export var MainDesignerController = (function() {
         },
         Render: function(): void {
             renderQueue.render();
+        },
+        GetDesigner: function(): CircuitDesigner {
+            return designer;
         }
     };
 })();

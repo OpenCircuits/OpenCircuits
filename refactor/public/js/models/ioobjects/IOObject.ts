@@ -1,7 +1,9 @@
+import {XMLNode} from "../../utils/io/xml/XMLNode";
+import {XMLable} from "../../utils/io/xml/XMLable";
 import {Name} from "../../utils/Name";
 import {CircuitDesigner} from "../CircuitDesigner";
 
-export abstract class IOObject {
+export abstract class IOObject implements XMLable {
     protected designer?: CircuitDesigner;
     protected name: Name;
 
@@ -19,8 +21,11 @@ export abstract class IOObject {
 
     public abstract activate(signal: boolean, i?: number): void;
 
-    public abstract save(node: HTMLElement): HTMLElement;
-    public abstract load(node: HTMLElement): void;
+    public save(node: XMLNode): void {
+        node.addElement("name", this.name.getName());
+    }
+    public abstract load(node: XMLNode): void;
 
     public abstract getDisplayName(): string;
+    public abstract getXMLName(): string;
 }

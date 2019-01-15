@@ -3,7 +3,7 @@ import {FlipFlop} from "./FlipFlop";
 
 export class JKFlipFlop extends FlipFlop {
 
-	constructor() {
+	public constructor() {
 		super(3, 2, V(60, 60));
 	}
 
@@ -34,4 +34,8 @@ export class JKFlipFlop extends FlipFlop {
 	public getImageName() {
 		return "flipflop.svg";
 	}
+
+    public getXMLName(): string {
+        return "jkff";
+    }
 }

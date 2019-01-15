@@ -2,7 +2,7 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {Exporter} from "../utils/io/Exporter";
 
-export var MainDesignerController = (function() {
+export var HeaderController = (function() {
     let mainDesigner: CircuitDesigner;
 
     let projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
@@ -18,7 +18,7 @@ export var MainDesignerController = (function() {
 
             // fileInput.onchange = () => Exporter.
 
-            downloadButton.onclick = () => Exporter.saveFile(projectNameInput.value);
+            downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
 
             downloadPDFButton.onclick = () => {
 

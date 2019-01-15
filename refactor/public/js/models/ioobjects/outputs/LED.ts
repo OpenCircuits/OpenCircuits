@@ -26,4 +26,8 @@ export class LED extends Component {
 	public getImageName(): string {
 		return "led.svg";
 	}
+
+    public getXMLName(): string {
+        return "led";
+    }
 }

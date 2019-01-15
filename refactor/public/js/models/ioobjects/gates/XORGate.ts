@@ -23,4 +23,8 @@ export class XORGate extends Gate {
 	public getImageName() {
 		return "xor.svg";
 	}
+
+    public getXMLName(): string {
+        return "xor";
+    }
 }

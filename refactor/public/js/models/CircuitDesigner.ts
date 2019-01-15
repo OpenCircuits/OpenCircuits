@@ -1,3 +1,5 @@
+import {XMLNode} from "../utils/io/xml/XMLNode";
+
 import {Propagation} from "./Propagation";
 
 import {IOObject}  from "./ioobjects/IOObject";
@@ -136,6 +138,57 @@ export class CircuitDesigner {
 
 		this.wires.splice(this.wires.indexOf(wire), 1);
 		wire.setDesigner(undefined);
+	}
+
+	public save(node: XMLNode): void {
+		let objectsNode     = node.createChild("objects");
+		let wiresNode       = node.createChild("wires");
+		let connectionsNode = node.createChild("connections");
+
+		let idMap = new Map<IOObject, number>();
+
+		let id = 0;
+		for (let obj of this.objects) {
+			let componentNode = objectsNode.createChild(obj.getXMLName());
+			idMap.set(obj, id++);
+	        componentNode.addElement("xid", id);
+			obj.save(componentNode);
+		}
+
+		for (let wire of this.wires) {
+			let wireNode = wiresNode.createChild(wire.getXMLName());
+			idMap.set(wire, id++);
+	        wireNode.addElement("xid", id);
+			wire.save(wireNode);
+		}
+
+		// Save connections
+		for (let wire of this.wires) {
+			let connectionNode = connectionsNode.createChild("connection");
+			connectionNode.addElement("xid", idMap.get(wire));
+			let inputNode = connectionNode.createChild("input");
+			{
+				let iPort = wire.getInput();
+				let input = iPort.getParent();
+				let iI = 0;
+				// Find index of port
+				while (iI < input.getOutputPortCount() &&
+					   input.getOutputPort(iI) !== iPort) { iI++; }
+				inputNode.addElement("xid", idMap.get(input));
+				inputNode.addElement("index", iI);
+			}
+			let outputNode = connectionNode.createChild("output");
+			{
+				let oPort = wire.getOutput();
+				let input = oPort.getParent();
+				let iI = 0;
+				// Find index of port
+				while (iI < input.getInputPortCount() &&
+					   input.getInputPort(iI) !== oPort) { iI++; }
+				outputNode.addElement("xid", idMap.get(input));
+				outputNode.addElement("index", iI);
+			}
+		}
 	}
 
 	public getObjects(): Array<Component> {

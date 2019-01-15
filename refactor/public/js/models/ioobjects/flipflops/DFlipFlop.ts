@@ -3,7 +3,7 @@ import {FlipFlop} from "./FlipFlop";
 
 export class DFlipFlop extends FlipFlop {
 
-	constructor() {
+	public constructor() {
 		super(2, 2, V(60, 60));
 	}
 
@@ -26,4 +26,8 @@ export class DFlipFlop extends FlipFlop {
 	public getImageName() {
 		return "flipflop.svg";
 	}
+
+    public getXMLName(): string {
+        return "dff";
+    }
 }

@@ -3,6 +3,7 @@ import {DEFAULT_SIZE} from "../../utils/Constants";
 import {V} from "../../utils/math/Vector";
 import {Matrix2x3} from "../../utils/math/Matrix";
 import {BezierCurve} from "../../utils/math/BezierCurve";
+import {XMLNode} from "../../utils/io/xml/XMLNode";
 import {IOObject}   from "./IOObject";
 import {Component}  from "./Component";
 import {OutputPort} from "./OutputPort";
@@ -104,7 +105,26 @@ export class Wire extends IOObject {
         return this.straight;
     }
 
+    public save(node: XMLNode): void {
+        super.save(node);
+
+        // write curve
+        let curveNode = node.createChild("curve");
+        curveNode.addVectorElement("p1", this.shape.getP1());
+        curveNode.addVectorElement("p2", this.shape.getP2());
+        curveNode.addVectorElement("c1", this.shape.getC1());
+        curveNode.addVectorElement("c2", this.shape.getC2());
+    }
+
+    public load(node: XMLNode): void {
+        throw new Error("Method not implemented.");
+    }
+
     public getDisplayName(): string {
         return "Wire";
+    }
+
+    public getXMLName(): string {
+        return "wire";
     }
 }

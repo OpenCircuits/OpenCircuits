@@ -23,4 +23,8 @@ export class BUFGate extends Gate {
 	public getImageName() {
 		return "buf.svg";
 	}
+
+    public getXMLName(): string {
+        return "buf";
+    }
 }

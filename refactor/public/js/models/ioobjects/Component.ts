@@ -1,6 +1,7 @@
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {ClampedValue} from "../../utils/ClampedValue";
+import {XMLNode}      from "../../utils/io/xml/XMLNode";
 
 import {IOObject}   from "./IOObject";
 import {Wire}       from "./Wire";
@@ -155,12 +156,23 @@ export abstract class Component extends IOObject {
         return this.transform.getPos();
     }
 
+    public getAngle(): number {
+        return this.transform.getAngle();
+    }
+
     public getTransform(): Transform {
         return this.transform;
     }
 
-    public save(node: HTMLElement): HTMLElement {
-        let componentNode =
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addElement("x", this.getPos().x);
+        node.addElement("y", this.getPos().y);
+        node.addElement("angle", this.getAngle());
+    }
+
+    public load(node: XMLNode): void {
+
     }
 
 	abstract getImageName(): string;

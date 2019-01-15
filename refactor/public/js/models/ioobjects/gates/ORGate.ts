@@ -23,4 +23,8 @@ export class ORGate extends Gate {
 	public getImageName() {
 		return "or.svg";
 	}
+
+    public getXMLName(): string {
+        return "or";
+    }
 }
