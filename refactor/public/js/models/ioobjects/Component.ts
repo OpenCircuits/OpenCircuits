@@ -30,12 +30,9 @@ export abstract class Component extends IOObject {
 
         this.transform = new Transform(V(0,0), size, 0);
 
-		// Create and initialize each port
-		// for (var i = 0; i < inputPortCount.getValue(); i++)
-		// 	this.inputs.push(new InputPort(this));
+		// Create ports
         this.setInputPortCount(inputPortCount.getValue());
-		for (var i = 0; i < outputPortCount.getValue(); i++)
-			this.outputs.push(new OutputPort(this));
+        this.setOutputPortCount(outputPortCount.getValue());
 	}
 
     /**
@@ -56,6 +53,25 @@ export abstract class Component extends IOObject {
             port.setOriginPos(V(port.getOriginPos().x, l));
             port.setTargetPos(V(port.getTargetPos().x, l));
         }
+    }
+
+    protected setPortCount(arr: Array<Port>, val: ClampedValue, newVal: number, type: typeof InputPort | typeof OutputPort) {
+        // no need to update if value is already
+        //  the current amount
+        if (newVal == arr.length)
+            return;
+
+        // set count (will auto-clamp)
+        val.setValue(newVal);
+
+        // add or remove ports to meet target
+        while (arr.length > val.getValue())
+            arr.pop();
+        while (arr.length < val.getValue())
+            arr.push(new type(this));
+
+        // update positions
+        this.updatePortPositions(arr);
     }
 
     /**
@@ -88,26 +104,25 @@ export abstract class Component extends IOObject {
      * @param val The new number of ports
      */
     public setInputPortCount(val: number): void {
-        // no need to update if value is already
-        //  the current amount
-        if (val == this.inputs.length)
-            return;
+        this.setPortCount(this.inputs, this.inputPortCount, val, InputPort);
+    }
 
-        // set count (will auto-clamp)
-        this.inputPortCount.setValue(val);
-
-        // add or remove ports to meet target
-        while (this.inputs.length > this.inputPortCount.getValue())
-            this.inputs.pop();
-        while (this.inputs.length < this.inputPortCount.getValue())
-            this.inputs.push(new InputPort(this));
-
-        // update positions
-        this.updatePortPositions(this.inputs);
+    /**
+     * Set the number of OutputPorts of this component.
+     *  The value will be clamped and positions of ports
+     *  will be updated.
+     * @param val The new number of ports
+     */
+    public setOutputPortCount(val: number): void {
+        this.setPortCount(this.outputs, this.outputPortCount, val, OutputPort);
     }
 
     public setPos(v: Vector): void {
         this.transform.setPos(v);
+    }
+
+    public setAngle(a: number): void {
+        this.transform.setAngle(a);
     }
 
     /**
@@ -166,13 +181,14 @@ export abstract class Component extends IOObject {
 
     public save(node: XMLNode): void {
         super.save(node);
-        node.addElement("x", this.getPos().x);
-        node.addElement("y", this.getPos().y);
-        node.addElement("angle", this.getAngle());
+        node.addVectorAttribute("", this.getPos());
+        node.addAttribute("angle", this.getAngle());
     }
 
     public load(node: XMLNode): void {
-
+        super.load(node);
+        this.setPos(node.getVectorAttribute(""));
+        this.setAngle(node.getFloatAttribute("angle"));
     }
 
 	abstract getImageName(): string;

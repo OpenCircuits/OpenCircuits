@@ -22,9 +22,11 @@ export abstract class IOObject implements XMLable {
     public abstract activate(signal: boolean, i?: number): void;
 
     public save(node: XMLNode): void {
-        node.addElement("name", this.name.getName());
+        node.addAttribute("name", this.name.getName());
     }
-    public abstract load(node: XMLNode): void;
+    public load(node: XMLNode): void {
+        this.name = new Name(node.getAttribute("name"));
+    }
 
     public abstract getDisplayName(): string;
     public abstract getXMLName(): string;

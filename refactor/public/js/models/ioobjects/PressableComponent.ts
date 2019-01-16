@@ -2,6 +2,8 @@ import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {ClampedValue} from "../../utils/ClampedValue";
 
+import {XMLNode} from "../../utils/io/xml/XMLNode";
+
 import {Component} from "./Component";
 
 export abstract class PressableComponent extends Component {
@@ -37,6 +39,18 @@ export abstract class PressableComponent extends Component {
 	public isOn(): boolean {
 		return this.on;
 	}
+
+    public save(node: XMLNode): void {
+        super.save(node);
+
+        node.addAttribute("isOn", this.isOn());
+    }
+
+    public load(node: XMLNode): void {
+        super.load(node);
+
+        this.activate(node.getBooleanAttribute("isOn"));
+    }
 
 	public abstract getOnImageName(): string;
 

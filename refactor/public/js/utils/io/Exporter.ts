@@ -6,8 +6,7 @@ export let Exporter = (function() {
     let saved = false;
 
     let write = function(designer: CircuitDesigner): string {
-        let root = <XMLDocument>new DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>", "text/xml");
-        let writer = new XMLWriter();
+        let writer = new XMLWriter(designer.getXMLName());
 
         designer.save(writer.getRoot());
 

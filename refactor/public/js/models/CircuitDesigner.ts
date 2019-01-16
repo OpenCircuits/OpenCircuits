@@ -1,3 +1,6 @@
+import {CreateComponentFromXML} from "../utils/ComponentFactory";
+
+import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
 import {Propagation} from "./Propagation";
@@ -6,7 +9,7 @@ import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
 
-export class CircuitDesigner {
+export class CircuitDesigner implements XMLable {
 	private objects: Array<Component>;
 	private wires: Array<Wire>;
 	private propagationQueue: Array<Propagation>;
@@ -143,30 +146,23 @@ export class CircuitDesigner {
 	public save(node: XMLNode): void {
 		let objectsNode     = node.createChild("objects");
 		let wiresNode       = node.createChild("wires");
-		let connectionsNode = node.createChild("connections");
 
 		let idMap = new Map<IOObject, number>();
 
 		let id = 0;
 		for (let obj of this.objects) {
 			let componentNode = objectsNode.createChild(obj.getXMLName());
-			idMap.set(obj, id++);
-	        componentNode.addElement("xid", id);
+			idMap.set(obj, id);
+	        componentNode.addAttribute("xid", id);
+			id++;
 			obj.save(componentNode);
 		}
 
 		for (let wire of this.wires) {
 			let wireNode = wiresNode.createChild(wire.getXMLName());
-			idMap.set(wire, id++);
-	        wireNode.addElement("xid", id);
 			wire.save(wireNode);
-		}
 
-		// Save connections
-		for (let wire of this.wires) {
-			let connectionNode = connectionsNode.createChild("connection");
-			connectionNode.addElement("xid", idMap.get(wire));
-			let inputNode = connectionNode.createChild("input");
+			let inputNode = wireNode.createChild("input");
 			{
 				let iPort = wire.getInput();
 				let input = iPort.getParent();
@@ -174,20 +170,50 @@ export class CircuitDesigner {
 				// Find index of port
 				while (iI < input.getOutputPortCount() &&
 					   input.getOutputPort(iI) !== iPort) { iI++; }
-				inputNode.addElement("xid", idMap.get(input));
-				inputNode.addElement("index", iI);
+				inputNode.addAttribute("xid", idMap.get(input));
+				inputNode.addAttribute("index", iI);
 			}
-			let outputNode = connectionNode.createChild("output");
+			let outputNode = wireNode.createChild("output");
 			{
 				let oPort = wire.getOutput();
 				let input = oPort.getParent();
-				let iI = 0;
+				let iO = 0;
 				// Find index of port
-				while (iI < input.getInputPortCount() &&
-					   input.getInputPort(iI) !== oPort) { iI++; }
-				outputNode.addElement("xid", idMap.get(input));
-				outputNode.addElement("index", iI);
+				while (iO < input.getInputPortCount() &&
+					   input.getInputPort(iO) !== oPort) { iO++; }
+				outputNode.addAttribute("xid", idMap.get(input));
+				outputNode.addAttribute("index", iO);
 			}
+		}
+	}
+
+	public load(node: XMLNode): void {
+		let objectsNode     = node.findChild("objects");
+		let wiresNode       = node.findChild("wires");
+
+		let idMap = new Map<number, Component>();
+
+		let objects = objectsNode.getChildren();
+		for (let object of objects) {
+			let xid = object.getIntAttribute("xid");
+			let obj = CreateComponentFromXML(object.getTag());
+			this.addObject(obj);
+			idMap.set(xid, obj);
+			obj.load(object);
+		}
+
+		let wires = wiresNode.getChildren();
+		for (let wire of wires) {
+			let inputNode = wire.findChild("input");
+			let outputNode = wire.findChild("output");
+
+			let inputObj  = idMap.get( inputNode.getIntAttribute("xid"));
+			let outputObj = idMap.get(outputNode.getIntAttribute("xid"));
+			let inputIndex  =  inputNode.getIntAttribute("index");
+			let outputIndex = outputNode.getIntAttribute("index");
+
+			let w = this.connect(inputObj, inputIndex,  outputObj, outputIndex);
+			w.load(wire);
 		}
 	}
 
@@ -197,6 +223,10 @@ export class CircuitDesigner {
 
 	public getWires(): Array<Wire> {
 		return this.wires.slice(); // Shallow copy array
+	}
+
+	public getXMLName(): string {
+		return "circuit";
 	}
 
 }

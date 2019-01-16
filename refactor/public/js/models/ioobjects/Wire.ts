@@ -110,14 +110,21 @@ export class Wire extends IOObject {
 
         // write curve
         let curveNode = node.createChild("curve");
-        curveNode.addVectorElement("p1", this.shape.getP1());
-        curveNode.addVectorElement("p2", this.shape.getP2());
-        curveNode.addVectorElement("c1", this.shape.getC1());
-        curveNode.addVectorElement("c2", this.shape.getC2());
+        curveNode.addVectorAttribute("p1", this.shape.getP1());
+        curveNode.addVectorAttribute("p2", this.shape.getP2());
+        curveNode.addVectorAttribute("c1", this.shape.getC1());
+        curveNode.addVectorAttribute("c2", this.shape.getC2());
     }
 
     public load(node: XMLNode): void {
-        throw new Error("Method not implemented.");
+        super.load(node);
+
+        // load curve
+        let curveNode = node.findChild("curve");
+        this.shape.setP1(curveNode.getVectorAttribute("p1"));
+        this.shape.setP2(curveNode.getVectorAttribute("p2"));
+        this.shape.setC1(curveNode.getVectorAttribute("c1"));
+        this.shape.setC2(curveNode.getVectorAttribute("c2"));
     }
 
     public getDisplayName(): string {
