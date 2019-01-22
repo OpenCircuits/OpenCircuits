@@ -1,5 +1,7 @@
-import {DEFAULT_FILL_COLOR,
+import {DEBUG_SHOW_CULLBOXES,
+        DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR} from "../../Constants";
 
@@ -18,6 +20,10 @@ import {Images} from "../../Images";
 export var ComponentRenderer = (function() {
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
+            // Check if object is on the screen
+            if (!camera.cull(object.getCullBox()))
+                return;
+
             renderer.save();
 
             let transform = object.getTransform();
@@ -41,7 +47,7 @@ export var ComponentRenderer = (function() {
                 let box = object.getSelectionBox();
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, 2);
+                renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
 
             // Draw tinted image
@@ -49,6 +55,14 @@ export var ComponentRenderer = (function() {
             renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
             renderer.restore();
+
+            if (DEBUG_SHOW_CULLBOXES) {
+                renderer.save();
+                let cullBox = object.getCullBox();
+                renderer.transform(camera, cullBox);
+                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, '#ff00ff', '#000000', 0, 0.5);
+                renderer.restore();
+            }
         }
     };
 })();

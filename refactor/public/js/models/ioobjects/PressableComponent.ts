@@ -1,3 +1,5 @@
+import {DEFAULT_BORDER_WIDTH} from "../../utils/Constants";
+
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {ClampedValue} from "../../utils/ClampedValue";
@@ -38,6 +40,27 @@ export abstract class PressableComponent extends Component {
 
 	public isOn(): boolean {
 		return this.on;
+	}
+
+	public getMinPos(): Vector {
+		let min = super.getMinPos();
+
+		// Find minimum pos from corners of selection box
+		this.selectionBox.getCorners().forEach((v) => {
+			v = v.sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
+			min = Vector.min(min, v);
+		});
+		return min;
+	}
+
+	public getMaxPos(): Vector {
+		let max = super.getMaxPos();
+		// Find minimum pos from corners of selection box
+		this.selectionBox.getCorners().forEach((v) => {
+			v = v.add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
+			max = Vector.max(max, v);
+		});
+		return max;
 	}
 
     public save(node: XMLNode): void {

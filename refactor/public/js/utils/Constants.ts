@@ -1,3 +1,4 @@
+export const DEBUG_SHOW_CULLBOXES = true;
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
@@ -6,6 +7,8 @@ export const DEFAULT_BORDER_COLOR  = "#000000";
 export const DEFAULT_ON_COLOR      = "#3cacf2";
 export const SELECTED_FILL_COLOR   = "#1cff3e";
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
+
+export const DEFAULT_BORDER_WIDTH = 2;
 
 export const DRAG_TIME = 50;
 

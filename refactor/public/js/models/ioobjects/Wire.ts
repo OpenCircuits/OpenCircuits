@@ -1,15 +1,15 @@
 import {DEFAULT_SIZE} from "../../utils/Constants";
 
-import {V} from "../../utils/math/Vector";
+import {V,Vector} from "../../utils/math/Vector";
 import {Matrix2x3} from "../../utils/math/Matrix";
 import {BezierCurve} from "../../utils/math/BezierCurve";
 import {XMLNode} from "../../utils/io/xml/XMLNode";
-import {IOObject}   from "./IOObject";
+import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {OutputPort} from "./OutputPort";
 import {InputPort}  from "./InputPort";
 
-export class Wire extends IOObject {
+export class Wire extends CullableObject {
     private input: OutputPort;
     private output: InputPort;
 
@@ -103,6 +103,14 @@ export class Wire extends IOObject {
 
     public isStraight(): boolean {
         return this.straight;
+    }
+
+    public getMinPos(): Vector {
+        return this.getShape().getBoundingBox().getBottomLeft();
+    }
+
+    public getMaxPos(): Vector {
+        return this.getShape().getBoundingBox().getTopRight();
     }
 
     public save(node: XMLNode): void {

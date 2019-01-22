@@ -1,15 +1,19 @@
+import {DEFAULT_BORDER_WIDTH,
+        IO_PORT_RADIUS,
+        IO_PORT_BORDER_WIDTH} from "../../utils/Constants";
+
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {ClampedValue} from "../../utils/ClampedValue";
 import {XMLNode}      from "../../utils/io/xml/XMLNode";
 
-import {IOObject}   from "./IOObject";
+import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
 import {Port}       from "./Port";
 import {InputPort}  from "./InputPort";
 import {OutputPort} from "./OutputPort";
 
-export abstract class Component extends IOObject {
+export abstract class Component extends CullableObject {
     protected inputs: Array<InputPort>;
     protected outputs: Array<OutputPort>;
 
@@ -142,12 +146,8 @@ export abstract class Component extends IOObject {
         return this.inputs.length;
     }
 
-	public getOutputPort(i: number): OutputPort {
-		return this.outputs[i];
-	}
-
-    public getOutputPortCount(): number {
-        return this.outputs.length;
+    public getInputPorts(): Array<InputPort> {
+        return this.inputs.slice(); // Shallow copy
     }
 
     public getInputs(): Array<Wire> {
@@ -160,11 +160,30 @@ export abstract class Component extends IOObject {
         return arr;
     }
 
+	public getOutputPort(i: number): OutputPort {
+		return this.outputs[i];
+	}
+
+    public getOutputPortCount(): number {
+        return this.outputs.length;
+    }
+
+    public getOutputPorts(): Array<OutputPort> {
+        return this.outputs.slice(); // Shallow copy
+    }
+
     public getOutputs(): Array<Wire> {
         var arr: Array<Wire> = [];
         for (var i = 0; i < this.outputs.length; i++)
             arr = arr.concat(this.outputs[i].getConnections());
         return arr;
+    }
+
+    public getPorts(): Array<Port> {
+        let ports: Array<Port> = [];
+        ports = ports.concat(this.getInputPorts());
+        ports = ports.concat(this.getOutputPorts());
+        return ports;
     }
 
     public getPos(): Vector {
@@ -177,6 +196,42 @@ export abstract class Component extends IOObject {
 
     public getTransform(): Transform {
         return this.transform;
+    }
+
+    public getMinPos(): Vector {
+        let min = V(Infinity, Infinity);
+        // Find minimum pos from corners of transform
+        this.transform.getCorners().forEach((v) => {
+            v = v.sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
+            min = Vector.min(min, v);
+        });
+
+        // Find minimum pos from ports
+        this.getPorts().forEach((p) => {
+            let v = p.getWorldTargetPos();
+            v = v.sub(V(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH, IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH));
+            min = Vector.min(min, v);
+        });
+
+        return min;
+    }
+
+    public getMaxPos(): Vector {
+        let max = V(-Infinity, -Infinity);
+        // Find maximum pos from corners of transform
+        this.transform.getCorners().forEach((v) => {
+            v = v.add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
+            max = Vector.max(max, v);
+        });
+
+        // Find maximum pos from ports
+        this.getPorts().forEach((p) => {
+            let v = p.getWorldTargetPos();
+            v = v.add(V(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH, IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH));
+            max = Vector.max(max, v);
+        });
+
+        return max;
     }
 
     public save(node: XMLNode): void {

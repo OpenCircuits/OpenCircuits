@@ -64,9 +64,11 @@ export class Transform {
         this.matrix.translate(this.pos);
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
-
-        if (this.parent != undefined)
+        
+        if (this.parent != undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
+            this.prevParentMatrix = this.parent.getMatrix();
+        }
 
         this.inverse = this.matrix.inverse();
     }
@@ -81,6 +83,11 @@ export class Transform {
         this.radius = Math.sqrt(this.size.x*this.size.x + this.size.y*this.size.y)/2;
     }
     private updateCorners(): void {
+        // If parent changed then we need to recalculate corners
+        if (this.parent != undefined &&
+            !this.parent.getMatrix().equals(this.prevParentMatrix))
+            this.dirtyCorners = true;
+
         if (!this.dirtyCorners)
             return;
         this.dirtyCorners = false;

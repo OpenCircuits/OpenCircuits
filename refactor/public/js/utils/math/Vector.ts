@@ -71,6 +71,12 @@ export class Vector {
         return new Vector(this.x, this.y);
     }
 
+    static min(v1: Vector, v2: Vector): Vector {
+        return new Vector(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y));
+    }
+    static max(v1: Vector, v2: Vector): Vector {
+        return new Vector(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
+    }
     // static V(x: Vector | number, y: number = 0): Vector {
     //     return new Vector(x, y);
     // }

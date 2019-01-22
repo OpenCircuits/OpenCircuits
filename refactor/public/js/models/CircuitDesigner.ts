@@ -152,14 +152,20 @@ export class CircuitDesigner implements XMLable {
 		let id = 0;
 		for (let obj of this.objects) {
 			let componentNode = objectsNode.createChild(obj.getXMLName());
+
+			// Set and save XML ID for connections
 			idMap.set(obj, id);
 	        componentNode.addAttribute("xid", id);
 			id++;
+
+			// Save properties
 			obj.save(componentNode);
 		}
 
 		for (let wire of this.wires) {
 			let wireNode = wiresNode.createChild(wire.getXMLName());
+
+			// Save properties
 			wire.save(wireNode);
 
 			let inputNode = wireNode.createChild("input");
@@ -196,23 +202,33 @@ export class CircuitDesigner implements XMLable {
 		let objects = objectsNode.getChildren();
 		for (let object of objects) {
 			let xid = object.getIntAttribute("xid");
+
+			// Create and add object
 			let obj = CreateComponentFromXML(object.getTag());
 			this.addObject(obj);
+
+			// Add to ID map for connections later
 			idMap.set(xid, obj);
+
+			// Load properties
 			obj.load(object);
 		}
 
 		let wires = wiresNode.getChildren();
 		for (let wire of wires) {
-			let inputNode = wire.findChild("input");
+			let inputNode  = wire.findChild("input");
 			let outputNode = wire.findChild("output");
 
+			// Load connections
 			let inputObj  = idMap.get( inputNode.getIntAttribute("xid"));
 			let outputObj = idMap.get(outputNode.getIntAttribute("xid"));
 			let inputIndex  =  inputNode.getIntAttribute("index");
 			let outputIndex = outputNode.getIntAttribute("index");
 
+			// Create wire
 			let w = this.connect(inputObj, inputIndex,  outputObj, outputIndex);
+
+			// Load properties
 			w.load(wire);
 		}
 	}

@@ -5,5 +5,4 @@ export interface XMLable {
     load(node: XMLNode): void;
 
     getXMLName(): string;
-
 }

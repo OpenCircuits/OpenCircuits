@@ -1,5 +1,6 @@
 import {Vector,V}  from "./Vector";
 import {Transform} from "./Transform";
+import {Clamp} from "./MathUtils";
 
 export class BezierCurve {
     private p1: Vector;
@@ -15,6 +16,7 @@ export class BezierCurve {
         this.p2 = p2.copy();
         this.c1 = c1.copy();
         this.c2 = c2.copy();
+        
         this.dirty = true;
         this.boundingBox = new Transform(V(0), V(0));
     }
@@ -35,8 +37,8 @@ export class BezierCurve {
 
         var discriminant1 = b.y*b.y - 4*a.y*c.y;
         discriminant1 = (discriminant1 >= 0 ? Math.sqrt(discriminant1) : -1);
-        var t1 = (discriminant1 !== -1 ? clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
-        var t2 = (discriminant1 !== -1 ? clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
+        var t1 = (discriminant1 !== -1 ? Clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
+        var t2 = (discriminant1 !== -1 ? Clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
         max.y = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
         min.y = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
 
@@ -97,6 +99,11 @@ export class BezierCurve {
 
     public getPos(t: number): Vector {
         return V(this.getX(t), this.getY(t));
+    }
+
+    public getBoundingBox(): Transform {
+        this.updateBoundingBox();
+        return this.boundingBox.copy();
     }
 
 }
