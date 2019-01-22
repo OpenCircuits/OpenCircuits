@@ -1,7 +1,7 @@
 import "jest";
 
-import {Vector,V}  from "../../../../../refactor/public/js/utils/math/Vector";
-import {Transform} from "../../../../../refactor/public/js/utils/math/Transform";
+import {Vector,V}  from "../../../../../site/public/ts/utils/math/Vector";
+import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
 
 /*
     constructor(pos: Vector, size: Vector, angle: number = 0);

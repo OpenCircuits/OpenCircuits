@@ -1,6 +1,6 @@
 import "jest";
 
-import {ClampedValue} from "../../../../refactor/public/js/utils/ClampedValue";
+import {ClampedValue} from "../../../../site/public/ts/utils/ClampedValue";
 
 describe("ClampedValue", () => {
     describe("Constructor", () => {

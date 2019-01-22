@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../refactor/public/js/models/CircuitDesigner";
-import {Switch}          from "../../../../../../refactor/public/js/models/ioobjects/inputs/Switch";
-import {ANDGate}         from "../../../../../../refactor/public/js/models/ioobjects/gates/ANDGate";
-import {LED}             from "../../../../../../refactor/public/js/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
+import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+import {ANDGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
+import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {

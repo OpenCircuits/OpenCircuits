@@ -1,7 +1,7 @@
 const path = require('path');
 
 var config = {
-    entry: './refactor/public/js/Main.ts',
+    entry: './site/public/ts/Main.ts',
     output: {
         filename: 'Bundle.js',
         path: path.resolve(__dirname, 'build')

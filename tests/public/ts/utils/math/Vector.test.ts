@@ -1,6 +1,6 @@
 import "jest";
 
-import {Vector} from "../../../../../refactor/public/js/utils/math/Vector";
+import {Vector} from "../../../../../site/public/ts/utils/math/Vector";
 
 describe("Vector", () => {
     describe("Constructor", () => {

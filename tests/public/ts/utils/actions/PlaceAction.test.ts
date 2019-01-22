@@ -1,8 +1,8 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../refactor/public/js/models/CircuitDesigner";
-import {Switch}          from "../../../../../refactor/public/js/models/ioobjects/inputs/Switch";
-import {PlaceAction}     from "../../../../../refactor/public/js/utils/actions/PlaceAction";
+import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {Switch}          from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/PlaceAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo", () => {

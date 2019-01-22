@@ -1,7 +1,7 @@
 import "jest";
 
-import {Vector}  from "../../../../../refactor/public/js/utils/math/Vector";
-import {Matrix2x3} from "../../../../../refactor/public/js/utils/math/Matrix";
+import {Vector}  from "../../../../../site/public/ts/utils/math/Vector";
+import {Matrix2x3} from "../../../../../site/public/ts/utils/math/Matrix";
 
 describe("Matrix2x3", () => {
     describe("Constructor", () => {
