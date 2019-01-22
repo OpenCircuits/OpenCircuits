@@ -7,29 +7,29 @@ namespace app\models;
  *
  */
 class ItemNavConfig {
-    
+
     /** @property @var array */
     protected $sections;
-    
+
     /**
      * ItemNavConfig constructor
-     * 
+     *
      * @param Core  $core
      * @param array $details
      */
     public function __construct() {
         $this->sections = array();
-        
-        $file = fopen('../data/itemnavconfig.txt', 'r');
-        
+
+        $file = fopen('./data/itemnavconfig.txt', 'r');
+
         if (!$file) {
             die("Could not find item nav config file!");
         }
-        
+
         // Read properties line by line
         while (!feof($file)) {
             $line = fgets($file);
-            
+
             // item type
             if ($line[0] == "[") {
                 $title = substr($line, 1, strpos($line, "]")-1);
@@ -49,12 +49,12 @@ class ItemNavConfig {
                 $this->sections[count($this->sections)-1]["items"][] = $item;
             }
         }
-        
+
         fclose($file);
     }
-    
+
     public function getSections() {
         return $this->sections;
     }
-    
+
 }
