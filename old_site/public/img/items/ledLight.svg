@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="500px" enable-background="new 0 0 500 500" viewBox="0 0 500 500">
+<radialGradient id="SVGID_1_" cx="250" cy="250" r="250" gradientUnits="userSpaceOnUse">
+<stop offset="0.4152" style="stop-color:#FFFFFF;stop-opacity:0.7"/>
+<stop offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+</radialGradient>
+<circle fill="url(#SVGID_1_)" cx="250" cy="250" r="250"/>
+</svg>

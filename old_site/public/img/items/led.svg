@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="500px" enable-background="new 0 0 500 500" viewBox="0 0 500 500">
+<path fill="#F1F2F2" d="M375,500v-50h-25V100c0,0-2.303-100-100-100C149.97,0,150,100,150,100v350h-25v50H375z"/>
+<g><polygon fill="#D1D3D4" points="313.636,278.939 186.364,278.939 250,357.727 305.273,358.485 305.273,450.152 313.636,450.152"/>
+<polygon fill="#D1D3D4" points="234.061,364.545 186.364,298.636 186.364,450.152 235.576,450.152"/></g>
+</svg>
