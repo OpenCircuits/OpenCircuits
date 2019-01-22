@@ -1,3 +1,4 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 var config = {
@@ -6,6 +7,15 @@ var config = {
         filename: 'Bundle.js',
         path: path.resolve(__dirname, 'build')
     },
+    plugins: [
+        new CopyWebpackPlugin([
+            { from: 'site/public/index.php', to: 'index.php' },
+            { from: 'site/app/',  to: 'app/' },
+            { from: 'site/data/', to: 'data/' },
+            { from: 'site/public/css/', to: 'css/' },
+            { from: 'site/public/img/', to: 'img/' }
+        ])
+    ],
     devtool: 'source-map',
     module: {
         rules: [ {

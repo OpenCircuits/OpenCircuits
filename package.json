@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",
+    "copy-webpack-plugin": "^4.6.0",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.5",
     "ts-loader": "^5.3.1",

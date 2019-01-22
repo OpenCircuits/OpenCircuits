@@ -7,9 +7,8 @@
 ._*
 node_modules
 coverage
+build
 site/data/config.txt
 site/public/js/combined-min.js
 tests/index.js
-build/Bundle.js
-build/Bundle.js.map
 package-lock.json
