@@ -7,6 +7,9 @@ import {Tool} from "../tools/Tool";
 import {PanTool} from "../tools/PanTool";
 import {SelectionTool} from "../tools/SelectionTool";
 import {RotateTool} from "../tools/RotateTool";
+import {PlaceComponentTool} from "../tools/PlaceComponentTool";
+
+import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 
 export var ToolRenderer = (function() {
 
@@ -55,6 +58,11 @@ export var ToolRenderer = (function() {
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
                     drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getLastAngle());
                 }
+            }
+            else if (tool instanceof PlaceComponentTool) {
+                // Draw current object
+                let component = tool.getComponent();
+                ComponentRenderer.render(renderer, camera, component, false);
             }
 
         }

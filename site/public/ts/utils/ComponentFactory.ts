@@ -14,18 +14,23 @@ import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
 import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
 import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
 
-let COMPONENTS = new Map<string, any>();
+const INPUTS    = [Switch];
+const OUTPUTS   = [LED];
+const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
+const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
+
+let XML_COMPONENTS = new Map<string, any>();
 
 // Helper to add a bunch of types to the COMPONENTS map
-function addTypes(types: Array<any>) {
+function addXMLTypes(types: Array<any>) {
     for (let type of types)
-        COMPONENTS.set(new type().getXMLName(), type);
+        XML_COMPONENTS.set(new type().getXMLName(), type);
 }
 
-addTypes([Switch]);
-addTypes([LED]);
-addTypes([BUFGate, ANDGate, ORGate, XORGate]);
-addTypes([DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop]);
+addXMLTypes(INPUTS);
+addXMLTypes(OUTPUTS);
+addXMLTypes(GATES);
+addXMLTypes(FLIPFLOPS);
 
 /**
  * Helper method that creates an object from the
@@ -34,10 +39,23 @@ addTypes([DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop]);
  * @param  val [description]
  * @return     [description]
  */
-export function CreateComponentFromXML(tag: string): Component {
-    if (COMPONENTS.has(tag)) {
-        let type = COMPONENTS.get(tag);
-        return <Component>(new type());
+export function CreateComponentFromXML(tag: string, not: boolean = false): Component {
+    if (XML_COMPONENTS.has(tag)) {
+        let type = XML_COMPONENTS.get(tag);
+        return <Component>(new type(not));
     }
     return undefined;
+}
+
+export function GetAllComponentInputs() {
+    return INPUTS.slice();
+}
+export function GetAllComponentOutputs() {
+    return OUTPUTS.slice();
+}
+export function GetAllComponentGates() {
+    return GATES.slice();
+}
+export function GetAllComponentFlipFlops() {
+    return FLIPFLOPS.slice();
 }

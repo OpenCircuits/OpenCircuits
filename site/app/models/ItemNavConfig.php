@@ -43,7 +43,7 @@ class ItemNavConfig {
                 $item = array();
                 $item["display"] = trim($props[0]);
                 $item["img"]     = trim($props[1]);
-                $item["js"]      = trim($props[2]);
+                $item["xml"]     = trim($props[2]);
                 if (count($props) > 3)
                     $item["not"] = trim($props[3]);
                 $this->sections[count($this->sections)-1]["items"][] = $item;

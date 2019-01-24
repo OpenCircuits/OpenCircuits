@@ -16,7 +16,7 @@ export abstract class Tool implements MouseListener, KeyboardListener {
         return false;
     }
 
-    public onMouseMove(input: Input, button: number): boolean {
+    public onMouseMove(input: Input): boolean {
         return false;
     }
 

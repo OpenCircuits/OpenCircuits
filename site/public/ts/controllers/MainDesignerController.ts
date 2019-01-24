@@ -20,8 +20,10 @@ import {PanTool} from "../utils/tools/PanTool";
 import {SelectionTool} from "../utils/tools/SelectionTool";
 import {RotateTool} from "../utils/tools/RotateTool";
 import {TranslateTool} from "../utils/tools/TranslateTool";
+import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 
 import {PressableComponent} from "../models/ioobjects/PressableComponent";
+import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
@@ -41,6 +43,7 @@ export var MainDesignerController = (function() {
     var selectionTool: SelectionTool;
     var rotateTool: RotateTool;
     var translateTool: TranslateTool;
+    var placeComponentTool: PlaceComponentTool;
     var currentTool: Tool;
 
     var currentPressedObj: IOObject;
@@ -117,6 +120,12 @@ export var MainDesignerController = (function() {
             MainDesignerController.Render();
     }
 
+    let onMouseMove = function(): void {
+        // If current tool did something, then render
+        if (currentTool.onMouseMove(input))
+            MainDesignerController.Render();
+    }
+
     let onMouseUp = function(button: number): void {
         // If current tool did something, then render
         if (currentTool.onMouseUp(input, button))
@@ -159,6 +168,10 @@ export var MainDesignerController = (function() {
         // If current tool did something, then render
         if (currentTool.onClick(input, button))
             MainDesignerController.Render();
+
+        // Switch from place-component tool to selection tool
+        if (currentTool === placeComponentTool)
+            currentTool = selectionTool;
     }
 
     let onScroll = function(): void {
@@ -213,12 +226,14 @@ export var MainDesignerController = (function() {
             selectionTool = new SelectionTool(designer, view.getCamera());
             rotateTool = new RotateTool(view.getCamera());
             translateTool = new TranslateTool(view.getCamera());
+            placeComponentTool = new PlaceComponentTool(designer, view.getCamera());
             currentTool = selectionTool;
 
             // input
             input = new Input(view.getCanvas());
             input.addListener("mousedown", onMouseDown);
             input.addListener("mousedrag", onMouseDrag);
+            input.addListener("mousemove", onMouseMove);
             input.addListener("mouseup",   onMouseUp);
             input.addListener("click",     onClick);
             input.addListener("scroll",    onScroll);
@@ -260,6 +275,11 @@ export var MainDesignerController = (function() {
         },
         Render: function(): void {
             renderQueue.render();
+        },
+        PlaceComponent: function(component: Component) {
+            console.log("place");
+            placeComponentTool.setComponent(component);
+            currentTool = placeComponentTool;
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;

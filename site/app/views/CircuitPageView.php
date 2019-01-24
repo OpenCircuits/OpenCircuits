@@ -12,8 +12,6 @@ class CircuitPageView {
         <link rel="stylesheet" href="css/stylesheet.css">
     </head>
     <body>
-        <canvas id="canvas" class="canvas"></canvas>
-
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
@@ -40,6 +38,49 @@ class CircuitPageView {
                     </button>
                 </div>
             </header>
+
+            <main>
+                <nav id="itemnav" class="itemnav">
+HTML;
+                    $sections = $itemNavConfig->getSections();
+
+                    // Output all items in the ItemNav menu
+                    foreach($sections as $section) {
+                        // Get each tab (ex. Inputs, Outputs, Gates, etc.)
+                        $name  = $section["name"];
+                        $dir   = $section["dir"];
+                        $items = $section["items"];
+
+                        $name2 = strtolower($name);
+
+                        $return .= <<<HTML
+                    <h4 id="itemnav-section-{$name2}" unselectable>{$name}</h4>
+HTML;
+                        foreach ($items as $item) {
+                            // Get each item in the tab (ex. Button, Switch, etc.)
+                            $displayName = $item["display"];
+                            $imageName   = $item["img"];
+                            $xmlId       = $item["xml"];
+
+                            $not = "false";
+                            if (isset($item["not"]))
+                                $not = $item["not"];
+
+                            $return .= <<<HTML
+                            <button id="itemnav-section-{$name2}-button-{$xmlId}" type="button" data-xmlid="{$xmlId}" data-not="{$not}">
+                                <img id="itemnav-section-{$name2}-img-{$xmlId}" src="img/icons/{$dir}/{$imageName}" alt="{$displayName}" />
+                                <br/>{$displayName}
+                            </button>
+HTML;
+                        }
+                    }
+
+                    $return .= <<<HTML
+                </nav>
+                <div id="itemnav-open-tab" class="tab"> &#9776; </div>
+
+                <canvas id="canvas" class="canvas"></canvas>
+            </main>
         </div>
 
         <script src="Bundle.js"></script>
