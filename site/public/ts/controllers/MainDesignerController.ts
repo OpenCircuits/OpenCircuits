@@ -148,6 +148,12 @@ export var MainDesignerController = (function() {
     }
 
     let onClick = function(button: number): void {
+        // Switch from place-component tool to selection tool
+        if (currentTool === placeComponentTool) {
+            currentTool = selectionTool;
+            return;
+        }
+
         // Check to see if any component was clicked
         if (button === LEFT_MOUSE_BUTTON) {
             let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
@@ -162,7 +168,7 @@ export var MainDesignerController = (function() {
                         obj.click();
                         MainDesignerController.Render();
                     }
-                    return;
+                    break;
                 }
             }
         }
@@ -170,10 +176,6 @@ export var MainDesignerController = (function() {
         // If current tool did something, then render
         if (currentTool.onClick(input, button))
             MainDesignerController.Render();
-
-        // Switch from place-component tool to selection tool
-        if (currentTool === placeComponentTool)
-            currentTool = selectionTool;
     }
 
     let onScroll = function(): void {

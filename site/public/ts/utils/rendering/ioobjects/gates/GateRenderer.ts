@@ -14,12 +14,6 @@ import {ANDGate} from "../../../../models/ioobjects/gates/ANDGate";
 import {ORGate} from "../../../../models/ioobjects/gates/ORGate";
 import {XORGate} from "../../../../models/ioobjects/gates/XORGate";
 
-// import {Images} from "../../../Images";
-
-// import {ANDGate} from "../../../models/ioobjects/gates/ANDGate";
-// import {Switch} from "../../../models/ioobjects/inputs/Switch";
-// import {LED} from "../../../models/ioobjects/outputs/LED";
-
 export var GateRenderer = (function() {
 
     let drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
