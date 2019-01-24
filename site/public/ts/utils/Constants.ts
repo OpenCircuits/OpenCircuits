@@ -23,6 +23,8 @@ export const WIRE_DIST_ITERATIONS = 10;
 export const WIRE_NEWTON_ITERATIONS = 5;
 export const WIRE_SNAP_THRESHOLD    = 10;
 
+export const GATE_NOT_CIRCLE_RADIUS = 5;
+
 export const ROTATION_CIRCLE_RADIUS = 75;
 export const ROTATION_CIRCLE_THICKNESS = 5;
 export const ROTATION_CIRCLE_THRESHOLD = 5;

@@ -27,6 +27,8 @@ import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
+import {ORGate}  from "../models/ioobjects/gates/ORGate";
+import {XORGate}  from "../models/ioobjects/gates/XORGate";
 import {LED}      from "../models/ioobjects/outputs/LED";
 
 export var MainDesignerController = (function() {
@@ -255,6 +257,17 @@ export var MainDesignerController = (function() {
 
             designer.addObjects([s1, s2, g1, l1]);
 
+            var g2 = new XORGate();
+            g2.setPos(V(0, 200));
+            g2.setInputPortCount(5);
+            designer.addObject(g2);
+
+            var g3 = new ORGate();
+            g3.setPos(V(0, -200));
+            g3.setInputPortCount(5);
+            designer.addObject(g3);
+
+
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
 
@@ -277,7 +290,6 @@ export var MainDesignerController = (function() {
             renderQueue.render();
         },
         PlaceComponent: function(component: Component) {
-            console.log("place");
             placeComponentTool.setComponent(component);
             currentTool = placeComponentTool;
         },

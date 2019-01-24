@@ -46,14 +46,14 @@ export abstract class Component extends CullableObject {
      * @param arr The array of ports (either in or out ports)
      */
     protected updatePortPositions(arr: Array<Port>): void {
-        for (var i = 0; i < arr.length; i++) {
+        for (let i = 0; i < arr.length; i++) {
             // Calculate y position of port
-            var l = -this.transform.getSize().y/2*(i - arr.length/2 + 0.5);
+            let l = -this.transform.getSize().y/2*(i - arr.length/2 + 0.5);
             if (i === 0) l--;
             if (i === arr.length-1) l++;
 
             // Set y positions
-            var port = arr[i];
+            let port = arr[i];
             port.setOriginPos(V(port.getOriginPos().x, l));
             port.setTargetPos(V(port.getTargetPos().x, l));
         }

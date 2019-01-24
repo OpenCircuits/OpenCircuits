@@ -32,6 +32,10 @@ export abstract class Gate extends Component {
             this.name = new Name(this.getDisplayName());
     }
 
+    public isNot(): boolean {
+        return this.not;
+    }
+
     public save(node: XMLNode): void {
         super.save(node);
 

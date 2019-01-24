@@ -2,21 +2,18 @@ export var Images = (function() {
     var images: Map<string, HTMLImageElement> = new Map();
 
     var loadImages = function(imageNames: Array<string>,
-                              index: number,
                               onFinish: () => void): void {
-        var img = new Image();//Object.create(Image);
-        img.onload = function() {
-            images.set(imageNames[index], img);
-            // img.dx = 0;
-            // img.dy = 0;
-            // img.ratio = img.width / img.height;
-            if (index === imageNames.length-1)
-                onFinish();
-            else
-                loadImages(imageNames, index+1, onFinish);
-        };
-        img.src = "img/items/" + imageNames[index];
-        // console.log(img.src);
+        // Load each image
+        let index = 0;
+        for (let imageName of imageNames) {
+            let img = new Image();
+            img.onload = function() {
+                if (++index === imageNames.length)
+                    onFinish();
+            };
+            img.src = "img/items/" + imageName;
+            images.set(imageName, img);
+        }
     }
 
     return {
@@ -26,12 +23,11 @@ export var Images = (function() {
                  "buttonUp.svg", "buttonDown.svg",
                  "switchUp.svg", "switchDown.svg",
                  "led.svg", "ledLight.svg",
-                 "buffer.svg", "and.svg",
-                 "or.svg", "xor.svg",
+                 "buf.svg", "and.svg", "or.svg",
                  "segment1.svg", "segment2.svg",
                  "segment3.svg", "segment4.svg",
                  "clock.svg", "clockOn.svg",
-                 "keyboard.svg", "base.svg"], 0, onFinishLoading);
+                 "keyboard.svg", "base.svg"], onFinishLoading);
         },
         GetImage: function(img: string): HTMLImageElement {
             return images.get(img);

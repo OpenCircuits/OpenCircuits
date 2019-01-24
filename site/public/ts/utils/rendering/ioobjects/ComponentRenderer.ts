@@ -7,9 +7,13 @@ import {DEBUG_SHOW_CULLBOXES,
 
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
+import {GateRenderer} from "./gates/GateRenderer";
+
 import {Camera} from "../../Camera";
+
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
+import {Gate} from "../../../models/ioobjects/gates/Gate";
 
 import {Images} from "../../Images";
 
@@ -48,6 +52,9 @@ export var ComponentRenderer = (function() {
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
                 renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+            }
+            if (object instanceof Gate) {
+                GateRenderer.render(renderer, camera, object, selected);
             }
 
             // Draw tinted image
