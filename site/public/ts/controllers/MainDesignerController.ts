@@ -109,8 +109,10 @@ export var MainDesignerController = (function() {
         // Check if dragging object
         if (currentTool === selectionTool && currentPressedObj != undefined) {
             let objs = [currentPressedObj];
+
             // Translate multiple objects if they are all selected
-            if (selectionTool.getSelections().length > 0 && objs.includes(currentPressedObj))
+            if (selectionTool.getSelections().length > 0 &&
+                selectionTool.getSelections().includes(currentPressedObj))
                 objs = selectionTool.getSelections();
 
             translateTool.startDragging(objs, worldMousePos, currentPressedObj);
@@ -148,6 +150,10 @@ export var MainDesignerController = (function() {
     }
 
     let onClick = function(button: number): void {
+        // If current tool did something, then render
+        if (currentTool.onClick(input, button))
+            MainDesignerController.Render();
+
         // Switch from place-component tool to selection tool
         if (currentTool === placeComponentTool) {
             currentTool = selectionTool;
@@ -172,10 +178,6 @@ export var MainDesignerController = (function() {
                 }
             }
         }
-
-        // If current tool did something, then render
-        if (currentTool.onClick(input, button))
-            MainDesignerController.Render();
     }
 
     let onScroll = function(): void {
