@@ -29,4 +29,7 @@ export abstract class FlipFlop extends Component {
         this.setOutputPortCount(node.getIntAttribute("outputs"));
     }
 
+    public getImageName() {
+        return "flipflop.svg";
+    }
 }

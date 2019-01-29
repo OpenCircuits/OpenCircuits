@@ -31,10 +31,6 @@ export class JKFlipFlop extends FlipFlop {
 		return "JK Flip Flop";
 	}
 
-	public getImageName() {
-		return "flipflop.svg";
-	}
-
     public getXMLName(): string {
         return "jkff";
     }

@@ -23,10 +23,6 @@ export class DFlipFlop extends FlipFlop {
 		return "D Flip Flop";
 	}
 
-	public getImageName() {
-		return "flipflop.svg";
-	}
-
     public getXMLName(): string {
         return "dff";
     }
