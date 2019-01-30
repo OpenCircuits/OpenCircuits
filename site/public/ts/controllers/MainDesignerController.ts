@@ -276,7 +276,6 @@ export var MainDesignerController = (function() {
             designer.connect(s2, 0,  g1, 1);
 
             designer.connect(g1, 0,  l1, 0);
-                
 
             s1.activate(true);
 
