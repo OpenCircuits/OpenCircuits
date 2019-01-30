@@ -31,10 +31,6 @@ export class SRFlipFlop extends FlipFlop {
 		return "SR Flip Flop";
 	}
 
-	public getImageName() {
-		return "flipflop.svg";
-	}
-
     public getXMLName(): string {
         return "srff";
     }
