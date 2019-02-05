@@ -71,7 +71,7 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
  *          True if the point is within the rectangle,
  *          false otherwise
  */
-export function CircleContains(pos1: Vector, r: number, pos2: Vector) {
+export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
     return (pos2.sub(pos1).len2() <= r*r);
 }
 
