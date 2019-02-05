@@ -50,6 +50,32 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
 }
 
 /**
+ * Determines whether the given point
+ * is within the circle defined by the
+ * given transform
+ *
+ * @param  {Vector} pos1
+ *         The center of the circle in world
+ *         coordinates
+ *
+ * @param  {number} r
+ *         The radius of the circle in world
+ *         units
+ *
+ * @param  {Vector} pos2
+ *         * Must be in world coordinates *
+ *         The point to determine whether or not
+ *         it's within the circle
+ *
+ * @return {Boolean}
+ *          True if the point is within the rectangle,
+ *          false otherwise
+ */
+export function CircleContains(pos1: Vector, r: number, pos2: Vector) {
+    return (pos2.sub(pos1).len2() <= r*r);
+}
+
+/**
  * Compares two transforms to see if they overlap.
  * First tests it using a quick circle-circle
  * intersection using the 'radius' of the transform
