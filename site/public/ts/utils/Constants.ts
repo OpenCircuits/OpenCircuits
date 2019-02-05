@@ -1,4 +1,4 @@
-export const DEBUG_SHOW_CULLBOXES = false;
+export const DEBUG_SHOW_CULLBOXES = true;
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
