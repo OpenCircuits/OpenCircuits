@@ -26,7 +26,6 @@ import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
-import {Button}   from "../models/ioobjects/inputs/Button";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
@@ -271,7 +270,6 @@ export var MainDesignerController = (function() {
             g3.setPos(V(0, -200));
             g3.setInputPortCount(5);
             designer.addObject(g3);
-            
 
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
