@@ -271,6 +271,7 @@ export var MainDesignerController = (function() {
             g3.setInputPortCount(5);
             designer.addObject(g3);
 
+            
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
 
