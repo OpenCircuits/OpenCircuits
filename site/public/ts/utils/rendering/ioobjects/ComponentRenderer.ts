@@ -38,10 +38,10 @@ export var ComponentRenderer = (function() {
 
             // Draw IO ports
             for (let i = 0; i < object.getInputPortCount(); i++)
-                IOPortRenderer.renderIPort(renderer, object.getInputPort(i),  selected);
+                IOPortRenderer.renderIPort(renderer, object.getInputPort(i), selected, object.getXMLName() == "wp");
 
             for (let i = 0; i < object.getOutputPortCount(); i++)
-                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected);
+                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected, object.getXMLName() == "wp");
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
@@ -59,7 +59,8 @@ export var ComponentRenderer = (function() {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+            if (Images.GetImage(imgName)) 
+                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
             renderer.restore();
 
