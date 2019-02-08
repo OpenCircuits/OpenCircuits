@@ -1,6 +1,6 @@
 import "jest";
 
-import {Clamp, TransformContains, RectContains} from "../../../../../site/public/ts/utils/math/MathUtils";
+import {Clamp, TransformContains, RectContains, CircleContains} from "../../../../../site/public/ts/utils/math/MathUtils";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
 import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
 
@@ -211,5 +211,43 @@ describe("RectContains", () => {
         var t = new Transform(V(0,0), V(2,2), 0);
         var b  = RectContains(t, V(2,2));
         expect(b).toEqual(false);
+    });
+});
+
+/*
+export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
+    return (pos2.sub(pos1).len2() <= r*r);
+}
+}
+*/
+
+describe("CircleContains", () => {
+    it("same points", () => {
+        var c  = CircleContains(V(0,0), 2, V(0,0));
+        expect(c).toEqual(true);
+    });
+    it("on the edge", () => {
+        var c  = CircleContains(V(0,0), 2, V(0,2));
+        expect(c).toEqual(true);
+    });
+    it("on the cusp", () => {
+        var c  = CircleContains(V(1,5), -3, V(3.1,7.14242));
+        expect(c).toEqual(true);
+    });
+    it("outside", () => {
+        var c  = CircleContains(V(0,0), 2, V(5,5));
+        expect(c).toEqual(false);
+    });
+    it("negative radius, inside", () => {
+        var c  = CircleContains(V(0,0), -2, V(0,2));
+        expect(c).toEqual(true);
+    });
+    it("negative radius, outside", () => {
+        var c  = CircleContains(V(1,5), -3, V(10,10));
+        expect(c).toEqual(false);
+    });
+    it("decimal numbers", () => {
+        var c  = CircleContains(V(-4.6,5.2), 7.7, V(-1.3,8.6));
+        expect(c).toEqual(true);
     });
 });
