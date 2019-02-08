@@ -68,12 +68,12 @@ export class RotateTool extends Tool {
         return this.midpoint;
     }
 
-    public getStartAngle(): number {
-        return this.startAngle;
-    }
-
     public getLastAngle(): number {
         return this.action.getAngle() + this.getStartAngle();
+    }
+
+    public getStartAngle(): number {
+        return this.startAngle;
     }
 
     public isRotating(): boolean {
