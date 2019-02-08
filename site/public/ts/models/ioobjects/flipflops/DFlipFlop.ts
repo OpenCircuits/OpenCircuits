@@ -4,7 +4,9 @@ import {FlipFlop} from "./FlipFlop";
 export class DFlipFlop extends FlipFlop {
 
 	public constructor() {
-		super(2, 2, V(60, 60));
+		super(2, 2, V(80, 80));
+		this.getInputPort(0).setName(">");
+		this.getInputPort(1).setName("D");
 	}
 
 	// @Override

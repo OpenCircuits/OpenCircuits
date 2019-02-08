@@ -1,7 +1,7 @@
 import {Renderer} from "../../Renderer";
 import {Camera} from "../../../Camera";
 import {FlipFlop} from "../../../../models/ioobjects/flipflops/FlipFlop";
-import {ComponentRenderer} from "../ComponentRenderer";
+import {IOLabelRenderer} from "../IOLabelRenderer";
 
 // import {Images} from "../../../Images";
 
@@ -11,19 +11,15 @@ import {ComponentRenderer} from "../ComponentRenderer";
 
 export var FlipFlopRenderer = (function() {
     return {
-        render(renderer: Renderer, camera: Camera, flipflop: FlipFlop, selected: boolean) {
+        render(renderer: Renderer, camera: Camera, flipflop: FlipFlop) {
 
-            ComponentRenderer.render(renderer, camera, flipflop, selected);
+            IOLabelRenderer.render(renderer, camera, flipflop);
 
             renderer.save();
 
             var transform = flipflop.getTransform();
 
             renderer.transform(camera, transform);
-
-
-
-
 
             renderer.restore();
         }

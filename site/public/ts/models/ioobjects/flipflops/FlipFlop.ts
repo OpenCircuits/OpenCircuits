@@ -13,6 +13,8 @@ export abstract class FlipFlop extends Component {
 
     constructor(numInputs: number, numOutputs: number, size: Vector) {
         super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
+		this.getOutputPort(0).setName("Q'");
+		this.getOutputPort(1).setName("Q ");
     }
 
     public save(node: XMLNode): void {
@@ -30,6 +32,6 @@ export abstract class FlipFlop extends Component {
     }
 
 	public getImageName() {
-		return "flipflop.svg";
+		return "base.svg";
 	}
 }
