@@ -11,13 +11,16 @@ import {Tool} from "./Tool";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
+import {TranslateAction} from "../actions/TranslateAction";
+
+import {MainDesignerController} from "../../controllers/MainDesignerController";
+
 export class TranslateTool extends Tool {
     private camera: Camera;
 
-    private objects: Array<IOObject>;
-
     private dragging: boolean;
-    private prevPos: Vector;
+    private action: TranslateAction;
+    private startPos: Vector;
 
     public constructor(camera: Camera) {
         super();
@@ -28,9 +31,9 @@ export class TranslateTool extends Tool {
     }
 
     public startDragging(objs: Array<IOObject>, mousePos: Vector, pressedObj: IOObject): void {
-        this.objects = objs;
         this.dragging = true;
-        this.prevPos = mousePos;
+        this.startPos = mousePos;
+        this.action = new TranslateAction(objs);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -39,17 +42,8 @@ export class TranslateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
-        // Translate each object by a 'delta' position
-        let dPos = worldMousePos.sub(this.prevPos);
-        for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only translate components
-            if (obj instanceof Component)
-                obj.setPos(obj.getPos().add(dPos))
-        }
-        this.prevPos.translate(dPos);
+        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos)
+        this.action.updateOffset(mousePosOffset);
 
         return true;
     }
@@ -61,6 +55,8 @@ export class TranslateTool extends Tool {
             return false;
 
         this.dragging = false;
+
+        MainDesignerController.GetActionManager().add(this.action);
 
         return true;
     }

@@ -11,15 +11,18 @@ import {Tool} from "./Tool";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
+import {RotateAction} from "../actions/RotateAction";
+
+import {MainDesignerController} from "../../controllers/MainDesignerController";
+
 export class RotateTool extends Tool {
     private camera: Camera;
 
-    private objects: Array<IOObject>;
-    private midpoint: Vector;
-
     private rotating: boolean;
+    private midpoint: Vector;
     private startAngle: number;
-    private prevAngle: number;
+
+    private action: RotateAction;
 
     public constructor(camera: Camera) {
         super();
@@ -30,11 +33,10 @@ export class RotateTool extends Tool {
     }
 
     public startRotation(objs: Array<IOObject>, midpoint: Vector, mousePos: Vector): void {
-        this.objects = objs;
         this.midpoint = midpoint;
         this.rotating = true;
         this.startAngle = mousePos.sub(midpoint).angle();
-        this.prevAngle = this.startAngle;
+        this.action = new RotateAction(objs, midpoint);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -43,18 +45,9 @@ export class RotateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        let origin = this.midpoint;
-
         // Rotate each object by a 'delta' angle
-        let dAngle = worldMousePos.sub(origin).angle() - this.prevAngle;
-        for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only rotate components
-            if (obj instanceof Component)
-                obj.getTransform().rotateAbout(dAngle, origin);
-        }
-        this.prevAngle += dAngle;
+        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        this.action.updateAngle(worldMousePos.sub(this.midpoint).angle() - this.startAngle);
 
         return true;
     }
@@ -67,6 +60,7 @@ export class RotateTool extends Tool {
 
         this.rotating = false;
 
+        MainDesignerController.GetActionManager().add(this.action);
         return true;
     }
 
@@ -74,12 +68,12 @@ export class RotateTool extends Tool {
         return this.midpoint;
     }
 
-    public getLastAngle(): number {
-        return this.prevAngle;
-    }
-
     public getStartAngle(): number {
         return this.startAngle;
+    }
+
+    public getLastAngle(): number {
+        return this.action.getAngle() + this.getStartAngle();
     }
 
     public isRotating(): boolean {

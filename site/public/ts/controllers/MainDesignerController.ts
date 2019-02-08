@@ -211,7 +211,6 @@ export var MainDesignerController = (function() {
             key === OPTION_KEY) {
             currentTool = selectionTool;
         }
-
     }
 
     return {
@@ -299,6 +298,9 @@ export var MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
+        },
+        GetActionManager: function(): ActionManager {
+          return actions;
         }
     };
 })();
