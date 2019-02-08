@@ -15,7 +15,7 @@ export var IOPortRenderer = (function() {
         renderIPort(renderer: Renderer, iport: InputPort, selected: boolean) {
             var o = iport.getOriginPos();
             var v = iport.getTargetPos();
-            
+
             var borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             renderer.line(o.x, o.y, v.x, v.y, borderCol, IO_PORT_LINE_WIDTH);
 
