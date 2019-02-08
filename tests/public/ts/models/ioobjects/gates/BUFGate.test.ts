@@ -17,12 +17,12 @@ describe("BUFGate", () => {
         it("Initial State", () => {
             expect(o.isOn()).toBe(false);
         });
-        it("Input B is on", () => {
+        it("Input on", () => {
             a.activate(true);
 
             expect(o.isOn()).toBe(true);
         });
-        it("Input B is off", () => {
+        it("Input off", () => {
             a.activate(false);
 
             expect(o.isOn()).toBe(false);
@@ -40,12 +40,12 @@ describe("BUFGate", () => {
         it("Initial State", () => {
             expect(o.isOn()).toBe(true);
         });
-        it("Input A is on", () => {
+        it("Input on", () => {
             a.activate(true);
 
             expect(o.isOn()).toBe(false);
         });
-        it("Input A is off", () => {
+        it("Input off", () => {
             a.activate(false);
 
             expect(o.isOn()).toBe(true);
