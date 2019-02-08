@@ -202,6 +202,7 @@ export var MainDesignerController = (function() {
             currentTool = panTool;
         }
 
+        
     }
 
     let onKeyUp = function(key: number): void {
