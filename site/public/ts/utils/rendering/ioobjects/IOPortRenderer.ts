@@ -12,7 +12,7 @@ import {OutputPort} from "../../../models/ioobjects/OutputPort";
 
 export var IOPortRenderer = (function() {
     return {
-        renderIPort(renderer: Renderer, iport: InputPort, selected: boolean, wireport: boolean) {
+        renderIPort(renderer: Renderer, iport: InputPort, selected: boolean) {
             var o = iport.getOriginPos();
             var v = iport.getTargetPos();
             
@@ -22,7 +22,7 @@ export var IOPortRenderer = (function() {
             var circleFillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
         },
-        renderOPort(renderer: Renderer, oport: OutputPort, selected: boolean, wireport: boolean) {
+        renderOPort(renderer: Renderer, oport: OutputPort, selected: boolean) {
             var o = oport.getOriginPos();
             var v = oport.getTargetPos();
 

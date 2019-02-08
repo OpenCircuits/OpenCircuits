@@ -38,10 +38,10 @@ export var ComponentRenderer = (function() {
 
             // Draw IO ports
             for (let i = 0; i < object.getInputPortCount(); i++)
-                IOPortRenderer.renderIPort(renderer, object.getInputPort(i), selected, object.getXMLName() == "wp");
+                IOPortRenderer.renderIPort(renderer, object.getInputPort(i), selected);
 
             for (let i = 0; i < object.getOutputPortCount(); i++)
-                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected, object.getXMLName() == "wp");
+                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected);
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
