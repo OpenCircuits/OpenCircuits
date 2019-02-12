@@ -1,4 +1,4 @@
-import {Vector} from "../../../utils/math/Vector";
+import {V, Vector} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
