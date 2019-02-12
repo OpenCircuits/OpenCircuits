@@ -258,7 +258,6 @@ export var MainDesignerController = (function() {
             s2.setPos(V(-200, -100));
             g1.setPos(V(0, 0));
             l1.setPos(V(200, 0));
-            wp.setPos(V(-100, 100));
 
             designer.addObjects([s1, s2, g1, l1]);
 
