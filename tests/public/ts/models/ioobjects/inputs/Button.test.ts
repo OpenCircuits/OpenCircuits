@@ -1,7 +1,5 @@
 import "jest";
 
-//do i even need to test anything else besides just pressing it?
-
 import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
 import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {Button}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Button";
@@ -38,8 +36,7 @@ describe("Button", () => {
 
     it("Input A On", () => {
         a.activate(true);
-        //b.activate(false);
-        //is there a difference between this and pressing it?
+        b.activate(false);
 
         expect(o.isOn()).toBe(false);
     });
