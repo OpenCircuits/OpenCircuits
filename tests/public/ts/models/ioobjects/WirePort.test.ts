@@ -5,7 +5,7 @@ import {WirePort}   from "../../../../../site/public/ts/models/ioobjects/WirePor
 import {Switch}   from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED}             from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
 
-describe("Constant Low", () => {
+describe("Wire Port", () => {
     const designer = new CircuitDesigner(0);
     const wp = new WirePort(), s = new Switch(), o = new LED();
 

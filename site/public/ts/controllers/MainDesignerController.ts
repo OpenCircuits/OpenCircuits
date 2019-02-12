@@ -30,7 +30,6 @@ import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
 import {LED}      from "../models/ioobjects/outputs/LED";
-import {WirePort}      from "../models/ioobjects/WirePort";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
@@ -254,7 +253,6 @@ export var MainDesignerController = (function() {
             var s2 = new Switch();
             var g1 = new ANDGate();
             var l1 = new LED();
-            var wp = new WirePort();
 
             s1.setPos(V(-200, 100));
             s2.setPos(V(-200, -100));
@@ -262,7 +260,7 @@ export var MainDesignerController = (function() {
             l1.setPos(V(200, 0));
             wp.setPos(V(-100, 100));
 
-            designer.addObjects([s1, s2, g1, l1, wp]);
+            designer.addObjects([s1, s2, g1, l1]);
 
             var g2 = new XORGate();
             g2.setPos(V(0, 200));
@@ -275,8 +273,7 @@ export var MainDesignerController = (function() {
             designer.addObject(g3);
 
 
-            designer.connect(s1, 0,  wp, 0);
-            designer.connect(wp, 0,  g1, 0);
+            designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
 
             designer.connect(g1, 0,  l1, 0);

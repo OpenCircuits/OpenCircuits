@@ -26,7 +26,7 @@ export class WirePort extends Component {
 		return "";
 	}
 
-    public getXMLName(): string {
-        return "wp";
-    }
+	public getXMLName(): string {
+		return "wp";
+	}
 }
