@@ -12,13 +12,12 @@ export class SRLatch extends Latch {
 		this.set = this.inputs[0].getIsOn();
 		const reset = this.inputs[2].getIsOn();
 		if (this.clock) {
-        	if (this.set && reset) {
-                // undefined behavior
-            } else if (this.set) {
-                this.state = true;
-            } else if (reset) {
-                this.state = false;
-            }
+			if (this.set && reset) {
+				// undefined behavior
+			} else if (this.set)
+				this.state = true;
+			else if (reset)
+				this.state = false;
 		}
 
 		super.activate(this.state, 1);
@@ -29,7 +28,7 @@ export class SRLatch extends Latch {
 		return "SR Latch";
 	}
 
-    public getXMLName(): string {
-        return "srl";
-    }
+	public getXMLName(): string {
+		return "srl";
+	}
 }

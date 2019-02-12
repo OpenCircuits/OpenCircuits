@@ -11,7 +11,7 @@ export class DLatch extends Latch {
 		this.clock = this.inputs[0].getIsOn();
 		this.set = this.inputs[1].getIsOn();
 		if (this.clock)
-        	this.state = this.set;
+			this.state = this.set;
 
 		super.activate(this.state, 1);
 		super.activate(!this.state, 0);
@@ -21,7 +21,7 @@ export class DLatch extends Latch {
 		return "D Latch";
 	}
 
-    public getXMLName(): string {
-        return "dl";
-    }
+	public getXMLName(): string {
+		return "dl";
+	}
 }
