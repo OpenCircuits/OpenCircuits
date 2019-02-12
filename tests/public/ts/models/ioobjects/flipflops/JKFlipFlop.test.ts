@@ -2,7 +2,7 @@ import "jest";
 
 import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
 import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {JKFlipFlop}         from "../../../../../../site/public/ts/models/ioobjects/flipflops/JKFlipFlop";
+import {JKFlipFlop}      from "../../../../../../site/public/ts/models/ioobjects/flipflops/JKFlipFlop";
 import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
 
 describe("JKFlipFLop", () => {
