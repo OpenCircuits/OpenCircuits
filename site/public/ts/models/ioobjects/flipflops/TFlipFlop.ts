@@ -1,10 +1,9 @@
-import {V} from "../../../utils/math/Vector";
 import {FlipFlop} from "./FlipFlop";
 
 export class TFlipFlop extends FlipFlop {
 
 	public constructor() {
-		super(2, 2, V(60, 60));
+		super(2);
 	}
 
 	// @Override

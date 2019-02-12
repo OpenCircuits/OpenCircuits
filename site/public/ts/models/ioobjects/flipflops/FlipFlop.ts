@@ -1,4 +1,4 @@
-import {Vector} from "../../../utils/math/Vector";
+import {V, Vector} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
@@ -11,8 +11,8 @@ export abstract class FlipFlop extends Component {
 	protected state: boolean = false;
 	protected last_clock: boolean = false;
 
-    constructor(numInputs: number, numOutputs: number, size: Vector) {
-        super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
+    constructor(numInputs: number) {
+        super(new ClampedValue(numInputs), new ClampedValue(2), V(60, 60));
     }
 
     public save(node: XMLNode): void {
