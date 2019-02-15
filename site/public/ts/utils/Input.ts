@@ -101,8 +101,6 @@ export class Input {
             return;
         }
 
-        console.log("click");
-
         // call each listener
         this.callListeners("click", event.button);
     }
@@ -137,7 +135,6 @@ export class Input {
     }
     private onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
-                console.log("up");
 
         // call each listener
         this.callListeners("mouseup", 0);
