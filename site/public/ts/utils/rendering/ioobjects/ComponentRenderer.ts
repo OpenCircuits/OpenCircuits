@@ -57,14 +57,14 @@ export var ComponentRenderer = (function() {
             if (object instanceof Gate) {
                 GateRenderer.render(renderer, camera, object, selected);
             }
+            if (object instanceof FlipFlop) {
+                FlipFlopRenderer.render(renderer, camera, object, selected);
+            }
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
-
-            if (object instanceof FlipFlop) {
-                FlipFlopRenderer.render(renderer, camera, object);
-            }
+            if (Images.GetImage(imgName))
+                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
             renderer.restore();
 

@@ -32,6 +32,6 @@ export abstract class FlipFlop extends Component {
     }
 
 	public getImageName() {
-		return "base.svg";
+		return "";
 	}
 }

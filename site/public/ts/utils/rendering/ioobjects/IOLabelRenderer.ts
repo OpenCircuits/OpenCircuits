@@ -11,12 +11,7 @@ export var IOLabelRenderer = (function() {
             if (!camera.cull(object.getCullBox()))
                 return;
 
-            renderer.save();
-
             let transform = object.getTransform();
-
-            renderer.transform(camera, transform);
-
             let size: Vector = transform.getSize();
 
             for (let i = 0; i < object.getInputPortCount(); i++){
@@ -44,7 +39,6 @@ export var IOLabelRenderer = (function() {
                 pos.y = Clamp(pos.y, -size.y/2+14, size.y/2-14);
                 renderer.text(name, pos.x, pos.y, align);
             }
-            renderer.restore();
         }
     };
 
