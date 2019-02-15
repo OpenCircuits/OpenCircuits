@@ -8,6 +8,8 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 import {Tool} from "./Tool";
 
+import {SelectionTool} from "./SelectionTool";
+
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
@@ -27,10 +29,33 @@ export class TranslateTool extends Tool {
         this.dragging = false;
     }
 
-    public startDragging(objs: Array<IOObject>, mousePos: Vector, pressedObj: IOObject): void {
-        this.objects = objs;
-        this.dragging = true;
-        this.prevPos = mousePos;
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        if (!(currentTool instanceof SelectionTool))
+            return false;
+        if (!(event == "mousedrag"))
+            return false;
+
+        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        let selections = currentTool.getSelections();
+        let currentPressedObj = currentTool.getCurrentlyPressedObj();
+        if (currentPressedObj != undefined) {
+            this.objects = [currentPressedObj];
+
+            // Translate multiple objects if they are all selected
+            if (selections.length > 0 && selections.includes(this.objects[0]))
+                this.objects = selections
+
+            this.dragging = true;
+            this.prevPos = worldMousePos;
+
+            return true;
+        }
+        return false;
+    }
+
+    public deactivate(event: string, input: Input, button?: number): boolean {
+        return (event == "mouseup");
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
