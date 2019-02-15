@@ -22,6 +22,10 @@ export class SelectionTool extends Tool {
     private selections: Array<IOObject>;
     private selecting: boolean;
 
+    // These functions are called every time the selections change
+    // TODO: pass selections as argument
+    private callbacks: Array<{ (): void }>;
+
     // Current selection box positions
     private p1: Vector;
     private p2: Vector;
@@ -34,6 +38,8 @@ export class SelectionTool extends Tool {
 
         this.selections = [];
         this.selecting = false;
+
+        this.callbacks = [];
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -61,8 +67,10 @@ export class SelectionTool extends Tool {
                 this.selecting = false;
 
                 // Clear selections if no shift key
-                if (!input.isKeyDown(SHIFT_KEY))
+                if (!input.isKeyDown(SHIFT_KEY)) {
                     this.selections = [];
+                    this.selectionChanged();
+                }
 
                 // Calculate transform rectangle of the selection box
                 var p1 = this.camera.getWorldPos(input.getMouseDownPos());
@@ -76,8 +84,10 @@ export class SelectionTool extends Tool {
                     // Check if object is in box
                     if (TransformContains(box, obj.getTransform())) {
                         // Add to selections if not already selected
-                        if (!this.selections.includes(obj))
+                        if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            this.selectionChanged();
+                        }
                     }
                 }
 
@@ -93,8 +103,10 @@ export class SelectionTool extends Tool {
             let worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
             // Clear selections if no shift key
-            if (!input.isKeyDown(SHIFT_KEY))
+            if (!input.isKeyDown(SHIFT_KEY)) {
                 this.selections = [];
+                this.selectionChanged();
+            }
 
             // Check if an object was clicked
             //  and add to selections
@@ -108,15 +120,19 @@ export class SelectionTool extends Tool {
                     if (RectContains(obj.getSelectionBox(), worldMousePos) &&
                         !RectContains(obj.getTransform(), worldMousePos)) {
                         // Add to selections if not already selected
-                        if (!this.selections.includes(obj))
+                        if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            this.selectionChanged();
+                        }
                     }
                 } else {
                     // Check if mouse is within bounds of the object
                     if (RectContains(obj.getTransform(), worldMousePos)) {
                         // Add to selections if not already selected
-                        if (!this.selections.includes(obj))
+                        if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            this.selectionChanged();
+                        }
                     }
                 }
             }
@@ -151,4 +167,10 @@ export class SelectionTool extends Tool {
         return this.p2.copy();
     }
 
+    set onSelectionChanged(func: {(): void}) {
+        this.callbacks.push(func);
+    }
+    private selectionChanged() {
+        this.callbacks.forEach(c => c());
+    }
 }

@@ -30,11 +30,13 @@ import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
 import {LED}      from "../models/ioobjects/outputs/LED";
+import { SelectionPopupController } from "./SelectionPopupController";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
     var view: MainDesignerView;
     var input: Input;
+    var selectionPopup: SelectionPopupController;
 
     var actions: ActionManager;
 
@@ -221,6 +223,7 @@ export var MainDesignerController = (function() {
             //  time its updated
             designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
+            selectionPopup = new SelectionPopupController();
 
             // utils
             renderQueue = new RenderQueue(() => view.render(designer, selectionTool.getSelections(), currentTool));
@@ -248,6 +251,7 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
+            selectionTool.onSelectionChanged = () => { selectionPopup.onSelectionChanged() };
 
             var s1 = new Switch();
             var s2 = new Switch();
@@ -296,6 +300,9 @@ export var MainDesignerController = (function() {
         PlaceComponent: function(component: Component) {
             placeComponentTool.setComponent(component);
             currentTool = placeComponentTool;
+        },
+        GetSelections: function(): Array<IOObject> {
+            return selectionTool.getSelections();
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;

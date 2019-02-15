@@ -44,7 +44,7 @@ export class CircuitDesigner implements XMLable {
 	 * @param receiver
 	 * @param signal
 	 */
-	public propogate(receiver: IOObject, signal: boolean): void {
+	public propagate(receiver: IOObject, signal: boolean): void {
 		this.propagationQueue.push(new Propagation(receiver, signal));
 
 		if (this.updateRequests == 0) {
