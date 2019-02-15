@@ -71,11 +71,8 @@ export var ComponentRenderer = (function() {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-<<<<<<< HEAD
+
             if (Images.GetImage(imgName))
-=======
-            if (Images.GetImage(imgName)) 
->>>>>>> 272b13bb52e23b36372c55fea7af6a2aec714f0b
                 renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
             renderer.restore();
