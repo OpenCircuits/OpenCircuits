@@ -7,40 +7,48 @@ import {LED}             from "../../../../../../site/public/ts/models/ioobjects
 
 describe("BUFGate", () => {
     describe("BUFGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(); var o1 = new LED(); var not_gate = new BUFGate(true);
-        var b = new Switch;  var o2 = new LED(); var buf_gate = new BUFGate();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch, o = new LED(), buf_gate = new BUFGate();
 
-        designer.addObjects([a, o1, not_gate, b, o2, buf_gate]);
-        designer.connect(a, 0, not_gate, 0);
-        designer.connect(not_gate, 0, o1, 0);
-
-        designer.connect(b, 0, buf_gate, 0);
-        designer.connect(buf_gate, 0, o2, 0);
+        designer.addObjects([a, o, buf_gate]);
+        designer.connect(a, 0, buf_gate, 0);
+        designer.connect(buf_gate, 0, o, 0);
 
         it("Initial State", () => {
-            expect(o1.isOn()).toBe(true);
-            expect(o2.isOn()).toBe(false);
+            expect(o.isOn()).toBe(false);
         });
-        it("Input A is on", () => {
+        it("Input on", () => {
             a.activate(true);
 
-            expect(o1.isOn()).toBe(false);
+            expect(o.isOn()).toBe(true);
         });
-        it("Input A is off", () => {
+        it("Input off", () => {
             a.activate(false);
 
-            expect(o1.isOn()).toBe(true);
+            expect(o.isOn()).toBe(false);
         });
-        it("Input B is on", () => {
-            b.activate(true);
+    });
 
-            expect(o2.isOn()).toBe(true);
+    describe("NOTGate", () => {
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), o = new LED(), not_gate = new BUFGate(true);
+        
+        designer.addObjects([a, o, not_gate]);
+        designer.connect(a, 0, not_gate, 0);
+        designer.connect(not_gate, 0, o, 0);
+
+        it("Initial State", () => {
+            expect(o.isOn()).toBe(true);
         });
-        it("Input B is off", () => {
-            b.activate(false);
+        it("Input on", () => {
+            a.activate(true);
 
-            expect(o2.isOn()).toBe(false);
+            expect(o.isOn()).toBe(false);
+        });
+        it("Input off", () => {
+            a.activate(false);
+
+            expect(o.isOn()).toBe(true);
         });
     });
 });

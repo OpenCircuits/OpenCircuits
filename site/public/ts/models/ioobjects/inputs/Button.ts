@@ -1,6 +1,6 @@
 /*
     //This is a part of the old code that I wasn't able to implement
-    //So the click area of the button is a rectangle
+    //The click area of the button is a rectangle, but it should be a circle
 
     contains(pos) {
         return circleContains(this.transform, pos);
