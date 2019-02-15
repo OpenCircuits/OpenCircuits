@@ -1,12 +1,13 @@
 import {LEFT_MOUSE_BUTTON,
         OPTION_KEY,
         SHIFT_KEY,
+        IO_PORT_RADIUS,
         ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2} from "../utils/Constants";
 
 import {V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
-import {RectContains} from "../utils/math/MathUtils";
+import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
 import {ActionManager} from "../utils/actions/ActionManager";
@@ -15,16 +16,14 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Tool} from "../utils/tools/Tool";
-import {PanTool} from "../utils/tools/PanTool";
-import {SelectionTool} from "../utils/tools/SelectionTool";
-import {RotateTool} from "../utils/tools/RotateTool";
-import {TranslateTool} from "../utils/tools/TranslateTool";
-import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
+import {ToolManager} from "../utils/tools/ToolManager";
+
+import {MouseListener} from "../utils/MouseListener";
 
 import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
+import {InputPort} from "../models/ioobjects/InputPort";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
@@ -37,19 +36,8 @@ export var MainDesignerController = (function() {
     var input: Input;
 
     var actions: ActionManager;
-
+    var toolManager: ToolManager;
     var renderQueue: RenderQueue;
-
-    // tools
-    var panTool: PanTool;
-    var selectionTool: SelectionTool;
-    var rotateTool: RotateTool;
-    var translateTool: TranslateTool;
-    var placeComponentTool: PlaceComponentTool;
-    var currentTool: Tool;
-
-    var currentPressedObj: IOObject;
-    var pressedObj: boolean;
 
     let resize = function() {
         view.resize();
@@ -58,126 +46,38 @@ export var MainDesignerController = (function() {
     }
 
     let onMouseDown = function(button: number): void {
-        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-        // Check if rotation circle was pressed
-        if (currentTool === selectionTool && selectionTool.getSelections().length > 0) {
-            let midpoint = selectionTool.calculateMidpoint();
-            let d = worldMousePos.sub(midpoint).len2();
-            if (d <= ROTATION_CIRCLE_R2 && d >= ROTATION_CIRCLE_R1) {
-                rotateTool.startRotation(selectionTool.getSelections(), midpoint, worldMousePos);
-                currentTool = rotateTool;
-
-                MainDesignerController.Render();
-                return;
-            }
-        }
-
-        // Check to see if any component was pressed
-        if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-            let objects = designer.getObjects();
-            for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
-
-                // Check if mouse is within bounds of the object
-                if (RectContains(obj.getTransform(), worldMousePos)) {
-                    if (obj instanceof PressableComponent) {
-                        obj.press();
-                        pressedObj = true;
-                        MainDesignerController.Render();
-                    }
-                    currentPressedObj = obj;
-                    return;
-                }
-                // If just the selection box was hit then
-                //  don't call the press() method, just set
-                //  currentPressedObj to potentially drag
-                else if (obj instanceof PressableComponent && RectContains(obj.getSelectionBox(), worldMousePos)) {
-                    currentPressedObj = obj;
-                    pressedObj = false;
-                    return;
-                }
-            }
-        }
-    }
-
-    let onMouseDrag = function(button: number): void {
-        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-        // Check if dragging object
-        if (currentTool === selectionTool && currentPressedObj != undefined) {
-            let objs = [currentPressedObj];
-
-            // Translate multiple objects if they are all selected
-            if (selectionTool.getSelections().length > 0 &&
-                selectionTool.getSelections().includes(currentPressedObj))
-                objs = selectionTool.getSelections();
-
-            translateTool.startDragging(objs, worldMousePos, currentPressedObj);
-            currentTool = translateTool;
-        }
-
-        // If current tool did something, then render
-        if (currentTool.onMouseDrag(input, button))
+        if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
     }
 
     let onMouseMove = function(): void {
-        // If current tool did something, then render
-        if (currentTool.onMouseMove(input))
+        if (toolManager.onMouseMove(input))
+            MainDesignerController.Render();
+    }
+
+    let onMouseDrag = function(button: number): void {
+        if (toolManager.onMouseDrag(input, button))
             MainDesignerController.Render();
     }
 
     let onMouseUp = function(button: number): void {
-        // If current tool did something, then render
-        if (currentTool.onMouseUp(input, button))
+        if (toolManager.onMouseUp(input, button))
             MainDesignerController.Render();
-
-        // Switch from rotate tool to selection tool
-        if (currentTool === rotateTool)
-            currentTool = selectionTool;
-
-        // Switch from translate tool to selection tool
-        if (currentTool === translateTool)
-            currentTool = selectionTool;
-
-        // Release currently pressed object
-        if (pressedObj && currentPressedObj != undefined && currentPressedObj instanceof PressableComponent)
-            currentPressedObj.release();
-        currentPressedObj = undefined;
     }
 
     let onClick = function(button: number): void {
-        // If current tool did something, then render
-        if (currentTool.onClick(input, button))
+        if (toolManager.onClick(input, button))
             MainDesignerController.Render();
+    }
 
-        // Switch from place-component tool to selection tool
-        if (currentTool === placeComponentTool) {
-            currentTool = selectionTool;
-            return;
-        }
+    let onKeyDown = function(key: number): void {
+        if (toolManager.onKeyDown(input, key))
+            MainDesignerController.Render();
+    }
 
-        // Check to see if any component was clicked
-        if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-            let objects = designer.getObjects();
-            for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
-
-                // Check if mouse is within bounds of the object
-                if (RectContains(obj.getTransform(), worldMousePos)) {
-                    if (obj instanceof PressableComponent) {
-                        obj.click();
-                        MainDesignerController.Render();
-                    }
-                    break;
-                }
-            }
-        }
+    let onKeyUp = function(key: number): void {
+        if (toolManager.onKeyUp(input, key))
+            MainDesignerController.Render();
     }
 
     let onScroll = function(): void {
@@ -193,27 +93,6 @@ export var MainDesignerController = (function() {
 
         MainDesignerController.Render();
     }
-
-    let onKeyDown = function(key: number): void {
-
-        // Switch to to pan tool
-        if (currentTool === selectionTool &&
-            key === OPTION_KEY) {
-            currentTool = panTool;
-        }
-
-    }
-
-    let onKeyUp = function(key: number): void {
-
-        // Switch to selection tool
-        if (currentTool === panTool &&
-            key === OPTION_KEY) {
-            currentTool = selectionTool;
-        }
-        
-    }
-
     return {
         Init: function(): void {
             // pass Render function so that
@@ -223,28 +102,23 @@ export var MainDesignerController = (function() {
             view = new MainDesignerView();
 
             // utils
-            renderQueue = new RenderQueue(() => view.render(designer, selectionTool.getSelections(), currentTool));
             actions = new ActionManager();
-
-            // tools
-            // @TODO maybe a tool manager thing that handles switching between tools
-            panTool = new PanTool(view.getCamera());
-            selectionTool = new SelectionTool(designer, view.getCamera());
-            rotateTool = new RotateTool(view.getCamera());
-            translateTool = new TranslateTool(view.getCamera());
-            placeComponentTool = new PlaceComponentTool(designer, view.getCamera());
-            currentTool = selectionTool;
+            toolManager = new ToolManager(view.getCamera(), designer);
+            renderQueue = new RenderQueue(() =>
+                view.render(designer,
+                            toolManager.getSelectionTool().getSelections(),
+                            toolManager.getCurrentTool()));
 
             // input
             input = new Input(view.getCanvas());
-            input.addListener("mousedown", onMouseDown);
-            input.addListener("mousedrag", onMouseDrag);
-            input.addListener("mousemove", onMouseMove);
-            input.addListener("mouseup",   onMouseUp);
-            input.addListener("click",     onClick);
-            input.addListener("scroll",    onScroll);
-            input.addListener("keydown",   onKeyDown);
-            input.addListener("keyup",     onKeyUp);
+            input.addListener("click",     (b) => onClick(b));
+            input.addListener("mousedown", (b) => onMouseDown(b));
+            input.addListener("mousedrag", (b) => onMouseDrag(b));
+            input.addListener("mousemove", ( ) => onMouseMove());
+            input.addListener("mouseup",   (b) => onMouseUp(b));
+            input.addListener("keydown",   (b) => onKeyDown(b));
+            input.addListener("keyup",     (b) => onKeyUp(b));
+            input.addListener("scroll", onScroll);
 
             window.addEventListener("resize", _e => resize(), false);
 
@@ -294,8 +168,7 @@ export var MainDesignerController = (function() {
             renderQueue.render();
         },
         PlaceComponent: function(component: Component) {
-            placeComponentTool.setComponent(component);
-            currentTool = placeComponentTool;
+            toolManager.placeComponent(component);
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
