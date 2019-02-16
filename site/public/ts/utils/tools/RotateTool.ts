@@ -32,7 +32,7 @@ export class RotateTool extends Tool {
 
         this.rotating = false;
     }
-  
+
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
@@ -53,7 +53,6 @@ export class RotateTool extends Tool {
             this.midpoint = midpoint;
             this.rotating = true;
             this.startAngle = worldMousePos.sub(midpoint).angle();
-            this.prevAngle = this.startAngle;
             this.action = new RotateAction(selections, midpoint);
             return true;
         }

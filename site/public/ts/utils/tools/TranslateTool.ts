@@ -31,7 +31,7 @@ export class TranslateTool extends Tool {
 
         this.dragging = false;
     }
-  
+
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
@@ -46,12 +46,12 @@ export class TranslateTool extends Tool {
             let objects = [currentPressedObj];
 
             // Translate multiple objects if they are all selected
-            if (selections.length > 0 && selections.includes(this.objects[0]))
+            if (selections.length > 0 && selections.includes(objects[0]))
                 objects = selections
 
             this.dragging = true;
             this.startPos = worldMousePos;
-            this.action = new TranslateAction(objs);
+            this.action = new TranslateAction(objects);
 
             return true;
         }
