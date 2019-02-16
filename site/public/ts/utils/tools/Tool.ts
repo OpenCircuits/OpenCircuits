@@ -2,6 +2,8 @@ import {Input} from "../Input";
 import {MouseListener} from "../MouseListener";
 import {KeyboardListener} from "../KeyboardListener";
 
+import {Action} from "../actions/Action";
+
 export abstract class Tool implements MouseListener, KeyboardListener {
 
     /**
@@ -54,6 +56,10 @@ export abstract class Tool implements MouseListener, KeyboardListener {
 
     public onKeyUp(input: Input, key: number): boolean {
         return false;
+    }
+
+    public getAction(): Action {
+        return undefined;
     }
 
 }

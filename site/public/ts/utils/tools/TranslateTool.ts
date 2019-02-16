@@ -13,6 +13,7 @@ import {SelectionTool} from "./SelectionTool";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
+import {Action} from "../actions/Action";
 import {TranslateAction} from "../actions/TranslateAction";
 
 import {MainDesignerController} from "../../controllers/MainDesignerController";
@@ -85,6 +86,10 @@ export class TranslateTool extends Tool {
         MainDesignerController.GetActionManager().add(this.action);
 
         return true;
+    }
+
+    public getAction(): Action {
+        return this.action;
     }
 
     public isDragging(): boolean {

@@ -9,12 +9,7 @@ import {Camera} from "../Camera";
 import {Tool} from "./Tool";
 import {SelectionTool} from "./SelectionTool";
 
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Component} from "../../models/ioobjects/Component";
-
 import {RotateAction} from "../actions/RotateAction";
-
-import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 export class RotateTool extends Tool {
     private camera: Camera;
@@ -84,8 +79,11 @@ export class RotateTool extends Tool {
 
         this.rotating = false;
 
-        MainDesignerController.GetActionManager().add(this.action);
         return true;
+    }
+
+    public getAction() {
+        return this.action;
     }
 
     public getMidpoint(): Vector {

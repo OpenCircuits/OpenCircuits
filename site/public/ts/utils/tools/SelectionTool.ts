@@ -7,12 +7,6 @@ import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 
-import {PanTool} from "./PanTool";
-import {RotateTool} from "./RotateTool";
-import {TranslateTool} from "./TranslateTool";
-import {PlaceComponentTool} from "./PlaceComponentTool";
-import {WiringTool} from "./WiringTool";
-
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
 import {TransformContains,RectContains} from "../math/MathUtils";
