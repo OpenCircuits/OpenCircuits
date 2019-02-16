@@ -2,6 +2,7 @@ import {Input} from "../Input";
 import {MouseListener} from "../MouseListener";
 import {KeyboardListener} from "../KeyboardListener";
 import {Camera} from "../Camera";
+import {Action} from "../actions/Action";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
@@ -13,8 +14,6 @@ import {PanTool} from "./PanTool";
 import {TranslateTool} from "./TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
-
-import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
@@ -28,6 +27,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private tools: Array<Tool>;
 
     private currentTool: Tool;
+
+    private currentAction: Action;
 
     public constructor(camera: Camera, designer: CircuitDesigner) {
         this.selectionTool      = new SelectionTool(designer, camera);
@@ -62,7 +63,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         if (this.currentTool.deactivate(event, input, button)) {
             // Add action
             if (this.currentTool.getAction() != undefined)
-                MainDesignerController.GetActionManager().add(this.currentTool.getAction());
+                this.currentAction = this.currentTool.getAction();
             this.activate(this.selectionTool);
             return true;
         }
@@ -109,6 +110,14 @@ export class ToolManager implements MouseListener, KeyboardListener {
     public placeComponent(component: Component) {
         this.placeComponentTool.setComponent(component);
         this.activate(this.placeComponentTool);
+    }
+
+    // Gets the last action and sets it as undefined
+    //  so it doesn't get added more than once
+    public popAction(): Action {
+        let action = this.currentAction;
+        this.currentAction = undefined;
+        return action;
     }
 
     public getCurrentTool(): Tool {
