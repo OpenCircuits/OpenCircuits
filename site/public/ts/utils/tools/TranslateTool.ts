@@ -13,13 +13,17 @@ import {SelectionTool} from "./SelectionTool";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
+import {Action} from "../actions/Action";
+import {TranslateAction} from "../actions/TranslateAction";
+
+import {MainDesignerController} from "../../controllers/MainDesignerController";
+
 export class TranslateTool extends Tool {
     private camera: Camera;
 
-    private objects: Array<IOObject>;
-
     private dragging: boolean;
-    private prevPos: Vector;
+    private action: TranslateAction;
+    private startPos: Vector;
 
     public constructor(camera: Camera) {
         super();
@@ -40,14 +44,15 @@ export class TranslateTool extends Tool {
         let selections = currentTool.getSelections();
         let currentPressedObj = currentTool.getCurrentlyPressedObj();
         if (currentPressedObj != undefined) {
-            this.objects = [currentPressedObj];
+            let objects = [currentPressedObj];
 
             // Translate multiple objects if they are all selected
-            if (selections.length > 0 && selections.includes(this.objects[0]))
-                this.objects = selections
+            if (selections.length > 0 && selections.includes(objects[0]))
+                objects = selections
 
             this.dragging = true;
-            this.prevPos = worldMousePos;
+            this.startPos = worldMousePos;
+            this.action = new TranslateAction(objects);
 
             return true;
         }
@@ -64,17 +69,8 @@ export class TranslateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
-        // Translate each object by a 'delta' position
-        let dPos = worldMousePos.sub(this.prevPos);
-        for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only translate components
-            if (obj instanceof Component)
-                obj.setPos(obj.getPos().add(dPos))
-        }
-        this.prevPos.translate(dPos);
+        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos)
+        this.action.updateOffset(mousePosOffset);
 
         return true;
     }
@@ -87,7 +83,13 @@ export class TranslateTool extends Tool {
 
         this.dragging = false;
 
+        MainDesignerController.GetActionManager().add(this.action);
+
         return true;
+    }
+
+    public getAction(): Action {
+        return this.action;
     }
 
     public isDragging(): boolean {

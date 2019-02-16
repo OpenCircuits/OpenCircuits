@@ -93,7 +93,6 @@ export var MainDesignerController = (function() {
 
         MainDesignerController.Render();
     }
-
     return {
         Init: function(): void {
             // pass Render function so that
@@ -173,6 +172,9 @@ export var MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
+        },
+        GetActionManager: function(): ActionManager {
+          return actions;
         }
     };
 })();

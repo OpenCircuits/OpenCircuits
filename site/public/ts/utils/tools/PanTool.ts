@@ -1,6 +1,5 @@
 import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY} from "../Constants";
+        OPTION_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {Input} from "../Input";
 import {Camera} from "../Camera";

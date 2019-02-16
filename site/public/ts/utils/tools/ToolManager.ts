@@ -14,6 +14,8 @@ import {TranslateTool} from "./TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
 
+import {MainDesignerController} from "../../controllers/MainDesignerController";
+
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
     private selectionTool       : SelectionTool;
@@ -35,7 +37,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
 
-        // Array of tools
+        // Array of tools to activate
         this.tools = [
             this.panTool,
             this.rotateTool,
@@ -58,6 +60,9 @@ export class ToolManager implements MouseListener, KeyboardListener {
         // Check if current tool should be deactivated
         //  and default tool (selection tool) should be activated
         if (this.currentTool.deactivate(event, input, button)) {
+            // Add action
+            if (this.currentTool.getAction() != undefined)
+                MainDesignerController.GetActionManager().add(this.currentTool.getAction());
             this.activate(this.selectionTool);
             return true;
         }
