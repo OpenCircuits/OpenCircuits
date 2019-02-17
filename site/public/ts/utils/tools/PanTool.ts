@@ -30,7 +30,7 @@ export class PanTool extends Tool {
     public deactivate(event: string, input: Input, button?: number): boolean {
         // Deactivate if stopped dragging by releasing mouse
         //  or if no dragging happened and OPTION_KEY was released
-        return (this.isDragging && event == "mouseup" ||
+        return (event == "mouseup" ||
                !this.isDragging && event == "keyup" && button === OPTION_KEY);
     }
 
