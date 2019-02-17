@@ -8,8 +8,10 @@ import {LEFT_MOUSE_BUTTON,
 import {V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains,CircleContains} from "../utils/math/MathUtils";
+import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
+import {Action} from "../utils/actions/Action";
 import {ActionManager} from "../utils/actions/ActionManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
@@ -48,36 +50,43 @@ export var MainDesignerController = (function() {
     let onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             MainDesignerController.Render();
+        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onScroll = function(): void {
@@ -167,6 +176,11 @@ export var MainDesignerController = (function() {
         Render: function(): void {
             renderQueue.render();
         },
+        AddAction(action: Action): void {
+            if (action == undefined)
+                return;
+            actions.add(action);
+        },
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
         },
@@ -174,7 +188,7 @@ export var MainDesignerController = (function() {
             return designer;
         },
         GetActionManager: function(): ActionManager {
-          return actions;
+            return actions;
         }
     };
 })();

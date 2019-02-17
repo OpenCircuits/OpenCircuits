@@ -129,6 +129,7 @@ export class Input {
         this.mouseDown = true;
         this.mouseDownPos = V(event.clientX - rect.left,
                               event.clientY - rect.top);
+        this.mousePos = V(this.mouseDownPos);
 
         // call each listener
         this.callListeners("mousedown", 0);
@@ -148,8 +149,8 @@ export class Input {
         this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.mouseDown) &&
-                          (Date.now() - this.startTapTime > DRAG_TIME);
+        this.isDragging = (this.mouseDown);// &&
+                          //(Date.now() - this.startTapTime > DRAG_TIME);
 
         // call listeners
         if (this.isDragging)

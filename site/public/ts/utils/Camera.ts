@@ -18,12 +18,12 @@ export class Camera {
 
     private dirty: boolean;
 
-    constructor(width: number, height: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
+    public constructor(width: number, height: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
         this.width = width;
         this.height = height;
         this.pos = startPos;
         this.zoom = startZoom;
-        this.center = V(0,0);
+        this.center = V(width,height).scale(0.5);
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
     }
@@ -62,6 +62,9 @@ export class Camera {
         // getCurrentContext().getRenderer().restore();
 
         return TransformContains(transform, this.getTransform());
+    }
+    public getCenter(): Vector {
+        return V(this.width/2, this.height/2);
     }
     public getPos(): Vector {
         return this.pos.copy();
