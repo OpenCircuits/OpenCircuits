@@ -21,6 +21,12 @@ export abstract class IOObject implements XMLable {
 
     public abstract activate(signal: boolean, i?: number): void;
 
+    public copy(): IOObject {
+        let copy: IOObject = new (<any> this.constructor)();
+        copy.name = new Name(this.name.getName());
+        return copy;
+    }
+
     public save(node: XMLNode): void {
         node.addAttribute("name", this.name.getName());
     }
