@@ -8,8 +8,10 @@ import {PanTool} from "../tools/PanTool";
 import {SelectionTool} from "../tools/SelectionTool";
 import {RotateTool} from "../tools/RotateTool";
 import {PlaceComponentTool} from "../tools/PlaceComponentTool";
+import {WiringTool} from "../tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
+import {WireRenderer} from "./ioobjects/WireRenderer";
 
 export var ToolRenderer = (function() {
 
@@ -63,6 +65,13 @@ export var ToolRenderer = (function() {
                 // Draw current object
                 let component = tool.getComponent();
                 ComponentRenderer.render(renderer, camera, component, false);
+            }
+            else if (tool instanceof WiringTool) {
+                // Draw fake wire
+                let wire = tool.getWire();
+                if (wire.getInput() != null)
+                    wire.activate(wire.getInput().getIsOn());
+                WireRenderer.render(renderer, camera, wire, false);
             }
 
         }

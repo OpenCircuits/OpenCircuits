@@ -23,7 +23,6 @@ describe("PlaceAction", () => {
 
         // connect
         var a1 = new ConnectionAction(a, 0,  b, 0);
-        a1.execute();
 
         // initial
         expect(designer.getWires().length).toBe(1);
