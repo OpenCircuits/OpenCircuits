@@ -63,12 +63,4 @@ describe("TFlipFLop", () => {
         expect(l1.isOn()).toBe(true);
         expect(l0.isOn()).toBe(false);
     });
-    /*
-     * I like TFlipFlops, so I am testing the getImageName function
-     * for flipflops here because it should be tested and only needs
-     * to be tested once ~NTP
-     */
-    it("Check Image Name", () => {
-        expect(f.getImageName()).toBe("flipflop.svg");
-    });
 });
