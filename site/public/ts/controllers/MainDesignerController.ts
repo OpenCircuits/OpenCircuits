@@ -297,6 +297,9 @@ export var MainDesignerController = (function() {
             placeComponentTool.setComponent(component);
             currentTool = placeComponentTool;
         },
+        GetCanvas: function(): HTMLCanvasElement {
+            return view.getCanvas();
+        },
         GetDesigner: function(): CircuitDesigner {
             return designer;
         }
