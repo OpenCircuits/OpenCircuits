@@ -15,16 +15,20 @@ export var ContextMenuController = (function() {
     
     let contextmenu = document.getElementById("context-menu");
     
-    let onClick =  function(e: MouseEvent): void{
+    let onRelease =  function(e: MouseEvent, canvas: HTMLCanvasElement): void{
         if(e.button === RIGHT_MOUSE_BUTTON){
             contextmenu.style.left = String(e.pageX) + 'px';
             contextmenu.style.top = String(e.pageY) + 'px';
+            if(contextmenu.offsetHeight + e.pageY > canvas.offsetHeight){
+                contextmenu.style.top = String(e.pageY - contextmenu.offsetHeight) + 'px';
+            }
             contextmenu.style.visibility = 'visible';
         }
-        else if(e.button === LEFT_MOUSE_BUTTON){
-            if(contextmenu.style.visibility === 'visible'){
-                contextmenu.style.visibility = 'hidden';
-            }
+    }
+    
+    let onClick = function(e: MouseEvent): void{
+        if(contextmenu.style.visibility === 'visible'){
+            contextmenu.style.visibility = 'hidden';
         }
     }
 
@@ -33,6 +37,11 @@ export var ContextMenuController = (function() {
             let canvas = MainDesignerController.GetCanvas(); 
             
             //Mouse click input
+            canvas.addEventListener("mouseup", function(e){
+                e.preventDefault();
+                onRelease(e, canvas);
+            });
+
             canvas.addEventListener("mousedown", function(e){
                 e.preventDefault();
                 onClick(e);
