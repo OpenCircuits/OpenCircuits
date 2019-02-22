@@ -2,7 +2,6 @@ import { Vector } from "../math/Vector";
 import { Component } from "../../models/ioobjects/Component";
 import { MainDesignerController } from "../../controllers/MainDesignerController";
 import { IOObject } from "../../models/ioobjects/IOObject";
-import * as Traits from "./Traits";
 
 // TODO: use decorators to determine what interfaces are available
 
@@ -82,7 +81,6 @@ class Title extends Module {
 class Position extends Module {
     private xbox: HTMLInputElement;
     private ybox: HTMLInputElement;
-    private static placeholder: string = "-";
 
     constructor(parent_div: HTMLDivElement) {
         super(parent_div.querySelector("div#popup-pos-text"));
@@ -93,42 +91,33 @@ class Position extends Module {
     }
 
     pull(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
         let enable = true;
 
         if (selections.length) {
             let x: number = null;
             let y: number = null;
 
-            if ("getPos" in selections[0]) {
-                const pos = (selections[0] as unknown as Traits.Positionable).getPos();
+            const s0 = selections[0];
+            if (s0 instanceof Component) {
+                const pos = s0.getPos();
                 x = pos.x;
                 y = pos.y;
-            } else {
-                enable = false;
             }
 
             for (let i = 1; i < selections.length && x != null && y != null; ++i) {
-                if ("getPos" in selections[i]) {
-                    const pos = (selections[i] as unknown as Traits.Positionable).getPos();
-                    if (pos.x != x) x = null;
-                    if (pos.y != y) y = null;
+                const s = selections[i];
+                if (s instanceof Component) {
+                    const pos = s.getPos();
+                    if (pos.x != x || pos.y != y) x = y = null;
                 } else {
                     x = y = null;
                     enable = false;
                 }
             }
 
-            if (x == null) {
-                this.xbox.value = Position.placeholder;
-            } else {
-                this.xbox.value = x.toFixed(2);
-            }
-            if (y == null) {
-                this.ybox.value = Position.placeholder;
-            } else {
-                this.ybox.value = y.toFixed(2);
-            }
+            this.xbox.value = (x == null) ? "" : x.toFixed(2);
+            this.ybox.value = (x == null) ? "" : y.toFixed(2);
         } else {
             enable = false;
         }
@@ -137,16 +126,15 @@ class Position extends Module {
     }
 
     push(): void {
-        let selections = MainDesignerController.GetSelections();
+        let selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
 
         selections.forEach(s => {
-            // * This cast will always succeed because push is only called when the module is enabled, and it's disabled if any do not have this trait
-            let trait = (s as unknown as Traits.Positionable);
-            let pos = trait.getPos();
+            let c = s as Component;
+            let pos = c.getPos();
 
-            trait.setPos(new Vector(
-                this.xbox.value == Position.placeholder ? pos.x : this.xbox.valueAsNumber,
-                this.xbox.value == Position.placeholder ? pos.y : this.ybox.valueAsNumber,
+            c.setPos(new Vector(
+                this.xbox.value == "" ? pos.x : this.xbox.valueAsNumber,
+                this.xbox.value == "" ? pos.y : this.ybox.valueAsNumber,
             ));
         });
         MainDesignerController.Render();

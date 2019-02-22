@@ -1,7 +1,7 @@
 import { Vector } from "../utils/math/Vector";
 import * as Modules from "../utils/selectionpopup/SelectionPopupModules";
 import { MainDesignerController } from "./MainDesignerController";
-import * as Traits from "../utils/selectionpopup/Traits";
+import { Component } from "../models/ioobjects/Component";
 
 /**
  * A popup
@@ -45,8 +45,9 @@ export class SelectionPopupController {
             let sum = new Vector(0, 0);
             let count = 0;
             for (let i = 0; i < selections.length; ++i) {
-                if ("getPos" in selections[i]) {
-                    const pos = (selections[i] as unknown as Traits.Positionable).getPos();
+                const s = selections[i];
+                if (s instanceof Component) { // Only components have positions
+                    const pos = s.getPos();
                     sum = sum.add(pos);
                     count += 1;
                 }
