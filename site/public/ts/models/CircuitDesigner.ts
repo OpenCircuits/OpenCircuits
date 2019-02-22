@@ -9,6 +9,9 @@ import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
 
+import {InputPort}  from "./ioobjects/InputPort";
+import {OutputPort} from "./ioobjects/OutputPort";
+
 export class CircuitDesigner implements XMLable {
 	private objects: Array<Component>;
 	private wires: Array<Wire>;
@@ -103,17 +106,21 @@ export class CircuitDesigner implements XMLable {
 		this.objects.push(obj);
 	}
 
-	public connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
+	public createWire(p1: OutputPort, p2: InputPort): Wire {
 		// Make wire
-		var wire = new Wire(c1.getOutputPort(i1), c2.getInputPort(i2));
+		let wire = new Wire(p1, p2);
 		this.wires.push(wire);
 		wire.setDesigner(this);
 
-		// Connect components to wire
-		c1.connect(i1, wire);
-		c2.setInput(i2, wire);
+		// Connect ports to wire
+		p1.connect(wire);
+		p2.setInput(wire);
 
 		return wire;
+	}
+
+	public connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
+		return this.createWire(c1.getOutputPort(i1), c2.getInputPort(i2));
 	}
 
 	public removeObject(obj: Component): void {

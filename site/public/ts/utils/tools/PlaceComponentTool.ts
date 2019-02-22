@@ -1,6 +1,3 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY} from "../Constants";
 import {Tool} from "./Tool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
@@ -21,6 +18,14 @@ export class PlaceComponentTool extends Tool {
 
         this.designer = designer;
         this.camera = camera;
+    }
+
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        return false;
+    }
+
+    public deactivate(event: string, input: Input, button?: number): boolean {
+        return (event == "onclick");
     }
 
     public setComponent(component: Component) {
