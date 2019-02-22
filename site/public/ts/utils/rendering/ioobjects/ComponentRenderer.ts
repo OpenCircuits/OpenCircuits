@@ -14,6 +14,7 @@ import {Camera} from "../../Camera";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
+import {LED} from "../../../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
 
 import {Images} from "../../Images";
@@ -54,6 +55,7 @@ export var ComponentRenderer = (function() {
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
                 renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
+
             if (object instanceof Gate) {
                 GateRenderer.render(renderer, camera, object, selected);
             }
@@ -69,6 +71,13 @@ export var ComponentRenderer = (function() {
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (Images.GetImage(imgName))
                 renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+
+            //Draw LED turned on
+            if (object instanceof LED) {
+                if (object.isOn()){
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
+                }
+            }
 
             renderer.restore();
 

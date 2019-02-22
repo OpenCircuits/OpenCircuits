@@ -5,11 +5,13 @@ import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
 export class LED extends Component {
+	private color: string;
 
 	constructor() {
 		super(new ClampedValue(1),
 			  new ClampedValue(0),
 			  V(50, 50));
+		this.color = "#ffffff";
 
 		// Make port face down instead of sideways
 		this.inputs[0].setTargetPos(V(0, 2*DEFAULT_SIZE));
@@ -25,6 +27,14 @@ export class LED extends Component {
 
 	public getImageName(): string {
 		return "led.svg";
+	}
+
+	public getOnImageName() {
+		return "ledLight.svg"
+	}
+
+	public getColor(): string {
+		return this.color;
 	}
 
     public getXMLName(): string {
