@@ -45,9 +45,6 @@ export var ComponentRenderer = (function() {
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
-                if (object.isOn())
-                    imgName = object.getOnImageName();
-
                 let box = object.getSelectionBox();
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);

@@ -75,6 +75,11 @@ export abstract class PressableComponent extends Component {
         this.activate(node.getBooleanAttribute("isOn"));
     }
 
+	public getImageName(): string {
+		return (this.isOn ? this.getOnImageName() : this.getOffImageName());
+	}
+
+	public abstract getOffImageName(): string;
 	public abstract getOnImageName(): string;
 
 }

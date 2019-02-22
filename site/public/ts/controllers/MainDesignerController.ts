@@ -26,6 +26,9 @@ import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
+import {ConstantHigh} from "../models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow} from "../models/ioobjects/inputs/ConstantLow";
+import {Clock} from "../models/ioobjects/inputs/Clock";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
@@ -253,13 +256,28 @@ export var MainDesignerController = (function() {
             var s2 = new Switch();
             var g1 = new ANDGate();
             var l1 = new LED();
+            //additional stuff
+            var c_high = new ConstantHigh();
+            var c_low = new ConstantLow();
+            var l2 = new LED();
+            var l3 = new LED();
+            var c1 = new Clock();
+            var g4 = new ORGate();
 
             s1.setPos(V(-200, 100));
             s2.setPos(V(-200, -100));
             g1.setPos(V(0, 0));
             l1.setPos(V(200, 0));
+            //additional stuff
+            c_high.setPos(V(-200, 400));
+            l2.setPos(V(200, 300));
+            c_low.setPos(V(-200, 200));
+            g4.setPos(V(0, 300))
+            l3.setPos(V(300, 200));
+            c1.setPos(V(100, 200));
 
-            designer.addObjects([s1, s2, g1, l1]);
+            //make sure to add back s1, s2, g1, l1
+            designer.addObjects([s1, s2, g1, l1, c_high, c_low, l2, g4, c1, l3]); //additional from c_high
 
             var g2 = new XORGate();
             g2.setPos(V(0, 200));
@@ -276,6 +294,15 @@ export var MainDesignerController = (function() {
             designer.connect(s2, 0,  g1, 1);
 
             designer.connect(g1, 0,  l1, 0);
+            //this is testing the Constant High and Constant Low
+            designer.connect(c_high, 0, g4, 0);
+            designer.connect(c_low, 0, g4, 1);
+
+            //more testing for High and Low
+            designer.connect(g4, 0, l2, 0)
+            //end of testing
+
+            designer.connect(c1, 0, l3, 0);
 
             s1.activate(true);
 
