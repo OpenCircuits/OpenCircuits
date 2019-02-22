@@ -15,6 +15,9 @@ import {TranslateTool} from "./TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
 
+import {ActionsHelper} from "./ActionsHelper";
+import {ActionManager} from "../actions/ActionManager";
+
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
     private selectionTool       : SelectionTool;
@@ -23,20 +26,24 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private translateTool       : TranslateTool;
     private placeComponentTool  : PlaceComponentTool;
     private wiringTool          : WiringTool;
+    private actionsHelper       : ActionsHelper;
+
+    private actionManager : ActionManager;
 
     private tools: Array<Tool>;
 
     private currentTool: Tool;
 
-    private currentAction: Action;
-
     public constructor(camera: Camera, designer: CircuitDesigner) {
+        this.actionManager      = new ActionManager();
+
         this.selectionTool      = new SelectionTool(designer, camera);
         this.panTool            = new PanTool(camera);
         this.rotateTool         = new RotateTool(camera);
         this.translateTool      = new TranslateTool(camera);
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
+        this.actionsHelper      = new ActionsHelper(this.actionManager);
 
         // Array of tools to activate
         this.tools = [
@@ -63,7 +70,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         if (this.currentTool.deactivate(event, input, button)) {
             // Add action
             if (this.currentTool.getAction() != undefined)
-                this.currentAction = this.currentTool.getAction();
+                this.actionManager.add(this.currentTool.getAction())
             this.activate(this.selectionTool);
             return true;
         }
@@ -75,6 +82,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
                 return true;
             }
         }
+
+        // Re-render on action update
+        if (this.actionsHelper.onEvent(this.currentTool, event, input, button))
+          return true;
 
         return didSomething;
     }
@@ -110,14 +121,6 @@ export class ToolManager implements MouseListener, KeyboardListener {
     public placeComponent(component: Component) {
         this.placeComponentTool.setComponent(component);
         this.activate(this.placeComponentTool);
-    }
-
-    // Gets the last action and sets it as undefined
-    //  so it doesn't get added more than once
-    public popAction(): Action {
-        let action = this.currentAction;
-        this.currentAction = undefined;
-        return action;
     }
 
     public getCurrentTool(): Tool {
