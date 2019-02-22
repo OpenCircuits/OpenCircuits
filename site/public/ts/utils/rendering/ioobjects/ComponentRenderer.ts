@@ -8,7 +8,10 @@ import {DEBUG_SHOW_CULLBOXES,
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
+import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 
+import {Multiplexer} from "../../../models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "../../../models/ioobjects/other/Demultiplexer";
 import {Camera} from "../../Camera";
 
 import {Component} from "../../../models/ioobjects/Component";
@@ -56,10 +59,14 @@ export var ComponentRenderer = (function() {
             if (object instanceof Gate) {
                 GateRenderer.render(renderer, camera, object, selected);
             }
+            if (object instanceof Multiplexer || object instanceof Demultiplexer) {
+                MultiplexerRenderer.render(renderer, camera, object, selected);
+            }
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+            if (Images.GetImage(imgName))
+                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
             renderer.restore();
 
