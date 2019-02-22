@@ -4,7 +4,7 @@ import {LEFT_MOUSE_BUTTON,
         ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2} from "../utils/Constants";
 
-import {V} from "../utils/math/Vector";
+import {V, Vector} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains} from "../utils/math/MathUtils";
 import {Input} from "../utils/Input";
@@ -123,8 +123,9 @@ export var MainDesignerController = (function() {
 
         // If current tool did something, then render
         if (currentTool.onMouseDrag(input, button))
+            selectionPopup.hide();
             MainDesignerController.Render();
-    }
+        }
 
     let onMouseMove = function(): void {
         // If current tool did something, then render
@@ -134,8 +135,10 @@ export var MainDesignerController = (function() {
 
     let onMouseUp = function(button: number): void {
         // If current tool did something, then render
-        if (currentTool.onMouseUp(input, button))
+        if (currentTool.onMouseUp(input, button)) {
+            selectionPopup.update();
             MainDesignerController.Render();
+        }
 
         // Switch from rotate tool to selection tool
         if (currentTool === rotateTool)
@@ -193,6 +196,7 @@ export var MainDesignerController = (function() {
         let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
+        selectionPopup.update();
         MainDesignerController.Render();
     }
 
@@ -251,7 +255,7 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
-            selectionTool.onSelectionChanged = () => { selectionPopup.onSelectionChanged() };
+            selectionTool.onSelectionChanged = () => { selectionPopup.update() };
 
             var s1 = new Switch();
             var s2 = new Switch();
@@ -306,6 +310,12 @@ export var MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
+        },
+        CanvasToScreen: function(p: Vector): Vector {
+            return view.getCamera().getScreenPos(p);
+        },
+        ScreenToCanvas: function(p: Vector): Vector {
+            return view.getCamera().getWorldPos(p);
         }
     };
 })();

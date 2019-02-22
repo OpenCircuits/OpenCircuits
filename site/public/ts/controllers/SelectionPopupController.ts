@@ -34,34 +34,44 @@ export class SelectionPopupController {
         return this.pos;
     }
 
-    show() {
-        const selections = MainDesignerController.GetSelections();
-        let sum = new Vector(0, 0);
-        let count = 0;
-        for (let i = 0; i < selections.length; ++i) {
-            if ("getPos" in selections[0]) {
-                const pos = (selections[0] as unknown as Traits.Positionable).getPos();
-                sum = sum.add(pos);
-                count += 1;
-            }
-        }
-        this.position = sum.scale(1/count);
+    update() {
+        if (MainDesignerController.GetSelections().length) {
+            // Update each module
+            // Important to do this before repositioning the popup, since its size changes depending on which modules are active
+            this.modules.forEach(c => c.pull());
 
+            // Update the position of the popup
+            const selections = MainDesignerController.GetSelections();
+            let sum = new Vector(0, 0);
+            let count = 0;
+            for (let i = 0; i < selections.length; ++i) {
+                if ("getPos" in selections[i]) {
+                    const pos = (selections[i] as unknown as Traits.Positionable).getPos();
+                    sum = sum.add(pos);
+                    count += 1;
+                }
+            }
+            let screen_pos = MainDesignerController.CanvasToScreen(sum.scale(1/count));
+            //console.log(this.div.clientHeight, document.body.clientHeight);
+            screen_pos.y = screen_pos.y - (this.div.clientHeight/2);
+            // TODO: clamp should make sure not to overlap with other screen elements
+            //const lo = new Vector(0);
+            //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
+            this.position = screen_pos;// Vector.clamp(screen_pos, lo, hi);
+
+
+            this.show();
+        } else {
+            this.hide();
+        }
+    }
+
+    show() {
         this.div.style.visibility = "visible";
         this.div.focus();
     }
 
     hide() {
         this.div.style.visibility = "hidden";
-    }
-
-    onSelectionChanged() {
-        console.log(MainDesignerController.GetSelections());
-        if (MainDesignerController.GetSelections().length) {
-            this.show();
-            this.modules.forEach(c => c.pull()); // Update each module with current information
-        } else {
-            this.hide();
-        }
     }
 }

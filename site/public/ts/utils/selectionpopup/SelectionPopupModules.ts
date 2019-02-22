@@ -4,8 +4,7 @@ import { MainDesignerController } from "../../controllers/MainDesignerController
 import { IOObject } from "../../models/ioobjects/IOObject";
 import * as Traits from "./Traits";
 
-// TODO: use decorators to determine what interfaces
-//
+// TODO: use decorators to determine what interfaces are available
 
 /**
  * A selection popup module is one of the "properties" that is displayed to the user (for view or sometimes editing) when an appropriate circuit component
@@ -51,7 +50,7 @@ class Title extends Module {
         this.title = this.div.querySelector("input#popup-name");
         // oninput instead of onchange because onchange triggers when we change it
         // This way we don't have to worry about accidentally naming things <Multiple> or <None>
-        this.title.oninput = this.push;
+        this.title.onchange = () => this.push();
     }
 
     pull(): void {
@@ -74,6 +73,7 @@ class Title extends Module {
     }
 
     push(): void {
+        console.log(this.title.value);
         let selections = MainDesignerController.GetSelections();
         selections.forEach(c => c.setName(this.title.value));
     }
@@ -88,6 +88,8 @@ class Position extends Module {
         super(parent_div.querySelector("div#popup-pos-text"));
         this.xbox = this.div.querySelector("input#popup-position-x");
         this.ybox = this.div.querySelector("input#popup-position-y");
+        this.xbox.onchange = () => this.push();
+        this.ybox.onchange = () => this.push();
     }
 
     pull(): void {
@@ -120,12 +122,12 @@ class Position extends Module {
             if (x == null) {
                 this.xbox.value = Position.placeholder;
             } else {
-                this.xbox.value = x.toString();
+                this.xbox.value = x.toFixed(2);
             }
             if (y == null) {
                 this.ybox.value = Position.placeholder;
             } else {
-                this.ybox.value = y.toString();
+                this.ybox.value = y.toFixed(2);
             }
         } else {
             enable = false;
@@ -147,6 +149,7 @@ class Position extends Module {
                 this.xbox.value == Position.placeholder ? pos.y : this.ybox.valueAsNumber,
             ));
         });
+        MainDesignerController.Render();
     }
 }
 
