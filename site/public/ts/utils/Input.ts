@@ -3,6 +3,9 @@ import {DRAG_TIME,
 
 import {Vector,V} from "../utils/math/Vector";
 
+import {MouseListener} from "./MouseListener";
+import {KeyboardListener} from "./KeyboardListener";
+
 export class Input {
     private canvas: HTMLCanvasElement;
     private prevMousePos: Vector;
@@ -24,7 +27,7 @@ export class Input {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.listeners = new Map();
-        this.keysDown = new Map();
+        this.keysDown  = new Map();
 
         window.addEventListener('keydown',  (e: KeyboardEvent) => this.onKeyDown(e), false);
         window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyUp(e), false);
@@ -51,7 +54,7 @@ export class Input {
         //     e.preventDefault();
         // });
     }
-    public addListener(type: string, listener: (b: number) => void): void {
+    public addListener(type: string, listener: (b?: number) => void): void {
         var arr = this.listeners.get(type);
         if (arr == undefined)
             this.listeners.set(type, arr = []);
@@ -126,6 +129,7 @@ export class Input {
         this.mouseDown = true;
         this.mouseDownPos = V(event.clientX - rect.left,
                               event.clientY - rect.top);
+        this.mousePos = V(this.mouseDownPos);
 
         // call each listener
         this.callListeners("mousedown", 0);
@@ -145,8 +149,8 @@ export class Input {
         this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.mouseDown) &&
-                          (Date.now() - this.startTapTime > DRAG_TIME);
+        this.isDragging = (this.mouseDown);// &&
+                          //(Date.now() - this.startTapTime > DRAG_TIME);
 
         // call listeners
         if (this.isDragging)

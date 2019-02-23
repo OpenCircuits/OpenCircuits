@@ -17,7 +17,6 @@ export class ActionManager {
      * @param action The new action
      */
     public add(action: Action): void {
-        action.execute();
         this.redoStack = [];
         this.undoStack.push(action);
     }

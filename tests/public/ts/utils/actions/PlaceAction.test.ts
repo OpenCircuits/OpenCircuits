@@ -10,7 +10,6 @@ describe("PlaceAction", () => {
         var a = new Switch();
 
         var a1 = new PlaceAction(designer, a);
-        a1.execute();
 
         expect(designer.getObjects().length).toBe(1);
         expect(designer.getObjects()[0]).toBe(a);
