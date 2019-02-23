@@ -60,7 +60,7 @@ export var ComponentRenderer = (function() {
                 GateRenderer.render(renderer, camera, object, selected);
             }
 
-            //Seven Segment renderer
+            // Seven Segment renderer
             if (object instanceof SevenSegmentDisplay) {
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
@@ -69,12 +69,15 @@ export var ComponentRenderer = (function() {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
+            if (object instanceof LED)
+                tint = object.getColor();
+            
             if (Images.GetImage(imgName))
                 renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
 
-            //Draw LED turned on
+            // Draw LED turned on
             if (object instanceof LED) {
-                if (object.isOn()){
+                if (object.isOn()) {
                     renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
                 }
             }
