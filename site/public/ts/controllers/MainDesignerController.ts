@@ -194,6 +194,9 @@ export var MainDesignerController = (function() {
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
         },
+        GetCanvas: function(): HTMLCanvasElement {
+            return view.getCanvas();
+        },
         GetDesigner: function(): CircuitDesigner {
             return designer;
         },
