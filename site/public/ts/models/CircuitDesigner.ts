@@ -3,6 +3,8 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
+import {CreateWire} from "../utils/ComponentUtils";
+
 import {Propagation} from "./Propagation";
 
 import {IOObject}  from "./ioobjects/IOObject";
@@ -107,15 +109,9 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public createWire(p1: OutputPort, p2: InputPort): Wire {
-		// Make wire
-		let wire = new Wire(p1, p2);
+		let wire = CreateWire(p1, p2);
 		this.wires.push(wire);
 		wire.setDesigner(this);
-
-		// Connect ports to wire
-		p1.connect(wire);
-		p2.setInput(wire);
-
 		return wire;
 	}
 
