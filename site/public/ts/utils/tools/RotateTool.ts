@@ -7,19 +7,18 @@ import {Vector,V} from "../math/Vector";
 import {Input} from "../Input";
 import {Camera} from "../Camera";
 import {Tool} from "./Tool";
+import {SelectionTool} from "./SelectionTool";
 
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Component} from "../../models/ioobjects/Component";
+import {RotateAction} from "../actions/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;
 
-    private objects: Array<IOObject>;
-    private midpoint: Vector;
-
     private rotating: boolean;
+    private midpoint: Vector;
     private startAngle: number;
-    private prevAngle: number;
+
+    private action: RotateAction;
 
     public constructor(camera: Camera) {
         super();
@@ -29,12 +28,34 @@ export class RotateTool extends Tool {
         this.rotating = false;
     }
 
-    public startRotation(objs: Array<IOObject>, midpoint: Vector, mousePos: Vector): void {
-        this.objects = objs;
-        this.midpoint = midpoint;
-        this.rotating = true;
-        this.startAngle = mousePos.sub(midpoint).angle();
-        this.prevAngle = this.startAngle;
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        if (!(currentTool instanceof SelectionTool))
+            return false;
+        if (!(event == "mousedown"))
+            return false;
+
+        let selections = currentTool.getSelections();
+        if (selections.length == 0)
+            return false;
+
+        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        // Check if mouse clicked on rotation circle
+        let midpoint = currentTool.calculateMidpoint();
+        let d = worldMousePos.sub(midpoint).len2();
+        if (d <= ROTATION_CIRCLE_R2 && d >= ROTATION_CIRCLE_R1) {
+            // Activate
+            this.midpoint = midpoint;
+            this.rotating = true;
+            this.startAngle = worldMousePos.sub(midpoint).angle();
+            this.action = new RotateAction(selections, midpoint);
+            return true;
+        }
+        return false;
+    }
+
+    public deactivate(event: string, input: Input, button?: number): boolean {
+        return (event == "mouseup");
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -43,18 +64,9 @@ export class RotateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        let origin = this.midpoint;
-
         // Rotate each object by a 'delta' angle
-        let dAngle = worldMousePos.sub(origin).angle() - this.prevAngle;
-        for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only rotate components
-            if (obj instanceof Component)
-                obj.getTransform().rotateAbout(dAngle, origin);
-        }
-        this.prevAngle += dAngle;
+        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        this.action.updateAngle(worldMousePos.sub(this.midpoint).angle() - this.startAngle);
 
         return true;
     }
@@ -70,12 +82,16 @@ export class RotateTool extends Tool {
         return true;
     }
 
+    public getAction() {
+        return this.action;
+    }
+
     public getMidpoint(): Vector {
         return this.midpoint;
     }
 
     public getLastAngle(): number {
-        return this.prevAngle;
+        return this.action.getAngle() + this.getStartAngle();
     }
 
     public getStartAngle(): number {

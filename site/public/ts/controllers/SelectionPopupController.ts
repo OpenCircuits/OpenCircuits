@@ -24,7 +24,7 @@ export class SelectionPopupController {
     }
 
     set position(v: Vector) {
-        this.pos = v; // TODO: clamp v to window (makes sure it's not on top of the sidebar, for example)
+        this.pos = v;
 
         this.div.style.left = `${this.pos.x}px`;
         this.div.style.top = `${this.pos.y}px`;

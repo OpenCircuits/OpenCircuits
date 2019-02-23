@@ -30,6 +30,9 @@ export class SelectionTool extends Tool {
     private p1: Vector;
     private p2: Vector;
 
+    private currentPressedObj: IOObject;
+    private pressedObj: boolean;
+
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
@@ -40,6 +43,53 @@ export class SelectionTool extends Tool {
         this.selecting = false;
 
         this.callbacks = [];
+    }
+
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        return false;
+    }
+
+    public deactivate(event: string, input: Input, button?: number): boolean {
+        return false;
+    }
+
+    public onMouseDown(input: Input, button: number): boolean {
+        if (button === LEFT_MOUSE_BUTTON) {
+            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+            let objects = this.designer.getObjects();
+            for (let i = objects.length-1; i >= 0; i--) {
+                let obj = objects[i];
+
+                // if (PressedObj(obj, worldMousePos)) {
+                //     obj.press();
+                //     this.pressedObj = true;
+                //     this.currentPressedObj = obj;
+                // }
+                // else if (ClickedObj(obj, worldMousePos)) {
+                //     this.pressedObj = false;
+                //     this.currentPressedObj = obj;
+                // }
+
+                // Check if mouse is within bounds of the object
+                if (RectContains(obj.getTransform(), worldMousePos)) {
+                    if (obj instanceof PressableComponent) {
+                        obj.press();
+                        this.pressedObj = true;
+                    }
+                    this.currentPressedObj = obj;
+                    return true;
+                }
+                // If just the selection box was hit then
+                //  don't call the press() method, just set
+                //  currentPressedObj to potentially drag
+                else if (obj instanceof PressableComponent && RectContains(obj.getSelectionBox(), worldMousePos)) {
+                    this.currentPressedObj = obj;
+                    this.pressedObj = false;
+                    return false;
+                }
+            }
+        }
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -93,6 +143,13 @@ export class SelectionTool extends Tool {
 
                 return true; // should render
             }
+
+            // Release currently pressed object
+            if (this.pressedObj) {
+                if (this.currentPressedObj instanceof PressableComponent)
+                    this.currentPressedObj.release();
+                this.currentPressedObj = undefined;
+            }
         }
 
         return false;
@@ -102,8 +159,12 @@ export class SelectionTool extends Tool {
         if (button === LEFT_MOUSE_BUTTON) {
             let worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
+            let render = false;
+
             // Clear selections if no shift key
             if (!input.isKeyDown(SHIFT_KEY)) {
+                if (this.selections.length != 0)
+                    render = true;
                 this.selections = [];
                 this.selectionChanged();
             }
@@ -114,7 +175,28 @@ export class SelectionTool extends Tool {
             for (let i = objects.length-1; i >= 0; i--) {
                 let obj = objects[i];
 
+                // if (PressedObj(obj, worldMousePos)) {
+                //     // Check if object should be clicked
+                //     if (RectContains(obj.getTransform(), worldMousePos)) {
+                //         obj.click();
+                //         return true;
+                //     }
+                // }
+                // else if (ClickedObj(obj, worldMousePos)) {
+                //
+                //     if (!this.selections.includes(obj)) {
+                //         this.selections.push(obj);
+                //         render = true;
+                //     }
+                // }
+
                 if (obj instanceof PressableComponent) {
+                    // Check if object should be clicked
+                    if (RectContains(obj.getTransform(), worldMousePos)) {
+                        obj.click();
+                        return true;
+                    }
+
                     // Make sure mouse is within selection box,
                     //  but not within regular transform
                     if (RectContains(obj.getSelectionBox(), worldMousePos) &&
@@ -123,6 +205,7 @@ export class SelectionTool extends Tool {
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
                             this.selectionChanged();
+                            render = true;
                         }
                     }
                 } else {
@@ -132,12 +215,13 @@ export class SelectionTool extends Tool {
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
                             this.selectionChanged();
+                            render = true;
                         }
                     }
                 }
             }
 
-            return true;
+            return render;
         }
 
         return false;
@@ -173,4 +257,8 @@ export class SelectionTool extends Tool {
     private selectionChanged() {
         this.callbacks.forEach(c => c());
     }
+    public getCurrentlyPressedObj(): IOObject {
+        return this.currentPressedObj;
+    }
+
 }
