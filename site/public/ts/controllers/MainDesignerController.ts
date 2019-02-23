@@ -37,7 +37,6 @@ export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
     var view: MainDesignerView;
     var input: Input;
-    var selectionPopup: SelectionPopupController;
 
     var actions: ActionManager;
     var toolManager: ToolManager;
@@ -63,7 +62,7 @@ export var MainDesignerController = (function() {
 
     let onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button)) {
-            selectionPopup.hide();
+            SelectionPopupController.Hide();
             MainDesignerController.Render();
         }
         MainDesignerController.AddAction(toolManager.popAction());
@@ -71,7 +70,7 @@ export var MainDesignerController = (function() {
 
     let onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button)) {
-            selectionPopup.update();
+            SelectionPopupController.Update();
             MainDesignerController.Render();
         }
         MainDesignerController.AddAction(toolManager.popAction());
@@ -106,7 +105,7 @@ export var MainDesignerController = (function() {
         let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
-        selectionPopup.update();
+        SelectionPopupController.Update();
         MainDesignerController.Render();
     }
     return {
@@ -116,7 +115,6 @@ export var MainDesignerController = (function() {
             //  time its updated
             designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
-            selectionPopup = new SelectionPopupController();
 
             // utils
             actions = new ActionManager();
@@ -139,7 +137,7 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
-            toolManager.getSelectionTool().onSelectionChanged = () => { selectionPopup.update() };
+            toolManager.getSelectionTool().onSelectionChanged = () => { SelectionPopupController.Update() };
 
             var s1 = new Switch();
             var s2 = new Switch();

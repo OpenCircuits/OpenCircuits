@@ -4,16 +4,16 @@ import { MainDesignerController } from "./MainDesignerController";
 import { Component } from "../models/ioobjects/Component";
 
 /**
- * A popup
+ * A popup that exposes certain properties of the selected components to the user
  * ! Controls its own DOM element
  */
-export class SelectionPopupController {
+class SelectionPopupController {
     private div: HTMLDivElement;
     private modules: Array<Modules.SelectionPopupModule>;
     private pos: Vector;
 
     constructor(div_id: string = "popup") {
-        this.div = <HTMLDivElement> document.getElementById(div_id);
+        this.div = document.getElementById(div_id) as HTMLDivElement;
         // ? .js sets position to "absolute" -- why? Why not set in the css file
 
         this.modules = new Array<Modules.SelectionPopupModule>(
@@ -75,4 +75,22 @@ export class SelectionPopupController {
     hide() {
         this.div.style.visibility = "hidden";
     }
+}
+
+namespace Singleton {
+    const p = new SelectionPopupController();
+
+    export function Update() {
+        p.update();
+    }
+    export function Show() {
+        p.show();
+    }
+    export function Hide() {
+        p.hide();
+    }
+}
+
+export {
+    Singleton as SelectionPopupController
 }
