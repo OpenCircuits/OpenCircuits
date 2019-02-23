@@ -200,16 +200,16 @@ describe("Transform", () => {
                 expect(t.getCorners().length).toBe(4);
 
                 expect(t.getBottomLeft().x).toBeCloseTo(-2.5, 1e-3);
-                expect(t.getBottomLeft().y).toBeCloseTo(2.5, 1e-3);
+                expect(t.getBottomLeft().y).toBeCloseTo(-2.5, 1e-3);
 
                 expect(t.getBottomRight().x).toBeCloseTo(2.5, 1e-3);
-                expect(t.getBottomRight().y).toBeCloseTo(2.5, 1e-3);
+                expect(t.getBottomRight().y).toBeCloseTo(-2.5, 1e-3);
 
                 expect(t.getTopRight().x).toBeCloseTo(2.5, 1e-3);
-                expect(t.getTopRight().y).toBeCloseTo(-2.5, 1e-3);
+                expect(t.getTopRight().y).toBeCloseTo(2.5, 1e-3);
 
                 expect(t.getTopLeft().x).toBeCloseTo(-2.5, 1e-3);
-                expect(t.getTopLeft().y).toBeCloseTo(-2.5, 1e-3);
+                expect(t.getTopLeft().y).toBeCloseTo(2.5, 1e-3);
             }
         });
         it("Copy", () => {

@@ -1,4 +1,4 @@
-export const DEBUG_SHOW_CULLBOXES = false;
+export const DEBUG_SHOW_CULLBOXES = true;
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
@@ -16,6 +16,8 @@ export const IO_PORT_LENGTH = 60;
 export const IO_PORT_RADIUS = 7;
 export const IO_PORT_BORDER_WIDTH = 1;
 export const IO_PORT_LINE_WIDTH   = 2;
+
+export const WIRE_THICKNESS = 7.0;
 
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
