@@ -1,5 +1,4 @@
 import "jest";
-
 import {BezierCurve} from "../../../../../site/public/ts/utils/math/BezierCurve";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
 import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
@@ -69,31 +68,51 @@ describe("BezierCurve", () => {
         var curve = new BezierCurve(V(0,0), V(-2,5), V(0,4), V(2,0));
         var c = curve.getBoundingBox();
         var arr = c.getCorners();
-        expect(arr).toEqual([V(-2,0), V(0,0.25), V(0.25,5), V(-2,5)]);
+        let expected = [V(-2,5), V(0.5,5), V(0.5,0), V(-2,0)];
+        arr.forEach((v, i) => {
+            expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
+            expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
+        });
     });
     it("irrational bound getBoundingBox", () => {
         var curve = new BezierCurve(V(6,6), V(-2,6), V(6,0), V(-0.5,6));
         var c = curve.getBoundingBox();
         var arr = c.getCorners();
-        expect(arr).toEqual([V(-2,1.5918), V(6,1.5918), V(6,6), V(-2,6)]);
+        let expected = [V(-2,6), V(6,6), V(6,3.3333), V(-2,3.3333)];
+        arr.forEach((v, i) => {
+            expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
+            expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
+        });
     });
     it("spiral curve getBoundingBox", () => {
         var curve = new BezierCurve(V(1,2.5), V(0,1), V(6,0), V(-0.5,6));
         var c = curve.getBoundingBox();
         var arr = c.getCorners();
-        expect(arr).toEqual([V(-0.02769,1), V(2.90132,1), V(2.90132,3.06), V(-0.02769,3.06)]);
+        let expected = [V(-0.02769,3.06), V(2.90132,3.06), V(2.90132,1), V(-0.02769,1)];
+        arr.forEach((v, i) => {
+            expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
+            expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
+        });
     });
     it("crossing curve getBoundingBox", () => {
         var curve = new BezierCurve(V(1,2), V(4,1), V(6,0), V(2,3));
         var c = curve.getBoundingBox();
         var arr = c.getCorners();
-        expect(arr).toEqual([V(1,1), V(4,1), V(4,2), V(1,2)]);
+        let expected = [V(1,2), V(4,2), V(4,1), V(1,1)];
+        arr.forEach((v, i) => {
+            expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
+            expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
+        });
     });
     it("crazy crossing curve getBoundingBox", () => {
         var curve = new BezierCurve(V(1,2), V(4,1), V(6,0), V(-2,3));
         var c = curve.getBoundingBox();
         var arr = c.getCorners();
-        expect(arr).toEqual([V(1,1), V(4,1), V(4,2), V(1,2)]);
+        let expected = [V(1,2), V(4,2), V(4,1), V(1,1)];
+        arr.forEach((v, i) => {
+            expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
+            expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
+        });
     });
 
 });

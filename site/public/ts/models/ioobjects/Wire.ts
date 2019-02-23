@@ -1,4 +1,5 @@
-import {DEFAULT_SIZE} from "../../utils/Constants";
+import {DEFAULT_SIZE,
+        WIRE_THICKNESS} from "../../utils/Constants";
 
 import {V,Vector} from "../../utils/math/Vector";
 import {Matrix2x3} from "../../utils/math/Matrix";
@@ -106,11 +107,11 @@ export class Wire extends CullableObject {
     }
 
     public getMinPos(): Vector {
-        return this.getShape().getBoundingBox().getBottomLeft();
+        return this.getShape().getBoundingBox().getTopLeft().sub(WIRE_THICKNESS, WIRE_THICKNESS);
     }
 
     public getMaxPos(): Vector {
-        return this.getShape().getBoundingBox().getTopRight();
+        return this.getShape().getBoundingBox().getBottomRight().add(WIRE_THICKNESS, WIRE_THICKNESS);
     }
 
     public save(node: XMLNode): void {

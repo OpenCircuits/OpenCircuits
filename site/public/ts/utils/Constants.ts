@@ -17,6 +17,8 @@ export const IO_PORT_RADIUS = 7;
 export const IO_PORT_BORDER_WIDTH = 1;
 export const IO_PORT_LINE_WIDTH   = 2;
 
+export const WIRE_THICKNESS = 7.0;
+
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
 export const WIRE_DIST_ITERATIONS = 10;
