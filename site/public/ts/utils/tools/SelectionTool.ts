@@ -112,6 +112,14 @@ export class SelectionTool extends Tool {
         // Find selections within the
         //  current selection box
         if (button === LEFT_MOUSE_BUTTON) {
+            // Release currently pressed object
+            if (this.pressedObj) {
+                this.pressedObj = false;
+                if (this.currentPressedObj instanceof PressableComponent)
+                    this.currentPressedObj.release();
+            }
+            this.currentPressedObj = undefined;
+
             // Stop selection box
             if (this.selecting) {
                 this.selecting = false;
@@ -130,25 +138,19 @@ export class SelectionTool extends Tool {
                 // Go through each object and see if it's within
                 //  the selection box
                 var objects = this.designer.getObjects();
+                let new_objs = false;
                 for (let obj of objects) {
                     // Check if object is in box
                     if (TransformContains(box, obj.getTransform())) {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
-                            this.selectionChanged();
                         }
                     }
                 }
+                if (new_objs) this.selectionChanged();
 
                 return true; // should render
-            }
-
-            // Release currently pressed object
-            if (this.pressedObj) {
-                if (this.currentPressedObj instanceof PressableComponent)
-                    this.currentPressedObj.release();
-                this.currentPressedObj = undefined;
             }
         }
 
@@ -258,6 +260,7 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
     public getCurrentlyPressedObj(): IOObject {
+        console.log(this.currentPressedObj);
         return this.currentPressedObj;
     }
 
