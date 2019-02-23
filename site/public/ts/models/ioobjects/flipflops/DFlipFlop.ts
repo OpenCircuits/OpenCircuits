@@ -13,7 +13,7 @@ export class DFlipFlop extends FlipFlop {
 	public activate() {
 		this.last_clock = this.clock;
 		this.clock = this.inputs[0].getIsOn();
-		var data = this.inputs[1].getIsOn();
+		let data = this.inputs[1].getIsOn();
 		if (this.clock && !this.last_clock)
 			this.state = data;
 

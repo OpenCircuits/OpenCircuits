@@ -1,4 +1,4 @@
-import {V, Vector} from "./Vector";
+import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
 
 /**
@@ -37,7 +37,7 @@ export function Clamp(x: number, min: number, max: number): number {
  *         The closest position on the edge of
  *         the rectangle from 'pos'
  */
-export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector) : Vector{
+export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector) : Vector {
     if (pos.x < bl.x)
         return V(bl.x, Clamp(pos.y, bl.y, tr.y));
     if (pos.x > tr.x)

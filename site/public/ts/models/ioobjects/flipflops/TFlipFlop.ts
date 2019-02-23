@@ -25,7 +25,7 @@ export class TFlipFlop extends FlipFlop {
 		return "T Flip Flop";
 	}
 
-    public getXMLName(): string {
-        return "tff";
-    }
+	public getXMLName(): string {
+		return "tff";
+	}
 }

@@ -9,7 +9,7 @@ export class JKFlipFlop extends FlipFlop {
 		this.getInputPort(1).setName(">");
 		this.getInputPort(2).setName("J");
 	}
-
+	
 	// @Override
 	public activate() {
 		this.last_clock = this.clock;
@@ -34,7 +34,7 @@ export class JKFlipFlop extends FlipFlop {
 		return "JK Flip Flop";
 	}
 
-    public getXMLName(): string {
-        return "jkff";
-    }
+	public getXMLName(): string {
+		return "jkff";
+	}
 }

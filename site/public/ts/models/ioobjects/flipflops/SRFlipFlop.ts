@@ -34,7 +34,7 @@ export class SRFlipFlop extends FlipFlop {
 		return "SR Flip Flop";
 	}
 
-    public getXMLName(): string {
-        return "srff";
-    }
+	public getXMLName(): string {
+		return "srff";
+	}
 }
