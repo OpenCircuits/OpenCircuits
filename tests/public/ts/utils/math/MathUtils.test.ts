@@ -214,13 +214,6 @@ describe("RectContains", () => {
     });
 });
 
-/*
-export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
-    return (pos2.sub(pos1).len2() <= r*r);
-}
-}
-*/
-
 describe("CircleContains", () => {
     it("same points", () => {
         var c  = CircleContains(V(0,0), 2, V(0,0));
