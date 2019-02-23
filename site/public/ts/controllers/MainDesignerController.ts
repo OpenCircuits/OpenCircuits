@@ -31,7 +31,7 @@ import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
 import {LED}      from "../models/ioobjects/outputs/LED";
-import { SelectionPopupController } from "./SelectionPopupController";
+import {SelectionPopupController} from "./SelectionPopupController";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
@@ -137,7 +137,7 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
-            toolManager.getSelectionTool().onSelectionChanged = () => { SelectionPopupController.Update() };
+            toolManager.getSelectionTool().addSelectionChangeListener( () => SelectionPopupController.Update() );
 
             var s1 = new Switch();
             var s2 = new Switch();
@@ -197,14 +197,11 @@ export var MainDesignerController = (function() {
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();
         },
+        GetCamera: function(): Camera {
+            return view.getCamera();
+        },
         GetDesigner: function(): CircuitDesigner {
             return designer;
-        },
-        CanvasToScreen: function(p: Vector): Vector {
-            return view.getCamera().getScreenPos(p);
-        },
-        ScreenToCanvas: function(p: Vector): Vector {
-            return view.getCamera().getWorldPos(p);
         },
         GetActionManager: function(): ActionManager {
             return actions;

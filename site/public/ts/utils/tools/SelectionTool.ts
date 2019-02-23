@@ -45,6 +45,10 @@ export class SelectionTool extends Tool {
         this.callbacks = [];
     }
 
+    private selectionsChanged() {
+        this.callbacks.forEach(c => c());
+    }
+
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         return false;
     }
@@ -127,7 +131,7 @@ export class SelectionTool extends Tool {
                 // Clear selections if no shift key
                 if (!input.isKeyDown(SHIFT_KEY)) {
                     this.selections = [];
-                    this.selectionChanged();
+                    this.selectionsChanged();
                 }
 
                 // Calculate transform rectangle of the selection box
@@ -145,10 +149,11 @@ export class SelectionTool extends Tool {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            new_objs = true;
                         }
                     }
                 }
-                if (new_objs) this.selectionChanged();
+                if (new_objs) this.selectionsChanged();
 
                 return true; // should render
             }
@@ -168,7 +173,7 @@ export class SelectionTool extends Tool {
                 if (this.selections.length != 0)
                     render = true;
                 this.selections = [];
-                this.selectionChanged();
+                this.selectionsChanged();
             }
 
             // Check if an object was clicked
@@ -206,7 +211,7 @@ export class SelectionTool extends Tool {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
-                            this.selectionChanged();
+                            this.selectionsChanged();
                             render = true;
                         }
                     }
@@ -216,7 +221,7 @@ export class SelectionTool extends Tool {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
-                            this.selectionChanged();
+                            this.selectionsChanged();
                             render = true;
                         }
                     }
@@ -253,11 +258,8 @@ export class SelectionTool extends Tool {
         return this.p2.copy();
     }
 
-    set onSelectionChanged(func: {(): void}) {
+    public addSelectionChangeListener(func: {(): void}) {
         this.callbacks.push(func);
-    }
-    private selectionChanged() {
-        this.callbacks.forEach(c => c());
     }
     public getCurrentlyPressedObj(): IOObject {
         return this.currentPressedObj;
