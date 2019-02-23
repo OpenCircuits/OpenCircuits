@@ -15,6 +15,7 @@ import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
+import {LED} from "../../../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
 
 import {Images} from "../../Images";
@@ -55,6 +56,7 @@ export var ComponentRenderer = (function() {
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
                 renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
+
             if (object instanceof Gate) {
                 GateRenderer.render(renderer, camera, object, selected);
             }
@@ -62,7 +64,7 @@ export var ComponentRenderer = (function() {
                 FlipFlopRenderer.render(renderer, camera, object, selected);
             }
 
-            //Seven Segment renderer
+            // Seven Segment renderer
             if (object instanceof SevenSegmentDisplay) {
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
@@ -71,9 +73,18 @@ export var ComponentRenderer = (function() {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
+            if (object instanceof LED)
+                tint = object.getColor();
 
             if (Images.GetImage(imgName))
                 renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+
+            // Draw LED turned on
+            if (object instanceof LED) {
+                if (object.isOn()) {
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
+                }
+            }
 
             renderer.restore();
 
