@@ -184,6 +184,9 @@ export var MainDesignerController = (function() {
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
         },
+        GetCanvas: function(): HTMLCanvasElement {
+            return view.getCanvas();
+        },
         GetDesigner: function(): CircuitDesigner {
             return designer;
         },
