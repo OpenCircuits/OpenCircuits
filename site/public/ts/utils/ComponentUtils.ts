@@ -91,11 +91,11 @@ export function SeparateGroup(objects: Array<IOObject>): SeparatedComponentColle
         if (obj instanceof Wire) {
             groups.wires.push(obj);
         } else if (obj instanceof Component) {
-            // Input => 0 output ports and >0 input ports
-            if (obj.getInputPortCount() > 0 && obj.getOutputPortCount() == 0)
+            // Input => >0 output ports and 0 input ports
+            if (obj.getInputPortCount() == 0 && obj.getOutputPortCount() > 0)
                 groups.inputs.push(obj);
-            // Output => 0 input ports and >0 output ports
-            else if (obj.getInputPortCount() == 0 && obj.getOutputPortCount() > 0)
+            // Output => >0 input ports and 0 output ports
+            else if (obj.getInputPortCount() > 0 && obj.getOutputPortCount() == 0)
                 groups.outputs.push(obj);
             // Component => neither just input or output
             else
