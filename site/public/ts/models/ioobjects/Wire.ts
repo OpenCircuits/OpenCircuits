@@ -107,11 +107,11 @@ export class Wire extends CullableObject {
     }
 
     public getMinPos(): Vector {
-        return this.getShape().getBoundingBox().getTopLeft().sub(WIRE_THICKNESS, WIRE_THICKNESS);
+        return this.getShape().getBoundingBox().getBottomLeft().sub(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
     }
 
     public getMaxPos(): Vector {
-        return this.getShape().getBoundingBox().getBottomRight().add(WIRE_THICKNESS, WIRE_THICKNESS);
+        return this.getShape().getBoundingBox().getTopRight().add(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
     }
 
     public save(node: XMLNode): void {
