@@ -260,7 +260,6 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
     public getCurrentlyPressedObj(): IOObject {
-        console.log(this.currentPressedObj);
         return this.currentPressedObj;
     }
 
