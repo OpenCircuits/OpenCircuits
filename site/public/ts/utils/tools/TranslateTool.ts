@@ -8,16 +8,20 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 import {Tool} from "./Tool";
 
+import {SelectionTool} from "./SelectionTool";
+
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
+
+import {Action} from "../actions/Action";
+import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
     private camera: Camera;
 
-    private objects: Array<IOObject>;
-
     private dragging: boolean;
-    private prevPos: Vector;
+    private action: TranslateAction;
+    private startPos: Vector;
 
     public constructor(camera: Camera) {
         super();
@@ -27,10 +31,34 @@ export class TranslateTool extends Tool {
         this.dragging = false;
     }
 
-    public startDragging(objs: Array<IOObject>, mousePos: Vector, pressedObj: IOObject): void {
-        this.objects = objs;
-        this.dragging = true;
-        this.prevPos = mousePos;
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        if (!(currentTool instanceof SelectionTool))
+            return false;
+        if (!(event == "mousedrag"))
+            return false;
+
+        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        let selections = currentTool.getSelections();
+        let currentPressedObj = currentTool.getCurrentlyPressedObj();
+        if (currentPressedObj != undefined) {
+            let objects = [currentPressedObj];
+
+            // Translate multiple objects if they are all selected
+            if (selections.length > 0 && selections.includes(objects[0]))
+                objects = selections
+
+            this.dragging = true;
+            this.startPos = worldMousePos;
+            this.action = new TranslateAction(objects);
+
+            return true;
+        }
+        return false;
+    }
+
+    public deactivate(event: string, input: Input, button?: number): boolean {
+        return (event == "mouseup");
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -39,17 +67,8 @@ export class TranslateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
-        // Translate each object by a 'delta' position
-        let dPos = worldMousePos.sub(this.prevPos);
-        for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only translate components
-            if (obj instanceof Component)
-                obj.setPos(obj.getPos().add(dPos))
-        }
-        this.prevPos.translate(dPos);
+        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos)
+        this.action.updateOffset(mousePosOffset);
 
         return true;
     }
@@ -63,6 +82,10 @@ export class TranslateTool extends Tool {
         this.dragging = false;
 
         return true;
+    }
+
+    public getAction(): Action {
+        return this.action;
     }
 
     public isDragging(): boolean {

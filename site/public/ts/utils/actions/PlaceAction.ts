@@ -9,6 +9,8 @@ export class PlaceAction implements Action {
     public constructor(designer: CircuitDesigner, obj: Component) {
         this.designer = designer;
         this.obj = obj;
+        // Place action is implicitly executed
+        this.execute();
     }
 
     public execute(): void {

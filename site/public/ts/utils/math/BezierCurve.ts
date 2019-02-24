@@ -1,3 +1,4 @@
+import {DEFAULT_BORDER_WIDTH}  from "../Constants";
 import {Vector,V}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
@@ -16,14 +17,14 @@ export class BezierCurve {
         this.p2 = p2.copy();
         this.c1 = c1.copy();
         this.c2 = c2.copy();
-        
+
         this.dirty = true;
         this.boundingBox = new Transform(V(0), V(0));
     }
 
     private updateBoundingBox(): void {
-        if (!this.dirty)
-            return;
+        // if (!this.dirty)
+        //     return;
         this.dirty = false;
 
         // calculate the min and max positions of the curve
@@ -32,7 +33,7 @@ export class BezierCurve {
         var end1 = this.getPos(0);
         var end2 = this.getPos(1);
         var a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
-        var b = this.p1.sub(this.c1.scale(2).add(this.c2)).scale(2);
+        var b = this.p1.sub(this.c1.scale(2)).add(this.c2).scale(2);
         var c = this.c1.sub(this.p1);
 
         var discriminant1 = b.y*b.y - 4*a.y*c.y;
@@ -44,8 +45,10 @@ export class BezierCurve {
 
         var discriminant2 = b.x*b.x - 4*a.x*c.x;
         discriminant2 = (discriminant2 >= 0 ? Math.sqrt(discriminant2) : -1);
-        max.x = Math.max(this.getX(t1), this.getX(t2), end1.x, end2.x);
-        min.x = Math.min(this.getX(t1), this.getX(t2), end1.x, end2.x);
+        var t3 = (discriminant2 !== -1 ? Clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
+        var t4 = (discriminant2 !== -1 ? Clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
+        max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
+        min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
         this.boundingBox.setSize(V(max.x - min.x, max.y - min.y));
         this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));

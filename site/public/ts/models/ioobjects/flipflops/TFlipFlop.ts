@@ -3,7 +3,9 @@ import {FlipFlop} from "./FlipFlop";
 export class TFlipFlop extends FlipFlop {
 
 	public constructor() {
-		super(2);
+		super(2, V(80, 80));
+		this.getInputPort(0).setName(">");
+		this.getInputPort(1).setName("T");
 	}
 
 	// @Override
@@ -22,7 +24,7 @@ export class TFlipFlop extends FlipFlop {
 		return "T Flip Flop";
 	}
 
-    public getXMLName(): string {
-        return "tff";
-    }
+	public getXMLName(): string {
+		return "tff";
+	}
 }
