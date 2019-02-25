@@ -1,3 +1,4 @@
+import {V} from "../../../utils/math/Vector";
 import {FlipFlop} from "./FlipFlop";
 
 export class DFlipFlop extends FlipFlop {
