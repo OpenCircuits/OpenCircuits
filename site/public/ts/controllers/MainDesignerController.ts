@@ -160,6 +160,9 @@ export var MainDesignerController = (function() {
             m1.setPos(V(400, 0));
             designer.addObject(m1);
 
+            var d1= new Demultiplexer();
+            d1.setPos(V(-400,0));
+            designer.addObject(d1);
 
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);

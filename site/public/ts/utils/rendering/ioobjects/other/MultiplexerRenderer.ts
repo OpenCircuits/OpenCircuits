@@ -19,20 +19,22 @@ export var MultiplexerRenderer = (function() {
             let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
 
+            //
+            // Creates the Multiplexer and Demultiplexer the correct size
+            //
             if (mul instanceof Multiplexer){
                 let p1 = V(-transform.getSize().x/2 , transform.getSize().y/2 + 7);
                 let p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2 - 7);
-                let p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + 25-7);
-                let p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - 25+7);
+                let p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + 18);
+                let p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - 18);
 
                 renderer.shape([p1, p2, p3, p4], fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
-
-            else{
-                let p1 = V(transform.getSize().x/2 + 5, transform.getSize().y/2 + 25);
-                let p2 = V(transform.getSize().x/2 + 5, -transform.getSize().y/2 - 25);
-                let p3 = V(-transform.getSize().x/2 - 5, -transform.getSize().y/2-7);
-                let p4 = V(-transform.getSize().x/2 - 5, transform.getSize().y/2+7);
+            else {
+                let p1 = V(transform.getSize().x/2 , transform.getSize().y/2 + 7);
+                let p2 = V(transform.getSize().x/2 , -transform.getSize().y/2 - 7);
+                let p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + 18);
+                let p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - 18);
 
                 renderer.shape([p1, p2, p3, p4], fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }

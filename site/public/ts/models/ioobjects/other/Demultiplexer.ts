@@ -1,15 +1,32 @@
+import {DEFAULT_SIZE,
+		IO_PORT_LENGTH} from "../../../utils/Constants";
 import {V} from "../../../utils/math/Vector";
 import {Component} from "../Component";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {InputPort}from "../../../models/ioobjects/InputPort";
 import {Port}from "../../../models/ioobjects/Port";
 
+//
+//Creates A Demultiplexer and it extends form component
+//
+
 export class Demultiplexer extends Component {
 	private selectLines: Array<InputPort>;
 
+	//
+	//constructor using the super class
+	//
+
 	public constructor() {
-		super(new ClampedValue(3,2,9),new ClampedValue(4,2,Math.pow(2,8)), V(0,0));
+		super(new ClampedValue(2,1,9),new ClampedValue(2,1,8), V(0,0));
 	}
+
+	//
+	//All ports are on the one side originally but
+	// this function overides the original UpdatePortPositions
+	//function and puts the correct number of inputs need at the
+	// bottom of the Demultiplexer
+	//
 
     public activate() {
 		let num = 0;
@@ -35,7 +52,7 @@ export class Demultiplexer extends Component {
 		if (!(ports[0] instanceof InputPort))
 			super.updatePortPositions(ports);
 
-			let target = this.inputPortCount.getValue();//NOT SURE
+			let target = this.getInputAmount()-1;
 	        let width = Math.max(DEFAULT_SIZE/2*(target-1), DEFAULT_SIZE);
 	        let height = DEFAULT_SIZE/2*(2 << (target-1));
 	        this.transform.setSize(V(width+10, height));

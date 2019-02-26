@@ -6,15 +6,28 @@ import {ClampedValue} from "../../../utils/ClampedValue";
 import {InputPort}from "../../../models/ioobjects/InputPort";
 import {Port}from "../../../models/ioobjects/Port";
 
+//
+//this is a Multiplexer class that takes
+//in a certain number of inputs and has one  output
+//
 
 export class Multiplexer extends Component {
 	private target: number;
 	private selectLines: Array<InputPort>;
 
+	//
+	//clamps number of inputs and the output.
+	//
+
 	public constructor() {
 		super(new ClampedValue(2,1,(Math.pow(2,8)+8)),new ClampedValue(1), V(0,0));
 		this.target = 2;
 	}
+
+	//
+	//Activate function that allows the multiplexer
+	//to give desired output
+	//
 
     public activate() {
 		let num = 0;
@@ -32,16 +45,25 @@ export class Multiplexer extends Component {
 		super.setInputPortCount(val + (2 << (val-1)));
 	}
 
+	//
+	//All ports are on the one side originally but
+	// this function overides the original UpdatePortPositions
+	//function and puts the correct number of inputs need at the
+	// bottom of the multiplexer
+	//
+
 	public updatePortPositions(ports: Array<Port>) {
+		//if ports is 0
 		if (!(ports[0] instanceof InputPort))
 			super.updatePortPositions(ports);
-		// this.target == this.inputPortCount.getValue();
 
-		//let this.target = this.getInputAmount();
+		//sets the width
         let width = Math.max(DEFAULT_SIZE/2*(this.target-1), DEFAULT_SIZE);
+		//sets the height
         let height = DEFAULT_SIZE/2*(2 << (this.target-1));
         this.transform.setSize(V(width+10, height));
 
+		//Manipulates the actual input ports
         this.selectLines = [];
         for (let i = 0; i < this.target; i++) {
             let input = this.inputs[i];
@@ -50,7 +72,7 @@ export class Multiplexer extends Component {
             let l = -DEFAULT_SIZE/2*(i - this.target/2 + 0.5);
             if (i === 0) l -= 1;
             if (i === this.target-1) l += 1;
-
+			//sets postition
             input.setOriginPos(V(l, 0));
             input.setTargetPos(V(l, IO_PORT_LENGTH+height/2-DEFAULT_SIZE/2));
         }
