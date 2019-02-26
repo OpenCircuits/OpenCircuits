@@ -1,4 +1,4 @@
-export const DEBUG_SHOW_CULLBOXES = false;
+export const DEBUG_SHOW_CULLBOXES = true;
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
@@ -16,6 +16,8 @@ export const IO_PORT_LENGTH = 60;
 export const IO_PORT_RADIUS = 7;
 export const IO_PORT_BORDER_WIDTH = 1;
 export const IO_PORT_LINE_WIDTH   = 2;
+
+export const WIRE_THICKNESS = 7.0;
 
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
@@ -35,7 +37,7 @@ export const SIDENAV_WIDTH = 200;
 export const ITEMNAV_WIDTH = 200;
 
 export const LEFT_MOUSE_BUTTON  = 0;
-export const RIGHT_MOUSE_BUTTON = 1;
+export const RIGHT_MOUSE_BUTTON = 2;
 
 export const BACKSPACE_KEY = 8;
 export const ENTER_KEY  = 13;

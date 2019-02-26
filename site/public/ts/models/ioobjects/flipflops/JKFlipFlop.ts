@@ -4,9 +4,12 @@ import {FlipFlop} from "./FlipFlop";
 export class JKFlipFlop extends FlipFlop {
 
 	public constructor() {
-		super(3, 2, V(60, 60));
+		super(3, 2, V(80, 120));
+		this.getInputPort(0).setName("K");
+		this.getInputPort(1).setName(">");
+		this.getInputPort(2).setName("J");
 	}
-
+	
 	// @Override
 	public activate() {
 		this.last_clock = this.clock;
@@ -31,7 +34,7 @@ export class JKFlipFlop extends FlipFlop {
 		return "JK Flip Flop";
 	}
 
-    public getXMLName(): string {
-        return "jkff";
-    }
+	public getXMLName(): string {
+		return "jkff";
+	}
 }
