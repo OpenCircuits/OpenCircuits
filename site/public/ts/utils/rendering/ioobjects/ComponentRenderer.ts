@@ -64,11 +64,10 @@ export var ComponentRenderer = (function() {
                 GateRenderer.render(renderer, camera, object, selected);
             }
             
-            if (object instanceof Multiplexer || object instanceof Demultiplexer) {
+            if (object instanceof Multiplexer || object instanceof Demultiplexer)
                 MultiplexerRenderer.render(renderer, camera, object, selected);
-            }
           
-            if (object instanceof FlipFlop) {
+            if (object instanceof FlipFlop)
                 FlipFlopRenderer.render(renderer, camera, object, selected);
 
             // Seven Segment renderer
