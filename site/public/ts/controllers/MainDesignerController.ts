@@ -5,7 +5,7 @@ import {LEFT_MOUSE_BUTTON,
         ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2} from "../utils/Constants";
 
-import {V, Vector} from "../utils/math/Vector";
+import {Vector, V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
@@ -183,7 +183,7 @@ export var MainDesignerController = (function() {
         Render: function(): void {
             renderQueue.render();
         },
-        AddAction(action: Action): void {
+        AddAction: function(action: Action): void {
             if (action == undefined)
                 return;
             actions.add(action);

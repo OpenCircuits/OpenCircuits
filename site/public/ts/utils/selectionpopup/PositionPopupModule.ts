@@ -1,3 +1,5 @@
+import {GRID_SIZE} from "../Constants";
+
 import {Vector} from "../math/Vector";
 import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
@@ -7,15 +9,15 @@ export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
     private ybox: HTMLInputElement;
 
-    constructor(parent_div: HTMLDivElement) {
+    public constructor(parent_div: HTMLDivElement) {
         super(parent_div.querySelector("div#popup-pos-text"));
         this.xbox = this.div.querySelector("input#popup-position-x");
         this.ybox = this.div.querySelector("input#popup-position-y");
-        this.xbox.onchange = () => this.push();
-        this.ybox.onchange = () => this.push();
+        this.xbox.oninput = () => this.push();
+        this.ybox.oninput = () => this.push();
     }
 
-    pull(): void {
+    public pull(): void {
         const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
         let enable = true;
 
@@ -41,8 +43,10 @@ export class PositionPopupModule extends SelectionPopupModule {
                 }
             }
 
-            this.xbox.value = (x == null) ? "" : x.toFixed(2);
-            this.ybox.value = (x == null) ? "" : y.toFixed(2);
+            // ""+(+x.toFixed(2)) is a hack to turn the fixed string
+            //  back into a number so that trailing zeros go away
+            this.xbox.value = (x == null) ? "-" : ""+(+(x / GRID_SIZE - 0.5).toFixed(2));
+            this.ybox.value = (y == null) ? "-" : ""+(+(y / GRID_SIZE - 0.5).toFixed(2));
         } else {
             enable = false;
         }
@@ -50,7 +54,7 @@ export class PositionPopupModule extends SelectionPopupModule {
         this.setEnabled(enable);
     }
 
-    push(): void {
+    public push(): void {
         let selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
 
         selections.forEach(s => {
@@ -58,8 +62,8 @@ export class PositionPopupModule extends SelectionPopupModule {
             let pos = c.getPos();
 
             c.setPos(new Vector(
-                this.xbox.value == "" ? pos.x : this.xbox.valueAsNumber,
-                this.xbox.value == "" ? pos.y : this.ybox.valueAsNumber,
+                this.xbox.value == "" ? pos.x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                this.ybox.value == "" ? pos.y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5),
             ));
         });
         MainDesignerController.Render();
