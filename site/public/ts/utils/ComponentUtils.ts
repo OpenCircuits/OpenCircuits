@@ -130,7 +130,7 @@ export function CreateGroup(objects: Array<IOObject>): SeparatedComponentCollect
  * @return      An array of connections
  */
 export function GetAllWires(objs: Array<Component>): Array<Wire> {
-    let wires = new Array<Wire>();
+    let allWires = new Array<Wire>();
 
     // Gather all wires that attach objects in the given array
     for (let obj of objs) {
@@ -138,11 +138,11 @@ export function GetAllWires(objs: Array<Component>): Array<Wire> {
         for (let wire of wires) {
             // Make sure connection is in the array
             if (objs.includes(wire.getOutputComponent()))
-                wires.push(wire);
+                allWires.push(wire);
         }
     }
 
-    return wires;
+    return allWires;
 }
 
 /**
