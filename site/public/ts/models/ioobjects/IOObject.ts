@@ -11,16 +11,19 @@ export abstract class IOObject implements XMLable {
         this.name = new Name(this.getDisplayName());
     }
 
-	public setDesigner(designer?: CircuitDesigner): void {
-		this.designer = designer;
-	}
-
-	public getDesigner(): CircuitDesigner {
-		return this.designer;
-	}
-
     public abstract activate(signal: boolean, i?: number): void;
 
+    public setDesigner(designer?: CircuitDesigner): void {
+        this.designer = designer;
+    }
+
+    public getDesigner(): CircuitDesigner {
+        return this.designer;
+    }
+
+    public setName(name: string): void {
+        this.name.setName(name);
+    }
     public getName(): string {
         return this.name.getName();
     }
@@ -41,10 +44,4 @@ export abstract class IOObject implements XMLable {
     public abstract getDisplayName(): string;
     public abstract getXMLName(): string;
 
-    public setName(name: string): void {
-        this.name.setName(name);
-    }
-    public getName(): string {
-        return this.name.getName();
-    }
 }
