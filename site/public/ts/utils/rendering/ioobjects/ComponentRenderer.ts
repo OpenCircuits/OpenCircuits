@@ -8,8 +8,8 @@ import {DEBUG_SHOW_CULLBOXES,
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
-import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
 import {ICRenderer} from "./other/ICRenderer";
+import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
 
 import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
@@ -64,9 +64,6 @@ export var ComponentRenderer = (function() {
 
                 let box = object.getSelectionBox();
                 drawBox(renderer, box, selected);
-            }
-            if (object instanceof FlipFlop) {
-                FlipFlopRenderer.render(renderer, camera, object, selected);
             }
 
             // Specific renderers
