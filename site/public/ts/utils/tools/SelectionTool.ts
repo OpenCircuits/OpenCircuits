@@ -22,6 +22,10 @@ export class SelectionTool extends Tool {
     private selections: Array<IOObject>;
     private selecting: boolean;
 
+    // These functions are called every time the selections change
+    // TODO: pass selections as argument
+    private callbacks: Array<{ (): void }>;
+
     // Current selection box positions
     private p1: Vector;
     private p2: Vector;
@@ -37,6 +41,12 @@ export class SelectionTool extends Tool {
 
         this.selections = [];
         this.selecting = false;
+
+        this.callbacks = [];
+    }
+
+    private selectionsChanged() {
+        this.callbacks.forEach(c => c());
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -106,13 +116,23 @@ export class SelectionTool extends Tool {
         // Find selections within the
         //  current selection box
         if (button === LEFT_MOUSE_BUTTON) {
+            // Release currently pressed object
+            if (this.pressedObj) {
+                this.pressedObj = false;
+                if (this.currentPressedObj instanceof PressableComponent)
+                    this.currentPressedObj.release();
+            }
+            this.currentPressedObj = undefined;
+
             // Stop selection box
             if (this.selecting) {
                 this.selecting = false;
 
                 // Clear selections if no shift key
-                if (!input.isKeyDown(SHIFT_KEY))
+                if (!input.isKeyDown(SHIFT_KEY)) {
                     this.selections = [];
+                    this.selectionsChanged();
+                }
 
                 // Calculate transform rectangle of the selection box
                 var p1 = this.camera.getWorldPos(input.getMouseDownPos());
@@ -122,23 +142,20 @@ export class SelectionTool extends Tool {
                 // Go through each object and see if it's within
                 //  the selection box
                 var objects = this.designer.getObjects();
+                let new_objs = false;
                 for (let obj of objects) {
                     // Check if object is in box
                     if (TransformContains(box, obj.getTransform())) {
                         // Add to selections if not already selected
-                        if (!this.selections.includes(obj))
+                        if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            new_objs = true;
+                        }
                     }
                 }
+                if (new_objs) this.selectionsChanged();
 
                 return true; // should render
-            }
-
-            // Release currently pressed object
-            if (this.pressedObj) {
-                if (this.currentPressedObj instanceof PressableComponent)
-                    this.currentPressedObj.release();
-                this.currentPressedObj = undefined;
             }
         }
 
@@ -156,6 +173,7 @@ export class SelectionTool extends Tool {
                 if (this.selections.length != 0)
                     render = true;
                 this.selections = [];
+                this.selectionsChanged();
             }
 
             // Check if an object was clicked
@@ -193,6 +211,7 @@ export class SelectionTool extends Tool {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            this.selectionsChanged();
                             render = true;
                         }
                     }
@@ -202,6 +221,7 @@ export class SelectionTool extends Tool {
                         // Add to selections if not already selected
                         if (!this.selections.includes(obj)) {
                             this.selections.push(obj);
+                            this.selectionsChanged();
                             render = true;
                         }
                     }
@@ -238,6 +258,9 @@ export class SelectionTool extends Tool {
         return this.p2.copy();
     }
 
+    public addSelectionChangeListener(func: {(): void}) {
+        this.callbacks.push(func);
+    }
     public getCurrentlyPressedObj(): IOObject {
         return this.currentPressedObj;
     }

@@ -1,4 +1,4 @@
-import {Vector} from "./Vector";
+import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
 
 /**
@@ -18,6 +18,35 @@ import {Transform} from "./Transform";
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
+}
+
+/**
+ * Returns the nearest point on the edge
+ * of the given rectangle.
+ *
+ * @param  {Vector} bl
+ *         Bottom left corner of the rectangle
+ *
+ * @param  {Vector} tr
+ *         Top right corner of the rectangle
+ *
+ * @param  {Vector} pos
+ *         The position to get the nearest point on
+ *
+ * @return {Vector}
+ *         The closest position on the edge of
+ *         the rectangle from 'pos'
+ */
+export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector) : Vector {
+    if (pos.x < bl.x)
+        return V(bl.x, Clamp(pos.y, bl.y, tr.y));
+    if (pos.x > tr.x)
+        return V(tr.x, Clamp(pos.y, bl.y, tr.y));
+    if (pos.y < bl.y)
+        return V(Clamp(pos.x, bl.x, tr.x), bl.y);
+    if (pos.y > tr.y)
+        return V(Clamp(pos.x, bl.x, tr.x), tr.y);
+    return V(0, 0);
 }
 
 /**

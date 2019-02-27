@@ -40,4 +40,11 @@ export abstract class IOObject implements XMLable {
 
     public abstract getDisplayName(): string;
     public abstract getXMLName(): string;
+
+    public setName(name: string): void {
+        this.name.setName(name);
+    }
+    public getName(): string {
+        return this.name.getName();
+    }
 }

@@ -37,6 +37,17 @@ class CircuitPageView {
                         <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
                     </button>
                 </div>
+
+                <div id="context-menu" class="contextmenu" style="visibility: hidden;">
+                    <button id="context-menu-cut" alt="Cut">Cut</button>   
+                    <button id="context-menu-copy" alt="Copy">Copy</button>
+                    <button id="context-menu-paste" alt="Paste">Paste</button>  
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>         
+                    <hr/>
+                    <button id="context-menu-undo" alt="Undo">Undo</button>
+                    <button id="context-menu-redo" alt="Redo">Redo</button>
+                </div>
+                    
             </header>
 
             <main>
@@ -80,6 +91,36 @@ HTML;
                 <div id="itemnav-open-tab" class="tab"> &#9776; </div>
 
                 <canvas id="canvas" class="canvas"></canvas>
+
+                <div id="popup" class="popup" tabindex="-1" style="visibility: hidden;">
+                    <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
+                    <hr/>
+                    <div id="popup-pos-text" style="display: none;">Position
+                        <label id="popup-position-label" class="popup__label" unselectable disabled>
+                            <input id="popup-position-x" type="number" value="0" min="-10000" max="10000" step="0.5" alt="X-Position of object(s)" />
+                            <input id="popup-position-y" type="number" value="0" min="-10000" max="10000" step="0.5" alt="Y-Position of object(s)" />
+                        </label>
+                    </div>
+                    <div id="popup-input-count-text" style="display: none;">Input Count
+                        <label id="popup-input-count-label" class="popup__label" unselectable disabled>
+                            <input id="popup-input-count" type="number" value="2" min="2" max="8" step="1" alt="Number of inputs object(s) have" />
+                        </label>
+                    </div>
+                    <div id="popup-color-text" style="display: none;">Color
+                        <label id="popup-color-label" class="popup__label" unselectable disabled>
+                            <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
+                        </label>
+                    </div>
+                    <div id="popup-clock-delay-text" style="display: none;">Clock Delay
+                        <label id="popup-clock-delay-label" class="popup__label" unselectable disabled>
+                            <input id="popup-clock-delay" type="number" value="1000" min="200" max="10000" step="100" alt="Clock delay in milliseconds" />
+                        </label>
+                    </div>
+                    <!--
+                    <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
+                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
+                    -->
+                </div>
             </main>
         </div>
 
