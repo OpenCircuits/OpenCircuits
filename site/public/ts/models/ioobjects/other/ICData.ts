@@ -1,3 +1,4 @@
+import {DEFAULT_SIZE} from "../../../utils/Constants";
 
 import {Vector,V} from "../../../utils/math/Vector";
 import {Transform} from "../../../utils/math/Transform";

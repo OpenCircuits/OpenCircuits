@@ -3,6 +3,7 @@ import {DEFAULT_SIZE} from "../../../utils/Constants";
 import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {SeparatedComponentCollection} from "../../../utils/ComponentUtils";
+import {CircuitDesigner} from "../../CircuitDesigner";
 import {Component} from "../Component";
 
 import {ICData} from "./ICData";
@@ -27,6 +28,17 @@ export class IC extends Component {
             }
         }
     }
+
+    public setDesigner(designer?: CircuitDesigner): void {
+        super.setDesigner(designer);
+
+        // Set designer of all internal components/wires
+        let components = this.collection.getAllComponents();
+        for (let obj of components)
+            obj.setDesigner(designer);
+        for (let wire of this.collection.wires)
+            wire.setDesigner(designer);
+	}
 
     public update(): void {
         // Update size
@@ -57,7 +69,7 @@ export class IC extends Component {
     }
 
     public getImageName(): string {
-        return "constLow.svg";
+        return "";
     }
 
 }
