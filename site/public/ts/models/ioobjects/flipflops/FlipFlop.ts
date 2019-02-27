@@ -1,7 +1,9 @@
-import {Vector} from "../../../utils/math/Vector";
+import {Vector,V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
+import {Port} from "../Port";
+import {InputPort} from "../InputPort";
 
 //
 // FlipFlop is an abstract superclass for general flip flops.
@@ -11,25 +13,47 @@ export abstract class FlipFlop extends Component {
 	protected state: boolean = false;
 	protected last_clock: boolean = false;
 
-    constructor(numInputs: number, numOutputs: number, size: Vector) {
-        super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
-    }
+	public constructor(numInputs: number, numOutputs: number, size: Vector) {
+		super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
+		this.getOutputPort(0).setName("Q'");
+		this.getOutputPort(1).setName("Q ");
+	}
 
-    public save(node: XMLNode): void {
-        super.save(node);
+	protected updatePortPositions(arr: Array<Port>): void {
+		super.updatePortPositions(arr);
 
-        node.addAttribute("inputs", this.getInputPortCount());
-        node.addAttribute("outputs", this.getOutputPortCount());
-    }
+		// Positioning for JK and SR flip flops
+		if (arr.length == 3) {
+			{
+				let port = arr[0];
+				let l = (-this.transform.getSize().y/2*(0 - arr.length/2 + 0.5) - 1) * 3/4;
+				port.setOriginPos(V(port.getOriginPos().x, l));
+				port.setTargetPos(V(port.getTargetPos().x, l));
+			}
+			{
+				let port = arr[2];
+				let l = (-this.transform.getSize().y/2*(2 - arr.length/2 + 0.5) + 1) * 3/4;
+				port.setOriginPos(V(port.getOriginPos().x, l));
+				port.setTargetPos(V(port.getTargetPos().x, l));
+			}
+		}
+	}
 
-    public load(node: XMLNode): void {
-        super.load(node);
+	public save(node: XMLNode): void {
+		super.save(node);
 
-        this.setInputPortCount(node.getIntAttribute("inputs"));
-        this.setOutputPortCount(node.getIntAttribute("outputs"));
-    }
+		node.addAttribute("inputs", this.getInputPortCount());
+		node.addAttribute("outputs", this.getOutputPortCount());
+	}
+
+	public load(node: XMLNode): void {
+		super.load(node);
+
+		this.setInputPortCount(node.getIntAttribute("inputs"));
+		this.setOutputPortCount(node.getIntAttribute("outputs"));
+	}
 
 	public getImageName() {
-		return "flipflop.svg";
+		return "";
 	}
 }

@@ -9,13 +9,16 @@ import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {ICRenderer} from "./other/ICRenderer";
+import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
 
 import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
 
+import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
+import {LED} from "../../../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
 import {IC} from "../../../models/ioobjects/other/IC";
 
@@ -66,6 +69,8 @@ export var ComponentRenderer = (function() {
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
+            if (object instanceof FlipFlop)
+                FlipFlopRenderer.render(renderer, camera, object, selected);
             if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
             if (object instanceof SevenSegmentDisplay)
@@ -73,8 +78,18 @@ export var ComponentRenderer = (function() {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
+            if (object instanceof LED)
+                tint = object.getColor();
+
             if (Images.GetImage(imgName))
                 renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+
+            // Draw LED turned on
+            if (object instanceof LED) {
+                if (object.isOn()) {
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
+                }
+            }
 
             renderer.restore();
 

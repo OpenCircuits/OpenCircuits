@@ -37,6 +37,17 @@ class CircuitPageView {
                         <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
                     </button>
                 </div>
+
+                <div id="context-menu" class="contextmenu" style="visibility: hidden;">
+                    <button id="context-menu-cut" alt="Cut">Cut</button>   
+                    <button id="context-menu-copy" alt="Copy">Copy</button>
+                    <button id="context-menu-paste" alt="Paste">Paste</button>  
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>         
+                    <hr/>
+                    <button id="context-menu-undo" alt="Undo">Undo</button>
+                    <button id="context-menu-redo" alt="Redo">Redo</button>
+                </div>
+                    
             </header>
 
             <main>
