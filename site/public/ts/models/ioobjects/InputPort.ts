@@ -23,7 +23,7 @@ export class InputPort extends Port {
 		if (designer == undefined)
 			return;
 
-		designer.propogate(this.parent, this.isOn);
+		designer.propagate(this.parent, this.isOn);
 	}
 
 	public disconnect(): void {
