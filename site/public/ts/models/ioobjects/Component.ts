@@ -262,6 +262,27 @@ export abstract class Component extends CullableObject {
 
         return max;
     }
+    
+    public copy(): Component {
+        let copy = <Component>super.copy();
+        
+        // Copy properties
+        copy.transform = this.transform.copy();
+        copy.inputPortCount  = this.inputPortCount.copy();
+        copy.outputPortCount = this.outputPortCount.copy();
+        copy.setInputPortCount(this.getInputPortCount());
+        copy.setOutputPortCount(this.getOutputPortCount());
+        
+        // Copy port positions
+        let ports = this.getPorts();
+        let copyPorts = copy.getPorts();
+        for (let i = 0; i < ports.length; i++) {
+            copyPorts[i].setOriginPos(ports[i].getOriginPos());
+            copyPorts[i].setTargetPos(ports[i].getTargetPos());
+        }
+        
+        return copy;
+    }
 
     public save(node: XMLNode): void {
         super.save(node);

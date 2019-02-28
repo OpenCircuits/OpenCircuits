@@ -10,7 +10,10 @@ import {V} from "../../math/Vector";
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
+import {ICRenderer} from "./other/ICRenderer";
 import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
+
+import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
 
 import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
@@ -19,6 +22,7 @@ import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
 import {LED} from "../../../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
+import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
 
@@ -27,6 +31,13 @@ import {Images} from "../../Images";
 // import {LED} from "../../../models/ioobjects/outputs/LED";
 
 export var ComponentRenderer = (function() {
+
+    let drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
+        let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+        renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+    }
+
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
             // Check if object is on the screen
@@ -60,25 +71,19 @@ export var ComponentRenderer = (function() {
                 size = object.getPressableBox().getSize();
                 dPos = object.getPressableBox().getPos();
 
-                let box = transform;
-                let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-                let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(0, 0, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+                let box = object.getSelectionBox();
+                drawBox(renderer, box, selected);
             }
 
-            if (object instanceof Gate) {
+            // Specific renderers
+            if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
-            }
-            if (object instanceof FlipFlop) {
+            if (object instanceof FlipFlop)
                 FlipFlopRenderer.render(renderer, camera, object, selected);
-            }
-
-            // Seven Segment renderer
-            if (object instanceof SevenSegmentDisplay) {
-                let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-                let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(dPos.x, dPos.y, size.x, size.y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-            }
+            if (object instanceof IC)
+                ICRenderer.render(renderer, camera, object, selected);
+            if (object instanceof SevenSegmentDisplay)
+                drawBox(renderer, transform, selected);
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);

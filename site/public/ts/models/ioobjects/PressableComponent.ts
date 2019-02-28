@@ -67,6 +67,12 @@ export abstract class PressableComponent extends Component {
 		});
 		return max;
 	}
+	
+	public copy(): PressableComponent {
+		let copy = <PressableComponent>super.copy();
+		copy.selectionBox = this.selectionBox.copy();
+		return copy;
+	}
 
     public save(node: XMLNode): void {
         super.save(node);
