@@ -10,6 +10,7 @@ import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {ICRenderer} from "./other/ICRenderer";
 import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
+import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
 import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
@@ -74,7 +75,7 @@ export var ComponentRenderer = (function() {
             if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
             if (object instanceof SevenSegmentDisplay)
-                drawBox(renderer, transform, selected);
+                SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
