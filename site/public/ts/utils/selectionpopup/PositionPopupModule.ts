@@ -45,8 +45,10 @@ export class PositionPopupModule extends SelectionPopupModule {
 
             // ""+(+x.toFixed(2)) is a hack to turn the fixed string
             //  back into a number so that trailing zeros go away
-            this.xbox.value = (x == null) ? "-" : ""+(+(x / GRID_SIZE - 0.5).toFixed(2));
-            this.ybox.value = (y == null) ? "-" : ""+(+(y / GRID_SIZE - 0.5).toFixed(2));
+            this.xbox.value = (x == null) ? "" : ""+(+(x / GRID_SIZE - 0.5).toFixed(2));
+            this.xbox.placeholder = (x == null) ? "-" : "";
+            this.ybox.value = (y == null) ? "" : ""+(+(y / GRID_SIZE - 0.5).toFixed(2));
+            this.ybox.placeholder = (y == null) ? "-" : "";
         } else {
             enable = false;
         }

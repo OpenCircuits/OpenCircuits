@@ -24,10 +24,13 @@ export class Input {
 
     private keysDown: Map<number, boolean>;
 
-    constructor(canvas: HTMLCanvasElement) {
+    private dragTime: number;
+
+    constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         this.canvas = canvas;
         this.listeners = new Map();
         this.keysDown  = new Map();
+        this.dragTime = dragTime;
 
         window.addEventListener('keydown',  (e: KeyboardEvent) => this.onKeyDown(e), false);
         window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyUp(e), false);
@@ -149,8 +152,8 @@ export class Input {
         this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
-        this.isDragging = (this.mouseDown);// &&
-                          //(Date.now() - this.startTapTime > DRAG_TIME);
+        this.isDragging = (this.mouseDown &&
+                           Date.now() - this.startTapTime > this.dragTime);
 
         // call listeners
         if (this.isDragging)

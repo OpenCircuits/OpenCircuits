@@ -5,6 +5,8 @@ import {DEBUG_SHOW_CULLBOXES,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR} from "../../Constants";
 
+import {V} from "../../math/Vector";
+
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
@@ -48,6 +50,9 @@ export var ComponentRenderer = (function() {
             let transform = object.getTransform();
             let imgName = object.getImageName();
 
+            let dPos = V(0,0);
+            let size = transform.getSize();
+
             // Transform the renderer
             renderer.transform(camera, transform);
 
@@ -63,7 +68,11 @@ export var ComponentRenderer = (function() {
                 if (object.isOn())
                     imgName = object.getOnImageName();
 
-                let box = object.getSelectionBox();
+                // Set size/pos for drawing image to be size of "pressable" part
+                size = object.getPressableBox().getSize();
+                dPos = object.getPressableBox().getPos();
+
+                let box = transform;
                 drawBox(renderer, box, selected);
             }
 
@@ -83,13 +92,12 @@ export var ComponentRenderer = (function() {
                 tint = object.getColor();
 
             if (Images.GetImage(imgName))
-                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+                renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
 
             // Draw LED turned on
             if (object instanceof LED) {
-                if (object.isOn()) {
-                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
-                }
+                if (object.isOn())
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
             }
 
             renderer.restore();

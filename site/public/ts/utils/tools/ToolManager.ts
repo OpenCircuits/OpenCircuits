@@ -65,6 +65,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
             if (this.currentTool.getAction() != undefined)
                 this.currentAction = this.currentTool.getAction();
             this.activate(this.selectionTool);
+            this.selectionTool.activate(this.currentTool, event, input, button);
             return true;
         }
 

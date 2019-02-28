@@ -18,7 +18,7 @@ describe("Pan Tool", () => {
     let input: any = new Input(<any>{
         addEventListener:() => {},
         getBoundingClientRect:() => {return {left: 0, top: 0}}
-    });
+    }, -1);
 
     input.addListener("keydown", (b?: number) => { toolManager.onKeyDown(input, b); });
     input.addListener("keyup",   (b?: number) => { toolManager.onKeyUp(input, b); });
