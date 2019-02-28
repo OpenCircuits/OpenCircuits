@@ -51,4 +51,30 @@ describe("BUFGate", () => {
             expect(o.isOn()).toBe(true);
         });
     });
+    
+    describe("Copy", () => {
+        it("ANDGate Copy", () => {
+            let a = new BUFGate();
+            a.setInputPortCount(4);
+            let b = <BUFGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(BUFGate);
+            expect(b.isNot()).toBe(false);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+        it("NANDGate Copy", () => {
+            let a = new BUFGate(true);
+            a.setInputPortCount(4);
+            
+            let b = <BUFGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(BUFGate);
+            expect(b.isNot()).toBe(true);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+    });
 });

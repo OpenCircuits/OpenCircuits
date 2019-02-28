@@ -81,4 +81,30 @@ describe("ORGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
+    
+    describe("Copy", () => {
+        it("ORGate Copy", () => {
+            let a = new ORGate();
+            a.setInputPortCount(4);
+            let b = <ORGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(ORGate);
+            expect(b.isNot()).toBe(false);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+        it("NORGate Copy", () => {
+            let a = new ORGate(true);
+            a.setInputPortCount(4);
+            
+            let b = <ORGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(ORGate);
+            expect(b.isNot()).toBe(true);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+    });
 });

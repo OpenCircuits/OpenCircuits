@@ -27,6 +27,12 @@ export abstract class CullableObject extends IOObject {
         this.updateCullTransform();
         return this.cullTransform;
     }
+	
+	public copy(): CullableObject {
+		let copy = <CullableObject>super.copy();
+		copy.cullTransform = this.cullTransform.copy();
+		return copy;
+	}
 
     public abstract getMinPos(): Vector;
     public abstract getMaxPos(): Vector;
