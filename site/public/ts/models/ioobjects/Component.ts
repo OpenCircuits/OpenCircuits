@@ -4,6 +4,7 @@ import {DEFAULT_BORDER_WIDTH,
 
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
+import {RectContains} from "../../utils/math/MathUtils";
 import {ClampedValue} from "../../utils/ClampedValue";
 import {XMLNode}      from "../../utils/io/xml/XMLNode";
 
@@ -140,6 +141,30 @@ export abstract class Component extends CullableObject {
      */
     public transformPoint(v: Vector): Vector {
         return this.transform.getMatrix().mul(v);
+    }
+
+    /**
+     * Determines whether or not a point is within
+     *  this component's "pressable" bounds (always false)
+     *  for most components
+     * @param  v The point
+     * @return   True if the point is within this component,
+     *           false otherwise
+     */
+	public isWithinPressBounds(v: Vector): boolean {
+        return false;
+	}
+
+    /**
+     * Determines whether or not a point is within
+     *  this component's "selectable" bounds
+     * @param  v The point
+     * @return   True if the point is within this component,
+     *           false otherwise
+     */
+    public isWithinSelectBounds(v: Vector): boolean {
+        return RectContains(this.getTransform(), v) &&
+               !this.isWithinPressBounds(v);
     }
 
 	public getInputPort(i: number): InputPort {

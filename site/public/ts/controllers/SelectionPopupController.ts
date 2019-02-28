@@ -23,9 +23,6 @@ export var SelectionPopupController = (function() {
         div.style.left = `${pos.x}px`;
         div.style.top  = `${pos.y}px`;
     }
-    let getPos = function(): Vector {
-        return pos;
-    }
 
     return {
         Init: function(cam: Camera, div_id: string = "popup"): void {

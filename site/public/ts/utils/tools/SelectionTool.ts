@@ -49,11 +49,34 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
 
+    public addSelection(obj: IOObject): boolean {
+        if (!this.selections.includes(obj)) {
+            this.selections.push(obj);
+            this.selectionsChanged();
+            return true;
+        }
+        return false;
+    }
+
+    public clearSelections(): boolean {
+        if (this.selections.length == 0)
+            return false;
+        this.selections = [];
+        this.selectionsChanged();
+        return true;
+    }
+
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+        if (event == "mouseup")
+            this.onMouseUp(input, button);
+        if (event == "onclick")
+            this.onClick(input, button);
         return false;
     }
 
     public deactivate(event: string, input: Input, button?: number): boolean {
+        this.selecting = false;
+        
         return false;
     }
 
@@ -65,31 +88,20 @@ export class SelectionTool extends Tool {
             for (let i = objects.length-1; i >= 0; i--) {
                 let obj = objects[i];
 
-                // if (PressedObj(obj, worldMousePos)) {
-                //     obj.press();
-                //     this.pressedObj = true;
-                //     this.currentPressedObj = obj;
-                // }
-                // else if (ClickedObj(obj, worldMousePos)) {
-                //     this.pressedObj = false;
-                //     this.currentPressedObj = obj;
-                // }
-
-                // Check if mouse is within bounds of the object
-                if (RectContains(obj.getTransform(), worldMousePos)) {
-                    if (obj instanceof PressableComponent) {
+                // Check if we pressed the object
+                if (obj.isWithinPressBounds(worldMousePos)) {
+                    if (obj instanceof PressableComponent)
                         obj.press();
-                        this.pressedObj = true;
-                    }
+                    this.pressedObj = true;
                     this.currentPressedObj = obj;
                     return true;
                 }
                 // If just the selection box was hit then
                 //  don't call the press() method, just set
                 //  currentPressedObj to potentially drag
-                else if (obj instanceof PressableComponent && RectContains(obj.getSelectionBox(), worldMousePos)) {
-                    this.currentPressedObj = obj;
+                else if (obj.isWithinSelectBounds(worldMousePos)) {
                     this.pressedObj = false;
+                    this.currentPressedObj = obj;
                     return false;
                 }
             }
@@ -121,6 +133,8 @@ export class SelectionTool extends Tool {
                 this.pressedObj = false;
                 if (this.currentPressedObj instanceof PressableComponent)
                     this.currentPressedObj.release();
+                this.currentPressedObj = undefined;
+                return true;
             }
             this.currentPressedObj = undefined;
 
@@ -129,31 +143,22 @@ export class SelectionTool extends Tool {
                 this.selecting = false;
 
                 // Clear selections if no shift key
-                if (!input.isKeyDown(SHIFT_KEY)) {
-                    this.selections = [];
-                    this.selectionsChanged();
-                }
+                if (!input.isKeyDown(SHIFT_KEY))
+                    this.clearSelections();
 
                 // Calculate transform rectangle of the selection box
-                var p1 = this.camera.getWorldPos(input.getMouseDownPos());
-                var p2 = this.camera.getWorldPos(input.getMousePos());
-                var box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+                let p1 = this.camera.getWorldPos(input.getMouseDownPos());
+                let p2 = this.camera.getWorldPos(input.getMousePos());
+                let box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
 
                 // Go through each object and see if it's within
                 //  the selection box
-                var objects = this.designer.getObjects();
-                let new_objs = false;
+                let objects = this.designer.getObjects();
                 for (let obj of objects) {
                     // Check if object is in box
-                    if (TransformContains(box, obj.getTransform())) {
-                        // Add to selections if not already selected
-                        if (!this.selections.includes(obj)) {
-                            this.selections.push(obj);
-                            new_objs = true;
-                        }
-                    }
+                    if (TransformContains(box, obj.getTransform()))
+                        this.addSelection(obj);
                 }
-                if (new_objs) this.selectionsChanged();
 
                 return true; // should render
             }
@@ -169,12 +174,8 @@ export class SelectionTool extends Tool {
             let render = false;
 
             // Clear selections if no shift key
-            if (!input.isKeyDown(SHIFT_KEY)) {
-                if (this.selections.length != 0)
-                    render = true;
-                this.selections = [];
-                this.selectionsChanged();
-            }
+            if (!input.isKeyDown(SHIFT_KEY))
+                render = this.clearSelections();
 
             // Check if an object was clicked
             //  and add to selections
@@ -182,49 +183,16 @@ export class SelectionTool extends Tool {
             for (let i = objects.length-1; i >= 0; i--) {
                 let obj = objects[i];
 
-                // if (PressedObj(obj, worldMousePos)) {
-                //     // Check if object should be clicked
-                //     if (RectContains(obj.getTransform(), worldMousePos)) {
-                //         obj.click();
-                //         return true;
-                //     }
-                // }
-                // else if (ClickedObj(obj, worldMousePos)) {
-                //
-                //     if (!this.selections.includes(obj)) {
-                //         this.selections.push(obj);
-                //         render = true;
-                //     }
-                // }
-
-                if (obj instanceof PressableComponent) {
+                if (obj.isWithinPressBounds(worldMousePos)) {
                     // Check if object should be clicked
-                    if (RectContains(obj.getTransform(), worldMousePos)) {
+                    if (obj instanceof PressableComponent) {
                         obj.click();
                         return true;
                     }
-
-                    // Make sure mouse is within selection box,
-                    //  but not within regular transform
-                    if (RectContains(obj.getSelectionBox(), worldMousePos) &&
-                        !RectContains(obj.getTransform(), worldMousePos)) {
-                        // Add to selections if not already selected
-                        if (!this.selections.includes(obj)) {
-                            this.selections.push(obj);
-                            this.selectionsChanged();
-                            render = true;
-                        }
-                    }
-                } else {
-                    // Check if mouse is within bounds of the object
-                    if (RectContains(obj.getTransform(), worldMousePos)) {
-                        // Add to selections if not already selected
-                        if (!this.selections.includes(obj)) {
-                            this.selections.push(obj);
-                            this.selectionsChanged();
-                            render = true;
-                        }
-                    }
+                }
+                // Check if object should be selected
+                else if (obj.isWithinSelectBounds(worldMousePos)) {
+                    return this.addSelection(obj);
                 }
             }
 

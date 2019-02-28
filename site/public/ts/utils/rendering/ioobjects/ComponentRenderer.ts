@@ -5,6 +5,8 @@ import {DEBUG_SHOW_CULLBOXES,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR} from "../../Constants";
 
+import {V} from "../../math/Vector";
+
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
@@ -36,6 +38,9 @@ export var ComponentRenderer = (function() {
             let transform = object.getTransform();
             let imgName = object.getImageName();
 
+            let dPos = V(0,0);
+            let size = transform.getSize();
+
             // Transform the renderer
             renderer.transform(camera, transform);
 
@@ -51,10 +56,14 @@ export var ComponentRenderer = (function() {
                 if (object.isOn())
                     imgName = object.getOnImageName();
 
-                let box = object.getSelectionBox();
+                // Set size/pos for drawing image to be size of "pressable" part
+                size = object.getPressableBox().getSize();
+                dPos = object.getPressableBox().getPos();
+
+                let box = transform;
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+                renderer.rect(0, 0, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
 
             if (object instanceof Gate) {
@@ -68,7 +77,7 @@ export var ComponentRenderer = (function() {
             if (object instanceof SevenSegmentDisplay) {
                 let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
                 let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+                renderer.rect(dPos.x, dPos.y, size.x, size.y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
 
             // Draw tinted image
@@ -77,13 +86,12 @@ export var ComponentRenderer = (function() {
                 tint = object.getColor();
 
             if (Images.GetImage(imgName))
-                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+                renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
 
             // Draw LED turned on
             if (object instanceof LED) {
-                if (object.isOn()) {
-                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*transform.getSize().x, 3*transform.getSize().y, object.getColor());
-                }
+                if (object.isOn())
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
             }
 
             renderer.restore();

@@ -27,6 +27,7 @@ import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {InputPort} from "../models/ioobjects/InputPort";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
+import {Button}   from "../models/ioobjects/inputs/Button";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
@@ -143,6 +144,9 @@ export var MainDesignerController = (function() {
             var s2 = new Switch();
             var g1 = new ANDGate();
             var l1 = new LED();
+
+            var b = new Button();
+            designer.addObject(b);
 
             s1.setPos(V(-200, 100));
             s2.setPos(V(-200, -100));
