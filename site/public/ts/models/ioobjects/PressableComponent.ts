@@ -67,10 +67,10 @@ export abstract class PressableComponent extends Component {
 		});
 		return max;
 	}
-	
+
 	public copy(): PressableComponent {
 		let copy = <PressableComponent>super.copy();
-		copy.selectionBox = this.selectionBox.copy();
+		copy.pressableBox = this.pressableBox.copy();
 		return copy;
 	}
 

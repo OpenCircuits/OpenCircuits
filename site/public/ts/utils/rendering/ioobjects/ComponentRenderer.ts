@@ -71,7 +71,7 @@ export var ComponentRenderer = (function() {
                 size = object.getPressableBox().getSize();
                 dPos = object.getPressableBox().getPos();
 
-                let box = object.getSelectionBox();
+                let box = transform;
                 drawBox(renderer, box, selected);
             }
 
