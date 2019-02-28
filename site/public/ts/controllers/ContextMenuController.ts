@@ -26,7 +26,7 @@ export var ContextMenuController = (function() {
             });
 
             // Stop default right click menu
-            window.addEventListener("contextmenu", function(e) {
+            canvas.addEventListener("contextmenu", function(e) {
                 e.preventDefault();
                 onContextMenu(e, canvas);
             });
