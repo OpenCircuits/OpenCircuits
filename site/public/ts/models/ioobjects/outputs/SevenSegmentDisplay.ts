@@ -1,8 +1,8 @@
 import {IO_PORT_RADIUS} from "../../../utils/Constants";
-import {V} from "../../../utils/math/Vector";
+import {Vector, V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
-import { Port } from "../Port";
+import {Port} from "../Port";
 
 export class SevenSegmentDisplay extends Component {
     public constructor() {
@@ -25,6 +25,16 @@ export class SevenSegmentDisplay extends Component {
             port.setOriginPos(V(port.getOriginPos().x, l));
             port.setTargetPos(V(port.getTargetPos().x, l));
         }
+    }
+
+    public getSegments(): Array<Vector> {
+        return [V( 0,   -1), V(1, 0),
+                V( 1, -0.5), V(0, 1),
+                V( 1,  0.5), V(0, 1),
+                V( 0,    1), V(1, 0),
+                V(-1,  0.5), V(0, 1),
+                V(-1, -0.5), V(0, 1),
+                V( 0,    0), V(1, 0)];
     }
 
     public getDisplayName(): string {

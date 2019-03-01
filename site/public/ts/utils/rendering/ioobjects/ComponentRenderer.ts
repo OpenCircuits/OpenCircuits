@@ -5,16 +5,25 @@ import {DEBUG_SHOW_CULLBOXES,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR} from "../../Constants";
 
+import {V} from "../../math/Vector";
+
 import {Renderer} from "../Renderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
+import {ICRenderer} from "./other/ICRenderer";
+import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
+import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
+import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
 
+import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
+import {LED} from "../../../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
+import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
 
@@ -23,6 +32,13 @@ import {Images} from "../../Images";
 // import {LED} from "../../../models/ioobjects/outputs/LED";
 
 export var ComponentRenderer = (function() {
+
+    let drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
+        let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+        renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+    }
+
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
             // Check if object is on the screen
@@ -33,6 +49,9 @@ export var ComponentRenderer = (function() {
 
             let transform = object.getTransform();
             let imgName = object.getImageName();
+
+            let dPos = V(0,0);
+            let size = transform.getSize();
 
             // Transform the renderer
             renderer.transform(camera, transform);
@@ -49,26 +68,37 @@ export var ComponentRenderer = (function() {
                 if (object.isOn())
                     imgName = object.getOnImageName();
 
-                let box = object.getSelectionBox();
-                let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-                let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(box.getPos().x, box.getPos().y, box.getSize().x, box.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-            }
-            if (object instanceof Gate) {
-                GateRenderer.render(renderer, camera, object, selected);
+                // Set size/pos for drawing image to be size of "pressable" part
+                size = object.getPressableBox().getSize();
+                dPos = object.getPressableBox().getPos();
+
+                let box = transform;
+                drawBox(renderer, box, selected);
             }
 
-            //Seven Segment renderer
-            if (object instanceof SevenSegmentDisplay) {
-                let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-                let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-                renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-            }
+            // Specific renderers
+            if (object instanceof Gate)
+                GateRenderer.render(renderer, camera, object, selected);
+            if (object instanceof FlipFlop)
+                FlipFlopRenderer.render(renderer, camera, object, selected);
+            if (object instanceof IC)
+                ICRenderer.render(renderer, camera, object, selected);
+            if (object instanceof SevenSegmentDisplay)
+                SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            if (Images.GetImage(imgName)) 
-                renderer.image(Images.GetImage(imgName), 0, 0, transform.getSize().x, transform.getSize().y, tint);
+            if (object instanceof LED)
+                tint = object.getColor();
+
+            if (Images.GetImage(imgName))
+                renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
+
+            // Draw LED turned on
+            if (object instanceof LED) {
+                if (object.isOn())
+                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
+            }
 
             renderer.restore();
 

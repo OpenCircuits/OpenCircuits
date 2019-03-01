@@ -67,11 +67,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
         // Check if current tool should be deactivated
         //  and default tool (selection tool) should be activated
-        if (this.currentTool.deactivate(event, input, button)) {
+        if (this.currentTool != this.selectionTool &&
+            this.currentTool.deactivate(event, input, button)) {
             // Add action
             if (this.currentTool.getAction() != undefined)
                 this.actionManager.add(this.currentTool.getAction())
             this.activate(this.selectionTool);
+            this.selectionTool.activate(this.currentTool, event, input, button);
             return true;
         }
 
@@ -79,6 +81,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         for (let tool of this.tools) {
             if (tool.activate(this.currentTool, event, input, button)) {
                 this.activate(tool);
+                this.selectionTool.deactivate(event, input, button);
                 return true;
             }
         }

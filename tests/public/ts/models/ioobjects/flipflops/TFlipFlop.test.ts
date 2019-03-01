@@ -2,7 +2,7 @@ import "jest";
 
 import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
 import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {TFlipFlop}         from "../../../../../../site/public/ts/models/ioobjects/flipflops/TFlipFlop";
+import {TFlipFlop}       from "../../../../../../site/public/ts/models/ioobjects/flipflops/TFlipFlop";
 import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
 
 describe("TFlipFLop", () => {
@@ -62,13 +62,5 @@ describe("TFlipFLop", () => {
 
         expect(l1.isOn()).toBe(true);
         expect(l0.isOn()).toBe(false);
-    });
-    /*
-     * I like TFlipFlops, so I am testing the getImageName function
-     * for flipflops here because it should be tested and only needs
-     * to be tested once ~NTP
-     */
-    it("Check Image Name", () => {
-        expect(f.getImageName()).toBe("flipflop.svg");
     });
 });
