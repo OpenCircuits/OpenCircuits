@@ -5,7 +5,7 @@ import {Input} from "../Input";
 
 import {ActionManager} from "../actions/ActionManager";
 
-export class ActionsHelper {
+export class ActionHelper {
 
     private actionManager : ActionManager;
     private ctrlKeyPressed : boolean;

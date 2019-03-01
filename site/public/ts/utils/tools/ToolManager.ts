@@ -15,7 +15,7 @@ import {TranslateTool} from "./TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
 
-import {ActionsHelper} from "./ActionsHelper";
+import {ActionHelper} from "./ActionHelper";
 import {ActionManager} from "../actions/ActionManager";
 
 export class ToolManager implements MouseListener, KeyboardListener {
@@ -26,7 +26,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private translateTool       : TranslateTool;
     private placeComponentTool  : PlaceComponentTool;
     private wiringTool          : WiringTool;
-    private actionsHelper       : ActionsHelper;
+    private actionHelper        : ActionHelper;
 
     private actionManager : ActionManager;
 
@@ -43,7 +43,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.translateTool      = new TranslateTool(camera);
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
-        this.actionsHelper      = new ActionsHelper(this.actionManager);
+        this.actionHelper       = new ActionHelper(this.actionManager);
 
         // Array of tools to activate
         this.tools = [
@@ -84,7 +84,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         }
 
         // Re-render on action update
-        if (this.actionsHelper.onEvent(this.currentTool, event, input, button))
+        if (this.actionHelper.onEvent(this.currentTool, event, input, button))
           return true;
 
         return didSomething;
