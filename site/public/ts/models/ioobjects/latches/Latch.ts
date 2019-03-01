@@ -30,6 +30,6 @@ export abstract class Latch extends Component {
 	}
 
 	public getImageName() {
-		return "latch.svg";
+		return "";
 	}
 }

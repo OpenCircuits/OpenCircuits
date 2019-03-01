@@ -8,16 +8,17 @@ import {DEBUG_SHOW_CULLBOXES,
 import {V} from "../../math/Vector";
 
 import {Renderer} from "../Renderer";
+import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {ICRenderer} from "./other/ICRenderer";
-import {FlipFlopRenderer} from "./flipflops/FlipFlopRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
 import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
 
 import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
+import {Latch} from "../../../models/ioobjects/latches/Latch";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
@@ -79,11 +80,11 @@ export var ComponentRenderer = (function() {
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
-            if (object instanceof FlipFlop)
-                FlipFlopRenderer.render(renderer, camera, object, selected);
-            if (object instanceof IC)
+            else if (object instanceof FlipFlop || object instanceof Latch)
+                drawBox(renderer, object.getTransform(), selected);
+            else if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
-            if (object instanceof SevenSegmentDisplay)
+            else if (object instanceof SevenSegmentDisplay)
                 SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
@@ -99,6 +100,9 @@ export var ComponentRenderer = (function() {
                 if (object.isOn())
                     renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
             }
+
+            // Render the IOLabels, does not render labels if they are blank
+            IOLabelRenderer.render(renderer, camera, object);
 
             renderer.restore();
 
