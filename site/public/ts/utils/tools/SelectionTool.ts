@@ -76,7 +76,7 @@ export class SelectionTool extends Tool {
 
     public deactivate(event: string, input: Input, button?: number): boolean {
         this.selecting = false;
-        
+
         return false;
     }
 
