@@ -23,12 +23,15 @@ export class ActionHelper {
                 this.ctrlKeyPressed = false;
 
         if (event == "keydown" && this.ctrlKeyPressed) {
-            if (button === Z_KEY)
+            if (button === Z_KEY) {
               this.actionManager.undo()
-            if (button === Y_KEY)
+              return true; // True to re-render
+            }
+            if (button === Y_KEY) {
               this.actionManager.redo()
+              return true; // True to re-render
+            }
         }
-
-        return true; // True to re-render
+        return false;
     }
 }
