@@ -12,7 +12,7 @@ export class Button extends PressableComponent {
 	}
 
 	public isWithinPressBounds(v: Vector): boolean {
-		return CircleContains(this.getTransform().getPos(), this.getTransform().getSize().x/2, v);
+		return CircleContains(this.getPos(), this.getSize().x/2, v);
 	}
 
     public press() {

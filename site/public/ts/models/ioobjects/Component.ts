@@ -219,6 +219,10 @@ export abstract class Component extends CullableObject {
         return this.transform.getPos();
     }
 
+    public getSize(): Vector {
+        return this.transform.getSize();
+    }
+
     public getAngle(): number {
         return this.transform.getAngle();
     }
@@ -262,17 +266,17 @@ export abstract class Component extends CullableObject {
 
         return max;
     }
-    
+
     public copy(): Component {
         let copy = <Component>super.copy();
-        
+
         // Copy properties
         copy.transform = this.transform.copy();
         copy.inputPortCount  = this.inputPortCount.copy();
         copy.outputPortCount = this.outputPortCount.copy();
         copy.setInputPortCount(this.getInputPortCount());
         copy.setOutputPortCount(this.getOutputPortCount());
-        
+
         // Copy port positions
         let ports = this.getPorts();
         let copyPorts = copy.getPorts();
@@ -280,7 +284,7 @@ export abstract class Component extends CullableObject {
             copyPorts[i].setOriginPos(ports[i].getOriginPos());
             copyPorts[i].setTargetPos(ports[i].getTargetPos());
         }
-        
+
         return copy;
     }
 
