@@ -27,6 +27,20 @@ export class IC extends Component {
                 port.activate(on);
             }
         }
+
+        this.update();
+    }
+
+    private copyPorts(): void {
+        let ports = this.data.getPorts();
+        let myPorts = this.getPorts();
+
+        // Copy names and positions of ports
+        for (let i = 0; i < ports.length; i++) {
+            myPorts[i].setName     (ports[i].getName());
+            myPorts[i].setOriginPos(ports[i].getOriginPos());
+            myPorts[i].setTargetPos(ports[i].getTargetPos());
+        }
     }
 
     public setDesigner(designer?: CircuitDesigner): void {
@@ -45,10 +59,7 @@ export class IC extends Component {
         this.transform.setSize(this.data.getSize());
 
         // Update port positions
-        for (let i = 0; i < this.inputs.length; i++)
-            this.inputs[i].setTargetPos(this.data.getInputPos(i));
-        for (let i = 0; i < this.outputs.length; i++)
-            this.outputs[i].setTargetPos(this.data.getOutputPos(i));
+        this.copyPorts();
     }
 
     public activate(): void {
@@ -58,6 +69,12 @@ export class IC extends Component {
             let input = this.collection.inputs[i];
             input.activate(port.getIsOn());
         }
+    }
+
+    public copy(): IC {
+        let copy = new IC(this.data);
+        copy.transform = this.transform.copy();
+        return copy;
     }
 
     public getDisplayName(): string {
