@@ -11,7 +11,6 @@ import {Renderer} from "../Renderer";
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
-import {ICRenderer} from "./other/ICRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
 import {Transform} from "../../math/Transform";
@@ -81,9 +80,9 @@ export var ComponentRenderer = (function() {
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
-                drawBox(renderer, object.getTransform(), selected);
+                drawBox(renderer, transform, selected);
             else if (object instanceof IC)
-                ICRenderer.render(renderer, camera, object, selected);
+                drawBox(renderer, transform, selected);
             else if (object instanceof SevenSegmentDisplay)
                 SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
 
