@@ -10,11 +10,14 @@ import {Propagation} from "./Propagation";
 import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
+import {ICData}  from "./ioobjects/other/ICData";
 
 import {InputPort}  from "./ioobjects/InputPort";
 import {OutputPort} from "./ioobjects/OutputPort";
 
 export class CircuitDesigner implements XMLable {
+	private ics: Array<ICData>;
+
 	private objects: Array<Component>;
 	private wires: Array<Wire>;
 	private propagationQueue: Array<Propagation>;
@@ -27,6 +30,7 @@ export class CircuitDesigner implements XMLable {
 		this.propagationTime = propagationTime;
 		this.updateCallback = callback;
 
+		this.ics     = [];
 		this.objects = [];
 		this.wires   = [];
 		this.propagationQueue = [];
@@ -93,6 +97,10 @@ export class CircuitDesigner implements XMLable {
 		}
 
 		return true;
+	}
+
+	public addICData(data: ICData): void {
+		this.ics.push(data);
 	}
 
 	public addObjects(objects: Array<Component>): void {
