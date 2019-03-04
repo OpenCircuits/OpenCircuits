@@ -123,7 +123,7 @@ export var MainDesignerController = (function() {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
-                            toolManager.getCurrentTool()));
+                            toolManager));
 
             // input
             input = new Input(view.getCanvas());
@@ -191,6 +191,9 @@ export var MainDesignerController = (function() {
             if (action == undefined)
                 return;
             actions.add(action);
+        },
+        ClearSelections: function(): void {
+            toolManager.getSelectionTool().clearSelections();
         },
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
