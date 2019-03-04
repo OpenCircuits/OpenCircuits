@@ -82,6 +82,56 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return didSomething;
     }
 
+    /**
+     * Removes a type of tool from this tool manager
+     *
+     * @param  toolType The type of tool to remove
+     *
+     */
+    public removeTool(toolType: typeof Tool |
+                                typeof PanTool |
+                                typeof RotateTool |
+                                typeof TranslateTool |
+                                typeof PlaceComponentTool |
+                                typeof WiringTool): void {
+        for (let i = 0; i < this.tools.length; i++) {
+            let tool = this.tools[i];
+            if (tool instanceof toolType) {
+                // Activate selection tool if this tool is already active
+                if (this.currentTool == tool) {
+                    this.activate(this.selectionTool);
+                    this.selectionTool.activate(this.currentTool, "remove", undefined, 0);
+                }
+
+                // Remove the tool from this list of tools
+                this.tools.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Check if a specific type of tool is active
+     *
+     * @param  toolType The type of tool
+     * @return          True if the tool is active,
+     *                  False otherwise
+     */
+    public hasTool(toolType: typeof Tool |
+                             typeof PanTool |
+                             typeof RotateTool |
+                             typeof TranslateTool |
+                             typeof PlaceComponentTool |
+                             typeof WiringTool): boolean {
+
+        for (let i = 0; i < this.tools.length; i++) {
+            let tool = this.tools[i];
+            if (tool instanceof toolType)
+                return true;
+        }
+        return false;
+    }
+
     public onMouseDown(input: Input, button: number): boolean {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onMouseDown(i,b), "mousedown", input, button);
     }
