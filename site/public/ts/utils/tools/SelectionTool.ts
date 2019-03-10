@@ -33,6 +33,8 @@ export class SelectionTool extends Tool {
     private currentPressedObj: IOObject;
     private pressedObj: boolean;
 
+    private disabledSelectionBox: boolean;
+
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
@@ -64,6 +66,10 @@ export class SelectionTool extends Tool {
         this.selections = [];
         this.selectionsChanged();
         return true;
+    }
+
+    public disableSelectionBox() {
+        this.disabledSelectionBox = true;
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -111,7 +117,7 @@ export class SelectionTool extends Tool {
     public onMouseDrag(input: Input, button: number): boolean {
         // Update positions of selection
         //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON) {
+        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelectionBox) {
             this.selecting = true;
 
             // Update selection box positions

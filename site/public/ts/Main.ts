@@ -1,8 +1,8 @@
 
 
 import {Images} from "./utils/Images";
-// import {ICDesignerController} from "./controllers/ICDesignerController";
 import {MainDesignerController} from "./controllers/MainDesignerController";
+import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
 import {ItemNavController} from "./controllers/ItemNavController";
 // import {InputController} from "./utils/input/InputController";
@@ -20,6 +20,7 @@ function Load(onFinishLoading: () => void) {
 function Init() {
     // Initialize all controllers
     MainDesignerController.Init();
+    ICDesignerController.Init();
     HeaderController.Init(MainDesignerController.GetDesigner());
     ItemNavController.Init(MainDesignerController.GetDesigner());
     ContextMenuController.Init();

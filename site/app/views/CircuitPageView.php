@@ -39,15 +39,15 @@ class CircuitPageView {
                 </div>
 
                 <div id="context-menu" class="contextmenu" style="visibility: hidden;">
-                    <button id="context-menu-cut" alt="Cut">Cut</button>   
+                    <button id="context-menu-cut" alt="Cut">Cut</button>
                     <button id="context-menu-copy" alt="Copy">Copy</button>
-                    <button id="context-menu-paste" alt="Paste">Paste</button>  
-                    <button id="context-menu-select-all" alt="Select All">Select All</button>         
+                    <button id="context-menu-paste" alt="Paste">Paste</button>
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>
                     <hr/>
                     <button id="context-menu-undo" alt="Undo">Undo</button>
                     <button id="context-menu-redo" alt="Redo">Redo</button>
                 </div>
-                    
+
             </header>
 
             <main>
@@ -92,6 +92,14 @@ HTML;
 
                 <canvas id="canvas" class="canvas"></canvas>
 
+                <div id="ic-designer" style="visibility: hidden;">
+                    <canvas id="ic-canvas" class="icdesigner"></canvas>
+                    <div class="icbuttons">
+                        <button id="ic-confirmbutton" class="icbuttons__button" onclick="icdesigner.confirm();" alt="Submit IC">Confirm</button>
+                        <button id="ic-cancelbutton"  class="icbuttons__button" onclick="icdesigner.cancel();"  alt="Cancel IC">Cancel</button>
+                    </div>
+                </div>
+
                 <div id="popup" class="popup" tabindex="-1" style="visibility: hidden;">
                     <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
                     <hr/>
@@ -116,10 +124,10 @@ HTML;
                             <input id="popup-clock-delay" type="number" value="1000" min="200" max="10000" step="100" alt="Clock delay in milliseconds" />
                         </label>
                     </div>
-                    <!--
+
                     <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
-                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
-                    -->
+                    <!-- <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button> -->
+
                 </div>
             </main>
         </div>
