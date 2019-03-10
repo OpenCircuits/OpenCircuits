@@ -23,31 +23,44 @@ class CircuitPageView {
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
                 </div>
                 <div class="header__right">
-                    <button type="button" onclick="document.getElementById('header-file-input').click();">
-                        <img src="img/icons/open.svg" height="100%" alt="Open a file" />
-                    </button>
+                    <div>
+                        <button type="button" onclick="document.getElementById('header-file-input').click();">
+                            <img src="img/icons/open.svg" height="100%" alt="Open a file" />
+                        </button>
+                    </div>
                     <input id="header-file-input" type="file" name="name" style="display: none;" multiple="false" required="true" accept=".circuit,.xml" />
-                    <button id="header-download-button" type="button">
-                        <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
-                    </button>
-                    <button id="header-download-pdf-button" type="button">
-                        <img src="img/icons/pdf_download.svg" height="100%" alt="Save current scene as PDF" />
-                    </button>
-                    <button id="header-download-png-button" type="button">
-                        <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
-                    </button>
+
+                    <div class="header__dropdown">
+                        <button id="header-download-dropdown-button" class="header__dropdown__button">
+                            <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                        </button>
+                        <div id="header-download-dropdown-content" class="header__dropdown__content">
+                            <div id="header-download-button" type="button">
+                                <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                                <a>Download</a>
+                            </div>
+                            <div id="header-download-pdf-button" type="button">
+                                <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF" />
+                                <a>Download as PDF</a>
+                            </div>
+                            <div id="header-download-png-button" type="button">
+                                <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG" />
+                                <a>Download as PNG</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="context-menu" class="contextmenu" style="visibility: hidden;">
-                    <button id="context-menu-cut" alt="Cut">Cut</button>   
+                    <button id="context-menu-cut" alt="Cut">Cut</button>
                     <button id="context-menu-copy" alt="Copy">Copy</button>
-                    <button id="context-menu-paste" alt="Paste">Paste</button>  
-                    <button id="context-menu-select-all" alt="Select All">Select All</button>         
+                    <button id="context-menu-paste" alt="Paste">Paste</button>
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>
                     <hr/>
                     <button id="context-menu-undo" alt="Undo">Undo</button>
                     <button id="context-menu-redo" alt="Redo">Redo</button>
                 </div>
-                    
+
             </header>
 
             <main>
