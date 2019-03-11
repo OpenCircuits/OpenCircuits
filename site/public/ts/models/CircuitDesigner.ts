@@ -3,18 +3,24 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
-import {CreateWire} from "../utils/ComponentUtils";
+import {CreateWire,
+		SaveGroup,
+		LoadGroup} from "../utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
 import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
+import {ICData}  from "./ioobjects/other/ICData";
+import {IC}  from "./ioobjects/other/IC";
 
 import {InputPort}  from "./ioobjects/InputPort";
 import {OutputPort} from "./ioobjects/OutputPort";
 
 export class CircuitDesigner implements XMLable {
+	private ics: Array<ICData>;
+
 	private objects: Array<Component>;
 	private wires: Array<Wire>;
 	private propagationQueue: Array<Propagation>;
@@ -27,15 +33,13 @@ export class CircuitDesigner implements XMLable {
 		this.propagationTime = propagationTime;
 		this.updateCallback = callback;
 
-		this.objects = [];
-		this.wires   = [];
-		this.propagationQueue = [];
-		this.updateRequests = 0;
+		this.reset();
 	}
 
 	public reset(): void {
+		this.ics     = [];
 		this.objects = [];
-		this.wires = [];
+		this.wires   = [];
 		this.propagationQueue = [];
 		this.updateRequests = 0;
 	}
@@ -95,6 +99,10 @@ export class CircuitDesigner implements XMLable {
 		return true;
 	}
 
+	public addICData(data: ICData): void {
+		this.ics.push(data);
+	}
+
 	public addObjects(objects: Array<Component>): void {
 		for (var i = 0; i < objects.length; i++)
 			this.addObject(objects[i]);
@@ -147,93 +155,54 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public save(node: XMLNode): void {
-		let objectsNode     = node.createChild("objects");
-		let wiresNode       = node.createChild("wires");
+		let icDataNode  = node.createChild("icdata");
 
-		let idMap = new Map<IOObject, number>();
+		let icIdMap = new Map<ICData, number>();
+		let icId = 0;
 
-		let id = 0;
-		for (let obj of this.objects) {
-			let componentNode = objectsNode.createChild(obj.getXMLName());
+		// Create ICData map
+		for (let ic of this.ics)
+			icIdMap.set(ic, icId++);
 
-			// Set and save XML ID for connections
-			idMap.set(obj, id);
-	        componentNode.addAttribute("xid", id);
-			id++;
+		// Save ICs
+		for (let ic of this.ics) {
+			let icNode = icDataNode.createChild("icdata");
+			let icid = icIdMap.get(ic);
 
-			// Save properties
-			obj.save(componentNode);
+			icNode.addAttribute("icid", icid);
+			ic.save(icNode, icIdMap);
 		}
 
-		for (let wire of this.wires) {
-			let wireNode = wiresNode.createChild(wire.getXMLName());
-
-			// Save properties
-			wire.save(wireNode);
-
-			let inputNode = wireNode.createChild("input");
-			{
-				let iPort = wire.getInput();
-				let input = iPort.getParent();
-				let iI = 0;
-				// Find index of port
-				while (iI < input.getOutputPortCount() &&
-					   input.getOutputPort(iI) !== iPort) { iI++; }
-				inputNode.addAttribute("xid", idMap.get(input));
-				inputNode.addAttribute("index", iI);
-			}
-			let outputNode = wireNode.createChild("output");
-			{
-				let oPort = wire.getOutput();
-				let input = oPort.getParent();
-				let iO = 0;
-				// Find index of port
-				while (iO < input.getInputPortCount() &&
-					   input.getInputPort(iO) !== oPort) { iO++; }
-				outputNode.addAttribute("xid", idMap.get(input));
-				outputNode.addAttribute("index", iO);
-			}
-		}
+		SaveGroup(node, this.objects, this.wires, icIdMap);
 	}
 
+
 	public load(node: XMLNode): void {
-		let objectsNode     = node.findChild("objects");
-		let wiresNode       = node.findChild("wires");
+		let icDataNode  = node.findChild("icdata");
 
-		let idMap = new Map<number, Component>();
+		let icIdMap = new Map<number, ICData>();
+		let ics = icDataNode.getChildren();
 
-		let objects = objectsNode.getChildren();
-		for (let object of objects) {
-			let xid = object.getIntAttribute("xid");
-
-			// Create and add object
-			let obj = CreateComponentFromXML(object.getTag());
-			this.addObject(obj);
-
-			// Add to ID map for connections later
-			idMap.set(xid, obj);
-
-			// Load properties
-			obj.load(object);
+		// Create ICData map
+		for (let ic of ics) {
+			let icid = ic.getIntAttribute("icid");
+			icIdMap.set(icid, new ICData())
 		}
 
-		let wires = wiresNode.getChildren();
-		for (let wire of wires) {
-			let inputNode  = wire.findChild("input");
-			let outputNode = wire.findChild("output");
-
-			// Load connections
-			let inputObj  = idMap.get( inputNode.getIntAttribute("xid"));
-			let outputObj = idMap.get(outputNode.getIntAttribute("xid"));
-			let inputIndex  =  inputNode.getIntAttribute("index");
-			let outputIndex = outputNode.getIntAttribute("index");
-
-			// Create wire
-			let w = this.connect(inputObj, inputIndex,  outputObj, outputIndex);
-
-			// Load properties
-			w.load(wire);
+		// Load ICs
+		for (let ic of ics) {
+			let icid = ic.getIntAttribute("icid");
+			icIdMap.get(icid).load(ic, icIdMap);
 		}
+
+		let group = LoadGroup(node, icIdMap);
+
+		// Add all objects/wires
+		group.getAllComponents().forEach((c) => this.addObject(c));
+		group.wires.forEach((w) => {
+			this.wires.push(w);
+			w.setDesigner(this);
+		});
 	}
 
 	public getObjects(): Array<Component> {

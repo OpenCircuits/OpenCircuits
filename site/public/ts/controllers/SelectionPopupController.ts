@@ -1,10 +1,15 @@
 import {Vector} from "../utils/math/Vector";
+
+import {ICData} from "../models/ioobjects/other/ICData";
+
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
 import {Camera} from "../utils/Camera";
+
 import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
 import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
+import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -34,17 +39,19 @@ export var SelectionPopupController = (function() {
             modules = new Array<SelectionPopupModule>(
                 new TitlePopupModule(div),
                 new PositionPopupModule(div),
+                new ICButtonPopupModule(div)
             );
             pos = new Vector(0, 0);
         },
         Update: function(): void {
-            if (MainDesignerController.GetSelections().length) {
+            const selections = MainDesignerController.GetSelections();
+
+            if (selections.length > 0) {
                 // Update each module
                 // Important to do this before repositioning the popup, since its size changes depending on which modules are active
                 modules.forEach(c => c.pull());
 
                 // Update the position of the popup
-                const selections = MainDesignerController.GetSelections();
                 let sum = new Vector(0, 0);
                 let count = 0;
                 for (let i = 0; i < selections.length; ++i) {

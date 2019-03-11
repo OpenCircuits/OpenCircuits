@@ -27,12 +27,12 @@ export class ORGate extends Gate {
 
         for (let i = 0; i < arr.length; i++) {
             let port = arr[i];
-			let t = ((port.getOriginPos().y) / this.getTransform().getSize().y + 0.5) % 1.0;
+			let t = ((port.getOriginPos().y) / this.getSize().y + 0.5) % 1.0;
 			if (t < 0) t += 1.0;
 
 			// @TODO move to a MathUtils QuadCurve function or something
-			let s = this.getTransform().getSize().x/2 - DEFAULT_BORDER_WIDTH;
-			let l = this.getTransform().getSize().x/5 - DEFAULT_BORDER_WIDTH;
+			let s = this.getSize().x/2 - DEFAULT_BORDER_WIDTH;
+			let l = this.getSize().x/5 - DEFAULT_BORDER_WIDTH;
 			let t2 = 1 - t;
 
 			// Calculate x position along quadratic curve

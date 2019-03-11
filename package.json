@@ -11,8 +11,8 @@
   "devDependencies": {
     "@types/jest": "^23.3.10",
     "copy-webpack-plugin": "^4.6.0",
-    "jest": "^23.6.0",
-    "ts-jest": "^23.10.5",
+    "jest": "^24.4.0",
+    "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.1",
     "typescript": "^3.2.2",
     "webpack": "^4.25.1",

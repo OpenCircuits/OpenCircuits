@@ -1,37 +1,36 @@
-import {CONTROL_KEY,
-        Z_KEY, Y_KEY} from "../Constants";
+import {Z_KEY, Y_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {Input} from "../Input";
 
 import {ActionManager} from "../actions/ActionManager";
 
 export class ActionHelper {
-
+    private disabled: boolean;
     private actionManager : ActionManager;
-    private ctrlKeyPressed : boolean;
 
     public constructor(actionManager: ActionManager) {
-        this.ctrlKeyPressed = false;
+        this.disabled = false;
         this.actionManager = actionManager;
     }
 
     public onEvent(currentTool: Tool, event: string, input: Input, button?: number): boolean {
-        if (button === CONTROL_KEY)
-            if (event == "keydown")
-                this.ctrlKeyPressed = true;
-            else if (event == "keyup")
-                this.ctrlKeyPressed = false;
+        if (this.disabled)
+            return false;
 
-        if (event == "keydown" && this.ctrlKeyPressed) {
+        if (event == "keydown" && input.isModifierKeyDown()) {
             if (button === Z_KEY) {
-              this.actionManager.undo()
-              return true; // True to re-render
+                this.actionManager.undo()
+                return true; // True to re-render
             }
             if (button === Y_KEY) {
-              this.actionManager.redo()
-              return true; // True to re-render
+                this.actionManager.redo()
+                return true; // True to re-render
             }
         }
         return false;
+    }
+
+    public disable() {
+        this.disabled = true;
     }
 }

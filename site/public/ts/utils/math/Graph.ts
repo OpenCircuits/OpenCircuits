@@ -65,10 +65,13 @@ export class Graph<V, E> {
     }
 
     public isConnected(): boolean {
-        if (this.list.size == 0)
+        if (this.list.size <= 1)
             return true;
         let first  = this.getFirstConnectedNode(this.list);
         let rfirst = this.getFirstConnectedNode(this.reverseList);
+
+        if (first == undefined || rfirst == undefined)
+            return false;
 
         let visited = new Map<V, boolean>();
 
