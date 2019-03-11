@@ -92,7 +92,10 @@ export class Graph<V, E> {
     }
 
     public getNodes(): V[] {
-        return Array.from(this.list.keys());
+        let nodes = [];
+        for (let val of this.list.keys())
+            nodes.push(val);
+        return nodes;
     }
 
 }
