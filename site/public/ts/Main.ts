@@ -11,19 +11,25 @@ import {SelectionPopupController} from "./controllers/SelectionPopupController";
 function Init() {
     LoadingScreen.Render();
 
-    const promise = new Promise((resolve, reject) => {
-        // Initialize all controllers
-        MainDesignerController.Init();
-        ICDesignerController.Init();
-        HeaderController.Init(MainDesignerController.GetDesigner());
-        ItemNavController.Init(MainDesignerController.GetDesigner());
-        ContextMenuController.Init();
-        SelectionPopupController.Init(MainDesignerController.GetCamera());
-        ICDesignerController.Init();
-        resolve(1);
-    });
+    const promises = [
+        new Promise((resolve, reject) => {
+            MainDesignerController.Init();
+            HeaderController.Init(MainDesignerController.GetDesigner());
+            ItemNavController.Init(MainDesignerController.GetDesigner());
+            SelectionPopupController.Init(MainDesignerController.GetCamera());
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            ICDesignerController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            ContextMenuController.Init();
+            resolve(1);
+        })
+    ];
 
-    promise.then((val)=>{
+    Promise.all(promises).then((val)=>{
         MainDesignerController.Render();
         // InputController.Init();    
     });
