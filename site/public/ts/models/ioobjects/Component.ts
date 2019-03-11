@@ -4,6 +4,7 @@ import {DEFAULT_BORDER_WIDTH,
 
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
+import {RectContains} from "../../utils/math/MathUtils";
 import {ClampedValue} from "../../utils/ClampedValue";
 import {XMLNode}      from "../../utils/io/xml/XMLNode";
 
@@ -142,6 +143,30 @@ export abstract class Component extends CullableObject {
         return this.transform.getMatrix().mul(v);
     }
 
+    /**
+     * Determines whether or not a point is within
+     *  this component's "pressable" bounds (always false)
+     *  for most components
+     * @param  v The point
+     * @return   True if the point is within this component,
+     *           false otherwise
+     */
+	public isWithinPressBounds(v: Vector): boolean {
+        return false;
+	}
+
+    /**
+     * Determines whether or not a point is within
+     *  this component's "selectable" bounds
+     * @param  v The point
+     * @return   True if the point is within this component,
+     *           false otherwise
+     */
+    public isWithinSelectBounds(v: Vector): boolean {
+        return RectContains(this.getTransform(), v) &&
+               !this.isWithinPressBounds(v);
+    }
+
 	public getInputPort(i: number): InputPort {
 		return this.inputs[i];
 	}
@@ -194,6 +219,10 @@ export abstract class Component extends CullableObject {
         return this.transform.getPos();
     }
 
+    public getSize(): Vector {
+        return this.transform.getSize();
+    }
+
     public getAngle(): number {
         return this.transform.getAngle();
     }
@@ -236,6 +265,27 @@ export abstract class Component extends CullableObject {
         });
 
         return max;
+    }
+
+    public copy(): Component {
+        let copy = <Component>super.copy();
+
+        // Copy properties
+        copy.transform = this.transform.copy();
+        copy.inputPortCount  = this.inputPortCount.copy();
+        copy.outputPortCount = this.outputPortCount.copy();
+        copy.setInputPortCount(this.getInputPortCount());
+        copy.setOutputPortCount(this.getOutputPortCount());
+
+        // Copy port positions
+        let ports = this.getPorts();
+        let copyPorts = copy.getPorts();
+        for (let i = 0; i < ports.length; i++) {
+            copyPorts[i].setOriginPos(ports[i].getOriginPos());
+            copyPorts[i].setTargetPos(ports[i].getTargetPos());
+        }
+
+        return copy;
     }
 
     public save(node: XMLNode): void {

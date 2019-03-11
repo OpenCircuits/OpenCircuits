@@ -13,8 +13,8 @@ export abstract class FlipFlop extends Component {
 	protected state: boolean = false;
 	protected last_clock: boolean = false;
 
-	public constructor(numInputs: number, numOutputs: number, size: Vector) {
-		super(new ClampedValue(numInputs), new ClampedValue(numOutputs), size);
+	public constructor(numInputs: number, size: Vector) {
+		super(new ClampedValue(numInputs), new ClampedValue(2), size);
 		this.getOutputPort(0).setName("Q'");
 		this.getOutputPort(1).setName("Q ");
 	}

@@ -21,6 +21,7 @@ export var ItemNavController = (function() {
     // let downloadPNGButton = document.getElementById("header-download-png-button");
 
     let isOpen = false;
+    let disabled = false;
 
     let open = function() {
         itemnav.style.width       = ITEMNAV_WIDTH + "px";
@@ -45,7 +46,7 @@ export var ItemNavController = (function() {
     }
 
     return {
-        Init: function(designer: CircuitDesigner) {
+        Init: function(designer: CircuitDesigner): void {
             mainDesigner = designer;
 
             tab.onclick = () => { ItemNavController.Toggle(); }
@@ -62,7 +63,10 @@ export var ItemNavController = (function() {
                 child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
             }
         },
-        Toggle: function() {
+        Toggle: function(): void {
+            if (disabled)
+                return;
+
             if (isOpen) {
                 isOpen = false;
                 close();
@@ -70,6 +74,15 @@ export var ItemNavController = (function() {
                 isOpen = true;
                 open();
             }
+        },
+        IsOpen: function(): boolean {
+            return isOpen;
+        },
+        Enable: function(): void {
+            disabled = false;
+        },
+        Disable: function(): void {
+            disabled = true;
         }
     }
 

@@ -1,14 +1,5 @@
-/*
-    //This is a part of the old code that I wasn't able to implement
-    //The click area of the button is a rectangle, but it should be a circle
-
-    contains(pos) {
-        return circleContains(this.transform, pos);
-    }
-}
-*/
-
-import {V} from "../../../utils/math/Vector";
+import {Vector, V} from "../../../utils/math/Vector";
+import {CircleContains} from "../../../utils/math/MathUtils";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {PressableComponent} from "../PressableComponent";
 
@@ -18,6 +9,10 @@ export class Button extends PressableComponent {
 			  new ClampedValue(1),
 			  V(50, 50),
 		  	  V(50, 50));
+	}
+
+	public isWithinPressBounds(v: Vector): boolean {
+		return CircleContains(this.getPos(), this.getSize().x/2, v);
 	}
 
     public press() {

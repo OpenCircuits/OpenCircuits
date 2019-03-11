@@ -29,13 +29,15 @@ export var IOLabelRenderer = (function() {
             for (let i = 0; i < object.getInputPortCount(); i++){
                 let name = object.getInputPort(i).getName();
                 let pos0: Vector = object.getInputPort(i).getTargetPos();
-                portArithmetic(renderer, pos0, name, size);
+                if (name)
+                    portArithmetic(renderer, pos0, name, size);
             }
 
             for (let i = 0; i < object.getOutputPortCount(); i++){
                 let name = object.getOutputPort(i).getName();
                 let pos0: Vector = object.getOutputPort(i).getTargetPos();
-                portArithmetic(renderer, pos0, name, size);
+                if (name)
+                    portArithmetic(renderer, pos0, name, size);
             }
         }
     };

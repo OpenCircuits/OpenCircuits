@@ -5,7 +5,7 @@ import {LEFT_MOUSE_BUTTON,
         ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2} from "../utils/Constants";
 
-import {V} from "../utils/math/Vector";
+import {Vector, V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
@@ -27,12 +27,14 @@ import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {InputPort} from "../models/ioobjects/InputPort";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
+import {Button}   from "../models/ioobjects/inputs/Button";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
 import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 import {LED}      from "../models/ioobjects/outputs/LED";
+import {SelectionPopupController} from "./SelectionPopupController";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
@@ -62,14 +64,18 @@ export var MainDesignerController = (function() {
     }
 
     let onMouseDrag = function(button: number): void {
-        if (toolManager.onMouseDrag(input, button))
+        if (toolManager.onMouseDrag(input, button)) {
+            SelectionPopupController.Hide();
             MainDesignerController.Render();
+        }
         MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseUp = function(button: number): void {
-        if (toolManager.onMouseUp(input, button))
+        if (toolManager.onMouseUp(input, button)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
         MainDesignerController.AddAction(toolManager.popAction());
     }
 
@@ -102,6 +108,7 @@ export var MainDesignerController = (function() {
         let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
+        SelectionPopupController.Update();
         MainDesignerController.Render();
     }
     return {
@@ -118,7 +125,7 @@ export var MainDesignerController = (function() {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
-                            toolManager.getCurrentTool()));
+                            toolManager));
 
             // input
             input = new Input(view.getCanvas());
@@ -133,11 +140,15 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
+            toolManager.getSelectionTool().addSelectionChangeListener( () => SelectionPopupController.Update() );
 
             var s1 = new Switch();
             var s2 = new Switch();
             var g1 = new ANDGate();
             var l1 = new LED();
+
+            var b = new Button();
+            designer.addObject(b);
 
             s1.setPos(V(-200, 100));
             s2.setPos(V(-200, -100));
@@ -185,16 +196,25 @@ export var MainDesignerController = (function() {
         Render: function(): void {
             renderQueue.render();
         },
-        AddAction(action: Action): void {
+        AddAction: function(action: Action): void {
             if (action == undefined)
                 return;
             actions.add(action);
         },
+        ClearSelections: function(): void {
+            toolManager.getSelectionTool().clearSelections();
+        },
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
         },
+        GetSelections: function(): Array<IOObject> {
+            return toolManager.getSelectionTool().getSelections();
+        },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();
+        },
+        GetCamera: function(): Camera {
+            return view.getCamera();
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;

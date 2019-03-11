@@ -1,4 +1,4 @@
-[![OpenCircuits Repo](https://github.com/OpenCircuits/OpenCircuits/blob/master/old_site/public/img/icons/logo.svg)](https://github.com/OpenCircuits/OpenCircuits)
+[![OpenCircuits Repo](https://github.com/OpenCircuits/OpenCircuits/blob/master/site/public/img/icons/logo.svg)](https://github.com/OpenCircuits/OpenCircuits)
 
 [![GitHub license](https://img.shields.io/github/license/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/blob/master/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/graphs/contributors)
@@ -6,8 +6,9 @@
 [![GitHub issues](https://img.shields.io/github/issues/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/92a3e51c76c148cc8bf6149317308db7)](https://www.codacy.com/app/LeonMontealegre/OpenCircuits?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenCircuits/OpenCircuits&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits)
-[![Docker Build Status](https://img.shields.io/docker/build/opencircuits/opencircuits.svg)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/opencircuits/opencircuits.svg)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
 
 # Website
 
