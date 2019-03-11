@@ -10,9 +10,9 @@ import {Port} from "../Port";
 export abstract class Latch extends Component {
 	protected clock: boolean = false;
 	protected state: boolean = false;
-	
+
 	constructor(numInputs: number) {
-		super(new ClampedValue(numInputs), new ClampedValue(2), V(70, (numInputs == 2 ? 70 : 110)));
+		super(new ClampedValue(numInputs), new ClampedValue(2), V(70, 70));
 		this.getOutputPort(0).setName("Q'");
 		this.getOutputPort(1).setName("Q ");
 	}
