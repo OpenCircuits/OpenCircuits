@@ -229,6 +229,8 @@ export var ICDesignerController = (function() {
             toolManager.removeTool(PlaceComponentTool);
             toolManager.removeTool(WiringTool);
 
+            // Disable other functionality
+            toolManager.disableActions();
             toolManager.getSelectionTool().disableSelectionBox();
 
             // input

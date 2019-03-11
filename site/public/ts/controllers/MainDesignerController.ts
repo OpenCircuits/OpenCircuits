@@ -39,7 +39,6 @@ export var MainDesignerController = (function() {
     var view: MainDesignerView;
     var input: Input;
 
-    var actions: ActionManager;
     var toolManager: ToolManager;
     var renderQueue: RenderQueue;
 
@@ -52,13 +51,11 @@ export var MainDesignerController = (function() {
     let onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseDrag = function(button: number): void {
@@ -66,7 +63,6 @@ export var MainDesignerController = (function() {
             SelectionPopupController.Hide();
             MainDesignerController.Render();
         }
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseUp = function(button: number): void {
@@ -74,25 +70,21 @@ export var MainDesignerController = (function() {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onScroll = function(): void {
@@ -118,7 +110,6 @@ export var MainDesignerController = (function() {
             view = new MainDesignerView();
 
             // utils
-            actions = new ActionManager();
             toolManager = new ToolManager(view.getCamera(), designer);
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
@@ -187,11 +178,6 @@ export var MainDesignerController = (function() {
         Render: function(): void {
             renderQueue.render();
         },
-        AddAction: function(action: Action): void {
-            if (action == undefined)
-                return;
-            actions.add(action);
-        },
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
@@ -209,9 +195,6 @@ export var MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
-        },
-        GetActionManager: function(): ActionManager {
-            return actions;
         }
     };
 })();
