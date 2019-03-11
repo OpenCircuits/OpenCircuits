@@ -6,61 +6,33 @@ import {ClampedValue} from "../../../utils/ClampedValue";
 import {InputPort}from "../../../models/ioobjects/InputPort";
 import {Port}from "../../../models/ioobjects/Port";
 
-//
-//Creates A Demultiplexer and it extends form component
-//
-
 export class Demultiplexer extends Component {
 	private selectLines: Array<InputPort>;
-
-	//
-	//constructor using the super class
-	//
 
 	public constructor() {
 		super(new ClampedValue(2,1,9),new ClampedValue(2,1,8), V(0,0));
 	}
 
-	//
-	//All ports are on the one side originally but
-	// this function overides the original UpdatePortPositions
-	//function and puts the correct number of inputs need at the
-	// bottom of the Demultiplexer
-	//
-
-    public activate() {
-		let num = 0;
-        for (let i = 0; i < this.selectLines.length; i++) {
-            num = num | ((this.selectLines[i].getIsOn() ? 1 : 0) << i);
-        }
-        super.activate(this.inputs[this.inputs.length-1].getIsOn(), num);
-    }
-
-	public getInputAmount() {
-		return this.inputs.length;
-	}
-
-	public setInputPortCount(val: number) {
-		super.setInputPortCount(val + 1);
-	}
-	public setOutputPortCount(val: number) {
-		super.setOutputPortCount(2 << (val-1));
-	}
-
+	/**
+	 * All ports are on the one side originally but
+	 * 	this function overides the original UpdatePortPositions
+	 * 	function and puts the correct number of inputs need at the
+	 * 	bottom of the Demultiplexer
+	 */
 	public updatePortPositions(ports: Array<Port>) {
 		// if input was zero or negative, demux would glitch
 		if (!(ports[0] instanceof InputPort))
 			super.updatePortPositions(ports);
 
-			let target = this.getInputAmount()-1;
-	        let width = Math.max(DEFAULT_SIZE/2*(target-1), DEFAULT_SIZE);
-	        let height = DEFAULT_SIZE/2*(2 << (target-1));
-	        this.transform.setSize(V(width+10, height));
+		let target = this.inputs.length-1;
+        let width = Math.max(DEFAULT_SIZE/2*(target-1), DEFAULT_SIZE);
+        let height = DEFAULT_SIZE/2*(2 << (target-1));
+        this.transform.setSize(V(width+10, height));
 
-			this.selectLines = [];
-	        for (let i = 0; i < target; i++) {
-	            let input = this.inputs[i];
-	            this.selectLines.push(input);
+		this.selectLines = [];
+        for (let i = 0; i < target; i++) {
+            let input = this.inputs[i];
+            this.selectLines.push(input);
 
             let l = -DEFAULT_SIZE/2*(i - target/2 + 0.5);
             if (i === 0) l -= 1;
@@ -83,6 +55,22 @@ export class Demultiplexer extends Component {
         input.setOriginPos(V(0, 0));
         input.setTargetPos(V(-IO_PORT_LENGTH-(width/2-DEFAULT_SIZE/2), 0));
     }
+
+    public activate() {
+		let num = 0;
+        for (let i = 0; i < this.selectLines.length; i++) {
+            num = num | ((this.selectLines[i].getIsOn() ? 1 : 0) << i);
+        }
+        super.activate(this.inputs[this.inputs.length-1].getIsOn(), num);
+    }
+
+	public setInputPortCount(val: number) {
+		super.setInputPortCount(val + 1);
+	}
+
+	public setOutputPortCount(val: number) {
+		super.setOutputPortCount(2 << (val-1));
+	}
 
 	public getImageName(): string {
 		return "";

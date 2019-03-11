@@ -21,11 +21,15 @@ import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
 import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
 import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
 
+import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
+
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh];
 const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
+const OTHER     = [Multiplexer, Demultiplexer];
 
 let XML_COMPONENTS = new Map<string, any>();
 
@@ -40,6 +44,7 @@ addXMLTypes(OUTPUTS);
 addXMLTypes(GATES);
 addXMLTypes(LATCHES);
 addXMLTypes(FLIPFLOPS);
+addXMLTypes(OTHER);
 
 /**
  * Helper method that creates an object from the
