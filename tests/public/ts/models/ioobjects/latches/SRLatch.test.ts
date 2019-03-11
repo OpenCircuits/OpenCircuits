@@ -12,8 +12,8 @@ describe("SRLatch", () => {
 
     designer.addObjects([clk, s, r, l, l1, l0]);
     designer.connect(clk, 0,  l, 1);
-    designer.connect(s, 0,  l, 0);
-    designer.connect(r, 0,  l, 2);
+    designer.connect(s, 0,  l, 2);
+    designer.connect(r, 0,  l, 0);
     designer.connect(l, 0,  l0, 0);
     designer.connect(l, 1,  l1, 0);
 
