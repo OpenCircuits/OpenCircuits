@@ -9,7 +9,11 @@ import {GetNearestPointOnRect} from "../../../utils/math/MathUtils";
 import {SeparatedComponentCollection,
         CopyGroup,
         CreateGraph,
-        CreateGroup} from "../../../utils/ComponentUtils";
+        CreateGroup,
+        SaveGroup,
+        LoadGroup} from "../../../utils/ComponentUtils";
+
+import {XMLNode} from "../../../utils/io/xml/XMLNode";
 
 import {IOObject} from "../IOObject";
 import {Port} from "../Port";
@@ -24,16 +28,18 @@ export class ICData {
     private inputPorts:  Array<InputPort>;
     private outputPorts: Array<OutputPort>;
 
-    public constructor(collection: SeparatedComponentCollection) {
+    public constructor(collection?: SeparatedComponentCollection) {
         this.transform = new Transform(V(0,0), V(0,0));
         this.collection = collection;
         this.inputPorts  = [];
         this.outputPorts = [];
 
-        this.calculateSize();
-        this.createPorts(InputPort, this.inputPorts, this.collection.inputs, -1);
-        this.createPorts(OutputPort, this.outputPorts, this.collection.outputs, 1);
-        this.positionPorts();
+        if (collection) {
+            this.calculateSize();
+            this.createPorts(InputPort, this.inputPorts, this.collection.inputs, -1);
+            this.createPorts(OutputPort, this.outputPorts, this.collection.outputs, 1);
+            this.positionPorts();
+        }
     }
 
     private calculateSize(): void {
@@ -78,8 +84,6 @@ export class ICData {
             let p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
             var v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
             var v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
-            // let v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
-            // let v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(size.scale(0.5).add(IO_PORT_LENGTH-25, IO_PORT_LENGTH-25))).add(p);
 
             port.setOriginPos(v1);
             port.setTargetPos(v2);
@@ -119,6 +123,60 @@ export class ICData {
 
     public copy(): SeparatedComponentCollection {
         return CopyGroup(this.collection);
+    }
+
+    public save(node: XMLNode, icIdMap: Map<ICData, number>): void {
+        node.addVectorAttribute("size", this.transform.getSize());
+
+        // Save Input Ports
+        let inputsNode = node.createChild("inputs");
+        for (let input of this.inputPorts) {
+            let inputNode = inputsNode.createChild("input");
+            inputNode.addAttribute("name", input.getName());
+            inputNode.addVectorAttribute("origin", input.getOriginPos());
+            inputNode.addVectorAttribute("target", input.getTargetPos());
+        }
+
+        // Save Output Ports
+        let outputsNode = node.createChild("outputs");
+        for (let output of this.outputPorts) {
+            let outputNode = outputsNode.createChild("output");
+            outputNode.addAttribute("name", output.getName());
+            outputNode.addVectorAttribute("origin", output.getOriginPos());
+            outputNode.addVectorAttribute("target", output.getTargetPos());
+        }
+
+        // Save internal circuit
+        let circuitNode = node.createChild("circuit");
+        SaveGroup(circuitNode, this.collection.getAllComponents(), this.collection.wires, icIdMap);
+    }
+
+    public load(node: XMLNode, icIdMap: Map<number, ICData>): void {
+        this.setSize(node.getVectorAttribute("size"));
+
+        // Load inputs
+        let inputNodes = node.findChild("inputs").getChildren();
+        for (let input of inputNodes) {
+            let port = new InputPort(undefined);
+            port.setName(input.getAttribute("name"));
+            port.setOriginPos(input.getVectorAttribute("origin"));
+            port.setTargetPos(input.getVectorAttribute("target"));
+            this.inputPorts.push(port);
+        }
+
+        // Load outputs
+        let outputNodes = node.findChild("outputs").getChildren();
+        for (let output of outputNodes) {
+            let port = new OutputPort(undefined);
+            port.setName(output.getAttribute("name"));
+            port.setOriginPos(output.getVectorAttribute("origin"));
+            port.setTargetPos(output.getVectorAttribute("target"));
+            this.outputPorts.push(port);
+        }
+
+        // Load components
+        let groupNode = node.findChild("circuit");
+        this.collection = LoadGroup(groupNode, icIdMap);
     }
 
     static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
