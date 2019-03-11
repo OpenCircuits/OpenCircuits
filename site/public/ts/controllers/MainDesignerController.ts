@@ -31,6 +31,8 @@ import {Button}   from "../models/ioobjects/inputs/Button";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
+import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 import {LED}      from "../models/ioobjects/outputs/LED";
 import {SelectionPopupController} from "./SelectionPopupController";
 
@@ -156,6 +158,13 @@ export var MainDesignerController = (function() {
             g3.setInputPortCount(5);
             designer.addObject(g3);
 
+            var m1 = new Multiplexer();
+            m1.setPos(V(400, 0));
+            designer.addObject(m1);
+
+            var d1= new Demultiplexer();
+            d1.setPos(V(-400,0));
+            designer.addObject(d1);
 
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
