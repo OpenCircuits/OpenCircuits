@@ -92,7 +92,7 @@ export var ComponentRenderer = (function() {
             if (object instanceof LED)
                 tint = object.getColor();
 
-            if (Images.GetImage(imgName))
+            if (imgName)
                 renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
 
             // Draw LED turned on

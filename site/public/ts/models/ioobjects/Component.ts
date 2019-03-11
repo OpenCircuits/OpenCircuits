@@ -300,5 +300,7 @@ export abstract class Component extends CullableObject {
         this.setAngle(node.getFloatAttribute("angle"));
     }
 
-	abstract getImageName(): string;
+	public getImageName(): string {
+        return undefined;
+    }
 }

@@ -72,10 +72,6 @@ export class Demultiplexer extends Component {
 		super.setOutputPortCount(2 << (val-1));
 	}
 
-	public getImageName(): string {
-		return "";
-	}
-
 	public getDisplayName(): string {
         return "Demultiplexer";
     }

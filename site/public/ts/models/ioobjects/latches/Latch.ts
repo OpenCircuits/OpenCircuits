@@ -28,8 +28,4 @@ export abstract class Latch extends Component {
  		this.setInputPortCount(node.getIntAttribute("inputs"));
 		this.setOutputPortCount(node.getIntAttribute("outputs"));
 	}
-
-	public getImageName() {
-		return "";
-	}
 }

@@ -30,7 +30,7 @@ export class Multiplexer extends Component {
         let width = Math.max(DEFAULT_SIZE/2*(this.target-1), DEFAULT_SIZE);
 		// Calculate height
         let height = DEFAULT_SIZE/2*(2 << (this.target-1));
-		
+
         this.transform.setSize(V(width+10, height));
 
 		// Manipulates the actual input ports
@@ -74,10 +74,6 @@ export class Multiplexer extends Component {
 	public setInputPortCount(val: number): void {
 		this.target = val;
 		super.setInputPortCount(val + (2 << (val-1)));
-	}
-
-	public getImageName(): string {
-		return "";
 	}
 
 	public getDisplayName(): string {
