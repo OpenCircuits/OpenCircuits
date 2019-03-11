@@ -77,6 +77,10 @@ export class IC extends Component {
         return copy;
     }
 
+    public getData(): ICData {
+        return this.data;
+    }
+
     public getDisplayName(): string {
         return "IC";
     }

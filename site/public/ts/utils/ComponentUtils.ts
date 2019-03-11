@@ -1,7 +1,13 @@
+import {CreateComponentFromXML} from "./ComponentFactory";
+
 import {Graph} from "./math/Graph";
+
+import {XMLNode} from "./io/xml/XMLNode";
 
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
+import {ICData} from "../models/ioobjects/other/ICData";
+import {IC} from "../models/ioobjects/other/IC";
 
 import {InputPort} from "../models/ioobjects/InputPort";
 import {OutputPort} from "../models/ioobjects/OutputPort";
@@ -222,4 +228,132 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
 
     let group: Array<IOObject> = copies;
     return SeparateGroup(group.concat(wireCopies));
+}
+
+/**
+ * Saves a group of objects to an XML node
+ *
+ * @param node    The XML parent node
+ * @param objects The array of components to save
+ * @param wires   The array of wires to save
+ * @param icIdMap Map of ICData to unique ids.
+ *                Must be created prior to calling this method
+ *                  to ensure nested ICs work properly
+ */
+export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array<Wire>, icIdMap: Map<ICData, number>): void {
+    let objectsNode = node.createChild("objects");
+    let wiresNode   = node.createChild("wires");
+    let idMap = new Map<IOObject, number>();
+    let id = 0;
+
+    // Save components
+    for (let obj of objects) {
+        let componentNode = objectsNode.createChild(obj.getXMLName());
+
+        // Save IC ID for ICs
+        if (obj instanceof IC) {
+            let icid = icIdMap.get(obj.getData());
+            componentNode.addAttribute("icid", icid);
+        }
+
+        // Set and save XML ID for connections
+        componentNode.addAttribute("xid", id);
+        idMap.set(obj, id++);
+
+        // Save properties
+        obj.save(componentNode);
+    }
+
+    // Save wires
+    for (let wire of wires) {
+        let wireNode = wiresNode.createChild(wire.getXMLName());
+
+        // Save properties
+        wire.save(wireNode);
+
+        let inputNode = wireNode.createChild("input");
+        {
+            let iPort = wire.getInput();
+            let input = iPort.getParent();
+            let iI = 0;
+            // Find index of port
+            while (iI < input.getOutputPortCount() &&
+                   input.getOutputPort(iI) !== iPort) { iI++; }
+            inputNode.addAttribute("xid", idMap.get(input));
+            inputNode.addAttribute("index", iI);
+        }
+        let outputNode = wireNode.createChild("output");
+        {
+            let oPort = wire.getOutput();
+            let input = oPort.getParent();
+            let iO = 0;
+            // Find index of port
+            while (iO < input.getInputPortCount() &&
+                   input.getInputPort(iO) !== oPort) { iO++; }
+            outputNode.addAttribute("xid", idMap.get(input));
+            outputNode.addAttribute("index", iO);
+        }
+    }
+}
+
+/**
+ * Load a group of objects from an XML node
+ *
+ * @param node    The XML parent node
+ * @param icIdMap Map of unique ids for ICData.
+ *                Must be created prior to calling this method
+ *                  to ensure nested ICs work properly
+ */
+export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): SeparatedComponentCollection {
+    let objectsNode = node.findChild("objects");
+    let wiresNode   = node.findChild("wires");
+    let idMap = new Map<number, Component>();
+
+    let objects: Array<IOObject> = [];
+    let wires: Array<Wire> = [];
+
+    // Load components
+    let objectNodes = objectsNode.getChildren();
+    for (let object of objectNodes) {
+        let xid = object.getIntAttribute("xid");
+
+        // Create and add object
+        let obj;
+        if (object.getTag() == "ic") {
+            let icid = object.getIntAttribute("icid");
+            let icData = icIdMap.get(icid);
+            obj = new IC(icData);
+        } else {
+            obj = CreateComponentFromXML(object.getTag());
+        }
+        objects.push(obj);
+
+        // Add to ID map for connections later
+        idMap.set(xid, obj);
+
+        // Load properties
+        obj.load(object);
+    }
+
+    // Load wires
+    let wireNodes = wiresNode.getChildren();
+    for (let wire of wireNodes) {
+        let inputNode  = wire.findChild("input");
+        let outputNode = wire.findChild("output");
+
+        // Load connections
+        let inputObj  = idMap.get( inputNode.getIntAttribute("xid"));
+        let outputObj = idMap.get(outputNode.getIntAttribute("xid"));
+        let inputIndex  =  inputNode.getIntAttribute("index");
+        let outputIndex = outputNode.getIntAttribute("index");
+
+        // Create wire
+        let w = Connect(inputObj, inputIndex,  outputObj, outputIndex);
+        wires.push(w);
+
+        // Load properties
+        w.load(wire);
+    }
+
+    return SeparateGroup(objects.concat(wires));
 }
