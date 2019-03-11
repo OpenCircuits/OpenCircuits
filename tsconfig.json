@@ -3,10 +3,9 @@
     "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
-    "lib": ["es5", "es6", "es7", "dom"],
-    "module": "es6",
+    "lib": ["es5", "dom"],
+    "module": "es2015",
     "target": "es5",
-    "jsx": "react",
     "esModuleInterop": true,
     "downlevelIteration": true,
     "allowJs": true
