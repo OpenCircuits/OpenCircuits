@@ -12,6 +12,8 @@ class CircuitPageView {
         <link rel="stylesheet" href="css/stylesheet.css">
     </head>
     <body>
+        <div id="loading-screen" class="loadingscreen"></div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">

@@ -24,6 +24,13 @@ button, input {
 .show {
     display: block !important;
 }
+.hide {
+    display: none !important;
+}
+.invisible {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
 .white {
     background-color: #fff !important;
 }
@@ -225,6 +232,21 @@ nav {
     visibility: hidden;
     transition: 0.3s;
 }
+
+.loadingscreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    opacity: 1;
+    visibility: visible;
+    background-color: #ccc;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
 
 
 /*

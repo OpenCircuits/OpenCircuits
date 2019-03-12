@@ -1,15 +1,22 @@
-import {LoadingScreen} from "./utils/LoadingScreen";
 import {Images} from "./utils/Images";
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
 import {ItemNavController} from "./controllers/ItemNavController";
-// import {InputController} from "./utils/input/InputController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
 import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
+import {LoadingScreen} from "./views/LoadingScreen";
+
 function Init() {
+    LoadingScreen.Show();
+
     const promises = [
+        new Promise((resolve, reject) => {
+            Images.Load(function() {
+                resolve(1);
+            });
+        }),
         new Promise((resolve, reject) => {
             MainDesignerController.Init();
             HeaderController.Init(MainDesignerController.GetDesigner());
@@ -27,20 +34,11 @@ function Init() {
         })
     ];
 
-    Promise.all(promises).then((val)=>{
-        LoadingScreen.Hide()
+    Promise.all(promises).then((val) => {
         MainDesignerController.Render();
-        // InputController.Init();    
+        console.log("LOADED!");
+        LoadingScreen.Hide();
     });
 }
 
-function Load(onFinishLoading: () => void) {
-    LoadingScreen.Show();
-    Images.Load(onFinishLoading);
-}
-
-function Start() {
-    Load(Init);
-}
-
-Start();
+Init();
