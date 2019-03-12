@@ -138,9 +138,6 @@ export var MainDesignerController = (function() {
             var g1 = new ANDGate();
             var l1 = new LED();
 
-            var b = new Button();
-            designer.addObject(b);
-
             s1.setPos(V(-200, 100));
             s2.setPos(V(-200, -100));
             g1.setPos(V(0, 0));
@@ -158,14 +155,6 @@ export var MainDesignerController = (function() {
             g3.setInputPortCount(5);
             designer.addObject(g3);
 
-            var m1 = new Multiplexer();
-            m1.setPos(V(400, 0));
-            designer.addObject(m1);
-
-            var d1= new Demultiplexer();
-            d1.setPos(V(-400,0));
-            designer.addObject(d1);
-
             designer.connect(s1, 0,  g1, 0);
             designer.connect(s2, 0,  g1, 1);
 
@@ -173,6 +162,7 @@ export var MainDesignerController = (function() {
 
             s1.activate(true);
 
+            // TODO: Remove these Logs before deploying ~NTP 
             console.log("LED active: " + l1.isOn().toString());
 
             s1.activate(false);
