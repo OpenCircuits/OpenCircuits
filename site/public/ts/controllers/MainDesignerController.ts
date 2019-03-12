@@ -132,47 +132,6 @@ export var MainDesignerController = (function() {
             window.addEventListener("resize", _e => resize(), false);
 
             toolManager.getSelectionTool().addSelectionChangeListener( () => SelectionPopupController.Update() );
-
-            var s1 = new Switch();
-            var s2 = new Switch();
-            var g1 = new ANDGate();
-            var l1 = new LED();
-
-            s1.setPos(V(-200, 100));
-            s2.setPos(V(-200, -100));
-            g1.setPos(V(0, 0));
-            l1.setPos(V(200, 0));
-
-            designer.addObjects([s1, s2, g1, l1]);
-
-            var g2 = new XORGate();
-            g2.setPos(V(0, 200));
-            g2.setInputPortCount(5);
-            designer.addObject(g2);
-
-            var g3 = new ORGate();
-            g3.setPos(V(0, -200));
-            g3.setInputPortCount(5);
-            designer.addObject(g3);
-
-            designer.connect(s1, 0,  g1, 0);
-            designer.connect(s2, 0,  g1, 1);
-
-            designer.connect(g1, 0,  l1, 0);
-
-            s1.activate(true);
-
-            // TODO: Remove these Logs before deploying ~NTP 
-            console.log("LED active: " + l1.isOn().toString());
-
-            s1.activate(false);
-            s2.activate(true);
-
-            console.log("LED active: " + l1.isOn().toString());
-
-            s1.activate(true);
-
-            console.log("LED active: " + l1.isOn().toString());
         },
         Render: function(): void {
             renderQueue.render();
