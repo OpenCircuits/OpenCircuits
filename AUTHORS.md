@@ -7,6 +7,7 @@ Jonathon Schmalz (2018 - current)
 Calynn Vitus (2018 - current)  
 
 Audrey Baxter (2019 - current)  
+Hari Channagiri (2019 - current)
 Max Griffon (2019 - current)  
 Rahul Jain (2019 - current)  
 Hannah Lim (2019 - current)  
