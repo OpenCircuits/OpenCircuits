@@ -17,12 +17,14 @@ export class ConnectionAction implements Action {
         this.i1 = i1;
         this.c2 = c2;
         this.i2 = i2;
+        // Connection action is explicitly executed
+        this.execute();
     }
 
     public execute(): void {
         this.wire = this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
     }
-    
+
     public undo(): void {
         this.designer.removeWire(this.wire);
     }

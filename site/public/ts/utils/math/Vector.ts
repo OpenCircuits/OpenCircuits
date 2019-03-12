@@ -77,6 +77,9 @@ export class Vector {
     static max(v1: Vector, v2: Vector): Vector {
         return new Vector(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
     }
+    static clamp(x: Vector, lo: Vector, hi: Vector): Vector {
+        return Vector.min(Vector.max(x, lo), hi);
+    }
     // static V(x: Vector | number, y: number = 0): Vector {
     //     return new Vector(x, y);
     // }

@@ -36,5 +36,9 @@ export class ClampedValue {
     public getMaxValue(): number {
         return this.maxValue;
     }
+    
+    public copy(): ClampedValue {
+        return new ClampedValue(this.value, this.minValue, this.maxValue);
+    }
 
 }

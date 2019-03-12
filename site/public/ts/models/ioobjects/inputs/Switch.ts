@@ -7,8 +7,8 @@ export class Switch extends PressableComponent {
 	public constructor() {
 		super(new ClampedValue(0),
 			  new ClampedValue(1),
-			  V(48, 60),
-		  	  V(62, 77));
+		  	  V(62, 77),
+			  V(48, 60));
 	}
 
 	public click(): void {

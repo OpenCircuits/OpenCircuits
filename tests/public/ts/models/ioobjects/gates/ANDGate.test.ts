@@ -81,4 +81,30 @@ describe("ANDGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
+    
+    describe("Copy", () => {
+        it("ANDGate Copy", () => {
+            let a = new ANDGate();
+            a.setInputPortCount(4);
+            let b = <ANDGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(ANDGate);
+            expect(b.isNot()).toBe(false);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+        it("NANDGate Copy", () => {
+            let a = new ANDGate(true);
+            a.setInputPortCount(4);
+            
+            let b = <ANDGate>a.copy();
+            
+            expect(a).not.toBe(b);
+            expect(b).toBeInstanceOf(ANDGate);
+            expect(b.isNot()).toBe(true);
+            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
+            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+        });
+    });
 });

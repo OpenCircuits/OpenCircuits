@@ -3,13 +3,16 @@ import {ROTATION_CIRCLE_RADIUS,
 import {Vector} from "../math/Vector";
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
+import {ToolManager} from "../tools/ToolManager";
 import {Tool} from "../tools/Tool";
 import {PanTool} from "../tools/PanTool";
 import {SelectionTool} from "../tools/SelectionTool";
 import {RotateTool} from "../tools/RotateTool";
 import {PlaceComponentTool} from "../tools/PlaceComponentTool";
+import {WiringTool} from "../tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
+import {WireRenderer} from "./ioobjects/WireRenderer";
 
 export var ToolRenderer = (function() {
 
@@ -32,7 +35,8 @@ export var ToolRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, tool: Tool) {
+        render(renderer: Renderer, camera: Camera, toolManager: ToolManager) {
+            const tool = toolManager.getCurrentTool();
 
             if (tool instanceof SelectionTool) {
                 // Draw selection box
@@ -48,7 +52,7 @@ export var ToolRenderer = (function() {
                 }
 
                 // Draw rotation circle outline
-                else if (tool.getSelections().length > 0) {
+                else if (tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
                     drawRotationCircleOutline(renderer, camera, tool.calculateMidpoint());
                 }
             }
@@ -63,6 +67,13 @@ export var ToolRenderer = (function() {
                 // Draw current object
                 let component = tool.getComponent();
                 ComponentRenderer.render(renderer, camera, component, false);
+            }
+            else if (tool instanceof WiringTool) {
+                // Draw fake wire
+                let wire = tool.getWire();
+                if (wire.getInput() != null)
+                    wire.activate(wire.getInput().getIsOn());
+                WireRenderer.render(renderer, camera, wire, false);
             }
 
         }

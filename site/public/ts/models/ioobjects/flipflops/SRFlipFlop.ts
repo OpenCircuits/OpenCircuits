@@ -4,7 +4,10 @@ import {FlipFlop} from "./FlipFlop";
 export class SRFlipFlop extends FlipFlop {
 
 	public constructor() {
-		super(3, 2, V(60, 60));
+		super(3, V(80, 120));
+		this.getInputPort(0).setName("R");
+		this.getInputPort(1).setName(">");
+		this.getInputPort(2).setName("S");
 	}
 
 	// @Override
@@ -31,11 +34,7 @@ export class SRFlipFlop extends FlipFlop {
 		return "SR Flip Flop";
 	}
 
-	public getImageName() {
-		return "flipflop.svg";
+	public getXMLName(): string {
+		return "srff";
 	}
-
-    public getXMLName(): string {
-        return "srff";
-    }
 }
