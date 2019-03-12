@@ -38,7 +38,6 @@ function Init() {
 
     Promise.all(promises).then((val) => {
         MainDesignerController.Render();
-        console.log("LOADED!");
         LoadingScreen.Hide();
     });
 }
