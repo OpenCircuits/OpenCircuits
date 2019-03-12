@@ -5,30 +5,41 @@ import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
 import {ItemNavController} from "./controllers/ItemNavController";
-// import {InputController} from "./utils/input/InputController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
 import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
-function Start() {
-    Load(Init);
-}
-
-function Load(onFinishLoading: () => void) {
-    Images.Load(onFinishLoading);
-}
+import {LoadingScreen} from "./views/LoadingScreen";
 
 function Init() {
-    // Initialize all controllers
-    MainDesignerController.Init();
-    ICDesignerController.Init();
-    HeaderController.Init(MainDesignerController.GetDesigner());
-    ItemNavController.Init(MainDesignerController.GetDesigner());
-    ContextMenuController.Init();
-    SelectionPopupController.Init(MainDesignerController.GetCamera());
-    // ICDesignerController.Init();
+    LoadingScreen.Show();
 
-    MainDesignerController.Render();
-    // InputController.Init();
+    const promises = [
+        new Promise((resolve, reject) => {
+            Images.Load(function() {
+                resolve(1);
+            });
+        }),
+        new Promise((resolve, reject) => {
+            MainDesignerController.Init();
+            HeaderController.Init(MainDesignerController.GetDesigner());
+            ItemNavController.Init(MainDesignerController.GetDesigner());
+            SelectionPopupController.Init(MainDesignerController.GetCamera());
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            ICDesignerController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            ContextMenuController.Init();
+            resolve(1);
+        })
+    ];
+
+    Promise.all(promises).then((val) => {
+        MainDesignerController.Render();
+        LoadingScreen.Hide();
+    });
 }
 
-Start();
+Init();

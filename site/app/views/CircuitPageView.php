@@ -12,6 +12,11 @@ class CircuitPageView {
         <link rel="stylesheet" href="css/stylesheet.css">
     </head>
     <body>
+        <div id="loading-screen" class="loading__screen">
+            <div class="loading__screen__background"></div>
+            <img class="loading__screen__logo" src="img/icons/logo.svg">
+        </div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
