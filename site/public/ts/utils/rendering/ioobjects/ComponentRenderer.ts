@@ -11,6 +11,7 @@ import {Renderer} from "../Renderer";
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
+import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
 import {Transform} from "../../math/Transform";
@@ -18,6 +19,8 @@ import {Camera} from "../../Camera";
 
 import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Latch} from "../../../models/ioobjects/latches/Latch";
+import {Multiplexer} from "../../../models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "../../../models/ioobjects/other/Demultiplexer";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
@@ -26,10 +29,6 @@ import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmen
 import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
-
-// import {ANDGate} from "../../../models/ioobjects/gates/ANDGate";
-// import {Switch} from "../../../models/ioobjects/inputs/Switch";
-// import {LED} from "../../../models/ioobjects/outputs/LED";
 
 export var ComponentRenderer = (function() {
 
@@ -79,19 +78,21 @@ export var ComponentRenderer = (function() {
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
+            else if (object instanceof Multiplexer || object instanceof Demultiplexer)
+                MultiplexerRenderer.render(renderer, camera, object, selected);
+            else if (object instanceof SevenSegmentDisplay)
+                SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof IC)
                 drawBox(renderer, transform, selected);
-            else if (object instanceof SevenSegmentDisplay)
-                SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (object instanceof LED)
                 tint = object.getColor();
 
-            if (Images.GetImage(imgName))
+            if (imgName)
                 renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
 
             // Draw LED turned on

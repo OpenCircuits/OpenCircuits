@@ -3,8 +3,8 @@ Constant Low & constantlow.svg & constlow
 Constant High & constanthigh.svg & consthigh
 Button & button.svg & button
 Switch & switch.svg & switch
-Clock & clock.svg & ?
-Keyboard & keyboard.svg & ?
+Clock & clock.svg & clock
+Keyboard & keyboard.svg & keyboard
 
 [Outputs=outputs]
 LED & led.svg & led
@@ -31,8 +31,8 @@ D Flip Flop & srflipflop.svg & dff
 T Flip Flop & srflipflop.svg & tff
 
 [Other=other]
-Mux & multiplexer.svg & ?
-Demux & demultiplexer.svg & ?
-Encoder & encoder.svg & ?
-Decoder & decoder.svg & ?
-Label & label.svg & ?
+Mux & multiplexer.svg & mux
+Demux & demultiplexer.svg & demux
+Encoder & encoder.svg & encoder
+Decoder & decoder.svg & decoder
+Label & label.svg & label

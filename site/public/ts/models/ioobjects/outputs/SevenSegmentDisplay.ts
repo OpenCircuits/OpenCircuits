@@ -41,10 +41,6 @@ export class SevenSegmentDisplay extends Component {
         return "7 Segment Display";
     }
 
-    public getImageName(): string {
-        return "";
-    }
-
     public getXMLName() {
         return "sevensegmentdisplay";
     }

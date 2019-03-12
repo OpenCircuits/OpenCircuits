@@ -88,9 +88,4 @@ export class IC extends Component {
     public getXMLName(): string {
         return "ic";
     }
-
-    public getImageName(): string {
-        return "";
-    }
-
 }
