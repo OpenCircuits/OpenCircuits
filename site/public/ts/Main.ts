@@ -9,8 +9,6 @@ import {ContextMenuController} from "./controllers/ContextMenuController";
 import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
 function Init() {
-    LoadingScreen.Render();
-
     const promises = [
         new Promise((resolve, reject) => {
             MainDesignerController.Init();
@@ -30,12 +28,14 @@ function Init() {
     ];
 
     Promise.all(promises).then((val)=>{
+        LoadingScreen.Hide()
         MainDesignerController.Render();
         // InputController.Init();    
     });
 }
 
 function Load(onFinishLoading: () => void) {
+    LoadingScreen.Show();
     Images.Load(onFinishLoading);
 }
 

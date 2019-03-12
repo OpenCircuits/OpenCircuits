@@ -1,7 +1,10 @@
 export const LoadingScreen = (function() {
     return {
-        Render() {
+        Show() {
             
+        },
+        Hide() {
+
         }
     };
 })();
