@@ -42,7 +42,7 @@ import {IC} from "../models/ioobjects/other/IC";
 import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";
 
-export var ICDesignerController = (function() {
+export const ICDesignerController = (function() {
     let designer: CircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
@@ -124,8 +124,8 @@ export var ICDesignerController = (function() {
                 let p  = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
                 // let v1 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(pos);
                 // let v2 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).sub(size.scale(0.5).add(IO_PORT_LENGTH-25, IO_PORT_LENGTH-25)).add(pos);
-                var v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
-                var v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+                let v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
+                let v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
                 // Set port for IC
                 dragPort.setOriginPos(v1);

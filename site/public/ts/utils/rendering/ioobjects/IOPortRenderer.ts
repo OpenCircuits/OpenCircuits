@@ -10,7 +10,7 @@ import {Renderer} from "../Renderer";
 import {InputPort} from "../../../models/ioobjects/InputPort";
 import {OutputPort} from "../../../models/ioobjects/OutputPort";
 
-export var IOPortRenderer = (function() {
+export const IOPortRenderer = (function() {
     return {
         renderIPort(renderer: Renderer, iport: InputPort, selected: boolean) {
             var o = iport.getOriginPos();

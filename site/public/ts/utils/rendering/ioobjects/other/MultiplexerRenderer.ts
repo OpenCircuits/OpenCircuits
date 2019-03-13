@@ -11,7 +11,7 @@ import {Camera} from "../../../Camera";
 import {Multiplexer} from "../../../../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../../../../models/ioobjects/other/Demultiplexer";
 
-export var MultiplexerRenderer = (function() {
+export const MultiplexerRenderer = (function() {
 
     return {
         render(renderer: Renderer, camera: Camera, mul: Multiplexer | Demultiplexer, selected: boolean) {

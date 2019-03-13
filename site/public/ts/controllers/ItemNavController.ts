@@ -7,7 +7,7 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerController} from "./MainDesignerController";
 
-export var ItemNavController = (function() {
+export const ItemNavController = (function() {
     let mainDesigner: CircuitDesigner;
 
     let tab = document.getElementById("itemnav-open-tab");

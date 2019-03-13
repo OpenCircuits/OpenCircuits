@@ -13,7 +13,7 @@ import {SevenSegmentDisplay} from "../../../../models/ioobjects/outputs/SevenSeg
 
 import {Images} from "../../../Images";
 
-export var SevenSegmentDisplayRenderer = (function() {
+export const SevenSegmentDisplayRenderer = (function() {
     return {
         render(renderer: Renderer, camera: Camera, display: SevenSegmentDisplay, selected: boolean) {
             let transform = display.getTransform();

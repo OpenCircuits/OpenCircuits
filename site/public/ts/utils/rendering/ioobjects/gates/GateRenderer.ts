@@ -14,7 +14,7 @@ import {ANDGate} from "../../../../models/ioobjects/gates/ANDGate";
 import {ORGate} from "../../../../models/ioobjects/gates/ORGate";
 import {XORGate} from "../../../../models/ioobjects/gates/XORGate";
 
-export var GateRenderer = (function() {
+export const GateRenderer = (function() {
 
     let drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
         let amt = 2 * Math.floor(inputs / 4) + 1;

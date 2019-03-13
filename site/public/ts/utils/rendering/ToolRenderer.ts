@@ -14,7 +14,7 @@ import {WiringTool} from "../tools/WiringTool";
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
 
-export var ToolRenderer = (function() {
+export const ToolRenderer = (function() {
 
     var drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
         // Get position, radius, and thickness

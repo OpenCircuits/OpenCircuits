@@ -30,7 +30,7 @@ import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
 
-export var ComponentRenderer = (function() {
+export const ComponentRenderer = (function() {
 
     let drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
         let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);

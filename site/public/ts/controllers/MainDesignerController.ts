@@ -36,7 +36,7 @@ import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 import {LED}      from "../models/ioobjects/outputs/LED";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export var MainDesignerController = (function() {
+export const MainDesignerController = (function() {
     var designer: CircuitDesigner;
     var view: MainDesignerView;
     var input: Input;

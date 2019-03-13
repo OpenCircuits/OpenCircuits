@@ -3,7 +3,7 @@ import {Camera} from "../Camera";
 
 var GRID_SIZE = 50;
 
-export var Grid = (function() {
+export const Grid = (function() {
 
     return {
         render(renderer: Renderer, camera: Camera) {

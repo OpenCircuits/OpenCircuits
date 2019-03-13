@@ -1,4 +1,4 @@
-export var Images = (function() {
+export const Images = (function() {
     var images: Map<string, HTMLImageElement> = new Map();
 
     var loadImages = function(imageNames: Array<string>,

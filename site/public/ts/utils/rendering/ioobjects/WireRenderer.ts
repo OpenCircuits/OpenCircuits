@@ -7,7 +7,7 @@ import {Renderer} from "../Renderer";
 import {Camera} from "../../Camera";
 import {Wire} from "../../../models/ioobjects/Wire";
 
-export var WireRenderer = (function() {
+export const WireRenderer = (function() {
     return {
         render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean) {
             if (!camera.cull(wire.getCullBox()))
