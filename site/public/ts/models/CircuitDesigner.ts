@@ -45,6 +45,15 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	/**
+	 * Method to call when you want to force an update
+	 * 	Used when something changed but isn't propagated
+	 * 	(i.e. Clock updated but wasn't connected to anything)
+	 */
+	public forceUpdate(): void {
+		this.updateCallback();
+	}
+
+	/**
 	 * Add a propagation request to the queue.
 	 * Also checks if there are currently no requests and starts the cycle if
 	 *  there aren't
