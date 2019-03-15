@@ -87,7 +87,7 @@ export abstract class PressableComponent extends Component {
     }
 
 	public getImageName(): string {
-		return (this.isOn ? this.getOnImageName() : this.getOffImageName());
+		return (this.isOn() ? this.getOnImageName() : this.getOffImageName());
 	}
 
 	public abstract getOffImageName(): string;
