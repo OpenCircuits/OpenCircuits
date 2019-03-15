@@ -7,7 +7,7 @@ import {Clamp} from "../../math/MathUtils";
 
 export const IOLabelRenderer = (function() {
 
-    let portArithmetic = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
+    const portArithmetic = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
         let align: CanvasTextAlign = "center";
         let padding = 8;
         let ww = renderer.getTextWidth(name)/2;

@@ -73,7 +73,7 @@ export class CircuitDesigner implements XMLable {
 	private update(): boolean {
 		// Create temp queue before sending, in the case that sending them triggers
 		//   more propagations to occur
-		var tempQueue = [];
+		let tempQueue = [];
 		while (this.propagationQueue.length > 0)
 			tempQueue.push(this.propagationQueue.pop());
 
@@ -104,7 +104,7 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public addObjects(objects: Array<Component>): void {
-		for (var i = 0; i < objects.length; i++)
+		for (let i = 0; i < objects.length; i++)
 			this.addObject(objects[i]);
 	}
 
@@ -132,9 +132,9 @@ export class CircuitDesigner implements XMLable {
 			throw new Error("Attempted to remove object that doesn't exist!");
 
 		// Remove all input and output wires
-		var inputs = obj.getInputs();
-		var outputs = obj.getOutputs();
-		var wires = inputs.concat(outputs);
+		let inputs = obj.getInputs();
+		let outputs = obj.getOutputs();
+		let wires = inputs.concat(outputs);
 		for (let wire of wires)
 			this.removeWire(wire);
 

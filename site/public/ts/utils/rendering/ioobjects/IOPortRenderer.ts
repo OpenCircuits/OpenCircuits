@@ -13,23 +13,23 @@ import {OutputPort} from "../../../models/ioobjects/OutputPort";
 export const IOPortRenderer = (function() {
     return {
         renderIPort(renderer: Renderer, iport: InputPort, selected: boolean) {
-            var o = iport.getOriginPos();
-            var v = iport.getTargetPos();
+            const o = iport.getOriginPos();
+            const v = iport.getTargetPos();
 
-            var borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+            const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             renderer.line(o.x, o.y, v.x, v.y, borderCol, IO_PORT_LINE_WIDTH);
 
-            var circleFillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+            const circleFillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
         },
         renderOPort(renderer: Renderer, oport: OutputPort, selected: boolean) {
-            var o = oport.getOriginPos();
-            var v = oport.getTargetPos();
+            const o = oport.getOriginPos();
+            const v = oport.getTargetPos();
 
-            var borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+            const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             renderer.line(o.x, o.y, v.x, v.y, borderCol, IO_PORT_LINE_WIDTH);
 
-            var circleFillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+            const circleFillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
         }
     };

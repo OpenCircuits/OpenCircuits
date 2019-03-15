@@ -16,20 +16,20 @@ import {XORGate} from "../../../../models/ioobjects/gates/XORGate";
 
 export const GateRenderer = (function() {
 
-    let drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
-        let amt = 2 * Math.floor(inputs / 4) + 1;
+    const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
+        const amt = 2 * Math.floor(inputs / 4) + 1;
         for (let i = 0; i < amt; i++) {
-            let d = (i - Math.floor(amt/2)) * size.y;
-            let h = DEFAULT_BORDER_WIDTH;
-            let l1 = -size.y/2;
-            let l2 = +size.y/2;
+            const d = (i - Math.floor(amt/2)) * size.y;
+            const h = DEFAULT_BORDER_WIDTH;
+            const l1 = -size.y/2;
+            const l2 = +size.y/2;
 
-            let s = size.x/2 - h;
-            let l = size.x/5 - h;
+            const s = size.x/2 - h;
+            const l = size.x/5 - h;
 
-            let p1 = V(-s, l1 + d);
-            let p2 = V(-s, l2 + d);
-            let c  = V(-l, d);
+            const p1 = V(-s, l1 + d);
+            const p2 = V(-s, l2 + d);
+            const c  = V(-l, d);
 
             renderer.quadCurve(p1.x+dx, p1.y, p2.x+dx, p2.y, c.x+dx, c.y, borderCol, DEFAULT_BORDER_WIDTH);
         }
@@ -49,12 +49,12 @@ export const GateRenderer = (function() {
 
             if (gate instanceof ANDGate) {
                 // Draw line to visually match input ports
-                let l1 = -(transform.getSize().y/2)*(0.5-gate.getInputPortCount()/2);
-                let l2 = -(transform.getSize().y/2)*(gate.getInputPortCount()/2-0.5);
+                const l1 = -(transform.getSize().y/2)*(0.5-gate.getInputPortCount()/2);
+                const l2 = -(transform.getSize().y/2)*(gate.getInputPortCount()/2-0.5);
 
-                let s = (transform.getSize().x-DEFAULT_BORDER_WIDTH)/2;
-                let p1 = V(-s, l1);
-                let p2 = V(-s, l2);
+                const s = (transform.getSize().x-DEFAULT_BORDER_WIDTH)/2;
+                const p1 = V(-s, l1);
+                const p2 = V(-s, l2);
 
                 renderer.line(p1.x, p1.y, p2.x, p2.y, borderCol, DEFAULT_BORDER_WIDTH);
             }

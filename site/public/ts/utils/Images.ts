@@ -1,7 +1,7 @@
 export const Images = (function() {
-    var images: Map<string, HTMLImageElement> = new Map();
+    const images: Map<string, HTMLImageElement> = new Map();
 
-    var loadImages = function(imageNames: Array<string>,
+    const loadImages = function(imageNames: Array<string>,
                               onFinish: () => void): void {
         // Load each image
         let index = 0;

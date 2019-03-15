@@ -37,12 +37,12 @@ import {LED}      from "../models/ioobjects/outputs/LED";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
-    var designer: CircuitDesigner;
-    var view: MainDesignerView;
-    var input: Input;
+    let designer: CircuitDesigner;
+    let view: MainDesignerView;
+    let input: Input;
 
-    var toolManager: ToolManager;
-    var renderQueue: RenderQueue;
+    let toolManager: ToolManager;
+    let renderQueue: RenderQueue;
 
     let resize = function() {
         view.resize();
