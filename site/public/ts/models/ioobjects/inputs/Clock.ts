@@ -8,19 +8,18 @@ export class Clock extends Component {
     private img: string;
 
     public constructor() {
-        super(new ClampedValue(0), new ClampedValue(1), V(60, 60));
+        super(new ClampedValue(0), new ClampedValue(1), V(60, 42));
         this.frequency = 1000;
         this.isOn = false;
         this.tick();
     }
 
-    //changing the clock
+    // Changing the clock
     public tick() {
         this.activate(!this.isOn);
         setTimeout(() => this.tick(), this.frequency);
     }
 
-    //stuff related to frequency
     public setFrequency(freq: number) {
         this.frequency = freq * 1000;
     }
@@ -29,13 +28,14 @@ export class Clock extends Component {
         return this.frequency;
     }
 
-    //activate changes state and image
+    // Activate changes state and image
     public activate(bool: boolean) {
         super.activate(bool);
         this.isOn = bool;
+        if (this.designer != undefined)
+            this.designer.forceUpdate();
     }
 
-    //general stuff for all objects
     public getDisplayName() {
         return "Clock";
     }
