@@ -44,52 +44,52 @@ export const MainDesignerController = (function() {
     let toolManager: ToolManager;
     let renderQueue: RenderQueue;
 
-    let resize = function() {
+    const resize = function() {
         view.resize();
 
         MainDesignerController.Render();
     }
 
-    let onMouseDown = function(button: number): void {
+    const onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
     }
 
-    let onMouseMove = function(): void {
+    const onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             MainDesignerController.Render();
     }
 
-    let onMouseDrag = function(button: number): void {
+    const onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button)) {
             SelectionPopupController.Hide();
             MainDesignerController.Render();
         }
     }
 
-    let onMouseUp = function(button: number): void {
+    const onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
-    let onClick = function(button: number): void {
+    const onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             MainDesignerController.Render();
     }
 
-    let onKeyDown = function(key: number): void {
+    const onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             MainDesignerController.Render();
     }
 
-    let onKeyUp = function(key: number): void {
+    const onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             MainDesignerController.Render();
     }
 
-    let onScroll = function(): void {
+    const onScroll = function(): void {
         // @TODO move this stuff as well
         let zoomFactor = input.getZoomFactor();
 

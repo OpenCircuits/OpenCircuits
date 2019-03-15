@@ -22,7 +22,7 @@ export const SelectionPopupController = (function() {
     let modules: Array<SelectionPopupModule>;
     let pos: Vector;
 
-    let setPos = function(v: Vector): void {
+    const setPos = function(v: Vector): void {
         pos = v;
 
         div.style.left = `${pos.x}px`;

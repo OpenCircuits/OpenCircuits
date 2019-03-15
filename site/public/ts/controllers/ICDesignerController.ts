@@ -57,7 +57,7 @@ export const ICDesignerController = (function() {
     let dragPort: Port = undefined;
     let dragEdge: "horizontal" | "vertical" = undefined;
 
-    let portContains = function(port: Port, mousePos: Vector) {
+    const portContains = function(port: Port, mousePos: Vector) {
         let target = port.getTargetPos();
         let origin = port.getOriginPos();
 
@@ -70,13 +70,13 @@ export const ICDesignerController = (function() {
         return RectContains(rect, mousePos);
     }
 
-    let resize = function() {
+    const resize = function() {
         view.resize();
 
         ICDesignerController.Render();
     }
 
-    let onMouseDown = function(button: number): void {
+    const onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             ICDesignerController.Render();
 
@@ -107,12 +107,12 @@ export const ICDesignerController = (function() {
         }
     }
 
-    let onMouseMove = function(): void {
+    const onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             ICDesignerController.Render();
     }
 
-    let onMouseDrag = function(button: number): void {
+    const onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button))
             ICDesignerController.Render();
 
@@ -149,7 +149,7 @@ export const ICDesignerController = (function() {
         }
     }
 
-    let onMouseUp = function(button: number): void {
+    const onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button))
             ICDesignerController.Render();
 
@@ -159,22 +159,22 @@ export const ICDesignerController = (function() {
         dragEdge = undefined;
     }
 
-    let onClick = function(button: number): void {
+    const onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             ICDesignerController.Render();
     }
 
-    let onKeyDown = function(key: number): void {
+    const onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             ICDesignerController.Render();
     }
 
-    let onKeyUp = function(key: number): void {
+    const onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             ICDesignerController.Render();
     }
 
-    let onScroll = function(): void {
+    const onScroll = function(): void {
         // @TODO move this stuff as well
         let zoomFactor = input.getZoomFactor();
 
@@ -188,7 +188,7 @@ export const ICDesignerController = (function() {
         ICDesignerController.Render();
     }
 
-    let confirm = function(): void {
+    const confirm = function(): void {
         // Add the ICData and IC to the main designer
         let designer = MainDesignerController.GetDesigner();
         designer.addICData(icdata);
@@ -201,7 +201,7 @@ export const ICDesignerController = (function() {
         MainDesignerController.Render();
     }
 
-    let cancel = function(): void {
+    const cancel = function(): void {
         ICDesignerController.Hide();
     }
 
