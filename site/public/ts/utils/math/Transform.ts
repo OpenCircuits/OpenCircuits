@@ -113,6 +113,10 @@ export class Transform {
         this.dirty = true;
         this.dirtyCorners = true;
     }
+    public setRotationAbout(a: number, c: Vector): void {
+        this.rotateAbout(-this.getAngle(), c);
+        this.rotateAbout(a, c);
+    }
 
     public setParent(t: Transform): void {
         this.parent = t;
