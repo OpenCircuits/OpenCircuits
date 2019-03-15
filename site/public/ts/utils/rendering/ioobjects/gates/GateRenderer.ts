@@ -39,11 +39,11 @@ export const GateRenderer = (function() {
         render(renderer: Renderer, camera: Camera, gate: Gate, selected: boolean) {
             let transform = gate.getTransform();
 
-            var fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
-            var borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+            const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+            const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
             if (gate.isNot()) {
-                let l = transform.getSize().x/2 + 5;
+                const l = transform.getSize().x/2 + 5;
                 renderer.circle(l, 0, GATE_NOT_CIRCLE_RADIUS, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             }
 
