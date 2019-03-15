@@ -6,6 +6,7 @@ import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
+import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
@@ -75,7 +76,7 @@ export class SelectionTool extends Tool {
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (event == "mouseup")
             this.onMouseUp(input, button);
-        if (event == "onclick")
+        if (event == "onclick" && !(currentTool instanceof PlaceComponentTool))
             this.onClick(input, button);
         return false;
     }
