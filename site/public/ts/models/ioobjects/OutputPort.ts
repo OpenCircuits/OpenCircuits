@@ -30,7 +30,7 @@ export class OutputPort extends Port {
 			return;
 
 		for (var w of this.connections)
-			designer.propogate(w, this.isOn);
+			designer.propagate(w, this.isOn);
 	}
 
 	public connect(w: Wire): void {

@@ -64,7 +64,7 @@ export class Transform {
         this.matrix.translate(this.pos);
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
-        
+
         if (this.parent != undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
             this.prevParentMatrix = this.parent.getMatrix();
@@ -112,6 +112,10 @@ export class Transform {
         this.setPos(V(xx, yy).add(c));
         this.dirty = true;
         this.dirtyCorners = true;
+    }
+    public setRotationAbout(a: number, c: Vector): void {
+        this.rotateAbout(-this.getAngle(), c);
+        this.rotateAbout(a, c);
     }
 
     public setParent(t: Transform): void {
@@ -205,19 +209,19 @@ export class Transform {
         this.updateMatrix();
         return this.inverse;
     }
-    public getBottomLeft(): Vector {
+    public getTopLeft(): Vector {
         this.updateCorners();
         return this.corners[0];
     }
-    public getBottomRight(): Vector {
+    public getTopRight(): Vector {
         this.updateCorners();
         return this.corners[1];
     }
-    public getTopRight(): Vector {
+    public getBottomRight(): Vector {
         this.updateCorners();
         return this.corners[2];
     }
-    public getTopLeft(): Vector {
+    public getBottomLeft(): Vector {
         this.updateCorners();
         return this.corners[3];
     }

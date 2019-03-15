@@ -35,6 +35,12 @@ export abstract class Gate extends Component {
     public isNot(): boolean {
         return this.not;
     }
+    
+    public copy(): Gate {
+        let copy = <Gate>super.copy();
+        copy.not = this.not;
+        return copy;
+    }
 
     public save(node: XMLNode): void {
         super.save(node);

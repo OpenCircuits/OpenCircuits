@@ -16,6 +16,9 @@ import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
 import {SplitWireTool} from "./SplitWireTool";
 
+import {ActionHelper} from "./ActionHelper";
+import {ActionManager} from "../actions/ActionManager";
+
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
     private selectionTool       : SelectionTool;
@@ -26,13 +29,17 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private wiringTool          : WiringTool;
     private splitWireTool       : SplitWireTool;
 
+    private actionHelper        : ActionHelper;
+
+    private actionManager : ActionManager;
+
     private tools: Array<Tool>;
 
     private currentTool: Tool;
 
-    private currentAction: Action;
-
     public constructor(camera: Camera, designer: CircuitDesigner) {
+        this.actionManager      = new ActionManager();
+
         this.selectionTool      = new SelectionTool(designer, camera);
         this.panTool            = new PanTool(camera);
         this.rotateTool         = new RotateTool(camera);
@@ -40,6 +47,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
         this.splitWireTool      = new SplitWireTool(designer, camera);
+
+        this.actionHelper = new ActionHelper(this.actionManager);
 
         // Array of tools to activate
         this.tools = [
@@ -64,10 +73,12 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
         // Check if current tool should be deactivated
         //  and default tool (selection tool) should be activated
-        if (this.currentTool.deactivate(event, input, button)) {
+        if (this.currentTool != this.selectionTool &&
+            this.currentTool.deactivate(event, input, button)) {
             // Add action
             if (this.currentTool.getAction() != undefined)
-                this.currentAction = this.currentTool.getAction();
+                this.actionManager.add(this.currentTool.getAction())
+            this.selectionTool.activate(this.currentTool, event, input, button);
             this.activate(this.selectionTool);
             return true;
         }
@@ -76,11 +87,63 @@ export class ToolManager implements MouseListener, KeyboardListener {
         for (let tool of this.tools) {
             if (tool.activate(this.currentTool, event, input, button)) {
                 this.activate(tool);
+                this.selectionTool.deactivate(event, input, button);
                 return true;
             }
         }
 
+        // Re-render on action update
+        if (this.actionHelper.onEvent(this.currentTool, event, input, button))
+            return true;
+
         return didSomething;
+    }
+
+    /**
+     * Removes a type of tool from this tool manager
+     *
+     * @param  toolType The type of tool to remove
+     *
+     */
+    public removeTool(toolType: typeof Tool | typeof PanTool | typeof RotateTool | typeof TranslateTool |
+                                typeof PlaceComponentTool | typeof WiringTool): void {
+
+        for (let i = 0; i < this.tools.length; i++) {
+            let tool = this.tools[i];
+            if (tool instanceof toolType) {
+                // Activate selection tool if this tool is already active
+                if (this.currentTool == tool) {
+                    this.activate(this.selectionTool);
+                    this.selectionTool.activate(this.currentTool, "remove", undefined, 0);
+                }
+
+                // Remove the tool from this list of tools
+                this.tools.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Check if a specific type of tool is active
+     *
+     * @param  toolType The type of tool
+     * @return          True if the tool is active,
+     *                  False otherwise
+     */
+    public hasTool(toolType: typeof Tool | typeof PanTool | typeof RotateTool | typeof TranslateTool |
+                             typeof PlaceComponentTool | typeof WiringTool): boolean {
+
+        for (let i = 0; i < this.tools.length; i++) {
+            let tool = this.tools[i];
+            if (tool instanceof toolType)
+                return true;
+        }
+        return false;
+    }
+
+    public disableActions(): void {
+        this.actionHelper.disable();
     }
 
     public onMouseDown(input: Input, button: number): boolean {
@@ -114,14 +177,6 @@ export class ToolManager implements MouseListener, KeyboardListener {
     public placeComponent(component: Component) {
         this.placeComponentTool.setComponent(component);
         this.activate(this.placeComponentTool);
-    }
-
-    // Gets the last action and sets it as undefined
-    //  so it doesn't get added more than once
-    public popAction(): Action {
-        let action = this.currentAction;
-        this.currentAction = undefined;
-        return action;
     }
 
     public getCurrentTool(): Tool {

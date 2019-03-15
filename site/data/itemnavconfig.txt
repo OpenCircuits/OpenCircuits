@@ -1,14 +1,14 @@
 [Inputs=inputs]
-Constant Low & constantlow.svg & ?
-Constant High & constanthigh.svg & ?
-Button & button.svg & ?
+Constant Low & constantlow.svg & constlow
+Constant High & constanthigh.svg & consthigh
+Button & button.svg & button
 Switch & switch.svg & switch
-Clock & clock.svg & ?
-Keyboard & keyboard.svg & ?
+Clock & clock.svg & clock
+Keyboard & keyboard.svg & keyboard
 
 [Outputs=outputs]
 LED & led.svg & led
-7 Segment Display & sevensegmentdisplay.svg & ?
+7 Segment Display & sevensegmentdisplay.svg & sevensegmentdisplay
 
 [Logic Gates=gates]
 Buffer & bufgate.svg & buf
@@ -21,8 +21,8 @@ XOR & xorgate.svg & xor
 XNOR & xnorgate.svg & xor & true
 
 [Latches=latches]
-SR Latch & srlatch.svg & ?
-D Latch & srlatch.svg & ?
+SR Latch & srlatch.svg & srl
+D Latch & srlatch.svg & dl
 
 [Flip Flops=flipflops]
 SR Flip Flop & srflipflop.svg & srff
@@ -31,8 +31,8 @@ D Flip Flop & srflipflop.svg & dff
 T Flip Flop & srflipflop.svg & tff
 
 [Other=other]
-Mux & multiplexer.svg & ?
-Demux & demultiplexer.svg & ?
-Encoder & encoder.svg & ?
-Decoder & decoder.svg & ?
-Label & label.svg & ?
+Mux & multiplexer.svg & mux
+Demux & demultiplexer.svg & demux
+Encoder & encoder.svg & encoder
+Decoder & decoder.svg & decoder
+Label & label.svg & label

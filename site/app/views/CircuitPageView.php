@@ -12,6 +12,11 @@ class CircuitPageView {
         <link rel="stylesheet" href="css/stylesheet.css">
     </head>
     <body>
+        <div id="loading-screen" class="loading__screen">
+            <div class="loading__screen__background"></div>
+            <img class="loading__screen__logo" src="img/icons/logo.svg">
+        </div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
@@ -23,20 +28,44 @@ class CircuitPageView {
                     <img id="logo" class="header__center__logo" src="img/icons/logo.svg" height="100%" alt="OpenCircuits logo" />
                 </div>
                 <div class="header__right">
-                    <button type="button" onclick="document.getElementById('header-file-input').click();">
-                        <img src="img/icons/open.svg" height="100%" alt="Open a file" />
-                    </button>
+                    <div>
+                        <button type="button" onclick="document.getElementById('header-file-input').click();">
+                            <img src="img/icons/open.svg" height="100%" alt="Open a file" />
+                        </button>
+                    </div>
                     <input id="header-file-input" type="file" name="name" style="display: none;" multiple="false" required="true" accept=".circuit,.xml" />
-                    <button id="header-download-button" type="button">
-                        <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
-                    </button>
-                    <button id="header-download-pdf-button" type="button">
-                        <img src="img/icons/pdf_download.svg" height="100%" alt="Save current scene as PDF" />
-                    </button>
-                    <button id="header-download-png-button" type="button">
-                        <img src="img/icons/png_download.svg" height="100%" alt="Save current scene as PNG" />
-                    </button>
+
+                    <div class="header__dropdown">
+                        <button id="header-download-dropdown-button" class="header__dropdown__button">
+                            <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                        </button>
+                        <div id="header-download-dropdown-content" class="header__dropdown__content">
+                            <div id="header-download-button" type="button">
+                                <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                                <a>Download</a>
+                            </div>
+                            <div id="header-download-pdf-button" type="button">
+                                <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF" />
+                                <a>Download as PDF</a>
+                            </div>
+                            <div id="header-download-png-button" type="button">
+                                <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG" />
+                                <a>Download as PNG</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div id="context-menu" class="contextmenu" style="visibility: hidden;">
+                    <button id="context-menu-cut" alt="Cut">Cut</button>
+                    <button id="context-menu-copy" alt="Copy">Copy</button>
+                    <button id="context-menu-paste" alt="Paste">Paste</button>
+                    <button id="context-menu-select-all" alt="Select All">Select All</button>
+                    <hr/>
+                    <button id="context-menu-undo" alt="Undo">Undo</button>
+                    <button id="context-menu-redo" alt="Redo">Redo</button>
+                </div>
+
             </header>
 
             <main>
@@ -80,6 +109,44 @@ HTML;
                 <div id="itemnav-open-tab" class="tab"> &#9776; </div>
 
                 <canvas id="canvas" class="canvas"></canvas>
+
+                <div id="ic-designer" style="visibility: hidden;">
+                    <canvas id="ic-canvas" class="icdesigner"></canvas>
+                    <div class="icbuttons">
+                        <button id="ic-confirmbutton" class="icbuttons__button" onclick="icdesigner.confirm();" alt="Submit IC">Confirm</button>
+                        <button id="ic-cancelbutton"  class="icbuttons__button" onclick="icdesigner.cancel();"  alt="Cancel IC">Cancel</button>
+                    </div>
+                </div>
+
+                <div id="popup" class="popup" tabindex="-1" style="visibility: hidden;">
+                    <input id="popup-name" type="text" value="Name :" alt="Name of object(s)">
+                    <hr/>
+                    <div id="popup-pos-text" style="display: none;">Position
+                        <label id="popup-position-label" class="popup__label" unselectable disabled>
+                            <input id="popup-position-x" type="number" value="0" min="-10000" max="10000" step="0.5" alt="X-Position of object(s)" />
+                            <input id="popup-position-y" type="number" value="0" min="-10000" max="10000" step="0.5" alt="Y-Position of object(s)" />
+                        </label>
+                    </div>
+                    <div id="popup-input-count-text" style="display: none;">Input Count
+                        <label id="popup-input-count-label" class="popup__label" unselectable disabled>
+                            <input id="popup-input-count" type="number" value="2" min="2" max="8" step="1" alt="Number of inputs object(s) have" />
+                        </label>
+                    </div>
+                    <div id="popup-color-text" style="display: none;">Color
+                        <label id="popup-color-label" class="popup__label" unselectable disabled>
+                            <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
+                        </label>
+                    </div>
+                    <div id="popup-clock-delay-text" style="display: none;">Clock Delay
+                        <label id="popup-clock-delay-label" class="popup__label" unselectable disabled>
+                            <input id="popup-clock-delay" type="number" value="1000" min="200" max="10000" step="100" alt="Clock delay in milliseconds" />
+                        </label>
+                    </div>
+
+                    <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
+                    <!-- <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button> -->
+
+                </div>
             </main>
         </div>
 

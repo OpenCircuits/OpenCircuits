@@ -5,7 +5,7 @@ import {LEFT_MOUSE_BUTTON,
         ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2} from "../utils/Constants";
 
-import {V} from "../utils/math/Vector";
+import {Vector, V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
@@ -27,17 +27,20 @@ import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {InputPort} from "../models/ioobjects/InputPort";
 import {Switch}   from "../models/ioobjects/inputs/Switch";
+import {Button}   from "../models/ioobjects/inputs/Button";
 import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate}  from "../models/ioobjects/gates/XORGate";
+import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 import {LED}      from "../models/ioobjects/outputs/LED";
+import {SelectionPopupController} from "./SelectionPopupController";
 
 export var MainDesignerController = (function() {
     var designer: CircuitDesigner;
     var view: MainDesignerView;
     var input: Input;
 
-    var actions: ActionManager;
     var toolManager: ToolManager;
     var renderQueue: RenderQueue;
 
@@ -50,43 +53,40 @@ export var MainDesignerController = (function() {
     let onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onMouseDrag = function(button: number): void {
-        if (toolManager.onMouseDrag(input, button))
+        if (toolManager.onMouseDrag(input, button)) {
+            SelectionPopupController.Hide();
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
+        }
     }
 
     let onMouseUp = function(button: number): void {
-        if (toolManager.onMouseUp(input, button))
+        if (toolManager.onMouseUp(input, button)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
+        }
     }
 
     let onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             MainDesignerController.Render();
-        MainDesignerController.AddAction(toolManager.popAction());
     }
 
     let onScroll = function(): void {
@@ -100,6 +100,7 @@ export var MainDesignerController = (function() {
         let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
 
+        SelectionPopupController.Update();
         MainDesignerController.Render();
     }
     return {
@@ -111,12 +112,11 @@ export var MainDesignerController = (function() {
             view = new MainDesignerView();
 
             // utils
-            actions = new ActionManager();
             toolManager = new ToolManager(view.getCamera(), designer);
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
-                            toolManager.getCurrentTool()));
+                            toolManager));
 
             // input
             input = new Input(view.getCanvas());
@@ -131,64 +131,28 @@ export var MainDesignerController = (function() {
 
             window.addEventListener("resize", _e => resize(), false);
 
-
-            var s1 = new Switch();
-            var s2 = new Switch();
-            var g1 = new ANDGate();
-            var l1 = new LED();
-
-            s1.setPos(V(-200, 100));
-            s2.setPos(V(-200, -100));
-            g1.setPos(V(0, 0));
-            l1.setPos(V(200, 0));
-
-            designer.addObjects([s1, s2, g1, l1]);
-
-            var g2 = new XORGate();
-            g2.setPos(V(0, 200));
-            g2.setInputPortCount(5);
-            designer.addObject(g2);
-
-            var g3 = new ORGate();
-            g3.setPos(V(0, -200));
-            g3.setInputPortCount(5);
-            designer.addObject(g3);
-
-
-            designer.connect(s1, 0,  g1, 0);
-            designer.connect(s2, 0,  g1, 1);
-
-            designer.connect(g1, 0,  l1, 0);
-
-            s1.activate(true);
-
-            console.log("LED active: " + l1.isOn().toString());
-
-            s1.activate(false);
-            s2.activate(true);
-
-            console.log("LED active: " + l1.isOn().toString());
-
-            s1.activate(true);
-
-            console.log("LED active: " + l1.isOn().toString());
+            toolManager.getSelectionTool().addSelectionChangeListener( () => SelectionPopupController.Update() );
         },
         Render: function(): void {
             renderQueue.render();
         },
-        AddAction(action: Action): void {
-            if (action == undefined)
-                return;
-            actions.add(action);
+        ClearSelections: function(): void {
+            toolManager.getSelectionTool().clearSelections();
         },
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
         },
+        GetSelections: function(): Array<IOObject> {
+            return toolManager.getSelectionTool().getSelections();
+        },
+        GetCanvas: function(): HTMLCanvasElement {
+            return view.getCanvas();
+        },
+        GetCamera: function(): Camera {
+            return view.getCamera();
+        },
         GetDesigner: function(): CircuitDesigner {
             return designer;
-        },
-        GetActionManager: function(): ActionManager {
-            return actions;
         }
     };
 })();

@@ -5,7 +5,7 @@ import {ToolRenderer}      from "../utils/rendering/ToolRenderer";
 import {WireRenderer}      from "../utils/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer";
 
-import {Tool} from "../utils/tools/Tool";
+import {ToolManager} from "../utils/tools/ToolManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -27,7 +27,7 @@ export class MainDesignerView {
         this.resize();
     }
 
-    public render(designer: CircuitDesigner, selections: Array<IOObject>, currentTool: Tool) {
+    public render(designer: CircuitDesigner, selections: Array<IOObject>, toolManager: ToolManager) {
         this.renderer.clear();
 
         // Render grid
@@ -48,7 +48,7 @@ export class MainDesignerView {
         }
 
         // Render current tool
-        ToolRenderer.render(this.renderer, this.camera, currentTool);
+        ToolRenderer.render(this.renderer, this.camera, toolManager);
     }
 
     public resize(): void {
