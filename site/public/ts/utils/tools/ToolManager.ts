@@ -14,6 +14,7 @@ import {PanTool} from "./PanTool";
 import {TranslateTool} from "./TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
+import {SplitWireTool} from "./SplitWireTool";
 
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
@@ -23,6 +24,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private translateTool       : TranslateTool;
     private placeComponentTool  : PlaceComponentTool;
     private wiringTool          : WiringTool;
+    private splitWireTool       : SplitWireTool;
 
     private tools: Array<Tool>;
 
@@ -37,6 +39,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.translateTool      = new TranslateTool(camera);
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
+        this.splitWireTool      = new SplitWireTool(designer, camera);
 
         // Array of tools to activate
         this.tools = [
@@ -44,7 +47,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
             this.rotateTool,
             this.translateTool,
             this.placeComponentTool,
-            this.wiringTool
+            this.wiringTool,
+            this.splitWireTool
         ];
 
         // Default tool
