@@ -3,7 +3,7 @@
     "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
-    "lib": ["es5", "dom"],
+    "lib": ["es7", "dom"],
     "module": "es2015",
     "target": "es5",
     "esModuleInterop": true,
