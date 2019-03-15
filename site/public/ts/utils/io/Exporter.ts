@@ -8,6 +8,8 @@ export let Exporter = (function() {
     let write = function(designer: CircuitDesigner): string {
         let writer = new XMLWriter(designer.getXMLName());
 
+        writer.setVersion(1);
+        
         designer.save(writer.getRoot());
 
         return writer.serialize();
