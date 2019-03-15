@@ -24,7 +24,7 @@ export class ColorPopupModule extends SelectionPopupModule {
                 same = leds[i].getColor() == color;
             }
 
-            this.color.value = same ? color : "#ffffff";
+            this.color.value = same ? color : "#cccccc";
         }
 
         this.setEnabled(enable);
