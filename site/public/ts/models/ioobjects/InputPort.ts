@@ -19,7 +19,7 @@ export class InputPort extends Port {
 		this.isOn = signal;
 
 		// Get designer to propagate signal, exit if undefined
-		var designer = this.parent.getDesigner();
+		const designer = this.parent.getDesigner();
 		if (designer == undefined)
 			return;
 
