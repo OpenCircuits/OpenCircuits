@@ -23,7 +23,6 @@ function Init() {
         new Promise((resolve, reject) => {
             MainDesignerController.Init();
             HeaderController.Init(MainDesignerController.GetDesigner());
-            ItemNavController.Init(MainDesignerController.GetDesigner());
             SelectionPopupController.Init(MainDesignerController.GetCamera());
             resolve(1);
         }),
@@ -33,6 +32,10 @@ function Init() {
         }),
         new Promise((resolve, reject) => {
             ContextMenuController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            ItemNavController.Init();
             resolve(1);
         }),
         new Promise((resolve, reject) => {
