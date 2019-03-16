@@ -46,6 +46,8 @@ export class SelectionTool extends Tool {
         this.selections = [];
         this.selecting = false;
 
+        this.disabledSelections = false;
+
         this.callbacks = [];
     }
 
@@ -55,7 +57,7 @@ export class SelectionTool extends Tool {
 
     public addSelection(obj: IOObject): boolean {
         // Don't select anything if it's disabled
-        if (this.disableSelections)
+        if (this.disabledSelections)
             return false;
 
         if (!this.selections.includes(obj)) {
@@ -123,7 +125,7 @@ export class SelectionTool extends Tool {
     public onMouseDrag(input: Input, button: number): boolean {
         // Update positions of selection
         //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON && !this.disableSelections) {
+        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections) {
             this.selecting = true;
 
             // Update selection box positions

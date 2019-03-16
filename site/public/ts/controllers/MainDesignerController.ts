@@ -131,8 +131,11 @@ export const MainDesignerController = (function() {
             toolManager.disableTool(WiringTool, val);
 
             // Disable actions/selections
-            toolManager.disableActions();
+            toolManager.disableActions(val);
+            toolManager.getSelectionTool().clearSelections();
             toolManager.getSelectionTool().disableSelections(val);
+
+            MainDesignerController.Render();
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
