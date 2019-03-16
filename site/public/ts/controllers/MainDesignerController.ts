@@ -1,18 +1,6 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY,
-        IO_PORT_RADIUS,
-        ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2} from "../utils/Constants";
-
-import {Vector, V} from "../utils/math/Vector";
-import {Transform} from "../utils/math/Transform";
-import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
-import {Action} from "../utils/actions/Action";
-import {ActionManager} from "../utils/actions/ActionManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -24,12 +12,8 @@ import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 import {WiringTool} from "../utils/tools/WiringTool";
 
-import {MouseListener} from "../utils/MouseListener";
-
-import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
-import {InputPort} from "../models/ioobjects/InputPort";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
