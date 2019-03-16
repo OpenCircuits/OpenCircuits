@@ -23,22 +23,27 @@ export const ItemNavController = (function() {
     let isOpen = false;
     let disabled = false;
 
-    const open = function() {
-        itemnav.style.width       = ITEMNAV_WIDTH + "px";
-        tab.style.marginLeft      = (ITEMNAV_WIDTH - tab.offsetWidth) + "px";
-        tab.style.borderColor     = "rgba(153, 153, 153, 0.0)";
-        tab.style.backgroundColor = "rgba(200, 200, 200, 0.0)";
-        tab.style.fontSize        = "2.5em";
-        tab.innerHTML             = "&times;";
-    }
+    // const open = function() {
+    //     itemnav.style.width       = ITEMNAV_WIDTH + "px";
+    //     tab.style.marginLeft      = (ITEMNAV_WIDTH - tab.offsetWidth) + "px";
+    //     tab.style.borderColor     = "rgba(153, 153, 153, 0.0)";
+    //     tab.style.backgroundColor = "rgba(200, 200, 200, 0.0)";
+    //     tab.style.fontSize        = "2.5em";
+    //     tab.innerHTML             = "&times;";
+    // }
+    //
+    // const close = function() {
+    //     itemnav.style.width       = "0px";
+    //     tab.style.marginLeft      = "0px";
+    //     tab.style.borderColor     = "rgba(153, 153, 153, 0.7)";
+    //     tab.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
+    //     tab.style.fontSize        = "2em";
+    //     tab.innerHTML             = "&plus;";
+    // }
 
-    const close = function() {
-        itemnav.style.width       = "0px";
-        tab.style.marginLeft      = "0px";
-        tab.style.borderColor     = "rgba(153, 153, 153, 0.7)";
-        tab.style.backgroundColor = "rgba(200, 200, 200, 0.7)";
-        tab.style.fontSize        = "2em";
-        tab.innerHTML             = "&#9776;";
+    const toggle = function() {
+        itemnav.classList.toggle("shrink");
+        tab.classList.toggle("tab__closed");
     }
 
     const place = function(component: Component) {
@@ -67,13 +72,17 @@ export const ItemNavController = (function() {
             if (disabled)
                 return;
 
-            if (isOpen) {
-                isOpen = false;
-                close();
-            } else {
-                isOpen = true;
-                open();
-            }
+            isOpen = !isOpen;
+            toggle();
+
+
+            // if (isOpen) {
+            //     isOpen = false;
+            //     close();
+            // } else {
+            //     isOpen = true;
+            //     open();
+            // }
         },
         IsOpen: function(): boolean {
             return isOpen;
