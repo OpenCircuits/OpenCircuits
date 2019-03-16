@@ -5,6 +5,7 @@ import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
 import {ItemNavController} from "./controllers/ItemNavController";
+import {SideNavController} from "./controllers/SideNavController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
 import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
@@ -32,6 +33,10 @@ function Init() {
         }),
         new Promise((resolve, reject) => {
             ContextMenuController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            SideNavController.Init();
             resolve(1);
         })
     ];

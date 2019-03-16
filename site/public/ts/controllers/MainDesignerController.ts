@@ -142,6 +142,13 @@ export var MainDesignerController = (function() {
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
         },
+        SetEditMode: function(val: boolean) {
+            if (val) {
+
+            } else {
+
+            }
+        },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
         },
