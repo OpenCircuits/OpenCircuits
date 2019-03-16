@@ -23,7 +23,7 @@ export class Switch extends PressableComponent {
         return "Switch";
     }
 
-	public getImageName(): string {
+	public getOffImageName(): string {
 		return "switchUp.svg";
 	}
 

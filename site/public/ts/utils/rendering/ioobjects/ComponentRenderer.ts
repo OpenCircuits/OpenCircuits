@@ -64,9 +64,6 @@ export var ComponentRenderer = (function() {
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
-                if (object.isOn())
-                    imgName = object.getOnImageName();
-
                 // Set size/pos for drawing image to be size of "pressable" part
                 size = object.getPressableBox().getSize();
                 dPos = object.getPressableBox().getPos();

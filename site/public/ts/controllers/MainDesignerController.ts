@@ -26,14 +26,6 @@ import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
 import {InputPort} from "../models/ioobjects/InputPort";
-import {Switch}   from "../models/ioobjects/inputs/Switch";
-import {Button}   from "../models/ioobjects/inputs/Button";
-import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
-import {ORGate}  from "../models/ioobjects/gates/ORGate";
-import {XORGate}  from "../models/ioobjects/gates/XORGate";
-import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
-import {LED}      from "../models/ioobjects/outputs/LED";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export var MainDesignerController = (function() {
