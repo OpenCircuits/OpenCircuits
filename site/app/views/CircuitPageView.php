@@ -17,10 +17,30 @@ class CircuitPageView {
             <img class="loading__screen__logo" src="img/icons/logo.svg">
         </div>
 
+        <div id="overlay" class="overlay invisible"></div>
+
+        <div id="sidenav" class="sidenav shrink">
+            <div class="sidenav__accountinfo">
+                User
+            </div>
+            <div class="sidenav__content">
+                <h4>
+                    <label class="sidenav__content__switch">
+                        <input id="sidenav-mode-checkbox" type="checkbox" checked />
+                        <span class="sidenav__content__slider"></span>
+                    </label>
+                </h4>
+                <h4 unselectable>My Circuits</h4>
+                <h4 unselectable>Examples</h4>
+                <ul id="sidenav-content-example-list">
+                </ul>
+            </div>
+        </div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
-                    <span id="header-open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
+                    <span id="header-sidenav-open-tab" role="button" tabindex="0" class="header__left__sidenavbutton">&#9776;</span>
                     <input id="header-project-name-input" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
 
