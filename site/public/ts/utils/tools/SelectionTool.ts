@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY, DELETE_KEY,BACKSPACE_KEY,
+        OPTION_KEY, SHIFT_KEY,
+        DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
@@ -185,8 +185,6 @@ export class SelectionTool extends Tool {
             if (!input.isKeyDown(SHIFT_KEY))
                 render = this.clearSelections();
 
-
-
             // Check if an object was clicked
             //  and add to selections
             let objects = this.designer.getObjects();
@@ -212,23 +210,20 @@ export class SelectionTool extends Tool {
         return false;
     }
 
-    public onKeyDown(input: Input, key: number): boolean{
-        if (key == DELETE_KEY || key == BACKSPACE_KEY) {
-            if (this.selections.length==0)
-                return false;
+    public onKeyDown(input: Input, key: number): boolean {
+        if (this.selections.length == 0)
+            return false;
 
-            for (let selection of this.selections) {
+        if (key == DELETE_KEY || key == BACKSPACE_KEY) {
+            for (const selection of this.selections) {
                 if (selection instanceof Component)
                     this.designer.removeObject(selection);
             }
             this.clearSelections();
             return true;
         }
-        if (key == ESC_KEY){
-            for (let selection of this.selections) {
-                if (selection instanceof Component)
-                    this.clearSelections();
-            }
+        if (key == ESC_KEY) {
+            this.clearSelections();
             return true;
         }
 
