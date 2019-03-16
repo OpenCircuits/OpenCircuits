@@ -223,15 +223,15 @@ export var ICDesignerController = (function() {
                             ic,
                             toolManager));
 
-            // Remove some tools
-            toolManager.removeTool(TranslateTool);
-            toolManager.removeTool(RotateTool);
-            toolManager.removeTool(PlaceComponentTool);
-            toolManager.removeTool(WiringTool);
+            // Disable some tools
+            toolManager.disableTool(TranslateTool);
+            toolManager.disableTool(RotateTool);
+            toolManager.disableTool(PlaceComponentTool);
+            toolManager.disableTool(WiringTool);
 
             // Disable other functionality
             toolManager.disableActions();
-            toolManager.getSelectionTool().disableSelectionBox();
+            toolManager.getSelectionTool().disableSelections();
 
             // input
             input = new Input(view.getCanvas());
