@@ -89,9 +89,13 @@ export const ItemNavController = (function() {
         },
         Enable: function(): void {
             disabled = false;
+            if (tab.classList.contains("invisible"))
+                tab.classList.remove("invisible");
         },
         Disable: function(): void {
             disabled = true;
+            if (!tab.classList.contains("invisible"))
+                tab.classList.add("invisible");
         }
     }
 

@@ -6,6 +6,8 @@ import {Action} from "../actions/Action";
 
 export abstract class Tool implements MouseListener, KeyboardListener {
 
+    private disabled: boolean = false;
+
     /**
      * Checks if this tool should be activated and
      *  then activates it
@@ -29,6 +31,10 @@ export abstract class Tool implements MouseListener, KeyboardListener {
      *                False otherwise
      */
     public abstract deactivate(event: string, input: Input, button?: number): boolean;
+
+    public setDisabled(val: boolean): void {
+        this.disabled = val;
+    }
 
     public onMouseDown(input: Input, button: number): boolean {
         return false;
@@ -56,6 +62,10 @@ export abstract class Tool implements MouseListener, KeyboardListener {
 
     public onKeyUp(input: Input, key: number): boolean {
         return false;
+    }
+
+    public isDisabled(): boolean {
+        return this.disabled;
     }
 
     public getAction(): Action {

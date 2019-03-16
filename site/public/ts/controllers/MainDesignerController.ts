@@ -1,31 +1,19 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY,
-        IO_PORT_RADIUS,
-        ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2} from "../utils/Constants";
-
-import {Vector, V} from "../utils/math/Vector";
-import {Transform} from "../utils/math/Transform";
-import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
-import {Action} from "../utils/actions/Action";
-import {ActionManager} from "../utils/actions/ActionManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {TranslateTool} from "../utils/tools/TranslateTool";
+import {RotateTool} from "../utils/tools/RotateTool";
+import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
+import {WiringTool} from "../utils/tools/WiringTool";
 
-import {MouseListener} from "../utils/MouseListener";
-
-import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
-import {InputPort} from "../models/ioobjects/InputPort";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
@@ -95,6 +83,7 @@ export const MainDesignerController = (function() {
         SelectionPopupController.Update();
         MainDesignerController.Render();
     }
+
     return {
         Init: function(): void {
             // pass Render function so that
@@ -133,6 +122,20 @@ export const MainDesignerController = (function() {
         },
         PlaceComponent: function(component: Component) {
             toolManager.placeComponent(component);
+        },
+        SetEditMode: function(val: boolean) {
+            // Disable some tools
+            toolManager.disableTool(TranslateTool, val);
+            toolManager.disableTool(RotateTool, val);
+            toolManager.disableTool(PlaceComponentTool, val);
+            toolManager.disableTool(WiringTool, val);
+
+            // Disable actions/selections
+            toolManager.disableActions(val);
+            toolManager.getSelectionTool().clearSelections();
+            toolManager.getSelectionTool().disableSelections(val);
+
+            MainDesignerController.Render();
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
