@@ -1,8 +1,9 @@
 import {XMLReader} from "./xml/XMLReader";
+import {XMLNode} from "./xml/XMLNode";
+import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export const Importer = (function() {
-
+export const Importer = (function() {=
     let saved = false;
 
     const read = function(designer: CircuitDesigner, file: string): string {
@@ -11,7 +12,11 @@ export const Importer = (function() {
             return;
 
         let reader = new XMLReader(root);
-        
+
+        // Check for old version of save
+        if (reader.getVersion() == -1)
+            ResolveVersionConflict(reader);
+
         designer.load(reader.getRoot());
     }
 

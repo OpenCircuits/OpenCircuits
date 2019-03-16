@@ -212,6 +212,9 @@ export class CircuitDesigner implements XMLable {
 			this.wires.push(w);
 			w.setDesigner(this);
 		});
+
+		// Update since the circuit has changed
+		this.updateCallback();
 	}
 
 	public getObjects(): Array<Component> {
