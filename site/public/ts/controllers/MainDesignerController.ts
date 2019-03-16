@@ -19,6 +19,10 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {TranslateTool} from "../utils/tools/TranslateTool";
+import {RotateTool} from "../utils/tools/RotateTool";
+import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
+import {WiringTool} from "../utils/tools/WiringTool";
 
 import {MouseListener} from "../utils/MouseListener";
 
@@ -103,6 +107,7 @@ export var MainDesignerController = (function() {
         SelectionPopupController.Update();
         MainDesignerController.Render();
     }
+
     return {
         Init: function(): void {
             // pass Render function so that
@@ -143,11 +148,15 @@ export var MainDesignerController = (function() {
             toolManager.placeComponent(component);
         },
         SetEditMode: function(val: boolean) {
-            if (val) {
+            // Disable some tools
+            toolManager.disableTool(TranslateTool, val);
+            toolManager.disableTool(RotateTool, val);
+            toolManager.disableTool(PlaceComponentTool, val);
+            toolManager.disableTool(WiringTool, val);
 
-            } else {
-
-            }
+            // Disable actions/selections
+            toolManager.disableActions();
+            toolManager.getSelectionTool().disableSelections(val);
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();

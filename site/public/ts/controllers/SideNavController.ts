@@ -1,4 +1,5 @@
 import {MainDesignerController} from "./MainDesignerController";
+import {ItemNavController} from "./ItemNavController";
 
 export const SideNavController = (function() {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -15,7 +16,22 @@ export const SideNavController = (function() {
 
     let toggleEditMode = function() {
         editMode = !editMode;
-        MainDesignerController.SetEditMode(editMode);
+
+        MainDesignerController.SetEditMode(!editMode);
+
+        // Toggle ItemNavController
+        if (ItemNavController.IsOpen())
+            ItemNavController.Toggle();
+
+        // Disable or re-enable ItemNavController
+        if (editMode)
+            ItemNavController.Enable();
+        else
+            ItemNavController.Disable();
+
+        // Toggle SideNavController if entering play mode
+        if (SideNavController.IsOpen() && !editMode)
+            SideNavController.Toggle();
     }
 
     let toggle = function() {
