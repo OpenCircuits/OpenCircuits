@@ -41,11 +41,11 @@ export class Vector {
         return new Vector(Math.abs(this.x), Math.abs(this.y));
     }
     normalize(): Vector {
-        var len = this.len();
+        const len = this.len();
         if (len === 0) {
             return new Vector(0, 0);
         } else {
-            var invLen = 1 / len;
+            const invLen = 1 / len;
             return new Vector(this.x * invLen, this.y * invLen);
         }
     }

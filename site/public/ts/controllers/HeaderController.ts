@@ -3,23 +3,21 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 import {Importer} from "../utils/io/Importer";
 import {Exporter} from "../utils/io/Exporter";
 
-export var HeaderController = (function() {
-    let mainDesigner: CircuitDesigner;
+export const HeaderController = (function() {
+    const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
 
-    let projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
+    const fileInput = <HTMLInputElement>document.getElementById("header-file-input");
 
-    let fileInput = <HTMLInputElement>document.getElementById("header-file-input");
+    const downloadDropdownButton = document.getElementById("header-download-dropdown-button");
+    const downloadDropdown = document.getElementById("header-download-dropdown-content");
 
-    let downloadDropdownButton = document.getElementById("header-download-dropdown-button");
-    let downloadDropdown = document.getElementById("header-download-dropdown-content");
-
-    let downloadButton = document.getElementById("header-download-button");
-    let downloadPDFButton = document.getElementById("header-download-pdf-button");
-    let downloadPNGButton = document.getElementById("header-download-png-button");
+    const downloadButton = document.getElementById("header-download-button");
+    const downloadPDFButton = document.getElementById("header-download-pdf-button");
+    const downloadPNGButton = document.getElementById("header-download-png-button");
 
     return {
         Init: function(designer: CircuitDesigner) {
-            mainDesigner = designer;
+            const mainDesigner: CircuitDesigner = designer;
 
             // Show/hide the dropdown on click
             downloadDropdownButton.onclick = () => {

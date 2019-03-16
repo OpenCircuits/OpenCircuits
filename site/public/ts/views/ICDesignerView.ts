@@ -22,19 +22,19 @@ export class ICDesignerView {
 
     public constructor() {
         // Get HTML elements
-        let canvas = document.getElementById("ic-canvas");
+        const canvas = document.getElementById("ic-canvas");
         if (!(canvas instanceof HTMLCanvasElement))
             throw new Error("IC Canvas element not found!");
 
-        let div = document.getElementById("ic-designer");
+        const div = document.getElementById("ic-designer");
         if (!(div instanceof HTMLDivElement))
             throw new Error("IC Designer DIV element not found!");
 
-        let confirmButton = document.getElementById("ic-confirmbutton");
+        const confirmButton = document.getElementById("ic-confirmbutton");
         if (!(confirmButton instanceof HTMLButtonElement))
             throw new Error("IC Confirm Button element not found!");
 
-        let cancelButton = document.getElementById("ic-cancelbutton");
+        const cancelButton = document.getElementById("ic-cancelbutton");
         if (!(cancelButton instanceof HTMLButtonElement))
             throw new Error("IC Cancel Button element not found!");
 
@@ -69,7 +69,7 @@ export class ICDesignerView {
         Grid.render(this.renderer, this.camera);
 
         // Render all objects
-        var objects = designer.getObjects();
+        const objects = designer.getObjects();
         for (let object of objects)
             ComponentRenderer.render(this.renderer, this.camera, object, false);
 

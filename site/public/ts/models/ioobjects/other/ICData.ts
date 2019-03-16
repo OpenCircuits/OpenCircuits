@@ -70,8 +70,8 @@ export class ICData {
     }
 
     public positionPorts(): void {
-        let ports = this.getPorts();
-        let size = this.transform.getSize();
+        const ports = this.getPorts();
+        const size = this.transform.getSize();
 
         for (let i = 0; i < ports.length; i++) {
             let port = ports[i];
@@ -82,8 +82,8 @@ export class ICData {
             let pos = target.add(target.sub(origin).normalize().scale(10000));
 
             let p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
-            var v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
-            var v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            let v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
+            let v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
             port.setOriginPos(v1);
             port.setTargetPos(v2);

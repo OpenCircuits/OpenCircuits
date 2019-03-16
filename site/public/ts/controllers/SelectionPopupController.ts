@@ -16,13 +16,13 @@ import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
 * ! Controls its own DOM element(s)
 * TODO: use decorators or some other interface to determine what properties are available
 */
-export var SelectionPopupController = (function() {
+export const SelectionPopupController = (function() {
     let camera: Camera;
     let div: HTMLDivElement;
     let modules: Array<SelectionPopupModule>;
     let pos: Vector;
 
-    let setPos = function(v: Vector): void {
+    const setPos = function(v: Vector): void {
         pos = v;
 
         div.style.left = `${pos.x}px`;

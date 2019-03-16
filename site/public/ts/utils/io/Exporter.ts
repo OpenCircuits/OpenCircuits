@@ -1,11 +1,11 @@
 import {XMLWriter} from "./xml/XMLWriter";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export let Exporter = (function() {
+export const Exporter = (function() {
 
     let saved = false;
 
-    let write = function(designer: CircuitDesigner): string {
+    const write = function(designer: CircuitDesigner): string {
         let writer = new XMLWriter(designer.getXMLName());
 
         designer.save(writer.getRoot());
