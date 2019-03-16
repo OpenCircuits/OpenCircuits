@@ -6,15 +6,15 @@ import {Matrix2x3} from "../../../../../site/public/ts/utils/math/Matrix";
 describe("Matrix2x3", () => {
     describe("Constructor", () => {
         it("No parameters", () => {
-            var m = new Matrix2x3();
+            const m = new Matrix2x3();
                                     // [1 0 0]
                                     // [0 1 0]
             expect(m["mat"]).toEqual([1, 0, 0, 1, 0, 0]);
         });
         it("One (matrix) parameter", () => {
-            var m1 = new Matrix2x3();
+            const m1 = new Matrix2x3();
             m1["mat"] = [6, 5, 4, 3, 2, 1];
-            var m2 = new Matrix2x3(m1);
+            const m2 = new Matrix2x3(m1);
                                     // [6 4 2]
                                     // [5 3 1]
             expect(m1["mat"]).toEqual([6, 5, 4, 3, 2, 1]);
@@ -26,12 +26,12 @@ describe("Matrix2x3", () => {
     });
     describe("Modifiers", () => {
         it("Zero", () => {
-            var m = new Matrix2x3();
+            const m = new Matrix2x3();
             m.zero();
             expect(m["mat"]).toEqual([0, 0, 0, 0, 0, 0]);
         });
         it("Identity", () => {
-            var m = new Matrix2x3();
+            const m = new Matrix2x3();
             m["mat"] = [0, 0, 0, 0, 0, 0];
             m.identity();
                                     // [1 0 0]
@@ -40,8 +40,8 @@ describe("Matrix2x3", () => {
         });
         it("Translate", () => {
             {
-                var m = new Matrix2x3();
-                var v = new Vector(5, -2);
+                const m = new Matrix2x3();
+                const v = new Vector(5, -2);
                 m.translate(v);
                 expect(v.x).toBe(5);
                 expect(v.y).toBe(-2);
@@ -50,9 +50,9 @@ describe("Matrix2x3", () => {
                 expect(m["mat"]).toEqual([1, 0, 0, 1, 5, -2]);
             }
             {
-                var m = new Matrix2x3();
+                const m = new Matrix2x3();
                 m["mat"] = [1, 2, 3, 4, 0, 0];
-                var v = new Vector(5, -2);
+                const v = new Vector(5, -2);
                 m.translate(v);
                 expect(v.x).toBe(5);
                 expect(v.y).toBe(-2);
@@ -63,7 +63,7 @@ describe("Matrix2x3", () => {
         });
         it("Rotate", () => {
             {
-                var m = new Matrix2x3();
+                const m = new Matrix2x3();
                 m.rotate(Math.PI / 2);
                                         // [0 -1 0]
                                         // [1  0 0]
@@ -75,7 +75,7 @@ describe("Matrix2x3", () => {
                 expect(m["mat"][5]).toBe(0);
             }
             {
-                var m = new Matrix2x3();
+                const m = new Matrix2x3();
                 m.rotate(Math.PI / 4);
                                         // [0.707 -0.707 0]
                                         // [0.707  0.707 0]
@@ -89,8 +89,8 @@ describe("Matrix2x3", () => {
         });
         it("Scale", () => {
             {
-                var m = new Matrix2x3();
-                var v = new Vector(5, -2);
+                const m = new Matrix2x3();
+                const v = new Vector(5, -2);
                 m.scale(v);
                 expect(v.x).toBe(5);
                 expect(v.y).toBe(-2);
@@ -99,9 +99,9 @@ describe("Matrix2x3", () => {
                 expect(m["mat"]).toEqual([5, 0, -0, -2, 0, 0]);
             }
             {
-                var m = new Matrix2x3();
+                const m = new Matrix2x3();
                 m["mat"] = [1, 2, 3, 4, 0, 0];
-                var v = new Vector(5, -2);
+                const v = new Vector(5, -2);
                 m.scale(v);
                 expect(v.x).toBe(5);
                 expect(v.y).toBe(-2);
@@ -113,21 +113,21 @@ describe("Matrix2x3", () => {
     });
     describe("Operators", () => {
         it("Mul", () => {
-            var m = new Matrix2x3();
+            const m = new Matrix2x3();
             m["mat"] = [1, 2, 3, 4, 5, 6];
-            var v1 = new Vector(-1, -2);
-            var v2 = m.mul(v1);
+            const v1 = new Vector(-1, -2);
+            const v2 = m.mul(v1);
             expect(v1.x).toBe(-1);
             expect(v1.y).toBe(-2);
             expect(v2.x).toBe(-2);
             expect(v2.y).toBe(-4);
         });
         it("Mult", () => {
-            var m1 = new Matrix2x3();
+            const m1 = new Matrix2x3();
             m1["mat"] = [1, 2, 3, 4, 5, 6];
-            var m2 = new Matrix2x3();
+            const m2 = new Matrix2x3();
             m2["mat"] = [6, 5, 4, 3, 2, 1];
-            var m3 = m1.mult(m2);
+            const m3 = m1.mult(m2);
                                     // [1 3 5]
                                     // [2 4 6]
             expect(m1["mat"]).toEqual([1, 2, 3, 4, 5, 6]);
@@ -140,8 +140,8 @@ describe("Matrix2x3", () => {
         });
         it("Inverse", () => {
             {
-                var m = new Matrix2x3();
-                var i = m.inverse();
+                const m = new Matrix2x3();
+                const i = m.inverse();
                                         // [1 0 0]
                                         // [0 1 0]
                 expect(m["mat"]).toEqual([1, 0, 0, 1, 0, 0]);
@@ -150,9 +150,9 @@ describe("Matrix2x3", () => {
                 expect(i["mat"]).toEqual([1, -0, -0, 1, 0, 0]);
             }
             {
-                var m = new Matrix2x3();
+                const m = new Matrix2x3();
                 m["mat"] = [1, 2, 3, 4, 5, 6];
-                var i = m.inverse();
+                const i = m.inverse();
                                         // [1 3 5]
                                         // [2 4 6]
                 expect(m["mat"]).toEqual([1, 2, 3, 4, 5, 6]);

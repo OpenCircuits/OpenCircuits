@@ -7,11 +7,11 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerController} from "./MainDesignerController";
 
-export var ItemNavController = (function() {
+export const ItemNavController = (function() {
     let mainDesigner: CircuitDesigner;
 
-    let tab = document.getElementById("itemnav-open-tab");
-    let itemnav = document.getElementById("itemnav");
+    const tab = document.getElementById("itemnav-open-tab");
+    const itemnav = document.getElementById("itemnav");
 
     // let projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
     //
@@ -23,7 +23,7 @@ export var ItemNavController = (function() {
     let isOpen = false;
     let disabled = false;
 
-    let open = function() {
+    const open = function() {
         itemnav.style.width       = ITEMNAV_WIDTH + "px";
         tab.style.marginLeft      = (ITEMNAV_WIDTH - tab.offsetWidth) + "px";
         tab.style.borderColor     = "rgba(153, 153, 153, 0.0)";
@@ -32,7 +32,7 @@ export var ItemNavController = (function() {
         tab.innerHTML             = "&times;";
     }
 
-    let close = function() {
+    const close = function() {
         itemnav.style.width       = "0px";
         tab.style.marginLeft      = "0px";
         tab.style.borderColor     = "rgba(153, 153, 153, 0.7)";
@@ -41,7 +41,7 @@ export var ItemNavController = (function() {
         tab.innerHTML             = "&#9776;";
     }
 
-    let place = function(component: Component) {
+    const place = function(component: Component) {
         MainDesignerController.PlaceComponent(component);
     }
 
@@ -57,8 +57,8 @@ export var ItemNavController = (function() {
                 if (!(child instanceof HTMLButtonElement))
                     continue;
 
-                let xmlId = child.dataset.xmlid;
-                let not = child.dataset.not == 'true';
+                const xmlId = child.dataset.xmlid;
+                const not = child.dataset.not == 'true';
 
                 child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
             }

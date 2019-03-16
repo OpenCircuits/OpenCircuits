@@ -7,11 +7,11 @@ import {ANDGate}         from "../../../../../../site/public/ts/models/ioobjects
 import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
 
 describe("Button", () => {
-    var designer = new CircuitDesigner(0);
-    var a = new Switch();
-    var b = new Button(), b2 = new Button();
-    var g = new ANDGate();
-    var o = new LED(), o2 = new LED();
+    const designer = new CircuitDesigner(0);
+    const a = new Switch();
+    const b = new Button(), b2 = new Button();
+    const g = new ANDGate();
+    const o = new LED(), o2 = new LED();
 
     designer.addObjects([a, b, g, o, b2, o2]);
     designer.connect(a, 0,  g, 0);

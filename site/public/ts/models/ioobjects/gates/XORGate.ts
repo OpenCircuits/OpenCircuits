@@ -43,8 +43,8 @@ export class XORGate extends Gate {
 
 	// @Override
 	public activate() {
-		var on = false;
-		for (var i = 0; i < this.inputs.length; i++)
+		let on = false;
+		for (let i = 0; i < this.inputs.length; i++)
 			on = (on !== this.inputs[i].getIsOn());
 		super.activate(on);
 	}

@@ -13,4 +13,11 @@ export class XMLReader {
         return this.rootNode;
     }
 
+    public getVersion(): number {
+        let root = this.getRoot();
+        if (root.hasAttribute("version"))
+            return root.getIntAttribute("version");
+        return -1;
+    }
+
 }
