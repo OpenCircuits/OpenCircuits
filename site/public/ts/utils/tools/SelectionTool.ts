@@ -1,6 +1,7 @@
 import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY} from "../Constants";
+        OPTION_KEY, SHIFT_KEY,
+        DELETE_KEY, BACKSPACE_KEY,
+        ESC_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
@@ -204,6 +205,26 @@ export class SelectionTool extends Tool {
             }
 
             return render;
+        }
+
+        return false;
+    }
+
+    public onKeyDown(input: Input, key: number): boolean {
+        if (this.selections.length == 0)
+            return false;
+
+        if (key == DELETE_KEY || key == BACKSPACE_KEY) {
+            for (const selection of this.selections) {
+                if (selection instanceof Component)
+                    this.designer.removeObject(selection);
+            }
+            this.clearSelections();
+            return true;
+        }
+        if (key == ESC_KEY) {
+            this.clearSelections();
+            return true;
         }
 
         return false;
