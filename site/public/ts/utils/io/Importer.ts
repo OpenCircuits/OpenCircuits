@@ -3,7 +3,7 @@ import {XMLNode} from "./xml/XMLNode";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export const Importer = (function() {=
+export const Importer = (function() {
     let saved = false;
 
     const read = function(designer: CircuitDesigner, file: string): string {
