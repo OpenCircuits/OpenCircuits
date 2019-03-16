@@ -39,7 +39,7 @@ export class PanTool extends Tool {
 
             this.isDragging = true;
 
-            var dPos = input.getDeltaMousePos();
+            const dPos = input.getDeltaMousePos();
             this.camera.translate(dPos.scale(-1*this.camera.getZoom()));
 
             return true;

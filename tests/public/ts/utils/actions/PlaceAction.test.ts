@@ -6,10 +6,10 @@ import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/Place
 
 describe("PlaceAction", () => {
     it("Undo/Redo", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch();
 
-        var a1 = new PlaceAction(designer, a);
+        const a1 = new PlaceAction(designer, a);
 
         expect(designer.getObjects().length).toBe(1);
         expect(designer.getObjects()[0]).toBe(a);

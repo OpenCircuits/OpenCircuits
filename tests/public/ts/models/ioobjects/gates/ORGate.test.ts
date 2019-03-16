@@ -7,8 +7,8 @@ import {LED}             from "../../../../../../site/public/ts/models/ioobjects
 
 describe("ORGate", () => {
     describe("ORGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new ORGate(), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new ORGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);
@@ -45,8 +45,8 @@ describe("ORGate", () => {
     });
 
     describe("NORGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new ORGate(true), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new ORGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);

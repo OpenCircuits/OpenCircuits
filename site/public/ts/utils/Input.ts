@@ -47,7 +47,7 @@ export class Input {
     }
 
     public addListener(type: string, listener: (b?: number) => void): void {
-        var arr = this.listeners.get(type);
+        let arr = this.listeners.get(type);
         if (arr == undefined)
             this.listeners.set(type, arr = []);
         arr.push(listener);
@@ -85,14 +85,14 @@ export class Input {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        var code = event.keyCode;
+        const code = event.keyCode;
         this.keysDown.set(code, true);
 
         // call each listener
         this.callListeners("keydown", code);
     }
     private onKeyUp(event: KeyboardEvent): void {
-        var code = event.keyCode;
+        const code = event.keyCode;
         this.keysDown.set(code, false);
 
         // call each listener
@@ -114,7 +114,7 @@ export class Input {
         this.callListeners("dblclick", 0);
     }
     private onScroll(event: WheelEvent): void {
-        var delta = -event.deltaY / 120.0;
+        const delta = -event.deltaY / 120.0;
 
         // calculate zoom factor
         this.zoomFactor = 0.95;
@@ -125,7 +125,7 @@ export class Input {
         this.callListeners("scroll", 0);
     }
     private onMouseDown(event: MouseEvent): void {
-        var rect = this.canvas.getBoundingClientRect();
+        const rect = this.canvas.getBoundingClientRect();
 
         // reset dragging and set mouse stuff
         this.isDragging = false;
@@ -145,7 +145,7 @@ export class Input {
         this.callListeners("mouseup", 0);
     }
     private onMouseMove(event: MouseEvent): void {
-        var rect = this.canvas.getBoundingClientRect();
+        const rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
         this.prevMousePos = V(this.mousePos);
@@ -178,7 +178,7 @@ export class Input {
     }
     private callListeners(type: string, b?: number) {
         // call all listeners of type
-        var listeners = this.listeners.get(type);
+        const listeners = this.listeners.get(type);
         if (listeners != undefined) {
             for (let listener of listeners)
                 listener(b);

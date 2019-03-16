@@ -3,10 +3,10 @@ import {XMLNode} from "./xml/XMLNode";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export let Importer = (function() {
+export const Importer = (function() {=
     let saved = false;
 
-    let read = function(designer: CircuitDesigner, file: string): string {
+    const read = function(designer: CircuitDesigner, file: string): string {
         let root = <XMLDocument>new DOMParser().parseFromString(file, "text/xml");
         if (root.documentElement.nodeName == "parsererror")
             return;

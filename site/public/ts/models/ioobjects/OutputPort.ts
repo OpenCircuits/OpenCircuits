@@ -25,11 +25,11 @@ export class OutputPort extends Port {
 		this.isOn = signal;
 
 		// Get designer to propagate signal, exit if undefined
-		var designer = this.parent.getDesigner();
+		const designer = this.parent.getDesigner();
 		if (designer == undefined)
 			return;
 
-		for (var w of this.connections)
+		for (let w of this.connections)
 			designer.propagate(w, this.isOn);
 	}
 
@@ -40,7 +40,7 @@ export class OutputPort extends Port {
 
     public disconnect(w: Wire): void {
         // find index and splice
-        var i = this.connections.indexOf(w);
+        const i = this.connections.indexOf(w);
         if (i != -1)
             this.connections.splice(i, 1);
     }
