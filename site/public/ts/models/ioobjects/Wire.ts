@@ -37,22 +37,22 @@ export class Wire extends CullableObject {
     private updateCurve(): void {
         if (this.input != null) {
             // If transform matrix differs then update curve
-            let mat = this.input.getParent().getTransform().getMatrix();
+            const mat = this.input.getParent().getTransform().getMatrix();
             if (!mat.equals(this.prevInputTransform)) {
                 this.prevInputTransform = mat;
-                var pos = this.input.getWorldTargetPos();
-                var dir = this.input.getWorldDir();
+                const pos = this.input.getWorldTargetPos();
+                const dir = this.input.getWorldDir();
                 this.shape.setP1(pos);
                 this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
             }
         }
         if (this.output != null) {
             // If transform matrix differs then update curve
-            let mat = this.output.getParent().getTransform().getMatrix();
+            const mat = this.output.getParent().getTransform().getMatrix();
             if (!mat.equals(this.prevOutputTransform)) {
                 this.prevOutputTransform = mat;
-                var pos = this.output.getWorldTargetPos();
-                var dir = this.output.getWorldDir();
+                const pos = this.output.getWorldTargetPos();
+                const dir = this.output.getWorldDir();
                 this.shape.setP2(pos);
                 this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
             }
@@ -118,7 +118,7 @@ export class Wire extends CullableObject {
         super.save(node);
 
         // write curve
-        let curveNode = node.createChild("curve");
+        const curveNode = node.createChild("curve");
         curveNode.addVectorAttribute("p1", this.shape.getP1());
         curveNode.addVectorAttribute("p2", this.shape.getP2());
         curveNode.addVectorAttribute("c1", this.shape.getC1());
@@ -129,7 +129,7 @@ export class Wire extends CullableObject {
         super.load(node);
 
         // load curve
-        let curveNode = node.findChild("curve");
+        const curveNode = node.findChild("curve");
         this.shape.setP1(curveNode.getVectorAttribute("p1"));
         this.shape.setP2(curveNode.getVectorAttribute("p2"));
         this.shape.setC1(curveNode.getVectorAttribute("c1"));

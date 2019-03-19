@@ -66,7 +66,7 @@ export class RotateTool extends Tool {
 
         // Rotate each object by a 'delta' angle
         let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        this.action.updateAngle(worldMousePos.sub(this.midpoint).angle() - this.startAngle);
+        this.action.updateAngle(worldMousePos.sub(this.midpoint).angle() - this.startAngle, input.isShiftKeyDown());
 
         return true;
     }

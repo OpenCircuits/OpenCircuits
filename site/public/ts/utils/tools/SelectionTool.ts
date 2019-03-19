@@ -1,11 +1,13 @@
 import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY} from "../Constants";
+        OPTION_KEY, SHIFT_KEY,
+        DELETE_KEY, BACKSPACE_KEY,
+        ESC_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
+import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
@@ -33,7 +35,7 @@ export class SelectionTool extends Tool {
     private currentPressedObj: IOObject;
     private pressedObj: boolean;
 
-    private disabledSelectionBox: boolean;
+    private disabledSelections: boolean;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
@@ -44,6 +46,8 @@ export class SelectionTool extends Tool {
         this.selections = [];
         this.selecting = false;
 
+        this.disabledSelections = false;
+
         this.callbacks = [];
     }
 
@@ -52,6 +56,10 @@ export class SelectionTool extends Tool {
     }
 
     public addSelection(obj: IOObject): boolean {
+        // Don't select anything if it's disabled
+        if (this.disabledSelections)
+            return false;
+
         if (!this.selections.includes(obj)) {
             this.selections.push(obj);
             this.selectionsChanged();
@@ -68,14 +76,14 @@ export class SelectionTool extends Tool {
         return true;
     }
 
-    public disableSelectionBox() {
-        this.disabledSelectionBox = true;
+    public disableSelections(val: boolean = true) {
+        this.disabledSelections = val;
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (event == "mouseup")
             this.onMouseUp(input, button);
-        if (event == "onclick")
+        if (event == "onclick" && !(currentTool instanceof PlaceComponentTool))
             this.onClick(input, button);
         return false;
     }
@@ -117,7 +125,7 @@ export class SelectionTool extends Tool {
     public onMouseDrag(input: Input, button: number): boolean {
         // Update positions of selection
         //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelectionBox) {
+        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections) {
             this.selecting = true;
 
             // Update selection box positions
@@ -203,6 +211,26 @@ export class SelectionTool extends Tool {
             }
 
             return render;
+        }
+
+        return false;
+    }
+
+    public onKeyDown(input: Input, key: number): boolean {
+        if (this.selections.length == 0)
+            return false;
+
+        if (key == DELETE_KEY || key == BACKSPACE_KEY) {
+            for (const selection of this.selections) {
+                if (selection instanceof Component)
+                    this.designer.removeObject(selection);
+            }
+            this.clearSelections();
+            return true;
+        }
+        if (key == ESC_KEY) {
+            this.clearSelections();
+            return true;
         }
 
         return false;

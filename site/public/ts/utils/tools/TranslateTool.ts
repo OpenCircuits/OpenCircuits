@@ -46,11 +46,13 @@ export class TranslateTool extends Tool {
 
             // Translate multiple objects if they are all selected
             if (selections.length > 0 && selections.includes(objects[0]))
-                objects = selections
+                objects = selections;
 
             this.dragging = true;
             this.startPos = worldMousePos;
-            this.action = new TranslateAction(objects);
+            if (currentPressedObj instanceof Component)
+                this.startPos = worldMousePos.sub((<Component>currentPressedObj).getPos());
+            this.action = new TranslateAction(objects, currentPressedObj);
 
             return true;
         }
@@ -67,8 +69,8 @@ export class TranslateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos)
-        this.action.updateOffset(mousePosOffset);
+        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos);
+        this.action.updateOffset(mousePosOffset, input.isShiftKeyDown());
 
         return true;
     }

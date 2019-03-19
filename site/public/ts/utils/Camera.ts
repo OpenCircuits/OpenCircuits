@@ -42,8 +42,8 @@ export class Camera {
         this.mat.scale(V(this.zoom, this.zoom));
         this.inv = this.mat.inverse();
 
-        var p1 = this.getWorldPos(V(0, 0));
-        var p2 = this.getWorldPos(V(this.width, this.height));
+        const p1 = this.getWorldPos(V(0, 0));
+        const p2 = this.getWorldPos(V(this.width, this.height));
         this.transform.setPos(p2.add(p1).scale(0.5));
         this.transform.setSize(p2.sub(p1));
     }

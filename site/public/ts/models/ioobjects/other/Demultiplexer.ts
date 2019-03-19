@@ -31,7 +31,7 @@ export class Demultiplexer extends Component {
 
 		this.selectLines = [];
         for (let i = 0; i < target; i++) {
-            let input = this.inputs[i];
+            const input = this.inputs[i];
             this.selectLines.push(input);
 
             let l = -DEFAULT_SIZE/2*(i - target/2 + 0.5);
@@ -42,7 +42,7 @@ export class Demultiplexer extends Component {
             input.setTargetPos(V(l, IO_PORT_LENGTH+height/2-DEFAULT_SIZE/2));
         }
         for (let i = 0; i < this.outputs.length; i++) {
-            let output = this.outputs[i];
+            const output = this.outputs[i];
 
             let l = -DEFAULT_SIZE/2*(i - (this.outputs.length)/2 + 0.5);
             if (i === 0) l -= 1;
@@ -51,7 +51,7 @@ export class Demultiplexer extends Component {
             output.setOriginPos(V(0, l));
             output.setTargetPos(V(IO_PORT_LENGTH+(width/2-DEFAULT_SIZE/2), l));
         }
-        var input = this.inputs[this.inputs.length-1];
+        const input = this.inputs[this.inputs.length-1];
         input.setOriginPos(V(0, 0));
         input.setTargetPos(V(-IO_PORT_LENGTH-(width/2-DEFAULT_SIZE/2), 0));
     }

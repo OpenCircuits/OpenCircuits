@@ -6,15 +6,15 @@ import {LED}             from "../../../../site/public/ts/models/ioobjects/outpu
 
 describe("CircuitDesigner", () => {
     describe("Empty Circuit", () => {
-        var designer = new CircuitDesigner(0);
+        const designer = new CircuitDesigner(0);
 
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);
     });
     describe("Add", () => {
         it("Add Object", () => {
-            var designer = new CircuitDesigner(0);
-            var a = new Switch(), o = new LED();
+            const designer = new CircuitDesigner(0);
+            const a = new Switch(), o = new LED();
 
             designer.addObject(a);
             designer.addObject(o);
@@ -28,8 +28,8 @@ describe("CircuitDesigner", () => {
             expect(designer.getObjects().length).toBe(2);
         });
         it("Add Objects", () => {
-            var designer = new CircuitDesigner(0);
-            var a = new Switch(), o = new LED();
+            const designer = new CircuitDesigner(0);
+            const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
 
@@ -43,18 +43,18 @@ describe("CircuitDesigner", () => {
         });
     });
     describe("Basic Circuit", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), o = new LED();
 
         designer.addObjects([a, o]);
         designer.connect(a, 0,  o, 0);
 
-        var objects = designer.getObjects();
+        const objects = designer.getObjects();
         expect(objects.length).toBe(2);
         expect(objects[0]).toBe(a);
         expect(objects[1]).toBe(o);
 
-        var wires = designer.getWires();
+        const wires = designer.getWires();
         expect(wires.length).toBe(1);
         expect(wires[0].getInputComponent()).toBe(a);
         expect(wires[0].getOutputComponent()).toBe(o);
@@ -71,8 +71,8 @@ describe("CircuitDesigner", () => {
     });
     describe("Remove Object", () => {
         it("Add Remove No Connection", () => {
-            var designer = new CircuitDesigner(0);
-            var a = new Switch(), o = new LED();
+            const designer = new CircuitDesigner(0);
+            const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
 
@@ -90,8 +90,8 @@ describe("CircuitDesigner", () => {
             expect(() => designer.removeObject(o)).toThrowError();
         });
         it("Add Remove Connected 1", () => {
-            var designer = new CircuitDesigner(0);
-            var a = new Switch(), o = new LED();
+            const designer = new CircuitDesigner(0);
+            const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
             designer.connect(a, 0,  o, 0);
@@ -112,8 +112,8 @@ describe("CircuitDesigner", () => {
         });
     });
     describe("Reset Circuit", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), o = new LED();
 
         designer.addObjects([a, o]);
         designer.connect(a, 0,  o, 0);

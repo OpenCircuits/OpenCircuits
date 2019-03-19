@@ -9,7 +9,21 @@ class CircuitPageView {
 <!DOCTYPE HTML>
 <html>
     <head>
+        <meta charset="utf-8"/>
+        <meta name="description" content="Open Circuits">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+        <meta name="theme-color" content="#999">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js" integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
+
         <link rel="stylesheet" href="css/stylesheet.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+        <link rel="manifest" href="img/manifest.json">
+        <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
+
+        <title>Open Circuits</title>
     </head>
     <body>
         <div id="loading-screen" class="loading__screen">
@@ -17,10 +31,30 @@ class CircuitPageView {
             <img class="loading__screen__logo" src="img/icons/logo.svg">
         </div>
 
+        <div id="overlay" class="overlay invisible"></div>
+
+        <div id="sidenav" class="sidenav shrink">
+            <div class="sidenav__accountinfo">
+                User
+            </div>
+            <div class="sidenav__content">
+                <h4>
+                    <label class="sidenav__content__switch">
+                        <input id="sidenav-mode-checkbox" type="checkbox" checked />
+                        <span class="sidenav__content__slider"></span>
+                    </label>
+                </h4>
+                <h4 unselectable>My Circuits</h4>
+                <h4 unselectable>Examples</h4>
+                <ul id="sidenav-content-example-list">
+                </ul>
+            </div>
+        </div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
-                    <span id="header-open-side-nav-button" role="button" tabindex="0" class="header__left__sidenavbutton" onclick="SideNavController.toggle();">&#9776;</span>
+                    <span id="header-sidenav-open-tab" role="button" tabindex="0" class="header__left__sidenavbutton">&#9776;</span>
                     <input id="header-project-name-input" class="header__left__projectname" type="text" value="Untitled Circuit*" alt="Name of project">
                 </div>
 
@@ -69,7 +103,7 @@ class CircuitPageView {
             </header>
 
             <main>
-                <nav id="itemnav" class="itemnav">
+                <nav id="itemnav" class="itemnav shrink">
 HTML;
                     $sections = $itemNavConfig->getSections();
 
@@ -106,7 +140,7 @@ HTML;
 
                     $return .= <<<HTML
                 </nav>
-                <div id="itemnav-open-tab" class="tab"> &#9776; </div>
+                <div id="itemnav-open-tab" class="tab"></div>
 
                 <canvas id="canvas" class="canvas"></canvas>
 

@@ -92,8 +92,8 @@ export class Transform {
             return;
         this.dirtyCorners = false;
 
-        var corners = this.getLocalCorners();
-        for (var i = 0; i < 4; i++)
+        const corners = this.getLocalCorners();
+        for (let i = 0; i < 4; i++)
             this.corners[i] = this.toWorldSpace(corners[i]);
     }
 
@@ -106,12 +106,16 @@ export class Transform {
     public rotateAbout(a: number, c: Vector): void {
         this.setAngle(this.getAngle() + a);
         this.setPos(this.pos.sub(c));
-        var cos = Math.cos(a), sin = Math.sin(a);
-        var xx = this.pos.x * cos - this.pos.y * sin;
-        var yy = this.pos.y * cos + this.pos.x * sin;
+        const cos = Math.cos(a), sin = Math.sin(a);
+        const xx = this.pos.x * cos - this.pos.y * sin;
+        const yy = this.pos.y * cos + this.pos.x * sin;
         this.setPos(V(xx, yy).add(c));
         this.dirty = true;
         this.dirtyCorners = true;
+    }
+    public setRotationAbout(a: number, c: Vector): void {
+        this.rotateAbout(-this.getAngle(), c);
+        this.rotateAbout(a, c);
     }
 
     public setParent(t: Transform): void {
@@ -231,7 +235,7 @@ export class Transform {
     }
 
     public copy(): Transform {
-        var trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
+        const trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
         trans.scale = this.scale.copy();
         trans.dirty = true;
         return trans;
