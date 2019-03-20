@@ -69,6 +69,10 @@ export class SelectionTool extends Tool {
         return true;
     }
 
+    public setCurrentlyPressedObj(obj: IOObject): void {
+        this.currentPressedObj = obj;
+    }
+
     public disableSelectionBox() {
         this.disabledSelectionBox = true;
     }
