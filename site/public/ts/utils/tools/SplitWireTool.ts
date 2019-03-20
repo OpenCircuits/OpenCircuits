@@ -10,7 +10,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {WirePort} from "../../models/ioobjects/WirePort";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 export class SplitWireTool extends TranslateTool {
 
