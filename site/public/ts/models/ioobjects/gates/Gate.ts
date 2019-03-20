@@ -35,7 +35,7 @@ export abstract class Gate extends Component {
     public isNot(): boolean {
         return this.not;
     }
-    
+
     public copy(): Gate {
         let copy = <Gate>super.copy();
         copy.not = this.not;
@@ -46,14 +46,14 @@ export abstract class Gate extends Component {
         super.save(node);
 
         node.addAttribute("inputs", this.getInputPortCount());
-        node.addAttribute("outputs", this.getOutputPortCount());
+        node.addAttribute("not", this.not);
     }
 
     public load(node: XMLNode): void {
         super.load(node);
 
         this.setInputPortCount(node.getIntAttribute("inputs"));
-        this.setOutputPortCount(node.getIntAttribute("outputs"));
+        this.setNot(node.getBooleanAttribute("not"));
     }
 
 }

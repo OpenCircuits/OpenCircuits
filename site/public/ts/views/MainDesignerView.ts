@@ -17,7 +17,7 @@ export class MainDesignerView {
     private camera: Camera;
 
     public constructor() {
-        var canvas = document.getElementById("canvas");
+        const canvas = document.getElementById("canvas");
         if (!(canvas instanceof HTMLCanvasElement))
             throw new Error("Canvas element not found!");
         this.canvas = canvas;
@@ -34,16 +34,16 @@ export class MainDesignerView {
         Grid.render(this.renderer, this.camera);
 
         // Render all wires (first so they are underneath objects)
-        var wires = designer.getWires();
+        const wires = designer.getWires();
         for (let wire of wires) {
-            var selected = selections.includes(wire);
+            const selected = selections.includes(wire);
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
         // Render all objects
-        var objects = designer.getObjects();
+        const objects = designer.getObjects();
         for (let object of objects) {
-            var selected = selections.includes(object);
+            const selected = selections.includes(object);
             ComponentRenderer.render(this.renderer, this.camera, object, selected);
         }
 

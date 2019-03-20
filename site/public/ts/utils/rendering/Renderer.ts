@@ -44,7 +44,7 @@ export class Renderer {
         this.context.restore();
     }
     public transform(camera: Camera, transform: Transform) {
-        var m = transform.getMatrix().copy();
+        const m = transform.getMatrix().copy();
         m.setTranslation(camera.getScreenPos(m.getTranslation()));
         m.scale(1.0/camera.getZoom());
         this.context.setTransform(m.get(0), m.get(1), m.get(2),
@@ -138,7 +138,7 @@ export class Renderer {
         this.restore();
     }
     public getTextWidth(txt: string): number {
-        var width = 0;
+        let width = 0;
         this.save();
         this.context.font = "lighter 15px arial";
         this.context.fillStyle = '#000';
@@ -189,7 +189,7 @@ export class Renderer {
         this.setStyles(fillStyle, borderStyle, borderSize);
         this.context.beginPath();
         this.context.moveTo(points[0].x, points[0].y);
-        for (var i = 1; i < points.length; i++)
+        for (let i = 1; i < points.length; i++)
             this.context.lineTo(points[i].x, points[i].y);
         this.context.lineTo(points[0].x, points[0].y);
         this.context.fill();

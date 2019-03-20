@@ -4,6 +4,7 @@ import {Switch}       from "../models/ioobjects/inputs/Switch";
 import {Button}       from "../models/ioobjects/inputs/Button";
 import {ConstantLow}  from "../models/ioobjects/inputs/ConstantLow";
 import {ConstantHigh} from "../models/ioobjects/inputs/ConstantHigh";
+import {Clock}        from "../models/ioobjects/inputs/Clock";
 
 import {LED} from "../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../models/ioobjects/outputs/SevenSegmentDisplay";
@@ -24,7 +25,7 @@ import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
 import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 
-const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh];
+const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
 const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
@@ -32,11 +33,14 @@ const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
 const OTHER     = [Multiplexer, Demultiplexer];
 
 let XML_COMPONENTS = new Map<string, any>();
+let XML_NAMES = new Map<any, string>();
 
 // Helper to add a bunch of types to the COMPONENTS map
 function addXMLTypes(types: Array<any>) {
-    for (let type of types)
+    for (let type of types) {
         XML_COMPONENTS.set(new type().getXMLName(), type);
+        XML_NAMES.set(type, new type().getXMLName());
+    }
 }
 
 addXMLTypes(INPUTS);
@@ -59,6 +63,10 @@ export function CreateComponentFromXML(tag: string, not: boolean = false): Compo
         return <Component>(new type(not));
     }
     return undefined;
+}
+
+export function GetXMLName(type: any): string {
+    return XML_NAMES.get(type);
 }
 
 export function GetAllComponentInputs() {

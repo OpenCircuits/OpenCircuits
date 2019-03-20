@@ -45,6 +45,15 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	/**
+	 * Method to call when you want to force an update
+	 * 	Used when something changed but isn't propagated
+	 * 	(i.e. Clock updated but wasn't connected to anything)
+	 */
+	public forceUpdate(): void {
+		this.updateCallback();
+	}
+
+	/**
 	 * Add a propagation request to the queue.
 	 * Also checks if there are currently no requests and starts the cycle if
 	 *  there aren't
@@ -73,7 +82,7 @@ export class CircuitDesigner implements XMLable {
 	private update(): boolean {
 		// Create temp queue before sending, in the case that sending them triggers
 		//   more propagations to occur
-		var tempQueue = [];
+		let tempQueue = [];
 		while (this.propagationQueue.length > 0)
 			tempQueue.push(this.propagationQueue.pop());
 
@@ -104,7 +113,7 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public addObjects(objects: Array<Component>): void {
-		for (var i = 0; i < objects.length; i++)
+		for (let i = 0; i < objects.length; i++)
 			this.addObject(objects[i]);
 	}
 
@@ -132,9 +141,9 @@ export class CircuitDesigner implements XMLable {
 			throw new Error("Attempted to remove object that doesn't exist!");
 
 		// Remove all input and output wires
-		var inputs = obj.getInputs();
-		var outputs = obj.getOutputs();
-		var wires = inputs.concat(outputs);
+		let inputs = obj.getInputs();
+		let outputs = obj.getOutputs();
+		let wires = inputs.concat(outputs);
 		for (let wire of wires)
 			this.removeWire(wire);
 
@@ -203,6 +212,9 @@ export class CircuitDesigner implements XMLable {
 			this.wires.push(w);
 			w.setDesigner(this);
 		});
+
+		// Update since the circuit has changed
+		this.updateCallback();
 	}
 
 	public getObjects(): Array<Component> {

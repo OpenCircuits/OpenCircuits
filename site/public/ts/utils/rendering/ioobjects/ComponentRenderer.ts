@@ -30,9 +30,9 @@ import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
 
-export var ComponentRenderer = (function() {
+export const ComponentRenderer = (function() {
 
-    let drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
+    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
         let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
         renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
@@ -64,9 +64,6 @@ export var ComponentRenderer = (function() {
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
-                if (object.isOn())
-                    imgName = object.getOnImageName();
-
                 // Set size/pos for drawing image to be size of "pressable" part
                 size = object.getPressableBox().getSize();
                 dPos = object.getPressableBox().getPos();

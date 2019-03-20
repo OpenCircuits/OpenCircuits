@@ -28,25 +28,25 @@ export class BezierCurve {
         this.dirty = false;
 
         // calculate the min and max positions of the curve
-        var min = V(0, 0);
-        var max = V(0, 0);
-        var end1 = this.getPos(0);
-        var end2 = this.getPos(1);
-        var a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
-        var b = this.p1.sub(this.c1.scale(2)).add(this.c2).scale(2);
-        var c = this.c1.sub(this.p1);
+        const min = V(0, 0);
+        const max = V(0, 0);
+        const end1 = this.getPos(0);
+        const end2 = this.getPos(1);
+        const a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
+        const b = this.p1.sub(this.c1.scale(2)).add(this.c2).scale(2);
+        const c = this.c1.sub(this.p1);
 
-        var discriminant1 = b.y*b.y - 4*a.y*c.y;
+        let discriminant1 = b.y*b.y - 4*a.y*c.y;
         discriminant1 = (discriminant1 >= 0 ? Math.sqrt(discriminant1) : -1);
-        var t1 = (discriminant1 !== -1 ? Clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
-        var t2 = (discriminant1 !== -1 ? Clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
+        const t1 = (discriminant1 !== -1 ? Clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
+        const t2 = (discriminant1 !== -1 ? Clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
         max.y = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
         min.y = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
 
-        var discriminant2 = b.x*b.x - 4*a.x*c.x;
+        let discriminant2 = b.x*b.x - 4*a.x*c.x;
         discriminant2 = (discriminant2 >= 0 ? Math.sqrt(discriminant2) : -1);
-        var t3 = (discriminant2 !== -1 ? Clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
-        var t4 = (discriminant2 !== -1 ? Clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
+        const t3 = (discriminant2 !== -1 ? Clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
+        const t4 = (discriminant2 !== -1 ? Clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
         max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
         min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
@@ -141,5 +141,4 @@ export class BezierCurve {
         this.updateBoundingBox();
         return this.boundingBox.copy();
     }
-
 }

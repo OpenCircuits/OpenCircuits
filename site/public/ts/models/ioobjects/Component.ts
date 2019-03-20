@@ -180,9 +180,9 @@ export abstract class Component extends CullableObject {
     }
 
     public getInputs(): Array<Wire> {
-        var arr = [];
-        for (var i = 0; i < this.inputs.length; i++) {
-            var input = this.inputs[i].getInput();
+        let arr = [];
+        for (let i = 0; i < this.inputs.length; i++) {
+            let input = this.inputs[i].getInput();
             if (input != undefined)
                 arr.push(input);
         }
@@ -202,8 +202,8 @@ export abstract class Component extends CullableObject {
     }
 
     public getOutputs(): Array<Wire> {
-        var arr: Array<Wire> = [];
-        for (var i = 0; i < this.outputs.length; i++)
+        let arr: Array<Wire> = [];
+        for (let i = 0; i < this.outputs.length; i++)
             arr = arr.concat(this.outputs[i].getConnections());
         return arr;
     }

@@ -7,8 +7,8 @@ import {LED}             from "../../../../../../site/public/ts/models/ioobjects
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new ANDGate(), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new ANDGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);
@@ -45,8 +45,8 @@ describe("ANDGate", () => {
     });
 
     describe("NANDGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new ANDGate(true), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new ANDGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);

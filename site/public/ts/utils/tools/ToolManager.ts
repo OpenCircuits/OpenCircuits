@@ -85,6 +85,9 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
         // Check if any tool should be activated
         for (let tool of this.tools) {
+            if (tool.isDisabled())
+                continue;
+
             if (tool.activate(this.currentTool, event, input, button)) {
                 this.activate(tool);
                 this.selectionTool.deactivate(event, input, button);
@@ -100,13 +103,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     /**
-     * Removes a type of tool from this tool manager
+     * Disables a type of tool from this tool manager
      *
      * @param  toolType The type of tool to remove
      *
      */
-    public removeTool(toolType: typeof Tool | typeof PanTool | typeof RotateTool | typeof TranslateTool |
-                                typeof PlaceComponentTool | typeof WiringTool): void {
+    public disableTool(toolType: typeof Tool | typeof PanTool | typeof RotateTool | typeof TranslateTool |
+                                typeof PlaceComponentTool | typeof WiringTool, disabled: boolean = true): void {
 
         for (let i = 0; i < this.tools.length; i++) {
             let tool = this.tools[i];
@@ -118,7 +121,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
                 }
 
                 // Remove the tool from this list of tools
-                this.tools.splice(i, 1);
+                tool.setDisabled(disabled);
                 return;
             }
         }
@@ -137,13 +140,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
         for (let i = 0; i < this.tools.length; i++) {
             let tool = this.tools[i];
             if (tool instanceof toolType)
-                return true;
+                return !tool.isDisabled();
         }
         return false;
     }
 
-    public disableActions(): void {
-        this.actionHelper.disable();
+    public disableActions(disabled: boolean = true): void {
+        this.actionHelper.setDisabled(disabled);
     }
 
     public onMouseDown(input: Input, button: number): boolean {
@@ -175,6 +178,9 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     public placeComponent(component: Component) {
+        if (this.placeComponentTool.isDisabled())
+            return;
+
         this.placeComponentTool.setComponent(component);
         this.activate(this.placeComponentTool);
     }

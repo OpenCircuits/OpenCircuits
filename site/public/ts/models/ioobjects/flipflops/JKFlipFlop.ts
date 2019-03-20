@@ -14,8 +14,8 @@ export class JKFlipFlop extends FlipFlop {
 	public activate() {
 		this.last_clock = this.clock;
 		this.clock = this.inputs[1].getIsOn();
-		var set = this.inputs[0].getIsOn();
-		var reset = this.inputs[2].getIsOn();
+		const set = this.inputs[0].getIsOn();
+		const reset = this.inputs[2].getIsOn();
 		if (this.clock && !this.last_clock) {
 			if (set && reset) {
 				this.state = !this.state;
