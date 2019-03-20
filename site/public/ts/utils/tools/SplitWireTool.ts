@@ -1,26 +1,24 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY} from "../Constants";
+import {DEFAULT_SIZE} from "../Constants";
+
+import {BezierContains} from "../math/MathUtils";
+
 import {Tool} from "./Tool";
 import {TranslateTool} from "./TranslateTool"
 import {SelectionTool} from "./SelectionTool";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Wire} from "../../models/ioobjects/Wire";
-import {WirePort} from "../../models/ioobjects/WirePort";
-import {Vector,V} from "../math/Vector";
-import {BezierContains} from "../math/MathUtils";
+
 import {Input} from "../Input";
 import {Camera} from "../Camera";
+
+import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {WirePort} from "../../models/ioobjects/WirePort";
 
 export class SplitWireTool extends TranslateTool {
 
     private designer: CircuitDesigner;
-    private wire1: Wire;
-    private wire2: Wire;
-    private wirePort: WirePort;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super(camera);
+
         this.designer = designer;
     }
 
@@ -30,55 +28,43 @@ export class SplitWireTool extends TranslateTool {
         if (!(event == "mousedrag"))
             return false;
 
-            console.log(currentTool);
-            console.log("ASd");
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        //go through every wire and check to see if it has been selected
-        let wire_selected = false;
+        // Go through every wire and check to see if it has been pressed
         let currentWire;
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        for(let w of this.designer.getWires()){
-            if(BezierContains(w.getShape(), worldMousePos)){
+        for (let w of this.designer.getWires()) {
+            if (BezierContains(w.getShape(), worldMousePos)) {
                 currentWire = w;
-                wire_selected = true;
                 break;
             }
         }
 
-        if(!wire_selected){
+        if (!currentWire)
             return false;
-        }
 
+        // Create new wire port
+        const wirePort = new WirePort();
+        wirePort.setPos(worldMousePos);
+        this.designer.addObject(wirePort);
+
+        // Set wireport as selections and being pressed
         currentTool.clearSelections();
+        currentTool.setCurrentlyPressedObj(wirePort);
+        currentTool.addSelection(wirePort);
 
-        //create new wire port
-        this.wirePort = new WirePort();
-        this.wirePort.setPos(worldMousePos);
-        this.designer.addObject(this.wirePort);
-
-        currentTool.setCurrentlyPressedObj(this.wirePort);
-        currentTool.addSelection(this.wirePort);
-
-        //store old wire's values and delete it
-        let currentInput = currentWire.getInput();
-        let currentOutput = currentWire.getOutput();
+        // Store old wire's values and delete it
+        const currentInput  = currentWire.getInput();
+        const currentOutput = currentWire.getOutput();
         this.designer.removeWire(currentWire);
 
         // Create two new wires
-        this.wire1 = this.designer.createWire(currentInput, this.wirePort.getInputPort(0));
-        this.wire2 = this.designer.createWire(this.wirePort.getOutputPort(0), currentOutput);
+        const wire1 = this.designer.createWire(currentInput, wirePort.getInputPort(0));
+        const wire2 = this.designer.createWire(wirePort.getOutputPort(0), currentOutput);
 
-        //set control points
-        //c1 corresponds with point 1 and c2 corresponds with point 2
-        let w1c1 = new Vector(currentInput.getWorldTargetPos().x, this.wirePort.getPos().y);
-        this.wire1.getShape().setC1(w1c1);
-        let w1c2 = new Vector(this.wirePort.getPos().x, currentInput.getWorldTargetPos().y);
-        this.wire1.getShape().setC1(w1c2);
-
-        let w2c1 = new Vector(this.wirePort.getPos().x, currentOutput.getWorldTargetPos().y);
-        this.wire1.getShape().setC1(w2c1);
-        let w2c2 = new Vector(currentInput.getWorldTargetPos().x, this.wirePort.getPos().y);
-        this.wire1.getShape().setC1(w2c2);
+        // Set control points:
+        //  c1 corresponds with point 1 and c2 corresponds with point 2
+        wire1.getShape().setC2(wirePort.getInputDir ().scale(DEFAULT_SIZE).add(wirePort.getPos()));
+        wire2.getShape().setC1(wirePort.getOutputDir().scale(DEFAULT_SIZE).add(wirePort.getPos()));
 
         return super.activate(currentTool, event, input, button);
     }
