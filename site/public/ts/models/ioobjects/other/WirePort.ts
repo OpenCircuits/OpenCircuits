@@ -1,6 +1,6 @@
 import {IO_PORT_RADIUS} from "../../../utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
+import {Vector,V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
@@ -17,6 +17,14 @@ export class WirePort extends Component {
 	// @Override
 	public activate() {
 		super.activate(this.inputs[0].getIsOn());
+	}
+
+	public getInputDir(): Vector {
+		return this.transform.getMatrix().mul(V(-1, 0)).sub(this.getPos()).normalize();
+	}
+
+	public getOutputDir(): Vector {
+		return this.transform.getMatrix().mul(V( 1, 0)).sub(this.getPos()).normalize();
 	}
 
 	public getDisplayName() {

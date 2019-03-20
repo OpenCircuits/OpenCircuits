@@ -17,11 +17,10 @@ import {Action} from "../actions/Action";
 import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
-    private camera: Camera;
-
-    private dragging: boolean;
-    private action: TranslateAction;
-    private startPos: Vector;
+    protected camera: Camera;
+    protected dragging: boolean;
+    protected action: TranslateAction;
+    protected startPos: Vector;
 
     public constructor(camera: Camera) {
         super();
