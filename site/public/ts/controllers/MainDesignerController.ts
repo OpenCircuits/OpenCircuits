@@ -55,8 +55,10 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button))
+        if (toolManager.onClick(input, button)){
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyDown = function(key: number): void {
