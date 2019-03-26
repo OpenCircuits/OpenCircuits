@@ -14,9 +14,9 @@ import {WiringTool} from "../tools/WiringTool";
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
 
-export var ToolRenderer = (function() {
+export const ToolRenderer = (function() {
 
-    var drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
+    const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
         // Get position, radius, and thickness
         let pos = camera.getScreenPos(midpoint);
         let radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
@@ -25,10 +25,10 @@ export var ToolRenderer = (function() {
         renderer.circle(pos.x, pos.y, radius, undefined, '#ff0000', thickness, 0.5);
     }
 
-    var drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
+    const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
         // Get position, radius, and angles
-        let pos = camera.getScreenPos(midpoint);
-        let radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
+        const pos = camera.getScreenPos(midpoint);
+        const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
 
         // Draw arc'd circle
         renderer.arcCircle(pos.x, pos.y, radius, a0, a1, '#ffffff', '#000000', 5, 0.4);
@@ -42,10 +42,10 @@ export var ToolRenderer = (function() {
                 // Draw selection box
                 if (tool.isSelecting()) {
                     // Get positions and size
-                    let p1 = tool.getP1();
-                    let p2 = tool.getP2();
-                    let pos = p1.add(p2).scale(0.5);
-                    let size = p2.sub(p1);
+                    const p1 = tool.getP1();
+                    const p2 = tool.getP2();
+                    const pos = p1.add(p2).scale(0.5);
+                    const size = p2.sub(p1);
 
                     // Draw box
                     renderer.rect(pos.x, pos.y, size.x, size.y, '#ffffff', '#6666ff', 2, 0.4);
@@ -65,12 +65,12 @@ export var ToolRenderer = (function() {
             }
             else if (tool instanceof PlaceComponentTool) {
                 // Draw current object
-                let component = tool.getComponent();
+                const component = tool.getComponent();
                 ComponentRenderer.render(renderer, camera, component, false);
             }
             else if (tool instanceof WiringTool) {
                 // Draw fake wire
-                let wire = tool.getWire();
+                const wire = tool.getWire();
                 if (wire.getInput() != null)
                     wire.activate(wire.getInput().getIsOn());
                 WireRenderer.render(renderer, camera, wire, false);

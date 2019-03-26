@@ -25,17 +25,25 @@ export abstract class Port {
         this.target = dir.scale(IO_PORT_LENGTH);
     }
 
+    private updateDir(): void {
+        // If target and origin are same, don't update dir
+        if (this.target.sub(this.origin).len2() == 0)
+            return;
+
+        this.dir = this.target.sub(this.origin).normalize();
+    }
+
     public setName(name: string): void {
         this.name = name;
     }
 
     public setOriginPos(pos: Vector): void {
         this.origin = pos;
-        this.dir = this.target.sub(this.origin).normalize();
+        this.updateDir();
     }
     public setTargetPos(pos: Vector): void {
         this.target = pos;
-        this.dir = this.target.sub(this.origin).normalize();
+        this.updateDir();
     }
 
     public getParent(): Component {

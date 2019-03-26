@@ -28,25 +28,25 @@ export class BezierCurve {
         this.dirty = false;
 
         // calculate the min and max positions of the curve
-        var min = V(0, 0);
-        var max = V(0, 0);
-        var end1 = this.getPos(0);
-        var end2 = this.getPos(1);
-        var a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
-        var b = this.p1.sub(this.c1.scale(2)).add(this.c2).scale(2);
-        var c = this.c1.sub(this.p1);
+        const min = V(0, 0);
+        const max = V(0, 0);
+        const end1 = this.getPos(0);
+        const end2 = this.getPos(1);
+        const a = this.c1.sub(this.c2).scale(3).add(this.p2.sub(this.p1));
+        const b = this.p1.sub(this.c1.scale(2)).add(this.c2).scale(2);
+        const c = this.c1.sub(this.p1);
 
-        var discriminant1 = b.y*b.y - 4*a.y*c.y;
+        let discriminant1 = b.y*b.y - 4*a.y*c.y;
         discriminant1 = (discriminant1 >= 0 ? Math.sqrt(discriminant1) : -1);
-        var t1 = (discriminant1 !== -1 ? Clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
-        var t2 = (discriminant1 !== -1 ? Clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
+        const t1 = (discriminant1 !== -1 ? Clamp((-b.y + discriminant1)/(2*a.y),0,1) : 0);
+        const t2 = (discriminant1 !== -1 ? Clamp((-b.y - discriminant1)/(2*a.y),0,1) : 0);
         max.y = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
         min.y = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
 
-        var discriminant2 = b.x*b.x - 4*a.x*c.x;
+        let discriminant2 = b.x*b.x - 4*a.x*c.x;
         discriminant2 = (discriminant2 >= 0 ? Math.sqrt(discriminant2) : -1);
-        var t3 = (discriminant2 !== -1 ? Clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
-        var t4 = (discriminant2 !== -1 ? Clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
+        const t3 = (discriminant2 !== -1 ? Clamp((-b.x + discriminant2)/(2*a.x),0,1) : 0);
+        const t4 = (discriminant2 !== -1 ? Clamp((-b.x - discriminant2)/(2*a.x),0,1) : 0);
         max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
         min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
@@ -90,13 +90,14 @@ export class BezierCurve {
         return this.c2.copy();
     }
 
+    // Position
     public getX(t: number): number {
-        var it = 1 - t;
+        const it = 1 - t;
         return this.p1.x*it*it*it + 3*this.c1.x*t*it*it + 3*this.c2.x*t*t*it + this.p2.x*t*t*t;
     }
 
     public getY(t: number): number {
-        var it = 1 - t;
+        const it = 1 - t;
         return this.p1.y*it*it*it + 3*this.c1.y*t*it*it + 3*this.c2.y*t*t*it + this.p2.y*t*t*t;
     }
 
@@ -104,9 +105,40 @@ export class BezierCurve {
         return V(this.getX(t), this.getY(t));
     }
 
+    // 1st Derivative
+    public getDX(t: number): number {
+        const it = 1 - t;
+        return -3*this.p1.x*it*it + 3*this.c1.x*it*(1-3*t) + 3*this.c2.x*t*(2-3*t) + 3*this.p2.x*t*t;
+    }
+
+    public getDY(t: number): number {
+        const it = 1 - t;
+        return -3*this.p1.y*it*it + 3*this.c1.y*it*(1-3*t) + 3*this.c2.y*t*(2-3*t) + 3*this.p2.y*t*t;
+    }
+
+    public getDerivative(t: number): Vector {
+        return V(this.getDX(t), this.getDY(t));
+    }
+
+    // 2nd Derivative
+    public getDDX(t: number): number {
+        const m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
+        const b = this.p1.x - 2*this.c1.x + this.c2.x;
+        return 6*(m * t + b);
+    }
+
+    public getDDY(t: number): number {
+        const m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
+        const b = this.p1.y - 2*this.c1.y + this.c2.y;
+        return 6*(m * t + b);
+    }
+
+    public get2ndDerivative(t: number): Vector {
+        return V(this.getDDX(t), this.getDDY(t));
+    }
+
     public getBoundingBox(): Transform {
         this.updateBoundingBox();
         return this.boundingBox.copy();
     }
-
 }

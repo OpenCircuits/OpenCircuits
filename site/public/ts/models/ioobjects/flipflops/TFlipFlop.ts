@@ -13,7 +13,7 @@ export class TFlipFlop extends FlipFlop {
 	public activate() {
 		this.last_clock = this.clock;
 		this.clock = this.inputs[0].getIsOn();
-		var toggle = this.inputs[1].getIsOn();
+		const toggle = this.inputs[1].getIsOn();
 		if (this.clock && !this.last_clock && toggle)
 			this.state = !this.state;
 

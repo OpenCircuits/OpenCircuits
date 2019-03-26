@@ -20,4 +20,4 @@ function getBrowser(): {name: string, version: string} {
     };
 }
 
-export var Browser = getBrowser();
+export const Browser = getBrowser();

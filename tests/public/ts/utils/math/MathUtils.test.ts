@@ -6,241 +6,241 @@ import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
 
 describe("Clamp", () => {
     it("less than minimum", () => {
-        var x   = 1;
-        var min = 2;
-        var max = 3;
-        var c = Clamp(x, min, max);
+        const x   = 1;
+        const min = 2;
+        const max = 3;
+        const c = Clamp(x, min, max);
         expect(c).toEqual(2);
     });
     it("in between", () => {
-        var x   = 2;
-        var min = 1;
-        var max = 3;
-        var c = Clamp(x, min, max);
+        const x   = 2;
+        const min = 1;
+        const max = 3;
+        const c = Clamp(x, min, max);
         expect(c).toEqual(2);
     });
     it("more than maximum", () => {
-        var x   = 7;
-        var min = 2;
-        var max = 3;
-        var c = Clamp(x, min, max);
+        const x   = 7;
+        const min = 2;
+        const max = 3;
+        const c = Clamp(x, min, max);
         expect(c).toEqual(3);
     });
     it("all equal", () => {
-        var x   = 5;
-        var min = 5;
-        var max = 5;
-        var c = Clamp(x, min, max);
+        const x   = 5;
+        const min = 5;
+        const max = 5;
+        const c = Clamp(x, min, max);
         expect(c).toEqual(5);
     });
 });
 
 describe("TransformContains", () => {
     it("identical", () => {
-        var t1 = new Transform(V(1,-1), V(1,1), 0);
-        var t2 = new Transform(V(1,-1), V(1,1), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(1,-1), V(1,1), 0);
+        const t2 = new Transform(V(1,-1), V(1,1), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t1 inside t2", () => {
-        var t1 = new Transform(V(0,-2), V(1,1), 0);
-        var t2 = new Transform(V(0,-2), V(2,4), 270);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,-2), V(1,1), 0);
+        const t2 = new Transform(V(0,-2), V(2,4), 270);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("opposing quadrants", () => {
-        var t1 = new Transform(V(-1,1), V(1,1), 0);
-        var t2 = new Transform(V(1,-1), V(1,1), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,1), V(1,1), 0);
+        const t2 = new Transform(V(1,-1), V(1,1), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(false);
     });
     it("intersects on t1 left", () => {
-        var t1 = new Transform(V(0,0),  V(1,1), 0);
-        var t2 = new Transform(V(-1,0), V(3,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0),  V(1,1), 0);
+        const t2 = new Transform(V(-1,0), V(3,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("intersects on t1 left", () => {
-        var t1 = new Transform(V(0,0),  V(3,2), 0);
-        var t2 = new Transform(V(-1,0), V(3,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0),  V(3,2), 0);
+        const t2 = new Transform(V(-1,0), V(3,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("intersects on t1 right", () => {
-        var t1 = new Transform(V(-1,0), V(3,2), 0);
-        var t2 = new Transform(V(0,0),  V(3,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(3,2), 0);
+        const t2 = new Transform(V(0,0),  V(3,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("intersects on t1 top", () => {
-        var t1 = new Transform(V(0,0),  V(4,2), 0);
-        var t2 = new Transform(V(0,-1), V(4,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0),  V(4,2), 0);
+        const t2 = new Transform(V(0,-1), V(4,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("intersects on t1 bottom", () => {
-        var t1 = new Transform(V(0,0),  V(4,2), 0);
-        var t2 = new Transform(V(0,-1), V(4,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0),  V(4,2), 0);
+        const t2 = new Transform(V(0,-1), V(4,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t1 rotated, intersecting", () => {
-        var t1 = new Transform(V(-1,1), V(4,2), 180);
-        var t2 = new Transform(V(1,-1), V(4,2), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,1), V(4,2), 180);
+        const t2 = new Transform(V(1,-1), V(4,2), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t1 rotated, not intersecting", () => {
-        var t1 = new Transform(V(-1,1), V(1,1), 0);
-        var t2 = new Transform(V(1,-1), V(1,1), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,1), V(1,1), 0);
+        const t2 = new Transform(V(1,-1), V(1,1), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(false);
     });
     it("t2 rotated, intersecting on t1 left", () => {
-        var t1 = new Transform(V(0,0), V(2,2), 0);
-        var t2 = new Transform(V(3,0), V(1,4), 90);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0), V(2,2), 0);
+        const t2 = new Transform(V(3,0), V(1,4), 90);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t2 rotated, intersecting on t1 top", () => {
-        var t1 = new Transform(V(0,0), V(2,2), 0);
-        var t2 = new Transform(V(0,3), V(4,1), 90);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0), V(2,2), 0);
+        const t2 = new Transform(V(0,3), V(4,1), 90);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t2 rotated, intersecting on t1 right", () => {
-        var t1 = new Transform(V(0,0), V(2,2), 0);
-        var t2 = new Transform(V(-3,0), V(1,4), 90);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0), V(2,2), 0);
+        const t2 = new Transform(V(-3,0), V(1,4), 90);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t2 rotated, intersecting on t1 bottom", () => {
-        var t1 = new Transform(V(0,0), V(2,2), 0);
-        var t2 = new Transform(V(0,-3), V(4,1), 90);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(0,0), V(2,2), 0);
+        const t2 = new Transform(V(0,-3), V(4,1), 90);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("t2 rotated, not intersecting", () => {
-        var t1 = new Transform(V(-1,1), V(2,2), 0);
-        var t2 = new Transform(V(2,0), V(4,2), 90);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,1), V(2,2), 0);
+        const t2 = new Transform(V(2,0), V(4,2), 90);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(false);
     });
     it("both rotated, not intersecting", () => {
-        var t1 = new Transform(V(-1,1), V(1,1), 0);
-        var t2 = new Transform(V(1,-1), V(1,1), 0);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,1), V(1,1), 0);
+        const t2 = new Transform(V(1,-1), V(1,1), 0);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(false);
     });
     it("both rotated, intersecting on t1 left", () => {
-        var t1 = new Transform(V(-1,0), V(2,4), 90);
-        var t2 = new Transform(V(0.5,0), V(4,1), 270);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(2,4), 90);
+        const t2 = new Transform(V(0.5,0), V(4,1), 270);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("both rotated, intersecting on t1 top", () => {
-        var t1 = new Transform(V(-1,0), V(2,4), 90);
-        var t2 = new Transform(V(-1,1), V(1,2), 270);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(2,4), 90);
+        const t2 = new Transform(V(-1,1), V(1,2), 270);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("both rotated, intersecting on t1 right", () => {
-        var t1 = new Transform(V(-1,0), V(2,4), 90);
-        var t2 = new Transform(V(-3,1), V(1,2), 270);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(2,4), 90);
+        const t2 = new Transform(V(-3,1), V(1,2), 270);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("both rotated, intersecting on t1 bottom", () => {
-        var t1 = new Transform(V(-1,0), V(2,4), 90);
-        var t2 = new Transform(V(-1,-1), V(1,2), 270);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(2,4), 90);
+        const t2 = new Transform(V(-1,-1), V(1,2), 270);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("odd rotation, intersecting", () => {
-        var t1 = new Transform(V(-1,0), V(6,1), 44);
-        var t2 = new Transform(V(1,0), V(6,1), 136);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(6,1), 44);
+        const t2 = new Transform(V(1,0), V(6,1), 136);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("odd rotation, intersecting", () => {
-        var t1 = new Transform(V(-1,0), V(6,1), 45);
-        var t2 = new Transform(V(1,0), V(6,1), 135);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-1,0), V(6,1), 45);
+        const t2 = new Transform(V(1,0), V(6,1), 135);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(true);
     });
     it("odd rotation, not intersecting", () => {
-        var t1 = new Transform(V(-5,0), V(2,1), 45);
-        var t2 = new Transform(V(5,0), V(2,1), 135);
-        var b  = TransformContains(t1, t2);
+        const t1 = new Transform(V(-5,0), V(2,1), 45);
+        const t2 = new Transform(V(5,0), V(2,1), 135);
+        const b  = TransformContains(t1, t2);
         expect(b).toEqual(false);
     });
 });
 
 describe("RectContains", () => {
     it("intersects at center", () => {
-        var t = new Transform(V(0,0), V(3,2), 0);
-        var b  = RectContains(t, V(0,0));
+        const t = new Transform(V(0,0), V(3,2), 0);
+        const b  = RectContains(t, V(0,0));
         expect(b).toEqual(true);
     });
     it("intersects at top right corner", () => {
-        var t = new Transform(V(0,0), V(4,4), 0);
-        var b  = RectContains(t, V(1.5,1.5));
+        const t = new Transform(V(0,0), V(4,4), 0);
+        const b  = RectContains(t, V(1.5,1.5));
         expect(b).toEqual(true);
     });
     it("intersects at top left corner", () => {
-        var t = new Transform(V(0,0), V(4,4), 0);
-        var b  = RectContains(t, V(-1.5,1.5));
+        const t = new Transform(V(0,0), V(4,4), 0);
+        const b  = RectContains(t, V(-1.5,1.5));
         expect(b).toEqual(true);
     });
     it("intersects at bottom left corner", () => {
-        var t = new Transform(V(0,0), V(4,4), 0);
-        var b  = RectContains(t, V(-1.5,-1.5));
+        const t = new Transform(V(0,0), V(4,4), 0);
+        const b  = RectContains(t, V(-1.5,-1.5));
         expect(b).toEqual(true);
     });
     it("intersects at bottom right corner", () => {
-        var t = new Transform(V(0,0), V(4,4), 0);
-        var b  = RectContains(t, V(1.5,-1.5));
+        const t = new Transform(V(0,0), V(4,4), 0);
+        const b  = RectContains(t, V(1.5,-1.5));
         expect(b).toEqual(true);
     });
     it("not intersecting", () => {
-        var t = new Transform(V(0,0), V(2,2), 0);
-        var b  = RectContains(t, V(3,3));
+        const t = new Transform(V(0,0), V(2,2), 0);
+        const b  = RectContains(t, V(3,3));
         expect(b).toEqual(false);
     });
     it("on the bound/edge of rectangle", () => {
-        var t = new Transform(V(0,0), V(2,2), 0);
-        var b  = RectContains(t, V(2,2));
+        const t = new Transform(V(0,0), V(2,2), 0);
+        const b  = RectContains(t, V(2,2));
         expect(b).toEqual(false);
     });
 });
 
 describe("CircleContains", () => {
     it("same points", () => {
-        var c  = CircleContains(V(0,0), 2, V(0,0));
+        const c  = CircleContains(V(0,0), 2, V(0,0));
         expect(c).toEqual(true);
     });
     it("on the edge", () => {
-        var c  = CircleContains(V(0,0), 2, V(0,2));
+        const c  = CircleContains(V(0,0), 2, V(0,2));
         expect(c).toEqual(true);
     });
     it("on the cusp", () => {
-        var c  = CircleContains(V(1,5), -3, V(3.1,7.14242));
+        const c  = CircleContains(V(1,5), -3, V(3.1,7.14242));
         expect(c).toEqual(true);
     });
     it("outside", () => {
-        var c  = CircleContains(V(0,0), 2, V(5,5));
+        const c  = CircleContains(V(0,0), 2, V(5,5));
         expect(c).toEqual(false);
     });
     it("negative radius, inside", () => {
-        var c  = CircleContains(V(0,0), -2, V(0,2));
+        const c  = CircleContains(V(0,0), -2, V(0,2));
         expect(c).toEqual(true);
     });
     it("negative radius, outside", () => {
-        var c  = CircleContains(V(1,5), -3, V(10,10));
+        const c  = CircleContains(V(1,5), -3, V(10,10));
         expect(c).toEqual(false);
     });
     it("decimal numbers", () => {
-        var c  = CircleContains(V(-4.6,5.2), 7.7, V(-1.3,8.6));
+        const c  = CircleContains(V(-4.6,5.2), 7.7, V(-1.3,8.6));
         expect(c).toEqual(true);
     });
 });

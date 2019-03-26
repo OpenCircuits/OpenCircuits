@@ -257,7 +257,7 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
         }
 
         // Set and save XML ID for connections
-        componentNode.addAttribute("xid", id);
+        componentNode.addAttribute("uid", id);
         idMap.set(obj, id++);
 
         // Save properties
@@ -279,7 +279,7 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
             // Find index of port
             while (iI < input.getOutputPortCount() &&
                    input.getOutputPort(iI) !== iPort) { iI++; }
-            inputNode.addAttribute("xid", idMap.get(input));
+            inputNode.addAttribute("uid", idMap.get(input));
             inputNode.addAttribute("index", iI);
         }
         let outputNode = wireNode.createChild("output");
@@ -290,7 +290,7 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
             // Find index of port
             while (iO < input.getInputPortCount() &&
                    input.getInputPort(iO) !== oPort) { iO++; }
-            outputNode.addAttribute("xid", idMap.get(input));
+            outputNode.addAttribute("uid", idMap.get(input));
             outputNode.addAttribute("index", iO);
         }
     }
@@ -315,7 +315,7 @@ export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): Separate
     // Load components
     let objectNodes = objectsNode.getChildren();
     for (let object of objectNodes) {
-        let xid = object.getIntAttribute("xid");
+        let uid = object.getIntAttribute("uid");
 
         // Create and add object
         let obj;
@@ -326,10 +326,14 @@ export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): Separate
         } else {
             obj = CreateComponentFromXML(object.getTag());
         }
+
+        if (!obj)
+            throw new Error("Cannot find component with tag " + object.getTag() + "!");
+
         objects.push(obj);
 
         // Add to ID map for connections later
-        idMap.set(xid, obj);
+        idMap.set(uid, obj);
 
         // Load properties
         obj.load(object);
@@ -342,8 +346,8 @@ export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): Separate
         let outputNode = wire.findChild("output");
 
         // Load connections
-        let inputObj  = idMap.get( inputNode.getIntAttribute("xid"));
-        let outputObj = idMap.get(outputNode.getIntAttribute("xid"));
+        let inputObj  = idMap.get( inputNode.getIntAttribute("uid"));
+        let outputObj = idMap.get(outputNode.getIntAttribute("uid"));
         let inputIndex  =  inputNode.getIntAttribute("index");
         let outputIndex = outputNode.getIntAttribute("index");
 

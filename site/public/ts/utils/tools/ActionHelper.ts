@@ -30,7 +30,7 @@ export class ActionHelper {
         return false;
     }
 
-    public disable() {
-        this.disabled = true;
+    public setDisabled(val: boolean = true) {
+        this.disabled = val;
     }
 }
