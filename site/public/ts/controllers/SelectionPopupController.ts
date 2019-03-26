@@ -11,6 +11,7 @@ import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
 import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
+import {InputPortCountPopupModule} from "../utils/selectionpopup/InputPortCountPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -41,6 +42,7 @@ export var SelectionPopupController = (function() {
                 new TitlePopupModule(div),
                 new PositionPopupModule(div),
                 new ColorPopupModule(div),
+                new InputPortCountPopupModule(div),
                 new ICButtonPopupModule(div)
             );
             pos = new Vector(0, 0);
