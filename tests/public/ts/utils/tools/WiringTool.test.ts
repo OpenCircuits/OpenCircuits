@@ -26,8 +26,9 @@ describe("Wiring Tool", () => {
 
     let s = new Switch();
     let l = new LED();
+    let a = new ANDGate();
 
-    designer.addObjects([s, l]);
+    designer.addObjects([s, l, a]);
 
 
     // Declare as type: any so that we can manipulate
@@ -51,6 +52,7 @@ describe("Wiring Tool", () => {
 
     s.setPos(V(0, 0)); //set switch at 0 units to the left of And Gate
     l.setPos(V(100, 0)); //set LED 100 pixels to the right of the and gate
+    a.setPos(V(-200, 0));
 
 
     function down(x: number | Vector, y ?: number): void {
@@ -94,20 +96,9 @@ describe("Wiring Tool", () => {
     }
 
     function dragFromTo(start: Vector, end: Vector): void {
-        down(start.x, start.y);
-        let x: number = start.x;
-        let y: number = start.y;
-        while (x != end.x) {
-            if (x > end.x) { x--; }
-            if (x < end.x) { x++; }
-            move(x, y);
-        }
-        while (y != end.y) {
-            if (y > end.x) { y--; }
-            if (y < end.x) { y++; }
-            move(x, y);
-        }
-        up(end.x, end.y);
+        down(start);
+        move(end);
+        up(end);
     }
 
     function tool(): Tool {
@@ -116,6 +107,8 @@ describe("Wiring Tool", () => {
 
     const lPortPos: Vector = l.getInputPort(0).getWorldTargetPos();
     const sPortPos: Vector = s.getOutputPort(0).getWorldTargetPos();
+    const aOutPos: Vector = a.getOutputPort(0).getWorldTargetPos();
+    const aIn1Pos: Vector = a.getInputPort(0).getWorldTargetPos();
 
     it ("Click on Switch", () => {
 
@@ -152,6 +145,23 @@ describe("Wiring Tool", () => {
         expect(tool()).not.toBeInstanceOf(WiringTool);
         expect(designer.getWires()).toHaveLength(1);
     });
+
+    it ("Drag from Switch to AND Gate output", () => {
+        down(sPortPos);
+        move(aOutPos);
+        up(aOutPos);
+
+        expect(designer.getWires()).toHaveLength(1);
+    });
+
+    it ("Drag from Switch to AND Gate input", () => {
+        down(sPortPos);
+        move(aIn1Pos);
+        up(aIn1Pos);
+
+        expect(designer.getWires()).toHaveLength(2);
+    });
+
 
 
 });

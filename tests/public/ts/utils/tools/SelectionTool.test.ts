@@ -50,37 +50,50 @@ describe("Selection Tool", () => {
     a.setPos(V(0,0)); //set and gate at center of the scene
     l.setPos(V(50, 0)); //set LED 100 pixels to the right of the and gate
 
-    function down(x: number, y: number): void {
-        input.onMouseDown({clientX: x + CX, clientY: y + CY});
+    function down(x: number | Vector, y ?: number): void {
+        if (!(x instanceof Vector))  {
+            input.onMouseDown({clientX: x + CX, clientY: y + CY});
+        }
+        else {
+            input.onMouseDown({clientX: x.x + CX, clientY: x.y + CY});
+        }
     }
 
-    function move(x: number, y: number): void {
-        input.onMouseMove({clientX: x + CX, clientY: y + CY});
+    function up(x: number | Vector, y ?: number): void {
+        if (!(x instanceof Vector))  {
+            input.onMouseUp({clientX: x + CX, clientY: y + CY});
+        }
+        else {
+            input.onMouseUp({clientX: x.x + CX, clientY: x.y + CY});
+        }
     }
 
-    function up(x: number, y: number): void {
-        input.onMouseUp({clientX: x + CX, clientY: y + CY});
+    function move(x: number | Vector, y ?: number): void {
+        if (!(x instanceof Vector))  {
+            input.onMouseMove({clientX: x + CX, clientY: y + CY});
+        }
+        else {
+            input.onMouseMove({clientX: x.x + CX, clientY: x.y + CY});
+        }
     }
 
-    function click(x: number, y: number): void {
-        down(x, y);
-        up(x, y);
-        input.onClick({clientX: x + CX, clientY: y + CY, button: LEFT_MOUSE_BUTTON});
+    function click(x: number | Vector, y ?: number): void {
+        if (!(x instanceof Vector))  {
+            down(x, y);
+            up(x, y);
+            input.onClick({clientX: x + CX, clientY: y + CY, button: LEFT_MOUSE_BUTTON});
+        }
+        else {
+            down(x);
+            up(x);
+            input.onClick({clientX: x.x + CX, clientY: x.y + CY, button: LEFT_MOUSE_BUTTON});
+        }
     }
 
     function dragFromTo(start: Vector, end: Vector): void {
-        down(start.x, start.y);
-        let x: number = start.x;
-        let y: number = start.y;
-        while (x != end.x) {
-            move(x, y);
-            x++;
-        }
-        while (y != end.y) {
-            move(x, y);
-            y++;
-        }
-        up(end.x, end.y);
+        down(start);
+        move(end);
+        up(end);
     }
 
     function selections(): Array<IOObject> {
