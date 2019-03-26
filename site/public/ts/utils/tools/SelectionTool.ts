@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON,
         OPTION_KEY, SHIFT_KEY,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY} from "../Constants";
+        ESC_KEY, A_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
@@ -75,11 +75,11 @@ export class SelectionTool extends Tool {
         this.selectionsChanged();
         return true;
     }
-  
+
     public setCurrentlyPressedObj(obj: IOObject): void {
         this.currentPressedObj = obj;
     }
-  
+
     public disableSelections(val: boolean = true) {
         this.disabledSelections = val;
     }
@@ -221,6 +221,12 @@ export class SelectionTool extends Tool {
     }
 
     public onKeyDown(input: Input, key: number): boolean {
+        //if modifier key and a key are pressed, select all
+        if(input.isModifierKeyDown() && key == A_KEY){
+            this.selectAll();
+            return true;
+        }
+
         if (this.selections.length == 0)
             return false;
 
@@ -271,4 +277,11 @@ export class SelectionTool extends Tool {
         return this.currentPressedObj;
     }
 
+    public selectAll(): void {
+        let objects = this.designer.getObjects();
+        for (let i = 0; i < objects.length; i++) {
+            let obj = objects[i];
+            this.addSelection(obj);
+        }
+    }
 }
