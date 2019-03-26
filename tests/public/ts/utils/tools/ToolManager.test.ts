@@ -1,6 +1,9 @@
 import "jest";
 
 import {SHIFT_KEY,
+        IO_PORT_LENGTH,
+        IO_PORT_RADIUS,
+        DEFAULT_SIZE,
         LEFT_MOUSE_BUTTON} from "../../../../../site/public/ts/utils/Constants";
 import {IOObject} from "../../../../../site/public/ts/models/ioobjects/IOObject";
 import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
@@ -8,24 +11,24 @@ import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesig
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
+import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
+import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
+import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
 
-describe("Selection Tool", () => {
+describe("Tool Manager", () => {
     let camera = new Camera(500, 500);
     let designer = new CircuitDesigner(0);
     let toolManager = new ToolManager(camera, designer);
 
     let s = new Switch();
-    let a = new ANDGate();
     let l = new LED();
 
-    designer.addObjects([s, a, l]);
+    designer.addObjects([s, l]);
 
-    designer.connect(s, 0, l, 0);
 
     // Declare as type: any so that we can manipulate
     //  private methods to simulate user input
@@ -46,9 +49,9 @@ describe("Selection Tool", () => {
     const CX: number = center.x;
     const CY: number = center.y;
 
-    s.setPos(V(-200, 0)); //set switch at 200 units to the left of And Gate
-    a.setPos(V(0,0)); //set and gate at center of the scene
-    l.setPos(V(50, 0)); //set LED 100 pixels to the right of the and gate
+    s.setPos(V(0, 0)); //set switch at 0 units to the left of And Gate
+    l.setPos(V(100, 0)); //set LED 100 pixels to the right of the and gate
+
 
     function down(x: number | Vector, y ?: number): void {
         if (!(x instanceof Vector))  {
@@ -81,53 +84,34 @@ describe("Selection Tool", () => {
         if (!(x instanceof Vector))  {
             down(x, y);
             up(x, y);
-            input.onClick({clientX: x + CX, clientY: y + CY, button: LEFT_MOUSE_BUTTON});
+            input.onClick({clientX: x + CX, clientY: y + CY});
         }
         else {
             down(x);
             up(x);
-            input.onClick({clientX: x.x + CX, clientY: x.y + CY, button: LEFT_MOUSE_BUTTON});
+            input.onClick({clientX: x.x + CX, clientY: x.y + CY});
         }
     }
 
     function dragFromTo(start: Vector, end: Vector): void {
-        down(start);
-        move(end);
-        up(end);
-    }
-
-    function selections(): Array<IOObject> {
-        return toolManager.getSelectionTool().getSelections();
+        down(start.x, start.y);
+        let x: number = start.x;
+        let y: number = start.y;
+        while (x != end.x) {
+            if (x > end.x) { x--; }
+            if (x < end.x) { x++; }
+            move(x, y);
+        }
+        while (y != end.y) {
+            if (y > end.x) { y--; }
+            if (y < end.x) { y++; }
+            move(x, y);
+        }
+        up(end.x, end.y);
     }
 
     function tool(): Tool {
         return toolManager.getCurrentTool();
     }
-
-    it ("Click on And Gate", () => {
-
-        click(0, 0);
-
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(selections()).toContain(a);
-
-    });
-
-    it ("Drag over And Gate and LED", () => {
-        dragFromTo(V(-110, 0), V(110, 20));
-
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(selections()).toHaveLength(2);
-
-    });
-
-    it ("Turn on Switch", () => {
-        click(-200, 0);
-
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(l.isOn()).toEqual(true);
-    });
-
-
 
 });
