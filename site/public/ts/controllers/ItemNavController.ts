@@ -6,6 +6,8 @@ import {Component} from "../models/ioobjects/Component";
 
 import {MainDesignerController} from "./MainDesignerController";
 
+import {Input} from "../utils/Input";
+
 export const ItemNavController = (function() {
     const tab = document.getElementById("itemnav-open-tab");
     const itemnav = document.getElementById("itemnav");
@@ -36,6 +38,12 @@ export const ItemNavController = (function() {
                 const not = child.dataset.not == 'true';
 
                 child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
+                child.ondragstart = (event) => {
+                    place(CreateComponentFromXML(xmlId, not));
+                }
+                child.ondragend = (event) => {
+                    MainDesignerController.TriggerClick();
+                }
             }
         },
         Toggle: function(): void {

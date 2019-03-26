@@ -148,6 +148,9 @@ export const MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
+        },
+        TriggerClick: function() {
+            onClick(0);
         }
     };
 })();
