@@ -3,6 +3,8 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 import {Importer} from "../utils/io/Importer";
 import {Exporter} from "../utils/io/Exporter";
 
+import {MainDesignerController} from "./MainDesignerController";
+
 export const HeaderController = (function() {
     const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
 
@@ -47,13 +49,9 @@ export const HeaderController = (function() {
 
             downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
 
-            downloadPDFButton.onclick = () => {
+            downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 
-            }
-
-            downloadPNGButton.onclick = () => {
-
-            }
+            downloadPNGButton.onclick = () => Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
         }
     }
 

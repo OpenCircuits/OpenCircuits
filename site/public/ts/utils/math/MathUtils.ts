@@ -1,5 +1,8 @@
+import { WIRE_DIST_ITERATIONS, WIRE_NEWTON_ITERATIONS, WIRE_DIST_THRESHOLD2 } from "../Constants";
+
 import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
+import {BezierCurve} from "./BezierCurve";
 
 /**
  * Clamps a number between a given min and max
@@ -208,4 +211,101 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     }
 
     return true;
+}
+
+/**
+ * Uses Newton's method to find the roots of
+ * the function 'f' given a derivative 'df'
+ *
+ * @param  {Number} iterations
+ *         The number of iterations to perform
+ *         Newton's method with; the smaller
+ *         the better but less accurate
+ *
+ * @param  {Number} t0
+ *         The starting root value parameter
+ *
+ * @param  {Number} x
+ *         Parameter 1 for the function
+ *
+ * @param  {Number} y
+ *         Parameter 2 for the function
+ *
+ * @param  {Function} f
+ *         The function to find the roots of
+ *         In the form f(t, x, y) = ...
+ *
+ * @param  {Function} df
+ *         The derivative of the function
+ *         In the form of df(t, x, y)
+ *
+ * @return {Number}
+ *         The parameter 't' that results in
+ *         f(t, x, y) = 0
+ */
+export function FindRoots(iterations: number, t0: number, x: number, y: number,
+                          f:  (t: number, x: number, y: number) => number,
+                          df: (t: number, x: number, y: number) => number) {
+    let t = t0;
+    do {
+        const v  = f(t, x, y);
+        const dv = df(t, x, y);
+        if (dv === 0)
+            break;
+        t = t - v / dv;
+        t = Clamp(t, 0.01, 0.99);
+    } while((iterations--) > 0);
+    return t;
+}
+
+/**
+ * Finds if the given position is within
+ *  the given bezier curve
+ *
+ * Parametric function defined by
+ * X(t) = t(p2.x - p1.x) + p1.x
+ * Y(t) = t(p2.y - p1.y) + p1.y
+ *
+ * Solves for 't' from root of the derivative of
+ * the distance function between the line and `pos`
+ * D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)
+ *
+ * @param  {BezierCurve} curve
+           The bezier curve
+ *
+ * @param  {Vector} pos
+           The position
+ *
+ * @return {boolean}
+ *         True if position is within the bezier curve
+           False otherwise
+ */
+export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
+    let minDist = 1e20;
+    let t0 = -1;
+    for (let tt = 0; tt <= 1.0; tt += 1.0 / WIRE_DIST_ITERATIONS) {
+        var dist = curve.getPos(tt).sub(pos).len();
+        if (dist < minDist) {
+            t0 = tt;
+            minDist = dist;
+        }
+    }
+
+    const f1  = (t: number, x: number, y: number) => curve.getPos(t).sub(x, y).len2();
+    const df1 = (t: number, x: number, y: number) => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
+
+    // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
+    const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
+    if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
+        return true;
+
+    const f2  = (t: number, x: number, y: number) => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
+    const df2 = (t: number, x: number, y: number) => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+
+    // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
+    const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
+    if (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
+        return true;
+
+    return false;
 }

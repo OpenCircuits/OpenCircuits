@@ -104,7 +104,10 @@ export class XMLNode {
     }
 
     public getAttribute(tag: string): string {
-        return this.findChild(tag).node.childNodes[0].nodeValue;
+        const child = this.findChild(tag);
+        if (child)
+            return child.node.childNodes[0].nodeValue;
+        return "";
     }
 
     public getBooleanAttribute(tag: string): boolean {
