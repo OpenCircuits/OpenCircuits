@@ -147,17 +147,13 @@ describe("Wiring Tool", () => {
     });
 
     it ("Drag from Switch to AND Gate output", () => {
-        down(sPortPos);
-        move(aOutPos);
-        up(aOutPos);
+        dragFromTo(sPortPos, aOutPos);
 
         expect(designer.getWires()).toHaveLength(1);
     });
 
     it ("Drag from Switch to AND Gate input", () => {
-        down(sPortPos);
-        move(aIn1Pos);
-        up(aIn1Pos);
+        dragFromTo(sPortPos, aIn1Pos);
 
         expect(designer.getWires()).toHaveLength(2);
     });
