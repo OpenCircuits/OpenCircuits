@@ -51,10 +51,6 @@ export class SelectionTool extends Tool {
         this.callbacks = [];
     }
 
-    private selectionsChanged() {
-        this.callbacks.forEach(c => c());
-    }
-
     public addSelection(obj: IOObject): boolean {
         // Don't select anything if it's disabled
         if (this.disabledSelections)
@@ -278,10 +274,12 @@ export class SelectionTool extends Tool {
     }
 
     public selectAll(): void {
-        let objects = this.designer.getObjects();
-        for (let i = 0; i < objects.length; i++) {
-            let obj = objects[i];
+        const objects = this.designer.getObjects();
+        for (const obj of objects)
             this.addSelection(obj);
-        }
+    }
+
+    private selectionsChanged() {
+        this.callbacks.forEach(c => c());
     }
 }
