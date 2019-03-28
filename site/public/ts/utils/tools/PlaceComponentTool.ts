@@ -39,7 +39,6 @@ export class PlaceComponentTool extends Tool {
     public onMouseMove(input: Input): boolean {
         const pos = this.camera.getWorldPos(input.getMousePos());
         this.component.setPos(pos);
-        console.log(pos);
         return true;
     }
 
