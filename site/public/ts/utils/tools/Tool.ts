@@ -52,7 +52,7 @@ export abstract class Tool implements MouseListener, KeyboardListener {
         return false;
     }
 
-    public onClick(input: Input, button: number): boolean {
+    public onClick(input: Input, button: number, event: DragEvent = null): boolean {
         return false;
     }
 

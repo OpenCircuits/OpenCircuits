@@ -1,10 +1,10 @@
 import {ITEMNAV_WIDTH} from "../utils/Constants";
 
+import {MainDesignerController} from "./MainDesignerController";
+
 import {CreateComponentFromXML} from "../utils/ComponentFactory";
 
 import {Component} from "../models/ioobjects/Component";
-
-import {MainDesignerController} from "./MainDesignerController";
 
 import {Input} from "../utils/Input";
 
@@ -38,11 +38,9 @@ export const ItemNavController = (function() {
                 const not = child.dataset.not == 'true';
 
                 child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
-                child.ondragstart = (event) => {
-                    place(CreateComponentFromXML(xmlId, not));
-                }
                 child.ondragend = (event) => {
-                    MainDesignerController.TriggerClick();
+                    place(CreateComponentFromXML(xmlId, not));
+                    MainDesignerController.TriggerClick(event);
                 }
             }
         },
