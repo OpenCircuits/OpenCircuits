@@ -6,6 +6,9 @@ import {Component} from "../../models/ioobjects/Component";
 import {Input} from "../Input";
 import {Camera} from "../Camera";
 
+import {Action} from "../actions/Action";
+import {PlaceAction} from "../actions/PlaceAction";
+
 export class PlaceComponentTool extends Tool {
 
     private designer: CircuitDesigner;
@@ -41,10 +44,14 @@ export class PlaceComponentTool extends Tool {
     }
 
     public onClick(input: Input, button: number): boolean {
-        let pos = this.camera.getWorldPos(input.getMousePos());
+        // Place object
         this.designer.addObject(this.component);
-        this.component = undefined;
+        
         return true;
+    }
+
+    public getAction(): Action {
+        return new PlaceAction(this.designer, this.component);
     }
 
     public getComponent(): Component {
