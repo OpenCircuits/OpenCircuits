@@ -279,7 +279,7 @@ export class SelectionTool extends Tool {
             this.addSelection(obj);
     }
 
-    private selectionsChanged():void {
+    private selectionsChanged(): void {
         this.callbacks.forEach(c => c());
     }
 }
