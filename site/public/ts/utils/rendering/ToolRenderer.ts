@@ -58,10 +58,8 @@ export const ToolRenderer = (function() {
             }
             else if (tool instanceof RotateTool) {
                 // Draw rotation circle and outline
-                if (tool.isRotating()) {
-                    drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
-                    drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getLastAngle());
-                }
+                drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
+                drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getPrevAngle());
             }
             else if (tool instanceof PlaceComponentTool) {
                 // Draw current object
