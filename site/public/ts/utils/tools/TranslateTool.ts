@@ -1,7 +1,4 @@
-import {ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2,
-        SHIFT_KEY,
-        LEFT_MOUSE_BUTTON} from "../Constants";
+import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "../Constants";
 
 import {Vector,V} from "../math/Vector";
 import {Input} from "../Input";
@@ -10,7 +7,6 @@ import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
-import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
 import {Action} from "../actions/Action";
@@ -18,16 +14,17 @@ import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
     protected camera: Camera;
-    protected dragging: boolean;
-    protected action: TranslateAction;
+
+    protected pressedComponent: Component;
+    protected components: Array<Component>;
+    protected initialPositions: Array<Vector>;
+
     protected startPos: Vector;
 
     public constructor(camera: Camera) {
         super();
 
         this.camera = camera;
-
-        this.dragging = false;
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -40,22 +37,27 @@ export class TranslateTool extends Tool {
 
         let selections = currentTool.getSelections();
         let currentPressedObj = currentTool.getCurrentlyPressedObj();
-        if (currentPressedObj != undefined) {
-            let objects = [currentPressedObj];
 
-            // Translate multiple objects if they are all selected
-            if (selections.length > 0 && selections.includes(objects[0]))
-                objects = selections;
+        // Make sure everything is a component
+        if (!(currentPressedObj instanceof Component))
+            return false;
+        if (!selections.every((e) => e instanceof Component))
+            return false;
 
-            this.dragging = true;
-            this.startPos = worldMousePos;
-            if (currentPressedObj instanceof Component)
-                this.startPos = worldMousePos.sub((<Component>currentPressedObj).getPos());
-            this.action = new TranslateAction(objects, currentPressedObj);
+        // Translate multiple objects if they are all selected
+        this.pressedComponent = currentPressedObj;
+        this.components = [currentPressedObj];
+        if (selections.length > 0 && selections.includes(currentPressedObj))
+            this.components = <Array<Component>>selections;
 
-            return true;
-        }
-        return false;
+        // Copy initial positions
+        this.initialPositions = [];
+        for (let obj of this.components)
+            this.initialPositions.push(obj.getPos());
+
+        this.startPos = worldMousePos.sub(currentPressedObj.getPos());
+
+        return true;
     }
 
     public deactivate(event: string, input: Input, button?: number): boolean {
@@ -63,34 +65,34 @@ export class TranslateTool extends Tool {
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
-        if (!this.dragging)
-            return false;
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos);
-        this.action.updateOffset(mousePosOffset, input.isShiftKeyDown());
+        // Calculate position
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const dPos = worldMousePos.sub(this.pressedComponent.getPos()).sub(this.startPos);
 
-        return true;
-    }
-
-    public onMouseUp(input: Input, button: number): boolean {
-        if (!this.dragging)
-            return false;
-        if (button !== LEFT_MOUSE_BUTTON)
-            return false;
-
-        this.dragging = false;
+        // Set positions
+        for (let obj of this.components) {
+            let newPos = obj.getPos().add(dPos);
+            if (input.isShiftKeyDown()) {
+                newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
+                           Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
+            }
+            obj.setPos(newPos);
+        }
 
         return true;
     }
 
     public getAction(): Action {
-        return this.action;
-    }
+        // Copy final positions
+        const finalPositions = [];
+        for (let obj of this.components)
+            finalPositions.push(obj.getPos());
 
-    public isDragging(): boolean {
-        return this.dragging;
+        // Return action
+        return new TranslateAction(this.components, this.initialPositions, finalPositions);
     }
 
 }
