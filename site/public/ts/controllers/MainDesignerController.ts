@@ -149,7 +149,7 @@ export const MainDesignerController = (function() {
         GetDesigner: function(): CircuitDesigner {
             return designer;
         },
-        TriggerClick: function(event: DragEvent) {
+        TriggerClick: function(event: DragEvent): void {
             if (toolManager.onClick(input, 0, event))
                 MainDesignerController.Render();
         }

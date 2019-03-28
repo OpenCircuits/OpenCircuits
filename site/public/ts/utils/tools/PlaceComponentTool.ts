@@ -45,9 +45,8 @@ export class PlaceComponentTool extends Tool {
     public onClick(input: Input, button: number, event: DragEvent = null): boolean {
         if (event) {
             const rect = MainDesignerController.GetCanvas().getBoundingClientRect();
-            const pos = this.camera.getWorldPos(
-                V(event.clientX,event.clientY).sub(V(rect.left, rect.top))
-            );
+            const pos = this.camera
+                .getWorldPos(V(event.clientX,event.clientY).sub(V(rect.left, rect.top)));
             this.component.setPos(pos);
         }
         this.designer.addObject(this.component);
