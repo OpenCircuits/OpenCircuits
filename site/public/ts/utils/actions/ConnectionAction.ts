@@ -11,14 +11,18 @@ export class ConnectionAction implements Action {
     private i2: number;
     private wire: Wire;
 
-    public constructor(c1: Component, i1: number, c2: Component, i2: number) {
-        this.designer = c1.getDesigner();
-        this.c1 = c1;
-        this.i1 = i1;
-        this.c2 = c2;
-        this.i2 = i2;
-        // Connection action is explicitly executed
-        this.execute();
+    public constructor(w: Wire) {
+        this.designer = w.getDesigner();
+
+        // Get components of wire
+        this.c1 = w.getInputComponent();
+        this.c2 = w.getOutputComponent();
+
+        // Find indices of ports on components
+        this.i1 = this.c1.getOutputPorts().indexOf(w.getInput());
+        this.i2 = this.c2.getInputPorts().indexOf(w.getOutput());
+
+        this.wire = w;
     }
 
     public execute(): void {
