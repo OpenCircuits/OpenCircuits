@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {WirePort}   from "../../../../../site/public/ts/models/ioobjects/WirePort";
-import {Switch}   from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {LED}             from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
+import {Switch}   from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+import {LED}      from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {WirePort} from "../../../../../../site/public/ts/models/ioobjects/other/WirePort";
 
 describe("Wire Port", () => {
     const designer = new CircuitDesigner(0);
