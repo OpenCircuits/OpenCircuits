@@ -13,6 +13,7 @@ import {WiringTool} from "../tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
+import { Wire } from "../../models/ioobjects/Wire";
 
 export const ToolRenderer = (function() {
 
@@ -39,6 +40,15 @@ export const ToolRenderer = (function() {
             const tool = toolManager.getCurrentTool();
 
             if (tool instanceof SelectionTool) {
+                // If a wire has been selected, then don't draw the rotation circle
+                let selections = toolManager.getSelectionTool().getSelections();
+                let is_wire = false;
+                for(let s of selections){
+                    if(s instanceof Wire){
+                        is_wire = true;
+                    }
+                }
+
                 // Draw selection box
                 if (tool.isSelecting()) {
                     // Get positions and size
@@ -52,13 +62,23 @@ export const ToolRenderer = (function() {
                 }
 
                 // Draw rotation circle outline
-                else if (tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
+                else if (!is_wire && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
                     drawRotationCircleOutline(renderer, camera, tool.calculateMidpoint());
                 }
             }
             else if (tool instanceof RotateTool) {
+                // If a wire has been selected, then don't draw the rotation box
+                let selections = toolManager.getSelectionTool().getSelections();
+                let is_wire = false;
+                for(let s of selections){
+                    if(s instanceof Wire){
+                        is_wire = true;
+                    }
+                }
+
                 // Draw rotation circle and outline
-                if (tool.isRotating()) {
+                if (tool.isRotating() && !is_wire) {
+                    console.log("render rotate");
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
                     drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getLastAngle());
                 }

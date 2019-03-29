@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON,
         OPTION_KEY, SHIFT_KEY,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY} from "../Constants";
+        ESC_KEY, IO_PORT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
@@ -11,7 +11,7 @@ import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
-import {TransformContains,RectContains} from "../math/MathUtils";
+import {TransformContains,CircleContains,BezierContains} from "../math/MathUtils";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
@@ -75,11 +75,11 @@ export class SelectionTool extends Tool {
         this.selectionsChanged();
         return true;
     }
-  
+
     public setCurrentlyPressedObj(obj: IOObject): void {
         this.currentPressedObj = obj;
     }
-  
+
     public disableSelections(val: boolean = true) {
         this.disabledSelections = val;
     }
@@ -211,6 +211,21 @@ export class SelectionTool extends Tool {
                 // Check if object should be selected
                 else if (obj.isWithinSelectBounds(worldMousePos)) {
                     return this.addSelection(obj);
+                }
+                // Check if a port was clicked
+                else {
+                    for (let p of obj.getPorts()) {
+                        if (CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))
+                            return false;
+                    }
+                }
+            }
+
+            // Go through every wire and check to see if it has been clicked
+            //  and add to selections
+            for (let w of this.designer.getWires()) {
+                if (BezierContains(w.getShape(), worldMousePos)) {
+                    return this.addSelection(w);
                 }
             }
 
