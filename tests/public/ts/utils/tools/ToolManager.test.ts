@@ -4,7 +4,8 @@ import {SHIFT_KEY,
         IO_PORT_LENGTH,
         IO_PORT_RADIUS,
         DEFAULT_SIZE,
-        LEFT_MOUSE_BUTTON} from "../../../../../site/public/ts/utils/Constants";
+        LEFT_MOUSE_BUTTON,
+        ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
 import {IOObject} from "../../../../../site/public/ts/models/ioobjects/IOObject";
 import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
@@ -12,12 +13,17 @@ import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
 import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
+import {RotateTool} from "../../../../../site/public/ts/utils/tools/RotateTool";
+import {TranslateTool} from "../../../../../site/public/ts/utils/tools/TranslateTool";
+import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
+import {PanTool} from "../../../../../site/public/ts/utils/tools/PanTool";
 import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
 import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
+
 
 describe("Tool Manager", () => {
     let camera = new Camera(500, 500);
@@ -49,8 +55,8 @@ describe("Tool Manager", () => {
     const CX: number = center.x;
     const CY: number = center.y;
 
-    s.setPos(V(0, 0)); //set switch at 0 units to the left of And Gate
-    l.setPos(V(100, 0)); //set LED 100 pixels to the right of the and gate
+    s.setPos(V(0, 0)); //set switch at 0 units to the left of switch
+    l.setPos(V(200, 0)); //set LED 200 pixels to the right of the switch
 
 
     function down(x: number | Vector, y ?: number): void {
@@ -95,23 +101,41 @@ describe("Tool Manager", () => {
 
     function dragFromTo(start: Vector, end: Vector): void {
         down(start.x, start.y);
-        let x: number = start.x;
-        let y: number = start.y;
-        while (x != end.x) {
-            if (x > end.x) { x--; }
-            if (x < end.x) { x++; }
-            move(x, y);
-        }
-        while (y != end.y) {
-            if (y > end.x) { y--; }
-            if (y < end.x) { y++; }
-            move(x, y);
-        }
-        up(end.x, end.y);
+        move(end)
+        up(end);
+    }
+
+    function selections(): Array<IOObject> {
+        return toolManager.getSelectionTool().getSelections();
     }
 
     function tool(): Tool {
         return toolManager.getCurrentTool();
     }
+
+    const lPortPos: Vector = l.getInputPort(0).getWorldTargetPos();
+    const sPortPos: Vector = s.getOutputPort(0).getWorldTargetPos();
+
+    it("Click switch, wire switch/led, select entire & rotate", () => {
+      click(0,0);
+      expect(tool()).not.toBeInstanceOf(WiringTool);
+      click(lPortPos);
+      expect(tool()).toBeInstanceOf(WiringTool);
+      expect(designer.getWires()).toHaveLength(0);
+      click(sPortPos);
+      expect(tool()).not.toBeInstanceOf(WiringTool);
+      expect(designer.getWires()).toHaveLength(1);
+      dragFromTo(V(-100, -100), V(300, 300)); // Arbitrary drag box size
+      expect(tool()).toBeInstanceOf(SelectionTool);
+      expect(selections()).toHaveLength(2);
+      let midpoint = toolManager.getSelectionTool().calculateMidpoint();
+      let ang1 = l.getAngle();
+      move(midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
+      down(midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
+      move(midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS); // Flip selection
+      up(midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS);
+      let ang2 = l.getAngle();
+      expect(ang1).not.toEqual(ang2);
+    });
 
 });
