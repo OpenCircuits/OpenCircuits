@@ -3,7 +3,8 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
-import {CreateWire,
+import {SeparatedComponentCollection,
+		CreateWire,
 		SaveGroup,
 		LoadGroup} from "../utils/ComponentUtils";
 
@@ -106,6 +107,18 @@ export class CircuitDesigner implements XMLable {
 		}
 
 		return true;
+	}
+
+	public addGroup(group: SeparatedComponentCollection): void {
+
+
+		for (let a of group.getAllComponents()){
+			this.addObject(a)
+		}
+		for (let b of group.wires){
+			this.wires.push(b);
+			b.setDesigner(this);
+		}
 	}
 
 	public addICData(data: ICData): void {

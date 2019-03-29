@@ -42,7 +42,7 @@ export class PlaceComponentTool extends Tool {
 
     public onClick(input: Input, button: number): boolean {
         let pos = this.camera.getWorldPos(input.getMousePos());
-        this.designer.addObject(this.component);
+        this.designer.addObject(this.component.copy());
         this.component = undefined;
         return true;
     }
