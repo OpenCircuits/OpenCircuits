@@ -1,12 +1,11 @@
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
-import {Component} from "../../models/ioobjects/Component";
 import {Gate} from "../../models/ioobjects/gates/Gate";
 import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
 import {Multiplexer} from "../../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../../models/ioobjects/other/Demultiplexer";
 
-export class InputPortCountPopupModule extends SelectionPopupModule {
+export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
     constructor(parent_div: HTMLDivElement) {
         // Title module does not have a wrapping div
@@ -18,13 +17,13 @@ export class InputPortCountPopupModule extends SelectionPopupModule {
 
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
-        let gates = MainDesignerController.GetSelections()
+        let gates = selections
             .filter(o => o instanceof Gate && !(o instanceof BUFGate))
             .map(o => o as Gate);
-        let muxers = MainDesignerController.GetSelections()
+        let muxers = selections
             .filter(o => o instanceof Multiplexer)
             .map(o => o as Multiplexer);
-        let demuxers = MainDesignerController.GetSelections()
+        let demuxers = selections
             .filter(o => o instanceof Demultiplexer)
             .map(o => o as Demultiplexer);
 

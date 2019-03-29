@@ -1,7 +1,6 @@
 import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {Gate} from "./Gate";
-import {Port} from "../Port";
 
 export class ANDGate extends Gate {
 

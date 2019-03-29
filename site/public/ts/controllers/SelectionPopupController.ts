@@ -11,7 +11,8 @@ import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
 import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
-import {InputPortCountPopupModule} from "../utils/selectionpopup/InputPortCountPopupModule";
+import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
+import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -42,7 +43,9 @@ export const SelectionPopupController = (function() {
                 new TitlePopupModule(div),
                 new PositionPopupModule(div),
                 new ColorPopupModule(div),
-                new InputPortCountPopupModule(div),
+                new InputCountPopupModule(div),
+                // TODO: implement when encoders are added to the typescript build
+                // new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div)
             );
             pos = new Vector(0, 0);
