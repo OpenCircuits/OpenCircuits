@@ -99,19 +99,21 @@ describe("CreateGroup", () => {
 });
 
 describe("GetAllOutgoingPaths", () => {
-    it("Group 1", () => {
+    describe("Group 1", () => {
         const gate = new ANDGate();
 
         const wire = Connect(gate, 0,  gate, 0);
 
-        const group = GatherGroup([gate]);
+        it("Gather Gate", () => {
+            const group = GatherGroup([gate]);
 
-        expect(group.components.length).toBe(1);
-        expect(group.wires.length).toBe(1);
-        expect(group.components[0]).toBe(gate);
-        expect(group.wires[0]).toBe(wire);
+            expect(group.components.length).toBe(1);
+            expect(group.wires.length).toBe(1);
+            expect(group.components[0]).toBe(gate);
+            expect(group.wires[0]).toBe(wire);
+        });
     });
-    it("Group 2", () => {
+    describe("Group 2", () => {
         const gate = new ANDGate();
         const wp = new WirePort();
 
@@ -156,7 +158,7 @@ describe("GetAllOutgoingPaths", () => {
             expect(removed.wires.includes(wire2)).toBe(true);
         });
     });
-    it("Group 3", () => {
+    describe("Group 3", () => {
         const s1 = new Switch();
         const s2 = new Switch();
         const gate = new ANDGate();
