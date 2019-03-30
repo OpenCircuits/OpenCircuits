@@ -71,6 +71,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private onEvent(method: (i:Input,b?:number) => boolean, event: string, input: Input, button?: number): boolean {
         let didSomething = method(input, button);
 
+        // Check if selection tool has any actions to add
+        if (this.currentTool == this.selectionTool) {
+            const action = this.selectionTool.getAction();
+            if (action != undefined)
+                this.actionManager.add(action);
+        }
+
         // Check if current tool should be deactivated
         //  and default tool (selection tool) should be activated
         if (this.currentTool != this.selectionTool &&

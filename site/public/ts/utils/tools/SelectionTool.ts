@@ -2,19 +2,30 @@ import {LEFT_MOUSE_BUTTON,
         OPTION_KEY, SHIFT_KEY,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY} from "../Constants";
-import {Tool} from "./Tool";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Component} from "../../models/ioobjects/Component";
-import {PressableComponent} from "../../models/ioobjects/PressableComponent";
-import {PlaceComponentTool} from "./PlaceComponentTool"
-
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
 import {TransformContains,RectContains} from "../math/MathUtils";
 
+import {SeparatedComponentCollection,
+        GatherGroup} from "../ComponentUtils";
+
+import {Tool} from "./Tool";
+
+import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {IOObject} from "../../models/ioobjects/IOObject";
+import {Component} from "../../models/ioobjects/Component";
+import {Wire} from "../../models/ioobjects/Wire";
+
+import {PressableComponent} from "../../models/ioobjects/PressableComponent";
+import {PlaceComponentTool} from "./PlaceComponentTool"
+
 import {Input} from "../Input";
 import {Camera} from "../Camera";
+
+import {Action} from "../actions/Action";
+import {GroupAction} from "../actions/GroupAction";
+import {DeleteAction} from "../actions/DeleteAction";
+import {DeleteWireAction} from "../actions/DeleteWireAction";
 
 export class SelectionTool extends Tool {
 
@@ -37,6 +48,8 @@ export class SelectionTool extends Tool {
 
     private disabledSelections: boolean;
 
+    private lastAction: Action;
+
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
@@ -47,6 +60,8 @@ export class SelectionTool extends Tool {
         this.selecting = false;
 
         this.disabledSelections = false;
+
+        this.lastAction = undefined;
 
         this.callbacks = [];
     }
@@ -225,10 +240,27 @@ export class SelectionTool extends Tool {
             return false;
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
-            for (const selection of this.selections) {
-                if (selection instanceof Component)
-                    this.designer.removeObject(selection);
-            }
+            const allDeletions: SeparatedComponentCollection = GatherGroup(this.selections);
+            const components = allDeletions.getAllComponents();
+            const wires = allDeletions.wires;
+
+            // Create actions for deletion of wires then objects
+            //  order matters because the components need to be added
+            //  (when undoing) before the wires can be connected
+            const group = new GroupAction();
+            for (const wire of wires)
+                group.add(new DeleteWireAction(wire));
+            for (const obj of components)
+                group.add(new DeleteAction(obj));
+                
+            this.lastAction = group;
+
+            // Actually delete the objects/wires
+            for (const wire of wires)
+                this.designer.removeWire(wire);
+            for (const obj of components)
+                this.designer.removeObject(obj);
+
             this.clearSelections();
             return true;
         }
@@ -248,6 +280,15 @@ export class SelectionTool extends Tool {
                 midpoint.translate(obj.getPos());
         }
         return midpoint.scale(1. / selections.length);
+    }
+
+    public getAction(): Action {
+        const action = this.lastAction;
+
+        // Remove action
+        this.lastAction = undefined;
+
+        return action;
     }
 
     public getSelections(): Array<IOObject> {
