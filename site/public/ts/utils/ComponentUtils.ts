@@ -182,14 +182,10 @@ export function GetPath(w: Wire): Array<Wire | WirePort> {
 export function GetAllPaths(obj: Component): Array<Wire | WirePort> {
     let path: Array<Wire | WirePort> = [];
 
-    // Only one path for WirePorts
-    if (obj instanceof WirePort)
-        return GetPath(obj.getInputs()[0]);
-
     // Get all paths
-    let wires = obj.getInputs().concat(obj.getOutputs());
+    let wires = new Set(obj.getInputs().concat(obj.getOutputs()));
     for (const wire of wires)
-        path = path.concat(GetPath(wire));
+        path = path.concat(GetPath(wire).filter((o) => !path.includes(o)));
 
     return path;
 }
@@ -205,9 +201,8 @@ export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollect
     let group = SeparateGroup(objects);
 
     // Gather all connecting paths
-    const objs = group.getAllComponents();
-    for (const obj of objs) {
-        const path = GetAllPaths(obj);
+    for (const obj of objects) {
+        const path = (obj instanceof Wire ? GetPath(obj) : GetAllPaths(<Component>obj));
 
         // Add wires and wireports
         group.wires      = group.wires.concat(
