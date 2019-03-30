@@ -22,4 +22,14 @@ export class GroupAction implements Action {
             action.undo();
     }
 
+    public isEmpty(): boolean {
+        for (const action of this.actions) {
+            // Ignore other empty GroupActions
+            if (action instanceof GroupAction && action.isEmpty())
+                continue;
+            return false;
+        }
+        return true;
+    }
+
 }
