@@ -1,5 +1,3 @@
-import {CreateComponentFromXML} from "../utils/ComponentFactory";
-
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
@@ -126,6 +124,11 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public createWire(p1: OutputPort, p2: InputPort): Wire {
+		if (p1.getParent().getDesigner() != this)
+			throw new Error("Cannot create wire! The provided input is not apart of this circuit!");
+		if (p2.getParent().getDesigner() != this)
+			throw new Error("Cannot create wire! The provided output is not apart of this circuit!");
+
 		let wire = CreateWire(p1, p2);
 		this.wires.push(wire);
 		wire.setDesigner(this);
@@ -141,10 +144,8 @@ export class CircuitDesigner implements XMLable {
 			throw new Error("Attempted to remove object that doesn't exist!");
 
 		// Remove all input and output wires
-		let inputs = obj.getInputs();
-		let outputs = obj.getOutputs();
-		let wires = inputs.concat(outputs);
-		for (let wire of wires)
+		const wires = obj.getInputs().concat(obj.getOutputs());
+		for (const wire of wires)
 			this.removeWire(wire);
 
 		this.objects.splice(this.objects.indexOf(obj), 1);
