@@ -1,10 +1,9 @@
 import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY, SHIFT_KEY,
-        DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY} from "../Constants";
+        SHIFT_KEY, DELETE_KEY,
+        BACKSPACE_KEY, ESC_KEY} from "../Constants";
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
-import {TransformContains,RectContains} from "../math/MathUtils";
+import {TransformContains} from "../math/MathUtils";
 
 import {SeparatedComponentCollection,
         GatherGroup} from "../ComponentUtils";
@@ -14,7 +13,6 @@ import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
-import {Wire} from "../../models/ioobjects/Wire";
 
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 import {PlaceComponentTool} from "./PlaceComponentTool"
@@ -24,6 +22,7 @@ import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
+import {SelectAction} from "../actions/SelectAction";
 import {DeleteAction} from "../actions/DeleteAction";
 import {DeleteWireAction} from "../actions/DeleteWireAction";
 
@@ -70,6 +69,14 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
 
+    private setAction(action: Action) {
+        // Don't set action if it's an empty group action
+        if (action instanceof GroupAction && action.isEmpty())
+            return;
+
+        this.lastAction = action;
+    }
+
     public addSelection(obj: IOObject): boolean {
         // Don't select anything if it's disabled
         if (this.disabledSelections)
@@ -83,12 +90,29 @@ export class SelectionTool extends Tool {
         return false;
     }
 
-    public clearSelections(): boolean {
-        if (this.selections.length == 0)
+    public removeSelection(obj: IOObject): boolean {
+        // Don't deselect anything if it's disabled
+        if (this.disabledSelections)
             return false;
+
+        const i = this.selections.indexOf(obj);
+        if (i != -1) {
+            this.selections.splice(i, 1);
+            this.selectionsChanged();
+            return true;
+        }
+        return false;
+    }
+
+    public clearSelections(): Action {
+        const group = new GroupAction();
+        if (this.selections.length == 0)
+            return group;
+        // Create actions
+        this.selections.forEach((obj) => group.add(new SelectAction(this, obj, true)));
         this.selections = [];
         this.selectionsChanged();
-        return true;
+        return group;
     }
 
     public setCurrentlyPressedObj(obj: IOObject): void {
@@ -175,9 +199,13 @@ export class SelectionTool extends Tool {
             if (this.selecting) {
                 this.selecting = false;
 
+                // Create action
+                const group = new GroupAction();
+
                 // Clear selections if no shift key
                 if (!input.isKeyDown(SHIFT_KEY))
-                    this.clearSelections();
+                    group.add(this.clearSelections());
+
 
                 // Calculate transform rectangle of the selection box
                 let p1 = this.camera.getWorldPos(input.getMouseDownPos());
@@ -189,9 +217,14 @@ export class SelectionTool extends Tool {
                 let objects = this.designer.getObjects();
                 for (let obj of objects) {
                     // Check if object is in box
-                    if (TransformContains(box, obj.getTransform()))
+                    if (TransformContains(box, obj.getTransform())) {
+                        group.add(new SelectAction(this, obj)); // Add action
                         this.addSelection(obj);
+                    }
                 }
+
+                // Set as action if we changed selections added something
+                this.setAction(group);
 
                 return true; // should render
             }
@@ -206,9 +239,13 @@ export class SelectionTool extends Tool {
 
             let render = false;
 
+            const group = new GroupAction();
+
             // Clear selections if no shift key
-            if (!input.isKeyDown(SHIFT_KEY))
-                render = this.clearSelections();
+            if (!input.isKeyDown(SHIFT_KEY)) {
+                group.add(this.clearSelections());
+                render = !group.isEmpty(); // Render if selections were actually cleared
+            }
 
             // Check if an object was clicked
             //  and add to selections
@@ -220,14 +257,20 @@ export class SelectionTool extends Tool {
                     // Check if object should be clicked
                     if (obj instanceof PressableComponent) {
                         obj.click();
-                        return true;
+                        render = true;
+                        break;
                     }
                 }
                 // Check if object should be selected
                 else if (obj.isWithinSelectBounds(worldMousePos)) {
-                    return this.addSelection(obj);
+                    // Add select action
+                    group.add(new SelectAction(this, obj));
+                    render = this.addSelection(obj) || render;
+                    break;
                 }
             }
+
+            this.setAction(group);
 
             return render;
         }
@@ -248,12 +291,14 @@ export class SelectionTool extends Tool {
             //  order matters because the components need to be added
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
+            for (const obj of this.selections)
+                group.add(new SelectAction(this, obj, false));
             for (const wire of wires)
                 group.add(new DeleteWireAction(wire));
             for (const obj of components)
                 group.add(new DeleteAction(obj));
-                
-            this.lastAction = group;
+
+            this.setAction(group);
 
             // Actually delete the objects/wires
             for (const wire of wires)
@@ -265,7 +310,7 @@ export class SelectionTool extends Tool {
             return true;
         }
         if (key == ESC_KEY) {
-            this.clearSelections();
+            this.setAction(this.clearSelections());
             return true;
         }
 
