@@ -37,13 +37,10 @@ func init() {
 		os.Exit(1)
 	}
 	err = json.Unmarshal(file, &navConfig)
-	if err!= nil {
+	if err != nil {
 		log.Printf("Failed to unmarshall json: %v\n", err)
 		os.Exit(1)
 	}
-
-	remarsh, _ := json.Marshal(navConfig)
-	log.Printf("fmt %v\n", remarsh)
 }
 
 func IndexHandler(c *gin.Context) {
