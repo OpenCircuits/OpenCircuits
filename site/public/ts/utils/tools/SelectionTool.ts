@@ -50,6 +50,10 @@ export class SelectionTool extends Tool {
 
         this.callbacks = [];
     }
+        
+    private selectionsChanged() {	
+        this.callbacks.forEach(c => c());	
+    }
 
     public addSelection(obj: IOObject): boolean {
         // Don't select anything if it's disabled
