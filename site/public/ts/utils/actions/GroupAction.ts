@@ -9,17 +9,17 @@ export class GroupAction implements Action {
 
     public add(action: Action): void {
         // Add to front
-        this.actions.unshift(action);
+        this.actions.push(action);
     }
 
     public execute(): void {
-        for (const action of this.actions)
-            action.execute();
+        for (let i = 0; i < this.actions.length; i++)
+            this.actions[i].execute();
     }
 
     public undo(): void {
-        for (const action of this.actions)
-            action.undo();
+        for (let i = this.actions.length-1; i >= 0; i--)
+            this.actions[i].undo();
     }
 
     public isEmpty(): boolean {
