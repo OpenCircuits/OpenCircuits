@@ -12,9 +12,16 @@ import {Camera} from "../Camera";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {WirePort} from "../../models/ioobjects/other/WirePort";
 
+import {Action} from "../actions/Action";
+import {GroupAction} from "../actions/GroupAction";
+import {SelectAction} from "../actions/SelectAction";
+import {SplitWireAction} from "../actions/SplitWireAction";
+
 export class SplitWireTool extends TranslateTool {
 
     private designer: CircuitDesigner;
+
+    private action: GroupAction;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super(camera);
@@ -47,10 +54,14 @@ export class SplitWireTool extends TranslateTool {
         wirePort.setPos(worldMousePos);
         this.designer.addObject(wirePort);
 
+        // Create action
+        this.action = new GroupAction()
+
         // Set wireport as selections and being pressed
-        currentTool.clearSelections();
+        this.action.add(currentTool.clearSelections());
         currentTool.setCurrentlyPressedObj(wirePort);
         currentTool.addSelection(wirePort);
+        this.action.add(new SelectAction(currentTool, wirePort));
 
         // Store old wire's values and delete it
         const currentInput  = currentWire.getInput();
@@ -61,11 +72,20 @@ export class SplitWireTool extends TranslateTool {
         const wire1 = this.designer.createWire(currentInput, wirePort.getInputPort(0));
         const wire2 = this.designer.createWire(wirePort.getOutputPort(0), currentOutput);
 
+        this.action.add(new SplitWireAction(currentInput, wirePort, currentOutput));
+
         // Set control points:
         //  c1 corresponds with point 1 and c2 corresponds with point 2
         wire1.getShape().setC2(wirePort.getInputDir ().scale(DEFAULT_SIZE).add(wirePort.getPos()));
         wire2.getShape().setC1(wirePort.getOutputDir().scale(DEFAULT_SIZE).add(wirePort.getPos()));
 
         return super.activate(currentTool, event, input, button);
+    }
+
+    public getAction(): Action {
+        const group = new GroupAction();
+        group.add(this.action);
+        group.add(super.getAction());
+        return group;
     }
 }
