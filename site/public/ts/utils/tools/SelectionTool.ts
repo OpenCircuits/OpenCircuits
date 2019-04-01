@@ -292,7 +292,7 @@ export class SelectionTool extends Tool {
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
             for (const obj of this.selections)
-                group.add(new SelectAction(this, obj, false));
+                group.add(new SelectAction(this, obj, true));
             for (const wire of wires)
                 group.add(new DeleteWireAction(wire));
             for (const obj of components)
