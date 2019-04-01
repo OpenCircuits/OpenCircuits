@@ -1,5 +1,7 @@
 import {ITEMNAV_WIDTH} from "../utils/Constants";
 
+import {V} from "../utils/math/Vector";
+
 import {MainDesignerController} from "./MainDesignerController";
 
 import {CreateComponentFromXML} from "../utils/ComponentFactory";
@@ -20,13 +22,48 @@ export const ItemNavController = (function() {
         tab.classList.toggle("tab__closed");
     }
 
-    const place = function(component: Component) {
-        MainDesignerController.PlaceComponent(component);
+    const place = function(component: Component, instant: boolean) {
+        MainDesignerController.PlaceComponent(component, instant);
     }
 
     return {
         Init: function(): void {
+            const canvas = MainDesignerController.GetCanvas();
+
             tab.onclick = () => { ItemNavController.Toggle(); }
+
+            // canvas.ondrop = (event) => {
+            //     const w = 0;//child.offsetWidth;
+            //     const h = 0;//child.offsetHeight;
+            //
+            //     console.log(w + ", " + h);
+            //
+            //     console.log(event);
+            //
+            //     // const component = CreateComponentFromXML(xmlId, not);
+            //     //
+            //     // console.log(event.clientX + ", " + event.clientY);
+            //     // console.log(event.pageY + ", " + event.pageX);
+            //     // console.log(event.offsetX + ", " + event.offsetY);
+            //     // console.log(event.layerX + ", " + event.layerY);
+            //     // console.log(event.movementX + ", " + event.movementY);
+            //     //
+            //     // // Calculate world mouse pos from event
+            //     // const rect = canvas.getBoundingClientRect();
+            //     // const mousePos = V(event.clientX - rect.left * (canvas.width / rect.width),
+            //     //                    event.clientY - rect.top  * (canvas.height / rect.height));
+            //     //
+            //     // console.log(child);
+            //     //
+            //     // const pos = MainDesignerController.GetCamera().getWorldPos(mousePos);
+            //     //
+            //     // component.setPos(pos);
+            //     // place(component, true);
+            //     //
+            //     // MainDesignerController.Render();
+            // }
+
+            const headerHeight = document.getElementById("header").offsetHeight + 10;
 
             // Set onclicks for each item
             for (let i = 0; i < itemnav.children.length; i++) {
@@ -37,10 +74,32 @@ export const ItemNavController = (function() {
                 const xmlId = child.dataset.xmlid;
                 const not = child.dataset.not == 'true';
 
-                child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
+                let dragStart = V(0,0);
+
+                child.onclick = () => {
+                    place(CreateComponentFromXML(xmlId, not), false);
+                }
+                child.ondragstart = (event) => {
+                    dragStart = V(event.offsetX, event.offsetY);
+                }
                 child.ondragend = (event) => {
-                    place(CreateComponentFromXML(xmlId, not));
-                    MainDesignerController.TriggerClick(event);
+                    if (!(child instanceof HTMLButtonElement))
+                        return;
+
+                    const component = CreateComponentFromXML(xmlId, not);
+
+                    // Calculate world mouse pos from event
+                    const canvas = MainDesignerController.GetCanvas();
+                    const rect = canvas.getBoundingClientRect();
+                    const mousePos = V(event.pageX - dragStart.x - rect.left,
+                                       event.pageY - dragStart.y + headerHeight - rect.top);
+
+                    const pos = MainDesignerController.GetCamera().getWorldPos(mousePos);
+
+                    component.setPos(pos);
+                    place(component, true);
+
+                    MainDesignerController.Render();
                 }
             }
         },

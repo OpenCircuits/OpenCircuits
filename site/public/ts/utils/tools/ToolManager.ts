@@ -159,10 +159,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onMouseUp(i,b), "mouseup", input, button);
     }
 
-    public onClick(input: Input, button: number, event: DragEvent = null): boolean {
-        if (event) return this.onEvent((i:Input,b?:number) =>
-            this.currentTool.onClick(i,b,event), "onclick", input, button);
-        else return this.onEvent((i:Input,b?:number) => this.currentTool.onClick(i,b), "onclick", input, button);
+    public onClick(input: Input, button: number): boolean {
+        return this.onEvent((i:Input,b?:number) => this.currentTool.onClick(i,b), "onclick", input, button);
     }
 
     public onKeyDown(input: Input, key: number): boolean {
@@ -173,12 +171,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
 
-    public placeComponent(component: Component) {
+    public placeComponent(component: Component, instant: boolean = false) {
         if (this.placeComponentTool.isDisabled())
             return;
 
-        this.placeComponentTool.setComponent(component);
-        this.activate(this.placeComponentTool);
+        this.placeComponentTool.setComponent(component, instant);
+        if (!instant) // Don't activate the tool if we're just instantly placing
+            this.activate(this.placeComponentTool);
     }
 
     public getCurrentTool(): Tool {

@@ -120,8 +120,8 @@ export const MainDesignerController = (function() {
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
-        PlaceComponent: function(component: Component) {
-            toolManager.placeComponent(component);
+        PlaceComponent: function(component: Component, instant: boolean = false) {
+            toolManager.placeComponent(component, instant);
         },
         SetEditMode: function(val: boolean) {
             // Disable some tools
@@ -148,10 +148,6 @@ export const MainDesignerController = (function() {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
-        },
-        TriggerClick: function(event: DragEvent): void {
-            if (toolManager.onClick(input, 0, event))
-                MainDesignerController.Render();
         }
     };
 })();

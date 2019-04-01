@@ -32,7 +32,12 @@ export class PlaceComponentTool extends Tool {
         return (event == "onclick");
     }
 
-    public setComponent(component: Component) {
+    public setComponent(component: Component, instant: boolean = false) {
+        if (instant) {
+            // Place the object immediately
+            this.designer.addObject(component);
+            return;
+        }
         this.component = component;
     }
 
@@ -42,13 +47,7 @@ export class PlaceComponentTool extends Tool {
         return true;
     }
 
-    public onClick(input: Input, button: number, event: DragEvent = null): boolean {
-        if (event) {
-            const rect = MainDesignerController.GetCanvas().getBoundingClientRect();
-            const pos = this.camera
-                .getWorldPos(V(event.clientX,event.clientY).sub(V(rect.left, rect.top)));
-            this.component.setPos(pos);
-        }
+    public onClick(input: Input, button: number): boolean {
         this.designer.addObject(this.component);
         this.component = undefined;
         return true;
