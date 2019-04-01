@@ -50,9 +50,9 @@ export class SelectionTool extends Tool {
 
         this.callbacks = [];
     }
-        
-    private selectionsChanged() {	
-        this.callbacks.forEach(c => c());	
+
+    private selectionsChanged(): void {
+        this.callbacks.forEach(c => c());
     }
 
     public addSelection(obj: IOObject): boolean {
@@ -221,8 +221,8 @@ export class SelectionTool extends Tool {
     }
 
     public onKeyDown(input: Input, key: number): boolean {
-        //if modifier key and a key are pressed, select all
-        if(input.isModifierKeyDown() && key == A_KEY){
+        // If modifier key and a key are pressed, select all
+        if (input.isModifierKeyDown() && key == A_KEY) {
             this.selectAll();
             return true;
         }
@@ -283,7 +283,4 @@ export class SelectionTool extends Tool {
             this.addSelection(obj);
     }
 
-    private selectionsChanged(): void {
-        this.callbacks.forEach(c => c());
-    }
 }
