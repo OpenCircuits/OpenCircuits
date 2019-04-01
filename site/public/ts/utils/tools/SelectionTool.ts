@@ -203,7 +203,7 @@ export class SelectionTool extends Tool {
             let render = false;
 
             // Clear selections if no shift key
-            if (!input.isKeyDown(SHIFT_KEY))
+            if (!input.isShiftKeyDown())
                 render = this.clearSelections();
 
             // Check if an object was clicked
@@ -221,12 +221,12 @@ export class SelectionTool extends Tool {
                 }
                 // Check if object should be selected
                 else if (obj.isWithinSelectBounds(worldMousePos)) {
-                    //Try to add to selection if Shift Key is pressed
-                    if(!input.isShiftKeyDown()){
+                    // Try to add to selection if Shift Key is pressed
+                    if (!input.isShiftKeyDown())
                         return this.addSelection(obj);
-                    }
-                    //Try to remove object if possible then add if couldn't
-                    if(!this.removeSelection(obj))
+
+                    // Try to remove object if possible then add if couldn't
+                    if (!this.removeSelection(obj))
                         return this.addSelection(obj);
                     return true;
                 }
