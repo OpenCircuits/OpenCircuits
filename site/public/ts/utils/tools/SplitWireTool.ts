@@ -59,6 +59,7 @@ export class SplitWireTool extends TranslateTool {
 
         // Create two new wires
         const wire1 = this.designer.createWire(currentInput, wirePort.getInputPort(0));
+        wirePort.activate();
         const wire2 = this.designer.createWire(wirePort.getOutputPort(0), currentOutput);
 
         // Set control points:
