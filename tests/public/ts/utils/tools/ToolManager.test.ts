@@ -157,8 +157,6 @@ describe("Tool Manager", () => {
 
     });
 
-
-
     it("Connect s to and gate input", () => {
 
         click(sPortPos);
