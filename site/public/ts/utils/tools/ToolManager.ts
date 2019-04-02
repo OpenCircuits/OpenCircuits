@@ -43,7 +43,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.selectionTool      = new SelectionTool(designer, camera);
         this.panTool            = new PanTool(camera);
         this.rotateTool         = new RotateTool(camera);
-        this.translateTool      = new TranslateTool(camera);
+        this.translateTool      = new TranslateTool(designer, camera);
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
         this.splitWireTool      = new SplitWireTool(designer, camera);

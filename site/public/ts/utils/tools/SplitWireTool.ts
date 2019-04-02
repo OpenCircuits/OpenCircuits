@@ -15,12 +15,8 @@ import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 export class SplitWireTool extends TranslateTool {
 
-    private designer: CircuitDesigner;
-
     public constructor(designer: CircuitDesigner, camera: Camera) {
-        super(camera);
-
-        this.designer = designer;
+        super(designer, camera);
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
