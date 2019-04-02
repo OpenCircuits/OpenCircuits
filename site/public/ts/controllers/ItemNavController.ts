@@ -22,46 +22,13 @@ export const ItemNavController = (function() {
         tab.classList.toggle("tab__closed");
     }
 
-    const place = function(component: Component, instant: boolean) {
+    const place = function(component: Component, instant: boolean): void {
         MainDesignerController.PlaceComponent(component, instant);
     }
 
     return {
         Init: function(): void {
-            const canvas = MainDesignerController.GetCanvas();
-
             tab.onclick = () => { ItemNavController.Toggle(); }
-
-            // canvas.ondrop = (event) => {
-            //     const w = 0;//child.offsetWidth;
-            //     const h = 0;//child.offsetHeight;
-            //
-            //     console.log(w + ", " + h);
-            //
-            //     console.log(event);
-            //
-            //     // const component = CreateComponentFromXML(xmlId, not);
-            //     //
-            //     // console.log(event.clientX + ", " + event.clientY);
-            //     // console.log(event.pageY + ", " + event.pageX);
-            //     // console.log(event.offsetX + ", " + event.offsetY);
-            //     // console.log(event.layerX + ", " + event.layerY);
-            //     // console.log(event.movementX + ", " + event.movementY);
-            //     //
-            //     // // Calculate world mouse pos from event
-            //     // const rect = canvas.getBoundingClientRect();
-            //     // const mousePos = V(event.clientX - rect.left * (canvas.width / rect.width),
-            //     //                    event.clientY - rect.top  * (canvas.height / rect.height));
-            //     //
-            //     // console.log(child);
-            //     //
-            //     // const pos = MainDesignerController.GetCamera().getWorldPos(mousePos);
-            //     //
-            //     // component.setPos(pos);
-            //     // place(component, true);
-            //     //
-            //     // MainDesignerController.Render();
-            // }
 
             const headerHeight = document.getElementById("header").offsetHeight + 10;
 

@@ -120,10 +120,10 @@ export const MainDesignerController = (function() {
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
-        PlaceComponent: function(component: Component, instant: boolean = false) {
+        PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
-        SetEditMode: function(val: boolean) {
+        SetEditMode: function(val: boolean): void {
             // Disable some tools
             toolManager.disableTool(TranslateTool, val);
             toolManager.disableTool(RotateTool, val);

@@ -32,7 +32,7 @@ export class PlaceComponentTool extends Tool {
         return (event == "onclick");
     }
 
-    public setComponent(component: Component, instant: boolean = false) {
+    public setComponent(component: Component, instant: boolean = false): void {
         if (instant) {
             // Place the object immediately
             this.designer.addObject(component);
