@@ -1,13 +1,12 @@
 import {LEFT_MOUSE_BUTTON,
         SHIFT_KEY, DELETE_KEY,
-        BACKSPACE_KEY, ESC_KEY} from "../Constants";
+        BACKSPACE_KEY, ESC_KEY, A_KEY} from "../Constants";
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
 import {TransformContains} from "../math/MathUtils";
 
 import {SeparatedComponentCollection,
         GatherGroup} from "../ComponentUtils";
-
 import {Tool} from "./Tool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
@@ -65,7 +64,7 @@ export class SelectionTool extends Tool {
         this.callbacks = [];
     }
 
-    private selectionsChanged() {
+    private selectionsChanged(): void {
         this.callbacks.forEach(c => c());
     }
 
@@ -242,7 +241,7 @@ export class SelectionTool extends Tool {
             const group = new GroupAction();
 
             // Clear selections if no shift key
-            if (!input.isKeyDown(SHIFT_KEY)) {
+            if (!input.isShiftKeyDown()) {
                 group.add(this.clearSelections());
                 render = !group.isEmpty(); // Render if selections were actually cleared
             }
@@ -263,9 +262,14 @@ export class SelectionTool extends Tool {
                 }
                 // Check if object should be selected
                 else if (obj.isWithinSelectBounds(worldMousePos)) {
+                    // Deselect it if it's already selected and we're holding shift
+                    let deselect = false;
+                    if (input.isShiftKeyDown())
+                        deselect = this.removeSelection(obj);
+
                     // Add select action
-                    group.add(new SelectAction(this, obj));
-                    render = this.addSelection(obj) || render;
+                    group.add(new SelectAction(this, obj, deselect));
+                    render = deselect || this.addSelection(obj) || render;
                     break;
                 }
             }
@@ -279,6 +283,12 @@ export class SelectionTool extends Tool {
     }
 
     public onKeyDown(input: Input, key: number): boolean {
+        // If modifier key and a key are pressed, select all
+        if (input.isModifierKeyDown() && key == A_KEY) {
+            this.selectAll();
+            return true;
+        }
+
         if (this.selections.length == 0)
             return false;
 
@@ -355,6 +365,12 @@ export class SelectionTool extends Tool {
     }
     public getCurrentlyPressedObj(): IOObject {
         return this.currentPressedObj;
+    }
+
+    public selectAll(): void {
+        const objects = this.designer.getObjects();
+        for (const obj of objects)
+            this.addSelection(obj);
     }
 
 }
