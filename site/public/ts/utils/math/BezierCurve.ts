@@ -90,6 +90,7 @@ export class BezierCurve {
         return this.c2.copy();
     }
 
+    // Position
     public getX(t: number): number {
         const it = 1 - t;
         return this.p1.x*it*it*it + 3*this.c1.x*t*it*it + 3*this.c2.x*t*t*it + this.p2.x*t*t*t;
@@ -102,6 +103,38 @@ export class BezierCurve {
 
     public getPos(t: number): Vector {
         return V(this.getX(t), this.getY(t));
+    }
+
+    // 1st Derivative
+    public getDX(t: number): number {
+        const it = 1 - t;
+        return -3*this.p1.x*it*it + 3*this.c1.x*it*(1-3*t) + 3*this.c2.x*t*(2-3*t) + 3*this.p2.x*t*t;
+    }
+
+    public getDY(t: number): number {
+        const it = 1 - t;
+        return -3*this.p1.y*it*it + 3*this.c1.y*it*(1-3*t) + 3*this.c2.y*t*(2-3*t) + 3*this.p2.y*t*t;
+    }
+
+    public getDerivative(t: number): Vector {
+        return V(this.getDX(t), this.getDY(t));
+    }
+
+    // 2nd Derivative
+    public getDDX(t: number): number {
+        const m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
+        const b = this.p1.x - 2*this.c1.x + this.c2.x;
+        return 6*(m * t + b);
+    }
+
+    public getDDY(t: number): number {
+        const m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
+        const b = this.p1.y - 2*this.c1.y + this.c2.y;
+        return 6*(m * t + b);
+    }
+
+    public get2ndDerivative(t: number): Vector {
+        return V(this.getDDX(t), this.getDDY(t));
     }
 
     public getBoundingBox(): Transform {

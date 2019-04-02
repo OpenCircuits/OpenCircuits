@@ -45,6 +45,10 @@ export const ItemNavController = (function() {
 
                 child.onclick = () => {
                     place(CreateComponentFromXML(xmlId, not), false);
+
+                    // Unfocus element
+                    if (child instanceof HTMLElement)
+                        child.blur();
                 }
                 child.ondragstart = (event) => {
                     dragStart = V(event.offsetX, event.offsetY);

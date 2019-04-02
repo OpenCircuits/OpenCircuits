@@ -52,4 +52,8 @@ export class TranslateAction implements Action {
     public getOffset(): Vector {
         return this.offset;
     }
+
+    public getObjects(): Array<IOObject>{
+        return this.objects;
+    }
 }
