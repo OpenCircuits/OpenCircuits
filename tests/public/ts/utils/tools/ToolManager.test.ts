@@ -12,6 +12,7 @@ import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
 import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
+import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
 import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
 import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
@@ -94,24 +95,75 @@ describe("Tool Manager", () => {
     }
 
     function dragFromTo(start: Vector, end: Vector): void {
-        down(start.x, start.y);
-        let x: number = start.x;
-        let y: number = start.y;
-        while (x != end.x) {
-            if (x > end.x) { x--; }
-            if (x < end.x) { x++; }
-            move(x, y);
-        }
-        while (y != end.y) {
-            if (y > end.x) { y--; }
-            if (y < end.x) { y++; }
-            move(x, y);
-        }
-        up(end.x, end.y);
+        down(start);
+        move(end);
+        up(end);
+    }
+
+    function selections(): Array<IOObject> {
+        return toolManager.getSelectionTool().getSelections();
     }
 
     function tool(): Tool {
         return toolManager.getCurrentTool();
     }
+
+    let s1 = new Switch();
+    let a = new ANDGate();
+    designer.addObjects([s1, a]);
+    s.setPos(V(-200, -50));
+    s1.setPos(V(-200, 50));
+    a.setPos(V(0, 0));
+
+    const lPortPos: Vector = l.getInputPort(0).getWorldTargetPos();
+    const sPortPos: Vector = s.getOutputPort(0).getWorldTargetPos();
+    const s1PortPos: Vector = s1.getOutputPort(0).getWorldTargetPos();
+    const aOutPos: Vector = a.getOutputPort(0).getWorldTargetPos();
+    const aIn1Pos: Vector = a.getInputPort(0).getWorldTargetPos();
+    const aIn2Pos: Vector = a.getInputPort(1).getWorldTargetPos();
+
+    it("Beginning of second set of tests", () => {
+
+        expect(designer.getObjects()).toHaveLength(4);
+
+    });
+
+
+
+    it("Connect s to and gate input", () => {
+
+        click(sPortPos);
+        expect(tool()).toBeInstanceOf(WiringTool);
+        click(aIn1Pos);
+        expect(tool()).not.toBeInstanceOf(WiringTool);
+        expect(designer.getWires()).toHaveLength(1);
+
+    });
+
+    it("Connect s1 to other and gate input", () => {
+        click(s1PortPos);
+        expect(tool()).toBeInstanceOf(WiringTool);
+        click(aIn2Pos);
+        expect(tool()).not.toBeInstanceOf(WiringTool);
+        expect(designer.getWires()).toHaveLength(2);
+    });
+
+    it ("Connect led to and gate output", () => {
+        click(lPortPos);
+        expect(tool()).toBeInstanceOf(WiringTool);
+        click(aOutPos);
+        expect(tool()).not.toBeInstanceOf(WiringTool);
+        expect(designer.getWires()).toHaveLength(3);
+    });
+
+    it ("Turn on switches", () => {
+        click(s.getPos());
+        expect(s.isOn());
+        expect(tool()).toBeInstanceOf(SelectionTool);
+        click(s1.getPos());
+        expect(s1.isOn());
+        expect(tool()).toBeInstanceOf(SelectionTool);
+        expect(l.isOn());
+    });
 
 });
