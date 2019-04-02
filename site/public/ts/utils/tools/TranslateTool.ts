@@ -15,15 +15,15 @@ import {SelectionTool} from "./SelectionTool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
-import {WirePort} from "../../models/ioobjects/WirePort";
 import {Component} from "../../models/ioobjects/Component";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
-    private designer: CircuitDesigner;
-    private camera: Camera;
+    protected designer: CircuitDesigner;
+    protected camera: Camera;
 
     private dragging: boolean;
     private action: TranslateAction;
