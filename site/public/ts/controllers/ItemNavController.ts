@@ -35,7 +35,13 @@ export const ItemNavController = (function() {
                 const xmlId = child.dataset.xmlid;
                 const not = child.dataset.not == 'true';
 
-                child.onclick = () => { place(CreateComponentFromXML(xmlId, not)); }
+                child.onclick = () => {
+                    place(CreateComponentFromXML(xmlId, not));
+
+                    // Unfocus element
+                    if (child instanceof HTMLElement)
+                        child.blur();
+                }
             }
         },
         Toggle: function(): void {
