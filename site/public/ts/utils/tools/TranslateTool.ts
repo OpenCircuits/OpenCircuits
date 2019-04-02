@@ -99,7 +99,7 @@ export class TranslateTool extends Tool {
 
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
-            let group = this.action.getObjects();
+            const group = this.action.getObjects();
             this.designer.addGroup(CopyGroup(group));
 
             return true;
