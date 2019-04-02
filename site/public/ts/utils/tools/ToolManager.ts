@@ -172,7 +172,6 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     public placeComponent(component: Component) {
-
         if (this.placeComponentTool.isDisabled())
             return;
 

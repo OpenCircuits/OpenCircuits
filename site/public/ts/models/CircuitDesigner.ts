@@ -110,12 +110,10 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public addGroup(group: SeparatedComponentCollection): void {
-
-
-		for (let a of group.getAllComponents()){
+		for (let a of group.getAllComponents())
 			this.addObject(a)
-		}
-		for (let b of group.wires){
+
+		for (let b of group.wires) {
 			this.wires.push(b);
 			b.setDesigner(this);
 		}

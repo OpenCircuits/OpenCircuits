@@ -2,8 +2,7 @@ import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         SHIFT_KEY,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY,
-        } from "../Constants";
+        SPACEBAR_KEY} from "../Constants";
 
 import {CopyGroup} from "../ComponentUtils";
 
@@ -94,17 +93,16 @@ export class TranslateTool extends Tool {
         return true;
     }
 
-    public onKeyUp(input:Input, key: number): boolean{
+    public onKeyUp(input: Input, key: number): boolean{
         if (!this.dragging)
             return false;
 
-        if(key == SPACEBAR_KEY){
-            let arr = this.action.getObjects();
-            let group = CopyGroup(arr);
-            this.designer.addGroup(group);
+        // Duplicate group when we press the spacebar
+        if (key == SPACEBAR_KEY) {
+            let group = this.action.getObjects();
+            this.designer.addGroup(CopyGroup(group));
 
             return true;
-
         }
         return false;
     }
