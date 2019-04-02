@@ -134,6 +134,15 @@ export class SelectionTool extends Tool {
                     return false;
                 }
             }
+
+            // Go through every wire and check to see if it has been pressed
+            for (let w of this.designer.getWires()) {
+                if (BezierContains(w.getShape(), worldMousePos)) {
+                    this.pressedObj = false;
+                    this.currentPressedObj = w;
+                    return false;
+                }
+            }
         }
     }
 
@@ -232,19 +241,16 @@ export class SelectionTool extends Tool {
                 }
                 // Check if a port was clicked
                 else {
-                    for (let p of obj.getPorts()) {
-                        if (CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))
-                            return false;
-                    }
+                    if (obj.getPorts().some((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)))
+                        return false;
                 }
             }
 
             // Go through every wire and check to see if it has been clicked
             //  and add to selections
             for (let w of this.designer.getWires()) {
-                if (BezierContains(w.getShape(), worldMousePos)) {
+                if (BezierContains(w.getShape(), worldMousePos))
                     return this.addSelection(w);
-                }
             }
 
             return render;

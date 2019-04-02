@@ -10,7 +10,7 @@ import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
-import {IOObject} from "../../models/ioobjects/IOObject";
+import {Wire} from "../../models/ioobjects/Wire";
 import {Component} from "../../models/ioobjects/Component";
 
 import {Action} from "../actions/Action";
@@ -41,6 +41,9 @@ export class TranslateTool extends Tool {
         let selections = currentTool.getSelections();
         let currentPressedObj = currentTool.getCurrentlyPressedObj();
         if (currentPressedObj != undefined) {
+            if (currentPressedObj instanceof Wire)
+                return false;
+
             let objects = [currentPressedObj];
 
             // Translate multiple objects if they are all selected

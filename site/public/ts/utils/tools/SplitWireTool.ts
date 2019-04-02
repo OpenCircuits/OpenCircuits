@@ -10,6 +10,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {Wire} from "../../models/ioobjects/Wire";
 import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 export class SplitWireTool extends TranslateTool {
@@ -30,16 +31,8 @@ export class SplitWireTool extends TranslateTool {
 
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        // Go through every wire and check to see if it has been pressed
-        let currentWire;
-        for (let w of this.designer.getWires()) {
-            if (BezierContains(w.getShape(), worldMousePos)) {
-                currentWire = w;
-                break;
-            }
-        }
-
-        if (!currentWire)
+        const currentWire = currentTool.getCurrentlyPressedObj();
+        if (!(currentWire instanceof Wire))
             return false;
 
         // Create new wire port
