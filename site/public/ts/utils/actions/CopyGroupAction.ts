@@ -1,3 +1,5 @@
+import {Transform} from "../math/Transform";
+
 import {SeparatedComponentCollection,
         CopyGroup} from "../ComponentUtils";
 
@@ -11,14 +13,27 @@ export class CopyGroupAction implements Action {
     private initialGroup: Array<IOObject>;
     private copy: SeparatedComponentCollection;
 
+    private transforms: Array<Transform>;
+
     public constructor(designer: CircuitDesigner, initialGroup: Array<IOObject>, group: SeparatedComponentCollection) {
         this.designer = designer;
         this.initialGroup = initialGroup;
         this.copy = group;
+
+        this.transforms = group.getAllComponents().map(c => c.getTransform());
     }
 
     public execute(): void {
-        this.designer.addGroup(this.copy = CopyGroup(this.initialGroup));
+        this.copy = CopyGroup(this.initialGroup);
+
+        // Copy over transforms
+        const components = this.copy.getAllComponents();
+        for (let i = 0; i < components.length; i++) {
+            components[i].setPos(this.transforms[i].getPos());
+            components[i].setAngle(this.transforms[i].getAngle());
+        }
+
+        this.designer.addGroup(this.copy);
     }
 
     public undo(): void {
