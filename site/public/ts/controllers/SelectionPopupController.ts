@@ -61,12 +61,12 @@ export const SelectionPopupController = (function() {
                 // Update the position of the popup
                 let components = selections.filter(s => s instanceof Component).map(c => c as Component);
                 let sum = components.reduce((acc, c) => acc.add(c.getPos()), new Vector(0, 0));
-                let screen_pos = camera.getScreenPos(sum.scale(1/components.length));
-                //console.log(this.div.clientHeight, document.body.clientHeight);
-                screen_pos.y = screen_pos.y - (div.clientHeight/2);
+                let screen_pos = camera.getScreenPos(sum.scale(1/components.length)).sub(0, div.clientHeight/2);
+
                 // TODO: clamp should make sure not to overlap with other screen elements
                 //const lo = new Vector(0);
                 //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
+                
                 setPos(screen_pos);// Vector.clamp(screen_pos, lo, hi);
 
                 this.Show();
