@@ -1,7 +1,10 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         SHIFT_KEY,
-        LEFT_MOUSE_BUTTON} from "../Constants";
+        LEFT_MOUSE_BUTTON,
+        SPACEBAR_KEY} from "../Constants";
+
+import {CopyGroup} from "../ComponentUtils";
 
 import {Vector,V} from "../math/Vector";
 import {Input} from "../Input";
@@ -10,22 +13,26 @@ import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
+import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
-    private camera: Camera;
+    protected designer: CircuitDesigner;
+    protected camera: Camera;
 
     private dragging: boolean;
     private action: TranslateAction;
     private startPos: Vector;
 
-    public constructor(camera: Camera) {
+    public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
+        this.designer = designer;
         this.camera = camera;
 
         this.dragging = false;
@@ -84,6 +91,20 @@ export class TranslateTool extends Tool {
         this.dragging = false;
 
         return true;
+    }
+
+    public onKeyUp(input: Input, key: number): boolean{
+        if (!this.dragging)
+            return false;
+
+        // Duplicate group when we press the spacebar
+        if (key == SPACEBAR_KEY) {
+            const group = this.action.getObjects();
+            this.designer.addGroup(CopyGroup(group));
+
+            return true;
+        }
+        return false;
     }
 
     public getAction(): Action {

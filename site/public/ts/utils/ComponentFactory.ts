@@ -22,33 +22,38 @@ import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
 import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
 import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
 
-import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
+import {Multiplexer}   from "../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
+import {WirePort}      from "../models/ioobjects/other/WirePort";
 
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
 const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
-const OTHER     = [Multiplexer, Demultiplexer];
+const OTHER     = [Multiplexer, Demultiplexer, WirePort];
 
 let XML_COMPONENTS = new Map<string, any>();
 let XML_NAMES = new Map<any, string>();
 
 // Helper to add a bunch of types to the COMPONENTS map
-function addXMLTypes(types: Array<any>) {
+function addXMLTypes(types: Array<any>): Array<string> {
+    let arr = [];
     for (let type of types) {
-        XML_COMPONENTS.set(new type().getXMLName(), type);
-        XML_NAMES.set(type, new type().getXMLName());
+        const name = new type().getXMLName();
+        XML_COMPONENTS.set(name, type);
+        XML_NAMES.set(type, name);
+        arr.push(name);
     }
+    return arr;
 }
 
-addXMLTypes(INPUTS);
-addXMLTypes(OUTPUTS);
-addXMLTypes(GATES);
-addXMLTypes(LATCHES);
-addXMLTypes(FLIPFLOPS);
-addXMLTypes(OTHER);
+const XML_INPUTS    = addXMLTypes(INPUTS);
+const XML_OUTPUTS   = addXMLTypes(OUTPUTS);
+const XML_GATES     = addXMLTypes(GATES);
+const XML_LATCHES   = addXMLTypes(LATCHES);
+const XML_FLIPFLOPS = addXMLTypes(FLIPFLOPS);
+const XML_OTHER     = addXMLTypes(OTHER);
 
 /**
  * Helper method that creates an object from the
@@ -69,6 +74,25 @@ export function GetXMLName(type: any): string {
     return XML_NAMES.get(type);
 }
 
+export function GetAllComponentInputXMLNames() {
+    return XML_INPUTS.slice();
+}
+export function GetAllComponentOutputXMLNames() {
+    return XML_OUTPUTS.slice();
+}
+export function GetAllComponentGateXMLNames() {
+    return XML_GATES.slice();
+}
+export function GetAllComponentLatchXMLNames() {
+    return XML_LATCHES.slice();
+}
+export function GetAllComponentFlipFlopXMLNames() {
+    return XML_FLIPFLOPS.slice();
+}
+export function GetAllComponentOtherXMLNames() {
+    return XML_OTHER.slice();
+}
+
 export function GetAllComponentInputs() {
     return INPUTS.slice();
 }
@@ -83,4 +107,7 @@ export function GetAllComponentLatches() {
 }
 export function GetAllComponentFlipFlops() {
     return FLIPFLOPS.slice();
+}
+export function GetAllComponentOthers() {
+    return OTHER.slice();
 }
