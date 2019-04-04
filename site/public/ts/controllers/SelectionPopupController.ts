@@ -10,6 +10,9 @@ import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule
 import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
+import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
+import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
+import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -39,6 +42,10 @@ export const SelectionPopupController = (function() {
             modules = new Array<SelectionPopupModule>(
                 new TitlePopupModule(div),
                 new PositionPopupModule(div),
+                new ColorPopupModule(div),
+                new InputCountPopupModule(div),
+                // TODO: implement when encoders are added to the typescript build
+                // new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div)
             );
             pos = new Vector(0, 0);
@@ -52,17 +59,9 @@ export const SelectionPopupController = (function() {
                 modules.forEach(c => c.pull());
 
                 // Update the position of the popup
-                let sum = new Vector(0, 0);
-                let count = 0;
-                for (let i = 0; i < selections.length; ++i) {
-                    const s = selections[i];
-                    if (s instanceof Component) { // Only components have positions
-                        const pos = s.getPos();
-                        sum = sum.add(pos);
-                        count += 1;
-                    }
-                }
-                let screen_pos = camera.getScreenPos(sum.scale(1/count));
+                let components = selections.filter(s => s instanceof Component).map(c => c as Component);
+                let sum = components.reduce((acc, c) => acc.add(c.getPos()), new Vector(0, 0));
+                let screen_pos = camera.getScreenPos(sum.scale(1/components.length));
                 //console.log(this.div.clientHeight, document.body.clientHeight);
                 screen_pos.y = screen_pos.y - (div.clientHeight/2);
                 // TODO: clamp should make sure not to overlap with other screen elements

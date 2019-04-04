@@ -510,6 +510,29 @@ POPUP
     background-color: rgba(255, 255, 255, 0);
 }
 
+.popup button#popup-ic-button {
+    visibility: inherit;
+    width: 100%;
+    background-color: #ddd;
+    text-align: center;
+    color: #888;
+    border-color: #888;
+    border-radius: 3px;
+    border-width: thin;
+    border-style: solid;
+    font-weight: bold;
+    font-size: 0.85em;
+    margin-top:5px;
+    padding-bottom: 1px;
+    height: 21px;
+}
+.popup button#popup-ic-button:hover {
+    background-color: #ccc;
+}
+.popup button#popup-ic-button:active {
+    text-shadow: 1px 1px 1px #777;
+}
+
 
 /*
 

@@ -18,29 +18,18 @@ export class PositionPopupModule extends SelectionPopupModule {
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
-        let enable = true;
+        const selections = MainDesignerController.GetSelections();
+        const components = selections.filter(o => o instanceof Component).map(o => o as Component);
+        let enable = selections.length == components.length && components.length > 0;
 
-        if (selections.length) {
-            let x: number = null;
-            let y: number = null;
+        if (enable) {
+            let x: number = components[0].getPos().x;
+            let y: number = components[0].getPos().y;
 
-            const s0 = selections[0];
-            if (s0 instanceof Component) {
-                const pos = s0.getPos();
-                x = pos.x;
-                y = pos.y;
-            }
-
-            for (let i = 1; i < selections.length && x != null && y != null; ++i) {
-                const s = selections[i];
-                if (s instanceof Component) {
-                    const pos = s.getPos();
-                    if (pos.x != x || pos.y != y) x = y = null;
-                } else {
-                    x = y = null;
-                    enable = false;
-                }
+            for (let i = 1; i < components.length && x != null && y != null; ++i) {
+                const c = components[i];
+                const pos = c.getPos();
+                if (pos.x != x || pos.y != y) x = y = null;
             }
 
             // ""+(+x.toFixed(2)) is a hack to turn the fixed string
@@ -49,18 +38,15 @@ export class PositionPopupModule extends SelectionPopupModule {
             this.xbox.placeholder = (x == null) ? "-" : "";
             this.ybox.value = (y == null) ? "" : ""+(+(y / GRID_SIZE - 0.5).toFixed(2));
             this.ybox.placeholder = (y == null) ? "-" : "";
-        } else {
-            enable = false;
         }
 
         this.setEnabled(enable);
     }
 
     public push(): void {
-        let selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
+        let components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
-        selections.forEach(s => {
-            let c = s as Component;
+        components.forEach(c => {
             let pos = c.getPos();
 
             c.setPos(new Vector(
