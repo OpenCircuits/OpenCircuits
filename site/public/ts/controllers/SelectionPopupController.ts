@@ -4,6 +4,7 @@ import {ICData} from "../models/ioobjects/other/ICData";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
+import {Wire} from "../models/ioobjects/Wire";
 import {Camera} from "../utils/Camera";
 
 import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
@@ -58,6 +59,12 @@ export const SelectionPopupController = (function() {
                     const s = selections[i];
                     if (s instanceof Component) { // Only components have positions
                         const pos = s.getPos();
+                        sum = sum.add(pos);
+                        count += 1;
+                    }
+                    else if (s instanceof Wire) {
+                        // We take the average position in the wire parametrization
+                        const pos = s.getShape().getPos(0.5);
                         sum = sum.add(pos);
                         count += 1;
                     }

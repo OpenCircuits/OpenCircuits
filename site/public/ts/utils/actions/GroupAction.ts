@@ -13,8 +13,8 @@ export class GroupAction implements Action {
     }
 
     public execute(): void {
-        for (let i = 0; i < this.actions.length; i++)
-            this.actions[i].execute();
+        for (const action of this.actions)
+            action.execute();
     }
 
     public undo(): void {

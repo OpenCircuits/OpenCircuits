@@ -1,4 +1,11 @@
-import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "../Constants";
+import {GRID_SIZE,
+        ROTATION_CIRCLE_R1,
+        ROTATION_CIRCLE_R2,
+        SHIFT_KEY,
+        LEFT_MOUSE_BUTTON,
+        SPACEBAR_KEY} from "../Constants";
+
+import {CopyGroup} from "../ComponentUtils";
 
 import {Vector,V} from "../math/Vector";
 import {Input} from "../Input";
@@ -7,23 +14,32 @@ import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
+import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {IOObject} from "../../models/ioobjects/IOObject";
+import {Wire} from "../../models/ioobjects/Wire";
 import {Component} from "../../models/ioobjects/Component";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
+import {GroupAction} from "../actions/GroupAction";
+import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
+    protected designer: CircuitDesigner;
     protected camera: Camera;
 
     protected pressedComponent: Component;
     protected components: Array<Component>;
     protected initialPositions: Array<Vector>;
 
-    protected startPos: Vector;
+    private action: GroupAction;
+    private startPos: Vector;
 
-    public constructor(camera: Camera) {
+    public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
+        this.designer = designer;
         this.camera = camera;
     }
 
@@ -57,6 +73,8 @@ export class TranslateTool extends Tool {
 
         this.startPos = worldMousePos.sub(currentPressedObj.getPos());
 
+        this.action = new GroupAction();
+
         return true;
     }
 
@@ -85,14 +103,27 @@ export class TranslateTool extends Tool {
         return true;
     }
 
+    public onKeyUp(input: Input, key: number): boolean {
+        // Duplicate group when we press the spacebar
+        if (key == SPACEBAR_KEY) {
+            const group = CopyGroup(this.components);
+            this.action.add(new CopyGroupAction(this.designer, this.components, group));
+            this.designer.addGroup(group);
+
+            return true;
+        }
+        return false;
+    }
+
     public getAction(): Action {
         // Copy final positions
         const finalPositions = [];
         for (let obj of this.components)
             finalPositions.push(obj.getPos());
+        this.action.add(new TranslateAction(this.components, this.initialPositions, finalPositions));
 
         // Return action
-        return new TranslateAction(this.components, this.initialPositions, finalPositions);
+        return this.action;
     }
 
 }

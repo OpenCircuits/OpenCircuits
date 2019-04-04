@@ -1,12 +1,15 @@
 import {LEFT_MOUSE_BUTTON,
         SHIFT_KEY, DELETE_KEY,
-        BACKSPACE_KEY, ESC_KEY, A_KEY} from "../Constants";
+        BACKSPACE_KEY, ESC_KEY,
+        A_KEY, IO_PORT_RADIUS} from "../Constants";
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
-import {TransformContains} from "../math/MathUtils";
-
+import {TransformContains,
+        CircleContains,
+        BezierContains} from "../math/MathUtils";
 import {SeparatedComponentCollection,
         GatherGroup} from "../ComponentUtils";
+
 import {Tool} from "./Tool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
@@ -161,6 +164,15 @@ export class SelectionTool extends Tool {
                     return false;
                 }
             }
+
+            // Go through every wire and check to see if it has been pressed
+            for (let w of this.designer.getWires()) {
+                if (BezierContains(w.getShape(), worldMousePos)) {
+                    this.pressedObj = false;
+                    this.currentPressedObj = w;
+                    return false;
+                }
+            }
         }
     }
 
@@ -272,6 +284,18 @@ export class SelectionTool extends Tool {
                     render = deselect || this.addSelection(obj) || render;
                     break;
                 }
+                // Check if a port was clicked
+                else {
+                    if (obj.getPorts().some((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)))
+                        return false;
+                }
+            }
+
+            // Go through every wire and check to see if it has been clicked
+            //  and add to selections
+            for (let w of this.designer.getWires()) {
+                if (BezierContains(w.getShape(), worldMousePos))
+                    return this.addSelection(w);
             }
 
             this.setAction(group);
