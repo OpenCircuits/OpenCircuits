@@ -4,8 +4,8 @@ import {Action} from "./Action";
  * Manages undo/redo actions
  */
 export class ActionManager {
-    undoStack: Array<Action>;
-    redoStack: Array<Action>;
+    private undoStack: Array<Action>;
+    private redoStack: Array<Action>;
 
     public constructor() {
         this.undoStack = [];

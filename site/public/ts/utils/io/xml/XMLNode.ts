@@ -78,18 +78,14 @@ export class XMLNode {
 
     public findChild(name: string): XMLNode {
         // Search for child node by name
-        for (let i = 0; i < this.node.childNodes.length; i++) {
-            if (this.node.childNodes[i].nodeName === name)
-                return new XMLNode(this.root, this.node.childNodes[i]);
-        }
+        const child = Array.from(this.node.childNodes).find(child => child.nodeName === name);
+        if (child)
+            return new XMLNode(this.root, child);
         return undefined;
     }
 
     public getChildren(): Array<XMLNode> {
-        let arr = [];
-        for (let i = 0; i < this.node.childNodes.length; i++)
-            arr.push(new XMLNode(this.root, this.node.childNodes[i]));
-        return arr;
+        return Array.from(this.node.childNodes).map(child => new XMLNode(this.root, child));
     }
 
     public hasAttribute(tag: string): boolean {

@@ -10,9 +10,7 @@ export class ANDGate extends Gate {
 
 	// @Override
 	public activate() {
-		let on = true;
-		for (let i = 0; i < this.inputs.length; i++)
-			on = (on && this.inputs[i].getIsOn());
+		const on = this.inputs.every((input) => input.getIsOn());
 		super.activate(on);
 	}
 
