@@ -2,16 +2,19 @@ import {LEFT_MOUSE_BUTTON,
         OPTION_KEY, SHIFT_KEY,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY, A_KEY, IO_PORT_RADIUS} from "../Constants";
+
+import {Vector,V} from "../math/Vector";
+import {Transform} from "../math/Transform";
+import {TransformContains,
+        CircleContains,
+        BezierContains} from "../math/MathUtils";
+
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 import {PlaceComponentTool} from "./PlaceComponentTool"
-
-import {Vector,V} from "../math/Vector";
-import {Transform} from "../math/Transform";
-import {TransformContains,CircleContains,BezierContains} from "../math/MathUtils";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";

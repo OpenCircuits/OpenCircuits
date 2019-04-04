@@ -23,7 +23,7 @@ export class WirePort extends Component {
 
 	public isWithinSelectBounds(v: Vector): boolean {
 		return CircleContains(this.getPos(), this.getSize().x, v);
-    }
+	}
 
 	public getInputDir(): Vector {
 		return this.transform.getMatrix().mul(V(-1, 0)).sub(this.getPos()).normalize();
