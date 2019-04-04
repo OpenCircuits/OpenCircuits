@@ -177,12 +177,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
 
-    public placeComponent(component: Component) {
+    public placeComponent(component: Component, instant: boolean = false) {
         if (this.placeComponentTool.isDisabled())
             return;
 
-        this.placeComponentTool.setComponent(component);
-        this.activate(this.placeComponentTool);
+        this.placeComponentTool.setComponent(component, instant);
+        if (!instant) // Don't activate the tool if we're just instantly placing
+            this.activate(this.placeComponentTool);
     }
 
     public getCurrentTool(): Tool {
