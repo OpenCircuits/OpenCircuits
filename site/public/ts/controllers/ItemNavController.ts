@@ -33,8 +33,8 @@ export const ItemNavController = (function() {
             const headerHeight = document.getElementById("header").offsetHeight + 10;
 
             // Set onclicks for each item
-            for (let i = 0; i < itemnav.children.length; i++) {
-                let child = itemnav.children[i];
+            const children = Array.from(itemnav.children);
+            for (const child of children) {
                 if (!(child instanceof HTMLButtonElement))
                     continue;
 
