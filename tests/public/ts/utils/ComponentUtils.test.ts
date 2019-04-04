@@ -7,7 +7,7 @@ import {Vector, V} from "../../../../site/public/ts/utils/math/Vector";
 import {Transform} from "../../../../site/public/ts/utils/math/Transform";
 
 import {Wire} from "../../../../site/public/ts/models/ioobjects/Wire";
-import {WirePort} from "../../../../site/public/ts/models/ioobjects/WirePort";
+import {WirePort} from "../../../../site/public/ts/models/ioobjects/other/WirePort";
 import {OutputPort} from "../../../../site/public/ts/models/ioobjects/OutputPort";
 import {InputPort} from "../../../../site/public/ts/models/ioobjects/InputPort";
 import {Component} from "../../../../site/public/ts/models/ioobjects/Component";
