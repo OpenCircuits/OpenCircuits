@@ -1,4 +1,8 @@
+import {Vector,V} from "../math/Vector";
+
 import {Tool} from "./Tool";
+
+import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
@@ -28,21 +32,23 @@ export class PlaceComponentTool extends Tool {
         return (event == "onclick");
     }
 
-    public setComponent(component: Component) {
+    public setComponent(component: Component, instant: boolean = false): void {
+        if (instant) {
+            // Place the object immediately
+            this.designer.addObject(component);
+            return;
+        }
         this.component = component;
     }
 
     public onMouseMove(input: Input): boolean {
-        let pos = this.camera.getWorldPos(input.getMousePos());
-
+        const pos = this.camera.getWorldPos(input.getMousePos());
         this.component.setPos(pos);
-
         return true;
     }
 
     public onClick(input: Input, button: number): boolean {
-        let pos = this.camera.getWorldPos(input.getMousePos());
-        this.designer.addObject(this.component.copy());
+        this.designer.addObject(this.component);
         this.component = undefined;
         return true;
     }
@@ -50,5 +56,4 @@ export class PlaceComponentTool extends Tool {
     public getComponent(): Component {
         return this.component;
     }
-
 }
