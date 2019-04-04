@@ -4,6 +4,7 @@ import {ICData} from "../models/ioobjects/other/ICData";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
+import {Wire} from "../models/ioobjects/Wire";
 import {Camera} from "../utils/Camera";
 
 import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
@@ -66,7 +67,7 @@ export const SelectionPopupController = (function() {
                 // TODO: clamp should make sure not to overlap with other screen elements
                 //const lo = new Vector(0);
                 //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
-                
+
                 setPos(screen_pos);// Vector.clamp(screen_pos, lo, hi);
 
                 this.Show();
