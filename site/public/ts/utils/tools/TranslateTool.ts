@@ -1,4 +1,5 @@
-import {ROTATION_CIRCLE_R1,
+import {GRID_SIZE,
+        ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         SHIFT_KEY,
         LEFT_MOUSE_BUTTON,
@@ -20,14 +21,19 @@ import {Component} from "../../models/ioobjects/Component";
 import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
+import {GroupAction} from "../actions/GroupAction";
+import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/TranslateAction";
 
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;
     protected camera: Camera;
 
-    private dragging: boolean;
-    private action: TranslateAction;
+    protected pressedComponent: Component;
+    protected components: Array<Component>;
+    protected initialPositions: Array<Vector>;
+
+    private action: GroupAction;
     private startPos: Vector;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
@@ -35,8 +41,6 @@ export class TranslateTool extends Tool {
 
         this.designer = designer;
         this.camera = camera;
-
-        this.dragging = false;
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -49,25 +53,29 @@ export class TranslateTool extends Tool {
 
         let selections = currentTool.getSelections();
         let currentPressedObj = currentTool.getCurrentlyPressedObj();
-        if (currentPressedObj != undefined) {
-            if (currentPressedObj instanceof Wire)
-                return false;
 
-            let objects = [currentPressedObj];
+        // Make sure everything is a component
+        if (!(currentPressedObj instanceof Component))
+            return false;
+        if (!selections.every((e) => e instanceof Component))
+            return false;
 
-            // Translate multiple objects if they are all selected
-            if (selections.length > 0 && selections.includes(objects[0]))
-                objects = selections;
+        // Translate multiple objects if they are all selected
+        this.pressedComponent = currentPressedObj;
+        this.components = [currentPressedObj];
+        if (selections.length > 0 && selections.includes(currentPressedObj))
+            this.components = <Array<Component>>selections;
 
-            this.dragging = true;
-            this.startPos = worldMousePos;
-            if (currentPressedObj instanceof Component)
-                this.startPos = worldMousePos.sub((<Component>currentPressedObj).getPos());
-            this.action = new TranslateAction(objects, currentPressedObj);
+        // Copy initial positions
+        this.initialPositions = [];
+        for (let obj of this.components)
+            this.initialPositions.push(obj.getPos());
 
-            return true;
-        }
-        return false;
+        this.startPos = worldMousePos.sub(currentPressedObj.getPos());
+
+        this.action = new GroupAction();
+
+        return true;
     }
 
     public deactivate(event: string, input: Input, button?: number): boolean {
@@ -75,36 +83,32 @@ export class TranslateTool extends Tool {
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
-        if (!this.dragging)
-            return false;
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        let mousePosOffset = this.camera.getWorldPos(input.getMousePos()).sub(this.startPos);
-        this.action.updateOffset(mousePosOffset, input.isShiftKeyDown());
+        // Calculate position
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const dPos = worldMousePos.sub(this.pressedComponent.getPos()).sub(this.startPos);
+
+        // Set positions
+        for (let obj of this.components) {
+            let newPos = obj.getPos().add(dPos);
+            if (input.isShiftKeyDown()) {
+                newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
+                           Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
+            }
+            obj.setPos(newPos);
+        }
 
         return true;
     }
 
-    public onMouseUp(input: Input, button: number): boolean {
-        if (!this.dragging)
-            return false;
-        if (button !== LEFT_MOUSE_BUTTON)
-            return false;
-
-        this.dragging = false;
-
-        return true;
-    }
-
-    public onKeyUp(input: Input, key: number): boolean{
-        if (!this.dragging)
-            return false;
-
+    public onKeyUp(input: Input, key: number): boolean {
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
-            const group = this.action.getObjects();
-            this.designer.addGroup(CopyGroup(group));
+            const group = CopyGroup(this.components);
+            this.action.add(new CopyGroupAction(this.designer, this.components, group));
+            this.designer.addGroup(group);
 
             return true;
         }
@@ -112,11 +116,14 @@ export class TranslateTool extends Tool {
     }
 
     public getAction(): Action {
-        return this.action;
-    }
+        // Copy final positions
+        const finalPositions = [];
+        for (let obj of this.components)
+            finalPositions.push(obj.getPos());
+        this.action.add(new TranslateAction(this.components, this.initialPositions, finalPositions));
 
-    public isDragging(): boolean {
-        return this.dragging;
+        // Return action
+        return this.action;
     }
 
 }

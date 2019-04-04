@@ -61,10 +61,9 @@ export const ToolRenderer = (function() {
             }
             else if (tool instanceof RotateTool) {
                 // Draw rotation circle and outline
-                if (tool.isRotating() && !hasWire) {
-                    console.log("render rotate");
+                if (!hasWire) {
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
-                    drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getLastAngle());
+                    drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getPrevAngle());
                 }
             }
             else if (tool instanceof PlaceComponentTool) {
