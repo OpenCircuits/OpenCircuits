@@ -1,7 +1,7 @@
-export var Images = (function() {
-    var images: Map<string, HTMLImageElement> = new Map();
+export const Images = (function() {
+    const images: Map<string, HTMLImageElement> = new Map();
 
-    var loadImages = function(imageNames: Array<string>,
+    const loadImages = function(imageNames: Array<string>,
                               onFinish: () => void): void {
         // Load each image
         let index = 0;
@@ -17,6 +17,9 @@ export var Images = (function() {
     }
 
     return {
+        GetImage: function(img: string): HTMLImageElement {
+            return images.get(img);
+        },
         Load: function(onFinishLoading: () => void): void {
             loadImages(
                 ["constLow.svg", "constHigh.svg",
@@ -28,9 +31,6 @@ export var Images = (function() {
                  "segment3.svg", "segment4.svg",
                  "clock.svg", "clockOn.svg",
                  "keyboard.svg", "base.svg"], onFinishLoading);
-        },
-        GetImage: function(img: string): HTMLImageElement {
-            return images.get(img);
         }
     };
 })();

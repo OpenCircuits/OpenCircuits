@@ -53,12 +53,7 @@ export abstract class Component extends CullableObject {
             if (i === 0) l--;
             if (i === arr.length-1) l++;
 
-            // Set y positions
             let port = arr[i];
-            if (this.getDisplayName() == "SR Flip Flop" ||
-                this.getDisplayName() == "JK Flip Flop") {
-                l *= 3/4;
-            }
             port.setOriginPos(V(port.getOriginPos().x, l));
             port.setTargetPos(V(port.getTargetPos().x, l));
         }
@@ -180,9 +175,9 @@ export abstract class Component extends CullableObject {
     }
 
     public getInputs(): Array<Wire> {
-        var arr = [];
-        for (var i = 0; i < this.inputs.length; i++) {
-            var input = this.inputs[i].getInput();
+        let arr = [];
+        for (let i = 0; i < this.inputs.length; i++) {
+            let input = this.inputs[i].getInput();
             if (input != undefined)
                 arr.push(input);
         }
@@ -202,8 +197,8 @@ export abstract class Component extends CullableObject {
     }
 
     public getOutputs(): Array<Wire> {
-        var arr: Array<Wire> = [];
-        for (var i = 0; i < this.outputs.length; i++)
+        let arr: Array<Wire> = [];
+        for (let i = 0; i < this.outputs.length; i++)
             arr = arr.concat(this.outputs[i].getConnections());
         return arr;
     }

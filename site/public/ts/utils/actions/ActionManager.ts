@@ -4,8 +4,8 @@ import {Action} from "./Action";
  * Manages undo/redo actions
  */
 export class ActionManager {
-    undoStack: Array<Action>;
-    redoStack: Array<Action>;
+    private undoStack: Array<Action>;
+    private redoStack: Array<Action>;
 
     public constructor() {
         this.undoStack = [];
@@ -27,7 +27,7 @@ export class ActionManager {
     public undo(): void {
         if (this.undoStack.length > 0) {
             // pop next action and undo it
-            var action = this.undoStack.pop();
+            const action = this.undoStack.pop();
             action.undo();
 
             // add to redo stack
@@ -41,7 +41,7 @@ export class ActionManager {
     public redo(): void {
         if (this.redoStack.length > 0) {
             // pop next action and redo it
-            var action = this.redoStack.pop();
+            const action = this.redoStack.pop();
             action.execute();
 
             // add back to undo stack

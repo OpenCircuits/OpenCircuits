@@ -1,9 +1,8 @@
-import {CreateComponentFromXML} from "../utils/ComponentFactory";
-
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
-import {CreateWire,
+import {SeparatedComponentCollection,
+		CreateWire,
 		SaveGroup,
 		LoadGroup} from "../utils/ComponentUtils";
 
@@ -45,6 +44,15 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	/**
+	 * Method to call when you want to force an update
+	 * 	Used when something changed but isn't propagated
+	 * 	(i.e. Clock updated but wasn't connected to anything)
+	 */
+	public forceUpdate(): void {
+		this.updateCallback();
+	}
+
+	/**
 	 * Add a propagation request to the queue.
 	 * Also checks if there are currently no requests and starts the cycle if
 	 *  there aren't
@@ -73,7 +81,7 @@ export class CircuitDesigner implements XMLable {
 	private update(): boolean {
 		// Create temp queue before sending, in the case that sending them triggers
 		//   more propagations to occur
-		var tempQueue = [];
+		let tempQueue = [];
 		while (this.propagationQueue.length > 0)
 			tempQueue.push(this.propagationQueue.pop());
 
@@ -99,12 +107,22 @@ export class CircuitDesigner implements XMLable {
 		return true;
 	}
 
+	public addGroup(group: SeparatedComponentCollection): void {
+		for (let a of group.getAllComponents())
+			this.addObject(a)
+
+		for (let b of group.wires) {
+			this.wires.push(b);
+			b.setDesigner(this);
+		}
+	}
+
 	public addICData(data: ICData): void {
 		this.ics.push(data);
 	}
 
 	public addObjects(objects: Array<Component>): void {
-		for (var i = 0; i < objects.length; i++)
+		for (let i = 0; i < objects.length; i++)
 			this.addObject(objects[i]);
 	}
 
@@ -117,6 +135,11 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public createWire(p1: OutputPort, p2: InputPort): Wire {
+		if (p1.getParent().getDesigner() != this)
+			throw new Error("Cannot create wire! The provided input is not apart of this circuit!");
+		if (p2.getParent().getDesigner() != this)
+			throw new Error("Cannot create wire! The provided output is not apart of this circuit!");
+
 		let wire = CreateWire(p1, p2);
 		this.wires.push(wire);
 		wire.setDesigner(this);
@@ -132,10 +155,8 @@ export class CircuitDesigner implements XMLable {
 			throw new Error("Attempted to remove object that doesn't exist!");
 
 		// Remove all input and output wires
-		var inputs = obj.getInputs();
-		var outputs = obj.getOutputs();
-		var wires = inputs.concat(outputs);
-		for (let wire of wires)
+		const wires = obj.getInputs().concat(obj.getOutputs());
+		for (const wire of wires)
 			this.removeWire(wire);
 
 		this.objects.splice(this.objects.indexOf(obj), 1);
@@ -203,6 +224,9 @@ export class CircuitDesigner implements XMLable {
 			this.wires.push(w);
 			w.setDesigner(this);
 		});
+
+		// Update since the circuit has changed
+		this.updateCallback();
 	}
 
 	public getObjects(): Array<Component> {

@@ -25,27 +25,26 @@ export class XORGate extends Gate {
 		if (arr.length > 0 && arr[0] instanceof OutputPort)
 			return;
 
-        for (let i = 0; i < arr.length; i++) {
-            let port = arr[i];
+        for (const port of arr) {
 			let t = ((port.getOriginPos().y) / this.getSize().y + 0.5) % 1.0;
 			if (t < 0) t += 1.0;
 
 			// @TODO move to a MathUtils QuadCurve function or something
-			let s = this.getSize().x/2 - DEFAULT_BORDER_WIDTH;
-			let l = this.getSize().x/5 - DEFAULT_BORDER_WIDTH;
-			let t2 = 1 - t;
+			const s = this.getSize().x/2 - DEFAULT_BORDER_WIDTH;
+			const l = this.getSize().x/5 - DEFAULT_BORDER_WIDTH;
+			const t2 = 1 - t;
 
 			// Calculate x position along quadratic curve
-			let x = (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
+			const x = (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
             port.setOriginPos(V(x, port.getOriginPos().y));
         }
     }
 
 	// @Override
 	public activate() {
-		var on = false;
-		for (var i = 0; i < this.inputs.length; i++)
-			on = (on !== this.inputs[i].getIsOn());
+		let on = false;
+		for (const input of this.inputs)
+			on = (on !== input.getIsOn());
 		super.activate(on);
 	}
 

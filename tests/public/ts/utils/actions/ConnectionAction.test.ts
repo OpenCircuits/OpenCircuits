@@ -7,8 +7,8 @@ import {ConnectionAction} from "../../../../../site/public/ts/utils/actions/Conn
 
 describe("PlaceAction", () => {
     it("Undo/Redo 1", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new LED();
 
         designer.addObject(a);
         designer.addObject(b);
@@ -22,7 +22,8 @@ describe("PlaceAction", () => {
         expect(b.isOn()).toBe(false);
 
         // connect
-        var a1 = new ConnectionAction(a, 0,  b, 0);
+        const wire = designer.connect(a, 0,  b, 0);
+        const a1 = new ConnectionAction(wire);
 
         // initial
         expect(designer.getWires().length).toBe(1);

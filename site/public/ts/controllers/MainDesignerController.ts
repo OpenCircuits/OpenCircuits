@@ -1,95 +1,77 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY,
-        IO_PORT_RADIUS,
-        ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2} from "../utils/Constants";
-
-import {Vector, V} from "../utils/math/Vector";
-import {Transform} from "../utils/math/Transform";
-import {RectContains,CircleContains} from "../utils/math/MathUtils";
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
-import {Action} from "../utils/actions/Action";
-import {ActionManager} from "../utils/actions/ActionManager";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {TranslateTool} from "../utils/tools/TranslateTool";
+import {RotateTool} from "../utils/tools/RotateTool";
+import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
+import {WiringTool} from "../utils/tools/WiringTool";
 
-import {MouseListener} from "../utils/MouseListener";
-
-import {PressableComponent} from "../models/ioobjects/PressableComponent";
 import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
-import {InputPort} from "../models/ioobjects/InputPort";
-import {Switch}   from "../models/ioobjects/inputs/Switch";
-import {Button}   from "../models/ioobjects/inputs/Button";
-import {ANDGate}  from "../models/ioobjects/gates/ANDGate";
-import {ORGate}  from "../models/ioobjects/gates/ORGate";
-import {XORGate}  from "../models/ioobjects/gates/XORGate";
-import {Multiplexer} from "../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
-import {LED}      from "../models/ioobjects/outputs/LED";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export var MainDesignerController = (function() {
-    var designer: CircuitDesigner;
-    var view: MainDesignerView;
-    var input: Input;
+export const MainDesignerController = (function() {
+    let designer: CircuitDesigner;
+    let view: MainDesignerView;
+    let input: Input;
 
-    var toolManager: ToolManager;
-    var renderQueue: RenderQueue;
+    let toolManager: ToolManager;
+    let renderQueue: RenderQueue;
 
-    let resize = function() {
+    const resize = function() {
         view.resize();
 
         MainDesignerController.Render();
     }
 
-    let onMouseDown = function(button: number): void {
+    const onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             MainDesignerController.Render();
     }
 
-    let onMouseMove = function(): void {
+    const onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             MainDesignerController.Render();
     }
 
-    let onMouseDrag = function(button: number): void {
+    const onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button)) {
             SelectionPopupController.Hide();
             MainDesignerController.Render();
         }
     }
 
-    let onMouseUp = function(button: number): void {
+    const onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
-    let onClick = function(button: number): void {
-        if (toolManager.onClick(input, button))
+    const onClick = function(button: number): void {
+        if (toolManager.onClick(input, button)){
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
-    let onKeyDown = function(key: number): void {
+    const onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             MainDesignerController.Render();
     }
 
-    let onKeyUp = function(key: number): void {
+    const onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             MainDesignerController.Render();
     }
 
-    let onScroll = function(): void {
+    const onScroll = function(): void {
         // @TODO move this stuff as well
         let zoomFactor = input.getZoomFactor();
 
@@ -103,6 +85,7 @@ export var MainDesignerController = (function() {
         SelectionPopupController.Update();
         MainDesignerController.Render();
     }
+
     return {
         Init: function(): void {
             // pass Render function so that
@@ -139,8 +122,22 @@ export var MainDesignerController = (function() {
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
-        PlaceComponent: function(component: Component) {
-            toolManager.placeComponent(component);
+        PlaceComponent: function(component: Component, instant: boolean = false): void {
+            toolManager.placeComponent(component, instant);
+        },
+        SetEditMode: function(val: boolean): void {
+            // Disable some tools
+            toolManager.disableTool(TranslateTool, val);
+            toolManager.disableTool(RotateTool, val);
+            toolManager.disableTool(PlaceComponentTool, val);
+            toolManager.disableTool(WiringTool, val);
+
+            // Disable actions/selections
+            toolManager.disableActions(val);
+            toolManager.getSelectionTool().clearSelections();
+            toolManager.getSelectionTool().disableSelections(val);
+
+            MainDesignerController.Render();
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();

@@ -4,25 +4,29 @@ import {ICData} from "../models/ioobjects/other/ICData";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
+import {Wire} from "../models/ioobjects/Wire";
 import {Camera} from "../utils/Camera";
 
 import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
 import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
+import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
+import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
+import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
 * ! Controls its own DOM element(s)
 * TODO: use decorators or some other interface to determine what properties are available
 */
-export var SelectionPopupController = (function() {
+export const SelectionPopupController = (function() {
     let camera: Camera;
     let div: HTMLDivElement;
     let modules: Array<SelectionPopupModule>;
     let pos: Vector;
 
-    let setPos = function(v: Vector): void {
+    const setPos = function(v: Vector): void {
         pos = v;
 
         div.style.left = `${pos.x}px`;
@@ -39,6 +43,10 @@ export var SelectionPopupController = (function() {
             modules = new Array<SelectionPopupModule>(
                 new TitlePopupModule(div),
                 new PositionPopupModule(div),
+                new ColorPopupModule(div),
+                new InputCountPopupModule(div),
+                // TODO: implement when encoders are added to the typescript build
+                // new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div)
             );
             pos = new Vector(0, 0);
@@ -52,22 +60,14 @@ export var SelectionPopupController = (function() {
                 modules.forEach(c => c.pull());
 
                 // Update the position of the popup
-                let sum = new Vector(0, 0);
-                let count = 0;
-                for (let i = 0; i < selections.length; ++i) {
-                    const s = selections[i];
-                    if (s instanceof Component) { // Only components have positions
-                        const pos = s.getPos();
-                        sum = sum.add(pos);
-                        count += 1;
-                    }
-                }
-                let screen_pos = camera.getScreenPos(sum.scale(1/count));
-                //console.log(this.div.clientHeight, document.body.clientHeight);
-                screen_pos.y = screen_pos.y - (div.clientHeight/2);
+                let components = selections.filter(s => s instanceof Component).map(c => c as Component);
+                let sum = components.reduce((acc, c) => acc.add(c.getPos()), new Vector(0, 0));
+                let screen_pos = camera.getScreenPos(sum.scale(1/components.length)).sub(0, div.clientHeight/2);
+
                 // TODO: clamp should make sure not to overlap with other screen elements
                 //const lo = new Vector(0);
                 //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
+
                 setPos(screen_pos);// Vector.clamp(screen_pos, lo, hi);
 
                 this.Show();

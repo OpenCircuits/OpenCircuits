@@ -9,6 +9,11 @@ export class XMLWriter {
         this.rootNode = new XMLNode(this.root, this.root.childNodes[0]);
     }
 
+    public setVersion(version: number): void {
+        let root = this.getRoot();
+        root.addAttribute("version", version);
+    }
+
     public getRoot(): XMLNode {
         return this.rootNode;
     }

@@ -7,8 +7,8 @@ import {LED}             from "../../../../../../site/public/ts/models/ioobjects
 
 describe("XORGate", () => {
     describe("XORGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new XORGate(), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new XORGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);
@@ -44,8 +44,8 @@ describe("XORGate", () => {
         });
     });
     describe("XNORGate", () => {
-        var designer = new CircuitDesigner(0);
-        var a = new Switch(), b = new Switch(), g = new XORGate(true), o = new LED();
+        const designer = new CircuitDesigner(0);
+        const a = new Switch(), b = new Switch(), g = new XORGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);
         designer.connect(a, 0,  g, 0);

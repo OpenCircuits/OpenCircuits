@@ -13,24 +13,29 @@ export class ActionHelper {
         this.actionManager = actionManager;
     }
 
-    public onEvent(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public onEvent(currentTool: Tool, event: string, input: Input, key?: number): boolean {
         if (this.disabled)
             return false;
+        if (event != "keydown")
+            return false;
 
-        if (event == "keydown" && input.isModifierKeyDown()) {
-            if (button === Z_KEY) {
-                this.actionManager.undo()
-                return true; // True to re-render
-            }
-            if (button === Y_KEY) {
-                this.actionManager.redo()
-                return true; // True to re-render
-            }
+        // Redo: CMD/CTRL + SHIFT + Z   or   CMD/CTRL + Y
+        if (input.isModifierKeyDown() && input.isShiftKeyDown() && key == Z_KEY ||
+            input.isModifierKeyDown() &&                           key == Y_KEY) {
+            this.actionManager.redo();
+            return true;
         }
+
+        // Undo: CMD/CTRL + Z
+        if (input.isModifierKeyDown() && key == Z_KEY) {
+            this.actionManager.undo();
+            return true;
+        }
+
         return false;
     }
 
-    public disable() {
-        this.disabled = true;
+    public setDisabled(val: boolean = true) {
+        this.disabled = val;
     }
 }

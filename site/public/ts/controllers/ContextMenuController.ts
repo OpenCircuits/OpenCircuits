@@ -1,9 +1,9 @@
 import {MainDesignerController} from "./MainDesignerController";
 
-export var ContextMenuController = (function() {
-    let contextmenu = document.getElementById("context-menu");
+export const ContextMenuController = (function() {
+    const contextmenu = document.getElementById("context-menu");
 
-    let onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
+    const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
         contextmenu.style.left = String(e.pageX) + 'px';
         contextmenu.style.top  = String(e.pageY) + 'px';
         if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
@@ -11,14 +11,14 @@ export var ContextMenuController = (function() {
         contextmenu.style.visibility = 'visible';
     }
 
-    let onMouseDown = function(e: MouseEvent): void {
+    const onMouseDown = function(e: MouseEvent): void {
         if (contextmenu.style.visibility === 'visible')
             contextmenu.style.visibility = 'hidden';
     }
 
     return {
         Init: function(): void {
-            let canvas = MainDesignerController.GetCanvas();
+            const canvas = MainDesignerController.GetCanvas();
 
             canvas.addEventListener("mousedown", function(e) {
                 e.preventDefault();

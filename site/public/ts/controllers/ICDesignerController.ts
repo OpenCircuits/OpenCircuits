@@ -42,7 +42,7 @@ import {IC} from "../models/ioobjects/other/IC";
 import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";
 
-export var ICDesignerController = (function() {
+export const ICDesignerController = (function() {
     let designer: CircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
@@ -57,7 +57,7 @@ export var ICDesignerController = (function() {
     let dragPort: Port = undefined;
     let dragEdge: "horizontal" | "vertical" = undefined;
 
-    let portContains = function(port: Port, mousePos: Vector) {
+    const portContains = function(port: Port, mousePos: Vector) {
         let target = port.getTargetPos();
         let origin = port.getOriginPos();
 
@@ -70,13 +70,13 @@ export var ICDesignerController = (function() {
         return RectContains(rect, mousePos);
     }
 
-    let resize = function() {
+    const resize = function() {
         view.resize();
 
         ICDesignerController.Render();
     }
 
-    let onMouseDown = function(button: number): void {
+    const onMouseDown = function(button: number): void {
         if (toolManager.onMouseDown(input, button))
             ICDesignerController.Render();
 
@@ -107,12 +107,12 @@ export var ICDesignerController = (function() {
         }
     }
 
-    let onMouseMove = function(): void {
+    const onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             ICDesignerController.Render();
     }
 
-    let onMouseDrag = function(button: number): void {
+    const onMouseDrag = function(button: number): void {
         if (toolManager.onMouseDrag(input, button))
             ICDesignerController.Render();
 
@@ -124,8 +124,8 @@ export var ICDesignerController = (function() {
                 let p  = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
                 // let v1 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(pos);
                 // let v2 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).sub(size.scale(0.5).add(IO_PORT_LENGTH-25, IO_PORT_LENGTH-25)).add(pos);
-                var v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
-                var v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+                let v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
+                let v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
                 // Set port for IC
                 dragPort.setOriginPos(v1);
@@ -149,7 +149,7 @@ export var ICDesignerController = (function() {
         }
     }
 
-    let onMouseUp = function(button: number): void {
+    const onMouseUp = function(button: number): void {
         if (toolManager.onMouseUp(input, button))
             ICDesignerController.Render();
 
@@ -159,22 +159,22 @@ export var ICDesignerController = (function() {
         dragEdge = undefined;
     }
 
-    let onClick = function(button: number): void {
+    const onClick = function(button: number): void {
         if (toolManager.onClick(input, button))
             ICDesignerController.Render();
     }
 
-    let onKeyDown = function(key: number): void {
+    const onKeyDown = function(key: number): void {
         if (toolManager.onKeyDown(input, key))
             ICDesignerController.Render();
     }
 
-    let onKeyUp = function(key: number): void {
+    const onKeyUp = function(key: number): void {
         if (toolManager.onKeyUp(input, key))
             ICDesignerController.Render();
     }
 
-    let onScroll = function(): void {
+    const onScroll = function(): void {
         // @TODO move this stuff as well
         let zoomFactor = input.getZoomFactor();
 
@@ -188,7 +188,7 @@ export var ICDesignerController = (function() {
         ICDesignerController.Render();
     }
 
-    let confirm = function(): void {
+    const confirm = function(): void {
         // Add the ICData and IC to the main designer
         let designer = MainDesignerController.GetDesigner();
         designer.addICData(icdata);
@@ -201,7 +201,7 @@ export var ICDesignerController = (function() {
         MainDesignerController.Render();
     }
 
-    let cancel = function(): void {
+    const cancel = function(): void {
         ICDesignerController.Hide();
     }
 
@@ -223,15 +223,15 @@ export var ICDesignerController = (function() {
                             ic,
                             toolManager));
 
-            // Remove some tools
-            toolManager.removeTool(TranslateTool);
-            toolManager.removeTool(RotateTool);
-            toolManager.removeTool(PlaceComponentTool);
-            toolManager.removeTool(WiringTool);
+            // Disable some tools
+            toolManager.disableTool(TranslateTool);
+            toolManager.disableTool(RotateTool);
+            toolManager.disableTool(PlaceComponentTool);
+            toolManager.disableTool(WiringTool);
 
             // Disable other functionality
             toolManager.disableActions();
-            toolManager.getSelectionTool().disableSelectionBox();
+            toolManager.getSelectionTool().disableSelections();
 
             // input
             input = new Input(view.getCanvas());
