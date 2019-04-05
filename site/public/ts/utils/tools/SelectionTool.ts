@@ -92,6 +92,22 @@ export class SelectionTool extends Tool {
         return false;
     }
 
+    public addSelections(objs: Array<IOObject>): boolean {
+        // Don't select anything if it's disabled
+        if (this.disabledSelections)
+            return false;
+
+        // If something was already added then don't add it
+        objs = objs.filter(o => !this.selections.includes(o));
+
+        // Add the objects
+        this.selections = this.selections.concat(objs);
+
+        this.selectionsChanged();
+
+        return true;
+    }
+
     public removeSelection(obj: IOObject): boolean {
         // Don't deselect anything if it's disabled
         if (this.disabledSelections)
@@ -104,6 +120,16 @@ export class SelectionTool extends Tool {
             return true;
         }
         return false;
+    }
+
+    public selectAll(): void {
+        const objects = this.designer.getObjects();
+
+        const group = new GroupAction();
+        for (const obj of objects)
+            group.add(new SelectAction(this, obj));
+        this.addSelections(objects);
+        this.setAction(group);
     }
 
     public clearSelections(): Action {
@@ -228,11 +254,10 @@ export class SelectionTool extends Tool {
                 let objects = this.designer.getObjects();
                 for (let obj of objects) {
                     // Check if object is in box
-                    if (TransformContains(box, obj.getTransform())) {
+                    if (TransformContains(box, obj.getTransform()))
                         group.add(new SelectAction(this, obj)); // Add action
-                        this.addSelection(obj);
-                    }
                 }
+                this.addSelections(objects);
 
                 // Set as action if we changed selections added something
                 this.setAction(group);
@@ -389,12 +414,6 @@ export class SelectionTool extends Tool {
     }
     public getCurrentlyPressedObj(): IOObject {
         return this.currentPressedObj;
-    }
-
-    public selectAll(): void {
-        const objects = this.designer.getObjects();
-        for (const obj of objects)
-            this.addSelection(obj);
     }
 
 }
