@@ -44,26 +44,6 @@ export class Graph<V, E> {
         this.reverseList.get(target).push(new Edge<V,E>(source, weight));
     }
 
-    private getFirstConnectedNode(list: Map<V, Edge<V, E>[]>): V {
-        let it = list.entries();
-        for (let i of it) {
-            if (i[1].length > 0)
-                return i[0];
-        }
-        return undefined;
-    }
-
-    private dfs(list: Map<V, Edge<V, E>[]>, visited: Map<V, boolean>, v: V): void {
-        visited.set(v, true);
-
-        // Recursively visit each edge
-        for (let e of list.get(v)) {
-            let target = e.getTarget();
-            if (!visited.has(target))
-                this.dfs(list, visited, target);
-        }
-    }
-
     private bfs(visited: Map<V, boolean>, v: V): void {
         if (visited.get(v))
             return;
@@ -83,23 +63,6 @@ export class Graph<V, E> {
         this.bfs(visited, v);
 
         return visited.size == this.size();
-
-        // if (this.list.size <= 1)
-        //     return true;
-        // let first  = this.getFirstConnectedNode(this.list);
-        // let rfirst = this.getFirstConnectedNode(this.reverseList);
-        //
-        // if (first == undefined || rfirst == undefined)
-        //     return false;
-        //
-        // let visited = new Map<V, boolean>();
-        //
-        // // DFS through regular and reverse edge lists
-        // this.dfs(this.list, visited, first);
-        // this.dfs(this.reverseList, visited, rfirst);
-        //
-        // // Check if every node was visited
-        // return visited.size == this.size();
     }
 
     public size(): number {
