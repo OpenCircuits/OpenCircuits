@@ -252,12 +252,15 @@ export class SelectionTool extends Tool {
                 // Go through each object and see if it's within
                 //  the selection box
                 let objects = this.designer.getObjects();
+                let selections = [];
                 for (let obj of objects) {
                     // Check if object is in box
-                    if (TransformContains(box, obj.getTransform()))
+                    if (TransformContains(box, obj.getTransform())) {
+                        selections.push(obj);
                         group.add(new SelectAction(this, obj)); // Add action
+                    }
                 }
-                this.addSelections(objects);
+                this.addSelections(selections);
 
                 // Set as action if we changed selections added something
                 this.setAction(group);
