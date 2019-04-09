@@ -29,6 +29,7 @@ import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmen
 import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
+import { Port } from "../../../models/ioobjects/Port";
 
 export const ComponentRenderer = (function() {
 
@@ -39,7 +40,7 @@ export const ComponentRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selectedPorts: Array<Port>) {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -56,11 +57,14 @@ export const ComponentRenderer = (function() {
             renderer.transform(camera, transform);
 
             // Draw IO ports
-            for (let i = 0; i < object.getInputPortCount(); i++)
-                IOPortRenderer.renderIPort(renderer, object.getInputPort(i), selected);
-
-            for (let i = 0; i < object.getOutputPortCount(); i++)
-                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected);
+            const ports = object.getPorts();
+            let portSelected = false;
+            for (const port of ports) {
+                if(selectedPorts.includes(port)){
+                    portSelected = true;
+                }
+                IOPortRenderer.renderPort(renderer, port, selected || portSelected);
+            }
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
