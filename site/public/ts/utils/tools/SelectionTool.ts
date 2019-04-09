@@ -15,12 +15,14 @@ import {TransformContains,RectContains} from "../math/MathUtils";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
+import {Port} from "../../models/ioobjects/Port";
 
 export class SelectionTool extends Tool {
 
     private designer: CircuitDesigner;
     private camera: Camera;
 
+    private portSelections: Array<Port>;
     private selections: Array<IOObject>;
     private selecting: boolean;
 
@@ -44,6 +46,7 @@ export class SelectionTool extends Tool {
         this.camera = camera;
 
         this.selections = [];
+        this.portSelections = [];
         this.selecting = false;
 
         this.disabledSelections = false;
@@ -68,18 +71,32 @@ export class SelectionTool extends Tool {
         return false;
     }
 
+    public addPortSelection(p: Port): boolean {
+        // Don't select anything if it's disabled
+        if (this.disabledSelections)
+            return false;
+
+        if (!this.portSelections.includes(p)) {
+            this.portSelections.push(p);
+            this.selectionsChanged();
+            return true;
+        }
+        return false;
+    }
+
     public clearSelections(): boolean {
-        if (this.selections.length == 0)
+        if (this.selections.length == 0 && this.portSelections.length == 0)
             return false;
         this.selections = [];
+        this.portSelections = [];
         this.selectionsChanged();
         return true;
     }
-  
+
     public setCurrentlyPressedObj(obj: IOObject): void {
         this.currentPressedObj = obj;
     }
-  
+
     public disableSelections(val: boolean = true) {
         this.disabledSelections = val;
     }
@@ -171,13 +188,28 @@ export class SelectionTool extends Tool {
 
                 // Go through each object and see if it's within
                 //  the selection box
+                let selectingObj = false; // flag is true when we are selecting object(s)
                 let objects = this.designer.getObjects();
                 for (let obj of objects) {
                     // Check if object is in box
-                    if (TransformContains(box, obj.getTransform()))
+                    if (TransformContains(box, obj.getTransform())) {
+                        selectingObj = true;
                         this.addSelection(obj);
+                    }
                 }
 
+                // Go through the ports if we are not selecting objects and
+                //  there are no objects already in the current selections
+                if (!selectingObj && this.selections.length == 0){
+                    for (let obj of objects){
+                        let ports = obj.getPorts();
+                        for (let p of ports){
+                            if(RectContains(box, p.getWorldTargetPos())){
+                                this.addPortSelection(p);
+                            }
+                        }
+                    }
+                }
                 return true; // should render
             }
         }
@@ -252,6 +284,9 @@ export class SelectionTool extends Tool {
 
     public getSelections(): Array<IOObject> {
         return this.selections.slice(); // shallow copy
+    }
+    public getPortSelections(): Array<Port> {
+        return this.portSelections.slice(); // shallow copy
     }
     public isSelecting(): boolean {
         return this.selecting;
