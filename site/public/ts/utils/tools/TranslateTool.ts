@@ -33,6 +33,7 @@ export class TranslateTool extends Tool {
     protected pressedComponent: Component;
     protected components: Array<Component>;
     protected initialPositions: Array<Vector>;
+    protected neighbors: Map<Component, Array<Wire>>;
 
     private action: GroupAction;
     private startPos: Vector;
@@ -42,6 +43,7 @@ export class TranslateTool extends Tool {
 
         this.designer = designer;
         this.camera = camera;
+        this.neighbors = new Map<Component, Array<Wire>>();
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -66,6 +68,26 @@ export class TranslateTool extends Tool {
         this.components = [currentPressedObj];
         if (selections.length > 0 && selections.includes(currentPressedObj))
             this.components = <Array<Component>>selections;
+
+        // Precalculate neighbor wires for each component
+        // Used online to un-straighten wires when one component is dragged away from the other
+        this.neighbors.clear();
+        for (let obj of this.components) {
+            obj.getInputs().forEach(i => {
+                const c = i.getInputComponent();
+                let arr = this.neighbors.get(c);
+                arr = arr == undefined ? [] : arr;
+                arr.push(i);
+                this.neighbors.set(c, arr);
+            });
+            obj.getOutputs().forEach(o => {
+                const c = o.getOutputComponent();
+                let arr = this.neighbors.get(c);
+                arr = arr == undefined ? [] : arr;
+                arr.push(o);
+                this.neighbors.set(c, arr);
+            });
+        }
 
         // Copy initial positions
         this.initialPositions = [];
@@ -131,6 +153,13 @@ export class TranslateTool extends Tool {
                             Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
                 }
                 obj.setPos(newPos);
+            }
+
+            // If a wire connects a selected component with an unselected component, make it curvy
+            for (let neighbor of this.neighbors) {
+                if (this.components.indexOf(neighbor[0]) == -1) {
+                    neighbor[1].forEach(w => w.setIsStraight(false));
+                }
             }
         }
 
