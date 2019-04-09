@@ -4,8 +4,6 @@ import {Vector} from "../math/Vector";
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
 import {ToolManager} from "../tools/ToolManager";
-import {Tool} from "../tools/Tool";
-import {PanTool} from "../tools/PanTool";
 import {SelectionTool} from "../tools/SelectionTool";
 import {RotateTool} from "../tools/RotateTool";
 import {PlaceComponentTool} from "../tools/PlaceComponentTool";
@@ -13,6 +11,7 @@ import {WiringTool} from "../tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
+import {Wire} from "../../models/ioobjects/Wire";
 
 export const ToolRenderer = (function() {
 
@@ -38,6 +37,10 @@ export const ToolRenderer = (function() {
         render(renderer: Renderer, camera: Camera, toolManager: ToolManager) {
             const tool = toolManager.getCurrentTool();
 
+            // If a wire has been selected, then don't draw the rotation box
+            const selections = toolManager.getSelectionTool().getSelections();
+            const hasWire = selections.some((o) => o instanceof Wire);
+
             if (tool instanceof SelectionTool) {
                 // Draw selection box
                 if (tool.isSelecting()) {
@@ -52,15 +55,15 @@ export const ToolRenderer = (function() {
                 }
 
                 // Draw rotation circle outline
-                else if (tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
+                else if (!hasWire && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
                     drawRotationCircleOutline(renderer, camera, tool.calculateMidpoint());
                 }
             }
             else if (tool instanceof RotateTool) {
                 // Draw rotation circle and outline
-                if (tool.isRotating()) {
+                if (!hasWire) {
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
-                    drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getLastAngle());
+                    drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getPrevAngle());
                 }
             }
             else if (tool instanceof PlaceComponentTool) {

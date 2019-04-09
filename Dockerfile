@@ -16,3 +16,9 @@ RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 RUN apt-get update && apt-get install -y php php-sqlite3
 RUN npm install
 RUN npm run build
+
+# Change work directory for running php
+WORKDIR /www/build
+
+# Command to run at start of container
+CMD php -S 0.0.0.0:8080

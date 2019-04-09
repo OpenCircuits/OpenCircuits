@@ -10,16 +10,19 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {Wire} from "../../models/ioobjects/Wire";
 import {WirePort} from "../../models/ioobjects/other/WirePort";
 
-export class SplitWireTool extends TranslateTool {
+import {Action} from "../actions/Action";
+import {GroupAction} from "../actions/GroupAction";
+import {SelectAction} from "../actions/SelectAction";
+import {SplitWireAction} from "../actions/SplitWireAction";
 
-    private designer: CircuitDesigner;
+export class SplitWireTool extends TranslateTool {
+    private splitAction: GroupAction;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
-        super(camera);
-
-        this.designer = designer;
+        super(designer, camera);
     }
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
@@ -30,16 +33,8 @@ export class SplitWireTool extends TranslateTool {
 
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        // Go through every wire and check to see if it has been pressed
-        let currentWire;
-        for (let w of this.designer.getWires()) {
-            if (BezierContains(w.getShape(), worldMousePos)) {
-                currentWire = w;
-                break;
-            }
-        }
-
-        if (!currentWire)
+        const currentWire = currentTool.getCurrentlyPressedObj();
+        if (!(currentWire instanceof Wire))
             return false;
 
         // Create new wire port
@@ -47,10 +42,14 @@ export class SplitWireTool extends TranslateTool {
         wirePort.setPos(worldMousePos);
         this.designer.addObject(wirePort);
 
+        // Create action
+        this.splitAction = new GroupAction()
+
         // Set wireport as selections and being pressed
-        currentTool.clearSelections();
+        this.splitAction.add(currentTool.clearSelections());
         currentTool.setCurrentlyPressedObj(wirePort);
         currentTool.addSelection(wirePort);
+        this.splitAction.add(new SelectAction(currentTool, wirePort));
 
         // Store old wire's values and delete it
         const currentInput  = currentWire.getInput();
@@ -59,7 +58,10 @@ export class SplitWireTool extends TranslateTool {
 
         // Create two new wires
         const wire1 = this.designer.createWire(currentInput, wirePort.getInputPort(0));
+        wirePort.activate();
         const wire2 = this.designer.createWire(wirePort.getOutputPort(0), currentOutput);
+
+        this.splitAction.add(new SplitWireAction(currentInput, wirePort, currentOutput));
 
         // Set control points:
         //  c1 corresponds with point 1 and c2 corresponds with point 2
@@ -67,5 +69,17 @@ export class SplitWireTool extends TranslateTool {
         wire2.getShape().setC1(wirePort.getOutputDir().scale(DEFAULT_SIZE).add(wirePort.getPos()));
 
         return super.activate(currentTool, event, input, button);
+    }
+
+    // Override TranslateTool onKeyUp so that we can't duplicate the WirePorts
+    public onKeyUp(input: Input, key: number): boolean {
+        return false;
+    }
+
+    public getAction(): Action {
+        const group = new GroupAction();
+        group.add(this.splitAction);
+        group.add(super.getAction());
+        return group;
     }
 }
