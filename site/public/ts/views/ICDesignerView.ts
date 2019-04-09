@@ -71,7 +71,7 @@ export class ICDesignerView {
         // Render all objects
         const objects = designer.getObjects();
         for (let object of objects)
-            ComponentRenderer.render(this.renderer, this.camera, object, false);
+            ComponentRenderer.render(this.renderer, this.camera, object, false, []);
 
         // Render current tool
         ToolRenderer.render(this.renderer, this.camera, toolManager);

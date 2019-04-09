@@ -66,7 +66,8 @@ export const ToolRenderer = (function() {
             else if (tool instanceof PlaceComponentTool) {
                 // Draw current object
                 const component = tool.getComponent();
-                ComponentRenderer.render(renderer, camera, component, false);
+
+                ComponentRenderer.render(renderer, camera, component, false, []);
             }
             else if (tool instanceof WiringTool) {
                 // Draw fake wire

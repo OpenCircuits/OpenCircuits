@@ -97,6 +97,7 @@ export const MainDesignerController = (function() {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
+                            toolManager.getSelectionTool().getPortSelections(),
                             toolManager));
 
             // input

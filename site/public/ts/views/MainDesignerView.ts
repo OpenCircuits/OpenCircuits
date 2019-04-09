@@ -10,6 +10,7 @@ import {ToolManager} from "../utils/tools/ToolManager";
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {IOObject}  from "../models/ioobjects/IOObject";
+import { Port } from "../models/ioobjects/Port";
 
 export class MainDesignerView {
     private canvas: HTMLCanvasElement;
@@ -27,7 +28,7 @@ export class MainDesignerView {
         this.resize();
     }
 
-    public render(designer: CircuitDesigner, selections: Array<IOObject>, toolManager: ToolManager) {
+    public render(designer: CircuitDesigner, selections: Array<IOObject>, portSelections: Array<Port>, toolManager: ToolManager) {
         this.renderer.clear();
 
         // Render grid
@@ -44,7 +45,7 @@ export class MainDesignerView {
         const objects = designer.getObjects();
         for (let object of objects) {
             const selected = selections.includes(object);
-            ComponentRenderer.render(this.renderer, this.camera, object, selected);
+            ComponentRenderer.render(this.renderer, this.camera, object, selected, portSelections);
         }
 
         // Render current tool
