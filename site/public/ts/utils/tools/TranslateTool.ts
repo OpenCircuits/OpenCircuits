@@ -3,7 +3,8 @@ import {GRID_SIZE,
         ROTATION_CIRCLE_R2,
         SHIFT_KEY,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY} from "../Constants";
+        SPACEBAR_KEY,
+        WIRE_SNAP_THRESHOLD} from "../Constants";
 
 import {CopyGroup} from "../ComponentUtils";
 
@@ -90,14 +91,47 @@ export class TranslateTool extends Tool {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
         const dPos = worldMousePos.sub(this.pressedComponent.getPos()).sub(this.startPos);
 
-        // Set positions
-        for (let obj of this.components) {
-            let newPos = obj.getPos().add(dPos);
-            if (input.isShiftKeyDown()) {
-                newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                           Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
+        if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
+            // Snap wire port to the grid lines of its neighbor ports (if it is close enough)
+            const portPos = this.pressedComponent.getPos();
+            let newPos = portPos.add(dPos);
+
+            // getInputs() and getOutputs() have 1 and only 1 element each because WirePorts are specialized
+            const prevPos = this.pressedComponent.getInputs()[0].getInput().getWorldTargetPos();
+            const nextPos = this.pressedComponent.getOutputs()[0].getOutput().getWorldTargetPos();
+
+            this.pressedComponent.getInputs()[0].setIsStraight(false);
+            this.pressedComponent.getOutputs()[0].setIsStraight(false);
+
+            if (Math.abs(newPos.x - prevPos.x) <= WIRE_SNAP_THRESHOLD) {
+                newPos.x = prevPos.x;
+                this.pressedComponent.getInputs()[0].setIsStraight(true);
+            } else if (Math.abs(newPos.x - nextPos.x) <= WIRE_SNAP_THRESHOLD) {
+                newPos.x = nextPos.x;
+                this.pressedComponent.getOutputs()[0].setIsStraight(true);
             }
-            obj.setPos(newPos);
+
+            if (Math.abs(newPos.y - prevPos.y) <= WIRE_SNAP_THRESHOLD) {
+                newPos.y = prevPos.y;
+                this.pressedComponent.getInputs()[0].setIsStraight(true);
+            } else if (Math.abs(newPos.y - nextPos.y) <= WIRE_SNAP_THRESHOLD) {
+                newPos.y = nextPos.y;
+                this.pressedComponent.getOutputs()[0].setIsStraight(true);
+            }
+
+            // Only one position to set (the wire port)
+            this.pressedComponent.setPos(newPos);
+        }
+        else {
+            // Set positions of each component in turn
+            for (let obj of this.components) {
+                let newPos = obj.getPos().add(dPos);
+                if (input.isShiftKeyDown()) {
+                    newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
+                            Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
+                }
+                obj.setPos(newPos);
+            }
         }
 
         return true;

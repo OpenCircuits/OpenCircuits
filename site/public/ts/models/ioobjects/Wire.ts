@@ -105,6 +105,9 @@ export class Wire extends CullableObject {
     public isStraight(): boolean {
         return this.straight;
     }
+    public setIsStraight(straight: boolean): void {
+        this.straight = straight;
+    }
 
     public getMinPos(): Vector {
         return this.getShape().getBoundingBox().getBottomLeft().sub(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
