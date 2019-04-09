@@ -50,15 +50,19 @@ export class ICDesignerView {
         this.hide();
     }
 
-    public show() {
+    public setCursor(cursor: string): void {
+        this.renderer.setCursor(cursor);
+    }
+
+    public show(): void {
         this.div.style.visibility = "visible";
     }
 
-    public setConfirmButtonListener(listener: () => void) {
+    public setConfirmButtonListener(listener: () => void): void {
         this.confirmButton.onclick = () => listener();
     }
 
-    public setCancelButtonListener(listener: () => void) {
+    public setCancelButtonListener(listener: () => void): void {
         this.cancelButton.onclick = () => listener();
     }
 
@@ -82,7 +86,7 @@ export class ICDesignerView {
         this.camera.resize(this.canvas.width, this.canvas.height);
     }
 
-    public hide() {
+    public hide(): void {
         this.div.style.visibility = "hidden";
     }
 

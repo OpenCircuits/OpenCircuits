@@ -81,11 +81,10 @@ export class ICData {
             let pos = target.add(target.sub(origin).normalize().scale(10000));
 
             let p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
-            let v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
-            let v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            let v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
-            port.setOriginPos(v1);
-            port.setTargetPos(v2);
+            port.setOriginPos(p);
+            port.setTargetPos(v);
         }
     }
 
