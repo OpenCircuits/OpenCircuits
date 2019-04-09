@@ -26,7 +26,7 @@ export class Graph<V, E> {
         this.reverseList = new Map<V, Edge<V, E>[]>();
     }
 
-    public createNode(value: V) {
+    public createNode(value: V): void {
         if (this.list.has(value))
             throw new Error("Graph already has value: " + value);
 
@@ -34,7 +34,7 @@ export class Graph<V, E> {
         this.reverseList.set(value, []);
     }
 
-    public createEdge(source: V, target: V, weight: E) {
+    public createEdge(source: V, target: V, weight: E): void {
         if (!this.list.has(source))
             throw new Error("Graph doesn't have node of value: " + source);
         if (!this.list.has(target))
@@ -44,42 +44,24 @@ export class Graph<V, E> {
         this.reverseList.get(target).push(new Edge<V,E>(source, weight));
     }
 
-    private getFirstConnectedNode(list: Map<V, Edge<V, E>[]>): V {
-        let it = list.entries();
-        for (let i of it) {
-            if (i[1].length > 0)
-                return i[0];
-        }
-        return undefined;
-    }
+    private bfs(visited: Map<V, boolean>, v: V): void {
+        if (visited.get(v))
+            return;
 
-    private dfs(list: Map<V, Edge<V, E>[]>, visited: Map<V, boolean>, v: V) {
         visited.set(v, true);
-
-        // Recursively visit each edge
-        for (let e of list.get(v)) {
-            let target = e.getTarget();
-            if (!visited.has(target))
-                this.dfs(list, visited, target);
-        }
+        this.list.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
+        this.reverseList.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
     }
 
     public isConnected(): boolean {
         if (this.list.size <= 1)
             return true;
-        let first  = this.getFirstConnectedNode(this.list);
-        let rfirst = this.getFirstConnectedNode(this.reverseList);
 
-        if (first == undefined || rfirst == undefined)
-            return false;
+        const v = this.list.keys().next().value;
 
-        let visited = new Map<V, boolean>();
+        const visited = new Map<V, boolean>();
+        this.bfs(visited, v);
 
-        // DFS through regular and reverse edge lists
-        this.dfs(this.list, visited, first);
-        this.dfs(this.reverseList, visited, rfirst);
-
-        // Check if every node was visited
         return visited.size == this.size();
     }
 

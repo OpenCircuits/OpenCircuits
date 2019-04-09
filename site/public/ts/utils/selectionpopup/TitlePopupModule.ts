@@ -19,7 +19,7 @@ export class TitlePopupModule extends SelectionPopupModule {
             let same = true;
             let name = selections[0].getName();
             for (let i = 1; i < selections.length; ++i) {
-                same = same && (name == selections[i].getName());
+                same = name == selections[i].getName();
             }
 
             this.title.value = same ? name : "<Multiple>";

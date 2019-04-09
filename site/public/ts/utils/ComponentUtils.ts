@@ -13,6 +13,8 @@ import {InputPort} from "../models/ioobjects/InputPort";
 import {OutputPort} from "../models/ioobjects/OutputPort";
 import {Wire} from "../models/ioobjects/Wire";
 
+import {WirePort} from "../models/ioobjects/other/WirePort";
+
 /**
  * Helper class to hold different groups of components.
  *
@@ -116,39 +118,100 @@ export function SeparateGroup(objects: Array<IOObject>): SeparatedComponentColle
 
 /**
  * Creates a Separated group from the given list of objects
- *  It differs from SeparateGroup by also retrieving ALL the
- *  wires interconnected within the given components
+ *  It differs from SeparateGroup by also retrieving all IMMEDIATELY
+ *   connected wires that connect to other objects in `objects`
+ *
+ * Note that this method assumes all the components you want in the group are
+ *  provided in `objects` INCLUDING WirePorts, this will not trace down the paths
+ *  to get all wires ports. Use GatherGroup(objects) to do this.
  *
  * @param  objects The list of objects to separate
  * @return         A SeparatedComponentCollection of the objects
  */
 export function CreateGroup(objects: Array<IOObject>): SeparatedComponentCollection {
-    let groups = SeparateGroup(objects);
-    groups.wires = GetAllWires(groups.getAllComponents());
-    return groups;
+    let group = SeparateGroup(objects);
+
+    // Gather all connecting wires
+    const objs = group.getAllComponents();
+    for (const obj of objs) {
+        // Only get wires that connect to other components in objects
+        group.wires = group.wires.concat(
+                            obj.getOutputs().filter((w) => objs.includes(w.getOutputComponent())));
+    }
+
+    return group;
 }
 
 /**
- * Gathers all the wires that connect the given
- *  components
+ * Get's all the wires/WirePorts going out from this wire
  *
- * @param  objs The array of components
- * @return      An array of connections
+ * @param  w The wire to start from
+ * @return   The array of wires/WirePorts in this path (incuding w)
  */
-export function GetAllWires(objs: Array<Component>): Array<Wire> {
-    let allWires = new Array<Wire>();
+export function GetPath(w: Wire): Array<Wire | WirePort> {
+    let path: Array<Wire | WirePort> = [];
 
-    // Gather all wires that attach objects in the given array
-    for (let obj of objs) {
-        let wires = obj.getOutputs();
-        for (let wire of wires) {
-            // Make sure connection is in the array
-            if (objs.includes(wire.getOutputComponent()))
-                allWires.push(wire);
-        }
+    // Go to beginning of path
+    let i = w.getInputComponent();
+    while (i instanceof WirePort) {
+        w = i.getInputs()[0];
+        i = w.getInputComponent();
     }
 
-    return allWires;
+    path.push(w);
+
+    // Outputs
+    let o = w.getOutputComponent();
+    while (o instanceof WirePort) {
+        // Push the wireport and next wire
+        path.push(o);
+        path.push(w = o.getOutputs()[0]);
+        o = w.getOutputComponent();
+    }
+
+    return path;
+}
+
+/**
+ * Gathers all wires + wireports in the path from the inputs/outputs
+ *  of the given component.
+ *
+ * @param  obj  The component
+ * @return      An array of connections + WirePorts
+ */
+export function GetAllPaths(obj: Component): Array<Wire | WirePort> {
+    let path: Array<Wire | WirePort> = [];
+
+    // Get all paths
+    let wires = new Set(obj.getInputs().concat(obj.getOutputs()));
+    for (const wire of wires)
+        path = path.concat(GetPath(wire).filter((o) => !path.includes(o)));
+
+    return path;
+}
+
+/**
+ * Creates a Separated group from the given list of objects.
+ *  It also retrieves all "paths" going out from each object.
+ *
+ * @param  objects The list of objects
+ * @return         A SeparatedComponentCollection of the objects
+ */
+export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollection {
+    let group = SeparateGroup(objects);
+
+    // Gather all connecting paths
+    for (const obj of objects) {
+        const path = (obj instanceof Wire ? GetPath(obj) : GetAllPaths(<Component>obj));
+
+        // Add wires and wireports
+        group.wires      = group.wires.concat(
+                                <Array<Wire>>    path.filter((o) => o instanceof Wire     && !group.wires.includes(o)));
+        group.components = group.components.concat(
+                                <Array<WirePort>>path.filter((o) => o instanceof WirePort && !group.components.includes(o)))
+    }
+
+    return group;
 }
 
 /**

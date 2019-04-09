@@ -55,8 +55,10 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button))
+        if (toolManager.onClick(input, button)){
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyDown = function(key: number): void {
@@ -121,10 +123,10 @@ export const MainDesignerController = (function() {
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
-        PlaceComponent: function(component: Component) {
-            toolManager.placeComponent(component);
+        PlaceComponent: function(component: Component, instant: boolean = false): void {
+            toolManager.placeComponent(component, instant);
         },
-        SetEditMode: function(val: boolean) {
+        SetEditMode: function(val: boolean): void {
             // Disable some tools
             toolManager.disableTool(TranslateTool, val);
             toolManager.disableTool(RotateTool, val);

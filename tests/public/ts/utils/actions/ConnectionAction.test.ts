@@ -22,7 +22,8 @@ describe("PlaceAction", () => {
         expect(b.isOn()).toBe(false);
 
         // connect
-        const a1 = new ConnectionAction(a, 0,  b, 0);
+        const wire = designer.connect(a, 0,  b, 0);
+        const a1 = new ConnectionAction(wire);
 
         // initial
         expect(designer.getWires().length).toBe(1);

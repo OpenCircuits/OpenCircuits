@@ -9,6 +9,7 @@ describe("PlaceAction", () => {
         const designer = new CircuitDesigner(0);
         const a = new Switch();
 
+        designer.addObject(a);
         const a1 = new PlaceAction(designer, a);
 
         expect(designer.getObjects().length).toBe(1);

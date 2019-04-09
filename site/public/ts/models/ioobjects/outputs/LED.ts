@@ -37,6 +37,10 @@ export class LED extends Component {
 		return this.color;
 	}
 
+	public setColor(color: string) {
+		this.color = color;
+	}
+
     public getXMLName(): string {
         return "led";
     }
