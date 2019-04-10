@@ -29,7 +29,7 @@ import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmen
 import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
-import { Port } from "../../../models/ioobjects/Port";
+import {Port} from "../../../models/ioobjects/Port";
 
 export const ComponentRenderer = (function() {
 
@@ -50,7 +50,6 @@ export const ComponentRenderer = (function() {
             let transform = object.getTransform();
             let imgName = object.getImageName();
 
-            let dPos = V(0,0);
             let size = transform.getSize();
 
             // Transform the renderer
@@ -58,19 +57,15 @@ export const ComponentRenderer = (function() {
 
             // Draw IO ports
             const ports = object.getPorts();
-            let portSelected = false;
             for (const port of ports) {
-                if(selectedPorts.includes(port)){
-                    portSelected = true;
-                }
-                IOPortRenderer.renderPort(renderer, port, selected || portSelected);
+                const portSelected = selectedPorts.includes(port);
+                IOPortRenderer.renderPort(renderer, port, selected, portSelected);
             }
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
                 // Set size/pos for drawing image to be size of "pressable" part
                 size = object.getPressableBox().getSize();
-                dPos = object.getPressableBox().getPos();
 
                 let box = transform;
                 drawBox(renderer, box, selected);
