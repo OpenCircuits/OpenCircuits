@@ -120,7 +120,8 @@ export class Wire extends CullableObject {
     public save(node: XMLNode): void {
         super.save(node);
 
-        // save properties
+        // save state and properties
+        node.addAttribute("on", this.isOn);
         node.addAttribute("straight", this.straight);
 
         // write curve
@@ -134,7 +135,9 @@ export class Wire extends CullableObject {
     public load(node: XMLNode): void {
         super.load(node);
 
-        // load properties
+        // load state and properties
+        this.activate(node.getBooleanAttribute("on"));
+        this.input.activate(this.isOn);
         this.straight = node.getBooleanAttribute("straight");
 
         // load curve

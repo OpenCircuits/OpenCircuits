@@ -20,4 +20,11 @@ export class XMLReader {
         return -1;
     }
 
+    public getName(): string {
+        let root = this.getRoot();
+        if (root.hasAttribute("name"))
+            return root.getAttribute("name");
+        return undefined;
+    }
+
 }
