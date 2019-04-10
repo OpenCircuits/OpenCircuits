@@ -35,8 +35,8 @@ export class SelectionTool extends Tool {
     private designer: CircuitDesigner;
     private camera: Camera;
 
-    private portSelections: Array<Port>;
     private selections: Array<IOObject>;
+    private portSelections: Array<Port>;
     private selecting: boolean;
 
     // These functions are called every time the selections change
@@ -83,79 +83,123 @@ export class SelectionTool extends Tool {
         this.lastAction = action;
     }
 
-    public addSelection(obj: IOObject): boolean {
-        // Don't select anything if it's disabled
-        if (this.disabledSelections)
-            return false;
-
-        if (!this.selections.includes(obj)) {
-            this.selections.push(obj);
-            this.selectionsChanged();
+    private add<T>(arr: Array<T>, obj: T): boolean {
+        // Check if we're in array
+        if (!arr.includes(obj)) {
+            arr.push(obj);
             return true;
         }
         return false;
     }
 
-    public addPortSelection(p: Port): boolean {
-        // Don't select anything if it's disabled
-        if (this.disabledSelections)
-            return false;
-
-        if (!this.portSelections.includes(p)) {
-            this.portSelections.push(p);
-            this.selectionsChanged();
+    private remove<T>(arr: Array<T>, obj: T): boolean {
+        // Find index of obj in array
+        const i = arr.indexOf(obj);
+        if (i != -1) {
+            arr.splice(i, 1);
             return true;
         }
         return false;
     }
 
-    public addSelections(objs: Array<IOObject>): boolean {
+    public addSelection(obj: IOObject | Port): boolean {
         // Don't select anything if it's disabled
         if (this.disabledSelections)
             return false;
 
-        // If something was already added then don't add it
-        objs = objs.filter(o => !this.selections.includes(o));
+        // Determine if we're adding to portSelections or regular selections
+        if (obj instanceof IOObject) {
+            if (this.add(this.selections, obj))
+                this.selectionsChanged();
+        } else {
+            if (this.add(this.portSelections, obj))
+                this.selectionsChanged();
+        }
 
-        // Add the objects
-        this.selections = this.selections.concat(objs);
+        return false;
+    }
+
+    public addSelections(objs: Array<IOObject> | Array<Port>): boolean {
+        // Don't select anything if it's disabled
+        if (this.disabledSelections)
+            return false;
+        if (objs.length == 0)
+            return false;
+
+        // Determine if we're adding to portSelections or regular selections
+        for (let o of objs) {
+            if (o instanceof IOObject)
+                this.add(this.selections, o);
+            else
+                this.add(this.portSelections, o);
+        }
 
         this.selectionsChanged();
 
         return true;
     }
 
-    public removeSelection(obj: IOObject): boolean {
+    public removeSelection(obj: IOObject | Port): boolean {
         // Don't deselect anything if it's disabled
         if (this.disabledSelections)
             return false;
 
-        const i = this.selections.indexOf(obj);
-        if (i != -1) {
-            this.selections.splice(i, 1);
-            this.selectionsChanged();
-            return true;
+        // Determine if we're removing from portSelections or regular selections
+        if (obj instanceof IOObject) {
+            if (this.remove(this.selections, obj))
+                this.selectionsChanged();
+        } else {
+            if (this.remove(this.portSelections, obj))
+                this.selectionsChanged();
         }
+
         return false;
+    }
+
+    // Returns true if it was selected, false if it was deselected
+    public toggleSelection(obj: IOObject): boolean {
+        // Don't deselect anything if it's disabled
+        if (this.disabledSelections)
+            return;
+
+        // If we can add it, return true
+        if (this.add(this.selections, obj)) {
+            return true;
+        } else {
+            // Else we must remove it and return false
+            this.remove(this.selections, obj);
+            return false;
+        }
     }
 
     public selectAll(): void {
         const objects = this.designer.getObjects();
 
         const group = new GroupAction();
-        for (const obj of objects)
-            group.add(new SelectAction(this, obj));
+
+        // Clear previous selections
+        group.add(this.clearSelections());
+
+        // Add action for each selection
+        objects.forEach((obj) => group.add(new SelectAction(this, obj)));
+
         this.addSelections(objects);
         this.setAction(group);
     }
 
     public clearSelections(): Action {
         const group = new GroupAction();
-        if (this.selections.length == 0)
+        if (this.selections.length == 0 && this.portSelections.length == 0)
             return group;
+
         // Create actions
         this.selections.forEach((obj) => group.add(new SelectAction(this, obj, true)));
+        this.portSelections.forEach((port) => group.add(new SelectAction(this, port, true)));
+
+        // Clear the selections
         this.selections = [];
+        this.portSelections = [];
+
         this.selectionsChanged();
         return group;
     }
@@ -209,14 +253,14 @@ export class SelectionTool extends Tool {
             }
 
             // Go through every wire and check to see if it has been pressed
-            for (let w of this.designer.getWires()) {
-                if (BezierContains(w.getShape(), worldMousePos)) {
-                    this.pressedObj = false;
-                    this.currentPressedObj = w;
-                    return false;
-                }
+            const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
+            if (w) {
+                this.pressedObj = false;
+                this.currentPressedObj = w;
             }
         }
+
+        return false;
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -262,39 +306,37 @@ export class SelectionTool extends Tool {
 
 
                 // Calculate transform rectangle of the selection box
-                let p1 = this.camera.getWorldPos(input.getMouseDownPos());
-                let p2 = this.camera.getWorldPos(input.getMousePos());
-                let box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+                const p1 = this.camera.getWorldPos(input.getMouseDownPos());
+                const p2 = this.camera.getWorldPos(input.getMousePos());
+                const box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
 
                 // Go through each object and see if it's within
                 //  the selection box
-                let selectingObj = false; // flag is true when we are selecting object(s)
-                let objects = this.designer.getObjects();
-                let selections = [];
-                for (let obj of objects) {
-                    // Check if object is in box
-                    if (TransformContains(box, obj.getTransform())) {
-                        selections.push(obj);
-                        group.add(new SelectAction(this, obj)); // Add action
-                    }
-                }
+                const objects = this.designer.getObjects();
+                const selections = objects.filter((obj) => TransformContains(box, obj.getTransform()));
+
+                // Add actions
+                group.add(selections.map((obj) => new SelectAction(this, obj)));
+
                 this.addSelections(selections);
+
+                // Select ports if we haven't selected any regular objects
+                if (!this.selections.some((s) => s instanceof IOObject)) {
+                    // Get all ports from each object
+                    const ports = objects.map((obj) => obj.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), new Array<Port>());
+
+                    // Filter out ports within the selection box
+                    const portSelections = ports.filter((port) => RectContains(box, port.getWorldTargetPos()));
+
+                    // Add actions
+                    group.add(portSelections.map((port) => new SelectAction(this, port)));
+
+                    this.addSelections(portSelections);
+                }
 
                 // Set as action if we changed selections added something
                 this.setAction(group);
 
-                // Go through the ports if we are not selecting objects and
-                //  there are no objects already in the current selections
-                if (!selectingObj && this.selections.length == 0){
-                    for (let obj of objects){
-                        let ports = obj.getPorts();
-                        for (let p of ports){
-                            if(RectContains(box, p.getWorldTargetPos())){
-                                this.addPortSelection(p);
-                            }
-                        }
-                    }
-                }
                 return true; // should render
             }
         }
@@ -318,9 +360,9 @@ export class SelectionTool extends Tool {
 
             // Check if an object was clicked
             //  and add to selections
-            let objects = this.designer.getObjects();
+            const objects = this.designer.getObjects();
             for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
+                const obj = objects[i];
 
                 if (obj.isWithinPressBounds(worldMousePos)) {
                     // Check if object should be clicked
@@ -332,14 +374,17 @@ export class SelectionTool extends Tool {
                 }
                 // Check if object should be selected
                 else if (obj.isWithinSelectBounds(worldMousePos)) {
-                    // Deselect it if it's already selected and we're holding shift
-                    let deselect = false;
-                    if (input.isShiftKeyDown())
-                        deselect = this.removeSelection(obj);
+                    let selected = true;
 
-                    // Add select action
-                    group.add(new SelectAction(this, obj, deselect));
-                    render = deselect || this.addSelection(obj) || render;
+                    // Toggle selection if we're holding shift
+                    if (input.isShiftKeyDown()) {
+                        selected = this.toggleSelection(obj);
+                    } else {
+                        // Add selection
+                        this.addSelection(obj);
+                    }
+                    group.add(new SelectAction(this, obj, !selected));
+                    render = true;
                     break;
                 }
                 // Check if a port was clicked
@@ -351,9 +396,11 @@ export class SelectionTool extends Tool {
 
             // Go through every wire and check to see if it has been clicked
             //  and add to selections
-            for (let w of this.designer.getWires()) {
-                if (BezierContains(w.getShape(), worldMousePos))
-                    return this.addSelection(w);
+            const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
+            if (w) {
+                group.add(new SelectAction(this, w, false));
+                this.addSelection(w);
+                render = true;
             }
 
             this.setAction(group);
@@ -383,12 +430,9 @@ export class SelectionTool extends Tool {
             //  order matters because the components need to be added
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
-            for (const obj of this.selections)
-                group.add(new SelectAction(this, obj, true));
-            for (const wire of wires)
-                group.add(new DeleteWireAction(wire));
-            for (const obj of components)
-                group.add(new DeleteAction(obj));
+            group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
+            group.add(wires.map((wire)          => new DeleteWireAction(wire)));
+            group.add(components.map((obj)      => new DeleteAction(obj)));
 
             this.setAction(group);
 
