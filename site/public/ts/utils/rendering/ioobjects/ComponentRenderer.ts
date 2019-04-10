@@ -29,6 +29,7 @@ import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmen
 import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
+import {Port} from "../../../models/ioobjects/Port";
 
 export const ComponentRenderer = (function() {
 
@@ -39,7 +40,7 @@ export const ComponentRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean) {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selectedPorts: Array<Port>) {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -49,24 +50,22 @@ export const ComponentRenderer = (function() {
             let transform = object.getTransform();
             let imgName = object.getImageName();
 
-            let dPos = V(0,0);
             let size = transform.getSize();
 
             // Transform the renderer
             renderer.transform(camera, transform);
 
             // Draw IO ports
-            for (let i = 0; i < object.getInputPortCount(); i++)
-                IOPortRenderer.renderIPort(renderer, object.getInputPort(i), selected);
-
-            for (let i = 0; i < object.getOutputPortCount(); i++)
-                IOPortRenderer.renderOPort(renderer, object.getOutputPort(i), selected);
+            const ports = object.getPorts();
+            for (const port of ports) {
+                const portSelected = selectedPorts.includes(port);
+                IOPortRenderer.renderPort(renderer, port, selected, portSelected);
+            }
 
             // Draw background box for pressable components
             if (object instanceof PressableComponent) {
                 // Set size/pos for drawing image to be size of "pressable" part
                 size = object.getPressableBox().getSize();
-                dPos = object.getPressableBox().getPos();
 
                 let box = transform;
                 drawBox(renderer, box, selected);
