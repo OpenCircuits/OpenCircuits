@@ -6,9 +6,7 @@ export class GroupAction implements Action {
     public constructor() {
         this.actions = [];
     }
-
-    public add(action: Action): void;
-    public add(action: Array<Action>): void;
+    
     public add(action: Action | Array<Action>): void {
         if (action instanceof Array)
             this.actions = this.actions.concat(action);
