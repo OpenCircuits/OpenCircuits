@@ -120,6 +120,9 @@ export class Wire extends CullableObject {
     public save(node: XMLNode): void {
         super.save(node);
 
+        // save properties
+        node.addAttribute("straight", this.straight);
+
         // write curve
         const curveNode = node.createChild("curve");
         curveNode.addVectorAttribute("p1", this.shape.getP1());
@@ -130,6 +133,9 @@ export class Wire extends CullableObject {
 
     public load(node: XMLNode): void {
         super.load(node);
+
+        // load properties
+        this.straight = node.getBooleanAttribute("straight");
 
         // load curve
         const curveNode = node.findChild("curve");
