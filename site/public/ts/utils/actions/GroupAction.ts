@@ -7,9 +7,13 @@ export class GroupAction implements Action {
         this.actions = [];
     }
 
-    public add(action: Action): void {
-        // Add to front
-        this.actions.push(action);
+    public add(action: Action): void;
+    public add(action: Array<Action>): void;
+    public add(action: Action | Array<Action>): void {
+        if (action instanceof Array)
+            this.actions = this.actions.concat(action);
+        else
+            this.actions.push(action);
     }
 
     public execute(): void {
