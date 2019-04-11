@@ -110,6 +110,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return didSomething;
     }
 
+    public addAction(action: Action): void {
+        this.actionManager.add(action);
+    }
+
     /**
      * Disables a type of tool from this tool manager
      *
