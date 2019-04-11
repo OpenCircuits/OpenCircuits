@@ -183,8 +183,7 @@ HTML;
                     </div>
 
                     <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
-                    <!-- <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button> -->
-
+                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
                 </div>
             </main>
         </div>
