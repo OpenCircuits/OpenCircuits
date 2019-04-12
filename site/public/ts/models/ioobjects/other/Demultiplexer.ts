@@ -61,6 +61,9 @@ export class Demultiplexer extends Component {
         for (let i = 0; i < this.selectLines.length; i++) {
             num = num | ((this.selectLines[i].getIsOn() ? 1 : 0) << i);
         }
+		for (let i = 0; i < this.outputs.length; ++i){
+			super.activate(false, i);
+		}
         super.activate(this.inputs[this.inputs.length-1].getIsOn(), num);
     }
 
