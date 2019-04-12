@@ -10,7 +10,7 @@ export class Demultiplexer extends Component {
 	private selectLines: Array<InputPort>;
 
 	public constructor() {
-		super(new ClampedValue(2,1,9),new ClampedValue(2,1,8), V(0,0));
+		super(new ClampedValue(2,1,9),new ClampedValue(2,1,256), V(0,0));
 	}
 
 	/**
@@ -69,9 +69,6 @@ export class Demultiplexer extends Component {
 
 	public setInputPortCount(val: number) {
 		super.setInputPortCount(val + 1);
-	}
-
-	public setOutputPortCount(val: number) {
 		super.setOutputPortCount(2 << (val-1));
 	}
 
