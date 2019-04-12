@@ -11,6 +11,7 @@ import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule
 import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
+import {BusButtonPopupModule} from "../utils/selectionpopup/BusButtonPopupModule";
 import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
 import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
 import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
@@ -47,22 +48,29 @@ export const SelectionPopupController = (function() {
                 new InputCountPopupModule(div),
                 // TODO: implement when encoders are added to the typescript build
                 // new OutputCountPopupModule(div),
-                new ICButtonPopupModule(div)
+                new ICButtonPopupModule(div),
+                new BusButtonPopupModule(div)
             );
             pos = V(0, 0);
         },
         Update: function(): void {
             const selections = <Array<Component | Wire>>MainDesignerController.GetSelections();
+            const portSelections = MainDesignerController.GetPortSelections();
 
-            if (selections.length > 0) {
+            if (selections.length > 0 || portSelections.length > 0) {
                 // Update each module
                 // Important to do this before repositioning the popup, since its size changes depending on which modules are active
                 modules.forEach(c => c.pull());
 
                 // Update the position of the popup
-                let positions = selections.map(o => (o instanceof Component) ? o.getPos() : o.getShape().getPos(0.5));
-                let sum = positions.reduce((acc, pos) => acc.add(pos), V(0, 0));
-                let screen_pos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
+                let positions;
+                if (selections.length > 0)
+                    positions = selections.map(o => (o instanceof Component) ? o.getPos() : o.getShape().getPos(0.5));
+                else
+                    positions = portSelections.map(p => p.getWorldTargetPos());
+
+                const sum = positions.reduce((acc, pos) => acc.add(pos), V(0, 0));
+                const screen_pos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
 
                 // TODO: clamp should make sure not to overlap with other screen elements
                 //const lo = new Vector(0);

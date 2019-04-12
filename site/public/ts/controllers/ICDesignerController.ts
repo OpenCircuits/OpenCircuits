@@ -57,13 +57,17 @@ export const ICDesignerController = (function() {
     let dragPort: Port = undefined;
     let dragEdge: "horizontal" | "vertical" = undefined;
 
+    // Creates a rectangle for the collision box for a port on the IC
+    //  and determines if the given 'mousePos' is within it
     const portContains = function(port: Port, mousePos: Vector) {
-        let target = port.getTargetPos();
         let origin = port.getOriginPos();
+        let target = port.getTargetPos();
 
+        // Get properties of collision box
         let pos   = target.add(origin).scale(0.5);
         let size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
         let angle = target.sub(origin).angle();
+
         let rect  = new Transform(pos, size, angle);
         rect.setParent(port.getParent().getTransform());
 
@@ -80,36 +84,50 @@ export const ICDesignerController = (function() {
         if (toolManager.onMouseDown(input, button))
             ICDesignerController.Render();
 
-        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-        // Check if a port was pressed
-        let ports = ic.getPorts();
-        for (let i = 0; i < ports.length; i++) {
-            let port = ports[i];
-            if (portContains(port, worldMousePos)) {
-                dragging = true;
-                dragPort = icdata.getPorts()[i];
-                return;
-            }
-        }
-
-        // Check if an edge was pressed
-        let t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
-        let t2 = new Transform(ic.getPos(), ic.getSize().sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
-        if (RectContains(t1, worldMousePos) &&
-           !RectContains(t2, worldMousePos)) {
-           dragging = true;
-            if (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - 4 &&
-                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + 4)
-                dragEdge = "horizontal";
-            else
-                dragEdge = "vertical";
-        }
+        if (dragPort != undefined || dragEdge != undefined)
+            dragging = true;
     }
 
     const onMouseMove = function(): void {
         if (toolManager.onMouseMove(input))
             ICDesignerController.Render();
+
+        if (dragging)
+            return;
+
+        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+
+        // Reset port + edge dragging if we're not dragging
+        dragPort = undefined;
+        dragEdge = undefined;
+
+        // Check if a port is being hovered
+        let ports = ic.getPorts();
+        for (let i = 0; i < ports.length; i++) {
+            let port = ports[i];
+            if (portContains(port, worldMousePos)) {
+                dragPort = icdata.getPorts()[i];
+                view.setCursor("move");
+                return;
+            }
+        }
+
+        // Check if an edge is being hovered
+        let t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
+        let t2 = new Transform(ic.getPos(), ic.getSize().sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
+        if (RectContains(t1, worldMousePos) &&
+           !RectContains(t2, worldMousePos)) {
+            if (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - 4 &&
+                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + 4)
+                dragEdge = "horizontal";
+            else
+                dragEdge = "vertical";
+            view.setCursor(dragEdge == "horizontal" ? "ew-resize" : "ns-resize");
+            return;
+        }
+
+        // Reset cursor
+        view.setCursor("default");
     }
 
     const onMouseDrag = function(button: number): void {
@@ -120,19 +138,21 @@ export const ICDesignerController = (function() {
 
         if (dragging) {
             if (dragPort) {
-                let size = ic.getSize();
-                let p  = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
-                // let v1 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(pos);
-                // let v2 = pos.sub(worldMousePos).normalize().scale(size.scale(0.5)).sub(size.scale(0.5).add(IO_PORT_LENGTH-25, IO_PORT_LENGTH-25)).add(pos);
-                let v1 = p.sub(worldMousePos).normalize().scale(size.scale(0.5)).add(p);
-                let v2 = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+                if (ic.isWithinSelectBounds(worldMousePos)) {
+                    // TODO: turn switches into little switch icons
+                    //  on the surface of the IC and same with LEDs
+                } else {
+                    let size = ic.getSize();
+                    let p  = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
+                    let v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
-                // Set port for IC
-                dragPort.setOriginPos(v1);
-                dragPort.setTargetPos(v2);
+                    // Set port for IC
+                    dragPort.setOriginPos(p);
+                    dragPort.setTargetPos(v);
 
-                // Set pos for ICData
-                ic.update();
+                    // Set pos for ICData
+                    ic.update();
+                }
             }
             else if (dragEdge) {
                 let size = icdata.getSize();
