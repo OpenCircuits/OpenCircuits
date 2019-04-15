@@ -1,4 +1,6 @@
 import {Action} from "./Action";
+import {SAVED, setSAVED} from "../Config";
+
 
 /**
  * Manages undo/redo actions
@@ -19,6 +21,7 @@ export class ActionManager {
     public add(action: Action): void {
         this.redoStack = [];
         this.undoStack.push(action);
+        setSAVED(false);
     }
 
     /**
