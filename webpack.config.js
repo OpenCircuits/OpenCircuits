@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const fs   = require('fs');
@@ -19,7 +20,7 @@ function getItems() {
     }
     return items;
 }
-
+            
 var config = {
     entry: './site/public/ts/Main.ts',
     output: {
@@ -33,7 +34,7 @@ var config = {
             { from: 'site/data/', to: 'data/' },
             { from: 'site/public/css/', to: 'css/' },
             { from: 'site/public/img/', to: 'img/' }
-        ])
+        ])        
     ],
     devtool: 'source-map',
     module: {
@@ -47,14 +48,17 @@ var config = {
     },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js' ]
+    },
+    node: {
+        fs: "empty"
     }
 };
 
 module.exports = (env, argv) => {
-
-    if (argv.mode === 'development') {
-        // do some different stuff maybe
-    }
+    
+    config.plugins.push(new webpack.DefinePlugin({
+        PRODUCTION: JSON.stringify(!(argv.mode === 'development'))
+    }));
 
     return config;
 };
