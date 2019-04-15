@@ -1,5 +1,6 @@
 import "./polyfill.js";
 
+import {SAVED} from "./utils/Config";
 import {Images} from "./utils/Images";
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
@@ -40,6 +41,18 @@ function Init() {
         }),
         new Promise((resolve, reject) => {
             SideNavController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, reject) => {
+            // Prompt for exit
+            window.onbeforeunload = (e) => {
+                console.log(SAVED);    
+                if (PRODUCTION && !SAVED) {
+                    const dialogText = "You have unsaved changes.";
+                    e.returnValue = dialogText;
+                    return dialogText;
+                }
+            };
             resolve(1);
         })
     ];
