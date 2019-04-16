@@ -28,6 +28,27 @@ export const Exporter = (function() {
     };
 
     return {
+        pushFile: function(designer: CircuitDesigner, projectName: string) {
+            const data = write(designer);
+
+            if (projectName.replace(/\s+/g, '') === "")
+                projectName = "Untitled Circuit";
+
+            let xhr = new XMLHttpRequest();
+            // TODO: this is BAD
+            xhr.open('POST', 'circuit/' + escape(projectName));
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Success');
+                }
+                else {
+                    alert('Request failed.  Returned status of ' + xhr.status);
+                }
+            };
+            xhr.setRequestHeader('Content-Type', 'application/xml');
+            xhr.send(data);
+
+        },
         saveFile: function(designer: CircuitDesigner, projectName: string) {
             const data = write(designer);
 

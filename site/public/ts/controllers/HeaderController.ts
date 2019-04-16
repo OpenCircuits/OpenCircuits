@@ -13,6 +13,9 @@ export const HeaderController = (function() {
     const downloadDropdownButton = document.getElementById("header-download-dropdown-button");
     const downloadDropdown = document.getElementById("header-download-dropdown-content");
 
+    const saveButton = document.getElementById("header-save-button");
+    const loadButton = document.getElementById("header-load-button");
+    const loadId = <HTMLInputElement>document.getElementById("header-load-id");
     const downloadButton = document.getElementById("header-download-button");
     const downloadPDFButton = document.getElementById("header-download-pdf-button");
     const downloadPNGButton = document.getElementById("header-download-png-button");
@@ -48,6 +51,9 @@ export const HeaderController = (function() {
             fileInput.onchange = () => Importer.loadFile(mainDesigner, fileInput.files[0]);
 
             downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
+
+            saveButton.onclick = () => Exporter.pushFile(mainDesigner, projectNameInput.value);
+            loadButton.onclick = () => Importer.loadRemote(mainDesigner, loadId.value);
 
             downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 

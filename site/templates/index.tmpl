@@ -66,6 +66,15 @@
           <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
         </button>
         <div id="header-download-dropdown-content" class="header__dropdown__content">
+          <div id="header-save-button" type="button">
+            <img src="img/icons/download.svg" height="100%" alt="Push current scene" />
+            <a>Push to Remote</a>
+          </div>
+          <div id="header-load-button" type="button">
+            <img src="img/icons/download.svg" height="100%" alt="Load scene" />
+            <a>Load From Remote</a>
+            <input onclick="event.stopPropagation();" type="text" id="header-load-id" />
+          </div>
           <div id="header-download-button" type="button">
             <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
             <a>Download</a>
@@ -96,7 +105,7 @@
 
   <main>
     <nav id="itemnav" class="itemnav shrink">
-      {{ range $i, $section := .Sections }}
+      {{ range $i, $section := .navConfig.Sections }}
         <h4 id="itemnav-section-{{ $section.Id }}" unselectable>{{ $section.Label }}</h4>
         {{ range $k, $item := $section.Items }}
           <button id="itemnav-section-{{ $section.Id }}-button-{{ $item.Id }}" type="button" data-xmlid="{{ $item.Id }}" data-not="{{ $item.Not }}">
