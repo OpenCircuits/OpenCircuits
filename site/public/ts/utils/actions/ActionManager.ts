@@ -1,6 +1,6 @@
 import {Action} from "./Action";
+import {SaveAction} from "./SaveAction";
 import {SAVED, setSAVED} from "../Config";
-
 
 /**
  * Manages undo/redo actions
@@ -21,7 +21,8 @@ export class ActionManager {
     public add(action: Action): void {
         this.redoStack = [];
         this.undoStack.push(action);
-        setSAVED(false);
+        if (!(action instanceof SaveAction))
+            setSAVED(false);
     }
 
     /**
@@ -35,7 +36,12 @@ export class ActionManager {
 
             // add to redo stack
             this.redoStack.push(action);
+            //SaveActions cannot be undone on their own
+            if (action instanceof SaveAction)
+                this.undo();
         }
+        if (this.undoStack.length == 0)
+            setSAVED(true);
     }
 
     /**
@@ -49,6 +55,14 @@ export class ActionManager {
 
             // add back to undo stack
             this.undoStack.push(action);
+
+            if (action instanceof SaveAction) {
+                while (this.redoStack.length > 0 &&
+                (this.redoStack[this.redoStack.length - 1] instanceof SaveAction))
+                    this.redoStack.pop();
+            } else if (this.redoStack.length > 0 &&
+                (this.redoStack[this.redoStack.length - 1] instanceof SaveAction))
+                this.redo();
         }
     }
 
