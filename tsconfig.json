@@ -10,7 +10,8 @@
     "downlevelIteration": true,
     "allowJs": true,
     "typeRoots" : [
-      "./site/public/ts/utils/typings" // path to your typings directory (relative to tsconfig.json)
+      "./site/public/ts/utils/typings",
+      "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
     ]
   },
   "exclude": [

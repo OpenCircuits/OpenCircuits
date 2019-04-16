@@ -9,7 +9,7 @@
     "url": "git://github.com/OpenCircuits/OpenCircuits.git"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^23.3.14",
     "copy-webpack-plugin": "^4.6.0",
     "jest": "^24.4.0",
     "ts-jest": "^24.0.0",
