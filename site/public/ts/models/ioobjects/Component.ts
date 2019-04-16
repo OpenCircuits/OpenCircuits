@@ -53,12 +53,7 @@ export abstract class Component extends CullableObject {
             if (i === 0) l--;
             if (i === arr.length-1) l++;
 
-            // Set y positions
             let port = arr[i];
-            if (this.getDisplayName() == "SR Flip Flop" ||
-                this.getDisplayName() == "JK Flip Flop") {
-                l *= 3/4;
-            }
             port.setOriginPos(V(port.getOriginPos().x, l));
             port.setTargetPos(V(port.getTargetPos().x, l));
         }

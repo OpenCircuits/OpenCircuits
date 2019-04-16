@@ -1,54 +1,36 @@
+import {Vector} from "../math/Vector";
 
 import {Action} from "./Action";
 import {Component} from "../../models/ioobjects/Component";
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Vector,V} from "../math/Vector";
 
 export class RotateAction implements Action {
-    private angle: number;
-    private objects: Array<IOObject>;
+    private objects: Array<Component>;
+
     private midpoint: Vector;
 
-    public constructor(objects: Array<IOObject>, midpoint: Vector) {
-        this.angle = 0;
+    private initialAngles: Array<number>;
+    private finalAngles: Array<number>;
+
+    public constructor(objects: Array<Component>, midpoint: Vector, initialAngles: Array<number>, finalAngles: Array<number>) {
         this.objects = objects;
         this.midpoint = midpoint;
+        this.initialAngles = initialAngles;
+        this.finalAngles = finalAngles;
     }
 
-    public updateAngle(angle: number, shift: boolean): void {
-        let component = this.objects[0];
-
-        let dAngle = angle - this.angle;
-        if (component instanceof Component)
-            dAngle = angle - component.getAngle();
-
-        this.rotateObjects(dAngle,shift);
-        this.angle = angle;
-    }
-
-    private rotateObjects(angle: number, shift:boolean): void {
-        // Rotate each object by a 'delta' angle
+    private setAngles(angles: Array<number>) {
         for (let i = 0; i < this.objects.length; i++) {
-            let obj = this.objects[i];
-            // Only rotate components
-            if (obj instanceof Component){
-                let newAngle = obj.getAngle() + angle;
-                if (shift)
-                    newAngle = Math.floor(newAngle/(Math.PI/4))*Math.PI/4;
-                obj.getTransform().setRotationAbout(newAngle, this.midpoint);
-            }
+            const obj = this.objects[i];
+            obj.getTransform().setRotationAbout(angles[i], this.midpoint);
         }
     }
 
     public execute(): void {
-        this.rotateObjects(this.angle, false);
+        this.setAngles(this.finalAngles);
     }
 
     public undo(): void {
-        this.rotateObjects(-this.angle,false);
+        this.setAngles(this.initialAngles);
     }
 
-    public getAngle(): number {
-        return this.angle;
-    }
 }

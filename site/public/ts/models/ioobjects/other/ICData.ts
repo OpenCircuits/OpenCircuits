@@ -73,8 +73,7 @@ export class ICData {
         const ports = this.getPorts();
         const size = this.transform.getSize();
 
-        for (let i = 0; i < ports.length; i++) {
-            let port = ports[i];
+        for (const port of ports) {
             // Scale by large number to make sure that the target position
             //  is not in the rectangle of the IC
             let target = this.transform.getMatrix().mul(port.getTargetPos());
@@ -179,7 +178,7 @@ export class ICData {
         this.collection = LoadGroup(groupNode, icIdMap);
     }
 
-    static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
+    public static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
         let group = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
         let graph = CreateGraph(group);
 
@@ -201,7 +200,7 @@ export class ICData {
         return true;
     }
 
-    static Create(objects: Array<IOObject>): ICData {
+    public static Create(objects: Array<IOObject>): ICData {
         let copies = CopyGroup(objects);
         if (!this.IsValid(copies))
             return undefined;

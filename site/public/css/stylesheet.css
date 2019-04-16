@@ -510,6 +510,30 @@ POPUP
     background-color: rgba(255, 255, 255, 0);
 }
 
+.popup input#popup-position-x, input#popup-position-y {
+    width: calc(100% - 8px); /* 8px from l,r padding and l,r border */
+}
+
+.popup button#popup-ic-button {
+    visibility: inherit;
+    width: 100%;
+    background-color: #fff;
+    text-align: center;
+    color: #888;
+    border-radius: 3px;
+    border-width: thin;
+    border-style: solid;
+    font-size: 0.8em;
+    margin-top: 5px;
+    padding: 4px;
+}
+.popup button#popup-ic-button:hover {
+    background-color: #eee;
+}
+.popup button#popup-ic-button:active {
+    background-color: #ddd;
+}
+
 
 /*
 
