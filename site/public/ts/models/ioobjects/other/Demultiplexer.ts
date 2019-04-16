@@ -10,7 +10,7 @@ export class Demultiplexer extends Component {
 	private selectLines: Array<InputPort>;
 
 	public constructor() {
-		super(new ClampedValue(2,1,9),new ClampedValue(2,1,8), V(0,0));
+		super(new ClampedValue(2,1,8),new ClampedValue(2,1,256), V(0,0));
 	}
 
 	/**
@@ -57,18 +57,18 @@ export class Demultiplexer extends Component {
     }
 
     public activate() {
-		let num = 0;
-        for (let i = 0; i < this.selectLines.length; i++) {
-            num = num | ((this.selectLines[i].getIsOn() ? 1 : 0) << i);
-        }
+		const values: Array<number> = this.selectLines.map(p => (p.getIsOn() ? 1 : 0));
+
+		const num = values.reduce((acc, cur, i) => acc = acc | (cur << i), 0);
+
+		// Turn off each output port
+		this.outputs.forEach((p, i) => super.activate(false, i));
+
         super.activate(this.inputs[this.inputs.length-1].getIsOn(), num);
     }
 
 	public setInputPortCount(val: number) {
 		super.setInputPortCount(val + 1);
-	}
-
-	public setOutputPortCount(val: number) {
 		super.setOutputPortCount(2 << (val-1));
 	}
 
