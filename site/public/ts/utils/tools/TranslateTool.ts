@@ -119,27 +119,18 @@ export class TranslateTool extends Tool {
             let newPos = portPos.add(dPos);
 
             // getInputs() and getOutputs() have 1 and only 1 element each because WirePorts are specialized
-            const prevPos = this.pressedComponent.getInputs()[0].getInput().getWorldTargetPos();
-            const nextPos = this.pressedComponent.getOutputs()[0].getOutput().getWorldTargetPos();
+            const iw = this.pressedComponent.getInputs()[0];
+            const ow = this.pressedComponent.getOutputs()[0];
+            const ip = iw.getInput().getWorldTargetPos();
+            const op = ow.getOutput().getWorldTargetPos();
 
-            this.pressedComponent.getInputs()[0].setIsStraight(false);
-            this.pressedComponent.getOutputs()[0].setIsStraight(false);
+            iw.setIsStraight(false);
+            ow.setIsStraight(false);
 
-            if (Math.abs(newPos.x - prevPos.x) <= WIRE_SNAP_THRESHOLD) {
-                newPos.x = prevPos.x;
-                this.pressedComponent.getInputs()[0].setIsStraight(true);
-            } else if (Math.abs(newPos.x - nextPos.x) <= WIRE_SNAP_THRESHOLD) {
-                newPos.x = nextPos.x;
-                this.pressedComponent.getOutputs()[0].setIsStraight(true);
-            }
-
-            if (Math.abs(newPos.y - prevPos.y) <= WIRE_SNAP_THRESHOLD) {
-                newPos.y = prevPos.y;
-                this.pressedComponent.getInputs()[0].setIsStraight(true);
-            } else if (Math.abs(newPos.y - nextPos.y) <= WIRE_SNAP_THRESHOLD) {
-                newPos.y = nextPos.y;
-                this.pressedComponent.getOutputs()[0].setIsStraight(true);
-            }
+            newPos.x = this.snap(iw, newPos.x, ip.x);
+            newPos.y = this.snap(iw, newPos.y, ip.y);
+            newPos.x = this.snap(ow, newPos.x, op.x);
+            newPos.y = this.snap(ow, newPos.y, op.y);
 
             // Only one position to set (the wire port)
             this.pressedComponent.setPos(newPos);
@@ -187,6 +178,14 @@ export class TranslateTool extends Tool {
 
         // Return action
         return this.action;
+    }
+
+    private snap(wire: Wire, x: number, c: number) {
+        if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
+            wire.setIsStraight(true);
+            return c;
+        }
+        return x;
     }
 
 }
