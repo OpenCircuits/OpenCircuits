@@ -46,7 +46,6 @@ function Init() {
         new Promise((resolve, reject) => {
             // Prompt for exit
             window.onbeforeunload = (e) => {
-                console.log(SAVED);    
                 if (PRODUCTION && !SAVED) {
                     const dialogText = "You have unsaved changes.";
                     e.returnValue = dialogText;

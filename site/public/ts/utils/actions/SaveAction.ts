@@ -1,7 +1,8 @@
 import {Action} from "./Action";
-import {SAVED, setSAVED} from "../Config";
+import {setSAVED} from "../Config";
 
 export class SaveAction implements Action {
+
     public execute(): void {
     	setSAVED(true)
     }

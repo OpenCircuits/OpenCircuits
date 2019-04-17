@@ -20,7 +20,7 @@ function getItems() {
     }
     return items;
 }
-            
+
 var config = {
     entry: './site/public/ts/Main.ts',
     output: {
@@ -34,7 +34,7 @@ var config = {
             { from: 'site/data/', to: 'data/' },
             { from: 'site/public/css/', to: 'css/' },
             { from: 'site/public/img/', to: 'img/' }
-        ])        
+        ])
     ],
     devtool: 'source-map',
     module: {
@@ -52,7 +52,7 @@ var config = {
 };
 
 module.exports = (env, argv) => {
-    
+
     config.plugins.push(new webpack.DefinePlugin({
         PRODUCTION: JSON.stringify(!(argv.mode === 'development'))
     }));
