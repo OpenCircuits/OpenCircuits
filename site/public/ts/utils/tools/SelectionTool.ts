@@ -368,8 +368,8 @@ export class SelectionTool extends Tool {
                     // Check if object should be clicked
                     if (obj instanceof PressableComponent) {
                         obj.click();
-                        render = true;
-                        break;
+                        this.setAction(group);
+                        return true;
                     }
                 }
                 // Check if object should be selected
@@ -384,8 +384,8 @@ export class SelectionTool extends Tool {
                         this.addSelection(obj);
                     }
                     group.add(new SelectAction(this, obj, !selected));
-                    render = true;
-                    break;
+                    this.setAction(group)
+                    return true;
                 }
                 // Check if a port was clicked
                 else {

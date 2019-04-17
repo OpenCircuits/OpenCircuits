@@ -2,6 +2,8 @@ import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
 
+import {Action} from "../utils/actions/Action";
+
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
@@ -12,8 +14,9 @@ import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 import {WiringTool} from "../utils/tools/WiringTool";
 
-import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
+import {Component} from "../models/ioobjects/Component";
+import {Port} from "../models/ioobjects/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
@@ -126,6 +129,9 @@ export const MainDesignerController = (function() {
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
+        AddAction: function(action: Action) {
+            toolManager.addAction(action);
+        },
         SetEditMode: function(val: boolean): void {
             // Disable some tools
             toolManager.disableTool(TranslateTool, val);
@@ -142,6 +148,9 @@ export const MainDesignerController = (function() {
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
+        },
+        GetPortSelections: function(): Array<Port> {
+            return toolManager.getSelectionTool().getPortSelections();
         },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();
