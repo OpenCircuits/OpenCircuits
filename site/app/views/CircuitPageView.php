@@ -166,6 +166,11 @@ HTML;
                             <input id="popup-input-count" type="number" value="2" min="2" max="8" step="1" alt="Number of inputs object(s) have" />
                         </label>
                     </div>
+                    <div id="popup-output-count-text" style="display: none;">Output Count
+                        <label id="popup-output-count-label" class="popup__label" unselectable disabled>
+                            <input id="popup-output-count" type="number" value="2" min="2" max="8" step="1" alt="Number of outputs object(s) have" />
+                        </label>
+                    </div>
                     <div id="popup-color-text" style="display: none;">Color
                         <label id="popup-color-label" class="popup__label" unselectable disabled>
                             <input id="popup-color-picker" type="color" value="#ffffff" alt="Color of object(s)" />
@@ -178,8 +183,7 @@ HTML;
                     </div>
 
                     <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
-                    <!-- <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button> -->
-
+                    <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
                 </div>
             </main>
         </div>

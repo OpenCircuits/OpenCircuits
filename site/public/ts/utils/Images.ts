@@ -17,6 +17,9 @@ export const Images = (function() {
     }
 
     return {
+        GetImage: function(img: string): HTMLImageElement {
+            return images.get(img);
+        },
         Load: function(onFinishLoading: () => void): void {
             loadImages(
                 ["constLow.svg", "constHigh.svg",
@@ -28,9 +31,6 @@ export const Images = (function() {
                  "segment3.svg", "segment4.svg",
                  "clock.svg", "clockOn.svg",
                  "keyboard.svg", "base.svg"], onFinishLoading);
-        },
-        GetImage: function(img: string): HTMLImageElement {
-            return images.get(img);
         }
     };
 })();

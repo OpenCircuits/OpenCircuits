@@ -76,6 +76,10 @@ export class Multiplexer extends Component {
 		super.setInputPortCount(val + (2 << (val-1)));
 	}
 
+	public getTargetInputPortCount(): number {
+		return this.target;
+	}
+
 	public getDisplayName(): string {
         return "Multiplexer";
     }

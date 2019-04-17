@@ -1,24 +1,20 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY,
-        IO_PORT_RADIUS} from "../Constants";
+import {IO_PORT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Component} from "../../models/ioobjects/Component";
 import {Port} from "../../models/ioobjects/Port";
 import {InputPort} from "../../models/ioobjects/InputPort";
 import {OutputPort} from "../../models/ioobjects/OutputPort";
 import {Wire} from "../../models/ioobjects/Wire";
 
-import {Vector,V} from "../math/Vector";
-import {Transform} from "../math/Transform";
 import {CircleContains} from "../math/MathUtils";
 
 import {SelectionTool} from "./SelectionTool";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
+
+import {Action} from "../actions/Action";
+import {ConnectionAction} from "../actions/ConnectionAction";
 
 export class WiringTool extends Tool {
 
@@ -122,7 +118,7 @@ export class WiringTool extends Tool {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)) {
                     // Connect ports
                     if (this.port instanceof InputPort && p instanceof OutputPort)
-                        this.designer.createWire(p, this.port);
+                        this.wire = this.designer.createWire(p, this.port);
 
                     // Connect ports if not already connected
                     if (this.port instanceof OutputPort && p instanceof InputPort) {
@@ -131,7 +127,7 @@ export class WiringTool extends Tool {
                         if (p.getInput() != null)
                             return true;
 
-                        this.designer.createWire(this.port, p);
+                        this.wire = this.designer.createWire(this.port, p);
                     }
 
                     return true;
@@ -140,6 +136,13 @@ export class WiringTool extends Tool {
         }
 
         return true;
+    }
+
+    public getAction(): Action {
+        if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
+            return undefined;
+        
+        return new ConnectionAction(this.wire);
     }
 
     public getWire(): Wire {

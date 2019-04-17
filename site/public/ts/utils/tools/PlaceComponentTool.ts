@@ -1,10 +1,17 @@
+import {Vector,V} from "../math/Vector";
+
 import {Tool} from "./Tool";
+
+import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
+
+import {Action} from "../actions/Action";
+import {PlaceAction} from "../actions/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
 
@@ -28,27 +35,33 @@ export class PlaceComponentTool extends Tool {
         return (event == "onclick");
     }
 
-    public setComponent(component: Component) {
+    public setComponent(component: Component, instant: boolean = false): void {
+        if (instant) {
+            // Place the object immediately
+            this.designer.addObject(component);
+            return;
+        }
         this.component = component;
     }
 
     public onMouseMove(input: Input): boolean {
-        let pos = this.camera.getWorldPos(input.getMousePos());
-
+        const pos = this.camera.getWorldPos(input.getMousePos());
         this.component.setPos(pos);
-
         return true;
     }
 
     public onClick(input: Input, button: number): boolean {
-        let pos = this.camera.getWorldPos(input.getMousePos());
+        // Place object
         this.designer.addObject(this.component);
-        this.component = undefined;
+
         return true;
+    }
+
+    public getAction(): Action {
+        return new PlaceAction(this.designer, this.component);
     }
 
     public getComponent(): Component {
         return this.component;
     }
-
 }

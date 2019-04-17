@@ -14,6 +14,11 @@ export class XMLWriter {
         root.addAttribute("version", version);
     }
 
+    public setName(name: string): void {
+        let root = this.getRoot();
+        root.addAttribute("name", name);
+    }
+
     public getRoot(): XMLNode {
         return this.rootNode;
     }

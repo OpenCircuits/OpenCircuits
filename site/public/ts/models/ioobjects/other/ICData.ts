@@ -73,8 +73,7 @@ export class ICData {
         const ports = this.getPorts();
         const size = this.transform.getSize();
 
-        for (let i = 0; i < ports.length; i++) {
-            let port = ports[i];
+        for (const port of ports) {
             // Scale by large number to make sure that the target position
             //  is not in the rectangle of the IC
             let target = this.transform.getMatrix().mul(port.getTargetPos());
@@ -82,11 +81,10 @@ export class ICData {
             let pos = target.add(target.sub(origin).normalize().scale(10000));
 
             let p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
-            let v1 = p.sub(pos).normalize().scale(size.scale(0.5)).add(p);
-            let v2 = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            let v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
-            port.setOriginPos(v1);
-            port.setTargetPos(v2);
+            port.setOriginPos(p);
+            port.setTargetPos(v);
         }
     }
 
@@ -179,7 +177,7 @@ export class ICData {
         this.collection = LoadGroup(groupNode, icIdMap);
     }
 
-    static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
+    public static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
         let group = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
         let graph = CreateGraph(group);
 
@@ -201,7 +199,7 @@ export class ICData {
         return true;
     }
 
-    static Create(objects: Array<IOObject>): ICData {
+    public static Create(objects: Array<IOObject>): ICData {
         let copies = CopyGroup(objects);
         if (!this.IsValid(copies))
             return undefined;

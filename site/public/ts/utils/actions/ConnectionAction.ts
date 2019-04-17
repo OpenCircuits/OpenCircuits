@@ -1,32 +1,28 @@
 import {Action} from "./Action";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Component} from "../../models/ioobjects/Component";
+import {InputPort} from "../../models/ioobjects/InputPort";
+import {OutputPort} from "../../models/ioobjects/OutputPort";
 import {Wire} from "../../models/ioobjects/Wire";
 
 export class ConnectionAction implements Action {
     private designer: CircuitDesigner;
-    private c1: Component;
-    private i1: number;
-    private c2: Component;
-    private i2: number;
-    private wire: Wire;
 
-    public constructor(c1: Component, i1: number, c2: Component, i2: number) {
-        this.designer = c1.getDesigner();
-        this.c1 = c1;
-        this.i1 = i1;
-        this.c2 = c2;
-        this.i2 = i2;
-        // Connection action is explicitly executed
-        this.execute();
+    private input: OutputPort;
+    private output: InputPort;
+
+    public constructor(w: Wire) {
+        this.designer = w.getDesigner();
+
+        this.input = w.getInput();
+        this.output = w.getOutput();
     }
 
     public execute(): void {
-        this.wire = this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
+        this.designer.createWire(this.input, this.output);
     }
 
     public undo(): void {
-        this.designer.removeWire(this.wire);
+        this.designer.removeWire(this.output.getInput());
     }
 
 }

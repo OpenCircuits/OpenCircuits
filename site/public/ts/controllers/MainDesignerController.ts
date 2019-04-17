@@ -2,6 +2,8 @@ import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
 
+import {Action} from "../utils/actions/Action";
+
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
@@ -12,8 +14,9 @@ import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 import {WiringTool} from "../utils/tools/WiringTool";
 
-import {Component} from "../models/ioobjects/Component";
 import {IOObject} from "../models/ioobjects/IOObject";
+import {Component} from "../models/ioobjects/Component";
+import {Port} from "../models/ioobjects/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
@@ -55,8 +58,10 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button))
+        if (toolManager.onClick(input, button)){
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyDown = function(key: number): void {
@@ -97,6 +102,7 @@ export const MainDesignerController = (function() {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
+                            toolManager.getSelectionTool().getPortSelections(),
                             toolManager));
 
             // input
@@ -120,10 +126,13 @@ export const MainDesignerController = (function() {
         ClearSelections: function(): void {
             toolManager.getSelectionTool().clearSelections();
         },
-        PlaceComponent: function(component: Component) {
-            toolManager.placeComponent(component);
+        PlaceComponent: function(component: Component, instant: boolean = false): void {
+            toolManager.placeComponent(component, instant);
         },
-        SetEditMode: function(val: boolean) {
+        AddAction: function(action: Action) {
+            toolManager.addAction(action);
+        },
+        SetEditMode: function(val: boolean): void {
             // Disable some tools
             toolManager.disableTool(TranslateTool, val);
             toolManager.disableTool(RotateTool, val);
@@ -139,6 +148,9 @@ export const MainDesignerController = (function() {
         },
         GetSelections: function(): Array<IOObject> {
             return toolManager.getSelectionTool().getSelections();
+        },
+        GetPortSelections: function(): Array<Port> {
+            return toolManager.getSelectionTool().getPortSelections();
         },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();

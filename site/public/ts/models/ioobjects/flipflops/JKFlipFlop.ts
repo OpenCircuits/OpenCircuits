@@ -1,5 +1,6 @@
 import {V} from "../../../utils/math/Vector";
 import {FlipFlop} from "./FlipFlop";
+import {Port} from "../Port";
 
 export class JKFlipFlop extends FlipFlop {
 
@@ -29,6 +30,22 @@ export class JKFlipFlop extends FlipFlop {
 		super.activate(this.state, 0);
 		super.activate(!this.state, 1);
 	}
+
+	// @Override
+	protected updatePortPositions(arr: Array<Port>): void {
+        for (let i = 0; i < arr.length; i++) {
+            // Calculate y position of port
+            let l = -this.transform.getSize().y/2*(i - arr.length/2 + 0.5);
+            if (i === 0) l--;
+            if (i === arr.length-1) l++;
+
+            // Set y positions
+            let port = arr[i];
+            l *= 3/4;
+            port.setOriginPos(V(port.getOriginPos().x, l));
+            port.setTargetPos(V(port.getTargetPos().x, l));
+        }
+    }
 
 	public getDisplayName() {
 		return "JK Flip Flop";

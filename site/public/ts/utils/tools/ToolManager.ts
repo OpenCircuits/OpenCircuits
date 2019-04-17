@@ -43,7 +43,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.selectionTool      = new SelectionTool(designer, camera);
         this.panTool            = new PanTool(camera);
         this.rotateTool         = new RotateTool(camera);
-        this.translateTool      = new TranslateTool(camera);
+        this.translateTool      = new TranslateTool(designer, camera);
         this.placeComponentTool = new PlaceComponentTool(designer, camera);
         this.wiringTool         = new WiringTool(designer, camera);
         this.splitWireTool      = new SplitWireTool(designer, camera);
@@ -71,13 +71,21 @@ export class ToolManager implements MouseListener, KeyboardListener {
     private onEvent(method: (i:Input,b?:number) => boolean, event: string, input: Input, button?: number): boolean {
         let didSomething = method(input, button);
 
+        // Check if selection tool has any actions to add
+        if (this.currentTool == this.selectionTool) {
+            const action = this.selectionTool.getAction();
+            if (action != undefined)
+                this.actionManager.add(action);
+        }
+
         // Check if current tool should be deactivated
         //  and default tool (selection tool) should be activated
         if (this.currentTool != this.selectionTool &&
             this.currentTool.deactivate(event, input, button)) {
             // Add action
-            if (this.currentTool.getAction() != undefined)
-                this.actionManager.add(this.currentTool.getAction())
+            const action = this.currentTool.getAction();
+            if (action != undefined)
+                this.actionManager.add(action);
             this.selectionTool.activate(this.currentTool, event, input, button);
             this.activate(this.selectionTool);
             return true;
@@ -100,6 +108,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
             return true;
 
         return didSomething;
+    }
+
+    public addAction(action: Action): void {
+        this.actionManager.add(action);
     }
 
     /**
@@ -177,12 +189,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
 
-    public placeComponent(component: Component) {
+    public placeComponent(component: Component, instant: boolean = false) {
         if (this.placeComponentTool.isDisabled())
             return;
 
-        this.placeComponentTool.setComponent(component);
-        this.activate(this.placeComponentTool);
+        this.placeComponentTool.setComponent(component, instant);
+        if (!instant) // Don't activate the tool if we're just instantly placing
+            this.activate(this.placeComponentTool);
     }
 
     public getCurrentTool(): Tool {

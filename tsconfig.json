@@ -3,12 +3,16 @@
     "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
-    "lib": ["es5", "dom"],
-    "module": "es2015",
+    "lib": ["es2017", "dom"],
+    "module": "es6",
     "target": "es5",
     "esModuleInterop": true,
     "downlevelIteration": true,
-    "allowJs": true
+    "allowJs": true,
+    "typeRoots" : [
+      "./site/public/ts/utils/typings",
+      "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
+    ]
   },
   "exclude": [
     "node_modules",
