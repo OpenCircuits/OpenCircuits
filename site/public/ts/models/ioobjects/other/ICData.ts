@@ -20,6 +20,9 @@ import {Port} from "../Port";
 import {InputPort} from "../InputPort";
 import {OutputPort} from "../OutputPort";
 
+import {ConstantLow} from "../inputs/ConstantLow";
+import {ConstantHigh} from "../inputs/ConstantHigh";
+
 export class ICData {
     private transform: Transform;
 
@@ -54,6 +57,8 @@ export class ICData {
 
     private createPorts(type: typeof InputPort | typeof OutputPort, ports: Array<Port>, arr: Array<IOObject>, side: -1 | 1): void {
         let w = this.transform.getSize().x;
+
+        arr = arr.filter(o => !(o instanceof ConstantLow || o instanceof ConstantHigh))
 
         for (let i = 0; i < arr.length; i++) {
             let port = new type(undefined);
@@ -203,6 +208,10 @@ export class ICData {
         let copies = CopyGroup(objects);
         if (!this.IsValid(copies))
             return undefined;
+
+        let chs = copies.inputs.filter(c => c instanceof ConstantHigh);
+        copies.components = copies.components.concat(chs);
+        copies.inputs = copies.inputs.filter(c => !(c instanceof ConstantHigh));
 
         return new ICData(copies);
     }
