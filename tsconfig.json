@@ -8,7 +8,11 @@
     "target": "es5",
     "esModuleInterop": true,
     "downlevelIteration": true,
-    "allowJs": true
+    "allowJs": true,
+    "typeRoots" : [
+      "./site/public/ts/utils/typings",
+      "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
+    ]
   },
   "exclude": [
     "node_modules",
