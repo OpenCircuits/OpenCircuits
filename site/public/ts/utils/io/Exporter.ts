@@ -8,17 +8,6 @@ export const Exporter = (function() {
     let saved = true; // TODO, set saved to true when saving file
                       //  but somehow set it to false anytime the circuit changes
 
-    const write = function(designer: CircuitDesigner, name: string): string {
-        const writer = new XMLWriter(designer.getXMLName());
-
-        writer.setVersion(1);
-        writer.setName(name);
-
-        designer.save(writer.getRoot());
-
-        return writer.serialize();
-    }
-
     // Prompt for exit
     window.onbeforeunload = function(e) {
         if (!saved) {
@@ -29,12 +18,22 @@ export const Exporter = (function() {
     };
 
     return {
+        write: function(designer: CircuitDesigner, name: string): string {
+            const writer = new XMLWriter(designer.getXMLName());
+
+            writer.setVersion(1);
+            writer.setName(name);
+
+            designer.save(writer.getRoot());
+
+            return writer.serialize();
+        },
         saveFile: function(designer: CircuitDesigner, projectName: string): void {
             // Get name
             if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
 
-            const data = write(designer, projectName);
+            const data = this.write(designer, projectName);
 
             const filename = projectName + ".circuit";
 
