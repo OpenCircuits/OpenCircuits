@@ -23,12 +23,18 @@ import {PlaceComponentTool} from "./PlaceComponentTool"
 import {Input} from "../Input";
 import {Camera} from "../Camera";
 import {Port} from "../../models/ioobjects/Port";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
+import {OutputPort} from "../../models/ioobjects/OutputPort";
+import {InputPort} from "../../models/ioobjects/InputPort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
 import {DeleteAction} from "../actions/DeleteAction";
 import {DeleteWireAction} from "../actions/DeleteWireAction";
+import {ConnectionAction} from "../actions/ConnectionAction";
+import { Wire } from "../../models/ioobjects/Wire";
+
 
 export class SelectionTool extends Tool {
 
@@ -430,10 +436,26 @@ export class SelectionTool extends Tool {
             //  order matters because the components need to be added
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
-            group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-            group.add(wires.map((wire)          => new DeleteWireAction(wire)));
-            group.add(components.map((obj)      => new DeleteAction(obj)));
-
+            //check to see if WirePort is selected
+            let arr: boolean[] = components.map((obj) =>  { if (obj instanceof WirePort) { return true; } });
+            let i: number = 0;
+            let port_in: boolean = false;
+            if (arr.length == 1 && arr[0] == true) { port_in = true; }
+            let inp: OutputPort | WirePort = components[0].getInputs()[0].getInput();
+            let out: InputPort | WirePort = components[0].getOutputs()[0].getOutput();
+            let w: Wire = new Wire(inp, out);
+            //adding specific actions to group if port_in
+            if (port_in) {
+                    group.add(new DeleteWireAction(components[0].getInputs()[0]));
+                    group.add(new DeleteWireAction(components[0].getOutputs()[0]));
+                    group.add(new DeleteAction(components[0]));
+                    group.add(new ConnectionAction(w));
+            }
+            else {
+                group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
+                group.add(wires.map((wire)          => new DeleteWireAction(wire)));
+                group.add(components.map((obj)      => new DeleteAction(obj)));
+            }
             this.setAction(group);
 
             // Actually delete the objects/wires
@@ -441,6 +463,8 @@ export class SelectionTool extends Tool {
                 this.designer.removeWire(wire);
             for (const obj of components)
                 this.designer.removeObject(obj);
+            //add back wire if port_in
+            if (port_in) { this.designer.createWire(inp, out);}
 
             this.clearSelections();
             return true;
