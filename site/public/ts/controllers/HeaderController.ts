@@ -48,7 +48,7 @@ export const HeaderController = (function() {
                 }
             }
 
-            fileInput.onchange = () => Importer.loadFile(mainDesigner, fileInput.files[0]);
+            fileInput.onchange = () => Importer.loadFile(mainDesigner, fileInput.files[0], (n) => { if (n) projectNameInput.value = n; });
 
             downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
 

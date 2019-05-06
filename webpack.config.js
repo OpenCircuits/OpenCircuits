@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const fs   = require('fs');
@@ -54,9 +55,9 @@ var config = {
 
 module.exports = (env, argv) => {
 
-    if (argv.mode === 'development') {
-        // do some different stuff maybe
-    }
+    config.plugins.push(new webpack.DefinePlugin({
+        PRODUCTION: JSON.stringify(!(argv.mode === 'development'))
+    }));
 
     return config;
 };

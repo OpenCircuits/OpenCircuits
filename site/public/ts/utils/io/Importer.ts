@@ -6,20 +6,22 @@ import {CircuitDesigner} from "../../models/CircuitDesigner";
 export const Importer = (function() {
     let saved = false;
 
-    const readDocument = function(designer: CircuitDesigner, doc:XMLDocument) {
+    const readDocument = function(designer: CircuitDesigner, doc:XMLDocument, setName: (n: string) => void): void {
         let reader = new XMLReader(doc);
 
         // Check for old version of save
         if (reader.getVersion() == -1)
             ResolveVersionConflict(reader);
 
+        setName(reader.getName());
+
         designer.load(reader.getRoot());
     };
-    const read = function(designer: CircuitDesigner, file: string): string {
+    const read = function(designer: CircuitDesigner, file: string, setName: (n: string) => void): void {
         let root = <XMLDocument>new DOMParser().parseFromString(file, "text/xml");
         if (root.documentElement.nodeName == "parsererror")
             return;
-        readDocument(designer, root);
+        readDocument(designer, root, setName);
     };
 
     return {
@@ -47,7 +49,7 @@ export const Importer = (function() {
                 xhr.send();
             }
         },
-        loadFile: function(designer: CircuitDesigner, file: File) {
+        loadFile: function(designer: CircuitDesigner, file: File, setName: (n: string) => void): void {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             let open = confirm("Are you sure you want to overwrite your current scene?");
@@ -57,7 +59,7 @@ export const Importer = (function() {
 
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    read(designer, reader.result.toString());
+                    read(designer, reader.result.toString(), setName);
                 }
 
                 reader.readAsText(file);

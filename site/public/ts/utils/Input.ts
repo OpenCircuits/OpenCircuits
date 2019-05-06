@@ -33,8 +33,14 @@ export class Input {
         this.keysDown  = new Map();
         this.dragTime = dragTime;
 
-        window.addEventListener('keydown',  (e: KeyboardEvent) => this.onKeyDown(e), false);
-        window.addEventListener('keyup',    (e: KeyboardEvent) => this.onKeyUp(e), false);
+        window.addEventListener('keydown',  (e: KeyboardEvent) => {
+            if (!(document.activeElement instanceof HTMLInputElement))
+                this.onKeyDown(e)
+        }, false);
+        window.addEventListener('keyup',    (e: KeyboardEvent) => {
+            if (!(document.activeElement instanceof HTMLInputElement))
+                this.onKeyUp(e)
+        }, false);
 
         canvas.addEventListener('click',        (e: MouseEvent) => this.onClick(e),         false);
         canvas.addEventListener('dblclick',     (e: MouseEvent) => this.onDoubleClick(e),   false);

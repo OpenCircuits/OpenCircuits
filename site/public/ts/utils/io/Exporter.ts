@@ -8,15 +8,16 @@ export const Exporter = (function() {
     let saved = true; // TODO, set saved to true when saving file
                       //  but somehow set it to false anytime the circuit changes
 
-    const write = function(designer: CircuitDesigner): string {
+    const write = function(designer: CircuitDesigner, name: string): string {
         const writer = new XMLWriter(designer.getXMLName());
 
         writer.setVersion(1);
+        writer.setName(name);
 
         designer.save(writer.getRoot());
 
         return writer.serialize();
-    }
+    };
 
     // Prompt for exit
     window.onbeforeunload = function(e) {
@@ -29,10 +30,10 @@ export const Exporter = (function() {
 
     return {
         pushFile: function(designer: CircuitDesigner, projectName: string) {
-            const data = write(designer);
-
             if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
+
+            const data = write(designer, projectName);
 
             let xhr = new XMLHttpRequest();
             // TODO: this is BAD
@@ -50,11 +51,12 @@ export const Exporter = (function() {
 
         },
         saveFile: function(designer: CircuitDesigner, projectName: string) {
-            const data = write(designer);
-
             // Get name
             if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
+
+            const data = write(designer, projectName);
+
             const filename = projectName + ".circuit";
 
             const file = new Blob([data], {type: "text/plain"});
