@@ -34,7 +34,7 @@ describe("Rotate Tool", () => {
 
     let center = camera.getCenter();
 
-    var l = new ANDGate();
+    let l = new ANDGate();
     designer.addObject(l);
     l.setPos(V(0,0));
     it("Rotate an object from 3rd quadrant", () => {
