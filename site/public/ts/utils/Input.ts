@@ -125,7 +125,7 @@ export class Input {
             zoomFactor = 1.0 / zoomFactor;
 
         // call each listener
-        this.callListeners("scroll", zoomFactor);
+        this.callListeners("zoom", zoomFactor);
     }
     private onMouseDown(event: MouseEvent): void {
         const rect = this.canvas.getBoundingClientRect();

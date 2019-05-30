@@ -194,7 +194,7 @@ export const ICDesignerController = (function() {
             ICDesignerController.Render();
     }
 
-    const onScroll = function(zoom: number): void {
+    const onZoom = function(zoom: number): void {
         // Calculate position to zoom in/out of
         let pos0 = view.getCamera().getWorldPos(input.getMousePos());
         view.getCamera().zoomBy(zoom);
@@ -259,7 +259,7 @@ export const ICDesignerController = (function() {
             input.addListener("mouseup",   (b) => onMouseUp(b));
             input.addListener("keydown",   (b) => onKeyDown(b));
             input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("scroll", onScroll);
+            input.addListener("zoom",      (z) => onZoom(z));
 
             window.addEventListener("resize", _e => resize(), false);
         },
