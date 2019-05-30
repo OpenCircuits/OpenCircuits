@@ -52,7 +52,7 @@ export class Input {
         canvas.addEventListener('mouseleave',   (e: MouseEvent) => this.onMouseLeave(e),    false);
     }
 
-    public addListener(type: string, listener: (b?: number) => void): void {
+    public addListener(type: string, listener: (a?: any, b?: any) => void): void {
         let arr = this.listeners.get(type);
         if (arr == undefined)
             this.listeners.set(type, arr = []);
@@ -125,7 +125,7 @@ export class Input {
             zoomFactor = 1.0 / zoomFactor;
 
         // call each listener
-        this.callListeners("zoom", zoomFactor);
+        this.callListeners("zoom", this.mousePos, zoomFactor);
     }
     private onMouseDown(event: MouseEvent): void {
         const rect = this.canvas.getBoundingClientRect();
@@ -179,7 +179,7 @@ export class Input {
         //  mouse leaves
         this.callListeners("mouseup", 0);
     }
-    private callListeners(type: string, b?: number) {
+    private callListeners(type: string, a?: any, b?: any) {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {
