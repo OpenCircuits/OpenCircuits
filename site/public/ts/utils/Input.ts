@@ -7,6 +7,8 @@ import {DRAG_TIME,
 
 import {Vector,V} from "../utils/math/Vector";
 
+import * as Hammer from "hammerjs";
+
 export class Input {
     private canvas: HTMLCanvasElement;
     private prevMousePos: Vector;
@@ -18,8 +20,6 @@ export class Input {
 
     private isDragging: boolean;
     private startTapTime: number;
-
-    private zoomFactor: number;
 
     private listeners: Map<string, Array<(b?: number) => void> >;
 
@@ -86,9 +86,6 @@ export class Input {
     public getDeltaMousePos(): Vector {
         return this.mousePos.sub(this.prevMousePos);
     }
-    public getZoomFactor(): number {
-        return this.zoomFactor;
-    }
 
     private onKeyDown(event: KeyboardEvent): void {
         const code = event.keyCode;
@@ -123,12 +120,12 @@ export class Input {
         const delta = -event.deltaY / 120.0;
 
         // calculate zoom factor
-        this.zoomFactor = 0.95;
+        let zoomFactor = 0.95;
         if (delta < 0)
-            this.zoomFactor = 1.0 / this.zoomFactor;
+            zoomFactor = 1.0 / zoomFactor;
 
         // call each listener
-        this.callListeners("scroll", 0);
+        this.callListeners("scroll", zoomFactor);
     }
     private onMouseDown(event: MouseEvent): void {
         const rect = this.canvas.getBoundingClientRect();

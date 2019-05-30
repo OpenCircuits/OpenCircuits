@@ -194,13 +194,10 @@ export const ICDesignerController = (function() {
             ICDesignerController.Render();
     }
 
-    const onScroll = function(): void {
-        // @TODO move this stuff as well
-        let zoomFactor = input.getZoomFactor();
-
+    const onScroll = function(zoom: number): void {
         // Calculate position to zoom in/out of
         let pos0 = view.getCamera().getWorldPos(input.getMousePos());
-        view.getCamera().zoomBy(zoomFactor);
+        view.getCamera().zoomBy(zoom);
         let pos1 = view.getCamera().getScreenPos(pos0);
         let dPos = pos1.sub(input.getMousePos());
         view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
