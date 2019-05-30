@@ -15,6 +15,7 @@ class CircuitPageView {
         <meta name="theme-color" content="#999">
 
         <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+        <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 
         <link rel="stylesheet" href="css/stylesheet.css">
         <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">

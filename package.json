@@ -9,6 +9,7 @@
     "url": "git://github.com/OpenCircuits/OpenCircuits.git"
   },
   "devDependencies": {
+    "@types/hammerjs": "^2.0.36",
     "@types/jest": "^23.3.14",
     "copy-webpack-plugin": "^4.6.0",
     "jest": "^24.4.0",
