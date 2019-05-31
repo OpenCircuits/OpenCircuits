@@ -21,7 +21,9 @@ export class Input {
     private isDragging: boolean;
     private startTapTime: number;
 
-    private listeners: Map<string, Array<(b?: number) => void> >;
+    private touchCount: number;
+
+    private listeners: Map<string, Array<(a?: number, b?: number) => void> >;
 
     private keysDown: Map<number, boolean>;
 
@@ -32,7 +34,9 @@ export class Input {
         this.listeners = new Map();
         this.keysDown  = new Map();
         this.dragTime = dragTime;
+        this.touchCount = 0;
 
+        // Keyboard events
         window.addEventListener('keydown',  (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyDown(e)
@@ -42,14 +46,60 @@ export class Input {
                 this.onKeyUp(e)
         }, false);
 
-        canvas.addEventListener('click',        (e: MouseEvent) => this.onClick(e),         false);
-        canvas.addEventListener('dblclick',     (e: MouseEvent) => this.onDoubleClick(e),   false);
-        canvas.addEventListener('wheel',        (e: WheelEvent) => this.onScroll(e),        false);
-        canvas.addEventListener('mousedown',    (e: MouseEvent) => this.onMouseDown(e),     false);
-        canvas.addEventListener('mouseup',      (e: MouseEvent) => this.onMouseUp(e),       false);
-        canvas.addEventListener('mousemove',    (e: MouseEvent) => this.onMouseMove(e),     false);
-        canvas.addEventListener('mouseenter',   (e: MouseEvent) => this.onMouseEnter(e),    false);
-        canvas.addEventListener('mouseleave',   (e: MouseEvent) => this.onMouseLeave(e),    false);
+
+        // Mouse events
+        canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(e),         false);
+        canvas.addEventListener('dblclick',   (e: MouseEvent) => this.onDoubleClick(e),   false);
+        canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY)), false);
+        canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(  V(e.clientX, e.clientY)), false);
+        canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        canvas.addEventListener('mouseenter', (e: MouseEvent) => this.onMouseEnter(e),    false);
+        canvas.addEventListener('mouseleave', (e: MouseEvent) => this.onMouseLeave(e),    false);
+
+
+        // Touch screen events
+        canvas.addEventListener('touchstart', (e: TouchEvent) => {
+            this.touchCount = e.touches.length;
+            this.onMouseDown(this.calculateCenter(e.touches));
+
+            e.preventDefault();
+        }, false);
+
+        canvas.addEventListener('touchmove', (e: TouchEvent) => {
+            this.onMouseMove(this.calculateCenter(e.touches));
+
+            e.preventDefault();
+        }, false);
+
+        canvas.addEventListener('touchend', (e: TouchEvent) => {
+            this.touchCount = e.touches.length;
+            this.onMouseUp(V());
+
+            e.preventDefault();
+        }, false);
+
+
+        // Pinch to zoom
+        const touchManager = new Hammer.Manager(canvas, {recognizers: []});
+        let lastScale = 1;
+
+        touchManager.add(new Hammer.Pinch());
+        touchManager.on("pinch", (e) => {
+            this.callListeners("zoom", this.mousePos, lastScale/e.scale);
+            lastScale = e.scale;
+        });
+        touchManager.on("pinchend", (e) => {
+            lastScale = 1;
+        });
+    }
+
+    private calculateCenter(touches: TouchList): Vector {
+        // Calculate midpoint of all touches
+        let center = V(0,0);
+        for (let i = 0; i < touches.length; i++)
+            center = center.add(V(touches[i].clientX, touches[i].clientY));
+        return center.scale(1.0 / touches.length);
     }
 
     public addListener(type: string, listener: (a?: any, b?: any) => void): void {
@@ -87,6 +137,10 @@ export class Input {
         return this.mousePos.sub(this.prevMousePos);
     }
 
+    public getTouchCount(): number {
+        return this.touchCount;
+    }
+
     private onKeyDown(event: KeyboardEvent): void {
         const code = event.keyCode;
         this.keysDown.set(code, true);
@@ -101,6 +155,7 @@ export class Input {
         // call each listener
         this.callListeners("keyup", code);
     }
+
     private onClick(event: MouseEvent): void {
         // Don't call onclick if was dragging
         if (this.isDragging) {
@@ -116,44 +171,37 @@ export class Input {
         // call each listener
         this.callListeners("dblclick", 0);
     }
-    private onScroll(event: WheelEvent): void {
-        const delta = -event.deltaY / 120.0;
 
+    private onScroll(delta: number): void {
         // calculate zoom factor
         let zoomFactor = 0.95;
-        if (delta < 0)
+        if (delta >= 0)
             zoomFactor = 1.0 / zoomFactor;
 
         // call each listener
         this.callListeners("zoom", this.mousePos, zoomFactor);
     }
-    private onMouseDown(event: MouseEvent): void {
+
+    private onMouseDown(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
 
         // reset dragging and set mouse stuff
         this.isDragging = false;
         this.startTapTime = Date.now();
         this.mouseDown = true;
-        this.mouseDownPos = V(event.clientX - rect.left,
-                              event.clientY - rect.top);
+        this.mouseDownPos = pos.sub(V(rect.left, rect.top));
         this.mousePos = V(this.mouseDownPos);
 
         // call each listener
         this.callListeners("mousedown", 0);
     }
-    private onMouseUp(event: MouseEvent): void {
-        this.mouseDown = false;
-
-        // call each listener
-        this.callListeners("mouseup", 0);
-    }
-    private onMouseMove(event: MouseEvent): void {
+    private onMouseMove(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
+        this.rawMousePos  = pos;
         this.prevMousePos = V(this.mousePos);
-        this.rawMousePos  = V(event.clientX, event.clientY);
-        this.mousePos = this.rawMousePos.sub(V(rect.left, rect.top));
+        this.mousePos = pos.sub(V(rect.left, rect.top));
 
         // determine if mouse is dragging
         this.isDragging = (this.mouseDown &&
@@ -164,6 +212,13 @@ export class Input {
             this.callListeners("mousedrag", LEFT_MOUSE_BUTTON);
         this.callListeners("mousemove", 0);
     }
+    private onMouseUp(pos: Vector): void {
+        this.mouseDown = false;
+
+        // call each listener
+        this.callListeners("mouseup", 0);
+    }
+
     private onMouseEnter(event: MouseEvent): void {
         // call each listener
         this.callListeners("mouseenter", 0);
@@ -179,12 +234,13 @@ export class Input {
         //  mouse leaves
         this.callListeners("mouseup", 0);
     }
+
     private callListeners(type: string, a?: any, b?: any) {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {
             for (let listener of listeners)
-                listener(b);
+                listener(a, b);
         }
     }
 }
