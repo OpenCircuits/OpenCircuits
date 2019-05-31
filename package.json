@@ -23,5 +23,8 @@
     "build:prod": "webpack --mode=production",
     "build": "webpack --mode=development",
     "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "hammerjs": "^2.0.8"
   }
 }
