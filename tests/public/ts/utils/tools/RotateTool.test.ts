@@ -40,14 +40,14 @@ describe("Rotate Tool", () => {
     it("Rotate an object from 3rd quadrant", () => {
         let pos = l.getAngle();
 
-        input.onMouseDown({clientX: center.x, clientY: center.y});
-        input.onMouseUp({clientX: center.x, clientY: center.y});
+        input.onMouseDown(V(center.x, center.y));
+        input.onMouseUp(V(center.x, center.y));
         input.onClick({clientX: center.x, clientY: center.y, button: LEFT_MOUSE_BUTTON});
 
-        input.onMouseMove({clientX: center.x-ROTATION_CIRCLE_RADIUS, clientY: center.y});
-        input.onMouseDown({clientX: center.x-ROTATION_CIRCLE_RADIUS, clientY: center.y});
-        input.onMouseMove({clientX: center.x, clientY: center.y+ROTATION_CIRCLE_RADIUS});
-        input.onMouseUp({clientX: center.x, clientY: center.y+ROTATION_CIRCLE_RADIUS});
+        input.onMouseMove(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
+        input.onMouseDown(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
+        input.onMouseMove(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
+        input.onMouseUp(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
 
         let pos2 = l.getAngle();
 
@@ -57,14 +57,14 @@ describe("Rotate Tool", () => {
     it("Rotate an object from 4th quadrant", () => {
       let pos = l.getAngle();
 
-      input.onMouseDown({clientX: center.x, clientY: center.y});
-      input.onMouseUp({clientX: center.x, clientY: center.y});
+      input.onMouseDown(V(center.x, center.y));
+      input.onMouseUp(V(center.x, center.y));
       input.onClick({clientX: center.x, clientY: center.y, button: LEFT_MOUSE_BUTTON});
 
-      input.onMouseMove({clientX: center.x+ROTATION_CIRCLE_RADIUS, clientY: center.y});
-      input.onMouseDown({clientX: center.x+ROTATION_CIRCLE_RADIUS, clientY: center.y});
-      input.onMouseMove({clientX: center.x, clientY: center.y+ROTATION_CIRCLE_RADIUS});
-      input.onMouseUp({clientX: center.x, clientY: center.y+ROTATION_CIRCLE_RADIUS});
+      input.onMouseMove(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));
+      input.onMouseDown(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));
+      input.onMouseMove(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
+      input.onMouseUp(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
 
       let pos2 = l.getAngle();
 
