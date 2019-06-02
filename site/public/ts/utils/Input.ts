@@ -60,22 +60,17 @@ export class Input {
 
         // Touch screen events
         canvas.addEventListener('touchstart', (e: TouchEvent) => {
-            this.touchCount = e.touches.length;
             this.onMouseDown(this.calculateCenter(e.touches));
-
             e.preventDefault();
         }, false);
 
         canvas.addEventListener('touchmove', (e: TouchEvent) => {
             this.onMouseMove(this.calculateCenter(e.touches));
-
             e.preventDefault();
         }, false);
 
         canvas.addEventListener('touchend', (e: TouchEvent) => {
-            this.touchCount = e.touches.length;
             this.onMouseUp(V());
-
             e.preventDefault();
         }, false);
 
@@ -185,6 +180,8 @@ export class Input {
     private onMouseDown(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
 
+        this.touchCount++;
+
         // reset dragging and set mouse stuff
         this.isDragging = false;
         this.startTapTime = Date.now();
@@ -213,6 +210,7 @@ export class Input {
         this.callListeners("mousemove", 0);
     }
     private onMouseUp(pos: Vector): void {
+        this.touchCount--;
         this.mouseDown = false;
 
         // call each listener

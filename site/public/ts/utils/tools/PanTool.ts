@@ -12,8 +12,6 @@ export class PanTool extends Tool {
 
     private isDragging: boolean;
 
-    private initialTouches: number;
-
     public constructor(camera: Camera) {
         super();
 
@@ -25,7 +23,6 @@ export class PanTool extends Tool {
             return false;
 
         this.isDragging = false;
-        this.initialTouches = input.getTouchCount();
 
         return (event == "keydown" && button === OPTION_KEY ||
                 event == "mousedrag" && input.getTouchCount() == 2);
@@ -35,8 +32,7 @@ export class PanTool extends Tool {
         // Deactivate if stopped dragging by releasing mouse
         //  or if no dragging happened and OPTION_KEY was released
         return (event == "mouseup" ||
-               !this.isDragging && event == "keyup" && button === OPTION_KEY ||
-                input.getTouchCount() != this.initialTouches);
+               !this.isDragging && event == "keyup" && button === OPTION_KEY);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
