@@ -48,7 +48,7 @@ export class Input {
 
 
         // Mouse events
-        canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(e),         false);
+        canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
         canvas.addEventListener('dblclick',   (e: MouseEvent) => this.onDoubleClick(e),   false);
         canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
         canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY)), false);
@@ -86,6 +86,11 @@ export class Input {
         });
         touchManager.on("pinchend", (e) => {
             lastScale = 1;
+        });
+
+        touchManager.add(new Hammer.Tap());
+        touchManager.on("tap", (e) => {
+            this.onClick(V(e.center.x, e.center.y));
         });
     }
 
@@ -151,7 +156,7 @@ export class Input {
         this.callListeners("keyup", code);
     }
 
-    private onClick(event: MouseEvent): void {
+    private onClick(pos: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
         if (this.isDragging) {
             this.isDragging = false;
@@ -159,7 +164,7 @@ export class Input {
         }
 
         // call each listener
-        this.callListeners("click", event.button);
+        this.callListeners("click", button);
     }
     private onDoubleClick(event: MouseEvent): void {
 

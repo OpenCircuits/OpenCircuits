@@ -42,7 +42,7 @@ describe("Rotate Tool", () => {
 
         input.onMouseDown(V(center.x, center.y));
         input.onMouseUp(V(center.x, center.y));
-        input.onClick({clientX: center.x, clientY: center.y, button: LEFT_MOUSE_BUTTON});
+        input.onClick(V(center.x, center.y));
 
         input.onMouseMove(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
         input.onMouseDown(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
@@ -59,7 +59,7 @@ describe("Rotate Tool", () => {
 
       input.onMouseDown(V(center.x, center.y));
       input.onMouseUp(V(center.x, center.y));
-      input.onClick({clientX: center.x, clientY: center.y, button: LEFT_MOUSE_BUTTON});
+      input.onClick(V(center.x, center.y));
 
       input.onMouseMove(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));
       input.onMouseDown(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));

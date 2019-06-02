@@ -81,12 +81,12 @@ describe("Selection Tool", () => {
         if (!(x instanceof Vector))  {
             down(x, y);
             up(x, y);
-            input.onClick({clientX: x + CX, clientY: y + CY, button: LEFT_MOUSE_BUTTON});
+            input.onClick(V(x + CX, y + CY));
         }
         else {
             down(x);
             up(x);
-            input.onClick({clientX: x.x + CX, clientY: x.y + CY, button: LEFT_MOUSE_BUTTON});
+            input.onClick(V(x.x + CX, x.y + CY));
         }
     }
 
