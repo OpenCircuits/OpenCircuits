@@ -90,6 +90,9 @@ export class Input {
 
         touchManager.add(new Hammer.Tap());
         touchManager.on("tap", (e) => {
+            if (e.pointerType == "mouse")
+                return;
+
             this.onClick(V(e.center.x, e.center.y));
         });
     }
