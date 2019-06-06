@@ -1,4 +1,10 @@
-export const DEBUG_SHOW_CULLBOXES = false;
+export const DEBUG_CULLBOXES = false;
+export const DEBUG_CULLBOXES_FILL_COLOR   = "#00ff00";
+export const DEBUG_CULLBOXES_STROKE_COLOR = "#000000";
+
+export const DEBUG_SELECTION_BOUNDS = false;
+export const DEBUG_SELECTIONS_FILL_COLOR   = "#ff00ff";
+export const DEBUG_SELECTIONS_STROKE_COLOR = "#000000";
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
@@ -14,6 +20,7 @@ export const DRAG_TIME = 50;
 
 export const IO_PORT_LENGTH = 60;
 export const IO_PORT_RADIUS = 7;
+export const IO_PORT_SELECT_RADIUS = IO_PORT_RADIUS + 10;
 export const IO_PORT_BORDER_WIDTH = 1;
 export const IO_PORT_LINE_WIDTH   = 2;
 
