@@ -2,6 +2,8 @@ import "jest";
 
 import {OPTION_KEY} from "../../../../../site/public/ts/utils/Constants";
 
+import {V} from "../../../../../site/public/ts/utils/math/Vector";
+
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
@@ -32,11 +34,11 @@ describe("Pan Tool", () => {
     it("Drag without option key", () => {
         let pos = camera.getPos();
 
-        input.onMouseDown({clientX: center.x, clientY: center.y});
-        input.onMouseMove({clientX: center.x- 5, clientY: center.y});
-        input.onMouseMove({clientX: center.x-10, clientY: center.y});
-        input.onMouseMove({clientX: center.x-15, clientY: center.y});
-        input.onMouseUp({clientX: center.x-15, clientY: center.y});
+        input.onMouseDown(center);
+        input.onMouseMove(V(center.x- 5, center.y));
+        input.onMouseMove(V(center.x-10, center.y));
+        input.onMouseMove(V(center.x-15, center.y));
+        input.onMouseUp(V(center.x-15, center.y));
 
         let pos2 = camera.getPos();
 
@@ -47,11 +49,11 @@ describe("Pan Tool", () => {
         let pos = camera.getPos();
 
         input.onKeyDown({keyCode: OPTION_KEY})
-        input.onMouseDown({clientX: center.x, clientY: center.y});
-        input.onMouseMove({clientX: center.x- 5, clientY: center.y});
-        input.onMouseMove({clientX: center.x-10, clientY: center.y});
-        input.onMouseMove({clientX: center.x-15, clientY: center.y});
-        input.onMouseUp({clientX: center.x-15, clientY: center.y});
+        input.onMouseDown(V(center.x, center.y));
+        input.onMouseMove(V(center.x- 5, center.y));
+        input.onMouseMove(V(center.x-10, center.y));
+        input.onMouseMove(V(center.x-15, center.y));
+        input.onMouseUp(V(center.x-15, center.y));
         input.onKeyUp({keyCode: OPTION_KEY});
 
         let pos2 = camera.getPos();
@@ -63,9 +65,9 @@ describe("Pan Tool", () => {
         let pos = camera.getPos();
 
         input.onKeyDown({keyCode: OPTION_KEY})
-        input.onMouseDown({clientX: center.x, clientY: center.y});
+        input.onMouseDown(V(center.x, center.y));
         input.onKeyUp({keyCode: OPTION_KEY});
-        input.onMouseUp({clientX: center.x, clientY: center.y});
+        input.onMouseUp(V(center.x, center.y));
 
         let pos2 = camera.getPos();
 
