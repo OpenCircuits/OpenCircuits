@@ -1,3 +1,5 @@
+import {Vector} from "../utils/math/Vector";
+
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
@@ -74,16 +76,8 @@ export const MainDesignerController = (function() {
             MainDesignerController.Render();
     }
 
-    const onScroll = function(): void {
-        // @TODO move this stuff as well
-        let zoomFactor = input.getZoomFactor();
-
-        // Calculate position to zoom in/out of
-        let pos0 = view.getCamera().getWorldPos(input.getMousePos());
-        view.getCamera().zoomBy(zoomFactor);
-        let pos1 = view.getCamera().getScreenPos(pos0);
-        let dPos = pos1.sub(input.getMousePos());
-        view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
+    const onZoom = function(zoom: number, center: Vector): void {
+        view.getCamera().zoomTo(center, zoom);
 
         SelectionPopupController.Update();
         MainDesignerController.Render();
@@ -114,7 +108,7 @@ export const MainDesignerController = (function() {
             input.addListener("mouseup",   (b) => onMouseUp(b));
             input.addListener("keydown",   (b) => onKeyDown(b));
             input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("scroll", onScroll);
+            input.addListener("zoom",    (z,c) => onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
 

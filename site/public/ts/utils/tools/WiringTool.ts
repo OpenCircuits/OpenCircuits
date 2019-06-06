@@ -1,4 +1,5 @@
-import {IO_PORT_RADIUS} from "../Constants";
+import {IO_PORT_RADIUS,
+        IO_PORT_SELECT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Port} from "../../models/ioobjects/Port";
@@ -49,7 +50,7 @@ export class WiringTool extends Tool {
             let obj = objects[i];
             // Check if a port was clicked
             for (let p of obj.getPorts()) {
-                if (CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)) {
+                if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Input ports can only have one input
                     // so if one was clicked, then don't
                     // start a new wire
@@ -115,7 +116,7 @@ export class WiringTool extends Tool {
 
             // Check if a port was clicked
             for (let p of obj.getPorts()) {
-                if (CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)) {
+                if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Connect ports
                     if (this.port instanceof InputPort && p instanceof OutputPort)
                         this.wire = this.designer.createWire(p, this.port);
@@ -141,7 +142,7 @@ export class WiringTool extends Tool {
     public getAction(): Action {
         if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
             return undefined;
-        
+
         return new ConnectionAction(this.wire);
     }
 
