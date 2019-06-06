@@ -1,4 +1,6 @@
-import {DEBUG_SHOW_CULLBOXES,
+import {DEBUG_CULLBOXES,
+        DEBUG_CULLBOXES_FILL_COLOR,
+        DEBUG_CULLBOXES_STROKE_COLOR,
         DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
@@ -31,11 +33,11 @@ export const WireRenderer = (function() {
                 renderer.curve(p1.x, p1.y, p2.x, p2.y, c1.x, c1.y, c2.x, c2.y, color, WIRE_THICKNESS / camera.getZoom());
             }
 
-            if (DEBUG_SHOW_CULLBOXES) {
+            if (DEBUG_CULLBOXES) {
                 renderer.save();
                 const cullBox = wire.getCullBox();
                 renderer.transform(camera, cullBox);
-                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, '#ff00ff', '#000000', 0, 0.5);
+                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, DEBUG_CULLBOXES_FILL_COLOR, DEBUG_CULLBOXES_STROKE_COLOR, 0, 0.5);
                 renderer.restore();
             }
         }

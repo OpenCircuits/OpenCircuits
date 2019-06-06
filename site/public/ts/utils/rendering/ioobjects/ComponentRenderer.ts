@@ -1,4 +1,6 @@
-import {DEBUG_SHOW_CULLBOXES,
+import {DEBUG_CULLBOXES,
+        DEBUG_CULLBOXES_FILL_COLOR,
+        DEBUG_CULLBOXES_STROKE_COLOR,
         DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
@@ -102,11 +104,11 @@ export const ComponentRenderer = (function() {
 
             renderer.restore();
 
-            if (DEBUG_SHOW_CULLBOXES) {
+            if (DEBUG_CULLBOXES) {
                 renderer.save();
                 let cullBox = object.getCullBox();
                 renderer.transform(camera, cullBox);
-                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, '#ff00ff', '#000000', 0, 0.5);
+                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, DEBUG_CULLBOXES_FILL_COLOR, DEBUG_CULLBOXES_STROKE_COLOR, 1, 0.5);
                 renderer.restore();
             }
         }
