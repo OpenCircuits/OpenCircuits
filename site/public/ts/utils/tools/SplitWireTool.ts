@@ -30,6 +30,8 @@ export class SplitWireTool extends TranslateTool {
             return false;
         if (!(event == "mousedrag"))
             return false;
+        if (!(input.getTouchCount() == 1))
+            return false;
 
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 

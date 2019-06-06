@@ -93,7 +93,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
         // Check if any tool should be activated
         for (let tool of this.tools) {
-            if (tool.isDisabled())
+            if (tool.isDisabled() || tool == this.currentTool)
                 continue;
 
             if (tool.activate(this.currentTool, event, input, button)) {

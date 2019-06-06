@@ -24,7 +24,8 @@ export class PanTool extends Tool {
 
         this.isDragging = false;
 
-        return (event == "keydown" && button === OPTION_KEY);
+        return (event == "keydown" && button === OPTION_KEY ||
+                event == "mousedrag" && input.getTouchCount() == 2);
     }
 
     public deactivate(event: string, input: Input, button?: number): boolean {
@@ -36,7 +37,6 @@ export class PanTool extends Tool {
 
     public onMouseDrag(input: Input, button: number): boolean {
         if (button === LEFT_MOUSE_BUTTON) {
-
             this.isDragging = true;
 
             const dPos = input.getDeltaMousePos();

@@ -35,6 +35,8 @@ export class RotateTool extends Tool {
             return false;
         if (!(event == "mousedown"))
             return false;
+        if (!(input.getTouchCount() == 1))
+            return false;
 
         let selections = currentTool.getSelections();
         if (selections.length == 0)

@@ -272,7 +272,7 @@ export class SelectionTool extends Tool {
     public onMouseDrag(input: Input, button: number): boolean {
         // Update positions of selection
         //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections) {
+        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections && input.getTouchCount() == 1) {
             this.selecting = true;
 
             // Update selection box positions
