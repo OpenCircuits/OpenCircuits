@@ -1,23 +1,13 @@
-import {LEFT_MOUSE_BUTTON,
-        OPTION_KEY,
-        SHIFT_KEY,
-        IO_PORT_RADIUS,
-        IO_PORT_LENGTH,
+import {IO_PORT_LENGTH,
         IO_PORT_LINE_WIDTH,
-        DEFAULT_BORDER_WIDTH,
-        ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2} from "../utils/Constants";
+        DEFAULT_BORDER_WIDTH} from "../utils/Constants";
 
 import {Vector, V} from "../utils/math/Vector";
 import {Transform} from "../utils/math/Transform";
 import {RectContains,
-        CircleContains,
         GetNearestPointOnRect} from "../utils/math/MathUtils";
-import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
-import {Action} from "../utils/actions/Action";
-import {ActionManager} from "../utils/actions/ActionManager";
 
 import {TranslateTool} from "../utils/tools/TranslateTool";
 import {RotateTool} from "../utils/tools/RotateTool";
@@ -30,12 +20,8 @@ import {ICDesignerView} from "../views/ICDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
 
-import {MouseListener} from "../utils/MouseListener";
-
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Port} from "../models/ioobjects/Port";
-import {InputPort} from "../models/ioobjects/InputPort";
-import {OutputPort} from "../models/ioobjects/OutputPort";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
@@ -194,7 +180,7 @@ export const ICDesignerController = (function() {
             ICDesignerController.Render();
     }
 
-    const onZoom = function(center: Vector, zoom: number): void {
+    const onZoom = function(zoom: number, center: Vector): void {
         view.getCamera().zoomTo(center, zoom);
 
         ICDesignerController.Render();
@@ -254,7 +240,7 @@ export const ICDesignerController = (function() {
             input.addListener("mouseup",   (b) => onMouseUp(b));
             input.addListener("keydown",   (b) => onKeyDown(b));
             input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("zoom",    (c,z) => onZoom(c,z));
+            input.addListener("zoom",    (z,c) => onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
         },
