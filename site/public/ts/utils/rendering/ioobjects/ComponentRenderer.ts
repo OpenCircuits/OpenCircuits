@@ -1,4 +1,4 @@
-import {DEBUG_SHOW_CULLBOXES,
+import {DEBUG_CULLBOXES,
         DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
@@ -102,7 +102,7 @@ export const ComponentRenderer = (function() {
 
             renderer.restore();
 
-            if (DEBUG_SHOW_CULLBOXES) {
+            if (DEBUG_CULLBOXES) {
                 renderer.save();
                 let cullBox = object.getCullBox();
                 renderer.transform(camera, cullBox);
