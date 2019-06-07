@@ -23,7 +23,7 @@ export class Input {
 
     private touchCount: number;
 
-    private listeners: Map<string, Array<(a?: number, b?: number) => void> >;
+    private listeners: Map<string, Array<(a?: number, b?: Vector) => void> >;
 
     private keysDown: Map<number, boolean>;
 
@@ -81,10 +81,10 @@ export class Input {
 
         touchManager.add(new Hammer.Pinch());
         touchManager.on("pinch", (e) => {
-            this.callListeners("zoom", this.mousePos, lastScale/e.scale);
+            this.callListeners("zoom", lastScale/e.scale, this.mousePos);
             lastScale = e.scale;
         });
-        touchManager.on("pinchend", (e) => {
+        touchManager.on("pinchend", (_) => {
             lastScale = 1;
         });
 
@@ -97,15 +97,15 @@ export class Input {
         });
     }
 
-    private calculateCenter(touches: TouchList): Vector {
+    private calculateCenter(touchList: TouchList): Vector {
         // Calculate midpoint of all touches
-        let center = V(0,0);
-        for (let i = 0; i < touches.length; i++)
-            center = center.add(V(touches[i].clientX, touches[i].clientY));
-        return center.scale(1.0 / touches.length);
+        const touches = Array.from(touchList);
+        return touches.reduce((sum, touch) =>
+                    sum.add(V(touch.clientX, touch.clientY)), V(0,0))
+                    .scale(1.0 / touches.length);
     }
 
-    public addListener(type: string, listener: (a?: any, b?: any) => void): void {
+    public addListener(type: string, listener: (a?: number, b?: Vector) => void): void {
         let arr = this.listeners.get(type);
         if (arr == undefined)
             this.listeners.set(type, arr = []);
@@ -182,7 +182,7 @@ export class Input {
             zoomFactor = 1.0 / zoomFactor;
 
         // call each listener
-        this.callListeners("zoom", this.mousePos, zoomFactor);
+        this.callListeners("zoom", zoomFactor, this.mousePos);
     }
 
     private onMouseDown(pos: Vector): void {
@@ -241,7 +241,7 @@ export class Input {
         this.callListeners("mouseup", 0);
     }
 
-    private callListeners(type: string, a?: any, b?: any) {
+    private callListeners(type: string, a?: number, b?: Vector) {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {

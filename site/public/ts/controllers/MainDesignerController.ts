@@ -76,7 +76,7 @@ export const MainDesignerController = (function() {
             MainDesignerController.Render();
     }
 
-    const onZoom = function(center: Vector, zoom: number): void {
+    const onZoom = function(zoom: number, center: Vector): void {
         view.getCamera().zoomTo(center, zoom);
 
         SelectionPopupController.Update();
@@ -108,7 +108,7 @@ export const MainDesignerController = (function() {
             input.addListener("mouseup",   (b) => onMouseUp(b));
             input.addListener("keydown",   (b) => onKeyDown(b));
             input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("zoom",    (c,z) => onZoom(c,z));
+            input.addListener("zoom",    (z,c) => onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
 
