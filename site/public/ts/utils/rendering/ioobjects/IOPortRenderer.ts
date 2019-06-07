@@ -4,11 +4,7 @@ import {DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         IO_PORT_LINE_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_SELECT_RADIUS,
-        IO_PORT_BORDER_WIDTH,
-        DEBUG_SELECTION_BOUNDS,
-        DEBUG_SELECTIONS_FILL_COLOR,
-        DEBUG_SELECTIONS_STROKE_COLOR} from "../../Constants";
+        IO_PORT_BORDER_WIDTH} from "../../Constants";
 
 import {Renderer} from "../Renderer";
 import {Port} from "../../../models/ioobjects/Port";
@@ -25,10 +21,6 @@ export const IOPortRenderer = (function() {
             const borderCol = (selected || portSelected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const circleFillCol = (selected || portSelected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             renderer.circle(v.x, v.y, IO_PORT_RADIUS, circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
-
-            if (DEBUG_SELECTION_BOUNDS) {
-                renderer.circle(v.x, v.y, IO_PORT_SELECT_RADIUS, DEBUG_SELECTIONS_FILL_COLOR, DEBUG_SELECTIONS_STROKE_COLOR, 1, 0.5);
-            }
         }
     };
 })();

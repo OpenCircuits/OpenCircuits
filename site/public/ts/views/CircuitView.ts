@@ -1,6 +1,7 @@
 import {Camera}            from "../utils/Camera";
 import {Renderer}          from "../utils/rendering/Renderer";
 import {Grid}              from "../utils/rendering/Grid";
+import {DebugRenderer}     from "../utils/rendering/DebugRenderer";
 import {ToolRenderer}      from "../utils/rendering/ToolRenderer";
 import {WireRenderer}      from "../utils/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer";
@@ -51,6 +52,9 @@ export class CircuitView {
 
         // Render current tool
         ToolRenderer.render(this.renderer, this.camera, toolManager);
+
+        // Render debug visualizations
+        DebugRenderer.render(this.renderer, this.camera, designer.getObjects(), designer.getWires());
     }
 
     public resize(): void {
