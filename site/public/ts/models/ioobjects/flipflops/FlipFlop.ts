@@ -2,8 +2,8 @@ import {Vector,V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
-import {Port} from "../Port";
-import {InputPort} from "../InputPort";
+import {Port} from "../../ports/Port";
+import {InputPort} from "../../ports/InputPort";
 
 //
 // FlipFlop is an abstract superclass for general flip flops.

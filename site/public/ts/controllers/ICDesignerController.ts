@@ -21,7 +21,7 @@ import {ICDesignerView} from "../views/ICDesignerView";
 import {ToolManager} from "../utils/tools/ToolManager";
 
 import {IOObject} from "../models/ioobjects/IOObject";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 

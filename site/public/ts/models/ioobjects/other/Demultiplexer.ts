@@ -3,8 +3,8 @@ import {DEFAULT_SIZE,
 import {V} from "../../../utils/math/Vector";
 import {Component} from "../Component";
 import {ClampedValue} from "../../../utils/ClampedValue";
-import {InputPort}from "../../../models/ioobjects/InputPort";
-import {Port}from "../../../models/ioobjects/Port";
+import {InputPort}from "../../../models/ports/InputPort";
+import {Port}from "../../../models/ports/Port";
 
 export class Demultiplexer extends Component {
 	private selectLines: Array<InputPort>;

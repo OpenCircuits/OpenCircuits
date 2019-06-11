@@ -1,8 +1,9 @@
 import {V} from "../../utils/math/Vector";
 
-import {Component} from "./Component";
+import {Component} from "../ioobjects/Component";
+import {Wire}      from "../ioobjects/Wire";
+
 import {Port}	   from "./Port";
-import {Wire}      from "./Wire";
 
 export class OutputPort extends Port {
     private connections: Array<Wire>;

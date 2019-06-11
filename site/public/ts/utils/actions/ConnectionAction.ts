@@ -1,7 +1,7 @@
 import {Action} from "./Action";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {InputPort} from "../../models/ioobjects/InputPort";
-import {OutputPort} from "../../models/ioobjects/OutputPort";
+import {InputPort} from "../../models/ports/InputPort";
+import {OutputPort} from "../../models/ports/OutputPort";
 import {Wire} from "../../models/ioobjects/Wire";
 
 export class ConnectionAction implements Action {

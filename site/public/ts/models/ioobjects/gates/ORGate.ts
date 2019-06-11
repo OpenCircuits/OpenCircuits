@@ -4,8 +4,8 @@ import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {Gate} from "./Gate";
 
-import {Port} from "../Port";
-import {OutputPort} from "../OutputPort";
+import {Port} from "../../ports/Port";
+import {OutputPort} from "../../ports/OutputPort";
 
 export class ORGate extends Gate {
 

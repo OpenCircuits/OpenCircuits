@@ -2,7 +2,7 @@ import {V, Vector} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
-import {Port} from "../Port";
+import {Port} from "../../ports/Port";
 
 //
 // Latch is an abstract superclass for general latches.

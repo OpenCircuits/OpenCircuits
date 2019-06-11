@@ -1,7 +1,7 @@
 import {IO_PORT_LENGTH} from "../../utils/Constants";
 import {Vector,V} from "../../utils/math/Vector";
 
-import {Component} from "./Component";
+import {Component} from "../ioobjects/Component";
 
 export abstract class Port {
     protected parent: Component;

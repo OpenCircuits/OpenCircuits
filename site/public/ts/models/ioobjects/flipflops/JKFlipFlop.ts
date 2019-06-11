@@ -1,6 +1,6 @@
 import {V} from "../../../utils/math/Vector";
 import {FlipFlop} from "./FlipFlop";
-import {Port} from "../Port";
+import {Port} from "../../ports/Port";
 
 export class JKFlipFlop extends FlipFlop {
 

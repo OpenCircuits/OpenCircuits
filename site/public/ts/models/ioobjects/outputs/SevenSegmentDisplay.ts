@@ -2,7 +2,7 @@ import {IO_PORT_RADIUS} from "../../../utils/Constants";
 import {Vector, V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
-import {Port} from "../Port";
+import {Port} from "../../ports/Port";
 
 export class SevenSegmentDisplay extends Component {
     public constructor() {
