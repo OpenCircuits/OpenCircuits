@@ -5,78 +5,31 @@ import {DEFAULT_BORDER_WIDTH,
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {RectContains} from "../../utils/math/MathUtils";
-import {ClampedValue} from "../../utils/ClampedValue";
 import {XMLNode}      from "../../utils/io/xml/XMLNode";
 
+import {Port}       from "../ports/Port";
+import {InputPort}  from "../ports/InputPort";
+import {OutputPort} from "../ports/OutputPort";
+import {InputPortSet,
+        OutputPortSet} from "../ports/PortSets";
+        
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
-import {Port}       from "./Port";
-import {InputPort}  from "./InputPort";
-import {OutputPort} from "./OutputPort";
 
 export abstract class Component extends CullableObject {
-    protected inputs: Array<InputPort>;
-    protected outputs: Array<OutputPort>;
-
-    protected inputPortCount: ClampedValue;
-    protected outputPortCount: ClampedValue;
+    protected inputs:  InputPortSet;
+    protected outputs: OutputPortSet;
 
     protected transform: Transform;
 
-    // constructor(context, x, y, w, h, img, isPressable, maxInputs, maxOutputs, selectionBoxWidth, selectionBoxHeight) {
-	protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector) {
+	protected constructor(inputPorts: InputPortSet, outputPorts: OutputPortSet, size: Vector) {
         super();
 
-        this.inputPortCount = inputPortCount;
-        this.outputPortCount = outputPortCount;
-
-		this.inputs = [];
-		this.outputs = [];
+        this.inputs = inputPorts;
+        this.outputs = outputPorts;
 
         this.transform = new Transform(V(0,0), size, 0);
-
-		// Create ports
-        this.setInputPortCount(inputPortCount.getValue());
-        this.setOutputPortCount(outputPortCount.getValue());
 	}
-
-    /**
-     * Default behavior for port positioning to
-     *  be evenly spaced along the height of this
-     *  component.
-     * @param arr The array of ports (either in or out ports)
-     */
-    protected updatePortPositions(arr: Array<Port>): void {
-        for (let i = 0; i < arr.length; i++) {
-            // Calculate y position of port
-            let l = -this.transform.getSize().y/2*(i - arr.length/2 + 0.5);
-            if (i === 0) l--;
-            if (i === arr.length-1) l++;
-
-            let port = arr[i];
-            port.setOriginPos(V(port.getOriginPos().x, l));
-            port.setTargetPos(V(port.getTargetPos().x, l));
-        }
-    }
-
-    protected setPortCount(arr: Array<Port>, val: ClampedValue, newVal: number, type: typeof InputPort | typeof OutputPort) {
-        // no need to update if value is already
-        //  the current amount
-        if (newVal == arr.length)
-            return;
-
-        // set count (will auto-clamp)
-        val.setValue(newVal);
-
-        // add or remove ports to meet target
-        while (arr.length > val.getValue())
-            arr.pop();
-        while (arr.length < val.getValue())
-            arr.push(new type(this));
-
-        // update positions
-        this.updatePortPositions(arr);
-    }
 
     /**
      * Activates this component with the given signal
@@ -87,18 +40,18 @@ export abstract class Component extends CullableObject {
      */
 	public activate(signal: boolean, i: number = 0): void {
 		// Don't try to activate an Output component since it has no outputs
-		if (this.outputs.length == 0)
+		if (this.outputs.isEmpty())
 			return;
 
-		this.outputs[i].activate(signal);
+		this.outputs.get(i).activate(signal);
 	}
 
 	public connect(i: number, w: Wire) : void {
-		this.outputs[i].connect(w);
+		this.outputs.get(i).connect(w);
 	}
 
 	public setInput(i: number, w: Wire): void {
-		this.inputs[i].setInput(w);
+		this.inputs.get(i).setInput(w);
 	}
 
     /**
@@ -108,7 +61,7 @@ export abstract class Component extends CullableObject {
      * @param val The new number of ports
      */
     public setInputPortCount(val: number): void {
-        this.setPortCount(this.inputs, this.inputPortCount, val, InputPort);
+        this.inputs.setPortCount(val);
     }
 
     /**
@@ -118,7 +71,7 @@ export abstract class Component extends CullableObject {
      * @param val The new number of ports
      */
     public setOutputPortCount(val: number): void {
-        this.setPortCount(this.outputs, this.outputPortCount, val, OutputPort);
+        this.outputs.setPortCount(val);
     }
 
     public setPos(v: Vector): void {
@@ -163,51 +116,41 @@ export abstract class Component extends CullableObject {
     }
 
 	public getInputPort(i: number): InputPort {
-		return this.inputs[i];
+		return this.inputs.get(i);
 	}
 
     public getInputPortCount(): number {
-        return this.inputs.length;
+        return this.inputs.getLength();
     }
 
     public getInputPorts(): Array<InputPort> {
-        return this.inputs.slice(); // Shallow copy
+        return this.inputs.getPorts();
     }
 
     public getInputs(): Array<Wire> {
-        let arr = [];
-        for (let i = 0; i < this.inputs.length; i++) {
-            let input = this.inputs[i].getInput();
-            if (input != undefined)
-                arr.push(input);
-        }
-        return arr;
+        // Get each wire connected to each InputPort and then filter out the null ones
+        return this.getInputPorts().map((p) => p.getInput()).filter((w) => w != null);
     }
 
 	public getOutputPort(i: number): OutputPort {
-		return this.outputs[i];
+		return this.outputs.get(i);
 	}
 
     public getOutputPortCount(): number {
-        return this.outputs.length;
+        return this.outputs.getLength();
     }
 
     public getOutputPorts(): Array<OutputPort> {
-        return this.outputs.slice(); // Shallow copy
+        return this.outputs.getPorts();
     }
 
     public getOutputs(): Array<Wire> {
-        let arr: Array<Wire> = [];
-        for (let i = 0; i < this.outputs.length; i++)
-            arr = arr.concat(this.outputs[i].getConnections());
-        return arr;
+        // Accumulate all the OutputPort connections
+        return this.getOutputPorts().reduce((acc, p) => acc.concat(p.getConnections()), []);
     }
 
     public getPorts(): Array<Port> {
-        let ports: Array<Port> = [];
-        ports = ports.concat(this.getInputPorts());
-        ports = ports.concat(this.getOutputPorts());
-        return ports;
+        return (<Array<Port>>this.getInputPorts()).concat(this.getOutputPorts());
     }
 
     public getPos(): Vector {
@@ -267,18 +210,9 @@ export abstract class Component extends CullableObject {
 
         // Copy properties
         copy.transform = this.transform.copy();
-        copy.inputPortCount  = this.inputPortCount.copy();
-        copy.outputPortCount = this.outputPortCount.copy();
-        copy.setInputPortCount(this.getInputPortCount());
-        copy.setOutputPortCount(this.getOutputPortCount());
 
-        // Copy port positions
-        let ports = this.getPorts();
-        let copyPorts = copy.getPorts();
-        for (let i = 0; i < ports.length; i++) {
-            copyPorts[i].setOriginPos(ports[i].getOriginPos());
-            copyPorts[i].setTargetPos(ports[i].getTargetPos());
-        }
+        copy.inputs = this.inputs.copy(copy);
+        copy.outputs = this.outputs.copy(copy);
 
         return copy;
     }
