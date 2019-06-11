@@ -9,7 +9,8 @@ import {TransformContains,
         BezierContains,
         RectContains} from "../math/MathUtils";
 import {SeparatedComponentCollection,
-        GatherGroup} from "../ComponentUtils";
+        GatherGroup,
+        GetAllPorts} from "../ComponentUtils";
 
 import {Tool} from "./Tool";
 
@@ -323,7 +324,7 @@ export class SelectionTool extends Tool {
                 // Select ports if we haven't selected any regular objects
                 if (!this.selections.some((s) => s instanceof IOObject)) {
                     // Get all ports from each object
-                    const ports = objects.map((obj) => obj.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), new Array<Port>());
+                    const ports = GetAllPorts(objects);
 
                     // Filter out ports within the selection box
                     const portSelections = ports.filter((port) => RectContains(box, port.getWorldTargetPos()));

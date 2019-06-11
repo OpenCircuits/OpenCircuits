@@ -218,7 +218,7 @@ export const ICDesignerController = (function() {
             toolManager = new ToolManager(view.getCamera(), designer);
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
-                            ic,
+                            [], [],
                             toolManager));
 
             // Disable some tools

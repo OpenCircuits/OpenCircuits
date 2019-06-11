@@ -1,5 +1,4 @@
-import {DEBUG_CULLBOXES,
-        DEFAULT_FILL_COLOR,
+import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
@@ -101,14 +100,6 @@ export const ComponentRenderer = (function() {
             IOLabelRenderer.render(renderer, camera, object);
 
             renderer.restore();
-
-            if (DEBUG_CULLBOXES) {
-                renderer.save();
-                let cullBox = object.getCullBox();
-                renderer.transform(camera, cullBox);
-                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, '#ff00ff', '#000000', 0, 0.5);
-                renderer.restore();
-            }
         }
     };
 })();

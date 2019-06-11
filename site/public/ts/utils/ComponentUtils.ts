@@ -9,6 +9,7 @@ import {Component} from "../models/ioobjects/Component";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
+import {Port} from "../models/ioobjects/Port";
 import {InputPort} from "../models/ioobjects/InputPort";
 import {OutputPort} from "../models/ioobjects/OutputPort";
 import {Wire} from "../models/ioobjects/Wire";
@@ -44,6 +45,11 @@ export class SeparatedComponentCollection {
     public getAllComponents(): Array<Component> {
         return this.inputs.concat(this.components, this.outputs);
     }
+
+    public getEverything(): Array<IOObject> {
+        return (<Array<IOObject>>this.getAllComponents()).concat(this.wires);
+    }
+
 }
 
 /**
@@ -58,7 +64,7 @@ export function CreateWire(p1: OutputPort, p2: InputPort): Wire {
         throw new Error("Cannot create Wire! Input port already has an input!");
 
     // Make wire
-    let wire = new Wire(p1, p2);
+    const wire = new Wire(p1, p2);
 
     // Connect ports to wire
     p1.connect(wire);
@@ -79,6 +85,19 @@ export function CreateWire(p1: OutputPort, p2: InputPort): Wire {
  */
 export function Connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
     return CreateWire(c1.getOutputPort(i1), c2.getInputPort(i2));
+}
+
+/**
+ * Helper function to retrieve a list of all the Input/Output ports
+ *  from the given list of objects/wires
+ *
+ * @param  objects The list of objects to get ports from
+ * @return    All the ports attached to the given list of objects
+ */
+export function GetAllPorts(objects: Array<Component> | SeparatedComponentCollection): Array<Port> {
+    const objs = (objects instanceof Array) ? (objects) : (objects.getAllComponents());
+
+    return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
 }
 
 /**

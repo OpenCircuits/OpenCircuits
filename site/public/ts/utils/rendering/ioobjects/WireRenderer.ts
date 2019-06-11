@@ -1,5 +1,4 @@
-import {DEBUG_CULLBOXES,
-        DEFAULT_FILL_COLOR,
+import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
         WIRE_THICKNESS} from "../../Constants";
@@ -29,14 +28,6 @@ export const WireRenderer = (function() {
                 const c2 = camera.getScreenPos(curve.getC2());
 
                 renderer.curve(p1.x, p1.y, p2.x, p2.y, c1.x, c1.y, c2.x, c2.y, color, WIRE_THICKNESS / camera.getZoom());
-            }
-
-            if (DEBUG_CULLBOXES) {
-                renderer.save();
-                const cullBox = wire.getCullBox();
-                renderer.transform(camera, cullBox);
-                renderer.rect(0, 0, cullBox.getSize().x, cullBox.getSize().y, '#ff00ff', '#000000', 0, 0.5);
-                renderer.restore();
             }
         }
     };
