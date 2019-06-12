@@ -2,12 +2,12 @@ import {Vector} from "../../math/Vector";
 
 import {Shape} from "./Shape";
 
-export class Circle extends Shape {
+export class Circle implements Shape {
+    protected pos: Vector;
     protected radius: number;
 
     public constructor(pos: Vector, radius: number) {
-        super(pos);
-
+        this.pos = pos;
         this.radius = radius;
     }
 
