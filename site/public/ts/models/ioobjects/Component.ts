@@ -28,10 +28,10 @@ export abstract class Component extends CullableObject {
                             inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super();
 
+        this.transform = new Transform(V(0,0), size, 0);
+
         this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
         this.outputs = new OutputPortSet(this, outputPortCount, outputPositioner);
-
-        this.transform = new Transform(V(0,0), size, 0);
 	}
 
     /**

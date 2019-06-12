@@ -25,6 +25,8 @@ class PortSet<T extends Port> {
         this.count = count;
         this.positioner = positioner;
 
+        this.ports = [];
+
         this.setPortCount(count.getValue());
     }
 
