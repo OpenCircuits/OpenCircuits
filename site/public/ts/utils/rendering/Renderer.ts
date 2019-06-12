@@ -75,8 +75,19 @@ export class Renderer {
     }
     public draw(shape: Shape, style: Style, alpha: number = 1): void {
         this.save();
-        this.setStyle(style);
-        shape.draw(this.context, style.fill(), style.stroke());
+        this.setStyle(style, alpha);
+
+        // Begin path and draw the shape
+        this.context.beginPath();
+        shape.draw(this.context);
+
+        // Only fill or stroke if we have to
+        if (style.fill())
+            this.context.fill();
+        if (style.stroke())
+            this.context.stroke();
+
+        this.context.closePath();
         this.restore();
     }
     // public circle(pos: Vector, size: Vector, style: Style): void {
@@ -194,10 +205,11 @@ export class Renderer {
     //         this.context.stroke();
     //     this.restore();
     // }
-    public setStyle(style: Style): void {
+    public setStyle(style: Style, alpha: number = 1): void {
         // Set styles but only change them if they're different for optimization purposes
-        if (style.alpha !== this.context.globalAlpha)
-            this.context.globalAlpha = style.alpha;
+        if (alpha !== this.context.globalAlpha)
+            this.context.globalAlpha = alpha;
+
         if (style.fillColor !== this.context.fillStyle)
             this.context.fillStyle = style.fillColor;
         if (style.borderColor !== this.context.strokeStyle)

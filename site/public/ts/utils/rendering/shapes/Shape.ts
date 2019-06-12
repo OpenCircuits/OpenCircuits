@@ -7,6 +7,6 @@ export abstract class Shape {
         this.pos = pos;
     }
 
-    public abstract draw(ctx: CanvasRenderingContext2D, fill: boolean, stroke: boolean): void;
+    public abstract draw(ctx: CanvasRenderingContext2D): void;
 
 }
