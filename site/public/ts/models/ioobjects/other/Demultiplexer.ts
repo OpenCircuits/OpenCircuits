@@ -62,9 +62,9 @@ export class Demultiplexer extends Component {
 		const num = values.reduce((acc, cur, i) => acc = acc | (cur << i), 0);
 
 		// Turn off each output port
-		this.outputs.forEach((p, i) => super.activate(false, i));
+		this.getOutputPorts().forEach((p, i) => super.activate(false, i));
 
-        super.activate(this.inputs[this.inputs.length-1].getIsOn(), num);
+        super.activate(this.inputs.last.getIsOn(), num);
     }
 
 	public setInputPortCount(val: number) {

@@ -10,8 +10,8 @@ export class DLatch extends Latch {
 
 	// @Override
 	public activate() {
-		this.clock = this.inputs[0].getIsOn();
-		const data = this.inputs[1].getIsOn();
+		this.clock = this.inputs.first.getIsOn();
+		const data = this.inputs.first.getIsOn();
 		if (this.clock)
 			this.state = data;
 

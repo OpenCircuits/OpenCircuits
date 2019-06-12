@@ -10,7 +10,7 @@ export class BUFGate extends Gate {
 
 	// @Override
 	public activate() {
-		super.activate(this.inputs[0].getIsOn());
+		super.activate(this.inputs.first.getIsOn());
 	}
 
 	public getDisplayName() {

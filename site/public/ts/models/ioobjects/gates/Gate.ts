@@ -24,7 +24,7 @@ export abstract class Gate extends Component {
     private setNot(not: boolean): void {
         // if flipped then flip output
         if (not != this.not)
-            this.outputs[0].activate(!this.outputs[0].getIsOn());
+            this.outputs.first.activate(!this.outputs.first.getIsOn());
         this.not = not;
 
         // change name to be the not'd name if name wasn't manually set by user

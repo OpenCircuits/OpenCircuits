@@ -123,7 +123,7 @@ export abstract class Component extends CullableObject {
 	}
 
     public getInputPortCount(): number {
-        return this.inputs.getLength();
+        return this.inputs.length;
     }
 
     public getInputPorts(): Array<InputPort> {
@@ -140,7 +140,7 @@ export abstract class Component extends CullableObject {
 	}
 
     public getOutputPortCount(): number {
-        return this.outputs.getLength();
+        return this.outputs.length;
     }
 
     public getOutputPorts(): Array<OutputPort> {

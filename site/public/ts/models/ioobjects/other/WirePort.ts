@@ -12,13 +12,13 @@ export class WirePort extends Component {
 		super(new ClampedValue(1,1,1), new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
 
 		// Set origin = target position so that they overlap and look like 1 dot
-		this.inputs [0].setTargetPos(this.inputs [0].getOriginPos());
-		this.outputs[0].setTargetPos(this.outputs[0].getOriginPos());
+		this.inputs.first.setTargetPos(this.inputs.first.getOriginPos());
+		this.outputs.first.setTargetPos(this.outputs.first.getOriginPos());
 	}
 
 	// @Override
 	public activate() {
-		super.activate(this.inputs[0].getIsOn());
+		super.activate(this.inputs.first.getIsOn());
 	}
 
 	public isWithinSelectBounds(v: Vector): boolean {

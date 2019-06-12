@@ -42,7 +42,7 @@ export class ORGate extends Gate {
 
 	// @Override
 	public activate() {
-		const on = this.inputs.some((input) => input.getIsOn());
+		const on = this.getInputPorts().some((input) => input.getIsOn());
 		super.activate(on);
 	}
 
