@@ -17,6 +17,7 @@ import {WireRenderer} from "./ioobjects/WireRenderer";
 import {Wire} from "../../models/ioobjects/Wire";
 
 import {Style} from "./Style";
+import {ArcCircle} from "./shapes/ArcCircle";
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";
 
@@ -38,7 +39,7 @@ export const ToolRenderer = (function() {
         const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
 
         // Draw arc'd circle
-        renderer.draw(new Circle(pos, radius).arc(a0, a1), ROTATION_ARC_STYLE, 0.4);
+        renderer.draw(new ArcCircle(pos, radius, a0, a1), ROTATION_ARC_STYLE, 0.4);
     }
 
     return {
