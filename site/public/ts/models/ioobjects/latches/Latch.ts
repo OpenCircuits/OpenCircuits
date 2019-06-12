@@ -1,10 +1,12 @@
 import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
+
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
-import {Component} from "../Component";
 
 import {InputPort} from "../../ports/InputPort";
-import {Positioner} from "../../ports/positioners/Positioner";
+import {Positioner} from "../../ports/positioners/Positioner"
+
+import {Component} from "../Component";;
 
 //
 // Latch is an abstract superclass for general latches.
@@ -15,6 +17,7 @@ export abstract class Latch extends Component {
 
 	constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
 		super(new ClampedValue(numInputs), new ClampedValue(2), V(70, 70), inputPositioner);
+
 		this.getOutputPort(0).setName("Q'");
 		this.getOutputPort(1).setName("Q ");
 	}

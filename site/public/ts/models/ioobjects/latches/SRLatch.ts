@@ -1,12 +1,12 @@
 import {Latch} from "./Latch";
 
-import {SRLatchPositioner} from "../../ports/positioners/SRLatchPositioner";
+import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 
 export class SRLatch extends Latch {
 
 	public constructor() {
-		super(3, new SRLatchPositioner());
-		
+		super(3, new ThreePortPositioner());
+
 		this.getInputPort(0).setName("R");
 		this.getInputPort(1).setName(">");
 		this.getInputPort(2).setName("S");
