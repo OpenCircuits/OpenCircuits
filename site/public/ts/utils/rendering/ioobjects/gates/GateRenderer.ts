@@ -14,9 +14,16 @@ import {ANDGate} from "../../../../models/ioobjects/gates/ANDGate";
 import {ORGate} from "../../../../models/ioobjects/gates/ORGate";
 import {XORGate} from "../../../../models/ioobjects/gates/XORGate";
 
+import {Circle} from "../../shapes/Circle";
+import {Line} from "../../shapes/Line";
+import {QuadCurve} from "../../shapes/QuadCurve";
+import {Style} from "../../Style";
+
 export const GateRenderer = (function() {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
+        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
         const amt = 2 * Math.floor(inputs / 4) + 1;
         for (let i = 0; i < amt; i++) {
             const d = (i - Math.floor(amt/2)) * size.y;
@@ -27,11 +34,11 @@ export const GateRenderer = (function() {
             const s = size.x/2 - h;
             const l = size.x/5 - h;
 
-            const p1 = V(-s, l1 + d);
-            const p2 = V(-s, l2 + d);
-            const c  = V(-l, d);
+            const p1 = V(-s + dx, l1 + d);
+            const p2 = V(-s + dx, l2 + d);
+            const c  = V(-l + dx, d);
 
-            renderer.quadCurve(p1.x+dx, p1.y, p2.x+dx, p2.y, c.x+dx, c.y, borderCol, DEFAULT_BORDER_WIDTH);
+            renderer.draw(new QuadCurve(p1, p2, c), style);
         }
     }
 
@@ -43,11 +50,14 @@ export const GateRenderer = (function() {
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
             if (gate.isNot()) {
+                const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
                 const l = transform.getSize().x/2 + 5;
-                renderer.circle(l, 0, GATE_NOT_CIRCLE_RADIUS, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+                renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), style);
             }
 
             if (gate instanceof ANDGate) {
+                const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
                 // Draw line to visually match input ports
                 const l1 = -(transform.getSize().y/2)*(0.5-gate.getInputPortCount()/2);
                 const l2 = -(transform.getSize().y/2)*(gate.getInputPortCount()/2-0.5);
@@ -56,7 +66,7 @@ export const GateRenderer = (function() {
                 const p1 = V(-s, l1);
                 const p2 = V(-s, l2);
 
-                renderer.line(p1.x, p1.y, p2.x, p2.y, borderCol, DEFAULT_BORDER_WIDTH);
+                renderer.draw(new Line(p1, p2), style);
             }
             else if (gate instanceof ORGate) {
                 // Draw curve to visually match input ports
