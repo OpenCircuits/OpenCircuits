@@ -1,7 +1,12 @@
+import {GRID_SIZE} from "../Constants";
+import {GRID_LINE_COLOR} from "./Styles";
+
+import {V} from "../math/Vector";
+
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
 
-const GRID_SIZE = 50;
+import {Style} from "./Style";
 
 export const Grid = (function() {
 
@@ -18,14 +23,12 @@ export const Grid = (function() {
 
             // Batch-render the lines = uglier code + way better performance
             renderer.save();
-            renderer.setStyles(undefined, '#999', 1.0 / camera.getZoom());
+            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 1.0 / camera.getZoom()));
             renderer.beginPath();
-            for (let x = -cpx; x <= renderer.getSize().x-cpx+step; x += step) {
-                renderer.pathLine(x, 0, x, renderer.getSize().y);
-            }
-            for (let y = -cpy; y <= renderer.getSize().y-cpy+step; y += step) {
-                renderer.pathLine(0, y, renderer.getSize().x, y);
-            }
+            for (let x = -cpx; x <= renderer.getSize().x-cpx+step; x += step)
+                renderer.pathLine(V(x, 0), V(x, renderer.getSize().y));
+            for (let y = -cpy; y <= renderer.getSize().y-cpy+step; y += step)
+                renderer.pathLine(V(0, y), V(renderer.getSize().x, y));
             renderer.closePath();
             renderer.stroke();
             renderer.restore();

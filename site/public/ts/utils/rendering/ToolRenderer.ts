@@ -1,5 +1,8 @@
 import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "../Constants";
+import {ROTATION_CIRCLE_COLOR,
+        ROTATION_ARC_STYLE,
+        SELECTION_BOX_STYLE} from "./Styles";
 import {Vector} from "../math/Vector";
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
@@ -13,6 +16,11 @@ import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
 import {Wire} from "../../models/ioobjects/Wire";
 
+import {Style} from "./Style";
+import {ArcCircle} from "./shapes/ArcCircle";
+import {Circle} from "./shapes/Circle";
+import {Rectangle} from "./shapes/Rectangle";
+
 export const ToolRenderer = (function() {
 
     const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
@@ -21,7 +29,8 @@ export const ToolRenderer = (function() {
         let radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
         let thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
 
-        renderer.circle(pos.x, pos.y, radius, undefined, '#ff0000', thickness, 0.5);
+        renderer.draw(new Circle(pos, radius),
+                      new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
     }
 
     const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
@@ -30,7 +39,7 @@ export const ToolRenderer = (function() {
         const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
 
         // Draw arc'd circle
-        renderer.arcCircle(pos.x, pos.y, radius, a0, a1, '#ffffff', '#000000', 5, 0.4);
+        renderer.draw(new ArcCircle(pos, radius, a0, a1), ROTATION_ARC_STYLE, 0.4);
     }
 
     return {
@@ -51,7 +60,7 @@ export const ToolRenderer = (function() {
                     const size = p2.sub(p1);
 
                     // Draw box
-                    renderer.rect(pos.x, pos.y, size.x, size.y, '#ffffff', '#6666ff', 2, 0.4);
+                    renderer.draw(new Rectangle(pos, size), SELECTION_BOX_STYLE, 0.4);
                 }
 
                 // Draw rotation circle outline
