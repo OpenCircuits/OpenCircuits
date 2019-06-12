@@ -11,11 +11,10 @@ import {Propagation} from "./Propagation";
 import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
-import {ICData}  from "./ioobjects/other/ICData";
-import {IC}  from "./ioobjects/other/IC";
+import {ICData}    from "./ioobjects/other/ICData";
 
-import {InputPort}  from "./ioobjects/InputPort";
-import {OutputPort} from "./ioobjects/OutputPort";
+import {InputPort}  from "./ports/InputPort";
+import {OutputPort} from "./ports/OutputPort";
 
 export class CircuitDesigner implements XMLable {
 	private ics: Array<ICData>;

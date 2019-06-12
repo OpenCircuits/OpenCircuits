@@ -5,10 +5,10 @@ import {V,Vector} from "../../utils/math/Vector";
 import {Matrix2x3} from "../../utils/math/Matrix";
 import {BezierCurve} from "../../utils/math/BezierCurve";
 import {XMLNode} from "../../utils/io/xml/XMLNode";
+import {OutputPort} from "../ports/OutputPort";
+import {InputPort}  from "../ports/InputPort";
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
-import {OutputPort} from "./OutputPort";
-import {InputPort}  from "./InputPort";
 
 export class Wire extends CullableObject {
     private input: OutputPort;
