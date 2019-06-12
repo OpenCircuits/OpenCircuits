@@ -3,9 +3,28 @@ import {DEFAULT_SIZE,
 
 import {V} from "../../../utils/math/Vector";
 
+import {Port} from "../Port";
 import {InputPort} from "../InputPort";
 
 import {Positioner} from "./Positioner";
+
+export class MuxPositioner<T extends Port> extends Positioner<T> {
+
+    public updatePortPositions(ports: Array<T>): void {
+        ports.forEach((port, i) => {
+            const width = port.getParent().getSize().x;
+
+            // Calculate y position of port
+            let l = -DEFAULT_SIZE/2*(i - ports.length/2 + 0.5);
+            if (i === 0) l--;
+            if (i === ports.length-1) l++;
+
+            port.setOriginPos(V(0, l));
+            port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH+(width - DEFAULT_SIZE)/2).x, l));
+        });
+    }
+
+}
 
 export class MuxSelectPositioner extends Positioner<InputPort> {
 

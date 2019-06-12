@@ -1,11 +1,15 @@
 import {ClampedValue} from "../../../utils/ClampedValue";
 
+import {InputPort} from "../../ports/InputPort";
+import {MuxPositioner} from "../../ports/positioners/MuxPositioners";
+
 import {Mux} from "./Mux";
 
 export class Multiplexer extends Mux {
 
 	public constructor() {
-		super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1));
+		super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
+				new MuxPositioner<InputPort>());
 	}
 
 	/**

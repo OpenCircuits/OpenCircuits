@@ -4,18 +4,23 @@ import {V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
+import {OutputPort} from "../../ports/OutputPort";
 import {InputPortSet} from "../../ports/PortSets";
-import {MuxSelectPositioner} from "../../ports/positioners/MuxSelectPositioner";
+import {Positioner} from "../../ports/positioners/Positioner";
+import {MuxSelectPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Component} from "../Component";
 
 export abstract class Mux extends Component {
 	protected selects: InputPortSet;
 
-    public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue) {
-        super(inputPortCount, outputPortCount, V(DEFAULT_SIZE, DEFAULT_SIZE));
+    public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
+						inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+        super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new InputPortSet(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner());
+
+		this.setSelectPortCount(2);
     }
 
     public setSelectPortCount(val: number): void {

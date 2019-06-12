@@ -30,6 +30,12 @@ class PortSet<T extends Port> {
         this.setPortCount(count.getValue());
     }
 
+    /**
+     * Set the number of Ports of this set.
+     *  The value will be clamped and positions of ports
+     *  will be updated.
+     * @param val The new number of ports
+     */
     public setPortCount(newVal: number): void {
         // no need to update if value is already
         //  the current amount

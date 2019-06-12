@@ -57,22 +57,10 @@ export abstract class Component extends CullableObject {
 		this.inputs.get(i).setInput(w);
 	}
 
-    /**
-     * Set the number of InputPorts of this component.
-     *  The value will be clamped and positions of ports
-     *  will be updated.
-     * @param val The new number of ports
-     */
     public setInputPortCount(val: number): void {
         this.inputs.setPortCount(val);
     }
 
-    /**
-     * Set the number of OutputPorts of this component.
-     *  The value will be clamped and positions of ports
-     *  will be updated.
-     * @param val The new number of ports
-     */
     public setOutputPortCount(val: number): void {
         this.outputs.setPortCount(val);
     }
