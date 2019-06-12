@@ -2,9 +2,8 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
-        GATE_NOT_CIRCLE_RADIUS} from "../../../Constants";
-import {Vector,V} from "../../../math/Vector";
+        SELECTED_FILL_COLOR} from "../../../Constants";
+import {V} from "../../../math/Vector";
 
 import {Renderer} from "../../Renderer";
 import {Camera} from "../../../Camera";
@@ -12,6 +11,9 @@ import {Camera} from "../../../Camera";
 import {SevenSegmentDisplay} from "../../../../models/ioobjects/outputs/SevenSegmentDisplay";
 
 import {Images} from "../../../Images";
+
+import {Rectangle} from "../../shapes/Rectangle";
+import {Style} from "../../Style";
 
 export const SevenSegmentDisplayRenderer = (function() {
     return {
@@ -23,7 +25,8 @@ export const SevenSegmentDisplayRenderer = (function() {
             // Draw background
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-            renderer.rect(0, 0, size.x, size.y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+            const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+            renderer.draw(new Rectangle(V(), size), style);
 
             // Draw lights
             const segments = display.getSegments();
