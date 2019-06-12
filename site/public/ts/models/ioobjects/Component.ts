@@ -13,6 +13,7 @@ import {InputPort}  from "../ports/InputPort";
 import {OutputPort} from "../ports/OutputPort";
 import {InputPortSet,
         OutputPortSet} from "../ports/PortSets";
+import {Positioner} from "../ports/positioners/Positioner";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
@@ -23,13 +24,12 @@ export abstract class Component extends CullableObject {
 
     protected transform: Transform;
 
-    protected constructor(inputPorts: InputPortSet, outputPorts: OutputPortSet, size: Vector);
-    protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector);
-	protected constructor(inputPorts: InputPortSet | ClampedValue, outputPorts: OutputPortSet | ClampedValue, size: Vector) {
+	protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
+                            inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super();
 
-        this.inputs  = (inputPorts  instanceof ClampedValue) ? (new InputPortSet (this, inputPorts))  : (inputPorts);
-        this.outputs = (outputPorts instanceof ClampedValue) ? (new OutputPortSet(this, outputPorts)) : (outputPorts);
+        this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
+        this.outputs = new OutputPortSet(this, outputPortCount, outputPositioner);
 
         this.transform = new Transform(V(0,0), size, 0);
 	}

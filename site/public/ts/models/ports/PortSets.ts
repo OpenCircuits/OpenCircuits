@@ -86,13 +86,13 @@ class PortSet<T extends Port> {
 }
 
 export class InputPortSet extends PortSet<InputPort> {
-    public constructor(parent: Component, count: ClampedValue) {
-        super(parent, InputPort, count);
+    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<InputPort>) {
+        super(parent, InputPort, count, positioner);
     }
 }
 
 export class OutputPortSet extends PortSet<OutputPort> {
-    public constructor(parent: Component, count: ClampedValue) {
-        super(parent, OutputPort, count);
+    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<OutputPort>) {
+        super(parent, OutputPort, count, positioner);
     }
 }
