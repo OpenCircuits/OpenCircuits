@@ -6,13 +6,14 @@ import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
 import {RectContains} from "../../utils/math/MathUtils";
 import {XMLNode}      from "../../utils/io/xml/XMLNode";
+import {ClampedValue} from "../../utils/ClampedValue";
 
 import {Port}       from "../ports/Port";
 import {InputPort}  from "../ports/InputPort";
 import {OutputPort} from "../ports/OutputPort";
 import {InputPortSet,
         OutputPortSet} from "../ports/PortSets";
-        
+
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
 
@@ -22,11 +23,13 @@ export abstract class Component extends CullableObject {
 
     protected transform: Transform;
 
-	protected constructor(inputPorts: InputPortSet, outputPorts: OutputPortSet, size: Vector) {
+    protected constructor(inputPorts: InputPortSet, outputPorts: OutputPortSet, size: Vector);
+    protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector);
+	protected constructor(inputPorts: InputPortSet | ClampedValue, outputPorts: OutputPortSet | ClampedValue, size: Vector) {
         super();
 
-        this.inputs = inputPorts;
-        this.outputs = outputPorts;
+        this.inputs  = (inputPorts  instanceof ClampedValue) ? (new InputPortSet (this, inputPorts))  : (inputPorts);
+        this.outputs = (outputPorts instanceof ClampedValue) ? (new OutputPortSet(this, outputPorts)) : (outputPorts);
 
         this.transform = new Transform(V(0,0), size, 0);
 	}
