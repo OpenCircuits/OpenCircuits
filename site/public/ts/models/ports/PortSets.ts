@@ -46,9 +46,9 @@ class PortSet<T extends Port> {
         this.count.setValue(newVal);
 
         // add or remove ports to meet target
-        while (this.ports.length > newVal)
+        while (this.ports.length > this.count.getValue())
             this.ports.pop();
-        while (this.ports.length < newVal)
+        while (this.ports.length < this.count.getValue())
             this.ports.push(new this.type(this.parent));
 
         // update positions
