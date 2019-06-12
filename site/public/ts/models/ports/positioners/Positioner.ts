@@ -12,10 +12,10 @@ export class Positioner<T extends Port> {
      */
     public updatePortPositions(ports: Array<T>): void {
         ports.forEach((port, i) => {
-            const parent = port.getParent();
+            const height = port.getParent().getSize().y;
 
             // Calculate y position of port
-            let l = -parent.getSize().y/2*(i - ports.length/2 + 0.5);
+            let l = -height/2*(i - ports.length/2 + 0.5);
             if (i === 0) l--;
             if (i === ports.length-1) l++;
 
