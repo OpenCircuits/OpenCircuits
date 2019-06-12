@@ -2,7 +2,7 @@ import {Vector} from "../../math/Vector";
 
 import {Shape} from "./Shape";
 
-export class Curve implements Shape {
+export class QuadCurve implements Shape {
     private p1: Vector;
     private p2: Vector;
     private c: Vector;
