@@ -164,10 +164,10 @@ export class Renderer {
     //     this.context.closePath();
     //     this.restore();
     // }
-    // public pathLine(x1: number, y1: number, x2: number, y2: number): void {
-    //     this.context.moveTo(x1, y1);
-    //     this.context.lineTo(x2, y2);
-    // }
+    public pathLine(p1: Vector, p2: Vector): void {
+        this.context.moveTo(p1.x, p1.y);
+        this.context.lineTo(p2.x, p2.y);
+    }
     // public curve(x1: number, y1: number, x2: number, y2: number,
     //       cx1: number, cy1: number, cx2: number, cy2: number,
     //       style: string, size: number): void {
