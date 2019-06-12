@@ -30,12 +30,16 @@ import {IC} from "../../../models/ioobjects/other/IC";
 import {Images} from "../../Images";
 import {Port} from "../../../models/ports/Port";
 
+import {Rectangle} from "../shapes/Rectangle";
+import {Style} from "../Style";
+
 export const ComponentRenderer = (function() {
 
     const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
-        let borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        let fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-        renderer.rect(0, 0, transform.getSize().x, transform.getSize().y, fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH)
+        renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
 
     return {
@@ -46,8 +50,8 @@ export const ComponentRenderer = (function() {
 
             renderer.save();
 
-            let transform = object.getTransform();
-            let imgName = object.getImageName();
+            const transform = object.getTransform();
+            const imgName = object.getImageName();
 
             let size = transform.getSize();
 
