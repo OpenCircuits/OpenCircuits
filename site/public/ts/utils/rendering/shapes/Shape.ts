@@ -1,4 +1,4 @@
-import {Vector,V} from "../../math/Vector";
+import {Vector} from "../../math/Vector";
 
 export abstract class Shape {
     protected pos: Vector;
