@@ -1,4 +1,3 @@
-import {V}            from "../../utils/math/Vector";
 import {ClampedValue} from "../../utils/ClampedValue";
 
 import {Component} from "../ioobjects/Component";
@@ -6,6 +5,8 @@ import {Component} from "../ioobjects/Component";
 import {Port}       from "./Port";
 import {InputPort}  from "./InputPort";
 import {OutputPort} from "./OutputPort";
+
+import {Positioner} from "./positioners/Positioner";
 
 class PortSet<T extends Port> {
     private parent: Component;
@@ -15,30 +16,16 @@ class PortSet<T extends Port> {
 
     private type: new(c: Component) => T;
 
-    public constructor(parent: Component, type: new(c: Component) => T, count: ClampedValue) {
+    private positioner: Positioner<T>;
+
+    public constructor(parent: Component, type: new(c: Component) => T,
+                        count: ClampedValue, positioner: Positioner<T> = new Positioner<T>()) {
         this.parent = parent;
         this.type = type;
         this.count = count;
+        this.positioner = positioner;
 
         this.setPortCount(count.getValue());
-    }
-
-    /**
-     * Default behavior for port positioning to
-     *  be evenly spaced along the height of this
-     *  component.
-     * @param arr The array of ports (either in or out ports)
-     */
-    protected updatePortPositions(): void {
-        this.ports.forEach((port, i) => {
-            // Calculate y position of port
-            let l = -this.parent.getSize().y/2*(i - this.ports.length/2 + 0.5);
-            if (i === 0) l--;
-            if (i === this.ports.length-1) l++;
-
-            port.setOriginPos(V(port.getOriginPos().x, l));
-            port.setTargetPos(V(port.getTargetPos().x, l));
-        });
     }
 
     public setPortCount(newVal: number): void {
@@ -57,7 +44,7 @@ class PortSet<T extends Port> {
             this.ports.push(new this.type(this.parent));
 
         // update positions
-        this.updatePortPositions();
+        this.positioner.updatePortPositions(this.ports);
     }
 
     public get(i: number): T {
