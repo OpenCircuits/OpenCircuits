@@ -1,9 +1,12 @@
 import {Latch} from "./Latch";
 
+import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
+
 export class SRLatch extends Latch {
 
 	public constructor() {
-		super(3);
+		super(3, new ThreePortPositioner());
+
 		this.getInputPort(0).setName("R");
 		this.getInputPort(1).setName(">");
 		this.getInputPort(2).setName("S");
@@ -11,9 +14,9 @@ export class SRLatch extends Latch {
 
 	// @Override
 	public activate() {
-		this.clock = this.inputs[1].getIsOn();
-		const set = this.inputs[2].getIsOn();
-		const reset = this.inputs[0].getIsOn();
+		this.clock  = this.inputs.get(1).getIsOn();
+		const set   = this.inputs.get(2).getIsOn();
+		const reset = this.inputs.get(0).getIsOn();
 		if (this.clock) {
 			if (set && reset) {
 				// undefined behavior

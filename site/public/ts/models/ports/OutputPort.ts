@@ -1,14 +1,15 @@
-import {V} from "../../utils/math/Vector";
+import {Vector,V} from "../../utils/math/Vector";
 
-import {Component} from "./Component";
+import {Component} from "../ioobjects/Component";
+import {Wire}      from "../ioobjects/Wire";
+
 import {Port}	   from "./Port";
-import {Wire}      from "./Wire";
 
 export class OutputPort extends Port {
     private connections: Array<Wire>;
 
 	public constructor(parent: Component) {
-		super(parent, V(1, 0));
+		super(parent);
 		this.connections = [];
 	}
 
@@ -47,6 +48,10 @@ export class OutputPort extends Port {
 
 	public getConnections(): Array<Wire> {
 		return this.connections.slice(); // Shallow copy array
+	}
+
+	public getInitialDir(): Vector {
+		return V(1, 0);
 	}
 
 }

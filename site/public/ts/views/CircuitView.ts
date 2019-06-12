@@ -11,7 +11,7 @@ import {ToolManager} from "../utils/tools/ToolManager";
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {IOObject}  from "../models/ioobjects/IOObject";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 
 export class CircuitView {
     protected canvas: HTMLCanvasElement;

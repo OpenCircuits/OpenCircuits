@@ -18,7 +18,7 @@ import {TranslateTool} from "../../../../../site/public/ts/utils/tools/Translate
 import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
 import {PanTool} from "../../../../../site/public/ts/utils/tools/PanTool";
 import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
-import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
+import {Port} from "../../../../../site/public/ts/models/ports/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";

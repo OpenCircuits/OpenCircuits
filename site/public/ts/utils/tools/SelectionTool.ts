@@ -23,7 +23,7 @@ import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
-import {Port} from "../../models/ioobjects/Port";
+import {Port} from "../../models/ports/Port";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";

@@ -2,9 +2,9 @@ import {IO_PORT_RADIUS,
         IO_PORT_SELECT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Port} from "../../models/ioobjects/Port";
-import {InputPort} from "../../models/ioobjects/InputPort";
-import {OutputPort} from "../../models/ioobjects/OutputPort";
+import {Port} from "../../models/ports/Port";
+import {InputPort} from "../../models/ports/InputPort";
+import {OutputPort} from "../../models/ports/OutputPort";
 import {Wire} from "../../models/ioobjects/Wire";
 
 import {CircleContains} from "../math/MathUtils";

@@ -7,7 +7,7 @@ import {DEFAULT_FILL_COLOR,
         IO_PORT_BORDER_WIDTH} from "../../Constants";
 
 import {Renderer} from "../Renderer";
-import {Port} from "../../../models/ioobjects/Port";
+import {Port} from "../../../models/ports/Port";
 
 export const IOPortRenderer = (function() {
     return {

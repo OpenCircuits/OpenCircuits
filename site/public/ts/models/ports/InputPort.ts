@@ -1,14 +1,15 @@
-import {V} from "../../utils/math/Vector";
+import {Vector,V} from "../../utils/math/Vector";
 
-import {Component} from "./Component";
+import {Component} from "../ioobjects/Component";
+import {Wire}      from "../ioobjects/Wire";
+
 import {Port}	   from "./Port";
-import {Wire}      from "./Wire";
 
 export class InputPort extends Port {
 	private input?: Wire;
 
 	public constructor(parent: Component) {
-		super(parent, V(-1, 0));
+		super(parent);
 		this.input = undefined;
 	}
 
@@ -38,6 +39,10 @@ export class InputPort extends Port {
 
 	public getInput(): Wire {
 		return this.input;
+	}
+
+	public getInitialDir(): Vector {
+		return V(-1, 0);
 	}
 
 }

@@ -1,8 +1,8 @@
 import {GroupAction} from "../actions/GroupAction";
 import {ConnectionAction} from "../actions/ConnectionAction";
 
-import {InputPort} from "../../models/ioobjects/InputPort";
-import {OutputPort} from "../../models/ioobjects/OutputPort";
+import {InputPort} from "../../models/ports/InputPort";
+import {OutputPort} from "../../models/ports/OutputPort";
 
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";

@@ -9,9 +9,9 @@ import {Component} from "../models/ioobjects/Component";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
-import {Port} from "../models/ioobjects/Port";
-import {InputPort} from "../models/ioobjects/InputPort";
-import {OutputPort} from "../models/ioobjects/OutputPort";
+import {Port} from "../models/ports/Port";
+import {InputPort} from "../models/ports/InputPort";
+import {OutputPort} from "../models/ports/OutputPort";
 import {Wire} from "../models/ioobjects/Wire";
 
 import {WirePort} from "../models/ioobjects/other/WirePort";

@@ -16,9 +16,9 @@ import {SeparatedComponentCollection,
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 
 import {IOObject} from "../IOObject";
-import {Port} from "../Port";
-import {InputPort} from "../InputPort";
-import {OutputPort} from "../OutputPort";
+import {Port} from "../../ports/Port";
+import {InputPort} from "../../ports/InputPort";
+import {OutputPort} from "../../ports/OutputPort";
 
 export class ICData {
     private transform: Transform;

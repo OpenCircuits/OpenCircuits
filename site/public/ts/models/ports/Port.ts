@@ -1,7 +1,7 @@
 import {IO_PORT_LENGTH} from "../../utils/Constants";
 import {Vector,V} from "../../utils/math/Vector";
 
-import {Component} from "./Component";
+import {Component} from "../ioobjects/Component";
 
 export abstract class Port {
     protected parent: Component;
@@ -14,15 +14,15 @@ export abstract class Port {
     protected origin: Vector;
     protected target: Vector;
 
-    protected constructor(parent: Component, dir: Vector) {
+    protected constructor(parent: Component) {
         this.parent = parent;
         this.isOn = false;
 
         this.name = "";
 
-        this.dir = dir;
+        this.dir = this.getInitialDir();
         this.origin = V(0, 0);
-        this.target = dir.scale(IO_PORT_LENGTH);
+        this.target = this.dir.scale(IO_PORT_LENGTH);
     }
 
     private updateDir(): void {
@@ -56,6 +56,8 @@ export abstract class Port {
     public getName(): string {
         return this.name;
     }
+
+    public abstract getInitialDir(): Vector;
 
     public getDir(): Vector {
         return this.dir.copy();

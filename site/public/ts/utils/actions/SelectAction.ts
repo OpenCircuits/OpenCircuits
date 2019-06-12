@@ -1,6 +1,6 @@
 import {Action} from "./Action";
 import {IOObject} from "../../models/ioobjects/IOObject";
-import {Port} from "../../models/ioobjects/Port";
+import {Port} from "../../models/ports/Port";
 
 import {SelectionTool} from "../tools/SelectionTool";
 

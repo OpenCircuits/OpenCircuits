@@ -14,11 +14,11 @@ export class LED extends Component {
 		this.color = "#ffffff";
 
 		// Make port face down instead of sideways
-		this.inputs[0].setTargetPos(V(0, 2*DEFAULT_SIZE));
+		this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
 	}
 
 	public isOn(): boolean {
-		return this.inputs[0].getIsOn();
+		return this.inputs.first.getIsOn();
 	}
 
     public getDisplayName(): string {

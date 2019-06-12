@@ -10,7 +10,7 @@ export class ANDGate extends Gate {
 
 	// @Override
 	public activate() {
-		const on = this.inputs.every((input) => input.getIsOn());
+		const on = this.getInputPorts().every((input) => input.getIsOn());
 		super.activate(on);
 	}
 

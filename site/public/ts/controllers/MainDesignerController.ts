@@ -18,7 +18,7 @@ import {WiringTool} from "../utils/tools/WiringTool";
 
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 export const MainDesignerController = (function() {
