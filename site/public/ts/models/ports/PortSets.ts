@@ -68,8 +68,16 @@ class PortSet<T extends Port> {
         return this.ports.slice();
     }
 
-    public getLength(): number {
+    public get length(): number {
         return this.ports.length;
+    }
+
+    public get first(): T {
+        return this.ports[0];
+    }
+
+    public get last(): T {
+        return this.ports[this.ports.length - 1];
     }
 
     public isEmpty() {
