@@ -36,12 +36,12 @@ export class PlaceComponentTool extends Tool {
     }
 
     public setComponent(component: Component, instant: boolean = false): void {
+        this.component = component;
         if (instant) {
             // Place the object immediately
             this.designer.addObject(component);
             return;
         }
-        this.component = component;
     }
 
     public onMouseMove(input: Input): boolean {

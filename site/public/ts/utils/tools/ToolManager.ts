@@ -196,6 +196,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.placeComponentTool.setComponent(component, instant);
         if (!instant) // Don't activate the tool if we're just instantly placing
             this.activate(this.placeComponentTool);
+        else // Add action immeadiately
+            this.addAction(this.placeComponentTool.getAction());
     }
 
     public getCurrentTool(): Tool {
