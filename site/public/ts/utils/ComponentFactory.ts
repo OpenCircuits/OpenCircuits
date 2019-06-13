@@ -26,6 +26,7 @@ import {Encoder}       from "../models/ioobjects/other/Encoder";
 import {Decoder}       from "../models/ioobjects/other/Decoder";
 import {Multiplexer}   from "../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
+import {Label}         from "../models/ioobjects/other/Label";
 import {WirePort}      from "../models/ioobjects/other/WirePort";
 
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
@@ -33,7 +34,7 @@ const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
-const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, WirePort];
+const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, Label, WirePort];
 
 let XML_COMPONENTS = new Map<string, any>();
 let XML_NAMES = new Map<any, string>();

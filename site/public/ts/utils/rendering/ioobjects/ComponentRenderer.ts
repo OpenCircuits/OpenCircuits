@@ -22,6 +22,7 @@ import {Encoder} from "../../../models/ioobjects/other/Encoder";
 import {Decoder} from "../../../models/ioobjects/other/Decoder";
 import {Multiplexer} from "../../../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../../../models/ioobjects/other/Demultiplexer";
+import {Label} from "../../../models/ioobjects/other/Label";
 import {Component} from "../../../models/ioobjects/Component";
 import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
 import {Gate} from "../../../models/ioobjects/gates/Gate";
@@ -76,6 +77,18 @@ export const ComponentRenderer = (function() {
                 drawBox(renderer, box, selected);
             }
 
+            // Draw label and set the label's size
+            //  TODO: figure out how to get around this
+            if (object instanceof Label) {
+                // Calculate size
+                const width = renderer.getTextWidth(object.getName()) + 20;
+                transform.setSize(V(width, size.y));
+
+                drawBox(renderer, transform, selected);
+
+                renderer.text(object.getName(), V(), "center");
+            }
+
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
@@ -96,12 +109,12 @@ export const ComponentRenderer = (function() {
                 tint = object.getColor();
 
             if (imgName)
-                renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
+                renderer.image(Images.GetImage(imgName), V(), size, tint);
 
             // Draw LED turned on
             if (object instanceof LED) {
                 if (object.isOn())
-                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
+                    renderer.image(Images.GetImage(object.getOnImageName()), V(), size.scale(3), object.getColor());
             }
 
             // Render the IOLabels, does not render labels if they are blank
