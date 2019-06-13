@@ -42,6 +42,20 @@ export const GateRenderer = (function() {
         }
     }
 
+    const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
+        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
+        // Draw line to visually match input ports
+        const l1 = -(size.y/2)*(0.5-inputs/2);
+        const l2 =  (size.y/2)*(0.5-inputs/2);
+
+        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
+        const p1 = V(-s, l1);
+        const p2 = V(-s, l2);
+
+        renderer.draw(new Line(p1, p2), style);
+    }
+
     return {
         render(renderer: Renderer, camera: Camera, gate: Gate, selected: boolean) {
             let transform = gate.getTransform();
@@ -56,17 +70,8 @@ export const GateRenderer = (function() {
             }
 
             if (gate instanceof ANDGate) {
-                const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
-                // Draw line to visually match input ports
-                const l1 = -(transform.getSize().y/2)*(0.5-gate.getInputPortCount()/2);
-                const l2 = -(transform.getSize().y/2)*(gate.getInputPortCount()/2-0.5);
-
-                const s = (transform.getSize().x-DEFAULT_BORDER_WIDTH)/2;
-                const p1 = V(-s, l1);
-                const p2 = V(-s, l2);
-
-                renderer.draw(new Line(p1, p2), style);
+                // Draw AND gate line to match ports
+                drawANDLines(renderer, transform.getSize(), gate.getInputPortCount(), borderCol);
             }
             else if (gate instanceof ORGate) {
                 // Draw curve to visually match input ports
