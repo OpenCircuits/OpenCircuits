@@ -21,7 +21,7 @@ export class Encoder extends Component {
 
     public activate(): void {
         // Filter ports that are on then map to their indices
-        const onPorts = this.getInputPorts().filter((p) => p.getIsOn()).map((p, i) => i);
+        const onPorts = this.getInputPorts().filter((p) => p.getIsOn()).map((_, i) => i);
         if (onPorts.length != 1)
             return; // Undefined behavior
 
@@ -36,7 +36,7 @@ export class Encoder extends Component {
         }
     }
 
-    public setInputPortCount(val: number) {
+    public setOutputPortCount(val: number) {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*Math.pow(2, val)));
         super.setInputPortCount(Math.pow(2, val));
         super.setOutputPortCount(val);
