@@ -1,7 +1,11 @@
+import {IO_PORT_RADIUS} from "../../../utils/Constants";
+
 import {Vector, V} from "../../../utils/math/Vector";
 import {ClampedValue} from "../../../utils/ClampedValue";
 
-import {SSDPositioner} from "../../ports/positioners/SSDPositioner";
+import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePositioner";
+
+import {InputPort} from "../../ports/InputPort";
 
 import {Component} from "../Component";
 
@@ -10,7 +14,7 @@ export class SevenSegmentDisplay extends Component {
         super(new ClampedValue(7),
               new ClampedValue(0),
               V(70, 100),
-              new SSDPositioner());
+              new ConstantSpacePositioner<InputPort>(2*IO_PORT_RADIUS+1));
 
         this.setInputPortCount(7);
     }

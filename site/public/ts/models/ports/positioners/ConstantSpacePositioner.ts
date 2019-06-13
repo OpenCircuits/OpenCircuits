@@ -1,22 +1,27 @@
-import {IO_PORT_RADIUS} from "../../../utils/Constants";
-
 import {V} from "../../../utils/math/Vector";
 
-import {InputPort} from "../InputPort";
+import {Port} from "../Port";
 
 import {Positioner} from "./Positioner";
 
-export class SSDPositioner extends Positioner<InputPort> {
+export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
+    private spacing: number;
+
+    public constructor(spacing: number) {
+        super();
+        this.spacing = spacing;
+    }
 
     /**
-     * Port positiong for Seven Display Segment
+     * Port positiong for constant spacing that doesn't
+     *  depend on the parent's size
      *
      * @param arr The array of input ports
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: Array<T>): void {
         ports.forEach((port, i) => {
             // Calculate y position of port
-            let l = -(2*IO_PORT_RADIUS+1)*(i - ports.length/2 + 0.5);
+            let l = -this.spacing*(i - ports.length/2 + 0.5);
             if (i === 0) l--;
             if (i === ports.length-1) l++;
 
