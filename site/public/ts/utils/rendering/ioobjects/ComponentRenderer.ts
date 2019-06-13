@@ -109,12 +109,12 @@ export const ComponentRenderer = (function() {
                 tint = object.getColor();
 
             if (imgName)
-                renderer.image(Images.GetImage(imgName), 0, 0, size.x, size.y, tint);
+                renderer.image(Images.GetImage(imgName), V(), size, tint);
 
             // Draw LED turned on
             if (object instanceof LED) {
                 if (object.isOn())
-                    renderer.image(Images.GetImage(object.getOnImageName()), 0, 0, 3*size.x, 3*size.y, object.getColor());
+                    renderer.image(Images.GetImage(object.getOnImageName()), V(), size.scale(3), object.getColor());
             }
 
             // Render the IOLabels, does not render labels if they are blank

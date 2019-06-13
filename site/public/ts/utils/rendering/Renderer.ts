@@ -92,12 +92,17 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint?: string): void {
-        this.context.drawImage(img, x - w/2, y - h/2, w, h);
+    public image(img: HTMLImageElement, pos: Vector, size: Vector, tint?: string): void {
+        const center = pos.sub(size.scale(0.5));
+
+        this.context.drawImage(img, center.x, center.y, size.x, size.y);
         if (tint != undefined)
-            this.tintImage(img, x, y, w, h, tint);
+            this.tintImage(img, pos, size, tint);
     }
-    public tintImage(img: HTMLImageElement, x: number, y: number, w: number, h: number, tint: string): void {
+    public tintImage(img: HTMLImageElement, pos: Vector, size: Vector, tint: string): void {
+        const center = pos.sub(size.scale(0.5));
+
+        // Draw to tint canvas
         this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
         this.tintContext.fillStyle = tint;
         this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
@@ -106,8 +111,10 @@ export class Renderer {
         else
             this.tintContext.globalCompositeOperation = "source-atop";
         this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
+
+        // Draw to main canvas
         this.context.globalAlpha = 0.5;
-        this.context.drawImage(this.tintCanvas, x - w/2, y - h/2, w, h);
+        this.context.drawImage(this.tintCanvas, center.x, center.y, size.x, size.y);
         this.context.globalAlpha = 1.0;
     }
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {

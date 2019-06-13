@@ -44,7 +44,7 @@ export const SevenSegmentDisplayRenderer = (function() {
 
                 pos = pos.scale(V(w/2, w));
                 const size = (dir.x == 1 ? V(w, h) : V(h, w));
-                renderer.image(Images.GetImage(img), pos.x, pos.y, size.x, size.y);
+                renderer.image(Images.GetImage(img), pos, size);
             }
         }
     };
