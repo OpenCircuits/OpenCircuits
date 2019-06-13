@@ -46,8 +46,7 @@ export const SelectionPopupController = (function() {
                 new PositionPopupModule(div),
                 new ColorPopupModule(div),
                 new InputCountPopupModule(div),
-                // TODO: implement when encoders are added to the typescript build
-                // new OutputCountPopupModule(div),
+                new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div),
                 new BusButtonPopupModule(div)
             );

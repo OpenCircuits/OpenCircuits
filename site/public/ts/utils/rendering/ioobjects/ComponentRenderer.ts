@@ -18,6 +18,8 @@ import {Camera} from "../../Camera";
 
 import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Latch} from "../../../models/ioobjects/latches/Latch";
+import {Encoder} from "../../../models/ioobjects/other/Encoder";
+import {Decoder} from "../../../models/ioobjects/other/Decoder";
 import {Multiplexer} from "../../../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../../../models/ioobjects/other/Demultiplexer";
 import {Component} from "../../../models/ioobjects/Component";
@@ -82,6 +84,8 @@ export const ComponentRenderer = (function() {
             else if (object instanceof SevenSegmentDisplay)
                 SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
+                drawBox(renderer, transform, selected);
+            else if (object instanceof Encoder || object instanceof Decoder)
                 drawBox(renderer, transform, selected);
             else if (object instanceof IC)
                 drawBox(renderer, transform, selected);
