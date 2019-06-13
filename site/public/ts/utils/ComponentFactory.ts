@@ -22,6 +22,8 @@ import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
 import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
 import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
 
+import {Encoder}       from "../models/ioobjects/other/Encoder";
+import {Decoder}       from "../models/ioobjects/other/Decoder";
 import {Multiplexer}   from "../models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
 import {WirePort}      from "../models/ioobjects/other/WirePort";
@@ -31,7 +33,7 @@ const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
-const OTHER     = [Multiplexer, Demultiplexer, WirePort];
+const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, WirePort];
 
 let XML_COMPONENTS = new Map<string, any>();
 let XML_NAMES = new Map<any, string>();
