@@ -2,6 +2,7 @@ import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 import {Gate} from "../../models/ioobjects/gates/Gate";
 import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
+import {Decoder} from "../../models/ioobjects/other/Decoder";
 import {Mux} from "../../models/ioobjects/other/Mux";
 
 export class InputCountPopupModule extends SelectionPopupModule {
@@ -22,16 +23,20 @@ export class InputCountPopupModule extends SelectionPopupModule {
         const muxes = selections
              .filter(o => o instanceof Mux)
              .map(o => o as Mux);
+        const decos = selections
+             .filter(o => o instanceof Decoder)
+             .map(o => o as Decoder);
 
-        const enable = selections.length == gates.length + muxes.length && selections.length > 0;
+        const enable = selections.length == gates.length + muxes.length + decos.length && selections.length > 0;
 
         if (enable) {
             // Calculate input counts for each component
             let counts: Array<number> = [];
             gates.forEach(g => counts.push(g.getInputPortCount()));
             muxes.forEach(m => counts.push(m.getSelectPortCount()));
+            decos.forEach(d => counts.push(d.getInputPortCount()));
 
-            const same = counts.every((count) => count == counts[0]);
+            const same = counts.every((count) => count === counts[0]);
 
             this.count.value = same ? counts[0].toString() : "-";
         }
@@ -46,6 +51,9 @@ export class InputCountPopupModule extends SelectionPopupModule {
         const muxes = MainDesignerController.GetSelections()
              .filter(o => o instanceof Mux)
              .map(o => o as Mux);
+        const decos = MainDesignerController.GetSelections()
+             .filter(o => o instanceof Decoder)
+             .map(o => o as Decoder);
 
         const countAsNumber = this.count.valueAsNumber;
         gates.forEach(g =>
@@ -53,6 +61,9 @@ export class InputCountPopupModule extends SelectionPopupModule {
         );
         muxes.forEach(m =>
             m.setSelectPortCount(countAsNumber)
+        );
+        decos.forEach(d =>
+            d.setInputPortCount(countAsNumber)
         );
         MainDesignerController.Render();
     }
