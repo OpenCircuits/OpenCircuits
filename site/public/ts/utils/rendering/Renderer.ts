@@ -1,3 +1,5 @@
+import {FONT} from "./Styles";
+
 import {Vector,V} from "../math/Vector";
 import {Transform} from "../math/Transform";
 
@@ -108,24 +110,19 @@ export class Renderer {
         this.context.drawImage(this.tintCanvas, x - w/2, y - h/2, w, h);
         this.context.globalAlpha = 1.0;
     }
-    public text(txt: string, x: number, y: number, textAlign: CanvasTextAlign): void {
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {
         this.save();
-        this.context.font = "lighter 15px arial";
+        this.context.font = FONT;
         this.context.fillStyle = '#000';
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
-        this.context.fillText(txt, x, y);
+        this.context.fillText(txt, pos.x, pos.y);
         this.restore();
     }
     public getTextWidth(txt: string): number {
-        let width = 0;
-        this.save();
-        this.context.font = "lighter 15px arial";
-        this.context.fillStyle = '#000';
+        this.context.font = FONT;
         this.context.textBaseline = "middle";
-        width = this.context.measureText(txt).width;
-        this.restore();
-        return width;
+        return this.context.measureText(txt).width;
     }
     public pathLine(p1: Vector, p2: Vector): void {
         this.context.moveTo(p1.x, p1.y);
