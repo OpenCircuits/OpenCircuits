@@ -18,7 +18,7 @@ export const IOLabelRenderer = (function() {
         pos.x = Clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
         pos.y = Clamp(pos.y, -size.y/2+14, size.y/2-14);
 
-        renderer.text(name, pos.x, pos.y, align);
+        renderer.text(name, pos, align);
     }
 
     return {
