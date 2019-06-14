@@ -9,14 +9,17 @@ import {Clock}        from "../models/ioobjects/inputs/Clock";
 import {LED} from "../models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "../models/ioobjects/outputs/SevenSegmentDisplay";
 
+import {Gate} from "../models/ioobjects/gates/Gate";
 import {BUFGate} from "../models/ioobjects/gates/BUFGate";
 import {ANDGate} from "../models/ioobjects/gates/ANDGate";
 import {ORGate}  from "../models/ioobjects/gates/ORGate";
 import {XORGate} from "../models/ioobjects/gates/XORGate";
 
+import {Latch}  from "../models/ioobjects/latches/Latch";
 import {DLatch}  from "../models/ioobjects/latches/DLatch";
 import {SRLatch} from "../models/ioobjects/latches/SRLatch";
 
+import {FlipFlop}  from "../models/ioobjects/flipflops/FlipFlop";
 import {DFlipFlop}  from "../models/ioobjects/flipflops/DFlipFlop";
 import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
 import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
@@ -77,40 +80,40 @@ export function GetXMLName(type: any): string {
     return XML_NAMES.get(type);
 }
 
-export function GetAllComponentInputXMLNames() {
+export function GetAllComponentInputXMLNames(): Array<string> {
     return XML_INPUTS.slice();
 }
-export function GetAllComponentOutputXMLNames() {
+export function GetAllComponentOutputXMLNames(): Array<string> {
     return XML_OUTPUTS.slice();
 }
-export function GetAllComponentGateXMLNames() {
+export function GetAllComponentGateXMLNames(): Array<string> {
     return XML_GATES.slice();
 }
-export function GetAllComponentLatchXMLNames() {
+export function GetAllComponentLatchXMLNames(): Array<string> {
     return XML_LATCHES.slice();
 }
-export function GetAllComponentFlipFlopXMLNames() {
+export function GetAllComponentFlipFlopXMLNames(): Array<string> {
     return XML_FLIPFLOPS.slice();
 }
-export function GetAllComponentOtherXMLNames() {
+export function GetAllComponentOtherXMLNames(): Array<string> {
     return XML_OTHER.slice();
 }
 
-export function GetAllComponentInputs() {
+export function GetAllComponentInputs(): Array<typeof Component> {
     return INPUTS.slice();
 }
-export function GetAllComponentOutputs() {
+export function GetAllComponentOutputs(): Array<typeof Component> {
     return OUTPUTS.slice();
 }
-export function GetAllComponentGates() {
+export function GetAllComponentGates(): Array<typeof Gate> {
     return GATES.slice();
 }
-export function GetAllComponentLatches() {
+export function GetAllComponentLatches(): Array<typeof Latch> {
     return LATCHES.slice();
 }
-export function GetAllComponentFlipFlops() {
+export function GetAllComponentFlipFlops(): Array<typeof FlipFlop> {
     return FLIPFLOPS.slice();
 }
-export function GetAllComponentOthers() {
+export function GetAllComponentOthers(): Array<typeof Component> {
     return OTHER.slice();
 }
