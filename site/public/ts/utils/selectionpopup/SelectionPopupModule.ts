@@ -20,7 +20,7 @@ export abstract class SelectionPopupModule {
     }
 
     public getEnabled(): boolean {
-        return (this.div.style.display == "inherit");
+        return (this.div.style.display === "inherit");
     }
 
     // Updates the module to show properties of the selected object(s)
