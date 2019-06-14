@@ -194,8 +194,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
 
     // SAT w/ other two axes
     const normals = [b[3].sub(b[0]), b[3].sub(b[2])];
-    for (let i = 0; i < normals.length; i++) {
-        const normal = normals[i];
+    for (const normal of normals) {
         minA = Infinity, maxA = -Infinity;
         minB = Infinity, maxB = -Infinity;
         for (let j = 0; j < 4; j++) {
@@ -245,7 +244,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
  */
 export function FindRoots(iterations: number, t0: number, x: number, y: number,
                           f:  (t: number, x: number, y: number) => number,
-                          df: (t: number, x: number, y: number) => number) {
+                          df: (t: number, x: number, y: number) => number): number {
     let t = t0;
     do {
         const v  = f(t, x, y);
@@ -284,7 +283,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
     let t0 = -1;
     for (let tt = 0; tt <= 1.0; tt += 1.0 / WIRE_DIST_ITERATIONS) {
-        var dist = curve.getPos(tt).sub(pos).len();
+        const dist = curve.getPos(tt).sub(pos).len();
         if (dist < minDist) {
             t0 = tt;
             minDist = dist;
