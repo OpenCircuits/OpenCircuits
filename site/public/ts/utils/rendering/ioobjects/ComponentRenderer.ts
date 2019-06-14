@@ -73,7 +73,7 @@ export const ComponentRenderer = (() => {
                 // Set size/pos for drawing image to be size of "pressable" part
                 size = object.getPressableBox().getSize();
 
-                let box = transform;
+                const box = transform;
                 drawBox(renderer, box, selected);
             }
 

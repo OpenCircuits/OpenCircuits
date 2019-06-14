@@ -294,7 +294,7 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
 
     // Copy connections
     const wireCopies: Array<Wire> = [];
-    for (let i of graph.getNodes()) {
+    for (const i of graph.getNodes()) {
         const c1 = copies[i];
         const connections = graph.getConnections(i);
 
