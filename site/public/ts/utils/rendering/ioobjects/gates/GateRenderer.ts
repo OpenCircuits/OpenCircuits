@@ -58,7 +58,7 @@ export const GateRenderer = (() => {
 
     return {
         render(renderer: Renderer, _: Camera, gate: Gate, selected: boolean): void {
-            let transform = gate.getTransform();
+            const transform = gate.getTransform();
 
             const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);

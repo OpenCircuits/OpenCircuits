@@ -62,7 +62,7 @@ export class Graph<V, E> {
         const visited = new Map<V, boolean>();
         this.bfs(visited, v);
 
-        return visited.size == this.size();
+        return (visited.size === this.size());
     }
 
     public size(): number {

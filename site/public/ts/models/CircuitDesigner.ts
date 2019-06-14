@@ -27,7 +27,7 @@ export class CircuitDesigner implements XMLable {
 
     private updateCallback: () => void;
 
-    public constructor(propagationTime: number = 1, callback: () => void = function(){}) {
+    public constructor(propagationTime: number = 1, callback: () => void = () => {}) {
         this.propagationTime = propagationTime;
         this.updateCallback  = callback;
 
@@ -121,8 +121,8 @@ export class CircuitDesigner implements XMLable {
     }
 
     public addObjects(objects: Array<Component>): void {
-        for (let i = 0; i < objects.length; i++)
-            this.addObject(objects[i]);
+        for (const object of objects)
+            this.addObject(object);
     }
 
     public addObject(obj: Component): void {

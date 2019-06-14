@@ -13,11 +13,11 @@ export class Style {
     }
 
     public fill(): boolean {
-        return (this.fillColor != undefined);
+        return (this.fillColor != null);
     }
 
     public stroke(): boolean {
-        return (this.borderColor != undefined && this.borderSize > 0);
+        return (this.borderColor != null && this.borderSize > 0);
     }
 
 }

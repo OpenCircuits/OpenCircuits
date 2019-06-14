@@ -4,9 +4,9 @@ import {LED} from "../../models/ioobjects/outputs/LED";
 
 export class ColorPopupModule extends SelectionPopupModule {
     private color: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div.querySelector("div#popup-color-text"));
+        super(parentDiv.querySelector("div#popup-color-text"));
         this.color = this.div.querySelector("input#popup-color-picker");
 
         this.color.onchange = () => this.push();

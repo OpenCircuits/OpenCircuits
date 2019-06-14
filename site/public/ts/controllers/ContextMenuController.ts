@@ -20,13 +20,13 @@ export const ContextMenuController = (() => {
         Init: function(): void {
             const canvas = MainDesignerController.GetCanvas();
 
-            canvas.addEventListener("mousedown", function(e) {
+            canvas.addEventListener("mousedown", function(e: MouseEvent) {
                 e.preventDefault();
                 onMouseDown(e);
             });
 
             // Stop default right click menu
-            canvas.addEventListener("contextmenu", function(e) {
+            canvas.addEventListener("contextmenu", function(e: MouseEvent) {
                 e.preventDefault();
                 onContextMenu(e, canvas);
             });

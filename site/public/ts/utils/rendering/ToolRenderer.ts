@@ -43,7 +43,7 @@ export const ToolRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, toolManager: ToolManager) {
+        render(renderer: Renderer, camera: Camera, toolManager: ToolManager): void {
             const tool = toolManager.getCurrentTool();
 
             // If a wire has been selected, then don't draw the rotation box

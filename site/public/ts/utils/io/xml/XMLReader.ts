@@ -14,14 +14,14 @@ export class XMLReader {
     }
 
     public getVersion(): number {
-        let root = this.getRoot();
+        const root = this.getRoot();
         if (root.hasAttribute("version"))
             return root.getIntAttribute("version");
         return -1;
     }
 
     public getName(): string {
-        let root = this.getRoot();
+        const root = this.getRoot();
         if (root.hasAttribute("name"))
             return root.getAttribute("name");
         return undefined;

@@ -30,7 +30,7 @@ export const Importer = (() => {
                 designer.reset();
 
                 const reader = new FileReader();
-                reader.onload = function(_) {
+                reader.onload = () => {
                     read(designer, reader.result.toString(), setName);
                 }
 

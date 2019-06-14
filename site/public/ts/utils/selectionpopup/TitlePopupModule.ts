@@ -3,15 +3,15 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class TitlePopupModule extends SelectionPopupModule {
     private title: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div);
+        super(parentDiv);
         this.title = this.div.querySelector("input#popup-name");
         // oninput instead of onchange because onchange doesn't push changes when things get deselected
         this.title.oninput = () => this.push();
     }
 
-    pull(): void {
+    public pull(): void {
         const selections = MainDesignerController.GetSelections();
         // * All IOObjects have a display name, so no property checks are required
 
@@ -30,7 +30,7 @@ export class TitlePopupModule extends SelectionPopupModule {
         }
     }
 
-    push(): void {
+    public push(): void {
         const selections = MainDesignerController.GetSelections();
         selections.forEach(c => c.setName(this.title.value));
     }
