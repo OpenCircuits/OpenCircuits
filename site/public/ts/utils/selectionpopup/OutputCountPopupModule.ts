@@ -5,7 +5,7 @@ import {Encoder} from "../../models/ioobjects/other/Encoder";
 
 export class OutputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    constructor(parentDiv: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-output-count-text"));
         this.count = this.div.querySelector("input#popup-output-count");

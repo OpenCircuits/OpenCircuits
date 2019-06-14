@@ -3,7 +3,7 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class TitlePopupModule extends SelectionPopupModule {
     private title: HTMLInputElement;
-    constructor(parentDiv: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv);
         this.title = this.div.querySelector("input#popup-name");
@@ -11,7 +11,7 @@ export class TitlePopupModule extends SelectionPopupModule {
         this.title.oninput = () => this.push();
     }
 
-    pull(): void {
+    public pull(): void {
         const selections = MainDesignerController.GetSelections();
         // * All IOObjects have a display name, so no property checks are required
 
@@ -30,7 +30,7 @@ export class TitlePopupModule extends SelectionPopupModule {
         }
     }
 
-    push(): void {
+    public push(): void {
         const selections = MainDesignerController.GetSelections();
         selections.forEach(c => c.setName(this.title.value));
     }
