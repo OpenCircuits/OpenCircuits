@@ -3,7 +3,7 @@ declare var jsPDF: any; // jsPDF is external library
 import {XMLWriter} from "./xml/XMLWriter";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export const Exporter = (function() {
+export const Exporter = (() => {
 
     const write = function(designer: CircuitDesigner, name: string): string {
         const writer = new XMLWriter(designer.getXMLName());
@@ -36,13 +36,13 @@ export const Exporter = (function() {
                 a.download = filename;
                 document.body.appendChild(a);
                 a.click();
-                setTimeout(function() {
+                setTimeout(() => {
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);
                 }, 0);
             }
         },
-        savePNG: function(canvas: HTMLCanvasElement, projectName: string) {
+        savePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
@@ -60,13 +60,13 @@ export const Exporter = (function() {
                 a.download = filename;
                 document.body.appendChild(a);
                 a.click();
-                setTimeout(function() {
+                setTimeout(() => {
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);
                 }, 0);
             }
         },
-        savePDF: function(canvas: HTMLCanvasElement, projectName: string) {
+        savePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
             const width  = canvas.width;
             const height = canvas.height;
 
