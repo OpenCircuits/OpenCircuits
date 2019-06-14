@@ -3,9 +3,9 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class TitlePopupModule extends SelectionPopupModule {
     private title: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div);
+        super(parentDiv);
         this.title = this.div.querySelector("input#popup-name");
         // oninput instead of onchange because onchange doesn't push changes when things get deselected
         this.title.oninput = () => this.push();

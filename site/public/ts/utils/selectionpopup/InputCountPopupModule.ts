@@ -7,9 +7,9 @@ import {Mux} from "../../models/ioobjects/other/Mux";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div.querySelector("div#popup-input-count-text"));
+        super(parentDiv.querySelector("div#popup-input-count-text"));
         this.count = this.div.querySelector("input#popup-input-count");
 
         this.count.onchange = () => this.push();

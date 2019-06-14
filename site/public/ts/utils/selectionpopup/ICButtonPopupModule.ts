@@ -7,9 +7,9 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 export class ICButtonPopupModule extends SelectionPopupModule {
     private button: HTMLButtonElement;
 
-    public constructor(parent_div: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // No wrapping div
-        super(parent_div);
+        super(parentDiv);
         this.button = this.div.querySelector("button#popup-ic-button");
         this.button.onclick = () => this.push();
     }

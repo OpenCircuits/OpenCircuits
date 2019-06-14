@@ -8,8 +8,8 @@
 export abstract class SelectionPopupModule {
     protected div: HTMLDivElement;
 
-    public constructor(parent_div: HTMLDivElement) {
-        this.div = parent_div;
+    public constructor(parentDiv: HTMLDivElement) {
+        this.div = parentDiv;
     }
 
     // True makes this module visible in the selection popup menu
