@@ -17,7 +17,7 @@ export class LED extends Component {
         this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
     }
 
-    public setColor(color: string) {
+    public setColor(color: string): void {
         this.color = color;
     }
 
@@ -37,7 +37,7 @@ export class LED extends Component {
         return "led.svg";
     }
 
-    public getOnImageName() {
+    public getOnImageName(): string {
         return "ledLight.svg"
     }
 

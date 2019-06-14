@@ -13,9 +13,9 @@ import {Circle} from "../shapes/Circle";
 import {Line} from "../shapes/Line";
 import {Style} from "../Style";
 
-export const IOPortRenderer = (function() {
+export const IOPortRenderer = (() => {
     return {
-        renderPort(renderer: Renderer, port: Port, selected: boolean, portSelected: boolean) {
+        renderPort(renderer: Renderer, port: Port, selected: boolean, portSelected: boolean): void {
             const o = port.getOriginPos();
             const v = port.getTargetPos();
 

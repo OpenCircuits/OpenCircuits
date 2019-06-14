@@ -19,7 +19,7 @@ import {Line} from "../../shapes/Line";
 import {QuadCurve} from "../../shapes/QuadCurve";
 import {Style} from "../../Style";
 
-export const GateRenderer = (function() {
+export const GateRenderer = (() => {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
         const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
@@ -57,7 +57,7 @@ export const GateRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, gate: Gate, selected: boolean) {
+        render(renderer: Renderer, _: Camera, gate: Gate, selected: boolean): void {
             let transform = gate.getTransform();
 
             const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);

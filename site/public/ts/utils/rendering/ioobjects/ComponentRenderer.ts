@@ -36,9 +36,9 @@ import {Port} from "../../../models/ports/Port";
 import {Rectangle} from "../shapes/Rectangle";
 import {Style} from "../Style";
 
-export const ComponentRenderer = (function() {
+export const ComponentRenderer = (() => {
 
-    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean) {
+    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean): void {
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH)
@@ -46,7 +46,7 @@ export const ComponentRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selectedPorts: Array<Port>) {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selectedPorts: Array<Port>): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;

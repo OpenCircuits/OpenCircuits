@@ -21,7 +21,7 @@ import {Component} from "../models/ioobjects/Component";
 import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export const MainDesignerController = (function() {
+export const MainDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
@@ -29,7 +29,7 @@ export const MainDesignerController = (function() {
     let toolManager: ToolManager;
     let renderQueue: RenderQueue;
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         MainDesignerController.Render();
@@ -123,7 +123,7 @@ export const MainDesignerController = (function() {
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
-        AddAction: function(action: Action) {
+        AddAction: function(action: Action): void {
             toolManager.addAction(action);
         },
         SetEditMode: function(val: boolean): void {

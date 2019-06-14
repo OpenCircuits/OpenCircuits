@@ -6,14 +6,14 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 
 import {Component} from "../models/ioobjects/Component";
 
-export const ItemNavController = (function() {
+export const ItemNavController = (() => {
     const tab = document.getElementById("itemnav-open-tab");
     const itemnav = document.getElementById("itemnav");
 
     let isOpen = false;
     let disabled = false;
 
-    const toggle = function() {
+    const toggle = function(): void {
         itemnav.classList.toggle("shrink");
         tab.classList.toggle("tab__closed");
     }

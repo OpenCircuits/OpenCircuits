@@ -29,7 +29,7 @@ export class Decoder extends Component {
             super.activate(i === num, i);
     }
 
-    public setInputPortCount(val: number) {
+    public setInputPortCount(val: number): void {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*Math.pow(2, val)));
         super.setInputPortCount(val);
         super.setOutputPortCount(Math.pow(2, val));
@@ -39,7 +39,7 @@ export class Decoder extends Component {
         return "Decoder";
     }
 
-    public getXMLName() {
+    public getXMLName(): string {
         return "decoder";
     }
 

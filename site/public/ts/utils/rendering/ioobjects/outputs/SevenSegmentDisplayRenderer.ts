@@ -15,9 +15,9 @@ import {Images} from "../../../Images";
 import {Rectangle} from "../../shapes/Rectangle";
 import {Style} from "../../Style";
 
-export const SevenSegmentDisplayRenderer = (function() {
+export const SevenSegmentDisplayRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, display: SevenSegmentDisplay, selected: boolean) {
+        render(renderer: Renderer, _: Camera, display: SevenSegmentDisplay, selected: boolean): void {
             const transform = display.getTransform();
 
             const size = transform.getSize();

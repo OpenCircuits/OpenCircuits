@@ -5,7 +5,7 @@ import {Exporter} from "../utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
 
-export const HeaderController = (function() {
+export const HeaderController = (() => {
     const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
 
     const fileInput = <HTMLInputElement>document.getElementById("header-file-input");
@@ -18,7 +18,7 @@ export const HeaderController = (function() {
     const downloadPNGButton = document.getElementById("header-download-png-button");
 
     return {
-        Init: function(designer: CircuitDesigner) {
+        Init: function(designer: CircuitDesigner): void {
             const mainDesigner: CircuitDesigner = designer;
 
             // Show/hide the dropdown on click

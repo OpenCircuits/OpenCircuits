@@ -15,14 +15,14 @@ export class XMLNode {
         return new XMLNode(this.root, child);
     }
 
-    public addAttribute(tag: string, val: any) {
+    public addAttribute(tag: string, val: any): void {
         const a = this.root.createElement(tag);
         const b = this.root.createTextNode(val);
         a.appendChild(b);
         this.node.appendChild(a);
     }
 
-    public setAttribute(tag: string, val: any) {
+    public setAttribute(tag: string, val: any): void {
         if (!this.hasAttribute(tag))
             this.addAttribute(tag, val);
         else
@@ -30,7 +30,7 @@ export class XMLNode {
     }
 
     // Helper method to add x,y components of vector
-    public addVectorAttribute(tag: string, val: Vector) {
+    public addVectorAttribute(tag: string, val: Vector): void {
         this.addAttribute(tag+"x", val.x);
         this.addAttribute(tag+"y", val.y);
     }

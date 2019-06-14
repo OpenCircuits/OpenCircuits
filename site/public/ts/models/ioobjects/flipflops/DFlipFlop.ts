@@ -10,7 +10,7 @@ export class DFlipFlop extends FlipFlop {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         this.last_clock = this.clock;
         this.clock = this.inputs.get(0).getIsOn();
         const data = this.inputs.get(1).getIsOn();
@@ -21,7 +21,7 @@ export class DFlipFlop extends FlipFlop {
         super.activate(!this.state, 0);
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return "D Flip Flop";
     }
 

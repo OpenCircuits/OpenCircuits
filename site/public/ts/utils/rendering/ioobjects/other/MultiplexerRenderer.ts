@@ -13,10 +13,10 @@ import {Demultiplexer} from "../../../../models/ioobjects/other/Demultiplexer";
 import {Polygon} from "../../shapes/Polygon";
 import {Style} from "../../Style";
 
-export const MultiplexerRenderer = (function() {
+export const MultiplexerRenderer = (() => {
 
     return {
-        render(renderer: Renderer, camera: Camera, mul: Multiplexer | Demultiplexer, selected: boolean) {
+        render(renderer: Renderer, _: Camera, mul: Multiplexer | Demultiplexer, selected: boolean): void {
             const transform = mul.getTransform();
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);

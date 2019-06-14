@@ -13,7 +13,7 @@ export class SRLatch extends Latch {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         this.clock  = this.inputs.get(1).getIsOn();
         const set   = this.inputs.get(2).getIsOn();
         const reset = this.inputs.get(0).getIsOn();

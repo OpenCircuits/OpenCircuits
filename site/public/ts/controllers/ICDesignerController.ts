@@ -28,7 +28,7 @@ import {IC} from "../models/ioobjects/other/IC";
 import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";
 
-export const ICDesignerController = (function() {
+export const ICDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
@@ -45,7 +45,7 @@ export const ICDesignerController = (function() {
 
     // Creates a rectangle for the collision box for a port on the IC
     //  and determines if the given 'mousePos' is within it
-    const portContains = function(port: Port, mousePos: Vector) {
+    const portContains = function(port: Port, mousePos: Vector): boolean {
         const origin = port.getOriginPos();
         const target = port.getTargetPos();
 
@@ -60,7 +60,7 @@ export const ICDesignerController = (function() {
         return RectContains(rect, mousePos);
     }
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         ICDesignerController.Render();

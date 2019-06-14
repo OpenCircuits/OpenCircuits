@@ -8,10 +8,10 @@ import {Camera} from "../Camera";
 
 import {Style} from "./Style";
 
-export const Grid = (function() {
+export const Grid = (() => {
 
     return {
-        render(renderer: Renderer, camera: Camera) {
+        render(renderer: Renderer, camera: Camera): void {
             const step = GRID_SIZE/camera.getZoom();
 
             const cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));

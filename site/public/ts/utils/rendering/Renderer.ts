@@ -19,7 +19,7 @@ export class Renderer {
     private vw: number;
     private vh: number;
 
-    constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0) {
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0) {
         this.canvas = canvas;
         this.tintCanvas = document.createElement("canvas");
         this.vw = vw;
@@ -50,7 +50,7 @@ export class Renderer {
     public restore(): void {
         this.context.restore();
     }
-    public transform(camera: Camera, transform: Transform) {
+    public transform(camera: Camera, transform: Transform): void {
         const m = transform.getMatrix().copy();
         m.setTranslation(camera.getScreenPos(m.getTranslation()));
         m.scale(1.0/camera.getZoom());

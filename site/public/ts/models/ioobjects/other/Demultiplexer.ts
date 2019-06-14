@@ -12,18 +12,18 @@ export class Demultiplexer extends Mux {
                 undefined, new MuxPositioner<OutputPort>());
     }
 
-    public activate() {
+    public activate(): void {
         const values: Array<number> = this.selects.getPorts().map(p => (p.getIsOn() ? 1 : 0));
 
         const num = values.reduce((acc, cur, i) => acc = acc | (cur << i), 0);
 
         // Turn off each output port
-        this.getOutputPorts().forEach((p, i) => super.activate(false, i));
+        this.getOutputPorts().forEach((_, i) => super.activate(false, i));
 
         super.activate(this.inputs.last.getIsOn(), num);
     }
 
-    public setSelectPortCount(val: number) {
+    public setSelectPortCount(val: number): void {
         super.setSelectPortCount(val);
         super.setOutputPortCount(Math.pow(2, val));
     }

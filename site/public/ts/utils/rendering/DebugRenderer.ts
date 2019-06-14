@@ -15,9 +15,9 @@ import {GetAllPorts} from "../ComponentUtils";
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";
 
-export const DebugRenderer = (function() {
+export const DebugRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, objects: Array<Component>, wires: Array<Wire>) {
+        render(renderer: Renderer, camera: Camera, objects: Array<Component>, wires: Array<Wire>): void {
 
             if (DEBUG_CULLBOXES) {
                 const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));

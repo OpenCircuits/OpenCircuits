@@ -13,7 +13,7 @@ export class QuadCurve implements Shape {
         this.c  = c;
     }
 
-    public draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D): void {
         const p1 = this.p1;
         const p2 = this.p2;
         const c  = this.c;

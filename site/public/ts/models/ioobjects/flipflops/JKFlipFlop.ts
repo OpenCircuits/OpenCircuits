@@ -15,7 +15,7 @@ export class JKFlipFlop extends FlipFlop {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         this.last_clock = this.clock;
         this.clock  = this.inputs.get(1).getIsOn();
         const set   = this.inputs.get(0).getIsOn();
@@ -34,7 +34,7 @@ export class JKFlipFlop extends FlipFlop {
         super.activate(!this.state, 1);
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return "JK Flip Flop";
     }
 

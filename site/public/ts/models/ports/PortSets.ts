@@ -75,7 +75,7 @@ class PortSet<T extends Port> {
         return this.ports[this.ports.length - 1];
     }
 
-    public isEmpty() {
+    public isEmpty(): boolean {
         return this.ports.length == 0;
     }
 
