@@ -35,23 +35,22 @@ function FixGroup(objs: XMLNode, wiresNode: XMLNode): void {
     wiresNode.replaceChildrenWithName("bezier", "curve", true);
 
     // Add name attribute
-    for (let objNode of objs.getChildren()) {
-        console.log(objNode);
+    for (const objNode of objs.getChildren()) {
         if (!objNode.hasAttribute("name"))
             objNode.addAttribute("name", objNode.getTag());
     }
 
     // Normalize IDs
+    const idWireNodes = wiresNode.findChildrenWithAttribute("uid", true);
     let idCount = 0;
-    let idWireNodes = wiresNode.findChildrenWithAttribute("uid", true);
 
     // Collect all IDs and ID nodes
-    for (let objNode of objNodes) {
-        let id = objNode.getIntAttribute("uid");
+    for (const objNode of objNodes) {
+        const id = objNode.getIntAttribute("uid");
 
         // Collect nodes with id
         for (let i = 0; i < idWireNodes.length; i++) {
-            let node = idWireNodes[i];
+            const node = idWireNodes[i];
             if (node.getTag() != "wire" && node.getIntAttribute("uid") == id) {
                 node.setAttribute("uid", idCount);
                 idWireNodes.splice(i, 1);
@@ -61,7 +60,7 @@ function FixGroup(objs: XMLNode, wiresNode: XMLNode): void {
         idCount++;
     }
 
-    for (let wireNode of wireNodes) {
+    for (const wireNode of wireNodes) {
         // Add name attribute
         if (!wireNode.hasAttribute("name"))
             wireNode.addAttribute("name", "Wire");
@@ -81,7 +80,7 @@ export function ResolveVersionConflict(reader: XMLReader): void {
     const icNodes = (icsNode ? icsNode.getChildren() : []);
 
     // Fix ICs
-    for (let icNode of icNodes) {
+    for (const icNode of icNodes) {
         icNode.replaceChildrenWithName("icuid", "icid");
         icNode.replaceChildrenWithName("width",  "sizex");
         icNode.replaceChildrenWithName("height", "sizey");
@@ -102,17 +101,10 @@ export function ResolveVersionConflict(reader: XMLReader): void {
         const outputNodes = icNode.findChild("outputs").getChildren();
         const components = icNode.findChild("circuit").findChild("objects").getChildren();
 
-        console.log(components);
-        console.log(inputNodes);
-        console.log(outputNodes);
-
         let i = 0, j = 0, k = 0;
         while (k < components.length) {
             const tag = components[k].getTag();
             const name = components[k].getAttribute("name");
-
-            console.log(name + ", " + tag);
-            console.log(i + "," + j + "," + k);
 
             // Check if object is an input or output, and set name
             if (inputXMLs.includes(tag))
@@ -122,11 +114,7 @@ export function ResolveVersionConflict(reader: XMLReader): void {
 
             k++;
         }
-
-        console.log(icNode);
     }
 
     FixGroup(objs, wiresNode);
-
-    console.log(objs);
 }

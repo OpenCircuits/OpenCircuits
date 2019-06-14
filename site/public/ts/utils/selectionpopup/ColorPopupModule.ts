@@ -15,11 +15,11 @@ export class ColorPopupModule extends SelectionPopupModule {
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
         const leds = selections.filter(o => o instanceof LED).map(o => o as LED);
-        let enable = selections.length == leds.length && leds.length > 0;
+        const enable = selections.length == leds.length && leds.length > 0;
 
         if (enable) {
+            const color: string = leds[0].getColor();
             let same = true;
-            let color: string = leds[0].getColor();
             for (let i = 1; i < leds.length && same; ++i) {
                 same = leds[i].getColor() == color;
             }
@@ -31,7 +31,7 @@ export class ColorPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        let leds = MainDesignerController.GetSelections().filter(o => o instanceof LED).map(o => o as LED);
+        const leds = MainDesignerController.GetSelections().filter(o => o instanceof LED).map(o => o as LED);
 
         leds.forEach(l =>
             l.setColor(this.color.value)

@@ -25,9 +25,9 @@ export const ToolRenderer = (function() {
 
     const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
         // Get position, radius, and thickness
-        let pos = camera.getScreenPos(midpoint);
-        let radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
-        let thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
+        const pos = camera.getScreenPos(midpoint);
+        const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
+        const thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
 
         renderer.draw(new Circle(pos, radius),
                       new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);

@@ -17,7 +17,7 @@ export class TitlePopupModule extends SelectionPopupModule {
 
         if (selections.length) {
             let same = true;
-            let name = selections[0].getName();
+            const name = selections[0].getName();
             for (let i = 1; i < selections.length; ++i) {
                 same = name == selections[i].getName();
             }
@@ -31,7 +31,7 @@ export class TitlePopupModule extends SelectionPopupModule {
     }
 
     push(): void {
-        let selections = MainDesignerController.GetSelections();
+        const selections = MainDesignerController.GetSelections();
         selections.forEach(c => c.setName(this.title.value));
     }
 }

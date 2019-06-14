@@ -1,7 +1,5 @@
 import {Vector, V} from "../utils/math/Vector";
 
-import {ICData} from "../models/ioobjects/other/ICData";
-
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
 import {Wire} from "../models/ioobjects/Wire";

@@ -1,5 +1,5 @@
 export const LoadingScreen = (function() {
-    let div = document.getElementById("loading-screen");
+    const div = document.getElementById("loading-screen");
 
     return {
         Show() {

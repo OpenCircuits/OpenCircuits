@@ -29,7 +29,7 @@ export abstract class IOObject implements XMLable {
     }
 
     public copy(): IOObject {
-        let copy: IOObject = new (<any> this.constructor)();
+        const copy: IOObject = new (<any> this.constructor)();
         copy.name = new Name(this.name.getName());
         return copy;
     }

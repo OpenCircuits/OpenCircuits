@@ -11,7 +11,7 @@ export const ContextMenuController = (function() {
         contextmenu.style.visibility = 'visible';
     }
 
-    const onMouseDown = function(e: MouseEvent): void {
+    const onMouseDown = function(_: MouseEvent): void {
         if (contextmenu.style.visibility === 'visible')
             contextmenu.style.visibility = 'hidden';
     }

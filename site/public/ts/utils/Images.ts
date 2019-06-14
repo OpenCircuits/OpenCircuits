@@ -5,8 +5,8 @@ export const Images = (function() {
                               onFinish: () => void): void {
         // Load each image
         let index = 0;
-        for (let imageName of imageNames) {
-            let img = new Image();
+        for (const imageName of imageNames) {
+            const img = new Image();
             img.onload = function() {
                 if (++index === imageNames.length)
                     onFinish();

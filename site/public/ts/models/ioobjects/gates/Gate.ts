@@ -40,7 +40,7 @@ export abstract class Gate extends Component {
     }
 
     public copy(): Gate {
-        let copy = <Gate>super.copy();
+        const copy = <Gate>super.copy();
         copy.not = this.not;
         return copy;
     }

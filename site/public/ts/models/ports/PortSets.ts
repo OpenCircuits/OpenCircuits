@@ -80,7 +80,7 @@ class PortSet<T extends Port> {
     }
 
     public copy(newParent: Component): PortSet<T> {
-        let copy = new PortSet<T>(newParent, this.type, this.count.copy());
+        const copy = new PortSet<T>(newParent, this.type, this.count.copy());
 
         // Copy port positions
         copy.ports.forEach((p, i) => {

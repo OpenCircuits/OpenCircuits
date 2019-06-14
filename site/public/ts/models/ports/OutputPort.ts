@@ -30,7 +30,7 @@ export class OutputPort extends Port {
 		if (designer == undefined)
 			return;
 
-		for (let w of this.connections)
+		for (const w of this.connections)
 			designer.propagate(w, this.isOn);
 	}
 

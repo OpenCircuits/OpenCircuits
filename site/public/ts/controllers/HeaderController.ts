@@ -30,8 +30,8 @@ export const HeaderController = (function() {
 
             // Hide dropdown on click anywhere else
             window.onclick = (e) => {
-                let target: Element = (e.target || e.srcElement) as Element;
-                let dropdownParent = target.closest(".header__dropdown");
+                const target: Element = (e.target || e.srcElement) as Element;
+                const dropdownParent = target.closest(".header__dropdown");
                 if (!dropdownParent) {
                     if (downloadDropdown.classList.contains("show")) {
                         downloadDropdown.classList.toggle("show");

@@ -246,7 +246,7 @@ export class Input {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {
-            for (let listener of listeners)
+            for (const listener of listeners)
                 listener(a, b);
         }
     }

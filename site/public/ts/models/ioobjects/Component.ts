@@ -90,7 +90,7 @@ export abstract class Component extends CullableObject {
      * @return   True if the point is within this component,
      *           false otherwise
      */
-	public isWithinPressBounds(v: Vector): boolean {
+	public isWithinPressBounds(_: Vector): boolean {
         return false;
 	}
 
@@ -197,7 +197,7 @@ export abstract class Component extends CullableObject {
     }
 
     public copy(): Component {
-        let copy = <Component>super.copy();
+        const copy = <Component>super.copy();
 
         // Copy properties
         copy.transform = this.transform.copy();

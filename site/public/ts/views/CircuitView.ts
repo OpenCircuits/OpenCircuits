@@ -38,14 +38,14 @@ export class CircuitView {
 
         // Render all wires (first so they are underneath objects)
         const wires = designer.getWires();
-        for (let wire of wires) {
+        for (const wire of wires) {
             const selected = selections.includes(wire);
             WireRenderer.render(this.renderer, this.camera, wire, selected);
         }
 
         // Render all objects
         const objects = designer.getObjects();
-        for (let object of objects) {
+        for (const object of objects) {
             const selected = selections.includes(object);
             ComponentRenderer.render(this.renderer, this.camera, object, selected, portSelections);
         }

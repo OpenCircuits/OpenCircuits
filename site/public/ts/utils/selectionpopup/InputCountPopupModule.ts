@@ -31,7 +31,7 @@ export class InputCountPopupModule extends SelectionPopupModule {
 
         if (enable) {
             // Calculate input counts for each component
-            let counts: Array<number> = [];
+            const counts: Array<number> = [];
             gates.forEach(g => counts.push(g.getInputPortCount()));
             muxes.forEach(m => counts.push(m.getSelectPortCount()));
             decos.forEach(d => counts.push(d.getInputPortCount()));

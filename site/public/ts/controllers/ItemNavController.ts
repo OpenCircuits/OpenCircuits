@@ -1,5 +1,3 @@
-import {ITEMNAV_WIDTH} from "../utils/Constants";
-
 import {Vector,V} from "../utils/math/Vector";
 
 import {MainDesignerController} from "./MainDesignerController";
@@ -7,8 +5,6 @@ import {MainDesignerController} from "./MainDesignerController";
 import {CreateComponentFromXML} from "../utils/ComponentFactory";
 
 import {Component} from "../models/ioobjects/Component";
-
-import {Input} from "../utils/Input";
 
 export const ItemNavController = (function() {
     const tab = document.getElementById("itemnav-open-tab");

@@ -26,8 +26,8 @@ export const IOLabelRenderer = (function() {
             if (!camera.cull(object.getCullBox()))
                 return;
 
-            let transform = object.getTransform();
-            let size: Vector = transform.getSize();
+            const transform = object.getTransform();
+            const size: Vector = transform.getSize();
 
             const ports = object.getPorts();
             for (const port of ports) {

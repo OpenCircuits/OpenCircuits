@@ -16,8 +16,8 @@ export abstract class CullableObject extends IOObject {
         // @TODO change this cause it's inefficient to
         //  recalculate the cull box if nothing has changed
 
-        let min = this.getMinPos();
-        let max = this.getMaxPos();
+        const min = this.getMinPos();
+        const max = this.getMaxPos();
 
         this.cullTransform.setSize(max.sub(min));
         this.cullTransform.setPos(min.add(max).scale(0.5));
@@ -27,9 +27,9 @@ export abstract class CullableObject extends IOObject {
         this.updateCullTransform();
         return this.cullTransform;
     }
-	
+
 	public copy(): CullableObject {
-		let copy = <CullableObject>super.copy();
+		const copy = <CullableObject>super.copy();
 		copy.cullTransform = this.cullTransform.copy();
 		return copy;
 	}
