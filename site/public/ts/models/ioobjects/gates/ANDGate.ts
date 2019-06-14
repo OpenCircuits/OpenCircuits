@@ -7,23 +7,23 @@ import {Gate} from "./Gate";
 
 export class ANDGate extends Gate {
 
-	public constructor(not: boolean = false) {
-		super(not, new ClampedValue(2,2,8), V(50, 50), new ANDGatePositioner());
-	}
+    public constructor(not: boolean = false) {
+        super(not, new ClampedValue(2,2,8), V(50, 50), new ANDGatePositioner());
+    }
+    
+    // @Override
+    public activate() {
+        const on = this.getInputPorts().every((input) => input.getIsOn());
+        super.activate(on);
+    }
 
-	// @Override
-	public activate() {
-		const on = this.getInputPorts().every((input) => input.getIsOn());
-		super.activate(on);
-	}
+    public getDisplayName(): string {
+        return this.not ? "NAND Gate" : "AND Gate";
+    }
 
-	public getDisplayName(): string {
-		return this.not ? "NAND Gate" : "AND Gate";
-	}
-
-	public getImageName(): string {
-		return "and.svg";
-	}
+    public getImageName(): string {
+        return "and.svg";
+    }
 
     public getXMLName(): string {
         return "and";

@@ -4,22 +4,22 @@ import {Gate} from "./Gate";
 
 export class BUFGate extends Gate {
 
-	constructor(not: boolean = false) {
-		super(not, new ClampedValue(1,1,1), V(50, 50));
-	}
+    public constructor(not: boolean = false) {
+        super(not, new ClampedValue(1,1,1), V(50, 50));
+    }
 
-	// @Override
-	public activate() {
-		super.activate(this.inputs.first.getIsOn());
-	}
+    // @Override
+    public activate() {
+        super.activate(this.inputs.first.getIsOn());
+    }
 
-	public getDisplayName() {
-		return this.not ? "NOT Gate" : "Buffer Gate";
-	}
+    public getDisplayName() {
+        return this.not ? "NOT Gate" : "Buffer Gate";
+    }
 
-	public getImageName() {
-		return "buf.svg";
-	}
+    public getImageName() {
+        return "buf.svg";
+    }
 
     public getXMLName(): string {
         return "buf";

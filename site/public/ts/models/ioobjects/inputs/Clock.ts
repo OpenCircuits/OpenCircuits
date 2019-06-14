@@ -5,7 +5,6 @@ import {Component} from "../Component";
 export class Clock extends Component {
     private frequency: number;
     private isOn: boolean;
-    private img: string;
 
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(1), V(60, 42));

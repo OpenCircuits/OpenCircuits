@@ -22,17 +22,17 @@ export class Wire extends CullableObject {
     private prevInputTransform: Matrix2x3;
     private prevOutputTransform: Matrix2x3;
 
-	public constructor(input: OutputPort, output: InputPort) {
+    public constructor(input: OutputPort, output: InputPort) {
         super();
 
-		this.input = input;
-		this.output = output;
+        this.input = input;
+        this.output = output;
 
         this.isOn = false;
 
         this.shape = new BezierCurve(V(),V(),V(),V());
         this.straight = false;
-	}
+    }
 
     private updateCurve(): void {
         if (this.input != null) {
@@ -59,23 +59,23 @@ export class Wire extends CullableObject {
         }
     }
 
-	public activate(signal: boolean): void {
-		// Don't do anything if signal is same as current state
-		if (signal == this.isOn)
-			return;
+    public activate(signal: boolean): void {
+        // Don't do anything if signal is same as current state
+        if (signal == this.isOn)
+            return;
 
-		this.isOn = signal;
-		if (this.output != null)
-			this.output.activate(signal);
-	}
+        this.isOn = signal;
+        if (this.output != null)
+            this.output.activate(signal);
+    }
 
-	public setInput(c: OutputPort): void {
-		this.input = c;
-	}
+    public setInput(c: OutputPort): void {
+        this.input = c;
+    }
 
-	public setOutput(c: InputPort): void {
-		this.output = c;
-	}
+    public setOutput(c: InputPort): void {
+        this.output = c;
+    }
 
     public getInput(): OutputPort {
         return this.input;

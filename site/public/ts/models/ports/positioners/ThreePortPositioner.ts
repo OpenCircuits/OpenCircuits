@@ -18,18 +18,18 @@ export class ThreePortPositioner extends Positioner<InputPort> {
 
         // @TODO fix this because it looks awfully like the default one but with a * 3/4,
         //         so maybe make it a parameter or something
-		{
-			const port = ports[0];
-			const l = (-height/2*(0 - ports.length/2 + 0.5) - 1) * 3/4;
-			port.setOriginPos(V(port.getOriginPos().x, l));
-			port.setTargetPos(V(port.getTargetPos().x, l));
-		}
-		{
-			const port = ports[2];
-			const l = (-height/2*(2 - ports.length/2 + 0.5) + 1) * 3/4;
-			port.setOriginPos(V(port.getOriginPos().x, l));
-			port.setTargetPos(V(port.getTargetPos().x, l));
-		}
+        {
+            const port = ports[0];
+            const l = (-height/2*(0 - ports.length/2 + 0.5) - 1) * 3/4;
+            port.setOriginPos(V(port.getOriginPos().x, l));
+            port.setTargetPos(V(port.getTargetPos().x, l));
+        }
+        {
+            const port = ports[2];
+            const l = (-height/2*(2 - ports.length/2 + 0.5) + 1) * 3/4;
+            port.setOriginPos(V(port.getOriginPos().x, l));
+            port.setTargetPos(V(port.getTargetPos().x, l));
+        }
     }
 
 }

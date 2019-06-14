@@ -42,7 +42,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
             if (i === 0) l--;
             if (i === ports.length-1) l++;
 
-			// Sets postition
+            // Sets postition
             port.setOriginPos(V(l, 0));
             port.setTargetPos(V(l, IO_PORT_LENGTH+height/2-DEFAULT_SIZE/2));
         });
