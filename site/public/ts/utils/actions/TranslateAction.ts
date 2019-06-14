@@ -15,7 +15,7 @@ export class TranslateAction implements Action {
         this.finalPositions = finalPositions;
     }
 
-    private setPositions(positions: Array<Vector>) {
+    private setPositions(positions: Array<Vector>): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
             obj.setPos(positions[i]);

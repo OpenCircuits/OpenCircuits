@@ -27,7 +27,7 @@ export class CircuitDesigner implements XMLable {
 
     private updateCallback: () => void;
 
-    public constructor(propagationTime: number = 1, callback: () => void = function(){}) {
+    public constructor(propagationTime: number = 1, callback: () => void = () => {}) {
         this.propagationTime = propagationTime;
         this.updateCallback  = callback;
 

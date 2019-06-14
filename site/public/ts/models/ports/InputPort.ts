@@ -13,7 +13,7 @@ export class InputPort extends Port {
         this.input = undefined;
     }
 
-    public activate(signal: boolean) {
+    public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
         if (signal == this.isOn)
             return;

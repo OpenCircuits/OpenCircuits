@@ -242,7 +242,7 @@ export class Input {
         this.callListeners("mouseup", this.mouseDownButton);
     }
 
-    private callListeners(type: string, a?: number, b?: Vector) {
+    private callListeners(type: string, a?: number, b?: Vector): void {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {
