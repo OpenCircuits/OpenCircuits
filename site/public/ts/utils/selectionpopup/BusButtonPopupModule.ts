@@ -32,7 +32,7 @@ export class BusButtonPopupModule extends SelectionPopupModule {
         const outputPorts = portSelections.filter(o => o instanceof OutputPort);
 
         // Check if we have equal amount of input and output ports
-        let enable = (inputPorts.length == outputPorts.length);
+        const enable = (inputPorts.length == outputPorts.length);
 
         // Enable/disable the button
         this.button.style.display = (enable ? "inherit" : "none");
@@ -42,8 +42,8 @@ export class BusButtonPopupModule extends SelectionPopupModule {
         const designer = MainDesignerController.GetDesigner();
         const selections = MainDesignerController.GetPortSelections();
 
-        let inputPorts  = <Array<InputPort>> selections.filter(o => o instanceof InputPort);
-        let outputPorts = <Array<OutputPort>>selections.filter(o => o instanceof OutputPort);
+        const inputPorts  = <Array<InputPort>> selections.filter(o => o instanceof InputPort);
+        const outputPorts = <Array<OutputPort>>selections.filter(o => o instanceof OutputPort);
 
         const group = new GroupAction();
 

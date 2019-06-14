@@ -69,7 +69,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     private onEvent(method: (i:Input,b?:number) => boolean, event: string, input: Input, button?: number): boolean {
-        let didSomething = method(input, button);
+        const didSomething = method(input, button);
 
         // Check if selection tool has any actions to add
         if (this.currentTool == this.selectionTool) {
@@ -92,7 +92,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         }
 
         // Check if any tool should be activated
-        for (let tool of this.tools) {
+        for (const tool of this.tools) {
             if (tool.isDisabled() || tool == this.currentTool)
                 continue;
 
@@ -124,7 +124,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
                                 typeof PlaceComponentTool | typeof WiringTool, disabled: boolean = true): void {
 
         for (let i = 0; i < this.tools.length; i++) {
-            let tool = this.tools[i];
+            const tool = this.tools[i];
             if (tool instanceof toolType) {
                 // Activate selection tool if this tool is already active
                 if (this.currentTool == tool) {
@@ -150,7 +150,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
                              typeof PlaceComponentTool | typeof WiringTool): boolean {
 
         for (let i = 0; i < this.tools.length; i++) {
-            let tool = this.tools[i];
+            const tool = this.tools[i];
             if (tool instanceof toolType)
                 return !tool.isDisabled();
         }

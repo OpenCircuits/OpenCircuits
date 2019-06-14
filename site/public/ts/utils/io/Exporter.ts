@@ -5,9 +5,6 @@ import {CircuitDesigner} from "../../models/CircuitDesigner";
 
 export const Exporter = (function() {
 
-    let saved = true; // TODO, set saved to true when saving file
-                      //  but somehow set it to false anytime the circuit changes
-
     const write = function(designer: CircuitDesigner, name: string): string {
         const writer = new XMLWriter(designer.getXMLName());
 
@@ -18,15 +15,6 @@ export const Exporter = (function() {
 
         return writer.serialize();
     }
-
-    // Prompt for exit
-    window.onbeforeunload = function(e) {
-        if (!saved) {
-            const dialogText = "You have unsaved changes.";
-            e.returnValue = dialogText;
-            return dialogText;
-        }
-    };
 
     return {
         saveFile: function(designer: CircuitDesigner, projectName: string): void {

@@ -18,7 +18,7 @@ export class ICButtonPopupModule extends SelectionPopupModule {
         const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
 
         // Check if the selections are a valid IC
-        let enable = ICData.IsValid(selections);
+        const enable = ICData.IsValid(selections);
 
         // Enable/disable the button
         this.button.style.display = (enable ? "inherit" : "none");

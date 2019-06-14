@@ -43,13 +43,13 @@ export class WiringTool extends Tool {
         if (!(event == "mousedown" || event == "onclick"))
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        let objects = this.designer.getObjects();
+        const objects = this.designer.getObjects();
         for (let i = objects.length-1; i >= 0; i--) {
-            let obj = objects[i];
+            const obj = objects[i];
             // Check if a port was clicked
-            for (let p of obj.getPorts()) {
+            for (const p of obj.getPorts()) {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Input ports can only have one input
                     // so if one was clicked, then don't
@@ -91,10 +91,10 @@ export class WiringTool extends Tool {
     }
 
     public onMouseMove(input: Input): boolean {
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         // Set one side of curve to mouse position
-        let shape = this.wire.getShape();
+        const shape = this.wire.getShape();
         if (this.port instanceof InputPort) {
             shape.setP1(worldMousePos);
             shape.setC1(worldMousePos);
@@ -108,14 +108,14 @@ export class WiringTool extends Tool {
     }
 
     public onMouseUp(input: Input, button: number): boolean {
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        let objects = this.designer.getObjects();
+        const objects = this.designer.getObjects();
         for (let i = objects.length-1; i >= 0; i--) {
-            let obj = objects[i];
+            const obj = objects[i];
 
             // Check if a port was clicked
-            for (let p of obj.getPorts()) {
+            for (const p of obj.getPorts()) {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Connect ports
                     if (this.port instanceof InputPort && p instanceof OutputPort)

@@ -150,7 +150,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
 
     // Transform B's corners into A local space
     const bworld = B.getCorners();
-    let b = [];
+    const b = [];
     for (let i = 0; i < 4; i++) {
         b[i] = A.toLocalSpace(bworld[i]);
 

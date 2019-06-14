@@ -14,7 +14,7 @@ export const SideNavController = (function() {
 
     let editMode = true;
 
-    let toggleEditMode = function() {
+    const toggleEditMode = function() {
         editMode = !editMode;
 
         MainDesignerController.SetEditMode(!editMode);
@@ -34,7 +34,7 @@ export const SideNavController = (function() {
             SideNavController.Toggle();
     }
 
-    let toggle = function() {
+    const toggle = function() {
         sidenav.classList.toggle("shrink");
         overlay.classList.toggle("invisible");
     }

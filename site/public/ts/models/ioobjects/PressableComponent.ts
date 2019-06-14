@@ -69,7 +69,7 @@ export abstract class PressableComponent extends Component {
 	}
 
 	public copy(): PressableComponent {
-		let copy = <PressableComponent>super.copy();
+		const copy = <PressableComponent>super.copy();
 		copy.pressableBox = this.pressableBox.copy();
 		copy.pressableBox.setParent(copy.transform);
 		return copy;

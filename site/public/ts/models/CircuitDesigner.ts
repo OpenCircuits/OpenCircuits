@@ -80,7 +80,7 @@ export class CircuitDesigner implements XMLable {
 	private update(): boolean {
 		// Create temp queue before sending, in the case that sending them triggers
 		//   more propagations to occur
-		let tempQueue = [];
+		const tempQueue = [];
 		while (this.propagationQueue.length > 0)
 			tempQueue.push(this.propagationQueue.pop());
 
@@ -107,10 +107,10 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public addGroup(group: SeparatedComponentCollection): void {
-		for (let a of group.getAllComponents())
+		for (const a of group.getAllComponents())
 			this.addObject(a)
 
-		for (let b of group.wires) {
+		for (const b of group.wires) {
 			this.wires.push(b);
 			b.setDesigner(this);
 		}
@@ -139,7 +139,7 @@ export class CircuitDesigner implements XMLable {
 		if (p2.getParent().getDesigner() != this)
 			throw new Error("Cannot create wire! The provided output is not apart of this circuit!");
 
-		let wire = CreateWire(p1, p2);
+		const wire = CreateWire(p1, p2);
 		this.wires.push(wire);
 		wire.setDesigner(this);
 		return wire;
@@ -175,19 +175,19 @@ export class CircuitDesigner implements XMLable {
 	}
 
 	public save(node: XMLNode): void {
-		let icDataNode  = node.createChild("icdata");
+		const icDataNode  = node.createChild("icdata");
 
-		let icIdMap = new Map<ICData, number>();
-		let icId = 0;
+		const icIdMap = new Map<ICData, number>();
 
 		// Create ICData map
-		for (let ic of this.ics)
+		let icId = 0;
+		for (const ic of this.ics)
 			icIdMap.set(ic, icId++);
 
 		// Save ICs
-		for (let ic of this.ics) {
-			let icNode = icDataNode.createChild("icdata");
-			let icid = icIdMap.get(ic);
+		for (const ic of this.ics) {
+			const icNode = icDataNode.createChild("icdata");
+			const icid = icIdMap.get(ic);
 
 			icNode.addAttribute("icid", icid);
 			ic.save(icNode, icIdMap);
@@ -198,24 +198,24 @@ export class CircuitDesigner implements XMLable {
 
 
 	public load(node: XMLNode): void {
-		let icDataNode  = node.findChild("icdata");
+		const icDataNode  = node.findChild("icdata");
 
-		let icIdMap = new Map<number, ICData>();
-		let ics = icDataNode.getChildren();
+		const icIdMap = new Map<number, ICData>();
+		const ics = icDataNode.getChildren();
 
 		// Create ICData map
-		for (let ic of ics) {
-			let icid = ic.getIntAttribute("icid");
+		for (const ic of ics) {
+			const icid = ic.getIntAttribute("icid");
 			icIdMap.set(icid, new ICData())
 		}
 
 		// Load ICs
-		for (let ic of ics) {
-			let icid = ic.getIntAttribute("icid");
+		for (const ic of ics) {
+			const icid = ic.getIntAttribute("icid");
 			icIdMap.get(icid).load(ic, icIdMap);
 		}
 
-		let group = LoadGroup(node, icIdMap);
+		const group = LoadGroup(node, icIdMap);
 
 		// Add all objects/wires
 		group.getAllComponents().forEach((c) => this.addObject(c));

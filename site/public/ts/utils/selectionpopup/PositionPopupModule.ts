@@ -20,7 +20,7 @@ export class PositionPopupModule extends SelectionPopupModule {
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
         const components = selections.filter(o => o instanceof Component).map(o => o as Component);
-        let enable = selections.length == components.length && components.length > 0;
+        const enable = selections.length == components.length && components.length > 0;
 
         if (enable) {
             let x: number = components[0].getPos().x;
@@ -44,10 +44,10 @@ export class PositionPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        let components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
+        const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
         components.forEach(c => {
-            let pos = c.getPos();
+            const pos = c.getPos();
 
             c.setPos(new Vector(
                 this.xbox.value == "" ? pos.x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),

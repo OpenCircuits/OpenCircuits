@@ -128,7 +128,7 @@ export class SelectionTool extends Tool {
             return false;
 
         // Determine if we're adding to portSelections or regular selections
-        for (let o of objs) {
+        for (const o of objs) {
             if (o instanceof IOObject)
                 this.add(this.selections, o);
             else
@@ -229,11 +229,11 @@ export class SelectionTool extends Tool {
 
     public onMouseDown(input: Input, button: number): boolean {
         if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+            const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-            let objects = this.designer.getObjects();
+            const objects = this.designer.getObjects();
             for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
+                const obj = objects[i];
 
                 // Check if we pressed the object
                 if (obj.isWithinPressBounds(worldMousePos)) {
@@ -347,7 +347,7 @@ export class SelectionTool extends Tool {
 
     public onClick(input: Input, button: number): boolean {
         if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+            const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
             let render = false;
 
@@ -455,9 +455,9 @@ export class SelectionTool extends Tool {
     }
 
     public calculateMidpoint(): Vector {
-        let selections = this.selections;
-        let midpoint = V();
-        for (let obj of selections) {
+        const midpoint = V();
+        const selections = this.selections;
+        for (const obj of selections) {
             if (obj instanceof Component)
                 midpoint.translate(obj.getPos());
         }

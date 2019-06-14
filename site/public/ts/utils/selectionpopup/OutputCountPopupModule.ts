@@ -23,7 +23,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
         if (enable) {
             // Calculate output counts for each component
-            let counts: Array<number> = [];
+            const counts: Array<number> = [];
             encoders.forEach(e => counts.push(e.getOutputPortCount()));
 
             const same = counts.every((count) => count === counts[0]);

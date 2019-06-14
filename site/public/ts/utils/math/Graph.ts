@@ -74,8 +74,8 @@ export class Graph<V, E> {
     }
 
     public getNodes(): V[] {
-        let nodes = [];
-        for (let val of this.list.keys())
+        const nodes = [];
+        for (const val of this.list.keys())
             nodes.push(val);
         return nodes;
     }
