@@ -24,7 +24,7 @@ export abstract class Component extends CullableObject {
 
     protected transform: Transform;
 
-	protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
+    protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                             inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super();
 
@@ -32,7 +32,7 @@ export abstract class Component extends CullableObject {
 
         this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
         this.outputs = new OutputPortSet(this, outputPortCount, outputPositioner);
-	}
+    }
 
     /**
      * Activates this component with the given signal
@@ -41,21 +41,21 @@ export abstract class Component extends CullableObject {
      * @param i      The index of the output port
      *               Must be 0 <= i < outputs.length
      */
-	public activate(signal: boolean, i: number = 0): void {
-		// Don't try to activate an Output component since it has no outputs
-		if (this.outputs.isEmpty())
-			return;
+    public activate(signal: boolean, i: number = 0): void {
+        // Don't try to activate an Output component since it has no outputs
+        if (this.outputs.isEmpty())
+            return;
 
-		this.outputs.get(i).activate(signal);
-	}
+        this.outputs.get(i).activate(signal);
+    }
 
-	public connect(i: number, w: Wire) : void {
-		this.outputs.get(i).connect(w);
-	}
+    public connect(i: number, w: Wire) : void {
+        this.outputs.get(i).connect(w);
+    }
 
-	public setInput(i: number, w: Wire): void {
-		this.inputs.get(i).setInput(w);
-	}
+    public setInput(i: number, w: Wire): void {
+        this.inputs.get(i).setInput(w);
+    }
 
     public setInputPortCount(val: number): void {
         this.inputs.setPortCount(val);
@@ -90,9 +90,9 @@ export abstract class Component extends CullableObject {
      * @return   True if the point is within this component,
      *           false otherwise
      */
-	public isWithinPressBounds(_: Vector): boolean {
+    public isWithinPressBounds(_: Vector): boolean {
         return false;
-	}
+    }
 
     /**
      * Determines whether or not a point is within
@@ -102,13 +102,12 @@ export abstract class Component extends CullableObject {
      *           false otherwise
      */
     public isWithinSelectBounds(v: Vector): boolean {
-        return RectContains(this.getTransform(), v) &&
-               !this.isWithinPressBounds(v);
+        return RectContains(this.getTransform(), v) && !this.isWithinPressBounds(v);
     }
 
-	public getInputPort(i: number): InputPort {
-		return this.inputs.get(i);
-	}
+    public getInputPort(i: number): InputPort {
+        return this.inputs.get(i);
+    }
 
     public getInputPortCount(): number {
         return this.inputs.length;
@@ -123,9 +122,9 @@ export abstract class Component extends CullableObject {
         return this.getInputPorts().map((p) => p.getInput()).filter((w) => w != null);
     }
 
-	public getOutputPort(i: number): OutputPort {
-		return this.outputs.get(i);
-	}
+    public getOutputPort(i: number): OutputPort {
+        return this.outputs.get(i);
+    }
 
     public getOutputPortCount(): number {
         return this.outputs.length;
@@ -220,7 +219,7 @@ export abstract class Component extends CullableObject {
         this.setAngle(node.getFloatAttribute("angle"));
     }
 
-	public getImageName(): string {
+    public getImageName(): string {
         return undefined;
     }
 }

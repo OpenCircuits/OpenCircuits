@@ -15,7 +15,7 @@ export class IC extends Component {
 
     public constructor(data: ICData) {
         super(new ClampedValue(data.getInputCount()),
-              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
+                new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 
@@ -52,7 +52,7 @@ export class IC extends Component {
             obj.setDesigner(designer);
         for (const wire of this.collection.wires)
             wire.setDesigner(designer);
-	}
+    }
 
     public update(): void {
         // Update size

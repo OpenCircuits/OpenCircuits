@@ -12,28 +12,28 @@ import {Component} from "../Component";
 // FlipFlop is an abstract superclass for general flip flops.
 //
 export abstract class FlipFlop extends Component {
-	protected clock: boolean = false;
-	protected state: boolean = false;
-	protected last_clock: boolean = false;
+    protected clock: boolean = false;
+    protected state: boolean = false;
+    protected last_clock: boolean = false;
 
-	public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
-		super(new ClampedValue(numInputs), new ClampedValue(2), size, inputPositioner);
+    public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
+        super(new ClampedValue(numInputs), new ClampedValue(2), size, inputPositioner);
 
-		this.getOutputPort(0).setName("Q'");
-		this.getOutputPort(1).setName("Q ");
-	}
+        this.getOutputPort(0).setName("Q'");
+        this.getOutputPort(1).setName("Q ");
+    }
 
-	public save(node: XMLNode): void {
-		super.save(node);
+    public save(node: XMLNode): void {
+        super.save(node);
 
-		node.addAttribute("inputs", this.getInputPortCount());
-		node.addAttribute("outputs", this.getOutputPortCount());
-	}
+        node.addAttribute("inputs", this.getInputPortCount());
+        node.addAttribute("outputs", this.getOutputPortCount());
+    }
 
-	public load(node: XMLNode): void {
-		super.load(node);
+    public load(node: XMLNode): void {
+        super.load(node);
 
-		this.setInputPortCount(node.getIntAttribute("inputs"));
-		this.setOutputPortCount(node.getIntAttribute("outputs"));
-	}
+        this.setInputPortCount(node.getIntAttribute("inputs"));
+        this.setOutputPortCount(node.getIntAttribute("outputs"));
+    }
 }

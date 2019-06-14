@@ -6,7 +6,7 @@ import {IOObject} from "./IOObject"
 export abstract class CullableObject extends IOObject {
     private cullTransform: Transform;
 
-    constructor() {
+    public constructor() {
         super();
 
         this.cullTransform = new Transform(V(), V());
@@ -28,11 +28,11 @@ export abstract class CullableObject extends IOObject {
         return this.cullTransform;
     }
 
-	public copy(): CullableObject {
-		const copy = <CullableObject>super.copy();
-		copy.cullTransform = this.cullTransform.copy();
-		return copy;
-	}
+    public copy(): CullableObject {
+        const copy = <CullableObject>super.copy();
+        copy.cullTransform = this.cullTransform.copy();
+        return copy;
+    }
 
     public abstract getMinPos(): Vector;
     public abstract getMaxPos(): Vector;
