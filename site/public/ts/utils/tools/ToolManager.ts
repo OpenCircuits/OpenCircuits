@@ -148,13 +148,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
      */
     public hasTool(toolType: typeof Tool | typeof PanTool | typeof RotateTool | typeof TranslateTool |
                              typeof PlaceComponentTool | typeof WiringTool): boolean {
-
-        for (let i = 0; i < this.tools.length; i++) {
-            const tool = this.tools[i];
-            if (tool instanceof toolType)
-                return !tool.isDisabled();
-        }
-        return false;
+        const tool = this.tools.find((tool) => tool instanceof toolType);
+        if (tool == null)
+            return false;
+        return !tool.isDisabled();
     }
 
     public disableActions(disabled: boolean = true): void {

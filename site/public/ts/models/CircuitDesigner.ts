@@ -121,8 +121,8 @@ export class CircuitDesigner implements XMLable {
     }
 
     public addObjects(objects: Array<Component>): void {
-        for (let i = 0; i < objects.length; i++)
-            this.addObject(objects[i]);
+        for (const object of objects)
+            this.addObject(object);
     }
 
     public addObject(obj: Component): void {

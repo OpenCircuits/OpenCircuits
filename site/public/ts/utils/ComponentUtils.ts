@@ -259,8 +259,7 @@ export function CreateGraph(groups: SeparatedComponentCollection): Graph<number,
     }
 
     // Create edges
-    for (let j = 0; j < groups.wires.length; j++) {
-        const wire = groups.wires[j];
+    for (const wire of groups.wires) {
         const c1 = map.get(wire.getInputComponent());
         const c2 = map.get(wire.getOutputComponent());
         const i1 = wire.getInputComponent().getOutputPorts().indexOf(wire.getInput());
@@ -288,8 +287,8 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
 
     // Copy components
     const copies: Array<Component> = [];
-    for (let i = 0; i < objs.length; i++)
-        copies.push(objs[i].copy());
+    for (const obj of objs)
+        copies.push(obj.copy());
 
 
     // Copy connections
