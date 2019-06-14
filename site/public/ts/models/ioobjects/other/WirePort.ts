@@ -17,7 +17,7 @@ export class WirePort extends Component {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
 
@@ -33,7 +33,7 @@ export class WirePort extends Component {
         return this.transform.getMatrix().mul(V( 1, 0)).sub(this.getPos()).normalize();
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return "Port";
     }
 

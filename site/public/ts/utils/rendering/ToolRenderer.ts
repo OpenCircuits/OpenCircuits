@@ -21,7 +21,7 @@ import {ArcCircle} from "./shapes/ArcCircle";
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";
 
-export const ToolRenderer = (function() {
+export const ToolRenderer = (() => {
 
     const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
         // Get position, radius, and thickness

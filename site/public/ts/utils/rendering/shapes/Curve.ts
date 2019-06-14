@@ -15,7 +15,7 @@ export class Curve implements Shape {
             this.curve = new BezierCurve(p1, p2, c1, c2);
     }
 
-    public draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D): void {
         const p1 = this.curve.getP1();
         const p2 = this.curve.getP2();
         const c1 = this.curve.getC1();

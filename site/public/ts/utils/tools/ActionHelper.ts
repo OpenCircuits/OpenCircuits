@@ -13,7 +13,7 @@ export class ActionHelper {
         this.actionManager = actionManager;
     }
 
-    public onEvent(currentTool: Tool, event: string, input: Input, key?: number): boolean {
+    public onEvent(_: Tool, event: string, input: Input, key?: number): boolean {
         if (this.disabled)
             return false;
         if (event != "keydown")
@@ -35,7 +35,7 @@ export class ActionHelper {
         return false;
     }
 
-    public setDisabled(val: boolean = true) {
+    public setDisabled(val: boolean = true): void {
         this.disabled = val;
     }
 }

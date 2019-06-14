@@ -9,7 +9,7 @@ export class DLatch extends Latch {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         this.clock = this.inputs.get(0).getIsOn();
         const data = this.inputs.get(1).getIsOn();
         if (this.clock)

@@ -11,16 +11,16 @@ export class ORGate extends Gate {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         const on = this.getInputPorts().some((input) => input.getIsOn());
         super.activate(on);
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return this.not ? "NOR Gate" : "OR Gate";
     }
 
-    public getImageName() {
+    public getImageName(): string {
         return "or.svg";
     }
 

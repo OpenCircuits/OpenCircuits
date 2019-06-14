@@ -9,15 +9,15 @@ export class BUFGate extends Gate {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return this.not ? "NOT Gate" : "Buffer Gate";
     }
 
-    public getImageName() {
+    public getImageName(): string {
         return "buf.svg";
     }
 

@@ -105,7 +105,7 @@ export class RotateTool extends Tool {
         return true;
     }
 
-    public getAction() {
+    public getAction(): RotateAction {
         // Copy final positions
         const finalAngles = [];
         for (const obj of this.components)

@@ -98,7 +98,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
             if (tool.activate(this.currentTool, event, input, button)) {
                 this.activate(tool);
-                this.selectionTool.deactivate(event, input, button);
+                this.selectionTool.deactivate();
                 return true;
             }
         }
@@ -189,7 +189,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
 
-    public placeComponent(component: Component, instant: boolean = false) {
+    public placeComponent(component: Component, instant: boolean = false): void {
         if (this.placeComponentTool.isDisabled())
             return;
 

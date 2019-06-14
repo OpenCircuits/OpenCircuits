@@ -1,6 +1,6 @@
 import {MainDesignerController} from "./MainDesignerController";
 
-export const ContextMenuController = (function() {
+export const ContextMenuController = (() => {
     const contextmenu = document.getElementById("context-menu");
 
     const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {

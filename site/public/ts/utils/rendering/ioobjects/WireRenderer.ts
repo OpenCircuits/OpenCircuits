@@ -10,9 +10,9 @@ import {Curve} from "../shapes/Curve";
 import {Line} from "../shapes/Line";
 import {Style} from "../Style";
 
-export const WireRenderer = (function() {
+export const WireRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean) {
+        render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
 

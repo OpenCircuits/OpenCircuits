@@ -19,7 +19,7 @@ export class Rectangle implements Shape {
         }
     }
 
-    public draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D): void {
         const center = this.pos.sub(this.size.scale(0.5));
 
         ctx.rect(center.x, center.y, this.size.x, this.size.y);

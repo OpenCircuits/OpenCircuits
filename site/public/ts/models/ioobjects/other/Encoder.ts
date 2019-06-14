@@ -36,7 +36,7 @@ export class Encoder extends Component {
         }
     }
 
-    public setOutputPortCount(val: number) {
+    public setOutputPortCount(val: number): void {
         this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*Math.pow(2, val)));
         super.setInputPortCount(Math.pow(2, val));
         super.setOutputPortCount(val);
@@ -46,7 +46,7 @@ export class Encoder extends Component {
         return "Encoder";
     }
 
-    public getXMLName() {
+    public getXMLName(): string {
         return "encoder";
     }
 

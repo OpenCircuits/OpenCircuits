@@ -19,7 +19,7 @@ import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupMo
 * ! Controls its own DOM element(s)
 * TODO: use decorators or some other interface to determine what properties are available
 */
-export const SelectionPopupController = (function() {
+export const SelectionPopupController = (() => {
     let camera: Camera;
     let div: HTMLDivElement;
     let modules: Array<SelectionPopupModule>;

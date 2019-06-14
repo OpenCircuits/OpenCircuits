@@ -6,7 +6,7 @@ import {Camera} from "../../Camera";
 import {Renderer} from "../Renderer";
 import {Component} from "../../../models/ioobjects/Component";
 
-export const IOLabelRenderer = (function() {
+export const IOLabelRenderer = (() => {
 
     const drawPortText = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
         const align: CanvasTextAlign = "center";
@@ -22,7 +22,7 @@ export const IOLabelRenderer = (function() {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component) {
+        render(renderer: Renderer, camera: Camera, object: Component): void {
             if (!camera.cull(object.getCullBox()))
                 return;
 

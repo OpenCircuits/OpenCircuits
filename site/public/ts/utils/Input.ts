@@ -37,11 +37,11 @@ export class Input {
         this.touchCount = 0;
 
         // Keyboard events
-        window.addEventListener('keydown',  (e: KeyboardEvent) => {
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyDown(e)
         }, false);
-        window.addEventListener('keyup',    (e: KeyboardEvent) => {
+        window.addEventListener('keyup',   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e)
         }, false);
@@ -120,13 +120,13 @@ export class Input {
                 this.keysDown.get(key) == true);
     }
 
-    public isShiftKeyDown() {
+    public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
-    public isModifierKeyDown() {
+    public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY));
     }
-    public isOptionKeyDown() {
+    public isOptionKeyDown(): boolean {
         return this.isKeyDown(OPTION_KEY);
     }
 
@@ -159,7 +159,7 @@ export class Input {
         this.callListeners("keyup", code);
     }
 
-    private onClick(pos: Vector, button: number = LEFT_MOUSE_BUTTON): void {
+    private onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
         if (this.isDragging) {
             this.isDragging = false;
@@ -169,7 +169,7 @@ export class Input {
         // call each listener
         this.callListeners("click", button);
     }
-    private onDoubleClick(event: MouseEvent): void {
+    private onDoubleClick(_: MouseEvent): void {
 
         // call each listener
         this.callListeners("dblclick", 0);
@@ -217,7 +217,7 @@ export class Input {
             this.callListeners("mousedrag", this.mouseDownButton);
         this.callListeners("mousemove");
     }
-    private onMouseUp(pos: Vector, button: number = 0): void {
+    private onMouseUp(_: Vector, button: number = 0): void {
         this.touchCount--;
         this.mouseDown = false;
         this.mouseDownButton = -1;
@@ -226,11 +226,11 @@ export class Input {
         this.callListeners("mouseup", button);
     }
 
-    private onMouseEnter(event: MouseEvent): void {
+    private onMouseEnter(_: MouseEvent): void {
         // call each listener
         this.callListeners("mouseenter");
     }
-    private onMouseLeave(event: MouseEvent): void {
+    private onMouseLeave(_: MouseEvent): void {
         this.mouseDown = false;
 
         // call each listener

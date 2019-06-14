@@ -11,7 +11,7 @@ export class Line implements Shape {
         this.p2 = p2;
     }
 
-    public draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.p1.x, this.p1.y);
         ctx.lineTo(this.p2.x, this.p2.y);
     }

@@ -11,7 +11,7 @@ export class Circle implements Shape {
         this.radius = radius;
     }
 
-    public draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D): void {
         ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);
     }
 

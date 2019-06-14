@@ -76,7 +76,7 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
 
-    private setAction(action: Action) {
+    private setAction(action: Action): void {
         // Don't set action if it's an empty group action
         if (action instanceof GroupAction && action.isEmpty())
             return;
@@ -209,7 +209,7 @@ export class SelectionTool extends Tool {
         this.currentPressedObj = obj;
     }
 
-    public disableSelections(val: boolean = true) {
+    public disableSelections(val: boolean = true): void {
         this.disabledSelections = val;
     }
 
@@ -221,7 +221,7 @@ export class SelectionTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(): boolean {
         this.selecting = false;
 
         return false;
@@ -490,7 +490,7 @@ export class SelectionTool extends Tool {
         return this.p2.copy();
     }
 
-    public addSelectionChangeListener(func: {(): void}) {
+    public addSelectionChangeListener(func: {(): void}): void {
         this.callbacks.push(func);
     }
     public getCurrentlyPressedObj(): IOObject {

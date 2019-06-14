@@ -33,7 +33,7 @@ export class SevenSegmentDisplay extends Component {
         return "7 Segment Display";
     }
 
-    public getXMLName() {
+    public getXMLName(): string {
         return "sevensegmentdisplay";
     }
 }

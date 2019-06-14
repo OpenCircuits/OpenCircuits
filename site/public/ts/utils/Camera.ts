@@ -51,7 +51,7 @@ export class Camera {
         this.dirty = true;
         this.pos.translate(dx, dy);
     }
-    public zoomTo(c: Vector, z: number) {
+    public zoomTo(c: Vector, z: number): void {
         // Calculate position to zoom in/out of
         const pos0 = this.getWorldPos(c);
         this.zoomBy(z);

@@ -22,12 +22,12 @@ window.onbeforeunload = (e) => {
     }
 };
 
-function Init() {
+function Init(): void {
     LoadingScreen.Show();
 
     const promises = [
         new Promise((resolve, _) => {
-            Images.Load(function() {
+            Images.Load(() => {
                 resolve(1);
             });
         }),

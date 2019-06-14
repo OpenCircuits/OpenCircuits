@@ -11,18 +11,18 @@ export class XORGate extends Gate {
     }
 
     // @Override
-    public activate() {
+    public activate(): void {
         let on = false;
         for (const input of this.getInputPorts())
             on = (on !== input.getIsOn());
         super.activate(on);
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
 
-    public getImageName() {
+    public getImageName(): string {
         return "or.svg";
     }
 

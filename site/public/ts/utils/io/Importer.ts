@@ -2,7 +2,7 @@ import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
-export const Importer = (function() {
+export const Importer = (() => {
 
     const read = function(designer: CircuitDesigner, file: string, setName: (n: string) => void): void {
         const root = <XMLDocument>new DOMParser().parseFromString(file, "text/xml");
