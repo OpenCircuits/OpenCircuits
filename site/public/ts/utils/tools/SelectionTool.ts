@@ -399,8 +399,7 @@ export class SelectionTool extends Tool {
             //  and add to selections
             const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
             if (w) {
-                group.add(new SelectAction(this, w, false));
-                this.addSelection(w);
+                group.add(new SelectAction(this, w, false).execute());
                 render = true;
             }
 
@@ -435,15 +434,8 @@ export class SelectionTool extends Tool {
             group.add(wires.map((wire)          => new DeleteWireAction(wire)));
             group.add(components.map((obj)      => new DeleteAction(obj)));
 
-            this.setAction(group);
+            this.setAction(group.execute());
 
-            // Actually delete the objects/wires
-            for (const wire of wires)
-                this.designer.removeWire(wire);
-            for (const obj of components)
-                this.designer.removeObject(obj);
-
-            this.clearSelections();
             return true;
         }
         if (key == ESC_KEY) {
@@ -455,13 +447,10 @@ export class SelectionTool extends Tool {
     }
 
     public calculateMidpoint(): Vector {
-        const midpoint = V();
-        const selections = this.selections;
-        for (const obj of selections) {
-            if (obj instanceof Component)
-                midpoint.translate(obj.getPos());
-        }
-        return midpoint.scale(1. / selections.length);
+        return this.selections.filter(o => o instanceof Component)
+                .map(o => o as Component)
+                .reduce((acc, cur) => acc.add(cur.getPos()), V(0,0))
+                .scale(1. / this.selections.length);
     }
 
     public getAction(): Action {
