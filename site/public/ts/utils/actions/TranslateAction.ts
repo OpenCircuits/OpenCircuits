@@ -22,12 +22,16 @@ export class TranslateAction implements Action {
         }
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.setPositions(this.finalPositions);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.setPositions(this.initialPositions);
+
+        return this;
     }
 
 }

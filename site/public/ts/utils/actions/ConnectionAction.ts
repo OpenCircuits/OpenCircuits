@@ -17,12 +17,16 @@ export class ConnectionAction implements Action {
         this.output = w.getOutput();
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.designer.createWire(this.input, this.output);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.designer.removeWire(this.output.getInput());
+
+        return this;
     }
 
 }

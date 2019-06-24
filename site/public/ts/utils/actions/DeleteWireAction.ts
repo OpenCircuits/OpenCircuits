@@ -27,12 +27,16 @@ export class DeleteWireAction implements Action {
         this.wire = w;
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.designer.removeWire(this.wire);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.wire = this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
+
+        return this;
     }
 
 }

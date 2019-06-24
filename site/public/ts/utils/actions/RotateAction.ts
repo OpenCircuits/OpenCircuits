@@ -25,12 +25,16 @@ export class RotateAction implements Action {
         }
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.setAngles(this.finalAngles);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.setAngles(this.initialAngles);
+
+        return this;
     }
 
 }

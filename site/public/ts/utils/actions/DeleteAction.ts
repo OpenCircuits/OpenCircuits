@@ -11,12 +11,16 @@ export class DeleteAction implements Action {
         this.obj = obj;
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.designer.removeObject(this.obj);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.designer.addObject(this.obj);
+
+        return this;
     }
 
 }

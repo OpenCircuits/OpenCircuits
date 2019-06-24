@@ -27,22 +27,26 @@ export class SplitWireAction implements Action {
         this.c2 = port.getOutputs()[0].getShape();
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.designer.removeWire(this.output.getInput());
         this.designer.addObject(this.port);
         const wire1 = this.designer.createWire(this.input, this.port.getInputPort(0));
         const wire2 = this.designer.createWire(this.port.getOutputPort(0), this.output);
         wire1.getShape().setC2(this.c1.getC2());
         wire2.getShape().setC1(this.c2.getC1());
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         const wire1 = this.port.getInputs()[0];
         const wire2 = this.port.getOutputs()[0];
         this.designer.removeWire(wire1);
         this.designer.removeWire(wire2);
         this.designer.removeObject(this.port);
         this.designer.createWire(this.input, this.output);
+
+        return this;
     }
 
 }

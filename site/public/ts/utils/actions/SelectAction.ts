@@ -17,18 +17,22 @@ export class SelectAction implements Action {
         this.flip = flip;
     }
 
-    public execute(): void {
+    public execute(): Action {
         if (this.flip)
             this.selectionTool.removeSelection(this.obj);
         else
             this.selectionTool.addSelection(this.obj);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         if (this.flip)
             this.selectionTool.addSelection(this.obj);
         else
             this.selectionTool.removeSelection(this.obj);
+
+        return this;
     }
 
 }
