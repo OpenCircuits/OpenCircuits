@@ -36,6 +36,10 @@ export abstract class Mux extends Component {
         return this.selects.length;
     }
 
+    public getSelectPorts(): Array<InputPort> {
+        return this.selects.getPorts();
+    }
+
     // @Override
     public getInputPorts(): Array<InputPort> {
         return super.getInputPorts().concat(this.selects.getPorts());
