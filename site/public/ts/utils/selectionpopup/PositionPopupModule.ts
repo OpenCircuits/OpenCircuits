@@ -1,11 +1,10 @@
 import {GRID_SIZE} from "../Constants";
 
-import {Vector,V} from "../math/Vector";
+import {V} from "../math/Vector";
 import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {GroupAction} from "../actions/GroupAction";
 import {TranslateAction} from "../actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
