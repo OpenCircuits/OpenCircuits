@@ -23,7 +23,7 @@ describe("PlaceAction", () => {
 
         // connect
         const wire = designer.connect(a, 0,  b, 0);
-        const a1 = new ConnectionAction(wire);
+        const a1 = new ConnectionAction(wire.getInput(), wire.getOutput());
 
         // initial
         expect(designer.getWires().length).toBe(1);
