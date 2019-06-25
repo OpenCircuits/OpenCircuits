@@ -2,6 +2,7 @@ import {IO_PORT_LENGTH} from "../../utils/Constants";
 import {Vector,V} from "../../utils/math/Vector";
 
 import {Component} from "../ioobjects/Component";
+import {Wire}      from "../ioobjects/Wire";
 
 export abstract class Port {
     protected parent: Component;
@@ -78,5 +79,7 @@ export abstract class Port {
     public getWorldTargetPos(): Vector {
         return this.parent.transformPoint(this.target);
     }
+
+    public abstract getWires(): Array<Wire>;
 
 }
