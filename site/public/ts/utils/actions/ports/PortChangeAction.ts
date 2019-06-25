@@ -1,6 +1,6 @@
 import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
-import {DeletePathAction} from "../deletion/DeletePathAction";
+import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
 
 import {CircuitDesigner} from "../../../models/CircuitDesigner";
 import {Component} from "../../../models/ioobjects/Component";
@@ -33,7 +33,7 @@ export abstract class PortChangeAction implements Action {
         while (ports.length > target) {
             const port = ports.pop();
             port.getWires().forEach((w) =>
-                group.add(new DeletePathAction(GetPath(w)))
+                group.add(CreateDeletePathAction(GetPath(w)))
             );
         }
 
