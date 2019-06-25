@@ -1,9 +1,12 @@
 import {GRID_SIZE} from "../Constants";
 
-import {Vector} from "../math/Vector";
+import {Vector,V} from "../math/Vector";
 import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
+
+import {GroupAction} from "../actions/GroupAction";
+import {TranslateAction} from "../actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
@@ -46,14 +49,15 @@ export class PositionPopupModule extends SelectionPopupModule {
     public push(): void {
         const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
-        components.forEach(c => {
-            const pos = c.getPos();
+        MainDesignerController.AddAction(
+            new TranslateAction(components,
+                                components.map((c) => c.getPos()),
+                                components.map((c) =>
+                                    V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
+                                )).execute()
+        );
 
-            c.setPos(new Vector(
-                this.xbox.value == "" ? pos.x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                this.ybox.value == "" ? pos.y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5),
-            ));
-        });
         MainDesignerController.Render();
     }
 }
