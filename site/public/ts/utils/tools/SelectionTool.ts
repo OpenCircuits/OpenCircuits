@@ -29,7 +29,7 @@ import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
 import {DeleteAction} from "../actions/deletion/DeleteAction";
-import {DeleteWireAction} from "../actions/deletion/DeleteWireAction";
+import {DisconnectAction} from "../actions/addition/ConnectionAction";
 
 export class SelectionTool extends Tool {
 
@@ -431,7 +431,7 @@ export class SelectionTool extends Tool {
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
             group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-            group.add(wires.map((wire)          => new DeleteWireAction(wire)));
+            group.add(wires.map((wire)          => new DisconnectAction(wire)));
             group.add(components.map((obj)      => new DeleteAction(obj)));
 
             this.setAction(group.execute());

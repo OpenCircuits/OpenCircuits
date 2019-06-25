@@ -26,6 +26,8 @@ export class WiringTool extends Tool {
 
     private wire: Wire;
 
+    private action: ConnectionAction;
+
     // Keep track of whether or not this tool was
     //  activated by dragging or clicking
     private clicked: boolean;
@@ -37,7 +39,7 @@ export class WiringTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedown" || event == "onclick"))
@@ -82,7 +84,7 @@ export class WiringTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(event: string): boolean {
         if (this.clicked  && event == "onclick")
             return true;
         if (!this.clicked && event == "mouseup")
@@ -107,7 +109,7 @@ export class WiringTool extends Tool {
         return true;
     }
 
-    public onMouseUp(input: Input, button: number): boolean {
+    public onMouseUp(input: Input, _: number): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         const objects = this.designer.getObjects();
@@ -119,7 +121,7 @@ export class WiringTool extends Tool {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Connect ports
                     if (this.port instanceof InputPort && p instanceof OutputPort)
-                        this.wire = this.designer.createWire(p, this.port);
+                        this.action = new ConnectionAction(p, this.port);
 
                     // Connect ports if not already connected
                     if (this.port instanceof OutputPort && p instanceof InputPort) {
@@ -128,7 +130,7 @@ export class WiringTool extends Tool {
                         if (p.getInput() != null)
                             return true;
 
-                        this.wire = this.designer.createWire(this.port, p);
+                        this.action = new ConnectionAction(this.port, p);
                     }
 
                     return true;
@@ -143,7 +145,7 @@ export class WiringTool extends Tool {
         if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
             return undefined;
 
-        return new ConnectionAction(this.wire);
+        return this.action.execute();
     }
 
     public getWire(): Wire {
