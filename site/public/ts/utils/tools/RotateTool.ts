@@ -10,7 +10,7 @@ import {SelectionTool} from "./SelectionTool";
 
 import {Component} from "../../models/ioobjects/Component";
 
-import {RotateAction} from "../actions/RotateAction";
+import {RotateAction} from "../actions/transform/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;

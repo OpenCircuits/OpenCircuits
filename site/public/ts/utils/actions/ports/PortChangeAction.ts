@@ -1,6 +1,6 @@
 import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
-import {DeletePathAction} from "../DeletePathAction";
+import {DeletePathAction} from "../deletion/DeletePathAction";
 
 import {CircuitDesigner} from "../../../models/CircuitDesigner";
 import {Component} from "../../../models/ioobjects/Component";

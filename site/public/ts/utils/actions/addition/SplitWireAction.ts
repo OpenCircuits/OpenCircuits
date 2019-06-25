@@ -1,10 +1,10 @@
-import {Action} from "./Action";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {InputPort} from "../../models/ports/InputPort";
-import {OutputPort} from "../../models/ports/OutputPort";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
+import {Action} from "../Action";
+import {CircuitDesigner} from "../../../models/CircuitDesigner";
+import {InputPort} from "../../../models/ports/InputPort";
+import {OutputPort} from "../../../models/ports/OutputPort";
+import {WirePort} from "../../../models/ioobjects/other/WirePort";
 
-import {BezierCurve} from "../math/BezierCurve";
+import {BezierCurve} from "../../math/BezierCurve";
 
 export class SplitWireAction implements Action {
     private designer: CircuitDesigner;

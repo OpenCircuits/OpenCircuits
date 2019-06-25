@@ -1,7 +1,7 @@
-import {Action} from "./Action";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Component} from "../../models/ioobjects/Component";
-import {Wire} from "../../models/ioobjects/Wire";
+import {Action} from "../Action";
+import {CircuitDesigner} from "../../../models/CircuitDesigner";
+import {Component} from "../../../models/ioobjects/Component";
+import {Wire} from "../../../models/ioobjects/Wire";
 
 export class DeleteWireAction implements Action {
     private designer: CircuitDesigner;

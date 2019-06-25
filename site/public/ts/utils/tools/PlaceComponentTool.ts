@@ -1,8 +1,4 @@
-import {Vector,V} from "../math/Vector";
-
 import {Tool} from "./Tool";
-
-import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
@@ -11,7 +7,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
-import {PlaceAction} from "../actions/PlaceAction";
+import {PlaceAction} from "../actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
 

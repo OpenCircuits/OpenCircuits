@@ -1,7 +1,7 @@
-import {Vector} from "../math/Vector";
+import {Vector} from "../../math/Vector";
 
-import {Action} from "./Action";
-import {Component} from "../../models/ioobjects/Component";
+import {Action} from "../Action";
+import {Component} from "../../../models/ioobjects/Component";
 
 export class TranslateAction implements Action {
     private objects: Array<Component>;

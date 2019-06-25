@@ -3,7 +3,7 @@ import "jest";
 import {CircuitDesigner}  from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Switch}           from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED}              from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
-import {ConnectionAction} from "../../../../../site/public/ts/utils/actions/ConnectionAction";
+import {ConnectionAction} from "../../../../../site/public/ts/utils/actions/addition/ConnectionAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo 1", () => {

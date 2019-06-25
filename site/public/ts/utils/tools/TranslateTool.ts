@@ -17,7 +17,7 @@ import {Component} from "../../models/ioobjects/Component";
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
-import {TranslateAction} from "../actions/TranslateAction";
+import {TranslateAction} from "../actions/transform/TranslateAction";
 
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;

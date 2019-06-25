@@ -1,10 +1,10 @@
-import {Action} from "./Action";
-import {GroupAction} from "./GroupAction";
+import {Action} from "../Action";
+import {GroupAction} from "../GroupAction";
 import {DeleteAction} from "./DeleteAction";
 import {DeleteWireAction} from "./DeleteWireAction";
 
-import {Wire} from "../../models/ioobjects/Wire";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
+import {Wire} from "../../../models/ioobjects/Wire";
+import {WirePort} from "../../../models/ioobjects/other/WirePort";
 
 export class DeletePathAction implements Action {
     private action: GroupAction;

@@ -28,8 +28,8 @@ import {Port} from "../../models/ports/Port";
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
-import {DeleteAction} from "../actions/DeleteAction";
-import {DeleteWireAction} from "../actions/DeleteWireAction";
+import {DeleteAction} from "../actions/deletion/DeleteAction";
+import {DeleteWireAction} from "../actions/deletion/DeleteWireAction";
 
 export class SelectionTool extends Tool {
 

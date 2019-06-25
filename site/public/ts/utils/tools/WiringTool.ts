@@ -15,7 +15,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
-import {ConnectionAction} from "../actions/ConnectionAction";
+import {ConnectionAction} from "../actions/addition/ConnectionAction";
 
 export class WiringTool extends Tool {
 
