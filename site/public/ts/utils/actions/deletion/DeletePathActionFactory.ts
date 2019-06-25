@@ -1,5 +1,5 @@
 import {GroupAction} from "../GroupAction";
-import {DeleteAction} from "./DeleteAction";
+import {DeleteAction} from "../addition/PlaceAction";
 import {DisconnectAction} from "../addition/ConnectionAction";
 
 import {Wire} from "../../../models/ioobjects/Wire";

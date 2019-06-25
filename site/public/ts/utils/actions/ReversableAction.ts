@@ -1,4 +1,4 @@
-import { Action } from "./Action";
+import {Action} from "./Action";
 
 /**
  * Describes an action that is reversable for code-reuse.
