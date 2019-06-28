@@ -355,7 +355,7 @@ export class SelectionTool extends Tool {
 
             // Clear selections if no shift key
             if (!input.isShiftKeyDown()) {
-                group.add(this.clearSelections());
+                group.add(this.clearSelections().execute());
                 render = !group.isEmpty(); // Render if selections were actually cleared
             }
 
@@ -384,7 +384,7 @@ export class SelectionTool extends Tool {
                         // Add selection
                         this.addSelection(obj);
                     }
-                    group.add(new SelectAction(this, obj, !selected));
+                    group.add(new SelectAction(this, obj, !selected).execute());
                     this.setAction(group)
                     return true;
                 }

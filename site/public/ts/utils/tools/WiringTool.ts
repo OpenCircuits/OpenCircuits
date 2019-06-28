@@ -64,6 +64,7 @@ export class WiringTool extends Tool {
                     this.clicked = (event == "onclick");
 
                     this.port = p;
+                    this.action = undefined;
 
                     // Create wire
                     if (p instanceof InputPort) {
@@ -142,7 +143,8 @@ export class WiringTool extends Tool {
     }
 
     public getAction(): Action {
-        if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
+      if (!this.action)
+        // if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
             return undefined;
 
         return this.action.execute();
