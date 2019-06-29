@@ -1,6 +1,10 @@
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
+
 import {LED} from "../../models/ioobjects/outputs/LED";
+
+import {GroupAction} from "../actions/GroupAction";
+import {ColorChangeAction} from "../actions/ColorChangeAction";
 
 export class ColorPopupModule extends SelectionPopupModule {
     private color: HTMLInputElement;
@@ -31,11 +35,17 @@ export class ColorPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const leds = MainDesignerController.GetSelections().filter(o => o instanceof LED).map(o => o as LED);
+        const selections = MainDesignerController.GetSelections();
+        const targetColor = this.color.value;
 
-        leds.forEach(l =>
-            l.setColor(this.color.value)
+        MainDesignerController.AddAction(
+            selections.reduce((acc, o) => {
+                if (o instanceof LED)
+                    acc.add(new ColorChangeAction(o, targetColor));
+                return acc;
+            }, new GroupAction()).execute()
         );
+
         MainDesignerController.Render();
     }
 }
