@@ -45,4 +45,8 @@ export class InputPort extends Port {
         return V(-1, 0);
     }
 
+    public getWires(): Array<Wire> {
+        return this.getInput() ? [this.getInput()] : [];
+    }
+
 }

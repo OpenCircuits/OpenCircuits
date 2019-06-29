@@ -12,6 +12,7 @@ import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
+import {WirePort}  from "./ioobjects/other/WirePort";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
@@ -149,6 +150,13 @@ export class CircuitDesigner implements XMLable {
         return this.createWire(c1.getOutputPort(i1), c2.getInputPort(i2));
     }
 
+    public remove(o: Component | Wire): void {
+        if (o instanceof Component)
+            this.removeObject(o);
+        else
+            this.removeWire(o);
+    }
+
     public removeObject(obj: Component): void {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
@@ -164,7 +172,7 @@ export class CircuitDesigner implements XMLable {
 
     public removeWire(wire: Wire): void {
         if (!this.wires.includes(wire))
-        throw new Error("Attempted to remove wire that doesn't exist!");
+            throw new Error("Attempted to remove wire that doesn't exist!");
 
         // Completely disconnect from the circuit
         wire.getInput().disconnect(wire);
@@ -182,7 +190,7 @@ export class CircuitDesigner implements XMLable {
         // Create ICData map
         let icId = 0;
         for (const ic of this.ics)
-        icIdMap.set(ic, icId++);
+            icIdMap.set(ic, icId++);
 
         // Save ICs
         for (const ic of this.ics) {

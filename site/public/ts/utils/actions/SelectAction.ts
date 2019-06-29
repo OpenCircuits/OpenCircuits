@@ -1,34 +1,38 @@
 import {Action} from "./Action";
+import {ReversableAction} from "./ReversableAction";
+
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Port} from "../../models/ports/Port";
 
 import {SelectionTool} from "../tools/SelectionTool";
 
-export class SelectAction implements Action {
+export class SelectAction extends ReversableAction {
     private selectionTool: SelectionTool;
     private obj: IOObject | Port;
 
-    // True if we should deselect while executing and select while undoing
-    private flip: boolean;
-
     public constructor(selectionTool: SelectionTool, obj: IOObject | Port, flip: boolean = false) {
+        super(flip);
+
         this.selectionTool = selectionTool;
         this.obj = obj;
-        this.flip = flip;
     }
 
-    public execute(): void {
-        if (this.flip)
-            this.selectionTool.removeSelection(this.obj);
-        else
-            this.selectionTool.addSelection(this.obj);
+    protected normalExecute(): Action {
+        this.selectionTool.addSelection(this.obj);
+
+        return this;
     }
 
-    public undo(): void {
-        if (this.flip)
-            this.selectionTool.addSelection(this.obj);
-        else
-            this.selectionTool.removeSelection(this.obj);
+    protected normalUndo(): Action {
+        this.selectionTool.removeSelection(this.obj);
+
+        return this;
     }
 
+}
+
+export class DeselectAction extends SelectAction {
+    public constructor(selectionTool: SelectionTool, obj: IOObject | Port) {
+        super(selectionTool, obj, true);
+    }
 }

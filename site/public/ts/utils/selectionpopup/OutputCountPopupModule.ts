@@ -3,6 +3,9 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 import {Encoder} from "../../models/ioobjects/other/Encoder";
 
+import {GroupAction} from "../actions/GroupAction";
+import {OutputPortChangeAction} from "../actions/ports/OutputPortChangeAction";
+
 export class OutputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
     public constructor(parentDiv: HTMLDivElement) {
@@ -35,14 +38,17 @@ export class OutputCountPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const encoders = MainDesignerController.GetSelections()
-              .filter(o => o instanceof Encoder)
-              .map(o => o as Encoder);
-
+        const selections = MainDesignerController.GetSelections();
         const countAsNumber = this.count.valueAsNumber;
-        encoders.forEach(e =>
-            e.setOutputPortCount(countAsNumber)
+
+        MainDesignerController.AddAction(
+            selections.reduce((acc, o) => {
+                if (o instanceof Encoder)
+                    acc.add(new OutputPortChangeAction(o, countAsNumber));
+                return acc;
+            }, new GroupAction()).execute()
         );
+
         MainDesignerController.Render();
     }
 }

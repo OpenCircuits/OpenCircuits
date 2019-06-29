@@ -60,15 +60,17 @@ export const MainDesignerController = (() => {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button)){
+        if (toolManager.onClick(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
     const onKeyDown = function(key: number): void {
-        if (toolManager.onKeyDown(input, key))
+        if (toolManager.onKeyDown(input, key)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyUp = function(key: number): void {

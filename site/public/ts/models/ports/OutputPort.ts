@@ -54,4 +54,8 @@ export class OutputPort extends Port {
         return V(1, 0);
     }
 
+    public getWires(): Array<Wire> {
+        return this.getConnections();
+    }
+
 }

@@ -23,7 +23,7 @@ export class CopyGroupAction implements Action {
         this.transforms = group.getAllComponents().map(c => c.getTransform());
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.copy = CopyGroup(this.initialGroup);
 
         // Copy over transforms
@@ -34,9 +34,11 @@ export class CopyGroupAction implements Action {
         }
 
         this.designer.addGroup(this.copy);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         // Remove wires first
         for (const wire of this.copy.wires)
             this.designer.removeWire(wire);
@@ -44,6 +46,8 @@ export class CopyGroupAction implements Action {
         // Remove objects
         for (const obj of this.copy.getAllComponents())
             this.designer.removeObject(obj);
+
+        return this;
     }
 
 }

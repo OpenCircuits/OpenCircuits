@@ -28,8 +28,8 @@ import {Port} from "../../models/ports/Port";
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
-import {DeleteAction} from "../actions/DeleteAction";
-import {DeleteWireAction} from "../actions/DeleteWireAction";
+import {DeleteAction} from "../actions/addition/PlaceAction";
+import {DisconnectAction} from "../actions/addition/ConnectionAction";
 
 export class SelectionTool extends Tool {
 
@@ -355,7 +355,7 @@ export class SelectionTool extends Tool {
 
             // Clear selections if no shift key
             if (!input.isShiftKeyDown()) {
-                group.add(this.clearSelections());
+                group.add(this.clearSelections().execute());
                 render = !group.isEmpty(); // Render if selections were actually cleared
             }
 
@@ -384,7 +384,7 @@ export class SelectionTool extends Tool {
                         // Add selection
                         this.addSelection(obj);
                     }
-                    group.add(new SelectAction(this, obj, !selected));
+                    group.add(new SelectAction(this, obj, !selected).execute());
                     this.setAction(group)
                     return true;
                 }
@@ -399,8 +399,7 @@ export class SelectionTool extends Tool {
             //  and add to selections
             const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
             if (w) {
-                group.add(new SelectAction(this, w, false));
-                this.addSelection(w);
+                group.add(new SelectAction(this, w, false).execute());
                 render = true;
             }
 
@@ -432,18 +431,11 @@ export class SelectionTool extends Tool {
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
             group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-            group.add(wires.map((wire)          => new DeleteWireAction(wire)));
+            group.add(wires.map((wire)          => new DisconnectAction(wire)));
             group.add(components.map((obj)      => new DeleteAction(obj)));
 
-            this.setAction(group);
+            this.setAction(group.execute());
 
-            // Actually delete the objects/wires
-            for (const wire of wires)
-                this.designer.removeWire(wire);
-            for (const obj of components)
-                this.designer.removeObject(obj);
-
-            this.clearSelections();
             return true;
         }
         if (key == ESC_KEY) {
@@ -455,13 +447,10 @@ export class SelectionTool extends Tool {
     }
 
     public calculateMidpoint(): Vector {
-        const midpoint = V();
-        const selections = this.selections;
-        for (const obj of selections) {
-            if (obj instanceof Component)
-                midpoint.translate(obj.getPos());
-        }
-        return midpoint.scale(1. / selections.length);
+        return this.selections.filter(o => o instanceof Component)
+                .map(o => o as Component)
+                .reduce((acc, cur) => acc.add(cur.getPos()), V(0,0))
+                .scale(1. / this.selections.length);
     }
 
     public getAction(): Action {

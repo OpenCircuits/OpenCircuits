@@ -4,6 +4,9 @@ import {Gate} from "../../models/ioobjects/gates/Gate";
 import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
 import {Decoder} from "../../models/ioobjects/other/Decoder";
 import {Mux} from "../../models/ioobjects/other/Mux";
+import {GroupAction} from "../actions/GroupAction";
+import {InputPortChangeAction} from "../actions/ports/InputPortChangeAction";
+import {SelectPortChangeAction} from "../actions/ports/SelectPortChangeAction";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
@@ -45,26 +48,21 @@ export class InputCountPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const gates = MainDesignerController.GetSelections()
-             .filter(o => o instanceof Gate && !(o instanceof BUFGate))
-             .map(o => o as Gate);
-        const muxes = MainDesignerController.GetSelections()
-             .filter(o => o instanceof Mux)
-             .map(o => o as Mux);
-        const decos = MainDesignerController.GetSelections()
-             .filter(o => o instanceof Decoder)
-             .map(o => o as Decoder);
-
+        const selections = MainDesignerController.GetSelections();
         const countAsNumber = this.count.valueAsNumber;
-        gates.forEach(g =>
-            g.setInputPortCount(countAsNumber)
+
+        MainDesignerController.AddAction(
+            selections.reduce((acc, o) => {
+                if (o instanceof Gate && !(o instanceof BUFGate))
+                    acc.add(new InputPortChangeAction(o,  countAsNumber));
+                else if (o instanceof Mux)
+                    acc.add(new SelectPortChangeAction(o, countAsNumber));
+                else if (o instanceof Decoder)
+                    acc.add(new InputPortChangeAction(o,  countAsNumber));
+                return acc;
+            }, new GroupAction()).execute()
         );
-        muxes.forEach(m =>
-            m.setSelectPortCount(countAsNumber)
-        );
-        decos.forEach(d =>
-            d.setInputPortCount(countAsNumber)
-        );
+
         MainDesignerController.Render();
     }
 }
