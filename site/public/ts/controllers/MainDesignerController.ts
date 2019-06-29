@@ -18,10 +18,10 @@ import {WiringTool} from "../utils/tools/WiringTool";
 
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export const MainDesignerController = (function() {
+export const MainDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
@@ -29,7 +29,7 @@ export const MainDesignerController = (function() {
     let toolManager: ToolManager;
     let renderQueue: RenderQueue;
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         MainDesignerController.Render();
@@ -60,15 +60,17 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button)){
+        if (toolManager.onClick(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
     const onKeyDown = function(key: number): void {
-        if (toolManager.onKeyDown(input, key))
+        if (toolManager.onKeyDown(input, key)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyUp = function(key: number): void {
@@ -123,7 +125,7 @@ export const MainDesignerController = (function() {
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
-        AddAction: function(action: Action) {
+        AddAction: function(action: Action): void {
             toolManager.addAction(action);
         },
         SetEditMode: function(val: boolean): void {

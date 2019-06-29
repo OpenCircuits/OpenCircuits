@@ -13,7 +13,7 @@ import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
 import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
 import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
-import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
+import {Port} from "../../../../../site/public/ts/models/ports/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";

@@ -2,14 +2,17 @@ import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 import {Gate} from "../../models/ioobjects/gates/Gate";
 import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
-import {Multiplexer} from "../../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../../models/ioobjects/other/Demultiplexer";
+import {Decoder} from "../../models/ioobjects/other/Decoder";
+import {Mux} from "../../models/ioobjects/other/Mux";
+import {GroupAction} from "../actions/GroupAction";
+import {InputPortChangeAction} from "../actions/ports/InputPortChangeAction";
+import {SelectPortChangeAction} from "../actions/ports/SelectPortChangeAction";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div.querySelector("div#popup-input-count-text"));
+        super(parentDiv.querySelector("div#popup-input-count-text"));
         this.count = this.div.querySelector("input#popup-input-count");
 
         this.count.onchange = () => this.push();
@@ -17,57 +20,49 @@ export class InputCountPopupModule extends SelectionPopupModule {
 
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
-        let gates = selections
-            .filter(o => o instanceof Gate && !(o instanceof BUFGate))
-            .map(o => o as Gate);
-        let muxers = selections
-            .filter(o => o instanceof Multiplexer)
-            .map(o => o as Multiplexer);
-        let demuxers = selections
-            .filter(o => o instanceof Demultiplexer)
-            .map(o => o as Demultiplexer);
+        const gates = selections
+             .filter(o => o instanceof Gate && !(o instanceof BUFGate))
+             .map(o => o as Gate);
+        const muxes = selections
+             .filter(o => o instanceof Mux)
+             .map(o => o as Mux);
+        const decos = selections
+             .filter(o => o instanceof Decoder)
+             .map(o => o as Decoder);
 
-        let enable = selections.length == gates.length + muxers.length + demuxers.length && selections.length > 0;
-
-        let counts: Array<number> = [];
-        gates.forEach(g => counts.push(g.getInputPortCount()));
-        muxers.forEach(m => counts.push(m.getTargetInputPortCount()));
-        demuxers.forEach(d => counts.push(d.getInputPortCount() - 1));
+        const enable = selections.length == gates.length + muxes.length + decos.length && selections.length > 0;
 
         if (enable) {
-            let same = true;
-            let count: number = counts[0];
-            for (let i = 1; i < counts.length && same; ++i) {
-                same = counts[i] == count;
-            }
+            // Calculate input counts for each component
+            const counts: Array<number> = [];
+            gates.forEach(g => counts.push(g.getInputPortCount()));
+            muxes.forEach(m => counts.push(m.getSelectPortCount()));
+            decos.forEach(d => counts.push(d.getInputPortCount()));
 
-            this.count.value = same ? count.toString() : "-";
+            const same = counts.every((count) => count === counts[0]);
+
+            this.count.value = same ? counts[0].toString() : "-";
         }
 
         this.setEnabled(enable);
     }
 
     public push(): void {
-        let gates = MainDesignerController.GetSelections()
-            .filter(o => o instanceof Gate && !(o instanceof BUFGate))
-            .map(o => o as Gate);
-        let muxers = MainDesignerController.GetSelections()
-            .filter(o => o instanceof Multiplexer)
-            .map(o => o as Multiplexer);
-        let demuxers = MainDesignerController.GetSelections()
-            .filter(o => o instanceof Demultiplexer)
-            .map(o => o as Demultiplexer);
+        const selections = MainDesignerController.GetSelections();
+        const countAsNumber = this.count.valueAsNumber;
 
-        let countAsNumber = this.count.valueAsNumber;
-        gates.forEach(g =>
-            g.setInputPortCount(countAsNumber)
+        MainDesignerController.AddAction(
+            selections.reduce((acc, o) => {
+                if (o instanceof Gate && !(o instanceof BUFGate))
+                    acc.add(new InputPortChangeAction(o,  countAsNumber));
+                else if (o instanceof Mux)
+                    acc.add(new SelectPortChangeAction(o, countAsNumber));
+                else if (o instanceof Decoder)
+                    acc.add(new InputPortChangeAction(o,  countAsNumber));
+                return acc;
+            }, new GroupAction()).execute()
         );
-        muxers.forEach(m =>
-            m.setInputPortCount(countAsNumber)
-        );
-        demuxers.forEach(d =>
-            d.setInputPortCount(countAsNumber)
-        );
+
         MainDesignerController.Render();
     }
 }

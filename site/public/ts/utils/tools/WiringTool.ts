@@ -2,9 +2,9 @@ import {IO_PORT_RADIUS,
         IO_PORT_SELECT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Port} from "../../models/ioobjects/Port";
-import {InputPort} from "../../models/ioobjects/InputPort";
-import {OutputPort} from "../../models/ioobjects/OutputPort";
+import {Port} from "../../models/ports/Port";
+import {InputPort} from "../../models/ports/InputPort";
+import {OutputPort} from "../../models/ports/OutputPort";
 import {Wire} from "../../models/ioobjects/Wire";
 
 import {CircleContains} from "../math/MathUtils";
@@ -15,7 +15,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
-import {ConnectionAction} from "../actions/ConnectionAction";
+import {ConnectionAction} from "../actions/addition/ConnectionAction";
 
 export class WiringTool extends Tool {
 
@@ -25,6 +25,8 @@ export class WiringTool extends Tool {
     private port: Port;
 
     private wire: Wire;
+
+    private action: ConnectionAction;
 
     // Keep track of whether or not this tool was
     //  activated by dragging or clicking
@@ -37,19 +39,19 @@ export class WiringTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedown" || event == "onclick"))
             return false;
 
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        let objects = this.designer.getObjects();
+        const objects = this.designer.getObjects();
         for (let i = objects.length-1; i >= 0; i--) {
-            let obj = objects[i];
+            const obj = objects[i];
             // Check if a port was clicked
-            for (let p of obj.getPorts()) {
+            for (const p of obj.getPorts()) {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Input ports can only have one input
                     // so if one was clicked, then don't
@@ -62,6 +64,7 @@ export class WiringTool extends Tool {
                     this.clicked = (event == "onclick");
 
                     this.port = p;
+                    this.action = undefined;
 
                     // Create wire
                     if (p instanceof InputPort) {
@@ -82,7 +85,7 @@ export class WiringTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(event: string): boolean {
         if (this.clicked  && event == "onclick")
             return true;
         if (!this.clicked && event == "mouseup")
@@ -91,10 +94,10 @@ export class WiringTool extends Tool {
     }
 
     public onMouseMove(input: Input): boolean {
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         // Set one side of curve to mouse position
-        let shape = this.wire.getShape();
+        const shape = this.wire.getShape();
         if (this.port instanceof InputPort) {
             shape.setP1(worldMousePos);
             shape.setC1(worldMousePos);
@@ -107,19 +110,19 @@ export class WiringTool extends Tool {
         return true;
     }
 
-    public onMouseUp(input: Input, button: number): boolean {
-        let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+    public onMouseUp(input: Input, _: number): boolean {
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        let objects = this.designer.getObjects();
+        const objects = this.designer.getObjects();
         for (let i = objects.length-1; i >= 0; i--) {
-            let obj = objects[i];
+            const obj = objects[i];
 
             // Check if a port was clicked
-            for (let p of obj.getPorts()) {
+            for (const p of obj.getPorts()) {
                 if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
                     // Connect ports
                     if (this.port instanceof InputPort && p instanceof OutputPort)
-                        this.wire = this.designer.createWire(p, this.port);
+                        this.action = new ConnectionAction(p, this.port);
 
                     // Connect ports if not already connected
                     if (this.port instanceof OutputPort && p instanceof InputPort) {
@@ -128,7 +131,7 @@ export class WiringTool extends Tool {
                         if (p.getInput() != null)
                             return true;
 
-                        this.wire = this.designer.createWire(this.port, p);
+                        this.action = new ConnectionAction(this.port, p);
                     }
 
                     return true;
@@ -140,10 +143,11 @@ export class WiringTool extends Tool {
     }
 
     public getAction(): Action {
-        if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
+      if (!this.action)
+        // if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
             return undefined;
 
-        return new ConnectionAction(this.wire);
+        return this.action.execute();
     }
 
     public getWire(): Wire {

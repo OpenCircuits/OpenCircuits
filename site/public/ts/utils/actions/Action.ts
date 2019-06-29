@@ -1,5 +1,5 @@
 
 export interface Action {
-    execute(): void;
-    undo(): void;
+    execute(): Action;
+    undo(): Action;
 }

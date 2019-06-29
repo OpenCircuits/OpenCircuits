@@ -21,14 +21,14 @@ import {ICDesignerView} from "../views/ICDesignerView";
 import {ToolManager} from "../utils/tools/ToolManager";
 
 import {IOObject} from "../models/ioobjects/IOObject";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
 import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";
 
-export const ICDesignerController = (function() {
+export const ICDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
@@ -45,22 +45,22 @@ export const ICDesignerController = (function() {
 
     // Creates a rectangle for the collision box for a port on the IC
     //  and determines if the given 'mousePos' is within it
-    const portContains = function(port: Port, mousePos: Vector) {
-        let origin = port.getOriginPos();
-        let target = port.getTargetPos();
+    const portContains = function(port: Port, mousePos: Vector): boolean {
+        const origin = port.getOriginPos();
+        const target = port.getTargetPos();
 
         // Get properties of collision box
-        let pos   = target.add(origin).scale(0.5);
-        let size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
-        let angle = target.sub(origin).angle();
+        const pos   = target.add(origin).scale(0.5);
+        const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
+        const angle = target.sub(origin).angle();
 
-        let rect  = new Transform(pos, size, angle);
+        const rect  = new Transform(pos, size, angle);
         rect.setParent(port.getParent().getTransform());
 
         return RectContains(rect, mousePos);
     }
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         ICDesignerController.Render();
@@ -81,16 +81,16 @@ export const ICDesignerController = (function() {
         if (dragging)
             return;
 
-        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+        const worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
 
         // Reset port + edge dragging if we're not dragging
         dragPort = undefined;
         dragEdge = undefined;
 
         // Check if a port is being hovered
-        let ports = ic.getPorts();
+        const ports = ic.getPorts();
         for (let i = 0; i < ports.length; i++) {
-            let port = ports[i];
+            const port = ports[i];
             if (portContains(port, worldMousePos)) {
                 dragPort = icdata.getPorts()[i];
                 view.setCursor("move");
@@ -99,8 +99,8 @@ export const ICDesignerController = (function() {
         }
 
         // Check if an edge is being hovered
-        let t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
-        let t2 = new Transform(ic.getPos(), ic.getSize().sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
+        const t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
+        const t2 = new Transform(ic.getPos(), ic.getSize().sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
         if (RectContains(t1, worldMousePos) &&
            !RectContains(t2, worldMousePos)) {
             if (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - 4 &&
@@ -120,7 +120,7 @@ export const ICDesignerController = (function() {
         if (toolManager.onMouseDrag(input, button))
             ICDesignerController.Render();
 
-        let worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
+        const worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
 
         if (dragging) {
             if (dragPort) {
@@ -128,9 +128,9 @@ export const ICDesignerController = (function() {
                     // TODO: turn switches into little switch icons
                     //  on the surface of the IC and same with LEDs
                 } else {
-                    let size = ic.getSize();
-                    let p  = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
-                    let v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+                    const size = ic.getSize();
+                    const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
+                    const v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
 
                     // Set port for IC
                     dragPort.setOriginPos(p);
@@ -141,8 +141,8 @@ export const ICDesignerController = (function() {
                 }
             }
             else if (dragEdge) {
-                let size = icdata.getSize();
-                let size2 = worldMousePos.scale(2).abs();
+                const size = icdata.getSize();
+                const size2 = worldMousePos.scale(2).abs();
 
                 icdata.setSize(V(dragEdge == "horizontal" ? size2.x : size.x,
                                  dragEdge == "horizontal" ? size.y  : size2.y));
@@ -188,7 +188,7 @@ export const ICDesignerController = (function() {
 
     const confirm = function(): void {
         // Add the ICData and IC to the main designer
-        let designer = MainDesignerController.GetDesigner();
+        const designer = MainDesignerController.GetDesigner();
         designer.addICData(icdata);
         designer.addObject(ic.copy());
 
@@ -218,7 +218,7 @@ export const ICDesignerController = (function() {
             toolManager = new ToolManager(view.getCamera(), designer);
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
-                            ic,
+                            [], [],
                             toolManager));
 
             // Disable some tools

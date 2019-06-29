@@ -1,10 +1,5 @@
 export const DEBUG_CULLBOXES = false;
-export const DEBUG_CULLBOXES_FILL_COLOR   = "#00ff00";
-export const DEBUG_CULLBOXES_STROKE_COLOR = "#000000";
-
 export const DEBUG_SELECTION_BOUNDS = false;
-export const DEBUG_SELECTIONS_FILL_COLOR   = "#ff00ff";
-export const DEBUG_SELECTIONS_STROKE_COLOR = "#000000";
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
@@ -44,6 +39,7 @@ export const SIDENAV_WIDTH = 300;
 export const ITEMNAV_WIDTH = 200;
 
 export const LEFT_MOUSE_BUTTON  = 0;
+export const MIDDLE_MOUSE_BUTTON = 1;
 export const RIGHT_MOUSE_BUTTON = 2;
 
 export const BACKSPACE_KEY = 8;

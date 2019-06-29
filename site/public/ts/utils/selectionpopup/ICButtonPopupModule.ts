@@ -7,9 +7,9 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 export class ICButtonPopupModule extends SelectionPopupModule {
     private button: HTMLButtonElement;
 
-    public constructor(parent_div: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // No wrapping div
-        super(parent_div);
+        super(parentDiv);
         this.button = this.div.querySelector("button#popup-ic-button");
         this.button.onclick = () => this.push();
     }
@@ -18,7 +18,7 @@ export class ICButtonPopupModule extends SelectionPopupModule {
         const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
 
         // Check if the selections are a valid IC
-        let enable = ICData.IsValid(selections);
+        const enable = ICData.IsValid(selections);
 
         // Enable/disable the button
         this.button.style.display = (enable ? "inherit" : "none");

@@ -1,7 +1,5 @@
 import {Vector, V} from "../utils/math/Vector";
 
-import {ICData} from "../models/ioobjects/other/ICData";
-
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
 import {Wire} from "../models/ioobjects/Wire";
@@ -21,7 +19,7 @@ import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupMo
 * ! Controls its own DOM element(s)
 * TODO: use decorators or some other interface to determine what properties are available
 */
-export const SelectionPopupController = (function() {
+export const SelectionPopupController = (() => {
     let camera: Camera;
     let div: HTMLDivElement;
     let modules: Array<SelectionPopupModule>;
@@ -46,8 +44,7 @@ export const SelectionPopupController = (function() {
                 new PositionPopupModule(div),
                 new ColorPopupModule(div),
                 new InputCountPopupModule(div),
-                // TODO: implement when encoders are added to the typescript build
-                // new OutputCountPopupModule(div),
+                new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div),
                 new BusButtonPopupModule(div)
             );

@@ -3,7 +3,7 @@ import "jest";
 import {CircuitDesigner}  from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Switch}           from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED}              from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
-import {ConnectionAction} from "../../../../../site/public/ts/utils/actions/ConnectionAction";
+import {ConnectionAction} from "../../../../../site/public/ts/utils/actions/addition/ConnectionAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo 1", () => {
@@ -22,8 +22,7 @@ describe("PlaceAction", () => {
         expect(b.isOn()).toBe(false);
 
         // connect
-        const wire = designer.connect(a, 0,  b, 0);
-        const a1 = new ConnectionAction(wire);
+        const a1 = new ConnectionAction(a.getOutputPort(0), b.getInputPort(0)).execute();
 
         // initial
         expect(designer.getWires().length).toBe(1);
