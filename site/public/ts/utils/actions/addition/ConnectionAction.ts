@@ -15,8 +15,6 @@ export class ConnectionAction extends ReversableAction {
     private c2: Component;
     private i2: number;
 
-    private wire: Wire;
-
     public constructor(input: OutputPort, output: InputPort, flip: boolean = false) {
         super(flip);
 
@@ -32,13 +30,14 @@ export class ConnectionAction extends ReversableAction {
     }
 
     public normalExecute(): Action {
-        this.wire = this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
+        this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
 
         return this;
     }
 
     public normalUndo(): Action {
-        this.designer.removeWire(this.wire);
+        const wire = this.c1.getOutputs()[this.i1];
+        this.designer.removeWire(wire);
 
         return this;
     }
