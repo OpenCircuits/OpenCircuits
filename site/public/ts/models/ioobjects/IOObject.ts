@@ -1,9 +1,12 @@
 import {XMLNode} from "../../utils/io/xml/XMLNode";
 import {XMLable} from "../../utils/io/xml/XMLable";
+
+import {Selectable} from "../../utils/Selectable";
 import {Name} from "../../utils/Name";
+
 import {CircuitDesigner} from "../CircuitDesigner";
 
-export abstract class IOObject implements XMLable {
+export abstract class IOObject implements Selectable, XMLable {
     protected designer?: CircuitDesigner;
     protected name: Name;
 

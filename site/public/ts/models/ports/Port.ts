@@ -1,10 +1,12 @@
 import {IO_PORT_LENGTH} from "../../utils/Constants";
 import {Vector,V} from "../../utils/math/Vector";
 
+import {Selectable} from "../../utils/Selectable";
+
 import {Component} from "../ioobjects/Component";
 import {Wire}      from "../ioobjects/Wire";
 
-export abstract class Port {
+export abstract class Port implements Selectable {
     protected parent: Component;
     protected isOn: boolean;
 
