@@ -39,7 +39,7 @@ export class ColorPopupModule extends SelectionPopupModule {
         const targetColor = this.color.value;
 
         MainDesignerController.AddAction(
-            selections.reduce((acc, o) => {
+            selections.reduce<GroupAction>((acc, o) => {
                 if (o instanceof LED)
                     acc.add(new ColorChangeAction(o, targetColor));
                 return acc;

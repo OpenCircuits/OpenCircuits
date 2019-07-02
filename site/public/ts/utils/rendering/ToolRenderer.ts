@@ -51,11 +51,13 @@ export const ToolRenderer = (() => {
             const hasWire = selections.some((o) => o instanceof Wire);
 
             if (tool instanceof SelectionTool) {
+                 const selectionBox = tool.getSelectionBox();
+
                 // Draw selection box
-                if (tool.isSelecting()) {
+                if (selectionBox.isSelecting()) {
                     // Get positions and size
-                    const p1 = tool.getP1();
-                    const p2 = tool.getP2();
+                    const p1 = selectionBox.getP1();
+                    const p2 = selectionBox.getP2();
                     const pos = p1.add(p2).scale(0.5);
                     const size = p2.sub(p1);
 

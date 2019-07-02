@@ -52,7 +52,7 @@ export class InputCountPopupModule extends SelectionPopupModule {
         const countAsNumber = this.count.valueAsNumber;
 
         MainDesignerController.AddAction(
-            selections.reduce((acc, o) => {
+            selections.reduce<GroupAction>((acc, o) => {
                 if (o instanceof Gate && !(o instanceof BUFGate))
                     acc.add(new InputPortChangeAction(o,  countAsNumber));
                 else if (o instanceof Mux)

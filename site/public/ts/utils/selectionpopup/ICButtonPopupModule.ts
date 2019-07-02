@@ -15,16 +15,21 @@ export class ICButtonPopupModule extends SelectionPopupModule {
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections().filter(o => o instanceof Component);
+        const selections = MainDesignerController.GetSelections();
+        const componentSelections = selections.filter(o => o instanceof Component) as Array<Component>;
+        if (componentSelections.length != selections.length) {
+            this.button.style.display = "none";
+            return;
+        }
 
         // Check if the selections are a valid IC
-        const enable = ICData.IsValid(selections);
+        const enable = ICData.IsValid(componentSelections);
 
         // Enable/disable the button
         this.button.style.display = (enable ? "inherit" : "none");
     }
 
     public push(): void {
-        ICDesignerController.Show(MainDesignerController.GetSelections());
+        ICDesignerController.Show(MainDesignerController.GetSelections() as Array<Component>);
     }
 }

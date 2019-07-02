@@ -15,6 +15,7 @@ import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer
 
 import {Transform} from "../../math/Transform";
 import {Camera} from "../../Camera";
+import {Selectable} from "../../Selectable";
 
 import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
 import {Latch} from "../../../models/ioobjects/latches/Latch";
@@ -46,7 +47,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selectedPorts: Array<Port>): void {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Array<Selectable>): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -64,7 +65,7 @@ export const ComponentRenderer = (() => {
             // Draw IO ports
             const ports = object.getPorts();
             for (const port of ports) {
-                const portSelected = selectedPorts.includes(port);
+                const portSelected = selections.includes(port);
                 IOPortRenderer.renderPort(renderer, port, selected, portSelected);
             }
 
