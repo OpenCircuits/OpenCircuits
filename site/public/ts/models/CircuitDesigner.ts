@@ -236,6 +236,20 @@ export class CircuitDesigner implements XMLable {
         this.updateCallback();
     }
 
+    // Shift an object to a certain position
+    //  within it's list
+    public shift(obj: IOObject, i?: number): number {
+        const arr: Array<IOObject> =
+                (obj instanceof Component) ? (this.objects) : (this.wires);
+        const i0 = arr.indexOf(obj);
+        if (i0 === -1)
+            throw new Error("Can't move object! Object doesn't exist!");
+        i = (i == undefined ? arr.length : i);
+        arr.splice(i0, 1);
+        arr.splice(i, 0, obj);
+        return i0;
+    }
+
     public getObjects(): Array<Component> {
         return this.objects.slice(); // Shallow copy array
     }
