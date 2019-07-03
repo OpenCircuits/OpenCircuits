@@ -186,7 +186,7 @@ export class SelectionTool extends Tool {
         if (selectedObj) {
             // If we're holding shift then deselect the object if it's selected
             const deselect = (input.isShiftKeyDown() && this.selections.has(selectedObj));
-            this.action.add(new SelectAction(this, selectedObj, deselect));
+            this.action.add(new SelectAction(this, selectedObj, deselect).execute());
             return true;
         }
 
