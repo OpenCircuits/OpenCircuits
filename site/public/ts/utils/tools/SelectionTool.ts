@@ -251,6 +251,9 @@ export class SelectionTool extends Tool {
     }
 
     public getAction(): Action {
+        if (this.action.isEmpty())
+            return undefined;
+
         const action = this.action;
 
         // Clear action
