@@ -24,7 +24,8 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
-import {GroupAction} from "../actions/GroupAction";
+import {GroupAction} from "../actions/GroupAction"
+import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
         DeselectAction} from "../actions/selection/SelectAction";
 import {CreateGroupSelectAction,
@@ -187,6 +188,7 @@ export class SelectionTool extends Tool {
             // If we're holding shift then deselect the object if it's selected
             const deselect = (input.isShiftKeyDown() && this.selections.has(selectedObj));
             this.action.add(new SelectAction(this, selectedObj, deselect).execute());
+            this.action.add(new ShiftAction(selectedObj).execute());
             return true;
         }
 
