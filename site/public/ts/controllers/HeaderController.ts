@@ -48,12 +48,23 @@ export const HeaderController = (function() {
                 }
             }
 
-            fileInput.onchange = () => Importer.loadFile(mainDesigner, fileInput.files[0], (n) => { if (n) projectNameInput.value = n; });
+            const updateName = function (n: string) {
+                if (n) projectNameInput.value = n;
+            };
 
-            downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
+            projectNameInput.onchange = () => mainDesigner.setName(projectNameInput.value);
+            fileInput.onchange = () => {
+                Importer.loadFile(mainDesigner, fileInput.files[0]);
+                updateName(mainDesigner.getName());
+            };
 
-            saveButton.onclick = () => Exporter.pushFile(mainDesigner, projectNameInput.value);
-            loadButton.onclick = () => Importer.loadRemote(mainDesigner, loadId.value);
+            downloadButton.onclick = () => Exporter.saveFile(mainDesigner);
+
+            saveButton.onclick = () => Exporter.pushFile(mainDesigner);
+            loadButton.onclick = () => {
+                Importer.loadRemote(mainDesigner, loadId.value);
+                updateName(mainDesigner.getName());
+            };
 
             downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 

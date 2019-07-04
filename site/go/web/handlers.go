@@ -1,4 +1,4 @@
-package handlers
+package web
 
 import (
 	"encoding/json"
@@ -48,8 +48,7 @@ func IndexHandler(c *gin.Context) {
 	userId := session.Get("user-id")
 	loggedIn := userId != nil
 
-	// TODO: some parameters change if the user is logged in?
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "email": userId})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId})
 }
 
 func LoadCircuitHandler(c *gin.Context) {

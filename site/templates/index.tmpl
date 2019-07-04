@@ -27,7 +27,7 @@
 
 <div id="sidenav" class="sidenav shrink">
   <div class="sidenav__accountinfo">
-    User
+    {{ .userId }}
   </div>
   <div class="sidenav__content">
     <h4>
@@ -37,6 +37,8 @@
       </label>
     </h4>
     <h4 unselectable>My Circuits</h4>
+    <div id="my-circuits-list"></div>
+    <button id="save-circuit-button">SAVE</button>
     <h4 unselectable>Examples</h4>
     <ul id="sidenav-content-example-list">
     </ul>
@@ -87,6 +89,11 @@
             <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG" />
             <a>Download as PNG</a>
           </div>
+        </div>
+        <div>
+          <button id="header-login-button" class="header__login__button">
+            <img src="img/icons/download.svg" height="100%" alt="Sign in with Google" />
+          </button>
         </div>
       </div>
     </div>
@@ -153,8 +160,7 @@
       </div>
 
       <button id="popup-ic-button" type="button" alt="Create">Create IC</button>
-      <!-- <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button> -->
-
+      <button id="popup-bus-button" type="button" alt="Create a bus between selected ports">Bus</button>
     </div>
   </main>
 </div>

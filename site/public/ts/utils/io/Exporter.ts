@@ -1,3 +1,5 @@
+import {Utils} from "./Utils";
+
 declare var jsPDF: any; // jsPDF is external library
 
 import {XMLWriter} from "./xml/XMLWriter";
@@ -8,11 +10,11 @@ export const Exporter = (function() {
     let saved = true; // TODO, set saved to true when saving file
                       //  but somehow set it to false anytime the circuit changes
 
-    const write = function(designer: CircuitDesigner, name: string): string {
+    const write = function(designer: CircuitDesigner): string {
         const writer = new XMLWriter(designer.getXMLName());
 
         writer.setVersion(1);
-        writer.setName(name);
+        writer.setName(designer.getName());
 
         designer.save(writer.getRoot());
 
@@ -29,18 +31,18 @@ export const Exporter = (function() {
     };
 
     return {
-        pushFile: function(designer: CircuitDesigner, projectName: string) {
-            if (projectName.replace(/\s+/g, '') === "")
-                projectName = "Untitled Circuit";
-
-            const data = write(designer, projectName);
+        pushFile: function(designer: CircuitDesigner) {
+            const data = write(designer);
 
             let xhr = new XMLHttpRequest();
-            // TODO: this is BAD
-            xhr.open('POST', 'circuit/' + escape(projectName));
+
+            xhr.open('POST', 'circuit/' + designer.getId());
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    alert('Success');
+                    let h = JSON.parse(xhr.responseText);
+                    console.log(h);
+                    alert('Received object with id:' + h.id);
+                    designer.updateId(h.id);
                 }
                 else {
                     alert('Request failed.  Returned status of ' + xhr.status);
@@ -50,14 +52,11 @@ export const Exporter = (function() {
             xhr.send(data);
 
         },
-        saveFile: function(designer: CircuitDesigner, projectName: string) {
-            // Get name
-            if (projectName.replace(/\s+/g, '') === "")
-                projectName = "Untitled Circuit";
+        saveFile: function(designer: CircuitDesigner) {
+            let filePath = Utils.escapeFileName(designer.getName());
+            const data = write(designer);
 
-            const data = write(designer, projectName);
-
-            const filename = projectName + ".circuit";
+            const filename = filePath + ".circuit";
 
             const file = new Blob([data], {type: "text/plain"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
@@ -79,9 +78,7 @@ export const Exporter = (function() {
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
-                projectName = "Untitled Circuit";
-            const filename = projectName + ".png";
+            const filename = Utils.escapeFileName(projectName) + ".png";
 
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
                 const file = new Blob([data], {type: "image/png"});
@@ -107,8 +104,7 @@ export const Exporter = (function() {
             const pdf = new jsPDF("l", "px", [width, height]);
 
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
-                projectName = "Untitled Circuit";
+            let filename = Utils.escapeFileName(projectName) + ".pdf";
 
             // Fill background
             pdf.setFillColor("#CCC");
@@ -118,7 +114,7 @@ export const Exporter = (function() {
             const pdfHeight = pdf.internal.pageSize.getHeight();
 
             pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-            pdf.save(projectName + ".pdf");
+            pdf.save(filename);
         }
     }
 

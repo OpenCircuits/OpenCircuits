@@ -1,42 +1,50 @@
 package main
 
 import (
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/handlers"
+	"fmt"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
+	"github.com/OpenCircuits/OpenCircuits/site/go/db"
+	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func main() {
 	router := gin.Default()
-	// Generate CSRF Token
-	store := sessions.NewCookieStore([]byte(auth.RandToken(64)))
-	store.Options(sessions.Options{
-		Path: "/",
-		MaxAge: 60*60*24*7,
-	})
+
+	// TODO: use switches for which storage factory to instantiate
+	a, err := db.OpenSqliteDb("test.db")
+	defer a.Close()
+	if err != nil {
+		fmt.Printf("opening database: %v", err)
+		return
+	}
+	db.Initialize(a)
+
+	f := storage.MemCircuitStorageInterfaceFactory{}
+	core.SetCircuitStorageInterfaceFactory(&f)
 
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	router.LoadHTMLGlob("./templates/*")
+
+	// Generate CSRF Token... uhh, is this the same for every user?
+	store := sessions.NewCookieStore([]byte(auth.RandToken(64)))
+	store.Options(sessions.Options{
+		Path:   "/",
+		MaxAge: 60 * 60 * 24 * 7,
+	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
-	router.Static("/css", "./css")
-	router.Static("/img", "./img")
-	router.Static("/ts", "./ts")
-	router.StaticFile("/Bundle.js", "./Bundle.js")
+	web.RegisterPages(router)
+	api.RegisterRoutes(router)
 
-	router.GET("/", handlers.IndexHandler)
-	router.GET("/auth", auth.RedirectHandler)
-	router.GET("/login", auth.LoginHandler)
-	router.GET("/circuit/:id", handlers.CircuitLoadHandler)
-	router.POST("/circuit/:id", handlers.CircuitStoreHandler)
-
-	for true {
-		err := router.Run("127.0.0.1:9090")
-		if err != nil {
-			log.Printf("Web server crashed! \n %v", err)
-		}
-	}
+	router.Run("127.0.0.1:9090")
 }
+
+// TODO: Make authentication more abstract
+// TODO: Make api routes use new model
+// TODO: Set up command-line switch handling code
+// TODO: update branch and templates (last)

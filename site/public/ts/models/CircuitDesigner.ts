@@ -28,9 +28,15 @@ export class CircuitDesigner implements XMLable {
 
 	private updateCallback: () => void;
 
+	private name: string;
+	private id: Number;
+
 	public constructor(propagationTime: number = 1, callback: () => void = function(){}) {
 		this.propagationTime = propagationTime;
 		this.updateCallback = callback;
+
+		this.name = "Untitled Circuit";
+		this.id = Number.MAX_SAFE_INTEGER;
 
 		this.reset();
 	}
@@ -241,4 +247,24 @@ export class CircuitDesigner implements XMLable {
 		return "circuit";
 	}
 
+	public setName(name: string): void {
+	    if (name === null) {
+	    	name = "";
+		}
+		this.name = name;
+	}
+
+	public getName(): string {
+		return this.name;
+	}
+
+	public getId(): Number {
+		return this.id;
+	}
+
+	public updateId(id: Number): void {
+		if (this.id === Number.MAX_SAFE_INTEGER) {
+			this.id = id;
+		}
+	}
 }
