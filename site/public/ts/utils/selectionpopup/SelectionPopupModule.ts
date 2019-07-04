@@ -8,8 +8,8 @@
 export abstract class SelectionPopupModule {
     protected div: HTMLDivElement;
 
-    public constructor(parent_div: HTMLDivElement) {
-        this.div = parent_div;
+    public constructor(parentDiv: HTMLDivElement) {
+        this.div = parentDiv;
     }
 
     // True makes this module visible in the selection popup menu
@@ -20,7 +20,7 @@ export abstract class SelectionPopupModule {
     }
 
     public getEnabled(): boolean {
-        return (this.div.style.display == "inherit");
+        return (this.div.style.display === "inherit");
     }
 
     // Updates the module to show properties of the selected object(s)

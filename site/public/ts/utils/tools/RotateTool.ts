@@ -2,7 +2,7 @@ import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         LEFT_MOUSE_BUTTON} from "../Constants";
 
-import {Vector,V} from "../math/Vector";
+import {Vector} from "../math/Vector";
 import {Input} from "../Input";
 import {Camera} from "../Camera";
 import {Tool} from "./Tool";
@@ -10,7 +10,7 @@ import {SelectionTool} from "./SelectionTool";
 
 import {Component} from "../../models/ioobjects/Component";
 
-import {RotateAction} from "../actions/RotateAction";
+import {RotateAction} from "../actions/transform/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;
@@ -30,13 +30,15 @@ export class RotateTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedown"))
             return false;
+        if (!(input.getTouchCount() == 1))
+            return false;
 
-        let selections = currentTool.getSelections();
+        const selections = currentTool.getSelections();
         if (selections.length == 0)
             return false;
 
@@ -55,7 +57,7 @@ export class RotateTool extends Tool {
             // Copy initial angles
             this.initialAngles = [];
             this.currentAngles = [];
-            for (let obj of this.components) {
+            for (const obj of this.components) {
                 this.initialAngles.push(obj.getAngle());
                 this.currentAngles.push(obj.getAngle());
             }
@@ -69,7 +71,7 @@ export class RotateTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(event: string, _: Input): boolean {
         return (event == "mouseup");
     }
 
@@ -103,10 +105,10 @@ export class RotateTool extends Tool {
         return true;
     }
 
-    public getAction() {
+    public getAction(): RotateAction {
         // Copy final positions
         const finalAngles = [];
-        for (let obj of this.components)
+        for (const obj of this.components)
             finalAngles.push(obj.getAngle());
 
         // Return action

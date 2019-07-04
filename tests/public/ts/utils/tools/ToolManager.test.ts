@@ -18,7 +18,7 @@ import {TranslateTool} from "../../../../../site/public/ts/utils/tools/Translate
 import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
 import {PanTool} from "../../../../../site/public/ts/utils/tools/PanTool";
 import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
-import {Port} from "../../../../../site/public/ts/models/ioobjects/Port";
+import {Port} from "../../../../../site/public/ts/models/ports/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
@@ -54,28 +54,28 @@ function setupInput(toolManager: ToolManager): any {
 
 function down(input: any, x: number | Vector, y ?: number): void {
     if (!(x instanceof Vector))  {
-        input.onMouseDown({clientX: x + CX, clientY: y + CY});
+        input.onMouseDown(V(x + CX, y + CY));
     }
     else {
-        input.onMouseDown({clientX: x.x + CX, clientY: x.y + CY});
+        input.onMouseDown(V(x.x + CX, x.y + CY));
     }
 }
 
 function up(input: any, x: number | Vector, y ?: number): void {
     if (!(x instanceof Vector))  {
-        input.onMouseUp({clientX: x + CX, clientY: y + CY});
+        input.onMouseUp(V(x + CX, y + CY));
     }
     else {
-        input.onMouseUp({clientX: x.x + CX, clientY: x.y + CY});
+        input.onMouseUp(V(x.x + CX, x.y + CY));
     }
 }
 
 function move(input: any, x: number | Vector, y ?: number): void {
     if (!(x instanceof Vector))  {
-        input.onMouseMove({clientX: x + CX, clientY: y + CY});
+        input.onMouseMove(V(x + CX, y + CY));
     }
     else {
-        input.onMouseMove({clientX: x.x + CX, clientY: x.y + CY});
+        input.onMouseMove(V(x.x + CX, x.y + CY));
     }
 }
 
@@ -83,12 +83,12 @@ function click(input: any, x: number | Vector, y ?: number): void {
     if (!(x instanceof Vector))  {
         down(input, x, y);
         up(input, x, y);
-        input.onClick({clientX: x + CX, clientY: y + CY});
+        input.onClick(V(x + CX, y + CY));
     }
     else {
         down(input, x);
         up(input, x);
-        input.onClick({clientX: x.x + CX, clientY: x.y + CY});
+        input.onClick(V(x.x + CX, x.y + CY));
     }
 }
 

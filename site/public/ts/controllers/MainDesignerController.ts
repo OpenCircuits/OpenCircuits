@@ -1,3 +1,5 @@
+import {Vector} from "../utils/math/Vector";
+
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
@@ -16,10 +18,10 @@ import {WiringTool} from "../utils/tools/WiringTool";
 
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
-import {Port} from "../models/ioobjects/Port";
+import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export const MainDesignerController = (function() {
+export const MainDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
@@ -27,7 +29,7 @@ export const MainDesignerController = (function() {
     let toolManager: ToolManager;
     let renderQueue: RenderQueue;
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         MainDesignerController.Render();
@@ -58,15 +60,17 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button)){
+        if (toolManager.onClick(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
     const onKeyDown = function(key: number): void {
-        if (toolManager.onKeyDown(input, key))
+        if (toolManager.onKeyDown(input, key)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyUp = function(key: number): void {
@@ -74,16 +78,8 @@ export const MainDesignerController = (function() {
             MainDesignerController.Render();
     }
 
-    const onScroll = function(): void {
-        // @TODO move this stuff as well
-        let zoomFactor = input.getZoomFactor();
-
-        // Calculate position to zoom in/out of
-        let pos0 = view.getCamera().getWorldPos(input.getMousePos());
-        view.getCamera().zoomBy(zoomFactor);
-        let pos1 = view.getCamera().getScreenPos(pos0);
-        let dPos = pos1.sub(input.getMousePos());
-        view.getCamera().translate(dPos.scale(view.getCamera().getZoom()));
+    const onZoom = function(zoom: number, center: Vector): void {
+        view.getCamera().zoomTo(center, zoom);
 
         SelectionPopupController.Update();
         MainDesignerController.Render();
@@ -114,7 +110,7 @@ export const MainDesignerController = (function() {
             input.addListener("mouseup",   (b) => onMouseUp(b));
             input.addListener("keydown",   (b) => onKeyDown(b));
             input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("scroll", onScroll);
+            input.addListener("zoom",    (z,c) => onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
 
@@ -129,7 +125,7 @@ export const MainDesignerController = (function() {
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
-        AddAction: function(action: Action) {
+        AddAction: function(action: Action): void {
             toolManager.addAction(action);
         },
         SetEditMode: function(val: boolean): void {

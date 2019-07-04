@@ -15,14 +15,14 @@ export class IC extends Component {
 
     public constructor(data: ICData) {
         super(new ClampedValue(data.getInputCount()),
-              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
+                new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 
         // Redirect activate function for output objects
         for (let i = 0; i < this.getOutputPortCount(); i++) {
-            let port = this.getOutputPort(i);
-            let output = this.collection.outputs[i];
+            const port = this.getOutputPort(i);
+            const output = this.collection.outputs[i];
             output.activate = (on) => {
                 port.activate(on);
             }
@@ -32,8 +32,8 @@ export class IC extends Component {
     }
 
     private copyPorts(): void {
-        let ports = this.data.getPorts();
-        let myPorts = this.getPorts();
+        const ports = this.data.getPorts();
+        const myPorts = this.getPorts();
 
         // Copy names and positions of ports
         for (let i = 0; i < ports.length; i++) {
@@ -47,12 +47,12 @@ export class IC extends Component {
         super.setDesigner(designer);
 
         // Set designer of all internal components/wires
-        let components = this.collection.getAllComponents();
-        for (let obj of components)
+        const components = this.collection.getAllComponents();
+        for (const obj of components)
             obj.setDesigner(designer);
-        for (let wire of this.collection.wires)
+        for (const wire of this.collection.wires)
             wire.setDesigner(designer);
-	}
+    }
 
     public update(): void {
         // Update size
@@ -65,14 +65,14 @@ export class IC extends Component {
     public activate(): void {
         // Activate corresponding input object
         for (let i = 0; i < this.getInputPortCount(); i++) {
-            let port = this.getInputPort(i);
-            let input = this.collection.inputs[i];
+            const port = this.getInputPort(i);
+            const input = this.collection.inputs[i];
             input.activate(port.getIsOn());
         }
     }
 
     public copy(): IC {
-        let copy = new IC(this.data);
+        const copy = new IC(this.data);
         copy.transform = this.transform.copy();
         return copy;
     }

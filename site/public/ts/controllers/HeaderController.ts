@@ -5,7 +5,7 @@ import {Exporter} from "../utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
 
-export const HeaderController = (function() {
+export const HeaderController = (() => {
     const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
 
     const fileInput = <HTMLInputElement>document.getElementById("header-file-input");
@@ -21,7 +21,7 @@ export const HeaderController = (function() {
     const downloadPNGButton = document.getElementById("header-download-png-button");
 
     return {
-        Init: function(designer: CircuitDesigner) {
+        Init: function(designer: CircuitDesigner): void {
             const mainDesigner: CircuitDesigner = designer;
 
             // Show/hide the dropdown on click
@@ -33,8 +33,8 @@ export const HeaderController = (function() {
 
             // Hide dropdown on click anywhere else
             window.onclick = (e) => {
-                let target: Element = (e.target || e.srcElement) as Element;
-                let dropdownParent = target.closest(".header__dropdown");
+                const target: Element = (e.target || e.srcElement) as Element;
+                const dropdownParent = target.closest(".header__dropdown");
                 if (!dropdownParent) {
                     if (downloadDropdown.classList.contains("show")) {
                         downloadDropdown.classList.toggle("show");

@@ -1,6 +1,4 @@
-import {ITEMNAV_WIDTH} from "../utils/Constants";
-
-import {V} from "../utils/math/Vector";
+import {Vector,V} from "../utils/math/Vector";
 
 import {MainDesignerController} from "./MainDesignerController";
 
@@ -8,16 +6,14 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 
 import {Component} from "../models/ioobjects/Component";
 
-import {Input} from "../utils/Input";
-
-export const ItemNavController = (function() {
+export const ItemNavController = (() => {
     const tab = document.getElementById("itemnav-open-tab");
     const itemnav = document.getElementById("itemnav");
 
     let isOpen = false;
     let disabled = false;
 
-    const toggle = function() {
+    const toggle = function(): void {
         itemnav.classList.toggle("shrink");
         tab.classList.toggle("tab__closed");
     }
@@ -30,7 +26,7 @@ export const ItemNavController = (function() {
         Init: function(): void {
             tab.onclick = () => { ItemNavController.Toggle(); }
 
-            const headerHeight = document.getElementById("header").offsetHeight + 10;
+            // const headerHeight = document.getElementById("header").offsetHeight + 10;
 
             // Set onclicks for each item
             const children = Array.from(itemnav.children);
@@ -41,37 +37,43 @@ export const ItemNavController = (function() {
                 const xmlId = child.dataset.xmlid;
                 const not = child.dataset.not == 'true';
 
-                let dragStart = V(0,0);
-
-                child.onclick = () => {
+                const onClick = () => {
                     place(CreateComponentFromXML(xmlId, not), false);
 
                     // Unfocus element
                     if (child instanceof HTMLElement)
                         child.blur();
                 }
-                child.ondragstart = (event) => {
-                    dragStart = V(event.offsetX, event.offsetY);
-                }
-                child.ondragend = (event) => {
+
+                const onDragEnd = (p: Vector) => {
                     if (!(child instanceof HTMLButtonElement))
                         return;
 
                     const component = CreateComponentFromXML(xmlId, not);
-
-                    // Calculate world mouse pos from event
-                    const canvas = MainDesignerController.GetCanvas();
-                    const rect = canvas.getBoundingClientRect();
-                    const mousePos = V(event.pageX - dragStart.x - rect.left,
-                                       event.pageY - dragStart.y + headerHeight - rect.top);
-
-                    const pos = MainDesignerController.GetCamera().getWorldPos(mousePos);
+                    const pos = MainDesignerController.GetCamera().getWorldPos(p);
 
                     component.setPos(pos);
                     place(component, true);
 
                     MainDesignerController.Render();
                 }
+
+                child.onclick = () => onClick();
+                child.ondragend = (event) => onDragEnd(V(event.pageX, event.pageY));
+
+
+                child.addEventListener("touchstart", (event) => {
+                    event.preventDefault();
+                })
+                child.addEventListener("touchend", (event) => {
+                    if (event.changedTouches.length != 1)
+                        return;
+
+                    onDragEnd(V(event.changedTouches[0].pageX,
+                                event.changedTouches[0].pageY));
+
+                    event.preventDefault();
+                }, false);
             }
         },
         Toggle: function(): void {

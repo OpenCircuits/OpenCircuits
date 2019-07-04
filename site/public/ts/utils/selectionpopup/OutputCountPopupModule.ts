@@ -1,12 +1,16 @@
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
-import {Component} from "../../models/ioobjects/Component";
+
+import {Encoder} from "../../models/ioobjects/other/Encoder";
+
+import {GroupAction} from "../actions/GroupAction";
+import {OutputPortChangeAction} from "../actions/ports/OutputPortChangeAction";
 
 export class OutputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    constructor(parent_div: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
-        super(parent_div.querySelector("div#popup-output-count-text"));
+        super(parentDiv.querySelector("div#popup-output-count-text"));
         this.count = this.div.querySelector("input#popup-output-count");
 
         this.count.onchange = () => this.push();
@@ -14,36 +18,37 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
-        let encoders = selections
-            .filter(_ => false) // TODO: implement when encoders are added to the typescript build
-            .map(o => o as Component);
+        const encoders = selections
+              .filter(o => o instanceof Encoder)
+              .map(o => o as Encoder);
 
-        let counts: Array<number> = [];
-        encoders.forEach(g => counts.push(g.getOutputPortCount()));
+        const enable = selections.length == encoders.length && selections.length > 0;
 
-        let enable = selections.length == encoders.length && selections.length > 0;
         if (enable) {
-            let same = true;
-            let count: number = counts[0];
-            for (let i = 1; i < counts.length && same; ++i) {
-                same = counts[i] == count;
-            }
+            // Calculate output counts for each component
+            const counts: Array<number> = [];
+            encoders.forEach(e => counts.push(e.getOutputPortCount()));
 
-            this.count.value = same ? count.toString() : "-";
+            const same = counts.every((count) => count === counts[0]);
+
+            this.count.value = same ? counts[0].toString() : "-";
         }
 
         this.setEnabled(enable);
     }
 
     public push(): void {
-        let encoders = MainDesignerController.GetSelections()
-            .filter(_ => false) // TODO: implement when encoders are added to the typescript build
-            .map(o => o as Component);
+        const selections = MainDesignerController.GetSelections();
+        const countAsNumber = this.count.valueAsNumber;
 
-        let countAsNumber = this.count.valueAsNumber;
-        encoders.forEach(e =>
-            e.setOutputPortCount(countAsNumber)
+        MainDesignerController.AddAction(
+            selections.reduce((acc, o) => {
+                if (o instanceof Encoder)
+                    acc.add(new OutputPortChangeAction(o, countAsNumber));
+                return acc;
+            }, new GroupAction()).execute()
         );
+
         MainDesignerController.Render();
     }
 }

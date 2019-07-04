@@ -39,15 +39,15 @@ describe("Translate Tool", () => {
     s.setPos(V(0, 0)); //center of scene is (0, 0) for objects
 
     function down(x: number, y: number): void {
-        input.onMouseDown({clientX: CX + x, clientY: CY + y});
+        input.onMouseDown(V(CX + x, CY + y));
     }
 
     function up(x: number, y: number): void {
-        input.onMouseUp({clientX: CY + x, clientY: CY + y});
+        input.onMouseUp(V(CY + x, CY + y));
     }
 
     function move(x: number, y: number): void {
-        input.onMouseMove({clientX: CY + x, clientY: CY + y});
+        input.onMouseMove(V(CY + x, CY + y));
     }
 
 

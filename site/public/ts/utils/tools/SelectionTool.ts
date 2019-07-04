@@ -9,7 +9,8 @@ import {TransformContains,
         BezierContains,
         RectContains} from "../math/MathUtils";
 import {SeparatedComponentCollection,
-        GatherGroup} from "../ComponentUtils";
+        GatherGroup,
+        GetAllPorts} from "../ComponentUtils";
 
 import {Tool} from "./Tool";
 
@@ -22,13 +23,13 @@ import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
-import {Port} from "../../models/ioobjects/Port";
+import {Port} from "../../models/ports/Port";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
-import {DeleteAction} from "../actions/DeleteAction";
-import {DeleteWireAction} from "../actions/DeleteWireAction";
+import {DeleteAction} from "../actions/addition/PlaceAction";
+import {DisconnectAction} from "../actions/addition/ConnectionAction";
 
 export class SelectionTool extends Tool {
 
@@ -75,7 +76,7 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
 
-    private setAction(action: Action) {
+    private setAction(action: Action): void {
         // Don't set action if it's an empty group action
         if (action instanceof GroupAction && action.isEmpty())
             return;
@@ -127,7 +128,7 @@ export class SelectionTool extends Tool {
             return false;
 
         // Determine if we're adding to portSelections or regular selections
-        for (let o of objs) {
+        for (const o of objs) {
             if (o instanceof IOObject)
                 this.add(this.selections, o);
             else
@@ -208,7 +209,7 @@ export class SelectionTool extends Tool {
         this.currentPressedObj = obj;
     }
 
-    public disableSelections(val: boolean = true) {
+    public disableSelections(val: boolean = true): void {
         this.disabledSelections = val;
     }
 
@@ -220,7 +221,7 @@ export class SelectionTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(): boolean {
         this.selecting = false;
 
         return false;
@@ -228,11 +229,11 @@ export class SelectionTool extends Tool {
 
     public onMouseDown(input: Input, button: number): boolean {
         if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+            const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-            let objects = this.designer.getObjects();
+            const objects = this.designer.getObjects();
             for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
+                const obj = objects[i];
 
                 // Check if we pressed the object
                 if (obj.isWithinPressBounds(worldMousePos)) {
@@ -266,7 +267,7 @@ export class SelectionTool extends Tool {
     public onMouseDrag(input: Input, button: number): boolean {
         // Update positions of selection
         //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections) {
+        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections && input.getTouchCount() == 1) {
             this.selecting = true;
 
             // Update selection box positions
@@ -323,7 +324,7 @@ export class SelectionTool extends Tool {
                 // Select ports if we haven't selected any regular objects
                 if (!this.selections.some((s) => s instanceof IOObject)) {
                     // Get all ports from each object
-                    const ports = objects.map((obj) => obj.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), new Array<Port>());
+                    const ports = GetAllPorts(objects);
 
                     // Filter out ports within the selection box
                     const portSelections = ports.filter((port) => RectContains(box, port.getWorldTargetPos()));
@@ -346,7 +347,7 @@ export class SelectionTool extends Tool {
 
     public onClick(input: Input, button: number): boolean {
         if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+            const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
             let render = false;
 
@@ -354,7 +355,7 @@ export class SelectionTool extends Tool {
 
             // Clear selections if no shift key
             if (!input.isShiftKeyDown()) {
-                group.add(this.clearSelections());
+                group.add(this.clearSelections().execute());
                 render = !group.isEmpty(); // Render if selections were actually cleared
             }
 
@@ -383,7 +384,7 @@ export class SelectionTool extends Tool {
                         // Add selection
                         this.addSelection(obj);
                     }
-                    group.add(new SelectAction(this, obj, !selected));
+                    group.add(new SelectAction(this, obj, !selected).execute());
                     this.setAction(group)
                     return true;
                 }
@@ -398,8 +399,7 @@ export class SelectionTool extends Tool {
             //  and add to selections
             const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
             if (w) {
-                group.add(new SelectAction(this, w, false));
-                this.addSelection(w);
+                group.add(new SelectAction(this, w, false).execute());
                 render = true;
             }
 
@@ -431,18 +431,11 @@ export class SelectionTool extends Tool {
             //  (when undoing) before the wires can be connected
             const group = new GroupAction();
             group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-            group.add(wires.map((wire)          => new DeleteWireAction(wire)));
+            group.add(wires.map((wire)          => new DisconnectAction(wire)));
             group.add(components.map((obj)      => new DeleteAction(obj)));
 
-            this.setAction(group);
+            this.setAction(group.execute());
 
-            // Actually delete the objects/wires
-            for (const wire of wires)
-                this.designer.removeWire(wire);
-            for (const obj of components)
-                this.designer.removeObject(obj);
-
-            this.clearSelections();
             return true;
         }
         if (key == ESC_KEY) {
@@ -454,13 +447,10 @@ export class SelectionTool extends Tool {
     }
 
     public calculateMidpoint(): Vector {
-        let selections = this.selections;
-        let midpoint = V();
-        for (let obj of selections) {
-            if (obj instanceof Component)
-                midpoint.translate(obj.getPos());
-        }
-        return midpoint.scale(1. / selections.length);
+        return this.selections.filter(o => o instanceof Component)
+                .map(o => o as Component)
+                .reduce((acc, cur) => acc.add(cur.getPos()), V(0,0))
+                .scale(1. / this.selections.length);
     }
 
     public getAction(): Action {
@@ -489,7 +479,7 @@ export class SelectionTool extends Tool {
         return this.p2.copy();
     }
 
-    public addSelectionChangeListener(func: {(): void}) {
+    public addSelectionChangeListener(func: {(): void}): void {
         this.callbacks.push(func);
     }
     public getCurrentlyPressedObj(): IOObject {
