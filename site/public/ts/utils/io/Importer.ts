@@ -1,40 +1,42 @@
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {Circuit} from "../../models/Circuit";
 
 export const Importer = (() => {
 
-    const read = function(designer: CircuitDesigner, file: string, setName: (n: string) => void): void {
+    const readString = function(circuit: Circuit, file: string): void {
         const root = <XMLDocument>new DOMParser().parseFromString(file, "text/xml");
         if (root.documentElement.nodeName == "parsererror")
             return;
+        readDocument(circuit, root);
+    };
 
-        const reader = new XMLReader(root);
+    const readDocument = function(circuit: Circuit, doc: XMLDocument): void {
+        const reader = new XMLReader(doc);
 
         // Check for old version of save
         if (reader.getVersion() == -1)
             ResolveVersionConflict(reader);
 
-        designer.load(reader.getRoot());
+        circuit.load(reader.getRoot());
     };
 
     return {
-        loadRemote: function(designer: CircuitDesigner, id: string): void {
+        loadRemote: function(circuit: Circuit, id: string): void {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             let open = confirm("Are you sure you want to overwrite your current scene?");
 
             if (open) {
-                designer.reset();
-
                 let xhr = new XMLHttpRequest();
                 xhr.open('GET', 'circuit/' + escape(id));
                 xhr.onload = function() {
                     if (xhr.status === 200) {
                         alert('Success');
-                        let uc = xhr.responseXML;
+                        const uc = xhr.responseXML;
                         console.log(uc);
-                        readDocument(designer, xhr.responseXML);
+                        readDocument(circuit, xhr.responseXML);
                     }
                     else {
                         alert('Request failed.  Returned status of ' + xhr.status);
@@ -43,18 +45,16 @@ export const Importer = (() => {
                 xhr.send();
             }
         },
-        loadFile: function(designer: CircuitDesigner, file: File): void {
+        loadFile: function(circuit: Circuit, file: File): void {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             const open = confirm("Are you sure you want to overwrite your current scene?");
 
             if (open) {
-                designer.reset();
-
                 const reader = new FileReader();
                 reader.onload = () => {
-                    read(designer, reader.result.toString(), setName);
-                }
+                    readString(circuit, reader.result.toString());
+                };
 
                 reader.readAsText(file);
             }

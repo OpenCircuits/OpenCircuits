@@ -3,34 +3,28 @@ import {Utils} from "./Utils";
 declare var jsPDF: any; // jsPDF is external library
 
 import {XMLWriter} from "./xml/XMLWriter";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {Circuit} from "../../models/Circuit";
+import {CircuitMetadata} from "../../models/CircuitMetadata";
+import {XMLReader} from "./xml/XMLReader";
 
 export const Exporter = (() => {
 
-    const write = function(designer: CircuitDesigner): string {
-        const writer = new XMLWriter(designer.getXMLName());
-
-        writer.setVersion(1);
-        writer.setName(designer.getName());
-
-        designer.save(writer.getRoot());
-
-        return writer.serialize();
+    const parseMetadata = function(doc: XMLDocument, metadata: CircuitMetadata): void {
+        const reader = new XMLReader(doc);
+        metadata.load(reader.getRoot());
     };
 
     return {
-        pushFile: function(designer: CircuitDesigner) {
-            const data = write(designer);
+        pushFile: function(circuit: Circuit) {
+            const data = XMLWriter.fromLable(circuit).serialize();
 
             let xhr = new XMLHttpRequest();
 
-            xhr.open('POST', 'circuit/' + designer.getId());
+            xhr.open('POST', 'circuits/' + circuit.metadata.getId());
             xhr.onload = function() {
-                if (xhr.status === 200) {
-                    let h = JSON.parse(xhr.responseText);
-                    console.log(h);
-                    alert('Received object with id:' + h.id);
-                    designer.updateId(h.id);
+                if (xhr.status === 202) {
+                    parseMetadata(xhr.responseXML, circuit.metadata);
+                    console.log(circuit.metadata);
                 }
                 else {
                     alert('Request failed.  Returned status of ' + xhr.status);
@@ -40,9 +34,9 @@ export const Exporter = (() => {
             xhr.send(data);
 
         },
-        saveFile: function(designer: CircuitDesigner) {
-            let filePath = Utils.escapeFileName(designer.getName());
-            const data = write(designer);
+        saveFile: function(circuit: Circuit) {
+            let filePath = Utils.escapeFileName(circuit.metadata.getName());
+            const data = XMLWriter.fromLable(circuit).serialize();
 
             const filename = filePath + ".circuit";
 

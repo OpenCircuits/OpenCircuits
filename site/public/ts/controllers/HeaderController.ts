@@ -4,6 +4,7 @@ import {Importer} from "../utils/io/Importer";
 import {Exporter} from "../utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
+import {Circuit} from "../models/Circuit";
 
 export const HeaderController = (() => {
     const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
@@ -21,8 +22,8 @@ export const HeaderController = (() => {
     const downloadPNGButton = document.getElementById("header-download-png-button");
 
     return {
-        Init: function(designer: CircuitDesigner): void {
-            const mainDesigner: CircuitDesigner = designer;
+        Init: function(circuit: Circuit): void {
+            const mainCircuit: Circuit = circuit;
 
             // Show/hide the dropdown on click
             downloadDropdownButton.onclick = () => {
@@ -52,18 +53,18 @@ export const HeaderController = (() => {
                 if (n) projectNameInput.value = n;
             };
 
-            projectNameInput.onchange = () => mainDesigner.setName(projectNameInput.value);
+            projectNameInput.onchange = () => mainCircuit.metadata.setName(projectNameInput.value);
             fileInput.onchange = () => {
-                Importer.loadFile(mainDesigner, fileInput.files[0]);
-                updateName(mainDesigner.getName());
+                Importer.loadFile(mainCircuit, fileInput.files[0]);
+                updateName(mainCircuit.metadata.getName());
             };
 
-            downloadButton.onclick = () => Exporter.saveFile(mainDesigner);
+            downloadButton.onclick = () => Exporter.saveFile(mainCircuit);
 
-            saveButton.onclick = () => Exporter.pushFile(mainDesigner);
+            saveButton.onclick = () => Exporter.pushFile(mainCircuit);
             loadButton.onclick = () => {
-                Importer.loadRemote(mainDesigner, loadId.value);
-                updateName(mainDesigner.getName());
+                Importer.loadRemote(mainCircuit, loadId.value);
+                updateName(mainCircuit.metadata.getName());
             };
 
             downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);

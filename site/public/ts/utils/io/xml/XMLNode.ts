@@ -1,4 +1,5 @@
 import {V,Vector} from "../../math/Vector";
+import {XMLable} from "./XMLable";
 
 export class XMLNode {
     private root: XMLDocument;
@@ -13,6 +14,11 @@ export class XMLNode {
         const child = this.root.createElement(tag);
         this.node.appendChild(child);
         return new XMLNode(this.root, child);
+    }
+
+    public saveChildLable(lable: XMLable): void {
+        const child = this.createChild(lable.getXMLName());
+        lable.save(child);
     }
 
     public addAttribute(tag: string, val: any): void {
@@ -86,6 +92,11 @@ export class XMLNode {
 
     public getChildren(): Array<XMLNode> {
         return Array.from(this.node.childNodes).map(child => new XMLNode(this.root, child));
+    }
+
+    public loadChildLable(lable: XMLable): void {
+        const child = this.findChild(lable.getXMLName());
+        lable.load(child);
     }
 
     public hasAttribute(tag: string): boolean {

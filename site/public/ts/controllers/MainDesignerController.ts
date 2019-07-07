@@ -20,9 +20,10 @@ import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
 import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
+import {Circuit} from "../models/Circuit";
 
 export const MainDesignerController = (() => {
-    let designer: CircuitDesigner;
+    let circuit: Circuit;
     let view: MainDesignerView;
     let input: Input;
 
@@ -90,13 +91,13 @@ export const MainDesignerController = (() => {
             // pass Render function so that
             //  the circuit is redrawn every
             //  time its updated
-            designer = new CircuitDesigner(1, () => this.Render());
+            circuit.designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
 
             // utils
-            toolManager = new ToolManager(view.getCamera(), designer);
+            toolManager = new ToolManager(view.getCamera(), circuit.designer);
             renderQueue = new RenderQueue(() =>
-                view.render(designer,
+                view.render(circuit.designer,
                             toolManager.getSelectionTool().getSelections(),
                             toolManager.getSelectionTool().getPortSelections(),
                             toolManager));
@@ -155,7 +156,10 @@ export const MainDesignerController = (() => {
             return view.getCamera();
         },
         GetDesigner: function(): CircuitDesigner {
-            return designer;
+            return circuit.designer;
+        },
+        GetCircuit: function(): Circuit {
+            return circuit;
         }
     };
 })();

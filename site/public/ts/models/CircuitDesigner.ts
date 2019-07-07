@@ -206,6 +206,8 @@ export class CircuitDesigner implements XMLable {
 
 
     public load(node: XMLNode): void {
+        this.reset();
+
         const icDataNode  = node.findChild("icdata");
 
         const icIdMap = new Map<number, ICData>();
@@ -236,6 +238,10 @@ export class CircuitDesigner implements XMLable {
         this.updateCallback();
     }
 
+    public getXMLName(): string {
+        return "content";
+    }
+
     public getObjects(): Array<Component> {
         return this.objects.slice(); // Shallow copy array
     }
@@ -244,28 +250,4 @@ export class CircuitDesigner implements XMLable {
         return this.wires.slice(); // Shallow copy array
     }
 
-    public getXMLName(): string {
-        return "circuit";
-    }
-
-	public setName(name: string): void {
-	    if (name === null) {
-	    	name = "";
-		}
-		this.name = name;
-	}
-
-	public getName(): string {
-		return this.name;
-	}
-
-	public getId(): Number {
-		return this.id;
-	}
-
-	public updateId(id: Number): void {
-		if (this.id === Number.MAX_SAFE_INTEGER) {
-			this.id = id;
-		}
-	}
 }

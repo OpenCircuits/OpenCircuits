@@ -1,4 +1,5 @@
 import {XMLNode} from "./XMLNode";
+import {XMLable} from "./XMLable";
 
 export class XMLWriter {
     private root: XMLDocument;
@@ -9,14 +10,10 @@ export class XMLWriter {
         this.rootNode = new XMLNode(this.root, this.root.childNodes[0]);
     }
 
-    public setVersion(version: number): void {
-        const root = this.getRoot();
-        root.addAttribute("version", version);
-    }
-
-    public setName(name: string): void {
-        const root = this.getRoot();
-        root.addAttribute("name", name);
+    public static fromLable(lable: XMLable) {
+        const writer = new XMLWriter(lable.getXMLName());
+        lable.save(writer.getRoot());
+        return writer;
     }
 
     public getRoot(): XMLNode {

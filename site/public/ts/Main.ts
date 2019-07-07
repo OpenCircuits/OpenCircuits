@@ -33,7 +33,7 @@ function Init(): void {
         }),
         new Promise((resolve, _) => {
             MainDesignerController.Init();
-            HeaderController.Init(MainDesignerController.GetDesigner());
+            HeaderController.Init(MainDesignerController.GetCircuit());
             SelectionPopupController.Init(MainDesignerController.GetCamera());
             resolve(1);
         }),
