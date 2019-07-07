@@ -1,8 +1,10 @@
 package api
 
 import (
+	"encoding/xml"
 	"errors"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -26,13 +28,13 @@ func authorizeRequest(c *gin.Context) (string, error) {
 func CircuitStoreHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.JSON(http.StatusForbidden, err)
+		c.XML(http.StatusForbidden, err)
 		return
 	}
 
 	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err)
 	}
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
@@ -43,7 +45,7 @@ func CircuitStoreHandler(c *gin.Context) {
 		circuit.Metadata.Owner = userId
 	} else {
 		if circuit.Metadata.Owner != userId {
-			c.JSON(http.StatusForbidden, nil)
+			c.XML(http.StatusForbidden, err)
 			return
 		}
 	}
@@ -51,52 +53,60 @@ func CircuitStoreHandler(c *gin.Context) {
 	x, err := ioutil.ReadAll(c.Request.Body)
 	log.Print(x)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, nil)
+		c.XML(http.StatusBadRequest, err)
 		return
 	}
 
-	circuit.Content = string(x)
+	var newCircuit model.Circuit
+	err = xml.Unmarshal(x, newCircuit)
+	if err != nil {
+		c.XML(http.StatusBadRequest, err)
+		return
+	}
+
+	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(*circuit)
 
-	c.JSON(http.StatusOK, circuit.Metadata)
+	// Returned the updated metadata so the client can get any changes the server made to it
+	c.XML(http.StatusAccepted, circuit.Metadata)
 }
 
 func CircuitLoadHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.JSON(http.StatusForbidden, err.Error())
+		c.XML(http.StatusForbidden, err)
 		return
 	}
 
 	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err)
 	}
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.JSON(http.StatusNotFound, nil)
+		c.XML(http.StatusNotFound, err)
 		return
 	} else {
 		// Only owner can access... for now
 		if circuit.Metadata.Owner != userId {
-			c.JSON(http.StatusNotFound, nil)
+			c.XML(http.StatusNotFound, err)
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, circuit)
+	c.XML(http.StatusOK, circuit)
 }
 
 func CircuitQueryHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.JSON(http.StatusForbidden, err.Error())
+		c.XML(http.StatusForbidden, err)
 		return
 	}
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
 	circuits := storageInterface.EnumerateCircuits(userId)
-	c.JSON(http.StatusOK, circuits)
+	c.XML(http.StatusOK, circuits)
 }

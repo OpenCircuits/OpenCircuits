@@ -2,7 +2,7 @@ package storage
 
 import (
 	"database/sql"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
@@ -17,11 +17,11 @@ type sqliteCircuitStorageInterface struct {
 }
 
 type SqliteCircuitStorageInterfaceFactory struct {
-	Path string
+	Path   string
 	sqlite *sqliteCircuitStorageInterface
 }
 
-func (dbFactory *SqliteCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() core.CircuitStorageInterface {
+func (dbFactory *SqliteCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	if dbFactory.sqlite == nil {
 		dbFactory.sqlite = genSqliteInterface(dbFactory.Path)
 	}
@@ -36,7 +36,7 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	}
 
 	// TODO: just make this a .sql file
-	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, content TEXT NOT NULL, ownerId TEXT)")
+	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, designer TEXT NOT NULL, ownerId TEXT)")
 	if err != nil {
 		panic(err)
 	}
@@ -46,15 +46,15 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	}
 
 	// Generate the statements for storing/loading from a generic SQL db
-	store.loadEntryStmt, err = db.Prepare("SELECT id, content, name, ownerId FROM circuits WHERE id=?")
+	store.loadEntryStmt, err = db.Prepare("SELECT id, designer, name, ownerId FROM circuits WHERE id=?")
 	if err != nil {
 		panic(err)
 	}
-	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET content=? WHERE id=?")
+	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=? WHERE id=?")
 	if err != nil {
 		panic(err)
 	}
-	store.createEntryStmt, err = db.Prepare("INSERT INTO circuits(content, ownerId, name) VALUES (?, ?, ?)")
+	store.createEntryStmt, err = db.Prepare("INSERT INTO circuits(designer, ownerId, name) VALUES (?, ?, ?)")
 	if err != nil {
 		panic(err)
 	}
@@ -69,15 +69,15 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	return &store
 }
 
-func (d sqliteCircuitStorageInterface) LoadCircuit(id core.CircuitId) *model.Circuit {
+func (d sqliteCircuitStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {
 	var c model.Circuit
-	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.Id, &c.Content, &c.Metadata.Name, &c.Metadata.Owner)
+	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.Id, &c.Designer, &c.Metadata.Name, &c.Metadata.Owner)
 	if err == sql.ErrNoRows || err != nil {
 		return nil
 	}
 	return &c
 }
-func (d sqliteCircuitStorageInterface) EnumerateCircuits(userId core.UserId) []model.CircuitMetadata {
+func (d sqliteCircuitStorageInterface) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
 	rows, err := d.enumCircuitsStmt.Query(userId)
 	defer rows.Close()
 
@@ -109,7 +109,7 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
-	_, err := d.storeEntryStmt.Exec(circuit.Content, circuit.Metadata.Id)
+	_, err := d.storeEntryStmt.Exec(circuit.Designer, circuit.Metadata.Id)
 	if err != nil {
 		panic(err)
 	}

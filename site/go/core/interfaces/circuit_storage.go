@@ -1,4 +1,4 @@
-package core
+package interfaces
 
 import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 
@@ -8,9 +8,9 @@ import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 // do not modify the provided circuits.
 type CircuitStorageInterface interface {
 	// Tries to load a circuit with a given id
-	LoadCircuit(id CircuitId) *model.Circuit
+	LoadCircuit(id model.CircuitId) *model.Circuit
 	// gets all circuits accessible to a user
-	EnumerateCircuits(userId UserId) []model.CircuitMetadata
+	EnumerateCircuits(userId model.UserId) []model.CircuitMetadata
 	// Updates an existing circuit
 	UpdateCircuit(c model.Circuit)
 	// Makes a new blank circuit

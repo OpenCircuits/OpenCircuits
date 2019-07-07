@@ -1,12 +1,14 @@
 package core
 
+import "github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+
 // Process-wide globals.  Use sparingly
 
-var csif *CircuitStorageInterfaceFactory
-func GetCircuitStorageInterfaceFactory() CircuitStorageInterfaceFactory {
+var csif *interfaces.CircuitStorageInterfaceFactory
+func GetCircuitStorageInterfaceFactory() interfaces.CircuitStorageInterfaceFactory {
 	return *csif
 }
 
-func SetCircuitStorageInterfaceFactory(c CircuitStorageInterfaceFactory) {
+func SetCircuitStorageInterfaceFactory(c interfaces.CircuitStorageInterfaceFactory) {
 	csif = &c
 }

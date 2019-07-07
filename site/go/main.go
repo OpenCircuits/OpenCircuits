@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
-	"github.com/OpenCircuits/OpenCircuits/site/go/db"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -16,14 +14,6 @@ func main() {
 	router := gin.Default()
 
 	// TODO: use switches for which storage factory to instantiate
-	a, err := db.OpenSqliteDb("test.db")
-	defer a.Close()
-	if err != nil {
-		fmt.Printf("opening database: %v", err)
-		return
-	}
-	db.Initialize(a)
-
 	f := storage.MemCircuitStorageInterfaceFactory{}
 	core.SetCircuitStorageInterfaceFactory(&f)
 

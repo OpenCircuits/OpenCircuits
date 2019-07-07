@@ -2,7 +2,7 @@ package storage
 
 import (
 	"errors"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
@@ -13,16 +13,16 @@ type MemCircuitStorageInterfaceFactory struct {
 type memCircuitStorage struct {
 	// This is fine since maps are reference types
 	// TODO: this should support concurrency if used for more than single-request testing
-	m         map[core.CircuitId]model.Circuit
-	currentId core.CircuitId
+	m         map[model.CircuitId]model.Circuit
+	currentId model.CircuitId
 }
 
-func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() core.CircuitStorageInterface {
+func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	// Since the storage supports the interface this is fine.  For other kinds of storage, this pattern
 	//	of returning a single global object is not suitable.  Each call to this function should return a distinct
 	//	instance (i.e. a distinct connection to a database)
 	if m.memInterface == nil {
-		m.memInterface = &memCircuitStorage{m: make(map[core.CircuitId]model.Circuit)}
+		m.memInterface = &memCircuitStorage{m: make(map[model.CircuitId]model.Circuit)}
 	}
 	return m.memInterface
 }
@@ -35,11 +35,11 @@ func (mem memCircuitStorage) UpdateCircuit(c model.Circuit) {
 	mem.m[c.Metadata.Id] = c
 }
 
-func (mem memCircuitStorage) EnumerateCircuits(userId core.UserId) []model.CircuitMetadata {
+func (mem memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
 	return nil
 }
 
-func (mem memCircuitStorage) LoadCircuit(id core.CircuitId) *model.Circuit {
+func (mem memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
 	v, ok := mem.m[id]
 	if !ok {
 		return nil
