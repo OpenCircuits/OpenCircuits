@@ -1,61 +1,72 @@
-import {ToolManager} from "../utils/tools/ToolManager";
 import {Exporter} from "../utils/io/Exporter";
 import {Importer} from "../utils/io/Importer";
 import {CopyGroup} from "../utils/ComponentUtils";
+
+import {CreateDeleteGroupAction} from "../utils/actions/deletion/DeleteGroupActionFactory";
+import {CreateAddGroupAction} from "../utils/actions/addition/AddGroupActionFactory";
+import {TranslateAction} from "../utils/actions/transform/TranslateAction";
+
 import {CircuitDesigner} from "../models/CircuitDesigner";
-import {CLIPBOARD, setCLIPBOARD} from "../utils/Config";
-import { Component } from "../models/ioobjects/Component";
 
-// called in main.ts
+import {IC} from "../models/ioobjects/other/IC";
 
-// add the action to the maindesigncontroller.add action
-// try looking at add objects in the main design controller
+import {MainDesignerController} from "./MainDesignerController";
 
-export const CopyController = (function() {
-    let toolManager: ToolManager;
-    let circuitDesigner: CircuitDesigner;
+export const CopyController = (() => {
+    const copy = function(e: ClipboardEvent): void {
+        const selections = MainDesignerController.GetSelections();
 
-    const copy = function(e: ClipboardEvent) {
-        let selectionTool = toolManager.getSelectionTool();
-        let selections = selectionTool.getSelections();
+        // Create sub-circuit with just selections to save
+        const designer = new CircuitDesigner(-1);
+        designer.addGroup(CopyGroup(selections));
 
-        // create mini circuit designer with all components to copy
-        //  and use exporter to write circuit to XML
-        circuitDesigner.addGroup(CopyGroup(selections));
-        let circuitString = Exporter.write(circuitDesigner, "miniCircuitDesigner");
-        setCLIPBOARD(circuitString);
 
-        // where do i find the ic data for the items?
-        //circuitDesigner.addICData();
+        // Add all necessary IC data
+        const icDatas = selections.filter((o) => o instanceof IC)
+                                  .map((o) => (o as IC).getData());
 
+        // Add unique ICData to the circuit
+        icDatas.forEach((data, i) => {
+            if (icDatas.indexOf(data) == i) // If first one
+                designer.addICData(data);
+        });
+
+        // Export the circuit as XML and put it in the clipboard
+        e.clipboardData.setData("text/xml", Exporter.write(designer, "clipboard"));
+        e.preventDefault();
     }
 
-    const cut = function(e: ClipboardEvent) {
-        let selectionTool = toolManager.getSelectionTool();
-        let selections = selectionTool.getSelections();
+    const cut = function(e: ClipboardEvent): void {
+        const selections = MainDesignerController.GetSelections();
 
         copy(e);
 
-        // delete selected components
-        for(let s of selections){
-            if(s instanceof Component){
-                circuitDesigner.removeObject(s);
-            }
-        }
+        // Delete the selections
+        MainDesignerController.AddAction(
+            CreateDeleteGroupAction(selections).execute()
+        );
     }
 
-    const paste = function(e: ClipboardEvent) {
-        //what exactly does read do? it read an xml and laods it?
-        //what is the last parameter?
-        // TODO: Make sure this is an undoable/redoable action?
-        Importer.read(circuitDesigner, CLIPBOARD, (n) => {});
+    const paste = function(e: ClipboardEvent): void {
+        const mainDesigner = MainDesignerController.GetDesigner();
+        const contents = e.clipboardData.getData("text/xml");
+
+        const designer = new CircuitDesigner(-1);
+        Importer.read(designer, contents);
+
+        const group = CopyGroup(designer.getGroup());
+
+        const action = CreateAddGroupAction(mainDesigner, group);
+        // action.add()
+
+        MainDesignerController.AddAction(action.execute());
     }
 
     return {
         Init: function(): void {
-            document.addEventListener('copy', e => {copy(e)}, false);
-            document.addEventListener('cut', e => {cut(e)}, false);
-            document.addEventListener('paste', e => {paste(e)}, false);
+            document.addEventListener('copy',  (e) => {copy(e)},  false);
+            document.addEventListener('cut',   (e) => {cut(e)},   false);
+            document.addEventListener('paste', (e) => {paste(e)}, false);
         }
     }
 } )();
