@@ -104,6 +104,8 @@ export class XMLNode {
         if (child == undefined)
             return false;
         const nodes = child.node.childNodes;
+        // TODO: if a pair of tags is empty, this will still return false, which means both the case where the tag
+        // pair is empty and where the tag pair does not exist will cause this to return false.
         if (nodes.length != 1)
             return false;
         const node = nodes[0];
@@ -112,8 +114,11 @@ export class XMLNode {
 
     public getAttribute(tag: string): string {
         const child = this.findChild(tag);
-        if (child)
+        if (child) {
+            if (child.node.childNodes.length == 0)
+                return "";
             return child.node.childNodes[0].nodeValue;
+        }
         return "";
     }
 

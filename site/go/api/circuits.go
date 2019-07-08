@@ -28,24 +28,24 @@ func authorizeRequest(c *gin.Context) (string, error) {
 func CircuitStoreHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.XML(http.StatusForbidden, err)
+		c.XML(http.StatusForbidden, err.Error())
 		return
 	}
 
 	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		newCircuit := storageInterface.NewCircuit()
-		circuit = &newCircuit
-		circuit.Metadata.Owner = userId
+		c.XML(http.StatusNotFound, err.Error())
+		return
 	} else {
 		if circuit.Metadata.Owner != userId {
-			c.XML(http.StatusForbidden, err)
+			c.XML(http.StatusForbidden, err.Error())
 			return
 		}
 	}
@@ -53,14 +53,14 @@ func CircuitStoreHandler(c *gin.Context) {
 	x, err := ioutil.ReadAll(c.Request.Body)
 	log.Print(x)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var newCircuit model.Circuit
-	err = xml.Unmarshal(x, newCircuit)
+	err = xml.Unmarshal(x, &newCircuit)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -71,27 +71,60 @@ func CircuitStoreHandler(c *gin.Context) {
 	c.XML(http.StatusAccepted, circuit.Metadata)
 }
 
+func CircuitCreateHandler(c *gin.Context) {
+	userId, err := authorizeRequest(c)
+	if err != nil {
+		c.XML(http.StatusForbidden, err.Error())
+		return
+	}
+
+	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
+
+	x, err := ioutil.ReadAll(c.Request.Body)
+	log.Print(x)
+	if err != nil {
+		c.XML(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var newCircuit model.Circuit
+	err = xml.Unmarshal(x, &newCircuit)
+	if err != nil {
+		c.XML(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	circuit := storageInterface.NewCircuit()
+	circuit.Metadata.Owner = userId
+	circuit.Metadata.Version = 0
+	circuit.Update(newCircuit)
+	storageInterface.UpdateCircuit(circuit)
+
+	// Returned the updated metadata so the client can get any changes the server made to it
+	c.XML(http.StatusAccepted, circuit.Metadata)
+}
+
 func CircuitLoadHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.XML(http.StatusForbidden, err)
+		c.XML(http.StatusForbidden, err.Error())
 		return
 	}
 
 	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err)
+		c.XML(http.StatusBadRequest, err.Error())
 	}
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.XML(http.StatusNotFound, err)
+		c.XML(http.StatusNotFound, err.Error())
 		return
 	} else {
 		// Only owner can access... for now
 		if circuit.Metadata.Owner != userId {
-			c.XML(http.StatusNotFound, err)
+			c.XML(http.StatusNotFound, err.Error())
 			return
 		}
 	}
@@ -102,7 +135,7 @@ func CircuitLoadHandler(c *gin.Context) {
 func CircuitQueryHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
-		c.XML(http.StatusForbidden, err)
+		c.XML(http.StatusForbidden, err.Error())
 		return
 	}
 

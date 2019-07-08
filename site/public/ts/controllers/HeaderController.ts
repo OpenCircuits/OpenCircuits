@@ -49,6 +49,7 @@ export const HeaderController = (() => {
                 }
             }
 
+            // TODO: this will only work if its on the promise chain
             const updateName = function (n: string) {
                 if (n) projectNameInput.value = n;
             };

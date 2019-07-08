@@ -91,6 +91,7 @@ export const MainDesignerController = (() => {
             // pass Render function so that
             //  the circuit is redrawn every
             //  time its updated
+            circuit = new Circuit();
             circuit.designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
 

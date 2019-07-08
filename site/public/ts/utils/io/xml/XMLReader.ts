@@ -13,6 +13,7 @@ export class XMLReader {
         return this.rootNode;
     }
 
+    // TODO: remove these functions below
     public getVersion(): number {
         const root = this.getRoot();
         if (root.hasAttribute("version"))

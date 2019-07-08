@@ -20,9 +20,13 @@ export const Exporter = (() => {
 
             let xhr = new XMLHttpRequest();
 
-            xhr.open('POST', 'circuits/' + circuit.metadata.getId());
+            if (circuit.metadata.getId() === -1)
+                xhr.open('POST', 'api/circuits');
+            else
+                xhr.open('PUT', 'api/circuits/' + circuit.metadata.getId());
             xhr.onload = function() {
                 if (xhr.status === 202) {
+                    console.log(xhr.responseText);
                     parseMetadata(xhr.responseXML, circuit.metadata);
                     console.log(circuit.metadata);
                 }

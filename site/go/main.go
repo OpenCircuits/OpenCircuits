@@ -35,6 +35,4 @@ func main() {
 }
 
 // TODO: Make authentication more abstract
-// TODO: Make api routes use new model
 // TODO: Set up command-line switch handling code
-// TODO: update branch and templates (last)

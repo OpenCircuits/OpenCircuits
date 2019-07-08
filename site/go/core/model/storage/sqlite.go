@@ -109,7 +109,7 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
-	_, err := d.storeEntryStmt.Exec(circuit.Designer, circuit.Metadata.Id)
+	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Id)
 	if err != nil {
 		panic(err)
 	}

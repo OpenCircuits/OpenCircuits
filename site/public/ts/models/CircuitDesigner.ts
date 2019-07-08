@@ -239,7 +239,7 @@ export class CircuitDesigner implements XMLable {
     }
 
     public getXMLName(): string {
-        return "content";
+        return "designer";
     }
 
     public getObjects(): Array<Component> {

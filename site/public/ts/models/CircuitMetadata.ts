@@ -5,15 +5,15 @@ export class CircuitMetadata implements XMLable {
     //
     // Fields the client can modify
     //
-    name: string;
-    version: number;
+    name: string = '';
+    version: number = -1;
 
     //
     // Fields the server will reject modification of
     //
-    id: string;
+    id: number = -1;
     // The user id of the owner of the file
-    owner: string;
+    owner: string = '';
 
     public save(node: XMLNode): void {
         node.addAttribute('id', this.id);
@@ -23,7 +23,7 @@ export class CircuitMetadata implements XMLable {
     }
 
     public load(node: XMLNode): void {
-        this.id = node.getAttribute('id');
+        this.id = parseInt(node.getAttribute('id'));
         this.version = parseInt(node.getAttribute('version'));
         this.name = node.getAttribute('name');
         this.owner = node.getAttribute('owner');
@@ -44,7 +44,7 @@ export class CircuitMetadata implements XMLable {
         return this.name;
     }
 
-    public getId(): string {
+    public getId(): number {
         return this.id;
     }
 

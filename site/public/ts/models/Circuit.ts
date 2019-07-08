@@ -8,7 +8,7 @@ import {XMLNode} from "../utils/io/xml/XMLNode";
 //  with the behavior of the application.
 export class Circuit implements XMLable {
     designer: CircuitDesigner;
-    metadata: CircuitMetadata;
+    metadata: CircuitMetadata = new CircuitMetadata();
 
     public save(node: XMLNode): void {
         node.saveChildLable(this.designer);

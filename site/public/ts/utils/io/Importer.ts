@@ -15,9 +15,10 @@ export const Importer = (() => {
     const readDocument = function(circuit: Circuit, doc: XMLDocument): void {
         const reader = new XMLReader(doc);
 
+        // TODO: resolve this...
         // Check for old version of save
-        if (reader.getVersion() == -1)
-            ResolveVersionConflict(reader);
+        // if (reader.getVersion() == -1)
+        //     ResolveVersionConflict(reader);
 
         circuit.load(reader.getRoot());
     };
@@ -30,7 +31,7 @@ export const Importer = (() => {
 
             if (open) {
                 let xhr = new XMLHttpRequest();
-                xhr.open('GET', 'circuit/' + escape(id));
+                xhr.open('GET', 'api/circuits/' + escape(id));
                 xhr.onload = function() {
                     if (xhr.status === 200) {
                         alert('Success');
