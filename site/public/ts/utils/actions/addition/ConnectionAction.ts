@@ -1,15 +1,12 @@
 import {Action} from "../Action";
 import {ReversableAction} from "../ReversableAction";
 
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
 import {Component} from "../../../models/ioobjects/Component";
 import {InputPort} from "../../../models/ports/InputPort";
 import {OutputPort} from "../../../models/ports/OutputPort";
 import {Wire} from "../../../models/ioobjects/Wire";
 
 export class ConnectionAction extends ReversableAction {
-    private designer: CircuitDesigner;
-
     private c1: Component;
     private i1: number;
     private c2: Component;
@@ -17,8 +14,6 @@ export class ConnectionAction extends ReversableAction {
 
     public constructor(input: OutputPort, output: InputPort, flip: boolean = false) {
         super(flip);
-
-        this.designer = input.getParent().getDesigner();
 
         // Get components
         this.c1 = input.getParent();
@@ -30,14 +25,16 @@ export class ConnectionAction extends ReversableAction {
     }
 
     public normalExecute(): Action {
-        this.designer.connect(this.c1, this.i1,  this.c2, this.i2);
+        const designer = this.c1.getDesigner();
+        designer.connect(this.c1, this.i1,  this.c2, this.i2);
 
         return this;
     }
 
     public normalUndo(): Action {
+        const designer = this.c1.getDesigner();
         const wire = this.c1.getOutputs()[this.i1];
-        this.designer.removeWire(wire);
+        designer.removeWire(wire);
 
         return this;
     }
