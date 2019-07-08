@@ -1,8 +1,5 @@
 import "jest";
 
-import {SHIFT_KEY,
-        LEFT_MOUSE_BUTTON} from "../../../../../site/public/ts/utils/Constants";
-import {IOObject} from "../../../../../site/public/ts/models/ioobjects/IOObject";
 import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
@@ -13,15 +10,16 @@ import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDG
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
+import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
 
 describe("Selection Tool", () => {
-    let camera = new Camera(500, 500);
-    let designer = new CircuitDesigner(0);
-    let toolManager = new ToolManager(camera, designer);
+    const camera = new Camera(500, 500);
+    const designer = new CircuitDesigner(0);
+    const toolManager = new ToolManager(camera, designer);
 
-    let s = new Switch();
-    let a = new ANDGate();
-    let l = new LED();
+    const s = new Switch();
+    const a = new ANDGate();
+    const l = new LED();
 
     designer.addObjects([s, a, l]);
 
@@ -29,7 +27,7 @@ describe("Selection Tool", () => {
 
     // Declare as type: any so that we can manipulate
     //  private methods to simulate user input
-    let input: any = new Input(<any>{
+    const input: any = new Input(<any>{
         addEventListener:() => {},
         getBoundingClientRect:() => {return {left: 0, top: 0}}
     }, -1);
@@ -42,9 +40,9 @@ describe("Selection Tool", () => {
     input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
     input.addListener("click",     (b?: number) => { toolManager.onClick(input, b); });
 
-    let center = camera.getCenter();
-    const CX: number = center.x;
-    const CY: number = center.y;
+    const center = camera.getCenter();
+    const CX = center.x;
+    const CY = center.y;
 
     s.setPos(V(-200, 0)); //set switch at 200 units to the left of And Gate
     a.setPos(V(0,0)); //set and gate at center of the scene
@@ -96,7 +94,7 @@ describe("Selection Tool", () => {
         up(end);
     }
 
-    function selections(): Array<IOObject> {
+    function selections(): Array<Selectable> {
         return toolManager.getSelectionTool().getSelections();
     }
 
@@ -105,12 +103,10 @@ describe("Selection Tool", () => {
     }
 
     it ("Click on And Gate", () => {
-
         click(0, 0);
 
         expect(tool()).toBeInstanceOf(SelectionTool);
         expect(selections()).toContain(a);
-
     });
 
     it ("Drag over And Gate and LED", () => {
@@ -127,7 +123,5 @@ describe("Selection Tool", () => {
         expect(tool()).toBeInstanceOf(SelectionTool);
         expect(l.isOn()).toEqual(true);
     });
-
-
 
 });

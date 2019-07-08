@@ -1,28 +1,18 @@
 import "jest";
 
-import {SHIFT_KEY,
-        IO_PORT_LENGTH,
-        IO_PORT_RADIUS,
-        DEFAULT_SIZE,
-        LEFT_MOUSE_BUTTON,
-        ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
-import {IOObject} from "../../../../../site/public/ts/models/ioobjects/IOObject";
+import {ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
 import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
 import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
-import {RotateTool} from "../../../../../site/public/ts/utils/tools/RotateTool";
-import {TranslateTool} from "../../../../../site/public/ts/utils/tools/TranslateTool";
 import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
-import {PanTool} from "../../../../../site/public/ts/utils/tools/PanTool";
-import {Wire} from "../../../../../site/public/ts/models/ioobjects/Wire";
-import {Port} from "../../../../../site/public/ts/models/ports/Port";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
 import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
+import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
 
 
 
@@ -102,11 +92,11 @@ function dragFromTo(input: any, start: Vector, end: Vector): void {
 
 describe("Tool Manager", () => {
     describe("Test 1", () => {
-        let designer = new CircuitDesigner(0);
-        let toolManager = new ToolManager(camera, designer);
+        const designer = new CircuitDesigner(0);
+        const toolManager = new ToolManager(camera, designer);
 
-        let s = new Switch();
-        let l = new LED();
+        const s = new Switch();
+        const l = new LED();
 
         designer.addObjects([s, l]);
 
@@ -115,7 +105,7 @@ describe("Tool Manager", () => {
         s.setPos(V(0, 0)); //set switch at 0 units to the left of switch
         l.setPos(V(200, 0)); //set LED 200 pixels to the right of the switch
 
-        function selections(): Array<IOObject> {
+        function selections(): Array<Selectable> {
             return toolManager.getSelectionTool().getSelections();
         }
 
@@ -123,40 +113,41 @@ describe("Tool Manager", () => {
             return toolManager.getCurrentTool();
         }
 
-        let lPortPos: Vector = l.getInputPort(0).getWorldTargetPos();
-        let sPortPos: Vector = s.getOutputPort(0).getWorldTargetPos();
+        const lPortPos = l.getInputPort(0).getWorldTargetPos();
+        const sPortPos = s.getOutputPort(0).getWorldTargetPos();
 
         it("Click switch, wire switch/led, select entire & rotate", () => {
-          click(input, 0,0);
-          expect(tool()).not.toBeInstanceOf(WiringTool);
-          click(input, lPortPos);
-          expect(tool()).toBeInstanceOf(WiringTool);
-          expect(designer.getWires()).toHaveLength(0);
-          click(input, sPortPos);
-          expect(tool()).not.toBeInstanceOf(WiringTool);
-          expect(designer.getWires()).toHaveLength(1);
-          dragFromTo(input, V(-100, -100), V(300, 300)); // Arbitrary drag box size
-          expect(tool()).toBeInstanceOf(SelectionTool);
-          expect(selections()).toHaveLength(2);
-          let midpoint = toolManager.getSelectionTool().calculateMidpoint();
-          let ang1 = l.getAngle();
-          move(input, midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
-          down(input, midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
-          move(input, midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS); // Flip selection
-          up(input, midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS);
-          let ang2 = l.getAngle();
-          expect(ang1).not.toEqual(ang2);
+            click(input, 0,0);
+            expect(tool()).not.toBeInstanceOf(WiringTool);
+            click(input, lPortPos);
+            expect(tool()).toBeInstanceOf(WiringTool);
+            expect(designer.getWires()).toHaveLength(0);
+            click(input, sPortPos);
+            expect(tool()).not.toBeInstanceOf(WiringTool);
+            expect(designer.getWires()).toHaveLength(1);
+            dragFromTo(input, V(-100, -100), V(300, 300)); // Arbitrary drag box size
+            expect(tool()).toBeInstanceOf(SelectionTool);
+            expect(selections()).toHaveLength(2);
 
+            const midpoint = toolManager.getSelectionTool().calculateMidpoint();
+            const ang1 = l.getAngle();
+            move(input, midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
+            down(input, midpoint.x - ROTATION_CIRCLE_RADIUS, midpoint.y);
+            move(input, midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS); // Flip selection
+            up(input, midpoint.x, midpoint.y + ROTATION_CIRCLE_RADIUS);
+            const ang2 = l.getAngle();
+
+            expect(ang1).not.toEqual(ang2);
         });
     });
     describe ("Test 2", () => {
-        let designer = new CircuitDesigner(0);
-        let toolManager = new ToolManager(camera, designer);
+        const designer = new CircuitDesigner(0);
+        const toolManager = new ToolManager(camera, designer);
 
-        let s = new Switch();
-        let l = new LED();
-        let s1 = new Switch();
-        let a = new ANDGate();
+        const s = new Switch();
+        const l = new LED();
+        const s1 = new Switch();
+        const a = new ANDGate();
         designer.addObjects([s, s1, l, a]);
         s.setPos(V(-200, -50));
         l.setPos(V(200, 0));
@@ -165,36 +156,22 @@ describe("Tool Manager", () => {
 
         const input = setupInput(toolManager);
 
-        function selections(): Array<IOObject> {
-            return toolManager.getSelectionTool().getSelections();
-        }
-
         function tool(): Tool {
             return toolManager.getCurrentTool();
         }
 
-        let lPortPos: Vector = l.getInputPort(0).getWorldTargetPos();
-        let sPortPos: Vector = s.getOutputPort(0).getWorldTargetPos();
-
-
-
-
-
-        sPortPos = s.getOutputPort(0).getWorldTargetPos();
-        lPortPos = l.getInputPort(0).getWorldTargetPos();
-        let s1PortPos: Vector = s1.getOutputPort(0).getWorldTargetPos();
-        let aOutPos: Vector = a.getOutputPort(0).getWorldTargetPos();
-        let aIn1Pos: Vector = a.getInputPort(0).getWorldTargetPos();
-        let aIn2Pos: Vector = a.getInputPort(1).getWorldTargetPos();
+        const lPortPos  = l.getInputPort(0).getWorldTargetPos();
+        const sPortPos  = s.getOutputPort(0).getWorldTargetPos();
+        const s1PortPos = s1.getOutputPort(0).getWorldTargetPos();
+        const aOutPos   = a.getOutputPort(0).getWorldTargetPos();
+        const aIn1Pos   = a.getInputPort(0).getWorldTargetPos();
+        const aIn2Pos   = a.getInputPort(1).getWorldTargetPos();
 
         it("Beginning of second set of tests", () => {
-
             expect(designer.getObjects()).toHaveLength(4);
-
         });
 
         it("Connect s to and gate input", () => {
-
             click(input, sPortPos);
             expect(tool()).toBeInstanceOf(WiringTool);
             click(input, aIn1Pos);
