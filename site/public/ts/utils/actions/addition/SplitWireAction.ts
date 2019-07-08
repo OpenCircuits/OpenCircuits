@@ -1,4 +1,5 @@
 import {Action} from "../Action";
+import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 import {CircuitDesigner} from "../../../models/CircuitDesigner";
 import {InputPort} from "../../../models/ports/InputPort";
@@ -44,4 +45,11 @@ export class SnipWireAction extends SplitWireAction {
     public constructor(port: WirePort) {
         super(port.getOutputPort(0), port.getInputPort(0), port, true);
     }
+}
+
+
+export function CreateGroupSnipAction(ports: Array<WirePort>): GroupAction {
+    return ports.reduce((acc, p) => {
+        return acc.add(new SnipWireAction(p)) as GroupAction;
+    }, new GroupAction());
 }
