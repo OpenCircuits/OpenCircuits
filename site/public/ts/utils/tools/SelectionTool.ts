@@ -28,8 +28,7 @@ import {Port} from "../../models/ports/Port";
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/SelectAction";
-import {DeleteAction} from "../actions/addition/PlaceAction";
-import {DisconnectAction} from "../actions/addition/ConnectionAction";
+import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
 export class SelectionTool extends Tool {
 
@@ -422,20 +421,8 @@ export class SelectionTool extends Tool {
             return false;
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
-            const allDeletions: SeparatedComponentCollection = GatherGroup(this.selections);
-            const components = allDeletions.getAllComponents();
-            const wires = allDeletions.wires;
-
-            // Create actions for deletion of wires then objects
-            //  order matters because the components need to be added
-            //  (when undoing) before the wires can be connected
-            const group = new GroupAction();
-            group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-            group.add(wires.map((wire)          => new DisconnectAction(wire)));
-            group.add(components.map((obj)      => new DeleteAction(obj)));
-
-            this.setAction(group.execute());
-
+            const action = CreateDeleteGroupAction(this.selections);
+            this.setAction(action.execute());
             return true;
         }
         if (key == ESC_KEY) {
