@@ -1,7 +1,7 @@
-import {Vector} from "../math/Vector";
+import {Vector} from "../../math/Vector";
 
-import {Action} from "./Action";
-import {Component} from "../../models/ioobjects/Component";
+import {Action} from "../Action";
+import {Component} from "../../../models/ioobjects/Component";
 
 export class TranslateAction implements Action {
     private objects: Array<Component>;
@@ -15,19 +15,23 @@ export class TranslateAction implements Action {
         this.finalPositions = finalPositions;
     }
 
-    private setPositions(positions: Array<Vector>) {
+    private setPositions(positions: Array<Vector>): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
             obj.setPos(positions[i]);
         }
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.setPositions(this.finalPositions);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.setPositions(this.initialPositions);
+
+        return this;
     }
 
 }

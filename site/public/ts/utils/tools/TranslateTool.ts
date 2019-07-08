@@ -1,7 +1,4 @@
 import {GRID_SIZE,
-        ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2,
-        SHIFT_KEY,
         LEFT_MOUSE_BUTTON,
         SPACEBAR_KEY,
         WIRE_SNAP_THRESHOLD} from "../Constants";
@@ -16,15 +13,14 @@ import {Tool} from "./Tool";
 import {SelectionTool} from "./SelectionTool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Wire} from "../../models/ioobjects/Wire";
 import {Component} from "../../models/ioobjects/Component";
+import {Wire} from "../../models/ioobjects/Wire";
 import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
-import {TranslateAction} from "../actions/TranslateAction";
+import {TranslateAction} from "../actions/transform/TranslateAction";
 
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;
@@ -77,7 +73,7 @@ export class TranslateTool extends Tool {
         this.pressedComponent.setPos(newPos);
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedrag"))
@@ -130,7 +126,7 @@ export class TranslateTool extends Tool {
         return true;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(event: string, _: Input): boolean {
         return (event == "mouseup");
     }
 
@@ -167,7 +163,7 @@ export class TranslateTool extends Tool {
         return true;
     }
 
-    public onKeyUp(input: Input, key: number): boolean {
+    public onKeyUp(_: Input, key: number): boolean {
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
             const group = CopyGroup(this.components);
@@ -182,7 +178,7 @@ export class TranslateTool extends Tool {
     public getAction(): Action {
         // Copy final positions
         const finalPositions = [];
-        for (let obj of this.components)
+        for (const obj of this.components)
             finalPositions.push(obj.getPos());
         this.action.add(new TranslateAction(this.components, this.initialPositions, finalPositions));
 

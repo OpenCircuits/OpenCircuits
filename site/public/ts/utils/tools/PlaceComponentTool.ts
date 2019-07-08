@@ -1,8 +1,4 @@
-import {Vector,V} from "../math/Vector";
-
 import {Tool} from "./Tool";
-
-import {MainDesignerController} from "../../controllers/MainDesignerController";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
@@ -11,7 +7,7 @@ import {Input} from "../Input";
 import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
-import {PlaceAction} from "../actions/PlaceAction";
+import {PlaceAction} from "../actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
 
@@ -36,12 +32,12 @@ export class PlaceComponentTool extends Tool {
     }
 
     public setComponent(component: Component, instant: boolean = false): void {
+        this.component = component;
         if (instant) {
             // Place the object immediately
             this.designer.addObject(component);
             return;
         }
-        this.component = component;
     }
 
     public onMouseMove(input: Input): boolean {

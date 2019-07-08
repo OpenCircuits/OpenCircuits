@@ -32,7 +32,7 @@ describe("BUFGate", () => {
     describe("NOTGate", () => {
         const designer = new CircuitDesigner(0);
         const a = new Switch(), o = new LED(), not_gate = new BUFGate(true);
-        
+
         designer.addObjects([a, o, not_gate]);
         designer.connect(a, 0, not_gate, 0);
         designer.connect(not_gate, 0, o, 0);
@@ -51,25 +51,25 @@ describe("BUFGate", () => {
             expect(o.isOn()).toBe(true);
         });
     });
-    
+
     describe("Copy", () => {
-        it("ANDGate Copy", () => {
+        it("BUFGate Copy", () => {
             let a = new BUFGate();
             a.setInputPortCount(4);
             let b = <BUFGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(BUFGate);
             expect(b.isNot()).toBe(false);
             expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
             expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
         });
-        it("NANDGate Copy", () => {
+        it("NOTGate Copy", () => {
             let a = new BUFGate(true);
             a.setInputPortCount(4);
-            
+
             let b = <BUFGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(BUFGate);
             expect(b.isNot()).toBe(true);

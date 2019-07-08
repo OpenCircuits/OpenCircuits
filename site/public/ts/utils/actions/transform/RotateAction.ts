@@ -1,7 +1,7 @@
-import {Vector} from "../math/Vector";
+import {Vector} from "../../math/Vector";
 
-import {Action} from "./Action";
-import {Component} from "../../models/ioobjects/Component";
+import {Action} from "../Action";
+import {Component} from "../../../models/ioobjects/Component";
 
 export class RotateAction implements Action {
     private objects: Array<Component>;
@@ -18,19 +18,23 @@ export class RotateAction implements Action {
         this.finalAngles = finalAngles;
     }
 
-    private setAngles(angles: Array<number>) {
+    private setAngles(angles: Array<number>): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
             obj.getTransform().setRotationAbout(angles[i], this.midpoint);
         }
     }
 
-    public execute(): void {
+    public execute(): Action {
         this.setAngles(this.finalAngles);
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         this.setAngles(this.initialAngles);
+
+        return this;
     }
 
 }

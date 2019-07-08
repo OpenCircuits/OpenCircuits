@@ -5,7 +5,6 @@ import {Component} from "../Component";
 export class Clock extends Component {
     private frequency: number;
     private isOn: boolean;
-    private img: string;
 
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(1), V(60, 42));
@@ -15,36 +14,36 @@ export class Clock extends Component {
     }
 
     // Changing the clock
-    public tick() {
+    public tick(): void {
         this.activate(!this.isOn);
         setTimeout(() => this.tick(), this.frequency);
     }
 
-    public setFrequency(freq: number) {
+    public setFrequency(freq: number): void {
         this.frequency = freq * 1000;
     }
 
-    public getFrequency() {
+    public getFrequency(): number {
         return this.frequency;
     }
 
     // Activate changes state and image
-    public activate(bool: boolean) {
+    public activate(bool: boolean): void {
         super.activate(bool);
         this.isOn = bool;
         if (this.designer != undefined)
             this.designer.forceUpdate();
     }
 
-    public getDisplayName() {
+    public getDisplayName(): string {
         return "Clock";
     }
 
-    public getXMLName() {
+    public getXMLName(): string {
         return "clock";
     }
 
-    public getImageName() {
+    public getImageName(): string {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
     }
 }

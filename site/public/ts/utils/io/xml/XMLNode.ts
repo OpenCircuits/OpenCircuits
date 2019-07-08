@@ -10,19 +10,19 @@ export class XMLNode {
     }
 
     public createChild(tag: string): XMLNode {
-        let child = this.root.createElement(tag);
+        const child = this.root.createElement(tag);
         this.node.appendChild(child);
         return new XMLNode(this.root, child);
     }
 
-    public addAttribute(tag: string, val: any) {
-        let a = this.root.createElement(tag);
-        let b = this.root.createTextNode(val);
+    public addAttribute(tag: string, val: any): void {
+        const a = this.root.createElement(tag);
+        const b = this.root.createTextNode(val);
         a.appendChild(b);
         this.node.appendChild(a);
     }
 
-    public setAttribute(tag: string, val: any) {
+    public setAttribute(tag: string, val: any): void {
         if (!this.hasAttribute(tag))
             this.addAttribute(tag, val);
         else
@@ -30,7 +30,7 @@ export class XMLNode {
     }
 
     // Helper method to add x,y components of vector
-    public addVectorAttribute(tag: string, val: Vector) {
+    public addVectorAttribute(tag: string, val: Vector): void {
         this.addAttribute(tag+"x", val.x);
         this.addAttribute(tag+"y", val.y);
     }
@@ -40,11 +40,11 @@ export class XMLNode {
         let child;
         while ((child = this.findChild(name))) {
             // Create new child with 'replace' tag
-            let newNode = this.createChild(replace);
+            const newNode = this.createChild(replace);
 
             // Copy all children to new node
-            let children = child.getChildren();
-            for (let child of children)
+            const children = child.getChildren();
+            for (const child of children)
                 newNode.node.appendChild(child.node.cloneNode(true));
 
             // Set the node
@@ -53,8 +53,8 @@ export class XMLNode {
 
         if (deep) {
             // Replace in children
-            let children = this.getChildren();
-            for (let child of children)
+            const children = this.getChildren();
+            for (const child of children)
                 child.replaceChildrenWithName(name, replace, true);
         }
     }
@@ -63,8 +63,8 @@ export class XMLNode {
         let arr: Array<XMLNode> = [];
 
         // Gather children with given attribute
-        let children = this.getChildren();
-        for (let child of children) {
+        const children = this.getChildren();
+        for (const child of children) {
             // console.log(child);
             if (child.hasAttribute(attribute))
                 arr.push(child);
@@ -89,13 +89,13 @@ export class XMLNode {
     }
 
     public hasAttribute(tag: string): boolean {
-        let child = this.findChild(tag);
+        const child = this.findChild(tag);
         if (child == undefined)
             return false;
-        let nodes = child.node.childNodes;
+        const nodes = child.node.childNodes;
         if (nodes.length != 1)
             return false;
-        let node = nodes[0];
+        const node = nodes[0];
         return (node.nodeValue != undefined);
     }
 

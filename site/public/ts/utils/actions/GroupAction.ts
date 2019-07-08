@@ -6,22 +6,28 @@ export class GroupAction implements Action {
     public constructor() {
         this.actions = [];
     }
-    
-    public add(action: Action | Array<Action>): void {
+
+    public add(action: Action | Array<Action>): Action {
         if (action instanceof Array)
             this.actions = this.actions.concat(action);
         else
             this.actions.push(action);
+
+        return this;
     }
 
-    public execute(): void {
+    public execute(): Action {
         for (const action of this.actions)
             action.execute();
+
+        return this;
     }
 
-    public undo(): void {
+    public undo(): Action {
         for (let i = this.actions.length-1; i >= 0; i--)
             this.actions[i].undo();
+
+        return this;
     }
 
     public isEmpty(): boolean {

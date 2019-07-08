@@ -3,11 +3,15 @@ import {setSAVED} from "../Config";
 
 export class SaveAction implements Action {
 
-    public execute(): void {
-    	setSAVED(true)
+    public execute(): Action {
+        setSAVED(true);
+
+        return this;
     }
 
-    public undo(): void {
-    	setSAVED(false)
+    public undo(): Action {
+        setSAVED(false);
+
+        return this;
     }
 }

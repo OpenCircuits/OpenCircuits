@@ -29,7 +29,7 @@ export class Vector {
     public sub(x: Vector | number, y: number = 0): Vector {
         if (x instanceof Vector)
             return new Vector(this.x - x.x, this.y - x.y);
-        else (y != null)
+        else
             return new Vector(this.x - x, this.y - y);
     }
     public scale(a: Vector | number): Vector {
