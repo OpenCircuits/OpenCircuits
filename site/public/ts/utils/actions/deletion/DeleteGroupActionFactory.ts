@@ -1,5 +1,5 @@
 import {GroupAction} from "../GroupAction";
-import {SelectAction} from "../SelectAction";
+import {SelectAction} from "../selection/SelectAction";
 import {DeleteAction} from "../addition/PlaceAction";
 import {DisconnectAction} from "../addition/ConnectionAction";
 
