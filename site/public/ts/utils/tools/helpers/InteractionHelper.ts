@@ -26,7 +26,7 @@ export class InteractionHelper {
         this.currentlyPressedObj = obj;
     }
 
-    public press(input: Input) {
+    public press(input: Input): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
         const objects = this.designer.getObjects().reverse();
 

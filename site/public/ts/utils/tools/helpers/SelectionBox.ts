@@ -7,7 +7,6 @@ import {TransformContains,
 import {GetAllPorts} from "../../ComponentUtils";
 
 import {CircuitDesigner} from "../../../models/CircuitDesigner";
-import {IOObject} from "../../../models/ioobjects/IOObject";
 
 import {Input} from "../../Input";
 import {Camera} from "../../Camera";
@@ -37,7 +36,7 @@ export class SelectionBox {
         this.selectionTool = selectionTool;
     }
 
-    public drag(input: Input) {
+    public drag(input: Input): boolean {
         this.selecting = true;
 
         // Update positions
