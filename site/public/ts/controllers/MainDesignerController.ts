@@ -3,25 +3,27 @@ import {Vector} from "../utils/math/Vector";
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
+import {Selectable} from "../utils/Selectable";
 
 import {Action} from "../utils/actions/Action";
+import {CreateDeselectAllAction} from "../utils/actions/selection/SelectActionsFactory";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {SelectionTool} from "../utils/tools/SelectionTool";
 import {TranslateTool} from "../utils/tools/TranslateTool";
 import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 import {WiringTool} from "../utils/tools/WiringTool";
 
-import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
-import {Port} from "../models/ioobjects/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 
-export const MainDesignerController = (function() {
+
+export const MainDesignerController = (() => {
     let designer: CircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
@@ -29,7 +31,7 @@ export const MainDesignerController = (function() {
     let toolManager: ToolManager;
     let renderQueue: RenderQueue;
 
-    const resize = function() {
+    const resize = function(): void {
         view.resize();
 
         MainDesignerController.Render();
@@ -60,15 +62,17 @@ export const MainDesignerController = (function() {
     }
 
     const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button)){
+        if (toolManager.onClick(input, button)) {
             SelectionPopupController.Update();
             MainDesignerController.Render();
         }
     }
 
     const onKeyDown = function(key: number): void {
-        if (toolManager.onKeyDown(input, key))
+        if (toolManager.onKeyDown(input, key)) {
+            SelectionPopupController.Update();
             MainDesignerController.Render();
+        }
     }
 
     const onKeyUp = function(key: number): void {
@@ -96,7 +100,6 @@ export const MainDesignerController = (function() {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
-                            toolManager.getSelectionTool().getPortSelections(),
                             toolManager));
 
             // input
@@ -118,12 +121,12 @@ export const MainDesignerController = (function() {
             renderQueue.render();
         },
         ClearSelections: function(): void {
-            toolManager.getSelectionTool().clearSelections();
+            MainDesignerController.AddAction(CreateDeselectAllAction(toolManager.getSelectionTool()).execute());
         },
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
         },
-        AddAction: function(action: Action) {
+        AddAction: function(action: Action): void {
             toolManager.addAction(action);
         },
         SetEditMode: function(val: boolean): void {
@@ -135,16 +138,16 @@ export const MainDesignerController = (function() {
 
             // Disable actions/selections
             toolManager.disableActions(val);
-            toolManager.getSelectionTool().clearSelections();
+            MainDesignerController.ClearSelections();
             toolManager.getSelectionTool().disableSelections(val);
 
             MainDesignerController.Render();
         },
-        GetSelections: function(): Array<IOObject> {
+        GetSelections: function(): Array<Selectable> {
             return toolManager.getSelectionTool().getSelections();
         },
-        GetPortSelections: function(): Array<Port> {
-            return toolManager.getSelectionTool().getPortSelections();
+        GetSelectionTool: function(): SelectionTool {
+            return toolManager.getSelectionTool();
         },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();

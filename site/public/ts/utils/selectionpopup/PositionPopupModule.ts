@@ -1,16 +1,18 @@
 import {GRID_SIZE} from "../Constants";
 
-import {Vector} from "../math/Vector";
+import {V} from "../math/Vector";
 import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
+
+import {TranslateAction} from "../actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
     private ybox: HTMLInputElement;
 
-    public constructor(parent_div: HTMLDivElement) {
-        super(parent_div.querySelector("div#popup-pos-text"));
+    public constructor(parentDiv: HTMLDivElement) {
+        super(parentDiv.querySelector("div#popup-pos-text"));
         this.xbox = this.div.querySelector("input#popup-position-x");
         this.ybox = this.div.querySelector("input#popup-position-y");
         this.xbox.oninput = () => this.push();
@@ -20,7 +22,7 @@ export class PositionPopupModule extends SelectionPopupModule {
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
         const components = selections.filter(o => o instanceof Component).map(o => o as Component);
-        let enable = selections.length == components.length && components.length > 0;
+        const enable = selections.length == components.length && components.length > 0;
 
         if (enable) {
             let x: number = components[0].getPos().x;
@@ -44,16 +46,17 @@ export class PositionPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        let components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
+        const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
-        components.forEach(c => {
-            let pos = c.getPos();
+        MainDesignerController.AddAction(
+            new TranslateAction(components,
+                                components.map((c) => c.getPos()),
+                                components.map((c) =>
+                                    V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
+                                )).execute()
+        );
 
-            c.setPos(new Vector(
-                this.xbox.value == "" ? pos.x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                this.ybox.value == "" ? pos.y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5),
-            ));
-        });
         MainDesignerController.Render();
     }
 }

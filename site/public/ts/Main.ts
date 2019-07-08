@@ -5,6 +5,7 @@ import {Images} from "./utils/Images";
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
+import {CopyController} from "./controllers/CopyController";
 import {ItemNavController} from "./controllers/ItemNavController";
 import {SideNavController} from "./controllers/SideNavController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
@@ -12,51 +13,54 @@ import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
 import {LoadingScreen} from "./views/LoadingScreen";
 
-function Init() {
+
+// Prompt for exit
+window.onbeforeunload = (e) => {
+    if (PRODUCTION && !SAVED) {
+        const dialogText = "You have unsaved changes.";
+        e.returnValue = dialogText;
+        return dialogText;
+    }
+};
+
+function Init(): void {
     LoadingScreen.Show();
 
     const promises = [
-        new Promise((resolve, reject) => {
-            Images.Load(function() {
+        new Promise((resolve, _) => {
+            Images.Load(() => {
                 resolve(1);
             });
         }),
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _) => {
             MainDesignerController.Init();
             HeaderController.Init(MainDesignerController.GetDesigner());
             SelectionPopupController.Init(MainDesignerController.GetCamera());
             resolve(1);
         }),
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _) => {
+            CopyController.Init();
+            resolve(1);
+        }),
+        new Promise((resolve, _) => {
             ICDesignerController.Init();
             resolve(1);
         }),
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _) => {
             ContextMenuController.Init();
             resolve(1);
         }),
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _) => {
             ItemNavController.Init();
             resolve(1);
         }),
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _) => {
             SideNavController.Init();
-            resolve(1);
-        }),
-        new Promise((resolve, reject) => {
-            // Prompt for exit
-            window.onbeforeunload = (e) => {
-                if (PRODUCTION && !SAVED) {
-                    const dialogText = "You have unsaved changes.";
-                    e.returnValue = dialogText;
-                    return dialogText;
-                }
-            };
             resolve(1);
         })
     ];
 
-    Promise.all(promises).then((val) => {
+    Promise.all(promises).then(() => {
         MainDesignerController.Render();
         LoadingScreen.Hide();
     });

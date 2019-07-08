@@ -1,13 +1,13 @@
-export const Images = (function() {
+export const Images = (() => {
     const images: Map<string, HTMLImageElement> = new Map();
 
     const loadImages = function(imageNames: Array<string>,
                               onFinish: () => void): void {
         // Load each image
         let index = 0;
-        for (let imageName of imageNames) {
-            let img = new Image();
-            img.onload = function() {
+        for (const imageName of imageNames) {
+            const img = new Image();
+            img.onload = () => {
                 if (++index === imageNames.length)
                     onFinish();
             };

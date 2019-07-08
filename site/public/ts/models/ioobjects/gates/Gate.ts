@@ -4,6 +4,9 @@ import {Name} from "../../../utils/Name";
 import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {Component} from "../Component";
 
+import {InputPort} from "../../ports/InputPort";
+import {Positioner} from "../../ports/positioners/Positioner"
+
 //
 // Gate is an abstract superclass for simple logical gates.
 // Gate should always be a component with exactly 1 output port
@@ -11,8 +14,8 @@ import {Component} from "../Component";
 export abstract class Gate extends Component {
     protected not: boolean = false;
 
-    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector) {
-        super(inputPortCount, new ClampedValue(1), size);
+    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector, inputPositioner?: Positioner<InputPort>) {
+        super(inputPortCount, new ClampedValue(1), size, inputPositioner);
         this.setNot(not);
     }
 
@@ -24,7 +27,7 @@ export abstract class Gate extends Component {
     private setNot(not: boolean): void {
         // if flipped then flip output
         if (not != this.not)
-            this.outputs[0].activate(!this.outputs[0].getIsOn());
+            this.outputs.first.activate(!this.outputs.first.getIsOn());
         this.not = not;
 
         // change name to be the not'd name if name wasn't manually set by user
@@ -37,7 +40,7 @@ export abstract class Gate extends Component {
     }
 
     public copy(): Gate {
-        let copy = <Gate>super.copy();
+        const copy = <Gate>super.copy();
         copy.not = this.not;
         return copy;
     }

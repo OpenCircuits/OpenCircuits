@@ -1,7 +1,7 @@
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 
-export const SideNavController = (function() {
+export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
     const sidenav = document.getElementById("sidenav");
 
@@ -14,7 +14,7 @@ export const SideNavController = (function() {
 
     let editMode = true;
 
-    let toggleEditMode = function() {
+    const toggleEditMode = function(): void {
         editMode = !editMode;
 
         MainDesignerController.SetEditMode(!editMode);
@@ -34,7 +34,7 @@ export const SideNavController = (function() {
             SideNavController.Toggle();
     }
 
-    let toggle = function() {
+    const toggle = function(): void {
         sidenav.classList.toggle("shrink");
         overlay.classList.toggle("invisible");
     }

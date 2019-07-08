@@ -1,10 +1,9 @@
 import {Vector, V} from "../utils/math/Vector";
 
-import {ICData} from "../models/ioobjects/other/ICData";
-
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "../models/ioobjects/Component";
 import {Wire} from "../models/ioobjects/Wire";
+import {Port} from "../models/ports/Port";
 import {Camera} from "../utils/Camera";
 
 import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
@@ -21,7 +20,7 @@ import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupMo
 * ! Controls its own DOM element(s)
 * TODO: use decorators or some other interface to determine what properties are available
 */
-export const SelectionPopupController = (function() {
+export const SelectionPopupController = (() => {
     let camera: Camera;
     let div: HTMLDivElement;
     let modules: Array<SelectionPopupModule>;
@@ -46,29 +45,29 @@ export const SelectionPopupController = (function() {
                 new PositionPopupModule(div),
                 new ColorPopupModule(div),
                 new InputCountPopupModule(div),
-                // TODO: implement when encoders are added to the typescript build
-                // new OutputCountPopupModule(div),
+                new OutputCountPopupModule(div),
                 new ICButtonPopupModule(div),
                 new BusButtonPopupModule(div)
             );
             pos = V(0, 0);
         },
         Update: function(): void {
-            const selections = <Array<Component | Wire>>MainDesignerController.GetSelections();
-            const portSelections = MainDesignerController.GetPortSelections();
+            const selections = MainDesignerController.GetSelections();
 
-            if (selections.length > 0 || portSelections.length > 0) {
+            if (selections.length > 0) {
                 // Update each module
                 // Important to do this before repositioning the popup, since its size changes depending on which modules are active
                 modules.forEach(c => c.pull());
 
                 // Update the position of the popup
-                let positions;
-                if (selections.length > 0)
-                    positions = selections.map(o => (o instanceof Component) ? o.getPos() : o.getShape().getPos(0.5));
-                else
-                    positions = portSelections.map(p => p.getWorldTargetPos());
-
+                const positions = selections.map((o) => {
+                    if (o instanceof Component)
+                        return o.getPos();
+                    else if (o instanceof Wire)
+                        return o.getShape().getPos(0.5);
+                    else if (o instanceof Port)
+                        return o.getWorldTargetPos();
+                });
                 const sum = positions.reduce((acc, pos) => acc.add(pos), V(0, 0));
                 const screen_pos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
 

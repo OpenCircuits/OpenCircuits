@@ -10,12 +10,12 @@ export class XMLWriter {
     }
 
     public setVersion(version: number): void {
-        let root = this.getRoot();
+        const root = this.getRoot();
         root.addAttribute("version", version);
     }
 
     public setName(name: string): void {
-        let root = this.getRoot();
+        const root = this.getRoot();
         root.addAttribute("name", name);
     }
 

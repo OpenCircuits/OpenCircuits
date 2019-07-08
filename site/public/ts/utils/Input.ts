@@ -12,11 +12,11 @@ import * as Hammer from "hammerjs";
 export class Input {
     private canvas: HTMLCanvasElement;
     private prevMousePos: Vector;
-    private rawMousePos: Vector;
     private mousePos: Vector;
 
     private mouseDown: boolean;
     private mouseDownPos: Vector;
+    private mouseDownButton: number;
 
     private isDragging: boolean;
     private startTapTime: number;
@@ -37,11 +37,11 @@ export class Input {
         this.touchCount = 0;
 
         // Keyboard events
-        window.addEventListener('keydown',  (e: KeyboardEvent) => {
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyDown(e)
         }, false);
-        window.addEventListener('keyup',    (e: KeyboardEvent) => {
+        window.addEventListener('keyup',   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e)
         }, false);
@@ -51,8 +51,8 @@ export class Input {
         canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
         canvas.addEventListener('dblclick',   (e: MouseEvent) => this.onDoubleClick(e),   false);
         canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY)), false);
-        canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(  V(e.clientX, e.clientY)), false);
+        canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+        canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(  V(e.clientX, e.clientY), e.button), false);
         canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
         canvas.addEventListener('mouseenter', (e: MouseEvent) => this.onMouseEnter(e),    false);
         canvas.addEventListener('mouseleave', (e: MouseEvent) => this.onMouseLeave(e),    false);
@@ -120,13 +120,13 @@ export class Input {
                 this.keysDown.get(key) == true);
     }
 
-    public isShiftKeyDown() {
+    public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
-    public isModifierKeyDown() {
+    public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY));
     }
-    public isOptionKeyDown() {
+    public isOptionKeyDown(): boolean {
         return this.isKeyDown(OPTION_KEY);
     }
 
@@ -159,7 +159,7 @@ export class Input {
         this.callListeners("keyup", code);
     }
 
-    private onClick(pos: Vector, button: number = LEFT_MOUSE_BUTTON): void {
+    private onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
         if (this.isDragging) {
             this.isDragging = false;
@@ -169,7 +169,7 @@ export class Input {
         // call each listener
         this.callListeners("click", button);
     }
-    private onDoubleClick(event: MouseEvent): void {
+    private onDoubleClick(_: MouseEvent): void {
 
         // call each listener
         this.callListeners("dblclick", 0);
@@ -185,7 +185,7 @@ export class Input {
         this.callListeners("zoom", zoomFactor, this.mousePos);
     }
 
-    private onMouseDown(pos: Vector): void {
+    private onMouseDown(pos: Vector, button: number = 0): void {
         const rect = this.canvas.getBoundingClientRect();
 
         this.touchCount++;
@@ -196,15 +196,15 @@ export class Input {
         this.mouseDown = true;
         this.mouseDownPos = pos.sub(V(rect.left, rect.top));
         this.mousePos = V(this.mouseDownPos);
+        this.mouseDownButton = button;
 
         // call each listener
-        this.callListeners("mousedown", 0);
+        this.callListeners("mousedown", button);
     }
     private onMouseMove(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
-        this.rawMousePos  = pos;
         this.prevMousePos = V(this.mousePos);
         this.mousePos = pos.sub(V(rect.left, rect.top));
 
@@ -214,38 +214,39 @@ export class Input {
 
         // call listeners
         if (this.isDragging)
-            this.callListeners("mousedrag", LEFT_MOUSE_BUTTON);
-        this.callListeners("mousemove", 0);
+            this.callListeners("mousedrag", this.mouseDownButton);
+        this.callListeners("mousemove");
     }
-    private onMouseUp(pos: Vector): void {
+    private onMouseUp(_: Vector, button: number = 0): void {
         this.touchCount--;
         this.mouseDown = false;
+        this.mouseDownButton = -1;
 
         // call each listener
-        this.callListeners("mouseup", 0);
+        this.callListeners("mouseup", button);
     }
 
-    private onMouseEnter(event: MouseEvent): void {
+    private onMouseEnter(_: MouseEvent): void {
         // call each listener
-        this.callListeners("mouseenter", 0);
+        this.callListeners("mouseenter");
     }
-    private onMouseLeave(event: MouseEvent): void {
+    private onMouseLeave(_: MouseEvent): void {
         this.mouseDown = false;
 
         // call each listener
-        this.callListeners("mouseleave", 0);
+        this.callListeners("mouseleave");
 
         // call mouse up as well so that
         //  up events get called when the
         //  mouse leaves
-        this.callListeners("mouseup", 0);
+        this.callListeners("mouseup", this.mouseDownButton);
     }
 
-    private callListeners(type: string, a?: number, b?: Vector) {
+    private callListeners(type: string, a?: number, b?: Vector): void {
         // call all listeners of type
         const listeners = this.listeners.get(type);
         if (listeners != undefined) {
-            for (let listener of listeners)
+            for (const listener of listeners)
                 listener(a, b);
         }
     }

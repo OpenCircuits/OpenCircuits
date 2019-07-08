@@ -6,7 +6,7 @@ import {Camera} from "../../Camera";
 import {Renderer} from "../Renderer";
 import {Component} from "../../../models/ioobjects/Component";
 
-export const IOLabelRenderer = (function() {
+export const IOLabelRenderer = (() => {
 
     const drawPortText = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
         const align: CanvasTextAlign = "center";
@@ -18,16 +18,16 @@ export const IOLabelRenderer = (function() {
         pos.x = Clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
         pos.y = Clamp(pos.y, -size.y/2+14, size.y/2-14);
 
-        renderer.text(name, pos.x, pos.y, align);
+        renderer.text(name, pos, align);
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component) {
+        render(renderer: Renderer, camera: Camera, object: Component): void {
             if (!camera.cull(object.getCullBox()))
                 return;
 
-            let transform = object.getTransform();
-            let size: Vector = transform.getSize();
+            const transform = object.getTransform();
+            const size: Vector = transform.getSize();
 
             const ports = object.getPorts();
             for (const port of ports) {

@@ -1,5 +1,3 @@
-import {ITEMNAV_WIDTH} from "../utils/Constants";
-
 import {Vector,V} from "../utils/math/Vector";
 
 import {MainDesignerController} from "./MainDesignerController";
@@ -8,16 +6,14 @@ import {CreateComponentFromXML} from "../utils/ComponentFactory";
 
 import {Component} from "../models/ioobjects/Component";
 
-import {Input} from "../utils/Input";
-
-export const ItemNavController = (function() {
+export const ItemNavController = (() => {
     const tab = document.getElementById("itemnav-open-tab");
     const itemnav = document.getElementById("itemnav");
 
     let isOpen = false;
     let disabled = false;
 
-    const toggle = function() {
+    const toggle = function(): void {
         itemnav.classList.toggle("shrink");
         tab.classList.toggle("tab__closed");
     }

@@ -1,6 +1,6 @@
 import {MainDesignerController} from "./MainDesignerController";
 
-export const ContextMenuController = (function() {
+export const ContextMenuController = (() => {
     const contextmenu = document.getElementById("context-menu");
 
     const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
@@ -11,7 +11,7 @@ export const ContextMenuController = (function() {
         contextmenu.style.visibility = 'visible';
     }
 
-    const onMouseDown = function(e: MouseEvent): void {
+    const onMouseDown = function(_: MouseEvent): void {
         if (contextmenu.style.visibility === 'visible')
             contextmenu.style.visibility = 'hidden';
     }
@@ -20,13 +20,13 @@ export const ContextMenuController = (function() {
         Init: function(): void {
             const canvas = MainDesignerController.GetCanvas();
 
-            canvas.addEventListener("mousedown", function(e) {
+            canvas.addEventListener("mousedown", function(e: MouseEvent) {
                 e.preventDefault();
                 onMouseDown(e);
             });
 
             // Stop default right click menu
-            canvas.addEventListener("contextmenu", function(e) {
+            canvas.addEventListener("contextmenu", function(e: MouseEvent) {
                 e.preventDefault();
                 onContextMenu(e, canvas);
             });

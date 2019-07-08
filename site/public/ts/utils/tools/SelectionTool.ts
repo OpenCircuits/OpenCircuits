@@ -1,64 +1,53 @@
 import {LEFT_MOUSE_BUTTON,
-        SHIFT_KEY, DELETE_KEY,
-        BACKSPACE_KEY, ESC_KEY,
-        A_KEY, IO_PORT_RADIUS} from "../Constants";
+        DELETE_KEY, BACKSPACE_KEY,
+        ESC_KEY, A_KEY,
+        IO_PORT_RADIUS} from "../Constants";
 import {Vector,V} from "../math/Vector";
-import {Transform} from "../math/Transform";
-import {TransformContains,
-        CircleContains,
-        BezierContains,
-        RectContains} from "../math/MathUtils";
-import {SeparatedComponentCollection,
-        GatherGroup} from "../ComponentUtils";
+import {CircleContains,
+        BezierContains,} from "../math/MathUtils";
 
+import {Selectable} from "../Selectable";
 import {Tool} from "./Tool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
 
-import {PressableComponent} from "../../models/ioobjects/PressableComponent";
 import {PlaceComponentTool} from "./PlaceComponentTool"
+
+import {SelectionBox} from "./helpers/SelectionBox";
+import {InteractionHelper} from "./helpers/InteractionHelper";
 
 import {Input} from "../Input";
 import {Camera} from "../Camera";
-import {Port} from "../../models/ioobjects/Port";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
-import {OutputPort} from "../../models/ioobjects/OutputPort";
-import {InputPort} from "../../models/ioobjects/InputPort";
 
 import {Action} from "../actions/Action";
-import {GroupAction} from "../actions/GroupAction";
-import {SelectAction} from "../actions/SelectAction";
-import {DeleteAction} from "../actions/DeleteAction";
-import {DeleteWireAction} from "../actions/DeleteWireAction";
-import {ConnectionAction} from "../actions/ConnectionAction";
-import { Wire } from "../../models/ioobjects/Wire";
+import {GroupAction} from "../actions/GroupAction"
+import {ShiftAction} from "../actions/ShiftAction";
+import {SelectAction,
+        DeselectAction} from "../actions/selection/SelectAction";
+import {CreateGroupSelectAction,
+        CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
 
+import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
 export class SelectionTool extends Tool {
 
     private designer: CircuitDesigner;
     private camera: Camera;
 
-    private selections: Array<IOObject>;
-    private portSelections: Array<Port>;
-    private selecting: boolean;
+    private selections: Set<Selectable>;
 
     // These functions are called every time the selections change
     // TODO: pass selections as argument
     private callbacks: Array<{ (): void }>;
 
-    // Current selection box positions
-    private p1: Vector;
-    private p2: Vector;
-
-    private currentPressedObj: IOObject;
-    private pressedObj: boolean;
+    private selectionBox: SelectionBox;
+    private interactionHelper: InteractionHelper;
 
     private disabledSelections: boolean;
 
-    private lastAction: Action;
+    private action: GroupAction;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
@@ -66,157 +55,63 @@ export class SelectionTool extends Tool {
         this.designer = designer;
         this.camera = camera;
 
-        this.selections = [];
-        this.portSelections = [];
-        this.selecting = false;
+        this.selections = new Set();
+
+        this.selectionBox = new SelectionBox(designer, camera, this);
+        this.interactionHelper = new InteractionHelper(designer, camera);
 
         this.disabledSelections = false;
 
-        this.lastAction = undefined;
+        this.action = new GroupAction();
 
         this.callbacks = [];
     }
+
 
     private selectionsChanged(): void {
         this.callbacks.forEach(c => c());
     }
 
-    private setAction(action: Action) {
-        // Don't set action if it's an empty group action
-        if (action instanceof GroupAction && action.isEmpty())
-            return;
 
-        this.lastAction = action;
-    }
-
-    private add<T>(arr: Array<T>, obj: T): boolean {
-        // Check if we're in array
-        if (!arr.includes(obj)) {
-            arr.push(obj);
-            return true;
-        }
-        return false;
-    }
-
-    private remove<T>(arr: Array<T>, obj: T): boolean {
-        // Find index of obj in array
-        const i = arr.indexOf(obj);
-        if (i != -1) {
-            arr.splice(i, 1);
-            return true;
-        }
-        return false;
-    }
-
-    public addSelection(obj: IOObject | Port): boolean {
+    public select(obj: Selectable): boolean {
         // Don't select anything if it's disabled
         if (this.disabledSelections)
             return false;
-
-        // Determine if we're adding to portSelections or regular selections
-        if (obj instanceof IOObject) {
-            if (this.add(this.selections, obj))
-                this.selectionsChanged();
-        } else {
-            if (this.add(this.portSelections, obj))
-                this.selectionsChanged();
-        }
-
-        return false;
-    }
-
-    public addSelections(objs: Array<IOObject> | Array<Port>): boolean {
-        // Don't select anything if it's disabled
-        if (this.disabledSelections)
-            return false;
-        if (objs.length == 0)
+        if (this.selections.has(obj))
             return false;
 
-        // Determine if we're adding to portSelections or regular selections
-        for (let o of objs) {
-            if (o instanceof IOObject)
-                this.add(this.selections, o);
-            else
-                this.add(this.portSelections, o);
-        }
-
+        this.selections.add(obj);
         this.selectionsChanged();
 
         return true;
     }
 
-    public removeSelection(obj: IOObject | Port): boolean {
+    public deselect(obj: Selectable): boolean {
         // Don't deselect anything if it's disabled
         if (this.disabledSelections)
             return false;
 
-        // Determine if we're removing from portSelections or regular selections
-        if (obj instanceof IOObject) {
-            if (this.remove(this.selections, obj))
-                this.selectionsChanged();
-        } else {
-            if (this.remove(this.portSelections, obj))
-                this.selectionsChanged();
+        if (this.selections.delete(obj)) {
+            this.selectionsChanged();
+            return true;
         }
-
         return false;
     }
 
-    // Returns true if it was selected, false if it was deselected
-    public toggleSelection(obj: IOObject): boolean {
-        // Don't deselect anything if it's disabled
-        if (this.disabledSelections)
-            return;
-
-        // If we can add it, return true
-        if (this.add(this.selections, obj)) {
-            return true;
-        } else {
-            // Else we must remove it and return false
-            this.remove(this.selections, obj);
-            return false;
-        }
-    }
-
-    public selectAll(): void {
-        const objects = this.designer.getObjects();
-
-        const group = new GroupAction();
-
-        // Clear previous selections
-        group.add(this.clearSelections());
-
-        // Add action for each selection
-        objects.forEach((obj) => group.add(new SelectAction(this, obj)));
-
-        this.addSelections(objects);
-        this.setAction(group);
-    }
-
-    public clearSelections(): Action {
-        const group = new GroupAction();
-        if (this.selections.length == 0 && this.portSelections.length == 0)
-            return group;
-
-        // Create actions
-        this.selections.forEach((obj) => group.add(new SelectAction(this, obj, true)));
-        this.portSelections.forEach((port) => group.add(new SelectAction(this, port, true)));
-
-        // Clear the selections
-        this.selections = [];
-        this.portSelections = [];
-
-        this.selectionsChanged();
-        return group;
-    }
 
     public setCurrentlyPressedObj(obj: IOObject): void {
-        this.currentPressedObj = obj;
+        this.interactionHelper.setCurrentlyPressedObj(obj);
     }
 
-    public disableSelections(val: boolean = true) {
+    public addSelectionChangeListener(func: {(): void}): void {
+        this.callbacks.push(func);
+    }
+
+    public disableSelections(val: boolean = true): void {
         this.disabledSelections = val;
     }
+
+
 
     public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (event == "mouseup")
@@ -226,59 +121,25 @@ export class SelectionTool extends Tool {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
-        this.selecting = false;
+    public deactivate(): boolean {
+        this.selectionBox.deactivate();
 
         return false;
     }
 
+
     public onMouseDown(input: Input, button: number): boolean {
-        if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
-            let objects = this.designer.getObjects();
-            for (let i = objects.length-1; i >= 0; i--) {
-                let obj = objects[i];
-
-                // Check if we pressed the object
-                if (obj.isWithinPressBounds(worldMousePos)) {
-                    if (obj instanceof PressableComponent)
-                        obj.press();
-                    this.pressedObj = true;
-                    this.currentPressedObj = obj;
-                    return true;
-                }
-                // If just the selection box was hit then
-                //  don't call the press() method, just set
-                //  currentPressedObj to potentially drag
-                else if (obj.isWithinSelectBounds(worldMousePos)) {
-                    this.pressedObj = false;
-                    this.currentPressedObj = obj;
-                    return false;
-                }
-            }
-
-            // Go through every wire and check to see if it has been pressed
-            const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
-            if (w) {
-                this.pressedObj = false;
-                this.currentPressedObj = w;
-            }
-        }
-
-        return false;
+        if (button !== LEFT_MOUSE_BUTTON)
+            return false;
+        return this.interactionHelper.press(input);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
-        // Update positions of selection
-        //  box and set selecting to true
-        if (button === LEFT_MOUSE_BUTTON && !this.disabledSelections && input.getTouchCount() == 1) {
-            this.selecting = true;
+        if (button !== LEFT_MOUSE_BUTTON)
+            return false;
 
-            // Update selection box positions
-            this.p1 = input.getMouseDownPos();
-            this.p2 = input.getMousePos();
-
+        if (!this.disabledSelections && input.getTouchCount() == 1) {
+            this.selectionBox.drag(input);
             return true; // should render
         }
 
@@ -286,238 +147,122 @@ export class SelectionTool extends Tool {
     }
 
     public onMouseUp(input: Input, button: number): boolean {
-        // Find selections within the
-        //  current selection box
-        if (button === LEFT_MOUSE_BUTTON) {
-            // Release currently pressed object
-            if (this.pressedObj) {
-                this.pressedObj = false;
-                if (this.currentPressedObj instanceof PressableComponent)
-                    this.currentPressedObj.release();
-                this.currentPressedObj = undefined;
-                return true;
-            }
-            this.currentPressedObj = undefined;
+        if (button !== LEFT_MOUSE_BUTTON)
+            return false;
 
-            // Stop selection box
-            if (this.selecting) {
-                this.selecting = false;
+        if (this.interactionHelper.release())
+            return true;
 
-                // Create action
-                const group = new GroupAction();
+        const action = this.selectionBox.stop(input);
+        if (action.isEmpty())
+            return false;
+        this.action.add(action.execute());
 
-                // Clear selections if no shift key
-                if (!input.isKeyDown(SHIFT_KEY))
-                    group.add(this.clearSelections());
-
-
-                // Calculate transform rectangle of the selection box
-                const p1 = this.camera.getWorldPos(input.getMouseDownPos());
-                const p2 = this.camera.getWorldPos(input.getMousePos());
-                const box = new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
-
-                // Go through each object and see if it's within
-                //  the selection box
-                const objects = this.designer.getObjects();
-                const selections = objects.filter((obj) => TransformContains(box, obj.getTransform()));
-
-                // Add actions
-                group.add(selections.map((obj) => new SelectAction(this, obj)));
-
-                this.addSelections(selections);
-
-                // Select ports if we haven't selected any regular objects
-                if (!this.selections.some((s) => s instanceof IOObject)) {
-                    // Get all ports from each object
-                    const ports = objects.map((obj) => obj.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), new Array<Port>());
-
-                    // Filter out ports within the selection box
-                    const portSelections = ports.filter((port) => RectContains(box, port.getWorldTargetPos()));
-
-                    // Add actions
-                    group.add(portSelections.map((port) => new SelectAction(this, port)));
-
-                    this.addSelections(portSelections);
-                }
-
-                // Set as action if we changed selections added something
-                this.setAction(group);
-
-                return true; // should render
-            }
-        }
-
-        return false;
+        return true;
     }
 
     public onClick(input: Input, button: number): boolean {
-        if (button === LEFT_MOUSE_BUTTON) {
-            let worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        if (button !== LEFT_MOUSE_BUTTON)
+            return false;
 
-            let render = false;
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-            const group = new GroupAction();
+        let render = false;
 
-            // Clear selections if no shift key
-            if (!input.isShiftKeyDown()) {
-                group.add(this.clearSelections());
-                render = !group.isEmpty(); // Render if selections were actually cleared
-            }
-
-            // Check if an object was clicked
-            //  and add to selections
-            const objects = this.designer.getObjects();
-            for (let i = objects.length-1; i >= 0; i--) {
-                const obj = objects[i];
-
-                if (obj.isWithinPressBounds(worldMousePos)) {
-                    // Check if object should be clicked
-                    if (obj instanceof PressableComponent) {
-                        obj.click();
-                        this.setAction(group);
-                        return true;
-                    }
-                }
-                // Check if object should be selected
-                else if (obj.isWithinSelectBounds(worldMousePos)) {
-                    let selected = true;
-
-                    // Toggle selection if we're holding shift
-                    if (input.isShiftKeyDown()) {
-                        selected = this.toggleSelection(obj);
-                    } else {
-                        // Add selection
-                        this.addSelection(obj);
-                    }
-                    group.add(new SelectAction(this, obj, !selected));
-                    this.setAction(group)
-                    return true;
-                }
-                // Check if a port was clicked
-                else {
-                    if (obj.getPorts().some((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos)))
-                        return false;
-                }
-            }
-
-            // Go through every wire and check to see if it has been clicked
-            //  and add to selections
-            const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
-            if (w) {
-                group.add(new SelectAction(this, w, false));
-                this.addSelection(w);
-                render = true;
-            }
-
-            this.setAction(group);
-
-            return render;
+        // Clear selections if no shift key
+        if (!input.isShiftKeyDown()) {
+            this.action.add(CreateDeselectAllAction(this).execute());
+            render = true; // Render if selections were actually cleared
         }
 
-        return false;
+        // Check if a pressable object was clicked
+        const objects = this.designer.getObjects().reverse();
+        if (this.interactionHelper.click(input))
+            return true;
+
+        // Find selected object
+        const selectedObj = objects.find((o) => o.isWithinSelectBounds(worldMousePos));
+        if (selectedObj) {
+            // If we're holding shift then deselect the object if it's selected
+            const deselect = (input.isShiftKeyDown() && this.selections.has(selectedObj));
+            this.action.add(new SelectAction(this, selectedObj, deselect).execute());
+            this.action.add(new ShiftAction(selectedObj).execute());
+            return true;
+        }
+
+        // Check if a port was clicked
+        if (objects.some((o) => o.getPorts().some(
+                (p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))))
+            return false;
+
+        // Check if a wire was clicked then select it
+        const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
+        if (w) {
+            this.action.add(new DeselectAction(this, w).execute());
+            return true;
+        }
+
+        return render;
     }
 
     public onKeyDown(input: Input, key: number): boolean {
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
-            this.selectAll();
+            this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
             return true;
         }
 
-        if (this.selections.length == 0)
+        if (this.selections.size == 0)
             return false;
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
-            const allDeletions: SeparatedComponentCollection = GatherGroup(this.selections);
-            const components = allDeletions.getAllComponents();
-            const wires = allDeletions.wires;
+            const selections = Array.from(this.selections);
+            const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            // Create actions for deletion of wires then objects
-            //  order matters because the components need to be added
-            //  (when undoing) before the wires can be connected
-            const group = new GroupAction();
-            //check to see if WirePort is selected
-            let arr: boolean[] = components.map((obj) =>  { if (obj instanceof WirePort) { return true; } });
-            let i: number = 0;
-            let port_in: boolean = false;
-            if (arr.length == 1 && arr[0] == true) { port_in = true; }
-            let inp: OutputPort | WirePort = components[0].getInputs()[0].getInput();
-            let out: InputPort | WirePort = components[0].getOutputs()[0].getOutput();
-            let w: Wire = new Wire(inp, out);
-            //adding specific actions to group if port_in
-            if (port_in) {
-                    group.add(new DeleteWireAction(components[0].getInputs()[0]));
-                    group.add(new DeleteWireAction(components[0].getOutputs()[0]));
-                    group.add(new DeleteAction(components[0]));
-                    group.add(new ConnectionAction(w));
-            }
-            else {
-                group.add(this.selections.map((obj) => new SelectAction(this, obj, true)));
-                group.add(wires.map((wire)          => new DeleteWireAction(wire)));
-                group.add(components.map((obj)      => new DeleteAction(obj)));
-            }
-            this.setAction(group);
+            const action = CreateDeleteGroupAction(objs);
+            this.action.add(action.execute());
 
-            // Actually delete the objects/wires
-            for (const wire of wires)
-                this.designer.removeWire(wire);
-            for (const obj of components)
-                this.designer.removeObject(obj);
-            //add back wire if port_in
-            if (port_in) { this.designer.createWire(inp, out);}
-
-            this.clearSelections();
             return true;
         }
         if (key == ESC_KEY) {
-            this.setAction(this.clearSelections());
+            this.action.add(CreateDeselectAllAction(this).execute());
             return true;
         }
 
         return false;
     }
 
+
     public calculateMidpoint(): Vector {
-        let selections = this.selections;
-        let midpoint = V();
-        for (let obj of selections) {
-            if (obj instanceof Component)
-                midpoint.translate(obj.getPos());
-        }
-        return midpoint.scale(1. / selections.length);
+        const selections = Array.from(this.selections);
+        return selections.filter(o => o instanceof Component)
+                .map(o => o as Component)
+                .reduce((acc, cur) => acc.add(cur.getPos()), V(0,0))
+                .scale(1. / this.selections.size);
     }
 
     public getAction(): Action {
-        const action = this.lastAction;
+        if (this.action.isEmpty())
+            return undefined;
 
-        // Remove action
-        this.lastAction = undefined;
+        const action = this.action;
+
+        // Clear action
+        this.action = new GroupAction();
 
         return action;
     }
 
-    public getSelections(): Array<IOObject> {
-        return this.selections.slice(); // shallow copy
-    }
-    public getPortSelections(): Array<Port> {
-        return this.portSelections.slice(); // shallow copy
-    }
-    public isSelecting(): boolean {
-        return this.selecting;
+    public getSelections(): Array<Selectable> {
+        return Array.from(this.selections);
     }
 
-    public getP1(): Vector {
-        return this.p1.copy();
-    }
-    public getP2(): Vector {
-        return this.p2.copy();
+    public getSelectionBox(): SelectionBox {
+        return this.selectionBox;
     }
 
-    public addSelectionChangeListener(func: {(): void}) {
-        this.callbacks.push(func);
-    }
     public getCurrentlyPressedObj(): IOObject {
-        return this.currentPressedObj;
+        return this.interactionHelper.getCurrentlyPressedObj();
     }
 
 }

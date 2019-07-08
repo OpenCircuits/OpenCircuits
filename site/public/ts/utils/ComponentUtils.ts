@@ -9,8 +9,9 @@ import {Component} from "../models/ioobjects/Component";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
-import {InputPort} from "../models/ioobjects/InputPort";
-import {OutputPort} from "../models/ioobjects/OutputPort";
+import {Port} from "../models/ports/Port";
+import {InputPort} from "../models/ports/InputPort";
+import {OutputPort} from "../models/ports/OutputPort";
 import {Wire} from "../models/ioobjects/Wire";
 
 import {WirePort} from "../models/ioobjects/other/WirePort";
@@ -44,6 +45,11 @@ export class SeparatedComponentCollection {
     public getAllComponents(): Array<Component> {
         return this.inputs.concat(this.components, this.outputs);
     }
+
+    public getEverything(): Array<IOObject> {
+        return (<Array<IOObject>>this.getAllComponents()).concat(this.wires);
+    }
+
 }
 
 /**
@@ -58,7 +64,7 @@ export function CreateWire(p1: OutputPort, p2: InputPort): Wire {
         throw new Error("Cannot create Wire! Input port already has an input!");
 
     // Make wire
-    let wire = new Wire(p1, p2);
+    const wire = new Wire(p1, p2);
 
     // Connect ports to wire
     p1.connect(wire);
@@ -82,6 +88,19 @@ export function Connect(c1: Component, i1: number, c2: Component, i2: number): W
 }
 
 /**
+ * Helper function to retrieve a list of all the Input/Output ports
+ *  from the given list of objects/wires
+ *
+ * @param  objects The list of objects to get ports from
+ * @return    All the ports attached to the given list of objects
+ */
+export function GetAllPorts(objects: Array<Component> | SeparatedComponentCollection): Array<Port> {
+    const objs = (objects instanceof Array) ? (objects) : (objects.getAllComponents());
+
+    return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
+}
+
+/**
  * Helper method to separate out a group of IOObjects
  *  into a SeparatedComponentCollection class
  *
@@ -92,10 +111,10 @@ export function Connect(c1: Component, i1: number, c2: Component, i2: number): W
  */
 export function SeparateGroup(objects: Array<IOObject>): SeparatedComponentCollection {
     // Initial group
-    let groups = new SeparatedComponentCollection();
+    const groups = new SeparatedComponentCollection();
 
     // Sort out each type of object into separate groups
-    for (let obj of objects) {
+    for (const obj of objects) {
         if (obj instanceof Wire) {
             groups.wires.push(obj);
         } else if (obj instanceof Component) {
@@ -129,7 +148,7 @@ export function SeparateGroup(objects: Array<IOObject>): SeparatedComponentColle
  * @return         A SeparatedComponentCollection of the objects
  */
 export function CreateGroup(objects: Array<IOObject>): SeparatedComponentCollection {
-    let group = SeparateGroup(objects);
+    const group = SeparateGroup(objects);
 
     // Gather all connecting wires
     const objs = group.getAllComponents();
@@ -149,7 +168,7 @@ export function CreateGroup(objects: Array<IOObject>): SeparatedComponentCollect
  * @return   The array of wires/WirePorts in this path (incuding w)
  */
 export function GetPath(w: Wire): Array<Wire | WirePort> {
-    let path: Array<Wire | WirePort> = [];
+    const path: Array<Wire | WirePort> = [];
 
     // Go to beginning of path
     let i = w.getInputComponent();
@@ -183,7 +202,7 @@ export function GetAllPaths(obj: Component): Array<Wire | WirePort> {
     let path: Array<Wire | WirePort> = [];
 
     // Get all paths
-    let wires = new Set(obj.getInputs().concat(obj.getOutputs()));
+    const wires = new Set(obj.getInputs().concat(obj.getOutputs()));
     for (const wire of wires)
         path = path.concat(GetPath(wire).filter((o) => !path.includes(o)));
 
@@ -198,7 +217,7 @@ export function GetAllPaths(obj: Component): Array<Wire | WirePort> {
  * @return         A SeparatedComponentCollection of the objects
  */
 export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollection {
-    let group = SeparateGroup(objects);
+    const group = SeparateGroup(objects);
 
     // Gather all connecting paths
     for (const obj of objects) {
@@ -228,10 +247,10 @@ export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollect
  * @return        A graph corresponding to the given circuit
  */
 export function CreateGraph(groups: SeparatedComponentCollection): Graph<number, {i1:number, i2:number}> {
-    let graph = new Graph<number, {i1:number, i2:number}>();
+    const graph = new Graph<number, {i1:number, i2:number}>();
 
-    let objs = groups.getAllComponents();
-    let map = new Map<Component, number>();
+    const objs = groups.getAllComponents();
+    const map = new Map<Component, number>();
 
     // Create nodes and map
     for (let i = 0; i < objs.length; i++) {
@@ -240,13 +259,12 @@ export function CreateGraph(groups: SeparatedComponentCollection): Graph<number,
     }
 
     // Create edges
-    for (let j = 0; j < groups.wires.length; j++) {
-        let wire = groups.wires[j];
-        let c1 = map.get(wire.getInputComponent());
-        let c2 = map.get(wire.getOutputComponent());
-        let i1 = wire.getInputComponent().getOutputPorts().indexOf(wire.getInput());
-        let i2 = wire.getOutputComponent().getInputPorts().indexOf(wire.getOutput());
-        let indices = {i1: i1, i2: i2};
+    for (const wire of groups.wires) {
+        const c1 = map.get(wire.getInputComponent());
+        const c2 = map.get(wire.getOutputComponent());
+        const i1 = wire.getInputComponent().getOutputPorts().indexOf(wire.getInput());
+        const i2 = wire.getOutputComponent().getInputPorts().indexOf(wire.getOutput());
+        const indices = {i1: i1, i2: i2};
         graph.createEdge(c1, c2, indices);
     }
 
@@ -262,34 +280,34 @@ export function CreateGraph(groups: SeparatedComponentCollection): Graph<number,
  */
 export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollection): SeparatedComponentCollection {
     // Separate out the given objects
-    let groups = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
-    let objs = groups.getAllComponents();
+    const groups = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
+    const objs = groups.getAllComponents();
 
-    let graph: Graph<number, {i1:number, i2:number}> = CreateGraph(groups);
+    const graph: Graph<number, {i1:number, i2:number}> = CreateGraph(groups);
 
     // Copy components
-    let copies: Array<Component> = [];
-    for (let i = 0; i < objs.length; i++)
-        copies.push(objs[i].copy());
+    const copies: Array<Component> = [];
+    for (const obj of objs)
+        copies.push(obj.copy());
 
 
     // Copy connections
-    let wireCopies: Array<Wire> = [];
-    for (let i of graph.getNodes()) {
-        let c1 = copies[i];
-        let connections = graph.getConnections(i);
+    const wireCopies: Array<Wire> = [];
+    for (const i of graph.getNodes()) {
+        const c1 = copies[i];
+        const connections = graph.getConnections(i);
 
-        for (let connection of connections) {
-            let j = connection.getTarget();
-            let indices = connection.getWeight();
-            let c2 = copies[j];
+        for (const connection of connections) {
+            const j = connection.getTarget();
+            const indices = connection.getWeight();
+            const c2 = copies[j];
 
-            let wire = Connect(c1, indices.i1,  c2, indices.i2);
+            const wire = Connect(c1, indices.i1,  c2, indices.i2);
             wireCopies.push(wire);
         }
     }
 
-    let group: Array<IOObject> = copies;
+    const group: Array<IOObject> = copies;
     return SeparateGroup(group.concat(wireCopies));
 }
 
@@ -304,18 +322,18 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
  *                  to ensure nested ICs work properly
  */
 export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array<Wire>, icIdMap: Map<ICData, number>): void {
-    let objectsNode = node.createChild("objects");
-    let wiresNode   = node.createChild("wires");
-    let idMap = new Map<IOObject, number>();
-    let id = 0;
+    const objectsNode = node.createChild("objects");
+    const wiresNode   = node.createChild("wires");
+    const idMap = new Map<IOObject, number>();
 
     // Save components
-    for (let obj of objects) {
-        let componentNode = objectsNode.createChild(obj.getXMLName());
+    let id = 0;
+    for (const obj of objects) {
+        const componentNode = objectsNode.createChild(obj.getXMLName());
 
         // Save IC ID for ICs
         if (obj instanceof IC) {
-            let icid = icIdMap.get(obj.getData());
+            const icid = icIdMap.get(obj.getData());
             componentNode.addAttribute("icid", icid);
         }
 
@@ -328,29 +346,31 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
     }
 
     // Save wires
-    for (let wire of wires) {
-        let wireNode = wiresNode.createChild(wire.getXMLName());
+    for (const wire of wires) {
+        const wireNode = wiresNode.createChild(wire.getXMLName());
 
         // Save properties
         wire.save(wireNode);
 
-        let inputNode = wireNode.createChild("input");
+        const inputNode = wireNode.createChild("input");
         {
-            let iPort = wire.getInput();
-            let input = iPort.getParent();
-            let iI = 0;
+            const iPort = wire.getInput();
+            const input = iPort.getParent();
+
             // Find index of port
+            let iI = 0;
             while (iI < input.getOutputPortCount() &&
                    input.getOutputPort(iI) !== iPort) { iI++; }
             inputNode.addAttribute("uid", idMap.get(input));
             inputNode.addAttribute("index", iI);
         }
-        let outputNode = wireNode.createChild("output");
+        const outputNode = wireNode.createChild("output");
         {
-            let oPort = wire.getOutput();
-            let input = oPort.getParent();
-            let iO = 0;
+            const oPort = wire.getOutput();
+            const input = oPort.getParent();
+
             // Find index of port
+            let iO = 0;
             while (iO < input.getInputPortCount() &&
                    input.getInputPort(iO) !== oPort) { iO++; }
             outputNode.addAttribute("uid", idMap.get(input));
@@ -368,23 +388,23 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
  *                  to ensure nested ICs work properly
  */
 export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): SeparatedComponentCollection {
-    let objectsNode = node.findChild("objects");
-    let wiresNode   = node.findChild("wires");
-    let idMap = new Map<number, Component>();
+    const objectsNode = node.findChild("objects");
+    const wiresNode   = node.findChild("wires");
+    const idMap = new Map<number, Component>();
 
-    let objects: Array<IOObject> = [];
-    let wires: Array<Wire> = [];
+    const objects: Array<IOObject> = [];
+    const wires: Array<Wire> = [];
 
     // Load components
-    let objectNodes = objectsNode.getChildren();
-    for (let object of objectNodes) {
-        let uid = object.getIntAttribute("uid");
+    const objectNodes = objectsNode.getChildren();
+    for (const object of objectNodes) {
+        const uid = object.getIntAttribute("uid");
 
         // Create and add object
         let obj;
         if (object.getTag() == "ic") {
-            let icid = object.getIntAttribute("icid");
-            let icData = icIdMap.get(icid);
+            const icid = object.getIntAttribute("icid");
+            const icData = icIdMap.get(icid);
             obj = new IC(icData);
         } else {
             obj = CreateComponentFromXML(object.getTag());
@@ -403,19 +423,19 @@ export function LoadGroup(node: XMLNode, icIdMap: Map<number, ICData>): Separate
     }
 
     // Load wires
-    let wireNodes = wiresNode.getChildren();
-    for (let wire of wireNodes) {
-        let inputNode  = wire.findChild("input");
-        let outputNode = wire.findChild("output");
+    const wireNodes = wiresNode.getChildren();
+    for (const wire of wireNodes) {
+        const inputNode  = wire.findChild("input");
+        const outputNode = wire.findChild("output");
 
         // Load connections
-        let inputObj  = idMap.get( inputNode.getIntAttribute("uid"));
-        let outputObj = idMap.get(outputNode.getIntAttribute("uid"));
-        let inputIndex  =  inputNode.getIntAttribute("index");
-        let outputIndex = outputNode.getIntAttribute("index");
+        const inputObj  = idMap.get( inputNode.getIntAttribute("uid"));
+        const outputObj = idMap.get(outputNode.getIntAttribute("uid"));
+        const inputIndex  =  inputNode.getIntAttribute("index");
+        const outputIndex = outputNode.getIntAttribute("index");
 
         // Create wire
-        let w = Connect(inputObj, inputIndex,  outputObj, outputIndex);
+        const w = Connect(inputObj, inputIndex,  outputObj, outputIndex);
         wires.push(w);
 
         // Load properties
