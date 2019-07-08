@@ -1,20 +1,9 @@
 declare var jsPDF: any; // jsPDF is external library
 
-import {SAVED} from "../Config";
-
 import {XMLWriter} from "./xml/XMLWriter";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
 export const Exporter = (() => {
-
-    window.onbeforeunload = function(e) {
-        if (!SAVED) {
-            const dialogText = "You have unsaved changes.";
-            e.returnValue = dialogText;
-            return dialogText;
-        }
-    };
-
     return {
         write: function(designer: CircuitDesigner, name: string): string {
             const writer = new XMLWriter(designer.getXMLName());
