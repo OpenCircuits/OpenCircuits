@@ -122,6 +122,11 @@ export class CircuitDesigner implements XMLable {
         this.ics.push(data);
     }
 
+    public removeICData(data: ICData): void {
+        const i = this.ics.indexOf(data);
+        this.ics.splice(i, 1);
+    }
+
     public addObjects(objects: Array<Component>): void {
         for (const object of objects)
             this.addObject(object);
@@ -265,6 +270,10 @@ export class CircuitDesigner implements XMLable {
 
     public getWires(): Array<Wire> {
         return this.wires.slice(); // Shallow copy array
+    }
+
+    public getICData(): Array<ICData> {
+        return this.ics.slice(); // Shallow copy array
     }
 
     public getXMLName(): string {
