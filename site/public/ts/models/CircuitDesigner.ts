@@ -64,16 +64,17 @@ export class CircuitDesigner implements XMLable {
     public propagate(receiver: IOObject, signal: boolean): void {
         this.propagationQueue.push(new Propagation(receiver, signal));
 
-        if (this.updateRequests == 0) {
-            this.updateRequests++;
+        if (this.updateRequests > 0)
+            return;
 
-            // instant propagation
-            if (this.propagationTime == 0)
-                this.update();
-            else if (this.propagationTime > 0)
-                setTimeout(() => this.update(), this.propagationTime);
-            // Else if propagation time is < 0 then don't propagate at all
-        }
+        this.updateRequests++;
+
+        // instant propagation
+        if (this.propagationTime == 0)
+            this.update();
+        else if (this.propagationTime > 0)
+            setTimeout(() => this.update(), this.propagationTime);
+        // Else if propagation time is < 0 then don't propagate at all
     }
 
     /**
