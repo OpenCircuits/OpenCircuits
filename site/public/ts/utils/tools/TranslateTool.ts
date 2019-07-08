@@ -48,13 +48,13 @@ export class TranslateTool extends Tool {
         for (const obj of this.components) {
             obj.getInputs().forEach(i => {
                 const c = i.getInputComponent();
-                let arr = this.neighbors.get(c) || [];
+                const arr = this.neighbors.get(c) || [];
                 arr.push(i);
                 this.neighbors.set(c, arr);
             });
             obj.getOutputs().forEach(o => {
                 const c = o.getOutputComponent();
-                let arr = this.neighbors.get(c) || [];
+                const arr = this.neighbors.get(c) || [];
                 arr.push(o);
                 this.neighbors.set(c, arr);
             });

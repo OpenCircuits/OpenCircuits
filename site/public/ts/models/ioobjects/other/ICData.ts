@@ -209,7 +209,7 @@ export class ICData {
         if (!this.IsValid(copies))
             return undefined;
 
-        let chs = copies.inputs.filter(c => c instanceof ConstantHigh);
+        const chs = copies.inputs.filter(c => c instanceof ConstantHigh);
         copies.components = copies.components.concat(chs);
         copies.inputs = copies.inputs.filter(c => !(c instanceof ConstantHigh));
 

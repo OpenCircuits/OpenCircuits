@@ -5,7 +5,7 @@ import {Vector} from "../../math/Vector";
 import {Wire} from "../../../models/ioobjects/Wire";
 import {WirePort} from "../../../models/ioobjects/other/WirePort";
 
-export function Snap(wire: Wire, x: number, c: number) {
+export function Snap(wire: Wire, x: number, c: number): number {
     if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
         wire.setIsStraight(true);
         return c;
@@ -13,10 +13,10 @@ export function Snap(wire: Wire, x: number, c: number) {
     return x;
 }
 
-export function MoveAndSnap(port: WirePort, dPos: Vector) {
+export function MoveAndSnap(port: WirePort, dPos: Vector): void {
     // Snap wire port to the grid lines of its neighbor ports (if it is close enough)
     const portPos = port.getPos();
-    let newPos = portPos.add(dPos);
+    const newPos = portPos.add(dPos);
 
     // getInputs() and getOutputs() have 1 and only 1 element each because WirePorts are specialized
     const iw = port.getInputs()[0];
