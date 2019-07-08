@@ -5,6 +5,7 @@ import {Images} from "./utils/Images";
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
+import {CopyController} from "./controllers/CopyController";
 import {ItemNavController} from "./controllers/ItemNavController";
 import {SideNavController} from "./controllers/SideNavController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
@@ -35,6 +36,10 @@ function Init(): void {
             MainDesignerController.Init();
             HeaderController.Init(MainDesignerController.GetDesigner());
             SelectionPopupController.Init(MainDesignerController.GetCamera());
+            resolve(1);
+        }),
+        new Promise((resolve, _) => {
+            CopyController.Init();
             resolve(1);
         }),
         new Promise((resolve, _) => {
