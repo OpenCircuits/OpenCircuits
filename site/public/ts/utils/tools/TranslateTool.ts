@@ -1,7 +1,6 @@
 import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY,
-        WIRE_SNAP_THRESHOLD} from "../Constants";
+        SPACEBAR_KEY} from "../Constants";
 
 import {CopyGroup} from "../ComponentUtils";
 
@@ -22,6 +21,8 @@ import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/transform/TranslateAction";
 
+import {MoveAndSnap} from "./helpers/SnapUtils";
+
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;
     protected camera: Camera;
@@ -40,37 +41,6 @@ export class TranslateTool extends Tool {
         this.designer = designer;
         this.camera = camera;
         this.neighbors = new Map<Component, Array<Wire>>();
-    }
-
-    private snap(wire: Wire, x: number, c: number) {
-        if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
-            wire.setIsStraight(true);
-            return c;
-        }
-        return x;
-    }
-
-    private moveAndSnap(port: WirePort, dPos: Vector) {
-        // Snap wire port to the grid lines of its neighbor ports (if it is close enough)
-        const portPos = this.pressedComponent.getPos();
-        let newPos = portPos.add(dPos);
-
-        // getInputs() and getOutputs() have 1 and only 1 element each because WirePorts are specialized
-        const iw = this.pressedComponent.getInputs()[0];
-        const ow = this.pressedComponent.getOutputs()[0];
-        const ip = iw.getInput().getWorldTargetPos();
-        const op = ow.getOutput().getWorldTargetPos();
-
-        iw.setIsStraight(false);
-        ow.setIsStraight(false);
-
-        newPos.x = this.snap(iw, newPos.x, ip.x);
-        newPos.y = this.snap(iw, newPos.y, ip.y);
-        newPos.x = this.snap(ow, newPos.x, op.x);
-        newPos.y = this.snap(ow, newPos.y, op.y);
-
-        // Only one position to set (the wire port)
-        this.pressedComponent.setPos(newPos);
     }
 
     public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
@@ -93,8 +63,8 @@ export class TranslateTool extends Tool {
         // Translate multiple objects if they are all selected
         this.pressedComponent = currentPressedObj;
         this.components = [currentPressedObj];
-        if (selections.length > 0 && selections.includes(currentPressedObj))
-            this.components = <Array<Component>>selections;
+        if (selections.includes(currentPressedObj))
+            this.components = selections as Array<Component>;
 
         // Precalculate neighbor wires for each component
         // Used online to un-straighten wires when one component is dragged away from the other
@@ -115,10 +85,7 @@ export class TranslateTool extends Tool {
         }
 
         // Copy initial positions
-        this.initialPositions = [];
-        for (const obj of this.components)
-            this.initialPositions.push(obj.getPos());
-
+        this.initialPositions = this.components.map((o) => o.getPos());
         this.startPos = worldMousePos.sub(currentPressedObj.getPos());
 
         this.action = new GroupAction();
@@ -140,12 +107,12 @@ export class TranslateTool extends Tool {
 
         // Move and snap if it's a WirePort
         if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
-            this.moveAndSnap(this.pressedComponent, dPos);
+            MoveAndSnap(this.pressedComponent, dPos);
             return true;
         }
 
         // Set positions of each component in turn
-        for (let obj of this.components) {
+        for (const obj of this.components) {
             let newPos = obj.getPos().add(dPos);
             if (input.isShiftKeyDown()) {
                 newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
@@ -155,7 +122,7 @@ export class TranslateTool extends Tool {
         }
 
         // If a wire connects a selected component with an unselected component, make it curvy
-        for (let neighbor of this.neighbors) {
+        for (const neighbor of this.neighbors) {
             if (this.components.indexOf(neighbor[0]) == -1)
                 neighbor[1].forEach(w => w.setIsStraight(false));
         }
