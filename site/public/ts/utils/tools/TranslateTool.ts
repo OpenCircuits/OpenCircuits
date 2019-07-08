@@ -43,6 +43,24 @@ export class TranslateTool extends Tool {
         this.neighbors = new Map<Component, Array<Wire>>();
     }
 
+    private calculateNeighbors(): void {
+        this.neighbors.clear();
+        for (const obj of this.components) {
+            obj.getInputs().forEach(i => {
+                const c = i.getInputComponent();
+                let arr = this.neighbors.get(c) || [];
+                arr.push(i);
+                this.neighbors.set(c, arr);
+            });
+            obj.getOutputs().forEach(o => {
+                const c = o.getOutputComponent();
+                let arr = this.neighbors.get(c) || [];
+                arr.push(o);
+                this.neighbors.set(c, arr);
+            });
+        }
+    }
+
     public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
@@ -68,21 +86,7 @@ export class TranslateTool extends Tool {
 
         // Precalculate neighbor wires for each component
         // Used online to un-straighten wires when one component is dragged away from the other
-        this.neighbors.clear();
-        for (const obj of this.components) {
-            obj.getInputs().forEach(i => {
-                const c = i.getInputComponent();
-                let arr = this.neighbors.get(c) || [];
-                arr.push(i);
-                this.neighbors.set(c, arr);
-            });
-            obj.getOutputs().forEach(o => {
-                const c = o.getOutputComponent();
-                let arr = this.neighbors.get(c) || [];
-                arr.push(o);
-                this.neighbors.set(c, arr);
-            });
-        }
+        this.calculateNeighbors();
 
         // Copy initial positions
         this.initialPositions = this.components.map((o) => o.getPos());
@@ -123,8 +127,9 @@ export class TranslateTool extends Tool {
 
         // If a wire connects a selected component with an unselected component, make it curvy
         for (const neighbor of this.neighbors) {
-            if (this.components.indexOf(neighbor[0]) == -1)
-                neighbor[1].forEach(w => w.setIsStraight(false));
+            if (this.components.indexOf(neighbor[0]) != -1)
+                continue;
+            neighbor[1].forEach(w => w.setIsStraight(false));
         }
 
         return true;
