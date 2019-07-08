@@ -47,42 +47,40 @@ export class WiringTool extends Tool {
 
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        const objects = this.designer.getObjects();
-        for (let i = objects.length-1; i >= 0; i--) {
-            const obj = objects[i];
-            // Check if a port was clicked
-            for (const p of obj.getPorts()) {
-                if (CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos)) {
-                    // Input ports can only have one input
-                    // so if one was clicked, then don't
-                    // start a new wire
-                    if (p instanceof InputPort &&
-                        p.getInput() != null)
-                        return false;
+        const objects = this.designer.getObjects().reverse();
 
-                    // Activate
-                    this.clicked = (event == "onclick");
+        // Find a port that was clicked
+        const p = objects.reduce((acc, o) => acc = acc.concat(o.getPorts()), [])
+                    .find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos));
+        if (!p)
+            return false;
 
-                    this.port = p;
-                    this.action = undefined;
+        // Input ports can only have one input
+        // so if one was clicked, then don't
+        // start a new wire
+        if (p instanceof InputPort &&
+            p.getInput() != null)
+            return false;
 
-                    // Create wire
-                    if (p instanceof InputPort) {
-                        this.wire = new Wire(null, p);
-                        this.wire.getShape().setP1(p.getWorldTargetPos());
-                        this.wire.getShape().setC1(p.getWorldTargetPos());
-                    }
-                    if (p instanceof OutputPort) {
-                        this.wire = new Wire(p, null);
-                        this.wire.getShape().setP2(p.getWorldTargetPos());
-                        this.wire.getShape().setC2(p.getWorldTargetPos());
-                    }
+        // Activate
+        this.clicked = (event == "onclick");
 
-                    return true;
-                }
-            }
+        this.port = p;
+        this.action = undefined;
+
+        // Create wire
+        if (p instanceof InputPort) {
+            this.wire = new Wire(null, p);
+            this.wire.getShape().setP1(p.getWorldTargetPos());
+            this.wire.getShape().setC1(p.getWorldTargetPos());
         }
-        return false;
+        if (p instanceof OutputPort) {
+            this.wire = new Wire(p, null);
+            this.wire.getShape().setP2(p.getWorldTargetPos());
+            this.wire.getShape().setC2(p.getWorldTargetPos());
+        }
+
+        return true;
     }
 
     public deactivate(event: string): boolean {
@@ -143,7 +141,7 @@ export class WiringTool extends Tool {
     }
 
     public getAction(): Action {
-      if (!this.action)
+        if (!this.action)
         // if (this.wire.getInput() == undefined || this.wire.getOutput() == undefined)
             return undefined;
 

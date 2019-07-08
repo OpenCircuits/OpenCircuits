@@ -1,5 +1,6 @@
 import {CreateBusAction} from "../actions/addition/BusActionFactory";
 
+import {Port} from "../../models/ports/Port";
 import {InputPort} from "../../models/ports/InputPort";
 import {OutputPort} from "../../models/ports/OutputPort";
 
@@ -18,14 +19,13 @@ export class BusButtonPopupModule extends SelectionPopupModule {
 
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
+        const portSelections = selections.filter((o) => o instanceof Port) as Array<Port>;
 
         // Make sure there are no regular selections
-        if (selections.length > 0) {
+        if (portSelections.length != selections.length) {
             this.button.style.display = "none";
             return;
         }
-
-        const portSelections = MainDesignerController.GetPortSelections();
 
         const inputPorts  = portSelections.filter(o => o instanceof InputPort);
         const outputPorts = portSelections.filter(o => o instanceof OutputPort);
@@ -38,10 +38,11 @@ export class BusButtonPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetPortSelections();
+        const selections = MainDesignerController.GetSelections();
+        const portSelections = selections.filter((o) => o instanceof Port) as Array<Port>;
 
-        const inputPorts  = <Array<InputPort>> selections.filter(o => o instanceof InputPort);
-        const outputPorts = <Array<OutputPort>>selections.filter(o => o instanceof OutputPort);
+        const inputPorts  = <Array<InputPort>> portSelections.filter(o => o instanceof InputPort);
+        const outputPorts = <Array<OutputPort>>portSelections.filter(o => o instanceof OutputPort);
 
         MainDesignerController.AddAction(
             CreateBusAction(outputPorts, inputPorts).execute()
