@@ -5,8 +5,6 @@ import {LEFT_MOUSE_BUTTON,
 import {Vector,V} from "../math/Vector";
 import {CircleContains,
         BezierContains,} from "../math/MathUtils";
-import {SeparatedComponentCollection,
-        GatherGroup} from "../ComponentUtils";
 
 import {Selectable} from "../Selectable";
 import {Tool} from "./Tool";
@@ -30,8 +28,8 @@ import {SelectAction,
         DeselectAction} from "../actions/selection/SelectAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
-import {DeleteAction} from "../actions/addition/PlaceAction";
-import {DisconnectAction} from "../actions/addition/ConnectionAction";
+
+import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
 export class SelectionTool extends Tool {
 
@@ -218,20 +216,11 @@ export class SelectionTool extends Tool {
             return false;
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
-            const selections = Array.from(this.selections)
-                                    .filter((o) => o instanceof IOObject) as Array<IOObject>;
-            const allDeletions: SeparatedComponentCollection = GatherGroup(selections);
-            const components = allDeletions.getAllComponents();
-            const wires = allDeletions.wires;
+            const selections = Array.from(this.selections);
+            const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            // Create actions for deletion of wires then objects
-            //  order matters because the components need to be added
-            //  (when undoing) before the wires can be connected
-            const group = new GroupAction();
-            group.add(selections.map((obj) => new DeselectAction(this, obj)));
-            group.add(wires.map((wire)     => new DisconnectAction(wire)));
-            group.add(components.map((obj) => new DeleteAction(obj)));
-            this.action.add(group.execute());
+            const action = CreateDeleteGroupAction(objs);
+            this.action.add(action.execute());
 
             return true;
         }

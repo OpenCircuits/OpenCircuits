@@ -4,25 +4,23 @@ import {XMLWriter} from "./xml/XMLWriter";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
 export const Exporter = (() => {
-
-    const write = function(designer: CircuitDesigner, name: string): string {
-        const writer = new XMLWriter(designer.getXMLName());
-
-        writer.setVersion(1);
-        writer.setName(name);
-
-        designer.save(writer.getRoot());
-
-        return writer.serialize();
-    }
-
     return {
+        write: function(designer: CircuitDesigner, name: string): string {
+            const writer = new XMLWriter(designer.getXMLName());
+
+            writer.setVersion(1);
+            writer.setName(name);
+
+            designer.save(writer.getRoot());
+
+            return writer.serialize();
+        },
         saveFile: function(designer: CircuitDesigner, projectName: string): void {
             // Get name
             if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
 
-            const data = write(designer, projectName);
+            const data = this.write(designer, projectName);
 
             const filename = projectName + ".circuit";
 
