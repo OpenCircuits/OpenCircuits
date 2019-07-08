@@ -1,5 +1,3 @@
-import {DEFAULT_SIZE} from "../Constants";
-
 import {Tool} from "./Tool";
 import {TranslateTool} from "./TranslateTool"
 import {SelectionTool} from "./SelectionTool";
@@ -13,8 +11,8 @@ import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
-import {SelectAction} from "../actions/selection/SelectAction";
-import {CreateDeselectAllAction} from "../actions/selection/SelectAction";
+import {SelectAction,
+        CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {SplitWireAction} from "../actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
