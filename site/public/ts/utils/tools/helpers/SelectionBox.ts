@@ -36,7 +36,7 @@ export class SelectionBox {
         this.selectionTool = selectionTool;
     }
 
-    public drag(input: Input): boolean {
+    public drag(input: Input): void {
         this.selecting = true;
 
         // Update positions
