@@ -26,8 +26,8 @@ import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
 import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
-        DeselectAction} from "../actions/selection/SelectAction";
-import {CreateGroupSelectAction,
+        DeselectAction,
+        CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
