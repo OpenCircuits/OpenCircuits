@@ -3,7 +3,7 @@
   "description": "Travis-CI check for OpenCircuits",
   "author": "Leon Montealegre",
   "version": "0.0.1",
-  "license": "BSD-3-Clause",
+  "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/OpenCircuits/OpenCircuits.git"
