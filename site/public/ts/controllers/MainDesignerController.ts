@@ -13,6 +13,7 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {SelectionTool} from "../utils/tools/SelectionTool";
 import {TranslateTool} from "../utils/tools/TranslateTool";
 import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
@@ -144,6 +145,9 @@ export const MainDesignerController = (() => {
         },
         GetSelections: function(): Array<Selectable> {
             return toolManager.getSelectionTool().getSelections();
+        },
+        GetSelectionTool: function(): SelectionTool {
+            return toolManager.getSelectionTool();
         },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();
