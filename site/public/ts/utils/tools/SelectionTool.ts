@@ -29,7 +29,7 @@ import {SelectAction,
         DeselectAction} from "../actions/selection/SelectAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
-
+import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
 export class SelectionTool extends Tool {
@@ -220,17 +220,18 @@ export class SelectionTool extends Tool {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            const action = CreateDeleteGroupAction(objs);
-            this.action.add(action.execute());
+            this.action.add(CreateDeleteGroupAction(objs).execute());
 
             return true;
         }
-        if (key == X_KEY) { // Snip wire port
+        if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
             const wirePorts = selections.filter((o) => o instanceof WirePort) as Array<WirePort>;
             if (selections.length != wirePorts.length)
                 return false;
-
+            this.action.add(CreateDeselectAllAction(this).execute());
+            this.action.add(CreateGroupSnipAction(wirePorts).execute());
+            return true;
         }
         if (key == ESC_KEY) {
             this.action.add(CreateDeselectAllAction(this).execute());
