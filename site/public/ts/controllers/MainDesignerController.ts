@@ -3,8 +3,10 @@ import {Vector} from "../utils/math/Vector";
 import {Camera} from "../utils/Camera";
 import {Input} from "../utils/Input";
 import {RenderQueue} from "../utils/RenderQueue";
+import {Selectable} from "../utils/Selectable";
 
 import {Action} from "../utils/actions/Action";
+import {CreateDeselectAllAction} from "../utils/actions/selection/SelectActionsFactory";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -16,10 +18,9 @@ import {RotateTool} from "../utils/tools/RotateTool";
 import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
 import {WiringTool} from "../utils/tools/WiringTool";
 
-import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";
-import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
+
 
 export const MainDesignerController = (() => {
     let designer: CircuitDesigner;
@@ -98,7 +99,6 @@ export const MainDesignerController = (() => {
             renderQueue = new RenderQueue(() =>
                 view.render(designer,
                             toolManager.getSelectionTool().getSelections(),
-                            toolManager.getSelectionTool().getPortSelections(),
                             toolManager));
 
             // input
@@ -120,7 +120,7 @@ export const MainDesignerController = (() => {
             renderQueue.render();
         },
         ClearSelections: function(): void {
-            toolManager.getSelectionTool().clearSelections();
+            MainDesignerController.AddAction(CreateDeselectAllAction(toolManager.getSelectionTool()).execute());
         },
         PlaceComponent: function(component: Component, instant: boolean = false): void {
             toolManager.placeComponent(component, instant);
@@ -137,16 +137,13 @@ export const MainDesignerController = (() => {
 
             // Disable actions/selections
             toolManager.disableActions(val);
-            toolManager.getSelectionTool().clearSelections();
+            MainDesignerController.ClearSelections();
             toolManager.getSelectionTool().disableSelections(val);
 
             MainDesignerController.Render();
         },
-        GetSelections: function(): Array<IOObject> {
+        GetSelections: function(): Array<Selectable> {
             return toolManager.getSelectionTool().getSelections();
-        },
-        GetPortSelections: function(): Array<Port> {
-            return toolManager.getSelectionTool().getPortSelections();
         },
         GetCanvas: function(): HTMLCanvasElement {
             return view.getCanvas();

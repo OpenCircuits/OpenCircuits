@@ -13,7 +13,8 @@ import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
-import {SelectAction} from "../actions/SelectAction";
+import {SelectAction} from "../actions/selection/SelectAction";
+import {CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
 import {SplitWireAction} from "../actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
@@ -46,9 +47,9 @@ export class SplitWireTool extends TranslateTool {
         this.splitAction = new GroupAction()
 
         // Set wireport as selections and being pressed
-        this.splitAction.add(currentTool.clearSelections());
+        this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
         currentTool.setCurrentlyPressedObj(wirePort);
-        currentTool.addSelection(wirePort);
+        currentTool.select(wirePort);
         this.splitAction.add(new SelectAction(currentTool, wirePort));
 
         // Store old wire's values and delete it
@@ -72,7 +73,7 @@ export class SplitWireTool extends TranslateTool {
     }
 
     // Override TranslateTool onKeyUp so that we can't duplicate the WirePorts
-    public onKeyUp(input: Input, key: number): boolean {
+    public onKeyUp(): boolean {
         return false;
     }
 

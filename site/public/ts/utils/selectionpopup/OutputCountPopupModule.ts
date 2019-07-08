@@ -42,7 +42,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
         const countAsNumber = this.count.valueAsNumber;
 
         MainDesignerController.AddAction(
-            selections.reduce((acc, o) => {
+            selections.reduce<GroupAction>((acc, o) => {
                 if (o instanceof Encoder)
                     acc.add(new OutputPortChangeAction(o, countAsNumber));
                 return acc;

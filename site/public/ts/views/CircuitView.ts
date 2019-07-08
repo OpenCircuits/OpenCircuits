@@ -7,11 +7,9 @@ import {WireRenderer}      from "../utils/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer";
 
 import {ToolManager} from "../utils/tools/ToolManager";
+import {Selectable}  from "../utils/Selectable";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
-
-import {IOObject}  from "../models/ioobjects/IOObject";
-import {Port} from "../models/ports/Port";
 
 export class CircuitView {
     protected canvas: HTMLCanvasElement;
@@ -29,8 +27,7 @@ export class CircuitView {
         this.resize();
     }
 
-    public render(designer: CircuitDesigner, selections: Array<IOObject>,
-                  portSelections: Array<Port>, toolManager: ToolManager): void {
+    public render(designer: CircuitDesigner, selections: Array<Selectable>, toolManager: ToolManager): void {
         this.renderer.clear();
 
         // Render grid
@@ -47,7 +44,7 @@ export class CircuitView {
         const objects = designer.getObjects();
         for (const object of objects) {
             const selected = selections.includes(object);
-            ComponentRenderer.render(this.renderer, this.camera, object, selected, portSelections);
+            ComponentRenderer.render(this.renderer, this.camera, object, selected, selections);
         }
 
         // Render current tool
