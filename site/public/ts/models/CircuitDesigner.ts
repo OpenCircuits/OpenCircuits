@@ -4,7 +4,8 @@ import {XMLNode} from "../utils/io/xml/XMLNode";
 import {SeparatedComponentCollection,
         CreateWire,
         SaveGroup,
-        LoadGroup} from "../utils/ComponentUtils";
+        LoadGroup,
+        SeparateGroup} from "../utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
@@ -12,7 +13,6 @@ import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
-import {WirePort}  from "./ioobjects/other/WirePort";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
@@ -70,8 +70,9 @@ export class CircuitDesigner implements XMLable {
             // instant propagation
             if (this.propagationTime == 0)
                 this.update();
-            else
+            else if (this.propagationTime > 0)
                 setTimeout(() => this.update(), this.propagationTime);
+            // Else if propagation time is < 0 then don't propagate at all
         }
     }
 
@@ -109,7 +110,7 @@ export class CircuitDesigner implements XMLable {
 
     public addGroup(group: SeparatedComponentCollection): void {
         for (const a of group.getAllComponents())
-            this.addObject(a)
+            this.addObject(a);
 
         for (const b of group.wires) {
             this.wires.push(b);
@@ -204,7 +205,6 @@ export class CircuitDesigner implements XMLable {
         SaveGroup(node, this.objects, this.wires, icIdMap);
     }
 
-
     public load(node: XMLNode): void {
         const icDataNode  = node.findChild("icdata");
 
@@ -234,6 +234,10 @@ export class CircuitDesigner implements XMLable {
 
         // Update since the circuit has changed
         this.updateCallback();
+    }
+
+    public getGroup(): SeparatedComponentCollection {
+        return SeparateGroup((<Array<IOObject>>this.objects).concat(this.wires));
     }
 
     public getObjects(): Array<Component> {
