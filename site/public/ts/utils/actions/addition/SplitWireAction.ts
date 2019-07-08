@@ -43,7 +43,7 @@ export class SplitWireAction extends ReversableAction {
 
 export class SnipWireAction extends SplitWireAction {
     public constructor(port: WirePort) {
-        super(port.getOutputPort(0), port.getInputPort(0), port, true);
+        super(port.getInputs()[0].getInput(), port.getOutputs()[0].getOutput(), port, true);
     }
 }
 
