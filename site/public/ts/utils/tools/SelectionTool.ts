@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY,
+        ESC_KEY, A_KEY, X_KEY,
         IO_PORT_RADIUS} from "../Constants";
 import {Vector,V} from "../math/Vector";
 import {CircleContains,
@@ -12,6 +12,7 @@ import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -27,7 +28,7 @@ import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
         DeselectAction} from "../actions/selection/SelectAction";
 import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
+        CreateDeselectAllAction} from "../actions/selection/SelectAction";
 
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
@@ -223,6 +224,13 @@ export class SelectionTool extends Tool {
             this.action.add(action.execute());
 
             return true;
+        }
+        if (key == X_KEY) { // Snip wire port
+            const selections = Array.from(this.selections);
+            const wirePorts = selections.filter((o) => o instanceof WirePort) as Array<WirePort>;
+            if (selections.length != wirePorts.length)
+                return false;
+
         }
         if (key == ESC_KEY) {
             this.action.add(CreateDeselectAllAction(this).execute());

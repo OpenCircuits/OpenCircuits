@@ -14,7 +14,7 @@ import {WirePort} from "../../models/ioobjects/other/WirePort";
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction} from "../actions/selection/SelectAction";
-import {CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
+import {CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {SplitWireAction} from "../actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
