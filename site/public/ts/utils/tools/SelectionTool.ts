@@ -5,8 +5,6 @@ import {LEFT_MOUSE_BUTTON,
 import {Vector,V} from "../math/Vector";
 import {CircleContains,
         BezierContains,} from "../math/MathUtils";
-import {SeparatedComponentCollection,
-        GatherGroup} from "../ComponentUtils";
 
 import {Selectable} from "../Selectable";
 import {Tool} from "./Tool";
@@ -30,8 +28,6 @@ import {SelectAction,
         DeselectAction} from "../actions/selection/SelectAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
-import {DeleteAction} from "../actions/addition/PlaceAction";
-import {DisconnectAction} from "../actions/addition/ConnectionAction";
 
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
@@ -225,7 +221,7 @@ export class SelectionTool extends Tool {
 
             const action = CreateDeleteGroupAction(objs);
             this.action.add(action.execute());
-            
+
             return true;
         }
         if (key == ESC_KEY) {
