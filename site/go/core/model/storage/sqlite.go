@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // TODO: how much of this can we factor out to a generic SQL implementation?
@@ -36,7 +37,7 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	}
 
 	// TODO: just make this a .sql file
-	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, designer TEXT NOT NULL, ownerId TEXT)")
+	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, designer TEXT NOT NULL, ownerId TEXT, version INT NOT NULL DEFAULT 0)")
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +51,7 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	if err != nil {
 		panic(err)
 	}
-	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=? WHERE id=?")
+	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=?, name=?, ownerId=?, version=? WHERE id=?")
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +72,7 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 
 func (d sqliteCircuitStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {
 	var c model.Circuit
-	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.Id, &c.Designer, &c.Metadata.Name, &c.Metadata.Owner)
+	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.Id, &c.Designer.RawContent, &c.Metadata.Name, &c.Metadata.Owner)
 	if err == sql.ErrNoRows || err != nil {
 		return nil
 	}
@@ -109,7 +110,7 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
-	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Id)
+	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.Version, circuit.Metadata.Id)
 	if err != nil {
 		panic(err)
 	}
