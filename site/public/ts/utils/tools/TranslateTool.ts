@@ -13,11 +13,15 @@ import {SelectionTool} from "./SelectionTool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
+import {Wire} from "../../models/ioobjects/Wire";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/transform/TranslateAction";
+
+import {MoveAndSnap} from "./helpers/SnapUtils";
 
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;
@@ -26,6 +30,7 @@ export class TranslateTool extends Tool {
     protected pressedComponent: Component;
     protected components: Array<Component>;
     protected initialPositions: Array<Vector>;
+    protected neighbors: Map<Component, Array<Wire>>;
 
     private action: GroupAction;
     private startPos: Vector;
@@ -35,6 +40,25 @@ export class TranslateTool extends Tool {
 
         this.designer = designer;
         this.camera = camera;
+        this.neighbors = new Map<Component, Array<Wire>>();
+    }
+
+    private calculateNeighbors(): void {
+        this.neighbors.clear();
+        for (const obj of this.components) {
+            obj.getInputs().forEach(i => {
+                const c = i.getInputComponent();
+                const arr = this.neighbors.get(c) || [];
+                arr.push(i);
+                this.neighbors.set(c, arr);
+            });
+            obj.getOutputs().forEach(o => {
+                const c = o.getOutputComponent();
+                const arr = this.neighbors.get(c) || [];
+                arr.push(o);
+                this.neighbors.set(c, arr);
+            });
+        }
     }
 
     public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
@@ -57,14 +81,15 @@ export class TranslateTool extends Tool {
         // Translate multiple objects if they are all selected
         this.pressedComponent = currentPressedObj;
         this.components = [currentPressedObj];
-        if (selections.length > 0 && selections.includes(currentPressedObj))
-            this.components = <Array<Component>>selections;
+        if (selections.includes(currentPressedObj))
+            this.components = selections as Array<Component>;
+
+        // Precalculate neighbor wires for each component
+        // Used online to un-straighten wires when one component is dragged away from the other
+        this.calculateNeighbors();
 
         // Copy initial positions
-        this.initialPositions = [];
-        for (const obj of this.components)
-            this.initialPositions.push(obj.getPos());
-
+        this.initialPositions = this.components.map((o) => o.getPos());
         this.startPos = worldMousePos.sub(currentPressedObj.getPos());
 
         this.action = new GroupAction();
@@ -84,7 +109,13 @@ export class TranslateTool extends Tool {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
         const dPos = worldMousePos.sub(this.pressedComponent.getPos()).sub(this.startPos);
 
-        // Set positions
+        // Move and snap if it's a WirePort
+        if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
+            MoveAndSnap(this.pressedComponent, dPos);
+            return true;
+        }
+
+        // Set positions of each component in turn
         for (const obj of this.components) {
             let newPos = obj.getPos().add(dPos);
             if (input.isShiftKeyDown()) {
@@ -92,6 +123,13 @@ export class TranslateTool extends Tool {
                            Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
             }
             obj.setPos(newPos);
+        }
+
+        // If a wire connects a selected component with an unselected component, make it curvy
+        for (const neighbor of this.neighbors) {
+            if (this.components.indexOf(neighbor[0]) != -1)
+                continue;
+            neighbor[1].forEach(w => w.setIsStraight(false));
         }
 
         return true;
