@@ -1,4 +1,5 @@
 import {Action} from "../Action";
+import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
 import {Selectable} from "../../Selectable";
@@ -34,4 +35,18 @@ export class DeselectAction extends SelectAction {
     public constructor(selectionTool: SelectionTool, obj: Selectable) {
         super(selectionTool, obj, true);
     }
+}
+
+
+export function CreateGroupSelectAction(selectionTool: SelectionTool, objs: Array<Selectable>): GroupAction {
+    return objs.reduce((acc, s) => {
+        return acc.add(new SelectAction(selectionTool, s)) as GroupAction;
+    }, new GroupAction());
+}
+
+export function CreateDeselectAllAction(selectionTool: SelectionTool): GroupAction {
+    const objs = selectionTool.getSelections();
+    return objs.reduce((acc, s) => {
+        return acc.add(new DeselectAction(selectionTool, s)) as GroupAction;
+    }, new GroupAction());
 }

@@ -1,4 +1,5 @@
 import {Action} from "../Action";
+import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
 import {CircuitDesigner} from "../../../models/CircuitDesigner";
@@ -33,4 +34,11 @@ export class DeleteAction extends PlaceAction {
     public constructor(obj: Component) {
         super(obj.getDesigner(), obj, true);
     }
+}
+
+
+export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Array<Component>): GroupAction {
+    return objs.reduce((acc, o) => {
+        return acc.add(new PlaceAction(designer, o)) as GroupAction;
+    }, new GroupAction());
 }

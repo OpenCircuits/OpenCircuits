@@ -6,7 +6,7 @@ import {Multiplexer}     from "../../../../../site/public/ts/models/ioobjects/ot
 
 import {ActionManager}          from "../../../../../site/public/ts/utils/actions/ActionManager";
 import {SelectPortChangeAction} from "../../../../../site/public/ts/utils/actions/ports/SelectPortChangeAction";
-import {CreateGroupPlaceAction} from "../../../../../site/public/ts/utils/actions/addition/GroupPlaceActionFactory";
+import {CreateGroupPlaceAction} from "../../../../../site/public/ts/utils/actions/addition/PlaceAction";
 import {CreateBusAction}        from "../../../../../site/public/ts/utils/actions/addition/BusActionFactory";
 // import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/";
 

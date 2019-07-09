@@ -1,5 +1,3 @@
-import {DEFAULT_SIZE} from "../Constants";
-
 import {Tool} from "./Tool";
 import {TranslateTool} from "./TranslateTool"
 import {SelectionTool} from "./SelectionTool";
@@ -13,8 +11,8 @@ import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
-import {SelectAction} from "../actions/selection/SelectAction";
-import {CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
+import {SelectAction,
+        CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {SplitWireAction} from "../actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
@@ -34,40 +32,22 @@ export class SplitWireTool extends TranslateTool {
 
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        const currentWire = currentTool.getCurrentlyPressedObj();
-        if (!(currentWire instanceof Wire))
+        const wire = currentTool.getCurrentlyPressedObj();
+        if (!(wire instanceof Wire))
             return false;
 
         // Create new wire port
         const wirePort = new WirePort();
         wirePort.setPos(worldMousePos);
-        this.designer.addObject(wirePort);
 
         // Create action
-        this.splitAction = new GroupAction()
+        this.splitAction = new GroupAction();
 
         // Set wireport as selections and being pressed
         this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
+        this.splitAction.add(new SelectAction(currentTool, wirePort).execute());
+        this.splitAction.add(new SplitWireAction(wire.getInput(), wire.getOutput(), wirePort).execute());
         currentTool.setCurrentlyPressedObj(wirePort);
-        currentTool.select(wirePort);
-        this.splitAction.add(new SelectAction(currentTool, wirePort));
-
-        // Store old wire's values and delete it
-        const currentInput  = currentWire.getInput();
-        const currentOutput = currentWire.getOutput();
-        this.designer.removeWire(currentWire);
-
-        // Create two new wires
-        const wire1 = this.designer.createWire(currentInput, wirePort.getInputPort(0));
-        wirePort.activate();
-        const wire2 = this.designer.createWire(wirePort.getOutputPort(0), currentOutput);
-
-        this.splitAction.add(new SplitWireAction(currentInput, wirePort, currentOutput));
-
-        // Set control points:
-        //  c1 corresponds with point 1 and c2 corresponds with point 2
-        wire1.getShape().setC2(wirePort.getInputDir ().scale(DEFAULT_SIZE).add(wirePort.getPos()));
-        wire2.getShape().setC1(wirePort.getOutputDir().scale(DEFAULT_SIZE).add(wirePort.getPos()));
 
         return super.activate(currentTool, event, input, button);
     }

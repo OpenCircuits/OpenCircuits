@@ -13,7 +13,7 @@ import {Camera} from "../../Camera";
 
 import {GroupAction} from "../../actions/GroupAction";
 import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../../actions/selection/SelectActionsFactory";
+        CreateDeselectAllAction} from "../../actions/selection/SelectAction";
 
 import {SelectionTool} from "../SelectionTool";
 

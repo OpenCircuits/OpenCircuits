@@ -7,7 +7,7 @@ import {CopyGroup} from "../utils/ComponentUtils";
 import {GroupAction} from "../utils/actions/GroupAction";
 import {TranslateAction} from "../utils/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../utils/actions/selection/SelectActionsFactory";
+        CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "../utils/actions/deletion/DeleteGroupActionFactory";
 import {CreateAddGroupAction} from "../utils/actions/addition/AddGroupActionFactory";
 import {TransferICDataAction} from "../utils/actions/TransferICDataAction";

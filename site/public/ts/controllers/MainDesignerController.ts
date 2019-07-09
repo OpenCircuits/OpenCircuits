@@ -6,7 +6,7 @@ import {RenderQueue} from "../utils/RenderQueue";
 import {Selectable} from "../utils/Selectable";
 
 import {Action} from "../utils/actions/Action";
-import {CreateDeselectAllAction} from "../utils/actions/selection/SelectActionsFactory";
+import {CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 

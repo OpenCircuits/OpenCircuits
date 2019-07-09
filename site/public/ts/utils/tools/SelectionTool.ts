@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY,
+        ESC_KEY, A_KEY, X_KEY,
         IO_PORT_RADIUS} from "../Constants";
 import {Vector,V} from "../math/Vector";
 import {CircleContains,
@@ -12,6 +12,7 @@ import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {IOObject} from "../../models/ioobjects/IOObject";
 import {Component} from "../../models/ioobjects/Component";
+import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -25,10 +26,10 @@ import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
 import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
-        DeselectAction} from "../actions/selection/SelectAction";
-import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../actions/selection/SelectActionsFactory";
-
+        DeselectAction,
+        CreateGroupSelectAction,
+        CreateDeselectAllAction} from "../actions/selection/SelectAction";
+import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 
 export class SelectionTool extends Tool {
@@ -219,9 +220,17 @@ export class SelectionTool extends Tool {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            const action = CreateDeleteGroupAction(objs);
-            this.action.add(action.execute());
+            this.action.add(CreateDeleteGroupAction(objs).execute());
 
+            return true;
+        }
+        if (key == X_KEY) { // Snip wire port(s)
+            const selections = Array.from(this.selections);
+            const wirePorts = selections.filter((o) => o instanceof WirePort) as Array<WirePort>;
+            if (selections.length != wirePorts.length)
+                return false;
+            this.action.add(CreateDeselectAllAction(this).execute());
+            this.action.add(CreateGroupSnipAction(wirePorts).execute());
             return true;
         }
         if (key == ESC_KEY) {
