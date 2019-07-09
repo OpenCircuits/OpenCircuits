@@ -16,14 +16,14 @@ func main() {
 	router := gin.Default()
 
 	storagePtr := flag.String("interface", "sqlite", "The storage interface")
+	pathPtr := flag.String("dbPath", "circuits.db", "The path to the database file (sqlite only)")
 	flag.Parse()
 
 	var storageInterface interfaces.CircuitStorageInterfaceFactory
 	if *storagePtr == "mem" {
 		storageInterface = &storage.MemCircuitStorageInterfaceFactory{}
 	} else if *storagePtr == "sqlite" {
-		// TODO: support custom db path
-		storageInterface = &storage.SqliteCircuitStorageInterfaceFactory{Path: "circuits.db"}
+		storageInterface = &storage.SqliteCircuitStorageInterfaceFactory{Path: *pathPtr}
 	}
 
 	core.SetCircuitStorageInterfaceFactory(storageInterface)
@@ -45,5 +45,4 @@ func main() {
 	router.Run("127.0.0.1:9090")
 }
 
-// TODO: BLocking: make sure sqlite works; get the 'My Circuits' to show up
-// TODO: Set up command-line switch handling code
+// TODO: BLocking: Simple event-based saving

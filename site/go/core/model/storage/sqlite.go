@@ -36,6 +36,8 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 		panic(err)
 	}
 
+	// TODO: we should check db validity be making sure the "version" of the schema is the one this app is compatible with and then each 'migration' updates the schema version
+
 	// TODO: just make this a .sql file
 	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, designer TEXT NOT NULL, ownerId TEXT, version INT NOT NULL DEFAULT 0)")
 	if err != nil {
