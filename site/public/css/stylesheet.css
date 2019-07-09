@@ -269,6 +269,15 @@ input:checked + .sidenav__content__slider:before {
     transition: 0.3s;
 }
 
+div#my-circuits-list {
+    padding: 10px;
+}
+div#my-circuits-list div.circuit_list_entry {
+    color: #fff;
+    border: 3px solid yellow;
+    padding: 6px;
+}
+
 /*
 
 LOADING SCREEN

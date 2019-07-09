@@ -27,7 +27,7 @@ func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() inte
 	return m.memInterface
 }
 
-func (mem memCircuitStorage) UpdateCircuit(c model.Circuit) {
+func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
 	_, ok := mem.m[c.Metadata.Id]
 	if !ok {
 		panic(errors.New("circuit did not exist for given id"))
@@ -35,11 +35,18 @@ func (mem memCircuitStorage) UpdateCircuit(c model.Circuit) {
 	mem.m[c.Metadata.Id] = c
 }
 
-func (mem memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
-	return nil
+func (mem *memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
+	var ret []model.CircuitMetadata
+	for _,v := range mem.m {
+		// TODO: users can only view their own circuits for now
+		if v.Metadata.Owner == userId {
+			ret = append(ret, v.Metadata)
+		}
+	}
+	return ret
 }
 
-func (mem memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
+func (mem *memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
 	v, ok := mem.m[id]
 	if !ok {
 		return nil
@@ -47,7 +54,7 @@ func (mem memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
 	return &v
 }
 
-func (mem memCircuitStorage) NewCircuit() model.Circuit {
+func (mem *memCircuitStorage) NewCircuit() model.Circuit {
 	var c model.Circuit
 	mem.currentId++
 	c.Metadata.Id = mem.currentId
@@ -55,4 +62,4 @@ func (mem memCircuitStorage) NewCircuit() model.Circuit {
 	return c
 }
 
-func (mem memCircuitStorage) Close() {}
+func (mem *memCircuitStorage) Close() {}

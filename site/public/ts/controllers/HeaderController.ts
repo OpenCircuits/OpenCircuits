@@ -5,6 +5,7 @@ import {Exporter} from "../utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {Circuit} from "../models/Circuit";
+import {CircuitMetadata} from "../models/CircuitMetadata";
 
 export const HeaderController = (() => {
     const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
@@ -14,12 +15,19 @@ export const HeaderController = (() => {
     const downloadDropdownButton = document.getElementById("header-download-dropdown-button");
     const downloadDropdown = document.getElementById("header-download-dropdown-content");
 
+    const savingIndicator = document.getElementById("saving-indicator");
+
+    const newButton = document.getElementById("header-new-button");
     const saveButton = document.getElementById("header-save-button");
     const loadButton = document.getElementById("header-load-button");
     const loadId = <HTMLInputElement>document.getElementById("header-load-id");
     const downloadButton = document.getElementById("header-download-button");
     const downloadPDFButton = document.getElementById("header-download-pdf-button");
     const downloadPNGButton = document.getElementById("header-download-png-button");
+
+    const updateName = (n: string) => { if (n) projectNameInput.value = n; };
+
+    const setSavingState = (s: boolean) => savingIndicator.hidden = !s;
 
     return {
         Init: function(circuit: Circuit): void {
@@ -49,11 +57,6 @@ export const HeaderController = (() => {
                 }
             }
 
-            // TODO: this will only work if its on the promise chain
-            const updateName = function (n: string) {
-                if (n) projectNameInput.value = n;
-            };
-
             projectNameInput.onchange = () => mainCircuit.metadata.setName(projectNameInput.value);
             fileInput.onchange = () => {
                 Importer.loadFile(mainCircuit, fileInput.files[0]);
@@ -62,16 +65,23 @@ export const HeaderController = (() => {
 
             downloadButton.onclick = () => Exporter.saveFile(mainCircuit);
 
-            saveButton.onclick = () => Exporter.pushFile(mainCircuit);
+            newButton.onclick = () => {
+                MainDesignerController.NewCircuit();
+            };
+            saveButton.onclick = () => {
+                MainDesignerController.PushCircuit();
+            };
             loadButton.onclick = () => {
-                Importer.loadRemote(mainCircuit, loadId.value);
-                updateName(mainCircuit.metadata.getName());
+                MainDesignerController.FetchCircuit(loadId.value);
             };
 
             downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 
             downloadPNGButton.onclick = () => Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
-        }
+        },
+        UpdateName: updateName,
+        SavingInProgress: () => setSavingState(true),
+        SavingComplete: () => setSavingState(false),
     }
 
 })();

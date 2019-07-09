@@ -9,35 +9,25 @@ import {XMLReader} from "./xml/XMLReader";
 
 export const Exporter = (() => {
 
-    const parseMetadata = function(doc: XMLDocument, metadata: CircuitMetadata): void {
-        const reader = new XMLReader(doc);
-        metadata.load(reader.getRoot());
-    };
-
     return {
-        pushFile: function(circuit: Circuit) {
+        pushFile: (circuit: Circuit) => new Promise<CircuitMetadata>((resolve, reject) => {
             const data = XMLWriter.fromLable(circuit).serialize();
-
-            let xhr = new XMLHttpRequest();
+            const xhr = new XMLHttpRequest();
 
             if (circuit.metadata.getId() === -1)
                 xhr.open('POST', 'api/circuits');
             else
                 xhr.open('PUT', 'api/circuits/' + circuit.metadata.getId());
             xhr.onload = function() {
-                if (xhr.status === 202) {
-                    console.log(xhr.responseText);
-                    parseMetadata(xhr.responseXML, circuit.metadata);
-                    console.log(circuit.metadata);
-                }
-                else {
-                    alert('Request failed.  Returned status of ' + xhr.status);
-                }
+                if (xhr.status === 202)
+                    resolve(CircuitMetadata.parseXmlDocument(xhr.responseXML));
+                else
+                    reject(xhr.responseText);
             };
             xhr.setRequestHeader('Content-Type', 'application/xml');
             xhr.send(data);
 
-        },
+        }),
         saveFile: function(circuit: Circuit) {
             let filePath = Utils.escapeFileName(circuit.metadata.getName());
             const data = XMLWriter.fromLable(circuit).serialize();

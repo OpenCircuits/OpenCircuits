@@ -15,6 +15,8 @@ import (
 	"os"
 )
 
+// TODO: this is really hacked together...
+
 // User is a retrieved and authenticated user.
 type User struct {
 	Sub           string `json:"sub"`
@@ -74,7 +76,7 @@ func LoginHandler(c *gin.Context) {
 	session.Save()
 	link := getLoginURL(state)
 	// TODO: support redirecting back to current page
-	c.HTML(http.StatusOK, "auth.tmpl", gin.H{"link": link})
+	c.Redirect(http.StatusFound, link)
 }
 
 // TODO: we might want a method like "registerAuthenticatedMethod"

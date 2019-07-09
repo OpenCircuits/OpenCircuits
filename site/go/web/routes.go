@@ -14,6 +14,8 @@ func RegisterPages(router* gin.Engine) {
 	router.StaticFile("/Bundle.js", "./Bundle.js")
 
 	router.GET("/", IndexHandler)
+
+	// TODO: separate the auth handlers from the core auth module
 	router.GET("/auth", auth.RedirectHandler)
 	router.GET("/login", auth.LoginHandler)
 }

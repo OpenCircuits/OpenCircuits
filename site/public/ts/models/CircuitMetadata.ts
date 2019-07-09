@@ -1,5 +1,6 @@
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
+import {XMLReader} from "../utils/io/xml/XMLReader";
 
 export class CircuitMetadata implements XMLable {
     //
@@ -14,6 +15,23 @@ export class CircuitMetadata implements XMLable {
     id: number = -1;
     // The user id of the owner of the file
     owner: string = '';
+
+    public static parseXmlDocument = function(doc: XMLDocument): CircuitMetadata {
+        const m = new CircuitMetadata();
+        m.load((new XMLReader(doc)).getRoot());
+        return m;
+    };
+
+    // TODO (KevinMackenzie) We should make our XML serialization more flexible so we don't
+    // need two different functions
+    public static parseMultipleXmlDocument = function(doc: XMLDocument): CircuitMetadata[] {
+        const reader = new XMLReader(doc);
+        return reader.getRoot().getChildren().map((value) => {
+            const m = new CircuitMetadata();
+            m.load(value);
+            return m
+        });
+    };
 
     public save(node: XMLNode): void {
         node.addAttribute('id', this.id);

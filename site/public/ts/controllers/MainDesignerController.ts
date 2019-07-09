@@ -21,6 +21,11 @@ import {Component} from "../models/ioobjects/Component";
 import {Port} from "../models/ports/Port";
 import {SelectionPopupController} from "./SelectionPopupController";
 import {Circuit} from "../models/Circuit";
+import {Importer} from "../utils/io/Importer";
+import {SideNavController} from "./SideNavController";
+import {HeaderController} from "./HeaderController";
+import {CircuitMetadata} from "../models/CircuitMetadata";
+import {Exporter} from "../utils/io/Exporter";
 
 export const MainDesignerController = (() => {
     let circuit: Circuit;
@@ -161,6 +166,39 @@ export const MainDesignerController = (() => {
         },
         GetCircuit: function(): Circuit {
             return circuit;
+        },
+        FetchCircuit: function(id: string): Promise<Circuit> {
+            return Importer.loadRemote(circuit, id)
+                .then((metadata) => {
+                    HeaderController.UpdateName(metadata.getName());
+                })
+                .catch((reason) => {
+                    alert("Failed to pull circuit from server: " + reason);
+                })
+                .then(() => {
+                    return circuit;
+                });
+        },
+        PushCircuit: function(): Promise<CircuitMetadata> {
+            HeaderController.SavingInProgress();
+            return Exporter.pushFile(circuit)
+                .then(() => {
+                    HeaderController.SavingComplete();
+                })
+                .catch((reason) => {
+                    alert("Failed to push circuit to server: " + reason);
+                    return null;
+                });
+        },
+        NewCircuit: function() {
+            HeaderController.SavingInProgress();
+            Exporter.pushFile(circuit).then(() => {
+                HeaderController.UpdateName("Untitled Circuit*");
+                circuit.metadata = new CircuitMetadata();
+                circuit.designer.reset();
+                renderQueue.render();
+                HeaderController.SavingComplete();
+            });
         }
     };
 })();

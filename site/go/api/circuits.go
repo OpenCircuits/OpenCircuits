@@ -132,6 +132,11 @@ func CircuitLoadHandler(c *gin.Context) {
 	c.XML(http.StatusOK, circuit)
 }
 
+// XML is killing me
+type metadataList struct {
+	Metadata []model.CircuitMetadata `xml:"metadata"`
+}
+
 func CircuitQueryHandler(c *gin.Context) {
 	userId, err := authorizeRequest(c)
 	if err != nil {
@@ -141,5 +146,8 @@ func CircuitQueryHandler(c *gin.Context) {
 
 	storageInterface := core.GetCircuitStorageInterfaceFactory().CreateCircuitStorageInterface()
 	circuits := storageInterface.EnumerateCircuits(userId)
-	c.XML(http.StatusOK, circuits)
+	if circuits == nil {
+		circuits = []model.CircuitMetadata{}
+	}
+	c.XML(http.StatusOK, metadataList{Metadata: circuits})
 }

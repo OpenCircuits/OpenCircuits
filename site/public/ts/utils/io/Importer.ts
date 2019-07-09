@@ -1,18 +1,17 @@
 import {XMLReader} from "./xml/XMLReader";
-import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Circuit} from "../../models/Circuit";
+import {CircuitMetadata} from "../../models/CircuitMetadata";
 
 export const Importer = (() => {
 
-    const readString = function(circuit: Circuit, file: string): void {
+    const readString = function (circuit: Circuit, file: string): void {
         const root = <XMLDocument>new DOMParser().parseFromString(file, "text/xml");
         if (root.documentElement.nodeName == "parsererror")
             return;
         readDocument(circuit, root);
     };
 
-    const readDocument = function(circuit: Circuit, doc: XMLDocument): void {
+    const readDocument = function (circuit: Circuit, doc: XMLDocument): void {
         const reader = new XMLReader(doc);
 
         // TODO: resolve this...
@@ -24,29 +23,42 @@ export const Importer = (() => {
     };
 
     return {
-        loadRemote: function(circuit: Circuit, id: string): void {
+        // TODO (KevinMackenzie): We should reconsider how we organize the interface with the server
+        loadCircuitList: () => new Promise<CircuitMetadata[]>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'api/circuits');
+            xhr.onload = () => {
+                if (xhr.status == 200) {
+                    resolve(CircuitMetadata.parseMultipleXmlDocument(xhr.responseXML));
+                } else {
+                    reject(xhr.responseText);
+                }
+            };
+            xhr.send();
+        }),
+        loadRemote: function (circuit: Circuit, id: string): Promise<CircuitMetadata> {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             let open = confirm("Are you sure you want to overwrite your current scene?");
 
             if (open) {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', 'api/circuits/' + escape(id));
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        alert('Success');
-                        const uc = xhr.responseXML;
-                        console.log(uc);
-                        readDocument(circuit, xhr.responseXML);
-                    }
-                    else {
-                        alert('Request failed.  Returned status of ' + xhr.status);
-                    }
-                };
-                xhr.send();
+                return new Promise((resolve, reject) => {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'api/circuits/' + escape(id));
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            readDocument(circuit, xhr.responseXML);
+                            resolve(circuit.metadata);
+                        } else {
+                            reject(xhr.responseText);
+                        }
+                    };
+                    xhr.send();
+                })
             }
+            return Promise.resolve(undefined);
         },
-        loadFile: function(circuit: Circuit, file: File): void {
+        loadFile: function (circuit: Circuit, file: File): void {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             const open = confirm("Are you sure you want to overwrite your current scene?");

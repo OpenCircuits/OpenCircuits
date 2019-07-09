@@ -48,12 +48,5 @@ func IndexHandler(c *gin.Context) {
 	userId := session.Get("user-id")
 	loggedIn := userId != nil
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId})
-}
-
-func LoadCircuitHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userId := session.Get("user-id")
-
-	c.HTML(http.StatusOK, "loadcircuit.tmpl", gin.H{"email": userId})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "login_link": "/login"})
 }

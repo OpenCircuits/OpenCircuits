@@ -34,5 +34,5 @@ func main() {
 	router.Run("127.0.0.1:9090")
 }
 
-// TODO: Make authentication more abstract
+// TODO: BLocking: make sure sqlite works; get the 'My Circuits' to show up
 // TODO: Set up command-line switch handling code

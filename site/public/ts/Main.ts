@@ -49,10 +49,7 @@ function Init(): void {
             ItemNavController.Init();
             resolve(1);
         }),
-        new Promise((resolve, _) => {
-            SideNavController.Init();
-            resolve(1);
-        })
+        SideNavController.Init()
     ];
 
     Promise.all(promises).then(() => {

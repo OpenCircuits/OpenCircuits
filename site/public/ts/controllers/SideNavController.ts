@@ -1,7 +1,7 @@
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
-import {promises} from "fs";
-import {Exporter} from "../utils/io/Exporter";
+import {Importer} from "../utils/io/Importer";
+import {SideNavCircuitListView} from "../views/SideNavCircuitListView";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -42,7 +42,7 @@ export const SideNavController = (() => {
     }
 
     return {
-        Init: function(): void {
+        Init: function(): Promise<any> {
             isOpen = false;
 
             tab.onclick = () => { SideNavController.Toggle(); };
@@ -50,6 +50,14 @@ export const SideNavController = (() => {
             sidenavModeCheckbox.onchange = () => { toggleEditMode() };
 
             overlay.onclick = () => { SideNavController.Toggle(); };
+
+            return Importer.loadCircuitList()
+                .then((metadatas) => {
+                    SideNavCircuitListView.PopulateList(metadatas);
+                })
+                .catch((reason) => {
+                    console.log(reason); // this is most likely because the user isn't logged in
+                });
         },
         Toggle: function(): void {
             if (disabled)
