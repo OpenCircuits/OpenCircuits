@@ -91,6 +91,9 @@ export class Wire extends CullableObject {
     public isStraight(): boolean {
         return this.straight;
     }
+    public setIsStraight(straight: boolean): void {
+        this.straight = straight;
+    }
 
     public getMinPos(): Vector {
         return this.getShape().getBoundingBox().getBottomLeft().sub(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
@@ -103,8 +106,9 @@ export class Wire extends CullableObject {
     public save(node: XMLNode): void {
         super.save(node);
 
-        // save state
+        // save state and properties
         node.addAttribute("on", this.isOn);
+        node.addAttribute("straight", this.straight);
 
         // write curve
         const curveNode = node.createChild("curve");
@@ -117,9 +121,10 @@ export class Wire extends CullableObject {
     public load(node: XMLNode): void {
         super.load(node);
 
-        // load state
+        // load state and properties
         this.activate(node.getBooleanAttribute("on"));
         this.input.activate(this.isOn);
+        this.straight = node.getBooleanAttribute("straight");
 
         // load curve
         const curveNode = node.findChild("curve");
