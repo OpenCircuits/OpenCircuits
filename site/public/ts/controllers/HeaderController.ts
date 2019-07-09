@@ -59,7 +59,7 @@ export const HeaderController = (() => {
 
             projectNameInput.onchange = () => mainCircuit.metadata.setName(projectNameInput.value);
             fileInput.onchange = () => {
-                Importer.loadFile(mainCircuit, fileInput.files[0]);
+                Importer.LoadCircuitFromFile(mainCircuit, fileInput.files[0]);
                 updateName(mainCircuit.metadata.getName());
             };
 

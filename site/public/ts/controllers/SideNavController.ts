@@ -2,6 +2,7 @@ import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {Importer} from "../utils/io/Importer";
 import {SideNavCircuitListView} from "../views/SideNavCircuitListView";
+import {RemoteCircuitController} from "./RemoteCircuitController";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -51,7 +52,7 @@ export const SideNavController = (() => {
 
             overlay.onclick = () => { SideNavController.Toggle(); };
 
-            return Importer.loadCircuitList()
+            return RemoteCircuitController.LoadCircuitList()
                 .then((metadatas) => {
                     SideNavCircuitListView.PopulateList(metadatas);
                 })

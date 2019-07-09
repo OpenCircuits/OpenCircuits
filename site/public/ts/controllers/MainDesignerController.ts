@@ -26,6 +26,7 @@ import {SideNavController} from "./SideNavController";
 import {HeaderController} from "./HeaderController";
 import {CircuitMetadata} from "../models/CircuitMetadata";
 import {Exporter} from "../utils/io/Exporter";
+import {RemoteCircuitController} from "./RemoteCircuitController";
 
 export const MainDesignerController = (() => {
     let circuit: Circuit;
@@ -100,6 +101,21 @@ export const MainDesignerController = (() => {
             circuit.designer = new CircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
 
+            // This could be better
+            let defaultInterval = 5000;
+            let interval = defaultInterval;
+            setTimeout(function update() {
+                MainDesignerController.PushCircuit()
+                    .then(() => {
+                        setTimeout(update, interval = defaultInterval);
+                    })
+                    .catch((reason) => {
+                        console.log(reason);
+                        // Use exponential backoff
+                        setTimeout(update, interval *= 1.3);
+                    });
+            }, interval);
+
             // utils
             toolManager = new ToolManager(view.getCamera(), circuit.designer);
             renderQueue = new RenderQueue(() =>
@@ -168,7 +184,7 @@ export const MainDesignerController = (() => {
             return circuit;
         },
         FetchCircuit: function(id: string): Promise<Circuit> {
-            return Importer.loadRemote(circuit, id)
+            return RemoteCircuitController.LoadCircuit(circuit, id)
                 .then((metadata) => {
                     HeaderController.UpdateName(metadata.getName());
                 })
@@ -179,25 +195,23 @@ export const MainDesignerController = (() => {
                     return circuit;
                 });
         },
-        PushCircuit: function(): Promise<CircuitMetadata> {
+        PushCircuit: function(): Promise<any> {
+            // TODO: streamline and expand in-progress and other status indicators
             HeaderController.SavingInProgress();
-            return Exporter.pushFile(circuit)
-                .then(() => {
-                    HeaderController.SavingComplete();
-                })
+            return RemoteCircuitController.PushCircuit(circuit)
                 .catch((reason) => {
                     alert("Failed to push circuit to server: " + reason);
-                    return null;
+                })
+                .then(() => {
+                    HeaderController.SavingComplete();
                 });
         },
         NewCircuit: function() {
-            HeaderController.SavingInProgress();
-            Exporter.pushFile(circuit).then(() => {
+            MainDesignerController.PushCircuit().then(() => {
                 HeaderController.UpdateName("Untitled Circuit*");
                 circuit.metadata = new CircuitMetadata();
                 circuit.designer.reset();
                 renderQueue.render();
-                HeaderController.SavingComplete();
             });
         }
     };

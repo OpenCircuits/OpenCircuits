@@ -4,30 +4,10 @@ declare var jsPDF: any; // jsPDF is external library
 
 import {XMLWriter} from "./xml/XMLWriter";
 import {Circuit} from "../../models/Circuit";
-import {CircuitMetadata} from "../../models/CircuitMetadata";
-import {XMLReader} from "./xml/XMLReader";
 
 export const Exporter = (() => {
 
     return {
-        pushFile: (circuit: Circuit) => new Promise<CircuitMetadata>((resolve, reject) => {
-            const data = XMLWriter.fromLable(circuit).serialize();
-            const xhr = new XMLHttpRequest();
-
-            if (circuit.metadata.getId() === -1)
-                xhr.open('POST', 'api/circuits');
-            else
-                xhr.open('PUT', 'api/circuits/' + circuit.metadata.getId());
-            xhr.onload = function() {
-                if (xhr.status === 202)
-                    resolve(CircuitMetadata.parseXmlDocument(xhr.responseXML));
-                else
-                    reject(xhr.responseText);
-            };
-            xhr.setRequestHeader('Content-Type', 'application/xml');
-            xhr.send(data);
-
-        }),
         saveFile: function(circuit: Circuit) {
             let filePath = Utils.escapeFileName(circuit.metadata.getName());
             const data = XMLWriter.fromLable(circuit).serialize();
