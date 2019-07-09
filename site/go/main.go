@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
@@ -13,9 +15,18 @@ import (
 func main() {
 	router := gin.Default()
 
-	// TODO: use switches for which storage factory to instantiate
-	f := storage.MemCircuitStorageInterfaceFactory{}
-	core.SetCircuitStorageInterfaceFactory(&f)
+	storagePtr := flag.String("interface", "sqlite", "The storage interface")
+	flag.Parse()
+
+	var storageInterface interfaces.CircuitStorageInterfaceFactory
+	if *storagePtr == "mem" {
+		storageInterface = &storage.MemCircuitStorageInterfaceFactory{}
+	} else if *storagePtr == "sqlite" {
+		// TODO: support custom db path
+		storageInterface = &storage.SqliteCircuitStorageInterfaceFactory{Path: "circuits.db"}
+	}
+
+	core.SetCircuitStorageInterfaceFactory(storageInterface)
 
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
