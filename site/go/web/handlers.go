@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -44,9 +43,5 @@ func init() {
 }
 
 func IndexHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userId := session.Get("user-id")
-	loggedIn := userId != nil
-
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "login_link": "/login"})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "userId": ""})
 }
