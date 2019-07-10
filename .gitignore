@@ -15,6 +15,3 @@ package-lock.json
 
 # IntelliJ
 .idea/
-
-# Secrets
-site/secrets/
