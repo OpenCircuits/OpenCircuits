@@ -20,8 +20,13 @@
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "build:prod": "webpack --mode=production",
     "build": "webpack --mode=development",
+    "build:go": "go build -o ./build/server ./site/go",
+    "build:prod": "webpack --mode=production",
+    "build:docker": "docker build -t opencircuits/opencircuits .",
+    "start": "cd ./build && ./server",
+    "start:docker": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
+    "stop:docker": "docker container stop opencircuits && docker container rm opencircuits",
     "test": "jest --runInBand"
   },
   "dependencies": {
