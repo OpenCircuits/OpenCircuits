@@ -13,5 +13,5 @@ func main() {
 
 	web.RegisterPages(router)
 
-	router.Run("127.0.0.1:9090")
+	router.Run("127.0.0.1:8080")
 }
