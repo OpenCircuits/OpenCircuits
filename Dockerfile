@@ -13,12 +13,13 @@ COPY ./ /www
 RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 
 # Install dependencies
-RUN apt-get update && apt-get install -y php php-sqlite3
+RUN apt-get update && apt-get install -y golang
 RUN npm install
 RUN npm run build
+RUN npm run build:go
 
 # Change work directory for running php
-WORKDIR /www/build
+#WORKDIR /www/build
 
 # Command to run at start of container
-CMD php -S 0.0.0.0:8080
+CMD npm start
