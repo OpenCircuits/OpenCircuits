@@ -22,6 +22,8 @@
   "scripts": {
     "build:prod": "webpack --mode=production",
     "build": "webpack --mode=development",
+    "build:go": "go build -o ./build/server ./site/go",
+    "start": "cd ./build && ./server",
     "test": "jest --runInBand"
   },
   "dependencies": {
