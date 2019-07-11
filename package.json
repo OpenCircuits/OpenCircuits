@@ -33,6 +33,7 @@
     "start": "cd ./build && ./server",
     "start:docker": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
     "stop:docker": "docker container stop opencircuits && docker container rm opencircuits",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "lint": "eslint --ext .ts ./site/public/ts"
   }
 }
