@@ -69,7 +69,7 @@ export const Exporter = (() => {
             const height = canvas.height;
 
             const data = canvas.toDataURL("image/png", 1.0);
-            const pdf = new jsPDF("l", "px", <any>[width, height]);
+            const pdf = new jsPDF("l", "px", [width, height]);
 
             // Get name
             if (projectName.replace(/\s+/g, '') === "")
