@@ -12,6 +12,7 @@ import {CircuitDesigner} from "../models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
+import {Tool} from "../utils/tools/Tool";
 import {ToolManager} from "../utils/tools/ToolManager";
 import {SelectionTool} from "../utils/tools/SelectionTool";
 import {TranslateTool} from "../utils/tools/TranslateTool";
@@ -24,6 +25,8 @@ import {SelectionPopupController} from "./SelectionPopupController";
 
 
 export const MainDesignerController = (() => {
+    let active = true;
+
     let designer: CircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
@@ -104,14 +107,14 @@ export const MainDesignerController = (() => {
 
             // input
             input = new Input(view.getCanvas());
-            input.addListener("click",     (b) => onClick(b));
-            input.addListener("mousedown", (b) => onMouseDown(b));
-            input.addListener("mousedrag", (b) => onMouseDrag(b));
-            input.addListener("mousemove", ( ) => onMouseMove());
-            input.addListener("mouseup",   (b) => onMouseUp(b));
-            input.addListener("keydown",   (b) => onKeyDown(b));
-            input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("zoom",    (z,c) => onZoom(z,c));
+            input.addListener("click",     (b) => !active || onClick(b));
+            input.addListener("mousedown", (b) => !active || onMouseDown(b));
+            input.addListener("mousedrag", (b) => !active || onMouseDrag(b));
+            input.addListener("mousemove", ( ) => !active || onMouseMove());
+            input.addListener("mouseup",   (b) => !active || onMouseUp(b));
+            input.addListener("keydown",   (b) => !active || onKeyDown(b));
+            input.addListener("keyup",     (b) => !active || onKeyUp(b));
+            input.addListener("zoom",    (z,c) => !active || onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
 
@@ -128,6 +131,9 @@ export const MainDesignerController = (() => {
         },
         AddAction: function(action: Action): void {
             toolManager.addAction(action);
+        },
+        SetActive: function(on: boolean): void {
+            active = on;
         },
         SetEditMode: function(val: boolean): void {
             // Disable some tools
@@ -146,6 +152,9 @@ export const MainDesignerController = (() => {
         GetSelections: function(): Array<Selectable> {
             return toolManager.getSelectionTool().getSelections();
         },
+        GetCurrentTool: function(): Tool {
+            return toolManager.getCurrentTool();
+        },
         GetSelectionTool: function(): SelectionTool {
             return toolManager.getSelectionTool();
         },
@@ -157,6 +166,9 @@ export const MainDesignerController = (() => {
         },
         GetDesigner: function(): CircuitDesigner {
             return designer;
+        },
+        IsActive: function(): boolean {
+            return active;
         }
     };
 })();
