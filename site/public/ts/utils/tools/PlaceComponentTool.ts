@@ -23,11 +23,11 @@ export class PlaceComponentTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(): boolean {
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public deactivate(event: string): boolean {
         return (event == "onclick");
     }
 
@@ -46,7 +46,7 @@ export class PlaceComponentTool extends Tool {
         return true;
     }
 
-    public onClick(input: Input, button: number): boolean {
+    public onClick(): boolean {
         // Place object
         this.designer.addObject(this.component);
 

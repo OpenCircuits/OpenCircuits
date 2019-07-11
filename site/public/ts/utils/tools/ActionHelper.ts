@@ -6,7 +6,7 @@ import {ActionManager} from "../actions/ActionManager";
 
 export class ActionHelper {
     private disabled: boolean;
-    private actionManager : ActionManager;
+    private actionManager: ActionManager;
 
     public constructor(actionManager: ActionManager) {
         this.disabled = false;
