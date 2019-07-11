@@ -29,6 +29,8 @@ import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";
 
 export const ICDesignerController = (() => {
+    let visible = false;
+
     let designer: CircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
@@ -232,14 +234,14 @@ export const ICDesignerController = (() => {
 
             // input
             input = new Input(view.getCanvas());
-            input.addListener("click",     (b) => onClick(b));
-            input.addListener("mousedown", (b) => onMouseDown(b));
-            input.addListener("mousedrag", (b) => onMouseDrag(b));
-            input.addListener("mousemove", ( ) => onMouseMove());
-            input.addListener("mouseup",   (b) => onMouseUp(b));
-            input.addListener("keydown",   (b) => onKeyDown(b));
-            input.addListener("keyup",     (b) => onKeyUp(b));
-            input.addListener("zoom",    (z,c) => onZoom(z,c));
+            input.addListener("click",     (b) => !visible || onClick(b));
+            input.addListener("mousedown", (b) => !visible || onMouseDown(b));
+            input.addListener("mousedrag", (b) => !visible || onMouseDrag(b));
+            input.addListener("mousemove", ( ) => !visible || onMouseMove());
+            input.addListener("mouseup",   (b) => !visible || onMouseUp(b));
+            input.addListener("keydown",   (b) => !visible || onKeyDown(b));
+            input.addListener("keyup",     (b) => !visible || onKeyUp(b));
+            input.addListener("zoom",    (z,c) => !visible || onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
         },
@@ -247,6 +249,8 @@ export const ICDesignerController = (() => {
             renderQueue.render();
         },
         Show: function(objs: Array<IOObject>): void {
+            visible = true;
+
             // Create ICData and instance of the IC
             icdata = ICData.Create(objs);
             ic = new IC(icdata);
@@ -265,10 +269,17 @@ export const ICDesignerController = (() => {
 
             // Render
             ICDesignerController.Render();
+            MainDesignerController.SetActive(false);
         },
         Hide: function(): void {
+            visible = false;
+
             view.hide();
             ItemNavController.Enable();
+            MainDesignerController.SetActive(true);
+        },
+        IsVisible: function(): boolean {
+            return visible;
         }
     };
 })();
