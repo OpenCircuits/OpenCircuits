@@ -25,8 +25,8 @@ export const Images = (() => {
         Load: function(onFinishLoading: () => void): void {
             const promises =
                 IMAGE_FILE_NAMES.map((name) =>
-                    new Promise((resolve, _) => loadImage(name, resolve)
-                ));
+                    new Promise((resolve, _) => loadImage(name, resolve))
+                );
 
             Promise.all(promises).then(() => {
                 onFinishLoading();
