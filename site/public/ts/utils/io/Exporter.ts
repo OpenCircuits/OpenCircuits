@@ -1,4 +1,4 @@
-declare var jsPDF: any; // jsPDF is external library
+import jsPDF from "jspdf";
 
 import {XMLWriter} from "./xml/XMLWriter";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
