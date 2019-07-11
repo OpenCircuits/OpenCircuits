@@ -36,7 +36,7 @@ export const SevenSegmentDisplayRenderer = (() => {
                 const on  = display.getInputPort(Math.floor(i / 2)).getIsOn();
 
                 const imgNum = (dir.x == 1 ? (on ? "3" : "1") :
-                                           (on ? "4" : "2"));
+                                             (on ? "4" : "2"));
                 const img = "segment" + imgNum + ".svg";
 
                 const w = 35;

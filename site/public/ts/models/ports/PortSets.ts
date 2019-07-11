@@ -19,7 +19,7 @@ class PortSet<T extends Port> {
     private positioner: Positioner<T>;
 
     public constructor(parent: Component, type: new(c: Component) => T,
-                        count: ClampedValue, positioner: Positioner<T> = new Positioner<T>()) {
+                       count: ClampedValue, positioner: Positioner<T> = new Positioner<T>()) {
         this.parent = parent;
         this.type = type;
         this.count = count;

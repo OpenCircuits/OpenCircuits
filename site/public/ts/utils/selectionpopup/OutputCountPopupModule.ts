@@ -19,8 +19,8 @@ export class OutputCountPopupModule extends SelectionPopupModule {
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
         const encoders = selections
-              .filter(o => o instanceof Encoder)
-              .map(o => o as Encoder);
+                .filter(o => o instanceof Encoder)
+                .map(o => o as Encoder);
 
         const enable = selections.length == encoders.length && selections.length > 0;
 

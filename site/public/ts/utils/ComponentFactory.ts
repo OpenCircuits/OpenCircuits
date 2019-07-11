@@ -39,11 +39,11 @@ const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
 const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, Label, WirePort];
 
-const XML_COMPONENTS = new Map<string, any>();
-const XML_NAMES = new Map<any, string>();
+const XML_COMPONENTS = new Map<string, new (...args: unknown[]) => Component>();
+const XML_NAMES = new Map<new (...args: unknown[]) => Component, string>();
 
 // Helper to add a bunch of types to the COMPONENTS map
-function addXMLTypes(types: Array<any>): Array<string> {
+function addXMLTypes(types: Array<new () => Component>): Array<string> {
     const arr = [];
     for (const type of types) {
         const name = new type().getXMLName();
@@ -71,12 +71,12 @@ const XML_OTHER     = addXMLTypes(OTHER);
 export function CreateComponentFromXML(tag: string, not: boolean = false): Component {
     if (XML_COMPONENTS.has(tag)) {
         const type = XML_COMPONENTS.get(tag);
-        return <Component>(new type(not));
+        return new type(not);
     }
     return undefined;
 }
 
-export function GetXMLName(type: any): string {
+export function GetXMLName(type: new (...args: unknown[]) => Component): string {
     return XML_NAMES.get(type);
 }
 

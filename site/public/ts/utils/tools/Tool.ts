@@ -36,31 +36,31 @@ export abstract class Tool implements MouseListener, KeyboardListener {
         this.disabled = val;
     }
 
-    public onMouseDown(input: Input, button: number): boolean {
+    public onMouseDown(_input: Input, _button: number): boolean {
         return false;
     }
 
-    public onMouseMove(input: Input): boolean {
+    public onMouseMove(_input: Input): boolean {
         return false;
     }
 
-    public onMouseDrag(input: Input, button: number): boolean {
+    public onMouseDrag(_input: Input, _button: number): boolean {
         return false;
     }
 
-    public onMouseUp(input: Input, button: number): boolean {
+    public onMouseUp(_input: Input, _button: number): boolean {
         return false;
     }
 
-    public onClick(input: Input, button: number): boolean {
+    public onClick(_input: Input, _button: number): boolean {
         return false;
     }
 
-    public onKeyDown(input: Input, key: number): boolean {
+    public onKeyDown(_input: Input, _key: number): boolean {
         return false;
     }
 
-    public onKeyUp(input: Input, key: number): boolean {
+    public onKeyUp(_input: Input, _key: number): boolean {
         return false;
     }
 

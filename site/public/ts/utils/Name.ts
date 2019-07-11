@@ -10,7 +10,7 @@ export class Name {
      * Constructor for Name
      * @param name The initial name
      */
-    constructor(name: string) {
+    public constructor(name: string) {
         this.name = name;
         this.set = false;
     }
