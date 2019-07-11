@@ -11,6 +11,7 @@ func RegisterPages(router* gin.Engine) {
 	router.Static("/img", "./img")
 	router.Static("/ts", "./ts")
 	router.StaticFile("/Bundle.js", "./Bundle.js")
+	router.StaticFile("/Bundle.js.map", "./Bundle.js.map")
 
 	router.GET("/", IndexHandler)
 }
