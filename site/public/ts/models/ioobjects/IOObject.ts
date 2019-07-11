@@ -32,7 +32,7 @@ export abstract class IOObject implements Selectable, XMLable {
     }
 
     public copy(): IOObject {
-        const copy: IOObject = new (<any>this.constructor)();
+        const copy = new (<new () => IOObject>this.constructor)();
         copy.name = new Name(this.name.getName());
         return copy;
     }
