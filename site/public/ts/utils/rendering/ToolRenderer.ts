@@ -51,7 +51,7 @@ export const ToolRenderer = (() => {
             const hasWire = selections.some((o) => o instanceof Wire);
 
             if (tool instanceof SelectionTool) {
-                 const selectionBox = tool.getSelectionBox();
+                const selectionBox = tool.getSelectionBox();
 
                 // Draw selection box
                 if (selectionBox.isSelecting()) {

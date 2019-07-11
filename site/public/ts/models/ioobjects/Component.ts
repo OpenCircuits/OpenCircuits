@@ -25,7 +25,7 @@ export abstract class Component extends CullableObject {
     protected transform: Transform;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
-                            inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+                          inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super();
 
         this.transform = new Transform(V(0,0), size, 0);
@@ -49,7 +49,7 @@ export abstract class Component extends CullableObject {
         this.outputs.get(i).activate(signal);
     }
 
-    public connect(i: number, w: Wire) : void {
+    public connect(i: number, w: Wire): void {
         this.outputs.get(i).connect(w);
     }
 

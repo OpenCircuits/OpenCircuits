@@ -9,7 +9,7 @@ export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-                new MuxPositioner<InputPort>());
+              new MuxPositioner<InputPort>());
     }
 
     /**

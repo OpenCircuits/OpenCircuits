@@ -16,11 +16,11 @@ export class JKFlipFlop extends FlipFlop {
 
     // @Override
     public activate(): void {
-        this.last_clock = this.clock;
+        this.lastClock = this.clock;
         this.clock  = this.inputs.get(1).getIsOn();
         const set   = this.inputs.get(0).getIsOn();
         const reset = this.inputs.get(2).getIsOn();
-        if (this.clock && !this.last_clock) {
+        if (this.clock && !this.lastClock) {
             if (set && reset) {
                 this.state = !this.state;
             } else if (set) {

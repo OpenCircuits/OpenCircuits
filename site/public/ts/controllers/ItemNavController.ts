@@ -37,7 +37,7 @@ export const ItemNavController = (() => {
                 const xmlId = child.dataset.xmlid;
                 const not = child.dataset.not == 'true';
 
-                const onClick = () => {
+                const onClick = (): void => {
                     place(CreateComponentFromXML(xmlId, not), false);
 
                     // Unfocus element
@@ -45,7 +45,7 @@ export const ItemNavController = (() => {
                         child.blur();
                 }
 
-                const onDragEnd = (p: Vector) => {
+                const onDragEnd = (p: Vector): void => {
                     if (!(child instanceof HTMLButtonElement))
                         return;
 

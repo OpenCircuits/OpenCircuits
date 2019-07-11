@@ -14,7 +14,7 @@ import {Component} from "../Component";
 export abstract class FlipFlop extends Component {
     protected clock: boolean = false;
     protected state: boolean = false;
-    protected last_clock: boolean = false;
+    protected lastClock: boolean = false;
 
     public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs), new ClampedValue(2), size, inputPositioner);

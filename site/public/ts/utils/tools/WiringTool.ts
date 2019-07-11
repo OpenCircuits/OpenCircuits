@@ -1,5 +1,4 @@
-import {IO_PORT_RADIUS,
-        IO_PORT_SELECT_RADIUS} from "../Constants";
+import {IO_PORT_SELECT_RADIUS} from "../Constants";
 import {Tool} from "./Tool";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Port} from "../../models/ports/Port";
@@ -51,7 +50,7 @@ export class WiringTool extends Tool {
 
         // Find a port that was clicked
         const p = objects.reduce((acc, o) => acc = acc.concat(o.getPorts()), [])
-                    .find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos));
+                .find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos));
         if (!p)
             return false;
 

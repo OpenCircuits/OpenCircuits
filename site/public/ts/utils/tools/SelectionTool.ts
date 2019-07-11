@@ -193,7 +193,7 @@ export class SelectionTool extends Tool {
 
         // Check if a port was clicked
         if (objects.some((o) => o.getPorts().some(
-                (p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))))
+            (p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))))
             return false;
 
         // Check if a wire was clicked then select it

@@ -14,7 +14,9 @@ install:
     npm install
 
 script:
+    - npm run build
     - npm run test
+    - npm run lint
 
 notifications:
   email: false

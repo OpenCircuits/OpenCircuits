@@ -100,9 +100,8 @@ export class Input {
     private calculateCenter(touchList: TouchList): Vector {
         // Calculate midpoint of all touches
         const touches = Array.from(touchList);
-        return touches.reduce((sum, touch) =>
-                    sum.add(V(touch.clientX, touch.clientY)), V(0,0))
-                    .scale(1.0 / touches.length);
+        return touches.reduce((sum, touch) => sum.add(V(touch.clientX, touch.clientY)),
+                              V(0,0)).scale(1.0 / touches.length);
     }
 
     public addListener(type: string, listener: (a?: number, b?: Vector) => void): void {
