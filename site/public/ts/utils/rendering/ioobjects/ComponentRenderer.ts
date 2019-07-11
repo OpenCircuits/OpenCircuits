@@ -32,7 +32,6 @@ import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmen
 import {IC} from "../../../models/ioobjects/other/IC";
 
 import {Images} from "../../Images";
-import {Port} from "../../../models/ports/Port";
 
 import {Rectangle} from "../shapes/Rectangle";
 import {Style} from "../Style";

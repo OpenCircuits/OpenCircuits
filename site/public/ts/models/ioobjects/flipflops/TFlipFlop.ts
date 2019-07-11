@@ -11,10 +11,10 @@ export class TFlipFlop extends FlipFlop {
 
     // @Override
     public activate(): void {
-        this.last_clock = this.clock;
+        this.lastClock = this.clock;
         this.clock   = this.inputs.get(0).getIsOn();
         const toggle = this.inputs.get(1).getIsOn();
-        if (this.clock && !this.last_clock && toggle)
+        if (this.clock && !this.lastClock && toggle)
             this.state = !this.state;
 
         super.activate(this.state, 0);

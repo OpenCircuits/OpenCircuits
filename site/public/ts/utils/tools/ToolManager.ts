@@ -21,17 +21,17 @@ import {ActionManager} from "../actions/ActionManager";
 
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances
-    private selectionTool       : SelectionTool;
-    private panTool             : PanTool;
-    private rotateTool          : RotateTool;
-    private translateTool       : TranslateTool;
-    private placeComponentTool  : PlaceComponentTool;
-    private wiringTool          : WiringTool;
-    private splitWireTool       : SplitWireTool;
+    private selectionTool:      SelectionTool;
+    private panTool:            PanTool;
+    private rotateTool:         RotateTool;
+    private translateTool:      TranslateTool;
+    private placeComponentTool: PlaceComponentTool;
+    private wiringTool:         WiringTool;
+    private splitWireTool:      SplitWireTool;
 
-    private actionHelper        : ActionHelper;
+    private actionHelper: ActionHelper;
 
-    private actionManager : ActionManager;
+    private actionManager: ActionManager;
 
     private tools: Array<Tool>;
 
@@ -68,7 +68,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.currentTool = tool;
     }
 
-    private onEvent(method: (i:Input,b?:number) => boolean, event: string, input: Input, button?: number): boolean {
+    private onEvent(method: (i: Input,b?: number) => boolean, event: string, input: Input, button?: number): boolean {
         const didSomething = method(input, button);
 
         // Check if selection tool has any actions to add
@@ -159,31 +159,31 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     public onMouseDown(input: Input, button: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onMouseDown(i,b), "mousedown", input, button);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onMouseDown(i,b), "mousedown", input, button);
     }
 
     public onMouseMove(input: Input): boolean {
-        return this.onEvent((i:Input) => this.currentTool.onMouseMove(i), "mousemove", input);
+        return this.onEvent((i: Input) => this.currentTool.onMouseMove(i), "mousemove", input);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onMouseDrag(i,b), "mousedrag", input, button);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onMouseDrag(i,b), "mousedrag", input, button);
     }
 
     public onMouseUp(input: Input, button: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onMouseUp(i,b), "mouseup", input, button);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onMouseUp(i,b), "mouseup", input, button);
     }
 
     public onClick(input: Input, button: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onClick(i,b), "onclick", input, button);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onClick(i,b), "onclick", input, button);
     }
 
     public onKeyDown(input: Input, key: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyDown(i,b), "keydown", input, key);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onKeyDown(i,b), "keydown", input, key);
     }
 
     public onKeyUp(input: Input, key: number): boolean {
-        return this.onEvent((i:Input,b?:number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
 
     public placeComponent(component: Component, instant: boolean = false): void {

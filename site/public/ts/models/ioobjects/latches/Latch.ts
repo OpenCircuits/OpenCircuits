@@ -6,7 +6,7 @@ import {XMLNode} from "../../../utils/io/xml/XMLNode";
 import {InputPort} from "../../ports/InputPort";
 import {Positioner} from "../../ports/positioners/Positioner"
 
-import {Component} from "../Component";;
+import {Component} from "../Component";
 
 //
 // Latch is an abstract superclass for general latches.
@@ -15,7 +15,7 @@ export abstract class Latch extends Component {
     protected clock: boolean = false;
     protected state: boolean = false;
 
-    constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
+    protected constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs), new ClampedValue(2), V(70, 70), inputPositioner);
 
         this.getOutputPort(0).setName("Q'");

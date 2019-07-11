@@ -10,7 +10,7 @@ import {SelectPortChangeAction} from "../actions/ports/SelectPortChangeAction";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    constructor(parentDiv: HTMLDivElement) {
+    public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-input-count-text"));
         this.count = this.div.querySelector("input#popup-input-count");
@@ -21,14 +21,14 @@ export class InputCountPopupModule extends SelectionPopupModule {
     public pull(): void {
         const selections = MainDesignerController.GetSelections();
         const gates = selections
-             .filter(o => o instanceof Gate && !(o instanceof BUFGate))
-             .map(o => o as Gate);
+                .filter(o => o instanceof Gate && !(o instanceof BUFGate))
+                .map(o => o as Gate);
         const muxes = selections
-             .filter(o => o instanceof Mux)
-             .map(o => o as Mux);
+                .filter(o => o instanceof Mux)
+                .map(o => o as Mux);
         const decos = selections
-             .filter(o => o instanceof Decoder)
-             .map(o => o as Decoder);
+                .filter(o => o instanceof Decoder)
+                .map(o => o as Decoder);
 
         const enable = selections.length == gates.length + muxes.length + decos.length && selections.length > 0;
 

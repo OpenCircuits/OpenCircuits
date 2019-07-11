@@ -30,7 +30,7 @@ export const CopyController = (() => {
 
         // Add all necessary IC data
         const icDatas = selections.filter((o) => o instanceof IC)
-                                  .map((o) => (o as IC).getData());
+                .map((o) => (o as IC).getData());
 
         // Add unique ICData to the circuit
         icDatas.forEach((data, i) => {
@@ -77,12 +77,11 @@ export const CopyController = (() => {
         action.add(CreateDeselectAllAction(MainDesignerController.GetSelectionTool()));
 
         // Select everything that was added
-        action.add(CreateGroupSelectAction(
-                        MainDesignerController.GetSelectionTool(), objs));
+        action.add(CreateGroupSelectAction(MainDesignerController.GetSelectionTool(), objs));
 
         // Translate the copies over a bit
         action.add(new TranslateAction(objs, objs.map((o) => o.getPos()),
-                                        objs.map((o) => o.getPos().add(V(5, 5)))));
+                                       objs.map((o) => o.getPos().add(V(5, 5)))));
 
         MainDesignerController.AddAction(action.execute());
         MainDesignerController.Render();

@@ -2,7 +2,7 @@ export const Images = (() => {
     const images: Map<string, HTMLImageElement> = new Map();
 
     const loadImages = function(imageNames: Array<string>,
-                              onFinish: () => void): void {
+                                onFinish: () => void): void {
         // Load each image
         let index = 0;
         for (const imageName of imageNames) {

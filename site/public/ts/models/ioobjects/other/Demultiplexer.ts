@@ -9,7 +9,7 @@ export class Demultiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(1), new ClampedValue(4, 2, Math.pow(2,8)),
-                undefined, new MuxPositioner<OutputPort>());
+              undefined, new MuxPositioner<OutputPort>());
     }
 
     public activate(): void {

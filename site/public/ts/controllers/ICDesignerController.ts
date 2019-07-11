@@ -39,7 +39,7 @@ export const ICDesignerController = (() => {
     let icdata: ICData;
     let ic: IC;
 
-    let dragging: boolean = false;
+    let dragging = false;
     let dragPort: Port = undefined;
     let dragEdge: "horizontal" | "vertical" = undefined;
 
