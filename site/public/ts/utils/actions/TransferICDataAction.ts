@@ -1,6 +1,6 @@
 import {Action} from "./Action";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
-import { ICData } from "../../models/ioobjects/other/ICData";
+import {ICData} from "../../models/ioobjects/other/ICData";
 
 export class TransferICDataAction implements Action {
     private origin: CircuitDesigner;
