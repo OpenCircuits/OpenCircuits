@@ -47,7 +47,7 @@ describe("Rotate Tool", () => {
 
         test("Rotate ANDGate 45° CCW from side", () => {
             input.click(center); // Select object
-            expect(selections().length).toEqual(1);
+            expect(selections().length).toBe(1);
             expect(selections()).toContain(obj);
 
             input.move(V(-ROTATION_CIRCLE_RADIUS, 0))
@@ -59,7 +59,7 @@ describe("Rotate Tool", () => {
 
         test("Rotate ANDGate 45° CW from top", () => {
             input.click(center); // Select object
-            expect(selections().length).toEqual(1);
+            expect(selections().length).toBe(1);
             expect(selections()).toContain(obj);
 
             input.move(V(0, +ROTATION_CIRCLE_RADIUS))
@@ -93,7 +93,7 @@ describe("Rotate Tool", () => {
         test("Rotate Objects 45° CW", () => {
             input.drag(center.add(V(-40, -40)),
                        center.add(V(40, 40))); // Select objects
-            expect(selections().length).toEqual(2);
+            expect(selections().length).toBe(2);
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
 
