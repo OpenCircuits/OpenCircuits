@@ -50,6 +50,6 @@ func IndexHandler(c *gin.Context) {
 
 func NoCacheHandler(path string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Redirect(http.StatusFound, path)
+		c.File(path)
 	}
 }
