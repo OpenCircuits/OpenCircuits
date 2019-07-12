@@ -39,23 +39,24 @@ export class Input {
         // Keyboard events
         window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyDown(e)
+                this.onKeyDown(e.keyCode)
         }, false);
         window.addEventListener('keyup',   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e)
+                this.onKeyUp(e.keyCode)
         }, false);
 
+        window.addEventListener('blur', (_: FocusEvent) => this.onBlur());
 
         // Mouse events
         canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        canvas.addEventListener('dblclick',   (e: MouseEvent) => this.onDoubleClick(e),   false);
+        canvas.addEventListener('dblclick',   (_: MouseEvent) => this.onDoubleClick(), false);
         canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
         canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
         canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(  V(e.clientX, e.clientY), e.button), false);
         canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        canvas.addEventListener('mouseenter', (e: MouseEvent) => this.onMouseEnter(e),    false);
-        canvas.addEventListener('mouseleave', (e: MouseEvent) => this.onMouseLeave(e),    false);
+        canvas.addEventListener('mouseenter', (_: MouseEvent) => this.onMouseEnter(), false);
+        canvas.addEventListener('mouseleave', (_: MouseEvent) => this.onMouseLeave(), false);
 
 
         // Touch screen events
@@ -143,15 +144,13 @@ export class Input {
         return this.touchCount;
     }
 
-    private onKeyDown(event: KeyboardEvent): void {
-        const code = event.keyCode;
+    private onKeyDown(code: number): void {
         this.keysDown.set(code, true);
 
         // call each listener
         this.callListeners("keydown", code);
     }
-    private onKeyUp(event: KeyboardEvent): void {
-        const code = event.keyCode;
+    private onKeyUp(code: number): void {
         this.keysDown.set(code, false);
 
         // call each listener
@@ -168,7 +167,7 @@ export class Input {
         // call each listener
         this.callListeners("click", button);
     }
-    private onDoubleClick(_: MouseEvent): void {
+    private onDoubleClick(): void {
 
         // call each listener
         this.callListeners("dblclick", 0);
@@ -225,11 +224,11 @@ export class Input {
         this.callListeners("mouseup", button);
     }
 
-    private onMouseEnter(_: MouseEvent): void {
+    private onMouseEnter(): void {
         // call each listener
         this.callListeners("mouseenter");
     }
-    private onMouseLeave(_: MouseEvent): void {
+    private onMouseLeave(): void {
         this.mouseDown = false;
 
         // call each listener
@@ -239,6 +238,14 @@ export class Input {
         //  up events get called when the
         //  mouse leaves
         this.callListeners("mouseup", this.mouseDownButton);
+    }
+
+    private onBlur(): void {
+        // Release each key that is down
+        this.keysDown.forEach((down, key) => {
+            if (down)
+                this.onKeyUp(key);
+        });
     }
 
     private callListeners(type: string, a?: number, b?: Vector): void {
