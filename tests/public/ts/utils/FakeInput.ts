@@ -59,7 +59,7 @@ export class FakeInput extends Input {
 
         // Move a bit for each step
         for (let i = 1; i <= steps; i++)
-            this.move(pos.add(step.scale(i)));
+            this.move(step);
 
         return this;
     }
