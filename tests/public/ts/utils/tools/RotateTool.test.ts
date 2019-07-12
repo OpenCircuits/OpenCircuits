@@ -3,6 +3,8 @@ import "jest";
 import {LEFT_MOUSE_BUTTON,
         ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
 
+import {V} from "../../../../../site/public/ts/utils/math/Vector";
+
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
 import {Input} from "../../../../../site/public/ts/utils/Input";
@@ -10,65 +12,83 @@ import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager
 import {RotateTool} from "../../../../../site/public/ts/utils/tools/RotateTool";
 import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {V} from "../../../../../site/public/ts/utils/math/Vector";
+import {ORGate} from "../../../../../site/public/ts/models/ioobjects/gates/ORGate";
+
+import {FakeInput} from "../FakeInput";
+import {InitializeInput} from "./Helpers";
 
 describe("Rotate Tool", () => {
-    let camera = new Camera(500, 500);
-    let designer = new CircuitDesigner(0);
-    let toolManager = new ToolManager(camera, designer);
+    const camera = new Camera(500, 500);
+    const center = camera.getCenter();
 
-    // Declare as type: any so that we can manipulate
-    //  private methods to simulate user input
-    let input: any = new Input(<any>{
-        addEventListener:() => {},
-        getBoundingClientRect:() => {return {left: 0, top: 0}}
-    }, -1);
+    const designer = new CircuitDesigner(-1);
+    const toolManager = new ToolManager(camera, designer);
+    const input = new FakeInput();
 
-    input.addListener("keydown", (b?: number) => { toolManager.onKeyDown(input, b); });
-    input.addListener("keyup",   (b?: number) => { toolManager.onKeyUp(input, b); });
-    input.addListener("mousedown", (b?: number) => { toolManager.onMouseDown(input, b); });
-    input.addListener("mousemove", () => { toolManager.onMouseMove(input); });
-    input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
-    input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
-    input.addListener("click",   (b?: number) => { toolManager.onClick(input, b); });
+    InitializeInput(input, toolManager);
 
-    let center = camera.getCenter();
+    describe("Single Object", () => {
+        const obj = new ANDGate();
 
-    let l = new ANDGate();
-    designer.addObject(l);
-    l.setPos(V(0,0));
-    it("Rotate an object from 3rd quadrant", () => {
-        let pos = l.getAngle();
+        beforeAll(() => {
+            // Add object
+            designer.addObject(obj);
+        });
 
-        input.onMouseDown(V(center.x, center.y));
-        input.onMouseUp(V(center.x, center.y));
-        input.onClick(V(center.x, center.y));
+        beforeEach(() => {
+            // Reset gate rotation for each test
+            obj.setAngle(0);
+        });
 
-        input.onMouseMove(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
-        input.onMouseDown(V(center.x-ROTATION_CIRCLE_RADIUS, center.y));
-        input.onMouseMove(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
-        input.onMouseUp(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
+        test("Rotate ANDGate 45° CCW from side", () => {
+            input.click(center) // Select object
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(0, +ROTATION_CIRCLE_RADIUS))
+                    .release();
+            expect(obj.getAngle()).toBeCloseTo(-Math.PI/4);
+        });
 
-        let pos2 = l.getAngle();
-
-        // Expect rotation
-        expect(pos2).not.toEqual(pos);
+        test("Rotate ANDGate 45° CW from top", () => {
+            input.click(center) // Select object
+                    .move(V(0, +ROTATION_CIRCLE_RADIUS))
+                    .press()
+                    .move(V(+ROTATION_CIRCLE_RADIUS, 0))
+                    .release();
+            expect(obj.getAngle()).toBeCloseTo(-Math.PI/4);
+        });
     });
-    it("Rotate an object from 4th quadrant", () => {
-      let pos = l.getAngle();
 
-      input.onMouseDown(V(center.x, center.y));
-      input.onMouseUp(V(center.x, center.y));
-      input.onClick(V(center.x, center.y));
+    describe("Multiple Objects", () => {
+        const obj1 = new ANDGate();
+        const obj2 = new ORGate();
 
-      input.onMouseMove(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));
-      input.onMouseDown(V(center.x+ROTATION_CIRCLE_RADIUS, center.y));
-      input.onMouseMove(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
-      input.onMouseUp(V(center.x, center.y+ROTATION_CIRCLE_RADIUS));
+        beforeAll(() => {
+            // Clear previous circuit
+            designer.reset();
 
-      let pos2 = l.getAngle();
+            // Add objects
+            designer.addObjects([obj1, obj2]);
+        });
 
-      // Expect rotation
-      expect(pos2).not.toEqual(pos);
+        beforeEach(() => {
+            // Reset objects
+            obj1.setPos(V(-20, 20));
+            obj1.setAngle(0);
+            obj2.setPos(V(20, 0));
+            obj2.setAngle(0);
+        });
+
+        test("Rotate Objects 45° CW", () => {
+            input.drag(center.add(V(-40, 40)),
+                       center.add(V(40, -40))) // Select objects
+                    .moveTo(center)
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(0, +ROTATION_CIRCLE_RADIUS))
+                    .release();
+            expect(obj1.getAngle()).toBeCloseTo(-Math.PI/4);
+            expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);
+        })
     });
 });
