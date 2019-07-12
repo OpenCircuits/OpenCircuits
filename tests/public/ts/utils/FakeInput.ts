@@ -26,6 +26,8 @@ export class FakeInput extends Input {
     }
 
     public click(pos: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
+        super.onMouseDown(pos, button);
+        super.onMouseUp(button);
         super.onClick(pos, button);
         return this;
     }
@@ -39,12 +41,15 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public press(pos: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
+    public press(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
+        pos = (pos == undefined ? super.getMousePos() : pos);
         super.onMouseDown(pos, button);
         return this;
     }
-    public move(pos: Vector): FakeInput {
-        super.onMouseMove(pos);
+    public move(amt: Vector, steps: number = 1): FakeInput {
+        const step = amt.scale(1.0 / steps);
+        for (let i = 1; i <= steps; i++)
+            super.onMouseMove(super.getMousePos().add(step));
         return this;
     }
     public moveTo(target: Vector, steps: number = 5): FakeInput {
