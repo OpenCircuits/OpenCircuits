@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 type Item struct {
@@ -43,5 +45,11 @@ func init() {
 }
 
 func IndexHandler(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "userId": ""})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "user_id": "" , "timeNow": strconv.FormatInt(time.Now().Unix(), 10)})
+}
+
+func NoCacheHandler(path string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Redirect(http.StatusFound, path)
+	}
 }
