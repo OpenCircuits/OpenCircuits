@@ -8,4 +8,5 @@ export function InitializeInput(input: Input, toolManager: ToolManager): void {
     input.addListener("mousemove", ()           => { toolManager.onMouseMove(input); });
     input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
     input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
+    input.addListener("click",     (b?: number) => { toolManager.onClick(input, b); });
 }
