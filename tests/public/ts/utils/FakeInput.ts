@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON} from "../../../../site/public/ts/utils/Constants";
 
-import {Vector} from "../../../../site/public/ts/utils/math/Vector";
+import {Vector, V} from "../../../../site/public/ts/utils/math/Vector";
 import {Input} from "../../../../site/public/ts/utils/Input";
 
 export class FakeInput extends Input {
@@ -25,7 +25,8 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public click(pos: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
+    public click(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
+        pos = (pos == undefined ? super.getMousePos() : pos);
         super.onMouseDown(pos, button);
         super.onMouseUp(button);
         super.onClick(pos, button);
@@ -86,14 +87,14 @@ export class FakeInput extends Input {
     }
 
     public touch(pos: Vector): FakeInput {
-        this.touches.push(pos);
+        this.touches.push(V(pos));
         super.onTouchStart(this.touches);
         return this;
     }
     public moveTouch(i: number, amt: Vector, steps: number = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let s = 1; s <= steps; s++) {
-            this.touches[i].translate(step);
+            this.touches[i] = this.touches[i].add(step);
             super.onTouchMove(this.touches);
         }
         return this;
@@ -106,6 +107,13 @@ export class FakeInput extends Input {
     }
     public releaseTouch(): FakeInput {
         super.onTouchEnd();
+        return this;
+    }
+
+    public tap(pos: Vector): FakeInput {
+        this.touch(pos);
+        this.releaseTouch();
+        super.onClick(pos);
         return this;
     }
 
