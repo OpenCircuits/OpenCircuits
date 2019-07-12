@@ -156,7 +156,7 @@ export class SelectionTool extends Tool {
 
         const action = this.selectionBox.stop(input);
         if (action.isEmpty())
-            return false;
+            return true;
         this.action.add(action.execute());
 
         return true;

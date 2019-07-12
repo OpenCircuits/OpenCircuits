@@ -1,4 +1,6 @@
-import { WIRE_DIST_ITERATIONS, WIRE_NEWTON_ITERATIONS, WIRE_DIST_THRESHOLD2 } from "../Constants";
+import {WIRE_DIST_ITERATIONS,
+        WIRE_NEWTON_ITERATIONS,
+        WIRE_DIST_THRESHOLD2} from "../Constants";
 
 import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
