@@ -2,18 +2,16 @@ import "jest";
 
 import {SHIFT_KEY} from "../../../../../site/public/ts/utils/Constants";
 
-import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {V} from "../../../../../site/public/ts/utils/math/Vector";
+
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
+
+import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {Multiplexer} from "../../../../../site/public/ts/models/ioobjects/other/Multiplexer";
 import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
-import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
-import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";
@@ -134,7 +132,7 @@ describe("Selection Tool", () => {
             input.pressKey(SHIFT_KEY);
             input.click(center.add(obj1.getPos()));
             input.releaseKey(SHIFT_KEY);
-            
+
             expect(selections().length).toBe(2);
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
