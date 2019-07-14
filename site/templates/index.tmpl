@@ -17,6 +17,10 @@
     <link rel="manifest" href="img/manifest.json">
     <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
 
+    {{ range $a := .authData.Headers }}
+        {{ $a }}
+    {{ end }}
+
     <title>Open Circuits</title>
 </head>
 <body>
@@ -89,6 +93,16 @@
                         <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG"/>
                         <a>Download as PNG</a>
                     </div>
+                </div>
+            </div>
+            <div class="header__dropdown" title="Sign in Options">
+                <button id="header-login-dropdown-button" class="header__dropdown__button">
+                    <img src="img/icons/download.svg" height="100%" alt="Sign in options"/>
+                </button>
+                <div id="header-login-dropdown-content" class="header__dropdown__content">
+                    {{ range $a := .authData.Buttons }}
+                        <div class="header__login__option" type="button">{{ $a }}</div>
+                    {{ end }}
                 </div>
             </div>
         </div>

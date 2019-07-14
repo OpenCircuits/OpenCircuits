@@ -17,6 +17,9 @@ export const HeaderController = (() => {
     const downloadPDFButton = document.getElementById("header-download-pdf-button");
     const downloadPNGButton = document.getElementById("header-download-png-button");
 
+    const loginDropdownButton = document.getElementById("header-login-dropdown-button");
+    const loginDropdown = document.getElementById("header-login-dropdown-content");
+
     return {
         Init: function(designer: CircuitDesigner): void {
             const mainDesigner: CircuitDesigner = designer;
@@ -26,6 +29,13 @@ export const HeaderController = (() => {
                 // Toggle a class to keep :hover behavior
                 downloadDropdown.classList.toggle("show");
                 downloadDropdownButton.classList.toggle("white");
+            }
+
+            // Show/hide the dropdown on click
+            loginDropdownButton.onclick = () => {
+                // Toggle a class to keep :hover behavior
+                loginDropdown.classList.toggle("show");
+                loginDropdownButton.classList.toggle("white");
             }
 
             // Hide dropdown on click anywhere else

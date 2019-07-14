@@ -106,6 +106,10 @@ DROPDOWN
     height: auto;
     margin-top: 0px;
 }
+#header-login-dropdown-content {
+    height: auto;
+    margin-top: 0px;
+}
 /*
     TRIANGLE THINGY FOR 'POPOVER' MENU
     https://ux.stackexchange.com/questions/117118/what-is-the-difference-between-popover-menu-drop-down-menu-fly-out-menu

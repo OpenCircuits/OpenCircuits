@@ -2,7 +2,10 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -42,6 +45,19 @@ func init() {
 	}
 }
 
-func IndexHandler(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "userId": ""})
+func IndexHandler(c *gin.Context, manager auth.AuthenticationManager) {
+	session := sessions.Default(c)
+	userId := session.Get("user-id")
+	loggedIn := userId != nil
+
+	authData := struct {
+		Headers []template.HTML
+		Buttons []template.HTML
+	}{}
+	for _,a := range manager.AuthMethods {
+		authData.Headers = append(authData.Headers, a.GetLoginHeader())
+		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+	}
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "authData": authData})
 }

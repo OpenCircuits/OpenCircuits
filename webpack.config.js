@@ -30,6 +30,7 @@ var config = {
     plugins: [
         new CopyWebpackPlugin([
             { from: 'site/data', to: 'data' },
+            { from: 'site/secrets', to: 'secrets' },
             { from: 'site/templates', to: 'templates' },
             { from: 'site/public/css', to: 'css' },
             { from: 'site/public/img', to: 'img' }
