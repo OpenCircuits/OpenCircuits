@@ -1,4 +1,6 @@
-import { WIRE_DIST_ITERATIONS, WIRE_NEWTON_ITERATIONS, WIRE_DIST_THRESHOLD2 } from "../Constants";
+import {WIRE_DIST_ITERATIONS,
+        WIRE_NEWTON_ITERATIONS,
+        WIRE_DIST_THRESHOLD2} from "../Constants";
 
 import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
@@ -40,7 +42,7 @@ export function Clamp(x: number, min: number, max: number): number {
  *         The closest position on the edge of
  *         the rectangle from 'pos'
  */
-export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector) : Vector {
+export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     if (pos.x < bl.x)
         return V(bl.x, Clamp(pos.y, bl.y, tr.y));
     if (pos.x > tr.x)
@@ -290,16 +292,16 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
         }
     }
 
-    const f1  = (t: number, x: number, y: number) => curve.getPos(t).sub(x, y).len2();
-    const df1 = (t: number, x: number, y: number) => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
+    const f1  = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
+    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
 
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
     if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
         return true;
 
-    const f2  = (t: number, x: number, y: number) => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
-    const df2 = (t: number, x: number, y: number) => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+    const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
+    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);

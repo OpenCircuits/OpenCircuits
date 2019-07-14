@@ -1,5 +1,4 @@
-import {LEFT_MOUSE_BUTTON,
-        MIDDLE_MOUSE_BUTTON,
+import {MIDDLE_MOUSE_BUTTON,
         OPTION_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {Input} from "../Input";
@@ -37,7 +36,7 @@ export class PanTool extends Tool {
                !this.isDragging && event == "keyup" && button === OPTION_KEY);
     }
 
-    public onMouseDrag(input: Input, button: number): boolean {
+    public onMouseDrag(input: Input): boolean {
         this.isDragging = true;
 
         const dPos = input.getDeltaMousePos();

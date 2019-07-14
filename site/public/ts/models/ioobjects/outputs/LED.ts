@@ -7,7 +7,7 @@ import {Component} from "../Component";
 export class LED extends Component {
     private color: string;
 
-    constructor() {
+    public constructor() {
         super(new ClampedValue(1),
               new ClampedValue(0),
               V(50, 50));

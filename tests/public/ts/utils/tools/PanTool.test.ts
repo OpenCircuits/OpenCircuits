@@ -48,13 +48,13 @@ describe("Pan Tool", () => {
     it("Drag with option key", () => {
         let pos = camera.getPos();
 
-        input.onKeyDown({keyCode: OPTION_KEY})
+        input.onKeyDown(OPTION_KEY)
         input.onMouseDown(V(center.x, center.y));
         input.onMouseMove(V(center.x- 5, center.y));
         input.onMouseMove(V(center.x-10, center.y));
         input.onMouseMove(V(center.x-15, center.y));
         input.onMouseUp(V(center.x-15, center.y));
-        input.onKeyUp({keyCode: OPTION_KEY});
+        input.onKeyUp(OPTION_KEY);
 
         let pos2 = camera.getPos();
 
@@ -64,9 +64,9 @@ describe("Pan Tool", () => {
     it("No drag with option key", () => {
         let pos = camera.getPos();
 
-        input.onKeyDown({keyCode: OPTION_KEY})
+        input.onKeyDown(OPTION_KEY)
         input.onMouseDown(V(center.x, center.y));
-        input.onKeyUp({keyCode: OPTION_KEY});
+        input.onKeyUp(OPTION_KEY);
         input.onMouseUp(V(center.x, center.y));
 
         let pos2 = camera.getPos();

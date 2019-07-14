@@ -13,7 +13,7 @@ export class RenderQueue {
      * Constructor for RenderQueue
      * @param renderFunction The callback actual render function
      */
-    constructor(renderFunction: () => void) {
+    public constructor(renderFunction: () => void) {
         this.queued = 0;
         this.renderFunction = renderFunction;
     }

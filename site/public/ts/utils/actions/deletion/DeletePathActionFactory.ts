@@ -10,13 +10,13 @@ export function CreateDeletePathAction(path: Array<Wire | WirePort>): GroupActio
 
     // Remove wires first
     path.filter((p) => p instanceof Wire)
-        .map((p) => p as Wire)
-        .forEach((w) => action.add(new DisconnectAction(w)));
+            .map((p) => p as Wire)
+            .forEach((w) => action.add(new DisconnectAction(w)));
 
     // Then remove WirePorts
     path.filter((p) => p instanceof WirePort)
-        .map((p) => p as WirePort)
-        .forEach((wp) => action.add(new DeleteAction(wp)));
+            .map((p) => p as WirePort)
+            .forEach((wp) => action.add(new DeleteAction(wp)));
 
     return action;
 }

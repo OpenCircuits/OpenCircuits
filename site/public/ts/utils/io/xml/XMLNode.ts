@@ -15,18 +15,18 @@ export class XMLNode {
         return new XMLNode(this.root, child);
     }
 
-    public addAttribute(tag: string, val: any): void {
+    public addAttribute(tag: string, val: number | string | boolean): void {
         const a = this.root.createElement(tag);
-        const b = this.root.createTextNode(val);
+        const b = this.root.createTextNode(val.toString());
         a.appendChild(b);
         this.node.appendChild(a);
     }
 
-    public setAttribute(tag: string, val: any): void {
+    public setAttribute(tag: string, val: number | string | boolean): void {
         if (!this.hasAttribute(tag))
             this.addAttribute(tag, val);
         else
-            (<HTMLElement>this.findChild(tag).node.childNodes[0]).innerHTML = val;
+            (<HTMLElement>this.findChild(tag).node.childNodes[0]).innerHTML = val.toString();
     }
 
     // Helper method to add x,y components of vector

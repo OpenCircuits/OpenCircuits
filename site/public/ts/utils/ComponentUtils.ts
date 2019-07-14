@@ -155,7 +155,7 @@ export function CreateGroup(objects: Array<IOObject>): SeparatedComponentCollect
     for (const obj of objs) {
         // Only get wires that connect to other components in objects
         group.wires = group.wires.concat(
-                            obj.getOutputs().filter((w) => objs.includes(w.getOutputComponent())));
+            obj.getOutputs().filter((w) => objs.includes(w.getOutputComponent())));
     }
 
     return group;
@@ -246,8 +246,8 @@ export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollect
  * @param  groups The SeparatedComponentCollection of components
  * @return        A graph corresponding to the given circuit
  */
-export function CreateGraph(groups: SeparatedComponentCollection): Graph<number, {i1:number, i2:number}> {
-    const graph = new Graph<number, {i1:number, i2:number}>();
+export function CreateGraph(groups: SeparatedComponentCollection): Graph<number, {i1: number, i2: number}> {
+    const graph = new Graph<number, {i1: number, i2: number}>();
 
     const objs = groups.getAllComponents();
     const map = new Map<Component, number>();
@@ -283,7 +283,7 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
     const groups = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
     const objs = groups.getAllComponents();
 
-    const graph: Graph<number, {i1:number, i2:number}> = CreateGraph(groups);
+    const graph: Graph<number, {i1: number, i2: number}> = CreateGraph(groups);
 
     // Copy components
     const copies: Array<Component> = [];

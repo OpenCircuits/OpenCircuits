@@ -1,4 +1,3 @@
-import {DEFAULT_BORDER_WIDTH}  from "../Constants";
 import {Vector,V}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";

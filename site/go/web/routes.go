@@ -12,6 +12,7 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.Static("/img", "./img")
 	router.Static("/ts", "./ts")
 	router.StaticFile("/Bundle.js", "./Bundle.js")
+	router.StaticFile("/Bundle.js.map", "./Bundle.js.map")
 
 	router.GET("/", func(c *gin.Context) { IndexHandler(c, authManager) })
 }
