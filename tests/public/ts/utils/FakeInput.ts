@@ -105,8 +105,9 @@ export class FakeInput extends Input {
             this.touches.forEach((_, i) => this.moveTouch(i, step));
         return this;
     }
-    public releaseTouch(): FakeInput {
+    public releaseTouch(i: number = 0): FakeInput {
         super.onTouchEnd();
+        this.touches.splice(i, 1);
         return this;
     }
 
