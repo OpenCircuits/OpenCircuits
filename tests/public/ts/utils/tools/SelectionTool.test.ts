@@ -38,32 +38,32 @@ describe("Selection Tool", () => {
             designer.reset();
         });
 
-        // test("Click to Select then Deselect ANDGate", () => {
-        //     const gate = new ANDGate();
-        //     designer.addObject(gate);
-        //
-        //     input.click(center);
-        //     expect(selections().length).toBe(1);
-        //     expect(selections()).toContain(gate);
-        //
-        //     input.move(V(100, 0), 10)
-        //             .click();
-        //     expect(selections().length).toBe(0);
-        // });
+        test("Click to Select then Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
 
-        // test("Drag to Select then Click to Deselect ANDGate", () => {
-        //     const gate = new ANDGate();
-        //     designer.addObject(gate);
-        //
-        //     input.drag(center.add(V(-100, 100)),
-        //                center.add(V(100, -100)));
-        //     expect(selections().length).toBe(1);
-        //     expect(selections()).toContain(gate);
-        //
-        //     input.move(V(0, 100), 10)
-        //             .click();
-        //     expect(selections().length).toBe(0);
-        // });
+            input.click(center);
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.move(V(100, 0), 10)
+                    .click();
+            expect(selections().length).toBe(0);
+        });
+
+        test("Drag to Select then Click to Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.drag(center.add(V(-100, 100)),
+                       center.add(V(100, -100)));
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.move(V(0, 100), 10)
+                    .click();
+            expect(selections().length).toBe(0);
+        });
 
         test("Tap to Select then Deselect ANDGate", () => {
             const gate = new ANDGate();
@@ -89,32 +89,32 @@ describe("Selection Tool", () => {
             expect(obj.isOn()).toBe(false);
         });
 
-        // test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
-        //     const gate = new ANDGate();
-        //     designer.addObject(gate);
-        //
-        //     input.touch(center.add(V(-100, -100)))
-        //             .moveTouches(V(200, 200), 5)
-        //             .releaseTouch();
-        //     expect(selections().length).toBe(1);
-        //     expect(selections()).toContain(gate);
-        //
-        //     input.tap(V(-100, 0));
-        //     expect(selections().length).toBe(0);
-        // });
+        test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
 
-        // test("Click to Toggle Switch", () => {
-        //     const obj = new Switch();
-        //     designer.addObject(obj);
-        //
-        //     input.click(center);
-        //     expect(selections().length).toBe(0);
-        //     expect(obj.isOn()).toBe(true);
-        //
-        //     input.click(center);
-        //     expect(selections().length).toBe(0);
-        //     expect(obj.isOn()).toBe(false);
-        // });
+            input.touch(center.add(V(-100, -100)))
+                    .moveTouches(V(200, 200), 5)
+                    .releaseTouch();
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.tap(V(-100, 0));
+            expect(selections().length).toBe(0);
+        });
+
+        test("Click to Toggle Switch", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
+
+            input.click(center);
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(true);
+
+            input.click(center);
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(false);
+        });
 
     });
 
@@ -134,11 +134,12 @@ describe("Selection Tool", () => {
             input.pressKey(SHIFT_KEY);
             input.click(center.add(obj1.getPos()));
             input.releaseKey(SHIFT_KEY);
+            
             expect(selections().length).toBe(2);
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
 
-            input.move(V(-100, 0), 10)
+            input.move(center.add(V(-100, 0)), 10)
                     .click();
             expect(selections().length).toBe(0);
         });
