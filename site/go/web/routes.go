@@ -14,5 +14,8 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.StaticFile("/Bundle.js", "./Bundle.js")
 	router.StaticFile("/Bundle.js.map", "./Bundle.js.map")
 
+	// TODO: this is a hack to get bundles not not cache
+	router.GET("/Bundle.js?ver=:id", noCacheHandler("./Bundle.js"))
+
 	router.GET("/", func(c *gin.Context) { IndexHandler(c, authManager) })
 }

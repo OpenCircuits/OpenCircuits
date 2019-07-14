@@ -10,6 +10,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 type Item struct {
@@ -45,7 +47,20 @@ func init() {
 	}
 }
 
-func IndexHandler(c *gin.Context, manager auth.AuthenticationManager) {
+func getLastModifiedTime(path string) time.Time {
+	file, err := os.Stat(path)
+	if err != nil {
+		log.Printf("Invalid file path %s\n", path)
+		return time.Now()
+	}
+	return file.ModTime()
+}
+
+func getBustedName(path string) string {
+	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
+}
+
+func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {	
 	session := sessions.Default(c)
 	userId := session.Get("user-id")
 	loggedIn := userId != nil
@@ -59,5 +74,12 @@ func IndexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "authData": authData})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "authData": authData,
+		"bundleJs": getBustedName("./Bundle.js")})
+}
+
+func noCacheHandler(path string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.File(path)
+	}
 }
