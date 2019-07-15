@@ -135,7 +135,7 @@ describe("Selection Tool", () => {
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
 
-            input.move(V(-100, 0), 10)
+            input.move(V(0, -100), 10)
                     .click();
             expect(selections().length).toBe(0);
         });
