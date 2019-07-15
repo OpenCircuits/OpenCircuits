@@ -88,15 +88,12 @@ func (g authenticationMethod) redirectHandler(c *gin.Context) {
 	queryState := c.Request.URL.Query().Get("state")
 	if retrievedState != queryState {
 		log.Printf("Invalid session state: retrieved: %s; Param: %s", retrievedState, queryState)
-		// TODO: handle auth errors more gracefully...
-		c.HTML(http.StatusUnauthorized, "error.tmpl", gin.H{"message": "Invalid session state."})
 		return
 	}
 	code := c.Request.URL.Query().Get("code")
 	tok, err := g.oauth2Config.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		log.Println(err)
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"message": "Login failed. Please try again."})
 		return
 	}
 
@@ -114,14 +111,12 @@ func (g authenticationMethod) redirectHandler(c *gin.Context) {
 	u := user{}
 	if err = json.Unmarshal(data, &u); err != nil {
 		log.Println(err)
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"message": "Error marshalling response. Please try again."})
 		return
 	}
 	session.Set("user-id", "google_" + u.Email)
 	err = session.Save()
 	if err != nil {
 		log.Println(err)
-		c.HTML(http.StatusBadRequest, "error.tmpl", gin.H{"message": "Error while saving session. Please try again."})
 		return
 	}
 

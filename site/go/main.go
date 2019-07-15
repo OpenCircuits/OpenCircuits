@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -10,14 +11,21 @@ import (
 )
 
 func main() {
-	router := gin.Default()
-
-	router.Use(gin.Recovery())
+	googleAuthConfig := flag.String("google_auth", "disabled", "disabled|<path-to-config>; Enables google sign-in API login")
+	noAuthConfig := flag.String("no_auth", "disabled", "disabled|enabled; Enables username-only authentication for testing and development")
+	flag.Parse()
 
 	authManager := auth.AuthenticationManager{}
-	authManager.RegisterAuthenticationMethod(google.New("./secrets/google_oauth2_config.json"))
-	// For testing only
-	authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
+
+	if *googleAuthConfig != "disabled" {
+		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
+	}
+	if *noAuthConfig == "enabled" {
+		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
+	}
+
+	router := gin.Default()
+	router.Use(gin.Recovery())
 
 	// Generate CSRF Token...
 	store := sessions.NewCookieStore([]byte(utils.RandToken(64)))

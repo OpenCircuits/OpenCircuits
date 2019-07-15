@@ -17,5 +17,5 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	// TODO: this is a hack to get bundles not not cache
 	router.GET("/Bundle.js?ver=:id", noCacheHandler("./Bundle.js"))
 
-	router.GET("/", func(c *gin.Context) { IndexHandler(c, authManager) })
+	router.GET("/", func(c *gin.Context) { indexHandler(c, authManager) })
 }
