@@ -5,8 +5,9 @@ import {Input} from "../../../../site/public/ts/utils/Input";
 
 export class FakeInput extends Input {
     private touches: Array<Vector>;
+    private center: Vector;
 
-    public constructor() {
+    public constructor(cameraCenter: Vector = V()) {
         // Fake canvas and instant drag time
         super(<HTMLCanvasElement><unknown>{
             addEventListener: () => {},
@@ -14,6 +15,7 @@ export class FakeInput extends Input {
         }, -1);
 
         this.touches = [];
+        this.center = cameraCenter;
     }
 
     public pressKey(code: number): FakeInput {
@@ -26,7 +28,7 @@ export class FakeInput extends Input {
     }
 
     public click(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
-        pos = (pos == undefined ? super.getMousePos() : pos);
+        pos = (pos == undefined ? super.getMousePos() : pos.add(this.center));
         super.onMouseDown(pos, button);
         super.onMouseUp(button);
         super.onClick(pos, button);
@@ -43,7 +45,7 @@ export class FakeInput extends Input {
     }
 
     public press(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
-        pos = (pos == undefined ? super.getMousePos() : pos);
+        pos = (pos == undefined ? super.getMousePos() : pos.add(this.center));
         super.onMouseDown(pos, button);
         return this;
     }
@@ -56,7 +58,7 @@ export class FakeInput extends Input {
     public moveTo(target: Vector, steps: number = 5): FakeInput {
         // Calculate step Vector
         const pos = this.getMousePos();
-        const step = target.sub(pos).scale(1.0 / steps);
+        const step = target.add(this.center).sub(pos).scale(1.0 / steps);
 
         // Move a bit for each step
         for (let i = 1; i <= steps; i++)
@@ -87,7 +89,7 @@ export class FakeInput extends Input {
     }
 
     public touch(pos: Vector): FakeInput {
-        this.touches.push(V(pos));
+        this.touches.push(V(pos.add(this.center)));
         super.onTouchStart(this.touches);
         return this;
     }
@@ -114,7 +116,7 @@ export class FakeInput extends Input {
     public tap(pos: Vector): FakeInput {
         this.touch(pos);
         this.releaseTouch();
-        super.onClick(pos);
+        super.onClick(pos.add(this.center));
         return this;
     }
 
