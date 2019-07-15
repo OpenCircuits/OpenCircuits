@@ -25,18 +25,22 @@ export class Input {
     private touchCount: number;
 
     private listeners: Map<string, Array<(a?: number, b?: Vector) => void> >;
-
     private keysDown: Map<number, boolean>;
 
     private dragTime: number;
 
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         this.canvas = canvas;
-        this.listeners = new Map();
-        this.keysDown  = new Map();
         this.dragTime = dragTime;
-        this.touchCount = 0;
 
+        this.reset();
+
+        this.hookupKeyboardEvents();
+        this.hookupMouseEvents();
+        this.hookupTouchEvents();
+    }
+
+    private hookupKeyboardEvents(): void {
         // Keyboard events
         window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
@@ -48,37 +52,40 @@ export class Input {
         }, false);
 
         window.addEventListener('blur', (_: FocusEvent) => this.onBlur());
+    }
 
+    private hookupMouseEvents(): void {
         // Mouse events
-        canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        canvas.addEventListener('dblclick',   (_: MouseEvent) => this.onDoubleClick(), false);
-        canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
-        canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(e.button), false);
-        canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        canvas.addEventListener('mouseenter', (_: MouseEvent) => this.onMouseEnter(), false);
-        canvas.addEventListener('mouseleave', (_: MouseEvent) => this.onMouseLeave(), false);
+        this.canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener('dblclick',   (_: MouseEvent) => this.onDoubleClick(), false);
+        this.canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        this.canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(e.button), false);
+        this.canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        this.canvas.addEventListener('mouseenter', (_: MouseEvent) => this.onMouseEnter(), false);
+        this.canvas.addEventListener('mouseleave', (_: MouseEvent) => this.onMouseLeave(), false);
+    }
 
-
+    private hookupTouchEvents(): void {
         // Touch screen events
-        canvas.addEventListener('touchstart', (e: TouchEvent) => {
+        this.canvas.addEventListener('touchstart', (e: TouchEvent) => {
             this.onTouchStart(Array.from(e.touches).map((t) => V(t.clientX, t.clientY)));
             e.preventDefault();
         }, false);
 
-        canvas.addEventListener('touchmove', (e: TouchEvent) => {
+        this.canvas.addEventListener('touchmove', (e: TouchEvent) => {
             this.onTouchMove(Array.from(e.touches).map((t) => V(t.clientX, t.clientY)));
             e.preventDefault();
         }, false);
 
-        canvas.addEventListener('touchend', (e: TouchEvent) => {
+        this.canvas.addEventListener('touchend', (e: TouchEvent) => {
             this.onTouchEnd();
             e.preventDefault();
         }, false);
 
 
         // Pinch to zoom
-        const touchManager = new Hammer.Manager(canvas, {recognizers: []});
+        const touchManager = new Hammer.Manager(this.canvas, {recognizers: []});
         let lastScale = 1;
 
         touchManager.add(new Hammer.Pinch());
@@ -97,6 +104,23 @@ export class Input {
 
             this.onClick(V(e.center.x, e.center.y));
         });
+    }
+
+    public reset(): void {
+        this.prevMousePos = V();
+        this.mousePos = V();
+
+        this.mouseDown = false;
+        this.mouseDownPos = V();
+        this.mouseDownButton = 0;
+
+        this.isDragging = false;
+        this.startTapTime = 0;
+
+        this.touchCount = 0;
+
+        this.listeners = new Map();
+        this.keysDown  = new Map();
     }
 
     public addListener(type: string, listener: (a?: number, b?: Vector) => void): void {

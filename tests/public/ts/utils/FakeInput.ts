@@ -125,4 +125,10 @@ export class FakeInput extends Input {
         return this;
     }
 
+    public reset(): FakeInput {
+        super.reset();
+        this.touches = [];
+        return this;
+    }
+
 }
