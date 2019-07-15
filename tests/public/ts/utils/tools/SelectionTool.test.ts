@@ -18,11 +18,9 @@ import {InitializeInput} from "./Helpers";
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
-    const center = camera.getCenter();
-
     const designer = new CircuitDesigner(0);
     const toolManager = new ToolManager(camera, designer);
-    const input = new FakeInput();
+    const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
 
@@ -40,7 +38,7 @@ describe("Selection Tool", () => {
             const gate = new ANDGate();
             designer.addObject(gate);
 
-            input.click(center);
+            input.click(V(0, 0));
             expect(selections().length).toBe(1);
             expect(selections()).toContain(gate);
 
@@ -53,8 +51,8 @@ describe("Selection Tool", () => {
             const gate = new ANDGate();
             designer.addObject(gate);
 
-            input.drag(center.add(V(-100, 100)),
-                       center.add(V(100, -100)));
+            input.drag(V(-100, 100),
+                       V(100, -100));
             expect(selections().length).toBe(1);
             expect(selections()).toContain(gate);
 
@@ -67,7 +65,7 @@ describe("Selection Tool", () => {
             const gate = new ANDGate();
             designer.addObject(gate);
 
-            input.tap(V(center));
+            input.tap(V(0, 0));
             expect(selections().length).toBe(1);
             expect(selections()).toContain(gate);
 
@@ -78,11 +76,11 @@ describe("Selection Tool", () => {
             const obj = new Switch();
             designer.addObject(obj);
 
-            input.tap(V(center));
+            input.tap(V(0, 0));
             expect(selections().length).toBe(0);
             expect(obj.isOn()).toBe(true);
 
-            input.tap(V(center));
+            input.tap(V(0, 0));
             expect(selections().length).toBe(0);
             expect(obj.isOn()).toBe(false);
         });
@@ -91,7 +89,7 @@ describe("Selection Tool", () => {
             const gate = new ANDGate();
             designer.addObject(gate);
 
-            input.touch(center.add(V(-100, -100)))
+            input.touch(V(-100, -100))
                     .moveTouches(V(200, 200), 5)
                     .releaseTouch();
             expect(selections().length).toBe(1);
@@ -105,11 +103,11 @@ describe("Selection Tool", () => {
             const obj = new Switch();
             designer.addObject(obj);
 
-            input.click(center);
+            input.click(V(0, 0));
             expect(selections().length).toBe(0);
             expect(obj.isOn()).toBe(true);
 
-            input.click(center);
+            input.click(V(0, 0));
             expect(selections().length).toBe(0);
             expect(obj.isOn()).toBe(false);
         });
@@ -128,16 +126,16 @@ describe("Selection Tool", () => {
             obj1.setPos(V(100, 0));
             designer.addObjects([obj1, obj2]);
 
-            input.click(center);
+            input.click(V(0, 0));
             input.pressKey(SHIFT_KEY);
-            input.click(center.add(obj1.getPos()));
+            input.click(obj1.getPos());
             input.releaseKey(SHIFT_KEY);
 
             expect(selections().length).toBe(2);
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
 
-            input.move(center.add(V(-100, 0)), 10)
+            input.move(V(-100, 0), 10)
                     .click();
             expect(selections().length).toBe(0);
         });

@@ -1,17 +1,14 @@
 import "jest";
 
-import {LEFT_MOUSE_BUTTON,
-        ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
 
 import {V} from "../../../../../site/public/ts/utils/math/Vector";
 
-import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {RotateTool} from "../../../../../site/public/ts/utils/tools/RotateTool";
-import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
+
+import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
 import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
 import {ORGate} from "../../../../../site/public/ts/models/ioobjects/gates/ORGate";
 
@@ -20,11 +17,9 @@ import {InitializeInput} from "./Helpers";
 
 describe("Rotate Tool", () => {
     const camera = new Camera(500, 500);
-    const center = camera.getCenter();
-
     const designer = new CircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
-    const input = new FakeInput();
+    const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
 
@@ -46,7 +41,7 @@ describe("Rotate Tool", () => {
         });
 
         test("Rotate ANDGate 45° CCW from side", () => {
-            input.click(center); // Select object
+            input.click(V(0, 0)); // Select object
             expect(selections().length).toBe(1);
             expect(selections()).toContain(obj);
 
@@ -58,7 +53,7 @@ describe("Rotate Tool", () => {
         });
 
         test("Rotate ANDGate 45° CW from top", () => {
-            input.click(center); // Select object
+            input.click(V(0, 0)); // Select object
             expect(selections().length).toBe(1);
             expect(selections()).toContain(obj);
 
@@ -91,14 +86,14 @@ describe("Rotate Tool", () => {
         });
 
         test("Rotate Objects 45° CW", () => {
-            input.drag(center.add(V(-40, -40)),
-                       center.add(V(40, 40))); // Select objects
+            input.drag(V(-40, -40),
+                       V(40, 40)); // Select objects
             expect(selections().length).toBe(2);
             expect(selections()).toContain(obj1);
             expect(selections()).toContain(obj2);
 
             const midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            input.moveTo(center.add(midpoint)) // Move to midpoint of objects
+            input.moveTo(midpoint) // Move to midpoint of objects
                     .move(V(-ROTATION_CIRCLE_RADIUS, 0))
                     .press()
                     .move(V(0, +ROTATION_CIRCLE_RADIUS))

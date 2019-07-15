@@ -14,11 +14,9 @@ import {InitializeInput} from "./Helpers";
 
 describe("Pan Tool", () => {
     const camera = new Camera(500, 500);
-    const center = camera.getCenter();
-
     const designer = new CircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
-    const input = new FakeInput();
+    const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
 
@@ -28,36 +26,33 @@ describe("Pan Tool", () => {
     });
 
     test("Drag without option key", () => {
-        const target = center.sub(V(-20, 0));
-        input.drag(center, target);
+        input.drag(V(0, 0), V(-20, 0));
         expect(camera.getPos()).toEqual(V(0, 0));
     });
 
     test("Drag with option key", () => {
-        const target = center.sub(V(-20, 0));
         input.pressKey(OPTION_KEY)
-                .drag(center, target)
+                .drag(V(0, 0), V(20, 0))
                 .releaseKey(OPTION_KEY);
         expect(camera.getPos()).toEqual(V(-20, 0));
     });
 
     test("No drag with option key", () => {
         input.pressKey(OPTION_KEY)
-                .press(center)
+                .press(V(0, 0))
                 .releaseKey(OPTION_KEY)
                 .release();
         expect(camera.getPos()).toEqual(V(0, 0));
     });
 
     test("Drag with middle mouse", () => {
-        const target = center.sub(V(-20, 0));
-        input.drag(center, target, MIDDLE_MOUSE_BUTTON);
+        input.drag(V(0, 0), V(20, 0), MIDDLE_MOUSE_BUTTON);
         expect(camera.getPos()).toEqual(V(-20, 0));
     });
 
     test("Drag with two fingers", () => {
-        input.touch(center.add(V(-20, 0)))
-                .touch(center.add(V(20, 0)))
+        input.touch(V(-20, 0))
+                .touch(V(20, 0))
                 .moveTouches(V(20, 0))
                 .releaseTouch()
                 .releaseTouch();
