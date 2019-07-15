@@ -53,10 +53,7 @@ describe("Translate Tool", () => {
             const obj = new Switch();
             designer.addObject(obj);
 
-            input.moveTo(V(0, 0))
-                    .press()
-                    .move(V(100, 0))
-                    .release();
+            input.drag(V(0, 0), V(100, 0));
 
             expect(obj.getPos()).toEqual(V(100, 0));
         });
@@ -84,8 +81,51 @@ describe("Translate Tool", () => {
 
             expect(obj.getPos()).toEqual(V(0, 100));
         });
+
+        // TODO: Test with holding shift key
     });
 
+    describe("Multiple Objects", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+        });
 
+        test("Move Switch + ANDGate", () => {
+            const obj1 = new Switch();
+            const obj2 = new ANDGate();
+            obj1.setPos(V(100, 0));
+            designer.addObjects([obj1, obj2]);
+
+            // Select objects
+            input.drag(V(-200, -200), V(200, 200));
+
+            // Drag the objects
+            input.drag(V(0, 0), V(100, 0));
+
+            expect(obj1.getPos()).toEqual(V(200, 0));
+            expect(obj2.getPos()).toEqual(V(100, 0));
+        });
+
+        test("Move Switch while ANDGate is Selected", () => {
+            const sw = new Switch();
+            const gate = new ANDGate();
+            gate.setPos(V(100, 0));
+            designer.addObjects([sw, gate]);
+
+            // Select ANDGate
+            input.click(gate.getPos());
+
+            // Drag the Switch
+            input.drag(V(0, 0), V(-100, 0));
+
+            expect(sw.getPos()).toEqual(V(-100, 0));
+            expect(gate.getPos()).toEqual(V(100, 0));
+        });
+
+        // TODO: Test with holding shift key
+    });
+
+    // TODO: Test duplication when pressing Spacebar
 
 });
