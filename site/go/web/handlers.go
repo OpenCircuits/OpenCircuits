@@ -60,7 +60,7 @@ func getBustedName(path string) string {
 	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
 }
 
-func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {	
+func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 	session := sessions.Default(c)
 	userId := session.Get("user-id")
 	loggedIn := userId != nil
@@ -69,7 +69,7 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		Headers []template.HTML
 		Buttons []template.HTML
 	}{}
-	for _,a := range manager.AuthMethods {
+	for _, a := range manager.AuthMethods {
 		authData.Headers = append(authData.Headers, a.GetLoginHeader())
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}

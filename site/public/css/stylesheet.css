@@ -151,6 +151,9 @@ DROPDOWN
 .header__dropdown__content div:hover {background-color: #f1f1f1;}
 .header__dropdown:hover .header__dropdown__button {background-color: #444;}
 
+div.header__login__option {
+    height: auto;
+}
 
 /*
 

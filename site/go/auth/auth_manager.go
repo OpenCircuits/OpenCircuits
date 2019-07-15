@@ -13,7 +13,7 @@ func (am *AuthenticationManager) RegisterAuthenticationMethod(method Authenticat
 }
 
 func (am *AuthenticationManager) RegisterHandlers(e *gin.Engine) {
-	for _,ap := range am.AuthMethods {
+	for _, ap := range am.AuthMethods {
 		ap.RegisterHandlers(e)
 	}
 }
