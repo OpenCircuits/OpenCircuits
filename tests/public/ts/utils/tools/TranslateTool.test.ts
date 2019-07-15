@@ -1,97 +1,89 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {Input} from "../../../../../site/public/ts/utils/Input";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {TranslateTool} from "../../../../../site/public/ts/utils/tools/TranslateTool";
-import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
 import {V} from "../../../../../site/public/ts/utils/math/Vector";
 
+import {Camera} from "../../../../../site/public/ts/utils/Camera";
+import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
+
+import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+import {Button} from "../../../../../site/public/ts/models/ioobjects/inputs/Button";
+import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
+
+import {FakeInput} from "../FakeInput";
+import {InitializeInput} from "./Helpers";
+
 describe("Translate Tool", () => {
-    let camera = new Camera(500, 500);
-    let designer = new CircuitDesigner(0);
-    let toolManager = new ToolManager(camera, designer);
+    const camera = new Camera(500, 500);
+    const designer = new CircuitDesigner(-1);
+    const toolManager = new ToolManager(camera, designer);
+    const input = new FakeInput(camera.getCenter());
 
-    var s = new Switch();
+    InitializeInput(input, toolManager);
 
-    designer.addObject(s);
+    describe("Single Object", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+        });
 
+        test("Move mouse without dragging", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
 
-    // Declare as type: any so that we can manipulate
-    //  private methods to simulate user input
-    let input: any = new Input(<any>{
-        addEventListener:() => {},
-        getBoundingClientRect:() => {return {left: 0, top: 0}}
-    }, -1);
+            input.moveTo(V(0, 0))
+                    .move(V(20, 0));
 
-    input.addListener("keydown", (b?: number) => { toolManager.onKeyDown(input, b); });
-    input.addListener("keyup",   (b?: number) => { toolManager.onKeyUp(input, b); });
-    input.addListener("mousedown", (b?: number) => { toolManager.onMouseDown(input, b); });
-    input.addListener("mousemove", () => { toolManager.onMouseMove(input); });
-    input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
-    input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
+            expect(obj.getPos()).toEqual(V(0, 0));
+        });
 
-    let center = camera.getCenter();
-    const CX: number = center.x;
-    const CY: number = center.y;
+        test("Click and Move mouse not on Switch", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
 
-    s.setPos(V(0, 0)); //center of scene is (0, 0) for objects
+            input.moveTo(V(0, 50))
+                    .press()
+                    .move(V(0, -100))
+                    .release();
 
-    function down(x: number, y: number): void {
-        input.onMouseDown(V(CX + x, CY + y));
-    }
+            expect(obj.getPos()).toEqual(V(0, 0));
+        });
 
-    function up(x: number, y: number): void {
-        input.onMouseUp(V(CY + x, CY + y));
-    }
+        test("Move Switch", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
 
-    function move(x: number, y: number): void {
-        input.onMouseMove(V(CY + x, CY + y));
-    }
+            input.moveTo(V(0, 0))
+                    .press()
+                    .move(V(100, 0))
+                    .release();
 
+            expect(obj.getPos()).toEqual(V(100, 0));
+        });
 
-    it ("Move mouse without dragging", () => {
-        let init_pos = s.getPos();
+        test("Move Button", () => {
+            const obj = new Button();
+            designer.addObject(obj);
 
-        move(-5, 0);
-        move(-10, 0);
-        move(-15, 0);
+            input.moveTo(V(0, 0))
+                    .press()
+                    .move(V(-100, 0))
+                    .release();
 
-        let final_pos = s.getPos();
+            expect(obj.getPos()).toEqual(V(-100, 0));
+        });
 
-        expect(final_pos).toEqual(init_pos);
+        test("Move ANDGate", () => {
+            const obj = new ANDGate();
+            designer.addObject(obj);
 
-    });
+            input.moveTo(V(0, 0))
+                    .press()
+                    .move(V(0, 100))
+                    .release();
 
-    it ("Click and move mouse not on switch", () => {
-        let init_pos = s.getPos();
-
-        down(-60, 0);
-        move(-65, 0);
-        move(-70, 0);
-        move(-75, 0);
-        move(-80, 0);
-        up(-80, 0);
-
-        let final_pos = s.getPos();
-
-        expect(final_pos).toEqual(init_pos);
-
-    });
-
-    it ("Move switch", () => {
-        let init_pos = s.getPos();
-
-        down(0, 0);
-        move(-5, 0);
-        move(-10, 0);
-        move(-15, 0);
-
-        let final_pos = s.getPos();
-
-        expect(final_pos).not.toEqual(init_pos);
-
+            expect(obj.getPos()).toEqual(V(0, 100));
+        });
     });
 
 
