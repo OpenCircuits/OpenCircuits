@@ -67,8 +67,6 @@ export class TranslateTool extends Tool {
         if (!(event == "mousedrag"))
             return false;
 
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
         const selections = currentTool.getSelections();
         const currentPressedObj = currentTool.getCurrentlyPressedObj();
 
@@ -90,9 +88,11 @@ export class TranslateTool extends Tool {
 
         // Copy initial positions
         this.initialPositions = this.components.map((o) => o.getPos());
-        this.startPos = worldMousePos.sub(currentPressedObj.getPos());
 
         this.action = new GroupAction();
+
+        // Explicitly drag
+        this.onMouseDrag(input, 0);
 
         return true;
     }
@@ -105,9 +105,8 @@ export class TranslateTool extends Tool {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        // Calculate position
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        const dPos = worldMousePos.sub(this.pressedComponent.getPos()).sub(this.startPos);
+        const dPos = this.camera.getWorldPos(input.getMousePos()).sub(
+            this.camera.getWorldPos(input.getMouseDownPos()));
 
         // Move and snap if it's a WirePort
         if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
@@ -115,14 +114,13 @@ export class TranslateTool extends Tool {
             return true;
         }
 
-        // Set positions of each component in turn
-        for (const obj of this.components) {
-            let newPos = obj.getPos().add(dPos);
+        for (let i = 0; i < this.components.length; i++) {
+            let newPos = this.initialPositions[i].add(dPos);
             if (input.isShiftKeyDown()) {
                 newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
                            Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
             }
-            obj.setPos(newPos);
+            this.components[i].setPos(newPos);
         }
 
         // If a wire connects a selected component with an unselected component, make it curvy
