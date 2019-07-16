@@ -110,7 +110,7 @@ export class TranslateTool extends Tool {
 
         // Move and snap if it's a WirePort
         if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
-            MoveAndSnap(this.pressedComponent, dPos);
+            MoveAndSnap(this.pressedComponent, this.initialPositions[0].add(dPos));
             return true;
         }
 
