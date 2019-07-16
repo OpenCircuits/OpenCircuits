@@ -30,15 +30,13 @@ export class SplitWireTool extends TranslateTool {
         if (!(input.getTouchCount() == 1))
             return false;
 
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
         const wire = currentTool.getCurrentlyPressedObj();
         if (!(wire instanceof Wire))
             return false;
 
         // Create new wire port
         const wirePort = new WirePort();
-        wirePort.setPos(worldMousePos);
+        wirePort.setPos(this.camera.getWorldPos(input.getMouseDownPos()));
 
         // Create action
         this.splitAction = new GroupAction();
