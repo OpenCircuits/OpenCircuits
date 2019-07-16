@@ -13,5 +13,8 @@ func RegisterPages(router* gin.Engine) {
 	router.StaticFile("/Bundle.js", "./Bundle.js")
 	router.StaticFile("/Bundle.js.map", "./Bundle.js.map")
 
-	router.GET("/", IndexHandler)
+	// TODO: this is a hack to get bundles not not cache
+	router.GET("/Bundle.js?ver=:id", noCacheHandler("./Bundle.js"))
+
+	router.GET("/", indexHandler)
 }

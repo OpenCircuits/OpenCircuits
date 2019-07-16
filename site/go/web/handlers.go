@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 type Item struct {
@@ -42,6 +44,26 @@ func init() {
 	}
 }
 
-func IndexHandler(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "userId": ""})
+func getLastModifiedTime(path string) time.Time {
+	file, err := os.Stat(path)
+	if err != nil {
+		log.Printf("Invalid file path %s\n", path)
+		return time.Now()
+	}
+	return file.ModTime()
+}
+
+func getBustedName(path string) string {
+	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
+}
+
+func indexHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "user_id": "" ,
+		"bundleJs": getBustedName("./Bundle.js")})
+}
+
+func noCacheHandler(path string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.File(path)
+	}
 }
