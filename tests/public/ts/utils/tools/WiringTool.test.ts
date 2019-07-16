@@ -30,6 +30,11 @@ describe("Wiring Tool", () => {
         expect(connections).not.toContain(obj2);
     }
 
+    afterEach(() => {
+        // Clear circuit
+        designer.reset();
+    });
+
     test("Click to Connect Switch -> LED", () => {
         const sw = new Switch();
         const led = new LED();
