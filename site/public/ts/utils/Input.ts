@@ -38,6 +38,7 @@ export class Input {
         this.hookupKeyboardEvents();
         this.hookupMouseEvents();
         this.hookupTouchEvents();
+        this.setupHammer();
     }
 
     private hookupKeyboardEvents(): void {
@@ -67,14 +68,18 @@ export class Input {
     }
 
     private hookupTouchEvents(): void {
+        const getTouchPositions = (touches: TouchList): Array<Vector> => {
+            return Array.from(touches).map((t) => V(t.clientX, t.clientY));
+        };
+
         // Touch screen events
         this.canvas.addEventListener('touchstart', (e: TouchEvent) => {
-            this.onTouchStart(Array.from(e.touches).map((t) => V(t.clientX, t.clientY)));
+            this.onTouchStart(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
         this.canvas.addEventListener('touchmove', (e: TouchEvent) => {
-            this.onTouchMove(Array.from(e.touches).map((t) => V(t.clientX, t.clientY)));
+            this.onTouchMove(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
@@ -82,8 +87,9 @@ export class Input {
             this.onTouchEnd();
             e.preventDefault();
         }, false);
+    }
 
-
+    private setupHammer(): void {
         // Pinch to zoom
         const touchManager = new Hammer.Manager(this.canvas, {recognizers: []});
         let lastScale = 1;
