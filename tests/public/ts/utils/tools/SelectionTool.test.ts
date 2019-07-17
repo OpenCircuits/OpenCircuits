@@ -1,127 +1,144 @@
 import "jest";
 
-import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
+import {SHIFT_KEY} from "../../../../../site/public/ts/utils/Constants";
+
+import {V} from "../../../../../site/public/ts/utils/math/Vector";
+
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
-import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
-import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
+
+import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
+import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
+import {Multiplexer} from "../../../../../site/public/ts/models/ioobjects/other/Multiplexer";
+import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+
+import {FakeInput} from "../FakeInput";
+import {InitializeInput} from "./Helpers";
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new CircuitDesigner(0);
     const toolManager = new ToolManager(camera, designer);
+    const input = new FakeInput(camera.getCenter());
 
-    const s = new Switch();
-    const a = new ANDGate();
-    const l = new LED();
+    InitializeInput(input, toolManager);
 
-    designer.addObjects([s, a, l]);
-
-    designer.connect(s, 0, l, 0);
-
-    // Declare as type: any so that we can manipulate
-    //  private methods to simulate user input
-    const input: any = new Input(<any>{
-        addEventListener:() => {},
-        getBoundingClientRect:() => {return {left: 0, top: 0}}
-    }, -1);
-
-    input.addListener("keydown", (b?: number) => { toolManager.onKeyDown(input, b); });
-    input.addListener("keyup",   (b?: number) => { toolManager.onKeyUp(input, b); });
-    input.addListener("mousedown", (b?: number) => { toolManager.onMouseDown(input, b); });
-    input.addListener("mousemove", () => { toolManager.onMouseMove(input); });
-    input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
-    input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
-    input.addListener("click",     (b?: number) => { toolManager.onClick(input, b); });
-
-    const center = camera.getCenter();
-    const CX = center.x;
-    const CY = center.y;
-
-    s.setPos(V(-200, 0)); //set switch at 200 units to the left of And Gate
-    a.setPos(V(0,0)); //set and gate at center of the scene
-    l.setPos(V(50, 0)); //set LED 100 pixels to the right of the and gate
-
-    function down(x: number | Vector, y ?: number): void {
-        if (!(x instanceof Vector))  {
-            input.onMouseDown(V(x + CX, y + CY));
-        }
-        else {
-            input.onMouseDown(V(x.x + CX, x.y + CY));
-        }
-    }
-
-    function up(x: number | Vector, y ?: number): void {
-        if (!(x instanceof Vector))  {
-            input.onMouseUp(V(x + CX, y + CY));
-        }
-        else {
-            input.onMouseUp(V(x.x + CX, x.y + CY));
-        }
-    }
-
-    function move(x: number | Vector, y ?: number): void {
-        if (!(x instanceof Vector))  {
-            input.onMouseMove(V(x + CX, y + CY));
-        }
-        else {
-            input.onMouseMove(V(x.x + CX, x.y + CY));
-        }
-    }
-
-    function click(x: number | Vector, y ?: number): void {
-        if (!(x instanceof Vector))  {
-            down(x, y);
-            up(x, y);
-            input.onClick(V(x + CX, y + CY));
-        }
-        else {
-            down(x);
-            up(x);
-            input.onClick(V(x.x + CX, x.y + CY));
-        }
-    }
-
-    function dragFromTo(start: Vector, end: Vector): void {
-        down(start);
-        move(end);
-        up(end);
-    }
-
-    function selections(): Array<Selectable> {
+    function selections(): Selectable[] {
         return toolManager.getSelectionTool().getSelections();
     }
 
-    function tool(): Tool {
-        return toolManager.getCurrentTool();
-    }
+    describe("Single Object", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+        });
 
-    it ("Click on And Gate", () => {
-        click(0, 0);
+        test("Click to Select then Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
 
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(selections()).toContain(a);
+            input.click(V(0, 0));
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.move(V(100, 0), 10)
+                    .click();
+            expect(selections().length).toBe(0);
+        });
+
+        test("Drag to Select then Click to Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.drag(V(-100, 100),
+                       V(100, -100));
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.move(V(0, 100), 10)
+                    .click();
+            expect(selections().length).toBe(0);
+        });
+
+        test("Tap to Select then Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.tap(V(0, 0));
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.tap(V(0, -100));
+            expect(selections().length).toBe(0);
+        });
+        test("Tap to Toggle Switch", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
+
+            input.tap(V(0, 0));
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(true);
+
+            input.tap(V(0, 0));
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(false);
+        });
+
+        test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.touch(V(-100, -100))
+                    .moveTouches(V(200, 200), 5)
+                    .releaseTouch();
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(gate);
+
+            input.tap(V(-100, 0));
+            expect(selections().length).toBe(0);
+        });
+
+        test("Click to Toggle Switch", () => {
+            const obj = new Switch();
+            designer.addObject(obj);
+
+            input.click(V(0, 0));
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(true);
+
+            input.click(V(0, 0));
+            expect(selections().length).toBe(0);
+            expect(obj.isOn()).toBe(false);
+        });
+
     });
 
-    it ("Drag over And Gate and LED", () => {
-        dragFromTo(V(-110, 0), V(110, 20));
+    describe("Multiple Objects", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+        });
 
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(selections()).toHaveLength(2);
+        test("Click with Shift to Select Objects then Deselect", () => {
+            const obj1 = new ANDGate();
+            const obj2 = new Multiplexer();
+            obj1.setPos(V(100, 0));
+            designer.addObjects([obj1, obj2]);
 
-    });
+            input.click(V(0, 0));
+            input.pressKey(SHIFT_KEY);
+            input.click(obj1.getPos());
+            input.releaseKey(SHIFT_KEY);
 
-    it ("Turn on Switch", () => {
-        click(-200, 0);
+            expect(selections().length).toBe(2);
+            expect(selections()).toContain(obj1);
+            expect(selections()).toContain(obj2);
 
-        expect(tool()).toBeInstanceOf(SelectionTool);
-        expect(l.isOn()).toEqual(true);
+            input.move(V(0, -100), 10)
+                    .click();
+            expect(selections().length).toBe(0);
+        });
     });
 
 });

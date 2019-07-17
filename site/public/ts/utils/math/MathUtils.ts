@@ -310,3 +310,16 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 
     return false;
 }
+
+/**
+ * Finds the midpoint from a list of positions
+ *
+ * @param  {Array<Vector>} positions
+           The list of positions
+ *
+ * @return {Vector}
+ *         The midpoint of all the given positions
+ */
+export function CalculateMidpoint(positions: Array<Vector>): Vector {
+    return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
+}

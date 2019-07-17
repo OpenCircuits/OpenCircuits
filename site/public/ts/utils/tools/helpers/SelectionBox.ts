@@ -1,6 +1,6 @@
 import {SHIFT_KEY} from "../../Constants";
 
-import {Vector} from "../../math/Vector";
+import {Vector, V} from "../../math/Vector";
 import {Transform} from "../../math/Transform";
 import {TransformContains,
         RectContains} from "../../math/MathUtils";
@@ -34,6 +34,10 @@ export class SelectionBox {
         this.camera = camera;
 
         this.selectionTool = selectionTool;
+
+        this.p1 = V();
+        this.p2 = V();
+        this.selecting = false;
     }
 
     public drag(input: Input): void {

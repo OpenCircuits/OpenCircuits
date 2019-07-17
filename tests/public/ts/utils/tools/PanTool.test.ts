@@ -1,77 +1,62 @@
 import "jest";
 
-import {OPTION_KEY} from "../../../../../site/public/ts/utils/Constants";
+import {OPTION_KEY,
+        MIDDLE_MOUSE_BUTTON} from "../../../../../site/public/ts/utils/Constants";
 
 import {V} from "../../../../../site/public/ts/utils/math/Vector";
 
 import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
 import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {Input} from "../../../../../site/public/ts/utils/Input";
 import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {PanTool} from "../../../../../site/public/ts/utils/tools/PanTool";
+
+import {FakeInput} from "../FakeInput";
+import {InitializeInput} from "./Helpers";
 
 describe("Pan Tool", () => {
-    let camera = new Camera(500, 500);
-    let designer = new CircuitDesigner(0);
-    let toolManager = new ToolManager(camera, designer);
+    const camera = new Camera(500, 500);
+    const designer = new CircuitDesigner(-1);
+    const toolManager = new ToolManager(camera, designer);
+    const input = new FakeInput(camera.getCenter());
 
-    // Declare as type: any so that we can manipulate
-    //  private methods to simulate user input
-    let input: any = new Input(<any>{
-        addEventListener:() => {},
-        getBoundingClientRect:() => {return {left: 0, top: 0}}
-    }, -1);
+    InitializeInput(input, toolManager);
 
-    input.addListener("keydown", (b?: number) => { toolManager.onKeyDown(input, b); });
-    input.addListener("keyup",   (b?: number) => { toolManager.onKeyUp(input, b); });
-    input.addListener("mousedown", (b?: number) => { toolManager.onMouseDown(input, b); });
-    input.addListener("mousemove", () => { toolManager.onMouseMove(input); });
-    input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
-    input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
-
-    let center = camera.getCenter();
-
-    it("Drag without option key", () => {
-        let pos = camera.getPos();
-
-        input.onMouseDown(center);
-        input.onMouseMove(V(center.x- 5, center.y));
-        input.onMouseMove(V(center.x-10, center.y));
-        input.onMouseMove(V(center.x-15, center.y));
-        input.onMouseUp(V(center.x-15, center.y));
-
-        let pos2 = camera.getPos();
-
-        // Expect no movement
-        expect(pos2).toEqual(pos);
+    afterEach(() => {
+        // Reset camera position for each test
+        camera.setPos(V());
     });
-    it("Drag with option key", () => {
-        let pos = camera.getPos();
 
-        input.onKeyDown(OPTION_KEY)
-        input.onMouseDown(V(center.x, center.y));
-        input.onMouseMove(V(center.x- 5, center.y));
-        input.onMouseMove(V(center.x-10, center.y));
-        input.onMouseMove(V(center.x-15, center.y));
-        input.onMouseUp(V(center.x-15, center.y));
-        input.onKeyUp(OPTION_KEY);
-
-        let pos2 = camera.getPos();
-
-        // Expect movement
-        expect(pos2).not.toEqual(pos);
+    test("Drag without option key", () => {
+        input.drag(V(0, 0), V(-20, 0));
+        expect(camera.getPos()).toEqual(V(0, 0));
     });
-    it("No drag with option key", () => {
-        let pos = camera.getPos();
 
-        input.onKeyDown(OPTION_KEY)
-        input.onMouseDown(V(center.x, center.y));
-        input.onKeyUp(OPTION_KEY);
-        input.onMouseUp(V(center.x, center.y));
-
-        let pos2 = camera.getPos();
-
-        // Expect no movement
-        expect(pos2).toEqual(pos);
+    test("Drag with option key", () => {
+        input.pressKey(OPTION_KEY)
+                .drag(V(0, 0), V(20, 0))
+                .releaseKey(OPTION_KEY);
+        expect(camera.getPos()).toEqual(V(-20, 0));
     });
+
+    test("No drag with option key", () => {
+        input.pressKey(OPTION_KEY)
+                .press(V(0, 0))
+                .releaseKey(OPTION_KEY)
+                .release();
+        expect(camera.getPos()).toEqual(V(0, 0));
+    });
+
+    test("Drag with middle mouse", () => {
+        input.drag(V(0, 0), V(20, 0), MIDDLE_MOUSE_BUTTON);
+        expect(camera.getPos()).toEqual(V(-20, 0));
+    });
+
+    test("Drag with two fingers", () => {
+        input.touch(V(-20, 0))
+                .touch(V(20, 0))
+                .moveTouches(V(20, 0))
+                .releaseTouch()
+                .releaseTouch();
+        expect(camera.getPos()).toEqual(V(-20, 0));
+    });
+
 });

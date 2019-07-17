@@ -13,11 +13,8 @@ export function Snap(wire: Wire, x: number, c: number): number {
     return x;
 }
 
-export function MoveAndSnap(port: WirePort, dPos: Vector): void {
-    // Snap wire port to the grid lines of its neighbor ports (if it is close enough)
-    const portPos = port.getPos();
-    const newPos = portPos.add(dPos);
-
+// Snap wire port to the grid lines of its neighbor ports (if it is close enough)
+export function MoveAndSnap(port: WirePort, newPos: Vector): void {
     // getInputs() and getOutputs() have 1 and only 1 element each because WirePorts are specialized
     const iw = port.getInputs()[0];
     const ow = port.getOutputs()[0];
@@ -27,10 +24,10 @@ export function MoveAndSnap(port: WirePort, dPos: Vector): void {
     iw.setIsStraight(false);
     ow.setIsStraight(false);
 
-    newPos.x = this.snap(iw, newPos.x, ip.x);
-    newPos.y = this.snap(iw, newPos.y, ip.y);
-    newPos.x = this.snap(ow, newPos.x, op.x);
-    newPos.y = this.snap(ow, newPos.y, op.y);
+    newPos.x = Snap(iw, newPos.x, ip.x);
+    newPos.y = Snap(iw, newPos.y, ip.y);
+    newPos.x = Snap(ow, newPos.x, op.x);
+    newPos.y = Snap(ow, newPos.y, op.y);
 
     // Only one position to set (the wire port)
     port.setPos(newPos);
