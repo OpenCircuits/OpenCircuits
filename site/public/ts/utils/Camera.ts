@@ -27,11 +27,6 @@ export class Camera {
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
     }
-    public resize(width: number, height: number): void {
-        this.width = width;
-        this.height = height;
-        this.center = V(this.width, this.height).scale(0.5);
-    }
     private updateMatrix(): void {
         if (!this.dirty)
             return;
@@ -46,6 +41,15 @@ export class Camera {
         const p2 = this.getWorldPos(V(this.width, this.height));
         this.transform.setPos(p2.add(p1).scale(0.5));
         this.transform.setSize(p2.sub(p1));
+    }
+    public resize(width: number, height: number): void {
+        this.width = width;
+        this.height = height;
+        this.center = V(this.width, this.height).scale(0.5);
+    }
+    public setPos(pos: Vector): void {
+        this.dirty = true;
+        this.pos.set(pos);
     }
     public translate(dx: Vector | number, dy: number = 0): void {
         this.dirty = true;

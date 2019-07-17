@@ -18,6 +18,8 @@ export abstract class PressableComponent extends Component {
 
         this.pressableBox = new Transform(V(), pSize);
         this.pressableBox.setParent(this.transform);
+
+        this.on = false;
     }
 
     public activate(signal: boolean, i: number = 0): void {
