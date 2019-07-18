@@ -73,13 +73,13 @@ export abstract class Port implements Selectable {
     }
 
     public getWorldDir(): Vector {
-        return this.parent.transformPoint(this.dir).sub(this.parent.getPos()).normalize();
+        return this.parent.getTransform().toWorldSpace(this.dir).sub(this.parent.getPos()).normalize();
     }
     public getWorldOriginPos(): Vector {
-        return this.parent.transformPoint(this.origin);
+        return this.parent.getTransform().toWorldSpace(this.origin);
     }
     public getWorldTargetPos(): Vector {
-        return this.parent.transformPoint(this.target);
+        return this.parent.getTransform().toWorldSpace(this.target);
     }
 
     public abstract getWires(): Array<Wire>;
