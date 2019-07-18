@@ -15,7 +15,7 @@ install:
 
 script:
     - npm run build
-    - npm run test
+    - npm run test -- --maxWorkers=2
     - npm run lint
 
 notifications:

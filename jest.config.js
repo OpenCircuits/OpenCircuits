@@ -4,12 +4,11 @@ module.exports = {
     collectCoverage: true,
     testEnvironment: "jsdom",
     moduleFileExtensions: [
-      "ts",
-      "tsx",
-      "js"
+        "js",
+        "ts"
     ],
     transform: {
-      "\\.(ts|tsx)$": "ts-jest"
+        "\\.(ts)$": "ts-jest"
     },
-    testRegex: "/tests/.*\\.(ts|tsx|js)$"
+    testRegex: "/tests/.*\\.(test.ts)$"
 };
