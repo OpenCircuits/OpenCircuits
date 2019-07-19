@@ -5,7 +5,7 @@ import {Importer} from "../utils/io/Importer";
 import {CopyGroup} from "../utils/ComponentUtils";
 
 import {GroupAction} from "../utils/actions/GroupAction";
-import {TranslateAction} from "../utils/actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "../utils/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "../utils/actions/deletion/DeleteGroupActionFactory";
@@ -80,8 +80,7 @@ export const CopyController = (() => {
         action.add(CreateGroupSelectAction(MainDesignerController.GetSelectionTool(), objs));
 
         // Translate the copies over a bit
-        action.add(new TranslateAction(objs, objs.map((o) => o.getPos()),
-                                       objs.map((o) => o.getPos().add(V(5, 5)))));
+        action.add(CreateGroupTranslateAction(objs, objs.map((o) => o.getPos().add(V(5, 5)))));
 
         MainDesignerController.AddAction(action.execute());
         MainDesignerController.Render();

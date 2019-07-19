@@ -5,7 +5,7 @@ import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {TranslateAction} from "../actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "../actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
@@ -49,12 +49,11 @@ export class PositionPopupModule extends SelectionPopupModule {
         const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
         MainDesignerController.AddAction(
-            new TranslateAction(components,
-                                components.map((c) => c.getPos()),
-                                components.map((c) =>
-                                    V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
-                                )).execute()
+            CreateGroupTranslateAction(components,
+                                       components.map((c) =>
+                                           V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                                             this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
+                                       )).execute()
         );
 
         MainDesignerController.Render();
