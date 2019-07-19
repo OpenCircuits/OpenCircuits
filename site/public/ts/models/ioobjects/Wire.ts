@@ -103,6 +103,11 @@ export class Wire extends CullableObject {
         return this.getShape().getBoundingBox().getTopRight().add(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
     }
 
+    public copyInto(w: Wire): void {
+        w.isOn = this.isOn;
+        w.straight = this.straight;
+    }
+
     public save(node: XMLNode): void {
         super.save(node);
 

@@ -13,15 +13,12 @@ import {SelectionTool} from "./SelectionTool";
 
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 import {Component} from "../../models/ioobjects/Component";
-import {Wire} from "../../models/ioobjects/Wire";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/transform/TranslateAction";
-
-import {MoveAndSnap} from "./helpers/SnapUtils";
+import {CreateGroupPostTranslateAction} from "../actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
     protected designer: CircuitDesigner;
@@ -30,7 +27,6 @@ export class TranslateTool extends Tool {
     protected pressedComponent: Component;
     protected components: Array<Component>;
     protected initialPositions: Array<Vector>;
-    protected neighbors: Map<Component, Array<Wire>>;
 
     private action: GroupAction;
     private startPos: Vector;
@@ -40,25 +36,6 @@ export class TranslateTool extends Tool {
 
         this.designer = designer;
         this.camera = camera;
-        this.neighbors = new Map<Component, Array<Wire>>();
-    }
-
-    private calculateNeighbors(): void {
-        this.neighbors.clear();
-        for (const obj of this.components) {
-            obj.getInputs().forEach(i => {
-                const c = i.getInputComponent();
-                const arr = this.neighbors.get(c) || [];
-                arr.push(i);
-                this.neighbors.set(c, arr);
-            });
-            obj.getOutputs().forEach(o => {
-                const c = o.getOutputComponent();
-                const arr = this.neighbors.get(c) || [];
-                arr.push(o);
-                this.neighbors.set(c, arr);
-            });
-        }
     }
 
     public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
@@ -82,10 +59,6 @@ export class TranslateTool extends Tool {
         if (selections.includes(currentPressedObj))
             this.components = selections as Array<Component>;
 
-        // Precalculate neighbor wires for each component
-        // Used online to un-straighten wires when one component is dragged away from the other
-        this.calculateNeighbors();
-
         // Copy initial positions
         this.initialPositions = this.components.map((o) => o.getPos());
 
@@ -108,26 +81,14 @@ export class TranslateTool extends Tool {
         const dPos = this.camera.getWorldPos(input.getMousePos()).sub(
             this.camera.getWorldPos(input.getMouseDownPos()));
 
-        // Move and snap if it's a WirePort
-        if (this.components.length == 1 && this.pressedComponent instanceof WirePort) {
-            MoveAndSnap(this.pressedComponent, this.initialPositions[0].add(dPos));
-            return true;
-        }
-
         for (let i = 0; i < this.components.length; i++) {
             let newPos = this.initialPositions[i].add(dPos);
             if (input.isShiftKeyDown()) {
                 newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
                            Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
             }
-            this.components[i].setPos(newPos);
-        }
-
-        // If a wire connects a selected component with an unselected component, make it curvy
-        for (const neighbor of this.neighbors) {
-            if (this.components.indexOf(neighbor[0]) != -1)
-                continue;
-            neighbor[1].forEach(w => w.setIsStraight(false));
+            // Don't add action since we can have one action at the end
+            new TranslateAction(this.components[i], newPos).execute();
         }
 
         return true;
@@ -146,11 +107,7 @@ export class TranslateTool extends Tool {
     }
 
     public getAction(): Action {
-        // Copy final positions
-        const finalPositions = [];
-        for (const obj of this.components)
-            finalPositions.push(obj.getPos());
-        this.action.add(new TranslateAction(this.components, this.initialPositions, finalPositions));
+        this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
 
         // Return action
         return this.action;
