@@ -1,6 +1,7 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "../../utils/Constants";
+        IO_PORT_BORDER_WIDTH,
+        WIRE_SNAP_THRESHOLD} from "../../utils/Constants";
 
 import {Vector,V}     from "../../utils/math/Vector";
 import {Transform}    from "../../utils/math/Transform";
@@ -17,6 +18,14 @@ import {Positioner} from "../ports/positioners/Positioner";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
+
+function Snap(wire: Wire, x: number, c: number): number {
+    if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
+        wire.setIsStraight(true);
+        return c;
+    }
+    return x;
+}
 
 export abstract class Component extends CullableObject {
     protected inputs:  InputPortSet;
@@ -49,13 +58,6 @@ export abstract class Component extends CullableObject {
         this.outputs.get(i).activate(signal);
     }
 
-    public connect(i: number, w: Wire): void {
-        this.outputs.get(i).connect(w);
-    }
-
-    public setInput(i: number, w: Wire): void {
-        this.inputs.get(i).setInput(w);
-    }
 
     public setInputPortCount(val: number): void {
         this.inputs.setPortCount(val);
@@ -66,6 +68,19 @@ export abstract class Component extends CullableObject {
     }
 
     public setPos(v: Vector): void {
+        // Snap to connections
+        for (const port of this.getPorts()) {
+            const pos = port.getWorldTargetPos().sub(this.getPos());
+            const wires = port.getWires();
+            for (const w of wires) {
+                // Get the port that isn't the current port
+                const port2 = (w.getInput() == port ? w.getOutput() : w.getInput());
+                w.setIsStraight(false);
+                v.x = Snap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
+                v.y = Snap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
+            }
+        }
+
         this.transform.setPos(v);
     }
 
@@ -73,14 +88,6 @@ export abstract class Component extends CullableObject {
         this.transform.setAngle(a);
     }
 
-    /**
-     * Transform the given local-space vector
-     *  to world space relative to this transform
-     * @param v The point relative to this component
-     */
-    public transformPoint(v: Vector): Vector {
-        return this.transform.getMatrix().mul(v);
-    }
 
     /**
      * Determines whether or not a point is within
@@ -105,12 +112,17 @@ export abstract class Component extends CullableObject {
         return RectContains(this.getTransform(), v) && !this.isWithinPressBounds(v);
     }
 
+
     public getInputPort(i: number): InputPort {
         return this.inputs.get(i);
     }
 
     public getInputPortCount(): number {
         return this.inputs.length;
+    }
+
+    public getInputPortPos(i: number): Vector {
+        return this.getInputPort(i).getWorldTargetPos();
     }
 
     public getInputPorts(): Array<InputPort> {
@@ -130,6 +142,10 @@ export abstract class Component extends CullableObject {
         return this.outputs.length;
     }
 
+    public getOutputPortPos(i: number): Vector {
+        return this.getOutputPort(i).getWorldTargetPos();
+    }
+
     public getOutputPorts(): Array<OutputPort> {
         return this.outputs.getPorts();
     }
@@ -142,6 +158,7 @@ export abstract class Component extends CullableObject {
     public getPorts(): Array<Port> {
         return (<Array<Port>>this.getInputPorts()).concat(this.getOutputPorts());
     }
+
 
     public getPos(): Vector {
         return this.transform.getPos();
@@ -158,6 +175,7 @@ export abstract class Component extends CullableObject {
     public getTransform(): Transform {
         return this.transform;
     }
+
 
     public getMinPos(): Vector {
         let min = V(Infinity, Infinity);
@@ -195,6 +213,7 @@ export abstract class Component extends CullableObject {
         return max;
     }
 
+
     public copy(): Component {
         const copy = <Component>super.copy();
 
@@ -218,6 +237,7 @@ export abstract class Component extends CullableObject {
         this.setPos(node.getVectorAttribute(""));
         this.setAngle(node.getFloatAttribute("angle"));
     }
+
 
     public getImageName(): string {
         return undefined;

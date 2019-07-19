@@ -246,10 +246,11 @@ export function GatherGroup(objects: Array<IOObject>): SeparatedComponentCollect
  * @param  groups The SeparatedComponentCollection of components
  * @return        A graph corresponding to the given circuit
  */
-export function CreateGraph(groups: SeparatedComponentCollection): Graph<number, {i1: number, i2: number}> {
-    const graph = new Graph<number, {i1: number, i2: number}>();
+export function CreateGraph(groups: SeparatedComponentCollection): Graph<number, number> {
+    const graph = new Graph<number, number>();
 
     const objs = groups.getAllComponents();
+    const wires = groups.wires;
     const map = new Map<Component, number>();
 
     // Create nodes and map
@@ -259,13 +260,11 @@ export function CreateGraph(groups: SeparatedComponentCollection): Graph<number,
     }
 
     // Create edges
-    for (const wire of groups.wires) {
+    for (let j = 0; j < wires.length; j++) {
+        const wire = wires[j];
         const c1 = map.get(wire.getInputComponent());
         const c2 = map.get(wire.getOutputComponent());
-        const i1 = wire.getInputComponent().getOutputPorts().indexOf(wire.getInput());
-        const i2 = wire.getOutputComponent().getInputPorts().indexOf(wire.getOutput());
-        const indices = {i1: i1, i2: i2};
-        graph.createEdge(c1, c2, indices);
+        graph.createEdge(c1, c2, j);
     }
 
     return graph;
@@ -282,8 +281,9 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
     // Separate out the given objects
     const groups = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
     const objs = groups.getAllComponents();
+    const wires = groups.wires;
 
-    const graph: Graph<number, {i1: number, i2: number}> = CreateGraph(groups);
+    const graph: Graph<number, number> = CreateGraph(groups);
 
     // Copy components
     const copies: Array<Component> = [];
@@ -299,10 +299,16 @@ export function CopyGroup(objects: Array<IOObject> | SeparatedComponentCollectio
 
         for (const connection of connections) {
             const j = connection.getTarget();
-            const indices = connection.getWeight();
             const c2 = copies[j];
 
-            const wire = Connect(c1, indices.i1,  c2, indices.i2);
+            const w = wires[connection.getWeight()];
+
+            // Find indices of which ports the wire should be connected to
+            const i1 = objs[i].getOutputPorts().indexOf(w.getInput());
+            const i2 = objs[j].getInputPorts().indexOf(w.getOutput());
+
+            const wire = Connect(c1, i1,  c2, i2);
+            w.copyInto(wire); // Copy properties
             wireCopies.push(wire);
         }
     }
