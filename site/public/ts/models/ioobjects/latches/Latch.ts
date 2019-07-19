@@ -25,8 +25,8 @@ export abstract class Latch extends Component {
     public save(node: XMLNode): void {
         super.save(node);
 
-        node.addAttribute("inputs", this.getInputPortCount());
-        node.addAttribute("outputs", this.getOutputPortCount());
+        node.addAttribute("inputs", this.numInputs());
+        node.addAttribute("outputs", this.numOutputs());
     }
 
     public load(node: XMLNode): void {

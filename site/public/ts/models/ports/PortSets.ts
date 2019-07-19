@@ -63,6 +63,10 @@ class PortSet<T extends Port> {
         return this.ports.slice();
     }
 
+    public getCount(): ClampedValue {
+        return this.count.copy();
+    }
+
     public get length(): number {
         return this.ports.length;
     }

@@ -192,12 +192,12 @@ export class ICData {
 
         // Make sure it contains valid inputs (i.e. input w/ exactly 1 output)
         for (const input of group.inputs) {
-            if (input.getOutputPortCount() != 1)
+            if (input.numOutputs() != 1)
                 return false;
         }
         // Make sure it contains valid outputs (i.e. output w/ exactly 1 input)
         for (const output of group.outputs) {
-            if (output.getInputPortCount() != 1)
+            if (output.numInputs() != 1)
                 return false;
         }
 

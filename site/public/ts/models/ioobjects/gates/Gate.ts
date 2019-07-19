@@ -48,7 +48,7 @@ export abstract class Gate extends Component {
     public save(node: XMLNode): void {
         super.save(node);
 
-        node.addAttribute("inputs", this.getInputPortCount());
+        node.addAttribute("inputs", this.numInputs());
         node.addAttribute("not", this.not);
     }
 
