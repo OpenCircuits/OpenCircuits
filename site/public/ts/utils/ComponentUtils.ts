@@ -119,10 +119,10 @@ export function SeparateGroup(objects: Array<IOObject>): SeparatedComponentColle
             groups.wires.push(obj);
         } else if (obj instanceof Component) {
             // Input => >0 output ports and 0 input ports
-            if (obj.getInputPortCount() == 0 && obj.getOutputPortCount() > 0)
+            if (obj.numInputs() == 0 && obj.numOutputs() > 0)
                 groups.inputs.push(obj);
             // Output => >0 input ports and 0 output ports
-            else if (obj.getInputPortCount() > 0 && obj.getOutputPortCount() == 0)
+            else if (obj.numInputs() > 0 && obj.numOutputs() == 0)
                 groups.outputs.push(obj);
             // Component => neither just input or output
             else
@@ -365,7 +365,7 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
 
             // Find index of port
             let iI = 0;
-            while (iI < input.getOutputPortCount() &&
+            while (iI < input.numOutputs() &&
                    input.getOutputPort(iI) !== iPort) { iI++; }
             inputNode.addAttribute("uid", idMap.get(input));
             inputNode.addAttribute("index", iI);
@@ -377,7 +377,7 @@ export function SaveGroup(node: XMLNode, objects: Array<Component>, wires: Array
 
             // Find index of port
             let iO = 0;
-            while (iO < input.getInputPortCount() &&
+            while (iO < input.numInputs() &&
                    input.getInputPort(iO) !== oPort) { iO++; }
             outputNode.addAttribute("uid", idMap.get(input));
             outputNode.addAttribute("index", iO);

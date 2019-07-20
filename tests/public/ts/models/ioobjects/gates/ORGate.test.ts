@@ -91,8 +91,8 @@ describe("ORGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ORGate);
             expect(b.isNot()).toBe(false);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
         it("NORGate Copy", () => {
             let a = new ORGate(true);
@@ -103,8 +103,8 @@ describe("ORGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ORGate);
             expect(b.isNot()).toBe(true);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

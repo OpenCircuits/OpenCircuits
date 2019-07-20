@@ -16,7 +16,7 @@ export class SelectPortChangeAction extends PortChangeAction {
 
         // Remove actual input ports
         //  slice to get just the regular input ports, not the select ports1
-        group.add(super.createAction(obj.getInputPorts().slice(0, -obj.getSelectPortCount()),
+        group.add(super.createAction(obj.getInputPorts().slice(0, -obj.numSelects()),
                                      Math.pow(2, this.targetCount)));
 
         this.action = group;

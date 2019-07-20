@@ -117,10 +117,6 @@ export abstract class Component extends CullableObject {
         return this.inputs.get(i);
     }
 
-    public getInputPortCount(): number {
-        return this.inputs.length;
-    }
-
     public getInputPortPos(i: number): Vector {
         return this.getInputPort(i).getWorldTargetPos();
     }
@@ -129,17 +125,21 @@ export abstract class Component extends CullableObject {
         return this.inputs.getPorts();
     }
 
+    public getInputPortCount(): ClampedValue {
+        return this.inputs.getCount();
+    }
+
     public getInputs(): Array<Wire> {
         // Get each wire connected to each InputPort and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput()).filter((w) => w != null);
     }
 
-    public getOutputPort(i: number): OutputPort {
-        return this.outputs.get(i);
+    public numInputs(): number {
+        return this.inputs.length;
     }
 
-    public getOutputPortCount(): number {
-        return this.outputs.length;
+    public getOutputPort(i: number): OutputPort {
+        return this.outputs.get(i);
     }
 
     public getOutputPortPos(i: number): Vector {
@@ -150,9 +150,17 @@ export abstract class Component extends CullableObject {
         return this.outputs.getPorts();
     }
 
+    public getOutputPortCount(): ClampedValue {
+        return this.outputs.getCount();
+    }
+
     public getOutputs(): Array<Wire> {
         // Accumulate all the OutputPort connections
         return this.getOutputPorts().reduce((acc, p) => acc.concat(p.getConnections()), []);
+    }
+
+    public numOutputs(): number {
+        return this.outputs.length;
     }
 
     public getPorts(): Array<Port> {

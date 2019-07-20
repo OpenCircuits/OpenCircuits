@@ -21,8 +21,8 @@ describe("IC", () => {
         const icdata = ICData.Create([a, buf_gate, o]);
         let ic = new IC(icdata);
 
-        expect(ic.getInputPortCount()).toBe(1);
-        expect(ic.getOutputPortCount()).toBe(1);
+        expect(ic.numInputs()).toBe(1);
+        expect(ic.numOutputs()).toBe(1);
 
         const a2 = new Switch(), o2 = new LED();
         designer.addObjects([a2, o2, ic]);
@@ -45,8 +45,8 @@ describe("IC", () => {
         const icdata = ICData.Create([a, b, and_gate, o]);
         let ic = new IC(icdata);
 
-        expect(ic.getInputPortCount()).toBe(2);
-        expect(ic.getOutputPortCount()).toBe(1);
+        expect(ic.numInputs()).toBe(2);
+        expect(ic.numOutputs()).toBe(1);
 
         const a2 = new Switch(), b2 = new Switch(), o2 = new LED();
         designer.addObjects([a2, b2, o2, ic]);
