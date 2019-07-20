@@ -8,10 +8,10 @@ import (
 	"net/http"
 )
 
-// A no-pw-required authentication provider for testing and other purposes
 type noLoginAuthenticationProvider struct {
 }
 
+// Creates a new instance of the no-pw-required authentication method for testing / development
 func NewNoAuth() AuthenticationMethod {
 	return &noLoginAuthenticationProvider{}
 }

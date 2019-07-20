@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Registers the web-page-serving routes
 func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.LoadHTMLGlob("./templates/*")
 

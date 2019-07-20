@@ -33,7 +33,7 @@ type user struct {
 
 // Credentials which stores google ids.
 type oAuth2Config struct {
-	Id          string `json:"id"`
+	ID          string `json:"id"`
 	Secret      string `json:"secret"`
 	RedirectURL string `json:"redirectURL"`
 }
@@ -43,6 +43,7 @@ func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 	engine.GET("/auth/google_login", func(c *gin.Context) { g.loginHandler(c) })
 }
 
+// Creates a new instance of the google authentication method with the provided config path
 func New(configPath string) auth.AuthenticationMethod {
 	file, err := ioutil.ReadFile(configPath)
 	if err != nil {
@@ -59,7 +60,7 @@ func New(configPath string) auth.AuthenticationMethod {
 
 	return authenticationMethod{
 		oauth2Config: oauth2.Config{
-			ClientID:     cred.Id,
+			ClientID:     cred.ID,
 			ClientSecret: cred.Secret,
 			RedirectURL:  cred.RedirectURL,
 			Scopes: []string{
