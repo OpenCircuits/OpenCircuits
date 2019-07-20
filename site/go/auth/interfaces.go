@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-// An interface for authentication methods to plug into the router and the web page
+// AuthenticationMethod An interface for authentication methods to plug into the router and the web page
 type AuthenticationMethod interface {
 	// Register any handlers required for handling the user's auth
 	RegisterHandlers(*gin.Engine)

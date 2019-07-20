@@ -11,7 +11,7 @@ import (
 type noLoginAuthenticationProvider struct {
 }
 
-// Creates a new instance of the no-pw-required authentication method for testing / development
+// NewNoAuth Creates a new instance of the no-pw-required authentication method for testing / development
 func NewNoAuth() AuthenticationMethod {
 	return &noLoginAuthenticationProvider{}
 }

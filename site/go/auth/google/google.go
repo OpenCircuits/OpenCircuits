@@ -43,7 +43,7 @@ func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 	engine.GET("/auth/google_login", func(c *gin.Context) { g.loginHandler(c) })
 }
 
-// Creates a new instance of the google authentication method with the provided config path
+// New Creates a new instance of the google authentication method with the provided config path
 func New(configPath string) auth.AuthenticationMethod {
 	file, err := ioutil.ReadFile(configPath)
 	if err != nil {

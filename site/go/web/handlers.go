@@ -62,8 +62,8 @@ func getBustedName(path string) string {
 
 func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 	session := sessions.Default(c)
-	userId := session.Get("user-id")
-	loggedIn := userId != nil
+	userID := session.Get("user-id")
+	loggedIn := userID != nil
 
 	authData := struct {
 		Headers []template.HTML
@@ -74,7 +74,7 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "authData": authData,
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userID, "authData": authData,
 		"bundleJs": getBustedName("./Bundle.js")})
 }
 
