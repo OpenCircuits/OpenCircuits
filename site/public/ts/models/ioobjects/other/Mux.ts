@@ -32,12 +32,16 @@ export abstract class Mux extends Component {
         this.selects.setPortCount(val);
     }
 
-    public getSelectPortCount(): number {
-        return this.selects.length;
-    }
-
     public getSelectPorts(): Array<InputPort> {
         return this.selects.getPorts();
+    }
+
+    public getSelectPortCount(): ClampedValue {
+        return this.selects.getCount();
+    }
+
+    public numSelects(): number {
+        return this.selects.length;
     }
 
     // @Override

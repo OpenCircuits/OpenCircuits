@@ -71,16 +71,16 @@ export const GateRenderer = (() => {
 
             if (gate instanceof ANDGate) {
                 // Draw AND gate line to match ports
-                drawANDLines(renderer, transform.getSize(), gate.getInputPortCount(), borderCol);
+                drawANDLines(renderer, transform.getSize(), gate.numInputs(), borderCol);
             }
             else if (gate instanceof ORGate) {
                 // Draw curve to visually match input ports
-                drawQuadCurve(renderer, 0, transform.getSize(), gate.getInputPortCount(), borderCol);
+                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
             }
             else if (gate instanceof XORGate) {
                 // Draw curves to visually match input ports
-                drawQuadCurve(renderer, 0, transform.getSize(), gate.getInputPortCount(), borderCol);
-                drawQuadCurve(renderer, -12, transform.getSize(), gate.getInputPortCount(), borderCol);
+                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
+                drawQuadCurve(renderer, -12, transform.getSize(), gate.numInputs(), borderCol);
             }
 
 

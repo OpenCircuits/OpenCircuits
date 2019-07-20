@@ -90,8 +90,8 @@ describe("XORGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(XORGate);
             expect(b.isNot()).toBe(false);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
         it("XNORGate Copy", () => {
             let a = new XORGate(true);
@@ -102,8 +102,8 @@ describe("XORGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(XORGate);
             expect(b.isNot()).toBe(true);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

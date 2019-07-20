@@ -91,8 +91,8 @@ describe("ANDGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ANDGate);
             expect(b.isNot()).toBe(false);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
         it("NANDGate Copy", () => {
             let a = new ANDGate(true);
@@ -103,8 +103,8 @@ describe("ANDGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ANDGate);
             expect(b.isNot()).toBe(true);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

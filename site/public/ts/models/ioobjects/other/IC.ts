@@ -20,7 +20,7 @@ export class IC extends Component {
         this.collection = this.data.copy(); // Copy internals
 
         // Redirect activate function for output objects
-        for (let i = 0; i < this.getOutputPortCount(); i++) {
+        for (let i = 0; i < this.numOutputs(); i++) {
             const port = this.getOutputPort(i);
             const output = this.collection.outputs[i];
             output.activate = (on) => {
@@ -64,7 +64,7 @@ export class IC extends Component {
 
     public activate(): void {
         // Activate corresponding input object
-        for (let i = 0; i < this.getInputPortCount(); i++) {
+        for (let i = 0; i < this.numInputs(); i++) {
             const port = this.getInputPort(i);
             const input = this.collection.inputs[i];
             input.activate(port.getIsOn());

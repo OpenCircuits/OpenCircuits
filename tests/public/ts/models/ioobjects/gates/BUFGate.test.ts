@@ -61,8 +61,8 @@ describe("BUFGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(BUFGate);
             expect(b.isNot()).toBe(false);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
         it("NOTGate Copy", () => {
             let a = new BUFGate(true);
@@ -73,8 +73,8 @@ describe("BUFGate", () => {
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(BUFGate);
             expect(b.isNot()).toBe(true);
-            expect(b.getOutputPortCount()).toEqual(a.getOutputPortCount());
-            expect(b.getInputPortCount()).toEqual(a.getInputPortCount());
+            expect(b.numOutputs()).toEqual(a.numOutputs());
+            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });
