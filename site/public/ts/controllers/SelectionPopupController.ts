@@ -34,7 +34,7 @@ export const SelectionPopupController = (() => {
     }
 
     return {
-        Init: function(cam: Camera, divId: string = "popup"): void {
+        Init: function(cam: Camera, divId: string = "selection-popup"): void {
             camera = cam;
 
             div = document.getElementById(divId) as HTMLDivElement;
