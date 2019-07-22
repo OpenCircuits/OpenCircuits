@@ -26,7 +26,6 @@ import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
 import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
-        DeselectAction,
         CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
@@ -71,6 +70,13 @@ export class SelectionTool extends Tool {
 
     private selectionsChanged(): void {
         this.callbacks.forEach(c => c());
+    }
+
+    private createClickSelectAction(obj: IOObject, shift: boolean): void {
+        // If we're holding shift then deselect the object if it's selected
+        const deselect = (shift && this.selections.has(obj));
+        this.action.add(new SelectAction(this, obj, deselect).execute());
+        this.action.add(new ShiftAction(obj).execute());
     }
 
 
@@ -184,10 +190,7 @@ export class SelectionTool extends Tool {
         // Find selected object
         const selectedObj = objects.find((o) => o.isWithinSelectBounds(worldMousePos));
         if (selectedObj) {
-            // If we're holding shift then deselect the object if it's selected
-            const deselect = (input.isShiftKeyDown() && this.selections.has(selectedObj));
-            this.action.add(new SelectAction(this, selectedObj, deselect).execute());
-            this.action.add(new ShiftAction(selectedObj).execute());
+            this.createClickSelectAction(selectedObj, input.isShiftKeyDown());
             return true;
         }
 
@@ -199,7 +202,7 @@ export class SelectionTool extends Tool {
         // Check if a wire was clicked then select it
         const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
         if (w) {
-            this.action.add(new DeselectAction(this, w).execute());
+            this.createClickSelectAction(w, input.isShiftKeyDown());
             return true;
         }
 
