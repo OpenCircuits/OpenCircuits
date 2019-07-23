@@ -32,8 +32,13 @@ func (nl noLoginAuthenticationProvider) RegisterHandlers(engine *gin.Engine) {
 }
 
 func (nl noLoginAuthenticationProvider) GetLoginButton() template.HTML {
-	return `<div><a class="button" onclick="onNoAuthSubmit()">NoAuth Login</a></div>
-			<div><input id="no-auth-user-input" type="text" placeholder="username"/></div>`
+	return `
+<div>
+	<a class="button" onclick="onNoAuthSubmit()">NoAuth Login</a>
+</div>
+<div>
+	<input id="no-auth-user-input" type="text" placeholder="username"/>
+</div>`
 }
 
 func (nl noLoginAuthenticationProvider) GetLoginHeader() template.HTML {
