@@ -60,8 +60,7 @@ function Init(): void {
             resolve(1);
         }),
         new Promise((resolve, _) => {
-            LoginController.Init();
-            resolve(1);
+            LoginController.Init(resolve);
         })
     ];
 
