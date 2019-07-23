@@ -51,7 +51,7 @@ export const CopyController = (() => {
 
         // Delete the selections
         MainDesignerController.AddAction(
-            CreateDeleteGroupAction(objs).execute()
+            CreateDeleteGroupAction(MainDesignerController.GetSelectionTool(), objs).execute()
         );
     }
 
