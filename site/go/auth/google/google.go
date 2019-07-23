@@ -125,12 +125,24 @@ func (g authenticationMethod) redirectHandler(c *gin.Context) {
 }
 
 func (g authenticationMethod) GetLoginButton() template.HTML {
-	// return `<div class="g-signin2" data-onsuccess="alert('HELLO');"></div>`
-	return `<div><a class="button" href="/auth/google_login"">Sign in with Google</a></div>"`
+	return `<div id="login-popup-google-signin"></div>`
 }
 
 func (g authenticationMethod) GetLoginHeader() template.HTML {
-	// return `<script src="https://apis.google.com/js/platform.js" async defer></script>
-	// 	<meta name="google-signin-client_id" content="` + g.oauth2Config.ClientID + `.apps.googleusercontent.com">`
-	return ""
+	return template.HTML(`
+<meta name="google-signin-client_id" content="` + g.oauth2Config.ClientID + `">
+
+<script>
+function renderButton() {
+	gapi.signin2.render('login-popup-google-signin', {
+		'scope': 'profile email',
+		'width': 240,
+		'height': 50,
+		'longtitle': true,
+		'onsuccess': (u) => { console.log("Logged in as " + u.getBasicProfile().getName()); },
+		'onfailure': (e) => { console.log(e); }
+	});
+}
+</script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>`)
 }
