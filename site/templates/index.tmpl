@@ -48,6 +48,27 @@
             </div>
         </div>
 
+        <div id="login-popup" class="login__popup invisible">
+            <h1>Sign In</h1>
+            <hr/>
+            {{ range $a := .authData.Buttons }}
+                <div type="button">{{ $a }}</div>
+            {{ end }}
+            <hr/>
+            <div class="login__popup__label">Email</div>
+            <input type="email" name="email" aria-label="Email" aria-required="true" required="required" value="" tabindex="0">
+            <div class="login__popup__label">Password</div>
+            <div class="login__popup__password__container">
+                <input type="password" name="password" aria-label="Password" aria-required="true" required="required" value="" tabindex="0">
+                <span class="login__popup__password__link">
+                    <a role="link" tabindex="0" class="login__popup__password__recoverpassword" ontap="">Forgot your password?</a>
+                </span>
+            </div>
+            <button type="submit">Sign In</button>
+            <div class="login__popup__text">or</div>
+            <button type="submit">Create an Account</button>
+        </div>
+
         <div id="content" class="content">
             <header id="header">
                 <div class="header__left">
@@ -92,16 +113,10 @@
                             </div>
                         </div>
                     </div>
-                    <button id="header-login-dropdown-button" class="header__dropdown__button">
-                        <a>Sign In</a>
-                    </button>
-                    <div class="header__dropdown" title="Sign in Options">
-                        <div id="header-login-dropdown-content" class="header__dropdown__content">
-                            {{ range $a := .authData.Buttons }}
-                                <div class="header__login__option" type="button">{{ $a }}</div>
-                            {{ end }}
-                        </div>
-                    </div>
+
+                    <button id="header-signin-button">Sign In</button>
+                    <span id="header-login-or">or</span>
+                    <button id="header-createaccount-button">Create Account</button>
                 </div>
             </header>
 
