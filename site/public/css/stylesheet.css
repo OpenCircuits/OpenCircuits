@@ -5,6 +5,8 @@ body {
     padding: 0;
     overflow: hidden;
 
+    font-family: Arial, sans-serif;
+
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -51,7 +53,7 @@ header {
     cursor: pointer;
 }
 .header__left__projectname {
-    width: 20vw;
+    width: 175px;
     height: 40px;
     margin-top: 5px;
     border: 0;
@@ -72,6 +74,43 @@ header {
 .header__right {
     margin-right: 1%;
 }
+.header__right span {
+    float: right;
+    line-height: 40px;
+    vertical-align: middle;
+}
+#header-login-container {
+    margin-top: 0;
+    cursor: default;
+}
+#header-signin-button,
+#header-createaccount-button,
+#header-signout-button {
+    float: right;
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 10px;
+    height: 30px;
+    color: #aaa;
+    border: thin solid #888;
+    border-radius: 4px;
+}
+#header-signin-button,
+#header-signout-button {
+    margin-right: 15px;
+}
+#header-login-or {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    color: #aaa;
+}
+#header-signin-button:hover,
+#header-createaccount-button:hover {
+    color: #bbb;
+    border-color: #aaa;
+}
 .header__right div {
     float: right;
     height: 40px;
@@ -86,8 +125,15 @@ header {
     display: block;
     margin: auto;
 }
-@media (max-width: 512px) {
+@media (max-width: 800px) {
     .header__center__logo {
+        display: none;
+    }
+}
+@media (max-width: 500px) {
+    #header-signin-button,
+    #header-login-or,
+    #header-createaccount-button {
         display: none;
     }
 }
@@ -483,10 +529,10 @@ IC DESIGNER
 
 /*
 
-POPUP
+SELECTION POPUP
 
 */
-.popup {
+.selection-popup {
     position: fixed;
     width: 100px;
     left: 0px;
@@ -499,11 +545,11 @@ POPUP
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }
-.popup div {
+.selection-popup div {
     margin-top: 6px;
     margin-bottom: 2px;
 }
-.popup input {
+.selection-popup input {
     display: inline;
     padding: 2px;
     border: solid 2px rgba(200,200,200,0.5);
@@ -512,16 +558,16 @@ POPUP
     color: #888;
     background-color: rgba(255, 255, 255, 0.8);
 }
-.popup input[type="text"], input[type="color"] {
+.selection-popup input[type="text"], input[type="color"] {
     border: 0;
     background-color: rgba(255, 255, 255, 0);
 }
 
-.popup input#popup-position-x, input#popup-position-y {
+.selection-popup input#popup-position-x, input#popup-position-y {
     width: calc(100% - 8px); /* 8px from l,r padding and l,r border */
 }
 
-.popup button {
+.selection-popup button {
     visibility: inherit;
     width: 100%;
     background-color: #fff;
@@ -534,10 +580,10 @@ POPUP
     margin-top: 5px;
     padding: 4px;
 }
-.popup button:hover {
+.selection-popup button:hover {
     background-color: #eee;
 }
-.popup button:active {
+.selection-popup button:active {
     background-color: #ddd;
 }
 
@@ -582,6 +628,87 @@ CONTEXT MENU
 }
 
 
+/*
+
+LOGIN POPUP
+
+*/
+.login__popup {
+    z-index: 9;
+    position: absolute;
+    padding: 15px 40px 25px;
+    width: 300px;
+    top: 10vh;
+    left: 50%;
+    margin-left: -190px;
+    max-height: 85vh;
+    overflow: auto;
+    background: #fff;
+    border-radius: 10px;
+}
+.login__popup h1 {
+    color: #666;
+    font-weight: normal;
+    padding-bottom: 5px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.login__popup input {
+    width: 100%;
+    font-size: 100%;
+    padding: 3px;
+    color: #000;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+.login__popup button {
+    width: 100%;
+    cursor: pointer;
+    background-color: #eee;
+    text-align: center;
+    border: thin solid black;
+    border-radius: 3px;
+    font-size: 0.8em;
+    padding: 4px;
+}
+.login__popup button:hover {
+    background-color: #ddd;
+}
+.login__popup button:active {
+    background-color: #ccc;
+}
+.login__popup__text {
+    text-align: center;
+    color: #666;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.login__popup__label {
+    color: #666;
+    font-weight: normal;
+    margin-top: 20px;
+    margin-bottom: 6px;
+}
+.login__popup__password__container {
+    position: relative;
+    margin-bottom: 20px;
+}
+.login__popup__password__link {
+    position: absolute;
+    top: 3px;
+    right: 0;
+}
+.login__popup__password__recoverpassword {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 75%;
+    text-decoration: underline;
+    cursor: pointer;
+}
+#login-popup-google-signin {
+    margin-top: 20px;
+    margin-left: calc(300px/2 - 240px/2);
+    margin-bottom: 20px;
+}
 
 
 
