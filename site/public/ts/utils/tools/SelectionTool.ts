@@ -24,7 +24,8 @@ import {Camera} from "../Camera";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
-import {ShiftAction} from "../actions/ShiftAction";
+import {ShiftAction,
+        ShiftWireAction} from "../actions/ShiftAction";
 import {SelectAction,
         CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
@@ -72,11 +73,9 @@ export class SelectionTool extends Tool {
         this.callbacks.forEach(c => c());
     }
 
-    private createClickSelectAction(obj: IOObject, shift: boolean): void {
+    private shouldDeselect(obj: IOObject, shift: boolean): boolean {
         // If we're holding shift then deselect the object if it's selected
-        const deselect = (shift && this.selections.has(obj));
-        this.action.add(new SelectAction(this, obj, deselect).execute());
-        this.action.add(new ShiftAction(obj).execute());
+        return (shift && this.selections.has(obj));
     }
 
 
@@ -190,7 +189,9 @@ export class SelectionTool extends Tool {
         // Find selected object
         const selectedObj = objects.find((o) => o.isWithinSelectBounds(worldMousePos));
         if (selectedObj) {
-            this.createClickSelectAction(selectedObj, input.isShiftKeyDown());
+            const deselect = this.shouldDeselect(selectedObj, input.isShiftKeyDown());
+            this.action.add(new SelectAction(this, selectedObj, deselect).execute());
+            this.action.add(new ShiftAction(selectedObj).execute());
             return true;
         }
 
@@ -202,7 +203,9 @@ export class SelectionTool extends Tool {
         // Check if a wire was clicked then select it
         const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
         if (w) {
-            this.createClickSelectAction(w, input.isShiftKeyDown());
+            const deselect = this.shouldDeselect(w, input.isShiftKeyDown());
+            this.action.add(new SelectAction(this, w, deselect).execute());
+            this.action.add(new ShiftWireAction(w).execute());
             return true;
         }
 
@@ -223,7 +226,7 @@ export class SelectionTool extends Tool {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            this.action.add(CreateDeleteGroupAction(objs).execute());
+            this.action.add(CreateDeleteGroupAction(this, objs).execute());
 
             return true;
         }
