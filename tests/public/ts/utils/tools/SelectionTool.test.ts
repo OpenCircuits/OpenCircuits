@@ -112,6 +112,19 @@ describe("Selection Tool", () => {
             expect(obj.isOn()).toBe(false);
         });
 
+        test("Click to Select Wire", () => {
+            const obj1 = new Switch();
+            const obj2 = new ANDGate();
+            obj2.setPos(V(200, -12.5));
+
+            designer.addObjects([obj1, obj2]);
+            const wire = designer.connect(obj1, 0,  obj2, 0);
+
+            input.click(V(100, 0));
+            expect(selections().length).toBe(1);
+            expect(selections()).toContain(wire);
+        });
+
     });
 
     describe("Multiple Objects", () => {
