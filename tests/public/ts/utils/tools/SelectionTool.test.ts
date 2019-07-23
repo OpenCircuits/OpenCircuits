@@ -1,6 +1,8 @@
 import "jest";
 
-import {SHIFT_KEY} from "../../../../../site/public/ts/utils/Constants";
+import {SHIFT_KEY,
+        DELETE_KEY,
+        BACKSPACE_KEY} from "../../../../../site/public/ts/utils/Constants";
 
 import {V} from "../../../../../site/public/ts/utils/math/Vector";
 
@@ -125,6 +127,29 @@ describe("Selection Tool", () => {
             expect(selections()).toContain(wire);
         });
 
+        test("Select then Delete ANDGate", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.drag(V(-100, 100),
+                       V(100, -100))
+                    .pressKey(DELETE_KEY);
+            expect(selections().length).toBe(0);
+            expect(designer.getObjects().length).toBe(0);
+        });
+
+        test("Select then Delete ANDGate w/ Backspace", () => {
+            const gate = new ANDGate();
+            designer.addObject(gate);
+
+            input.drag(V(-100, 100),
+                       V(100, -100))
+                    .pressKey(BACKSPACE_KEY);
+            expect(selections().length).toBe(0);
+            expect(designer.getObjects().length).toBe(0);
+        });
+
+        // TODO: Add test for deleting wire
     });
 
     describe("Multiple Objects", () => {
@@ -152,6 +177,8 @@ describe("Selection Tool", () => {
                     .click();
             expect(selections().length).toBe(0);
         });
+
+        // TODO: Add test for deleting multiple objects/wires
     });
 
 });
