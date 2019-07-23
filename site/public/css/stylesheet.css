@@ -79,8 +79,13 @@ header {
     line-height: 40px;
     vertical-align: middle;
 }
+#header-login-container {
+    margin-top: 0;
+    cursor: default;
+}
 #header-signin-button,
-#header-createaccount-button {
+#header-createaccount-button,
+#header-signout-button {
     float: right;
     cursor: pointer;
     padding-left: 5px;
@@ -91,7 +96,8 @@ header {
     border: thin solid #888;
     border-radius: 4px;
 }
-#header-signin-button {
+#header-signin-button,
+#header-signout-button {
     margin-right: 15px;
 }
 #header-login-or {
