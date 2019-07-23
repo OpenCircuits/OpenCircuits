@@ -6,6 +6,7 @@ import {ROTATION_CIRCLE_COLOR,
 import {Vector} from "../math/Vector";
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
+
 import {ToolManager} from "../tools/ToolManager";
 import {SelectionTool} from "../tools/SelectionTool";
 import {RotateTool} from "../tools/RotateTool";
@@ -14,7 +15,8 @@ import {WiringTool} from "../tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
-import {Wire} from "../../models/ioobjects/Wire";
+
+import {Component} from "../../models/ioobjects/Component";
 
 import {Style} from "./Style";
 import {ArcCircle} from "./shapes/ArcCircle";
@@ -48,7 +50,7 @@ export const ToolRenderer = (() => {
 
             // If a wire has been selected, then don't draw the rotation box
             const selections = toolManager.getSelectionTool().getSelections();
-            const hasWire = selections.some((o) => o instanceof Wire);
+            const hasOnlyComponents = selections.every((s) => s instanceof Component);
 
             if (tool instanceof SelectionTool) {
                 const selectionBox = tool.getSelectionBox();
@@ -66,13 +68,13 @@ export const ToolRenderer = (() => {
                 }
 
                 // Draw rotation circle outline
-                else if (!hasWire && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
+                else if (hasOnlyComponents && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
                     drawRotationCircleOutline(renderer, camera, tool.calculateMidpoint());
                 }
             }
             else if (tool instanceof RotateTool) {
                 // Draw rotation circle and outline
-                if (!hasWire) {
+                if (hasOnlyComponents) {
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
                     drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getPrevAngle());
                 }
