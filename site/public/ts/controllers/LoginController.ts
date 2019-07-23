@@ -12,6 +12,14 @@ export const LoginController = (() => {
         overlay.classList.toggle("invisible");
     }
 
+    const onGapiSuccess = function(u: gapi.auth2.GoogleUser): void {
+        console.log(u.getBasicProfile().getName());
+    }
+
+    const onGapiError = function(e: {error: string}): void {
+        console.log(e);
+    }
+
     return {
         Init: function(): void {
             isOpen = false;
@@ -24,6 +32,17 @@ export const LoginController = (() => {
                 if (LoginController.IsOpen())
                     LoginController.Toggle();
             });
+
+            (<any>window).onGapiLoad = () => {
+                gapi.signin2.render('login-popup-google-signin', {
+                    'scope': 'profile email',
+                    'width': 240,
+                    'height': 50,
+                    'longtitle': true,
+                    'onsuccess': onGapiSuccess,
+                    'onfailure': onGapiError
+                });
+            }
         },
         Toggle: function(): void {
             if (disabled)

@@ -131,18 +131,10 @@ func (g authenticationMethod) GetLoginButton() template.HTML {
 func (g authenticationMethod) GetLoginHeader() template.HTML {
 	return template.HTML(`
 <meta name="google-signin-client_id" content="` + g.oauth2Config.ClientID + `">
-
 <script>
-function renderButton() {
-	gapi.signin2.render('login-popup-google-signin', {
-		'scope': 'profile email',
-		'width': 240,
-		'height': 50,
-		'longtitle': true,
-		'onsuccess': (u) => { console.log("Logged in as " + u.getBasicProfile().getName()); },
-		'onfailure': (e) => { console.log(e); }
-	});
-}
+	function gapiLoaded() {
+		window.onGapiLoad();
+	}
 </script>
-<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>`)
+<script src="https://apis.google.com/js/platform.js?onload=gapiLoaded" async defer></script>`)
 }
