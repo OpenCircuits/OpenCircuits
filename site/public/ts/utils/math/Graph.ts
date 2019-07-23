@@ -26,6 +26,15 @@ export class Graph<V, E> {
         this.reverseList = new Map<V, Edge<V, E>[]>();
     }
 
+    private bfs(visited: Map<V, boolean>, v: V): void {
+        if (visited.get(v))
+            return;
+
+        visited.set(v, true);
+        this.list.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
+        this.reverseList.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
+    }
+
     public createNode(value: V): void {
         if (this.list.has(value))
             throw new Error("Graph already has value: " + value);
@@ -44,15 +53,6 @@ export class Graph<V, E> {
         this.reverseList.get(target).push(new Edge<V,E>(source, weight));
     }
 
-    private bfs(visited: Map<V, boolean>, v: V): void {
-        if (visited.get(v))
-            return;
-
-        visited.set(v, true);
-        this.list.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
-        this.reverseList.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
-    }
-
     public isConnected(): boolean {
         if (this.list.size <= 1)
             return true;
@@ -65,8 +65,17 @@ export class Graph<V, E> {
         return (visited.size === this.size());
     }
 
+    public getEndNodes(): V[] {
+        // Get nodes with degree of exactly 1
+        return this.getNodes().filter((n) => this.getDegree(n) == 1);
+    }
+
     public size(): number {
         return this.list.size;
+    }
+
+    public getDegree(node: V): number {
+        return this.list.get(node).length + this.reverseList.get(node).length;
     }
 
     public getConnections(value: V): Edge<V, E>[] {
