@@ -250,16 +250,16 @@ export class SelectionTool extends Tool {
 
     public calculateMidpoint(): Vector {
         const selections = Array.from(this.selections);
-        return selections.filter(o => o instanceof Component)
-                .map(o => o as Component)
-                .reduce((acc, cur) => acc.add(cur.getPos()), V(0,0))
-                .scale(1. / this.selections.size);
+        const positions = selections.filter((s) => s instanceof Component)
+                .map((s) => s as Component)
+                .map((c) => c.getPos());
+        return positions.reduce((acc, cur) => acc.add(cur), V(0, 0))
+                .scale(1. / positions.length);
     }
 
     public getAction(): Action {
         if (this.action.isEmpty())
             return undefined;
-
         const action = this.action;
 
         // Clear action
