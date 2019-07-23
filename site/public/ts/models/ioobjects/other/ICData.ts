@@ -20,8 +20,10 @@ import {Port} from "../../ports/Port";
 import {InputPort} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";
 
-import {ConstantLow} from "../inputs/ConstantLow";
-import {ConstantHigh} from "../inputs/ConstantHigh";
+import {Label} from "./Label";
+import {Switch} from "../inputs/Switch";
+import {Button} from "../inputs/Button";
+import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
 
 export class ICData {
     private transform: Transform;
@@ -57,8 +59,6 @@ export class ICData {
 
     private createPorts(type: typeof InputPort | typeof OutputPort, ports: Array<Port>, arr: Array<IOObject>, side: -1 | 1): void {
         const w = this.transform.getSize().x;
-
-        arr = arr.filter(o => !(o instanceof ConstantLow || o instanceof ConstantHigh))
 
         for (let i = 0; i < arr.length; i++) {
             const port = new type(undefined);
@@ -183,23 +183,26 @@ export class ICData {
     }
 
     public static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
+        const BLACKLIST = [SevenSegmentDisplay, Label];
+
         const group = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
         const graph = CreateGraph(group);
+
+        const objs = group.getAllComponents();
+        const wires = group.wires;
 
         // Make sure it's a connected circuit
         if (!graph.isConnected())
             return false;
 
-        // Make sure it contains valid inputs (i.e. input w/ exactly 1 output)
-        for (const input of group.inputs) {
-            if (input.numOutputs() != 1)
-                return false;
-        }
-        // Make sure it contains valid outputs (i.e. output w/ exactly 1 input)
-        for (const output of group.outputs) {
-            if (output.numInputs() != 1)
-                return false;
-        }
+        // Make sure there's nothing on the blacklist
+        if (objs.some((o) => BLACKLIST.some((type) => o instanceof type)))
+            return false;
+
+        // Make sure all wires connected to components are in the group
+        const allWires = objs.reduce((acc, o) => acc = acc.concat(o.getInputs(), o.getOutputs()), []);
+        if (allWires.some((w) => !wires.includes(w)))
+            return false;
 
         return true;
     }
@@ -209,9 +212,17 @@ export class ICData {
         if (!this.IsValid(copies))
             return undefined;
 
-        const chs = copies.inputs.filter(c => c instanceof ConstantHigh);
-        copies.components = copies.components.concat(chs);
-        copies.inputs = copies.inputs.filter(c => !(c instanceof ConstantHigh));
+        // Move non-whitelisted inputs to regular components list
+        //  So that the ports that come out of the IC are useful inputs and not
+        //  things like ConstantHigh and ConstantLow which aren't interactive
+        const INPUT_WHITELIST = [Switch, Button];
+
+        const inputs = copies.inputs.filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
+        const components = copies.components.concat(copies.inputs)
+                .filter((c) => !INPUT_WHITELIST.some((type) => c instanceof type));
+
+        copies.inputs = inputs;
+        copies.components = components;
 
         return new ICData(copies);
     }
