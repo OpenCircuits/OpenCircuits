@@ -1,0 +1,15 @@
+{{define "itemnav"}}
+<nav id="itemnav" class="itemnav shrink">
+    {{ range $i, $section := .navConfig.Sections }}
+        <h4 id="itemnav-section-{{ $section.Id }}" unselectable>{{ $section.Label }}</h4>
+        {{ range $k, $item := $section.Items }}
+            <button id="itemnav-section-{{ $section.Id }}-button-{{ $item.Id }}" type="button"
+                    data-xmlid="{{ $item.Id }}" data-not="{{ $item.Not }}">
+                <img id="itemnav-section-{{ $section.Id }}-img-{{ $item.Id }}"
+                     src="img/icons/{{ $section.Id }}/{{ $item.Icon }}" alt="{{ $item.Label }}"/>
+                <br/>{{ $item.Label}}
+            </button>
+        {{end}}
+    {{end}}
+</nav>
+{{end}}

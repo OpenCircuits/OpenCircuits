@@ -1,0 +1,21 @@
+{{define "sidenav"}}
+<div id="sidenav" class="sidenav shrink">
+    <div class="sidenav__accountinfo">
+        {{ .userId }}
+    </div>
+    <div class="sidenav__content">
+        <h4>
+            <label class="sidenav__content__switch">
+                <input id="sidenav-mode-checkbox" type="checkbox" checked/>
+                <span class="sidenav__content__slider"></span>
+            </label>
+        </h4>
+        <h4 unselectable>My Circuits</h4>
+        <div id="my-circuits-list"></div>
+        <button id="save-circuit-button">SAVE</button>
+        <h4 unselectable>Examples</h4>
+        <ul id="sidenav-content-example-list">
+        </ul>
+    </div>
+</div>
+{{end}}
