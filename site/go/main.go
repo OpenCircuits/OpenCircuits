@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -37,6 +38,7 @@ func main() {
 
 	web.RegisterPages(router, authManager)
 	authManager.RegisterHandlers(router)
+	api.RegisterHandlers(router, authManager)
 
 	// TODO: add flags for this
 	router.Run("127.0.0.1:8080")

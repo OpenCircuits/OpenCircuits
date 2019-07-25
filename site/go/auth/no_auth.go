@@ -1,11 +1,9 @@
 package auth
 
 import (
-	"github.com/gin-gonic/contrib/sessions"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"html/template"
-	"log"
-	"net/http"
 )
 
 type noLoginAuthenticationProvider struct {
@@ -17,40 +15,33 @@ func NewNoAuth() AuthenticationMethod {
 }
 
 func (nl noLoginAuthenticationProvider) RegisterHandlers(engine *gin.Engine) {
-	engine.GET("/auth/noauth/:uid", func(c *gin.Context) {
-		// Handle the exchange code to initiate a transport.
-		session := sessions.Default(c)
-		session.Set("user-id", "untrusted_"+c.Param("uid"))
-		err := session.Save()
-		if err != nil {
-			log.Println(err)
-			return
-		}
+}
 
-		c.Redirect(http.StatusFound, "/")
-	})
+func (nl noLoginAuthenticationProvider) ExtractIdentity(token string) (string, error) {
+	if token == "" {
+		return "", errors.New("user id cannot be blank in no_auth")
+	}
+	return "no auth user " + token, nil
+}
+
+func (nl noLoginAuthenticationProvider) AuthHeaderPrefix() string {
+	return "no_auth"
 }
 
 func (nl noLoginAuthenticationProvider) GetLoginButton() template.HTML {
 	return `
-<div>
-	<a class="button" onclick="onNoAuthSubmit()">NoAuth Login</a>
-</div>
-<div>
-	<input id="no-auth-user-input" type="text" placeholder="username"/>
-</div>`
+<div class="login__popup__label">NoAuth Login</div>
+<div><input id="no-auth-user-input" type="text" placeholder="username"/></div>
+<button onclick="onNoAuthSubmit()">Submit</button>`
 }
 
 func (nl noLoginAuthenticationProvider) GetLoginHeader() template.HTML {
 	return `
+<meta id="no_auth_enable" content="true">
 <script type="application/javascript">
 function onNoAuthSubmit() {
 	let val = document.getElementById('no-auth-user-input').value;
-	if (val === "") {
-		alert("Username must not be blank!");
-		return;
-	}
-	window.location = '/auth/noauth/' + val;
+	onNoAuthSubmitted(val);
 }
 </script>`
 }

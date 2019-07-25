@@ -53,8 +53,8 @@
             <hr/>
             {{ range $a := .authData.Buttons }}
                 <div type="button">{{ $a }}</div>
+                <hr/>
             {{ end }}
-            <hr/>
             <div class="login__popup__label">Email</div>
             <input type="email" name="email" aria-label="Email" aria-required="true" required="required" value="" tabindex="0">
             <div class="login__popup__label">Password</div>

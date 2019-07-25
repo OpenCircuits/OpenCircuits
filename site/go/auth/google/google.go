@@ -3,15 +3,12 @@ package google
 import (
 	"encoding/json"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"html/template"
 	"io/ioutil"
 	"log"
-	"net/http"
 )
 
 type authenticationMethod struct {
@@ -39,8 +36,6 @@ type oAuth2Config struct {
 }
 
 func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
-	engine.GET("/auth/google", func(c *gin.Context) { g.redirectHandler(c) })
-	engine.GET("/auth/google_login", func(c *gin.Context) { g.loginHandler(c) })
 }
 
 // New Creates a new instance of the google authentication method with the provided config path
@@ -71,57 +66,13 @@ func New(configPath string) auth.AuthenticationMethod {
 	}
 }
 
-func (g authenticationMethod) loginHandler(c *gin.Context) {
-	state := utils.RandToken(32)
-	session := sessions.Default(c)
-	session.Set("state", state)
-	log.Printf("Stored session: %v\n", state)
-	session.Save()
-	link := g.oauth2Config.AuthCodeURL(state)
-	c.Redirect(http.StatusFound, link)
+func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
+	// TODO: real stuff with google
+	return "google auth token " + token, nil
 }
 
-// AuthHandler handles authentication of a user and initiates a session.
-func (g authenticationMethod) redirectHandler(c *gin.Context) {
-	// Handle the exchange code to initiate a transport.
-	session := sessions.Default(c)
-	retrievedState := session.Get("state")
-	queryState := c.Request.URL.Query().Get("state")
-	if retrievedState != queryState {
-		log.Printf("Invalid session state: retrieved: %s; Param: %s", retrievedState, queryState)
-		return
-	}
-	code := c.Request.URL.Query().Get("code")
-	tok, err := g.oauth2Config.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// Fetch user info, We might not need this to get identifiable information
-	client := g.oauth2Config.Client(oauth2.NoContext, tok)
-	userinfo, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-	if err != nil {
-		log.Println(err)
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	defer userinfo.Body.Close()
-	data, _ := ioutil.ReadAll(userinfo.Body)
-	u := user{}
-	if err = json.Unmarshal(data, &u); err != nil {
-		log.Println(err)
-		return
-	}
-	session.Set("user-id", "google_" + u.Email)
-	err = session.Save()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	c.Redirect(http.StatusFound, "/")
+func (g authenticationMethod) AuthHeaderPrefix() string {
+	return "google"
 }
 
 func (g authenticationMethod) GetLoginButton() template.HTML {

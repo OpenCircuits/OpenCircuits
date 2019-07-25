@@ -20,3 +20,13 @@ func (am *AuthenticationManager) RegisterHandlers(e *gin.Engine) {
 		ap.RegisterHandlers(e)
 	}
 }
+
+// MatchToken matches a provided string with the token format of an AuthenticationMethod
+func (am *AuthenticationManager) MatchToken(prefix string) *AuthenticationMethod {
+	for _, ap := range am.AuthMethods {
+		if ap.AuthHeaderPrefix() == prefix {
+			return &ap
+		}
+	}
+	return nil
+}
