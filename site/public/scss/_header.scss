@@ -1,0 +1,75 @@
+header {
+    position: fixed;
+    z-index: 3;
+
+    width: 100%;
+    height: 50px;
+    padding: 5px;
+
+    border: 0 solid #999;
+    border-bottom-width: 5px;
+    background-color: #222;
+}
+.header__left {
+    float: left;
+}
+.header__left__sidenavbutton {
+    font-size: 1.5em;
+
+    width: 10%;
+    height: 40px;
+    margin-top: 5px;
+
+    cursor: pointer;
+
+    color: #888;
+    border: 0;
+}
+.header__left__projectname {
+    font-size: 1.5em;
+
+    width: 20vw;
+    height: 40px;
+    margin-top: 5px;
+
+    color: #888;
+    border: 0;
+}
+
+.header__center__logo {
+    position: absolute;
+    top: 2px;
+    bottom: 0;
+    left: 50%;
+
+    width: 200px;
+    margin-left: -100px;
+
+    color: #888;
+}
+.header__right {
+    margin-right: 1%;
+}
+.header__right div {
+    float: right;
+
+    height: 40px;
+    margin-top: 5px;
+
+    cursor: pointer;
+}
+.header__right button {
+    height: 40px;
+
+    cursor: pointer;
+}
+.header__right img {
+    display: block;
+
+    margin: auto;
+}
+@media (max-width: 512px) {
+    .header__center__logo {
+        display: none;
+    }
+}

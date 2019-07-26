@@ -1,0 +1,58 @@
+.icdesigner {
+    font-size: 16;
+
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    width: 84vw;
+    height: 76vh;
+    margin: 14vh 8vw 8vh 8vw;
+
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, .9);
+}
+.icbuttons {
+    position: absolute;
+    z-index: 2;
+    top: 90vh;
+
+    width: 100vw;
+}
+.icbuttons__button {
+    font-size: 16px;
+
+    position: absolute;
+    z-index: 2;
+
+    display: inline-block;
+
+    width: 30vw;
+    padding: 15px 32px;
+
+    text-align: center;
+    text-decoration: none;
+
+    color: white;
+    border: none;
+    outline: none;
+}
+#ic-confirmbutton {
+    left: 8vw;
+
+    background-color: #4caf50;
+}
+#ic-confirmbutton:active {
+    background-color: #3e8e41;
+}
+#ic-cancelbutton {
+    right: calc(8vw - 2px);
+
+    background-color: #f44336;
+}
+#ic-cancelbutton:active {
+    background-color: #ba000d;
+}
