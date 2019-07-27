@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// RegisterHandlers setups up the API routes with the gin Engine
 func RegisterHandlers(e *gin.Engine, manager auth.AuthenticationManager) {
 
 	// A toy API route for testing that authentication headers are handled correctly

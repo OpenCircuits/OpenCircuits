@@ -93,7 +93,7 @@ export const LoginController = (() => {
                 gapi.load('auth2', () => {
                     const clientId = document.getElementsByName('google-signin-client_id')[0].getAttribute('content');
                     gapi.auth2.init(new class implements ClientConfig {
-                        client_id?: string = clientId
+                        public client_id?: string = clientId
                     }).then((auth2) => {
                         console.log(auth2.isSignedIn.get());
                         if (auth2.isSignedIn.get()) {
