@@ -2,20 +2,20 @@ import {setCookie} from "../Cookies";
 import {AuthState} from "./AuthState";
 
 export class NoAuthState implements AuthState {
-    private readonly userName: String = "";
+    private readonly userName: string = "";
 
-    constructor(username: string) {
+    public constructor(username: string) {
         this.userName = username;
         setCookie("no_auth_username", username);
     }
 
-    GetAuthHeader(): string {
+    public GetAuthHeader(): string {
         return "no_auth " + this.userName;
     }
 
-    LogOut(): Promise<any> {
+    public LogOut(): Promise<object> {
         setCookie("no_auth_username", "");
-        return Promise.resolve();
+        return Promise.resolve(null);
     }
 
 }

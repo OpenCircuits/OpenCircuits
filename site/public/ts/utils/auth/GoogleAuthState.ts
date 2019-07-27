@@ -1,7 +1,7 @@
 import {AuthState} from "./AuthState";
 
 export class GoogleAuthState implements AuthState {
-    GetAuthHeader(): string {
+    public GetAuthHeader(): string {
         if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
             return "google " + gapi.auth2.getAuthInstance().currentUser.get().getId();
         } else {
@@ -9,7 +9,7 @@ export class GoogleAuthState implements AuthState {
         }
     }
 
-    LogOut(): Promise<any> {
+    public LogOut(): Promise<object> {
         return gapi.auth2.getAuthInstance().signOut();
     }
 

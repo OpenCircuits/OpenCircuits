@@ -2,6 +2,7 @@ import {getCookie} from "../utils/Cookies";
 import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
+import ClientConfig = gapi.auth2.ClientConfig;
 
 export const LoginController = (() => {
     const loginPopup = document.getElementById("login-popup");
@@ -15,6 +16,15 @@ export const LoginController = (() => {
     let disabled = false;
 
     let authState: AuthState = undefined;
+
+    const setAuthState = function(as: AuthState): void {
+        const p = Promise.resolve();
+        if (authState !== undefined) {
+            console.log("Attempt to load multiple auth states!");
+            p.then(authState.LogOut);
+        }
+        p.then(() => authState = as);
+    }
 
     const toggle = function(): void {
         loginPopup.classList.toggle("invisible");
@@ -47,15 +57,6 @@ export const LoginController = (() => {
 
     const onLoginError = function(e: {error: string}): void {
         console.log(e);
-    }
-
-    const setAuthState = function(as: AuthState): void {
-        let p = Promise.resolve();
-        if (authState !== undefined) {
-            console.log("Attempt to load multiple auth states!");
-            p.then(authState.LogOut);
-        }
-        p.then(() => authState = as);
     }
 
     return {
@@ -91,8 +92,8 @@ export const LoginController = (() => {
 
                 gapi.load('auth2', () => {
                     const clientId = document.getElementsByName('google-signin-client_id')[0].getAttribute('content');
-                    gapi.auth2.init({
-                        client_id: clientId
+                    gapi.auth2.init(new class implements ClientConfig {
+                        client_id?: string = clientId
                     }).then((auth2) => {
                         console.log(auth2.isSignedIn.get());
                         if (auth2.isSignedIn.get()) {
@@ -104,7 +105,7 @@ export const LoginController = (() => {
             };
 
             if (document.getElementById('no_auth_enabled') !== undefined) {
-                let username = getCookie("no_auth_username");
+                const username = getCookie("no_auth_username");
                 if (username !== "") {
                     onNoAuthLogin(username);
                 }
@@ -119,7 +120,7 @@ export const LoginController = (() => {
             };
 
             (<any>window).authPing = () => {
-                let xhr = new XMLHttpRequest();
+                const xhr = new XMLHttpRequest();
                 xhr.open("POST", "ping", false);
                 xhr.setRequestHeader("auth", authState !== undefined ? authState.GetAuthHeader() : "");
                 xhr.onreadystatechange = () => {
