@@ -4,32 +4,20 @@ import (
 	"encoding/json"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
+	"google.golang.org/api/oauth2/v2"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"net/http"
 )
 
 type authenticationMethod struct {
-	oauth2Config oauth2.Config
-}
-
-// User is a retrieved and authenticated user.
-type user struct {
-	Sub           string `json:"sub"`
-	Name          string `json:"name"`
-	GivenName     string `json:"given_name"`
-	FamilyName    string `json:"family_name"`
-	Profile       string `json:"profile"`
-	Picture       string `json:"picture"`
-	Email         string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
-	Gender        string `json:"gender"`
+	config  oauth2Config
+	service *oauth2.Service
 }
 
 // Credentials which stores google ids.
-type oAuth2Config struct {
+type oauth2Config struct {
 	ID          string `json:"id"`
 	Secret      string `json:"secret"`
 	RedirectURL string `json:"redirectURL"`
@@ -46,29 +34,33 @@ func New(configPath string) auth.AuthenticationMethod {
 		panic(err)
 	}
 
-	var cred oAuth2Config
+	var cred oauth2Config
 	err = json.Unmarshal(file, &cred)
 	if err != nil {
 		log.Printf("Error unmarshalling credentials json: %v\n", err)
 		panic(err)
 	}
 
+	client := &http.Client{}
+	oauth2Service, err := oauth2.New(client)
+	if err != nil {
+		panic(err)
+	}
+
 	return authenticationMethod{
-		oauth2Config: oauth2.Config{
-			ClientID:     cred.ID,
-			ClientSecret: cred.Secret,
-			RedirectURL:  cred.RedirectURL,
-			Scopes: []string{
-				"https://www.googleapis.com/auth/userinfo.email",
-			},
-			Endpoint: google.Endpoint,
-		},
+		service: oauth2Service,
+		config: cred,
 	}
 }
 
 func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
-	// TODO: real stuff with google
-	return "google auth token " + token, nil
+	// This is poorly documented, so the code for verifying a token is credit to
+	// https://stackoverflow.com/a/36717411/2972004
+	tokenInfo, err := g.service.Tokeninfo().IdToken(token).Do()
+	if err != nil {
+		return "", err
+	}
+	return "google_" + tokenInfo.UserId, nil
 }
 
 func (g authenticationMethod) AuthHeaderPrefix() string {
@@ -81,7 +73,7 @@ func (g authenticationMethod) GetLoginButton() template.HTML {
 
 func (g authenticationMethod) GetLoginHeader() template.HTML {
 	return template.HTML(`
-<meta name="google-signin-client_id" content="` + g.oauth2Config.ClientID + `">
+<meta name="google-signin-client_id" content="` + g.config.ID + `">
 <script>
 	function gapiLoaded() {
 		window.onGapiLoad();
