@@ -98,8 +98,7 @@ export const LoginController = (() => {
             // Setup each auth method if they are loaded in the page
             let authPromise = Promise.resolve();
             if (googleAuthMeta !== null) {
-                authPromise =
-                    authPromise
+                authPromise = authPromise
                         .then(() => loadDynamicScript("https://apis.google.com/js/platform.js"))
                         .then(() => {
                             console.log("0");
@@ -133,8 +132,7 @@ export const LoginController = (() => {
 
 
             if (noAuthMeta !== null) {
-                authPromise =
-                    authPromise
+                authPromise = authPromise
                         .then(() => {
                             console.log("1");
                             const username = getCookie("no_auth_username");
