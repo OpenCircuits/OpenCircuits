@@ -1,40 +1,49 @@
+@import 'theme';
+
+$header-height: 50px;
+$header-padding: 5px;
+$header-border-width: 5px;
+$header-total-height: $header-height + 2*$header-padding + $header-border-width;
+
+$header-border: 0 solid $secondary-color;
+
 header {
     position: fixed;
     z-index: 3;
 
     width: 100%;
-    height: 50px;
-    padding: 5px;
+    height: $header-height;
+    padding: $header-padding;
 
-    border: 0 solid #999;
-    border-bottom-width: 5px;
+    border: $header-border;
+    border-bottom-width: $header-border-width;
     background-color: #222;
 }
+
+
 .header__left {
     float: left;
-}
-.header__left__sidenavbutton {
-    font-size: 1.5em;
 
-    width: 10%;
-    height: 40px;
-    margin-top: 5px;
+    margin-top: $header-height/2 - 25px/2;
 
-    cursor: pointer;
-
-    color: #888;
     border: 0;
-}
-.header__left__projectname {
-    font-size: 1.5em;
 
-    width: 20vw;
-    height: 40px;
-    margin-top: 5px;
+    &__sidenavbutton {
+        font-size: 24px;
 
-    color: #888;
-    border: 0;
+        cursor: pointer;
+
+        color: $secondary-color;
+    }
+    &__projectname {
+        font-size: 24px;
+
+        width: 20vw;
+
+        color: $secondary-color;
+    }
 }
+
 
 .header__center__logo {
     position: absolute;
@@ -45,31 +54,35 @@ header {
     width: 200px;
     margin-left: -100px;
 
-    color: #888;
+    color: $secondary-color;
+
+    @media (max-width: 512px) {
+        & {
+            display: none;
+        }
+    }
 }
+
+
 .header__right {
     margin-right: 1%;
-}
-.header__right div {
-    float: right;
 
-    height: 40px;
-    margin-top: 5px;
+    & div {
+        float: right;
 
-    cursor: pointer;
-}
-.header__right button {
-    height: 40px;
+        height: 40px;
+        margin-top: 5px;
 
-    cursor: pointer;
-}
-.header__right img {
-    display: block;
+        cursor: pointer;
+    }
+    & button {
+        height: 40px;
 
-    margin: auto;
-}
-@media (max-width: 512px) {
-    .header__center__logo {
-        display: none;
+        cursor: pointer;
+    }
+    & img {
+        display: block;
+
+        margin: auto;
     }
 }
