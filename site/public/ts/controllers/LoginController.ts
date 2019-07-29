@@ -19,8 +19,8 @@ export const LoginController = (() => {
     let authState: AuthState = undefined;
 
     // Put authentication type meta-tags here (used to determine if an auth method is enabled)
-    let noAuthMeta = document.getElementById('no_auth_enable');
-    let googleAuthMeta = document.getElementById('google-signin-client_id');
+    const noAuthMeta = document.getElementById('no_auth_enable');
+    const googleAuthMeta = document.getElementById('google-signin-client_id');
 
     const setAuthState = function(as: AuthState): void {
         const p = Promise.resolve();
@@ -98,49 +98,51 @@ export const LoginController = (() => {
             // Setup each auth method if they are loaded in the page
             let authPromise = Promise.resolve();
             if (googleAuthMeta !== null) {
-                authPromise = authPromise
-                    .then(() => loadDynamicScript("https://apis.google.com/js/platform.js"))
-                    .then(() => {
-                        console.log("0");
-                        gapi.signin2.render('login-popup-google-signin', {
-                            'scope': 'profile email',
-                            'width': 240,
-                            'height': 50,
-                            'longtitle': true,
-                            'onsuccess': onGoogleLogin,
-                            'onfailure': onLoginError
-                        });
+                authPromise =
+                    authPromise
+                        .then(() => loadDynamicScript("https://apis.google.com/js/platform.js"))
+                        .then(() => {
+                            console.log("0");
+                            gapi.signin2.render('login-popup-google-signin', {
+                                'scope': 'profile email',
+                                'width': 240,
+                                'height': 50,
+                                'longtitle': true,
+                                'onsuccess': onGoogleLogin,
+                                'onfailure': onLoginError
+                            });
 
-                        return new Promise<void>((resolve) => {
-                            gapi.load('auth2', resolve);
+                            return new Promise<void>((resolve) => {
+                                gapi.load('auth2', resolve);
+                            });
+                        })
+                        .then(() => {
+                            console.log("0");
+                            return gapi.auth2.init(new class implements ClientConfig {
+                                public client_id?: string = googleAuthMeta.getAttribute('content');
+                            });
+                        })
+                        .then((auth2) => {
+                            console.log("0");
+                            console.log(auth2.isSignedIn.get());
+                            if (auth2.isSignedIn.get()) {
+                                onGoogleLogin(auth2.currentUser.get());
+                            }
                         });
-                    })
-                    .then(() => {
-                        console.log("0");
-                        return gapi.auth2.init(new class implements ClientConfig {
-                            public client_id?: string = googleAuthMeta.getAttribute('content');
-                        });
-                    })
-                    .then((auth2) => {
-                        console.log("0");
-                        console.log(auth2.isSignedIn.get());
-                        if (auth2.isSignedIn.get()) {
-                            onGoogleLogin(auth2.currentUser.get());
-                        }
-                    });
             }
 
 
             if (noAuthMeta !== null) {
-                authPromise = authPromise
-                    .then(() => {
-                        console.log("1");
-                        const username = getCookie("no_auth_username");
-                        if (username !== "") {
-                            onNoAuthLogin(username);
-                        }
-                        document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
-                    });
+                authPromise =
+                    authPromise
+                        .then(() => {
+                            console.log("1");
+                            const username = getCookie("no_auth_username");
+                            if (username !== "") {
+                                onNoAuthLogin(username);
+                            }
+                            document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
+                        });
             }
 
             return authPromise.then(() => 1);
