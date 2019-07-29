@@ -50,6 +50,8 @@ export const SelectionPopupController = (() => {
                 new BusButtonPopupModule(div)
             );
             pos = V(0, 0);
+
+            SelectionPopupController.Hide();
         },
         Update: function(): void {
             const selections = MainDesignerController.GetSelections();
@@ -83,11 +85,11 @@ export const SelectionPopupController = (() => {
             }
         },
         Show: function(): void {
-            div.style.visibility = "visible";
+            div.classList.remove("invisible")
             div.focus();
         },
         Hide: function(): void {
-            div.style.visibility = "hidden";
+            div.classList.add("invisible");
         }
     };
 })();

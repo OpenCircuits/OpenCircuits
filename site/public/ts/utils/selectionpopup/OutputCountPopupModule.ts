@@ -14,8 +14,8 @@ export class OutputCountPopupModule extends SelectionPopupModule {
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-output-count-text"));
-        this.count = this.div.querySelector("input#popup-output-count");
-
+        
+        this.count = this.el.querySelector("input#popup-output-count");
         this.count.onchange = () => this.push();
     }
 
@@ -39,7 +39,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
             this.count.value = same ? counts[0].getValue().toString() : "";
             this.count.placeholder = same ? "" : "-";
-            
+
             this.count.min = min.toString();
             this.count.max = max.toString();
         }
