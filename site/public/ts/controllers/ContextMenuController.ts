@@ -4,16 +4,15 @@ export const ContextMenuController = (() => {
     const contextmenu = document.getElementById("context-menu");
 
     const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
-        contextmenu.style.left = String(e.pageX) + 'px';
-        contextmenu.style.top  = String(e.pageY) + 'px';
+        contextmenu.style.left = `${e.pageX}px`;
+        contextmenu.style.top  = `${e.pageY}px`;
         if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
-            contextmenu.style.top = String(e.pageY - contextmenu.offsetHeight) + 'px';
-        contextmenu.style.visibility = 'visible';
+            contextmenu.style.top = `${e.pageY - contextmenu.offsetHeight}px`;
+        contextmenu.classList.remove("invisible");
     }
 
     const onMouseDown = function(_: MouseEvent): void {
-        if (contextmenu.style.visibility === 'visible')
-            contextmenu.style.visibility = 'hidden';
+        contextmenu.classList.add("invisible");
     }
 
     return {
