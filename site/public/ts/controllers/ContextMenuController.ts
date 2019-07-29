@@ -8,6 +8,8 @@ export const ContextMenuController = (() => {
         contextmenu.style.top  = `${e.pageY}px`;
         if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
             contextmenu.style.top = `${e.pageY - contextmenu.offsetHeight}px`;
+        if (contextmenu.offsetWidth + e.pageX > canvas.offsetWidth)
+            contextmenu.style.left = `${e.pageX - contextmenu.offsetWidth}px`;
         ContextMenuController.Show();
     }
 
