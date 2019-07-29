@@ -8,11 +8,11 @@ export const ContextMenuController = (() => {
         contextmenu.style.top  = `${e.pageY}px`;
         if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
             contextmenu.style.top = `${e.pageY - contextmenu.offsetHeight}px`;
-        contextmenu.classList.remove("invisible");
+        ContextMenuController.Show();
     }
 
     const onMouseDown = function(_: MouseEvent): void {
-        contextmenu.classList.add("invisible");
+        ContextMenuController.Hide();
     }
 
     return {
@@ -30,5 +30,11 @@ export const ContextMenuController = (() => {
                 onContextMenu(e, canvas);
             });
         },
+        Show: function(): void {
+            contextmenu.classList.remove("invisible");
+        },
+        Hide: function(): void {
+            contextmenu.classList.add("invisible");
+        }
     }
 })();
