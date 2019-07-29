@@ -15,7 +15,7 @@ export abstract class SelectionPopupModule {
     public setEnabled(show: boolean): void {
         // If we are enabled and should hide then toggle or
         //  if we aren't enabled and should show then toggle
-        if (this.isEnabled() != show)
+        if (this.isEnabled() !== show)
             this.el.classList.toggle("hide");
     }
 
