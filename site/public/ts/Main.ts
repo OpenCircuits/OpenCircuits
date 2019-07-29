@@ -59,9 +59,7 @@ function Init(): void {
             SideNavController.Init();
             resolve(1);
         }),
-        new Promise((resolve, _) => {
-            LoginController.Init(resolve);
-        })
+        LoginController.Init()
     ];
 
     Promise.all(promises).then(() => {

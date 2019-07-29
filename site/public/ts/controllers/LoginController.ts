@@ -3,6 +3,7 @@ import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
 import ClientConfig = gapi.auth2.ClientConfig;
+import {loadDynamicScript} from "../utils/Script";
 
 export const LoginController = (() => {
     const loginPopup = document.getElementById("login-popup");
@@ -16,6 +17,10 @@ export const LoginController = (() => {
     let disabled = false;
 
     let authState: AuthState = undefined;
+
+    // Put authentication type meta-tags here (used to determine if an auth method is enabled)
+    let noAuthMeta = document.getElementById('no_auth_enable');
+    let googleAuthMeta = document.getElementById('google-signin-client_id');
 
     const setAuthState = function(as: AuthState): void {
         const p = Promise.resolve();
@@ -49,6 +54,16 @@ export const LoginController = (() => {
         onLogin();
     }
 
+    const onNoAuthSubmitted = function(): void {
+        const username = (<HTMLInputElement>document.getElementById("no-auth-user-input")).value;
+        console.log("NO AUTH LOGIN: " + username);
+        if (username === "") {
+            alert("User Name must not be blank");
+            return;
+        }
+        onNoAuthLogin(username);
+    }
+
     const onLogout = function(): void {
         authState = undefined;
         loginHeaderContainer.classList.remove("hide");
@@ -60,7 +75,7 @@ export const LoginController = (() => {
     }
 
     return {
-        Init: function(resolve: (value?: unknown) => void): void {
+        Init: function(): Promise<number> {
             isOpen = false;
 
             loginHeaderButton.onclick = () => {
@@ -80,60 +95,55 @@ export const LoginController = (() => {
                     LoginController.Toggle();
             });
 
-            (<any>window).onGapiLoad = () => {
-                gapi.signin2.render('login-popup-google-signin', {
-                    'scope': 'profile email',
-                    'width': 240,
-                    'height': 50,
-                    'longtitle': true,
-                    'onsuccess': onGoogleLogin,
-                    'onfailure': onLoginError
-                });
+            // Setup each auth method if they are loaded in the page
+            let authPromise = Promise.resolve();
+            if (googleAuthMeta !== null) {
+                authPromise = authPromise
+                    .then(() => loadDynamicScript("https://apis.google.com/js/platform.js"))
+                    .then(() => {
+                        console.log("0");
+                        gapi.signin2.render('login-popup-google-signin', {
+                            'scope': 'profile email',
+                            'width': 240,
+                            'height': 50,
+                            'longtitle': true,
+                            'onsuccess': onGoogleLogin,
+                            'onfailure': onLoginError
+                        });
 
-                gapi.load('auth2', () => {
-                    const clientId = document.getElementsByName('google-signin-client_id')[0].getAttribute('content');
-                    gapi.auth2.init(new class implements ClientConfig {
-                        public client_id?: string = clientId
-                    }).then((auth2) => {
+                        return new Promise<void>((resolve) => {
+                            gapi.load('auth2', resolve);
+                        });
+                    })
+                    .then(() => {
+                        console.log("0");
+                        return gapi.auth2.init(new class implements ClientConfig {
+                            public client_id?: string = googleAuthMeta.getAttribute('content');
+                        });
+                    })
+                    .then((auth2) => {
+                        console.log("0");
                         console.log(auth2.isSignedIn.get());
                         if (auth2.isSignedIn.get()) {
                             onGoogleLogin(auth2.currentUser.get());
                         }
-                        resolve(1);
                     });
-                });
-            };
-
-            if (document.getElementById('no_auth_enabled') !== undefined) {
-                const username = getCookie("no_auth_username");
-                if (username !== "") {
-                    onNoAuthLogin(username);
-                }
             }
 
-            (<any>window).onNoAuthSubmitted = (username: string) => {
-                if (username === "") {
-                    alert("User Name must not be blank");
-                    return;
-                }
-                onNoAuthLogin(username);
-            };
 
-            (<any>window).authPing = () => {
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", "ping", false);
-                xhr.setRequestHeader("auth", authState !== undefined ? authState.GetAuthHeader() : "");
-                xhr.onreadystatechange = () => {
-                    if (this.readyState == 4) {
-                        if (this.status == 200) {
-                            console.log("SUCCESSFUL PING");
-                        } else {
-                            console.log("UNSUCCESSFUL PING " + this.status);
+            if (noAuthMeta !== null) {
+                authPromise = authPromise
+                    .then(() => {
+                        console.log("1");
+                        const username = getCookie("no_auth_username");
+                        if (username !== "") {
+                            onNoAuthLogin(username);
                         }
-                    }
-                };
-                xhr.send();
+                        document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
+                    });
             }
+
+            return authPromise.then(() => 1);
         },
         Toggle: function(): void {
             if (disabled)

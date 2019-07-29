@@ -72,12 +72,5 @@ func (g authenticationMethod) GetLoginButton() template.HTML {
 }
 
 func (g authenticationMethod) GetLoginHeader() template.HTML {
-	return template.HTML(`
-<meta name="google-signin-client_id" content="` + g.config.ID + `">
-<script>
-	function gapiLoaded() {
-		window.onGapiLoad();
-	}
-</script>
-<script src="https://apis.google.com/js/platform.js?onload=gapiLoaded" async defer></script>`)
+	return template.HTML(`<meta id="google-signin-client_id" name="google-signin-client_id" content="` + g.config.ID + `">`)
 }
