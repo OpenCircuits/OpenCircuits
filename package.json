@@ -29,7 +29,7 @@
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "install:go": "go get -u github.com/gin-gonic/gin github.com/gin-gonic/contrib/sessions golang.org/x/oauth2 golang.org/x/oauth2/google",
+    "install:go": "go get -u github.com/gin-gonic/gin github.com/gin-gonic/contrib/sessions golang.org/x/oauth2 golang.org/x/oauth2/google google.golang.org/api/oauth2/v2",
     "build": "webpack --mode=development",
     "build:go": "go build -o ./build/server ./site/go",
     "build:prod": "webpack --mode=production",
