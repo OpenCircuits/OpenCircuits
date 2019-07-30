@@ -9,6 +9,8 @@ export const SideNavController = (() => {
 
     const overlay = document.getElementById("overlay");
 
+    const context = document.getElementById("content");
+
     let isOpen = false;
     let disabled = false;
 
@@ -37,6 +39,7 @@ export const SideNavController = (() => {
     const toggle = function(): void {
         sidenav.classList.toggle("shrink");
         overlay.classList.toggle("invisible");
+        context.classList.toggle("sidenav__shift");
     }
 
     return {

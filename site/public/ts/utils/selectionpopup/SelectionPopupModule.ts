@@ -2,25 +2,25 @@
 * A selection popup module is one of the "properties" that is displayed to the user (for view or sometimes editing) when an appropriate circuit component
 * I.e. AND gates have a configurable number of input nodes, all components have a name and position
 *
-* Under the hood, it's basically just a wrapper for an input element and surrounding div
-* TODO: Do I even need a div?
+* Under the hood, it's basically just a wrapper for an input element and surrounding el
+* TODO: Do I even need a el?
 */
 export abstract class SelectionPopupModule {
-    protected div: HTMLDivElement;
+    protected el: HTMLElement;
 
-    public constructor(parentDiv: HTMLDivElement) {
-        this.div = parentDiv;
+    public constructor(parentel: HTMLElement) {
+        this.el = parentel;
     }
 
-    // True makes this module visible in the selection popup menu
-    // False hides this module from the selection popup menu
     public setEnabled(show: boolean): void {
-        // Inherit to make sure this isn't visible when the selection popup is hidden
-        this.div.style.display = (show ? "inherit" : "none");
+        // If we are enabled and should hide then toggle or
+        //  if we aren't enabled and should show then toggle
+        if (this.isEnabled() !== show)
+            this.el.classList.toggle("hide");
     }
 
-    public getEnabled(): boolean {
-        return (this.div.style.display === "inherit");
+    public isEnabled(): boolean {
+        return (!this.el.classList.contains("hide"));
     }
 
     // Updates the module to show properties of the selected object(s)

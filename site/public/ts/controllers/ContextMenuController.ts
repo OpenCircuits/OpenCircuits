@@ -4,16 +4,17 @@ export const ContextMenuController = (() => {
     const contextmenu = document.getElementById("context-menu");
 
     const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
-        contextmenu.style.left = String(e.pageX) + 'px';
-        contextmenu.style.top  = String(e.pageY) + 'px';
+        contextmenu.style.left = `${e.pageX}px`;
+        contextmenu.style.top  = `${e.pageY}px`;
         if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
-            contextmenu.style.top = String(e.pageY - contextmenu.offsetHeight) + 'px';
-        contextmenu.style.visibility = 'visible';
+            contextmenu.style.top = `${e.pageY - contextmenu.offsetHeight}px`;
+        if (contextmenu.offsetWidth + e.pageX > canvas.offsetWidth)
+            contextmenu.style.left = `${e.pageX - contextmenu.offsetWidth}px`;
+        ContextMenuController.Show();
     }
 
     const onMouseDown = function(_: MouseEvent): void {
-        if (contextmenu.style.visibility === 'visible')
-            contextmenu.style.visibility = 'hidden';
+        ContextMenuController.Hide();
     }
 
     return {
@@ -31,5 +32,11 @@ export const ContextMenuController = (() => {
                 onContextMenu(e, canvas);
             });
         },
+        Show: function(): void {
+            contextmenu.classList.remove("invisible");
+        },
+        Hide: function(): void {
+            contextmenu.classList.add("invisible");
+        }
     }
 })();

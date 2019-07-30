@@ -1,0 +1,58 @@
+.loading__screen {
+    position: absolute;
+    z-index: 10;
+
+    width: 100%;
+    height: 100%;
+
+    transition: .3s;
+
+    background-color: #ccc;
+
+    &__background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        width: 200px;
+        height: 200px;
+        margin-top: -100px;
+        margin-left: -100px;
+
+        animation: pulse 2s infinite;
+
+        border-radius: 50%;
+        background-color: #999;
+        background-image: url('../img/icon.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 50%;
+    }
+    &__logo {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+
+        width: 30%;
+        margin-left: -15%;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        transform: scale(1.5, 1.5);
+
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.5, 1.5);
+
+        opacity: 0;
+    }
+}

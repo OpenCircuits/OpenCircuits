@@ -33,7 +33,7 @@ export class ICDesignerView extends CircuitView {
     }
 
     public show(): void {
-        this.div.style.visibility = "visible";
+        this.div.classList.remove("invisible");
     }
 
     public setConfirmButtonListener(listener: () => void): void {
@@ -45,7 +45,7 @@ export class ICDesignerView extends CircuitView {
     }
 
     public hide(): void {
-        this.div.style.visibility = "hidden";
+        this.div.classList.add("invisible");
     }
 
 }

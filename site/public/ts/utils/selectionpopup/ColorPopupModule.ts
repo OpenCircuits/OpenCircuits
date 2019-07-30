@@ -11,8 +11,8 @@ export class ColorPopupModule extends SelectionPopupModule {
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-color-text"));
-        this.color = this.div.querySelector("input#popup-color-picker");
-
+        
+        this.color = this.el.querySelector("input#popup-color-picker");
         this.color.onchange = () => this.push();
     }
 
