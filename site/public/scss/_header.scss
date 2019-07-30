@@ -140,44 +140,44 @@ header {
         margin-top: 0;
     }
 
-    #header-login-container {
+    &__account {
         margin-top: 0;
         cursor: default;
-    }
-    #header-signin-button,
-    #header-createaccount-button,
-    #header-signout-button {
-        float: right;
-        cursor: pointer;
-        padding-left: 5px;
-        padding-right: 5px;
-        margin-top: 10px;
-        height: 30px;
-        color: #aaa;
-        border: thin solid #888;
-        border-radius: 4px;
-    }
-    #header-signin-button,
-    #header-signout-button {
-        margin-right: 15px;
-    }
-    #header-login-or {
-        margin-top: 5px;
-        margin-left: 10px;
-        margin-right: 10px;
-        color: #aaa;
-    }
-    #header-signin-button:hover,
-    #header-createaccount-button:hover {
-        color: #bbb;
-        border-color: #aaa;
-    }
 
-    @media (max-width: 500px) {
+        & div {
+            margin-top: 0px;
+        }
+        & button {
+            float: right;
+            cursor: pointer;
+            padding-left: 5px;
+            padding-right: 5px;
+            margin-top: 5px;
+            height: 30px;
+            color: #aaa;
+            border: thin solid #888;
+            border-radius: 4px;
+
+            &:hover {
+                color: #bbb;
+                border-color: #aaa;
+            }
+        }
+
         #header-signin-button,
-        #header-login-or,
-        #header-createaccount-button {
-            display: none;
+        #header-signout-button {
+            margin-right: 15px;
+        }
+        #header-login-or {
+            margin-left: 10px;
+            margin-right: 10px;
+            color: #aaa;
+        }
+
+        @media (max-width: 500px) {
+            & {
+                display: none;
+            }
         }
     }
 }
