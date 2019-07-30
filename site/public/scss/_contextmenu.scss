@@ -1,40 +1,28 @@
 .contextmenu {
-    font-size: 16;
-
     position: fixed;
     z-index: 1;
-    top: 0;
-    left: 0;
 
     width: 100px;
     padding: 1em;
 
-    color: #888;
-    border: 1px solid #444;
+    border: 1px solid $secondary-color;
     border-radius: 3px;
-    outline: none;
-    background-color: rgba(255, 255, 255, .8);
-}
-.contextmenu button {
-    display: inline;
+    background-color: rgba(white, .8);
 
-    width: 100%;
-    margin-top: .1em;
-    padding: .4em;
+    & button {
+        width: 100%;
+        margin-top: .1em;
+        padding: .4em;
 
-    text-align: left;
+        text-align: left;
 
-    color: #888;
-    color: #555;
-    border: 0;
-    border-style: none;
-    outline: none;
-    background-color: rgba(0, 0, 0, .0);
-}
-.contextmenu button:hover {
-    background-color: rgba(51, 103, 214, .5);
-}
-.contextmenu button:disabled {
-    color: #aaa;
-    background-color: rgba(0, 0, 0, .0);
+        color: darken($secondary-color, 20%);
+    }
+    & button:hover {
+        background-color: rgba(51, 103, 214, .5);
+    }
+    & button:disabled {
+        color: #aaa;
+        background-color: transparent;
+    }
 }
