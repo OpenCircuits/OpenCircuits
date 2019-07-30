@@ -116,7 +116,7 @@ export const LoginController = (() => {
                 }).then(async (_) => {}); // Have to explicitly call .then
 
             }
-            else if (noAuthMeta) {
+            if (noAuthMeta) {
                 const username = GetCookie("no_auth_username");
                 if (username)
                     onNoAuthLogin(username);
