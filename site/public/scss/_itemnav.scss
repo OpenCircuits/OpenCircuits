@@ -1,5 +1,3 @@
-@import 'theme', 'header';
-
 $itemnav-width: 215px;
 
 $tab-width: 18px;
@@ -19,7 +17,7 @@ $tab-padding: 8px;
 
     border: $header-border;
     border-right-width: $header-border-width;
-    background-color: rgba($primary-color, .7);
+    background-color: rgba($background-color, .7);
 
     & h4 {
         font-size: 24px;
@@ -68,7 +66,7 @@ $tab-padding: 8px;
     border: $header-border;
     border-width: $header-border-width;
     border-bottom-right-radius: 15px;
-    background-color: rgba($primary-color, .7);
+    background-color: rgba($background-color, .7);
 
     &:after {
         content: '+';
