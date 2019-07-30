@@ -1,4 +1,4 @@
-import {setCookie} from "../Cookies";
+import {SetCookie} from "../Cookies";
 import {AuthState} from "./AuthState";
 
 export class NoAuthState implements AuthState {
@@ -6,15 +6,15 @@ export class NoAuthState implements AuthState {
 
     public constructor(username: string) {
         this.userName = username;
-        setCookie("no_auth_username", username);
+        SetCookie("no_auth_username", username);
     }
 
-    public GetAuthHeader(): string {
+    public getAuthHeader(): string {
         return "no_auth " + this.userName;
     }
 
-    public LogOut(): Promise<object> {
-        setCookie("no_auth_username", "");
+    public logOut(): Promise<object> {
+        SetCookie("no_auth_username", "");
         return Promise.resolve(null);
     }
 

@@ -1,15 +1,15 @@
 import {AuthState} from "./AuthState";
 
 export class GoogleAuthState implements AuthState {
-    public GetAuthHeader(): string {
-        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-            return "google " + gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-        } else {
+
+    public getAuthHeader(): string {
+        const auth2 = gapi.auth2.getAuthInstance();
+        if (!auth2.isSignedIn.get())
             return "";
-        }
+        return "google " + auth2.currentUser.get().getAuthResponse().id_token;
     }
 
-    public LogOut(): Promise<object> {
+    public logOut(): Promise<object> {
         return gapi.auth2.getAuthInstance().signOut();
     }
 

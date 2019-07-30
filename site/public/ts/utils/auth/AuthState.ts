@@ -1,7 +1,7 @@
 
 export interface AuthState {
     // Gets an authorization header for outgoing requests
-    GetAuthHeader(): string;
+    getAuthHeader(): string;
     // Logs the user out of their session and invalidates this object
-    LogOut(): Promise<object>;
+    logOut(): Promise<object>;
 }
