@@ -16,12 +16,11 @@
     }
     & input {
         width: calc(100% - 2*2px - 2*2px);
-
         margin-bottom: 1px;
         padding: 2px;
 
         color: $secondary-color;
-        border: solid 2px rgba($background-color, 0.5);
+        border: solid 2px rgba($background-color, .5);
         background-color: rgba(white, .8);
     }
     & input[type='text'],
@@ -31,7 +30,7 @@
     }
 
     & button {
-        font-size: 0.8em;
+        font-size: .8em;
 
         width: 100%;
         margin-top: 5px;

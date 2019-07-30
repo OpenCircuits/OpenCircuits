@@ -85,8 +85,10 @@ header {
         margin: auto;
     }
     & span {
-        float: right;
         line-height: 40px;
+
+        float: right;
+
         vertical-align: middle;
     }
 
@@ -142,18 +144,22 @@ header {
 
     &__account {
         margin-top: 0;
+
         cursor: default;
 
         & div {
-            margin-top: 0px;
+            margin-top: 0;
         }
         & button {
             float: right;
-            cursor: pointer;
-            padding-left: 5px;
-            padding-right: 5px;
-            margin-top: 5px;
+
             height: 30px;
+            margin-top: 5px;
+            padding-right: 5px;
+            padding-left: 5px;
+
+            cursor: pointer;
+
             color: #aaa;
             border: thin solid #888;
             border-radius: 4px;
@@ -169,8 +175,9 @@ header {
             margin-right: 15px;
         }
         #header-login-or {
-            margin-left: 10px;
             margin-right: 10px;
+            margin-left: 10px;
+
             color: #aaa;
         }
 
@@ -185,7 +192,7 @@ header {
 
 #header-login-dropdown-content {
     height: auto;
-    margin-top: 0px;
+    margin-top: 0;
 }
 div.header__login__option {
     height: auto;
