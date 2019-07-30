@@ -1,65 +1,52 @@
 .popup {
-    font-size: 16;
-
     position: fixed;
-    top: 0;
-    left: 0;
 
     width: 100px;
     padding: 1em;
 
-    color: #888;
-    border: 1px solid #444;
+    color: $secondary-color;
+    border: 1px solid $secondary-color;
     border-radius: 3px;
     outline: none;
-    background-color: rgba(255, 255, 255, .8);
-}
-.popup div {
-    margin-top: 6px;
-    margin-bottom: 2px;
-}
-.popup input {
-    display: inline;
+    background-color: rgba(white, .8);
 
-    width: 100%;
-    margin-bottom: 1px;
-    padding: 2px;
+    & div {
+        margin-top: 6px;
+        margin-bottom: 2px;
+    }
+    & input {
+        width: calc(100% - 2*2px - 2*2px);
 
-    color: #888;
-    border: solid 2px rgba(200,200,200,.5);
-    background-color: rgba(255, 255, 255, .8);
-}
-.popup input[type='text'],
-input[type='color'] {
-    border: 0;
-    background-color: rgba(255, 255, 255, 0);
-}
+        margin-bottom: 1px;
+        padding: 2px;
 
-.popup input#popup-position-x,
-input#popup-position-y {
-    width: calc(100% - 8px); /* 8px from l,r padding and l,r border */
-}
+        color: $secondary-color;
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, .8);
+    }
+    & input[type='text'],
+    input[type='color'] {
+        border: 0;
+        background-color: transparent;
+    }
 
-.popup button {
-    font-size: .8em;
+    & button {
+        font-size: 0.8em;
 
-    visibility: inherit;
+        width: 100%;
+        margin-top: 5px;
+        padding: 4px;
 
-    width: 100%;
-    margin-top: 5px;
-    padding: 4px;
-
-    text-align: center;
-
-    color: #888;
-    border-width: thin;
-    border-style: solid;
-    border-radius: 3px;
-    background-color: #fff;
-}
-.popup button:hover {
-    background-color: #eee;
-}
-.popup button:active {
-    background-color: #ddd;
+        color: $secondary-color;
+        border-width: thin;
+        border-style: solid;
+        border-radius: 3px;
+        background-color: white;
+    }
+    & button:hover {
+        background-color: darken(white, 5%);
+    }
+    & button:active {
+        background-color: darken(white, 10%);
+    }
 }
