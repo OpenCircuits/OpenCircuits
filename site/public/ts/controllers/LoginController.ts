@@ -1,9 +1,11 @@
+import ClientConfig = gapi.auth2.ClientConfig;
+
 import {GetCookie} from "../utils/Cookies";
+import {LoadDynamicScript} from "../utils/Script";
+
 import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
-import ClientConfig = gapi.auth2.ClientConfig;
-import {LoadDynamicScript} from "../utils/Script";
 
 export const LoginController = (() => {
     const loginPopup = document.getElementById("login-popup");
@@ -22,19 +24,6 @@ export const LoginController = (() => {
     const noAuthMeta = document.getElementById('no_auth_enable');
     const googleAuthMeta = document.getElementById('google-signin-client_id');
 
-    const setAuthState = async function(as: AuthState): Promise<void> {
-        if (authState) {
-            console.error("Attempt to load multiple auth states!");
-            await authState.logOut();
-        }
-        authState = as;
-    }
-
-    const toggle = function(): void {
-        loginPopup.classList.toggle("invisible");
-        overlay.classList.toggle("invisible");
-    }
-
     const onLogin = function(): void {
         loginHeaderContainer.classList.add("hide");
         logoutHeaderButton.classList.remove("hide");
@@ -42,7 +31,26 @@ export const LoginController = (() => {
             LoginController.Toggle();
     }
 
-    const onGoogleLogin = async function(u: gapi.auth2.GoogleUser): Promise<void> {
+    const onLogout = function(): void {
+        authState = undefined;
+        loginHeaderContainer.classList.remove("hide");
+        logoutHeaderButton.classList.add("hide");
+    }
+
+    const onLoginError = function(e: {error: string}): void {
+        console.error(e);
+    }
+
+    const setAuthState = async function(as: AuthState): Promise<void> {
+        if (!authState) {
+            authState = as;
+            return;
+        }
+        console.error("Attempt to load multiple auth states!");
+        await authState.logOut().then(() => authState = as);
+    }
+
+    const onGoogleLogin = async function(_: gapi.auth2.GoogleUser): Promise<void> {
         await setAuthState(new GoogleAuthState());
         onLogin();
     }
@@ -61,14 +69,9 @@ export const LoginController = (() => {
         onNoAuthLogin(username);
     }
 
-    const onLogout = function(): void {
-        authState = undefined;
-        loginHeaderContainer.classList.remove("hide");
-        logoutHeaderButton.classList.add("hide");
-    }
-
-    const onLoginError = function(e: {error: string}): void {
-        console.error(e);
+    const toggle = function(): void {
+        loginPopup.classList.toggle("invisible");
+        overlay.classList.toggle("invisible");
     }
 
     return {
@@ -107,9 +110,10 @@ export const LoginController = (() => {
 
                 // Load 'auth2' from GAPI and then initialize w/ meta-data
                 await new Promise<void>((resolve) => gapi.load('auth2', resolve));
-                await gapi.auth2.init({
-                    client_id: googleAuthMeta.getAttribute("content")
-                }).then(async (auth2) => {}); // Have to explicitly call .then
+                await gapi.auth2.init(new class implements ClientConfig {
+                    // Written like this to make ESLint happy
+                    public client_id?: string = googleAuthMeta.getAttribute("content");
+                }).then(async (_) => {}); // Have to explicitly call .then
 
             }
             else if (noAuthMeta) {
