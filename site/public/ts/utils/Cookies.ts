@@ -1,5 +1,5 @@
 // From https://www.w3schools.com/js/js_cookies.asp
-export function getCookie(cname: string): string {
+export function GetCookie(cname: string): string {
     const name = cname + "=";
     const decodedCookie = decodeURIComponent(document.cookie);
     const ca = decodedCookie.split(";");
@@ -14,7 +14,7 @@ export function getCookie(cname: string): string {
     return "";
 }
 
-export function setCookie(cname: string, cvalue: string, exdays: number = 1000): void {
+export function SetCookie(cname: string, cvalue: string, exdays: number = 1000): void {
     const d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     const expires = "expires="+ d.toUTCString();
