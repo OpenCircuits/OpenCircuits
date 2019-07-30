@@ -18,8 +18,8 @@ export class InputCountPopupModule extends SelectionPopupModule {
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-input-count-text"));
-        this.count = this.div.querySelector("input#popup-input-count");
-
+        
+        this.count = this.el.querySelector("input#popup-input-count");
         this.count.onchange = () => this.push();
     }
 

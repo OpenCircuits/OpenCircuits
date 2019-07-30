@@ -13,8 +13,9 @@ export class PositionPopupModule extends SelectionPopupModule {
 
     public constructor(parentDiv: HTMLDivElement) {
         super(parentDiv.querySelector("div#popup-pos-text"));
-        this.xbox = this.div.querySelector("input#popup-position-x");
-        this.ybox = this.div.querySelector("input#popup-position-y");
+
+        this.xbox = this.el.querySelector("input#popup-position-x");
+        this.ybox = this.el.querySelector("input#popup-position-y");
         this.xbox.oninput = () => this.push();
         this.ybox.oninput = () => this.push();
     }

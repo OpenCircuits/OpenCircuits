@@ -244,6 +244,8 @@ export const ICDesignerController = (() => {
             input.addListener("zoom",    (z,c) => !visible || onZoom(z,c));
 
             window.addEventListener("resize", _e => resize(), false);
+
+            ICDesignerController.Hide();
         },
         Render: function(): void {
             renderQueue.render();

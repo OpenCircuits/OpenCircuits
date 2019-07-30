@@ -1,0 +1,52 @@
+.popup {
+    position: fixed;
+
+    width: 100px;
+    padding: 1em;
+
+    color: $secondary-color;
+    border: 1px solid $secondary-color;
+    border-radius: 3px;
+    outline: none;
+    background-color: rgba(white, .8);
+
+    & div {
+        margin-top: 6px;
+        margin-bottom: 2px;
+    }
+    & input {
+        width: calc(100% - 2*2px - 2*2px);
+
+        margin-bottom: 1px;
+        padding: 2px;
+
+        color: $secondary-color;
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, .8);
+    }
+    & input[type='text'],
+    input[type='color'] {
+        border: 0;
+        background-color: transparent;
+    }
+
+    & button {
+        font-size: 0.8em;
+
+        width: 100%;
+        margin-top: 5px;
+        padding: 4px;
+
+        color: $secondary-color;
+        border-width: thin;
+        border-style: solid;
+        border-radius: 3px;
+        background-color: white;
+    }
+    & button:hover {
+        background-color: darken(white, 5%);
+    }
+    & button:active {
+        background-color: darken(white, 10%);
+    }
+}

@@ -1,0 +1,52 @@
+.icdesigner {
+    & canvas {
+        position: fixed;
+        z-index: 2;
+
+        margin: 14vh 8vw 8vh 8vw;
+
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 3px;
+        background-color: rgba(white, .9);
+    }
+
+    &__buttons {
+        position: absolute;
+        z-index: 3;
+        top: 90vh;
+
+        width: 100vw;
+
+        & button {
+            font-size: 16px;
+
+            position: absolute;
+
+            width: 30vw;
+            padding: 15px 32px;
+
+            color: white;
+        }
+
+        &__confirm {
+            left: 8vw;
+
+            background-color: #4caf50;
+
+            &:active {
+                background-color: #3e8e41;
+            }
+        }
+
+        &__cancel {
+            right: 8vw;
+
+            background-color: #f44336;
+
+            &:active {
+                background-color: #ba000d;
+            }
+        }
+    }
+}

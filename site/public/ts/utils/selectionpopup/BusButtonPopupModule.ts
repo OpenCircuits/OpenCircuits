@@ -8,13 +8,10 @@ import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class BusButtonPopupModule extends SelectionPopupModule {
-    private button: HTMLButtonElement;
-
     public constructor(parentDiv: HTMLDivElement) {
         // No wrapping div
-        super(parentDiv);
-        this.button = this.div.querySelector("button#popup-bus-button");
-        this.button.onclick = () => this.push();
+        super(parentDiv.querySelector("button#popup-bus-button"));
+        this.el.onclick = () => this.push();
     }
 
     public pull(): void {
@@ -23,7 +20,7 @@ export class BusButtonPopupModule extends SelectionPopupModule {
 
         // Make sure there are no regular selections
         if (portSelections.length != selections.length) {
-            this.button.style.display = "none";
+            this.setEnabled(false);
             return;
         }
 
@@ -34,7 +31,7 @@ export class BusButtonPopupModule extends SelectionPopupModule {
         const enable = (inputPorts.length == outputPorts.length);
 
         // Enable/disable the button
-        this.button.style.display = (enable ? "inherit" : "none");
+        this.setEnabled(enable);
     }
 
     public push(): void {

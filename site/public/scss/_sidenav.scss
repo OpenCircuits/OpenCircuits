@@ -1,0 +1,125 @@
+$sidenav-width: 250px;
+
+.sidenav {
+    position: fixed;
+    z-index: 6;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    width: $sidenav-width;
+    height: 100%;
+
+    transition: .5s;
+
+    border: 0 solid $secondary-color;
+    border-right-width: 5px;
+    background-color: $primary-color;
+
+    &__accountinfo {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 60px;
+
+        height: 60px;
+        padding-left: .5em;
+
+        color: $secondary-color;
+        border: 0 solid $secondary-color;
+        border-bottom-width: 3px;
+        background-color: lighten($primary-color, 20%);
+    }
+    &__content {
+        overflow-y: auto;
+
+        height: 100%;
+
+        & h4 {
+            font-size: 24px;
+
+            display: block;
+
+            margin: 0;
+            padding: .5em 1em .5em .5em;
+
+            cursor: pointer;
+            transition: .5s;
+
+            color: lighten($secondary-color, 10%);
+            border: 0 solid $secondary-color;
+            border-bottom-width: 3px;
+            background-color: lighten($primary-color, 10%);
+        }
+        &__switch {
+            position: relative;
+
+            display: inline-block;
+
+            width: 100%;
+            height: 34px;
+
+            & input {
+                opacity: 0;
+            }
+        }
+        &__slider {
+            font-size: 20px;
+
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            cursor: pointer;
+            -webkit-transition: .4s;
+                    transition: .4s;
+
+            background-color: $primary-color;
+
+            &:after {
+                float: right;
+
+                margin-top: calc(34px / 2 - 20px / 2 - 1px);
+                margin-right: 10px;
+
+                content: 'Play Mode';
+
+                color: #565656;
+            }
+            &:before {
+                position: absolute;
+                left: 0;
+
+                width: 50%;
+                height: 34px;
+
+                content: '';
+                -webkit-transition: .4s;
+                        transition: .4s;
+
+                background-color: white;
+            }
+            input:checked + &:after {
+                float: left;
+
+                margin-top: calc(34px / 2 - 20px / 2 - 1px);
+                margin-left: 10px;
+
+                content: 'Edit Mode';
+
+                color: #eee;
+            }
+            input:checked + & {
+                background-color: #3cacf2;
+            }
+            input:checked + &:before {
+                left: 50%;
+            }
+        }
+    }
+}
+
+.sidenav__shift {
+    margin-left: $sidenav-width;
+}
