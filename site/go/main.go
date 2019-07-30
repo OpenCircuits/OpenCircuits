@@ -12,19 +12,21 @@ import (
 )
 
 func main() {
-	googleAuthConfig := flag.String("google_auth", "disabled", "disabled|<path-to-config>; Enables google sign-in API login")
-	noAuthConfig := flag.String("no_auth", "disabled", "disabled|enabled; Enables username-only authentication for testing and development")
+    // Parse flags
+	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
+	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	flag.Parse()
 
+    // Register authentication method
 	authManager := auth.AuthenticationManager{}
-
-	if *googleAuthConfig != "disabled" {
+	if *googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
 	}
-	if *noAuthConfig == "enabled" {
+	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
 
+    // Route through Gin
 	router := gin.Default()
 	router.Use(gin.Recovery())
 
@@ -36,6 +38,7 @@ func main() {
 	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
+    // Register pages
 	web.RegisterPages(router, authManager)
 	authManager.RegisterHandlers(router)
 	api.RegisterHandlers(router, authManager)
