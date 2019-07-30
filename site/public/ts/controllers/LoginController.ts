@@ -1,9 +1,9 @@
-import {getCookie} from "../utils/Cookies";
+import {GetCookie} from "../utils/Cookies";
 import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
 import ClientConfig = gapi.auth2.ClientConfig;
-import {loadDynamicScript} from "../utils/Script";
+import {LoadDynamicScript} from "../utils/Script";
 
 export const LoginController = (() => {
     const loginPopup = document.getElementById("login-popup");
@@ -22,13 +22,12 @@ export const LoginController = (() => {
     const noAuthMeta = document.getElementById('no_auth_enable');
     const googleAuthMeta = document.getElementById('google-signin-client_id');
 
-    const setAuthState = function(as: AuthState): void {
-        const p = Promise.resolve();
-        if (authState !== undefined) {
-            console.log("Attempt to load multiple auth states!");
-            p.then(authState.LogOut);
+    const setAuthState = async function(as: AuthState): Promise<void> {
+        if (authState) {
+            console.error("Attempt to load multiple auth states!");
+            await authState.logOut();
         }
-        p.then(() => authState = as);
+        authState = as;
     }
 
     const toggle = function(): void {
@@ -43,9 +42,8 @@ export const LoginController = (() => {
             LoginController.Toggle();
     }
 
-    const onGoogleLogin = function(u: gapi.auth2.GoogleUser): void {
-        console.log(u.getBasicProfile().getName());
-        setAuthState(new GoogleAuthState());
+    const onGoogleLogin = async function(u: gapi.auth2.GoogleUser): Promise<void> {
+        await setAuthState(new GoogleAuthState());
         onLogin();
     }
 
@@ -56,7 +54,6 @@ export const LoginController = (() => {
 
     const onNoAuthSubmitted = function(): void {
         const username = (<HTMLInputElement>document.getElementById("no-auth-user-input")).value;
-        console.log("NO AUTH LOGIN: " + username);
         if (username === "") {
             alert("User Name must not be blank");
             return;
@@ -71,23 +68,21 @@ export const LoginController = (() => {
     }
 
     const onLoginError = function(e: {error: string}): void {
-        console.log(e);
+        console.error(e);
     }
 
     return {
-        Init: function(): Promise<number> {
+        Init: async function(): Promise<number> {
             isOpen = false;
 
             loginHeaderButton.onclick = () => {
                 LoginController.Toggle();
             };
 
-            logoutHeaderButton.onclick = () => {
-                if (authState !== undefined) {
-                    authState.LogOut().then(onLogout);
-                } else {
-                    onLogout();
-                }
+            logoutHeaderButton.onclick = async () => {
+                if (authState)
+                    await authState.logOut();
+                onLogout();
             };
 
             overlay.addEventListener("click", () => {
@@ -96,54 +91,35 @@ export const LoginController = (() => {
             });
 
             // Setup each auth method if they are loaded in the page
-            let authPromise = Promise.resolve();
-            if (googleAuthMeta !== null) {
-                authPromise = authPromise
-                        .then(() => loadDynamicScript("https://apis.google.com/js/platform.js"))
-                        .then(() => {
-                            console.log("0");
-                            gapi.signin2.render('login-popup-google-signin', {
-                                'scope': 'profile email',
-                                'width': 240,
-                                'height': 50,
-                                'longtitle': true,
-                                'onsuccess': onGoogleLogin,
-                                'onfailure': onLoginError
-                            });
+            if (googleAuthMeta) {
+                // Load GAPI script
+                await LoadDynamicScript("https://apis.google.com/js/platform.js");
 
-                            return new Promise<void>((resolve) => {
-                                gapi.load('auth2', resolve);
-                            });
-                        })
-                        .then(() => {
-                            console.log("0");
-                            return gapi.auth2.init(new class implements ClientConfig {
-                                public client_id?: string = googleAuthMeta.getAttribute('content');
-                            });
-                        })
-                        .then((auth2) => {
-                            console.log("0");
-                            console.log(auth2.isSignedIn.get());
-                            if (auth2.isSignedIn.get()) {
-                                onGoogleLogin(auth2.currentUser.get());
-                            }
-                        });
+                // Render sign in button
+                gapi.signin2.render('login-popup-google-signin', {
+                    'scope': 'profile email',
+                    'width': 240,
+                    'height': 50,
+                    'longtitle': true,
+                    'onsuccess': onGoogleLogin,
+                    'onfailure': onLoginError
+                });
+
+                // Load 'auth2' from GAPI and then initialize w/ meta-data
+                await new Promise<void>((resolve) => gapi.load('auth2', resolve));
+                await gapi.auth2.init({
+                    client_id: googleAuthMeta.getAttribute("content")
+                }).then(async (auth2) => {}); // Have to explicitly call .then
+
+            }
+            else if (noAuthMeta) {
+                const username = GetCookie("no_auth_username");
+                if (username)
+                    onNoAuthLogin(username);
+                document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
             }
 
-
-            if (noAuthMeta !== null) {
-                authPromise = authPromise
-                        .then(() => {
-                            console.log("1");
-                            const username = getCookie("no_auth_username");
-                            if (username !== "") {
-                                onNoAuthLogin(username);
-                            }
-                            document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
-                        });
-            }
-
-            return authPromise.then(() => 1);
+            return 1;
         },
         Toggle: function(): void {
             if (disabled)
@@ -161,11 +137,10 @@ export const LoginController = (() => {
         Disable: function(): void {
             disabled = true;
         },
-        GetAuthHeader(): string {
-            if (authState === undefined) {
-                return ""
-            }
-            return authState.GetAuthHeader();
+        GetAuthHeader: function(): string {
+            if (!authState)
+                return "";
+            return authState.getAuthHeader();
         }
     }
 
