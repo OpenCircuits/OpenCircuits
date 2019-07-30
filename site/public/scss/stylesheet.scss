@@ -1,6 +1,6 @@
-@import 'header', 'dropdown', 'sidenav', 'loadingscreen',
-        'itemnav', 'icdesigner', 'popup', 'contextmenu',
-        'utils', 'theme';
+@import 'theme', 'header', 'sidenav',
+        'loadingscreen', 'itemnav', 'icdesigner',
+        'popup', 'contextmenu', 'utils';
 
 body {
     overflow: hidden;
@@ -15,7 +15,7 @@ body {
 
     color: #fff;
     outline: none;
-    background-color: $primary-color;
+    background-color: $background-color;
 
     -webkit-touch-callout: none;
      -khtml-user-select: none;
