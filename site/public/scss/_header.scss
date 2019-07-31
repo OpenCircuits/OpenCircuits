@@ -76,17 +76,15 @@ header {
     }
     & button {
         height: 40px;
+        margin-left: 5px;
 
         cursor: pointer;
     }
     & img {
         display: block;
 
-        margin: auto;
-
         height: 85%;
-
-        margin-left: 5px;
+        margin: auto;
     }
     & span {
         line-height: 40px;
@@ -163,6 +161,7 @@ header {
 
             height: 30px;
             margin-top: 5px;
+            margin-left: 0;
             padding-right: 5px;
             padding-left: 5px;
 
