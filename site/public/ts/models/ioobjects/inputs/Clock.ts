@@ -20,11 +20,7 @@ export class Clock extends Component {
     }
 
     public setFrequency(freq: number): void {
-        this.frequency = freq * 1000;
-    }
-
-    public getFrequency(): number {
-        return this.frequency;
+        this.frequency = freq;
     }
 
     // Activate changes state and image
@@ -33,6 +29,10 @@ export class Clock extends Component {
         this.isOn = bool;
         if (this.designer != undefined)
             this.designer.forceUpdate();
+    }
+
+    public getFrequency(): number {
+        return this.frequency;
     }
 
     public getDisplayName(): string {
