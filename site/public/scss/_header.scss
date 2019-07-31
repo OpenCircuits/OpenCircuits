@@ -55,7 +55,7 @@ header {
 
     color: $secondary-color;
 
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
         & {
             display: none;
         }
@@ -83,6 +83,10 @@ header {
         display: block;
 
         margin: auto;
+
+        height: 85%;
+
+        margin-left: 5px;
     }
     & span {
         line-height: 40px;
@@ -90,6 +94,9 @@ header {
         float: right;
 
         vertical-align: middle;
+    }
+    #header-help-img {
+        height: 75%;
     }
 
     &__dropdown {
@@ -144,6 +151,7 @@ header {
 
     &__account {
         margin-top: 0;
+        margin-right: 10px;
 
         cursor: default;
 
@@ -170,10 +178,6 @@ header {
             }
         }
 
-        #header-signin-button,
-        #header-signout-button {
-            margin-right: 15px;
-        }
         #header-login-or {
             margin-right: 10px;
             margin-left: 10px;
