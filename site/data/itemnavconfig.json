@@ -23,6 +23,11 @@
           "id": "switch",
           "label": "Switch",
           "icon": "switch.svg"
+        },
+        {
+          "id": "clock",
+          "label": "Clock",
+          "icon": "clock.svg"
         }
       ]
     },

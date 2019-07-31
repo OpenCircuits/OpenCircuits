@@ -14,6 +14,7 @@ import {BusButtonPopupModule} from "../utils/selectionpopup/BusButtonPopupModule
 import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
 import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
 import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
+import {ClockFrequencyPopupModule} from "../utils/selectionpopup/ClockFrequencyPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -46,6 +47,7 @@ export const SelectionPopupController = (() => {
                 new ColorPopupModule(div),
                 new InputCountPopupModule(div),
                 new OutputCountPopupModule(div),
+                new ClockFrequencyPopupModule(div),
                 new ICButtonPopupModule(div),
                 new BusButtonPopupModule(div)
             );
