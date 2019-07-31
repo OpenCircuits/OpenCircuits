@@ -17,6 +17,8 @@ export const HeaderController = (() => {
     const downloadPDFButton = document.getElementById("header-download-pdf-button");
     const downloadPNGButton = document.getElementById("header-download-png-button");
 
+    const helpButton = document.getElementById("header-help-button");
+
     return {
         Init: function(designer: CircuitDesigner): void {
             const mainDesigner: CircuitDesigner = designer;
@@ -37,11 +39,6 @@ export const HeaderController = (() => {
                         downloadDropdown.classList.toggle("show");
                         downloadDropdownButton.classList.toggle("white");
                     }
-                    // let visible = (downloadDropdown.style.display == "block");
-                    // if (visible) {
-                    //     downloadDropdown.style.display = "none";
-                    //     downloadDropdownButton.style.backgroundColor = "initial";//"rgba(0,0,0,0)";
-                    // }
                 }
             }
 
