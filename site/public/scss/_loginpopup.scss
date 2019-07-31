@@ -1,0 +1,97 @@
+.login__popup {
+    position: absolute;
+    z-index: 9;
+    top: 10vh;
+    left: 50%;
+
+    overflow: auto;
+
+    width: 300px;
+    max-height: 85vh;
+    margin-left: -190px;
+    padding: 15px 40px 25px;
+
+    border-radius: 10px;
+    background: #fff;
+
+    & h1 {
+        font-weight: normal;
+
+        margin-bottom: 20px;
+        padding-bottom: 5px;
+
+        text-align: center;
+
+        color: #666;
+    }
+    & input {
+        font-size: 100%;
+
+        width: 100%;
+        padding: 3px;
+
+        color: #000;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+    }
+    & button {
+        font-size: .8em;
+
+        width: 100%;
+        padding: 4px;
+
+        cursor: pointer;
+        text-align: center;
+
+        border: thin solid black;
+        border-radius: 3px;
+        background-color: #eee;
+    }
+    & button:hover {
+        background-color: #ddd;
+    }
+    & button:active {
+        background-color: #ccc;
+    }
+
+    &__text {
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        text-align: center;
+
+        color: #666;
+    }
+    &__label {
+        font-weight: normal;
+
+        margin-top: 20px;
+        margin-bottom: 6px;
+
+        color: #666;
+    }
+    &__password__container {
+        position: relative;
+
+        margin-bottom: 20px;
+    }
+    &__password__link {
+        position: absolute;
+        top: 3px;
+        right: 0;
+    }
+    &__password__recoverpassword {
+        font-size: 75%;
+
+        cursor: pointer;
+        text-decoration: underline;
+
+        color: rgba(0, 0, 0, .5);
+    }
+}
+
+#login-popup-google-signin {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: calc(300px/2 - 240px/2);
+}

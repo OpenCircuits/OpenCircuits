@@ -14,6 +14,10 @@
         <link rel="manifest" href="img/manifest.json">
         <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
 
+        {{ range $a := .authData.Headers }}
+            {{ $a }}
+        {{ end }}
+
         <title>Open Circuits</title>
     </head>
     <body>
@@ -30,6 +34,8 @@
             {{template "header" .}}
 
             {{template "contextmenu" .}}
+
+            {{template "loginpopup" .}}
 
             <main>
                 {{template "itemnav" .}}

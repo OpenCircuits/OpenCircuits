@@ -55,7 +55,7 @@ header {
 
     color: $secondary-color;
 
-    @media (max-width: 512px) {
+    @media (max-width: 800px) {
         & {
             display: none;
         }
@@ -83,6 +83,13 @@ header {
         display: block;
 
         margin: auto;
+    }
+    & span {
+        line-height: 40px;
+
+        float: right;
+
+        vertical-align: middle;
     }
 
     &__dropdown {
@@ -134,6 +141,61 @@ header {
         height: auto;
         margin-top: 0;
     }
+
+    &__account {
+        margin-top: 0;
+
+        cursor: default;
+
+        & div {
+            margin-top: 0;
+        }
+        & button {
+            float: right;
+
+            height: 30px;
+            margin-top: 5px;
+            padding-right: 5px;
+            padding-left: 5px;
+
+            cursor: pointer;
+
+            color: #aaa;
+            border: thin solid #888;
+            border-radius: 4px;
+
+            &:hover {
+                color: #bbb;
+                border-color: #aaa;
+            }
+        }
+
+        #header-signin-button,
+        #header-signout-button {
+            margin-right: 15px;
+        }
+        #header-login-or {
+            margin-right: 10px;
+            margin-left: 10px;
+
+            color: #aaa;
+        }
+
+        @media (max-width: 500px) {
+            & {
+                display: none;
+            }
+        }
+    }
+}
+
+
+#header-login-dropdown-content {
+    height: auto;
+    margin-top: 0;
+}
+div.header__login__option {
+    height: auto;
 }
 /*
     TRIANGLE THINGY FOR 'POPOVER' MENU

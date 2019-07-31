@@ -50,7 +50,10 @@ export const SideNavController = (() => {
 
             sidenavModeCheckbox.onchange = () => { toggleEditMode() };
 
-            overlay.onclick = () => { SideNavController.Toggle(); };
+            overlay.addEventListener("click", () => {
+                if (SideNavController.IsOpen())
+                    SideNavController.Toggle();
+            });
         },
         Toggle: function(): void {
             if (disabled)

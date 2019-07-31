@@ -15,3 +15,6 @@ package-lock.json
 
 # IntelliJ
 .idea/
+
+# Secrets (to prevent devs from pushing api keys to the repo)
+site/secrets/

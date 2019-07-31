@@ -18,9 +18,9 @@ RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 RUN apt-get update && apt-get -y install curl
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install -y nodejs
-RUN go get -u github.com/gin-gonic/gin
 
 RUN npm install
+RUN npm run install:go
 RUN npm run build
 RUN npm run build:go
 

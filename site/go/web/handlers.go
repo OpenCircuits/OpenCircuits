@@ -2,7 +2,10 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -57,8 +60,21 @@ func getBustedName(path string) string {
 	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
 }
 
-func indexHandler(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": false, "user_id": "" ,
+func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
+	session := sessions.Default(c)
+	userID := session.Get("user-id")
+	loggedIn := userID != nil
+
+	authData := struct {
+		Headers []template.HTML
+		Buttons []template.HTML
+	}{}
+	for _, a := range manager.AuthMethods {
+		authData.Headers = append(authData.Headers, a.GetLoginHeader())
+		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+	}
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userID, "authData": authData,
 		"bundleJs": getBustedName("./Bundle.js")})
 }
 

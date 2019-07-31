@@ -1,8 +1,10 @@
-@import 'theme', 'header', 'sidenav',
-        'loadingscreen', 'itemnav', 'icdesigner',
-        'popup', 'contextmenu', 'utils';
+@import 'theme', 'header', 'sidenav', 'loadingscreen',
+        'itemnav', 'icdesigner', 'selectionpopup',
+        'loginpopup', 'contextmenu', 'utils';
 
 body {
+    font-family: Arial, sans-serif;
+
     overflow: hidden;
 
     margin: 0;
