@@ -55,7 +55,10 @@ function Init(): void {
             ItemNavController.Init();
             resolve(1);
         }),
-        SideNavController.Init(),
+        new Promise((resolve, _) => {
+            SideNavController.Init();
+            resolve(1);
+        }),
         LoginController.Init()
     ];
 

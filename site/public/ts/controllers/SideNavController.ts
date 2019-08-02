@@ -1,8 +1,8 @@
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
+import {HeaderController} from "./HeaderController";
 import {RemoteCircuitController} from "./RemoteCircuitController";
 import {Importer} from "../utils/io/Importer";
-import {ExampleCircuitListView} from "../views/ExampleCircuitListView";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -14,7 +14,7 @@ export const SideNavController = (() => {
 
     const context = document.getElementById("content");
 
-    const exampleCircuits = document.getElementById("example-circuit-list");
+    const exampleCircuitsList = document.getElementById("example-circuit-list");
 
     let isOpen = false;
     let disabled = false;
@@ -48,15 +48,15 @@ export const SideNavController = (() => {
     }
 
     // Callback
-    const loadExampleCircuit = function(id: string): Promise<void> {
-        return RemoteCircuitController.LoadExampleCircuit(id)
-            .then((contents) => {
-                Importer.read(MainDesignerController.GetDesigner(), contents);
-            });
+    const loadExampleCircuit = async function(id: string): Promise<void> {
+        const contents = await RemoteCircuitController.LoadExampleCircuit(id);
+        Importer.LoadCircuitFromString(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
+        if (isOpen)
+            toggle();
     }
 
     return {
-        Init: function(): Promise<number> {
+        Init: function(): void {
             isOpen = false;
 
             tab.onclick = () => { SideNavController.Toggle(); };
@@ -68,16 +68,13 @@ export const SideNavController = (() => {
                     SideNavController.Toggle();
             });
 
-            return RemoteCircuitController.LoadExampleCircuitList()
-                     .then((names: string[]) => {
-                         exampleCircuits.innerHTML = ExampleCircuitListView.RenderCircuitList(names);
-                         let elements = document.getElementsByClassName("example-circuit-container");
-                         for (let a = 0; a < elements.length; ++a) {
-                             let element = <HTMLElement>elements[a];
-                             element.onclick = () => loadExampleCircuit(element.id.split("-", 3)[2]);
-                         }
-                     })
-                    .then(() => 1)
+            // Set up onclick listeners to example circuits
+            const exampleCircuits = exampleCircuitsList.children;
+            for (let i = 0; i < exampleCircuits.length; i++) {
+                const exampleCircuit = exampleCircuits[i] as HTMLElement;
+                const id = exampleCircuit.id.split("-")[2];
+                exampleCircuit.onclick = () => loadExampleCircuit(id);
+            }
         },
         Toggle: function(): void {
             if (disabled)
