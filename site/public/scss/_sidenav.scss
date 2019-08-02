@@ -1,8 +1,10 @@
 $sidenav-width: 250px;
+$sidenav-border-width: 5px;
 
 .sidenav {
     position: fixed;
     z-index: 6;
+    left: 0;
 
     overflow-x: hidden;
     overflow-y: hidden;
@@ -10,11 +12,15 @@ $sidenav-width: 250px;
     width: $sidenav-width;
     height: 100%;
 
-    transition: .5s;
+    transition: all 0.5s;
 
     border: 0 solid $secondary-color;
-    border-right-width: 5px;
+    border-right-width: $sidenav-border-width;
     background-color: $primary-color;
+
+    &__move {
+        left: -$sidenav-width - $sidenav-border-width;
+    }
 
     &__accountinfo {
         font-size: 16px;
@@ -60,6 +66,50 @@ $sidenav-width: 250px;
 
             & input {
                 opacity: 0;
+            }
+        }
+        &__circuit {
+            $img-width: 50px;
+            $height: 50px;
+            $padding-v: 4px;
+            $padding-h: 6px;
+
+            border-bottom: solid $sidenav-border-width/3 $secondary-color;
+            height: $height;
+            padding: $padding-v $padding-h $padding-v $padding-h;
+            background-color: lighten($primary-color, 5%);
+
+            & img {
+                height: $img-width;
+                width: $img-width;
+                background-color: $background-color;
+                border-radius: 5px;
+            }
+            &__text {
+                width: $sidenav-width - $img-width - $sidenav-border-width - $padding-h*2 - 20px;
+                display: inline-block;
+                vertical-align: top;
+                & span {
+                    display: block;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+                &__name {
+                    margin-top: 7px;
+                    font-weight: bold;
+                }
+            }
+        }
+        &__footer {
+            text-align: center;
+            padding: 50px 25px 50px 25px;
+            color: $secondary-color;
+            height: 120px;
+
+            & a {
+                color: lighten($secondary-color, 25%);
+                text-decoration: none;
             }
         }
         &__slider {
