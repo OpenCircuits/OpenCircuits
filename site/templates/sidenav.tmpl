@@ -1,5 +1,5 @@
 {{define "sidenav"}}
-<div id="sidenav" class="sidenav shrink">
+<div id="sidenav" class="sidenav sidenav__move">
     <div class="sidenav__accountinfo">
         {{ .userId }}
     </div>
@@ -16,6 +16,10 @@
             {{ range $i, $example := .examples }}
                 {{ template "sidenavcircuit" $example }}
             {{end}}
+        </div>
+        <div class="sidenav__content__footer">
+            A program made with love by <a href="http://www.leonmontealeg.re/" target="_blank">Leon Montealegre</a>
+            and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank">team</a>
         </div>
     </div>
 </div>
