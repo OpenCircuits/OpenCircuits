@@ -12,7 +12,11 @@
         </h4>
         <h4 unselectable>My Circuits</h4>
         <h4 unselectable>Examples</h4>
-        <div id="example-circuit-list"></div>
+        <div id="example-circuit-list">
+            {{ range $i, $example := .examples }}
+                {{ template "sidenavcircuit" $example }}
+            {{end}}
+        </div>
     </div>
 </div>
 {{end}}
