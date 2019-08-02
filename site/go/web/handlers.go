@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -74,8 +75,17 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userID, "authData": authData,
-		"bundleJs": getBustedName("./Bundle.js")})
+    exampleCircuits := api.GetExamples()
+    log.Printf("circuits len: %d\n", len(exampleCircuits))
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+            "examples": exampleCircuits,
+            "navConfig": navConfig,
+            "l": loggedIn,
+            "userId": userID,
+            "authData": authData,
+		    "bundleJs": getBustedName("./Bundle.js"),
+        })
 }
 
 func noCacheHandler(path string) gin.HandlerFunc {

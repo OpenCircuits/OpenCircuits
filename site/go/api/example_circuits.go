@@ -1,70 +1,86 @@
 package api
 
 import (
-	"encoding/base64"
+    "encoding/json"
+    "github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
-	"path/filepath"
-	"regexp"
-	"strings"
+    "strconv"
 )
 
-var exampleCircuitRegExp *regexp.Regexp
+
+
+
+/******************************************************************************
+ * LEON'S NEW STUFF - FEEL FREE TO MOVE, I DONT KNOW GO VERY WELL
+ */
+type Circuit struct {
+    Id string
+    Name string
+    Desc string
+    Contents string
+}
+
+type ExampleCircuit struct {
+    Name string `json:"name"`
+    File string `json:"file"`
+}
+
+type ExamplesConfig struct {
+    Examples []ExampleCircuit `json:"examples"`
+}
+/*
+ ******************************************************************************
+ */
+
+var exampleCircuits []Circuit
+
 func init() {
-	// restrictive, but easy
-	r, err := regexp.Compile("[^a-zA-Z0-9_.]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-	exampleCircuitRegExp = r
+    // Load the example circuits into memory
+    // Since we don't expect an absurd number of them and/or absurdly large circuits
+    // Also good since retrieving the example circuits is done every time
+    //  the page is refreshed and should be fast and efficient
+    file, err := ioutil.ReadFile("./examples/examples.json")
+    core.CheckErrorMessage(err, "File error:")
+
+    var examplesConfig ExamplesConfig
+    err = json.Unmarshal(file, &examplesConfig)
+    core.CheckErrorMessage(err, "Failed to unmarshall json:")
+
+    exampleCircuits = make([]Circuit, len(examplesConfig.Examples))
+    for i := 0; i < len(exampleCircuits); i++ {
+        contents, err := ioutil.ReadFile("./examples/" + examplesConfig.Examples[i].File)
+        core.CheckErrorMessage(err, "File read error:")
+
+        exampleCircuits[i] = Circuit{
+            Id: strconv.Itoa(i),
+            Name: examplesConfig.Examples[i].Name,
+            Desc: "example",
+            Contents: string(contents),
+        }
+    }
+}
+
+func GetExamples() []Circuit {
+    return exampleCircuits
 }
 
 func getExampleCircuitHandler(c *gin.Context) {
-	exampleIdb64 := c.Param("id")
+	exampleId := c.Param("id")
 
-	// The circuit's ID is simply its file name, but b64 encoded
-	exampleId, err := base64.StdEncoding.DecodeString(exampleIdb64)
-	if err != nil {
-		c.XML(http.StatusBadRequest, err)
-	}
+    i, err := strconv.Atoi(exampleId)
+    if (err != nil) {
+        c.XML(http.StatusForbidden, nil)
+        return
+    }
 
-	sanitizedId := exampleCircuitRegExp.ReplaceAllString(string(exampleId), "")
-
-	contents, err := ioutil.ReadFile("examples/" + sanitizedId)
-	if err != nil {
+	// The circuit's ID is simply its index
+	if i < 0 || i >= len(exampleCircuits) {
 		c.XML(http.StatusNotFound, nil)
 		return
 	}
 
 	c.Header("Content-Type", "text/xml")
-	c.String(http.StatusOK, string(contents))
-}
-
-func getExampleCircuitListHandler(c *gin.Context) {
-	var exampleNames []string
-
-	err := filepath.Walk("examples",
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if !strings.Contains(info.Name(), ".circuit") {
-				return nil
-			}
-
-			// Only show the files that will be accepted by the loader function
-			if !exampleCircuitRegExp.MatchString(info.Name()) {
-				exampleNames = append(exampleNames, info.Name())
-			}
-			return nil
-		})
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-	}
-
-	c.JSON(http.StatusOK, exampleNames)
+	c.String(http.StatusOK, exampleCircuits[i].Contents)
 }
