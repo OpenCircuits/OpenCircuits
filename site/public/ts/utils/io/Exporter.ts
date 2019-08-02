@@ -5,7 +5,7 @@ import {CircuitDesigner} from "../../models/CircuitDesigner";
 
 export const Exporter = (() => {
     return {
-        write: function(designer: CircuitDesigner, name: string): string {
+        WriteCircuit: function(designer: CircuitDesigner, name: string): string {
             const writer = new XMLWriter(designer.getXMLName());
 
             writer.setVersion(1);
@@ -15,12 +15,12 @@ export const Exporter = (() => {
 
             return writer.serialize();
         },
-        saveFile: function(designer: CircuitDesigner, projectName: string): void {
+        SaveFile: function(designer: CircuitDesigner, projectName: string): void {
             // Get name
             if (projectName.replace(/\s+/g, '') === "")
                 projectName = "Untitled Circuit";
 
-            const data = this.write(designer, projectName);
+            const data = this.WriteCircuit(designer, projectName);
 
             const filename = projectName + ".circuit";
 
@@ -40,7 +40,7 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-        savePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
+        SavePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
@@ -64,7 +64,7 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-        savePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
+        SavePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
             const width  = canvas.width;
             const height = canvas.height;
 

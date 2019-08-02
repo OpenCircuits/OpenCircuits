@@ -1,10 +1,12 @@
+import {SAVED} from "../Config"
+
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {CircuitDesigner} from "../../models/CircuitDesigner";
 
 export const Importer = (() => {
     return {
-        read: function(designer: CircuitDesigner, fileContents: string): string {
+        LoadCircuit: function(designer: CircuitDesigner, fileContents: string): string {
             const root = <XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml");
             if (root.documentElement.nodeName == "parsererror")
                 return;
@@ -19,17 +21,24 @@ export const Importer = (() => {
 
             return reader.getName();
         },
-        loadFile: function(designer: CircuitDesigner, file: File, setName: (n: string) => void): void {
-            // TOOD: only ask for confirmation if nothing was done to the scene
-            //        ex. no objects, or wires, or history of actions
-            const open = confirm("Are you sure you want to overwrite your current scene?");
+        LoadCircuitFromString: function(designer: CircuitDesigner, contents: string, setName: (n: string) => void): void {
+            const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
+
+            if (open) {
+                designer.reset();
+
+                setName(this.LoadCircuit(designer, contents));
+            }
+        },
+        LoadCircuitFromFile: function(designer: CircuitDesigner, file: File, setName: (n: string) => void): void {
+            const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
 
             if (open) {
                 designer.reset();
 
                 const reader = new FileReader();
                 reader.onload = () => {
-                    setName(this.read(designer, reader.result.toString()));
+                    setName(this.LoadCircuit(designer, reader.result.toString()));
                 }
 
                 reader.readAsText(file);

@@ -1,8 +1,9 @@
+import {LoadExampleCircuit} from "../utils/api/Example";
+import {Importer} from "../utils/io/Importer";
+
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {HeaderController} from "./HeaderController";
-import {RemoteCircuitController} from "./RemoteCircuitController";
-import {Importer} from "../utils/io/Importer";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -49,7 +50,7 @@ export const SideNavController = (() => {
 
     // Callback
     const loadExampleCircuit = async function(id: string): Promise<void> {
-        const contents = await RemoteCircuitController.LoadExampleCircuit(id);
+        const contents = await LoadExampleCircuit(id);
         Importer.LoadCircuitFromString(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
         if (isOpen)
             toggle();

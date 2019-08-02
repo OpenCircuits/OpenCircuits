@@ -45,13 +45,17 @@ export const HeaderController = (() => {
                 }
             }
 
-            fileInput.onchange = () => Importer.loadFile(mainDesigner, fileInput.files[0], (n) => { if (n) projectNameInput.value = n; });
+            fileInput.onchange = () => Importer.LoadCircuitFromFile(mainDesigner, fileInput.files[0], HeaderController.SetProjectName);
 
-            downloadButton.onclick = () => Exporter.saveFile(mainDesigner, projectNameInput.value);
+            downloadButton.onclick = () => Exporter.SaveFile(mainDesigner, projectNameInput.value);
 
-            downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
+            downloadPDFButton.onclick = () => Exporter.SavePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 
-            downloadPNGButton.onclick = () => Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
+            downloadPNGButton.onclick = () => Exporter.SavePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
+        },
+        SetProjectName(name: string): void {
+            if (name)
+                projectNameInput.value = name;
         }
     }
 
