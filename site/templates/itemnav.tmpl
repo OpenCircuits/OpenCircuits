@@ -1,5 +1,5 @@
 {{define "itemnav"}}
-<nav id="itemnav" class="itemnav shrink">
+<nav id="itemnav" class="itemnav itemnav__move">
     {{ range $i, $section := .navConfig.Sections }}
         <h4 id="itemnav-section-{{ $section.Id }}" unselectable>{{ $section.Label }}</h4>
         {{ range $k, $item := $section.Items }}
