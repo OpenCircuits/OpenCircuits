@@ -1,5 +1,6 @@
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
+import {RemoteCircuitController} from "./RemoteCircuitController";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -43,7 +44,7 @@ export const SideNavController = (() => {
     }
 
     return {
-        Init: function(): void {
+        Init: function(): Promise<number> {
             isOpen = false;
 
             tab.onclick = () => { SideNavController.Toggle(); };
@@ -54,6 +55,12 @@ export const SideNavController = (() => {
                 if (SideNavController.IsOpen())
                     SideNavController.Toggle();
             });
+
+            return RemoteCircuitController.LoadExampleCircuitList()
+                     .then((names: string[]) => {
+                        // TODO: Render this list of names into the side-bar
+                    })
+                    .then(() => 1)
         },
         Toggle: function(): void {
             if (disabled)
