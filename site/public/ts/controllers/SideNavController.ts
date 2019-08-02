@@ -1,6 +1,7 @@
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {RemoteCircuitController} from "./RemoteCircuitController";
+import {Importer} from "../utils/io/Importer";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -41,6 +42,14 @@ export const SideNavController = (() => {
         sidenav.classList.toggle("shrink");
         overlay.classList.toggle("invisible");
         context.classList.toggle("sidenav__shift");
+    }
+
+    // Callback
+    const loadExampleCircuit = function(id: string): Promise<void> {
+        return RemoteCircuitController.LoadExampleCircuit(id)
+            .then((contents) => {
+                Importer.read(MainDesignerController.GetDesigner(), contents);
+            });
     }
 
     return {
