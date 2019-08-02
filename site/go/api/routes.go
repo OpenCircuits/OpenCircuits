@@ -10,8 +10,8 @@ import (
 // RegisterHandlers setups up the API routes with the gin Engine
 func RegisterHandlers(e *gin.Engine, manager auth.AuthenticationManager) {
 
-	e.GET("api/template/:id", getExampleCircuitHandler)
-	e.GET("api/templates", getExampleCircuitListHandler)
+	e.GET("api/example/:id", getExampleCircuitHandler)
+	e.GET("api/examples", getExampleCircuitListHandler)
 
 	// A toy API route for testing that authentication headers are handled correctly
 	e.POST("api/ping", func(c *gin.Context) {

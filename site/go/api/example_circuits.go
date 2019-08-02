@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 var exampleCircuitRegExp *regexp.Regexp
@@ -47,8 +48,15 @@ func getExampleCircuitListHandler(c *gin.Context) {
 
 	err := filepath.Walk("examples",
 		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !strings.Contains(info.Name(), ".circuit") {
+				return nil
+			}
+
 			// Only show the files that will be accepted by the loader function
-			if exampleCircuitRegExp.MatchString(info.Name()) {
+			if !exampleCircuitRegExp.MatchString(info.Name()) {
 				exampleNames = append(exampleNames, info.Name())
 			}
 			return nil

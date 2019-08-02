@@ -2,6 +2,7 @@ import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {RemoteCircuitController} from "./RemoteCircuitController";
 import {Importer} from "../utils/io/Importer";
+import {ExampleCircuitListView} from "../views/ExampleCircuitListView";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -12,6 +13,8 @@ export const SideNavController = (() => {
     const overlay = document.getElementById("overlay");
 
     const context = document.getElementById("content");
+
+    const exampleCircuits = document.getElementById("example-circuit-list");
 
     let isOpen = false;
     let disabled = false;
@@ -67,8 +70,13 @@ export const SideNavController = (() => {
 
             return RemoteCircuitController.LoadExampleCircuitList()
                      .then((names: string[]) => {
-                        // TODO: Render this list of names into the side-bar
-                    })
+                         exampleCircuits.innerHTML = ExampleCircuitListView.RenderCircuitList(names);
+                         let elements = document.getElementsByClassName("example-circuit-container");
+                         for (let a = 0; a < elements.length; ++a) {
+                             let element = <HTMLElement>elements[a];
+                             element.onclick = () => loadExampleCircuit(element.id.split("-", 3)[2]);
+                         }
+                     })
                     .then(() => 1)
         },
         Toggle: function(): void {
