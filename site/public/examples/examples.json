@@ -1,7 +1,59 @@
 {
     "examples": [
         {
-            "name": "Example 1",
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
+            "file": "example3.circuit"
+        },
+        {
+            "name": "7-segment Letter Display with letters A-H",
             "file": "example3.circuit"
         }
     ]
