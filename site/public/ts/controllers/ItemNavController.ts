@@ -14,7 +14,7 @@ export const ItemNavController = (() => {
     let disabled = false;
 
     const toggle = function(): void {
-        itemnav.classList.toggle("shrink");
+        itemnav.classList.toggle("itemnav__move");
         tab.classList.toggle("tab__closed");
     }
 

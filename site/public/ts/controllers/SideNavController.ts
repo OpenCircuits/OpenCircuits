@@ -43,7 +43,7 @@ export const SideNavController = (() => {
     }
 
     const toggle = function(): void {
-        sidenav.classList.toggle("shrink");
+        sidenav.classList.toggle("sidenav__move");
         overlay.classList.toggle("invisible");
         context.classList.toggle("sidenav__shift");
     }
