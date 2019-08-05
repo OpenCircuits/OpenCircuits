@@ -43,6 +43,7 @@ export const SideNavController = (() => {
     }
 
     const toggle = function(): void {
+        isOpen = !isOpen;
         sidenav.classList.toggle("sidenav__move");
         overlay.classList.toggle("invisible");
         context.classList.toggle("sidenav__shift");
@@ -81,7 +82,6 @@ export const SideNavController = (() => {
             if (disabled)
                 return;
 
-            isOpen = !isOpen;
             toggle();
         },
         IsOpen: function(): boolean {
