@@ -2,14 +2,14 @@ package core
 
 import (
 	"log"
-    "os"
+	"os"
 )
 
 // CheckError:
 //  Post condition: If err is not nil, err will be logged and the program exited
 //                  Otherwise, nothing
 func CheckError(err error) {
-    CheckErrorMessage(err, "")
+	CheckErrorMessage(err, "")
 }
 
 // CheckErrorMessage:
@@ -17,8 +17,8 @@ func CheckError(err error) {
 //                    supplied message and the program exited
 //                  Otherwise, nothing
 func CheckErrorMessage(err error, msg string) {
-    if err != nil {
-        log.Printf("%s %v\n", msg, err)
-        os.Exit(1)
-    }
+	if err != nil {
+		log.Printf("%s %v\n", msg, err)
+		os.Exit(1)
+	}
 }

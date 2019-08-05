@@ -75,17 +75,17 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}
 
-    exampleCircuits := api.GetExamples()
-    log.Printf("circuits len: %d\n", len(exampleCircuits))
+	exampleCircuits := api.GetExamples()
+	log.Printf("circuits len: %d\n", len(exampleCircuits))
 
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-            "examples": exampleCircuits,
-            "navConfig": navConfig,
-            "l": loggedIn,
-            "userId": userID,
-            "authData": authData,
-		    "bundleJs": getBustedName("./Bundle.js"),
-        })
+		"examples":  exampleCircuits,
+		"navConfig": navConfig,
+		"l":         loggedIn,
+		"userId":    userID,
+		"authData":  authData,
+		"bundleJs":  getBustedName("./Bundle.js"),
+	})
 }
 
 func noCacheHandler(path string) gin.HandlerFunc {
