@@ -24,9 +24,13 @@ export const HeaderController = (() => {
 
             // Show/hide the dropdown(s) on click
             $(".header__right__dropdown__button").click(function() {
-                // Hide any other dropdowns first
-                $(".header__right__dropdown__content").removeClass("show");
-                $(".header__right__dropdown__button").removeClass("white");
+                // Hide all other dropdowns first
+                $(".header__right__dropdown__content")
+                        .not($(this).siblings(".header__right__dropdown__content"))
+                        .removeClass("show");
+                $(".header__right__dropdown__button")
+                        .not($(this))
+                        .removeClass("white");
 
                 $(this).toggleClass("white");
                 $(this).siblings(".header__right__dropdown__content")
