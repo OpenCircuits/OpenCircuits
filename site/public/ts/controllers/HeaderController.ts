@@ -1,4 +1,7 @@
 import $ from "jquery";
+import IntroJs from "intro.js";
+
+import test from "./test.json";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -12,11 +15,11 @@ export const HeaderController = (() => {
 
     const fileInput = $("input#header-file-input");
 
-    const downloadButton = $("header-download-button");
-    const downloadPDFButton = $("header-download-pdf-button");
-    const downloadPNGButton = $("header-download-png-button");
+    const downloadButton = $("#header-download-button");
+    const downloadPDFButton = $("#header-download-pdf-button");
+    const downloadPNGButton = $("#header-download-png-button");
 
-    const helpButton = $("header-help-button");
+    const headerHelpTourButton = $("#header-help-tour-button");
 
     return {
         Init: function(designer: CircuitDesigner): void {
@@ -63,6 +66,12 @@ export const HeaderController = (() => {
 
             downloadPNGButton.click(() => {
                 Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+            });
+
+            console.log(headerHelpTourButton);
+            headerHelpTourButton.click(() => {
+                console.log(test);
+                // introJs(".tour__general").start();
             });
 
             // helpButton.onclick = () => {
