@@ -1,7 +1,8 @@
 import $ from "jquery";
-import IntroJs from "intro.js";
 
-import test from "./test.json";
+// import introJs from "intro.js";
+//
+// import test from "./tours/test.json";
 
 import {CircuitDesigner} from "../models/CircuitDesigner";
 
@@ -68,15 +69,13 @@ export const HeaderController = (() => {
                 Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
             });
 
-            console.log(headerHelpTourButton);
             headerHelpTourButton.click(() => {
-                console.log(test);
-                // introJs(".tour__general").start();
+                // // Open ItemNav for tutorial
+                // if (!ItemNavController.IsOpen())
+                //     ItemNavController.Toggle();
+                //
+                // introJs().setOptions(test).start();
             });
-
-            // helpButton.onclick = () => {
-            //
-            // }
         }
     }
 

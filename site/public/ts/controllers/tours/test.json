@@ -1,0 +1,19 @@
+{
+    "keyboardNavigation": true,
+    "showBullets": false,
+    "showProgress": true,
+    "overlayOpacity": 0.4,
+    "steps": [
+        {
+            "intro": "Hello world!"
+        },
+        {
+            "intro": "Test",
+            "element": "#itemnav"
+        },
+        {
+            "intro": "asd",
+            "element": "#header, #itemnav-open-tab"
+        }
+    ]
+}
