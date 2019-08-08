@@ -1,6 +1,11 @@
 @import 'theme', 'header', 'sidenav', 'loadingscreen',
         'itemnav', 'icdesigner', 'selectionpopup',
-        'loginpopup', 'contextmenu', 'utils';
+        'loginpopup', 'contextmenu', 'utils', 'introjs-custom';
+
+// .introjs-button, .introjs-skipbutton {
+//     text-shadow: none;
+//     color: #000 !important;
+// }
 
 body {
     font-family: Arial, sans-serif;
@@ -51,12 +56,6 @@ input {
 
 .content {
     transition: .5s;
-}
-main {
-    position: fixed;
-
-    width: 100%;
-    height: 100%;
 }
 
 
