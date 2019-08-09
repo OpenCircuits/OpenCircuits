@@ -21,7 +21,7 @@ export const HeaderController = (() => {
 
     function SetupDropdown(): void {
         // Show/hide the dropdown(s) on click
-        $(".header__right__dropdown__button").click(function() {
+        $(".header__right__dropdown__button").click(function(): void {
             // Hide all other dropdowns first
             $(".header__right__dropdown__content")
                     .not($(this).siblings(".header__right__dropdown__content"))
@@ -46,7 +46,7 @@ export const HeaderController = (() => {
     }
 
     function SetupIOInputs(): void {
-        $("input#header-file-input").change(function() {
+        $("input#header-file-input").change(function(): void {
             Importer.loadFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], (n) => {
                 if (n) projectNameInput.val(n);
             });
