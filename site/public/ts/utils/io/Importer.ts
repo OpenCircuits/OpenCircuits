@@ -8,7 +8,7 @@ export const Importer = (() => {
     return {
         LoadCircuit: function(designer: CircuitDesigner, fileContents: string): string {
             const root = <XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml");
-            if (root.documentElement.nodeName == "parsererror")
+            if (root.getElementsByTagName("parsererror").length > 0)
                 return;
 
             const reader = new XMLReader(root);
