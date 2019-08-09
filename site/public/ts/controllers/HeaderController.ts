@@ -47,21 +47,19 @@ export const HeaderController = (() => {
 
     function SetupIOInputs(): void {
         $("input#header-file-input").change(function(): void {
-            Importer.loadFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], (n) => {
-                if (n) projectNameInput.val(n);
-            });
+            Importer.LoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
         });
 
         $("#header-download-button").click(() => {
-            Exporter.saveFile(MainDesignerController.GetDesigner(), projectNameInput.val() as string);
+            Exporter.SaveFile(MainDesignerController.GetDesigner(), projectNameInput.val() as string);
         });
 
         $("#header-download-pdf-button").click(() => {
-            Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+            Exporter.SavePDF(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
         });
 
         $("#header-download-png-button").click(() => {
-            Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+            Exporter.SavePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
         });
     }
 
@@ -91,7 +89,10 @@ export const HeaderController = (() => {
             SetupDropdown();
             SetupIOInputs();
             SetupHelpMenu();
+        },
+        SetProjectName(name: string): void {
+            if (name)
+                projectNameInput.val(name);
         }
     }
-
 })();

@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -15,14 +16,14 @@ import (
 )
 
 type Item struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Label string `json:"label"`
 	Icon  string `json:"icon"`
 	Not   bool   `json:"not"`
 }
 
 type Section struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Label string `json:"label"`
 	Items []Item `json:"items"`
 }
@@ -74,8 +75,16 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userID, "authData": authData,
-		"bundleJs": getBustedName("./Bundle.js")})
+	exampleCircuits := api.GetExamples()
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"examples":  exampleCircuits,
+		"navConfig": navConfig,
+		"l":         loggedIn,
+		"userId":    userID,
+		"authData":  authData,
+		"bundleJs":  getBustedName("./Bundle.js"),
+	})
 }
 
 func noCacheHandler(path string) gin.HandlerFunc {

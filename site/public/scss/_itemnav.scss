@@ -7,17 +7,22 @@ $tab-padding: 8px;
     position: fixed;
     z-index: 2;
     bottom: 0;
+    left: 0;
 
     overflow-x: hidden;
 
     width: $itemnav-width;
     height: calc(100% - #{$header-total-height});
 
-    transition: .5s;
+    transition: all 0.5s;
 
     border: $header-border;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, .7);
+
+    &__move {
+        left: -$itemnav-width - $header-border-width;
+    }
 
     & h4 {
         font-size: 24px;

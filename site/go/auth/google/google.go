@@ -49,7 +49,7 @@ func New(configPath string) auth.AuthenticationMethod {
 
 	return authenticationMethod{
 		service: oauth2Service,
-		config: cred,
+		config:  cred,
 	}
 }
 

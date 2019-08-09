@@ -39,7 +39,7 @@ export const CopyController = (() => {
         });
 
         // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/xml", Exporter.write(designer, "clipboard"));
+        e.clipboardData.setData("text/xml", Exporter.WriteCircuit(designer, "clipboard"));
         e.preventDefault();
     }
 
@@ -60,7 +60,7 @@ export const CopyController = (() => {
         const contents = e.clipboardData.getData("text/xml");
 
         const designer = new CircuitDesigner(-1);
-        Importer.read(designer, contents);
+        Importer.LoadCircuit(designer, contents);
 
         const group = CopyGroup(designer.getGroup());
         const objs = group.getAllComponents();
