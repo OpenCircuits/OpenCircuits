@@ -4,6 +4,8 @@ import {DEBUG_CULLBOXES,
 import {DEBUG_CULLBOX_STYLE,
         DEBUG_SELECTION_BOUNDS_STYLE} from "./Styles";
 
+import {V} from "../math/Vector";
+
 import {Renderer} from "./Renderer";
 import {Camera} from "../Camera";
 
@@ -24,8 +26,7 @@ export const DebugRenderer = (() => {
                 renderer.save();
                 for (const cullBox of cullboxes) {
                     renderer.transform(camera, cullBox);
-                    renderer.draw(new Rectangle(cullBox), DEBUG_CULLBOX_STYLE, 0.5);
-                    // new Rectangle(V(), cullBox.getSize())
+                    renderer.draw(new Rectangle(V(0,0), cullBox.getSize()), DEBUG_CULLBOX_STYLE, 0.5);
                 }
                 renderer.restore();
             }
@@ -37,8 +38,6 @@ export const DebugRenderer = (() => {
                     const v = port.getTargetPos();
                     renderer.transform(camera, port.getParent().getTransform());
                     renderer.draw(new Circle(v, IO_PORT_SELECT_RADIUS), DEBUG_SELECTION_BOUNDS_STYLE, 0.5);
-                    // renderer.circle(v.x, v.y, IO_PORT_SELECT_RADIUS, DEBUG_SELECTIONS_FILL_COLOR,
-                    //                           DEBUG_SELECTIONS_STROKE_COLOR, 1, 0.5);
                 }
                 renderer.restore();
             }
