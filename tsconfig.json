@@ -4,9 +4,11 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "lib": ["es2017", "dom"],
+    "moduleResolution": "node",
     "module": "es6",
     "target": "es5",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "downlevelIteration": true,
     "allowJs": true,
     "typeRoots" : [
