@@ -1,60 +1,19 @@
 {
     "examples": [
         {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
+            "name": "Basic AND Gate Setup",
+            "file": "example1.circuit",
+            "thumbnail": "./img/thumbnails/example1.png"
+        },
+        {
+            "name": "SR-Latch Gate Implementation",
+            "file": "example2.circuit",
+            "thumbnail": "./img/thumbnails/example2.png"
         },
         {
             "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
-        },
-        {
-            "name": "7-segment Letter Display with letters A-H",
-            "file": "example3.circuit"
+            "file": "example3.circuit",
+            "thumbnail": "./img/thumbnails/example2.png"
         }
     ]
 }
