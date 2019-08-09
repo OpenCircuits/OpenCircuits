@@ -12,15 +12,18 @@
     "@types/gapi": "0.0.39",
     "@types/gapi.auth2": "0.0.50",
     "@types/hammerjs": "^2.0.36",
+    "@types/intro.js": "^2.4.5",
     "@types/jest": "^23.3.14",
+    "@types/jquery": "^3.3.30",
     "@types/jspdf": "^1.3.1",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "copy-webpack-plugin": "^4.6.0",
-    "csscomb": "^4.3.0",
     "eslint": "^6.0.1",
     "hammerjs": "^2.0.8",
+    "intro.js": "^2.9.3",
     "jest": "^24.4.0",
+    "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
     "node-sass": "^4.12.0",
     "opener": "^1.5.1",
@@ -44,5 +47,8 @@
     "test": "jest",
     "lint": "eslint --ext .ts ./site/public/ts",
     "fix:css": "csscomb ./site/public/scss"
+  },
+  "dependencies": {
+    "csscomb": "^4.3.0"
   }
 }

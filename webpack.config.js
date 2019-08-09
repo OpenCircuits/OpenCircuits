@@ -13,7 +13,6 @@ const config = {
             {from: 'site/data',       to: 'data'},
             {from: 'site/templates',  to: 'templates'},
             {from: 'site/public/examples',   to: 'examples'},
-            // {from: 'site/public/css', to: 'css'},
             {from: 'site/public/img', to: 'img'}
         ])
     ],

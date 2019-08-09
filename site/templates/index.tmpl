@@ -33,20 +33,20 @@
         <div id="content" class="content">
             {{template "header" .}}
 
-            {{template "contextmenu" .}}
-
             {{template "loginpopup" .}}
 
-            <main>
-                {{template "itemnav" .}}
-                <div id="itemnav-open-tab" class="tab"></div>
+            {{template "quickstartpopup" .}}
 
-                <canvas id="canvas" class="canvas"></canvas>
+            {{template "itemnav" .}}
+            <div id="itemnav-open-tab" class="tab"></div>
 
-                {{template "icdesigner"}}
+            <canvas id="canvas" class="canvas"></canvas>
 
-                {{template "selectionpopup"}}
-            </main>
+            {{template "icdesigner"}}
+
+            {{template "selectionpopup"}}
+
+            {{template "contextmenu" .}}
         </div>
 
         <script src="{{.bundleJs}}"></script>

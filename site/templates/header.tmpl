@@ -12,6 +12,41 @@
     </div>
 
     <div class="header__right">
+        <div class="header__right__dropdown">
+            <button class="header__right__dropdown__button">
+                <img id="header-help-img" src="img/icons/help.svg" height="100%" alt="Open help menu"/>
+            </button>
+            <div class="header__right__dropdown__content">
+                <h1>Tours</h1>
+                <hr/>
+                <div id="header-help-tour-button" class="disabled" type="button">
+                    <img src="img/icons/tour_general.svg" height="100%" alt="Take a tour of OpenCircuits"/>
+                    <a>General Tour</a>
+                </div>
+                <h1>Resources</h1>
+                <hr/>
+                <div id="header-help-quick-start-button" type="button">
+                    <img src="img/icons/quick_start.svg" height="100%" alt="Check out our Quick Start guide"/>
+                    <a>Quick Start</a>
+                </div>
+                <div id="header-help-video-tutorials-button" class="disabled" type="button">
+                    <img src="img/icons/video_tutorials.svg" height="100%" alt="Check out our Video Tutorials"/>
+                    <a>Video Tutorials</a>
+                </div>
+                <div id="header-help-user-guide-button" class="disabled" type="button">
+                    <img src="img/icons/user_guide.svg" height="100%" alt="Read our User Guide"/>
+                    <a>OpenCircuits User Guide</a>
+                </div>
+                <div id="header-help-center-button" class="disabled" type="button">
+                    <img src="img/icons/help_center.svg" height="100%" alt="Check out our Help Center"/>
+                    <a>Help Center</a>
+                </div>
+                <div id="header-help-shortcuts-button" class="disabled" type="button">
+                    <img src="img/icons/keyboard.svg" height="100%" alt="See our Keyboard Shortcuts"/>
+                    <a>Keyboard Shortcuts</a>
+                </div>
+            </div>
+        </div>
         <div>
             <button type="button" onclick="document.getElementById('header-file-input').click();">
                 <img src="img/icons/open.svg" height="100%" alt="Open a file"/>
@@ -21,10 +56,10 @@
                required="true" accept=".circuit,.xml"/>
 
         <div class="header__right__dropdown">
-            <button id="header-download-dropdown-button" class="header__right__dropdown__button">
+            <button class="header__right__dropdown__button">
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
             </button>
-            <div id="header-download-dropdown-content" class="header__right__dropdown__content">
+            <div class="header__right__dropdown__content">
                 <div id="header-new-button" type="button">
                     <img src="img/icons/download.svg" height="100%" alt="Push current scene"/>
                     <a>New Circuit</a>

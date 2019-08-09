@@ -1,4 +1,8 @@
-import {CircuitDesigner} from "../models/CircuitDesigner";
+import $ from "jquery";
+
+// import introJs from "intro.js";
+//
+// import test from "./tours/test.json";
 
 import {Importer} from "../utils/io/Importer";
 import {Exporter} from "../utils/io/Exporter";
@@ -6,57 +10,89 @@ import {Exporter} from "../utils/io/Exporter";
 import {MainDesignerController} from "./MainDesignerController";
 
 export const HeaderController = (() => {
-    const projectNameInput = <HTMLInputElement>document.getElementById("header-project-name-input");
+    const projectNameInput = $("input#header-project-name-input");
 
-    const fileInput = <HTMLInputElement>document.getElementById("header-file-input");
+    function CloseDropdowns(): void {
+        $(".header__right__dropdown__content")
+                .removeClass("show");
+        $(".header__right__dropdown__button")
+                .removeClass("white");
+    }
 
-    const downloadDropdownButton = document.getElementById("header-download-dropdown-button");
-    const downloadDropdown = document.getElementById("header-download-dropdown-content");
+    function SetupDropdown(): void {
+        // Show/hide the dropdown(s) on click
+        $(".header__right__dropdown__button").click(function(): void {
+            // Hide all other dropdowns first
+            $(".header__right__dropdown__content")
+                    .not($(this).siblings(".header__right__dropdown__content"))
+                    .removeClass("show");
+            $(".header__right__dropdown__button")
+                    .not($(this))
+                    .removeClass("white");
 
-    const downloadButton = document.getElementById("header-download-button");
-    const downloadPDFButton = document.getElementById("header-download-pdf-button");
-    const downloadPNGButton = document.getElementById("header-download-png-button");
+            $(this).toggleClass("white");
+            $(this).siblings(".header__right__dropdown__content")
+                    .toggleClass("show");
+        });
+
+        // Hide dropdown(s) on click anywhere else
+        $(window).click((e) => {
+            const dropdownParent = $(e.target).parents(".header__right__dropdown");
+            if (dropdownParent.length == 0) {
+                $(".header__right__dropdown__content").removeClass("show");
+                $(".header__right__dropdown__button").removeClass("white");
+            }
+        });
+    }
+
+    function SetupIOInputs(): void {
+        $("input#header-file-input").change(function(): void {
+            Importer.LoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
+        });
+
+        $("#header-download-button").click(() => {
+            Exporter.SaveFile(MainDesignerController.GetDesigner(), projectNameInput.val() as string);
+        });
+
+        $("#header-download-pdf-button").click(() => {
+            Exporter.SavePDF(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+        });
+
+        $("#header-download-png-button").click(() => {
+            Exporter.SavePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+        });
+    }
+
+    function SetupHelpMenu(): void {
+        $("#header-help-tour-button").click(() => {
+            // // Open ItemNav for tutorial
+            // if (!ItemNavController.IsOpen())
+            //     ItemNavController.Toggle();
+            //
+            // introJs().setOptions(test).start();
+        });
+
+        $("#header-help-quick-start-button").click(() => {
+            CloseDropdowns();
+            $("#quick-start-popup").removeClass("invisible");
+            $("#overlay").removeClass("invisible");
+        });
+
+        $("#overlay").click(() => {
+            $("#quick-start-popup").addClass("invisible");
+            $("#overlay").addClass("invisible");
+        })
+    }
 
     return {
-        Init: function(designer: CircuitDesigner): void {
-            const mainDesigner: CircuitDesigner = designer;
-
-            // Show/hide the dropdown on click
-            downloadDropdownButton.onclick = () => {
-                // Toggle a class to keep :hover behavior
-                downloadDropdown.classList.toggle("show");
-                downloadDropdownButton.classList.toggle("white");
-            }
-
-            // Hide dropdown on click anywhere else
-            window.onclick = (e) => {
-                const target: Element = (e.target || e.srcElement) as Element;
-                const dropdownParent = target.closest(".header__right__dropdown");
-                if (!dropdownParent) {
-                    if (downloadDropdown.classList.contains("show")) {
-                        downloadDropdown.classList.toggle("show");
-                        downloadDropdownButton.classList.toggle("white");
-                    }
-                    // let visible = (downloadDropdown.style.display == "block");
-                    // if (visible) {
-                    //     downloadDropdown.style.display = "none";
-                    //     downloadDropdownButton.style.backgroundColor = "initial";//"rgba(0,0,0,0)";
-                    // }
-                }
-            }
-
-            fileInput.onchange = () => Importer.LoadCircuitFromFile(mainDesigner, fileInput.files[0], HeaderController.SetProjectName);
-
-            downloadButton.onclick = () => Exporter.SaveFile(mainDesigner, projectNameInput.value);
-
-            downloadPDFButton.onclick = () => Exporter.SavePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
-
-            downloadPNGButton.onclick = () => Exporter.SavePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
+        async Init(): Promise<void> {
+            SetupDropdown();
+            SetupIOInputs();
+            SetupHelpMenu();
         },
         SetProjectName(name: string): void {
             if (name)
-                projectNameInput.value = name;
+                projectNameInput.val(name);
         }
     }
-
 })();
