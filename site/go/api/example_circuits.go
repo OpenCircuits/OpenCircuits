@@ -13,15 +13,17 @@ import (
  * LEON'S NEW STUFF - FEEL FREE TO MOVE, I DONT KNOW GO VERY WELL
  */
 type Circuit struct {
-	Id       string
-	Name     string
-	Desc     string
-	Contents string
+	Id        string
+	Name      string
+	Desc      string
+    Thumbnail string
+	Contents  string
 }
 
 type ExampleCircuit struct {
-	Name string `json:"name"`
-	File string `json:"file"`
+	Name      string `json:"name"`
+	File      string `json:"file"`
+    Thumbnail string `json:"thumbnail"`
 }
 
 type ExamplesConfig struct {
@@ -52,10 +54,11 @@ func init() {
 		core.CheckErrorMessage(err, "File read error:")
 
 		exampleCircuits[i] = Circuit{
-			Id:       strconv.Itoa(i),
-			Name:     examplesConfig.Examples[i].Name,
-			Desc:     "example",
-			Contents: string(contents),
+			Id:        strconv.Itoa(i),
+			Name:      examplesConfig.Examples[i].Name,
+			Desc:      "example",
+            Thumbnail: examplesConfig.Examples[i].Thumbnail,
+			Contents:  string(contents),
 		}
 	}
 }

@@ -1,6 +1,6 @@
 {{define "sidenavcircuit"}}
 <div id="example-circuit-{{ .Id }}" class="sidenav__content__circuit">
-    <img src="./img/icon.svg"></img>
+    <img src="{{ .Thumbnail }}"></img>
     <div class="sidenav__content__circuit__text">
         <span class="sidenav__content__circuit__text__name">{{ .Name }}</span>
         <span class="sidenav__content__circuit__text__desc">{{ .Desc }}</span>

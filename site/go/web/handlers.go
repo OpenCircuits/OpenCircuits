@@ -76,7 +76,6 @@ func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
 	}
 
 	exampleCircuits := api.GetExamples()
-	log.Printf("circuits len: %d\n", len(exampleCircuits))
 
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"examples":  exampleCircuits,
