@@ -35,7 +35,6 @@ function Init(): void {
         }),
         new Promise((resolve, _) => {
             MainDesignerController.Init();
-            HeaderController.Init(MainDesignerController.GetDesigner());
             SelectionPopupController.Init(MainDesignerController.GetCamera());
             resolve(1);
         }),
@@ -59,6 +58,7 @@ function Init(): void {
             SideNavController.Init();
             resolve(1);
         }),
+        HeaderController.Init(),
         LoginController.Init()
     ];
 
