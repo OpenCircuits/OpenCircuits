@@ -71,9 +71,8 @@ export const SideNavController = (() => {
             });
 
             // Set up onclick listeners to example circuits
-            const exampleCircuits = exampleCircuitsList.children;
-            for (let i = 0; i < exampleCircuits.length; i++) {
-                const exampleCircuit = exampleCircuits[i] as HTMLElement;
+            const exampleCircuits = Array.from(exampleCircuitsList.children) as HTMLElement[];
+            for (const exampleCircuit of exampleCircuits) {
                 const id = exampleCircuit.id.split("-")[2];
                 exampleCircuit.onclick = () => loadExampleCircuit(id);
             }

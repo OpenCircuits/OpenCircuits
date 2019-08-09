@@ -16,14 +16,14 @@ import (
 )
 
 type Item struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Label string `json:"label"`
 	Icon  string `json:"icon"`
 	Not   bool   `json:"not"`
 }
 
 type Section struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Label string `json:"label"`
 	Items []Item `json:"items"`
 }

@@ -9,30 +9,26 @@ import (
 	"strconv"
 )
 
-/******************************************************************************
- * LEON'S NEW STUFF - FEEL FREE TO MOVE, I DONT KNOW GO VERY WELL
- */
+// Circuit is a representation of a circuit
 type Circuit struct {
-	Id        string
+	ID        string
 	Name      string
 	Desc      string
     Thumbnail string
 	Contents  string
 }
 
+// ExampleCircuit is a representation of the example circuit in a config
 type ExampleCircuit struct {
 	Name      string `json:"name"`
 	File      string `json:"file"`
     Thumbnail string `json:"thumbnail"`
 }
 
+// ExamplesConfig is a representation of the config for examples
 type ExamplesConfig struct {
 	Examples []ExampleCircuit `json:"examples"`
 }
-
-/*
- ******************************************************************************
- */
 
 var exampleCircuits []Circuit
 
@@ -54,7 +50,7 @@ func init() {
 		core.CheckErrorMessage(err, "File read error:")
 
 		exampleCircuits[i] = Circuit{
-			Id:        strconv.Itoa(i),
+			ID:        strconv.Itoa(i),
 			Name:      examplesConfig.Examples[i].Name,
 			Desc:      "example",
             Thumbnail: examplesConfig.Examples[i].Thumbnail,
@@ -63,14 +59,10 @@ func init() {
 	}
 }
 
-func GetExamples() []Circuit {
-	return exampleCircuits
-}
-
 func getExampleCircuitHandler(c *gin.Context) {
-	exampleId := c.Param("id")
+	exampleID := c.Param("id")
 
-	i, err := strconv.Atoi(exampleId)
+	i, err := strconv.Atoi(exampleID)
 	if err != nil {
 		c.XML(http.StatusForbidden, nil)
 		return
@@ -84,4 +76,9 @@ func getExampleCircuitHandler(c *gin.Context) {
 
 	c.Header("Content-Type", "text/xml")
 	c.String(http.StatusOK, exampleCircuits[i].Contents)
+}
+
+// GetExamples returns the list of example circuits
+func GetExamples() []Circuit {
+	return exampleCircuits
 }
