@@ -22,12 +22,12 @@ header {
 .header__left {
     float: left;
 
-    margin-top: $header-height/2 - 25px/2;
-
     border: 0;
 
     &__sidenavbutton {
         font-size: 24px;
+
+        margin-top: $header-height/2 - 25px/2;
 
         cursor: pointer;
 
@@ -37,9 +37,31 @@ header {
     &__projectname {
         font-size: 24px;
 
-        width: 20vw;
+        margin-top: $header-height/2 - 25px/2;
+
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
 
         color: $secondary-color;
+    }
+    &__save__button {
+        height: 30px;
+        margin-top: $header-padding;
+        margin-right: 0;
+        padding-right: 5px;
+        padding-left: 5px;
+
+        cursor: pointer;
+
+        color: #ddd;
+        background-color: $success-color;
+        border: thin solid #888;
+        border-radius: 4px;
+
+        &:hover {
+            color: #ccc;
+            background-color: darken($success-color, 10%);
+            border-color: #aaa;
+        }
     }
 }
 
