@@ -18,6 +18,8 @@ export class Wire extends CullableObject {
     private shape: BezierCurve;
     private straight: boolean;
 
+    private dirtyShape: boolean;
+
     public constructor(input: OutputPort, output: InputPort) {
         super();
 
@@ -28,9 +30,20 @@ export class Wire extends CullableObject {
 
         this.shape = new BezierCurve(V(),V(),V(),V());
         this.straight = false;
+
+        this.dirtyShape = true;
+    }
+
+    public onTransformChange(): void {
+        super.onTransformChange();
+        this.dirtyShape = true;
     }
 
     private updateCurve(): void {
+        if (!this.dirtyShape)
+            return;
+        this.dirtyShape = false;
+
         if (this.input != null) {
             const pos = this.input.getWorldTargetPos();
             const dir = this.input.getWorldDir();
@@ -56,11 +69,27 @@ export class Wire extends CullableObject {
     }
 
     public setInput(c: OutputPort): void {
+        if (c == this.input)
+            return;
+
         this.input = c;
+        this.onTransformChange();
     }
 
     public setOutput(c: InputPort): void {
+        if (c == this.output)
+            return;
+
         this.output = c;
+        this.onTransformChange();
+    }
+
+    public setIsStraight(straight: boolean): void {
+        if (straight == this.straight)
+            return;
+
+        this.straight = straight;
+        this.onTransformChange();
     }
 
     public getInput(): OutputPort {
@@ -91,21 +120,21 @@ export class Wire extends CullableObject {
     public isStraight(): boolean {
         return this.straight;
     }
-    public setIsStraight(straight: boolean): void {
-        this.straight = straight;
-    }
 
     public getMinPos(): Vector {
-        return this.getShape().getBoundingBox().getBottomLeft().sub(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
+        return this.getShape().getBoundingBox()
+                .getBottomLeft().sub(WIRE_THICKNESS/2);
     }
 
     public getMaxPos(): Vector {
-        return this.getShape().getBoundingBox().getTopRight().add(WIRE_THICKNESS/2, WIRE_THICKNESS/2);
+        return this.getShape().getBoundingBox()
+                .getTopRight().add(WIRE_THICKNESS/2);
     }
 
     public copyInto(w: Wire): void {
         w.isOn = this.isOn;
         w.straight = this.straight;
+        this.onTransformChange();
     }
 
     public save(node: XMLNode): void {
