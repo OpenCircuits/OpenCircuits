@@ -28,7 +28,7 @@ export class Vector {
     public sub(v: Vector): Vector;
     public sub(x: number): Vector;
     public sub(x: number, y: number): Vector;
-    public sub(x: Vector | number, y: number = 0): Vector {
+    public sub(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
         const dy = (x instanceof Vector ? x.y : (y == undefined ? x : y));
         return new Vector(this.x - dx, this.y - dy);
