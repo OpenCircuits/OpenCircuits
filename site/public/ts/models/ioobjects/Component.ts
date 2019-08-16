@@ -67,10 +67,12 @@ export abstract class Component extends CullableObject {
 
     public setInputPortCount(val: number): void {
         this.inputs.setPortCount(val);
+        this.onTransformChange();
     }
 
     public setOutputPortCount(val: number): void {
         this.outputs.setPortCount(val);
+        this.onTransformChange();
     }
 
     public setPos(v: Vector): void {

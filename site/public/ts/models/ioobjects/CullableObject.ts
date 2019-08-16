@@ -20,8 +20,8 @@ export abstract class CullableObject extends IOObject {
     }
 
     private updateCullTransform(): void {
-        // if (!this.dirty)
-        //     return;
+        if (!this.dirty)
+            return;
         this.dirty = false;
 
         const min = this.getMinPos();
