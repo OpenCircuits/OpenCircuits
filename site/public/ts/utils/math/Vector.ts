@@ -12,7 +12,7 @@ export class Vector {
             this.y = x.y;
         } else {
             this.x = x;
-            this.y = (y == undefined ? x : y);
+            this.y = (y == null ? x : y);
         }
     }
 
@@ -21,7 +21,7 @@ export class Vector {
     public add(x: number, y: number): Vector;
     public add(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
-        const dy = (x instanceof Vector ? x.y : (y == undefined ? x : y));
+        const dy = (x instanceof Vector ? x.y : (y == null ? x : y));
         return new Vector(this.x + dx, this.y + dy);
     }
 
@@ -30,7 +30,7 @@ export class Vector {
     public sub(x: number, y: number): Vector;
     public sub(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
-        const dy = (x instanceof Vector ? x.y : (y == undefined ? x : y));
+        const dy = (x instanceof Vector ? x.y : (y == null ? x : y));
         return new Vector(this.x - dx, this.y - dy);
     }
 
@@ -69,21 +69,17 @@ export class Vector {
     public project(v: Vector): Vector {
         return this.scale(v.dot(this) / this.len2());
     }
-    public isCloseTo(v: Vector, eps = 1e-3): boolean {
-        const diff = this.sub(v).abs();
-        return (diff.x <= eps && diff.y <= eps);
-    }
     public copy(): Vector {
         return new Vector(this.x, this.y);
     }
 
     public static min(...vectors: Vector[]): Vector {
-        return new Vector(Math.min(...vectors.map(v => v.x)),
-                          Math.min(...vectors.map(v => v.y)));
+        return new Vector(Math.min(...vectors.map((v) => v.x)),
+                          Math.min(...vectors.map((v) => v.y)));
     }
     public static max(...vectors: Vector[]): Vector {
-        return new Vector(Math.max(...vectors.map(v => v.x)),
-                          Math.max(...vectors.map(v => v.y)));
+        return new Vector(Math.max(...vectors.map((v) => v.x)),
+                          Math.max(...vectors.map((v) => v.y)));
     }
     public static clamp(x: Vector, lo: Vector, hi: Vector): Vector {
         return Vector.min(Vector.max(x, lo), hi);
