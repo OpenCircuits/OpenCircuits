@@ -98,7 +98,7 @@ export class RotateTool extends Tool {
                 newAngle = Math.floor(newAngle/(Math.PI/4))*Math.PI/4;
 
             // Set rotation
-            obj.getTransform().setRotationAbout(newAngle, this.midpoint);
+            obj.setRotationAbout(newAngle, this.midpoint);
         }
         this.prevAngle += dAngle;
 
