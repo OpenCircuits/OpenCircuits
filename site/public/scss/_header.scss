@@ -20,51 +20,51 @@ header {
 
 
 .header__left {
-    float: left;
+    margin-left: 1%;
 
-    border: 0;
+    & div {
+        float: left;
 
-    &__sidenavbutton {
-        font-size: 24px;
-
-        margin-top: $header-height/2 - 25px/2;
+        height: $header-height - 2*$header-padding;
+        margin-top: $header-padding;
 
         cursor: pointer;
-
-        color: $secondary-color;
-        outline: none;
     }
-    &__projectname {
-        font-size: 24px;
-
-        margin-top: $header-height/2 - 25px/2;
-
-        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
-
-        color: $secondary-color;
-    }
-    &__save__button {
+    & button {
         height: 30px;
         margin-top: $header-padding;
-        margin-right: 0;
-        padding-right: 5px;
-        padding-left: 5px;
+        padding-right: 7px;
+        padding-left: 7px;
 
         cursor: pointer;
 
         color: #ddd;
-        background-color: $success-color;
-        border: thin solid #888;
         border-radius: 4px;
-
+        background-color: $success-color;
         &:hover {
             color: #ccc;
-            background-color: darken($success-color, 10%);
             border-color: #aaa;
+            background-color: darken($success-color, 10%);
         }
     }
-}
+    & input {
+        font-size: 24px;
 
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        height: $header-height - 2*$header-padding;
+        margin-right: 10px;
+
+        color: $secondary-color;
+    }
+    & span {
+        font-size: 24px;
+        line-height: $header-height - 2*$header-padding;
+
+        margin-right: 10px;
+
+        vertical-align: middle;
+    }
+}
 
 .header__center__logo {
     position: absolute;
@@ -141,7 +141,7 @@ header {
 
             border-radius: 6px 0 6px 6px;
             background-color: #fff;
-            box-shadow: 0 4px 4px 0 rgba(0,0,0,.2);
+            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
 
             & h1 {
                 font-size: 1.5em;

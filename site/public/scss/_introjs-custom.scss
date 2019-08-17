@@ -4,7 +4,7 @@
 
     box-sizing: content-box;
 
-    transition: all .3s ease-out;
+    transition: all 0.3s ease-out;
 
     opacity: 0;
     background: #000;
@@ -46,7 +46,7 @@ tr.introjs-showElement > th {
 
     box-sizing: content-box;
 
-    transition: all .3s ease-out;
+    transition: all 0.3s ease-out;
 
     border: 4px solid rgba(0, 0, 0, 0.5);
     border-radius: 4px;
@@ -62,7 +62,7 @@ tr.introjs-showElement > th {
 
     box-sizing: content-box;
 
-    transition: all .3s ease-out;
+    transition: all 0.3s ease-out;
 
     background-color: transparent;
 }
@@ -167,12 +167,12 @@ tr.introjs-showElement > th {
     padding: 10px;
     padding-top: 30px;
 
-    transition: opacity .1s ease-out;
+    transition: opacity 0.1s ease-out;
 
     color: #fff;
     border-radius: 3px;
     background-color: #434a54;
-    box-shadow: 0 1px 10px rgba(0,0,0,.4);
+    box-shadow: 0 1px 10px rgba(0,0,0,0.4);
 }
 
 .introjs-tooltipbuttons {
@@ -203,7 +203,7 @@ tr.introjs-showElement > th {
 
     box-sizing: content-box;
     margin: 0;
-    padding: .3em .8em;
+    padding: 0.3em 0.8em;
 
     cursor: pointer;
     white-space: nowrap;
@@ -211,7 +211,7 @@ tr.introjs-showElement > th {
 
     color: #000;
     border: 2px solid #fff;
-    border-radius: .2em;
+    border-radius: 0.2em;
     outline: none;
     background-color: #ececec;
 
@@ -240,20 +240,20 @@ tr.introjs-showElement > th {
 
 .introjs-prevbutton {
     border-right: none;
-    border-radius: .2em 0 0 .2em;
+    border-radius: 0.2em 0 0 0.2em;
 }
 
 .introjs-prevbutton.introjs-fullbutton {
     border: 1px solid #d4d4d4;
-    border-radius: .2em;
+    border-radius: 0.2em;
 }
 
 .introjs-nextbutton {
-    border-radius: 0 .2em .2em 0;
+    border-radius: 0 0.2em 0.2em 0;
 }
 
 .introjs-nextbutton.introjs-fullbutton {
-    border-radius: .2em;
+    border-radius: 0.2em;
 }
 
 .introjs-disabled,

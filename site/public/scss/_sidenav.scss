@@ -28,7 +28,7 @@ $sidenav-border-width: 5px;
         line-height: 60px;
 
         height: 60px;
-        padding-left: .5em;
+        padding-left: 0.5em;
 
         color: $secondary-color;
         border: 0 solid $secondary-color;
@@ -46,10 +46,10 @@ $sidenav-border-width: 5px;
             display: block;
 
             margin: 0;
-            padding: .5em 1em .5em .5em;
+            padding: 0.5em 1em 0.5em 0.5em;
 
             cursor: pointer;
-            transition: .5s;
+            transition: 0.5s;
 
             color: lighten($secondary-color, 10%);
             border: 0 solid $secondary-color;
@@ -74,42 +74,51 @@ $sidenav-border-width: 5px;
             $padding-v: 4px;
             $padding-h: 6px;
 
-            border-bottom: solid $sidenav-border-width/3 $secondary-color;
             height: $height;
             padding: $padding-v $padding-h $padding-v $padding-h;
+
+            border-bottom: solid $sidenav-border-width/3 $secondary-color;
             background-color: lighten($primary-color, 5%);
 
             & img {
-                height: $img-width;
                 width: $img-width;
-                background-color: $background-color;
+                height: $img-width;
+
                 border-radius: 5px;
+                background-color: $background-color;
             }
             &__text {
-                width: $sidenav-width - $img-width - $sidenav-border-width - $padding-h*2 - 20px;
                 display: inline-block;
+
+                width: $sidenav-width - $img-width - $sidenav-border-width - $padding-h*2 - 20px;
+
                 vertical-align: top;
                 & span {
                     display: block;
+                    overflow: hidden;
+
                     white-space: nowrap;
                     text-overflow: ellipsis;
-                    overflow: hidden;
                 }
                 &__name {
-                    margin-top: 7px;
                     font-weight: bold;
+
+                    margin-top: 7px;
                 }
             }
         }
         &__footer {
-            text-align: center;
-            padding: 50px 25px 50px 25px;
-            color: $secondary-color;
             height: 120px;
+            padding: 50px 25px 50px 25px;
+
+            text-align: center;
+
+            color: $secondary-color;
 
             & a {
-                color: lighten($secondary-color, 25%);
                 text-decoration: none;
+
+                color: lighten($secondary-color, 25%);
             }
         }
         &__slider {
@@ -122,8 +131,8 @@ $sidenav-border-width: 5px;
             left: 0;
 
             cursor: pointer;
-            -webkit-transition: .4s;
-                    transition: .4s;
+            -webkit-transition: 0.4s;
+                    transition: 0.4s;
 
             background-color: $primary-color;
 
@@ -145,8 +154,8 @@ $sidenav-border-width: 5px;
                 height: 34px;
 
                 content: '';
-                -webkit-transition: .4s;
-                        transition: .4s;
+                -webkit-transition: 0.4s;
+                        transition: 0.4s;
 
                 background-color: white;
             }
