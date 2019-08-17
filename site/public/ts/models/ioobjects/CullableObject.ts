@@ -6,15 +6,23 @@ import {IOObject} from "./IOObject"
 export abstract class CullableObject extends IOObject {
     private cullTransform: Transform;
 
+    private dirty: boolean;
+
     public constructor() {
         super();
 
+        this.dirty = true;
         this.cullTransform = new Transform(V(), V());
     }
 
+    public onTransformChange(): void {
+        this.dirty = true;
+    }
+
     private updateCullTransform(): void {
-        // @TODO change this cause it's inefficient to
-        //  recalculate the cull box if nothing has changed
+        if (!this.dirty)
+            return;
+        this.dirty = false;
 
         const min = this.getMinPos();
         const max = this.getMaxPos();

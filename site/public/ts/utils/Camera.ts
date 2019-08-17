@@ -49,11 +49,11 @@ export class Camera {
     }
     public setPos(pos: Vector): void {
         this.dirty = true;
-        this.pos.set(pos);
+        this.pos = pos;
     }
-    public translate(dx: Vector | number, dy: number = 0): void {
+    public translate(dv: Vector): void {
         this.dirty = true;
-        this.pos.translate(dx, dy);
+        this.pos = this.pos.add(dv);
     }
     public zoomTo(c: Vector, z: number): void {
         // Calculate position to zoom in/out of
@@ -68,11 +68,6 @@ export class Camera {
         this.zoom *= s;
     }
     public cull(transform: Transform): boolean {
-        // getCurrentContext().getRenderer().save();
-        // transform.transformCtx(getCurrentContext().getRenderer().context);
-        // getCurrentContext().getRenderer().rect(0, 0, transform.size.x, transform.size.y, '#ff00ff');
-        // getCurrentContext().getRenderer().restore();
-
         return TransformContains(transform, this.getTransform());
     }
     public getCenter(): Vector {

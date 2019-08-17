@@ -21,7 +21,7 @@ export class RotateAction implements Action {
     private setAngles(angles: Array<number>): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
-            obj.getTransform().setRotationAbout(angles[i], this.midpoint);
+            obj.setRotationAbout(angles[i], this.midpoint);
         }
     }
 
