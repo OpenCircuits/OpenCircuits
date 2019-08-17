@@ -17,7 +17,7 @@ export const Exporter = (() => {
         },
         SaveFile: function(designer: CircuitDesigner, projectName: string): void {
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
+            if (projectName.replace(/\s+/g, "") === "")
                 projectName = "Untitled Circuit";
 
             const data = this.WriteCircuit(designer, projectName);
@@ -44,7 +44,7 @@ export const Exporter = (() => {
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
+            if (projectName.replace(/\s+/g, "") === "")
                 projectName = "Untitled Circuit";
             const filename = projectName + ".png";
 
@@ -72,7 +72,7 @@ export const Exporter = (() => {
             const pdf = new jsPDF("l", "px", [width, height]);
 
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
+            if (projectName.replace(/\s+/g, "") === "")
                 projectName = "Untitled Circuit";
 
             // Fill background

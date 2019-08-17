@@ -93,9 +93,9 @@ export const CopyController = (() => {
 
     return {
         Init: function(): void {
-            document.addEventListener('copy',  (e) => !isActive() || copy(e),  false);
-            document.addEventListener('cut',   (e) => !isActive() || cut(e),   false);
-            document.addEventListener('paste', (e) => !isActive() || paste(e), false);
+            document.addEventListener("copy",  (e) => !isActive() || copy(e),  false);
+            document.addEventListener("cut",   (e) => !isActive() || cut(e),   false);
+            document.addEventListener("paste", (e) => !isActive() || paste(e), false);
         }
     }
 } )();
