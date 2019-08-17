@@ -5,6 +5,7 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
@@ -26,6 +27,9 @@ func main() {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
 
+	// Create the example circuit storage interface
+	exampleCsif := storage.NewExampleCircuitStorageInterfaceFactory("./examples/examples.json")
+
 	// Route through Gin
 	router := gin.Default()
 	router.Use(gin.Recovery())
@@ -39,9 +43,9 @@ func main() {
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
 	// Register pages
-	web.RegisterPages(router, authManager)
+	web.RegisterPages(router, authManager, exampleCsif)
 	authManager.RegisterHandlers(router)
-	api.RegisterHandlers(router, authManager)
+	api.RegisterRoutes(router, authManager, exampleCsif)
 
 	// TODO: add flags for this
 	router.Run("127.0.0.1:8080")
