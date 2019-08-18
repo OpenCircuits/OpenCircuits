@@ -10,24 +10,27 @@ type MemCircuitStorageInterfaceFactory struct {
 	memInterface *memCircuitStorage
 }
 
+// A simple, array-based circuit storage for testing and example circuits
 type memCircuitStorage struct {
-	// TODO: this should support concurrency if used for more than single-request mutable testing
-	m         map[model.CircuitId]model.Circuit
-	currentId model.CircuitId
+	m      []model.Circuit
+	nextId model.CircuitId
+}
+
+func (mem *memCircuitStorage) inStore(id model.CircuitId) bool {
+	return id < int64(len(mem.m))
 }
 
 func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	// Since the storage supports the interface this is fine.  For other kinds of storage, this pattern
 	//	of returning a single global object may not be suitable.
 	if m.memInterface == nil {
-		m.memInterface = &memCircuitStorage{m: make(map[model.CircuitId]model.Circuit)}
+		m.memInterface = &memCircuitStorage{}
 	}
 	return m.memInterface
 }
 
 func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
-	_, ok := mem.m[c.Metadata.ID]
-	if !ok {
+	if !mem.inStore(c.Metadata.ID) {
 		panic(errors.New("circuit did not exist for given id"))
 	}
 	mem.m[c.Metadata.ID] = c
@@ -44,18 +47,17 @@ func (mem *memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.Cir
 }
 
 func (mem *memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
-	v, ok := mem.m[id]
-	if !ok {
+	if !mem.inStore(id) {
 		return nil
 	}
-	return &v
+	return &mem.m[id]
 }
 
 func (mem *memCircuitStorage) NewCircuit() model.Circuit {
 	var c model.Circuit
-	mem.currentId++
-	c.Metadata.ID = mem.currentId
-	mem.m[c.Metadata.ID] = c
+	c.Metadata.ID = mem.nextId
+	mem.m = append(mem.m, c)
+	mem.nextId++
 	return c
 }
 
