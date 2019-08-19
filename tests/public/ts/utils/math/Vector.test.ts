@@ -12,7 +12,7 @@ describe("Vector", () => {
         it("One (number) parameter", () => {
             const v = new Vector(5);
             expect(v.x).toBe(5);
-            expect(v.y).toBe(0);
+            expect(v.y).toBe(5);
         });
         it("Two (number) parameters", () => {
             const v = new Vector(5, 5);
@@ -22,25 +22,8 @@ describe("Vector", () => {
         it("One (vector) parameter", () => {
             const v1 = new Vector(5, 5);
             const v2 = new Vector(v1);
-            expect(v1.x).toBe(5);
-            expect(v1.y).toBe(5);
-        });
-    });
-    describe("Modifiers", () => {
-        it("Translate (numbers)", () => {
-            const v = new Vector(1, 1);
-            v.translate(5, 5);
-            expect(v.x).toBe(6);
-            expect(v.y).toBe(6);
-        });
-        it("Translate (vector)", () => {
-            const v1 = new Vector(1, 1);
-            const v2 = new Vector(5, 5);
-            v1.translate(v2);
             expect(v2.x).toBe(5);
             expect(v2.y).toBe(5);
-            expect(v1.x).toBe(6);
-            expect(v1.y).toBe(6);
         });
     });
     describe("Operators", () => {
@@ -231,6 +214,26 @@ describe("Vector", () => {
                 expect(v2.y).toBe(0);
                 expect(p.x).toBeCloseTo(0.8, 1e-3);
                 expect(p.y).toBeCloseTo(0.4, 1e-3);
+            }
+        });
+    });
+    describe("Utility", () => {
+        it("Min", () => {
+            {
+                const v1 = new Vector(5, 5);
+                const v2 = new Vector(-5, 10);
+                const min = Vector.min(v1, v2);
+                expect(min.x).toBe(-5);
+                expect(min.y).toBe(5);
+            }
+        });
+        it("Max", () => {
+            {
+                const v1 = new Vector(5, 5);
+                const v2 = new Vector(-5, 10);
+                const max = Vector.max(v1, v2);
+                expect(max.x).toBe(5);
+                expect(max.y).toBe(10);
             }
         });
     });

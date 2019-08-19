@@ -38,17 +38,19 @@ export class Transform {
      */
     public constructor(pos: Vector, size: Vector, angle: number = 0) {
         this.parent = undefined;
+
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
         this.angle = angle;
+
         this.scale = V(1, 1);
         this.corners = [];
         this.localCorners = [];
+
         this.prevParentMatrix = undefined;
         this.dirty = true;
         this.dirtySize = true;
         this.dirtyCorners = true;
-        this.updateMatrix();
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix
