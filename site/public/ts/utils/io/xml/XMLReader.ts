@@ -4,13 +4,16 @@ export class XMLReader {
     private root: XMLDocument;
     private rootNode: XMLNode;
 
+    private metadataNode: XMLNode;
+    private contentsNode: XMLNode;
+
     public constructor(root: XMLDocument) {
         this.root = root;
         this.rootNode = new XMLNode(this.root, this.root.childNodes[0]);
-    }
 
-    public getRoot(): XMLNode {
-        return this.rootNode;
+        if (!this.rootNode.findChild)
+        this.metadataNode = this.rootNode.findChild("metadata");
+        this.contentsNode = this.contentsNode.findChild("contents");
     }
 
     public getVersion(): number {
@@ -25,6 +28,10 @@ export class XMLReader {
         if (root.hasAttribute("name"))
             return root.getAttribute("name");
         return undefined;
+    }
+
+    public getContentsNode(): XMLNode {
+        return this.rootNode;
     }
 
 }

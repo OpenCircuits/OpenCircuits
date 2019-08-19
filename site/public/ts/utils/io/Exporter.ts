@@ -10,8 +10,9 @@ export const Exporter = (() => {
 
             writer.setVersion(1);
             writer.setName(name);
+            writer.setThumbnail("data:,"); // TODO: Generate a thumbnail
 
-            designer.save(writer.getRoot());
+            designer.save(writer.getContentsNode());
 
             return writer.serialize();
         },
@@ -24,7 +25,7 @@ export const Exporter = (() => {
 
             const filename = projectName + ".circuit";
 
-            const file = new Blob([data], {type: "text/plain"});
+            const file = new Blob([data], {type: "text/xml"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
                 window.navigator.msSaveOrOpenBlob(file, filename);
             } else { // Others
