@@ -70,7 +70,7 @@ function FixGroup(objs: XMLNode, wiresNode: XMLNode): void {
 }
 
 export function ResolveVersionConflict(reader: XMLReader): void {
-    const root = reader.getRoot();
+    const root = reader.getContentsNode();
     root.replaceChildrenWithName("ics", "icdata");
 
     const objs = root.findChild("objects");

@@ -11,27 +11,32 @@ export class XMLReader {
         this.root = root;
         this.rootNode = new XMLNode(this.root, this.root.childNodes[0]);
 
-        if (!this.rootNode.findChild)
         this.metadataNode = this.rootNode.findChild("metadata");
-        this.contentsNode = this.contentsNode.findChild("contents");
+        this.contentsNode = this.rootNode.findChild("contents");
+
+        // Old file version didn't have Metadata
+        if (!this.metadataNode) {
+            this.metadataNode = this.rootNode;
+            this.contentsNode = this.rootNode;
+        }
     }
 
     public getVersion(): number {
-        const root = this.getRoot();
+        const root = this.metadataNode;
         if (root.hasAttribute("version"))
             return root.getIntAttribute("version");
         return -1;
     }
 
     public getName(): string {
-        const root = this.getRoot();
+        const root = this.metadataNode;
         if (root.hasAttribute("name"))
             return root.getAttribute("name");
         return undefined;
     }
 
     public getContentsNode(): XMLNode {
-        return this.rootNode;
+        return this.contentsNode;
     }
 
 }
