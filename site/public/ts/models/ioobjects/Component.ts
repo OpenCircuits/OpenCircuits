@@ -37,10 +37,16 @@ export abstract class Component extends CullableObject {
                           inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super();
 
-        this.transform = new Transform(V(0,0), size, 0);
+        this.transform = new Transform(V(), size);
 
         this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
         this.outputs = new OutputPortSet(this, outputPortCount, outputPositioner);
+    }
+
+    public onTransformChange(): void {
+        super.onTransformChange();
+        this.getInputs().concat(this.getOutputs()).
+                forEach((w) => w.onTransformChange());
     }
 
     /**
@@ -61,10 +67,12 @@ export abstract class Component extends CullableObject {
 
     public setInputPortCount(val: number): void {
         this.inputs.setPortCount(val);
+        this.onTransformChange();
     }
 
     public setOutputPortCount(val: number): void {
         this.outputs.setPortCount(val);
+        this.onTransformChange();
     }
 
     public setPos(v: Vector): void {
@@ -82,10 +90,17 @@ export abstract class Component extends CullableObject {
         }
 
         this.transform.setPos(v);
+        this.onTransformChange();
     }
 
     public setAngle(a: number): void {
         this.transform.setAngle(a);
+        this.onTransformChange();
+    }
+
+    public setRotationAbout(a: number, c: Vector): void {
+        this.transform.setRotationAbout(a, c);
+        this.onTransformChange();
     }
 
 
@@ -109,7 +124,8 @@ export abstract class Component extends CullableObject {
      *           false otherwise
      */
     public isWithinSelectBounds(v: Vector): boolean {
-        return RectContains(this.getTransform(), v) && !this.isWithinPressBounds(v);
+        return RectContains(this.getTransform(), v) &&
+                !this.isWithinPressBounds(v);
     }
 
 
@@ -121,7 +137,7 @@ export abstract class Component extends CullableObject {
         return this.getInputPort(i).getWorldTargetPos();
     }
 
-    public getInputPorts(): Array<InputPort> {
+    public getInputPorts(): InputPort[] {
         return this.inputs.getPorts();
     }
 
@@ -129,9 +145,11 @@ export abstract class Component extends CullableObject {
         return this.inputs.getCount();
     }
 
-    public getInputs(): Array<Wire> {
-        // Get each wire connected to each InputPort and then filter out the null ones
-        return this.getInputPorts().map((p) => p.getInput()).filter((w) => w != null);
+    public getInputs(): Wire[] {
+        // Get each wire connected to each InputPort
+        //  and then filter out the null ones
+        return this.getInputPorts().map((p) => p.getInput())
+                .filter((w) => w != null);
     }
 
     public numInputs(): number {
@@ -146,7 +164,7 @@ export abstract class Component extends CullableObject {
         return this.getOutputPort(i).getWorldTargetPos();
     }
 
-    public getOutputPorts(): Array<OutputPort> {
+    public getOutputPorts(): OutputPort[] {
         return this.outputs.getPorts();
     }
 
@@ -154,17 +172,19 @@ export abstract class Component extends CullableObject {
         return this.outputs.getCount();
     }
 
-    public getOutputs(): Array<Wire> {
+    public getOutputs(): Wire[] {
         // Accumulate all the OutputPort connections
-        return this.getOutputPorts().reduce((acc, p) => acc.concat(p.getConnections()), []);
+        return this.getOutputPorts().reduce(
+            (acc, p) => acc.concat(p.getConnections()), []
+        );
     }
 
     public numOutputs(): number {
         return this.outputs.length;
     }
 
-    public getPorts(): Array<Port> {
-        return (<Array<Port>>this.getInputPorts()).concat(this.getOutputPorts());
+    public getPorts(): Port[] {
+        return (<Port[]>this.getInputPorts()).concat(this.getOutputPorts());
     }
 
 
@@ -181,44 +201,40 @@ export abstract class Component extends CullableObject {
     }
 
     public getTransform(): Transform {
-        return this.transform;
+        return this.transform.copy();
     }
 
 
     public getMinPos(): Vector {
-        let min = V(Infinity, Infinity);
+        const min = V(Infinity);
+
         // Find minimum pos from corners of transform
-        this.transform.getCorners().forEach((v) => {
-            v = v.sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
-            min = Vector.min(min, v);
-        });
+        const corners = this.transform.getCorners().map(
+            v => v.sub(DEFAULT_BORDER_WIDTH)
+        );
 
         // Find minimum pos from ports
-        this.getPorts().forEach((p) => {
-            let v = p.getWorldTargetPos();
-            v = v.sub(V(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH, IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH));
-            min = Vector.min(min, v);
-        });
+        const ports = this.getPorts().map(
+            p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+        );
 
-        return min;
+        return Vector.min(min, ...corners, ...ports);
     }
 
     public getMaxPos(): Vector {
-        let max = V(-Infinity, -Infinity);
+        const max = V(-Infinity);
+
         // Find maximum pos from corners of transform
-        this.transform.getCorners().forEach((v) => {
-            v = v.add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
-            max = Vector.max(max, v);
-        });
+        const corners = this.transform.getCorners().map(
+            v => v.add(DEFAULT_BORDER_WIDTH)
+        );
 
         // Find maximum pos from ports
-        this.getPorts().forEach((p) => {
-            let v = p.getWorldTargetPos();
-            v = v.add(V(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH, IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH));
-            max = Vector.max(max, v);
-        });
+        const ports = this.getPorts().map(
+            p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+        );
 
-        return max;
+        return Vector.max(max, ...corners, ...ports);
     }
 
 
