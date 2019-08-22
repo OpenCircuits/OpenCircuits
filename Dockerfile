@@ -23,9 +23,7 @@ RUN npm install
 RUN npm run install:go
 RUN npm run build
 RUN npm run build:go
-
-# Change work directory for running php
-#WORKDIR /www/build
+RUN npm run build:css
 
 # Command to run at start of container
-CMD npm start
+CMD cd ./build && ./server
