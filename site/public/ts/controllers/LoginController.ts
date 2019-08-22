@@ -32,8 +32,7 @@ export const LoginController = (() => {
         loginHeaderContainer.addClass("hide");
         saveHeaderButton.removeClass("hide");
         logoutHeaderButton.removeClass("hide");
-        if (LoginController.IsOpen())
-            LoginController.Toggle();
+        LoginController.Hide();
     }
 
     const onLogout = function(): void {
@@ -75,16 +74,21 @@ export const LoginController = (() => {
         onNoAuthLogin(username);
     }
 
-    const toggle = function(): void {
-        loginPopup.toggleClass("invisible");
-        overlay.toggleClass("invisible");
+    const show = function(): void {
+        loginPopup.removeClass("invisible");
+        overlay.removeClass("invisible");
+    }
+    const hide = function(): void {
+        loginPopup.addClass("invisible");
+        overlay.addClass("invisible");
     }
 
     return {
         Init: async function(): Promise<number> {
             isOpen = false;
 
-            loginHeaderButton.click(() => LoginController.Toggle());
+            loginHeaderButton.click(() => LoginController.Show());
+            overlay.click(() => LoginController.Hide());
 
             logoutHeaderButton.click(async () => {
                 if (authState)
@@ -92,10 +96,6 @@ export const LoginController = (() => {
                 onLogout();
             });
 
-            overlay.click(() => {
-                if (LoginController.IsOpen())
-                    LoginController.Toggle();
-            });
 
             // Setup each auth method if they are loaded in the page
             if (googleAuthMeta.length > 0) {
@@ -105,9 +105,9 @@ export const LoginController = (() => {
                 // Render sign in button
                 gapi.signin2.render("login-popup-google-signin", {
                     "scope": "profile email",
-                    "width": 240,
-                    "height": 50,
-                    "longtitle": true,
+                    "width": 120,
+                    "height": 36,
+                    "longtitle": false,
                     "onsuccess": onGoogleLogin,
                     "onfailure": onLoginError
                 });
@@ -128,12 +128,19 @@ export const LoginController = (() => {
 
             return 1;
         },
-        Toggle: function(): void {
+        Show: function(): void {
             if (disabled)
                 return;
 
-            isOpen = !isOpen;
-            toggle();
+            isOpen = true;
+            show();
+        },
+        Hide: function(): void {
+            if (disabled)
+                return;
+
+            isOpen = false;
+            hide();
         },
         IsOpen: function(): boolean {
             return isOpen;
