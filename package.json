@@ -18,6 +18,7 @@
     "@types/jspdf": "^1.3.1",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
+    "concurrently": "^4.1.2",
     "copy-webpack-plugin": "^4.6.0",
     "eslint": "^6.0.1",
     "hammerjs": "^2.0.8",
@@ -34,19 +35,22 @@
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "install:go": "go get -u github.com/gin-gonic/gin github.com/gin-gonic/contrib/sessions golang.org/x/oauth2 golang.org/x/oauth2/google google.golang.org/api/oauth2/v2",
     "build": "webpack --mode=development",
-    "build:go": "go build -o ./build/server ./site/go",
     "build:prod": "webpack --mode=production",
-    "build:docker": "docker build -t opencircuits/opencircuits .",
+    "build:go": "go build -o ./build/server ./site/go",
     "build:css": "node-sass ./site/public/scss -o ./build/css",
-    "build:all": "npm run build && npm run build:go && npm run build:css",
-    "start": "cd ./build && opener http://localhost:8080 && ./server",
-    "start:docker": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
-    "stop:docker": "docker container stop opencircuits && docker container rm opencircuits",
-    "test": "jest",
+    "build:all": "concurrently \"npm:build\" \"npm:build:go\" \"npm:build:css\"",
+    "docker:build": "docker build -t opencircuits/opencircuits .",
+    "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
+    "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
+    "fix:css": "csscomb ./site/public/scss",
+    "install:go": "cd ./site/go && go get",
     "lint": "eslint --ext .ts ./site/public/ts",
-    "fix:css": "csscomb ./site/public/scss"
+    "start": "cd ./build && opener http://localhost:8080 && ./server",
+    "test": "jest",
+    "watch:ts": "npm run build -- --watch",
+    "watch:css": "npm run build:css -- --watch",
+    "watch:all": "concurrently \"npm:watch:ts\" \"npm:watch:css\""
   },
   "dependencies": {
     "csscomb": "^4.3.0"
