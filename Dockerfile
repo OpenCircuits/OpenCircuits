@@ -23,6 +23,7 @@ RUN npm install
 RUN npm run install:go
 RUN npm run build
 RUN npm run build:go
+RUN npm run build:css
 
 # Command to run at start of container
 CMD cd ./build && ./server
