@@ -8,7 +8,7 @@ export const Exporter = (() => {
         WriteCircuit: function(designer: CircuitDesigner, name: string): string {
             const writer = new XMLWriter(designer.getXMLName());
 
-            writer.setVersion(1);
+            writer.setVersion(1.1);
             writer.setName(name);
             writer.setThumbnail("data:,"); // TODO: Generate a thumbnail
 
