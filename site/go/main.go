@@ -48,5 +48,5 @@ func main() {
 	api.RegisterRoutes(router, authManager, exampleCsif)
 
 	// TODO: add flags for this
-	router.Run("127.0.0.1:8080")
+	router.Run("0.0.0.0:8080")
 }
