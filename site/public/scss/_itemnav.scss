@@ -18,7 +18,7 @@ $tab-padding: 8px;
 
     border: $header-border;
     border-right-width: $header-border-width;
-    background-color: rgba($background-color, .7);
+    background-color: rgba($background-color, 0.7);
 
     &__move {
         left: -$itemnav-width - $header-border-width;
@@ -30,7 +30,7 @@ $tab-padding: 8px;
         margin-bottom: 15px;
 
         cursor: default;
-        transition: .5s;
+        transition: 0.5s;
         text-align: center;
 
         color: #fff;
@@ -44,7 +44,7 @@ $tab-padding: 8px;
         padding: 1vh 1vh 1vh 1vh;
 
         cursor: pointer;
-        transition: .3s;
+        transition: 0.3s;
 
         color: darken($secondary-color, 5%);
     }
@@ -65,13 +65,13 @@ $tab-padding: 8px;
     padding: 0 $tab-padding 0 $tab-padding;
 
     cursor: pointer;
-    transition: .5s;
+    transition: 0.5s;
 
     color: #000;
     border: $header-border;
     border-width: $header-border-width;
     border-bottom-right-radius: 15px;
-    background-color: rgba($background-color, .7);
+    background-color: rgba($background-color, 0.7);
 
     &:after {
         content: '+';

@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import ClientConfig = gapi.auth2.ClientConfig;
 
 import {GetCookie} from "../utils/Cookies";
@@ -8,12 +10,14 @@ import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
 
 export const LoginController = (() => {
-    const loginPopup = document.getElementById("login-popup");
-    const overlay = document.getElementById("overlay");
+    const loginPopup = $("#login-popup");
+    const overlay = $("#overlay");
 
-    const loginHeaderContainer = document.getElementById("header-login-container");
-    const loginHeaderButton = document.getElementById("header-signin-button");
-    const logoutHeaderButton = document.getElementById("header-signout-button");
+    const loginHeaderContainer = $("#header-login-container");
+    const loginHeaderButton = $("#header-signin-button");
+    const logoutHeaderButton = $("#header-signout-button");
+
+    const saveHeaderButton = $("#header-save-button");
 
     let isOpen = false;
     let disabled = false;
@@ -21,20 +25,21 @@ export const LoginController = (() => {
     let authState: AuthState = undefined;
 
     // Put authentication type meta-tags here (used to determine if an auth method is enabled)
-    const noAuthMeta = document.getElementById('no_auth_enable');
-    const googleAuthMeta = document.getElementById('google-signin-client_id');
+    const noAuthMeta = $("#no_auth_enable");
+    const googleAuthMeta = $("#google-signin-client_id");
 
     const onLogin = function(): void {
-        loginHeaderContainer.classList.add("hide");
-        logoutHeaderButton.classList.remove("hide");
-        if (LoginController.IsOpen())
-            LoginController.Toggle();
+        loginHeaderContainer.addClass("hide");
+        saveHeaderButton.removeClass("hide");
+        logoutHeaderButton.removeClass("hide");
+        LoginController.Hide();
     }
 
     const onLogout = function(): void {
         authState = undefined;
-        loginHeaderContainer.classList.remove("hide");
-        logoutHeaderButton.classList.add("hide");
+        loginHeaderContainer.removeClass("hide");
+        saveHeaderButton.addClass("hide");
+        logoutHeaderButton.addClass("hide");
     }
 
     const onLoginError = function(e: {error: string}): void {
@@ -61,7 +66,7 @@ export const LoginController = (() => {
     }
 
     const onNoAuthSubmitted = function(): void {
-        const username = (<HTMLInputElement>document.getElementById("no-auth-user-input")).value;
+        const username = $("#no-auth-user-input").val() as string;
         if (username === "") {
             alert("User Name must not be blank");
             return;
@@ -69,68 +74,73 @@ export const LoginController = (() => {
         onNoAuthLogin(username);
     }
 
-    const toggle = function(): void {
-        loginPopup.classList.toggle("invisible");
-        overlay.classList.toggle("invisible");
+    const show = function(): void {
+        loginPopup.removeClass("invisible");
+        overlay.removeClass("invisible");
+    }
+    const hide = function(): void {
+        loginPopup.addClass("invisible");
+        overlay.addClass("invisible");
     }
 
     return {
         Init: async function(): Promise<number> {
             isOpen = false;
 
-            loginHeaderButton.onclick = () => {
-                LoginController.Toggle();
-            };
+            loginHeaderButton.click(() => LoginController.Show());
+            overlay.click(() => LoginController.Hide());
 
-            logoutHeaderButton.onclick = async () => {
+            logoutHeaderButton.click(async () => {
                 if (authState)
                     await authState.logOut();
                 onLogout();
-            };
-
-            overlay.addEventListener("click", () => {
-                if (LoginController.IsOpen())
-                    LoginController.Toggle();
             });
 
+
             // Setup each auth method if they are loaded in the page
-            if (googleAuthMeta) {
+            if (googleAuthMeta.length > 0) {
                 // Load GAPI script
                 await LoadDynamicScript("https://apis.google.com/js/platform.js");
 
                 // Render sign in button
-                gapi.signin2.render('login-popup-google-signin', {
-                    'scope': 'profile email',
-                    'width': 240,
-                    'height': 50,
-                    'longtitle': true,
-                    'onsuccess': onGoogleLogin,
-                    'onfailure': onLoginError
+                gapi.signin2.render("login-popup-google-signin", {
+                    "scope": "profile email",
+                    "width": 120,
+                    "height": 36,
+                    "longtitle": false,
+                    "onsuccess": onGoogleLogin,
+                    "onfailure": onLoginError
                 });
 
                 // Load 'auth2' from GAPI and then initialize w/ meta-data
-                await new Promise<void>((resolve) => gapi.load('auth2', resolve));
+                await new Promise<void>((resolve) => gapi.load("auth2", resolve));
                 await gapi.auth2.init(new class implements ClientConfig {
                     // Written like this to make ESLint happy
-                    public client_id?: string = googleAuthMeta.getAttribute("content");
+                    public client_id?: string = googleAuthMeta[0].getAttribute("content");
                 }).then(async (_) => {}); // Have to explicitly call .then
-
             }
-            if (noAuthMeta) {
+            if (noAuthMeta.length > 0) {
                 const username = GetCookie("no_auth_username");
                 if (username)
                     onNoAuthLogin(username);
-                document.getElementById("no-auth-submit").onclick = onNoAuthSubmitted;
+                $("#no-auth-submit").click(onNoAuthSubmitted);
             }
 
             return 1;
         },
-        Toggle: function(): void {
+        Show: function(): void {
             if (disabled)
                 return;
 
-            isOpen = !isOpen;
-            toggle();
+            isOpen = true;
+            show();
+        },
+        Hide: function(): void {
+            if (disabled)
+                return;
+
+            isOpen = false;
+            hide();
         },
         IsOpen: function(): boolean {
             return isOpen;

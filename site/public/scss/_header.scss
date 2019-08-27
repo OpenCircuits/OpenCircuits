@@ -5,6 +5,8 @@ $header-total-height: $header-height + 2*$header-padding + $header-border-width;
 
 $header-border: 0 solid $secondary-color;
 
+$header-button-height: 30px;
+
 header {
     position: fixed;
     z-index: 3;
@@ -20,29 +22,53 @@ header {
 
 
 .header__left {
-    float: left;
+    margin-left: 7px;
 
-    margin-top: $header-height/2 - 25px/2;
+    & div {
+        float: left;
 
-    border: 0;
+        height: $header-height - 2*$header-padding;
+        margin-top: $header-padding;
 
-    &__sidenavbutton {
-        font-size: 24px;
+        cursor: pointer;
+    }
+    & button {
+        height: $header-button-height;
+        line-height: $header-button-height;
+        margin-top: $header-padding;
+        padding-right: 7px;
+        padding-left: 7px;
 
         cursor: pointer;
 
-        color: $secondary-color;
-        outline: none;
+        color: #ddd;
+        border-radius: 4px;
+        background-color: $success-color;
+        &:hover {
+            color: #ccc;
+            border-color: #aaa;
+            background-color: darken($success-color, 10%);
+        }
     }
-    &__projectname {
+    & input {
         font-size: 24px;
 
-        width: 20vw;
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        height: $header-height - 2*$header-padding;
+        margin-right: 10px;
 
         color: $secondary-color;
     }
-}
+    & span {
+        font-size: 24px;
+        line-height: $header-height - 2*$header-padding;
 
+        margin-right: 10px;
+        color: $secondary-color;
+
+        vertical-align: middle;
+    }
+}
 
 .header__center__logo {
     position: absolute;
@@ -64,7 +90,7 @@ header {
 
 
 .header__right {
-    margin-right: 1%;
+    margin-right: 14px;
 
     & div {
         float: right;
@@ -119,7 +145,7 @@ header {
 
             border-radius: 6px 0 6px 6px;
             background-color: #fff;
-            box-shadow: 0 4px 4px 0 rgba(0,0,0,.2);
+            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
 
             & h1 {
                 font-size: 1.5em;
@@ -183,7 +209,8 @@ header {
         & button {
             float: right;
 
-            height: 30px;
+            height: $header-button-height;
+            line-height: $header-button-height;
             margin-top: $header-padding;
             margin-left: 0;
             padding-right: 5px;

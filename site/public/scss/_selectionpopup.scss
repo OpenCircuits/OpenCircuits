@@ -8,7 +8,7 @@
     border: 1px solid $secondary-color;
     border-radius: 3px;
     outline: none;
-    background-color: rgba(white, .8);
+    background-color: rgba(white, 0.8);
 
     & div {
         margin-top: 6px;
@@ -20,8 +20,8 @@
         padding: 2px;
 
         color: $secondary-color;
-        border: solid 2px rgba($background-color, .5);
-        background-color: rgba(white, .8);
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, 0.8);
     }
     & input[type='text'],
     input[type='color'] {
@@ -30,7 +30,7 @@
     }
 
     & button {
-        font-size: .8em;
+        font-size: 0.8em;
 
         width: 100%;
         margin-top: 5px;

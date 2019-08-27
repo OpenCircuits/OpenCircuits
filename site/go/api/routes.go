@@ -1,19 +1,17 @@
 package api
 
 import (
+	"fmt"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 )
 
-// RegisterHandlers setups up the API routes with the gin Engine
-func RegisterHandlers(e *gin.Engine, manager auth.AuthenticationManager) {
-
-	e.GET("api/example/:id", getExampleCircuitHandler)
-
-	// A toy API route for testing that authentication headers are handled correctly
-	e.POST("api/ping", func(c *gin.Context) {
+func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gin.Context, userId model.UserId)) func (c *gin.Context) {
+	return func(c* gin.Context) {
 		parts := strings.SplitN(c.GetHeader("auth"), " ", 2)
 		if len(parts) != 2 {
 			c.JSON(http.StatusBadRequest, nil)
@@ -24,7 +22,7 @@ func RegisterHandlers(e *gin.Engine, manager auth.AuthenticationManager) {
 			c.JSON(http.StatusBadRequest, struct {
 				message string
 			}{
-				message: "Cannot call authenticated ping method without valid authentication header",
+				message: "Cannot call authenticated route without valid authentication header",
 			})
 			return
 		}
@@ -33,11 +31,16 @@ func RegisterHandlers(e *gin.Engine, manager auth.AuthenticationManager) {
 			c.JSON(http.StatusBadRequest, nil)
 			return
 		}
-		println("PING from username " + id)
-		c.JSON(http.StatusOK, struct {
-			message string
-		}{
-			message: "Thank you for pinging our API",
-		})
-	})
+		handler(c, id)
+	}
+}
+
+func pingHandler(c *gin.Context, userId model.UserId) {
+	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
+}
+
+func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, csif interfaces.CircuitStorageInterfaceFactory) {
+	// TODO: api versioning
+	router.GET("/api/ping", authenticatedHandler(manager, pingHandler))
+	router.GET("/api/example/:id", getExampleCircuitHandler(csif))
 }

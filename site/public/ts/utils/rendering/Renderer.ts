@@ -120,7 +120,7 @@ export class Renderer {
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {
         this.save();
         this.context.font = FONT;
-        this.context.fillStyle = '#000';
+        this.context.fillStyle = "#000";
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
         this.context.fillText(txt, pos.x, pos.y);

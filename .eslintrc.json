@@ -14,6 +14,7 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
+        "quotes": ["warn", "double"],
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/ban-types": "error",

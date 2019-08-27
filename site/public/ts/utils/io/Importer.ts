@@ -17,7 +17,7 @@ export const Importer = (() => {
             if (reader.getVersion() == -1)
                 ResolveVersionConflict(reader);
 
-            designer.load(reader.getRoot());
+            designer.load(reader.getContentsNode());
 
             return reader.getName();
         },

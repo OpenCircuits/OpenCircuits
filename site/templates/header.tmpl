@@ -1,10 +1,15 @@
 {{define "header"}}
 <header id="header">
     <div class="header__left">
-        <span id="header-sidenav-open-tab" role="button" tabindex="0"
-              class="header__left__sidenavbutton">&#9776;</span>
-        <input id="header-project-name-input" class="header__left__projectname" type="text"
-               value="Untitled Circuit*" alt="Name of project">
+        <div>
+            <span id="header-sidenav-open-tab" role="button" tabindex="0">&#9776;</span>
+        </div>
+        <div>
+            <input id="header-project-name-input" type="text" value="Untitled Circuit*" alt="Name of project">
+        </div>
+        <div>
+            <button id="header-save-button" class="hide">Save</button>
+        </div>
     </div>
 
     <div class="header__center">
