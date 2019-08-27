@@ -2,8 +2,8 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"html/template"
@@ -61,30 +61,32 @@ func getBustedName(path string) string {
 	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
 }
 
-func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
-	session := sessions.Default(c)
-	userID := session.Get("user-id")
-	loggedIn := userID != nil
+func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		userID := session.Get("user-id")
+		loggedIn := userID != nil
 
-	authData := struct {
-		Headers []template.HTML
-		Buttons []template.HTML
-	}{}
-	for _, a := range manager.AuthMethods {
-		authData.Headers = append(authData.Headers, a.GetLoginHeader())
-		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+		authData := struct {
+			Headers []template.HTML
+			Buttons []template.HTML
+		}{}
+		for _, a := range manager.AuthMethods {
+			authData.Headers = append(authData.Headers, a.GetLoginHeader())
+			authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+		}
+
+		exampleCircuits := examplesCsif.CreateCircuitStorageInterface().EnumerateCircuits("example")
+
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"examples":  exampleCircuits,
+			"navConfig": navConfig,
+			"l":         loggedIn,
+			"userId":    userID,
+			"authData":  authData,
+			"bundleJs":  getBustedName("./Bundle.js"),
+		})
 	}
-
-	exampleCircuits := api.GetExamples()
-
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"examples":  exampleCircuits,
-		"navConfig": navConfig,
-		"l":         loggedIn,
-		"userId":    userID,
-		"authData":  authData,
-		"bundleJs":  getBustedName("./Bundle.js"),
-	})
 }
 
 func noCacheHandler(path string) gin.HandlerFunc {

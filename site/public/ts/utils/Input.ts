@@ -43,28 +43,28 @@ export class Input {
 
     private hookupKeyboardEvents(): void {
         // Keyboard events
-        window.addEventListener('keydown', (e: KeyboardEvent) => {
+        window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyDown(e.keyCode)
         }, false);
-        window.addEventListener('keyup',   (e: KeyboardEvent) => {
+        window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e.keyCode)
         }, false);
 
-        window.addEventListener('blur', (_: FocusEvent) => this.onBlur());
+        window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
     }
 
     private hookupMouseEvents(): void {
         // Mouse events
-        this.canvas.addEventListener('click',      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener('dblclick',   (_: MouseEvent) => this.onDoubleClick(), false);
-        this.canvas.addEventListener('wheel',      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener('mousedown',  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener('mouseup',    (e: MouseEvent) => this.onMouseUp(e.button), false);
-        this.canvas.addEventListener('mousemove',  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        this.canvas.addEventListener('mouseenter', (_: MouseEvent) => this.onMouseEnter(), false);
-        this.canvas.addEventListener('mouseleave', (_: MouseEvent) => this.onMouseLeave(), false);
+        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("dblclick",   (_: MouseEvent) => this.onDoubleClick(), false);
+        this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
+        this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
+        this.canvas.addEventListener("mouseleave", (_: MouseEvent) => this.onMouseLeave(), false);
     }
 
     private hookupTouchEvents(): void {
@@ -73,17 +73,17 @@ export class Input {
         };
 
         // Touch screen events
-        this.canvas.addEventListener('touchstart', (e: TouchEvent) => {
+        this.canvas.addEventListener("touchstart", (e: TouchEvent) => {
             this.onTouchStart(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
-        this.canvas.addEventListener('touchmove', (e: TouchEvent) => {
+        this.canvas.addEventListener("touchmove", (e: TouchEvent) => {
             this.onTouchMove(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
-        this.canvas.addEventListener('touchend', (e: TouchEvent) => {
+        this.canvas.addEventListener("touchend", (e: TouchEvent) => {
             this.onTouchEnd();
             e.preventDefault();
         }, false);

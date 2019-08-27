@@ -35,7 +35,7 @@ export const ItemNavController = (() => {
                     continue;
 
                 const xmlId = child.dataset.xmlid;
-                const not = child.dataset.not == 'true';
+                const not = child.dataset.not == "true";
 
                 const onClick = (): void => {
                     place(CreateComponentFromXML(xmlId, not), false);

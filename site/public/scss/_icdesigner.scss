@@ -8,7 +8,7 @@
         color: $secondary-color;
         border: 1px solid $secondary-color;
         border-radius: 3px;
-        background-color: rgba(white, .9);
+        background-color: rgba(white, 0.9);
     }
 
     &__buttons {
@@ -32,20 +32,20 @@
         &__confirm {
             left: 8vw;
 
-            background-color: #4caf50;
+            background-color: $success-color;
 
             &:active {
-                background-color: #3e8e41;
+                background-color: darken($success-color, 10%);
             }
         }
 
         &__cancel {
             right: 8vw;
 
-            background-color: #f44336;
+            background-color: $danger-color;
 
             &:active {
-                background-color: #ba000d;
+                background-color: darken($danger-color, 10%);
             }
         }
     }
