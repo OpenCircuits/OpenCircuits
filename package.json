@@ -44,7 +44,7 @@
     "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
     "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
     "fix:css": "csscomb ./site/public/scss",
-    "install:go": "cd ./site/go && go get",
+    "install:go": "go get -d ./site/go/...",
     "lint": "eslint --ext .ts ./site/public/ts",
     "start": "concurrently \"cd ./build && ./server\" \"opener http://localhost:8080\"",
     "test": "jest",
