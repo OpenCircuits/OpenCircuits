@@ -6,7 +6,9 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-type MemCircuitStorageInterfaceFactory struct {
+type memCircuitStorageInterfaceFactory struct {
+	// Since the storage supports the interface this is fine.  For other kinds of storage, this pattern
+	//	of returning a single global object may not be suitable.
 	memInterface *memCircuitStorage
 }
 
@@ -16,16 +18,15 @@ type memCircuitStorage struct {
 	nextId model.CircuitId
 }
 
+func NewMemStorageInterfaceFactory() interfaces.CircuitStorageInterfaceFactory {
+	return &memCircuitStorageInterfaceFactory{&memCircuitStorage{}}
+}
+
 func (mem *memCircuitStorage) inStore(id model.CircuitId) bool {
 	return id < int64(len(mem.m))
 }
 
-func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
-	// Since the storage supports the interface this is fine.  For other kinds of storage, this pattern
-	//	of returning a single global object may not be suitable.
-	if m.memInterface == nil {
-		m.memInterface = &memCircuitStorage{}
-	}
+func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	return m.memInterface
 }
 

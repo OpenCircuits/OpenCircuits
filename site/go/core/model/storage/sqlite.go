@@ -17,15 +17,16 @@ type sqliteCircuitStorageInterface struct {
 	enumCircuitsStmt *sql.Stmt
 }
 
-type SqliteCircuitStorageInterfaceFactory struct {
+type sqliteCircuitStorageInterfaceFactory struct {
 	Path   string
 	sqlite *sqliteCircuitStorageInterface
 }
 
-func (dbFactory *SqliteCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
-	if dbFactory.sqlite == nil {
-		dbFactory.sqlite = genSqliteInterface(dbFactory.Path)
-	}
+func NewSqliteStorageInterfaceFactory(dbPath string) interfaces.CircuitStorageInterfaceFactory {
+	return &sqliteCircuitStorageInterfaceFactory{dbPath, genSqliteInterface(dbPath)}
+}
+
+func (dbFactory *sqliteCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	return dbFactory.sqlite
 }
 

@@ -33,9 +33,9 @@ func main() {
 	// Set up the storage interface
 	var userCsif interfaces.CircuitStorageInterfaceFactory
 	if *userCsifConfig == "mem" {
-		userCsif = &storage.MemCircuitStorageInterfaceFactory{}
+		userCsif = storage.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
-		userCsif = &storage.SqliteCircuitStorageInterfaceFactory{Path: *sqliteDbPathConfig}
+		userCsif = storage.NewSqliteStorageInterfaceFactory(*sqliteDbPathConfig)
 	}
 
 	// Create the example circuit storage interface
