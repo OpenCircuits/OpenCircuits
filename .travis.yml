@@ -15,6 +15,7 @@ install:
 
 script:
     - npm run build
+    - npm run build:css
     - npm run test -- --maxWorkers=2
     - npm run lint
 
