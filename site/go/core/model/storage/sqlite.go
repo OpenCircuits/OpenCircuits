@@ -54,7 +54,7 @@ func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
 	if err != nil {
 		panic(err)
 	}
-	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=?, name=?, ownerId=?, WHERE id=?")
+	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=?, name=?, ownerId=? WHERE id=?")
 	if err != nil {
 		panic(err)
 	}
