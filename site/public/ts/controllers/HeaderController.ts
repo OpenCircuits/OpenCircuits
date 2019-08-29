@@ -47,7 +47,7 @@ export const HeaderController = (() => {
 
     function SetupIOInputs(): void {
         $("input#header-file-input").change(function(): void {
-            Importer.LoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
+            Importer.PromptLoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
         });
 
         $("#header-download-button").click(() => {

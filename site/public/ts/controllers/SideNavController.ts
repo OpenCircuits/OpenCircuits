@@ -52,7 +52,7 @@ export const SideNavController = (() => {
     // Callback
     const loadExampleCircuit = async function(id: string): Promise<void> {
         const contents = await LoadExampleCircuit(id);
-        Importer.LoadCircuitFromString(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
+        Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
         if (isOpen)
             toggle();
     }
