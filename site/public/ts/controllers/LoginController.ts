@@ -8,6 +8,7 @@ import {LoadDynamicScript} from "../utils/Script";
 import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
+import {Ping} from "../utils/api/Ping";
 
 export const LoginController = (() => {
     const loginPopup = $("#login-popup");
@@ -28,25 +29,25 @@ export const LoginController = (() => {
     const noAuthMeta = $("#no_auth_enable");
     const googleAuthMeta = $("#google-signin-client_id");
 
-    const onLogin = function(): void {
+    function OnLogin(): void {
         loginHeaderContainer.addClass("hide");
         saveHeaderButton.removeClass("hide");
         logoutHeaderButton.removeClass("hide");
         LoginController.Hide();
     }
 
-    const onLogout = function(): void {
+    function OnLogout(): void {
         authState = undefined;
         loginHeaderContainer.removeClass("hide");
         saveHeaderButton.addClass("hide");
         logoutHeaderButton.addClass("hide");
     }
 
-    const onLoginError = function(e: {error: string}): void {
+    function OnLoginError(e: {error: string}): void {
         console.error(e);
     }
 
-    const setAuthState = async function(as: AuthState): Promise<void> {
+    async function SetAuthState(as: AuthState): Promise<void> {
         if (!authState) {
             authState = as;
             return;
@@ -55,30 +56,30 @@ export const LoginController = (() => {
         await authState.logOut().then(() => authState = as);
     }
 
-    const onGoogleLogin = async function(_: gapi.auth2.GoogleUser): Promise<void> {
-        await setAuthState(new GoogleAuthState());
-        onLogin();
+    async function OnGoogleLogin(_: gapi.auth2.GoogleUser): Promise<void> {
+        await SetAuthState(new GoogleAuthState());
+        OnLogin();
     }
 
-    const onNoAuthLogin = function(username: string): void {
-        setAuthState(new NoAuthState(username));
-        onLogin();
+    function OnNoAuthLogin(username: string): void {
+        SetAuthState(new NoAuthState(username));
+        OnLogin();
     }
 
-    const onNoAuthSubmitted = function(): void {
+    function OnNoAuthSubmitted(): void {
         const username = $("#no-auth-user-input").val() as string;
         if (username === "") {
             alert("User Name must not be blank");
             return;
         }
-        onNoAuthLogin(username);
+        OnNoAuthLogin(username);
     }
 
-    const show = function(): void {
+    function Show(): void {
         loginPopup.removeClass("invisible");
         overlay.removeClass("invisible");
     }
-    const hide = function(): void {
+    function Hide(): void {
         loginPopup.addClass("invisible");
         overlay.addClass("invisible");
     }
@@ -93,7 +94,11 @@ export const LoginController = (() => {
             logoutHeaderButton.click(async () => {
                 if (authState)
                     await authState.logOut();
-                onLogout();
+                OnLogout();
+            });
+
+            saveHeaderButton.click(async () => {
+                console.log(await Ping("no_auth", "bobby"));
             });
 
 
@@ -108,8 +113,8 @@ export const LoginController = (() => {
                     "width": 120,
                     "height": 36,
                     "longtitle": false,
-                    "onsuccess": onGoogleLogin,
-                    "onfailure": onLoginError
+                    "onsuccess": OnGoogleLogin,
+                    "onfailure": OnLoginError
                 });
 
                 // Load 'auth2' from GAPI and then initialize w/ meta-data
@@ -122,8 +127,8 @@ export const LoginController = (() => {
             if (noAuthMeta.length > 0) {
                 const username = GetCookie("no_auth_username");
                 if (username)
-                    onNoAuthLogin(username);
-                $("#no-auth-submit").click(onNoAuthSubmitted);
+                    OnNoAuthLogin(username);
+                $("#no-auth-submit").click(OnNoAuthSubmitted);
             }
 
             return 1;
@@ -133,14 +138,14 @@ export const LoginController = (() => {
                 return;
 
             isOpen = true;
-            show();
+            Show();
         },
         Hide: function(): void {
             if (disabled)
                 return;
 
             isOpen = false;
-            hide();
+            Hide();
         },
         IsOpen: function(): boolean {
             return isOpen;
