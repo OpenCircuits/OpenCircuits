@@ -46,7 +46,7 @@
     "fix:css": "csscomb ./site/public/scss",
     "install:go": "go get -d ./site/go/...",
     "lint": "eslint --ext .ts ./site/public/ts",
-    "start": "concurrently \"cd ./build && ./server\" \"opener http://localhost:8080\"",
+    "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
     "test": "jest",
     "watch:ts": "npm run build -- --watch",
     "watch:css": "npm run build:css -- --watch",
