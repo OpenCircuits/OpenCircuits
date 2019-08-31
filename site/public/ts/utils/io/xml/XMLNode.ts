@@ -101,7 +101,7 @@ export class XMLNode {
 
     public getAttribute(tag: string): string {
         const child = this.findChild(tag);
-        if (child)
+        if (child && child.node.childNodes.length > 0)
             return child.node.childNodes[0].nodeValue;
         return "";
     }
