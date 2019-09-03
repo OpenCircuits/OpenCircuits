@@ -93,12 +93,12 @@ func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Cont
 	if circuit == nil {
 		c.XML(http.StatusNotFound, err.Error())
 		return
-	} else {
-		// Only owner can access... for now
-		if circuit.Metadata.Owner != userId {
-			c.XML(http.StatusNotFound, err.Error())
-			return
-		}
+	}
+
+	// Only owner can access... for now
+	if circuit.Metadata.Owner != userId {
+		c.XML(http.StatusNotFound, err.Error())
+		return
 	}
 
 	c.XML(http.StatusOK, circuit)
