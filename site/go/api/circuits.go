@@ -86,6 +86,7 @@ func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Cont
 	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		c.XML(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	storageInterface := m.CreateCircuitStorageInterface()
