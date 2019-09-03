@@ -5,16 +5,30 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
+	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 )
 
-func circuitHandler(m interfaces.CircuitStorageInterfaceFactory, f func (_ interfaces.CircuitStorageInterfaceFactory, _ *gin.Context, _ model.UserId)) func (_ *gin.Context, _ model.UserId) {
+func circuitHandler(m interfaces.CircuitStorageInterfaceFactory, f func(_ interfaces.CircuitStorageInterfaceFactory, _ *gin.Context, _ model.UserId)) func(_ *gin.Context, _ model.UserId) {
 	return func(c *gin.Context, userId model.UserId) {
 		f(m, c, userId)
 	}
+}
+
+func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
+	x, err := ioutil.ReadAll(r)
+	if err != nil {
+		return model.Circuit{}, err
+	}
+
+	var newCircuit model.Circuit
+	err = xml.Unmarshal(x, &newCircuit)
+	if err != nil {
+		return model.Circuit{}, err
+	}
+	return newCircuit, nil
 }
 
 func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -36,14 +50,7 @@ func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 		}
 	}
 
-	x, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	var newCircuit model.Circuit
-	err = xml.Unmarshal(x, &newCircuit)
+	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
 		c.XML(http.StatusBadRequest, err.Error())
 		return
@@ -59,15 +66,7 @@ func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
 	storageInterface := m.CreateCircuitStorageInterface()
 
-	x, err := ioutil.ReadAll(c.Request.Body)
-	log.Print(x)
-	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	var newCircuit model.Circuit
-	err = xml.Unmarshal(x, &newCircuit)
+	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
 		c.XML(http.StatusBadRequest, err.Error())
 		return
