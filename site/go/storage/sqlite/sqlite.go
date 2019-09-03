@@ -1,4 +1,4 @@
-package storage
+package sqlite
 
 import (
 	"database/sql"
@@ -22,7 +22,7 @@ type sqliteCircuitStorageInterfaceFactory struct {
 	sqlite *sqliteCircuitStorageInterface
 }
 
-func NewSqliteStorageInterfaceFactory(dbPath string) interfaces.CircuitStorageInterfaceFactory {
+func NewInterfaceFactory(dbPath string) interfaces.CircuitStorageInterfaceFactory {
 	return &sqliteCircuitStorageInterfaceFactory{dbPath, genSqliteInterface(dbPath)}
 }
 

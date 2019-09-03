@@ -6,7 +6,8 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
+	"github.com/OpenCircuits/OpenCircuits/site/go/storage"
+	"github.com/OpenCircuits/OpenCircuits/site/go/storage/sqlite"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
@@ -35,7 +36,7 @@ func main() {
 	if *userCsifConfig == "mem" {
 		userCsif = storage.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
-		userCsif = storage.NewSqliteStorageInterfaceFactory(*sqliteDbPathConfig)
+		userCsif = sqlite.NewInterfaceFactory(*sqliteDbPathConfig)
 	}
 
 	// Create the example circuit storage interface
