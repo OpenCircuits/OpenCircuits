@@ -9,6 +9,15 @@ import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
 import {AuthState} from "../utils/auth/AuthState";
 import {NoAuthState} from "../utils/auth/NoAuthState";
 import {Ping} from "../utils/api/Ping";
+import {CreateUserCircuit, QueryUserCircuits} from "../utils/api/Circuits";
+import {MainDesignerController} from "./MainDesignerController";
+import {Exporter} from "../utils/io/Exporter";
+import {HeaderController} from "./HeaderController";
+import {XMLReader} from "../utils/io/xml/XMLReader";
+import {XMLNode} from "../utils/io/xml/XMLNode";
+import {CircuitMetadataBuilder} from "../models/CircuitMetadata";
+import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
+import {UserCircuitsListController} from "./UserCircuitsListController";
 
 export const LoginController = (() => {
     const loginPopup = $("#login-popup");
@@ -29,11 +38,13 @@ export const LoginController = (() => {
     const noAuthMeta = $("#no_auth_enable");
     const googleAuthMeta = $("#google-signin-client_id");
 
-    function OnLogin(): void {
+    async function OnLogin(): Promise<void> {
         loginHeaderContainer.addClass("hide");
         saveHeaderButton.removeClass("hide");
         logoutHeaderButton.removeClass("hide");
         LoginController.Hide();
+
+        await UserCircuitsListController.UpdateCircuits(authState);
     }
 
     function OnLogout(): void {
@@ -41,6 +52,8 @@ export const LoginController = (() => {
         loginHeaderContainer.removeClass("hide");
         saveHeaderButton.addClass("hide");
         logoutHeaderButton.addClass("hide");
+
+        UserCircuitsListController.ClearCircuits();
     }
 
     function OnLoginError(e: {error: string}): void {
@@ -61,9 +74,9 @@ export const LoginController = (() => {
         OnLogin();
     }
 
-    function OnNoAuthLogin(username: string): void {
+    async function OnNoAuthLogin(username: string): Promise<void> {
         SetAuthState(new NoAuthState(username));
-        OnLogin();
+        await OnLogin();
     }
 
     function OnNoAuthSubmitted(): void {
@@ -98,7 +111,13 @@ export const LoginController = (() => {
             });
 
             saveHeaderButton.click(async () => {
-                console.log(await Ping("no_auth", "bobby"));
+                console.log(await Ping(authState));
+
+                
+                // console.log(root.getChildren());
+                // const circuit = MainDesignerController.GetDesigner();
+                // const data = Exporter.WriteCircuit(circuit, HeaderController.GetProjectName());
+                // console.log(await CreateUserCircuit("no_auth", "bobby", data));
             });
 
 
@@ -155,11 +174,6 @@ export const LoginController = (() => {
         },
         Disable: function(): void {
             disabled = true;
-        },
-        GetAuthHeader: function(): string {
-            if (!authState)
-                return "";
-            return authState.getAuthHeader();
         }
     }
 
