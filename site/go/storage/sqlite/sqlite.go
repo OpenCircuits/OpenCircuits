@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/gchaincl/dotsql"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// TODO: how much of this can we factor out to a generic SQL implementation?
+// TODO: most of this could be factored into a common sql implementation
 type sqliteCircuitStorageInterface struct {
 	db *sql.DB
 
@@ -17,60 +18,75 @@ type sqliteCircuitStorageInterface struct {
 	enumCircuitsStmt *sql.Stmt
 }
 
-type sqliteCircuitStorageInterfaceFactory struct {
-	Path   string
-	sqlite *sqliteCircuitStorageInterface
+func NewInterfaceFactory(sqliteDir string) (interfaces.CircuitStorageInterfaceFactory, error) {
+	return genSqliteInterface(sqliteDir)
 }
 
-func NewInterfaceFactory(dbPath string) interfaces.CircuitStorageInterfaceFactory {
-	return &sqliteCircuitStorageInterfaceFactory{dbPath, genSqliteInterface(dbPath)}
+func (d *sqliteCircuitStorageInterface) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
+	// Since the sqlite storage interface only needs one instance, it can be its own factory
+	return d
 }
 
-func (dbFactory *sqliteCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
-	return dbFactory.sqlite
+// TODO: remove this when migrations are supported
+func schemaInitialized(db *sql.DB) bool {
+	rows, err := db.Query("SELECT name FROM sqlite_master WHERE type='table' AND name='circuits'")
+	if err != nil {
+		return false
+	}
+	return rows.Next()
 }
 
-func genSqliteInterface(path string) *sqliteCircuitStorageInterface {
+func initializeSchema(db *sql.DB, path string) error {
+	schemaDot, err := dotsql.LoadFromFile(path)
+	if err != nil {
+		return err
+	}
+	// This doesn't set up migrations (intentionally)
+	_, err = schemaDot.Exec(db, "create-circuits-table")
+	return err
+}
+
+func genSqliteInterface(workingDir string) (*sqliteCircuitStorageInterface, error) {
 	var store sqliteCircuitStorageInterface
-	db, err := sql.Open("sqlite3", path)
+	db, err := sql.Open("sqlite3", workingDir+"/db")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	// TODO: we should check db validity be making sure the "version" of the schema is the one this app is compatible with and then each 'migration' updates the schema version
-
-	// TODO: just make this a .sql file
-	createCircuitStmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS circuits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, designer TEXT NOT NULL, ownerId TEXT)")
-	if err != nil {
-		panic(err)
-	}
-	_, err = createCircuitStmt.Exec()
-	if err != nil {
-		panic(err)
+	if !schemaInitialized(db) {
+		err = initializeSchema(db, workingDir+"/schema.sql")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Generate the statements for storing/loading from a generic SQL db
-	store.loadEntryStmt, err = db.Prepare("SELECT id, designer, name, ownerId FROM circuits WHERE id=?")
+	dot, err := dotsql.LoadFromFile(workingDir + "/queries.sql")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	store.storeEntryStmt, err = db.Prepare("UPDATE circuits SET designer=?, name=?, ownerId=? WHERE id=?")
+
+	store.loadEntryStmt, err = dot.Prepare(db, "load-circuit-entry")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	store.createEntryStmt, err = db.Prepare("INSERT INTO circuits(designer, ownerId, name) VALUES (?, ?, ?)")
+	store.storeEntryStmt, err = dot.Prepare(db, "store-circuit-entry")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	store.enumCircuitsStmt, err = db.Prepare("SELECT id, name, ownerId FROM circuits WHERE ownerId=?")
+	store.createEntryStmt, err = dot.Prepare(db, "create-circuit-entry")
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	store.enumCircuitsStmt, err = dot.Prepare(db, "query-user-circuits")
+	if err != nil {
+		return nil, err
 	}
 
 	store.db = db
 
 	// Return success
-	return &store
+	return &store, nil
 }
 
 func (d sqliteCircuitStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {

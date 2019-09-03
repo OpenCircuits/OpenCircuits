@@ -5,21 +5,24 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/storage"
 	"github.com/OpenCircuits/OpenCircuits/site/go/storage/sqlite"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	var err error
+
 	// Parse flags
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	sqliteDbPathConfig := flag.String("dbPath", "circuits.db", "The path to the database file (sqlite only)")
+	sqlitePathConfig := flag.String("sqlitePath", "data/sql/sqlite", "The path to the sqlite working directory")
 	flag.Parse()
 
 	// Register authentication method
@@ -36,7 +39,8 @@ func main() {
 	if *userCsifConfig == "mem" {
 		userCsif = storage.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
-		userCsif = sqlite.NewInterfaceFactory(*sqliteDbPathConfig)
+		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
+		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
 	}
 
 	// Create the example circuit storage interface
