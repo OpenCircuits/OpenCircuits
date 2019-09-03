@@ -93,6 +93,9 @@ export const HeaderController = (() => {
         SetProjectName(name: string): void {
             if (name)
                 projectNameInput.val(name);
+        },
+        GetProjectName(): string {
+            return projectNameInput.val() as string;
         }
     }
 })();

@@ -1,14 +1,15 @@
 import $ from "jquery";
 
-import {AuthType} from "./AuthTypes";
+import {AuthState} from "../auth/AuthState";
 
-export function Ping(authType: AuthType, id: string): Promise<string> {
+export function Ping(auth: AuthState): Promise<string> {
     return $.when(
         $.ajax({
             method: "GET",
             url: "api/ping",
             headers: {
-                "auth": authType + " " + id
+                "authType": auth.getType(),
+                "authId": auth.getId()
             }
         })
     );

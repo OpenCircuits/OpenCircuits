@@ -7,17 +7,11 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strings"
 )
 
 func authenticatedHandler(manager auth.AuthenticationManager, handler func(_ *gin.Context, _ model.UserId)) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		parts := strings.SplitN(c.GetHeader("auth"), " ", 2)
-		if len(parts) != 2 {
-			c.JSON(http.StatusBadRequest, nil)
-			return
-		}
-		am := manager.MatchToken(parts[0])
+		am := manager.MatchToken(c.GetHeader("authType"))
 		if am == nil {
 			c.JSON(http.StatusBadRequest, struct {
 				message string
@@ -26,7 +20,7 @@ func authenticatedHandler(manager auth.AuthenticationManager, handler func(_ *gi
 			})
 			return
 		}
-		id, err := (*am).ExtractIdentity(parts[1])
+		id, err := (*am).ExtractIdentity(c.GetHeader("authId"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, nil)
 			return

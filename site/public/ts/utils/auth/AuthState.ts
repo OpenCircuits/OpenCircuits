@@ -1,7 +1,10 @@
+import {AuthType} from "./AuthTypes";
 
 export interface AuthState {
-    // Gets an authorization header for outgoing requests
-    getAuthHeader(): string;
+    // Gets auth type
+    getType(): AuthType;
+    // Gets auth identification
+    getId(): string;
     // Logs the user out of their session and invalidates this object
     logOut(): Promise<object>;
 }
