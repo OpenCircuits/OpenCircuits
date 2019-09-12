@@ -22,7 +22,7 @@ export class XMLWriter {
         this.metadataNode.addAttribute("thumbnail", data);
     }
 
-    public setVersion(version: number): void {
+    public setVersion(version: string): void {
         this.metadataNode.addAttribute("version", version);
     }
 
