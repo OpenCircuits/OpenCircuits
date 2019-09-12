@@ -1,8 +1,26 @@
 import $ from "jquery";
 
+import {XMLNode} from "../io/xml/XMLNode";
 import {AuthState} from "../auth/AuthState";
+import {CircuitMetadata, CircuitMetadataBuilder} from "../../models/CircuitMetadata";
 
-export function CreateUserCircuit(auth: AuthState, data: string): Promise<string> {
+
+function XMLToCircuitMetadata(xml: XMLDocument | XMLNode): CircuitMetadata {
+    const root = (xml instanceof XMLNode) ? (xml) : (new XMLNode(xml, xml.children[0]));
+    return new CircuitMetadataBuilder()
+            .withId(root.getAttribute("id"))
+            .withName(root.getAttribute("name"))
+            .withDesc(root.getAttribute("desc"))
+            .withOwner(root.getAttribute("owner"))
+            .withThumbnail(root.getAttribute("thumbnail"))
+            .build();
+}
+function XMLToCircuitMetadataList(xml: XMLDocument): CircuitMetadata[] {
+    const root = new XMLNode(xml, xml.children[0]);
+    return root.getChildren().map((metadata) => XMLToCircuitMetadata(metadata));
+}
+
+export function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata> {
     return $.when(
         $.ajax({
             method: "POST",
@@ -13,10 +31,16 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<string
             },
             data: data
         })
-    );
+    ).then((xml: XMLDocument, statusText, xhr) => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+            console.error("Failed to create user circuit!", statusText)
+            return;
+        }
+        return XMLToCircuitMetadata(xml);
+    });
 }
 
-export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<string> {
+export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<CircuitMetadata> {
     return $.when(
         $.ajax({
             method: "PUT",
@@ -27,7 +51,13 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
             },
             data: data
         })
-    );
+    ).then((xml: XMLDocument, statusText, xhr) => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+            console.error("Failed to update user circuit!", statusText)
+            return;
+        }
+        return XMLToCircuitMetadata(xml);
+    });
 }
 
 export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string> {
@@ -43,7 +73,7 @@ export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<str
     );
 }
 
-export function QueryUserCircuits(auth: AuthState): Promise<XMLDocument> {
+export function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[]> {
     return $.when(
         $.ajax({
             method: "GET",
@@ -53,5 +83,11 @@ export function QueryUserCircuits(auth: AuthState): Promise<XMLDocument> {
                 "authId": auth.getId()
             }
         })
-    );
+    ).then((xml: XMLDocument, statusText, xhr) => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+            console.error("Failed to create user circuit!", statusText)
+            return;
+        }
+        return XMLToCircuitMetadataList(xml);
+    });
 }
