@@ -7,6 +7,7 @@ type CircuitMetadata struct {
 	Owner     UserId    `xml:"owner",json:"owner"`
 	Desc      string    `xml:"desc",json:"desc"`
 	Thumbnail string    `xml:"thumbnail",json:"thumbnail"`
+	Version   string    `xml:"version",json:"version"`
 }
 
 // CircuitDesigner is a simple string until we need server-side analysis of circuit content
@@ -31,4 +32,6 @@ func (c *Circuit) Update(newCircuit Circuit) {
 func (m *CircuitMetadata) Update(newMetadata CircuitMetadata) {
 	m.Name = newMetadata.Name
 	m.Desc = newMetadata.Desc
+	m.Thumbnail = newMetadata.Thumbnail
+	m.Version = newMetadata.Version
 }
