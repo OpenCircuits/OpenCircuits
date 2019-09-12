@@ -10,8 +10,8 @@ import {NoAuthState} from "../utils/auth/NoAuthState";
 import {MainDesignerController} from "./MainDesignerController";
 import {Exporter} from "../utils/io/Exporter";
 import {HeaderController} from "./HeaderController";
-import {UserCircuitsListController} from "./UserCircuitsListController";
 import {RemoteController} from "./RemoteController";
+import {SideNavController} from "./SideNavController";
 
 export const LoginController = (() => {
     const loginPopup = $("#login-popup");
@@ -36,7 +36,7 @@ export const LoginController = (() => {
         logoutHeaderButton.removeClass("hide");
         LoginController.Hide();
 
-        UserCircuitsListController.UpdateCircuits();
+        SideNavController.UpdateUserCircuits();
     }
 
     function OnLogout(): void {
@@ -44,7 +44,7 @@ export const LoginController = (() => {
         saveHeaderButton.addClass("hide");
         logoutHeaderButton.addClass("hide");
 
-        UserCircuitsListController.ClearCircuits();
+        SideNavController.ClearUserCircuits();
     }
 
     function OnLoginError(e: {error: string}): void {
@@ -92,7 +92,7 @@ export const LoginController = (() => {
                 const circuit = MainDesignerController.GetDesigner();
                 const data = Exporter.WriteCircuit(circuit, HeaderController.GetProjectName());
                 RemoteController.SaveCircuit(data, async () => {
-                    return UserCircuitsListController.UpdateCircuits();
+                    return SideNavController.UpdateUserCircuits();
                 });
             });
 

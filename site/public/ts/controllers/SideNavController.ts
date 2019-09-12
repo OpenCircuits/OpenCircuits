@@ -1,9 +1,11 @@
-import {LoadExampleCircuit} from "../utils/api/Example";
 import {Importer} from "../utils/io/Importer";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {HeaderController} from "./HeaderController";
+import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
+import {RemoteController} from "./RemoteController";
+import {CircuitMetadata, CircuitMetadataBuilder} from "../models/CircuitMetadata";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -21,6 +23,8 @@ export const SideNavController = (() => {
     let disabled = false;
 
     let editMode = true;
+
+    let userCircuits: SideNavCircuitPreview[] = [];
 
     const toggleEditMode = function(): void {
         editMode = !editMode;
@@ -49,9 +53,7 @@ export const SideNavController = (() => {
         context.classList.toggle("sidenav__shift");
     }
 
-    // Callback
-    const loadExampleCircuit = async function(id: string): Promise<void> {
-        const contents = await LoadExampleCircuit(id);
+    const loadCircuit = function(contents: XMLDocument): void {
         Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
         if (isOpen)
             toggle();
@@ -74,8 +76,31 @@ export const SideNavController = (() => {
             const exampleCircuits = Array.from(exampleCircuitsList.children) as HTMLElement[];
             for (const exampleCircuit of exampleCircuits) {
                 const id = exampleCircuit.id.split("-")[2];
-                exampleCircuit.onclick = () => loadExampleCircuit(id);
+                const name = exampleCircuit.children[1].children[0].innerHTML;
+                const desc = exampleCircuit.children[1].children[1].innerHTML;
+                const data = new CircuitMetadataBuilder()
+                        .withId(id)
+                        .withName(name)
+                        .withDesc(desc)
+                        .withVersion("1.1")
+                        .build();
+                exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, loadCircuit);
             }
+        },
+        ClearUserCircuits(): void {
+            userCircuits.forEach((c) => c.remove());
+            userCircuits = [];
+        },
+        UpdateUserCircuits(): void {
+            SideNavController.ClearUserCircuits();
+
+            RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
+                data.forEach((d) => {
+                    const preview = new SideNavCircuitPreview(d);
+                    preview.onClick(() => RemoteController.LoadUserCircuit(d, loadCircuit));
+                    userCircuits.push(preview);
+                });
+            });
         },
         Toggle: function(): void {
             if (disabled)
