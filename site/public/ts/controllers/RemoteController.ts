@@ -1,6 +1,7 @@
 import {AuthState} from "../utils/auth/AuthState";
 import {CircuitMetadata} from "../models/CircuitMetadata";
-import {CreateUserCircuit, UpdateUserCircuit, QueryUserCircuits} from "../utils/api/Circuits";
+import {CreateUserCircuit, UpdateUserCircuit, QueryUserCircuits, LoadUserCircuit} from "../utils/api/Circuits";
+import {LoadExampleCircuit} from "../utils/api/Example";
 
 export const RemoteController = (() => {
     interface RemoteData {
@@ -10,7 +11,7 @@ export const RemoteController = (() => {
     let promiseChain: Promise<RemoteData> =
             new Promise((resolve, _) => resolve({
                 authState: undefined,
-                metadata: undefined
+                metadata: CircuitMetadata.Default()
             }));
 
     function Chain(body: (data: RemoteData) => Promise<RemoteData | void>, requireAuth: boolean = false): void {
@@ -59,7 +60,7 @@ export const RemoteController = (() => {
         SaveCircuit(circuitData: string, callback: () => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
                 // Decide whether to update current circuit or create new one
-                const metadata: CircuitMetadata = !data.metadata ?
+                const metadata: CircuitMetadata = !data.metadata.getId() ?
                     await CreateUserCircuit(data.authState, circuitData) :
                     await UpdateUserCircuit(data.authState, data.metadata.getId(), circuitData);
 
@@ -75,6 +76,24 @@ export const RemoteController = (() => {
                 const list = await QueryUserCircuits(data.authState);
                 await callback(list);
             }, true);
-        }
+        },
+        LoadExampleCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+            Chain(async (_data: RemoteData) => {
+                const contents = await LoadExampleCircuit(metadata);
+                callback(contents);
+                return {
+                    metadata: metadata
+                };
+            });
+        },
+        LoadUserCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+            Chain(async (data: RemoteData) => {
+                const contents = await LoadUserCircuit(data.authState, metadata.getId());
+                callback(contents);
+                return {
+                    metadata: metadata
+                };
+            });
+        },
     }
 })();
