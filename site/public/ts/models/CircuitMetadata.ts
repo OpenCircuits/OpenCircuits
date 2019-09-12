@@ -5,6 +5,7 @@ export class CircuitMetadata {
     private owner: string;
     private desc: string;
     private thumbnail: string;
+    private version: string;
 
     public constructor(builder: CircuitMetadataBuilder) {
         this.id = builder.id;
@@ -12,6 +13,7 @@ export class CircuitMetadata {
         this.owner = builder.owner;
         this.desc = builder.desc;
         this.thumbnail = builder.thumbnail;
+        this.version = builder.version;
     }
 
     public getId(): string {
@@ -33,6 +35,14 @@ export class CircuitMetadata {
     public getThumbnail(): string {
         return this.thumbnail;
     }
+
+    public getVersion(): string {
+        return this.version;
+    }
+
+    public static Default(): CircuitMetadata {
+        return new CircuitMetadataBuilder().build();
+    }
 }
 
 export class CircuitMetadataBuilder {
@@ -41,13 +51,15 @@ export class CircuitMetadataBuilder {
     public owner: string;
     public desc: string;
     public thumbnail: string;
+    public version: string;
 
     public constructor() {
         this.id = "";
-        this.name = "";
+        this.name = "Untitled Circuit";
         this.owner = "";
         this.desc = "";
         this.thumbnail = "";
+        this.version = "1.1";
     }
 
     public withId(id: string): CircuitMetadataBuilder {
@@ -72,6 +84,11 @@ export class CircuitMetadataBuilder {
 
     public withThumbnail(thumbnail: string): CircuitMetadataBuilder {
         this.thumbnail = thumbnail;
+        return this;
+    }
+
+    public withVersion(version: string): CircuitMetadataBuilder {
+        this.version = version;
         return this;
     }
 
