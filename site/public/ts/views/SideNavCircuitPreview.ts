@@ -17,6 +17,10 @@ export class SideNavCircuitPreview {
         this.element.remove();
     }
 
+    public onClick(callback: () => void): void {
+        this.element.click(callback);
+    }
+
     private build(): void {
         const id = this.metadata.getId();
         const name = this.metadata.getName();
