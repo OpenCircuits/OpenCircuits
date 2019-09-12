@@ -1,26 +1,12 @@
 import $ from "jquery";
 
-import {XMLNode} from "../io/xml/XMLNode";
 import {AuthState} from "../auth/AuthState";
-import {CircuitMetadata, CircuitMetadataBuilder} from "../../models/CircuitMetadata";
+import {CircuitMetadata} from "../../models/CircuitMetadata";
 
-
-function XMLToCircuitMetadata(xml: XMLDocument | XMLNode): CircuitMetadata {
-    const root = (xml instanceof XMLNode) ? (xml) : (new XMLNode(xml, xml.children[0]));
-    return new CircuitMetadataBuilder()
-            .withId(root.getAttribute("id"))
-            .withName(root.getAttribute("name"))
-            .withDesc(root.getAttribute("desc"))
-            .withOwner(root.getAttribute("owner"))
-            .withThumbnail(root.getAttribute("thumbnail"))
-            .build();
-}
-function XMLToCircuitMetadataList(xml: XMLDocument): CircuitMetadata[] {
-    const root = new XMLNode(xml, xml.children[0]);
-    return root.getChildren().map((metadata) => XMLToCircuitMetadata(metadata));
-}
+import {XMLToCircuitMetadata, XMLToCircuitMetadataList} from "./Utils";
 
 export function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata> {
+    console.log(data);
     return $.when(
         $.ajax({
             method: "POST",
@@ -60,7 +46,7 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
     });
 }
 
-export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string> {
+export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<XMLDocument> {
     return $.when(
         $.ajax({
             method: "GET",

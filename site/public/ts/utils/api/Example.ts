@@ -1,10 +1,12 @@
 import $ from "jquery";
 
-export function LoadExampleCircuit(id: string): Promise<string> {
+import {CircuitMetadata} from "../../models/CircuitMetadata";
+
+export function LoadExampleCircuit(data: CircuitMetadata): Promise<XMLDocument> {
     return $.when(
         $.ajax({
             method: "GET",
-            url: `api/example/${id}`
+            url: `api/example/${data.getId()}`
         })
     );
 }
