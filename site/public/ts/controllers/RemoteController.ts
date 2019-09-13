@@ -1,7 +1,8 @@
-import {AuthState} from "../utils/auth/AuthState";
-import {CircuitMetadata} from "../models/CircuitMetadata";
-import {CreateUserCircuit, UpdateUserCircuit, QueryUserCircuits, LoadUserCircuit} from "../utils/api/Circuits";
-import {LoadExampleCircuit} from "../utils/api/Example";
+import {AuthState} from "../auth/AuthState";
+import {CircuitMetadata} from "digital/models/CircuitMetadata";
+import {CreateUserCircuit, UpdateUserCircuit,
+        QueryUserCircuits, LoadUserCircuit} from "../api/Circuits";
+import {LoadExampleCircuit} from "../api/Example";
 
 export const RemoteController = (() => {
     interface RemoteData {

@@ -1,7 +1,7 @@
-import {Component} from "../../models/ioobjects/Component";
-import {ICData} from "../../models/ioobjects/other/ICData";
-import {MainDesignerController} from "../../controllers/MainDesignerController";
-import {ICDesignerController} from "../../controllers/ICDesignerController";
+import {Component} from "digital/models/ioobjects/Component";
+import {ICData} from "digital/models/ioobjects/other/ICData";
+import {MainDesignerController} from "../controllers/MainDesignerController";
+import {ICDesignerController} from "../controllers/ICDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class ICButtonPopupModule extends SelectionPopupModule {

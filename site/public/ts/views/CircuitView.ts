@@ -1,15 +1,15 @@
-import {Camera}            from "../utils/Camera";
-import {Renderer}          from "../utils/rendering/Renderer";
-import {Grid}              from "../utils/rendering/Grid";
-import {DebugRenderer}     from "../utils/rendering/DebugRenderer";
-import {ToolRenderer}      from "../utils/rendering/ToolRenderer";
-import {WireRenderer}      from "../utils/rendering/ioobjects/WireRenderer";
-import {ComponentRenderer} from "../utils/rendering/ioobjects/ComponentRenderer";
+import {Camera}            from "math/Camera";
+import {Renderer}          from "digital/rendering/Renderer";
+import {Grid}              from "digital/rendering/Grid";
+import {DebugRenderer}     from "digital/rendering/DebugRenderer";
+import {ToolRenderer}      from "digital/rendering/ToolRenderer";
+import {WireRenderer}      from "digital/rendering/ioobjects/WireRenderer";
+import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 
-import {ToolManager} from "../utils/tools/ToolManager";
-import {Selectable}  from "../utils/Selectable";
+import {ToolManager} from "digital/tools/ToolManager";
+import {Selectable}  from "core/utils/Selectable";
 
-import {CircuitDesigner} from "../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
 export class CircuitView {
     protected canvas: HTMLCanvasElement;

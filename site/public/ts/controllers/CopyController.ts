@@ -1,20 +1,20 @@
-import {V} from "../utils/math/Vector";
+import {V} from "Vector";
 
-import {Exporter} from "../utils/io/Exporter";
-import {Importer} from "../utils/io/Importer";
-import {CopyGroup} from "../utils/ComponentUtils";
+import {Exporter} from "core/utils/io/Exporter";
+import {Importer} from "core/utils/io/Importer";
+import {CopyGroup} from "digital/utils/ComponentUtils";
 
-import {GroupAction} from "../utils/actions/GroupAction";
-import {CreateGroupTranslateAction} from "../utils/actions/transform/TranslateAction";
+import {GroupAction} from "digital/actions/GroupAction";
+import {CreateGroupTranslateAction} from "digital/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
-import {CreateDeleteGroupAction} from "../utils/actions/deletion/DeleteGroupActionFactory";
-import {CreateAddGroupAction} from "../utils/actions/addition/AddGroupActionFactory";
-import {TransferICDataAction} from "../utils/actions/TransferICDataAction";
+        CreateDeselectAllAction} from "digital/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "digital/actions/deletion/DeleteGroupActionFactory";
+import {CreateAddGroupAction} from "digital/actions/addition/AddGroupActionFactory";
+import {TransferICDataAction} from "digital/actions/TransferICDataAction";
 
-import {CircuitDesigner} from "../models/CircuitDesigner";
-import {IOObject} from "../models/ioobjects/IOObject";
-import {IC} from "../models/ioobjects/other/IC";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {IOObject} from "digital/models/ioobjects/IOObject";
+import {IC} from "digital/models/ioobjects/other/IC";
 
 import {MainDesignerController} from "./MainDesignerController";
 

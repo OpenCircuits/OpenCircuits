@@ -1,10 +1,10 @@
-import {Vector,V} from "../utils/math/Vector";
+import {Vector,V} from "Vector";
 
 import {MainDesignerController} from "./MainDesignerController";
 
-import {CreateComponentFromXML} from "../utils/ComponentFactory";
+import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
 
-import {Component} from "../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
 export const ItemNavController = (() => {
     const tab = document.getElementById("itemnav-open-tab");

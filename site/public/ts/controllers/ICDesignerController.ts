@@ -1,29 +1,28 @@
 import {IO_PORT_LENGTH,
         IO_PORT_LINE_WIDTH,
-        DEFAULT_BORDER_WIDTH} from "../utils/Constants";
+        DEFAULT_BORDER_WIDTH} from "digital/utils/Constants";
 
-import {Vector, V} from "../utils/math/Vector";
-import {Transform} from "../utils/math/Transform";
+import {Vector, V} from "Vector";
+import {Transform} from "math/Transform";
 import {RectContains,
-        GetNearestPointOnRect} from "../utils/math/MathUtils";
-import {Input} from "../utils/Input";
-import {RenderQueue} from "../utils/RenderQueue";
+        GetNearestPointOnRect} from "math/MathUtils";
+import {Input} from "core/utils/Input";
+import {RenderQueue} from "core/utils/RenderQueue";
 
-import {TranslateTool} from "../utils/tools/TranslateTool";
-import {RotateTool} from "../utils/tools/RotateTool";
-import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
-import {WiringTool} from "../utils/tools/WiringTool";
-
-import {CircuitDesigner} from "../models/CircuitDesigner";
+import {TranslateTool} from "digital/tools/TranslateTool";
+import {RotateTool} from "digital/tools/RotateTool";
+import {PlaceComponentTool} from "digital/tools/PlaceComponentTool";
+import {WiringTool} from "digital/tools/WiringTool";
 
 import {ICDesignerView} from "../views/ICDesignerView";
 
-import {ToolManager} from "../utils/tools/ToolManager";
+import {ToolManager} from "digital/tools/ToolManager";
 
-import {IOObject} from "../models/ioobjects/IOObject";
-import {Port} from "../models/ports/Port";
-import {ICData} from "../models/ioobjects/other/ICData";
-import {IC} from "../models/ioobjects/other/IC";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {IOObject} from "digital/models/ioobjects/IOObject";
+import {Port} from "digital/models/ports/Port";
+import {ICData} from "digital/models/ioobjects/other/ICData";
+import {IC} from "digital/models/ioobjects/other/IC";
 
 import {ItemNavController} from "./ItemNavController";
 import {MainDesignerController} from "./MainDesignerController";

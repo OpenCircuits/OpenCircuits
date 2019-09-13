@@ -1,10 +1,10 @@
-import {CreateBusAction} from "../actions/addition/BusActionFactory";
+import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
-import {Port} from "../../models/ports/Port";
-import {InputPort} from "../../models/ports/InputPort";
-import {OutputPort} from "../../models/ports/OutputPort";
+import {Port} from "digital/models/ports/Port";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class BusButtonPopupModule extends SelectionPopupModule {

@@ -1,9 +1,9 @@
-import {GroupAction} from "../actions/GroupAction";
-import {ClockFrequencyChangeAction} from "../actions/ClockFrequencyChangeAction";
+import {GroupAction} from "digital/actions/GroupAction";
+import {ClockFrequencyChangeAction} from "digital/actions/ClockFrequencyChangeAction";
 
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 
-import {Clock} from "../../models/ioobjects/inputs/Clock";
+import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
 import {SelectionPopupModule} from "./SelectionPopupModule";
 

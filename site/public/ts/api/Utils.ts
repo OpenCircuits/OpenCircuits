@@ -1,5 +1,5 @@
-import {XMLNode} from "../io/xml/XMLNode";
-import {CircuitMetadataBuilder, CircuitMetadata} from "../../models/CircuitMetadata";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {CircuitMetadataBuilder, CircuitMetadata} from "digital/models/CircuitMetadata";
 
 export function XMLToCircuitMetadata(xml: XMLDocument | XMLNode): CircuitMetadata {
     const root = (xml instanceof XMLNode) ? (xml) : (new XMLNode(xml, xml.children[0]));

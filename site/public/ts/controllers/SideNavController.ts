@@ -1,11 +1,12 @@
-import {Importer} from "../utils/io/Importer";
+import {Importer} from "core/utils/io/Importer";
 
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {HeaderController} from "./HeaderController";
 import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
 import {RemoteController} from "./RemoteController";
-import {CircuitMetadata, CircuitMetadataBuilder} from "../models/CircuitMetadata";
+import {CircuitMetadata,
+        CircuitMetadataBuilder} from "digital/models/CircuitMetadata";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");

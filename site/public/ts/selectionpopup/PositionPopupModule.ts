@@ -1,11 +1,11 @@
-import {GRID_SIZE} from "../Constants";
+import {GRID_SIZE} from "digital/utils/Constants";
 
-import {V} from "../math/Vector";
-import {Component} from "../../models/ioobjects/Component";
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {V} from "Vector";
+import {Component} from "digital/models/ioobjects/Component";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {CreateGroupTranslateAction} from "../actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "digital/actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;

@@ -1,15 +1,15 @@
-import {ClampedValue} from "../ClampedValue";
+import {ClampedValue} from "math/ClampedValue";
 
-import {GroupAction} from "../actions/GroupAction";
-import {InputPortChangeAction} from "../actions/ports/InputPortChangeAction";
-import {SelectPortChangeAction} from "../actions/ports/SelectPortChangeAction";
+import {GroupAction} from "digital/actions/GroupAction";
+import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
 
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 
-import {Gate} from "../../models/ioobjects/gates/Gate";
-import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
-import {Decoder} from "../../models/ioobjects/other/Decoder";
-import {Mux} from "../../models/ioobjects/other/Mux";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+import {Decoder} from "digital/models/ioobjects/other/Decoder";
+import {Mux} from "digital/models/ioobjects/other/Mux";
 
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
@@ -18,7 +18,7 @@ export class InputCountPopupModule extends SelectionPopupModule {
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-input-count-text"));
-        
+
         this.count = this.el.querySelector("input#popup-input-count");
         this.count.onchange = () => this.push();
     }

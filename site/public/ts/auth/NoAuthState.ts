@@ -1,4 +1,4 @@
-import {SetCookie} from "../Cookies";
+import {SetCookie} from "../utils/Cookies";
 import {AuthType} from "./AuthTypes";
 import {AuthState} from "./AuthState";
 

@@ -1,17 +1,17 @@
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {LED} from "../../models/ioobjects/outputs/LED";
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
-import {GroupAction} from "../actions/GroupAction";
-import {ColorChangeAction} from "../actions/ColorChangeAction";
+import {GroupAction} from "digital/actions/GroupAction";
+import {ColorChangeAction} from "digital/actions/ColorChangeAction";
 
 export class ColorPopupModule extends SelectionPopupModule {
     private color: HTMLInputElement;
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-color-text"));
-        
+
         this.color = this.el.querySelector("input#popup-color-picker");
         this.color.onchange = () => this.push();
     }

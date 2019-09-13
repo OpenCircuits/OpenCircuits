@@ -1,11 +1,11 @@
-import {ClampedValue} from "../ClampedValue";
+import {ClampedValue} from "math/ClampedValue";
 
-import {GroupAction} from "../actions/GroupAction";
-import {OutputPortChangeAction} from "../actions/ports/OutputPortChangeAction";
+import {GroupAction} from "digital/actions/GroupAction";
+import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
 
-import {MainDesignerController} from "../../controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 
-import {Encoder} from "../../models/ioobjects/other/Encoder";
+import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
@@ -14,7 +14,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
     public constructor(parentDiv: HTMLDivElement) {
         // Title module does not have a wrapping div
         super(parentDiv.querySelector("div#popup-output-count-text"));
-        
+
         this.count = this.el.querySelector("input#popup-output-count");
         this.count.onchange = () => this.push();
     }
