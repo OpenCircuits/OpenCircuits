@@ -2,8 +2,8 @@ import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
-import {Component} from "../../../models/ioobjects/Component";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Component} from "digital/models/ioobjects/Component";
 
 export class PlaceAction extends ReversableAction {
     private designer: CircuitDesigner;

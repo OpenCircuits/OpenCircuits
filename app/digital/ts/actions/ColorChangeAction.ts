@@ -1,5 +1,5 @@
 import {Action} from "./Action";
-import {LED} from "../../models/ioobjects/outputs/LED";
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
 export class ColorChangeAction implements Action {
     private led: LED;

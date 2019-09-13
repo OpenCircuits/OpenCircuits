@@ -1,10 +1,10 @@
 import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
-        WIRE_THICKNESS} from "../../Constants";
+        WIRE_THICKNESS} from "digital/utils/Constants";
 import {Renderer} from "../Renderer";
-import {Camera} from "../../Camera";
-import {Wire} from "../../../models/ioobjects/Wire";
+import {Camera} from "math/Camera";
+import {Wire} from "digital/models/ioobjects/Wire";
 
 import {Curve} from "../shapes/Curve";
 import {Line} from "../shapes/Line";

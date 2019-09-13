@@ -1,6 +1,6 @@
 import {Action} from "./Action";
 import {SaveAction} from "./SaveAction";
-import {setSAVED} from "../Config";
+import {setSAVED} from "core/utils/Config";
 
 /**
  * Manages undo/redo actions

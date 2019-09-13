@@ -1,7 +1,7 @@
-import {Vector} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {Vector} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
 
-import {XMLNode} from "../../../utils/io/xml/XMLNode";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {InputPort} from "../../ports/InputPort";
 import {Positioner} from "../../ports/positioners/Positioner";

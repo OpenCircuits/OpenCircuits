@@ -1,6 +1,6 @@
-import {Z_KEY, Y_KEY} from "../Constants";
+import {Z_KEY, Y_KEY} from "digital/utils/Constants";
+import {Input} from "core/utils/Input";
 import {Tool} from "./Tool";
-import {Input} from "../Input";
 
 import {ActionManager} from "../actions/ActionManager";
 

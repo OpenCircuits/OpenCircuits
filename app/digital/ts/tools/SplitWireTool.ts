@@ -2,12 +2,12 @@ import {Tool} from "./Tool";
 import {TranslateTool} from "./TranslateTool"
 import {SelectionTool} from "./SelectionTool";
 
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Input} from "core/utils/Input";
+import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Wire} from "../../models/ioobjects/Wire";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Wire} from "digital/models/ioobjects/Wire";
+import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";

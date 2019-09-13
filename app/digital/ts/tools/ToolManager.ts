@@ -1,11 +1,11 @@
-import {Input} from "../Input";
-import {MouseListener} from "../MouseListener";
-import {KeyboardListener} from "../KeyboardListener";
-import {Camera} from "../Camera";
-import {Action} from "../actions/Action";
+import {Input} from "core/utils/Input";
+import {MouseListener} from "core/utils/MouseListener";
+import {KeyboardListener} from "core/utils/KeyboardListener";
+import {Camera} from "math/Camera";
+import {Action} from "digital/actions/Action";
 
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Component} from "../../models/ioobjects/Component";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Component} from "digital/models/ioobjects/Component";
 
 import {Tool} from "./Tool";
 import {SelectionTool} from "./SelectionTool";

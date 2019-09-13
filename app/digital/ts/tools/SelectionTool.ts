@@ -1,26 +1,26 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY, A_KEY, X_KEY,
-        IO_PORT_RADIUS} from "../Constants";
-import {Vector,V} from "../math/Vector";
+        IO_PORT_RADIUS} from "digital/utils/Constants";
+import {Vector,V} from "Vector";
 import {CircleContains,
-        BezierContains,} from "../math/MathUtils";
+        BezierContains,} from "math/MathUtils";
 
-import {Selectable} from "../Selectable";
+import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
 
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {IOObject} from "../../models/ioobjects/IOObject";
-import {Component} from "../../models/ioobjects/Component";
-import {WirePort} from "../../models/ioobjects/other/WirePort";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {IOObject} from "digital/models/ioobjects/IOObject";
+import {Component} from "digital/models/ioobjects/Component";
+import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {SelectionBox} from "./helpers/SelectionBox";
 import {InteractionHelper} from "./helpers/InteractionHelper";
 
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Input} from "core/utils/Input";
+import {Camera} from "math/Camera";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"

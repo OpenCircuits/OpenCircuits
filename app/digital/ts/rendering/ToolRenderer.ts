@@ -1,11 +1,11 @@
 import {ROTATION_CIRCLE_RADIUS,
-        ROTATION_CIRCLE_THICKNESS} from "../Constants";
+        ROTATION_CIRCLE_THICKNESS} from "digital/utils/Constants";
 import {ROTATION_CIRCLE_COLOR,
         ROTATION_ARC_STYLE,
         SELECTION_BOX_STYLE} from "./Styles";
-import {Vector} from "../math/Vector";
+import {Vector} from "Vector";
+import {Camera} from "math/Camera";
 import {Renderer} from "./Renderer";
-import {Camera} from "../Camera";
 
 import {ToolManager} from "../tools/ToolManager";
 import {SelectionTool} from "../tools/SelectionTool";
@@ -16,7 +16,7 @@ import {WiringTool} from "../tools/WiringTool";
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
 
-import {Component} from "../../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
 import {Style} from "./Style";
 import {ArcCircle} from "./shapes/ArcCircle";

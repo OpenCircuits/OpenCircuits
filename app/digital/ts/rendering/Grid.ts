@@ -1,10 +1,10 @@
-import {GRID_SIZE} from "../Constants";
+import {GRID_SIZE} from "digital/utils/Constants";
 import {GRID_LINE_COLOR} from "./Styles";
 
-import {V} from "../math/Vector";
+import {V} from "Vector";
 
 import {Renderer} from "./Renderer";
-import {Camera} from "../Camera";
+import {Camera} from "math/Camera";
 
 import {Style} from "./Style";
 

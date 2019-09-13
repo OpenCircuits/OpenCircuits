@@ -1,7 +1,7 @@
 import {DEFAULT_SIZE,
-        IO_PORT_LENGTH} from "../../../utils/Constants";
+        IO_PORT_LENGTH} from "digital/utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
+import {V} from "Vector";
 
 import {Port} from "../Port";
 import {InputPort} from "../InputPort";

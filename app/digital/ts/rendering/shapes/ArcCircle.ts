@@ -1,4 +1,4 @@
-import {Vector} from "../../math/Vector";
+import {Vector} from "Vector";
 
 import {Circle} from "./Circle";
 

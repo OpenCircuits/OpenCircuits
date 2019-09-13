@@ -1,6 +1,6 @@
-import {DEFAULT_BORDER_WIDTH} from "../../../utils/Constants";
+import {DEFAULT_BORDER_WIDTH} from "digital/utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
+import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 

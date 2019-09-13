@@ -1,7 +1,7 @@
-import {IO_PORT_RADIUS} from "../../../utils/Constants";
+import {IO_PORT_RADIUS} from "digital/utils/Constants";
 
-import {Vector, V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {Vector, V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePositioner";
 

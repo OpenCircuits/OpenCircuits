@@ -1,5 +1,5 @@
-import {Vector} from "../../math/Vector";
-import {Transform} from "../../math/Transform";
+import {Vector} from "Vector";
+import {Transform} from "math/Transform";
 
 import {Shape} from "./Shape";
 

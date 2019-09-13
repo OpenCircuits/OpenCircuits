@@ -1,5 +1,5 @@
-import {Vector,V} from "../../utils/math/Vector";
-import {Transform} from "../../utils/math/Transform";
+import {Vector,V} from "Vector";
+import {Transform} from "math/Transform";
 
 import {IOObject} from "./IOObject"
 

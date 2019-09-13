@@ -1,4 +1,4 @@
-import {V,Vector} from "../../math/Vector";
+import {V,Vector} from "Vector";
 
 export class XMLNode {
     private root: XMLDocument;

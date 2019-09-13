@@ -3,16 +3,16 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR,
-        GATE_NOT_CIRCLE_RADIUS} from "../../../Constants";
-import {Vector,V} from "../../../math/Vector";
+        GATE_NOT_CIRCLE_RADIUS} from "digital/utils/Constants";
+import {Vector,V} from "Vector";
 
 import {Renderer} from "../../Renderer";
-import {Camera} from "../../../Camera";
+import {Camera} from "math/Camera";
 
-import {Gate} from "../../../../models/ioobjects/gates/Gate";
-import {ANDGate} from "../../../../models/ioobjects/gates/ANDGate";
-import {ORGate} from "../../../../models/ioobjects/gates/ORGate";
-import {XORGate} from "../../../../models/ioobjects/gates/XORGate";
+import {Gate}    from "digital/models/ioobjects/gates/Gate";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
 import {Circle} from "../../shapes/Circle";
 import {Line} from "../../shapes/Line";

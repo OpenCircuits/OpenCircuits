@@ -1,4 +1,4 @@
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {ClampedValue} from "math/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
 import {MuxPositioner} from "../../ports/positioners/MuxPositioners";

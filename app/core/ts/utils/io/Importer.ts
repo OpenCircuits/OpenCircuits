@@ -1,8 +1,8 @@
-import {SAVED} from "../Config"
+import {SAVED} from "../Config";
 
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
 export const Importer = (() => {
     return {

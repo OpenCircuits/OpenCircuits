@@ -3,10 +3,10 @@ import {DRAG_TIME,
         SHIFT_KEY,
         CONTROL_KEY,
         COMMAND_KEY,
-        OPTION_KEY} from "./Constants";
+        OPTION_KEY} from "digital/utils/Constants";
 
-import {Vector,V} from "../utils/math/Vector";
-import {CalculateMidpoint} from "./math/MathUtils";
+import {Vector,V} from "Vector";
+import {CalculateMidpoint} from "math/MathUtils";
 
 import * as Hammer from "hammerjs";
 

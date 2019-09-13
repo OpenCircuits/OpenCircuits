@@ -1,9 +1,10 @@
 import {DEFAULT_SIZE,
-        WIRE_THICKNESS} from "../../utils/Constants";
+        WIRE_THICKNESS} from "digital/utils/Constants";
 
-import {V,Vector} from "../../utils/math/Vector";
-import {BezierCurve} from "../../utils/math/BezierCurve";
-import {XMLNode} from "../../utils/io/xml/XMLNode";
+import {V,Vector} from "Vector";
+import {BezierCurve} from "math/BezierCurve";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
+
 import {OutputPort} from "../ports/OutputPort";
 import {InputPort}  from "../ports/InputPort";
 import {CullableObject}   from "./CullableObject";

@@ -2,7 +2,7 @@ import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {PortChangeAction} from "./PortChangeAction";
 
-import {Mux} from "../../../models/ioobjects/other/Mux";
+import {Mux} from "digital/models/ioobjects/other/Mux";
 
 export class SelectPortChangeAction extends PortChangeAction {
     public constructor(obj: Mux, target: number) {

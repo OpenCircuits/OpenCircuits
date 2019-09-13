@@ -1,6 +1,6 @@
-import {Input} from "../Input";
-import {MouseListener} from "../MouseListener";
-import {KeyboardListener} from "../KeyboardListener";
+import {Input} from "core/utils/Input";
+import {MouseListener} from "core/utils/MouseListener";
+import {KeyboardListener} from "core/utils/KeyboardListener";
 
 import {Action} from "../actions/Action";
 

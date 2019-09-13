@@ -1,36 +1,36 @@
-import {Component} from "../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
-import {Switch}       from "../models/ioobjects/inputs/Switch";
-import {Button}       from "../models/ioobjects/inputs/Button";
-import {ConstantLow}  from "../models/ioobjects/inputs/ConstantLow";
-import {ConstantHigh} from "../models/ioobjects/inputs/ConstantHigh";
-import {Clock}        from "../models/ioobjects/inputs/Clock";
+import {Switch}       from "digital/models/ioobjects/inputs/Switch";
+import {Button}       from "digital/models/ioobjects/inputs/Button";
+import {ConstantLow}  from "digital/models/ioobjects/inputs/ConstantLow";
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {Clock}        from "digital/models/ioobjects/inputs/Clock";
 
-import {LED} from "../models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "../models/ioobjects/outputs/SevenSegmentDisplay";
+import {LED} from "digital/models/ioobjects/outputs/LED";
+import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
 
-import {Gate} from "../models/ioobjects/gates/Gate";
-import {BUFGate} from "../models/ioobjects/gates/BUFGate";
-import {ANDGate} from "../models/ioobjects/gates/ANDGate";
-import {ORGate}  from "../models/ioobjects/gates/ORGate";
-import {XORGate} from "../models/ioobjects/gates/XORGate";
+import {Gate}    from "digital/models/ioobjects/gates/Gate";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
-import {Latch}  from "../models/ioobjects/latches/Latch";
-import {DLatch}  from "../models/ioobjects/latches/DLatch";
-import {SRLatch} from "../models/ioobjects/latches/SRLatch";
+import {Latch}   from "digital/models/ioobjects/latches/Latch";
+import {DLatch}  from "digital/models/ioobjects/latches/DLatch";
+import {SRLatch} from "digital/models/ioobjects/latches/SRLatch";
 
-import {FlipFlop}  from "../models/ioobjects/flipflops/FlipFlop";
-import {DFlipFlop}  from "../models/ioobjects/flipflops/DFlipFlop";
-import {JKFlipFlop} from "../models/ioobjects/flipflops/JKFlipFlop";
-import {SRFlipFlop} from "../models/ioobjects/flipflops/SRFlipFlop";
-import {TFlipFlop}  from "../models/ioobjects/flipflops/TFlipFlop";
+import {FlipFlop}   from "digital/models/ioobjects/flipflops/FlipFlop";
+import {DFlipFlop}  from "digital/models/ioobjects/flipflops/DFlipFlop";
+import {JKFlipFlop} from "digital/models/ioobjects/flipflops/JKFlipFlop";
+import {SRFlipFlop} from "digital/models/ioobjects/flipflops/SRFlipFlop";
+import {TFlipFlop}  from "digital/models/ioobjects/flipflops/TFlipFlop";
 
-import {Encoder}       from "../models/ioobjects/other/Encoder";
-import {Decoder}       from "../models/ioobjects/other/Decoder";
-import {Multiplexer}   from "../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../models/ioobjects/other/Demultiplexer";
-import {Label}         from "../models/ioobjects/other/Label";
-import {WirePort}      from "../models/ioobjects/other/WirePort";
+import {Encoder}       from "digital/models/ioobjects/other/Encoder";
+import {Decoder}       from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
+import {Label}         from "digital/models/ioobjects/other/Label";
+import {WirePort}      from "digital/models/ioobjects/other/WirePort";
 
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
 const OUTPUTS   = [LED, SevenSegmentDisplay];

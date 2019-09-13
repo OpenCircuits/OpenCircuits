@@ -1,7 +1,7 @@
 import {DEFAULT_SIZE} from "../../../utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePositioner";
 import {InputPort} from "../../ports/InputPort";

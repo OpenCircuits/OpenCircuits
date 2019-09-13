@@ -1,5 +1,5 @@
-import {Vector} from "../../math/Vector";
-import {BezierCurve} from "../../math/BezierCurve";
+import {Vector} from "Vector";
+import {BezierCurve} from "math/BezierCurve";
 
 import {Shape} from "./Shape";
 

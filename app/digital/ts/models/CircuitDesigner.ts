@@ -1,5 +1,5 @@
-import {XMLable} from "../utils/io/xml/XMLable";
-import {XMLNode} from "../utils/io/xml/XMLNode";
+import {XMLable} from "core/utils/io/xml/XMLable";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {SeparatedComponentCollection,
         CreateWire,

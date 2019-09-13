@@ -1,10 +1,10 @@
-import {V, Vector} from "../../math/Vector";
+import {V, Vector} from "Vector";
 import {Clamp,
-        GetNearestPointOnRect} from "../../math/MathUtils";
+        GetNearestPointOnRect} from "math/MathUtils";
 
-import {Camera} from "../../Camera";
+import {Camera} from "math/Camera";
 import {Renderer} from "../Renderer";
-import {Component} from "../../../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
 export const IOLabelRenderer = (() => {
 

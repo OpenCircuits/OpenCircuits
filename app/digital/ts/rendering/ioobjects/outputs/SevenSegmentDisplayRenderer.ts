@@ -2,15 +2,15 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR} from "../../../Constants";
-import {V} from "../../../math/Vector";
+        SELECTED_FILL_COLOR} from "digital/utils/Constants";
+import {V} from "Vector";
 
 import {Renderer} from "../../Renderer";
-import {Camera} from "../../../Camera";
+import {Camera} from "math/Camera";
 
-import {SevenSegmentDisplay} from "../../../../models/ioobjects/outputs/SevenSegmentDisplay";
+import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
 
-import {Images} from "../../../Images";
+import {Images} from "digital/utils/Images";
 
 import {Rectangle} from "../../shapes/Rectangle";
 import {Style} from "../../Style";

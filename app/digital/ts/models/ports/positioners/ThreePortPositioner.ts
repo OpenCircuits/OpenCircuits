@@ -1,4 +1,4 @@
-import {V} from "../../../utils/math/Vector";
+import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 import {Positioner} from "./Positioner";

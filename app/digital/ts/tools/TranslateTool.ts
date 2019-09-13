@@ -1,18 +1,18 @@
 import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY} from "../Constants";
+        SPACEBAR_KEY} from "digital/utils/Constants";
 
-import {CopyGroup} from "../ComponentUtils";
+import {CopyGroup} from "digital/utils/ComponentUtils";
 
-import {Vector,V} from "../math/Vector";
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Vector,V} from "Vector";
+import {Camera} from "math/Camera";
+import {Input} from "core/utils/Input";
 import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Component} from "../../models/ioobjects/Component";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Component} from "digital/models/ioobjects/Component";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction";

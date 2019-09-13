@@ -1,15 +1,15 @@
-import {SHIFT_KEY} from "../../Constants";
+import {SHIFT_KEY} from "digital/utils/Constants";
 
-import {Vector, V} from "../../math/Vector";
-import {Transform} from "../../math/Transform";
+import {Vector, V} from "Vector";
+import {Transform} from "math/Transform";
+import {Camera} from "math/Camera";
 import {TransformContains,
-        RectContains} from "../../math/MathUtils";
-import {GetAllPorts} from "../../ComponentUtils";
+        RectContains} from "math/MathUtils";
+import {GetAllPorts} from "digital/utils/ComponentUtils";
 
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
-import {Input} from "../../Input";
-import {Camera} from "../../Camera";
+import {Input} from "core/utils/Input";
 
 import {GroupAction} from "../../actions/GroupAction";
 import {CreateGroupSelectAction,

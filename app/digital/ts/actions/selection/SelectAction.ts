@@ -2,9 +2,9 @@ import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {Selectable} from "../../Selectable";
+import {Selectable} from "core/utils/Selectable";
 
-import {SelectionTool} from "../../tools/SelectionTool";
+import {SelectionTool} from "digital/tools/SelectionTool";
 
 export class SelectAction extends ReversableAction {
     private selectionTool: SelectionTool;

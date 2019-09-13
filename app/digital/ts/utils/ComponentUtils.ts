@@ -1,8 +1,8 @@
 import {CreateComponentFromXML} from "./ComponentFactory";
 
-import {Graph} from "./math/Graph";
+import {Graph} from "math/Graph";
 
-import {XMLNode} from "./io/xml/XMLNode";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {IOObject} from "../models/ioobjects/IOObject";
 import {Component} from "../models/ioobjects/Component";

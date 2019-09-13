@@ -1,16 +1,16 @@
 import {GetAllComponentInputXMLNames,
         GetAllComponentOutputXMLNames,
-        GetXMLName} from "../ComponentFactory";
+        GetXMLName} from "digital/utils/ComponentFactory";
 
 import {XMLReader} from "./xml/XMLReader";
 import {XMLNode} from "./xml/XMLNode";
 
-import {ConstantLow}  from "../../models/ioobjects/inputs/ConstantLow";
-import {ConstantHigh} from "../../models/ioobjects/inputs/ConstantHigh";
-import {BUFGate} from "../../models/ioobjects/gates/BUFGate";
-import {ANDGate} from "../../models/ioobjects/gates/ANDGate";
-import {ORGate}  from "../../models/ioobjects/gates/ORGate";
-import {XORGate} from "../../models/ioobjects/gates/XORGate";
+import {ConstantLow}  from "digital/models/ioobjects/inputs/ConstantLow";
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
 function FixGroup(objs: XMLNode, wiresNode: XMLNode): void {
 

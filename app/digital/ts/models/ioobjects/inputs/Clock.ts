@@ -1,5 +1,6 @@
-import {V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+
 import {Component} from "../Component";
 
 export class Clock extends Component {

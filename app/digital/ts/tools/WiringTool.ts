@@ -1,17 +1,17 @@
-import {IO_PORT_SELECT_RADIUS} from "../Constants";
+import {IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
 import {Tool} from "./Tool";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Port} from "../../models/ports/Port";
-import {InputPort} from "../../models/ports/InputPort";
-import {OutputPort} from "../../models/ports/OutputPort";
-import {Wire} from "../../models/ioobjects/Wire";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Port} from "digital/models/ports/Port";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
+import {Wire} from "digital/models/ioobjects/Wire";
 
-import {CircleContains} from "../math/MathUtils";
+import {CircleContains} from "math/MathUtils";
+import {Camera} from "math/Camera";
 
 import {SelectionTool} from "./SelectionTool";
 
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Input} from "core/utils/Input";
 
 import {Action} from "../actions/Action";
 import {ConnectionAction} from "../actions/addition/ConnectionAction";

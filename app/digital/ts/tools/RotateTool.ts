@@ -1,14 +1,14 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
-        LEFT_MOUSE_BUTTON} from "../Constants";
+        LEFT_MOUSE_BUTTON} from "digital/utils/Constants";
 
-import {Vector} from "../math/Vector";
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Vector} from "Vector";
+import {Camera} from "math/Camera";
+import {Input} from "core/utils/Input";
 import {Tool} from "./Tool";
 import {SelectionTool} from "./SelectionTool";
 
-import {Component} from "../../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
 import {RotateAction} from "../actions/transform/RotateAction";
 

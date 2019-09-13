@@ -1,10 +1,10 @@
 import {Tool} from "./Tool";
 
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {Component} from "../../models/ioobjects/Component";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Component} from "digital/models/ioobjects/Component";
 
-import {Input} from "../Input";
-import {Camera} from "../Camera";
+import {Input} from "core/utils/Input";
+import {Camera} from "math/Camera";
 
 import {Action} from "../actions/Action";
 import {PlaceAction} from "../actions/addition/PlaceAction";

@@ -1,4 +1,4 @@
-import {ClampedValue} from "../../utils/ClampedValue";
+import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "../ioobjects/Component";
 

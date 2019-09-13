@@ -1,7 +1,7 @@
 import {Action} from "./Action";
 
-import {Component} from "../../models/ioobjects/Component";
-import {Wire} from "../../models/ioobjects/Wire";
+import {Component} from "digital/models/ioobjects/Component";
+import {Wire} from "digital/models/ioobjects/Wire";
 
 export class ShiftAction implements Action {
     private obj: Component;

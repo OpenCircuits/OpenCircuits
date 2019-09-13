@@ -1,5 +1,6 @@
-import {V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+
 import {PressableComponent} from "../PressableComponent";
 
 export class Switch extends PressableComponent {

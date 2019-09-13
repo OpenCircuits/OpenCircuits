@@ -1,4 +1,4 @@
-import {Clamp} from "./math/MathUtils";
+import {Clamp} from "./MathUtils";
 
 export class ClampedValue {
     private value: number;
@@ -36,7 +36,7 @@ export class ClampedValue {
     public getMaxValue(): number {
         return this.maxValue;
     }
-    
+
     public copy(): ClampedValue {
         return new ClampedValue(this.value, this.minValue, this.maxValue);
     }

@@ -1,10 +1,10 @@
 import {Action} from "../Action";
 import {ReversableAction} from "../ReversableAction";
 
-import {Component} from "../../../models/ioobjects/Component";
-import {InputPort} from "../../../models/ports/InputPort";
-import {OutputPort} from "../../../models/ports/OutputPort";
-import {Wire} from "../../../models/ioobjects/Wire";
+import {Component} from "digital/models/ioobjects/Component";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
+import {Wire} from "digital/models/ioobjects/Wire";
 
 export class ConnectionAction extends ReversableAction {
     private c1: Component;

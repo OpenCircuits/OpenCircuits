@@ -1,7 +1,7 @@
-import {Vector,V} from "./math/Vector";
-import {Transform} from "./math/Transform";
-import {Matrix2x3} from "./math/Matrix";
-import {TransformContains} from "./math/MathUtils";
+import {Vector,V} from "./Vector";
+import {Transform} from "./Transform";
+import {Matrix2x3} from "./Matrix";
+import {TransformContains} from "./MathUtils";
 
 export class Camera {
     private pos: Vector;

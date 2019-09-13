@@ -1,8 +1,8 @@
-import {XMLNode} from "../../utils/io/xml/XMLNode";
-import {XMLable} from "../../utils/io/xml/XMLable";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {XMLable} from "core/utils/io/xml/XMLable";
 
-import {Selectable} from "../../utils/Selectable";
-import {Name} from "../../utils/Name";
+import {Selectable} from "core/utils/Selectable";
+import {Name} from "core/utils/Name";
 
 import {CircuitDesigner} from "../CircuitDesigner";
 

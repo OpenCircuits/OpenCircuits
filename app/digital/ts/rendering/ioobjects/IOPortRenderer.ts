@@ -4,10 +4,10 @@ import {DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         IO_PORT_LINE_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "../../Constants";
+        IO_PORT_BORDER_WIDTH} from "digital/utils/Constants";
 
 import {Renderer} from "../Renderer";
-import {Port} from "../../../models/ports/Port";
+import {Port} from "digital/models/ports/Port";
 
 import {Circle} from "../shapes/Circle";
 import {Line} from "../shapes/Line";

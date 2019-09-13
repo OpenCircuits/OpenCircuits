@@ -1,10 +1,11 @@
 import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
-import {InputPort} from "../../../models/ports/InputPort";
-import {OutputPort} from "../../../models/ports/OutputPort";
-import {WirePort} from "../../../models/ioobjects/other/WirePort";
+
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
+import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 export class SplitWireAction extends ReversableAction {
     private designer: CircuitDesigner;

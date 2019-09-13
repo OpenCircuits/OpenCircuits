@@ -1,11 +1,12 @@
-import {Transform} from "../math/Transform";
+import {Transform} from "math/Transform";
 
 import {SeparatedComponentCollection,
-        CopyGroup} from "../ComponentUtils";
+        CopyGroup} from "digital/utils/ComponentUtils";
 
 import {Action} from "./Action";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
-import {IOObject} from "../../models/ioobjects/IOObject";
+
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {IOObject} from "digital/models/ioobjects/IOObject";
 
 export class CopyGroupAction implements Action {
     private designer: CircuitDesigner;

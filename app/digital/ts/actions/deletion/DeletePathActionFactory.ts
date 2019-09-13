@@ -2,8 +2,8 @@ import {GroupAction} from "../GroupAction";
 import {DeleteAction} from "../addition/PlaceAction";
 import {DisconnectAction} from "../addition/ConnectionAction";
 
-import {Wire} from "../../../models/ioobjects/Wire";
-import {WirePort} from "../../../models/ioobjects/other/WirePort";
+import {Wire} from "digital/models/ioobjects/Wire";
+import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 export function CreateDeletePathAction(path: Array<Wire | WirePort>): GroupAction {
     const action = new GroupAction();

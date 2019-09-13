@@ -2,13 +2,13 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR} from "../../../Constants";
-import {V} from "../../../math/Vector";
+        SELECTED_FILL_COLOR} from "digital/utils/Constants";
+import {V} from "Vector";
 
 import {Renderer} from "../../Renderer";
-import {Camera} from "../../../Camera";
-import {Multiplexer} from "../../../../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../../../../models/ioobjects/other/Demultiplexer";
+import {Camera} from "math/Camera";
+import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 
 import {Polygon} from "../../shapes/Polygon";
 import {Style} from "../../Style";

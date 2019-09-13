@@ -2,9 +2,9 @@ import {GroupAction} from "../GroupAction";
 import {PlaceAction} from "./PlaceAction";
 import {ConnectionAction} from "./ConnectionAction";
 
-import {SeparatedComponentCollection} from "../../ComponentUtils";
+import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
 
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
 export function CreateAddGroupAction(designer: CircuitDesigner, group: SeparatedComponentCollection): GroupAction {
     const action = new GroupAction();

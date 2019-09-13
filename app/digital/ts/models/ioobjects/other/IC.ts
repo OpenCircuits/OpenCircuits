@@ -1,8 +1,10 @@
 import {DEFAULT_SIZE} from "../../../utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
-import {SeparatedComponentCollection} from "../../../utils/ComponentUtils";
+import {V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+
+import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
+
 import {CircuitDesigner} from "../../CircuitDesigner";
 import {Component} from "../Component";
 

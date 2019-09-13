@@ -1,7 +1,7 @@
-import {DEFAULT_SIZE} from "../../../utils/Constants";
+import {DEFAULT_SIZE} from "digital/utils/Constants";
 
-import {V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";

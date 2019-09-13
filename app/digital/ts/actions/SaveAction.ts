@@ -1,5 +1,5 @@
 import {Action} from "./Action";
-import {setSAVED} from "../Config";
+import {setSAVED} from "core/utils/Config";
 
 export class SaveAction implements Action {
 

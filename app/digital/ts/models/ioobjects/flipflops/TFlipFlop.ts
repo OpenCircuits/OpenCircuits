@@ -1,4 +1,4 @@
-import {V} from "../../../utils/math/Vector";
+import {V} from "Vector";
 import {FlipFlop} from "./FlipFlop";
 
 export class TFlipFlop extends FlipFlop {

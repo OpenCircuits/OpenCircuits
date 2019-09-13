@@ -1,11 +1,11 @@
-import {BezierContains} from "../../math/MathUtils";
+import {BezierContains} from "math/MathUtils";
+import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "../../../models/CircuitDesigner";
-import {IOObject} from "../../../models/ioobjects/IOObject";
-import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {IOObject} from "digital/models/ioobjects/IOObject";
+import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
 
-import {Input} from "../../Input";
-import {Camera} from "../../Camera";
+import {Input} from "core/utils/Input";
 
 export class InteractionHelper {
     private designer: CircuitDesigner;

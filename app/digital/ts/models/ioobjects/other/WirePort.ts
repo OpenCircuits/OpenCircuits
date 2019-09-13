@@ -1,9 +1,9 @@
-import {IO_PORT_RADIUS} from "../../../utils/Constants";
+import {IO_PORT_RADIUS} from "digital/utils/Constants";
 
-import {CircleContains} from "../../../utils/math/MathUtils";
+import {Vector, V} from "Vector";
+import {CircleContains} from "math/MathUtils";
+import {ClampedValue} from "math/ClampedValue";
 
-import {Vector,V} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
 import {Component} from "../Component";
 
 export class WirePort extends Component {

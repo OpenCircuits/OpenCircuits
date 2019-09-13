@@ -1,19 +1,19 @@
 import {DEFAULT_SIZE,
         IO_PORT_LENGTH} from "../../../utils/Constants";
 
-import {Vector,V} from "../../../utils/math/Vector";
-import {Transform} from "../../../utils/math/Transform";
+import {Vector, V} from "Vector";
+import {Transform} from "math/Transform";
 
-import {GetNearestPointOnRect} from "../../../utils/math/MathUtils";
+import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {SeparatedComponentCollection,
         CopyGroup,
         CreateGraph,
         CreateGroup,
         SaveGroup,
-        LoadGroup} from "../../../utils/ComponentUtils";
+        LoadGroup} from "digital/utils/ComponentUtils";
 
-import {XMLNode} from "../../../utils/io/xml/XMLNode";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {IOObject} from "../IOObject";
 import {Port} from "../../ports/Port";

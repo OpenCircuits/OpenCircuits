@@ -1,5 +1,5 @@
 import {Action} from "./Action";
-import {Clock} from "../../models/ioobjects/inputs/Clock";
+import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
 export class ClockFrequencyChangeAction implements Action {
     private clock: Clock;

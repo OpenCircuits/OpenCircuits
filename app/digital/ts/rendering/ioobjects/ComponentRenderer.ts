@@ -2,9 +2,9 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "../../Constants";
+        SELECTED_BORDER_COLOR} from "digital/utils/Constants";
 
-import {V} from "../../math/Vector";
+import {V} from "Vector";
 
 import {Renderer} from "../Renderer";
 import {IOLabelRenderer} from "./IOLabelRenderer";
@@ -13,25 +13,25 @@ import {GateRenderer} from "./gates/GateRenderer";
 import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
-import {Transform} from "../../math/Transform";
-import {Camera} from "../../Camera";
-import {Selectable} from "../../Selectable";
+import {Transform} from "math/Transform";
+import {Camera} from "math/Camera";
+import {Selectable} from "core/utils/Selectable";
 
-import {FlipFlop} from "../../../models/ioobjects/flipflops/FlipFlop";
-import {Latch} from "../../../models/ioobjects/latches/Latch";
-import {Encoder} from "../../../models/ioobjects/other/Encoder";
-import {Decoder} from "../../../models/ioobjects/other/Decoder";
-import {Multiplexer} from "../../../models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "../../../models/ioobjects/other/Demultiplexer";
-import {Label} from "../../../models/ioobjects/other/Label";
-import {Component} from "../../../models/ioobjects/Component";
-import {PressableComponent} from "../../../models/ioobjects/PressableComponent";
-import {Gate} from "../../../models/ioobjects/gates/Gate";
-import {LED} from "../../../models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "../../../models/ioobjects/outputs/SevenSegmentDisplay";
-import {IC} from "../../../models/ioobjects/other/IC";
+import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
+import {Latch}               from "digital/models/ioobjects/latches/Latch";
+import {Encoder}             from "digital/models/ioobjects/other/Encoder";
+import {Decoder}             from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
+import {Label}               from "digital/models/ioobjects/other/Label";
+import {Component}           from "digital/models/ioobjects/Component";
+import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
+import {Gate}                from "digital/models/ioobjects/gates/Gate";
+import {LED}                 from "digital/models/ioobjects/outputs/LED";
+import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
+import {IC}                  from "digital/models/ioobjects/other/IC";
 
-import {Images} from "../../Images";
+import {Images} from "digital/utils/Images";
 
 import {Rectangle} from "../shapes/Rectangle";
 import {Style} from "../Style";

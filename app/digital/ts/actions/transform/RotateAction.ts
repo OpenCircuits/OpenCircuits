@@ -1,7 +1,7 @@
-import {Vector} from "../../math/Vector";
+import {Vector} from "Vector";
 
 import {Action} from "../Action";
-import {Component} from "../../../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 
 export class RotateAction implements Action {
     private objects: Array<Component>;

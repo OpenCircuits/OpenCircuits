@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 
 import {XMLWriter} from "./xml/XMLWriter";
-import {CircuitDesigner} from "../../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
 export const Exporter = (() => {
     return {

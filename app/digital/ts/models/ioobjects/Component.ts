@@ -3,11 +3,11 @@ import {DEFAULT_BORDER_WIDTH,
         IO_PORT_BORDER_WIDTH,
         WIRE_SNAP_THRESHOLD} from "../../utils/Constants";
 
-import {Vector,V}     from "../../utils/math/Vector";
-import {Transform}    from "../../utils/math/Transform";
-import {RectContains} from "../../utils/math/MathUtils";
-import {XMLNode}      from "../../utils/io/xml/XMLNode";
-import {ClampedValue} from "../../utils/ClampedValue";
+import {Vector,V}     from "Vector";
+import {Transform}    from "math/Transform";
+import {RectContains} from "math/MathUtils";
+import {ClampedValue} from "math/ClampedValue";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Port}       from "../ports/Port";
 import {InputPort}  from "../ports/InputPort";

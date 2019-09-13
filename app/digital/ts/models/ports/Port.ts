@@ -1,7 +1,7 @@
-import {IO_PORT_LENGTH} from "../../utils/Constants";
-import {Vector,V} from "../../utils/math/Vector";
+import {IO_PORT_LENGTH} from "digital/utils/Constants";
+import {Vector,V} from "Vector";
 
-import {Selectable} from "../../utils/Selectable";
+import {Selectable} from "core/utils/Selectable";
 
 import {Component} from "../ioobjects/Component";
 import {Wire}      from "../ioobjects/Wire";

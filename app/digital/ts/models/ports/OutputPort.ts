@@ -1,4 +1,4 @@
-import {Vector,V} from "../../utils/math/Vector";
+import {Vector,V} from "Vector";
 
 import {Component} from "../ioobjects/Component";
 import {Wire}      from "../ioobjects/Wire";

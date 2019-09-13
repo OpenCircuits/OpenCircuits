@@ -1,6 +1,7 @@
-import {Vector, V} from "../../../utils/math/Vector";
-import {CircleContains} from "../../../utils/math/MathUtils";
-import {ClampedValue} from "../../../utils/ClampedValue";
+import {Vector, V} from "Vector";
+import {CircleContains} from "math/MathUtils";
+import {ClampedValue} from "math/ClampedValue";
+
 import {PressableComponent} from "../PressableComponent";
 
 export class Button extends PressableComponent {

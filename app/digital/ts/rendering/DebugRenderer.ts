@@ -1,18 +1,18 @@
 import {DEBUG_CULLBOXES,
         DEBUG_SELECTION_BOUNDS,
-        IO_PORT_SELECT_RADIUS} from "../Constants";
+        IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
 import {DEBUG_CULLBOX_STYLE,
         DEBUG_SELECTION_BOUNDS_STYLE} from "./Styles";
 
-import {V} from "../math/Vector";
+import {V} from "Vector";
 
 import {Renderer} from "./Renderer";
-import {Camera} from "../Camera";
+import {Camera} from "math/Camera";
 
-import {Wire} from "../../models/ioobjects/Wire";
-import {Component} from "../../models/ioobjects/Component";
+import {Wire} from "digital/models/ioobjects/Wire";
+import {Component} from "digital/models/ioobjects/Component";
 
-import {GetAllPorts} from "../ComponentUtils";
+import {GetAllPorts} from "digital/utils/ComponentUtils";
 
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";

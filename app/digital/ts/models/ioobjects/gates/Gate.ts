@@ -1,7 +1,8 @@
-import {Vector} from "../../../utils/math/Vector";
-import {ClampedValue} from "../../../utils/ClampedValue";
-import {Name} from "../../../utils/Name";
-import {XMLNode} from "../../../utils/io/xml/XMLNode";
+import {Vector} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+import {Name} from "core/utils/Name";
+import {XMLNode} from "core/utils/io/xml/XMLNode";
+
 import {Component} from "../Component";
 
 import {InputPort} from "../../ports/InputPort";

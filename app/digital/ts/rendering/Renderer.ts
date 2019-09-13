@@ -1,10 +1,10 @@
 import {FONT} from "./Styles";
 
-import {Vector,V} from "../math/Vector";
-import {Transform} from "../math/Transform";
+import {Vector,V} from "Vector";
+import {Transform} from "math/Transform";
+import {Camera} from "math/Camera";
 
-import {Browser} from "../Browser";
-import {Camera} from "../Camera";
+import {Browser} from "core/utils/Browser";
 
 import {Style} from "./Style";
 

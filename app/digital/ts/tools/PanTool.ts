@@ -1,8 +1,8 @@
 import {MIDDLE_MOUSE_BUTTON,
-        OPTION_KEY} from "../Constants";
+        OPTION_KEY} from "digital/utils/Constants";
+import {Camera} from "math/Camera";
+import {Input} from "core/utils/Input";
 import {Tool} from "./Tool";
-import {Input} from "../Input";
-import {Camera} from "../Camera";
 
 import {SelectionTool} from "./SelectionTool";
 
