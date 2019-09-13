@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {Multiplexer}     from "../../../../../site/public/ts/models/ioobjects/other/Multiplexer";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 
-import {ActionManager}          from "../../../../../site/public/ts/utils/actions/ActionManager";
-import {SelectPortChangeAction} from "../../../../../site/public/ts/utils/actions/ports/SelectPortChangeAction";
-import {CreateGroupPlaceAction} from "../../../../../site/public/ts/utils/actions/addition/PlaceAction";
-import {CreateBusAction}        from "../../../../../site/public/ts/utils/actions/addition/BusActionFactory";
+import {ActionManager}          from "digital/actions/ActionManager";
+import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
+import {CreateGroupPlaceAction} from "digital/actions/addition/PlaceAction";
+import {CreateBusAction}        from "digital/actions/addition/BusActionFactory";
 // import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/";
 
 describe("Integration Tests for Actions", () => {

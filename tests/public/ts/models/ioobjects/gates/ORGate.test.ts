@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {ORGate}          from "../../../../../../site/public/ts/models/ioobjects/gates/ORGate";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("ORGate", () => {
     describe("ORGate", () => {
@@ -81,13 +81,13 @@ describe("ORGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
-    
+
     describe("Copy", () => {
         it("ORGate Copy", () => {
             let a = new ORGate();
             a.setInputPortCount(4);
             let b = <ORGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ORGate);
             expect(b.isNot()).toBe(false);
@@ -97,9 +97,9 @@ describe("ORGate", () => {
         it("NORGate Copy", () => {
             let a = new ORGate(true);
             a.setInputPortCount(4);
-            
+
             let b = <ORGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ORGate);
             expect(b.isNot()).toBe(true);

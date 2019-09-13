@@ -1,13 +1,13 @@
 import "jest";
 
 import {OPTION_KEY,
-        MIDDLE_MOUSE_BUTTON} from "../../../../../site/public/ts/utils/Constants";
+        MIDDLE_MOUSE_BUTTON} from "digital/utils/Constants";
 
-import {V} from "../../../../../site/public/ts/utils/math/Vector";
+import {V} from "Vector";
+import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ToolManager} from "digital/tools/ToolManager";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";

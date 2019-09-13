@@ -1,6 +1,6 @@
 import "jest";
 
-import {Vector, V} from "../../../../site/public/ts/utils/math/Vector";
+import {Vector, V} from "Vector";
 
 import {FakeInput} from "./FakeInput";
 

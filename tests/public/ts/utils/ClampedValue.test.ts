@@ -1,6 +1,6 @@
 import "jest";
 
-import {ClampedValue} from "../../../../site/public/ts/utils/ClampedValue";
+import {ClampedValue} from "math/ClampedValue";
 
 describe("ClampedValue", () => {
     describe("Constructor", () => {

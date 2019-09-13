@@ -1,28 +1,20 @@
 import "jest";
 
 import {CreateWire, Connect, SeparateGroup,
-        CreateGroup, GatherGroup, CreateGraph,
-        CopyGroup, SeparatedComponentCollection} from "../../../../site/public/ts/utils/ComponentUtils";
-import {Vector, V} from "../../../../site/public/ts/utils/math/Vector";
-import {Transform} from "../../../../site/public/ts/utils/math/Transform";
+        CreateGroup, GatherGroup, CopyGroup} from "digital/utils/ComponentUtils";
 
-import {Wire} from "../../../../site/public/ts/models/ioobjects/Wire";
-import {WirePort} from "../../../../site/public/ts/models/ioobjects/other/WirePort";
-import {OutputPort} from "../../../../site/public/ts/models/ports/OutputPort";
-import {InputPort} from "../../../../site/public/ts/models/ports/InputPort";
-import {Component} from "../../../../site/public/ts/models/ioobjects/Component";
-import {Button} from "../../../../site/public/ts/models/ioobjects/inputs/Button";
-import {ConstantHigh} from "../../../../site/public/ts/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow} from "../../../../site/public/ts/models/ioobjects/inputs/ConstantLow";
-import {Switch} from "../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {LED} from "../../../../site/public/ts/models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "../../../../site/public/ts/models/ioobjects/outputs/SevenSegmentDisplay";
-import {ANDGate} from "../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {ORGate} from "../../../../site/public/ts/models/ioobjects/gates/ORGate";
-import {DFlipFlop} from "../../../../site/public/ts/models/ioobjects/flipflops/DFlipFlop";
-import {JKFlipFlop} from "../../../../site/public/ts/models/ioobjects/flipflops/JKFlipFlop";
-import {DLatch} from "../../../../site/public/ts/models/ioobjects/latches/DLatch";
-import {SRLatch} from "../../../../site/public/ts/models/ioobjects/latches/SRLatch";
+import {WirePort}            from "digital/models/ioobjects/other/WirePort";
+import {Button}              from "digital/models/ioobjects/inputs/Button";
+import {ConstantHigh}        from "digital/models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow}         from "digital/models/ioobjects/inputs/ConstantLow";
+import {Switch}              from "digital/models/ioobjects/inputs/Switch";
+import {LED}                 from "digital/models/ioobjects/outputs/LED";
+import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
+import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
+import {DFlipFlop}           from "digital/models/ioobjects/flipflops/DFlipFlop";
+import {DLatch}              from "digital/models/ioobjects/latches/DLatch";
+import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 
 describe("CreateWire", () => {
     it("Wire 0", () => {

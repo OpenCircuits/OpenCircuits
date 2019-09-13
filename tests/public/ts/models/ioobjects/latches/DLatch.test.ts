@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {DLatch}          from "../../../../../../site/public/ts/models/ioobjects/latches/DLatch";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {DLatch}          from "digital/models/ioobjects/latches/DLatch";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("DLatch", () => {
     const designer = new CircuitDesigner(0);

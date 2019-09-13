@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {SRLatch}         from "../../../../../../site/public/ts/models/ioobjects/latches/SRLatch";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {SRLatch}         from "digital/models/ioobjects/latches/SRLatch";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("SRLatch", () => {
     const designer = new CircuitDesigner(0);
@@ -62,7 +62,7 @@ describe("SRLatch", () => {
         r.activate(false);
 
         expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true); 
+        expect(l0.isOn()).toBe(true);
     });
     it("Latch in True State", () => {
     	clk.activate(true);

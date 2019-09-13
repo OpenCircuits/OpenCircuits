@@ -1,8 +1,8 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {ConstantLow}    from "../../../../../../site/public/ts/models/ioobjects/inputs/ConstantLow";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ConstantLow}     from "digital/models/ioobjects/inputs/ConstantLow";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("Constant Low", () => {
     const designer = new CircuitDesigner(0);

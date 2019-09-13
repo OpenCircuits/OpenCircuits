@@ -1,8 +1,8 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Clock} from "../../../../../../site/public/ts/models/ioobjects/inputs/Clock";
-import {LED} from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Clock}           from "digital/models/ioobjects/inputs/Clock";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe ("Clock", () => {
     var designer = new CircuitDesigner(0), c = new Clock(), l = new LED();

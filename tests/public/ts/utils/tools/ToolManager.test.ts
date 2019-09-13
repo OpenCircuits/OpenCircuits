@@ -1,21 +1,21 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
 
-import {V} from "../../../../../site/public/ts/utils/math/Vector";
+import {V} from "Vector";
 
-import {Camera} from "../../../../../site/public/ts/utils/Camera";
+import {Camera} from "math/Camera";
 
-import {Tool} from "../../../../../site/public/ts/utils/tools/Tool";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
-import {SelectionTool} from "../../../../../site/public/ts/utils/tools/SelectionTool";
-import {RotateTool} from "../../../../../site/public/ts/utils/tools/RotateTool";
-import {WiringTool} from "../../../../../site/public/ts/utils/tools/WiringTool";
+import {Tool}          from "digital/tools/Tool";
+import {ToolManager}   from "digital/tools/ToolManager";
+import {SelectionTool} from "digital/tools/SelectionTool";
+import {RotateTool}    from "digital/tools/RotateTool";
+import {WiringTool}    from "digital/tools/WiringTool";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {LED} from "../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";

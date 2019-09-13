@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {BUFGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/BUFGate";
-import {ANDGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {IC}     from "../../../../../../site/public/ts/models/ioobjects/other/IC";
-import {ICData} from "../../../../../../site/public/ts/models/ioobjects/other/ICData";
+import {IC}     from "digital/models/ioobjects/other/IC";
+import {ICData} from "digital/models/ioobjects/other/ICData";
 
 describe("IC", () => {
     it("Basic IC", () => {

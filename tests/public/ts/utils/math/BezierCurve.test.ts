@@ -1,7 +1,7 @@
 import "jest";
-import {BezierCurve} from "../../../../../site/public/ts/utils/math/BezierCurve";
-import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
-import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
+
+import {V} from "Vector";
+import {BezierCurve} from "math/BezierCurve";
 
 
 describe("BezierCurve", () => {

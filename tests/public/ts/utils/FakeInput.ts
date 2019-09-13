@@ -1,7 +1,7 @@
-import {LEFT_MOUSE_BUTTON} from "../../../../site/public/ts/utils/Constants";
+import {LEFT_MOUSE_BUTTON} from "digital/utils/Constants";
 
-import {Vector, V} from "../../../../site/public/ts/utils/math/Vector";
-import {Input} from "../../../../site/public/ts/utils/Input";
+import {Vector, V} from "Vector";
+import {Input} from "core/utils/Input";
 
 export class FakeInput extends Input {
     private touches: Array<Vector>;

@@ -1,16 +1,17 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "../../../../../site/public/ts/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
 
-import {V} from "../../../../../site/public/ts/utils/math/Vector";
+import {V} from "Vector";
+import {Camera} from "math/Camera";
 
-import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
+import {Selectable} from "core/utils/Selectable";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
-import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {ORGate} from "../../../../../site/public/ts/models/ioobjects/gates/ORGate";
+import {ToolManager} from "digital/tools/ToolManager";
+
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";

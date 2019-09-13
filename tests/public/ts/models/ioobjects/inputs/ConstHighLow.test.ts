@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {ConstantHigh} from "../../../../../../site/public/ts/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow} from "../../../../../../site/public/ts/models/ioobjects/inputs/ConstantLow";
-import {LED} from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow}     from "digital/models/ioobjects/inputs/ConstantLow";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe ("ConstHighLow", () => {
     describe("ConstHigh", () => {

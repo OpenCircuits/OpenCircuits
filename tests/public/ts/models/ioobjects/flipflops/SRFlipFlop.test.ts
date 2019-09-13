@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {SRFlipFlop}      from "../../../../../../site/public/ts/models/ioobjects/flipflops/SRFlipFlop";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {SRFlipFlop}      from "digital/models/ioobjects/flipflops/SRFlipFlop";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("SRFlipFLop", () => {
     const designer = new CircuitDesigner(0);

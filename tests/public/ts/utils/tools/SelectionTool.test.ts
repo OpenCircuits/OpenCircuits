@@ -2,18 +2,20 @@ import "jest";
 
 import {SHIFT_KEY,
         DELETE_KEY,
-        BACKSPACE_KEY} from "../../../../../site/public/ts/utils/Constants";
+        BACKSPACE_KEY} from "digital/utils/Constants";
 
-import {V} from "../../../../../site/public/ts/utils/math/Vector";
+import {V} from "Vector";
 
-import {Camera} from "../../../../../site/public/ts/utils/Camera";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
+import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Selectable} from "../../../../../site/public/ts/utils/Selectable";
-import {ANDGate} from "../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {Multiplexer} from "../../../../../site/public/ts/models/ioobjects/other/Multiplexer";
-import {Switch} from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
+import {Selectable} from "core/utils/Selectable";
+
+import {ToolManager} from "digital/tools/ToolManager";
+
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";

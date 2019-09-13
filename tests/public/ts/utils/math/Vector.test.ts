@@ -1,6 +1,6 @@
 import "jest";
 
-import {Vector} from "../../../../../site/public/ts/utils/math/Vector";
+import {Vector} from "Vector";
 
 describe("Vector", () => {
     describe("Constructor", () => {

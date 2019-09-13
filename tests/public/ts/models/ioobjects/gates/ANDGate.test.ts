@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {ANDGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {
@@ -81,13 +81,13 @@ describe("ANDGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
-    
+
     describe("Copy", () => {
         it("ANDGate Copy", () => {
             let a = new ANDGate();
             a.setInputPortCount(4);
             let b = <ANDGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ANDGate);
             expect(b.isNot()).toBe(false);
@@ -97,9 +97,9 @@ describe("ANDGate", () => {
         it("NANDGate Copy", () => {
             let a = new ANDGate(true);
             a.setInputPortCount(4);
-            
+
             let b = <ANDGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(ANDGate);
             expect(b.isNot()).toBe(true);

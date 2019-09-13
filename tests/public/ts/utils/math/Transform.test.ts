@@ -1,7 +1,7 @@
 import "jest";
 
-import {Vector,V}  from "../../../../../site/public/ts/utils/math/Vector";
-import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
+import {Vector,V}  from "Vector";
+import {Transform} from "math/Transform";
 
 /*
     constructor(pos: Vector, size: Vector, angle: number = 0);

@@ -1,9 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {XORGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/XORGate";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {XORGate}         from "digital/models/ioobjects/gates/XORGate";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("XORGate", () => {
     describe("XORGate", () => {
@@ -80,13 +80,13 @@ describe("XORGate", () => {
             expect(o.isOn()).toBe(true);
         });
     });
-    
+
     describe("Copy", () => {
         it("XORGate Copy", () => {
             let a = new XORGate();
             a.setInputPortCount(4);
             let b = <XORGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(XORGate);
             expect(b.isNot()).toBe(false);
@@ -96,9 +96,9 @@ describe("XORGate", () => {
         it("XNORGate Copy", () => {
             let a = new XORGate(true);
             a.setInputPortCount(4);
-            
+
             let b = <XORGate>a.copy();
-            
+
             expect(a).not.toBe(b);
             expect(b).toBeInstanceOf(XORGate);
             expect(b.isNot()).toBe(true);

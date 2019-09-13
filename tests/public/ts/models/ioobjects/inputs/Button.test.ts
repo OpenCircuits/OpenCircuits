@@ -1,10 +1,10 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {Button}          from "../../../../../../site/public/ts/models/ioobjects/inputs/Button";
-import {ANDGate}         from "../../../../../../site/public/ts/models/ioobjects/gates/ANDGate";
-import {LED}             from "../../../../../../site/public/ts/models/ioobjects/outputs/LED";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {Button}          from "digital/models/ioobjects/inputs/Button";
+import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("Button", () => {
     const designer = new CircuitDesigner(0);

@@ -1,8 +1,9 @@
 import "jest";
 
-import {CircuitDesigner} from "../../../../../site/public/ts/models/CircuitDesigner";
-import {Switch}          from "../../../../../site/public/ts/models/ioobjects/inputs/Switch";
-import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/addition/PlaceAction";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+
+import {PlaceAction} from "digital/actions/addition/PlaceAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo", () => {

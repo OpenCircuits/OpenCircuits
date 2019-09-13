@@ -1,5 +1,5 @@
-import {Input} from "../../../../../site/public/ts/utils/Input";
-import {ToolManager} from "../../../../../site/public/ts/utils/tools/ToolManager";
+import {Input} from "core/utils/Input";
+import {ToolManager} from "digital/tools/ToolManager";
 
 export function InitializeInput(input: Input, toolManager: ToolManager): void {
     input.addListener("keydown",   (b?: number) => { toolManager.onKeyDown(input, b); });

@@ -1,8 +1,9 @@
 import "jest";
 
-import {Clamp, TransformContains, RectContains, CircleContains} from "../../../../../site/public/ts/utils/math/MathUtils";
-import {Vector, V} from "../../../../../site/public/ts/utils/math/Vector";
-import {Transform} from "../../../../../site/public/ts/utils/math/Transform";
+import {V} from "Vector";
+import {Clamp, TransformContains,
+        RectContains, CircleContains} from "math/MathUtils";
+import {Transform} from "math/Transform";
 
 describe("Clamp", () => {
     it("less than minimum", () => {

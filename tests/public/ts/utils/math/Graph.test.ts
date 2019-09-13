@@ -1,5 +1,6 @@
 import "jest";
-import {Graph} from "../../../../../site/public/ts/utils/math/Graph";
+
+import {Graph} from "math/Graph";
 
 
 describe("Graph", () => {
