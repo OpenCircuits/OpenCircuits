@@ -1,11 +1,11 @@
 -- name: load-circuit-entry
-SELECT id, designer, name, ownerId FROM circuits WHERE id=?;
+SELECT id, designer, name, ownerId, version, thumbnail FROM circuits WHERE id=?;
 
 -- name: store-circuit-entry
-UPDATE circuits SET designer=?, name=?, ownerId=? WHERE id=?;
+UPDATE circuits SET designer=?, name=?, ownerId=?, version=?, thumbnail=? WHERE id=?;
 
 -- name: create-circuit-entry
-INSERT INTO circuits(designer, ownerId, name) VALUES (?, ?, ?);
+INSERT INTO circuits(designer, ownerId, name, version, thumbnail) VALUES (?, ?, ?, ?, ?);
 
 -- name: query-user-circuits
-SELECT id, name, ownerId FROM circuits WHERE ownerId=?;
+SELECT id, name, ownerId, version, thumbnail FROM circuits WHERE ownerId=?;
