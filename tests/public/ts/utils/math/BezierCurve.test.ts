@@ -69,7 +69,7 @@ describe("BezierCurve", () => {
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
         const expected = [V(-2,5), V(0.5,5), V(0.5,0), V(-2,0)];
-        arr.forEach((v, i) => {
+        arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
         });
@@ -79,7 +79,7 @@ describe("BezierCurve", () => {
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
         const expected = [V(-2,6), V(6,6), V(6,3.3333), V(-2,3.3333)];
-        arr.forEach((v, i) => {
+        arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
         });
@@ -89,7 +89,7 @@ describe("BezierCurve", () => {
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
         const expected = [V(-0.02769,3.06), V(2.90132,3.06), V(2.90132,1), V(-0.02769,1)];
-        arr.forEach((v, i) => {
+        arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
         });
@@ -99,7 +99,7 @@ describe("BezierCurve", () => {
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
         const expected = [V(1,2), V(4,2), V(4,1), V(1,1)];
-        arr.forEach((v, i) => {
+        arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
         });
@@ -109,7 +109,7 @@ describe("BezierCurve", () => {
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
         const expected = [V(1,2), V(4,2), V(4,1), V(1,1)];
-        arr.forEach((v, i) => {
+        arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);
         });
