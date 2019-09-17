@@ -18,7 +18,7 @@ type CircuitDesigner struct {
 // Circuit is the top-level model
 type Circuit struct {
 	Metadata CircuitMetadata `xml:"metadata"`
-	Designer CircuitDesigner `xml:"designer"`
+	Designer CircuitDesigner `xml:"contents"`
 }
 
 // Update takes a client-supplied circuit and updates the server-side data.  This allows the circuit model to control

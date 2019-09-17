@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 )
 
 type memCircuitStorageInterfaceFactory struct {
@@ -15,15 +16,18 @@ type memCircuitStorageInterfaceFactory struct {
 // A simple, array-based circuit storage for testing and example circuits
 type memCircuitStorage struct {
 	m      []model.Circuit
-	nextId model.CircuitId
+	idxMap map[string]int
+}
+
+func newMemCircuitStorage() *memCircuitStorage {
+	return &memCircuitStorage{
+		m: nil,
+		idxMap: make(map[string]int),
+	}
 }
 
 func NewMemStorageInterfaceFactory() interfaces.CircuitStorageInterfaceFactory {
-	return &memCircuitStorageInterfaceFactory{&memCircuitStorage{}}
-}
-
-func (mem *memCircuitStorage) inStore(id model.CircuitId) bool {
-	return id < int64(len(mem.m))
+	return &memCircuitStorageInterfaceFactory{newMemCircuitStorage()}
 }
 
 func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
@@ -31,10 +35,11 @@ func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() inte
 }
 
 func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
-	if !mem.inStore(c.Metadata.ID) {
+	val, ok := mem.idxMap[c.Metadata.ID]
+	if !ok {
 		panic(errors.New("circuit did not exist for given id"))
 	}
-	mem.m[c.Metadata.ID] = c
+	mem.m[val] = c
 }
 
 func (mem *memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
@@ -48,17 +53,23 @@ func (mem *memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.Cir
 }
 
 func (mem *memCircuitStorage) LoadCircuit(id model.CircuitId) *model.Circuit {
-	if !mem.inStore(id) {
+	val, ok := mem.idxMap[id]
+	if !ok {
 		return nil
 	}
-	return &mem.m[id]
+	return &mem.m[val]
+}
+
+func (mem *memCircuitStorage) checkToken(token string) bool {
+	_, ok := mem.idxMap[token]
+	return !ok
 }
 
 func (mem *memCircuitStorage) NewCircuit() model.Circuit {
 	var c model.Circuit
-	c.Metadata.ID = mem.nextId
+	c.Metadata.ID = utils.GenFreshCircuitId(mem.checkToken)
+	mem.idxMap[c.Metadata.ID] = len(mem.m)
 	mem.m = append(mem.m, c)
-	mem.nextId++
 	return c
 }
 

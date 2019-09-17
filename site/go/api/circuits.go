@@ -8,7 +8,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 )
 
 func circuitHandler(m interfaces.CircuitStorageInterfaceFactory, f func(_ interfaces.CircuitStorageInterfaceFactory, _ *gin.Context, _ model.UserId)) func(_ *gin.Context, _ model.UserId) {
@@ -32,20 +31,16 @@ func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 }
 
 func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
-		return
-	}
+	circuitId := c.Param("id")
 
 	storageInterface := m.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.XML(http.StatusNotFound, err.Error())
+		c.XML(http.StatusNotFound, nil)
 		return
 	} else {
 		if circuit.Metadata.Owner != userId {
-			c.XML(http.StatusForbidden, err.Error())
+			c.XML(http.StatusForbidden, nil)
 			return
 		}
 	}
@@ -82,22 +77,18 @@ func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 }
 
 func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	circuitId, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
-		return
-	}
+	circuitId := c.Param("id")
 
 	storageInterface := m.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.XML(http.StatusNotFound, err.Error())
+		c.XML(http.StatusNotFound, nil)
 		return
 	}
 
 	// Only owner can access... for now
 	if circuit.Metadata.Owner != userId {
-		c.XML(http.StatusNotFound, err.Error())
+		c.XML(http.StatusNotFound, nil)
 		return
 	}
 

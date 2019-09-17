@@ -6,7 +6,6 @@ import {CircuitMetadata} from "digital/models/CircuitMetadata";
 import {XMLToCircuitMetadata, XMLToCircuitMetadataList} from "./Utils";
 
 export function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata> {
-    console.log(data);
     return $.when(
         $.ajax({
             method: "POST",

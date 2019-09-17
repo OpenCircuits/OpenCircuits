@@ -1,21 +1,20 @@
 ############################
 # STEP 1 build executable binary
 ############################
-FROM golang:1.12-alpine AS builder
+FROM golang:1.13-alpine AS builder
 
 # Install git.
 # Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
+RUN apk update && apk add git
 
-WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/
-COPY . .
+WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/site/go
+COPY ./site/go/ .
 
-# Fetch dependencies.
-# Using go get.
-RUN go get -d -v ./...
+# Get dependencies
+RUN go mod download
 
 # Build the binary.
-RUN go build -o /go/bin/server ./site/go
+RUN CGO_ENABLED=0 go build -o /go/bin/server .
 
 
 ############################

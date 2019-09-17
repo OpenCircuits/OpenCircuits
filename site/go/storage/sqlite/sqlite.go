@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/gchaincl/dotsql"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -91,7 +92,7 @@ func genSqliteInterface(workingDir string) (*sqliteCircuitStorageInterface, erro
 
 func (d sqliteCircuitStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {
 	var c model.Circuit
-	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.ID, &c.Designer.RawContent, &c.Metadata.Name, &c.Metadata.Owner)
+	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.ID, &c.Designer.RawContent, &c.Metadata.Name, &c.Metadata.Owner, &c.Metadata.Version, &c.Metadata.Thumbnail)
 	if err == sql.ErrNoRows || err != nil {
 		return nil
 	}
@@ -107,7 +108,7 @@ func (d sqliteCircuitStorageInterface) EnumerateCircuits(userId model.UserId) []
 	var c model.CircuitMetadata
 	var cs []model.CircuitMetadata
 	for rows.Next() {
-		err := rows.Scan(&c.ID, &c.Name, &c.Owner)
+		err := rows.Scan(&c.ID, &c.Name, &c.Owner, &c.Version, &c.Thumbnail)
 		if err != nil {
 			return nil
 		}
@@ -115,12 +116,18 @@ func (d sqliteCircuitStorageInterface) EnumerateCircuits(userId model.UserId) []
 	}
 	return cs
 }
-func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
-	res, err := d.createEntryStmt.Exec("", "", "")
-	if err != nil {
+func (d sqliteCircuitStorageInterface) checkToken(token string) bool {
+	err := d.loadEntryStmt.QueryRow(token).Scan()
+	if err == sql.ErrNoRows {
+		return true
+	} else if err != nil {
 		panic(err)
 	}
-	id, err := res.LastInsertId()
+	return false
+}
+func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
+	id := utils.GenFreshCircuitId(d.checkToken)
+	_, err := d.createEntryStmt.Exec(id, "", "", "", "", "")
 	if err != nil {
 		panic(err)
 	}
@@ -129,7 +136,7 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
-	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.ID)
+	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.Version, circuit.Metadata.Thumbnail, circuit.Metadata.ID)
 	if err != nil {
 		panic(err)
 	}
