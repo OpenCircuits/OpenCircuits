@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/gchaincl/dotsql"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -115,12 +116,18 @@ func (d sqliteCircuitStorageInterface) EnumerateCircuits(userId model.UserId) []
 	}
 	return cs
 }
-func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
-	res, err := d.createEntryStmt.Exec("", "", "", "", "")
-	if err != nil {
+func (d sqliteCircuitStorageInterface) checkToken(token string) bool {
+	err := d.loadEntryStmt.QueryRow(token).Scan()
+	if err == sql.ErrNoRows {
+		return true
+	} else if err != nil {
 		panic(err)
 	}
-	id, err := res.LastInsertId()
+	return false
+}
+func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
+	id := utils.GenFreshCircuitId(d.checkToken)
+	_, err := d.createEntryStmt.Exec(id, "", "", "", "", "")
 	if err != nil {
 		panic(err)
 	}

@@ -5,7 +5,7 @@
 CREATE TABLE migrations (name TEXT NOT NULL PRIMARY KEY UNIQUE);
 
 -- name: create-circuits-table
-CREATE TABLE circuits (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+CREATE TABLE circuits (id TEXT PRIMARY KEY UNIQUE,
                        name TEXT NOT NULL,
                        designer TEXT NOT NULL,
                        ownerId TEXT NOT NULL,
