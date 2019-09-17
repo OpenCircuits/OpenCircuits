@@ -7,17 +7,11 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strings"
 )
 
-func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gin.Context, userId model.UserId)) func (c *gin.Context) {
-	return func(c* gin.Context) {
-		parts := strings.SplitN(c.GetHeader("auth"), " ", 2)
-		if len(parts) != 2 {
-			c.JSON(http.StatusBadRequest, nil)
-			return
-		}
-		am := manager.MatchToken(parts[0])
+func authenticatedHandler(manager auth.AuthenticationManager, handler func(_ *gin.Context, _ model.UserId)) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		am := manager.MatchToken(c.GetHeader("authType"))
 		if am == nil {
 			c.JSON(http.StatusBadRequest, struct {
 				message string
@@ -26,7 +20,7 @@ func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gi
 			})
 			return
 		}
-		id, err := (*am).ExtractIdentity(parts[1])
+		id, err := (*am).ExtractIdentity(c.GetHeader("authId"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, nil)
 			return
@@ -39,8 +33,14 @@ func pingHandler(c *gin.Context, userId model.UserId) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
 }
 
-func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, csif interfaces.CircuitStorageInterfaceFactory) {
+func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, exampleCsif interfaces.CircuitStorageInterfaceFactory, userCsif interfaces.CircuitStorageInterfaceFactory) {
 	// TODO: api versioning
 	router.GET("/api/ping", authenticatedHandler(manager, pingHandler))
-	router.GET("/api/example/:id", getExampleCircuitHandler(csif))
+	router.GET("/api/example/:id", getExampleCircuitHandler(exampleCsif))
+
+	// User-saveable circuits
+	router.GET("/api/circuits/:id", authenticatedHandler(manager, circuitHandler(userCsif, circuitLoadHandler)))
+	router.GET("/api/circuits", authenticatedHandler(manager, circuitHandler(userCsif, circuitQueryHandler)))
+	router.POST("/api/circuits", authenticatedHandler(manager, circuitHandler(userCsif, circuitCreateHandler)))
+	router.PUT("/api/circuits/:id", authenticatedHandler(manager, circuitHandler(userCsif, circuitStoreHandler)))
 }

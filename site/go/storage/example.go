@@ -10,7 +10,7 @@ import (
 
 type exampleCircuitStorageInterfaceFactory struct {
 	// Internally uses the memory interface
-	memInterfaceFactory *MemCircuitStorageInterfaceFactory
+	memInterfaceFactory interfaces.CircuitStorageInterfaceFactory
 	configPath          string
 }
 
@@ -30,7 +30,7 @@ type examplesConfig struct {
 //	storage that gets cached once on creation.  This could be extended to support persistence.
 func NewExampleCircuitStorageInterfaceFactory(configPath string) interfaces.CircuitStorageInterfaceFactory {
 	fs := exampleCircuitStorageInterfaceFactory{
-		memInterfaceFactory: &MemCircuitStorageInterfaceFactory{},
+		memInterfaceFactory: NewMemStorageInterfaceFactory(),
 		configPath:          configPath,
 	}
 

@@ -1,20 +1,27 @@
 import {SetCookie} from "../Cookies";
+import {AuthType} from "./AuthTypes";
 import {AuthState} from "./AuthState";
+
+const NO_AUTH_USERNAME_COOKIE = "no_auth_username";
 
 export class NoAuthState implements AuthState {
     private readonly userName: string = "";
 
     public constructor(username: string) {
         this.userName = username;
-        SetCookie("no_auth_username", username);
+        SetCookie(NO_AUTH_USERNAME_COOKIE, username);
     }
 
-    public getAuthHeader(): string {
-        return "no_auth " + this.userName;
+    public getType(): AuthType {
+        return "no_auth";
+    }
+
+    public getId(): string {
+        return this.userName;
     }
 
     public logOut(): Promise<object> {
-        SetCookie("no_auth_username", "");
+        SetCookie(NO_AUTH_USERNAME_COOKIE, "");
         return Promise.resolve(null);
     }
 
