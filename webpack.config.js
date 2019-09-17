@@ -2,6 +2,10 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
+function baseUrl(subdir) {
+    return path.join(__dirname, ".", subdir);
+}
+
 const config = {
     entry: './site/public/ts/Main.ts',
     output: {
@@ -29,6 +33,12 @@ const config = {
         ]
     },
     resolve: {
+        alias: {
+            "Vector": baseUrl('app/core/ts/utils/math/Vector'),
+            "math": baseUrl('app/core/ts/utils/math'),
+            "core/utils": baseUrl('app/core/ts/utils'),
+            "digital": baseUrl('app/digital/ts'),
+        },
         extensions: ['.ts', '.js']
     }
 };

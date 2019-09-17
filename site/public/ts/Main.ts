@@ -1,7 +1,8 @@
 import "./polyfill.js";
 
-import {SAVED} from "./utils/Config";
-import {Images} from "./utils/Images";
+import {SAVED} from "core/utils/Config";
+import {Images} from "digital/utils/Images";
+
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";

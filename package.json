@@ -37,7 +37,8 @@
   "scripts": {
     "build": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
-    "build:go": "(cd site/go ; go build -o ./../../build/server)",
+    "build:go": "(cd site/go && go build -o ./../../build/server)",
+    "build:go-win": "(cd site/go && go build -o ./../../build/server.exe)",
     "build:css": "node-sass ./site/public/scss -o ./build/css",
     "build:all": "concurrently \"npm:build\" \"npm:build:go\" \"npm:build:css\"",
     "docker:build": "docker build -t opencircuits/opencircuits .",
@@ -46,6 +47,7 @@
     "fix:css": "csscomb ./site/public/scss",
     "lint": "eslint --ext .ts ./site/public/ts",
     "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
+    "start-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
     "test": "jest",
     "watch:ts": "npm run build -- --watch",
     "watch:css": "npm run build:css -- --watch",

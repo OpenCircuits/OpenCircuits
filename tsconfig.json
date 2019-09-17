@@ -14,10 +14,17 @@
     "typeRoots" : [
       "./site/public/ts/utils/typings",
       "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+        "Vector": ["app/core/ts/utils/math/Vector"],
+        "math/*": ["app/core/ts/utils/math/*"],
+        "core/utils/*": ["app/core/ts/utils/*"],
+        "digital/*": ["app/digital/ts/*"]
+    }
+
   },
   "exclude": [
-    "node_modules",
-    "tests"
+    "node_modules"
   ]
 }

@@ -4,8 +4,8 @@ import $ from "jquery";
 //
 // import test from "./tours/test.json";
 
-import {Importer} from "../utils/io/Importer";
-import {Exporter} from "../utils/io/Exporter";
+import {Importer} from "core/utils/io/Importer";
+import {Exporter} from "core/utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
 
@@ -47,7 +47,7 @@ export const HeaderController = (() => {
 
     function SetupIOInputs(): void {
         $("input#header-file-input").change(function(): void {
-            Importer.LoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
+            Importer.PromptLoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
         });
 
         $("#header-download-button").click(() => {
@@ -93,6 +93,9 @@ export const HeaderController = (() => {
         SetProjectName(name: string): void {
             if (name)
                 projectNameInput.val(name);
+        },
+        GetProjectName(): string {
+            return projectNameInput.val() as string;
         }
     }
 })();

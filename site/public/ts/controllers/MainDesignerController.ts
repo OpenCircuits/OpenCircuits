@@ -1,26 +1,26 @@
-import {Vector} from "../utils/math/Vector";
+import {Vector} from "Vector";
 
-import {Camera} from "../utils/Camera";
-import {Input} from "../utils/Input";
-import {RenderQueue} from "../utils/RenderQueue";
-import {Selectable} from "../utils/Selectable";
+import {Camera} from "math/Camera";
+import {Input} from "core/utils/Input";
+import {RenderQueue} from "core/utils/RenderQueue";
+import {Selectable} from "core/utils/Selectable";
 
-import {Action} from "../utils/actions/Action";
-import {CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
+import {Action} from "digital/actions/Action";
+import {CreateDeselectAllAction} from "digital/actions/selection/SelectAction";
 
-import {CircuitDesigner} from "../models/CircuitDesigner";
+import {CircuitDesigner} from "digital/models/CircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Tool} from "../utils/tools/Tool";
-import {ToolManager} from "../utils/tools/ToolManager";
-import {SelectionTool} from "../utils/tools/SelectionTool";
-import {TranslateTool} from "../utils/tools/TranslateTool";
-import {RotateTool} from "../utils/tools/RotateTool";
-import {PlaceComponentTool} from "../utils/tools/PlaceComponentTool";
-import {WiringTool} from "../utils/tools/WiringTool";
+import {Tool} from "digital/tools/Tool";
+import {ToolManager} from "digital/tools/ToolManager";
+import {SelectionTool} from "digital/tools/SelectionTool";
+import {TranslateTool} from "digital/tools/TranslateTool";
+import {RotateTool} from "digital/tools/RotateTool";
+import {PlaceComponentTool} from "digital/tools/PlaceComponentTool";
+import {WiringTool} from "digital/tools/WiringTool";
 
-import {Component} from "../models/ioobjects/Component";
+import {Component} from "digital/models/ioobjects/Component";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 

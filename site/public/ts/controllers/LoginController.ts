@@ -5,9 +5,13 @@ import ClientConfig = gapi.auth2.ClientConfig;
 import {GetCookie} from "../utils/Cookies";
 import {LoadDynamicScript} from "../utils/Script";
 
-import {GoogleAuthState} from "../utils/auth/GoogleAuthState";
-import {AuthState} from "../utils/auth/AuthState";
-import {NoAuthState} from "../utils/auth/NoAuthState";
+import {GoogleAuthState} from "../auth/GoogleAuthState";
+import {NoAuthState} from "../auth/NoAuthState";
+import {MainDesignerController} from "./MainDesignerController";
+import {Exporter} from "core/utils/io/Exporter";
+import {HeaderController} from "./HeaderController";
+import {RemoteController} from "./RemoteController";
+import {SideNavController} from "./SideNavController";
 
 export const LoginController = (() => {
     const loginPopup = $("#login-popup");
@@ -22,63 +26,53 @@ export const LoginController = (() => {
     let isOpen = false;
     let disabled = false;
 
-    let authState: AuthState = undefined;
-
     // Put authentication type meta-tags here (used to determine if an auth method is enabled)
     const noAuthMeta = $("#no_auth_enable");
     const googleAuthMeta = $("#google-signin-client_id");
 
-    const onLogin = function(): void {
+    async function OnLogin(): Promise<void> {
         loginHeaderContainer.addClass("hide");
         saveHeaderButton.removeClass("hide");
         logoutHeaderButton.removeClass("hide");
         LoginController.Hide();
+
+        SideNavController.UpdateUserCircuits();
     }
 
-    const onLogout = function(): void {
-        authState = undefined;
+    function OnLogout(): void {
         loginHeaderContainer.removeClass("hide");
         saveHeaderButton.addClass("hide");
         logoutHeaderButton.addClass("hide");
+
+        SideNavController.ClearUserCircuits();
     }
 
-    const onLoginError = function(e: {error: string}): void {
+    function OnLoginError(e: {error: string}): void {
         console.error(e);
     }
 
-    const setAuthState = async function(as: AuthState): Promise<void> {
-        if (!authState) {
-            authState = as;
-            return;
-        }
-        console.error("Attempt to load multiple auth states!");
-        await authState.logOut().then(() => authState = as);
+    function OnGoogleLogin(_: gapi.auth2.GoogleUser): void {
+        RemoteController.Login(new GoogleAuthState(), OnLogin);
     }
 
-    const onGoogleLogin = async function(_: gapi.auth2.GoogleUser): Promise<void> {
-        await setAuthState(new GoogleAuthState());
-        onLogin();
+    function OnNoAuthLogin(username: string): void {
+        RemoteController.Login(new NoAuthState(username), OnLogin);
     }
 
-    const onNoAuthLogin = function(username: string): void {
-        setAuthState(new NoAuthState(username));
-        onLogin();
-    }
-
-    const onNoAuthSubmitted = function(): void {
+    function OnNoAuthSubmitted(): void {
         const username = $("#no-auth-user-input").val() as string;
         if (username === "") {
             alert("User Name must not be blank");
             return;
         }
-        onNoAuthLogin(username);
+        OnNoAuthLogin(username);
     }
 
-    const show = function(): void {
+    function Show(): void {
         loginPopup.removeClass("invisible");
         overlay.removeClass("invisible");
     }
-    const hide = function(): void {
+    function Hide(): void {
         loginPopup.addClass("invisible");
         overlay.addClass("invisible");
     }
@@ -91,9 +85,15 @@ export const LoginController = (() => {
             overlay.click(() => LoginController.Hide());
 
             logoutHeaderButton.click(async () => {
-                if (authState)
-                    await authState.logOut();
-                onLogout();
+                RemoteController.Logout(OnLogout);
+            });
+
+            saveHeaderButton.click(async () => {
+                const circuit = MainDesignerController.GetDesigner();
+                const data = Exporter.WriteCircuit(circuit, HeaderController.GetProjectName());
+                RemoteController.SaveCircuit(data, async () => {
+                    return SideNavController.UpdateUserCircuits();
+                });
             });
 
 
@@ -108,8 +108,8 @@ export const LoginController = (() => {
                     "width": 120,
                     "height": 36,
                     "longtitle": false,
-                    "onsuccess": onGoogleLogin,
-                    "onfailure": onLoginError
+                    "onsuccess": OnGoogleLogin,
+                    "onfailure": OnLoginError
                 });
 
                 // Load 'auth2' from GAPI and then initialize w/ meta-data
@@ -122,8 +122,8 @@ export const LoginController = (() => {
             if (noAuthMeta.length > 0) {
                 const username = GetCookie("no_auth_username");
                 if (username)
-                    onNoAuthLogin(username);
-                $("#no-auth-submit").click(onNoAuthSubmitted);
+                    OnNoAuthLogin(username);
+                $("#no-auth-submit").click(OnNoAuthSubmitted);
             }
 
             return 1;
@@ -133,14 +133,14 @@ export const LoginController = (() => {
                 return;
 
             isOpen = true;
-            show();
+            Show();
         },
         Hide: function(): void {
             if (disabled)
                 return;
 
             isOpen = false;
-            hide();
+            Hide();
         },
         IsOpen: function(): boolean {
             return isOpen;
@@ -150,11 +150,6 @@ export const LoginController = (() => {
         },
         Disable: function(): void {
             disabled = true;
-        },
-        GetAuthHeader: function(): string {
-            if (!authState)
-                return "";
-            return authState.getAuthHeader();
         }
     }
 
