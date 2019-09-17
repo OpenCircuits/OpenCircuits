@@ -16,5 +16,6 @@ module.exports = {
         "math/(.*)$": "<rootDir>/app/core/ts/utils/math/$1.ts",
         "core/utils/(.*)$": "<rootDir>/app/core/ts/utils/$1.ts",
         "digital/(.*)$": "<rootDir>/app/digital/ts/$1.ts",
+        "analog/(.*)$": "<rootDir>/app/analog/ts/$1.ts"
     }
 };
