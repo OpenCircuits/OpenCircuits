@@ -1,0 +1,4 @@
+export const WIRE_DIST_THRESHOLD  = 5;
+export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
+export const WIRE_DIST_ITERATIONS = 10;
+export const WIRE_NEWTON_ITERATIONS = 5;

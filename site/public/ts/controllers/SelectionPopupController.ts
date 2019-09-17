@@ -1,20 +1,20 @@
-import {Vector, V} from "../utils/math/Vector";
+import {Vector, V} from "Vector";
 
+import {Camera} from "math/Camera";
 import {MainDesignerController} from "./MainDesignerController";
-import {Component} from "../models/ioobjects/Component";
-import {Wire} from "../models/ioobjects/Wire";
-import {Port} from "../models/ports/Port";
-import {Camera} from "../utils/Camera";
+import {Component} from "digital/models/ioobjects/Component";
+import {Wire} from "digital/models/ioobjects/Wire";
+import {Port} from "digital/models/ports/Port";
 
-import {SelectionPopupModule} from "../utils/selectionpopup/SelectionPopupModule";
-import {TitlePopupModule} from "../utils/selectionpopup/TitlePopupModule";
-import {PositionPopupModule} from "../utils/selectionpopup/PositionPopupModule";
-import {ICButtonPopupModule} from "../utils/selectionpopup/ICButtonPopupModule";
-import {BusButtonPopupModule} from "../utils/selectionpopup/BusButtonPopupModule";
-import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
-import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
-import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
-import {ClockFrequencyPopupModule} from "../utils/selectionpopup/ClockFrequencyPopupModule";
+import {SelectionPopupModule} from "../selectionpopup/SelectionPopupModule";
+import {TitlePopupModule} from "../selectionpopup/TitlePopupModule";
+import {PositionPopupModule} from "../selectionpopup/PositionPopupModule";
+import {ICButtonPopupModule} from "../selectionpopup/ICButtonPopupModule";
+import {BusButtonPopupModule} from "../selectionpopup/BusButtonPopupModule";
+import {ColorPopupModule} from "../selectionpopup/ColorPopupModule";
+import {InputCountPopupModule} from "../selectionpopup/InputCountPopupModule";
+import {OutputCountPopupModule} from "../selectionpopup/OutputCountPopupModule";
+import {ClockFrequencyPopupModule} from "../selectionpopup/ClockFrequencyPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user

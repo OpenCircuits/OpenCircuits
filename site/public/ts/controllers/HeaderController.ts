@@ -4,8 +4,8 @@ import $ from "jquery";
 //
 // import test from "./tours/test.json";
 
-import {Importer} from "../utils/io/Importer";
-import {Exporter} from "../utils/io/Exporter";
+import {Importer} from "core/utils/io/Importer";
+import {Exporter} from "core/utils/io/Exporter";
 
 import {MainDesignerController} from "./MainDesignerController";
 
