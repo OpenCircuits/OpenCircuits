@@ -37,9 +37,6 @@ export const SideNavController = (() => {
         else
             ItemNavController.Disable();
 
-        // Toggle SideNavController if entering play mode
-        if (SideNavController.IsOpen() && !editMode)
-            SideNavController.Toggle();
     }
 
     const toggle = function(): void {
