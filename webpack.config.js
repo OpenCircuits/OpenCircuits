@@ -27,7 +27,8 @@ const config = {
                 test: /\.(ts)$/,
                 exclude: /(node_modules)/,
                 use: {
-                    loader: 'ts-loader'
+                    loader: 'ts-loader',
+                    options: {onlyCompileBundledFiles: true}
                 }
             }
         ]
@@ -37,8 +38,7 @@ const config = {
             "Vector": baseUrl('app/core/ts/utils/math/Vector'),
             "math": baseUrl('app/core/ts/utils/math'),
             "core/utils": baseUrl('app/core/ts/utils'),
-            "digital": baseUrl('app/digital/ts'),
-            "analog": baseUrl('app/analog/ts'),
+            "digital": baseUrl('app/digital/ts')
         },
         extensions: ['.ts', '.js']
     }
