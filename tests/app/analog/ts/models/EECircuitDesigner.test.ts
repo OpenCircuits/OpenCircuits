@@ -42,9 +42,9 @@ describe("EECircuitDesigner", () => {
             expect(resistor.getResistance()).toBe(2);
             //expect(wire2.getResistance()).toBe(0);
 
-            //Power
-            expect(battery.getPower()).toBe(50);
-            expect(resistor.getPower()).toBe(50);
+            // //Power
+            // expect(battery.getPower()).toBe(50);
+            // expect(resistor.getPower()).toBe(50);
             //Technically, this value should be Negative
             //The battery generates power and the resistor consumes it
             //We will use absolute value for now
@@ -88,10 +88,10 @@ describe("EECircuitDesigner", () => {
             expect(resistor2.getResistance()).toBe(3);
             //expect(wire3.getResistance()).toBe(0);
 
-            //Power
-            expect(battery.getPower()).toBe(20);
-            expect(resistor1.getPower()).toBe(8);
-            expect(resistor2.getPower()).toBe(12);
+            // //Power
+            // expect(battery.getPower()).toBe(20);
+            // expect(resistor1.getPower()).toBe(8);
+            // expect(resistor2.getPower()).toBe(12);
         });
         it ("No Resistor Circuit", () => {
             const designer = new EECircuitDesigner();
@@ -116,8 +116,8 @@ describe("EECircuitDesigner", () => {
             expect(battery.getResistance()).toBe(0);
             //expect(wire1.getResistance()).toBe(0);
 
-            //Power
-            expect(battery.getPower()).toBe(Infinity);
+            // //Power
+            // expect(battery.getPower()).toBe(Infinity);
         });
     });
 });

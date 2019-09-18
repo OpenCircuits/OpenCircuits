@@ -1,6 +1,6 @@
 import "jest";
 
-import {Battery} from "../../../../site/public/ts/models/eeobjects/Battery";
+import {Battery} from "analog/models/eeobjects/Battery";
 
 describe("Battery", () => {
     describe("New Battery, Default", () => {
