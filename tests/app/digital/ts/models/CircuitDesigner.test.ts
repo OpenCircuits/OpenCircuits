@@ -1,19 +1,19 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("CircuitDesigner", () => {
     describe("Empty Circuit", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
 
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);
     });
     describe("Add", () => {
         it("Add Object", () => {
-            const designer = new CircuitDesigner(0);
+            const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), o = new LED();
 
             designer.addObject(a);
@@ -28,7 +28,7 @@ describe("CircuitDesigner", () => {
             expect(designer.getObjects().length).toBe(2);
         });
         it("Add Objects", () => {
-            const designer = new CircuitDesigner(0);
+            const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
@@ -43,7 +43,7 @@ describe("CircuitDesigner", () => {
         });
     });
     describe("Basic Circuit", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), o = new LED();
 
         designer.addObjects([a, o]);
@@ -71,7 +71,7 @@ describe("CircuitDesigner", () => {
     });
     describe("Remove Object", () => {
         it("Add Remove No Connection", () => {
-            const designer = new CircuitDesigner(0);
+            const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
@@ -90,7 +90,7 @@ describe("CircuitDesigner", () => {
             expect(() => designer.removeObject(o)).toThrowError();
         });
         it("Add Remove Connected 1", () => {
-            const designer = new CircuitDesigner(0);
+            const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), o = new LED();
 
             designer.addObjects([a, o]);
@@ -112,7 +112,7 @@ describe("CircuitDesigner", () => {
         });
     });
     describe("Reset Circuit", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), o = new LED();
 
         designer.addObjects([a, o]);

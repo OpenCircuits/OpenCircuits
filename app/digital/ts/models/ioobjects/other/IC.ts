@@ -5,7 +5,7 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
 
-import {CircuitDesigner} from "../../CircuitDesigner";
+import {DigitalCircuitDesigner} from "../../DigitalCircuitDesigner";
 import {Component} from "../Component";
 
 import {ICData} from "./ICData";
@@ -45,7 +45,7 @@ export class IC extends Component {
         }
     }
 
-    public setDesigner(designer?: CircuitDesigner): void {
+    public setDesigner(designer?: DigitalCircuitDesigner): void {
         super.setDesigner(designer);
 
         // Set designer of all internal components/wires

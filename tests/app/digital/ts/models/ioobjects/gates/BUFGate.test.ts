@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("BUFGate", () => {
     describe("BUFGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch, o = new LED(), buf_gate = new BUFGate();
 
         designer.addObjects([a, o, buf_gate]);
@@ -30,7 +30,7 @@ describe("BUFGate", () => {
     });
 
     describe("NOTGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), o = new LED(), not_gate = new BUFGate(true);
 
         designer.addObjects([a, o, not_gate]);

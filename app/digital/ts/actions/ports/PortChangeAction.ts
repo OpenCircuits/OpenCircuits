@@ -2,13 +2,13 @@ import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "digital/models/ioobjects/Component";
 import {Port} from "digital/models/ports/Port";
 import {GetPath} from "digital/utils/ComponentUtils";
 
 export abstract class PortChangeAction implements Action {
-    protected designer: CircuitDesigner;
+    protected designer: DigitalCircuitDesigner;
 
     protected obj: Component;
 

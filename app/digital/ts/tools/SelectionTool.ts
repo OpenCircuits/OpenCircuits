@@ -9,7 +9,7 @@ import {CircleContains,
 import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "digital/models/ioobjects/IOObject";
 import {Component} from "digital/models/ioobjects/Component";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
@@ -34,7 +34,7 @@ import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFact
 
 export class SelectionTool extends Tool {
 
-    private designer: CircuitDesigner;
+    private designer: DigitalCircuitDesigner;
     private camera: Camera;
 
     private selections: Set<Selectable>;
@@ -50,7 +50,7 @@ export class SelectionTool extends Tool {
 
     private action: GroupAction;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
         super();
 
         this.designer = designer;

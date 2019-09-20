@@ -1,6 +1,6 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
@@ -11,7 +11,7 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 
 describe("IC", () => {
     it("Basic IC", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch, o = new LED(), buf_gate = new BUFGate();
 
         designer.addObjects([a, o, buf_gate]);
@@ -34,7 +34,7 @@ describe("IC", () => {
         expect(o2.isOn()).toBe(true);
     });
     it("Basic IC 2", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch, b = new Switch, o = new LED(), and_gate = new ANDGate();
 
         designer.addObjects([a, b, o, and_gate]);

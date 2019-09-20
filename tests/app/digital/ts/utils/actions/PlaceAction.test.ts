@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
 import {PlaceAction} from "digital/actions/addition/PlaceAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch();
 
         designer.addObject(a);

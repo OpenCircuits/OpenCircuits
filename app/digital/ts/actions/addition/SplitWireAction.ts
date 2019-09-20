@@ -2,13 +2,13 @@ import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 export class SplitWireAction extends ReversableAction {
-    private designer: CircuitDesigner;
+    private designer: DigitalCircuitDesigner;
 
     private input: OutputPort;
     private output: InputPort;

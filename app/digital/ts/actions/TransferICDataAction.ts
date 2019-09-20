@@ -1,15 +1,15 @@
 import {Action} from "./Action";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 export class TransferICDataAction implements Action {
-    private origin: CircuitDesigner;
-    private target: CircuitDesigner;
+    private origin: DigitalCircuitDesigner;
+    private target: DigitalCircuitDesigner;
 
     private data: Array<ICData>;
 
-    public constructor(origin: CircuitDesigner, target: CircuitDesigner) {
+    public constructor(origin: DigitalCircuitDesigner, target: DigitalCircuitDesigner) {
         this.origin = origin;
         this.target = target;
 

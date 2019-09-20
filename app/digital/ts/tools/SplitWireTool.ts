@@ -5,7 +5,7 @@ import {SelectionTool} from "./SelectionTool";
 import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Wire} from "digital/models/ioobjects/Wire";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
@@ -18,7 +18,7 @@ import {SplitWireAction} from "../actions/addition/SplitWireAction";
 export class SplitWireTool extends TranslateTool {
     private splitAction: GroupAction;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
         super(designer, camera);
     }
 

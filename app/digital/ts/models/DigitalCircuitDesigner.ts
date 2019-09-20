@@ -17,7 +17,7 @@ import {ICData}    from "./ioobjects/other/ICData";
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
-export class CircuitDesigner implements XMLable {
+export class DigitalCircuitDesigner implements XMLable {
     private ics: Array<ICData>;
 
     private objects: Array<Component>;

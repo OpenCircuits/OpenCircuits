@@ -1,11 +1,11 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("Constant Low", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const i = new ConstantHigh(), o = new LED();
 
     designer.addObjects([i, o]);

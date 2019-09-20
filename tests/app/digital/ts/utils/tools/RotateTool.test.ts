@@ -9,7 +9,7 @@ import {Selectable} from "core/utils/Selectable";
 
 import {ToolManager} from "digital/tools/ToolManager";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 
@@ -18,7 +18,7 @@ import {InitializeInput} from "./Helpers";
 
 describe("Rotate Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
+    const designer = new DigitalCircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
     const input = new FakeInput(camera.getCenter());
 

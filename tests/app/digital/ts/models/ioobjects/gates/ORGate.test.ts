@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("ORGate", () => {
     describe("ORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ORGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
@@ -45,7 +45,7 @@ describe("ORGate", () => {
     });
 
     describe("NORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ORGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);

@@ -1,12 +1,12 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {SRLatch}         from "digital/models/ioobjects/latches/SRLatch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("SRLatch", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const clk = new Switch(), s = new Switch(), r = new Switch(),
     	l = new SRLatch(), l0 = new LED(), l1 = new LED();
 

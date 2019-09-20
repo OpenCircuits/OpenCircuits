@@ -1,12 +1,12 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 import {WirePort}        from "digital/models/ioobjects/other/WirePort";
 
 describe("Wire Port", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const wp = new WirePort(), s = new Switch(), o = new LED();
 
     designer.addObjects([wp, s, o]);

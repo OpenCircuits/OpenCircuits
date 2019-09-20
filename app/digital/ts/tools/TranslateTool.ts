@@ -11,7 +11,7 @@ import {Tool} from "./Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "digital/models/ioobjects/Component";
 
 import {Action} from "../actions/Action";
@@ -21,7 +21,7 @@ import {TranslateAction} from "../actions/transform/TranslateAction";
 import {CreateGroupPostTranslateAction} from "../actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
-    protected designer: CircuitDesigner;
+    protected designer: DigitalCircuitDesigner;
     protected camera: Camera;
 
     protected pressedComponent: Component;
@@ -31,7 +31,7 @@ export class TranslateTool extends Tool {
     private action: GroupAction;
     private startPos: Vector;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
         super();
 
         this.designer = designer;

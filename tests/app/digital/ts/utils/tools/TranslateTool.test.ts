@@ -7,7 +7,7 @@ import {V} from "Vector";
 import {Camera} from "math/Camera";
 import {ToolManager} from "digital/tools/ToolManager";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {Button}          from "digital/models/ioobjects/inputs/Button";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
@@ -19,7 +19,7 @@ import {InitializeInput} from "./Helpers";
 
 describe("Translate Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
+    const designer = new DigitalCircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
     const input = new FakeInput(camera.getCenter());
 

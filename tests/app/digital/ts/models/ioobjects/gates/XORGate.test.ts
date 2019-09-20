@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {XORGate}         from "digital/models/ioobjects/gates/XORGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("XORGate", () => {
     describe("XORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new XORGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
@@ -44,7 +44,7 @@ describe("XORGate", () => {
         });
     });
     describe("XNORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new XORGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);

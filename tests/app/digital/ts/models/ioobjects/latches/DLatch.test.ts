@@ -1,12 +1,12 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {DLatch}          from "digital/models/ioobjects/latches/DLatch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("DLatch", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const clk = new Switch(), data = new Switch(), l = new DLatch(), l0 = new LED(), l1 = new LED();
 
     designer.addObjects([clk, data, l, l1, l0]);

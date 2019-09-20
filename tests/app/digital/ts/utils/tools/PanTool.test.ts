@@ -6,7 +6,7 @@ import {OPTION_KEY,
 import {V} from "Vector";
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ToolManager} from "digital/tools/ToolManager";
 
 import {FakeInput} from "../FakeInput";
@@ -14,7 +14,7 @@ import {InitializeInput} from "./Helpers";
 
 describe("Pan Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
+    const designer = new DigitalCircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
     const input = new FakeInput(camera.getCenter());
 

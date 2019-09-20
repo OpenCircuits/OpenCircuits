@@ -12,7 +12,7 @@ import {SelectionTool} from "digital/tools/SelectionTool";
 import {RotateTool}    from "digital/tools/RotateTool";
 import {WiringTool}    from "digital/tools/WiringTool";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
@@ -22,7 +22,7 @@ import {InitializeInput} from "./Helpers";
 
 describe("Tool Manager", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
+    const designer = new DigitalCircuitDesigner(-1);
     const toolManager = new ToolManager(camera, designer);
     const input = new FakeInput(camera.getCenter());
 

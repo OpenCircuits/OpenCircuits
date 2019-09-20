@@ -1,6 +1,6 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 
@@ -12,7 +12,7 @@ import {CreateBusAction}        from "digital/actions/addition/BusActionFactory"
 
 describe("Integration Tests for Actions", () => {
     it("Bus 5 switches to 3s Mux", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const manager = new ActionManager();
 
         const a = new Switch();
@@ -42,7 +42,7 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getWires().length).toBe(0);
     });
     it("Bus 5 switches to 3s Mux then change to 2s Mux", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const manager = new ActionManager();
 
         const a = new Switch();

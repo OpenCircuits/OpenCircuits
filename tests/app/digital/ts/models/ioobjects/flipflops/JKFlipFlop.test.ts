@@ -1,12 +1,12 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {JKFlipFlop}      from "digital/models/ioobjects/flipflops/JKFlipFlop";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("JKFlipFLop", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const clk = new Switch(), s = new Switch(), r = new Switch(),
     	f = new JKFlipFlop(), l0 = new LED(), l1 = new LED();
 

@@ -1,6 +1,6 @@
 import {IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
 import {Tool} from "./Tool";
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Port} from "digital/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
@@ -18,7 +18,7 @@ import {ConnectionAction} from "../actions/addition/ConnectionAction";
 
 export class WiringTool extends Tool {
 
-    private designer: CircuitDesigner;
+    private designer: DigitalCircuitDesigner;
     private camera: Camera;
 
     private port: Port;
@@ -31,7 +31,7 @@ export class WiringTool extends Tool {
     //  activated by dragging or clicking
     private clicked: boolean;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
         super();
 
         this.designer = designer;

@@ -1,20 +1,21 @@
+
 import {BezierContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "digital/models/ioobjects/IOObject";
 import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
 
 import {Input} from "core/utils/Input";
 
 export class InteractionHelper {
-    private designer: CircuitDesigner;
+    private designer: DigitalCircuitDesigner;
     private camera: Camera;
 
     private isPressingPressableObj: boolean;
     private currentlyPressedObj: IOObject;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
         this.designer = designer;
         this.camera = camera;
 

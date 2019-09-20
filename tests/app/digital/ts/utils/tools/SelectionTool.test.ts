@@ -12,7 +12,7 @@ import {Selectable} from "core/utils/Selectable";
 
 import {ToolManager} from "digital/tools/ToolManager";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
@@ -22,7 +22,7 @@ import {InitializeInput} from "./Helpers";
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const toolManager = new ToolManager(camera, designer);
     const input = new FakeInput(camera.getCenter());
 

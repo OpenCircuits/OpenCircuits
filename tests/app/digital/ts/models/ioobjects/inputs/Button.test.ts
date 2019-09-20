@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {Button}          from "digital/models/ioobjects/inputs/Button";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("Button", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const a = new Switch();
     const b = new Button(), b2 = new Button();
     const g = new ANDGate();

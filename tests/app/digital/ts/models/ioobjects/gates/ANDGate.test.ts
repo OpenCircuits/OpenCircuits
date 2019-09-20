@@ -1,13 +1,13 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ANDGate(), o = new LED();
 
         designer.addObjects([a, b, g, o]);
@@ -45,7 +45,7 @@ describe("ANDGate", () => {
     });
 
     describe("NANDGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ANDGate(true), o = new LED();
 
         designer.addObjects([a, b, g, o]);
