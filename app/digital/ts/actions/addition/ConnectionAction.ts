@@ -1,4 +1,4 @@
-import {Action} from "../Action";
+import {Action} from "core/actions/Action";
 import {ReversableAction} from "../ReversableAction";
 
 import {Component} from "digital/models/ioobjects/Component";

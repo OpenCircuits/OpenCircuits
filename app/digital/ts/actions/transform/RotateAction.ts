@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {Action} from "../Action";
+import {Action} from "core/actions/Action";
 import {Component} from "digital/models/ioobjects/Component";
 
 export class RotateAction implements Action {

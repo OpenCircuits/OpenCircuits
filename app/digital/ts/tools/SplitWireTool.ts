@@ -1,4 +1,4 @@
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 import {TranslateTool} from "./TranslateTool"
 import {SelectionTool} from "./SelectionTool";
 
@@ -9,7 +9,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Wire} from "digital/models/ioobjects/Wire";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
-import {Action} from "../actions/Action";
+import {Action} from "core/actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";

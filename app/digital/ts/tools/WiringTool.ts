@@ -1,5 +1,5 @@
 import {IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Port} from "digital/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
@@ -13,7 +13,7 @@ import {SelectionTool} from "./SelectionTool";
 
 import {Input} from "core/utils/Input";
 
-import {Action} from "../actions/Action";
+import {Action} from "core/actions/Action";
 import {ConnectionAction} from "../actions/addition/ConnectionAction";
 
 export class WiringTool extends Tool {

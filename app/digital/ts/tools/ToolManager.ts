@@ -2,12 +2,12 @@ import {Input} from "core/utils/Input";
 import {MouseListener} from "core/utils/MouseListener";
 import {KeyboardListener} from "core/utils/KeyboardListener";
 import {Camera} from "math/Camera";
-import {Action} from "digital/actions/Action";
+import {Action} from "app/core/ts/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "digital/models/ioobjects/Component";
 
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 import {SelectionTool} from "./SelectionTool";
 import {RotateTool} from "./RotateTool";
 import {PanTool} from "./PanTool";

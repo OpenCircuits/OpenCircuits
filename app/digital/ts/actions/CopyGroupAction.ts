@@ -3,7 +3,7 @@ import {Transform} from "math/Transform";
 import {SeparatedComponentCollection,
         CopyGroup} from "digital/utils/ComponentUtils";
 
-import {Action} from "./Action";
+import {Action} from "core/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "digital/models/ioobjects/IOObject";

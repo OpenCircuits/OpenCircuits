@@ -1,7 +1,7 @@
 import {Vector} from "Vector";
 
 import {GroupAction} from "../GroupAction";
-import {Action} from "../Action";
+import {Action} from "core/actions/Action";
 
 import {Component} from "digital/models/ioobjects/Component";
 

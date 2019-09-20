@@ -1,4 +1,4 @@
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "digital/models/ioobjects/Component";
@@ -6,7 +6,7 @@ import {Component} from "digital/models/ioobjects/Component";
 import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
-import {Action} from "../actions/Action";
+import {Action} from "core/actions/Action";
 import {PlaceAction} from "../actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {

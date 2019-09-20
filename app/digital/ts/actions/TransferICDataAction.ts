@@ -1,4 +1,4 @@
-import {Action} from "./Action";
+import {Action} from "core/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ICData} from "digital/models/ioobjects/other/ICData";

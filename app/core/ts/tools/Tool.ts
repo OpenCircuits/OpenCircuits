@@ -2,7 +2,7 @@ import {Input} from "core/utils/Input";
 import {MouseListener} from "core/utils/MouseListener";
 import {KeyboardListener} from "core/utils/KeyboardListener";
 
-import {Action} from "../actions/Action";
+import {Action} from "core/actions/Action";
 
 export abstract class Tool implements MouseListener, KeyboardListener {
 

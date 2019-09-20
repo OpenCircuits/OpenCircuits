@@ -1,4 +1,4 @@
-import {Action} from "./Action";
+import {Action} from "core/actions/Action";
 
 export class GroupAction implements Action {
     private actions: Array<Action>;

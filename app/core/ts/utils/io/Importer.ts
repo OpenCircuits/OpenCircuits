@@ -2,11 +2,11 @@ import {SAVED} from "../Config";
 
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Importer = (() => {
     return {
-        LoadCircuit: function(designer: CircuitDesigner, fileContents: string | XMLDocument): string {
+        LoadCircuit: function(designer: DigitalCircuitDesigner, fileContents: string | XMLDocument): string {
             const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
             if (root.getElementsByTagName("parsererror").length > 0)
                 return;
@@ -21,7 +21,7 @@ export const Importer = (() => {
 
             return reader.getName();
         },
-        PromptLoadCircuit: function(designer: CircuitDesigner, contents: string | XMLDocument, setName: (n: string) => void): void {
+        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument, setName: (n: string) => void): void {
             const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
 
             if (open) {
@@ -30,7 +30,7 @@ export const Importer = (() => {
                 setName(this.LoadCircuit(designer, contents));
             }
         },
-        PromptLoadCircuitFromFile: function(designer: CircuitDesigner, file: File, setName: (n: string) => void): void {
+        PromptLoadCircuitFromFile: function(designer: DigitalCircuitDesigner, file: File, setName: (n: string) => void): void {
             const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
 
             if (open) {

@@ -7,14 +7,14 @@ import {CopyGroup} from "digital/utils/ComponentUtils";
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 
 import {SelectionTool} from "./SelectionTool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "digital/models/ioobjects/Component";
 
-import {Action} from "../actions/Action";
+import {Action} from "core/actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {CopyGroupAction} from "../actions/CopyGroupAction";
 import {TranslateAction} from "../actions/transform/TranslateAction";

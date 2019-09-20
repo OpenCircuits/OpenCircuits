@@ -5,7 +5,7 @@ import {ROTATION_CIRCLE_R1,
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
-import {Tool} from "./Tool";
+import {Tool} from "core/tools/Tool";
 import {SelectionTool} from "./SelectionTool";
 
 import {Component} from "digital/models/ioobjects/Component";

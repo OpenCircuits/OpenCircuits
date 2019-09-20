@@ -7,7 +7,7 @@ import {CircleContains,
         BezierContains,} from "math/MathUtils";
 
 import {Selectable} from "core/utils/Selectable";
-import {Tool} from "core/tools/Tool";
+import {Tool} from "./Tool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "digital/models/ioobjects/IOObject";
@@ -22,7 +22,7 @@ import {InteractionHelper} from "./helpers/InteractionHelper";
 import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
-import {Action} from "core/actions/Action";
+import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
 import {ShiftAction,
         ShiftWireAction} from "../actions/ShiftAction";

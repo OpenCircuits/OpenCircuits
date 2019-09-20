@@ -1,11 +1,11 @@
 import jsPDF from "jspdf";
 
 import {XMLWriter} from "./xml/XMLWriter";
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Exporter = (() => {
     return {
-        WriteCircuit: function(designer: CircuitDesigner, name: string): string {
+        WriteCircuit: function(designer: DigitalCircuitDesigner, name: string): string {
             const writer = new XMLWriter(designer.getXMLName());
 
             writer.setVersion("1.1");
@@ -16,7 +16,7 @@ export const Exporter = (() => {
 
             return writer.serialize();
         },
-        SaveFile: function(designer: CircuitDesigner, projectName: string): void {
+        SaveFile: function(designer: DigitalCircuitDesigner, projectName: string): void {
             // Get name
             if (projectName.replace(/\s+/g, "") === "")
                 projectName = "Untitled Circuit";

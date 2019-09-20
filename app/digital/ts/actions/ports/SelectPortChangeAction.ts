@@ -1,4 +1,4 @@
-import {Action} from "../Action";
+import {Action} from "core/actions/Action";
 import {GroupAction} from "../GroupAction";
 import {PortChangeAction} from "./PortChangeAction";
 
