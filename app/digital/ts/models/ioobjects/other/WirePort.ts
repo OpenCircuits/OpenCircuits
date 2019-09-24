@@ -4,7 +4,7 @@ import {Vector, V} from "Vector";
 import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export class WirePort extends Component {
 

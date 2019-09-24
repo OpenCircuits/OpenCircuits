@@ -7,16 +7,16 @@ import {Vector} from "Vector";
 import {Camera} from "math/Camera";
 import {Renderer} from "./Renderer";
 
-import {ToolManager} from "../tools/ToolManager";
-import {SelectionTool} from "../tools/SelectionTool";
-import {RotateTool} from "../tools/RotateTool";
-import {PlaceComponentTool} from "../tools/PlaceComponentTool";
-import {WiringTool} from "../tools/WiringTool";
+import {ToolManager} from "core/tools/ToolManager";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {RotateTool} from "core/tools/RotateTool";
+import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
+import {WiringTool} from "core/tools/WiringTool";
 
 import {ComponentRenderer} from "./ioobjects/ComponentRenderer";
 import {WireRenderer} from "./ioobjects/WireRenderer";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Style} from "./Style";
 import {ArcCircle} from "./shapes/ArcCircle";

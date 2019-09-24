@@ -3,7 +3,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {Name} from "core/utils/Name";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 import {InputPort} from "../../ports/InputPort";
 import {Positioner} from "../../ports/positioners/Positioner"

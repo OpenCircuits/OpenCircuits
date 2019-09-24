@@ -4,17 +4,17 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Port} from "digital/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {Wire} from "digital/models/ioobjects/Wire";
+import {Wire} from "core/models/Wire";
 
 import {CircleContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
-import {SelectionTool} from "./SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 import {Input} from "core/utils/Input";
 
 import {Action} from "core/actions/Action";
-import {ConnectionAction} from "../actions/addition/ConnectionAction";
+import {ConnectionAction} from "../../../digital/ts/actions/addition/ConnectionAction";
 
 export class WiringTool extends Tool {
 

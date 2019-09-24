@@ -2,8 +2,8 @@ import {Vector, V} from "Vector";
 
 import {Camera} from "math/Camera";
 import {MainDesignerController} from "./MainDesignerController";
-import {Component} from "digital/models/ioobjects/Component";
-import {Wire} from "digital/models/ioobjects/Wire";
+import {Component} from "core/models/Component";
+import {Wire} from "core/models/Wire";
 import {Port} from "digital/models/ports/Port";
 
 import {SelectionPopupModule} from "../selectionpopup/SelectionPopupModule";

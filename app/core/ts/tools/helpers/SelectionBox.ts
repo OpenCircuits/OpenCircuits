@@ -7,9 +7,9 @@ import {TransformContains,
         RectContains} from "math/MathUtils";
 import {GetAllPorts} from "digital/utils/ComponentUtils";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-
 import {Input} from "core/utils/Input";
+
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 import {GroupAction} from "../../actions/GroupAction";
 import {CreateGroupSelectAction,
@@ -18,7 +18,7 @@ import {CreateGroupSelectAction,
 import {SelectionTool} from "../SelectionTool";
 
 export class SelectionBox {
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
     private camera: Camera;
 
     private selectionTool: SelectionTool;
@@ -29,7 +29,7 @@ export class SelectionBox {
 
     private selecting: boolean;
 
-    public constructor(designer: DigitalCircuitDesigner, camera: Camera, selectionTool: SelectionTool) {
+    public constructor(designer: CircuitDesigner, camera: Camera, selectionTool: SelectionTool) {
         this.designer = designer;
         this.camera = camera;
 

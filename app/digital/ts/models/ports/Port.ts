@@ -3,8 +3,8 @@ import {Vector,V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
 
-import {Component} from "../ioobjects/Component";
-import {Wire}      from "../ioobjects/Wire";
+import {Component} from "core/models/Component";
+import {Wire}      from "../../../../core/ts/models/Wire";
 
 export abstract class Port implements Selectable {
     protected parent: Component;
@@ -80,6 +80,10 @@ export abstract class Port implements Selectable {
     }
     public getWorldTargetPos(): Vector {
         return this.parent.getTransform().toWorldSpace(this.target);
+    }
+
+    public getPos(): Vector {
+        return this.getTargetPos();
     }
 
     public abstract getWires(): Array<Wire>;

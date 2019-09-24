@@ -3,7 +3,7 @@ import {Vector} from "Vector";
 import {GroupAction} from "../GroupAction";
 import {TranslateAction} from "./TranslateAction";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export function CreateGroupPostTranslateAction(objects: Array<Component>, initialPositions: Array<Vector>): GroupAction {
     const action = new GroupAction();

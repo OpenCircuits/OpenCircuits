@@ -6,7 +6,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
 
 import {DigitalCircuitDesigner} from "../../DigitalCircuitDesigner";
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 import {ICData} from "./ICData";
 

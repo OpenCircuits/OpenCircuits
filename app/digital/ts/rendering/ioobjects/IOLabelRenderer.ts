@@ -4,7 +4,7 @@ import {Clamp,
 
 import {Camera} from "math/Camera";
 import {Renderer} from "../Renderer";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export const IOLabelRenderer = (() => {
 

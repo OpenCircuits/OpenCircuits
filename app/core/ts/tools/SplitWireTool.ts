@@ -1,19 +1,19 @@
 import {Tool} from "core/tools/Tool";
 import {TranslateTool} from "./TranslateTool"
-import {SelectionTool} from "./SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Wire} from "digital/models/ioobjects/Wire";
+import {Wire} from "core/models/Wire";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../actions/GroupAction";
+import {GroupAction} from "../../../digital/ts/actions/GroupAction";
 import {SelectAction,
-        CreateDeselectAllAction} from "../actions/selection/SelectAction";
-import {SplitWireAction} from "../actions/addition/SplitWireAction";
+        CreateDeselectAllAction} from "../../../digital/ts/actions/selection/SelectAction";
+import {SplitWireAction} from "../../../digital/ts/actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
     private splitAction: GroupAction;

@@ -9,7 +9,7 @@ import {InputPortSet} from "../../ports/PortSets";
 import {Positioner} from "../../ports/positioners/Positioner";
 import {MuxSelectPositioner} from "../../ports/positioners/MuxPositioners";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export abstract class Mux extends Component {
     protected selects: InputPortSet;

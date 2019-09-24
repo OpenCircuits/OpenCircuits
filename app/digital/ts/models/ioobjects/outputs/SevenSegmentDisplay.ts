@@ -7,7 +7,7 @@ import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePosi
 
 import {InputPort} from "../../ports/InputPort";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export class SevenSegmentDisplay extends Component {
     public constructor() {

@@ -3,7 +3,7 @@ import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export class PlaceAction extends ReversableAction {
     private designer: DigitalCircuitDesigner;

@@ -3,7 +3,7 @@ import {Vector} from "Vector";
 import {GroupAction} from "../GroupAction";
 import {Action} from "core/actions/Action";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export class TranslateAction implements Action {
     protected object: Component;

@@ -4,7 +4,7 @@ import {DEFAULT_FILL_COLOR,
         WIRE_THICKNESS} from "digital/utils/Constants";
 import {Renderer} from "../Renderer";
 import {Camera} from "math/Camera";
-import {Wire} from "digital/models/ioobjects/Wire";
+import {Wire} from "core/models/Wire";
 
 import {Curve} from "../shapes/Curve";
 import {Line} from "../shapes/Line";

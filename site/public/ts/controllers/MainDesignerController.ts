@@ -5,29 +5,29 @@ import {Input} from "core/utils/Input";
 import {RenderQueue} from "core/utils/RenderQueue";
 import {Selectable} from "core/utils/Selectable";
 
-import {Action} from "digital/actions/Action";
+import {Action} from "core/actions/Action";
 import {CreateDeselectAllAction} from "digital/actions/selection/SelectAction";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Tool} from "digital/tools/Tool";
-import {ToolManager} from "digital/tools/ToolManager";
-import {SelectionTool} from "digital/tools/SelectionTool";
-import {TranslateTool} from "digital/tools/TranslateTool";
-import {RotateTool} from "digital/tools/RotateTool";
-import {PlaceComponentTool} from "digital/tools/PlaceComponentTool";
-import {WiringTool} from "digital/tools/WiringTool";
+import {Tool} from "core/tools/Tool";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {ToolManager} from "core/tools/ToolManager";
+import {TranslateTool} from "core/tools/TranslateTool";
+import {RotateTool} from "core/tools/RotateTool";
+import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
+import {WiringTool} from "core/tools/WiringTool";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 import {SelectionPopupController} from "./SelectionPopupController";
 
 
 export const MainDesignerController = (() => {
     let active = true;
 
-    let designer: CircuitDesigner;
+    let designer: DigitalCircuitDesigner;
     let view: MainDesignerView;
     let input: Input;
 
@@ -95,7 +95,7 @@ export const MainDesignerController = (() => {
             // pass Render function so that
             //  the circuit is redrawn every
             //  time its updated
-            designer = new CircuitDesigner(1, () => this.Render());
+            designer = new DigitalCircuitDesigner(1, () => this.Render());
             view = new MainDesignerView();
 
             // utils
@@ -164,7 +164,7 @@ export const MainDesignerController = (() => {
         GetCamera: function(): Camera {
             return view.getCamera();
         },
-        GetDesigner: function(): CircuitDesigner {
+        GetDesigner: function(): DigitalCircuitDesigner {
             return designer;
         },
         IsActive: function(): boolean {

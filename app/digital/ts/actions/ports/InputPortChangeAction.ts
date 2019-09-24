@@ -1,7 +1,7 @@
 import {Action} from "core/actions/Action";
 import {PortChangeAction} from "./PortChangeAction";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export class InputPortChangeAction extends PortChangeAction {
     public constructor(obj: Component, target: number) {

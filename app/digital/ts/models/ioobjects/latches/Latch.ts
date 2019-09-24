@@ -6,7 +6,7 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {InputPort} from "../../ports/InputPort";
 import {Positioner} from "../../ports/positioners/Positioner"
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 //
 // Latch is an abstract superclass for general latches.

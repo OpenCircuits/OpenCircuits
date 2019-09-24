@@ -6,11 +6,11 @@ import {Vector} from "Vector";
 import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
 import {Tool} from "core/tools/Tool";
-import {SelectionTool} from "./SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
-import {RotateAction} from "../actions/transform/RotateAction";
+import {RotateAction} from "../../../digital/ts/actions/transform/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;

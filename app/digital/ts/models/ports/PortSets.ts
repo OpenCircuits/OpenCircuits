@@ -1,6 +1,6 @@
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Port}       from "./Port";
 import {InputPort}  from "./InputPort";

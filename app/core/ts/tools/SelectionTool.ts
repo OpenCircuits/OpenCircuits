@@ -11,7 +11,7 @@ import {Tool} from "./Tool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "digital/models/ioobjects/IOObject";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
@@ -31,10 +31,11 @@ import {SelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
 import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 export class SelectionTool extends Tool {
 
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
     private camera: Camera;
 
     private selections: Set<Selectable>;
@@ -50,7 +51,7 @@ export class SelectionTool extends Tool {
 
     private action: GroupAction;
 
-    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
+    public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
         this.designer = designer;

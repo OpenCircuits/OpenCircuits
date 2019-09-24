@@ -3,7 +3,7 @@ import {DEFAULT_SIZE} from "digital/utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export class LED extends Component {
     private color: string;

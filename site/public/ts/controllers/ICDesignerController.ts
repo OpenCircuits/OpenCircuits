@@ -9,17 +9,17 @@ import {RectContains,
 import {Input} from "core/utils/Input";
 import {RenderQueue} from "core/utils/RenderQueue";
 
-import {TranslateTool} from "digital/tools/TranslateTool";
-import {RotateTool} from "digital/tools/RotateTool";
-import {PlaceComponentTool} from "digital/tools/PlaceComponentTool";
-import {WiringTool} from "digital/tools/WiringTool";
+import {TranslateTool} from "core/tools/TranslateTool";
+import {RotateTool} from "core/tools/RotateTool";
+import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
+import {WiringTool} from "core/tools/WiringTool";
 
 import {ICDesignerView} from "../views/ICDesignerView";
 
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
-import {IOObject} from "digital/models/ioobjects/IOObject";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {IOObject} from "core/models/IOObject";
 import {Port} from "digital/models/ports/Port";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
@@ -30,7 +30,7 @@ import {MainDesignerController} from "./MainDesignerController";
 export const ICDesignerController = (() => {
     let visible = false;
 
-    let designer: CircuitDesigner;
+    let designer: DigitalCircuitDesigner;
     let view: ICDesignerView;
     let input: Input;
 
@@ -209,7 +209,7 @@ export const ICDesignerController = (() => {
             // pass Render function so that
             //  the circuit is redrawn every
             //  time its updated
-            designer = new CircuitDesigner(1, () => this.Render());
+            designer = new DigitalCircuitDesigner(1, () => this.Render());
             view = new ICDesignerView();
 
             view.setConfirmButtonListener(() => confirm());

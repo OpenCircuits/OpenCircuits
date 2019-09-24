@@ -9,16 +9,16 @@ import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
 import {Tool} from "core/tools/Tool";
 
-import {SelectionTool} from "./SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../actions/GroupAction";
-import {CopyGroupAction} from "../actions/CopyGroupAction";
-import {TranslateAction} from "../actions/transform/TranslateAction";
-import {CreateGroupPostTranslateAction} from "../actions/transform/GroupPostTranslateActionFactory";
+import {GroupAction} from "../../../digital/ts/actions/GroupAction";
+import {CopyGroupAction} from "../../../digital/ts/actions/CopyGroupAction";
+import {TranslateAction} from "../../../digital/ts/actions/transform/TranslateAction";
+import {CreateGroupPostTranslateAction} from "../../../digital/ts/actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
     protected designer: DigitalCircuitDesigner;

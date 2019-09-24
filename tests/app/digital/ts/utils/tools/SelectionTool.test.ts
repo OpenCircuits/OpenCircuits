@@ -10,7 +10,7 @@ import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";

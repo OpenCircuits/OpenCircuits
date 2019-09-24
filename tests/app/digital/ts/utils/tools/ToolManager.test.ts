@@ -6,11 +6,11 @@ import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Tool}          from "digital/tools/Tool";
-import {ToolManager}   from "digital/tools/ToolManager";
-import {SelectionTool} from "digital/tools/SelectionTool";
-import {RotateTool}    from "digital/tools/RotateTool";
-import {WiringTool}    from "digital/tools/WiringTool";
+import {Tool}          from "core/tools/Tool";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {RotateTool}    from "core/tools/RotateTool";
+import {ToolManager}   from "core/tools/ToolManager";
+import {WiringTool}    from "core/tools/WiringTool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";

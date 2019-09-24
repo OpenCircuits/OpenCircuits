@@ -5,8 +5,8 @@ import {V,Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {OutputPort} from "../ports/OutputPort";
-import {InputPort}  from "../ports/InputPort";
+import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
+import {InputPort}  from "../../../digital/ts/models/ports/InputPort";
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 

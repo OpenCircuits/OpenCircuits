@@ -24,7 +24,7 @@ import {Decoder}             from "digital/models/ioobjects/other/Decoder";
 import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
-import {Component}           from "digital/models/ioobjects/Component";
+import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";

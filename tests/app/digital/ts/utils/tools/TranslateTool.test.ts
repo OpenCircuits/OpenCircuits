@@ -5,7 +5,7 @@ import {SPACEBAR_KEY} from "digital/utils/Constants";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";

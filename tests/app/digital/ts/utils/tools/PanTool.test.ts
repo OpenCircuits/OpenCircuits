@@ -7,7 +7,7 @@ import {V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";

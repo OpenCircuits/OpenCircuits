@@ -1,7 +1,7 @@
 import {GRID_SIZE} from "digital/utils/Constants";
 
 import {V} from "Vector";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 

@@ -7,7 +7,7 @@ import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePosi
 import {InputPort} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export class Encoder extends Component {
 

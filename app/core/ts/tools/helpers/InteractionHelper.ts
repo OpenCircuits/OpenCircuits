@@ -2,20 +2,20 @@
 import {BezierContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {IOObject} from "digital/models/ioobjects/IOObject";
-import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
-
 import {Input} from "core/utils/Input";
+import {IsPressable} from "core/utils/Pressable";
+import {Selectable} from "core/utils/Selectable";
+
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 export class InteractionHelper {
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
     private camera: Camera;
 
     private isPressingPressableObj: boolean;
-    private currentlyPressedObj: IOObject;
+    private currentlyPressedObj: Selectable;
 
-    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
+    public constructor(designer: CircuitDesigner, camera: Camera) {
         this.designer = designer;
         this.camera = camera;
 
@@ -23,7 +23,7 @@ export class InteractionHelper {
         this.currentlyPressedObj = undefined;
     }
 
-    public setCurrentlyPressedObj(obj: IOObject): void {
+    public setCurrentlyPressedObj(obj: Selectable): void {
         this.currentlyPressedObj = obj;
     }
 
@@ -36,7 +36,7 @@ export class InteractionHelper {
         // Check if we're pressing an object
         const pressedObj = objects.find((o) => o.isWithinPressBounds(worldMousePos));
         if (pressedObj) {
-            if (pressedObj instanceof PressableComponent)
+            if (IsPressable(pressedObj))
                 pressedObj.press();
             this.isPressingPressableObj = true;
             this.currentlyPressedObj = pressedObj;
@@ -62,7 +62,7 @@ export class InteractionHelper {
         // Release currently pressed object
         if (this.isPressingPressableObj) {
             this.isPressingPressableObj = false;
-            if (this.currentlyPressedObj instanceof PressableComponent)
+            if (IsPressable(this.currentlyPressedObj))
                 this.currentlyPressedObj.release();
             this.currentlyPressedObj = undefined;
             return true;
@@ -77,9 +77,9 @@ export class InteractionHelper {
         const objects = this.designer.getObjects().reverse();
 
         // Find clicked object
-        const clickedObj = objects.find((o) => o.isWithinPressBounds(worldMousePos) &&
-                                               o instanceof PressableComponent) as PressableComponent;
-        if (clickedObj) {
+        const clickedObj = objects.filter(o => IsPressable(o))
+                                  .find((o) => o.isWithinPressBounds(worldMousePos));
+        if (IsPressable(clickedObj)) {
             clickedObj.click();
             return true;
         }
@@ -87,7 +87,7 @@ export class InteractionHelper {
         return false;
     }
 
-    public getCurrentlyPressedObj(): IOObject {
+    public getCurrentlyPressedObj(): Selectable {
         return this.currentlyPressedObj;
     }
 }

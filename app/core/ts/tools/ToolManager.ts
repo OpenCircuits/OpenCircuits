@@ -5,19 +5,19 @@ import {Camera} from "math/Camera";
 import {Action} from "app/core/ts/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Tool} from "core/tools/Tool";
-import {SelectionTool} from "./SelectionTool";
-import {RotateTool} from "./RotateTool";
-import {PanTool} from "./PanTool";
-import {TranslateTool} from "./TranslateTool";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {RotateTool} from "core/tools/RotateTool";
+import {PanTool} from "core/tools/PanTool";
+import {TranslateTool} from "core/tools/TranslateTool";
 import {PlaceComponentTool} from "./PlaceComponentTool";
 import {WiringTool} from "./WiringTool";
 import {SplitWireTool} from "./SplitWireTool";
 
 import {ActionHelper} from "./ActionHelper";
-import {ActionManager} from "../actions/ActionManager";
+import {ActionManager} from "../../../digital/ts/actions/ActionManager";
 
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances

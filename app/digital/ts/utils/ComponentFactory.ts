@@ -1,4 +1,4 @@
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Switch}       from "digital/models/ioobjects/inputs/Switch";
 import {Button}       from "digital/models/ioobjects/inputs/Button";

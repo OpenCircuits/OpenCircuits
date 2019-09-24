@@ -6,10 +6,10 @@ import {ToolRenderer}      from "digital/rendering/ToolRenderer";
 import {WireRenderer}      from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 import {Selectable}  from "core/utils/Selectable";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 export class CircuitView {
     protected canvas: HTMLCanvasElement;

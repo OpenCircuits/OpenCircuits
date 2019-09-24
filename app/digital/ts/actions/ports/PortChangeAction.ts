@@ -3,7 +3,7 @@ import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 import {Port} from "digital/models/ports/Port";
 import {GetPath} from "digital/utils/ComponentUtils";
 

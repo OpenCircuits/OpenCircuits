@@ -9,9 +9,9 @@ import {SeparatedComponentCollection,
 
 import {Propagation} from "./Propagation";
 
-import {IOObject}  from "./ioobjects/IOObject";
-import {Component} from "./ioobjects/Component";
-import {Wire}      from "./ioobjects/Wire";
+import {IOObject}  from "core/models/IOObject";
+import {Component} from "core/models/Component";
+import {Wire}      from "../../../core/ts/models/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
 
 import {InputPort}  from "./ports/InputPort";

@@ -1,7 +1,7 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {Component} from "core/models/Component";
 
 export class ConstantLow extends Component {
 

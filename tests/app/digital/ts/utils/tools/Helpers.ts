@@ -1,5 +1,5 @@
 import {Input} from "core/utils/Input";
-import {ToolManager} from "digital/tools/ToolManager";
+import {ToolManager} from "core/tools/ToolManager";
 
 export function InitializeInput(input: Input, toolManager: ToolManager): void {
     input.addListener("keydown",   (b?: number) => { toolManager.onKeyDown(input, b); });

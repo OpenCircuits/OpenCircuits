@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
-        WIRE_SNAP_THRESHOLD} from "../../utils/Constants";
+        WIRE_SNAP_THRESHOLD} from "../../../digital/ts/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
@@ -9,12 +9,12 @@ import {RectContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
-import {Port}       from "../ports/Port";
-import {InputPort}  from "../ports/InputPort";
-import {OutputPort} from "../ports/OutputPort";
+import {Port}       from "../../../digital/ts/models/ports/Port";
+import {InputPort}  from "../../../digital/ts/models/ports/InputPort";
+import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
 import {InputPortSet,
-        OutputPortSet} from "../ports/PortSets";
-import {Positioner} from "../ports/positioners/Positioner";
+        OutputPortSet} from "../../../digital/ts/models/ports/PortSets";
+import {Positioner} from "../../../digital/ts/models/ports/positioners/Positioner";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";

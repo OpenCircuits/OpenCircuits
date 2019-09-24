@@ -4,7 +4,7 @@ import {MainDesignerController} from "./MainDesignerController";
 
 import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 export const ItemNavController = (() => {
     const tab = document.getElementById("itemnav-open-tab");

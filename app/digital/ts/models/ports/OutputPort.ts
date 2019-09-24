@@ -1,7 +1,7 @@
 import {Vector,V} from "Vector";
 
-import {Component} from "../ioobjects/Component";
-import {Wire}      from "../ioobjects/Wire";
+import {Component} from "core/models/Component";
+import {Wire}      from "../../../../core/ts/models/Wire";
 
 import {Port}	   from "./Port";
 
