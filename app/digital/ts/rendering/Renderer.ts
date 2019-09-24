@@ -101,16 +101,19 @@ export class Renderer {
     }
     public tintImage(img: HTMLImageElement, pos: Vector, size: Vector, tint: string): void {
         const center = pos.sub(size.scale(0.5));
-
-        // Draw to tint canvas
         this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
         this.tintContext.fillStyle = tint;
-        this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
-        if (Browser.name !== "Firefox")
+
+        // Draw to tint canvas
+        if (Browser.name !== "Firefox") {
+            this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
             this.tintContext.globalCompositeOperation = "destination-atop";
-        else
+            this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
+        } else {
+            this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
             this.tintContext.globalCompositeOperation = "source-atop";
-        this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
+            this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
+        }
 
         // Draw to main canvas
         this.context.globalAlpha = 0.5;
