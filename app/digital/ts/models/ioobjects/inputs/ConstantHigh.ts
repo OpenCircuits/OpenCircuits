@@ -18,6 +18,13 @@ export class ConstantHigh extends Component {
         return "consthigh";
     }
 
+    // @Override
+    public copy(): Component {
+        let c = super.copy();
+        c.activate(true);
+        return c;
+    }
+
     public getImageName(): string {
         return "constHigh.svg";
     }
