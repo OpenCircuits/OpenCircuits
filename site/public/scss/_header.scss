@@ -88,6 +88,24 @@ header {
     }
 }
 
+.header__center__github {
+    position: relative;
+    top: 2px;
+    bottom: 0;
+    left: 50%;
+
+    width: 50px;
+    margin-left: -100px;
+
+    color: $secondary-color;
+
+    @media (max-width: 900px) {
+        & {
+            display: none;
+        }
+    }
+}
+
 
 .header__right {
     margin-right: 14px;
