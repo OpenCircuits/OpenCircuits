@@ -5,18 +5,18 @@ import {SeparatedComponentCollection,
 
 import {Action} from "core/actions/Action";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {IOObject} from "digital/models/ioobjects/IOObject";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {IOObject} from "core/models/IOObject";
 
 export class CopyGroupAction implements Action {
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
 
     private initialGroup: Array<IOObject>;
     private copy: SeparatedComponentCollection;
 
     private transforms: Array<Transform>;
 
-    public constructor(designer: DigitalCircuitDesigner, initialGroup: Array<IOObject>, group: SeparatedComponentCollection) {
+    public constructor(designer: CircuitDesigner, initialGroup: Array<IOObject>, group: SeparatedComponentCollection) {
         this.designer = designer;
         this.initialGroup = initialGroup;
         this.copy = group;

@@ -9,15 +9,16 @@ import {SeparatedComponentCollection,
 
 import {Propagation} from "./Propagation";
 
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {Wire}      from "../../../core/ts/models/Wire";
+import {Wire}      from "core/models/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
-export class DigitalCircuitDesigner implements XMLable {
+export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
     private ics: Array<ICData>;
 
     private objects: Array<Component>;

@@ -1,6 +1,6 @@
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../GroupAction";
-import {PortChangeAction} from "./PortChangeAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
 

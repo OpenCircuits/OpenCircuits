@@ -7,7 +7,7 @@ import {DEFAULT_FILL_COLOR,
         IO_PORT_BORDER_WIDTH} from "digital/utils/Constants";
 
 import {Renderer} from "../Renderer";
-import {Port} from "digital/models/ports/Port";
+import {Port} from "core/models/ports/Port";
 
 import {Circle} from "../shapes/Circle";
 import {Line} from "../shapes/Line";

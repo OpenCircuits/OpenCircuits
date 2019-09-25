@@ -4,12 +4,13 @@ import {ReversableAction} from "../ReversableAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Component} from "core/models/Component";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 export class PlaceAction extends ReversableAction {
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
     private obj: Component;
 
-    public constructor(designer: DigitalCircuitDesigner, obj: Component, flip: boolean = false) {
+    public constructor(designer: CircuitDesigner, obj: Component, flip: boolean = false) {
         super(flip);
 
         this.designer = designer;
@@ -39,6 +40,6 @@ export class DeleteAction extends PlaceAction {
 
 export function CreateGroupPlaceAction(designer: DigitalCircuitDesigner, objs: Array<Component>): GroupAction {
     return objs.reduce((acc, o) => {
-        return acc.add(new PlaceAction(designer, o)) as GroupAction;
+        return acc.add(new PlaceAction(designer, o));
     }, new GroupAction());
 }

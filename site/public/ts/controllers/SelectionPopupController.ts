@@ -4,7 +4,7 @@ import {Camera} from "math/Camera";
 import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
-import {Port} from "digital/models/ports/Port";
+import {Port} from "core/models/ports/Port";
 
 import {SelectionPopupModule} from "../selectionpopup/SelectionPopupModule";
 import {TitlePopupModule} from "../selectionpopup/TitlePopupModule";

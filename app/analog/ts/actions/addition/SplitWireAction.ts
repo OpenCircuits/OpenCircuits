@@ -51,6 +51,6 @@ export class SnipWireAction extends SplitWireAction {
 
 export function CreateGroupSnipAction(ports: Array<Node>): GroupAction {
     return ports.reduce((acc, p) => {
-        return acc.add(new SnipWireAction(p)) as GroupAction;
+        return acc.add(new SnipWireAction(p));
     }, new GroupAction());
 }

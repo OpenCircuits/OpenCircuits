@@ -34,6 +34,6 @@ export class TranslateAction implements Action {
 
 export function CreateGroupTranslateAction(objs: Array<EEComponent>, targetPositions: Array<Vector>): GroupAction {
     return objs.reduce((acc, o, i) => {
-        return acc.add(new TranslateAction(o, targetPositions[i])) as GroupAction;
+        return acc.add(new TranslateAction(o, targetPositions[i]));
     }, new GroupAction());
 }

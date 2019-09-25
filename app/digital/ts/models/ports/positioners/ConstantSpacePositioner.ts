@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-import {Port} from "../Port";
+import {Port} from "core/models/ports/Port";
 
 import {Positioner} from "./Positioner";
 

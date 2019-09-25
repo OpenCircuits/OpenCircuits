@@ -1,5 +1,5 @@
 import {Action} from "core/actions/Action";
-import {PortChangeAction} from "./PortChangeAction";
+import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
 import {Component} from "core/models/Component";
 

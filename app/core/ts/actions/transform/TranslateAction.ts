@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {GroupAction} from "../GroupAction";
+import {GroupAction} from "../../../../core/ts/actions/GroupAction";
 import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
@@ -34,6 +34,6 @@ export class TranslateAction implements Action {
 
 export function CreateGroupTranslateAction(objs: Array<Component>, targetPositions: Array<Vector>): GroupAction {
     return objs.reduce((acc, o, i) => {
-        return acc.add(new TranslateAction(o, targetPositions[i])) as GroupAction;
+        return acc.add(new TranslateAction(o, targetPositions[i]));
     }, new GroupAction());
 }

@@ -4,9 +4,9 @@ import {ConnectionAction} from "./ConnectionAction";
 
 import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
-export function CreateAddGroupAction(designer: DigitalCircuitDesigner, group: SeparatedComponentCollection): GroupAction {
+export function CreateAddGroupAction(designer: CircuitDesigner, group: SeparatedComponentCollection): GroupAction {
     const action = new GroupAction();
 
     const objs = group.getAllComponents();

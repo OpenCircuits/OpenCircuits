@@ -17,7 +17,7 @@ import {WiringTool} from "./WiringTool";
 import {SplitWireTool} from "./SplitWireTool";
 
 import {ActionHelper} from "./ActionHelper";
-import {ActionManager} from "../../../digital/ts/actions/ActionManager";
+import {ActionManager} from "../actions/ActionManager";
 
 export class ToolManager implements MouseListener, KeyboardListener {
     // Tool instances

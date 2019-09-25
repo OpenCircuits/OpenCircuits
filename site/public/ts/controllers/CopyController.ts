@@ -4,16 +4,16 @@ import {Exporter} from "core/utils/io/Exporter";
 import {Importer} from "core/utils/io/Importer";
 import {CopyGroup} from "digital/utils/ComponentUtils";
 
-import {GroupAction} from "digital/actions/GroupAction";
-import {CreateGroupTranslateAction} from "digital/actions/transform/TranslateAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
-        CreateDeselectAllAction} from "digital/actions/selection/SelectAction";
-import {CreateDeleteGroupAction} from "digital/actions/deletion/DeleteGroupActionFactory";
-import {CreateAddGroupAction} from "digital/actions/addition/AddGroupActionFactory";
+        CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 import {TransferICDataAction} from "digital/actions/TransferICDataAction";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
-import {IOObject} from "digital/models/ioobjects/IOObject";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {IOObject} from "core/models/IOObject";
 import {IC} from "digital/models/ioobjects/other/IC";
 
 import {MainDesignerController} from "./MainDesignerController";
@@ -24,7 +24,7 @@ export const CopyController = (() => {
         const objs = selections.filter((o) => o instanceof IOObject) as Array<IOObject>;
 
         // Create sub-circuit with just selections to save
-        const designer = new CircuitDesigner(-1);
+        const designer = new DigitalCircuitDesigner(-1);
         designer.addGroup(CopyGroup(objs));
 
 
@@ -59,7 +59,7 @@ export const CopyController = (() => {
         const mainDesigner = MainDesignerController.GetDesigner();
         const contents = e.clipboardData.getData("text/xml");
 
-        const designer = new CircuitDesigner(-1);
+        const designer = new DigitalCircuitDesigner(-1);
         Importer.LoadCircuit(designer, contents);
 
         const group = CopyGroup(designer.getGroup());

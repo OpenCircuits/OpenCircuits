@@ -3,7 +3,7 @@ import {DEFAULT_SIZE,
 
 import {V} from "Vector";
 
-import {Port} from "../Port";
+import {Port} from "core/models/ports/Port";
 import {InputPort} from "../InputPort";
 
 import {Positioner} from "./Positioner";

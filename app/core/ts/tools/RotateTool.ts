@@ -10,7 +10,7 @@ import {SelectionTool} from "core/tools/SelectionTool";
 
 import {Component} from "core/models/Component";
 
-import {RotateAction} from "../../../digital/ts/actions/transform/RotateAction";
+import {RotateAction} from "core/actions/transform/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;

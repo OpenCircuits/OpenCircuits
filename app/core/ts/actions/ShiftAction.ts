@@ -2,13 +2,12 @@ import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
-import {IOObject} from "core/models/IOObject";
 
 export class ShiftAction implements Action {
-    private obj: IOObject;
+    private obj: Component;
     private i: number;
 
-    public constructor(obj: IOObject) {
+    public constructor(obj: Component) {
         this.obj = obj;
     }
 

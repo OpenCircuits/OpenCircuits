@@ -1,9 +1,8 @@
 import {Vector,V} from "Vector";
 
 import {Component} from "core/models/Component";
-import {Wire}      from "../../../../core/ts/models/Wire";
-
-import {Port}	   from "./Port";
+import {Wire}      from "core/models/Wire";
+import {Port}	   from "core/models/ports/Port";
 
 export class OutputPort extends Port {
     private connections: Array<Wire>;

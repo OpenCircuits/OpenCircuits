@@ -4,7 +4,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {ConnectionAction} from "digital/actions/addition/ConnectionAction";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo 1", () => {

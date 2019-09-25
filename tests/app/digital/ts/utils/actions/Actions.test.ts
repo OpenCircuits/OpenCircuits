@@ -4,9 +4,9 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 
-import {ActionManager}          from "digital/actions/ActionManager";
+import {ActionManager}          from "core/actions/ActionManager";
 import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
-import {CreateGroupPlaceAction} from "digital/actions/addition/PlaceAction";
+import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateBusAction}        from "digital/actions/addition/BusActionFactory";
 // import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/";
 

@@ -1,13 +1,13 @@
-import {GroupAction} from "../GroupAction";
-import {DeselectAction} from "../selection/SelectAction";
-import {DeleteAction} from "../addition/PlaceAction";
-import {DisconnectAction} from "../addition/ConnectionAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {DeselectAction} from "core/actions/selection/SelectAction";
+import {DeleteAction} from "core/actions/addition/PlaceAction";
+import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 
-import {SelectionTool} from "digital/tools/SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 import {GatherGroup} from "digital/utils/ComponentUtils";
 
-import {IOObject} from "digital/models/ioobjects/IOObject";
+import {IOObject} from "core/models/IOObject";
 
 export function CreateDeleteGroupAction(selectionTool: SelectionTool, objects: Array<IOObject>): GroupAction {
     const action = new GroupAction();

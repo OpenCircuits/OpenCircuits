@@ -4,7 +4,7 @@ import {ReversableAction} from "../ReversableAction";
 
 import {Selectable} from "core/utils/Selectable";
 
-import {SelectionTool} from "digital/tools/SelectionTool";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 export class SelectAction extends ReversableAction {
     private selectionTool: SelectionTool;
@@ -40,13 +40,13 @@ export class DeselectAction extends SelectAction {
 
 export function CreateGroupSelectAction(selectionTool: SelectionTool, objs: Array<Selectable>): GroupAction {
     return objs.reduce((acc, s) => {
-        return acc.add(new SelectAction(selectionTool, s)) as GroupAction;
+        return acc.add(new SelectAction(selectionTool, s));
     }, new GroupAction());
 }
 
 export function CreateDeselectAllAction(selectionTool: SelectionTool): GroupAction {
     const objs = selectionTool.getSelections();
     return objs.reduce((acc, s) => {
-        return acc.add(new DeselectAction(selectionTool, s)) as GroupAction;
+        return acc.add(new DeselectAction(selectionTool, s));
     }, new GroupAction());
 }

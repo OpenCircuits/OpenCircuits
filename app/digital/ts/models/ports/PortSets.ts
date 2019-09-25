@@ -1,8 +1,8 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
+import {Port}       from "core/models/ports/Port";
 
-import {Port}       from "./Port";
 import {InputPort}  from "./InputPort";
 import {OutputPort} from "./OutputPort";
 

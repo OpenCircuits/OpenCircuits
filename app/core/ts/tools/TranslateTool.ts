@@ -11,17 +11,17 @@ import {Tool} from "core/tools/Tool";
 
 import {SelectionTool} from "core/tools/SelectionTool";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
 
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../../../digital/ts/actions/GroupAction";
-import {CopyGroupAction} from "../../../digital/ts/actions/CopyGroupAction";
-import {TranslateAction} from "../../../digital/ts/actions/transform/TranslateAction";
-import {CreateGroupPostTranslateAction} from "../../../digital/ts/actions/transform/GroupPostTranslateActionFactory";
+import {GroupAction} from "core/actions/GroupAction";
+import {CopyGroupAction} from "core/actions/CopyGroupAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
-    protected designer: DigitalCircuitDesigner;
+    protected designer: CircuitDesigner;
     protected camera: Camera;
 
     protected pressedComponent: Component;
@@ -31,8 +31,8 @@ export class TranslateTool extends Tool {
     private action: GroupAction;
     private startPos: Vector;
 
-    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
-        super();
+    public constructor(designer: CircuitDesigner, camera: Camera) {
+        super(); 
 
         this.designer = designer;
         this.camera = camera;

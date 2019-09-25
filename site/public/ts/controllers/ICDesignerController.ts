@@ -20,7 +20,7 @@ import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "core/models/IOObject";
-import {Port} from "digital/models/ports/Port";
+import {Port} from "core/models/ports/Port";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 

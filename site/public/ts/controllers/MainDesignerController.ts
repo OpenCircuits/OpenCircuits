@@ -6,7 +6,7 @@ import {RenderQueue} from "core/utils/RenderQueue";
 import {Selectable} from "core/utils/Selectable";
 
 import {Action} from "core/actions/Action";
-import {CreateDeselectAllAction} from "digital/actions/selection/SelectAction";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 

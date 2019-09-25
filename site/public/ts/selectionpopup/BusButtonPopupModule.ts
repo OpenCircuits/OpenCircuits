@@ -1,6 +1,6 @@
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
-import {Port} from "digital/models/ports/Port";
+import {Port} from "core/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 

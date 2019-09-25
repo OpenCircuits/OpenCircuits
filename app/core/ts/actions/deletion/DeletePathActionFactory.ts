@@ -1,6 +1,6 @@
-import {GroupAction} from "../GroupAction";
-import {DeleteAction} from "../addition/PlaceAction";
-import {DisconnectAction} from "../addition/ConnectionAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {DeleteAction} from "core/actions/addition/PlaceAction";
+import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 
 import {Wire} from "core/models/Wire";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";

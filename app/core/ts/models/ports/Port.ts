@@ -4,7 +4,7 @@ import {Vector,V} from "Vector";
 import {Selectable} from "core/utils/Selectable";
 
 import {Component} from "core/models/Component";
-import {Wire}      from "../../../../core/ts/models/Wire";
+import {Wire}      from "core/models/Wire";
 
 export abstract class Port implements Selectable {
     protected parent: Component;

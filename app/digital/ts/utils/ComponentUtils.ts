@@ -9,7 +9,7 @@ import {Component} from "core/models/Component";
 import {ICData} from "../models/ioobjects/other/ICData";
 import {IC} from "../models/ioobjects/other/IC";
 
-import {Port} from "../models/ports/Port";
+import {Port} from "../../../core/ts/models/ports/Port";
 import {InputPort} from "../models/ports/InputPort";
 import {OutputPort} from "../models/ports/OutputPort";
 import {Wire} from "../../../core/ts/models/Wire";

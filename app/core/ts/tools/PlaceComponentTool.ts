@@ -7,7 +7,7 @@ import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
 import {Action} from "core/actions/Action";
-import {PlaceAction} from "../../../digital/ts/actions/addition/PlaceAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
 

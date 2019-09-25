@@ -5,7 +5,7 @@ import {Component} from "core/models/Component";
 import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {CreateGroupTranslateAction} from "digital/actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;

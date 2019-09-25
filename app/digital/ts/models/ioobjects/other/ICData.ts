@@ -1,5 +1,5 @@
 import {DEFAULT_SIZE,
-        IO_PORT_LENGTH} from "../../../utils/Constants";
+        IO_PORT_LENGTH} from "digital/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
@@ -15,10 +15,10 @@ import {SeparatedComponentCollection,
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {IOObject} from "../IOObject";
-import {Port} from "../../ports/Port";
-import {InputPort} from "../../ports/InputPort";
-import {OutputPort} from "../../ports/OutputPort";
+import {IOObject} from "core/models/IOObject";
+import {Port} from "core/models/ports/Port";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
 import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";

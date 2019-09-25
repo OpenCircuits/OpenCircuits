@@ -3,7 +3,7 @@ import "jest";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
-import {PlaceAction} from "digital/actions/addition/PlaceAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 describe("PlaceAction", () => {
     it("Undo/Redo", () => {
