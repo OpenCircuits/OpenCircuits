@@ -19,7 +19,7 @@
     "paths": {
         "Vector": ["app/core/ts/utils/math/Vector"],
         "math/*": ["app/core/ts/utils/math/*"],
-        "core/utils/*": ["app/core/ts/utils/*"],
+        "core/*": ["app/core/ts/*"],
         "digital/*": ["app/digital/ts/*"],
         "analog/*": ["app/analog/ts/*"]
     }

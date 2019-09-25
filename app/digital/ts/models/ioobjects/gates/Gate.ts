@@ -6,7 +6,7 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {Component} from "core/models/Component";
 
 import {InputPort} from "../../ports/InputPort";
-import {Positioner} from "../../ports/positioners/Positioner"
+import {Positioner} from "core/models/ports/positioners/Positioner"
 
 //
 // Gate is an abstract superclass for simple logical gates.

@@ -6,7 +6,7 @@ import {V} from "Vector";
 import {Port} from "core/models/ports/Port";
 import {InputPort} from "../InputPort";
 
-import {Positioner} from "./Positioner";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
 export class MuxPositioner<T extends Port> extends Positioner<T> {
 

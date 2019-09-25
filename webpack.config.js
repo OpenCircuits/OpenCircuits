@@ -37,7 +37,7 @@ const config = {
         alias: {
             "Vector": baseUrl('app/core/ts/utils/math/Vector'),
             "math": baseUrl('app/core/ts/utils/math'),
-            "core/utils": baseUrl('app/core/ts/utils'),
+            "core": baseUrl('app/core/ts/'),
             "digital": baseUrl('app/digital/ts')
         },
         extensions: ['.ts', '.js']

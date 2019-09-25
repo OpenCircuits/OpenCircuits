@@ -3,10 +3,10 @@ import {DEFAULT_SIZE} from "digital/utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {InputPort} from "../../ports/InputPort";
+import {InputPort,
+        InputPortSet} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";
-import {InputPortSet} from "../../ports/PortSets";
-import {Positioner} from "../../ports/positioners/Positioner";
+import {Positioner} from "../../../../../core/ts/models/ports/positioners/Positioner";
 import {MuxSelectPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Component} from "core/models/Component";

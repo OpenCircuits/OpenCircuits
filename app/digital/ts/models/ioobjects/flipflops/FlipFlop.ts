@@ -4,7 +4,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {InputPort} from "../../ports/InputPort";
-import {Positioner} from "../../ports/positioners/Positioner";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {Component} from "core/models/Component";
 

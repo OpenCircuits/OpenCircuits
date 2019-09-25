@@ -1,14 +1,11 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
-import {Port}       from "core/models/ports/Port";
-
-import {InputPort}  from "./InputPort";
-import {OutputPort} from "./OutputPort";
+import {Port}      from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
 
-class PortSet<T extends Port> {
+export class PortSet<T extends Port> {
     private parent: Component;
 
     private ports: T[];
@@ -95,16 +92,4 @@ class PortSet<T extends Port> {
         return copy;
     }
 
-}
-
-export class InputPortSet extends PortSet<InputPort> {
-    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<InputPort>) {
-        super(parent, InputPort, count, positioner);
-    }
-}
-
-export class OutputPortSet extends PortSet<OutputPort> {
-    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<OutputPort>) {
-        super(parent, OutputPort, count, positioner);
-    }
 }

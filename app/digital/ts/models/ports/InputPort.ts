@@ -1,8 +1,11 @@
 import {Vector,V} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "core/models/Component";
-import {Wire}      from "core/models/Wire";
-import {Port}	   from "core/models/ports/Port";
+import {Component}  from "core/models/Component";
+import {Wire}       from "core/models/Wire";
+import {Port}	    from "core/models/ports/Port";
+import {PortSet}    from "core/models/ports/PortSets";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
 export class InputPort extends Port {
     private input?: Wire;
@@ -48,4 +51,10 @@ export class InputPort extends Port {
         return this.getInput() ? [this.getInput()] : [];
     }
 
+}
+
+export class InputPortSet extends PortSet<InputPort> {
+    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<InputPort>) {
+        super(parent, InputPort, count, positioner);
+    }
 }

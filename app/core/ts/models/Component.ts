@@ -10,11 +10,11 @@ import {ClampedValue} from "math/ClampedValue";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Port}       from "./ports/Port";
-import {InputPort}  from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
-import {InputPortSet,
-        OutputPortSet} from "digital/models/ports/PortSets";
-import {Positioner} from "digital/models/ports/positioners/Positioner";
+import {InputPort,
+        InputPortSet}  from "digital/models/ports/InputPort";
+import {OutputPort,
+        OutputPortSet} from "digital/models/ports/OutputPort";
+import {Positioner} from "app/core/ts/models/ports/positioners/Positioner";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";

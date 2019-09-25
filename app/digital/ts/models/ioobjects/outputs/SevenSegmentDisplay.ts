@@ -3,7 +3,7 @@ import {IO_PORT_RADIUS} from "digital/utils/Constants";
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePositioner";
+import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {InputPort} from "../../ports/InputPort";
 

@@ -4,7 +4,7 @@ import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 
-import {Positioner} from "./Positioner";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
 export class QuadraticCurvePositioner extends Positioner<InputPort> {
 
