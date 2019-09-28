@@ -5,7 +5,7 @@ import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 
 import {SelectionTool} from "core/tools/SelectionTool";
 
-import {GatherGroup} from "digital/utils/ComponentUtils";
+import {GatherGroup} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 

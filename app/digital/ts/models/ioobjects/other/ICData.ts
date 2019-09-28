@@ -11,7 +11,7 @@ import {SeparatedComponentCollection,
         CreateGraph,
         CreateGroup,
         SaveGroup,
-        LoadGroup} from "digital/utils/ComponentUtils";
+        LoadGroup} from "core/utils/ComponentUtils";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 

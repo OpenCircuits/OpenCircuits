@@ -1,4 +1,4 @@
-import {CreateComponentFromXML} from "./ComponentFactory";
+import {CreateComponentFromXML} from "../../../digital/ts/utils/ComponentFactory";
 
 import {Graph} from "math/Graph";
 
@@ -6,15 +6,15 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {ICData} from "../models/ioobjects/other/ICData";
-import {IC} from "../models/ioobjects/other/IC";
+import {ICData} from "../../../digital/ts/models/ioobjects/other/ICData";
+import {IC} from "../../../digital/ts/models/ioobjects/other/IC";
 
-import {Port} from "../../../core/ts/models/ports/Port";
-import {InputPort} from "../models/ports/InputPort";
-import {OutputPort} from "../models/ports/OutputPort";
-import {Wire} from "../../../core/ts/models/Wire";
+import {Port} from "../models/ports/Port";
+import {InputPort} from "../../../digital/ts/models/ports/InputPort";
+import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
+import {Wire} from "../models/Wire";
 
-import {WirePort} from "../models/ioobjects/other/WirePort";
+import {WirePort} from "../../../digital/ts/models/ioobjects/other/WirePort";
 
 /**
  * Helper class to hold different groups of components.

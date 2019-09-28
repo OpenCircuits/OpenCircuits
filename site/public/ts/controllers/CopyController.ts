@@ -2,7 +2,7 @@ import {V} from "Vector";
 
 import {Exporter} from "core/utils/io/Exporter";
 import {Importer} from "core/utils/io/Importer";
-import {CopyGroup} from "digital/utils/ComponentUtils";
+import {CopyGroup} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";

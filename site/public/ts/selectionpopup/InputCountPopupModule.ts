@@ -1,6 +1,6 @@
 import {ClampedValue} from "math/ClampedValue";
 
-import {GroupAction} from "digital/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
 

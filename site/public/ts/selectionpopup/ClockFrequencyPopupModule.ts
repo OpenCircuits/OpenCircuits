@@ -1,4 +1,4 @@
-import {GroupAction} from "digital/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 import {ClockFrequencyChangeAction} from "digital/actions/ClockFrequencyChangeAction";
 
 import {MainDesignerController} from "../controllers/MainDesignerController";

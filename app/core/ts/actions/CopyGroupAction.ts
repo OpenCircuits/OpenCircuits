@@ -1,7 +1,7 @@
 import {Transform} from "math/Transform";
 
 import {SeparatedComponentCollection,
-        CopyGroup} from "digital/utils/ComponentUtils";
+        CopyGroup} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 

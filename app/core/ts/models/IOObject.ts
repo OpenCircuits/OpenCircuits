@@ -4,10 +4,10 @@ import {XMLable} from "core/utils/io/xml/XMLable";
 import {Selectable} from "core/utils/Selectable";
 import {Name} from "core/utils/Name";
 
-import {DigitalCircuitDesigner} from "../DigitalCircuitDesigner";
+import {CircuitDesigner} from "./CircuitDesigner";
 
 export abstract class IOObject implements Selectable, XMLable {
-    protected designer?: DigitalCircuitDesigner;
+    protected designer?: CircuitDesigner;
     protected name: Name;
 
     protected constructor() {
@@ -16,11 +16,11 @@ export abstract class IOObject implements Selectable, XMLable {
 
     public abstract activate(signal: boolean, i?: number): void;
 
-    public setDesigner(designer?: DigitalCircuitDesigner): void {
+    public setDesigner(designer?: CircuitDesigner): void {
         this.designer = designer;
     }
 
-    public getDesigner(): DigitalCircuitDesigner {
+    public getDesigner(): CircuitDesigner {
         return this.designer;
     }
 

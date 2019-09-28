@@ -1,7 +1,7 @@
 import "jest";
 
 import {CreateWire, Connect, SeparateGroup,
-        CreateGroup, GatherGroup, CopyGroup} from "digital/utils/ComponentUtils";
+        CreateGroup, GatherGroup, CopyGroup} from "core/utils/ComponentUtils";
 
 import {WirePort}            from "digital/models/ioobjects/other/WirePort";
 import {Button}              from "digital/models/ioobjects/inputs/Button";

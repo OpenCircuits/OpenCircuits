@@ -2,7 +2,7 @@ import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
         SPACEBAR_KEY} from "digital/utils/Constants";
 
-import {CopyGroup} from "digital/utils/ComponentUtils";
+import {CopyGroup} from "core/utils/ComponentUtils";
 
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";

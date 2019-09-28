@@ -1,4 +1,4 @@
-import {IOObject} from "./ioobjects/IOObject";
+import {IOObject} from "core/models/IOObject";
 
 export class Propagation {
     private receiver: IOObject;

@@ -5,7 +5,7 @@ import {SeparatedComponentCollection,
         CreateWire,
         SaveGroup,
         LoadGroup,
-        SeparateGroup} from "../utils/ComponentUtils";
+        SeparateGroup} from "../../../core/ts/utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 

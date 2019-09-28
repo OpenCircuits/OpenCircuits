@@ -1,16 +1,17 @@
 import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component}  from "core/models/Component";
 import {Wire}       from "core/models/Wire";
 import {Port}	    from "core/models/ports/Port";
 import {PortSet}    from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
+import {DigitalComponent} from "../DigitalComponent";
 
 export class OutputPort extends Port {
+    protected parent: DigitalComponent;
     private connections: Array<Wire>;
 
-    public constructor(parent: Component) {
+    public constructor(parent: DigitalComponent) {
         super(parent);
         this.connections = [];
     }
@@ -29,7 +30,7 @@ export class OutputPort extends Port {
 
         // Get designer to propagate signal, exit if undefined
         const designer = this.parent.getDesigner();
-        if (designer == undefined)
+        if (!designer)
             return;
 
         for (const w of this.connections)
@@ -63,7 +64,7 @@ export class OutputPort extends Port {
 }
 
 export class OutputPortSet extends PortSet<OutputPort> {
-    public constructor(parent: Component, count: ClampedValue, positioner?: Positioner<OutputPort>) {
+    public constructor(parent: DigitalComponent, count: ClampedValue, positioner?: Positioner<OutputPort>) {
         super(parent, OutputPort, count, positioner);
     }
 }

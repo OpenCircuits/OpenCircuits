@@ -12,7 +12,7 @@ import {Camera} from "math/Camera";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 
-import {GetAllPorts} from "digital/utils/ComponentUtils";
+import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";

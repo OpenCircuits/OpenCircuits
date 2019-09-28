@@ -3,7 +3,7 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
 
-import {GroupAction} from "digital/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 import {ColorChangeAction} from "digital/actions/ColorChangeAction";
 
 export class ColorPopupModule extends SelectionPopupModule {

@@ -7,9 +7,9 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "../DigitalComponent";
 
-export abstract class PressableComponent extends Component {
+export abstract class PressableComponent extends DigitalComponent {
     protected pressableBox: Transform;
     protected on: boolean;
 

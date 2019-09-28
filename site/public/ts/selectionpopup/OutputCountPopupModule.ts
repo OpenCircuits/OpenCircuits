@@ -1,6 +1,6 @@
 import {ClampedValue} from "math/ClampedValue";
 
-import {GroupAction} from "digital/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
 
 import {MainDesignerController} from "../controllers/MainDesignerController";

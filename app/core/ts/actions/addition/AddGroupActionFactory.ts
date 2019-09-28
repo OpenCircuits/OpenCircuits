@@ -2,7 +2,7 @@ import {GroupAction} from "../GroupAction";
 import {PlaceAction} from "./PlaceAction";
 import {ConnectionAction} from "./ConnectionAction";
 
-import {SeparatedComponentCollection} from "digital/utils/ComponentUtils";
+import {SeparatedComponentCollection} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 

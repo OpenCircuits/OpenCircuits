@@ -5,7 +5,7 @@ import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
 import {TransformContains,
         RectContains} from "math/MathUtils";
-import {GetAllPorts} from "digital/utils/ComponentUtils";
+import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {Input} from "core/utils/Input";
 

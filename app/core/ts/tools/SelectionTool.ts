@@ -9,8 +9,7 @@ import {CircleContains,
 import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {IOObject} from "digital/models/ioobjects/IOObject";
+import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
 import {WirePort} from "digital/models/ioobjects/other/WirePort";
 
@@ -277,7 +276,7 @@ export class SelectionTool extends Tool {
         return this.selectionBox;
     }
 
-    public getCurrentlyPressedObj(): IOObject {
+    public getCurrentlyPressedObj(): Selectable {
         return this.interactionHelper.getCurrentlyPressedObj();
     }
 
