@@ -9,9 +9,9 @@ import {OutputPort} from "../../ports/OutputPort";
 import {Positioner} from "../../../../../core/ts/models/ports/positioners/Positioner";
 import {MuxSelectPositioner} from "../../ports/positioners/MuxPositioners";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export abstract class Mux extends Component {
+export abstract class Mux extends DigitalComponent {
     protected selects: InputPortSet;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,

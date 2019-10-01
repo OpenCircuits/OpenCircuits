@@ -1,29 +1,29 @@
 import {XMLable} from "core/utils/io/xml/XMLable";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {SeparatedComponentCollection,
+import {DigitalObjectSet,
         CreateWire,
         SaveGroup,
         LoadGroup,
-        SeparateGroup} from "../../../core/ts/utils/ComponentUtils";
+        IOObjectSet} from "../../../core/ts/utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
-import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
+import {DigitalComponent} from "./DigitalComponent";
 
 export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
-    private ics: Array<ICData>;
+    private ics: ICData[];
 
-    private objects: Array<Component>;
-    private wires: Array<Wire>;
-    private propagationQueue: Array<Propagation>;
+    private objects: DigitalComponent[];
+    private wires: Wire[];
+    private propagationQueue: Propagation[];
     private updateRequests: number;
     private propagationTime: number;
 
@@ -110,11 +110,11 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         return true;
     }
 
-    public addGroup(group: SeparatedComponentCollection): void {
-        for (const a of group.getAllComponents())
+    public addGroup(group: DigitalObjectSet): void {
+        for (const a of group.getComponents())
             this.addObject(a);
 
-        for (const b of group.wires) {
+        for (const b of group.getWires()) {
             this.wires.push(b);
             b.setDesigner(this);
         }
@@ -129,12 +129,12 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         this.ics.splice(i, 1);
     }
 
-    public addObjects(objects: Array<Component>): void {
+    public addObjects(objects: DigitalComponent[]): void {
         for (const object of objects)
             this.addObject(object);
     }
 
-    public addObject(obj: Component): void {
+    public addObject(obj: DigitalComponent): void {
         if (this.objects.includes(obj))
             throw new Error("Attempted to add object that already existed!");
 
@@ -154,18 +154,18 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         return wire;
     }
 
-    public connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
+    public connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): Wire {
         return this.createWire(c1.getOutputPort(i1), c2.getInputPort(i2));
     }
 
-    public remove(o: Component | Wire): void {
-        if (o instanceof Component)
+    public remove(o: DigitalComponent | Wire): void {
+        if (o instanceof DigitalComponent)
             this.removeObject(o);
         else
             this.removeWire(o);
     }
 
-    public removeObject(obj: Component): void {
+    public removeObject(obj: DigitalComponent): void {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
 
@@ -233,8 +233,8 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         const group = LoadGroup(node, icIdMap);
 
         // Add all objects/wires
-        group.getAllComponents().forEach((c) => this.addObject(c));
-        group.wires.forEach((w) => {
+        group.getComponents().forEach((c) => this.addObject(c));
+        group.getWires().forEach((w) => {
             this.wires.push(w);
             w.setDesigner(this);
         });
@@ -248,7 +248,7 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
     public shift(obj: IOObject, i?: number): number {
         // Find initial position in list
         const arr: Array<IOObject> =
-                (obj instanceof Component) ? (this.objects) : (this.wires);
+                (obj instanceof DigitalComponent) ? (this.objects) : (this.wires);
         const i0 = arr.indexOf(obj);
         if (i0 === -1)
             throw new Error("Can't move object! Object doesn't exist!");
@@ -262,19 +262,19 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         return i0;
     }
 
-    public getGroup(): SeparatedComponentCollection {
-        return SeparateGroup((<Array<IOObject>>this.objects).concat(this.wires));
+    public getGroup(): DigitalObjectSet {
+        return new DigitalObjectSet((<IOObject[]>this.objects).concat(this.wires));
     }
 
-    public getObjects(): Array<Component> {
+    public getObjects(): DigitalComponent[] {
         return this.objects.slice(); // Shallow copy array
     }
 
-    public getWires(): Array<Wire> {
+    public getWires(): Wire[] {
         return this.wires.slice(); // Shallow copy array
     }
 
-    public getICData(): Array<ICData> {
+    public getICData(): ICData[] {
         return this.ics.slice(); // Shallow copy array
     }
 

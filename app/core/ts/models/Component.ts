@@ -87,6 +87,8 @@ export abstract class Component extends CullableObject {
         return RectContains(this.getTransform(), v) &&
                 !this.isWithinPressBounds(v);
     }
+    
+    public abstract indexOfPort(port: Port): number;
 
     public abstract getPorts(): Port[];
     public abstract getConnections(): Wire[];

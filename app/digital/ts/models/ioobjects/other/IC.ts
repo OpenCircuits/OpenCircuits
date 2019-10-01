@@ -3,17 +3,17 @@ import {DEFAULT_SIZE} from "../../../utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {SeparatedComponentCollection} from "core/utils/ComponentUtils";
+import {DigitalObjectSet} from "core/utils/ComponentUtils";
 
-import {DigitalCircuitDesigner} from "../../DigitalCircuitDesigner";
-import {Component} from "core/models/Component";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {ICData} from "./ICData";
 
-export class IC extends Component {
+export class IC extends DigitalComponent {
     private data: ICData;
 
-    private collection: SeparatedComponentCollection;
+    private collection: DigitalObjectSet;
 
     public constructor(data: ICData) {
         super(new ClampedValue(data.getInputCount()),
@@ -22,9 +22,10 @@ export class IC extends Component {
         this.collection = this.data.copy(); // Copy internals
 
         // Redirect activate function for output objects
+        const outputs = this.collection.getOutputs();
         for (let i = 0; i < this.numOutputs(); i++) {
             const port = this.getOutputPort(i);
-            const output = this.collection.outputs[i];
+            const output = outputs[i];
             output.activate = (on) => {
                 port.activate(on);
             }
@@ -49,10 +50,11 @@ export class IC extends Component {
         super.setDesigner(designer);
 
         // Set designer of all internal components/wires
-        const components = this.collection.getAllComponents();
+        const components = this.collection.getComponents();
         for (const obj of components)
             obj.setDesigner(designer);
-        for (const wire of this.collection.wires)
+        const wires = this.collection.getWires();
+        for (const wire of wires)
             wire.setDesigner(designer);
     }
 
@@ -66,9 +68,10 @@ export class IC extends Component {
 
     public activate(): void {
         // Activate corresponding input object
+        const inputs = this.collection.getInputs();
         for (let i = 0; i < this.numInputs(); i++) {
             const port = this.getInputPort(i);
-            const input = this.collection.inputs[i];
+            const input = inputs[i];
             input.activate(port.getIsOn());
         }
     }

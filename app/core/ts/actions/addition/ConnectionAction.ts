@@ -2,9 +2,8 @@ import {Action} from "core/actions/Action";
 import {ReversableAction} from "../ReversableAction";
 
 import {Component} from "core/models/Component";
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
 import {Wire} from "core/models/Wire";
+import {Port} from "core/models/ports/Port";
 
 export class ConnectionAction extends ReversableAction {
     private c1: Component;
@@ -12,16 +11,16 @@ export class ConnectionAction extends ReversableAction {
     private c2: Component;
     private i2: number;
 
-    public constructor(input: OutputPort, output: InputPort, flip: boolean = false) {
+    public constructor(p1: Port, p2: Port, flip: boolean = false) {
         super(flip);
 
         // Get components
-        this.c1 = input.getParent();
-        this.c2 = output.getParent();
+        this.c1 = p1.getParent();
+        this.c2 = p2.getParent();
 
         // Find indices of the ports
-        this.i1 = this.c1.getOutputPorts().indexOf(input);
-        this.i2 = this.c2.getInputPorts().indexOf(output);
+        this.i1 = this.c1.indexOfPort(p1);
+        this.i2 = this.c2.indexOfPort(p2);
     }
 
     public normalExecute(): Action {

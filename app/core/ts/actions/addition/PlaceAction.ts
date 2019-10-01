@@ -2,9 +2,8 @@ import {Action} from "core/actions/Action";
 import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Component} from "core/models/Component";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Component} from "core/models/Component";
 
 export class PlaceAction extends ReversableAction {
     private designer: CircuitDesigner;
@@ -38,7 +37,7 @@ export class DeleteAction extends PlaceAction {
 }
 
 
-export function CreateGroupPlaceAction(designer: DigitalCircuitDesigner, objs: Array<Component>): GroupAction {
+export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
     return objs.reduce((acc, o) => {
         return acc.add(new PlaceAction(designer, o));
     }, new GroupAction());

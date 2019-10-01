@@ -7,9 +7,9 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 import {InputPort} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class Encoder extends Component {
+export class Encoder extends DigitalComponent {
 
     public constructor() {
         super(new ClampedValue(4,2,Math.pow(2,8)),

@@ -6,7 +6,7 @@ import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
 
-import {SeparatedComponentCollection,
+import {DigitalObjectSet,
         CopyGroup,
         CreateGraph,
         CreateGroup,
@@ -28,12 +28,12 @@ import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
 export class ICData {
     private transform: Transform;
 
-    private collection: SeparatedComponentCollection;
+    private collection: DigitalObjectSet;
 
     private inputPorts:  Array<InputPort>;
     private outputPorts: Array<OutputPort>;
 
-    public constructor(collection?: SeparatedComponentCollection) {
+    public constructor(collection?: DigitalObjectSet) {
         this.transform = new Transform(V(0,0), V(0,0));
         this.collection = collection;
         this.inputPorts  = [];
@@ -41,19 +41,23 @@ export class ICData {
 
         if (collection) {
             this.calculateSize();
-            this.createPorts(InputPort, this.inputPorts, this.collection.inputs, -1);
-            this.createPorts(OutputPort, this.outputPorts, this.collection.outputs, 1);
+            this.createPorts(InputPort,  this.inputPorts,  this.collection.getInputs(), -1);
+            this.createPorts(OutputPort, this.outputPorts, this.collection.getOutputs(), 1);
             this.positionPorts();
         }
     }
 
     private calculateSize(): void {
+        const inputs  = this.collection.getInputs();
+        const outputs = this.collection.getOutputs();
+
         // Set start size based on length of names and amount of ports
         let longestName = 0;
-        for (const obj of this.collection.inputs.concat(this.collection.outputs))
+        for (const obj of inputs.concat(outputs))
             longestName = Math.max(obj.getName().length, longestName);
+
         const w = DEFAULT_SIZE + 20*longestName;
-        const h = DEFAULT_SIZE/2*(Math.max(this.collection.inputs.length, this.collection.outputs.length));
+        const h = DEFAULT_SIZE/2*(Math.max(inputs.length, outputs.length));
         this.transform.setSize(V(w, h));
     }
 
@@ -98,11 +102,11 @@ export class ICData {
     }
 
     public getInputCount(): number {
-        return this.collection.inputs.length;
+        return this.collection.getInputs().length;
     }
 
     public getOutputCount(): number {
-        return this.collection.outputs.length;
+        return this.collection.getOutputs().length;
     }
 
     public getSize(): Vector {
@@ -124,7 +128,7 @@ export class ICData {
         return ports;
     }
 
-    public copy(): SeparatedComponentCollection {
+    public copy(): DigitalObjectSet {
         return CopyGroup(this.collection);
     }
 
@@ -151,7 +155,7 @@ export class ICData {
 
         // Save internal circuit
         const circuitNode = node.createChild("circuit");
-        SaveGroup(circuitNode, this.collection.getAllComponents(), this.collection.wires, icIdMap);
+        SaveGroup(circuitNode, this.collection.getComponents(), this.collection.getWires(), icIdMap);
     }
 
     public load(node: XMLNode, icIdMap: Map<number, ICData>): void {
@@ -182,14 +186,14 @@ export class ICData {
         this.collection = LoadGroup(groupNode, icIdMap);
     }
 
-    public static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
+    public static IsValid(objects: Array<IOObject> | DigitalObjectSet): boolean {
         const BLACKLIST = [SevenSegmentDisplay, Label];
 
-        const group = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
         const graph = CreateGraph(group);
 
-        const objs = group.getAllComponents();
-        const wires = group.wires;
+        const objs  = group.getComponents();
+        const wires = group.getWires();
 
         // Make sure it's a connected circuit
         if (!graph.isConnected())
@@ -200,14 +204,14 @@ export class ICData {
             return false;
 
         // Make sure all wires connected to components are in the group
-        const allWires = objs.reduce((acc, o) => acc = acc.concat(o.getInputs(), o.getOutputs()), []);
+        const allWires = objs.reduce((acc, o) => acc = acc.concat(o.getConnections()), []);
         if (allWires.some((w) => !wires.includes(w)))
             return false;
 
         return true;
     }
 
-    public static Create(objects: Array<IOObject>): ICData {
+    public static Create(objects: IOObject[]): ICData {
         const copies = CopyGroup(objects);
         if (!this.IsValid(copies))
             return undefined;
@@ -217,12 +221,12 @@ export class ICData {
         //  things like ConstantHigh and ConstantLow which aren't interactive
         const INPUT_WHITELIST = [Switch, Button];
 
-        const inputs = copies.inputs.filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
-        const components = copies.components.concat(copies.inputs)
+        const inputs = copies.getInputs().filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
+        const components = copies.getComponents().concat(copies.getInputs())
                 .filter((c) => !INPUT_WHITELIST.some((type) => c instanceof type));
 
-        copies.inputs = inputs;
-        copies.components = components;
+        copies.setInputs(inputs);
+        copies.setComponents(components);
 
         return new ICData(copies);
     }

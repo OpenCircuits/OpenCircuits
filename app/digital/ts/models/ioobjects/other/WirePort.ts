@@ -4,9 +4,9 @@ import {Vector, V} from "Vector";
 import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class WirePort extends Component {
+export class WirePort extends DigitalComponent {
 
     public constructor() {
         super(new ClampedValue(1,1,1), new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));

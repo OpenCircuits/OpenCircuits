@@ -2,15 +2,15 @@ import {GroupAction} from "../GroupAction";
 import {PlaceAction} from "./PlaceAction";
 import {ConnectionAction} from "./ConnectionAction";
 
-import {SeparatedComponentCollection} from "core/utils/ComponentUtils";
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
-export function CreateAddGroupAction(designer: CircuitDesigner, group: SeparatedComponentCollection): GroupAction {
+export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectSet): GroupAction {
     const action = new GroupAction();
 
-    const objs = group.getAllComponents();
-    const wires = group.wires;
+    const objs = group.getComponents();
+    const wires = group.getWires();
 
     for (const obj of objs)
         action.add(new PlaceAction(designer, obj));

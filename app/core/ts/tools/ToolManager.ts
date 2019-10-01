@@ -4,7 +4,7 @@ import {KeyboardListener} from "core/utils/KeyboardListener";
 import {Camera} from "math/Camera";
 import {Action} from "app/core/ts/actions/Action";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
 
 import {Tool} from "core/tools/Tool";
@@ -33,11 +33,11 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
     private actionManager: ActionManager;
 
-    private tools: Array<Tool>;
+    private tools: Tool[];
 
     private currentTool: Tool;
 
-    public constructor(camera: Camera, designer: DigitalCircuitDesigner) {
+    public constructor(camera: Camera, designer: CircuitDesigner) {
         this.actionManager      = new ActionManager();
 
         this.selectionTool      = new SelectionTool(designer, camera);

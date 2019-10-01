@@ -1,6 +1,6 @@
 import {Tool} from "core/tools/Tool";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
 
 import {Input} from "core/utils/Input";
@@ -11,12 +11,12 @@ import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
 
-    private designer: DigitalCircuitDesigner;
+    private designer: CircuitDesigner;
     private camera: Camera;
 
     private component: Component;
 
-    public constructor(designer: DigitalCircuitDesigner, camera: Camera) {
+    public constructor(designer: CircuitDesigner, camera: Camera) {
         super();
 
         this.designer = designer;

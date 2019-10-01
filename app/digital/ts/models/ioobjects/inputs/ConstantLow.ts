@@ -1,11 +1,11 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class ConstantLow extends Component {
+export class ConstantLow extends DigitalComponent {
 
-    public constructor(){
+    public constructor() {
         super(new ClampedValue(0), new ClampedValue(1), V(50, 50));
         super.activate(false);
     }

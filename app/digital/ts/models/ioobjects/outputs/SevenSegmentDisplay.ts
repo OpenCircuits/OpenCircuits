@@ -7,9 +7,9 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 
 import {InputPort} from "../../ports/InputPort";
 
-import {Component} from "core/models/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class SevenSegmentDisplay extends Component {
+export class SevenSegmentDisplay extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(7),
               new ClampedValue(0),
