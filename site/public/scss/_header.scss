@@ -89,13 +89,14 @@ header {
 }
 
 .header__center__github {
-    position: relative;
-    top: 2px;
+    position: absolute;
+    top: 10px;
     bottom: 0;
     left: 50%;
 
-    width: 50px;
-    margin-left: -100px;
+    width: 40px;
+    height: 40px;
+    margin-left: 110px;
 
     color: $secondary-color;
 
