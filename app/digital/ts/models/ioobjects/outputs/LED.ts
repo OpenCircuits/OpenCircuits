@@ -66,6 +66,12 @@ export class LED extends Component {
         return Vector.max(max, ...corners, ...ports);
     }
 
+    // @Override
+    public activate(signal: boolean, i: number = 0): void {
+        this.onTransformChange();
+        this.getCullBox();
+    }
+
     public setColor(color: string): void {
         this.color = color;
     }
