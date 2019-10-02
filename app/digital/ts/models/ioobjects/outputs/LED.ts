@@ -1,6 +1,9 @@
-import {DEFAULT_SIZE} from "digital/utils/Constants";
+import {DEFAULT_SIZE,
+        DEFAULT_BORDER_WIDTH,
+        IO_PORT_RADIUS,
+        IO_PORT_BORDER_WIDTH} from "digital/utils/Constants";
 
-import {V} from "Vector";
+import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "../Component";
@@ -16,6 +19,51 @@ export class LED extends Component {
 
         // Make port face down instead of sideways
         this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
+    }
+
+    // @Override
+    public getMinPos(): Vector {
+      const min = V(Infinity);
+
+      //if the LED is on, create a new border width
+      let newBorderWidth = DEFAULT_BORDER_WIDTH;
+      if(this.inputs.first.getIsOn())
+        newBorderWidth += 50;
+
+      //find the corners of the object using the new border width
+      const corners = this.transform.getCorners().map(
+          v => v.sub(newBorderWidth)
+      );
+
+      // Find minimum pos from ports
+      const ports = this.getPorts().map(
+          p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+      );
+
+      //return the minimum position from all of these vectors
+      return Vector.min(min, ...corners, ...ports);
+    }
+
+    // @Override
+    public getMaxPos(): Vector {
+        const max = V(-Infinity);
+
+        //if the LED is on, create a new border width
+        let newBorderWidth = DEFAULT_BORDER_WIDTH;
+        if(this.inputs.first.getIsOn())
+          newBorderWidth += 50;
+
+        // Find maximum pos from corners of transform
+        const corners = this.transform.getCorners().map(
+            v => v.add(newBorderWidth)
+        );
+
+        // Find maximum pos from ports
+        const ports = this.getPorts().map(
+            p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+        );
+
+        return Vector.max(max, ...corners, ...ports);
     }
 
     public setColor(color: string): void {
