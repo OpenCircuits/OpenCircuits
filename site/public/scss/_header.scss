@@ -100,7 +100,7 @@ header {
 
     color: $secondary-color;
 
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
         & {
             display: none;
         }
