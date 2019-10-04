@@ -9,6 +9,7 @@ import {Browser} from "core/utils/Browser";
 import {Style} from "./Style";
 
 import {Shape} from "./shapes/Shape";
+import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
 
 export class Renderer {
     private canvas: HTMLCanvasElement;
@@ -27,8 +28,8 @@ export class Renderer {
 
         this.context = this.canvas.getContext("2d");
 
-        this.tintCanvas.width = 100;
-        this.tintCanvas.height = 100;
+        this.tintCanvas.width = 2 * ROTATION_CIRCLE_RADIUS;
+        this.tintCanvas.height = 2 * ROTATION_CIRCLE_RADIUS;
         this.tintContext = this.tintCanvas.getContext("2d");
     }
     public setCursor(cursor: string): void {
@@ -92,33 +93,38 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: HTMLImageElement, pos: Vector, size: Vector, tint?: string): void {
-        const center = pos.sub(size.scale(0.5));
+    public image(img: HTMLImageElement, center: Vector, size: Vector, tint?: string): void {
+        const pos = center.sub(size.scale(0.5));
 
-        this.context.drawImage(img, center.x, center.y, size.x, size.y);
+        this.context.drawImage(img, pos.x, pos.y, size.x, size.y);
         if (tint != undefined)
-            this.tintImage(img, pos, size, tint);
+            this.tintImage(img, center, size, tint);
     }
-    public tintImage(img: HTMLImageElement, pos: Vector, size: Vector, tint: string): void {
-        const center = pos.sub(size.scale(0.5));
-        this.tintContext.clearRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
-        this.tintContext.fillStyle = tint;
+    public tintImage(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
+        if (size.x > this.tintCanvas.width)
+            this.tintCanvas.width = size.x;
+        if (size.y > this.tintCanvas.height)
+            this.tintCanvas.height = size.y;
 
         // Draw to tint canvas
+        this.tintContext.clearRect(0, 0, size.x, size.y);
+        this.tintContext.fillStyle = tint;
         if (Browser.name !== "Firefox") {
-            this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
+            this.tintContext.fillRect(0, 0, size.x, size.y);
             this.tintContext.globalCompositeOperation = "destination-atop";
-            this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
+            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
         } else {
-            this.tintContext.drawImage(img, 0, 0, this.tintCanvas.width, this.tintCanvas.height);
+            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
             this.tintContext.globalCompositeOperation = "source-atop";
-            this.tintContext.fillRect(0, 0, this.tintCanvas.width, this.tintCanvas.height);
+            this.tintContext.fillRect(0, 0, size.x, size.y);
         }
 
         // Draw to main canvas
+        const pos = center.sub(size.scale(0.5));
+        const prevAlpha = this.context.globalAlpha;
         this.context.globalAlpha = 0.5;
-        this.context.drawImage(this.tintCanvas, center.x, center.y, size.x, size.y);
-        this.context.globalAlpha = 1.0;
+        this.context.drawImage(this.tintCanvas, 0, 0, size.x, size.y, pos.x, pos.y, size.x, size.y);
+        this.context.globalAlpha = prevAlpha;
     }
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {
         this.save();

@@ -2,7 +2,8 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "digital/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
 
 import {V} from "Vector";
 
@@ -105,17 +106,23 @@ export const ComponentRenderer = (() => {
 
             // Draw tinted image
             let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            if (object instanceof LED)
-                tint = object.getColor();
-
-            if (imgName)
-                renderer.image(Images.GetImage(imgName), V(), size, tint);
-
-            // Draw LED turned on
             if (object instanceof LED) {
-                if (object.isOn())
-                    renderer.image(Images.GetImage(object.getOnImageName()), V(), size.scale(3), object.getColor());
+                // draw the LED object
+                renderer.image(Images.GetImage(imgName), V(), size, object.getColor());
+
+                // draw the LED glow
+                if (object.isOn()) {
+                    const glow_img = Images.GetImage(object.getOnImageName());
+                    const LED_GLOW_SIZE = V(ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_RADIUS).scale(2);
+                    renderer.image(glow_img, V(), LED_GLOW_SIZE, object.getColor());
+                }
+
+                // tint green on top if selected
+                if (tint !== undefined)
+                    renderer.tintImage(Images.GetImage(imgName), V(), size, tint);
             }
+            else if (imgName)
+                renderer.image(Images.GetImage(imgName), V(), size, tint);
 
             // Render the IOLabels, does not render labels if they are blank
             IOLabelRenderer.render(renderer, camera, object);
