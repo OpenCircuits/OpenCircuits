@@ -2,6 +2,8 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "../Component";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
+
 
 export class Clock extends Component {
     private frequency: number;
@@ -46,5 +48,15 @@ export class Clock extends Component {
 
     public getImageName(): string {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
+    }
+
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("frequency",this.frequency);
+    }
+
+    public load(node: XMLNode): void {
+        super.load(node);
+        this.frequency=node.getIntAttribute("frequency");
     }
 }
