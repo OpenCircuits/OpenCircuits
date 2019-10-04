@@ -18,7 +18,7 @@
 
     <div class="header__right">
         <div class="header__right__dropdown">
-            <button class="header__right__dropdown__button">
+            <button class="header__right__dropdown__button" title="Help">
                 <img id="header-help-img" src="img/icons/help.svg" height="100%" alt="Open help menu"/>
             </button>
             <div class="header__right__dropdown__content">
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div>
-            <button type="button" onclick="document.getElementById('header-file-input').click();">
+            <button type="button" title="Open file" onclick="document.getElementById('header-file-input').click();">
                 <img src="img/icons/open.svg" height="100%" alt="Open a file"/>
             </button>
         </div>
@@ -61,23 +61,23 @@
                required="true" accept=".circuit,.xml"/>
 
         <div class="header__right__dropdown">
-            <button class="header__right__dropdown__button">
+            <button class="header__right__dropdown__button" title="Download current scene">
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
             </button>
             <div class="header__right__dropdown__content">
-                <div id="header-new-button" type="button">
+                <div id="header-new-button" type="button" title="New Circuit">
                     <img src="img/icons/download.svg" height="100%" alt="Push current scene"/>
                     <a>New Circuit</a>
                 </div>
-                <div id="header-download-button" type="button">
+                <div id="header-download-button" type="button" title="Download">
                     <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
                     <a>Download</a>
                 </div>
-                <div id="header-download-pdf-button" type="button">
+                <div id="header-download-pdf-button" type="button" title="Download as PDF">
                     <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF"/>
                     <a>Download as PDF</a>
                 </div>
-                <div id="header-download-png-button" type="button">
+                <div id="header-download-png-button" type="button" title="Download as PNG">
                     <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG"/>
                     <a>Download as PNG</a>
                 </div>
