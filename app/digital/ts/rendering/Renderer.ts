@@ -28,6 +28,8 @@ export class Renderer {
 
         this.context = this.canvas.getContext("2d");
 
+        // Largest image we ever want tinted is the LED glow, which is the same size as the rotation circle
+        // If we add a new larger image we want to tint, this will need to be updated
         this.tintCanvas.width = 2 * ROTATION_CIRCLE_RADIUS;
         this.tintCanvas.height = 2 * ROTATION_CIRCLE_RADIUS;
         this.tintContext = this.tintCanvas.getContext("2d");
@@ -98,28 +100,28 @@ export class Renderer {
 
         this.context.drawImage(img, pos.x, pos.y, size.x, size.y);
         if (tint != undefined)
-            this.tintImage(img, center, size, tint);
+            this.overlayTint(img, center, size, tint);
     }
-    public tintImage(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
-        if (size.x > this.tintCanvas.width)
-            this.tintCanvas.width = size.x;
-        if (size.y > this.tintCanvas.height)
-            this.tintCanvas.height = size.y;
+    public overlayTint(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
+        // Clear the region of the tint canvas we draw to
+        this.tintContext.clearRect(0, 0, size.x, size.y);
 
         // Draw to tint canvas
-        this.tintContext.clearRect(0, 0, size.x, size.y);
+        // Rendering code separated because firefox handles alpha blending differently
         this.tintContext.fillStyle = tint;
         if (Browser.name !== "Firefox") {
+            // Fill the tint canvas with the tint color and then pare it down to match the image
             this.tintContext.fillRect(0, 0, size.x, size.y);
             this.tintContext.globalCompositeOperation = "destination-atop";
             this.tintContext.drawImage(img, 0, 0, size.x, size.y);
         } else {
+            // Draw the image then replace its color with the tint color
             this.tintContext.drawImage(img, 0, 0, size.x, size.y);
             this.tintContext.globalCompositeOperation = "source-atop";
             this.tintContext.fillRect(0, 0, size.x, size.y);
         }
 
-        // Draw to main canvas
+        // Blit the tint canvas to the main canvas
         const pos = center.sub(size.scale(0.5));
         const prevAlpha = this.context.globalAlpha;
         this.context.globalAlpha = 0.5;

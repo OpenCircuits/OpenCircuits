@@ -119,7 +119,7 @@ export const ComponentRenderer = (() => {
 
                 // tint green on top if selected
                 if (tint !== undefined)
-                    renderer.tintImage(Images.GetImage(imgName), V(), size, tint);
+                    renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
             }
             else if (imgName)
                 renderer.image(Images.GetImage(imgName), V(), size, tint);
