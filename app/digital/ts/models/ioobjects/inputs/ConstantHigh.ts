@@ -20,7 +20,7 @@ export class ConstantHigh extends Component {
 
     // @Override
     public copy(): Component {
-        let c = super.copy();
+        const c = super.copy();
         c.activate(true);
         return c;
     }
