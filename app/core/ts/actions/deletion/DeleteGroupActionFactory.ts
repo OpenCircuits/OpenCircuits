@@ -9,12 +9,12 @@ import {GatherGroup} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 
-export function CreateDeleteGroupAction(selectionTool: SelectionTool, objects: Array<IOObject>): GroupAction {
+export function CreateDeleteGroupAction(selectionTool: SelectionTool, objects: IOObject[]): GroupAction {
     const action = new GroupAction();
 
     const allDeletions = GatherGroup(objects);
-    const components = allDeletions.getAllComponents();
-    const wires = allDeletions.wires;
+    const components = allDeletions.getComponents();
+    const wires = allDeletions.getWires();
 
     // Create actions for deletion of wires then objects
     //  order matters because the components need to be added

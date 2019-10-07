@@ -8,7 +8,11 @@ import {Positioner} from "./positioners/Positioner";
 export class PortSet<T extends Port> {
     private parent: Component;
 
-    private ports: T[];
+    // Keep track of old ports so that we can keep references intact 
+    //  for wire connections and such when we change the port count
+    private oldPorts: T[];
+    private currentPorts: T[];
+
     private count: ClampedValue;
 
     private type: new(c: Component) => T;
@@ -22,7 +26,8 @@ export class PortSet<T extends Port> {
         this.count = count;
         this.positioner = positioner;
 
-        this.ports = [];
+        this.oldPorts = [];
+        this.currentPorts = [];
 
         this.setPortCount(count.getValue());
     }
@@ -36,28 +41,28 @@ export class PortSet<T extends Port> {
     public setPortCount(newVal: number): void {
         // no need to update if value is already
         //  the current amount
-        if (newVal == this.ports.length)
+        if (newVal == this.currentPorts.length)
             return;
 
         // set count (will auto-clamp)
         this.count.setValue(newVal);
 
         // add or remove ports to meet target
-        while (this.ports.length > this.count.getValue())
-            this.ports.pop();
-        while (this.ports.length < this.count.getValue())
-            this.ports.push(new this.type(this.parent));
+        while (this.currentPorts.length > this.count.getValue())
+            this.oldPorts.push(this.currentPorts.pop());
+        while (this.currentPorts.length < this.count.getValue())
+            this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
 
         // update positions
-        this.positioner.updatePortPositions(this.ports);
+        this.positioner.updatePortPositions(this.currentPorts);
     }
 
     public get(i: number): T {
-        return this.ports[i];
+        return this.currentPorts[i];
     }
 
     public getPorts(): T[] {
-        return this.ports.slice();
+        return this.currentPorts.slice();
     }
 
     public getCount(): ClampedValue {
@@ -65,28 +70,28 @@ export class PortSet<T extends Port> {
     }
 
     public get length(): number {
-        return this.ports.length;
+        return this.currentPorts.length;
     }
 
     public get first(): T {
-        return this.ports[0];
+        return this.currentPorts[0];
     }
 
     public get last(): T {
-        return this.ports[this.ports.length - 1];
+        return this.currentPorts[this.currentPorts.length - 1];
     }
 
     public isEmpty(): boolean {
-        return this.ports.length == 0;
+        return this.currentPorts.length == 0;
     }
 
     public copy(newParent: Component): PortSet<T> {
         const copy = new PortSet<T>(newParent, this.type, this.count.copy());
 
         // Copy port positions
-        copy.ports.forEach((p, i) => {
-            p.setOriginPos(this.ports[i].getOriginPos());
-            p.setTargetPos(this.ports[i].getTargetPos());
+        copy.currentPorts.forEach((p, i) => {
+            p.setOriginPos(this.currentPorts[i].getOriginPos());
+            p.setTargetPos(this.currentPorts[i].getTargetPos());
         });
 
         return copy;

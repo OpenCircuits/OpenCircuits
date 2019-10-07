@@ -25,7 +25,7 @@ export abstract class PortChangeAction implements Action {
         this.initialCount = initialCount;
     }
 
-    protected createAction(ports: Array<Port>, target: number): GroupAction {
+    protected createAction(ports: Port[], target: number): GroupAction {
         const group = new GroupAction();
 
         // Disconnect all the wires coming out from

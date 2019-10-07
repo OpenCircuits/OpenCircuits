@@ -49,6 +49,9 @@ export abstract class Port implements Selectable {
         this.updateDir();
     }
 
+    public abstract connect(w: Wire): void;
+    public abstract disconnect(w: Wire): void;
+
     public getParent(): Component {
         return this.parent;
     }

@@ -1,16 +1,18 @@
 import {Component} from "./Component";
 import {Wire} from "./Wire";
 import {IOObjectSet} from "core/utils/ComponentUtils";
+import {Port} from "./ports/Port";
 
-export interface CircuitDesigner {
-    addObject(obj: Component): void;
-    addGroup(group: IOObjectSet): void;
+export abstract class CircuitDesigner {
+    abstract addObject(obj: Component): void;
+    abstract addGroup(group: IOObjectSet): void;
 
-    connect(c1: Component, i1: number, c2: Component, i2: number);
+    abstract createWire(p1: Port, p2: Port): Wire;
+    
+    abstract removeObject(obj: Component): void;
 
-    removeObject(obj: Component): void;
-    removeWire(wire: Wire): void;
-
-    getObjects(): Component[];
-    getWires(): Wire[];
+    abstract removeWire(wire: Wire): void;
+ 
+    abstract getObjects(): Component[];
+    abstract getWires(): Wire[];
 }

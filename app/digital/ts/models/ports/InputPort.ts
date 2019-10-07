@@ -6,10 +6,11 @@ import {Port}	    from "core/models/ports/Port";
 import {PortSet}    from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 import {DigitalComponent} from "../DigitalComponent";
+import {DigitalWire} from "../DigitalWire";
 
 export class InputPort extends Port {
     protected parent: DigitalComponent;
-    private input?: Wire;
+    private input?: DigitalWire;
 
     public constructor(parent: DigitalComponent) {
         super(parent);
@@ -30,17 +31,21 @@ export class InputPort extends Port {
         designer.propagate(this.parent, this.isOn);
     }
 
+    public connect(wire: DigitalWire): void {
+
+    }
+
     public disconnect(): void {
         // remove input and propagate false signal
         this.input = undefined;
         this.activate(false);
     }
 
-    public setInput(input: Wire): void {
+    public setInput(input: DigitalWire): void {
         this.input = input;
     }
 
-    public getInput(): Wire {
+    public getInput(): DigitalWire {
         return this.input;
     }
 
@@ -48,8 +53,12 @@ export class InputPort extends Port {
         return V(-1, 0);
     }
 
-    public getWires(): Array<Wire> {
+    public getWires(): DigitalWire[] {
         return this.getInput() ? [this.getInput()] : [];
+    }
+
+    public getParent(): DigitalComponent {
+        return this.parent;
     }
 
 }

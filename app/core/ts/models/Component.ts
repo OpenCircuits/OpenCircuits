@@ -42,7 +42,7 @@ export abstract class Component extends CullableObject {
             const wires = port.getWires();
             for (const w of wires) {
                 // Get the port that isn't the current port
-                const port2 = (w.getInput() == port ? w.getOutput() : w.getInput());
+                const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
                 w.setIsStraight(false);
                 v.x = Snap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
                 v.y = Snap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
@@ -89,9 +89,11 @@ export abstract class Component extends CullableObject {
     }
     
     public abstract indexOfPort(port: Port): number;
-
     public abstract getPorts(): Port[];
-    public abstract getConnections(): Wire[];
+
+    public getConnections(): Wire[] {
+        return this.getPorts().flatMap(p => p.getWires());
+    }
 
     public getPos(): Vector {
         return this.transform.getPos();

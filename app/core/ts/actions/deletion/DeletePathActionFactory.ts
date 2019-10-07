@@ -3,9 +3,9 @@ import {DeleteAction} from "core/actions/addition/PlaceAction";
 import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 
 import {Wire} from "core/models/Wire";
-import {WirePort} from "digital/models/ioobjects/other/WirePort";
+import {Node} from "core/models/Node";
 
-export function CreateDeletePathAction(path: Array<Wire | WirePort>): GroupAction {
+export function CreateDeletePathAction(path: Array<Wire | Node>): GroupAction {
     const action = new GroupAction();
 
     // Remove wires first
@@ -14,8 +14,8 @@ export function CreateDeletePathAction(path: Array<Wire | WirePort>): GroupActio
             .forEach((w) => action.add(new DisconnectAction(w)));
 
     // Then remove WirePorts
-    path.filter((p) => p instanceof WirePort)
-            .map((p) => p as WirePort)
+    path.filter((p) => p instanceof Node)
+            .map((p) => p as Node)
             .forEach((wp) => action.add(new DeleteAction(wp)));
 
     return action;

@@ -11,18 +11,19 @@ import {Propagation} from "./Propagation";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
-import {Wire}      from "core/models/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
+
+import {DigitalWire}      from "./DigitalWire";
 import {DigitalComponent} from "./DigitalComponent";
 
-export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
+export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
     private ics: ICData[];
 
     private objects: DigitalComponent[];
-    private wires: Wire[];
+    private wires: DigitalWire[];
     private propagationQueue: Propagation[];
     private updateRequests: number;
     private propagationTime: number;
@@ -30,6 +31,8 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
     private updateCallback: () => void;
 
     public constructor(propagationTime: number = 1, callback: () => void = () => {}) {
+        super();
+        
         this.propagationTime = propagationTime;
         this.updateCallback  = callback;
 
@@ -110,6 +113,10 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         return true;
     }
 
+    public createWire(p1: OutputPort, p2: InputPort): DigitalWire {
+        return new DigitalWire(p1, p2);
+    }
+
     public addGroup(group: DigitalObjectSet): void {
         for (const a of group.getComponents())
             this.addObject(a);
@@ -136,29 +143,21 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
 
     public addObject(obj: DigitalComponent): void {
         if (this.objects.includes(obj))
-            throw new Error("Attempted to add object that already existed!");
+            throw new Error("Attempted to add an object that already existed!");
 
         obj.setDesigner(this);
         this.objects.push(obj);
     }
 
-    public createWire(p1: OutputPort, p2: InputPort): Wire {
-        if (p1.getParent().getDesigner() != this)
-            throw new Error("Cannot create wire! The provided input is not apart of this circuit!");
-        if (p2.getParent().getDesigner() != this)
-            throw new Error("Cannot create wire! The provided output is not apart of this circuit!");
+    public addWire(wire: DigitalWire): void {
+        if (this.wires.includes(wire))
+            throw new Error("Attempted to add a wire that already existed!");
 
-        const wire = CreateWire(p1, p2);
-        this.wires.push(wire);
         wire.setDesigner(this);
-        return wire;
+        this.wires.push(wire);
     }
 
-    public connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): Wire {
-        return this.createWire(c1.getOutputPort(i1), c2.getInputPort(i2));
-    }
-
-    public remove(o: DigitalComponent | Wire): void {
+    public remove(o: DigitalComponent | DigitalWire): void {
         if (o instanceof DigitalComponent)
             this.removeObject(o);
         else
@@ -178,7 +177,7 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         obj.setDesigner(undefined);
     }
 
-    public removeWire(wire: Wire): void {
+    public removeWire(wire: DigitalWire): void {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
 
@@ -270,7 +269,7 @@ export class DigitalCircuitDesigner implements CircuitDesigner, XMLable {
         return this.objects.slice(); // Shallow copy array
     }
 
-    public getWires(): Wire[] {
+    public getWires(): DigitalWire[] {
         return this.wires.slice(); // Shallow copy array
     }
 

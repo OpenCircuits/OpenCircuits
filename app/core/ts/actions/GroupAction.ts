@@ -1,13 +1,14 @@
 import {Action} from "core/actions/Action";
+import {ReversableAction} from "./ReversableAction";
 
 export class GroupAction implements Action {
-    private actions: Array<Action>;
+    private actions: Action[];
 
-    public constructor() {
-        this.actions = [];
+    public constructor(actions?: Action[]) {
+        this.actions = actions || [];
     }
 
-    public add(action: Action | Array<Action>): GroupAction {
+    public add(action: Action | Action[]): GroupAction {
         if (action instanceof Array)
             this.actions = this.actions.concat(action);
         else

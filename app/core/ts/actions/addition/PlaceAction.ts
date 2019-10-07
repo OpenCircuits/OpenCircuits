@@ -38,7 +38,5 @@ export class DeleteAction extends PlaceAction {
 
 
 export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
-    return objs.reduce((acc, o) => {
-        return acc.add(new PlaceAction(designer, o));
-    }, new GroupAction());
+    return new GroupAction(objs.map(o => new PlaceAction(designer, o)));
 }

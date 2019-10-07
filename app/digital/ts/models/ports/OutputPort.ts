@@ -5,11 +5,14 @@ import {Wire}       from "core/models/Wire";
 import {Port}	    from "core/models/ports/Port";
 import {PortSet}    from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {DigitalComponent} from "../DigitalComponent";
+import {DigitalWire}      from "../DigitalWire";
 
 export class OutputPort extends Port {
     protected parent: DigitalComponent;
-    private connections: Array<Wire>;
+
+    private connections: DigitalWire[];
 
     public constructor(parent: DigitalComponent) {
         super(parent);
@@ -37,19 +40,19 @@ export class OutputPort extends Port {
             designer.propagate(w, this.isOn);
     }
 
-    public connect(w: Wire): void {
+    public connect(w: DigitalWire): void {
         this.connections.push(w);
         w.activate(this.isOn);
     }
 
-    public disconnect(w: Wire): void {
+    public disconnect(w: DigitalWire): void {
         // find index and splice
         const i = this.connections.indexOf(w);
         if (i != -1)
             this.connections.splice(i, 1);
     }
 
-    public getConnections(): Array<Wire> {
+    public getConnections(): DigitalWire[] {
         return this.connections.slice(); // Shallow copy array
     }
 
@@ -57,8 +60,12 @@ export class OutputPort extends Port {
         return V(1, 0);
     }
 
-    public getWires(): Array<Wire> {
+    public getWires(): Wire[] {
         return this.getConnections();
+    }
+
+    public getParent(): DigitalComponent {
+        return this.parent;
     }
 
 }

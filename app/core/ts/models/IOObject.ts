@@ -13,8 +13,8 @@ export abstract class IOObject implements Selectable, XMLable {
     protected constructor() {
         this.name = new Name(this.getDisplayName());
     }
-
-    public abstract activate(signal: boolean, i?: number): void;
+    
+    // public abstract activate(signal: boolean, i?: number): void;
 
     public setDesigner(designer?: CircuitDesigner): void {
         this.designer = designer;

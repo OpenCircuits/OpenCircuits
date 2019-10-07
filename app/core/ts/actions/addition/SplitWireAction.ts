@@ -1,56 +1,41 @@
-import {Action} from "core/actions/Action";
 import {GroupAction} from "../GroupAction";
-import {ReversableAction} from "../ReversableAction";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
-import {WirePort} from "digital/models/ioobjects/other/WirePort";
+import {Wire} from "core/models/Wire";
+import {Node} from "core/models/Node";
 
-export class SplitWireAction extends ReversableAction {
-    private designer: DigitalCircuitDesigner;
+import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
+import {PlaceAction, DeleteAction} from "./PlaceAction";
 
-    private input: OutputPort;
-    private output: InputPort;
-    private port: WirePort;
+export function CreateSplitWireAction(w: Wire, port: Node): GroupAction {
+    const action = new GroupAction();
 
-    public constructor(input: OutputPort, output: InputPort, port: WirePort, flip: boolean = false) {
-        super(flip);
-        this.designer = input.getParent().getDesigner();
+    action.add(new DisconnectAction(w));
+    action.add(new PlaceAction(w.getDesigner(), port));
+    action.add(new ConnectionAction(w.getP1(), port.getP1()));
+    action.add(new ConnectionAction(port.getP2(), w.getP2()));
 
-        this.input = input;
-        this.output = output;
-        this.port = port;
-    }
-
-    public normalExecute(): Action {
-        this.designer.removeWire(this.output.getInput());
-        this.designer.addObject(this.port);
-        this.designer.createWire(this.input, this.port.getInputPort(0));
-        this.designer.createWire(this.port.getOutputPort(0), this.output);
-
-        return this;
-    }
-
-    public normalUndo(): Action {
-        this.designer.removeWire(this.port.getInputs()[0]);
-        this.designer.removeWire(this.port.getOutputs()[0]);
-        this.designer.removeObject(this.port);
-        this.designer.createWire(this.input, this.output);
-
-        return this;
-    }
+    return action;
 }
 
-export class SnipWireAction extends SplitWireAction {
-    public constructor(port: WirePort) {
-        super(port.getInputs()[0].getInput(), port.getOutputs()[0].getOutput(), port, true);
-    }
+export function CreateSnipWireAction(port: Node): GroupAction {
+    const wires = port.getP1().getWires().concat(port.getP2().getWires());
+    if (wires.length != 2)
+        throw new Error("Cannot create snip action with WirePort of >2 wires!");
+
+    const ports = wires.flatMap(w => [w.getP1(), w.getP2()]).filter(p => p.getParent() != port);
+    if (ports.length != 2)
+        throw new Error("Failed to find 2 ports to snip to");
+
+    const action = new GroupAction();
+
+    action.add(new DisconnectAction(wires[0]));
+    action.add(new DisconnectAction(wires[1]));
+    action.add(new DeleteAction(port));
+    action.add(new ConnectionAction(ports[0], ports[1]));
+
+    return action;
 }
 
-
-export function CreateGroupSnipAction(ports: Array<WirePort>): GroupAction {
-    return ports.reduce((acc, p) => {
-        return acc.add(new SnipWireAction(p));
-    }, new GroupAction());
+export function CreateGroupSnipAction(ports: Node[]): GroupAction {
+    return new GroupAction(ports.map(p => CreateSnipWireAction(p)));
 }

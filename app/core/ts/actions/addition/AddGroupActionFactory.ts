@@ -16,10 +16,10 @@ export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectS
         action.add(new PlaceAction(designer, obj));
 
     for (const wire of wires) {
-        const inp = wire.getInput();
-        const out = wire.getOutput();
+        const inp = wire.getP1();
+        const out = wire.getP2();
         inp.disconnect(wire);
-        out.disconnect();
+        out.disconnect(wire);
         action.add(new ConnectionAction(inp, out));
     }
 

@@ -1,39 +1,40 @@
 import {Action} from "core/actions/Action";
 import {ReversableAction} from "../ReversableAction";
 
-import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
+import {GroupAction} from "../GroupAction";
 
 export class ConnectionAction extends ReversableAction {
-    private c1: Component;
-    private i1: number;
-    private c2: Component;
-    private i2: number;
+    private wire: Wire;
 
-    public constructor(p1: Port, p2: Port, flip: boolean = false) {
-        super(flip);
+    public constructor(w: Wire);
+    public constructor(p1: Port, p2: Port);
+    public constructor(p1: Port | Wire, p2?: Port) {
+        super(p1 instanceof Wire);
 
-        // Get components
-        this.c1 = p1.getParent();
-        this.c2 = p2.getParent();
-
-        // Find indices of the ports
-        this.i1 = this.c1.indexOfPort(p1);
-        this.i2 = this.c2.indexOfPort(p2);
+        if (p1 instanceof Wire) {
+            this.wire = p1;
+        } else {
+            const designer = p1.getParent().getDesigner();
+            this.wire = designer.createWire(p1, p2);
+        }
     }
 
     public normalExecute(): Action {
-        const designer = this.c1.getDesigner();
-        designer.connect(this.c1, this.i1,  this.c2, this.i2);
+        const p1 = this.wire.getP1();
+        const p2 = this.wire.getP2();
+        p1.connect(this.wire);
+        p2.connect(this.wire);
 
         return this;
     }
 
     public normalUndo(): Action {
-        const designer = this.c1.getDesigner();
-        const wire = this.c1.getOutputs()[this.i1];
-        designer.removeWire(wire);
+        const p1 = this.wire.getP1();
+        const p2 = this.wire.getP2();
+        p1.disconnect(this.wire);
+        p2.disconnect(this.wire);
 
         return this;
     }
@@ -42,6 +43,10 @@ export class ConnectionAction extends ReversableAction {
 
 export class DisconnectAction extends ConnectionAction {
     public constructor(wire: Wire) {
-        super(wire.getInput(), wire.getOutput(), true);
+        super(wire);
     }
+}
+
+export function CreateGroupDisconnectAction(wires: Wire[]): GroupAction {
+    return new GroupAction(wires.map(w => new DisconnectAction(w)));
 }

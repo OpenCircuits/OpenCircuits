@@ -44,7 +44,7 @@ export class SplitWireTool extends TranslateTool {
         // Set wireport as selections and being pressed
         this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
         this.splitAction.add(new SelectAction(currentTool, wirePort).execute());
-        this.splitAction.add(new SplitWireAction(wire.getInput(), wire.getOutput(), wirePort).execute());
+        this.splitAction.add(new SplitWireAction(wire, wirePort).execute());
         currentTool.setCurrentlyPressedObj(wirePort);
 
         return super.activate(currentTool, event, input, button);

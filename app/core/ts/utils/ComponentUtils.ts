@@ -14,8 +14,10 @@ import {InputPort} from "../../../digital/ts/models/ports/InputPort";
 import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
 import {Wire} from "../models/Wire";
 
-import {WirePort} from "../../../digital/ts/models/ioobjects/other/WirePort";
+import {DigitalNode} from "../../../digital/ts/models/ioobjects/other/DigitalNode";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalWire} from "digital/models/DigitalWire";
+import {Node} from "core/models/Node";
 
 /**
  * Helper class to hold different groups of components.
@@ -31,7 +33,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
  *  is included as getAllComponents()
  */
 export abstract class IOObjectSet {
-    private wires: Wire[];
+    protected wires: Wire[];
 
     public constructor(set: IOObject[]) {
         this.wires = set.filter(o => o instanceof Wire) as Wire[];
@@ -48,6 +50,8 @@ export abstract class IOObjectSet {
     }
 }
 export class DigitalObjectSet extends IOObjectSet {
+    protected wires: DigitalWire[];
+
     private inputs:  DigitalComponent[];
     private outputs: DigitalComponent[];
     private others:  DigitalComponent[];
@@ -83,6 +87,10 @@ export class DigitalObjectSet extends IOObjectSet {
         this.others = comps;
     }
 
+    public getWires(): DigitalWire[] {
+        return this.wires.slice(); // Shallow copy
+    }
+
     public getInputs(): DigitalComponent[] {
         return this.inputs.slice(); // Shallow Copy
     }
@@ -113,33 +121,30 @@ export class DigitalObjectSet extends IOObjectSet {
  * @param  p2 The input port (must not have a connection already)
  * @return    The new wire connecting the two ports
  */
-export function CreateWire(p1: OutputPort, p2: InputPort): Wire {
-    if (p2.getInput() != undefined)
-        throw new Error("Cannot create Wire! Input port already has an input!");
-
+export function CreateWire(p1: Port, p2: Port): Wire {
     // Make wire
     const wire = new Wire(p1, p2);
 
     // Connect ports to wire
     p1.connect(wire);
-    p2.setInput(wire);
+    p2.connect(wire);
 
     return wire;
 }
 
-/**
- * Helper function to connect two components at the given
- *  port indices
- *
- * @param  c1 The "output" component
- * @param  i1 The index relating to the output ports of c1
- * @param  c2 The "input" component
- * @param  i2 The index relating to the input ports of c2
- * @return    The wire connecting the two components
- */
-export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): Wire {
-    return CreateWire(c1.getOutputPort(i1), c2.getInputPort(i2));
-}
+// /**
+//  * Helper function to connect two components at the given
+//  *  port indices
+//  *
+//  * @param  c1 The "output" component
+//  * @param  i1 The index relating to the output ports of c1
+//  * @param  c2 The "input" component
+//  * @param  i2 The index relating to the input ports of c2
+//  * @return    The wire connecting the two components
+//  */
+// export function Connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
+//     return CreateWire(c1.getOutputPort(i1), c2.getInputPort(i2));
+// }
 
 /**
  * Helper function to retrieve a list of all the Input/Output ports
@@ -148,7 +153,7 @@ export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, 
  * @param  objects The list of objects to get ports from
  * @return    All the ports attached to the given list of objects
  */
-export function GetAllPorts(objs: Array<Component>): Array<Port> {
+export function GetAllPorts(objs: Component[]): Port[] {
     return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
 }
 
@@ -186,25 +191,25 @@ export function CreateGroup(objects: Array<IOObject>): DigitalObjectSet {
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (incuding w)
  */
-export function GetPath(w: Wire): Array<Wire | WirePort> {
-    const path: Array<Wire | WirePort> = [];
+export function GetPath(w: DigitalWire): Array<DigitalWire | DigitalNode> {
+    const path: Array<DigitalWire | DigitalNode> = [];
 
     // Go to beginning of path
-    let i = w.getInputComponent();
-    while (i instanceof WirePort) {
+    let i = w.getP1Component();
+    while (i instanceof DigitalNode) {
         w = i.getInputs()[0];
-        i = w.getInputComponent();
+        i = w.getP1Component();
     }
 
     path.push(w);
 
     // Outputs
-    let o = w.getOutputComponent();
-    while (o instanceof WirePort) {
+    let o = w.getP2Component();
+    while (o instanceof DigitalNode) {
         // Push the wireport and next wire
         path.push(o);
         path.push(w = o.getOutputs()[0]);
-        o = w.getOutputComponent();
+        o = w.getP2Component();
     }
 
     return path;
@@ -217,8 +222,8 @@ export function GetPath(w: Wire): Array<Wire | WirePort> {
  * @param  obj  The component
  * @return      An array of connections + WirePorts
  */
-export function GetAllPaths(obj: DigitalComponent): Array<Wire | WirePort> {
-    let path: Array<Wire | WirePort> = [];
+export function GetAllPaths(obj: DigitalComponent): Array<DigitalWire | DigitalNode> {
+    let path: Array<DigitalWire | DigitalNode> = [];
 
     // Get all paths
     const wires = new Set(obj.getInputs().concat(obj.getOutputs()));
@@ -235,20 +240,20 @@ export function GetAllPaths(obj: DigitalComponent): Array<Wire | WirePort> {
  * @param  objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
-export function GatherGroup(objects: Array<IOObject>): DigitalObjectSet {
+export function GatherGroup(objects: IOObject[]): DigitalObjectSet {
     const group = new DigitalObjectSet(objects);
 
     // Gather all connecting paths
     let wires = group.getWires();
     let components = group.getComponents();
     for (const obj of objects) {
-        const path = (obj instanceof Wire ? GetPath(obj) : GetAllPaths(obj as DigitalComponent));
+        const path = (obj instanceof DigitalWire ? GetPath(obj) : GetAllPaths(obj as DigitalComponent));
 
         // Add wires and wireports
         wires      = wires.concat(
-                                path.filter((o) => o instanceof Wire     && !wires.includes(o))      as Wire[]);
+                                path.filter((o) => o instanceof DigitalWire && !wires.includes(o))      as DigitalWire[]);
         components = components.concat(
-                                path.filter((o) => o instanceof WirePort && !components.includes(o)) as WirePort[])
+                                path.filter((o) => o instanceof DigitalNode && !components.includes(o)) as DigitalNode[])
     }
 
     return group;
@@ -291,6 +296,10 @@ export function CreateGraph(groups: DigitalObjectSet): Graph<number, number> {
     return graph;
 }
 
+export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
+    return new DigitalWire(c1.getOutputPort(i1), c2.getInputPort(i2));
+}
+
 /**
  * Copies a group of objects including connections that are
  *  present within the objects
@@ -307,13 +316,13 @@ export function CopyGroup(objects: IOObject[] | DigitalObjectSet): DigitalObject
     const graph: Graph<number, number> = CreateGraph(groups);
 
     // Copy components
-    const copies: Array<DigitalComponent> = [];
+    const copies: DigitalComponent[] = [];
     for (const obj of objs)
         copies.push(obj.copy());
 
 
     // Copy connections
-    const wireCopies: Array<Wire> = [];
+    const wireCopies: Wire[] = [];
     for (const i of graph.getNodes()) {
         const c1 = copies[i];
         const connections = graph.getConnections(i);
@@ -328,7 +337,7 @@ export function CopyGroup(objects: IOObject[] | DigitalObjectSet): DigitalObject
             const i1 = objs[i].getOutputPorts().indexOf(w.getInput());
             const i2 = objs[j].getInputPorts().indexOf(w.getOutput());
 
-            const wire = Connect(c1, i1,  c2, i2);
+            const wire = Connect(c1, i1, c2, i2);
             w.copyInto(wire); // Copy properties
             wireCopies.push(wire);
         }
@@ -348,7 +357,7 @@ export function CopyGroup(objects: IOObject[] | DigitalObjectSet): DigitalObject
  *                Must be created prior to calling this method
  *                  to ensure nested ICs work properly
  */
-export function SaveGroup(node: XMLNode, objects: DigitalComponent[], wires: Wire[], icIdMap: Map<ICData, number>): void {
+export function SaveGroup(node: XMLNode, objects: DigitalComponent[], wires: DigitalWire[], icIdMap: Map<ICData, number>): void {
     const objectsNode = node.createChild("objects");
     const wiresNode   = node.createChild("wires");
     const idMap = new Map<IOObject, number>();

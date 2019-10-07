@@ -5,8 +5,12 @@ import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {Node} from "core/models/Node";
+import {Port} from "core/models/ports/Port";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
-export class WirePort extends DigitalComponent {
+export class DigitalNode extends DigitalComponent implements Node {
 
     public constructor() {
         super(new ClampedValue(1,1,1), new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
@@ -23,6 +27,14 @@ export class WirePort extends DigitalComponent {
 
     public isWithinSelectBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x, v);
+    }
+
+    public getP1(): InputPort {
+        return this.inputs.first;
+    }
+
+    public getP2(): OutputPort {
+        return this.outputs.first;
     }
 
     public getInputDir(): Vector {

@@ -9,25 +9,22 @@ import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
 import {InputPort}  from "../../../digital/ts/models/ports/InputPort";
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
+import {Port} from "./ports/Port";
 
 export class Wire extends CullableObject {
-    private input: OutputPort;
-    private output: InputPort;
-
-    private isOn: boolean;
+    protected p1: Port;
+    protected p2: Port;
 
     private shape: BezierCurve;
     private straight: boolean;
 
     private dirtyShape: boolean;
 
-    public constructor(input: OutputPort, output: InputPort) {
+    public constructor(p1: Port, p2: Port) {
         super();
 
-        this.input = input;
-        this.output = output;
-
-        this.isOn = false;
+        this.p1 = p1;
+        this.p2 = p2;
 
         this.shape = new BezierCurve(V(),V(),V(),V());
         this.straight = false;
@@ -45,45 +42,43 @@ export class Wire extends CullableObject {
             return;
         this.dirtyShape = false;
 
-        if (this.input != null) {
-            const pos = this.input.getWorldTargetPos();
-            const dir = this.input.getWorldDir();
+        if (this.p1 != null) {
+            const pos = this.p1.getWorldTargetPos();
+            const dir = this.p1.getWorldDir();
             this.shape.setP1(pos);
             this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
         }
-        if (this.output != null) {
-            const pos = this.output.getWorldTargetPos();
-            const dir = this.output.getWorldDir();
+        if (this.p2 != null) {
+            const pos = this.p2.getWorldTargetPos();
+            const dir = this.p2.getWorldDir();
             this.shape.setP2(pos);
             this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
         }
     }
 
-    public activate(signal: boolean): void {
-        // Don't do anything if signal is same as current state
-        if (signal == this.isOn)
-            return;
+    public connect(): void {
 
-        this.isOn = signal;
-        if (this.output != null)
-            this.output.activate(signal);
     }
 
-    public setInput(c: OutputPort): void {
-        if (c == this.input)
-            return;
+    public disconnect(): void {
 
-        this.input = c;
-        this.onTransformChange();
     }
 
-    public setOutput(c: InputPort): void {
-        if (c == this.output)
-            return;
+    // public setInput(c: OutputPort): void {
+    //     if (c == this.input)
+    //         return;
 
-        this.output = c;
-        this.onTransformChange();
-    }
+    //     this.input = c;
+    //     this.onTransformChange();
+    // }
+
+    // public setOutput(c: InputPort): void {
+    //     if (c == this.output)
+    //         return;
+
+    //     this.output = c;
+    //     this.onTransformChange();
+    // }
 
     public setIsStraight(straight: boolean): void {
         if (straight == this.straight)
@@ -93,24 +88,20 @@ export class Wire extends CullableObject {
         this.onTransformChange();
     }
 
-    public getInput(): OutputPort {
-        return this.input;
+    public getP1(): Port {
+        return this.p1;
     }
 
-    public getInputComponent(): Component {
-        return this.input.getParent();
+    public getP1Component(): Component {
+        return this.p1.getParent();
     }
 
-    public getOutput(): InputPort {
-        return this.output;
+    public getP2(): Port {
+        return this.p2;
     }
 
-    public getOutputComponent(): Component {
-        return this.output.getParent();
-    }
-
-    public getIsOn(): boolean {
-        return this.isOn;
+    public getP2Component(): Component {
+        return this.p2.getParent();
     }
 
     public getShape(): BezierCurve {
@@ -133,7 +124,6 @@ export class Wire extends CullableObject {
     }
 
     public copyInto(w: Wire): void {
-        w.isOn = this.isOn;
         w.straight = this.straight;
         this.onTransformChange();
     }
@@ -141,8 +131,7 @@ export class Wire extends CullableObject {
     public save(node: XMLNode): void {
         super.save(node);
 
-        // save state and properties
-        node.addAttribute("on", this.isOn);
+        // save properties
         node.addAttribute("straight", this.straight);
 
         // write curve
@@ -156,9 +145,7 @@ export class Wire extends CullableObject {
     public load(node: XMLNode): void {
         super.load(node);
 
-        // load state and properties
-        this.activate(node.getBooleanAttribute("on"));
-        this.input.activate(this.isOn);
+        // load properties
         this.straight = node.getBooleanAttribute("straight");
 
         // load curve

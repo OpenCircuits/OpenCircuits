@@ -7,15 +7,16 @@ import {Positioner} from "core/models/ports/positioners/Positioner";
 import {InputPort, InputPortSet} from "./ports/InputPort";
 import {OutputPort, OutputPortSet} from "./ports/OutputPort";
 import {Wire} from "core/models/Wire";
+import {DigitalWire} from "./DigitalWire";
 
 export abstract class DigitalComponent extends Component {
-    protected designer?: DigitalCircuitDesigner;
+    protected designer: DigitalCircuitDesigner;
 
     protected inputs:  InputPortSet;
     protected outputs: OutputPortSet;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
-        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+                          inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super(size);
 
         this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
@@ -70,7 +71,7 @@ export abstract class DigitalComponent extends Component {
         return this.inputs.getCount();
     }
 
-    public getInputs(): Wire[] {
+    public getInputs(): DigitalWire[] {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput())
@@ -98,7 +99,7 @@ export abstract class DigitalComponent extends Component {
         return this.outputs.getCount();
     }
 
-    public getOutputs(): Wire[] {
+    public getOutputs(): DigitalWire[] {
         // Accumulate all the OutputPort connections
         return this.getOutputPorts().reduce(
             (acc, p) => acc.concat(p.getConnections()), []
@@ -113,7 +114,7 @@ export abstract class DigitalComponent extends Component {
         return (<Port[]>this.getInputPorts()).concat(this.getOutputPorts());
     }
 
-    public getConnections(): Wire[] {
+    public getConnections(): DigitalWire[] {
         return this.getInputs().concat(this.getOutputs());
     }
 
