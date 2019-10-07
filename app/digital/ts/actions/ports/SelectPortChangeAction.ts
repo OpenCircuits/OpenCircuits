@@ -3,8 +3,11 @@ import {GroupAction} from "core/actions/GroupAction";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
 export class SelectPortChangeAction extends PortChangeAction {
+    protected obj: Mux;
+
     public constructor(obj: Mux, target: number) {
         super(obj, target, obj.getSelectPorts().length);
 
@@ -23,8 +26,8 @@ export class SelectPortChangeAction extends PortChangeAction {
     }
 
     public execute(): Action {
-        if (!(this.obj instanceof Mux))
-            throw new Error("Attempted to set selection ports of a non-Mux object!");
+        // if (!(this.obj instanceof Mux))
+        //     throw new Error("Attempted to set selection ports of a non-Mux object!");
 
         super.execute();
         this.obj.setSelectPortCount(this.targetCount);
@@ -32,8 +35,8 @@ export class SelectPortChangeAction extends PortChangeAction {
     }
 
     public undo(): Action {
-        if (!(this.obj instanceof Mux))
-            throw new Error("Attempted to set selection ports of a non-Mux object!");
+        // if (!(this.obj instanceof Mux))
+        //     throw new Error("Attempted to set selection ports of a non-Mux object!");
 
         this.obj.setSelectPortCount(this.initialCount);
         super.undo();

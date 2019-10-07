@@ -7,13 +7,13 @@ import {Camera} from "math/Camera";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
-import {WirePort} from "digital/models/ioobjects/other/WirePort";
+import {Node} from "core/models/Node";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
-import {SplitWireAction} from "../actions/addition/SplitWireAction";
+import {CreateSnipWireAction} from "core/actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
     private splitAction: GroupAction;

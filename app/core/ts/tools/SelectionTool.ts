@@ -11,7 +11,7 @@ import {Tool} from "./Tool";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {WirePort} from "digital/models/ioobjects/other/WirePort";
+import {Node, isNode} from "core/models/Node";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -232,7 +232,7 @@ export class SelectionTool extends Tool {
         }
         if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
-            const wirePorts = selections.filter((o) => o instanceof WirePort) as Array<WirePort>;
+            const wirePorts = selections.filter((o) => isNode(o)) as unknown as (Component & Node)[];
             if (selections.length != wirePorts.length)
                 return false;
             this.action.add(CreateDeselectAllAction(this).execute());
