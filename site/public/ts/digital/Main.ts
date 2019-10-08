@@ -1,4 +1,4 @@
-import "./polyfill.js";
+import "../polyfill.js";
 
 import {SAVED} from "core/utils/Config";
 import {Images} from "digital/utils/Images";

@@ -3,7 +3,7 @@ import $ from "jquery";
 import {AuthState} from "../auth/AuthState";
 
 export function Ping(auth: AuthState): Promise<string> {
-    return $.when(
+    return new Promise((resolve, reject) => {
         $.ajax({
             method: "GET",
             url: "api/ping",
@@ -11,6 +11,6 @@ export function Ping(auth: AuthState): Promise<string> {
                 "authType": auth.getType(),
                 "authId": auth.getId()
             }
-        })
-    );
+        }).done(resolve).fail(reject);
+    });
 }
