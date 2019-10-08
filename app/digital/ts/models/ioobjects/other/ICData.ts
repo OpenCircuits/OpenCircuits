@@ -11,7 +11,7 @@ import {DigitalObjectSet,
         CreateGraph,
         CreateGroup,
         SaveGroup,
-        LoadGroup} from "core/utils/ComponentUtils";
+        LoadGroup} from "digital/utils/ComponentUtils";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 

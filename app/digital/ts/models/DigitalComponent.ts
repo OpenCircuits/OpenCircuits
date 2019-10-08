@@ -109,7 +109,7 @@ export abstract class DigitalComponent extends Component {
     public numOutputs(): number {
         return this.outputs.length;
     }
-    
+
     public getPorts(): Port[] {
         return (<Port[]>this.getInputPorts()).concat(this.getOutputPorts());
     }

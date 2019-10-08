@@ -11,6 +11,7 @@ import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
 export class DigitalNode extends DigitalComponent implements Node {
+    discriminator: "NODE_INTERFACE";
 
     public constructor() {
         super(new ClampedValue(1,1,1), new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));

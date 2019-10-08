@@ -13,7 +13,7 @@ import {Action} from "core/actions/Action";
 import {GroupAction} from "../actions/GroupAction";
 import {SelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
-import {CreateSnipWireAction} from "core/actions/addition/SplitWireAction";
+import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
 
 export class SplitWireTool extends TranslateTool {
     private splitAction: GroupAction;
@@ -35,7 +35,7 @@ export class SplitWireTool extends TranslateTool {
             return false;
 
         // Create new wire port
-        const wirePort = new WirePort();
+        const wirePort = wire.split();
         wirePort.setPos(this.camera.getWorldPos(input.getMouseDownPos()));
 
         // Create action
@@ -44,7 +44,7 @@ export class SplitWireTool extends TranslateTool {
         // Set wireport as selections and being pressed
         this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
         this.splitAction.add(new SelectAction(currentTool, wirePort).execute());
-        this.splitAction.add(new SplitWireAction(wire, wirePort).execute());
+        this.splitAction.add(CreateSplitWireAction(wire, wirePort).execute());
         currentTool.setCurrentlyPressedObj(wirePort);
 
         return super.activate(currentTool, event, input, button);

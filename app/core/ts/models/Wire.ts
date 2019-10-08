@@ -10,8 +10,9 @@ import {InputPort}  from "../../../digital/ts/models/ports/InputPort";
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {Port} from "./ports/Port";
+import {Node} from "./Node";
 
-export class Wire extends CullableObject {
+export abstract class Wire extends CullableObject {
     protected p1: Port;
     protected p2: Port;
 
@@ -63,6 +64,8 @@ export class Wire extends CullableObject {
     public disconnect(): void {
 
     }
+
+    public abstract split(): Node & Component;
 
     // public setInput(c: OutputPort): void {
     //     if (c == this.input)

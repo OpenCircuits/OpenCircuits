@@ -1,11 +1,10 @@
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
-import {PortChangeAction} from "core/actions/ports/PortChangeAction";
+import {DigitalPortChangeAction} from "./DigitalPortChangeAction";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
-import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class SelectPortChangeAction extends PortChangeAction {
+export class SelectPortChangeAction extends DigitalPortChangeAction {
     protected obj: Mux;
 
     public constructor(obj: Mux, target: number) {

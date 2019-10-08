@@ -5,6 +5,7 @@ import {DEFAULT_FILL_COLOR,
 import {Renderer} from "../Renderer";
 import {Camera} from "math/Camera";
 import {Wire} from "core/models/Wire";
+import {DigitalWire} from "digital/models/DigitalWire";
 
 import {Curve} from "../shapes/Curve";
 import {Line} from "../shapes/Line";
@@ -13,11 +14,15 @@ import {Style} from "../Style";
 export const WireRenderer = (() => {
     return {
         render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean): void {
+            console.log('renderer')
             if (!camera.cull(wire.getCullBox()))
                 return;
+            console.log('reedasd')
+
+            const isOn = (wire instanceof DigitalWire ? wire.getIsOn() : false);
 
             // @TODO move to function for getting color based on being selection/on/off
-            const color = (wire.getIsOn() ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
+            const color = (isOn ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
             const style = new Style(undefined, color, WIRE_THICKNESS / camera.getZoom());
 
             // get curve and start/end positions

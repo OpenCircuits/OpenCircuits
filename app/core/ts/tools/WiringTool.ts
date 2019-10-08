@@ -15,6 +15,7 @@ import {Input} from "core/utils/Input";
 
 import {Action} from "core/actions/Action";
 import {ConnectionAction} from "../actions/addition/ConnectionAction";
+import {DigitalWire} from "digital/models/DigitalWire";
 
 export class WiringTool extends Tool {
     private designer: CircuitDesigner;
@@ -68,12 +69,12 @@ export class WiringTool extends Tool {
 
         // Create wire
         if (p instanceof InputPort) {
-            this.wire = new Wire(null, p);
+            this.wire = new DigitalWire(null, p);
             this.wire.getShape().setP1(p.getWorldTargetPos());
             this.wire.getShape().setC1(p.getWorldTargetPos());
         }
         if (p instanceof OutputPort) {
-            this.wire = new Wire(p, null);
+            this.wire = new DigitalWire(p, null);
             this.wire.getShape().setP2(p.getWorldTargetPos());
             this.wire.getShape().setC2(p.getWorldTargetPos());
         }

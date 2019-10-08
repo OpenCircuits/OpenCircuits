@@ -2,7 +2,7 @@ import {V} from "Vector";
 
 import {Exporter} from "core/utils/io/Exporter";
 import {Importer} from "core/utils/io/Importer";
-import {CopyGroup} from "core/utils/ComponentUtils";
+import {CopyGroup} from "digital/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
@@ -63,7 +63,7 @@ export const CopyController = (() => {
         Importer.LoadCircuit(designer, contents);
 
         const group = CopyGroup(designer.getGroup());
-        const objs = group.getAllComponents();
+        const objs = group.getComponents();
 
         const action = new GroupAction();
 

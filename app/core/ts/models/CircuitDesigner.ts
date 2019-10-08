@@ -4,15 +4,18 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {Port} from "./ports/Port";
 
 export abstract class CircuitDesigner {
-    abstract addObject(obj: Component): void;
-    abstract addGroup(group: IOObjectSet): void;
+    public abstract addObject(obj: Component): void;
+    public abstract addWire(wire: Wire): void;
+    public abstract addGroup(group: IOObjectSet): void;
 
-    abstract createWire(p1: Port, p2: Port): Wire;
-    
-    abstract removeObject(obj: Component): void;
+    public abstract createWire(p1: Port, p2: Port): Wire;
 
-    abstract removeWire(wire: Wire): void;
- 
-    abstract getObjects(): Component[];
-    abstract getWires(): Wire[];
+    public abstract removeObject(obj: Component): void;
+
+    public abstract removeWire(wire: Wire): void;
+
+    public abstract shift(obj: Component | Wire, i?: number): number;
+
+    public abstract getObjects(): Component[];
+    public abstract getWires(): Wire[];
 }

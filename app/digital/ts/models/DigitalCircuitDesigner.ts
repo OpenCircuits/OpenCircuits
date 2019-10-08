@@ -2,10 +2,8 @@ import {XMLable} from "core/utils/io/xml/XMLable";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {DigitalObjectSet,
-        CreateWire,
         SaveGroup,
-        LoadGroup,
-        IOObjectSet} from "../../../core/ts/utils/ComponentUtils";
+        LoadGroup} from "digital/utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
@@ -32,7 +30,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
 
     public constructor(propagationTime: number = 1, callback: () => void = () => {}) {
         super();
-        
+
         this.propagationTime = propagationTime;
         this.updateCallback  = callback;
 
@@ -65,7 +63,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
      * @param receiver
      * @param signal
      */
-    public propagate(receiver: IOObject, signal: boolean): void {
+    public propagate(receiver: DigitalComponent | DigitalWire, signal: boolean): void {
         this.propagationQueue.push(new Propagation(receiver, signal));
 
         if (this.updateRequests > 0)
@@ -180,10 +178,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
     public removeWire(wire: DigitalWire): void {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
-
         // Completely disconnect from the circuit
-        wire.getInput().disconnect(wire);
-        wire.getOutput().disconnect();
+        // wire.getInput().disconnect(wire);
+        // wire.getOutput().disconnect();
 
         this.wires.splice(this.wires.indexOf(wire), 1);
         wire.setDesigner(undefined);
@@ -244,9 +241,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
 
     // Shift an object to a certain position
     //  within it's list
-    public shift(obj: IOObject, i?: number): number {
+    public shift(obj: DigitalComponent | DigitalWire, i?: number): number {
         // Find initial position in list
-        const arr: Array<IOObject> =
+        const arr: IOObject[] =
                 (obj instanceof DigitalComponent) ? (this.objects) : (this.wires);
         const i0 = arr.indexOf(obj);
         if (i0 === -1)

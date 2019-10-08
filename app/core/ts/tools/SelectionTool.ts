@@ -23,8 +23,7 @@ import {Camera} from "math/Camera";
 
 import {Action} from "../actions/Action";
 import {GroupAction} from "../actions/GroupAction"
-import {ShiftAction,
-        ShiftWireAction} from "../actions/ShiftAction";
+import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
         CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
@@ -205,7 +204,7 @@ export class SelectionTool extends Tool {
         if (w) {
             const deselect = this.shouldDeselect(w, input.isShiftKeyDown());
             this.action.add(new SelectAction(this, w, deselect).execute());
-            this.action.add(new ShiftWireAction(w).execute());
+            this.action.add(new ShiftAction(w).execute());
             return true;
         }
 

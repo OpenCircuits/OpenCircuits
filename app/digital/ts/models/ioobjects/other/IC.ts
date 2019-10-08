@@ -3,7 +3,7 @@ import {DEFAULT_SIZE} from "../../../utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {DigitalObjectSet} from "core/utils/ComponentUtils";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";

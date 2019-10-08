@@ -2,7 +2,7 @@ import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
         SPACEBAR_KEY} from "digital/utils/Constants";
 
-import {CopyGroup} from "core/utils/ComponentUtils";
+import {CopyGroup} from "digital/utils/ComponentUtils";
 
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";
@@ -32,7 +32,7 @@ export class TranslateTool extends Tool {
     private startPos: Vector;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
-        super(); 
+        super();
 
         this.designer = designer;
         this.camera = camera;

@@ -3,6 +3,7 @@ import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 import {DigitalComponent} from "./DigitalComponent";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
 export class DigitalWire extends Wire {
     protected p1: OutputPort;
@@ -24,6 +25,10 @@ export class DigitalWire extends Wire {
         this.isOn = signal;
         if (this.p2 != null)
             this.p2.activate(signal);
+    }
+
+    public split(): DigitalNode {
+        return new DigitalNode();
     }
 
     public getInput(): OutputPort {

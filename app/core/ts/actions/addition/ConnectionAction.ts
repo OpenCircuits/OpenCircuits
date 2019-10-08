@@ -4,8 +4,10 @@ import {ReversableAction} from "../ReversableAction";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 import {GroupAction} from "../GroupAction";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 export class ConnectionAction extends ReversableAction {
+    private designer: CircuitDesigner;
     private wire: Wire;
 
     public constructor(w: Wire);
@@ -14,14 +16,17 @@ export class ConnectionAction extends ReversableAction {
         super(p1 instanceof Wire);
 
         if (p1 instanceof Wire) {
+            this.designer = p1.getDesigner();
             this.wire = p1;
         } else {
-            const designer = p1.getParent().getDesigner();
-            this.wire = designer.createWire(p1, p2);
+            this.designer = p1.getParent().getDesigner();
+            this.wire = this.designer.createWire(p1, p2);
         }
     }
 
     public normalExecute(): Action {
+        this.designer.addWire(this.wire);
+
         const p1 = this.wire.getP1();
         const p2 = this.wire.getP2();
         p1.connect(this.wire);
@@ -31,6 +36,8 @@ export class ConnectionAction extends ReversableAction {
     }
 
     public normalUndo(): Action {
+        this.designer.removeWire(this.wire);
+
         const p1 = this.wire.getP1();
         const p2 = this.wire.getP2();
         p1.disconnect(this.wire);
