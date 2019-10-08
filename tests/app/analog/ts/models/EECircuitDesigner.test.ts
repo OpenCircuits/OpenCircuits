@@ -17,10 +17,10 @@ describe("EECircuitDesigner", () => {
             const battery  = new Battery(10);
             const resistor = new Resistor(2);
 
-            designer.addObjects([battery, resistor]);
+            Place(designer, [battery, resistor]);
 
-            const wire1 = designer.connect(battery,  resistor);
-            const wire2 = designer.connect(resistor, battery);
+            const wire1 = Connect(battery,  resistor);
+            const wire2 = Connect(resistor, battery);
 
             designer.simulate();
 
@@ -56,11 +56,11 @@ describe("EECircuitDesigner", () => {
             const resistor1 = new Resistor(2);
             const resistor2 = new Resistor(3);
 
-            designer.addObjects([battery, resistor1, resistor2]);
+            Place(designer, [battery, resistor1, resistor2]);
 
-            const wire1 = designer.connect(battery,   resistor1);
-            const wire2 = designer.connect(resistor1, resistor2);
-            const wire3 = designer.connect(resistor2, battery);
+            const wire1 = Connect(battery,   resistor1);
+            const wire2 = Connect(resistor1, resistor2);
+            const wire3 = Connect(resistor2, battery);
 
             designer.simulate();
 
@@ -98,9 +98,9 @@ describe("EECircuitDesigner", () => {
 
             const battery = new Battery(10);
 
-            designer.addObjects([battery]);
+            Place(designer, [battery]);
             //Decide whether or not to allow battery connected to itself
-            const wire1 =  designer.connect(battery, battery);
+            const wire1 =  Connect(battery, battery);
 
             designer.simulate();
 

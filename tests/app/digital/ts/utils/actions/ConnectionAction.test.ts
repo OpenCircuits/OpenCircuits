@@ -6,13 +6,15 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
+import {Place} from "../../Helpers";
+
 describe("PlaceAction", () => {
-    it("Undo/Redo 1", () => {
+    test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new LED();
 
-        designer.addObject(a);
-        designer.addObject(b);
+        Place(designer, [a]);
+        Place(designer, [b]);
 
         a.activate(true);
 

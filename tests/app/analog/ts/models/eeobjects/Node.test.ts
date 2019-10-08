@@ -6,7 +6,7 @@ import {Resistor}          from "analog/models/eeobjects/Resistor";
 import {Node}              from "analog/models/eeobjects/Node";
 
 describe("Node", () => {
-    it("Empty Circuit", () => {
+    test("Empty Circuit", () => {
         const designer = new EECircuitDesigner();
 
         const battery   = new Battery(10);
@@ -16,14 +16,14 @@ describe("Node", () => {
         const node1 = new Node();
         const node2 = new Node();
 
-        designer.addObjects([battery, resistor,resistor2,node1,node2]);
+        Place(designer, [battery, resistor,resistor2,node1,node2]);
 
-        const wire1 = designer.connect(battery , node1);
-        const wire2 = designer.connect(node1 , resistor);
-        const wire3 = designer.connect(node1 , resistor2);
-        const wire4 = designer.connect(resistor , node2);
-        const wire5 = designer.connect(resistor2 , node2);
-        const wire6 = designer.connect( node2 , battery);
+        const wire1 = Connect(battery , node1);
+        const wire2 = Connect(node1 , resistor);
+        const wire3 = Connect(node1 , resistor2);
+        const wire4 = Connect(resistor , node2);
+        const wire5 = Connect(resistor2 , node2);
+        const wire6 = Connect( node2 , battery);
 
         designer.simulate();
 
@@ -31,7 +31,7 @@ describe("Node", () => {
         expect(node1.getVoltage()).toBe(10);
         expect(node2.getVoltage()).toBe(0);
     });
-    it("Empty Circuit", () => {
+    test("Empty Circuit", () => {
         const designer = new EECircuitDesigner();
 
         const battery   = new Battery(10);
@@ -42,14 +42,14 @@ describe("Node", () => {
         const node1 = new Node();
         const node2 = new Node();
 
-        designer.addObjects([battery, resistor1,resistor2,resistor3,node1,node2]);
-        const wire1 = designer.connect(battery , resistor1);
-        const wire2 = designer.connect(resistor1 , node1);
-        const wire3 = designer.connect(node1 , resistor2);
-        const wire4 = designer.connect(node1 , resistor3);
-        const wire5 = designer.connect(resistor2 , node2);
-        const wire6 = designer.connect(resistor3 , node2);
-        const wire7 = designer.connect(node2 , battery);
+        Place(designer, [battery, resistor1,resistor2,resistor3,node1,node2]);
+        const wire1 = Connect(battery , resistor1);
+        const wire2 = Connect(resistor1 , node1);
+        const wire3 = Connect(node1 , resistor2);
+        const wire4 = Connect(node1 , resistor3);
+        const wire5 = Connect(resistor2 , node2);
+        const wire6 = Connect(resistor3 , node2);
+        const wire7 = Connect(node2 , battery);
 
         designer.simulate();
 

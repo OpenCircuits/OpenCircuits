@@ -222,11 +222,11 @@ export class ICData {
         const INPUT_WHITELIST = [Switch, Button];
 
         const inputs = copies.getInputs().filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
-        const components = copies.getComponents().concat(copies.getInputs())
+        const others = copies.getOthers().concat(copies.getInputs())
                 .filter((c) => !INPUT_WHITELIST.some((type) => c instanceof type));
 
         copies.setInputs(inputs);
-        copies.setComponents(components);
+        copies.setOthers(others);
 
         return new ICData(copies);
     }

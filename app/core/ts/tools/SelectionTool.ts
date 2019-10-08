@@ -225,7 +225,8 @@ export class SelectionTool extends Tool {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
 
-            this.action.add(CreateDeleteGroupAction(this, objs).execute());
+            this.action.add(CreateDeselectAllAction(this).execute());
+            this.action.add(CreateDeleteGroupAction(objs).execute());
 
             return true;
         }

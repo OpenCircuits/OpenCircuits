@@ -167,9 +167,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
             throw new Error("Attempted to remove object that doesn't exist!");
 
         // Remove all input and output wires
-        const wires = obj.getInputs().concat(obj.getOutputs());
-        for (const wire of wires)
-            this.removeWire(wire);
+        // const wires = obj.getInputs().concat(obj.getOutputs());
+        // for (const wire of wires)
+        //     this.removeWire(wire);
 
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);

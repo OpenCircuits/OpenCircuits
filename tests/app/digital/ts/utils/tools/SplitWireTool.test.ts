@@ -6,12 +6,14 @@ import {Camera} from "math/Camera";
 import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-import {WirePort}        from "digital/models/ioobjects/other/WirePort";
+import {Switch}      from "digital/models/ioobjects/inputs/Switch";
+import {LED}         from "digital/models/ioobjects/outputs/LED";
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";
+
+import {Place} from "../../Helpers";
 
 describe("Wiring Tool", () => {
     const camera = new Camera(500, 500);
@@ -31,7 +33,7 @@ describe("Wiring Tool", () => {
         const led = new LED();
         sw.setPos(V(-60, 0));
         led.setPos(V(400, -100));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         // Connect Switch -> LED
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -43,7 +45,7 @@ describe("Wiring Tool", () => {
                 .moveTo(V(200, 0));
 
         const port = sw.getOutputs()[0].getOutputComponent();
-        expect(port).toBeInstanceOf(WirePort);
+        expect(port).toBeInstanceOf(DigitalNode);
         expect(port.getInputs()[0].isStraight()).toBe(true);
         expect(port.getOutputs()[0].isStraight()).toBe(true);
         expect(port.getPos()).toEqual(V(200, 0));
@@ -62,7 +64,7 @@ describe("Wiring Tool", () => {
         const led = new LED();
         sw.setPos(V(-60, 0));
         led.setPos(V(400, -100));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         // Connect Switch -> LED
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -77,13 +79,13 @@ describe("Wiring Tool", () => {
                 .release();
 
         const port1 = sw.getOutputs()[0].getOutputComponent();
-        expect(port1).toBeInstanceOf(WirePort);
+        expect(port1).toBeInstanceOf(DigitalNode);
         expect(port1.getInputs()[0].isStraight()).toBe(true);
         expect(port1.getOutputs()[0].isStraight()).toBe(true);
         expect(port1.getPos()).toEqual(V(0, 100));
 
         const port2 = led.getInputs()[0].getInputComponent();
-        expect(port2).toBeInstanceOf(WirePort);
+        expect(port2).toBeInstanceOf(DigitalNode);
         expect(port2.getInputs()[0].isStraight()).toBe(true);
         expect(port2.getOutputs()[0].isStraight()).toBe(true);
         expect(port2.getPos()).toEqual(V(400, 100))

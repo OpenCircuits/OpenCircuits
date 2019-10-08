@@ -6,12 +6,11 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 describe("PlaceAction", () => {
-    it("Undo/Redo", () => {
+    test("Undo/Redo", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch();
 
-        designer.addObject(a);
-        const a1 = new PlaceAction(designer, a);
+        const a1 = new PlaceAction(designer, a).execute();
 
         expect(designer.getObjects().length).toBe(1);
         expect(designer.getObjects()[0]).toBe(a);

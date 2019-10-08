@@ -11,7 +11,7 @@ import {CreateBusAction}        from "digital/actions/addition/BusActionFactory"
 // import {PlaceAction}     from "../../../../../site/public/ts/utils/actions/";
 
 describe("Integration Tests for Actions", () => {
-    it("Bus 5 switches to 3s Mux", () => {
+    test("Bus 5 switches to 3s Mux", () => {
         const designer = new DigitalCircuitDesigner(0);
         const manager = new ActionManager();
 
@@ -41,7 +41,7 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);
     });
-    it("Bus 5 switches to 3s Mux then change to 2s Mux", () => {
+    test("Bus 5 switches to 3s Mux then change to 2s Mux", () => {
         const designer = new DigitalCircuitDesigner(0);
         const manager = new ActionManager();
 

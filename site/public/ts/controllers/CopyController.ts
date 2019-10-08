@@ -51,8 +51,9 @@ export const CopyController = (() => {
 
         // Delete the selections
         MainDesignerController.AddAction(
-            CreateDeleteGroupAction(MainDesignerController.GetSelectionTool(), objs).execute()
+            CreateDeselectAllAction(MainDesignerController.GetSelectionTool()).execute()
         );
+        MainDesignerController.AddAction(CreateDeleteGroupAction(objs).execute());
     }
 
     const paste = function(e: ClipboardEvent): void {

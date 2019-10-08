@@ -32,7 +32,10 @@ export class InputPort extends Port {
     }
 
     public connect(wire: DigitalWire): void {
-
+        if (this.input)
+            throw new Error("Cannot connect to Input Port! Connection already exists!");
+        this.input = wire;
+        this.activate(wire.getIsOn());
     }
 
     public disconnect(): void {

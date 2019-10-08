@@ -8,14 +8,16 @@ import {Camera} from "math/Camera";
 import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {Button}          from "digital/models/ioobjects/inputs/Button";
-import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-import {WirePort}        from "digital/models/ioobjects/other/WirePort";
+import {Switch}      from "digital/models/ioobjects/inputs/Switch";
+import {Button}      from "digital/models/ioobjects/inputs/Button";
+import {ANDGate}     from "digital/models/ioobjects/gates/ANDGate";
+import {LED}         from "digital/models/ioobjects/outputs/LED";
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";
+
+import {Place, Connect} from "../../Helpers";
 
 describe("Translate Tool", () => {
     const camera = new Camera(500, 500);
@@ -33,7 +35,7 @@ describe("Translate Tool", () => {
 
         test("Move mouse without dragging", () => {
             const obj = new Switch();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.moveTo(V(0, 0))
                     .move(V(20, 0));
@@ -43,7 +45,7 @@ describe("Translate Tool", () => {
 
         test("Click and Move mouse not on Switch", () => {
             const obj = new Switch();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.moveTo(V(0, 50))
                     .press()
@@ -55,7 +57,7 @@ describe("Translate Tool", () => {
 
         test("Move Switch", () => {
             const obj = new Switch();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.drag(V(0, 0), V(100, 0));
 
@@ -64,7 +66,7 @@ describe("Translate Tool", () => {
 
         test("Move Button", () => {
             const obj = new Button();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.moveTo(V(0, 0))
                     .press()
@@ -76,7 +78,7 @@ describe("Translate Tool", () => {
 
         test("Move ANDGate", () => {
             const obj = new ANDGate();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.moveTo(V(0, 0))
                     .press()
@@ -99,7 +101,7 @@ describe("Translate Tool", () => {
             const obj1 = new Switch();
             const obj2 = new ANDGate();
             obj1.setPos(V(100, 0));
-            designer.addObjects([obj1, obj2]);
+            Place(designer, [obj1, obj2]);
 
             // Select objects
             input.drag(V(-200, -200), V(200, 200));
@@ -115,7 +117,7 @@ describe("Translate Tool", () => {
             const sw = new Switch();
             const gate = new ANDGate();
             gate.setPos(V(100, 0));
-            designer.addObjects([sw, gate]);
+            Place(designer, [sw, gate]);
 
             // Select ANDGate
             input.click(gate.getPos());
@@ -139,17 +141,17 @@ describe("Translate Tool", () => {
         test("Clone Switch -> LED with Snapped WirePort", () => {
             const sw   = new Switch();
             const led  = new LED();
-            const port = new WirePort();
+            const port = new DigitalNode();
 
             // Set port to vertically align with Switch and horizontally with LED
             port.setPos(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
             led.setPos(V(100, 0));
 
-            designer.addObjects([sw, led, port]);
+            Place(designer, [sw, led, port]);
 
             // Connect to Port and set as straight
-            designer.connect(sw,   0, port, 0).setIsStraight(true);
-            designer.connect(port, 0, led,  0).setIsStraight(true);
+            Connect(sw,   0, port, 0).getWire().setIsStraight(true);
+            Connect(port, 0, led,  0).getWire().setIsStraight(true);
 
             // Select all
             input.drag(V(-200, -200), V(200, 200));
@@ -178,9 +180,9 @@ describe("Translate Tool", () => {
             objs.splice(objs.indexOf(port), 1);
             expect(objs.length).toBe(3);
 
-            const sw2 = objs.filter((o) => o instanceof Switch)[0] as Switch;
-            const led2 = objs.filter((o) => o instanceof LED)[0] as LED;
-            const port2 = objs.filter((o) => o instanceof WirePort)[0] as WirePort;
+            const sw2   = objs.filter((o) => o instanceof Switch)[0] as Switch;
+            const led2  = objs.filter((o) => o instanceof LED)[0] as LED;
+            const port2 = objs.filter((o) => o instanceof DigitalNode)[0] as DigitalNode;
 
             // Expect duplicated objects to be the same
             expect(sw2.getPos()).toEqual(V(-100, 0));

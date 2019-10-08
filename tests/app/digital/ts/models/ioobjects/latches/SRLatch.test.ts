@@ -5,23 +5,25 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {SRLatch}         from "digital/models/ioobjects/latches/SRLatch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
+import {Place, Connect} from "../../../Helpers";
+
 describe("SRLatch", () => {
     const designer = new DigitalCircuitDesigner(0);
     const clk = new Switch(), s = new Switch(), r = new Switch(),
     	l = new SRLatch(), l0 = new LED(), l1 = new LED();
 
-    designer.addObjects([clk, s, r, l, l1, l0]);
-    designer.connect(clk, 0,  l, 1);
-    designer.connect(s, 0,  l, 2);
-    designer.connect(r, 0,  l, 0);
-    designer.connect(l, 0,  l0, 0);
-    designer.connect(l, 1,  l1, 0);
+    Place(designer, [clk, s, r, l, l1, l0]);
+    Connect(clk, 0,  l, 1);
+    Connect(s, 0,  l, 2);
+    Connect(r, 0,  l, 0);
+    Connect(l, 0,  l0, 0);
+    Connect(l, 1,  l1, 0);
 
-    it("Initial State", () => {
+    test("Initial State", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(false);
     });
-    it("Toggle the Data without the Clock", () => {
+    test("Toggle the Data without the Clock", () => {
         s.activate(true);
 
         expect(l1.isOn()).toBe(false);
@@ -32,7 +34,7 @@ describe("SRLatch", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(true);
     });
-    it("Latch Off", () => {
+    test("Latch Off", () => {
         clk.activate(true);
         s.activate(true);
         s.activate(false);
@@ -46,7 +48,7 @@ describe("SRLatch", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(true);
     });
-    it("Latch in False State", () => {
+    test("Latch in False State", () => {
         clk.activate(false);
 
         expect(l1.isOn()).toBe(false);
@@ -64,7 +66,7 @@ describe("SRLatch", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(true);
     });
-    it("Latch in True State", () => {
+    test("Latch in True State", () => {
     	clk.activate(true);
 
         expect(l1.isOn()).toBe(false);
@@ -88,7 +90,7 @@ describe("SRLatch", () => {
         expect(l1.isOn()).toBe(true);
         expect(l0.isOn()).toBe(false);
     });
-    it("Set and Reset, undefined behavior", () => {
+    test("Set and Reset, undefined behavior", () => {
         clk.activate(true);
         s.activate(true);
         clk.activate(false);

@@ -20,6 +20,8 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";
 
+import {Place, Connect} from "../../Helpers";
+
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(0);
@@ -40,7 +42,7 @@ describe("Selection Tool", () => {
 
         test("Click to Select then Deselect ANDGate", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.click(V(0, 0));
             expect(selections().length).toBe(1);
@@ -53,7 +55,7 @@ describe("Selection Tool", () => {
 
         test("Drag to Select then Click to Deselect ANDGate", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.drag(V(-100, 100),
                        V(100, -100));
@@ -67,7 +69,7 @@ describe("Selection Tool", () => {
 
         test("Tap to Select then Deselect ANDGate", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.tap(V(0, 0));
             expect(selections().length).toBe(1);
@@ -78,7 +80,7 @@ describe("Selection Tool", () => {
         });
         test("Tap to Toggle Switch", () => {
             const obj = new Switch();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.tap(V(0, 0));
             expect(selections().length).toBe(0);
@@ -91,7 +93,7 @@ describe("Selection Tool", () => {
 
         test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.touch(V(-100, -100))
                     .moveTouches(V(200, 200), 5)
@@ -105,7 +107,7 @@ describe("Selection Tool", () => {
 
         test("Click to Toggle Switch", () => {
             const obj = new Switch();
-            designer.addObject(obj);
+            Place(designer, [obj]);
 
             input.click(V(0, 0));
             expect(selections().length).toBe(0);
@@ -121,8 +123,8 @@ describe("Selection Tool", () => {
             const obj2 = new ANDGate();
             obj2.setPos(V(200, -12.5));
 
-            designer.addObjects([obj1, obj2]);
-            const wire = designer.connect(obj1, 0,  obj2, 0);
+            Place(designer, [obj1, obj2]);
+            const wire = Connect(obj1, 0, obj2, 0).getWire();
 
             input.click(V(100, 0));
             expect(selections().length).toBe(1);
@@ -131,7 +133,7 @@ describe("Selection Tool", () => {
 
         test("Select then Delete ANDGate", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -142,7 +144,7 @@ describe("Selection Tool", () => {
 
         test("Select then Delete ANDGate w/ Backspace", () => {
             const gate = new ANDGate();
-            designer.addObject(gate);
+            Place(designer, [gate]);
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -164,7 +166,7 @@ describe("Selection Tool", () => {
             const obj1 = new ANDGate();
             const obj2 = new Multiplexer();
             obj1.setPos(V(100, 0));
-            designer.addObjects([obj1, obj2]);
+            Place(designer, [obj1, obj2]);
 
             input.click(V(0, 0));
             input.pressKey(SHIFT_KEY);

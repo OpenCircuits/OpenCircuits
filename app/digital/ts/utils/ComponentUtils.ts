@@ -50,7 +50,7 @@ export class DigitalObjectSet extends IOObjectSet {
         this.inputs = inputs;
     }
     // TODO: Remove, this is bad (ICData 229)
-    public setComponents(comps: DigitalComponent[]): void {
+    public setOthers(comps: DigitalComponent[]): void {
         this.others = comps;
     }
 
@@ -176,7 +176,7 @@ export function GatherGroup(objects: IOObject[]): DigitalObjectSet {
                                 path.filter((o) => o instanceof DigitalNode && !components.includes(o)) as DigitalNode[])
     }
 
-    return group;
+    return new DigitalObjectSet((components as IOObject[]).concat(wires));
 }
 
 /**
@@ -217,7 +217,12 @@ export function CreateGraph(groups: DigitalObjectSet): Graph<number, number> {
 }
 
 export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
-    return new DigitalWire(c1.getOutputPort(i1), c2.getInputPort(i2));
+    const p1 = c1.getOutputPort(i1);
+    const p2 = c2.getInputPort(i2);
+    const wire = new DigitalWire(p1, p2);
+    p1.connect(wire);
+    p2.connect(wire);
+    return wire;
 }
 
 /**

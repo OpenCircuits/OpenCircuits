@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {GroupAction} from "../../../../core/ts/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 import {TranslateAction} from "./TranslateAction";
 
 import {Component} from "core/models/Component";

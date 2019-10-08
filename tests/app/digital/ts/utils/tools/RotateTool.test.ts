@@ -16,6 +16,8 @@ import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 import {FakeInput} from "../FakeInput";
 import {InitializeInput} from "./Helpers";
 
+import {Place} from "../../Helpers";
+
 describe("Rotate Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(-1);
@@ -33,7 +35,7 @@ describe("Rotate Tool", () => {
 
         beforeAll(() => {
             // Add object
-            designer.addObject(obj);
+            Place(designer, [obj]);
         });
 
         beforeEach(() => {

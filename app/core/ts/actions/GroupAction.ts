@@ -17,14 +17,14 @@ export class GroupAction implements Action {
         return this;
     }
 
-    public execute(): Action {
+    public execute(): GroupAction {
         for (const action of this.actions)
             action.execute();
 
         return this;
     }
 
-    public undo(): Action {
+    public undo(): GroupAction {
         for (let i = this.actions.length-1; i >= 0; i--)
             this.actions[i].undo();
 

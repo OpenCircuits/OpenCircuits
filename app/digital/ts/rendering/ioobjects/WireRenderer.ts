@@ -14,10 +14,8 @@ import {Style} from "../Style";
 export const WireRenderer = (() => {
     return {
         render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean): void {
-            console.log('renderer')
             if (!camera.cull(wire.getCullBox()))
                 return;
-            console.log('reedasd')
 
             const isOn = (wire instanceof DigitalWire ? wire.getIsOn() : false);
 
