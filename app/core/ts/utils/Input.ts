@@ -253,6 +253,7 @@ export class Input {
         this.callListeners("mouseenter");
     }
     protected onMouseLeave(): void {
+        this.touchCount = 0;
         this.mouseDown = false;
 
         // call each listener

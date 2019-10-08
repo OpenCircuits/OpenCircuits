@@ -7,7 +7,6 @@ import {Camera} from "math/Camera";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
-import {Node} from "core/models/Node";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "../actions/GroupAction";

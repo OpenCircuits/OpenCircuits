@@ -5,8 +5,6 @@ import {V,Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {OutputPort} from "../../../digital/ts/models/ports/OutputPort";
-import {InputPort}  from "../../../digital/ts/models/ports/InputPort";
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {Port} from "./ports/Port";
@@ -55,14 +53,6 @@ export abstract class Wire extends CullableObject {
             this.shape.setP2(pos);
             this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
         }
-    }
-
-    public connect(): void {
-
-    }
-
-    public disconnect(): void {
-
     }
 
     public abstract split(): Node & Component;

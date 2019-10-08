@@ -9,7 +9,7 @@ function baseUrl(subdir) {
 const config = {
     entry: './site/public/ts/Main.ts',
     output: {
-        filename: 'Bundle.js',
+        filename: 'Bundle.digital.js',
         path: path.resolve(__dirname, 'build')
     },
     plugins: [

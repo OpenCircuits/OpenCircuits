@@ -20,6 +20,7 @@
     "@typescript-eslint/parser": "^1.11.0",
     "concurrently": "^4.1.2",
     "copy-webpack-plugin": "^4.6.0",
+    "copyfiles": "^2.1.1",
     "eslint": "^6.0.1",
     "hammerjs": "^2.0.8",
     "intro.js": "^2.9.3",
@@ -35,12 +36,18 @@
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "build": "webpack --mode=development",
-    "build:prod": "webpack --mode=production",
-    "build:go": "(cd site/go && go build -o ./../../build/server)",
+    "build": "webpack --config webpack.digital.js --mode=development",
+    "build:prod": "webpack --config webpack.digital.js --mode=production",
+
+    "build:ee": "webpack --config webpack.analog.js --mode=development",
+    "build:ee:prod": "webpack --config webpack.analog.js --mode=production",
+
+    "build:go": "(npm run copy && cd site/go && go build -o ./../../build/server)",
     "build:go-win": "(cd site/go && go build -o ./../../build/server.exe)",
     "build:css": "node-sass ./site/public/scss -o ./build/css",
-    "build:all": "concurrently \"npm:build\" \"npm:build:go\" \"npm:build:css\"",
+    "build:all": "concurrently \"npm:build\" \"npm:build:ee\" \"npm:build:go\" \"npm:build:css\"",
+
+    "copy": "copyfiles -u 1 site/data/* site/templates/* build/ && copyfiles -u 2 site/public/examples/* site/public/img/* build/",
 
     "docker:build": "docker build -t opencircuits/opencircuits .",
     "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
@@ -52,12 +59,15 @@
 
     "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
     "start-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
+    "start:ee": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
+    "start:ee-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
 
     "test": "jest",
 
-    "watch:ts": "npm run build -- --watch",
+    "watch": "npm run build -- --watch",
+    "watch:ee": "npm run build-ee -- --watch",
     "watch:css": "npm run build:css -- --watch",
-    "watch:all": "concurrently \"npm:watch:ts\" \"npm:watch:css\""
+    "watch:all": "concurrently \"npm:watch\" \"npm:watch:ee\" \"npm:watch:css\""
   },
   "dependencies": {
     "csscomb": "^4.3.0"
