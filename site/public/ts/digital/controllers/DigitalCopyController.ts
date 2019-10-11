@@ -15,7 +15,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "core/models/IOObject";
 import {IC} from "digital/models/ioobjects/other/IC";
 
-import {CopyController} from "./CopyController";
+import {CopyController} from "../../shared/controllers/CopyController";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 
 export class DigitalCopyController extends CopyController {

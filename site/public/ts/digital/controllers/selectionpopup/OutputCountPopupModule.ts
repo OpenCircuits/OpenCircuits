@@ -5,11 +5,11 @@ import {ClampedValue} from "math/ClampedValue";
 import {GroupAction} from "core/actions/GroupAction";
 import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 
 import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
-import {SelectionPopupModule} from "./SelectionPopupModule";
+import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 export class OutputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;

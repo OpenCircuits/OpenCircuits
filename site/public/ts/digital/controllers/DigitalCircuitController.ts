@@ -1,27 +1,27 @@
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
-import {SelectionPopupController} from "./SelectionPopupController";
+import {SelectionPopupController} from "../../shared/controllers/SelectionPopupController";
 
-import {TitlePopupModule}          from "site/digital/selectionpopup/TitlePopupModule";
-import {PositionPopupModule}       from "site/digital/selectionpopup/PositionPopupModule";
-import {ICButtonPopupModule}       from "site/digital/selectionpopup/ICButtonPopupModule";
-import {BusButtonPopupModule}      from "site/digital/selectionpopup/BusButtonPopupModule";
-import {ColorPopupModule}          from "site/digital/selectionpopup/ColorPopupModule";
-import {InputCountPopupModule}     from "site/digital/selectionpopup/InputCountPopupModule";
-import {OutputCountPopupModule}    from "site/digital/selectionpopup/OutputCountPopupModule";
-import {ClockFrequencyPopupModule} from "site/digital/selectionpopup/ClockFrequencyPopupModule";
+import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
+import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
+import {ICButtonPopupModule}       from "site/digital/controllers/selectionpopup/ICButtonPopupModule";
+import {BusButtonPopupModule}      from "site/digital/controllers/selectionpopup/BusButtonPopupModule";
+import {ColorPopupModule}          from "site/digital/controllers/selectionpopup/ColorPopupModule";
+import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup/InputCountPopupModule";
+import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
+import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
 
 import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
 
 import {ICDesignerController} from "./ICDesignerController";
-import {ContextMenuController} from "./ContextMenuController";
+import {ContextMenuController} from "../../shared/controllers/ContextMenuController";
 import {DigitalCopyController} from "./DigitalCopyController";
 import {DigitalHeaderController} from "./DigitalHeaderController";
 import {Importer} from "core/utils/io/Importer";
 import {Exporter} from "core/utils/io/Exporter";
-import {LoginController} from "./LoginController";
-import {SideNavController} from "./SideNavController";
+import {LoginController} from "../../shared/controllers/LoginController";
+import {SideNavController} from "../../shared/controllers/SideNavController";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;

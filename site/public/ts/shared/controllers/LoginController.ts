@@ -5,9 +5,9 @@ import ClientConfig = gapi.auth2.ClientConfig;
 import {GetCookie} from "../utils/Cookies";
 import {LoadDynamicScript} from "../utils/Script";
 
-import {GoogleAuthState} from "../auth/GoogleAuthState";
-import {NoAuthState} from "../auth/NoAuthState";
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {GoogleAuthState} from "../../digital/auth/GoogleAuthState";
+import {NoAuthState} from "../../digital/auth/NoAuthState";
+import {MainDesignerController} from "./MainDesignerController";
 import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
 

@@ -2,9 +2,9 @@ import $ from "jquery";
 
 import {Component} from "core/models/Component";
 import {ICData} from "digital/models/ioobjects/other/ICData";
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
-import {ICDesignerController} from "../controllers/ICDesignerController";
-import {SelectionPopupModule} from "./SelectionPopupModule";
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
+import {ICDesignerController} from "../ICDesignerController";
+import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 export class ICButtonPopupModule extends SelectionPopupModule {
     private icController: ICDesignerController;

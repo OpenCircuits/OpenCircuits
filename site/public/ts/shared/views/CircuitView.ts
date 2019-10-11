@@ -3,15 +3,15 @@ import {Renderer}          from "digital/rendering/Renderer";
 import {Grid}              from "digital/rendering/Grid";
 import {DebugRenderer}     from "digital/rendering/DebugRenderer";
 import {ToolRenderer}      from "digital/rendering/ToolRenderer";
-import {WireRenderer}      from "digital/rendering/ioobjects/WireRenderer";
-import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 
 import {ToolManager} from "core/tools/ToolManager";
 import {Selectable}  from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Wire} from "core/models/Wire";
+import {Component} from "core/models/Component";
 
-export class CircuitView {
+export abstract class CircuitView {
     protected canvas: HTMLCanvasElement;
     protected renderer: Renderer;
     protected camera: Camera;
@@ -27,7 +27,7 @@ export class CircuitView {
         this.resize();
     }
 
-    public render(designer: CircuitDesigner, selections: Array<Selectable>, toolManager: ToolManager): void {
+    public render(designer: CircuitDesigner, selections: Selectable[], toolManager: ToolManager): void {
         this.renderer.clear();
 
         // Render grid
@@ -35,17 +35,13 @@ export class CircuitView {
 
         // Render all wires (first so they are underneath objects)
         const wires = designer.getWires();
-        for (const wire of wires) {
-            const selected = selections.includes(wire);
-            WireRenderer.render(this.renderer, this.camera, wire, selected);
-        }
+        for (const wire of wires)
+            this.renderWire(wire, selections);
 
         // Render all objects
         const objects = designer.getObjects();
-        for (const object of objects) {
-            const selected = selections.includes(object);
-            ComponentRenderer.render(this.renderer, this.camera, object, selected, selections);
-        }
+        for (const object of objects)
+            this.renderObject(object, selections);
 
         // Render current tool
         ToolRenderer.render(this.renderer, this.camera, toolManager);
@@ -53,6 +49,9 @@ export class CircuitView {
         // Render debug visualizations
         DebugRenderer.render(this.renderer, this.camera, designer.getObjects(), designer.getWires());
     }
+
+    protected abstract renderWire(wire: Wire, selections: Selectable[]): void;
+    protected abstract renderObject(component: Component, selections: Selectable[]): void;
 
     public resize(): void {
         this.renderer.resize();

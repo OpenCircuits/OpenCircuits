@@ -12,7 +12,7 @@
     "downlevelIteration": true,
     "allowJs": true,
     "typeRoots" : [
-      "site/public/ts/digital/utils/typings",
+      "site/public/ts/shared/utils/typings",
       "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
     ],
     "baseUrl": ".",

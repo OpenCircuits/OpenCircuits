@@ -2,7 +2,7 @@ import $ from "jquery";
 
 import {Vector, V} from "Vector";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "./MainDesignerController";
 import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";

@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {CircuitView} from "site/digital/views/CircuitView";
+import {CircuitView} from "site/shared/views/CircuitView";
 
 import {TranslateTool} from "core/tools/TranslateTool";
 import {RotateTool} from "core/tools/RotateTool";
@@ -9,9 +9,9 @@ import {WiringTool} from "core/tools/WiringTool";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
-import {ItemNavController} from "site/digital/controllers/ItemNavController";
+import {ItemNavController} from "site/shared/controllers/ItemNavController";
 import {DesignerController} from "./DesignerController";
-import {SelectionPopupController} from "site/digital/controllers/SelectionPopupController";
+import {SelectionPopupController} from "site/shared/controllers/SelectionPopupController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;

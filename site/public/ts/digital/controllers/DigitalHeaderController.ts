@@ -1,7 +1,7 @@
 import {Importer} from "core/utils/io/Importer";
 import {Exporter} from "core/utils/io/Exporter";
 
-import {HeaderController} from "./HeaderController";
+import {HeaderController} from "../../shared/controllers/HeaderController";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 
 export class DigitalHeaderController extends HeaderController {

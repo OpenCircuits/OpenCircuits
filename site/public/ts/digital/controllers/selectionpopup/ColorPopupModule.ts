@@ -1,7 +1,7 @@
 import $ from "jquery";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
-import {SelectionPopupModule} from "./SelectionPopupModule";
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
+import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
 

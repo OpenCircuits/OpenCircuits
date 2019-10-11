@@ -4,7 +4,7 @@ import {GRID_SIZE} from "digital/utils/Constants";
 
 import {V} from "Vector";
 import {Component} from "core/models/Component";
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";

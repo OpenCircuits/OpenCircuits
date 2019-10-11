@@ -1,6 +1,6 @@
-import {CircuitView} from "./CircuitView";
+import {DigitalCircuitView} from "./DigitalCircuitView";
 
-export class MainDesignerView extends CircuitView {
+export class MainDesignerView extends DigitalCircuitView {
 
     public constructor() {
         super("canvas");

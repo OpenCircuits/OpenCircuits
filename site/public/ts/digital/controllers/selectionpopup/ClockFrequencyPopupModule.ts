@@ -3,11 +3,11 @@ import $ from "jquery";
 import {GroupAction} from "core/actions/GroupAction";
 import {ClockFrequencyChangeAction} from "digital/actions/ClockFrequencyChangeAction";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 
 import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
-import {SelectionPopupModule} from "./SelectionPopupModule";
+import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 export class ClockFrequencyPopupModule extends SelectionPopupModule {
     private input: HTMLInputElement;

@@ -6,14 +6,14 @@ import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 import {Decoder} from "digital/models/ioobjects/other/Decoder";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
-import {SelectionPopupModule} from "./SelectionPopupModule";
+import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;

@@ -1,6 +1,6 @@
-import {CircuitView} from "./CircuitView";
+import {DigitalCircuitView} from "./DigitalCircuitView";
 
-export class ICDesignerView extends CircuitView {
+export class ICDesignerView extends DigitalCircuitView {
     private div: HTMLDivElement;
     private confirmButton: HTMLButtonElement;
     private cancelButton: HTMLButtonElement;

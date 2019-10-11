@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "./MainDesignerController";
 import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
 import {RemoteController} from "./RemoteController";
 import {CircuitMetadata,

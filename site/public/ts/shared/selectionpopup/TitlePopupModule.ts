@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class TitlePopupModule extends SelectionPopupModule {

@@ -3,7 +3,7 @@ import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFa
 
 import {IOObject} from "core/models/IOObject";
 
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {MainDesignerController} from "./MainDesignerController";
 
 export abstract class CopyController {
 

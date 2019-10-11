@@ -8,7 +8,7 @@ import {Selectable} from "core/utils/Selectable";
 import {Action} from "core/actions/Action";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
-import {CircuitView} from "site/digital/views/CircuitView";
+import {CircuitView} from "site/shared/views/CircuitView";
 
 import {Tool} from "core/tools/Tool";
 import {SelectionTool} from "core/tools/SelectionTool";
