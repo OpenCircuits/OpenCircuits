@@ -11,8 +11,6 @@ export class AnalogWire extends Wire {
 
     public constructor(p1: AnalogPort, p2: AnalogPort) {
         super(p1, p2);
-
-        this.isOn = false;
     }
 
     public split(): AnalogNode {
@@ -22,5 +20,5 @@ export class AnalogWire extends Wire {
     public getIsOn(): boolean {
         return this.isOn;
     }
-    
+
 }

@@ -2,10 +2,10 @@ import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "digital/utils/Constants";
 import {ROTATION_CIRCLE_COLOR,
         ROTATION_ARC_STYLE,
-        SELECTION_BOX_STYLE} from "./Styles";
+        SELECTION_BOX_STYLE} from "../../../core/ts/rendering/Styles";
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";
-import {Renderer} from "./Renderer";
+import {Renderer} from "../../../core/ts/rendering/Renderer";
 
 import {ToolManager} from "core/tools/ToolManager";
 import {SelectionTool} from "core/tools/SelectionTool";
@@ -18,10 +18,11 @@ import {WireRenderer} from "./ioobjects/WireRenderer";
 
 import {Component} from "core/models/Component";
 
-import {Style} from "./Style";
-import {ArcCircle} from "./shapes/ArcCircle";
-import {Circle} from "./shapes/Circle";
-import {Rectangle} from "./shapes/Rectangle";
+import {Style} from "../../../core/ts/rendering/Style";
+import {ArcCircle} from "../../../core/ts/rendering/shapes/ArcCircle";
+import {Circle} from "../../../core/ts/rendering/shapes/Circle";
+import {Rectangle} from "../../../core/ts/rendering/shapes/Rectangle";
+import {DigitalWire} from "digital/models/DigitalWire";
 
 export const ToolRenderer = (() => {
 
@@ -91,7 +92,7 @@ export const ToolRenderer = (() => {
                 // const port = wire.getP1() || wire.getP2();
                 // if (port != null)
                 //     wire.activate(port.getIsOn());
-                WireRenderer.render(renderer, camera, wire, false);
+                WireRenderer.render(renderer, camera, wire as DigitalWire, false);
             }
 
         }

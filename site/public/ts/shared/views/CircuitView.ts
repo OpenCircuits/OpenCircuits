@@ -1,7 +1,7 @@
 import {Camera}            from "math/Camera";
-import {Renderer}          from "digital/rendering/Renderer";
-import {Grid}              from "digital/rendering/Grid";
-import {DebugRenderer}     from "digital/rendering/DebugRenderer";
+import {Renderer}          from "core/rendering/Renderer";
+import {Grid}              from "core/rendering/Grid";
+import {DebugRenderer}     from "core/rendering/DebugRenderer";
 import {ToolRenderer}      from "digital/rendering/ToolRenderer";
 
 import {ToolManager} from "core/tools/ToolManager";
@@ -10,6 +10,7 @@ import {Selectable}  from "core/utils/Selectable";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
+import {Tool} from "core/tools/Tool";
 
 export abstract class CircuitView {
     protected canvas: HTMLCanvasElement;
@@ -44,7 +45,7 @@ export abstract class CircuitView {
             this.renderObject(object, selections);
 
         // Render current tool
-        ToolRenderer.render(this.renderer, this.camera, toolManager);
+        this.renderTools(toolManager);
 
         // Render debug visualizations
         DebugRenderer.render(this.renderer, this.camera, designer.getObjects(), designer.getWires());
@@ -52,6 +53,7 @@ export abstract class CircuitView {
 
     protected abstract renderWire(wire: Wire, selections: Selectable[]): void;
     protected abstract renderObject(component: Component, selections: Selectable[]): void;
+    protected abstract renderTools(toolManager: ToolManager): void;
 
     public resize(): void {
         this.renderer.resize();

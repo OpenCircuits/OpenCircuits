@@ -1,16 +1,16 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {EEComponent} from "./EEComponent";
+import {AnalogComponent} from "../AnalogComponent";
 
-export class Resistor extends EEComponent {
+export class Resistor extends AnalogComponent {
 
     public constructor(resistance: number = 5) {
         super(new ClampedValue(2), V(50, 30));
 
         this.resistance = resistance;
-        this.inputs[0].setOriginPos(this.getSize().scale(this.inputs[0].getDir()).scale(0.5));
-        this.outputs[0].setOriginPos(this.getSize().scale(this.outputs[0].getDir()).scale(0.5));
+        // this.inputs[0].setOriginPos(this.getSize().scale(this.inputs[0].getDir()).scale(0.5));
+        // this.outputs[0].setOriginPos(this.getSize().scale(this.outputs[0].getDir()).scale(0.5));
     }
 
     public getDisplayName(): string {

@@ -35,7 +35,7 @@ export class AnalogPort extends Port {
     }
 
     public getInitialDir(): Vector {
-        return this.dir;
+        return new Vector(1, 0);
     }
 
     public getWires(): AnalogWire[] {
@@ -45,7 +45,7 @@ export class AnalogPort extends Port {
     public getParent(): AnalogComponent {
         return this.parent;
     }
-    
+
 }
 
 export class AnalogPortSet extends PortSet<AnalogPort> {

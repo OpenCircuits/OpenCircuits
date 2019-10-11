@@ -1,27 +1,40 @@
 import {ROTATION_CIRCLE_RADIUS,
-        ROTATION_CIRCLE_THICKNESS} from "analog/utils/Constants";
+        ROTATION_CIRCLE_THICKNESS} from "digital/utils/Constants";
+import {ROTATION_CIRCLE_COLOR,
+        ROTATION_ARC_STYLE,
+        SELECTION_BOX_STYLE} from "../../../core/ts/rendering/Styles";
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";
-import {Renderer} from "./Renderer";
-import {ToolManager} from "../tools/ToolManager";
-import {SelectionTool} from "../tools/SelectionTool";
-import {RotateTool} from "../tools/RotateTool";
-import {PlaceComponentTool} from "../tools/PlaceComponentTool";
-import {WiringTool} from "../tools/WiringTool";
+import {Renderer} from "../../../core/ts/rendering/Renderer";
 
-import {EEComponentRenderer} from "./eeobjects/EEComponentRenderer";
-import {EEWireRenderer} from "./eeobjects/EEWireRenderer";
-import {EEWire} from "analog/models/eeobjects/EEWire";
+import {ToolManager} from "core/tools/ToolManager";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {RotateTool} from "core/tools/RotateTool";
+import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
+import {WiringTool} from "core/tools/WiringTool";
 
-export const ToolRenderer = (function() {
+import {AnalogComponentRenderer} from "./eeobjects/AnalogComponentRenderer";
+import {AnalogWireRenderer} from "./eeobjects/AnalogWireRenderer";
+
+import {Component} from "core/models/Component";
+import {AnalogWire} from "analog/models/AnalogWire";
+
+import {Style} from "../../../core/ts/rendering/Style";
+import {ArcCircle} from "../../../core/ts/rendering/shapes/ArcCircle";
+import {Circle} from "../../../core/ts/rendering/shapes/Circle";
+import {Rectangle} from "../../../core/ts/rendering/shapes/Rectangle";
+import {AnalogComponent} from "analog/models/AnalogComponent";
+
+export const ToolRenderer = (() => {
 
     const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
         // Get position, radius, and thickness
-        let pos = camera.getScreenPos(midpoint);
-        let radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
-        let thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
+        const pos = camera.getScreenPos(midpoint);
+        const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
+        const thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
 
-        renderer.circle(pos.x, pos.y, radius, undefined, '#ff0000', thickness, 0.5);
+        renderer.draw(new Circle(pos, radius),
+                      new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
     }
 
     const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
@@ -30,38 +43,40 @@ export const ToolRenderer = (function() {
         const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
 
         // Draw arc'd circle
-        renderer.arcCircle(pos.x, pos.y, radius, a0, a1, '#ffffff', '#000000', 5, 0.4);
+        renderer.draw(new ArcCircle(pos, radius, a0, a1), ROTATION_ARC_STYLE, 0.4);
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, toolManager: ToolManager) {
+        render(renderer: Renderer, camera: Camera, toolManager: ToolManager): void {
             const tool = toolManager.getCurrentTool();
 
             // If a wire has been selected, then don't draw the rotation box
             const selections = toolManager.getSelectionTool().getSelections();
-            const hasWire = selections.some((o) => o instanceof EEWire);
+            const hasOnlyComponents = selections.every((s) => s instanceof Component);
 
             if (tool instanceof SelectionTool) {
+                const selectionBox = tool.getSelectionBox();
+
                 // Draw selection box
-                if (tool.isSelecting()) {
+                if (selectionBox.isSelecting()) {
                     // Get positions and size
-                    const p1 = tool.getP1();
-                    const p2 = tool.getP2();
+                    const p1 = selectionBox.getP1();
+                    const p2 = selectionBox.getP2();
                     const pos = p1.add(p2).scale(0.5);
                     const size = p2.sub(p1);
 
                     // Draw box
-                    renderer.rect(pos.x, pos.y, size.x, size.y, '#ffffff', '#6666ff', 2, 0.4);
+                    renderer.draw(new Rectangle(pos, size), SELECTION_BOX_STYLE, 0.4);
                 }
 
                 // Draw rotation circle outline
-                else if (!hasWire && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
+                else if (hasOnlyComponents && tool.getSelections().length > 0 && toolManager.hasTool(RotateTool)) {
                     drawRotationCircleOutline(renderer, camera, tool.calculateMidpoint());
                 }
             }
             else if (tool instanceof RotateTool) {
                 // Draw rotation circle and outline
-                if (!hasWire) {
+                if (hasOnlyComponents) {
                     drawRotationCircleOutline(renderer, camera, tool.getMidpoint());
                     drawRotationCircleArc(renderer, camera, tool.getMidpoint(), tool.getStartAngle(), tool.getPrevAngle());
                 }
@@ -70,12 +85,15 @@ export const ToolRenderer = (function() {
                 // Draw current object
                 const component = tool.getComponent();
 
-                EEComponentRenderer.render(renderer, camera, component, false, []);
+                AnalogComponentRenderer.render(renderer, camera, component as AnalogComponent, false, []);
             }
             else if (tool instanceof WiringTool) {
                 // Draw fake wire
                 const wire = tool.getWire();
-                EEWireRenderer.render(renderer, camera, wire, false);
+                // const port = wire.getP1() || wire.getP2();
+                // if (port != null)
+                //     wire.activate(port.getIsOn());
+                AnalogWireRenderer.render(renderer, camera, wire as AnalogWire, false);
             }
 
         }

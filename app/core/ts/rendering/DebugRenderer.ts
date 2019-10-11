@@ -19,7 +19,7 @@ import {Rectangle} from "./shapes/Rectangle";
 
 export const DebugRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, objects: Array<Component>, wires: Array<Wire>): void {
+        render(renderer: Renderer, camera: Camera, objects: Component[], wires: Wire[]): void {
 
             if (DEBUG_CULLBOXES) {
                 const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));

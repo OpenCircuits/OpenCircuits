@@ -2,25 +2,22 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
         WIRE_THICKNESS} from "digital/utils/Constants";
-import {Renderer} from "../Renderer";
+import {Renderer} from "../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
-import {Wire} from "core/models/Wire";
 import {DigitalWire} from "digital/models/DigitalWire";
 
-import {Curve} from "../shapes/Curve";
-import {Line} from "../shapes/Line";
-import {Style} from "../Style";
+import {Curve} from "../../../../core/ts/rendering/shapes/Curve";
+import {Line} from "../../../../core/ts/rendering/shapes/Line";
+import {Style} from "../../../../core/ts/rendering/Style";
 
 export const WireRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean): void {
+        render(renderer: Renderer, camera: Camera, wire: DigitalWire, selected: boolean): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
 
-            const isOn = (wire instanceof DigitalWire ? wire.getIsOn() : false);
-
             // @TODO move to function for getting color based on being selection/on/off
-            const color = (isOn ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
+            const color = (wire.getIsOn() ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
             const style = new Style(undefined, color, WIRE_THICKNESS / camera.getZoom());
 
             // get curve and start/end positions

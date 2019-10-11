@@ -65,7 +65,7 @@
     "test": "jest",
 
     "watch": "npm run build -- --watch",
-    "watch:ee": "npm run build-ee -- --watch",
+    "watch:ee": "npm run build:ee -- --watch",
     "watch:css": "npm run build:css -- --watch",
     "watch:all": "concurrently \"npm:watch\" \"npm:watch:ee\" \"npm:watch:css\""
   },

@@ -30,6 +30,8 @@ export abstract class DesignerController {
     private renderQueue: RenderQueue;
 
     protected constructor(designer: CircuitDesigner, view: CircuitView) {
+        this.active = true;
+
         this.designer = designer;
         this.view = view;
 

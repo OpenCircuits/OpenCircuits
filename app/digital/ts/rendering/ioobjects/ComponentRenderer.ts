@@ -6,7 +6,7 @@ import {DEFAULT_FILL_COLOR,
 
 import {V} from "Vector";
 
-import {Renderer} from "../Renderer";
+import {Renderer} from "../../../../core/ts/rendering/Renderer";
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
@@ -33,8 +33,8 @@ import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
 
-import {Rectangle} from "../shapes/Rectangle";
-import {Style} from "../Style";
+import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
+import {Style} from "../../../../core/ts/rendering/Style";
 
 export const ComponentRenderer = (() => {
 
@@ -46,7 +46,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Array<Selectable>): void {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;

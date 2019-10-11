@@ -4,14 +4,14 @@ import {DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         IO_PORT_LINE_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "digital/utils/Constants";
+        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
 
-import {Renderer} from "../../../../core/ts/rendering/Renderer";
+import {Renderer} from "core/rendering/Renderer";
 import {Port} from "core/models/ports/Port";
 
-import {Circle} from "../../../../core/ts/rendering/shapes/Circle";
-import {Line} from "../../../../core/ts/rendering/shapes/Line";
-import {Style} from "../../../../core/ts/rendering/Style";
+import {Circle} from "core/rendering/shapes/Circle";
+import {Line} from "core/rendering/shapes/Line";
+import {Style} from "core/rendering/Style";
 
 export const IOPortRenderer = (() => {
     return {

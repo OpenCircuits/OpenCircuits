@@ -1,17 +1,17 @@
-import {EEComponent} from "../models/eeobjects/EEComponent";
+import {AnalogComponent} from "analog/models/AnalogComponent";
 
-import {Battery}       from "../models/eeobjects/Battery";
-import {CurrentSource} from "../models/eeobjects/CurrentSource";
-import {Resistor}      from "../models/eeobjects/Resistor";
-import {Node}          from "../models/eeobjects/Node";
+import {Battery}       from "analog/models/eeobjects/Battery";
+import {CurrentSource} from "analog/models/eeobjects/CurrentSource";
+import {Resistor}      from "analog/models/eeobjects/Resistor";
+import {AnalogNode}    from "analog/models/eeobjects/AnalogNode";
 
-const OBJECTS = [Battery, CurrentSource, Resistor, Node];
+const OBJECTS = [Battery, CurrentSource, Resistor, AnalogNode];
 
 let XML_COMPONENTS = new Map<string, any>();
 let XML_NAMES = new Map<any, string>();
 
 // Helper to add a bunch of types to the COMPONENTS map
-function addXMLTypes(types: Array<any>): Array<string> {
+function addXMLTypes(types: any[]): string[] {
     let arr = [];
     for (let type of types) {
         const name = new type().getXMLName();
@@ -31,10 +31,10 @@ const XML_OBJECTS = addXMLTypes(OBJECTS);
  * @param  val [description]
  * @return     [description]
  */
-export function CreateComponentFromXML(tag: string, not: boolean = false): EEComponent {
+export function CreateComponentFromXML(tag: string, not: boolean = false): AnalogComponent {
     if (XML_COMPONENTS.has(tag)) {
         let type = XML_COMPONENTS.get(tag);
-        return <EEComponent>(new type(not));
+        return <AnalogComponent>(new type(not));
     }
     return undefined;
 }

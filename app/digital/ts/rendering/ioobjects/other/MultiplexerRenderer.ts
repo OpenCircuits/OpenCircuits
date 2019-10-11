@@ -5,13 +5,13 @@ import {DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR} from "digital/utils/Constants";
 import {V} from "Vector";
 
-import {Renderer} from "../../Renderer";
+import {Renderer} from "../../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
 import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 
-import {Polygon} from "../../shapes/Polygon";
-import {Style} from "../../Style";
+import {Polygon} from "../../../../../core/ts/rendering/shapes/Polygon";
+import {Style} from "../../../../../core/ts/rendering/Style";
 
 export const MultiplexerRenderer = (() => {
 
