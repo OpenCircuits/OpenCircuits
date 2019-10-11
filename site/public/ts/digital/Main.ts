@@ -13,7 +13,7 @@ import {SideNavController} from "./controllers/SideNavController";
 import {ContextMenuController} from "./controllers/ContextMenuController";
 import {SelectionPopupController} from "./controllers/SelectionPopupController";
 
-import {LoadingScreen} from "./views/LoadingScreen";
+import {LoadingScreen} from "site/shared/views/LoadingScreen";
 
 
 // Prompt for exit

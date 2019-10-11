@@ -1,6 +1,6 @@
 import {Importer} from "core/utils/io/Importer";
 
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
 import {HeaderController} from "./HeaderController";
 import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
@@ -55,7 +55,8 @@ export const SideNavController = (() => {
     }
 
     const loadCircuit = function(contents: XMLDocument): void {
-        Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
+        const name = Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents);
+        HeaderController.setProjectName(name);
         if (isOpen)
             toggle();
     }

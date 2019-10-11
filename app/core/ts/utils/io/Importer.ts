@@ -21,28 +21,34 @@ export const Importer = (() => {
 
             return reader.getName();
         },
-        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument, setName: (n: string) => void): void {
+        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument): string {
             const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
 
             if (open) {
                 designer.reset();
 
-                setName(this.LoadCircuit(designer, contents));
+                return this.LoadCircuit(designer, contents);
             }
+
+            return undefined;
         },
-        PromptLoadCircuitFromFile: function(designer: DigitalCircuitDesigner, file: File, setName: (n: string) => void): void {
-            const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
+        PromptLoadCircuitFromFile: function(designer: DigitalCircuitDesigner, file: File): Promise<string> {
+            return new Promise<string>((resolve, reject) => {
+                const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
 
-            if (open) {
-                designer.reset();
-
-                const reader = new FileReader();
-                reader.onload = () => {
-                    setName(this.LoadCircuit(designer, reader.result.toString()));
+                if (open) {
+                    designer.reset();
+    
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        resolve(this.LoadCircuit(designer, reader.result.toString()));
+                    }
+                    reader.onabort = reader.onerror = reject;
+    
+                    reader.readAsText(file);
                 }
-
-                reader.readAsText(file);
-            }
+                reject();
+            });
         }
     }
 

@@ -67,7 +67,6 @@ export class OutputPort extends Port {
     public getParent(): DigitalComponent {
         return this.parent;
     }
-
 }
 
 export class OutputPortSet extends PortSet<OutputPort> {

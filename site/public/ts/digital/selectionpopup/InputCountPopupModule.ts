@@ -4,7 +4,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
 
-import {MainDesignerController} from "../controllers/MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";

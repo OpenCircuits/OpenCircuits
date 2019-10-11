@@ -25,169 +25,61 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 
 import {ItemNavController} from "./ItemNavController";
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
+import {Selectable} from "core/utils/Selectable";
 
-export const ICDesignerController = (() => {
-    let visible = false;
+// Creates a rectangle for the collision box for a port on the IC
+//  and determines if the given 'mousePos' is within it
+function PortContains(port: Port, mousePos: Vector): boolean {
+    const origin = port.getOriginPos();
+    const target = port.getTargetPos();
 
-    let designer: DigitalCircuitDesigner;
-    let view: ICDesignerView;
-    let input: Input;
+    // Get properties of collision box
+    const pos   = target.add(origin).scale(0.5);
+    const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
+    const angle = target.sub(origin).angle();
 
-    let toolManager: ToolManager;
-    let renderQueue: RenderQueue;
+    const rect  = new Transform(pos, size, angle);
+    rect.setParent(port.getParent().getTransform());
 
-    let icdata: ICData;
-    let ic: IC;
+    return RectContains(rect, mousePos);
+}
 
-    let dragging = false;
-    let dragPort: Port = undefined;
-    let dragEdge: "horizontal" | "vertical" = undefined;
+export class ICDesignerController extends MainDesignerController {
+    protected designer: DigitalCircuitDesigner;
+    protected view: ICDesignerView;
 
-    // Creates a rectangle for the collision box for a port on the IC
-    //  and determines if the given 'mousePos' is within it
-    const portContains = function(port: Port, mousePos: Vector): boolean {
-        const origin = port.getOriginPos();
-        const target = port.getTargetPos();
+    private icdata: ICData;
+    private ic: IC;
 
-        // Get properties of collision box
-        const pos   = target.add(origin).scale(0.5);
-        const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
-        const angle = target.sub(origin).angle();
+    private dragging: boolean;
+    private dragPort: Port;
+    private dragEdge: "horizontal" | "vertical";
 
-        const rect  = new Transform(pos, size, angle);
-        rect.setParent(port.getParent().getTransform());
+    public constructor() {
+        // pass Render function so that
+        //  the circuit is redrawn every
+        //  time its updated
+        super(new DigitalCircuitDesigner(1, () => this.render()),
+              new ICDesignerView());
 
-        return RectContains(rect, mousePos);
+        this.view.setConfirmButtonListener(() => confirm());
+        this.view.setCancelButtonListener(() => cancel());
+
+        // Disable some tools
+        this.toolManager.disableTool(TranslateTool);
+        this.toolManager.disableTool(RotateTool);
+        this.toolManager.disableTool(PlaceComponentTool);
+        this.toolManager.disableTool(WiringTool);
+
+        // Disable other functionality
+        this.toolManager.disableActions();
+        this.toolManager.getSelectionTool().disableSelections();
+
+        this.hide();
     }
 
-    const resize = function(): void {
-        view.resize();
-
-        ICDesignerController.Render();
-    }
-
-    const onMouseDown = function(button: number): void {
-        if (toolManager.onMouseDown(input, button))
-            ICDesignerController.Render();
-
-        if (dragPort != undefined || dragEdge != undefined)
-            dragging = true;
-    }
-
-    const onMouseMove = function(): void {
-        if (toolManager.onMouseMove(input))
-            ICDesignerController.Render();
-
-        if (dragging)
-            return;
-
-        const worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-        // Reset port + edge dragging if we're not dragging
-        dragPort = undefined;
-        dragEdge = undefined;
-
-        // Check if a port is being hovered
-        const ports = ic.getPorts();
-        for (let i = 0; i < ports.length; i++) {
-            const port = ports[i];
-            if (portContains(port, worldMousePos)) {
-                dragPort = icdata.getPorts()[i];
-                view.setCursor("move");
-                return;
-            }
-        }
-
-        // Check if an edge is being hovered
-        const t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
-        const t2 = new Transform(ic.getPos(), ic.getSize().sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH).scale(5)));
-        if (RectContains(t1, worldMousePos) &&
-           !RectContains(t2, worldMousePos)) {
-            if (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - 4 &&
-                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + 4)
-                dragEdge = "horizontal";
-            else
-                dragEdge = "vertical";
-            view.setCursor(dragEdge == "horizontal" ? "ew-resize" : "ns-resize");
-            return;
-        }
-
-        // Reset cursor
-        view.setCursor("default");
-    }
-
-    const onMouseDrag = function(button: number): void {
-        if (toolManager.onMouseDrag(input, button))
-            ICDesignerController.Render();
-
-        const worldMousePos = view.getCamera().getWorldPos(input.getMousePos());
-
-        if (dragging) {
-            if (dragPort) {
-                if (ic.isWithinSelectBounds(worldMousePos)) {
-                    // TODO: turn switches into little switch icons
-                    //  on the surface of the IC and same with LEDs
-                } else {
-                    const size = ic.getSize();
-                    const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
-                    const v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
-
-                    // Set port for IC
-                    dragPort.setOriginPos(p);
-                    dragPort.setTargetPos(v);
-
-                    // Set pos for ICData
-                    ic.update();
-                }
-            }
-            else if (dragEdge) {
-                const size = icdata.getSize();
-                const size2 = worldMousePos.scale(2).abs();
-
-                icdata.setSize(V(dragEdge == "horizontal" ? size2.x : size.x,
-                                 dragEdge == "horizontal" ? size.y  : size2.y));
-
-                icdata.positionPorts();
-                ic.update();
-            }
-
-            ICDesignerController.Render();
-        }
-    }
-
-    const onMouseUp = function(button: number): void {
-        if (toolManager.onMouseUp(input, button))
-            ICDesignerController.Render();
-
-        // Reset dragging
-        dragging = false;
-        dragPort = undefined;
-        dragEdge = undefined;
-    }
-
-    const onClick = function(button: number): void {
-        if (toolManager.onClick(input, button))
-            ICDesignerController.Render();
-    }
-
-    const onKeyDown = function(key: number): void {
-        if (toolManager.onKeyDown(input, key))
-            ICDesignerController.Render();
-    }
-
-    const onKeyUp = function(key: number): void {
-        if (toolManager.onKeyUp(input, key))
-            ICDesignerController.Render();
-    }
-
-    const onZoom = function(zoom: number, center: Vector): void {
-        view.getCamera().zoomTo(center, zoom);
-
-        ICDesignerController.Render();
-    }
-
-    const confirm = function(): void {
+    private confirm(): void {
         // Add the ICData and IC to the main designer
         const designer = MainDesignerController.GetDesigner();
         designer.addICData(icdata);
@@ -200,87 +92,147 @@ export const ICDesignerController = (() => {
         MainDesignerController.Render();
     }
 
-    const cancel = function(): void {
-        ICDesignerController.Hide();
+    private cancel(): void {
+        this.hide();
     }
 
-    return {
-        Init: function(): void {
-            // pass Render function so that
-            //  the circuit is redrawn every
-            //  time its updated
-            designer = new DigitalCircuitDesigner(1, () => this.Render());
-            view = new ICDesignerView();
+    public show(objs: IOObject[]): void {
+        this.setActive(true);
 
-            view.setConfirmButtonListener(() => confirm());
-            view.setCancelButtonListener(() => cancel());
+        // Create ICData and instance of the IC
+        this.icdata = ICData.Create(objs);
+        this.ic = new IC(this.icdata);
 
-            // utils
-            toolManager = new ToolManager(view.getCamera(), designer);
-            renderQueue = new RenderQueue(() =>
-                view.render(designer,
-                            [], toolManager));
+        // Reset designer and add IC
+        this.designer.reset();
+        this.designer.addObject(this.ic);
 
-            // Disable some tools
-            toolManager.disableTool(TranslateTool);
-            toolManager.disableTool(RotateTool);
-            toolManager.disableTool(PlaceComponentTool);
-            toolManager.disableTool(WiringTool);
+        // Show the view
+        this.view.show();
 
-            // Disable other functionality
-            toolManager.disableActions();
-            toolManager.getSelectionTool().disableSelections();
+        // Hide and disable ItemNavController
+        if (ItemNavController.IsOpen())
+            ItemNavController.Toggle();
+        ItemNavController.Disable();
 
-            // input
-            input = new Input(view.getCanvas());
-            input.addListener("click",     (b) => !visible || onClick(b));
-            input.addListener("mousedown", (b) => !visible || onMouseDown(b));
-            input.addListener("mousedrag", (b) => !visible || onMouseDrag(b));
-            input.addListener("mousemove", ( ) => !visible || onMouseMove());
-            input.addListener("mouseup",   (b) => !visible || onMouseUp(b));
-            input.addListener("keydown",   (b) => !visible || onKeyDown(b));
-            input.addListener("keyup",     (b) => !visible || onKeyUp(b));
-            input.addListener("zoom",    (z,c) => !visible || onZoom(z,c));
+        // Render
+        this.render();
+        MainDesignerController.SetActive(false);
+    }
 
-            window.addEventListener("resize", _e => resize(), false);
+    public hide(): void {
+        this.setActive(false);
 
-            ICDesignerController.Hide();
-        },
-        Render: function(): void {
-            renderQueue.render();
-        },
-        Show: function(objs: Array<IOObject>): void {
-            visible = true;
+        this.view.hide();
+        ItemNavController.Enable();
+        MainDesignerController.SetActive(true);
+    }
 
-            // Create ICData and instance of the IC
-            icdata = ICData.Create(objs);
-            ic = new IC(icdata);
+    protected onMouseDown(button: number): boolean {
+        super.onMouseDown(button);
 
-            // Reset designer and add IC
-            designer.reset();
-            designer.addObject(ic);
+        if (this.dragPort != undefined || this.dragEdge != undefined)
+            this.dragging = true;
 
-            // Show the view
-            view.show();
+        return true;
+    }
 
-            // Hide and disable ItemNavController
-            if (ItemNavController.IsOpen())
-                ItemNavController.Toggle();
-            ItemNavController.Disable();
+    protected onMouseMove(): boolean {
+        super.onMouseMove();
 
-            // Render
-            ICDesignerController.Render();
-            MainDesignerController.SetActive(false);
-        },
-        Hide: function(): void {
-            visible = false;
+        if (this.dragging)
+            return true;
 
-            view.hide();
-            ItemNavController.Enable();
-            MainDesignerController.SetActive(true);
-        },
-        IsVisible: function(): boolean {
-            return visible;
+        const worldMousePos = this.getCamera().getWorldPos(this.input.getMousePos());
+
+        // Reset port + edge dragging if we're not dragging
+        this.dragPort = undefined;
+        this.dragEdge = undefined;
+
+        // Check if a port is being hovered
+        const ports = this.ic.getPorts();
+        for (let i = 0; i < ports.length; i++) {
+            const port = ports[i];
+            if (PortContains(port, worldMousePos)) {
+                this.dragPort = this.icdata.getPorts()[i];
+                this.view.setCursor("move");
+                return true;
+            }
         }
-    };
-})();
+
+        // Check if an edge is being hovered
+        const t1 = new Transform(this.ic.getPos(), this.ic.getSize().add(V(DEFAULT_BORDER_WIDTH).scale(5)));
+        const t2 = new Transform(this.ic.getPos(), this.ic.getSize().sub(V(DEFAULT_BORDER_WIDTH).scale(5)));
+        if (RectContains(t1, worldMousePos) &&
+           !RectContains(t2, worldMousePos)) {
+            if (worldMousePos.y < this.ic.getPos().y + this.ic.getSize().y/2 - 4 &&
+                worldMousePos.y > this.ic.getPos().y - this.ic.getSize().y/2 + 4)
+                this.dragEdge = "horizontal";
+            else
+                this.dragEdge = "vertical";
+            this.view.setCursor(this.dragEdge == "horizontal" ? "ew-resize" : "ns-resize");
+            return true;
+        }
+
+        // Reset cursor
+        this.view.setCursor("default");
+
+        return true;
+    }
+
+    protected onMouseDrag(button: number): boolean {
+        super.onMouseDrag(button);
+
+        const worldMousePos = this.getCamera().getWorldPos(this.input.getMousePos());
+
+        if (this.dragging) {
+            if (this.dragPort) {
+                if (this.ic.isWithinSelectBounds(worldMousePos)) {
+                    // TODO: turn switches into little switch icons
+                    //  on the surface of the IC and same with LEDs
+                } else {
+                    const size = this.ic.getSize();
+                    const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
+                    const v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25,
+                                                                                           IO_PORT_LENGTH+size.y/2-25))).add(p);
+
+                    // Set port for IC
+                    this.dragPort.setOriginPos(p);
+                    this.dragPort.setTargetPos(v);
+
+                    // Set pos for ICData
+                    this.ic.update();
+                }
+            }
+            else if (this.dragEdge) {
+                const size = this.icdata.getSize();
+                const size2 = worldMousePos.scale(2).abs();
+
+                this.icdata.setSize(V(this.dragEdge == "horizontal" ? size2.x : size.x,
+                                      this.dragEdge == "horizontal" ? size.y  : size2.y));
+
+                this.icdata.positionPorts();
+                this.ic.update();
+            }
+
+            this.render();
+        }
+
+        return true;
+    }
+
+    protected onMouseUp(button: number): boolean {
+        super.onMouseUp(button);
+
+        // Reset dragging
+        this.dragging = false;
+        this.dragPort = undefined;
+        this.dragEdge = undefined;
+
+        return true;
+    }
+
+    public getSelections(): Selectable[] {
+        return [];
+    }
+}

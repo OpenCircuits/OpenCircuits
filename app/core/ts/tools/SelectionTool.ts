@@ -11,7 +11,7 @@ import {Tool} from "./Tool";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {Node, isNode} from "core/models/Node";
+import {Node} from "core/models/Node";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -223,7 +223,7 @@ export class SelectionTool extends Tool {
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
             const selections = Array.from(this.selections);
-            const objs = selections.filter(o => o instanceof IOObject) as Array<IOObject>;
+            const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
 
             this.action.add(CreateDeselectAllAction(this).execute());
             this.action.add(CreateDeleteGroupAction(objs).execute());
@@ -232,7 +232,7 @@ export class SelectionTool extends Tool {
         }
         if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
-            const wirePorts = selections.filter((o) => isNode(o)) as unknown as (Component & Node)[];
+            const wirePorts = selections.filter((o) => o instanceof Node) as Node[];
             if (selections.length != wirePorts.length)
                 return false;
             this.action.add(CreateDeselectAllAction(this).execute());

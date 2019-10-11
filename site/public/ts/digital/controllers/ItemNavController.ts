@@ -1,101 +1,102 @@
+import $ from "jquery";
+
 import {Vector,V} from "Vector";
 
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
 import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
 
-import {Component} from "core/models/Component";
+export class ItemNavController {
+    private tab: JQuery<HTMLElement>;
+    private itemnav: JQuery<HTMLElement>;
 
-export const ItemNavController = (() => {
-    const tab = document.getElementById("itemnav-open-tab");
-    const itemnav = document.getElementById("itemnav");
+    private open: boolean;
+    private disabled: boolean;
 
-    let isOpen = false;
-    let disabled = false;
+    public constructor(main: MainDesignerController) {
+        this.tab = $("itemnav-open-tab");
+        this.itemnav = $("itemnav");
 
-    const toggle = function(): void {
-        itemnav.classList.toggle("itemnav__move");
-        tab.classList.toggle("tab__closed");
-    }
+        this.open = false;
+        this.disabled = false;
 
-    const place = function(component: Component, instant: boolean): void {
-        MainDesignerController.PlaceComponent(component, instant);
-    }
+        this.tab.click(() => this.toggle());
 
-    return {
-        Init: function(): void {
-            tab.onclick = () => { ItemNavController.Toggle(); }
+        // const headerHeight = document.getElementById("header").offsetHeight + 10;
 
-            // const headerHeight = document.getElementById("header").offsetHeight + 10;
+        // Set onclicks for each item
+        const children = Array.from(this.itemnav.children());
+        for (const child of children) {
+            if (!(child instanceof HTMLButtonElement))
+                continue;
 
-            // Set onclicks for each item
-            const children = Array.from(itemnav.children);
-            for (const child of children) {
-                if (!(child instanceof HTMLButtonElement))
-                    continue;
+            const xmlId = child.dataset.xmlid;
+            const not = child.dataset.not == "true";
 
-                const xmlId = child.dataset.xmlid;
-                const not = child.dataset.not == "true";
+            const onClick = (): void => {
+                main.placeComponent(CreateComponentFromXML(xmlId, not), false);
 
-                const onClick = (): void => {
-                    place(CreateComponentFromXML(xmlId, not), false);
-
-                    // Unfocus element
-                    if (child instanceof HTMLElement)
-                        child.blur();
-                }
-
-                const onDragEnd = (p: Vector): void => {
-                    if (!(child instanceof HTMLButtonElement))
-                        return;
-
-                    const component = CreateComponentFromXML(xmlId, not);
-                    const pos = MainDesignerController.GetCamera().getWorldPos(p);
-
-                    component.setPos(pos);
-                    place(component, true);
-
-                    MainDesignerController.Render();
-                }
-
-                child.onclick = () => onClick();
-                child.ondragend = (event) => onDragEnd(V(event.pageX, event.pageY));
-
-
-                child.addEventListener("touchstart", (event) => {
-                    event.preventDefault();
-                })
-                child.addEventListener("touchend", (event) => {
-                    if (event.changedTouches.length != 1)
-                        return;
-
-                    onDragEnd(V(event.changedTouches[0].pageX,
-                                event.changedTouches[0].pageY));
-
-                    event.preventDefault();
-                }, false);
+                // Unfocus element
+                if (child instanceof HTMLElement)
+                    child.blur();
             }
-        },
-        Toggle: function(): void {
-            if (disabled)
-                return;
 
-            isOpen = !isOpen;
-            toggle();
-        },
-        IsOpen: function(): boolean {
-            return isOpen;
-        },
-        Enable: function(): void {
-            disabled = false;
-            if (tab.classList.contains("invisible"))
-                tab.classList.remove("invisible");
-        },
-        Disable: function(): void {
-            disabled = true;
-            if (!tab.classList.contains("invisible"))
-                tab.classList.add("invisible");
+            const onDragEnd = (p: Vector): void => {
+                if (!(child instanceof HTMLButtonElement))
+                    return;
+
+                const component = CreateComponentFromXML(xmlId, not);
+                const pos = main.getCamera().getWorldPos(p);
+
+                component.setPos(pos);
+                main.placeComponent(component, true);
+
+                main.render();
+            }
+
+            child.onclick = () => onClick();
+            child.ondragend = (event) => onDragEnd(V(event.pageX, event.pageY));
+
+
+            child.addEventListener("touchstart", (event) => {
+                event.preventDefault();
+            })
+            child.addEventListener("touchend", (event) => {
+                if (event.changedTouches.length != 1)
+                    return;
+
+                onDragEnd(V(event.changedTouches[0].pageX,
+                            event.changedTouches[0].pageY));
+
+                event.preventDefault();
+            }, false);
         }
     }
 
-})();
+    private toggleElements(): void {
+        this.itemnav.toggleClass("itemnav__move");
+        this.tab.toggleClass("tab__closed");
+    }
+
+    public toggle(): void {
+        if (this.disabled)
+            return;
+
+        this.open = !this.open;
+        this.toggleElements();
+    }
+
+    public isOpen(): boolean {
+        return this.open;
+    }
+
+    public enable(): void {
+        this.disabled = false;
+        this.tab.removeClass("invisible");
+    }
+
+    public disable(): void {
+        this.disabled = true;
+        this.tab.addClass("invisible");
+    }
+}

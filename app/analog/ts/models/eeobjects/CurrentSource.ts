@@ -1,13 +1,14 @@
 import {V}     from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {EEComponent} from "./EEComponent";
+import {AnalogComponent} from "../AnalogComponent";
 
-export class CurrentSource extends EEComponent {
+export class CurrentSource extends AnalogComponent {
 
     public constructor(current: number = .005) {
-        super(new ClampedValue(1), new ClampedValue(1), V(50, 50));
-        //ensure no negative/zero current!!!
+        super(new ClampedValue(2), V(50, 50));
+
+        // Ensure no negative/zero current!!!
         if (current > 0){
             this.current = current;
         } else {

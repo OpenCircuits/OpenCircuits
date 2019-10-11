@@ -89,6 +89,6 @@ export abstract class Port implements Selectable {
         return this.getTargetPos();
     }
 
-    public abstract getWires(): Array<Wire>;
+    public abstract getWires(): Wire[];
 
 }

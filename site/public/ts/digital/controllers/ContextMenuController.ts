@@ -1,42 +1,44 @@
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
-export const ContextMenuController = (() => {
-    const contextmenu = document.getElementById("context-menu");
+export class ContextMenuController {
+    private contextmenu: HTMLElement;
 
-    const onContextMenu = function(e: MouseEvent, canvas: HTMLCanvasElement): void {
-        contextmenu.style.left = `${e.pageX}px`;
-        contextmenu.style.top  = `${e.pageY}px`;
-        if (contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
-            contextmenu.style.top = `${e.pageY - contextmenu.offsetHeight}px`;
-        if (contextmenu.offsetWidth + e.pageX > canvas.offsetWidth)
-            contextmenu.style.left = `${e.pageX - contextmenu.offsetWidth}px`;
-        ContextMenuController.Show();
+    public constructor(main: MainDesignerController) {
+        const canvas = main.getCanvas();
+
+        this.contextmenu = document.getElementById("context-menu");
+
+        canvas.addEventListener("mousedown", (e: MouseEvent) => {
+            e.preventDefault();
+            this.onMouseDown(e);
+        });
+
+        // Stop default right click menu
+        canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+            e.preventDefault();
+            this.onContextMenu(e, canvas);
+        });
     }
 
-    const onMouseDown = function(_: MouseEvent): void {
-        ContextMenuController.Hide();
+    private onContextMenu(e: MouseEvent, canvas: HTMLCanvasElement): void {
+        this.contextmenu.style.left = `${e.pageX}px`;
+        this.contextmenu.style.top  = `${e.pageY}px`;
+        if (this.contextmenu.offsetHeight + e.pageY > canvas.offsetHeight)
+            this.contextmenu.style.top  = `${e.pageY - this.contextmenu.offsetHeight}px`;
+        if (this.contextmenu.offsetWidth  + e.pageX > canvas.offsetWidth)
+            this.contextmenu.style.left = `${e.pageX - this.contextmenu.offsetWidth}px`;
+        this.show();
     }
 
-    return {
-        Init: function(): void {
-            const canvas = MainDesignerController.GetCanvas();
-
-            canvas.addEventListener("mousedown", function(e: MouseEvent) {
-                e.preventDefault();
-                onMouseDown(e);
-            });
-
-            // Stop default right click menu
-            canvas.addEventListener("contextmenu", function(e: MouseEvent) {
-                e.preventDefault();
-                onContextMenu(e, canvas);
-            });
-        },
-        Show: function(): void {
-            contextmenu.classList.remove("invisible");
-        },
-        Hide: function(): void {
-            contextmenu.classList.add("invisible");
-        }
+    private onMouseDown(_: MouseEvent): void {
+        this.hide();
     }
-})();
+    
+    public show(): void {
+        this.contextmenu.classList.remove("invisible");
+    }
+
+    public hide(): void {
+        this.contextmenu.classList.add("invisible");
+    }
+}

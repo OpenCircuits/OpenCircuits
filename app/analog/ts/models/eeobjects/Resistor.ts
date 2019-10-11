@@ -5,8 +5,8 @@ import {EEComponent} from "./EEComponent";
 
 export class Resistor extends EEComponent {
 
-    public constructor(resistance: number = 5) { //make sure resistance is > 0
-        super(new ClampedValue(1), new ClampedValue(1), V(50, 30));
+    public constructor(resistance: number = 5) {
+        super(new ClampedValue(2), V(50, 30));
 
         this.resistance = resistance;
         this.inputs[0].setOriginPos(this.getSize().scale(this.inputs[0].getDir()).scale(0.5));

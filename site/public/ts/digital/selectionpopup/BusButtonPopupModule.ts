@@ -4,7 +4,7 @@ import {Port} from "core/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
-import {MainDesignerController} from "../controllers/MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class BusButtonPopupModule extends SelectionPopupModule {

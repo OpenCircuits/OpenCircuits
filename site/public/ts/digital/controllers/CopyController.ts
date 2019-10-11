@@ -16,12 +16,29 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "core/models/IOObject";
 import {IC} from "digital/models/ioobjects/other/IC";
 
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 
-export const CopyController = (() => {
-    const copy = function(e: ClipboardEvent): void {
-        const selections = MainDesignerController.GetSelections();
-        const objs = selections.filter((o) => o instanceof IOObject) as Array<IOObject>;
+export class CopyController {
+    private isAct
+
+    public constructor(main: MainDesignerController) {
+        document.addEventListener("copy",  (e) => this.onCopy(e, main),  false);
+        document.addEventListener("cut",   (e) => this.onCut(e, main),   false);
+        document.addEventListener("paste", (e) => this.onPaste(e, main), false);
+    }
+
+    private isActive(main: MainDesignerController): boolean {
+        // Only paste if main designer is active and
+        //  current tool is SelectionTool
+        return main.isActive() && main.getCurrentTool() == main.getSelectionTool();
+    }
+    
+    private onCopy(e: ClipboardEvent, main: MainDesignerController): void {
+        if (!this.isActive(main))
+            return;
+
+        const selections = main.getSelections();
+        const objs = selections.filter((o) => o instanceof IOObject) as IOObject[];
 
         // Create sub-circuit with just selections to save
         const designer = new DigitalCircuitDesigner(-1);
@@ -43,21 +60,25 @@ export const CopyController = (() => {
         e.preventDefault();
     }
 
-    const cut = function(e: ClipboardEvent): void {
-        const selections = MainDesignerController.GetSelections();
+    private onCut(e: ClipboardEvent, main: MainDesignerController): void {
+        if (!this.isActive(main))
+            return;
+
+        const selections = main.getSelections();
         const objs = selections.filter((o) => o instanceof IOObject) as Array<IOObject>;
 
-        copy(e);
+        this.onCopy(e, main);
 
         // Delete the selections
-        MainDesignerController.AddAction(
-            CreateDeselectAllAction(MainDesignerController.GetSelectionTool()).execute()
-        );
-        MainDesignerController.AddAction(CreateDeleteGroupAction(objs).execute());
+        main.addAction(CreateDeselectAllAction(main.getSelectionTool()).execute());
+        main.addAction(CreateDeleteGroupAction(objs).execute());
     }
 
-    const paste = function(e: ClipboardEvent): void {
-        const mainDesigner = MainDesignerController.GetDesigner();
+    private onPaste(e: ClipboardEvent, main: MainDesignerController): void {
+        if (!this.isActive(main))
+            return;
+
+        const mainDesigner = main.getDesigner();
         const contents = e.clipboardData.getData("text/xml");
 
         const designer = new DigitalCircuitDesigner(-1);
@@ -74,29 +95,15 @@ export const CopyController = (() => {
         // Add each wire and object
         action.add(CreateAddGroupAction(mainDesigner, group));
 
-        // Deselect current selections
-        action.add(CreateDeselectAllAction(MainDesignerController.GetSelectionTool()));
-
-        // Select everything that was added
-        action.add(CreateGroupSelectAction(MainDesignerController.GetSelectionTool(), objs));
+        // Deselect current selections, then select new objs
+        action.add(CreateDeselectAllAction(main.getSelectionTool()));
+        action.add(CreateGroupSelectAction(main.getSelectionTool(), objs));
 
         // Translate the copies over a bit
         action.add(CreateGroupTranslateAction(objs, objs.map((o) => o.getPos().add(V(5, 5)))));
 
-        MainDesignerController.AddAction(action.execute());
-        MainDesignerController.Render();
+        main.addAction(action.execute());
+        main.render();
     }
 
-    const isActive = function(): boolean {
-        return MainDesignerController.IsActive() &&
-                MainDesignerController.GetCurrentTool() == MainDesignerController.GetSelectionTool();
-    }
-
-    return {
-        Init: function(): void {
-            document.addEventListener("copy",  (e) => !isActive() || copy(e),  false);
-            document.addEventListener("cut",   (e) => !isActive() || cut(e),   false);
-            document.addEventListener("paste", (e) => !isActive() || paste(e), false);
-        }
-    }
-} )();
+}

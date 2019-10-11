@@ -7,19 +7,20 @@ import $ from "jquery";
 import {Importer} from "core/utils/io/Importer";
 import {Exporter} from "core/utils/io/Exporter";
 
-import {MainDesignerController} from "./MainDesignerController";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
-export const HeaderController = (() => {
-    const projectNameInput = $("input#header-project-name-input");
+export class HeaderController {
+    private projectNameInput: JQuery<HTMLElement>;
 
-    function CloseDropdowns(): void {
-        $(".header__right__dropdown__content")
-                .removeClass("show");
-        $(".header__right__dropdown__button")
-                .removeClass("white");
+    public constructor(main: MainDesignerController) {
+        this.projectNameInput = $("input#header-project-name-input");
+
+        this.setupDropdown();
+        this.setupIOInputs(main);
+        this.setupHelpMenu();
     }
 
-    function SetupDropdown(): void {
+    private setupDropdown(): void {
         // Show/hide the dropdown(s) on click
         $(".header__right__dropdown__button").click(function(): void {
             // Hide all other dropdowns first
@@ -45,25 +46,28 @@ export const HeaderController = (() => {
         });
     }
 
-    function SetupIOInputs(): void {
-        $("input#header-file-input").change(function(): void {
-            Importer.PromptLoadCircuitFromFile(MainDesignerController.GetDesigner(), $(this).prop("files")[0], HeaderController.SetProjectName);
+    private setupIOInputs(main: MainDesignerController): void {
+        const header = this;
+
+        $("input#header-file-input").change(async function(): Promise<void> {
+            const name = await Importer.PromptLoadCircuitFromFile(main.getDesigner(), $(this).prop("files")[0]);
+            header.setProjectName(name);
         });
 
         $("#header-download-button").click(() => {
-            Exporter.SaveFile(MainDesignerController.GetDesigner(), projectNameInput.val() as string);
+            Exporter.SaveFile(main.getDesigner(), this.projectNameInput.val() as string);
         });
 
         $("#header-download-pdf-button").click(() => {
-            Exporter.SavePDF(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+            Exporter.SavePDF(main.getCanvas(), this.projectNameInput.val() as string);
         });
 
         $("#header-download-png-button").click(() => {
-            Exporter.SavePNG(MainDesignerController.GetCanvas(), projectNameInput.val() as string);
+            Exporter.SavePNG(main.getCanvas(), this.projectNameInput.val() as string);
         });
     }
 
-    function SetupHelpMenu(): void {
+    private setupHelpMenu(): void {
         $("#header-help-tour-button").click(() => {
             // // Open ItemNav for tutorial
             // if (!ItemNavController.IsOpen())
@@ -73,7 +77,7 @@ export const HeaderController = (() => {
         });
 
         $("#header-help-quick-start-button").click(() => {
-            CloseDropdowns();
+            this.closeDropdowns();
             $("#quick-start-popup").removeClass("invisible");
             $("#overlay").removeClass("invisible");
         });
@@ -84,18 +88,19 @@ export const HeaderController = (() => {
         })
     }
 
-    return {
-        async Init(): Promise<void> {
-            SetupDropdown();
-            SetupIOInputs();
-            SetupHelpMenu();
-        },
-        SetProjectName(name: string): void {
-            if (name)
-                projectNameInput.val(name);
-        },
-        GetProjectName(): string {
-            return projectNameInput.val() as string;
-        }
+    private closeDropdowns(): void {
+        $(".header__right__dropdown__content")
+                .removeClass("show");
+        $(".header__right__dropdown__button")
+                .removeClass("white");
     }
-})();
+
+    public setProjectName(name?: string): void {
+        if (name)
+            this.projectNameInput.val(name);
+    }
+
+    public getProjectName(): string {
+        return this.projectNameInput.val() as string;
+    }
+}

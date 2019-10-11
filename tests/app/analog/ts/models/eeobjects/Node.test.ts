@@ -1,6 +1,6 @@
 import "jest";
 
-import {EECircuitDesigner} from "analog/models/EECircuitDesigner";
+import {EECircuitDesigner} from "analog/models/AnalogCircuitDesigner";
 import {Battery}           from "analog/models/eeobjects/Battery";
 import {Resistor}          from "analog/models/eeobjects/Resistor";
 import {Node}              from "analog/models/eeobjects/Node";

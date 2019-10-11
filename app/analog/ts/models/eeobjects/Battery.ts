@@ -1,14 +1,15 @@
 import {V}     from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {EEComponent} from "./EEComponent";
+import {AnalogComponent} from "../AnalogComponent";
 
-export class Battery extends EEComponent {
+export class Battery extends AnalogComponent {
 
     public constructor(voltage: number = 5) {
-        super(new ClampedValue(1), new ClampedValue(1), V(50, 50));
-        //ensure no negative/zero voltage!!!
-        if (voltage > 0){
+        super(new ClampedValue(2), V(50, 50));
+
+        // Ensure no negative/zero voltage!!!
+        if (voltage > 0) {
             this.voltage = voltage;
         } else {
             this.voltage = 5;

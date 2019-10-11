@@ -1,4 +1,4 @@
-import {MainDesignerController} from "../controllers/MainDesignerController";
+import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
