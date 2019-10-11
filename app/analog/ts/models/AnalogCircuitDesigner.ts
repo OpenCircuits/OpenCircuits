@@ -44,7 +44,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     //     const battery = batteries[0];
 
-    //     const totalVoltage = battery.getVoltage();
+    //     const totalVoltage = battery.voltage;
 
     //     // Calculate total resistance
     //     let totalResistance = 0;
@@ -65,8 +65,8 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     //     const current = totalVoltage / totalResistance;
 
     //     // Set currents
-    //     this.objects.forEach(c => c.setCurrent(current));
-    //     this.wires.forEach(w => w.setCurrent(current));
+    //     this.objects.forEach(c => c.current = current);
+    //     this.wires.forEach(w => w.current = current);
 
     //     // Set voltages
     //     let voltage = totalVoltage;

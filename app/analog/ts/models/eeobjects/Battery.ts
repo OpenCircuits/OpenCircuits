@@ -1,3 +1,5 @@
+import {IO_PORT_LENGTH} from "core/utils/Constants";
+
 import {V}     from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
@@ -15,11 +17,8 @@ export class Battery extends AnalogComponent {
             this.voltage = 5;
         }
 
-        // this.inputs[0].setOriginPos(V(this.inputs[0].getOriginPos().y, -this.inputs[0].getOriginPos().x));
-        // this.inputs[0].setTargetPos(V(this.inputs[0].getTargetPos().y, -this.inputs[0].getTargetPos().x));
-
-        // this.outputs[0].setOriginPos(V(this.outputs[0].getOriginPos().y, -this.outputs[0].getOriginPos().x));
-        // this.outputs[0].setTargetPos(V(this.outputs[0].getTargetPos().y, -this.outputs[0].getTargetPos().x));
+        this.ports.getPorts()[0].setTargetPos(V(0, IO_PORT_LENGTH));
+        this.ports.getPorts()[1].setTargetPos(V(0, -IO_PORT_LENGTH));
     }
 
     public getDisplayName(): string {

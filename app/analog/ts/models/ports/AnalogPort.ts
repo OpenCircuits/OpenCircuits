@@ -15,12 +15,9 @@ export class AnalogPort extends Port {
 
     private connections: AnalogWire[];
 
-    private initialDir: Vector;
-
-    public constructor(parent: Component, dir?: Vector) {
+    public constructor(parent: Component) {
         super(parent);
         this.connections = [];
-        this.initialDir = dir;
     }
 
     public connect(w: AnalogWire): void {

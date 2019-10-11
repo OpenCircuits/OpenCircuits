@@ -42,7 +42,16 @@
 
             <canvas id="canvas" class="canvas"></canvas>
 
-            {{template "selectionpopup"}}
+            <div id="selection-popup" class="selectionpopup" tabindex="-1">
+                <input id="popup-name" type="text" value="Name :" alt="Name of object(s)"/>
+                <hr/>
+                <div id="popup-pos-text">Position
+                    <label id="popup-position-label" unselectable disabled>
+                        <input id="popup-position-x" type="number" step="0.5" alt="X-Position of object(s)"/>
+                        <input id="popup-position-y" type="number" step="0.5" alt="Y-Position of object(s)"/>
+                    </label>
+                </div>
+            </div>
 
             {{template "contextmenu" .}}
         </div>

@@ -1,3 +1,5 @@
+import {IO_PORT_LENGTH} from "core/utils/Constants";
+
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
@@ -9,8 +11,12 @@ export class Resistor extends AnalogComponent {
         super(new ClampedValue(2), V(50, 30));
 
         this.resistance = resistance;
-        // this.inputs[0].setOriginPos(this.getSize().scale(this.inputs[0].getDir()).scale(0.5));
-        // this.outputs[0].setOriginPos(this.getSize().scale(this.outputs[0].getDir()).scale(0.5));
+
+        this.ports.getPorts()[0].setOriginPos(V(this.getSize().x/2, 0));
+        this.ports.getPorts()[0].setTargetPos(V(IO_PORT_LENGTH, 0));
+
+        this.ports.getPorts()[1].setOriginPos(V(-this.getSize().x/2, 0));
+        this.ports.getPorts()[1].setTargetPos(V(-IO_PORT_LENGTH, 0));
     }
 
     public getDisplayName(): string {

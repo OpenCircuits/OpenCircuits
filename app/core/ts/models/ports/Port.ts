@@ -17,13 +17,13 @@ export abstract class Port implements Selectable {
     protected origin: Vector;
     protected target: Vector;
 
-    protected constructor(parent: Component) {
+    protected constructor(parent: Component, dir?: Vector) {
         this.parent = parent;
         this.isOn = false;
 
         this.name = "";
 
-        this.dir = this.getInitialDir();
+        this.dir = dir || this.getInitialDir();
         this.origin = V(0, 0);
         this.target = this.dir.scale(IO_PORT_LENGTH);
     }
