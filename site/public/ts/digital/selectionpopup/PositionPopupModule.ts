@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {GRID_SIZE} from "digital/utils/Constants";
 
 import {V} from "Vector";
@@ -11,18 +13,18 @@ export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
     private ybox: HTMLInputElement;
 
-    public constructor(parentDiv: HTMLDivElement) {
-        super(parentDiv.querySelector("div#popup-pos-text"));
+    public constructor(circuitController: MainDesignerController) {
+        super(circuitController, $("div#popup-pos-text"));
 
-        this.xbox = this.el.querySelector("input#popup-position-x");
-        this.ybox = this.el.querySelector("input#popup-position-y");
+        this.xbox = this.el.find("input#popup-position-x")[0] as HTMLInputElement;
+        this.ybox = this.el.find("input#popup-position-y")[0] as HTMLInputElement;
         this.xbox.oninput = () => this.push();
         this.ybox.oninput = () => this.push();
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
-        const components = selections.filter(o => o instanceof Component).map(o => o as Component);
+        const selections = this.circuitController.getSelections();
+        const components = selections.filter(o => o instanceof Component) as Component[];
         const enable = selections.length == components.length && components.length > 0;
 
         if (enable) {
@@ -47,16 +49,13 @@ export class PositionPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
+        const components = this.circuitController.getSelections() as Component[];
 
-        MainDesignerController.AddAction(
-            CreateGroupTranslateAction(components,
-                                       components.map((c) =>
-                                           V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                                             this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
-                                       )).execute()
-        );
+        this.circuitController.addAction(CreateGroupTranslateAction(components,
+                components.map(c => V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5)))
+        ).execute());
 
-        MainDesignerController.Render();
+        this.circuitController.render();
     }
 }

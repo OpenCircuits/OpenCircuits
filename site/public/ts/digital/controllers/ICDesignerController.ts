@@ -6,8 +6,6 @@ import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 import {RectContains,
         GetNearestPointOnRect} from "math/MathUtils";
-import {Input} from "core/utils/Input";
-import {RenderQueue} from "core/utils/RenderQueue";
 
 import {TranslateTool} from "core/tools/TranslateTool";
 import {RotateTool} from "core/tools/RotateTool";
@@ -16,17 +14,15 @@ import {WiringTool} from "core/tools/WiringTool";
 
 import {ICDesignerView} from "../views/ICDesignerView";
 
-import {ToolManager} from "core/tools/ToolManager";
-
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IOObject} from "core/models/IOObject";
 import {Port} from "core/models/ports/Port";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 
-import {ItemNavController} from "./ItemNavController";
-import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {Selectable} from "core/utils/Selectable";
+import {DigitalCircuitController} from "./DigitalCircuitController";
+import {DesignerController} from "site/shared/controllers/DesignerController";
 
 // Creates a rectangle for the collision box for a port on the IC
 //  and determines if the given 'mousePos' is within it
@@ -45,7 +41,7 @@ function PortContains(port: Port, mousePos: Vector): boolean {
     return RectContains(rect, mousePos);
 }
 
-export class ICDesignerController extends MainDesignerController {
+export class ICDesignerController extends DesignerController {
     protected designer: DigitalCircuitDesigner;
     protected view: ICDesignerView;
 
@@ -56,15 +52,19 @@ export class ICDesignerController extends MainDesignerController {
     private dragPort: Port;
     private dragEdge: "horizontal" | "vertical";
 
-    public constructor() {
+    private mainController: DigitalCircuitController;
+
+    public constructor(mainController: DigitalCircuitController) {
         // pass Render function so that
         //  the circuit is redrawn every
         //  time its updated
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new ICDesignerView());
 
-        this.view.setConfirmButtonListener(() => confirm());
-        this.view.setCancelButtonListener(() => cancel());
+        this.mainController = mainController;
+
+        this.view.setConfirmButtonListener(() => this.confirm());
+        this.view.setCancelButtonListener(()  => this.cancel());
 
         // Disable some tools
         this.toolManager.disableTool(TranslateTool);
@@ -81,15 +81,15 @@ export class ICDesignerController extends MainDesignerController {
 
     private confirm(): void {
         // Add the ICData and IC to the main designer
-        const designer = MainDesignerController.GetDesigner();
-        designer.addICData(icdata);
-        designer.addObject(ic.copy());
+        const designer = this.mainController.getDesigner();
+        designer.addICData(this.icdata);
+        designer.addObject(this.ic.copy());
 
-        ICDesignerController.Hide();
+        this.hide();
 
         // Clear selections and render the main designer
-        MainDesignerController.ClearSelections();
-        MainDesignerController.Render();
+        this.mainController.clearSelections();
+        this.mainController.render();
     }
 
     private cancel(): void {
@@ -110,22 +110,16 @@ export class ICDesignerController extends MainDesignerController {
         // Show the view
         this.view.show();
 
-        // Hide and disable ItemNavController
-        if (ItemNavController.IsOpen())
-            ItemNavController.Toggle();
-        ItemNavController.Disable();
-
         // Render
         this.render();
-        MainDesignerController.SetActive(false);
+        this.mainController.setActive(false);
     }
 
     public hide(): void {
         this.setActive(false);
 
         this.view.hide();
-        ItemNavController.Enable();
-        MainDesignerController.SetActive(true);
+        this.mainController.setActive(true);
     }
 
     protected onMouseDown(button: number): boolean {

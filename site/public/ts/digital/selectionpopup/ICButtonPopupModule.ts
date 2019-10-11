@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {Component} from "core/models/Component";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
@@ -5,15 +7,19 @@ import {ICDesignerController} from "../controllers/ICDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class ICButtonPopupModule extends SelectionPopupModule {
-    public constructor(parentDiv: HTMLDivElement) {
+    private icController: ICDesignerController;
+
+    public constructor(circuitController: MainDesignerController, icController: ICDesignerController) {
         // No wrapping div
-        super(parentDiv.querySelector("button#popup-ic-button"));
-        this.el.onclick = () => this.push();
+        super(circuitController, $("button#popup-ic-button"));
+        this.icController = icController;
+
+        this.el.click(() => this.push());
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
-        const componentSelections = selections.filter(o => o instanceof Component) as Array<Component>;
+        const selections = this.circuitController.getSelections();
+        const componentSelections = selections.filter(o => o instanceof Component) as Component[];
         if (componentSelections.length != selections.length) {
             this.setEnabled(false);
             return;
@@ -27,6 +33,6 @@ export class ICButtonPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        ICDesignerController.Show(MainDesignerController.GetSelections() as Array<Component>);
+        this.icController.show(this.circuitController.getSelections() as Component[]);
     }
 }

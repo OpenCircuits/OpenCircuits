@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {GroupAction} from "core/actions/GroupAction";
@@ -15,25 +17,23 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
-    public constructor(parentDiv: HTMLDivElement) {
-        // Title module does not have a wrapping div
-        super(parentDiv.querySelector("div#popup-input-count-text"));
 
-        this.count = this.el.querySelector("input#popup-input-count");
+    public constructor(circuitController: MainDesignerController) {
+        // Title module does not have a wrapping div
+        super(circuitController, $("div#popup-input-count-text"));
+
+        this.count = this.el.find("input#popup-input-count")[0] as HTMLInputElement;
         this.count.onchange = () => this.push();
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections();
         const gates = selections
-                .filter(o => o instanceof Gate && !(o instanceof BUFGate))
-                .map(o => o as Gate);
+                .filter(o => o instanceof Gate && !(o instanceof BUFGate)) as Gate[]
         const muxes = selections
-                .filter(o => o instanceof Mux)
-                .map(o => o as Mux);
+                .filter(o => o instanceof Mux) as Mux[]
         const decos = selections
-                .filter(o => o instanceof Decoder)
-                .map(o => o as Decoder);
+                .filter(o => o instanceof Decoder) as Decoder[];
 
         // Only enable if there's exactly 1 type, so just Gates or just Muxes or just Decoders
         const enable = selections.length > 0 && (selections.length == gates.length ||
@@ -42,7 +42,7 @@ export class InputCountPopupModule extends SelectionPopupModule {
 
         if (enable) {
             // Calculate input counts for each component
-            const counts: Array<ClampedValue> = [];
+            const counts: ClampedValue[] = [];
             gates.forEach(g => counts.push(g.getInputPortCount()));
             muxes.forEach(m => counts.push(m.getSelectPortCount()));
             decos.forEach(d => counts.push(d.getInputPortCount()));
@@ -62,21 +62,20 @@ export class InputCountPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections() as Array<Gate | Mux | Decoder>;
         const countAsNumber = this.count.valueAsNumber;
 
-        MainDesignerController.AddAction(
-            selections.reduce<GroupAction>((acc, o) => {
+        this.circuitController.addAction(new GroupAction(
+            selections.map(o => {
                 if (o instanceof Gate && !(o instanceof BUFGate))
-                    acc.add(new InputPortChangeAction(o,  countAsNumber));
+                    return new InputPortChangeAction(o,  countAsNumber);
                 else if (o instanceof Mux)
-                    acc.add(new SelectPortChangeAction(o, countAsNumber));
-                else if (o instanceof Decoder)
-                    acc.add(new InputPortChangeAction(o,  countAsNumber));
-                return acc;
-            }, new GroupAction()).execute()
-        );
+                    return new SelectPortChangeAction(o, countAsNumber);
+                else // Decoder
+                    return new InputPortChangeAction(o,  countAsNumber);
+            })
+        ).execute());
 
-        MainDesignerController.Render();
+        this.circuitController.render();
     }
 }

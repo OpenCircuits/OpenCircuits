@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {GroupAction} from "core/actions/GroupAction";
 import {ClockFrequencyChangeAction} from "digital/actions/ClockFrequencyChangeAction";
 

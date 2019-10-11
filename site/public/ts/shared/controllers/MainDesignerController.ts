@@ -1,18 +1,7 @@
 import {Vector} from "Vector";
 
-import {Camera} from "math/Camera";
-import {Input} from "core/utils/Input";
-import {RenderQueue} from "core/utils/RenderQueue";
-import {Selectable} from "core/utils/Selectable";
-
-import {Action} from "core/actions/Action";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
-
 import {CircuitView} from "site/digital/views/CircuitView";
 
-import {Tool} from "core/tools/Tool";
-import {SelectionTool} from "core/tools/SelectionTool";
-import {ToolManager} from "core/tools/ToolManager";
 import {TranslateTool} from "core/tools/TranslateTool";
 import {RotateTool} from "core/tools/RotateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
@@ -20,183 +9,103 @@ import {WiringTool} from "core/tools/WiringTool";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
+import {ItemNavController} from "site/digital/controllers/ItemNavController";
+import {DesignerController} from "./DesignerController";
+import {SelectionPopupController} from "site/digital/controllers/SelectionPopupController";
 
-export abstract class MainDesignerController {
-    private active: boolean;
+export abstract class MainDesignerController extends DesignerController {
+    protected itemNav: ItemNavController;
+    protected selectionPopup: SelectionPopupController;
 
-    protected input: Input;
+    protected constructor(designer: CircuitDesigner,
+                          view: CircuitView,
+                          CreateFromXML: (tag: string, not?: boolean) => Component) {
+        super(designer, view);
 
-    protected designer: CircuitDesigner;
-    protected view: CircuitView;
+        this.itemNav = new ItemNavController(this, CreateFromXML);
+        this.selectionPopup = new SelectionPopupController(this);
 
-    protected toolManager: ToolManager;
-
-    private renderQueue: RenderQueue;
-
-    protected constructor(designer: CircuitDesigner, view: CircuitView) {
-        // pass Render function so that
-        //  the circuit is redrawn every
-        //  time its updated
-        this.designer = designer;
-        this.view = view;
-
-        // utils
-        this.toolManager = new ToolManager(this.view.getCamera(), this.designer);
-        this.renderQueue = new RenderQueue(() =>
-            this.view.render(this.designer,
-                             this.getSelections(),
-                             this.toolManager));
-
-        // input
-        this.input = new Input(this.view.getCanvas());
-        this.input.addListener("click",     (b) => !this.active || this.onClick(b));
-        this.input.addListener("mousedown", (b) => !this.active || this.onMouseDown(b));
-        this.input.addListener("mousedrag", (b) => !this.active || this.onMouseDrag(b));
-        this.input.addListener("mousemove", ( ) => !this.active || this.onMouseMove());
-        this.input.addListener("mouseup",   (b) => !this.active || this.onMouseUp(b));
-        this.input.addListener("keydown",   (b) => !this.active || this.onKeyDown(b));
-        this.input.addListener("keyup",     (b) => !this.active || this.onKeyUp(b));
-        this.input.addListener("zoom",    (z,c) => !this.active || this.onZoom(z,c));
-
-        window.addEventListener("resize", _e => this.resize(), false);
-
-        // this.toolManager.getSelectionTool().addSelectionChangeListener(() => SelectionPopupController.Update());
+        this.toolManager.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
     }
 
-    private resize(): void {
-        this.view.resize();
-        this.render();
-    }
-
-    public setActive(on: boolean): void {
-        this.active = on;
-    }
-
-    public setEditMode(val: boolean): void {
+    public setEditMode(editMode: boolean): void {
         // Disable some tools
-        this.toolManager.disableTool(TranslateTool, val);
-        this.toolManager.disableTool(RotateTool, val);
-        this.toolManager.disableTool(PlaceComponentTool, val);
-        this.toolManager.disableTool(WiringTool, val);
+        this.toolManager.disableTool(TranslateTool, !editMode);
+        this.toolManager.disableTool(RotateTool, !editMode);
+        this.toolManager.disableTool(PlaceComponentTool, !editMode);
+        this.toolManager.disableTool(WiringTool, !editMode);
 
         // Disable actions/selections
-        this.toolManager.disableActions(val);
+        this.toolManager.disableActions(!editMode);
         this.clearSelections();
-        this.toolManager.getSelectionTool().disableSelections(val);
+        this.toolManager.getSelectionTool().disableSelections(!editMode);
+
+        // Toggle ItemNavController
+        if (this.itemNav.isOpen())
+            this.itemNav.toggle();
+
+        // Disable or re-enable ItemNavController
+        if (editMode)
+            this.itemNav.enable();
+        else
+            this.itemNav.disable();
 
         this.render();
     }
 
-    public addAction(action: Action): void {
-        this.toolManager.addAction(action);
-    }
+    public abstract loadCircuit(contents: XMLDocument): void;
+    public abstract saveCircuit(): string;
 
-    public placeComponent(comp: Component, instant: boolean = false): void {
-        this.toolManager.placeComponent(comp, instant);
-    }
+    public setActive(on: boolean): void {
+        super.setActive(on);
 
-    public clearSelections(): void {
-        this.addAction(CreateDeselectAllAction(this.toolManager.getSelectionTool()).execute());
-    }
-
-    public render(): void {
-        this.renderQueue.render();
-    }
-
-    protected onMouseDown(button: number): boolean {
-        if (this.toolManager.onMouseDown(this.input, button)) {
-            this.render();
-            return true;
+        if (!on) {
+            // Hide and disable ItemNavController
+            if (this.itemNav.isOpen())
+                this.itemNav.toggle();
+            this.itemNav.disable();
+        } else {
+            this.itemNav.enable();
         }
-        return false;
-    }
-
-    protected onMouseMove(): boolean {
-        if (this.toolManager.onMouseMove(this.input)) {
-            this.render();
-            return true;
-        }
-        return false;
     }
 
     protected onMouseDrag(button: number): boolean {
-        if (this.toolManager.onMouseDrag(this.input, button)) {
-            // SelectionPopupController.Hide();
-            this.render();
+        if (super.onMouseDrag(button)) {
+            this.selectionPopup.hide();
             return true;
         }
         return false;
     }
 
     protected onMouseUp(button: number): boolean {
-        if (this.toolManager.onMouseUp(this.input, button)) {
-            // SelectionPopupController.Update();
-            this.render();
+        if (super.onMouseUp(button)) {
+            this.selectionPopup.update();
             return true;
         }
         return false;
     }
 
     protected onClick(button: number): boolean {
-        if (this.toolManager.onClick(this.input, button)) {
-            // SelectionPopupController.Update();
-            this.render();
+        if (super.onClick(button)) {
+            this.selectionPopup.update();
             return true;
         }
         return false;
     }
 
     protected onKeyDown(key: number): boolean {
-        if (this.toolManager.onKeyDown(this.input, key)) {
-            // SelectionPopupController.Update();
-            this.render();
-            return true;
-        }
-        return false;
-    }
-
-    protected onKeyUp(key: number): boolean {
-        if (this.toolManager.onKeyUp(this.input, key)) {
-            this.render();
+        if (super.onKeyDown(key)) {
+            this.selectionPopup.update();
             return true;
         }
         return false;
     }
 
     protected onZoom(zoom: number, center: Vector): boolean {
-        // TODO: Move to tool
-        this.view.getCamera().zoomTo(center, zoom);
+        super.onZoom(zoom, center);
 
-        // SelectionPopupController.Update();
-        this.render();
+        this.selectionPopup.update();
+
         return true;
-    }
-
-    public getSelections(): Selectable[] {
-        return this.toolManager.getSelectionTool().getSelections();
-    }
-
-    public getCurrentTool(): Tool {
-        return this.toolManager.getCurrentTool();
-    }
-
-    public getSelectionTool(): SelectionTool {
-        return this.toolManager.getSelectionTool();
-    }
-
-    public getCanvas(): HTMLCanvasElement {
-        return this.view.getCanvas();
-    }
-
-    public getCamera(): Camera {
-        return this.view.getCamera();
-    }
-
-    public getDesigner(): CircuitDesigner {
-        return this.designer;
-    }
-
-    public isActive(): boolean {
-        return this.active;
     }
 }

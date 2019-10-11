@@ -9,8 +9,8 @@ import {Exporter} from "core/utils/io/Exporter";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
-export class HeaderController {
-    private projectNameInput: JQuery<HTMLElement>;
+export abstract class HeaderController {
+    protected projectNameInput: JQuery<HTMLElement>;
 
     public constructor(main: MainDesignerController) {
         this.projectNameInput = $("input#header-project-name-input");
@@ -50,12 +50,11 @@ export class HeaderController {
         const header = this;
 
         $("input#header-file-input").change(async function(): Promise<void> {
-            const name = await Importer.PromptLoadCircuitFromFile(main.getDesigner(), $(this).prop("files")[0]);
-            header.setProjectName(name);
+            header.setProjectName(await header.onLoadCircuit(main, $(this).prop("files")[0]));
         });
 
         $("#header-download-button").click(() => {
-            Exporter.SaveFile(main.getDesigner(), this.projectNameInput.val() as string);
+            this.onSaveCircuit(main);
         });
 
         $("#header-download-pdf-button").click(() => {
@@ -94,6 +93,9 @@ export class HeaderController {
         $(".header__right__dropdown__button")
                 .removeClass("white");
     }
+
+    protected async abstract onLoadCircuit(main: MainDesignerController, file: File): Promise<string>;
+    protected abstract onSaveCircuit(main: MainDesignerController): void;
 
     public setProjectName(name?: string): void {
         if (name)

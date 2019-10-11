@@ -1,21 +1,18 @@
-import {Importer} from "core/utils/io/Importer";
+import $ from "jquery";
 
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
-import {ItemNavController} from "./ItemNavController";
-import {HeaderController} from "./HeaderController";
 import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
 import {RemoteController} from "./RemoteController";
 import {CircuitMetadata,
         CircuitMetadataBuilder} from "digital/models/CircuitMetadata";
 
-
 export class SideNavController {
-    private tab = $("header-sidenav-open-tab");
-    private sidenav = $("sidenav");
-    private overlay = $("overlay");
-    private context = $("content");
-    private sidenavModeCheckbox = $("sidenav-mode-checkbox");
-    private exampleCircuitsList = $("example-circuit-list");
+    private tab = $("#header-sidenav-open-tab");
+    private sidenav = $("#sidenav");
+    private overlay = $("#overlay");
+    private context = $("#content");
+    private sidenavModeCheckbox = $("#sidenav-mode-checkbox");
+    private exampleCircuitsList = $("#example-circuit-list");
 
     private open: boolean;
     private disabled: boolean;
@@ -24,7 +21,11 @@ export class SideNavController {
 
     private userCircuits: SideNavCircuitPreview[];
 
-    public constructor() {
+    private main: MainDesignerController;
+
+    public constructor(main: MainDesignerController) {
+        this.main = main;
+
         this.open = false;
         this.disabled = false;
 
@@ -53,33 +54,18 @@ export class SideNavController {
                     .withDesc(desc)
                     .withVersion("1.1")
                     .build();
-            exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, this.loadCircuit);
+            exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, (c) => this.loadCircuit(c));
         }
     }
 
     private toggleEditMode() {
         this.editMode = !this.editMode;
 
-        MainDesignerController.SetEditMode(!editMode);
-
-        // Toggle ItemNavController
-        if (ItemNavController.IsOpen())
-            ItemNavController.Toggle();
-
-        // Disable or re-enable ItemNavController
-        if (editMode)
-            ItemNavController.Enable();
-        else
-            ItemNavController.Disable();
-
-        // Toggle SideNavController if entering play mode
-        if (this.isOpen() && !this.editMode)
-            this.toggle();
+        this.main.setEditMode(this.editMode);
     }
 
     private loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents);
-        HeaderController.setProjectName(name);
+        this.main.loadCircuit(contents);
         if (this.isOpen)
             this.toggle();
     }
@@ -95,7 +81,7 @@ export class SideNavController {
         RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
             data.forEach((d) => {
                 const preview = new SideNavCircuitPreview(d);
-                preview.onClick(() => RemoteController.LoadUserCircuit(d, this.loadCircuit));
+                preview.onClick(() => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)));
                 this.userCircuits.push(preview);
             });
         });

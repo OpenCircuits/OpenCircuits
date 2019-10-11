@@ -4,7 +4,7 @@ import {Vector,V} from "Vector";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
-import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
+import {Component} from "core/models/Component";
 
 export class ItemNavController {
     private tab: JQuery<HTMLElement>;
@@ -13,9 +13,9 @@ export class ItemNavController {
     private open: boolean;
     private disabled: boolean;
 
-    public constructor(main: MainDesignerController) {
-        this.tab = $("itemnav-open-tab");
-        this.itemnav = $("itemnav");
+    public constructor(main: MainDesignerController, CreateFromXML: (tag: string, not?: boolean) => Component) {
+        this.tab = $("#itemnav-open-tab");
+        this.itemnav = $("#itemnav");
 
         this.open = false;
         this.disabled = false;
@@ -34,7 +34,7 @@ export class ItemNavController {
             const not = child.dataset.not == "true";
 
             const onClick = (): void => {
-                main.placeComponent(CreateComponentFromXML(xmlId, not), false);
+                main.placeComponent(CreateFromXML(xmlId, not), false);
 
                 // Unfocus element
                 if (child instanceof HTMLElement)
@@ -45,7 +45,7 @@ export class ItemNavController {
                 if (!(child instanceof HTMLButtonElement))
                     return;
 
-                const component = CreateComponentFromXML(xmlId, not);
+                const component = CreateFromXML(xmlId, not);
                 const pos = main.getCamera().getWorldPos(p);
 
                 component.setPos(pos);

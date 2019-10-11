@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
@@ -8,17 +10,18 @@ import {ColorChangeAction} from "digital/actions/ColorChangeAction";
 
 export class ColorPopupModule extends SelectionPopupModule {
     private color: HTMLInputElement;
-    public constructor(parentDiv: HTMLDivElement) {
-        // Title module does not have a wrapping div
-        super(parentDiv.querySelector("div#popup-color-text"));
 
-        this.color = this.el.querySelector("input#popup-color-picker");
+    public constructor(circuitController: MainDesignerController) {
+        // Title module does not have a wrapping div
+        super(circuitController, $("div#popup-color-text"));
+
+        this.color = this.el.find("input#popup-color-picker")[0] as HTMLInputElement;
         this.color.onchange = () => this.push();
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
-        const leds = selections.filter(o => o instanceof LED).map(o => o as LED);
+        const selections = this.circuitController.getSelections();
+        const leds = selections.filter(o => o instanceof LED) as LED[];
         const enable = selections.length == leds.length && leds.length > 0;
 
         if (enable) {
@@ -35,17 +38,13 @@ export class ColorPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections() as LED[];
         const targetColor = this.color.value;
 
-        MainDesignerController.AddAction(
-            selections.reduce<GroupAction>((acc, o) => {
-                if (o instanceof LED)
-                    acc.add(new ColorChangeAction(o, targetColor));
-                return acc;
-            }, new GroupAction()).execute()
-        );
+        this.circuitController.addAction(new GroupAction(
+            selections.map(l => new ColorChangeAction(l, targetColor))
+        ).execute());
 
-        MainDesignerController.Render();
+        this.circuitController.render();
     }
 }

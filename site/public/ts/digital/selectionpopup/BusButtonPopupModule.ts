@@ -38,8 +38,7 @@ export class BusButtonPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = this.circuitController.getSelections();
-        const portSelections = selections.filter((o) => o instanceof Port) as Port[];
+        const portSelections = this.circuitController.getSelections() as Port[];
 
         const inputPorts  = <InputPort[]> portSelections.filter(o => o instanceof InputPort);
         const outputPorts = <OutputPort[]>portSelections.filter(o => o instanceof OutputPort);

@@ -268,7 +268,7 @@ export class SelectionTool extends Tool {
         return action;
     }
 
-    public getSelections(): Array<Selectable> {
+    public getSelections(): Selectable[] {
         return Array.from(this.selections);
     }
 

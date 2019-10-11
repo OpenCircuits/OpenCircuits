@@ -8,8 +8,6 @@ import {LoadDynamicScript} from "../utils/Script";
 import {GoogleAuthState} from "../auth/GoogleAuthState";
 import {NoAuthState} from "../auth/NoAuthState";
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
-import {Exporter} from "core/utils/io/Exporter";
-import {HeaderController} from "./HeaderController";
 import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
 
@@ -30,7 +28,10 @@ export class LoginController {
     private noAuthMeta = $("#no_auth_enable");
     private googleAuthMeta = $("#google-signin-client_id");
 
-    public constructor() {
+    private sidenav: SideNavController;
+
+    public constructor(main: MainDesignerController, sidenav: SideNavController) {
+        this.sidenav = sidenav;
 
         this.open = false;
         this.disabled = false;
@@ -39,14 +40,13 @@ export class LoginController {
         this.overlay.click(() => this.hide());
 
         this.logoutHeaderButton.click(async () => {
-            RemoteController.Logout(this.onLogout);
+            RemoteController.Logout(() => this.onLogout());
         });
 
         this.saveHeaderButton.click(async () => {
-            const circuit = MainDesignerController.GetDesigner();
-            const data = Exporter.WriteCircuit(circuit, HeaderController.GetProjectName());
+            const data = main.saveCircuit();
             RemoteController.SaveCircuit(data, async () => {
-                return SideNavController.UpdateUserCircuits();
+                return sidenav.updateUserCircuits();
             });
         });
     }
@@ -57,7 +57,7 @@ export class LoginController {
         this.logoutHeaderButton.removeClass("hide");
         this.hide();
 
-        SideNavController.UpdateUserCircuits();
+        this.sidenav.updateUserCircuits();
     }
 
     private onLogout(): void {
@@ -65,7 +65,7 @@ export class LoginController {
         this.saveHeaderButton.addClass("hide");
         this.logoutHeaderButton.addClass("hide");
 
-        SideNavController.ClearUserCircuits();
+        this.sidenav.clearUserCircuits();
     }
 
     private onLoginError(e: {error: string}): void {
@@ -73,11 +73,11 @@ export class LoginController {
     }
 
     private onGoogleLogin(_: gapi.auth2.GoogleUser): void {
-        RemoteController.Login(new GoogleAuthState(), this.onLogin);
+        RemoteController.Login(new GoogleAuthState(), () => this.onLogin());
     }
 
     private onNoAuthLogin(username: string): void {
-        RemoteController.Login(new NoAuthState(username), this.onLogin);
+        RemoteController.Login(new NoAuthState(username), () => this.onLogin());
     }
 
     private onNoAuthSubmitted(): void {
@@ -101,8 +101,8 @@ export class LoginController {
                 "width": 120,
                 "height": 36,
                 "longtitle": false,
-                "onsuccess": this.onGoogleLogin,
-                "onfailure": this.onLoginError
+                "onsuccess": (_) => this.onGoogleLogin(_),
+                "onfailure": (_) => this.onLoginError(_)
             });
 
             // Load 'auth2' from GAPI and then initialize w/ meta-data
@@ -117,7 +117,7 @@ export class LoginController {
             const username = GetCookie("no_auth_username");
             if (username)
                 this.onNoAuthLogin(username);
-            $("#no-auth-submit").click(this.onNoAuthSubmitted);
+            $("#no-auth-submit").click(() => this.onNoAuthSubmitted());
         }
     }
 

@@ -1,6 +1,7 @@
+import $ from "jquery";
+
 import {Vector, V} from "Vector";
 
-import {Camera} from "math/Camera";
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
@@ -14,7 +15,7 @@ import {SelectionPopupModule} from "../selectionpopup/SelectionPopupModule";
 * TODO: use decorators or some other interface to determine what properties are available
 */
 export class SelectionPopupController {
-    private camera: Camera;
+    private main: MainDesignerController;
 
     private div: JQuery<HTMLDivElement>;
 
@@ -22,8 +23,8 @@ export class SelectionPopupController {
 
     private pos: Vector;
 
-    public constructor(cam: Camera, divId: string = "selection-popup") {
-        this.camera = cam;
+    public constructor(main: MainDesignerController, divId: string = "#selection-popup") {
+        this.main = main;
 
         this.div = $(divId);
         // ? .js sets position to "absolute" -- why? Why not set in the css file
@@ -47,7 +48,8 @@ export class SelectionPopupController {
     }
 
     public update(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.main.getSelections();
+        const camera = this.main.getCamera();
 
         if (selections.length > 0) {
             // Update each module
