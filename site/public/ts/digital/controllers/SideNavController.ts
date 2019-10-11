@@ -8,27 +8,57 @@ import {RemoteController} from "./RemoteController";
 import {CircuitMetadata,
         CircuitMetadataBuilder} from "digital/models/CircuitMetadata";
 
-export const SideNavController = (() => {
-    const tab = document.getElementById("header-sidenav-open-tab");
-    const sidenav = document.getElementById("sidenav");
 
-    const sidenavModeCheckbox = <HTMLInputElement>document.getElementById("sidenav-mode-checkbox");
+export class SideNavController {
+    private tab = $("header-sidenav-open-tab");
+    private sidenav = $("sidenav");
+    private overlay = $("overlay");
+    private context = $("content");
+    private sidenavModeCheckbox = $("sidenav-mode-checkbox");
+    private exampleCircuitsList = $("example-circuit-list");
 
-    const overlay = document.getElementById("overlay");
+    private open: boolean;
+    private disabled: boolean;
 
-    const context = document.getElementById("content");
+    private editMode: boolean;
 
-    const exampleCircuitsList = document.getElementById("example-circuit-list");
+    private userCircuits: SideNavCircuitPreview[];
 
-    let isOpen = false;
-    let disabled = false;
+    public constructor() {
+        this.open = false;
+        this.disabled = false;
 
-    let editMode = true;
+        this.editMode = true;
 
-    let userCircuits: SideNavCircuitPreview[] = [];
+        this.userCircuits = [];
 
-    const toggleEditMode = function(): void {
-        editMode = !editMode;
+        this.tab.click(() => this.toggle());
+
+        this.sidenavModeCheckbox.change(() => this.toggleEditMode());
+
+        this.overlay.click(() => {
+            if (this.isOpen())
+                this.toggle();
+        });
+
+        // Set up onclick listeners to example circuits
+        const exampleCircuits = Array.from(this.exampleCircuitsList.children()) as HTMLElement[];
+        for (const exampleCircuit of exampleCircuits) {
+            const id = exampleCircuit.id.split("-").slice(2).join('-');
+            const name = exampleCircuit.children[1].children[0].innerHTML;
+            const desc = exampleCircuit.children[1].children[1].innerHTML;
+            const data = new CircuitMetadataBuilder()
+                    .withId(id)
+                    .withName(name)
+                    .withDesc(desc)
+                    .withVersion("1.1")
+                    .build();
+            exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, this.loadCircuit);
+        }
+    }
+
+    private toggleEditMode() {
+        this.editMode = !this.editMode;
 
         MainDesignerController.SetEditMode(!editMode);
 
@@ -43,82 +73,54 @@ export const SideNavController = (() => {
             ItemNavController.Disable();
 
         // Toggle SideNavController if entering play mode
-        if (SideNavController.IsOpen() && !editMode)
-            SideNavController.Toggle();
+        if (this.isOpen() && !this.editMode)
+            this.toggle();
     }
 
-    const toggle = function(): void {
-        isOpen = !isOpen;
-        sidenav.classList.toggle("sidenav__move");
-        overlay.classList.toggle("invisible");
-        context.classList.toggle("sidenav__shift");
-    }
-
-    const loadCircuit = function(contents: XMLDocument): void {
+    private loadCircuit(contents: XMLDocument): void {
         const name = Importer.PromptLoadCircuit(MainDesignerController.GetDesigner(), contents);
         HeaderController.setProjectName(name);
-        if (isOpen)
-            toggle();
+        if (this.isOpen)
+            this.toggle();
     }
 
-    return {
-        Init: function(): void {
-            isOpen = false;
-
-            tab.onclick = () => { SideNavController.Toggle(); };
-
-            sidenavModeCheckbox.onchange = () => { toggleEditMode() };
-
-            overlay.addEventListener("click", () => {
-                if (SideNavController.IsOpen())
-                    SideNavController.Toggle();
-            });
-
-            // Set up onclick listeners to example circuits
-            const exampleCircuits = Array.from(exampleCircuitsList.children) as HTMLElement[];
-            for (const exampleCircuit of exampleCircuits) {
-                const id = exampleCircuit.id.split("-").slice(2).join('-');
-                const name = exampleCircuit.children[1].children[0].innerHTML;
-                const desc = exampleCircuit.children[1].children[1].innerHTML;
-                const data = new CircuitMetadataBuilder()
-                        .withId(id)
-                        .withName(name)
-                        .withDesc(desc)
-                        .withVersion("1.1")
-                        .build();
-                exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, loadCircuit);
-            }
-        },
-        ClearUserCircuits(): void {
-            userCircuits.forEach((c) => c.remove());
-            userCircuits = [];
-        },
-        UpdateUserCircuits(): void {
-            SideNavController.ClearUserCircuits();
-
-            RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
-                data.forEach((d) => {
-                    const preview = new SideNavCircuitPreview(d);
-                    preview.onClick(() => RemoteController.LoadUserCircuit(d, loadCircuit));
-                    userCircuits.push(preview);
-                });
-            });
-        },
-        Toggle: function(): void {
-            if (disabled)
-                return;
-
-            toggle();
-        },
-        IsOpen: function(): boolean {
-            return isOpen;
-        },
-        Enable: function(): void {
-            disabled = false;
-        },
-        Disable: function(): void {
-            disabled = true;
-        }
+    public clearUserCircuits(): void {
+        this.userCircuits.forEach((c) => c.remove());
+        this.userCircuits = [];
     }
 
-})();
+    public updateUserCircuits(): void {
+        this.clearUserCircuits();
+
+        RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
+            data.forEach((d) => {
+                const preview = new SideNavCircuitPreview(d);
+                preview.onClick(() => RemoteController.LoadUserCircuit(d, this.loadCircuit));
+                this.userCircuits.push(preview);
+            });
+        });
+    }
+
+    public toggle(): void {
+        if (this.disabled)
+            return;
+
+        this.open = !this.open;
+        this.sidenav.toggleClass("sidenav__move");
+        this.overlay.toggleClass("invisible");
+        this.context.toggleClass("sidenav__shift");
+    }
+
+    public isOpen(): boolean {
+        return this.open;
+    }
+
+    public enable(): void {
+        this.disabled = false;
+    }
+
+    public disable(): void {
+        this.disabled = true;
+    }
+
+}

@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
 import {Port} from "core/models/ports/Port";
@@ -8,15 +10,16 @@ import {MainDesignerController} from "../../shared/controllers/MainDesignerContr
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class BusButtonPopupModule extends SelectionPopupModule {
-    public constructor(parentDiv: HTMLDivElement) {
-        // No wrapping div
-        super(parentDiv.querySelector("button#popup-bus-button"));
-        this.el.onclick = () => this.push();
+
+    public constructor(circuitController: MainDesignerController) {
+        super(circuitController, $("button#popup-bus-button"));
+
+        this.el.click(() => this.push());
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
-        const portSelections = selections.filter((o) => o instanceof Port) as Array<Port>;
+        const selections = this.circuitController.getSelections();
+        const portSelections = selections.filter((o) => o instanceof Port) as Port[];
 
         // Make sure there are no regular selections
         if (portSelections.length != selections.length) {
@@ -35,16 +38,16 @@ export class BusButtonPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetSelections();
-        const portSelections = selections.filter((o) => o instanceof Port) as Array<Port>;
+        const selections = this.circuitController.getSelections();
+        const portSelections = selections.filter((o) => o instanceof Port) as Port[];
 
-        const inputPorts  = <Array<InputPort>> portSelections.filter(o => o instanceof InputPort);
-        const outputPorts = <Array<OutputPort>>portSelections.filter(o => o instanceof OutputPort);
+        const inputPorts  = <InputPort[]> portSelections.filter(o => o instanceof InputPort);
+        const outputPorts = <OutputPort[]>portSelections.filter(o => o instanceof OutputPort);
 
-        MainDesignerController.AddAction(
+        this.circuitController.addAction(
             CreateBusAction(outputPorts, inputPorts).execute()
         );
 
-        MainDesignerController.Render();
+        this.circuitController.render();
     }
 }

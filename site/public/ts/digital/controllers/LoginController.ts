@@ -14,34 +14,23 @@ import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
 
 export class LoginController {
-    private loginPopup: JQuery<HTMLElement>;
-    private overlay: JQuery<HTMLElement>;
+    private loginPopup = $("#login-popup");
+    private overlay = $("#overlay");
 
-    private loginHeaderContainer: JQuery<HTMLElement>;
-    private loginHeaderButton: JQuery<HTMLElement>;
-    private logoutHeaderButton: JQuery<HTMLElement>;
+    private loginHeaderContainer = $("#header-login-container");
+    private loginHeaderButton = $("#header-signin-button");
+    private logoutHeaderButton = $("#header-signout-button");
 
-    private saveHeaderButton: JQuery<HTMLElement>;
+    private saveHeaderButton = $("#header-save-button");
 
     private open: boolean;
     private disabled: boolean;
 
     // Put authentication type meta-tags here (used to determine if an auth method is enabled)
-    private noAuthMeta: JQuery<HTMLElement>;
-    private googleAuthMeta: JQuery<HTMLElement>;
+    private noAuthMeta = $("#no_auth_enable");
+    private googleAuthMeta = $("#google-signin-client_id");
 
     public constructor() {
-        this.loginPopup = $("#login-popup");
-        this.overlay = $("#overlay");
-
-        this.loginHeaderContainer = $("#header-login-container");
-        this.loginHeaderButton = $("#header-signin-button");
-        this.logoutHeaderButton = $("#header-signout-button");
-
-        this.saveHeaderButton = $("#header-save-button");
-
-        this.noAuthMeta = $("#no_auth_enable");
-        this.googleAuthMeta = $("#google-signin-client_id");
 
         this.open = false;
         this.disabled = false;

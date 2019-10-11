@@ -1,20 +1,22 @@
+import $ from "jquery";
+
 import {MainDesignerController} from "../../shared/controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class TitlePopupModule extends SelectionPopupModule {
-    private title: HTMLInputElement;
+    private title: JQuery<HTMLInputElement>;
 
-    public constructor(parentDiv: HTMLDivElement) {
+    public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
-        super(parentDiv.querySelector("input#popup-name"));
+        super(circuitController, $("input#popup-name"));
 
-        this.title = this.el as HTMLInputElement;
+        this.title = this.el as JQuery<HTMLInputElement>;
         // oninput instead of onchange because onchange doesn't push changes when things get deselected
-        this.title.oninput = () => this.push();
+        this.title.on("input", () => this.push());
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections();
         // * All IOObjects have a display name, so no property checks are required
         if (selections.length == 0)
             return;
@@ -22,11 +24,11 @@ export class TitlePopupModule extends SelectionPopupModule {
         const name = selections[0].getName();
         const same = selections.every((s) => s.getName() == name);
 
-        this.title.value = same ? name : "<Multiple>";
+        this.title.val(same ? name : "<Multiple>");
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetSelections();
-        selections.forEach(c => c.setName(this.title.value));
+        const selections = this.circuitController.getSelections();
+        selections.forEach(c => c.setName(this.title.val() as string));
     }
 }

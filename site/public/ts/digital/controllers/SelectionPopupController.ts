@@ -7,14 +7,6 @@ import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
 import {SelectionPopupModule} from "../selectionpopup/SelectionPopupModule";
-import {TitlePopupModule} from "../selectionpopup/TitlePopupModule";
-import {PositionPopupModule} from "../selectionpopup/PositionPopupModule";
-import {ICButtonPopupModule} from "../selectionpopup/ICButtonPopupModule";
-import {BusButtonPopupModule} from "../selectionpopup/BusButtonPopupModule";
-import {ColorPopupModule} from "../selectionpopup/ColorPopupModule";
-import {InputCountPopupModule} from "../selectionpopup/InputCountPopupModule";
-import {OutputCountPopupModule} from "../selectionpopup/OutputCountPopupModule";
-import {ClockFrequencyPopupModule} from "../selectionpopup/ClockFrequencyPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -36,17 +28,7 @@ export class SelectionPopupController {
         this.div = $(divId);
         // ? .js sets position to "absolute" -- why? Why not set in the css file
 
-        const div = this.div[0];
-        this.modules = [
-            new TitlePopupModule(div),
-            new PositionPopupModule(div),
-            new ColorPopupModule(div),
-            new InputCountPopupModule(div),
-            new OutputCountPopupModule(div),
-            new ClockFrequencyPopupModule(div),
-            new ICButtonPopupModule(div),
-            new BusButtonPopupModule(div)
-        ];
+        this.modules = [];
 
         this.pos = V();
 
@@ -56,8 +38,12 @@ export class SelectionPopupController {
     private setPos(v: Vector): void {
         this.pos = v;
 
-        this.div.style.left = `${this.pos.x}px`;
-        this.div.style.top  = `${this.pos.y}px`;
+        this.div.css("left", `${this.pos.x}px`);
+        this.div.css("top",  `${this.pos.y}px`);
+    }
+
+    public addModules(...modules: SelectionPopupModule[]): void {
+        this.modules = this.modules.concat(modules);
     }
 
     public update(): void {
@@ -66,7 +52,7 @@ export class SelectionPopupController {
         if (selections.length > 0) {
             // Update each module
             // Important to do this before repositioning the popup, since its size changes depending on which modules are active
-            modules.forEach(c => c.pull());
+            this.modules.forEach(c => c.pull());
 
             // Update the position of the popup
             const positions = selections.map((o) => {
@@ -78,26 +64,26 @@ export class SelectionPopupController {
                     return o.getWorldTargetPos();
             });
             const sum = positions.reduce((acc, pos) => acc.add(pos), V(0, 0));
-            const screenPos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
+            const screenPos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, this.div[0].clientHeight/2);
 
             // TODO: clamp should make sure not to overlap with other screen elements
             //const lo = new Vector(0);
             //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
 
-            setPos(screenPos);// Vector.clamp(screen_pos, lo, hi);
+            this.setPos(screenPos);// Vector.clamp(screen_pos, lo, hi);
 
-            this.Show();
+            this.show();
         } else {
-            this.Hide();
+            this.hide();
         }
     }
 
-    public Show(): void {
+    public show(): void {
         this.div.removeClass("invisible")
         this.div.focus();
     }
 
-    public Hide(): void {
+    public hide(): void {
         this.div.addClass("invisible");
     }
 }

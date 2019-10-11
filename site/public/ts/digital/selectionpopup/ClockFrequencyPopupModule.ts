@@ -9,16 +9,17 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export class ClockFrequencyPopupModule extends SelectionPopupModule {
     private input: HTMLInputElement;
-    public constructor(parentDiv: HTMLDivElement) {
-        // Title module does not have a wrapping div
-        super(parentDiv.querySelector("div#popup-clock-delay-text"));
 
-        this.input = this.el.querySelector("input#popup-clock-delay");
+    public constructor(circuitController: MainDesignerController) {
+        // Title module does not have a wrapping div
+        super(circuitController, $("div#popup-clock-delay-text"));
+
+        this.input = this.el.find("input#popup-clock-delay")[0] as HTMLInputElement;
         this.input.onchange = () => this.push();
     }
 
     public pull(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections();
         const clocks = selections
                 .filter(o => o instanceof Clock)
                 .map(o => o as Clock);
@@ -28,7 +29,7 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
 
         if (enable) {
             // Calculate input counts for each component
-            const counts: Array<number> = [];
+            const counts: number[] = [];
             clocks.forEach(c => counts.push(c.getFrequency()));
 
             const same = counts.every((count) => count === counts[0]);
@@ -41,17 +42,13 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        const selections = MainDesignerController.GetSelections();
+        const selections = this.circuitController.getSelections() as Clock[];
         const countAsNumber = this.input.valueAsNumber;
 
-        MainDesignerController.AddAction(
-            selections.reduce<GroupAction>((acc, o) => {
-                if (o instanceof Clock)
-                    acc.add(new ClockFrequencyChangeAction(o, countAsNumber));
-                return acc;
-            }, new GroupAction()).execute()
-        );
+        this.circuitController.addAction(new GroupAction(
+            selections.map(c => new ClockFrequencyChangeAction(c, countAsNumber))
+        ).execute());
 
-        MainDesignerController.Render();
+        this.circuitController.render();
     }
 }
