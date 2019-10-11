@@ -38,7 +38,9 @@ const config = {
             "Vector": baseUrl('app/core/ts/utils/math/Vector'),
             "math": baseUrl('app/core/ts/utils/math'),
             "core": baseUrl('app/core/ts/'),
-            "digital": baseUrl('app/digital/ts')
+            "digital": baseUrl('app/digital/ts'),
+            "site/shared": baseUrl('site/public/ts/shared'),
+            "site/digital": baseUrl('site/public/ts/digital')
         },
         extensions: ['.ts', '.js']
     }

@@ -38,7 +38,9 @@ const config = {
             "Vector": baseUrl('app/core/ts/utils/math/Vector'),
             "math": baseUrl('app/core/ts/utils/math'),
             "core": baseUrl('app/core/ts/'),
-            "analog": baseUrl('app/analog/ts')
+            "analog": baseUrl('app/analog/ts'),
+            "site/shared": baseUrl('site/public/ts/shared'),
+            "site/analog": baseUrl('site/public/ts/analog')
         },
         extensions: ['.ts', '.js']
     }
