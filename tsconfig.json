@@ -21,7 +21,10 @@
         "math/*": ["app/core/ts/utils/math/*"],
         "core/*": ["app/core/ts/*"],
         "digital/*": ["app/digital/ts/*"],
-        "analog/*": ["app/analog/ts/*"]
+        "analog/*": ["app/analog/ts/*"],
+        "site/shared/*": ["site/public/ts/shared/*"],
+        "site/digital/*": ["site/public/ts/digital/*"],
+        "site/analog/*": ["site/public/ts/analog/*"]
     }
 
   },
