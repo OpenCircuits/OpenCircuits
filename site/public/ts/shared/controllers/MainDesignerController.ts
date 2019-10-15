@@ -6,7 +6,6 @@ import {RotateTool} from "core/tools/RotateTool";
 import {TranslateTool} from "core/tools/TranslateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
 import {WiringTool} from "core/tools/WiringTool";
-import {SplitWireTool} from "core/tools/SplitWireTool";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
@@ -28,8 +27,7 @@ export abstract class MainDesignerController extends DesignerController {
 
         this.toolManager.addTools(new RotateTool(this.getCamera()),
                                   new TranslateTool(this.getCamera()),
-                                  new PlaceComponentTool(this.designer, this.getCamera()),
-                                  new SplitWireTool(this.getCamera()));
+                                  new PlaceComponentTool(this.designer, this.getCamera()));
 
         this.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
     }

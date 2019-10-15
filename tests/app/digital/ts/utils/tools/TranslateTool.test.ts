@@ -5,7 +5,6 @@ import {SPACEBAR_KEY} from "digital/utils/Constants";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
-import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}      from "digital/models/ioobjects/inputs/Switch";
@@ -15,14 +14,14 @@ import {LED}         from "digital/models/ioobjects/outputs/LED";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
 
 import {Place, Connect} from "../../Helpers";
 
 describe("Translate Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(-1);
-    const toolManager = new ToolManager(camera, designer);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);

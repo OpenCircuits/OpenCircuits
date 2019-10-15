@@ -3,7 +3,6 @@ import "jest";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
-import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}      from "digital/models/ioobjects/inputs/Switch";
@@ -11,14 +10,15 @@ import {LED}         from "digital/models/ioobjects/outputs/LED";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
 
 import {Place} from "../../Helpers";
+import {CONTROL_KEY, Z_KEY} from "core/utils/Constants";
 
 describe("Wiring Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(0);
-    const toolManager = new ToolManager(camera, designer);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
@@ -26,6 +26,29 @@ describe("Wiring Tool", () => {
     afterEach(() => {
         // Clear circuit
         designer.reset();
+    });
+
+    test("Connect Switch -> LED then Split and then Undo/Redo", () => {
+        const sw = new Switch();
+        const led = new LED();
+        sw.setPos(V(-60, 0));
+        led.setPos(V(400, -100));
+        Place(designer, [sw, led]);
+
+        // Connect Switch -> LED
+        input.drag(sw.getOutputPort(0).getWorldTargetPos(),
+                   led.getInputPort(0).getWorldTargetPos());
+
+        // Split into Snap position
+        const wire = sw.getOutputs()[0];
+        input.press(wire.getShape().getPos(0.5))
+                .move(V(20, 0))
+                .release()
+                .pressKey(CONTROL_KEY)
+                .pressKey(Z_KEY)
+                .releaseKey(Z_KEY)
+                .pressKey(Z_KEY)
+                .releaseKey(Z_KEY);
     });
 
     test("Connect Switch -> LED then Split and Snap then Unsnap and move Down", () => {

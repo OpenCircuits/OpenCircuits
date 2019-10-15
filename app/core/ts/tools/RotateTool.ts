@@ -50,7 +50,7 @@ export class RotateTool extends Tool {
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
 
-    public activate(currentTool: Tool, event: string, input: Input): Action {
+    public activate(currentTool: Tool, event: string, input: Input): void {
         if (!(currentTool instanceof SelectionTool))
             throw new Error("Tool not selection tool!");
 
@@ -71,8 +71,6 @@ export class RotateTool extends Tool {
         this.midpoint = midpoint;
         this.startAngle = worldMousePos.sub(midpoint).angle();
         this.prevAngle = this.startAngle;
-
-        return undefined;
     }
 
     public shouldDeactivate(event: string, _: Input): boolean {

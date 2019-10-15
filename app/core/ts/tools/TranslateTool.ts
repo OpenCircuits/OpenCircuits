@@ -49,7 +49,7 @@ export class TranslateTool extends Tool {
         return true;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, _?: number): Action {
+    public activate(currentTool: Tool, event: string, input: Input, _?: number): void {
         if (!(currentTool instanceof SelectionTool))
             throw new Error("Tool not selection tool!");
 
@@ -69,8 +69,6 @@ export class TranslateTool extends Tool {
 
         // Explicitly drag
         this.onMouseDrag(input, 0);
-
-        return undefined;
     }
 
     public shouldDeactivate(event: string, _: Input): boolean {

@@ -119,12 +119,11 @@ export class SelectionTool extends DefaultTool {
 
 
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): Action {
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): void {
         if (event == "mouseup")
             this.onMouseUp(input, button);
         if (event == "onclick" && !(currentTool instanceof PlaceComponentTool))
             this.onClick(input, button);
-        return undefined;
     }
 
     public deactivate(): Action {

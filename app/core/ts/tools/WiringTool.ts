@@ -68,7 +68,6 @@ export class WiringTool extends Tool {
     }
 
     public shouldDeactivate(event: string): boolean {
-        console.log(this.clicked, event);
         if (this.clicked  && event == "onclick")
             return true;
         if (!this.clicked && event == "mouseup")

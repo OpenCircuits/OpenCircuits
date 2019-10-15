@@ -29,9 +29,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     private activate(tool: Tool, event: string, input: Input, button?: number): void {
-        // Activate tool and check if it added an action
-        const action = tool.activate(this.currentTool, event, input, button);
-        this.addAction(action);
+        // Activate tool and set it as current tool
+        tool.activate(this.currentTool, event, input, button);
         this.currentTool = tool;
     }
 

@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 
-describe("PlaceAction", () => {
+describe("Place Action", () => {
     test("Undo/Redo", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch();

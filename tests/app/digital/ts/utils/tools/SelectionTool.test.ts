@@ -10,7 +10,7 @@ import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 
-import {ToolManager} from "core/tools/ToolManager";
+import {SelectionTool} from "core/tools/SelectionTool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
@@ -18,20 +18,22 @@ import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
 
 import {Place, Connect} from "../../Helpers";
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(0);
-    const toolManager = new ToolManager(camera, designer);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
+
+    const selectionTool = toolManager.getDefaultTool() as SelectionTool;
 
     InitializeInput(input, toolManager);
 
     function selections(): Selectable[] {
-        return toolManager.getSelectionTool().getSelections();
+        return selectionTool.getSelections();
     }
 
     describe("Single Object", () => {

@@ -32,7 +32,7 @@ export class SplitWireTool extends TranslateTool {
         return (currentPressedObj instanceof Wire);
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): Action {
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): void {
         if (!(currentTool instanceof SelectionTool))
             throw new Error("Tool not selection tool!");
 
@@ -52,8 +52,6 @@ export class SplitWireTool extends TranslateTool {
         currentTool.setCurrentlyPressedObj(wirePort);
 
         super.activate(currentTool, event, input, button);
-
-        return this.splitAction;
     }
 
     public deactivate(): Action {

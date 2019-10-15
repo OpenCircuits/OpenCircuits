@@ -26,10 +26,6 @@ export class PlaceComponentTool extends Tool {
         return this.component != undefined;
     }
 
-    public activate(): Action {
-        return undefined;
-    }
-
     public shouldDeactivate(event: string): boolean {
         return (event == "onclick");
     }
