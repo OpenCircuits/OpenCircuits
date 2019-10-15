@@ -4,6 +4,7 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {DigitalObjectSet,
         SaveGroup,
         LoadGroup} from "digital/utils/ComponentUtils";
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
@@ -115,14 +116,12 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
         return new DigitalWire(p1, p2);
     }
 
-    public addGroup(group: DigitalObjectSet): void {
+    public addGroup(group: IOObjectSet): void {
         for (const a of group.getComponents())
-            this.addObject(a);
+            this.addObject(a as DigitalComponent);
 
-        for (const b of group.getWires()) {
-            this.wires.push(b);
-            b.setDesigner(this);
-        }
+        for (const b of group.getWires())
+            this.addWire(b as DigitalWire);
     }
 
     public addICData(data: ICData): void {

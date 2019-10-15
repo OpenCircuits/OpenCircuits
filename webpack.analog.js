@@ -39,10 +39,8 @@ const config = {
             "math": baseUrl('app/core/ts/utils/math'),
             "core": baseUrl('app/core/ts/'),
             "analog": baseUrl('app/analog/ts'),
-            "digital": baseUrl('app/digital/ts'),
             "site/shared": baseUrl('site/public/ts/shared'),
-            "site/analog": baseUrl('site/public/ts/analog'),
-            "site/digital": baseUrl('site/public/ts/digital')
+            "site/analog": baseUrl('site/public/ts/analog')
         },
         extensions: ['.ts', '.js']
     }

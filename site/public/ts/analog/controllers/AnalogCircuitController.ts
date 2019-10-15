@@ -11,6 +11,7 @@ import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
 
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
+import {SplitWireTool} from "core/tools/SplitWireTool";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
@@ -24,7 +25,8 @@ export class AnalogCircuitController extends MainDesignerController {
               new MainDesignerView(),
               CreateComponentFromXML);
 
-        this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()));
+        this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()),
+                                  new SplitWireTool(this.getCamera()));
 
         this.selectionPopup.addModules(
             new TitlePopupModule(this),

@@ -1,6 +1,6 @@
 import $ from "jquery"
 
-import {CircuitMetadata} from "digital/models/CircuitMetadata";
+import {CircuitMetadata} from "core/models/CircuitMetadata";
 
 export class SideNavCircuitPreview {
     private metadata: CircuitMetadata;

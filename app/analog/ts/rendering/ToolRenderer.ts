@@ -50,8 +50,10 @@ export const ToolRenderer = (() => {
         render(renderer: Renderer, camera: Camera, toolManager: ToolManager): void {
             const tool = toolManager.getCurrentTool();
 
+            const selectionTool = toolManager.getDefaultTool() as SelectionTool;
+
             // If a wire has been selected, then don't draw the rotation box
-            const selections = toolManager.getSelectionTool().getSelections();
+            const selections = selectionTool.getSelections();
             const hasOnlyComponents = selections.every((s) => s instanceof Component);
 
             if (tool instanceof SelectionTool) {

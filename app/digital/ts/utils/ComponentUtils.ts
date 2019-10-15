@@ -1,12 +1,9 @@
 import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
 
-import {Graph} from "math/Graph";
-
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
-import {Component} from "core/models/Component";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 
@@ -16,8 +13,21 @@ import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
 
+/**
+ * Helper class to hold different groups of components.
+ *
+ * The groups are:
+ *  Input components  (anything with 0 output ports and >0  input ports)
+ *  Output components (anything with 0 input ports  and >0 output ports)
+ *  Wires             (wires)
+ *  Components        (anything else)
+ *
+ * Note that .components does NOT contain inputs and outputs
+ *  A helper method to get all the components including them
+ *  is included as getAllComponents()
+ */
 export class DigitalObjectSet extends IOObjectSet {
-    protected wires: DigitalWire[];
+    protected wires: Set<DigitalWire>;
 
     private inputs:  DigitalComponent[];
     private outputs: DigitalComponent[];
@@ -55,7 +65,7 @@ export class DigitalObjectSet extends IOObjectSet {
     }
 
     public getWires(): DigitalWire[] {
-        return this.wires.slice(); // Shallow copy
+        return Array.from(this.wires);
     }
 
     public getInputs(): DigitalComponent[] {
@@ -76,37 +86,9 @@ export class DigitalObjectSet extends IOObjectSet {
 }
 
 
-
-/**
- * Creates a Separated group from the given list of objects
- *  It differs from SeparateGroup by also retrieving all IMMEDIATELY
- *   connected wires that connect to other objects in `objects`
- *
- * Note that this method assumes all the components you want in the group are
- *  provided in `objects` INCLUDING WirePorts, this will not trace down the paths
- *  to get all wires ports. Use GatherGroup(objects) to do this.
- *
- * @param  objects The list of objects to separate
- * @return         A SeparatedComponentCollection of the objects
- */
-export function CreateGroup(objects: IOObject[]): DigitalObjectSet {
-    const group = new DigitalObjectSet(objects);
-
-    let wires = group.getWires();
-
-    // Gather all connecting wires
-    const objs = group.getComponents();
-    for (const obj of objs) {
-        // Only get wires that connect to other components in objects
-        wires = wires.concat(
-            obj.getOutputs().filter((w) => objs.includes(w.getOutputComponent() as DigitalComponent)));
-    }
-
-    return new DigitalObjectSet((<IOObject[]>objs).concat(wires));
-}
-
 /**
  * Get's all the wires/WirePorts going out from this wire
+ *  Note: this path is UN-ORDERED!
  *
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (incuding w)
@@ -179,43 +161,6 @@ export function GatherGroup(objects: IOObject[]): DigitalObjectSet {
     return new DigitalObjectSet((components as IOObject[]).concat(wires));
 }
 
-/**
- * Helper function to create a directed graph from a given
- *  collection of components
- *
- * The Graph stores Nodes as indices from the
- * groups.getAllComponents() array
- *
- * The edge weights are stored as pairs representing
- * the input index (i1) and the output index (i2) respectively
- *
- * @param  groups The SeparatedComponentCollection of components
- * @return        A graph corresponding to the given circuit
- */
-export function CreateGraph(groups: DigitalObjectSet): Graph<number, number> {
-    const graph = new Graph<number, number>();
-
-    const objs = groups.getComponents();
-    const wires = groups.getWires();
-    const map = new Map<Component, number>();
-
-    // Create nodes and map
-    for (let i = 0; i < objs.length; i++) {
-        graph.createNode(i);
-        map.set(objs[i], i);
-    }
-
-    // Create edges
-    for (let j = 0; j < wires.length; j++) {
-        const wire = wires[j];
-        const c1 = map.get(wire.getInputComponent());
-        const c2 = map.get(wire.getOutputComponent());
-        graph.createEdge(c1, c2, j);
-    }
-
-    return graph;
-}
-
 export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
     const p2 = c2.getInputPort(i2);
@@ -223,53 +168,6 @@ export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, 
     p1.connect(wire);
     p2.connect(wire);
     return wire;
-}
-
-/**
- * Copies a group of objects including connections that are
- *  present within the objects
- *
- * @param  objects [description]
- * @return         [description]
- */
-export function CopyGroup(objects: IOObject[] | DigitalObjectSet): DigitalObjectSet {
-    // Separate out the given objects
-    const groups = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
-    const objs = groups.getComponents();
-    const wires = groups.getWires();
-
-    const graph: Graph<number, number> = CreateGraph(groups);
-
-    // Copy components
-    const copies: DigitalComponent[] = [];
-    for (const obj of objs)
-        copies.push(obj.copy());
-
-
-    // Copy connections
-    const wireCopies: Wire[] = [];
-    for (const i of graph.getNodes()) {
-        const c1 = copies[i];
-        const connections = graph.getConnections(i);
-
-        for (const connection of connections) {
-            const j = connection.getTarget();
-            const c2 = copies[j];
-
-            const w = wires[connection.getWeight()];
-
-            // Find indices of which ports the wire should be connected to
-            const i1 = objs[i].getOutputPorts().indexOf(w.getInput());
-            const i2 = objs[j].getInputPorts().indexOf(w.getOutput());
-
-            const wire = Connect(c1, i1, c2, i2);
-            w.copyInto(wire); // Copy properties
-            wireCopies.push(wire);
-        }
-    }
-
-    const group = copies as IOObject[];
-    return new DigitalObjectSet(group.concat(wireCopies));
 }
 
 /**

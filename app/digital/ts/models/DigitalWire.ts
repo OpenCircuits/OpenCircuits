@@ -51,9 +51,10 @@ export class DigitalWire extends Wire {
         return this.isOn;
     }
 
-    public copyInto(w: DigitalWire): void {
-        w.isOn = this.isOn;
-        super.copyInto(w);
+    public copy(p1?: OutputPort, p2?: InputPort): DigitalWire {
+        const copy = <DigitalWire>super.copy();
+        copy.isOn = this.isOn;
+        return copy;
     }
 
     public save(node: XMLNode): void {

@@ -4,7 +4,7 @@ import {MainDesignerController} from "./MainDesignerController";
 import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
 import {RemoteController} from "./RemoteController";
 import {CircuitMetadata,
-        CircuitMetadataBuilder} from "digital/models/CircuitMetadata";
+        CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 export class SideNavController {
     private tab = $("#header-sidenav-open-tab");

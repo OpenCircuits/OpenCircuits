@@ -116,9 +116,12 @@ export abstract class Wire extends CullableObject {
                 .getTopRight().add(WIRE_THICKNESS/2);
     }
 
-    public copyInto(w: Wire): void {
-        w.straight = this.straight;
-        this.onTransformChange();
+    public copy(p1?: Port, p2?: Port): Wire {
+        const copy = <Wire>super.copy();
+        copy.p1 = p1;
+        copy.p2 = p2;
+        copy.straight = this.straight;
+        return copy;
     }
 
     public save(node: XMLNode): void {

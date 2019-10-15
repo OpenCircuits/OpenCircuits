@@ -1,8 +1,10 @@
+import {Graph} from "math/Graph";
+
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
+import {Wire} from "core/models/Wire";
+import {Port} from "core/models/ports/Port";
 
-import {Port} from "../models/ports/Port";
-import {Wire} from "../models/Wire";
 /**
  * Helper class to hold different groups of components.
  *
@@ -16,21 +18,25 @@ import {Wire} from "../models/Wire";
  *  A helper method to get all the components including them
  *  is included as getAllComponents()
  */
-export abstract class IOObjectSet {
-    protected wires: Wire[];
+export class IOObjectSet {
+    protected components: Set<Component>;
+    protected wires: Set<Wire>;
 
     public constructor(set: IOObject[]) {
-        this.wires = set.filter(o => o instanceof Wire) as Wire[];
+        this.components = new Set<Component>(set.filter(o => o instanceof Component) as Component[]);
+        this.wires      = new Set<Wire>     (set.filter(o => o instanceof Wire)      as Wire[]);
     }
 
-    public abstract getComponents(): Component[];
+    public getComponents(): Component[] {
+        return Array.from(this.components);
+    }
 
     public getWires(): Wire[] {
-        return this.wires.slice(); // Shallow copy
+        return Array.from(this.wires);
     }
 
     public toList(): IOObject[] {
-        return (<IOObject[]>this.getComponents()).concat(this.wires);
+        return (<IOObject[]>this.getComponents()).concat(this.getWires());
     }
 }
 // export class AnalogObjectSet extends IOObjectSet<AnalogComponent> {
@@ -60,4 +66,114 @@ export abstract class IOObjectSet {
  */
 export function GetAllPorts(objs: Component[]): Port[] {
     return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
+}
+
+/**
+ * Creates a Separated group from the given list of objects
+ *  and also retrieves all IMMEDIATELY connected wires that
+ *  connect to other objects in `objects`
+ *
+ * Note that this method assumes all the components you want in the group are
+ *  provided in `objects` INCLUDING WirePorts, this will not trace down the paths
+ *  to get all wires ports. Use GatherGroup(objects) to do this.
+ *
+ * @param  objects The list of objects to separate
+ * @return         A SeparatedComponentCollection of the objects
+ */
+export function CreateGroup(objects: IOObject[]): IOObjectSet {
+    const group = new IOObjectSet(objects);
+
+    const objs = group.getComponents();
+    const wires = group.getWires()
+            // Add all connections from every object
+            .concat(objs.flatMap((o) => o.getConnections()))
+            // Filter out any connection that isn't connected
+            //  to two objects in the objects list
+            .filter((w) => objs.includes(w.getP1Component()) &&
+                           objs.includes(w.getP2Component()));
+
+    return new IOObjectSet((<IOObject[]>objs).concat(wires));
+}
+
+/**
+ * Helper function to create a directed graph from a given
+ *  collection of components
+ *
+ * The Graph stores Nodes as indices from the
+ * groups.getAllComponents() array
+ *
+ * The edge weights are stored as pairs representing
+ * the input index (i1) and the output index (i2) respectively
+ *
+ * @param  groups The SeparatedComponentCollection of components
+ * @return        A graph corresponding to the given circuit
+ */
+export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
+    const graph = new Graph<number, number>();
+
+    const objs = groups.getComponents();
+    const wires = groups.getWires();
+    const map = new Map<Component, number>();
+
+    // Create nodes and map
+    for (let i = 0; i < objs.length; i++) {
+        graph.createNode(i);
+        map.set(objs[i], i);
+    }
+
+    // Create edges
+    for (let j = 0; j < wires.length; j++) {
+        const wire = wires[j];
+        const c1 = map.get(wire.getP1Component());
+        const c2 = map.get(wire.getP2Component());
+        graph.createEdge(c1, c2, j);
+    }
+
+    return graph;
+}
+
+/**
+ * Copies a group of objects including connections that are
+ *  present within the objects
+ *
+ * @param  objects [description]
+ * @return         [description]
+ */
+export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
+    // Separate out the given objects
+    const groups = (objects instanceof IOObjectSet) ? (objects) : (CreateGroup(objects));
+    const objs = groups.getComponents();
+    const wires = groups.getWires();
+
+    const graph: Graph<number, number> = CreateGraph(groups);
+
+    // Copy components
+    const copies: Component[] = [];
+    for (const obj of objs)
+        copies.push(obj.copy());
+
+
+    // Copy connections
+    const wireCopies: Wire[] = [];
+    for (const i of graph.getNodes()) {
+        const c1 = copies[i];
+        const connections = graph.getConnections(i);
+
+        for (const connection of connections) {
+            const j = connection.getTarget();
+            const c2 = copies[j];
+
+            const w = wires[connection.getWeight()];
+
+            // Find indices of which ports the wire should be connected to
+            const i1 = objs[i].getPorts().indexOf(w.getP1());
+            const i2 = objs[i].getPorts().indexOf(w.getP2());
+
+            const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
+            wireCopies.push(wire);
+        }
+    }
+
+    const group = copies as IOObject[];
+    return new IOObjectSet(group.concat(wireCopies));
 }

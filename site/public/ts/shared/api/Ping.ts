@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {AuthState} from "../auth/AuthState";
+import {AuthState} from "../../digital/auth/AuthState";
 
 export function Ping(auth: AuthState): Promise<string> {
     return new Promise((resolve, reject) => {
