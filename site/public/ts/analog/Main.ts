@@ -16,24 +16,16 @@ window.onbeforeunload = (e) => {
     }
 };
 
-function Init(): void {
+async function Init(): Promise<void> {
+    const main = new AnalogCircuitController();
+
     LoadingScreen.Show();
 
-    const promises = [
-        new Promise((resolve, _) => {
-            Images.Load(() => {
-                resolve(1);
-            });
-        })
-    ];
+    await Images.Load();
+    await main.init();
+    main.render();
 
-    Promise.all(promises).then(async () => {
-        const main = new AnalogCircuitController();
-        await main.init();
-        main.render();
-        // main.render();
-        LoadingScreen.Hide();
-    });
+    LoadingScreen.Hide();
 }
 
 Init();

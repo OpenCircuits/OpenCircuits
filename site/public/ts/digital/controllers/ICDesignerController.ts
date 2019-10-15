@@ -66,15 +66,9 @@ export class ICDesignerController extends DesignerController {
         this.view.setConfirmButtonListener(() => this.confirm());
         this.view.setCancelButtonListener(()  => this.cancel());
 
-        // Disable some tools
-        this.toolManager.disableTool(TranslateTool);
-        this.toolManager.disableTool(RotateTool);
-        this.toolManager.disableTool(PlaceComponentTool);
-        this.toolManager.disableTool(WiringTool);
-
-        // Disable other functionality
+        // Disable some functionality
         this.toolManager.disableActions();
-        this.toolManager.getSelectionTool().disableSelections();
+        this.getSelectionTool().disableSelections();
 
         this.hide();
     }

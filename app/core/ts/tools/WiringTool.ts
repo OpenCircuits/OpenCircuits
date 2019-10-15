@@ -1,9 +1,7 @@
-import {IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
+import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
 import {Tool} from "core/tools/Tool";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Port} from "core/models/ports/Port";
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
 import {Wire} from "core/models/Wire";
 
 import {CircleContains} from "math/MathUtils";
@@ -14,8 +12,6 @@ import {SelectionTool} from "core/tools/SelectionTool";
 import {Input} from "core/utils/Input";
 
 import {Action} from "core/actions/Action";
-import {ConnectionAction} from "../actions/addition/ConnectionAction";
-import {DigitalWire} from "digital/models/DigitalWire";
 import {Component} from "core/models/Component";
 import {Vector} from "Vector";
 
@@ -46,10 +42,12 @@ export class WiringTool extends Tool {
     public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
-        if (!(event == "mousedown" || event == "onclick"))
+
+        // Activate if dragged from port or click on the port
+        if (!((event == "mousedrag" && input.getTouchCount() == 1) || event == "onclick"))
             return false;
 
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMouseDownPos());
         const objects = this.designer.getObjects().reverse();
 
         // Make sure a port is being clicked
@@ -60,7 +58,7 @@ export class WiringTool extends Tool {
         if (!(currentTool instanceof SelectionTool))
             throw new Error("Tool not selection tool!");
 
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMouseDownPos());
         const objects = this.designer.getObjects().reverse();
 
         this.port = this.findPort(objects, worldMousePos);
@@ -70,6 +68,7 @@ export class WiringTool extends Tool {
     }
 
     public shouldDeactivate(event: string): boolean {
+        console.log(this.clicked, event);
         if (this.clicked  && event == "onclick")
             return true;
         if (!this.clicked && event == "mouseup")

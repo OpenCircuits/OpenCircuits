@@ -8,6 +8,7 @@ import {CircleContains,
 
 import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
+import {DefaultTool} from "./DefaultTool";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
@@ -31,7 +32,7 @@ import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
-export class SelectionTool extends Tool {
+export class SelectionTool extends DefaultTool {
 
     private designer: CircuitDesigner;
     private camera: Camera;
@@ -118,18 +119,18 @@ export class SelectionTool extends Tool {
 
 
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): Action {
         if (event == "mouseup")
             this.onMouseUp(input, button);
         if (event == "onclick" && !(currentTool instanceof PlaceComponentTool))
             this.onClick(input, button);
-        return false;
+        return undefined;
     }
 
-    public deactivate(): boolean {
+    public deactivate(): Action {
         this.selectionBox.deactivate();
 
-        return false;
+        return undefined;
     }
 
 

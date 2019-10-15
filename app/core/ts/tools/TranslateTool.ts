@@ -2,8 +2,6 @@ import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
         SPACEBAR_KEY} from "digital/utils/Constants";
 
-import {CopyGroup} from "digital/utils/ComponentUtils";
-
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
@@ -11,7 +9,6 @@ import {Tool} from "core/tools/Tool";
 
 import {SelectionTool} from "core/tools/SelectionTool";
 
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
 
 import {Action} from "core/actions/Action";
@@ -21,7 +18,6 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
-    protected designer: CircuitDesigner;
     protected camera: Camera;
 
     protected pressedComponent: Component;
@@ -30,10 +26,9 @@ export class TranslateTool extends Tool {
 
     private action: GroupAction;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(camera: Camera) {
         super();
 
-        this.designer = designer;
         this.camera = camera;
     }
 
@@ -116,8 +111,9 @@ export class TranslateTool extends Tool {
     public onKeyUp(_: Input, key: number): boolean {
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
+            const designer = this.components[0].getDesigner();
             // const group = CopyGroup(this.components);
-            this.action.add(new CopyGroupAction(this.designer, this.components).execute());
+            this.action.add(new CopyGroupAction(designer, this.components).execute());
             // this.designer.addGroup(group);
 
             return true;

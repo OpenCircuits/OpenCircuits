@@ -54,6 +54,11 @@ export class ToolManager implements MouseListener, KeyboardListener {
             return didSomething;
         }
 
+        // Default tools are special as they can continuously add actions
+        //   (since other tools only add actions when activating/deactivating)
+        // and are also the only tool that can transition to another tool
+        //   (meaning that a regular tool cannot immeadiately switch to another regular tool)
+
         // Add action from default tool
         this.addAction(this.defaultTool.getAction());
 
@@ -73,6 +78,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return didSomething;
     }
 
+    public addTools(...tools: Tool[]): void {
+        this.tools = this.tools.concat(tools);
+    }
+
     public addAction(action?: Action): void {
         // Check if action exists, then add it to stack
         if (action)
@@ -80,20 +89,32 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     public setDisabled(toolType: Function, disabled: boolean): void {
-        const tool = this.tools.find((t) => t instanceof toolType);
+        const tool = this.getTool(toolType);
         if (tool)
             tool.setDisabled(disabled);
     }
 
+    public disableActions(disabled: boolean = true): void {
+        this.actionHelper.setDisabled(disabled);
+    }
+
+    public getTool(toolType: Function): Tool {
+        return this.tools.find((t) => t instanceof toolType);
+    }
+
+    public getCurrentTool(): Tool {
+        return this.currentTool;
+    }
+
+    public getDefaultTool(): DefaultTool {
+        return this.defaultTool;
+    }
+
     public hasTool(toolType: Function): boolean {
-        const tool = this.tools.find((t) => t instanceof toolType);
+        const tool = this.getTool(toolType);
         if (tool)
             return !tool.isDisabled();
         return false;
-    }
-
-    public disableActions(disabled: boolean = true): void {
-        this.actionHelper.setDisabled(disabled);
     }
 
     public onMouseDown(input: Input, button: number): boolean {

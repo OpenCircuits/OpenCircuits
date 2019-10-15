@@ -1,7 +1,6 @@
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
-import {SelectionPopupController} from "../../shared/controllers/SelectionPopupController";
 
 import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
@@ -22,6 +21,7 @@ import {Importer} from "core/utils/io/Importer";
 import {Exporter} from "core/utils/io/Exporter";
 import {LoginController} from "../../shared/controllers/LoginController";
 import {SideNavController} from "../../shared/controllers/SideNavController";
+import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -37,6 +37,8 @@ export class DigitalCircuitController extends MainDesignerController {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
               CreateComponentFromXML);
+
+        this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()));
 
         this.icController = new ICDesignerController(this);
 

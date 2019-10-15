@@ -16,26 +16,16 @@ window.onbeforeunload = (e) => {
     }
 };
 
-// let main: DigitalCircuitController;
+async function Init(): Promise<void> {
+    const main = new DigitalCircuitController();
 
-function Init(): void {
     LoadingScreen.Show();
 
-    const promises = [
-        new Promise((resolve, _) => {
-            Images.Load(() => {
-                resolve(1);
-            });
-        })
-    ];
+    await Images.Load();
+    await main.init();
+    main.render();
 
-    Promise.all(promises).then(async () => {
-        const main = new DigitalCircuitController();
-        await main.init();
-        main.render();
-        // main.render();
-        LoadingScreen.Hide();
-    });
+    LoadingScreen.Hide();
 }
 
 Init();

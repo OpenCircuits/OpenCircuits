@@ -1,4 +1,7 @@
+import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
+
 import {Camera} from "math/Camera";
+import {CircleContains} from "math/MathUtils";
 
 import {Input} from "core/utils/Input";
 import {Tool} from "core/tools/Tool";
@@ -10,8 +13,6 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 import {DigitalWire} from "digital/models/DigitalWire";
-import {CircleContains} from "math/MathUtils";
-import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
 
 export class DigitalWiringTool extends WiringTool {
     protected designer: DigitalCircuitDesigner;
@@ -23,10 +24,10 @@ export class DigitalWiringTool extends WiringTool {
     }
 
     public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {
-        if (!this.shouldActivate(currentTool, event, input))
+        if (!super.shouldActivate(currentTool, event, input))
             return false;
 
-        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+        const worldMousePos = this.camera.getWorldPos(input.getMouseDownPos());
         const objects = this.designer.getObjects().reverse();
 
         const p = this.findPort(objects, worldMousePos);
@@ -34,7 +35,7 @@ export class DigitalWiringTool extends WiringTool {
         // Input ports can only have one input
         // so if one was clicked, then don't
         // start a new wire
-        return (p instanceof InputPort && p.getInput() != null);
+        return !(p instanceof InputPort && p.getInput() != null);
     }
 
     public activate(currentTool: Tool, event: string, input: Input): Action {
@@ -42,14 +43,14 @@ export class DigitalWiringTool extends WiringTool {
 
         // Create wire
         if (this.port instanceof InputPort) {
-            this.wire = new DigitalWire(null, p);
-            this.wire.getShape().setP1(p.getWorldTargetPos());
-            this.wire.getShape().setC1(p.getWorldTargetPos());
+            this.wire = new DigitalWire(null, this.port);
+            this.wire.getShape().setP1(this.port.getWorldTargetPos());
+            this.wire.getShape().setC1(this.port.getWorldTargetPos());
         }
         if (this.port instanceof OutputPort) {
-            this.wire = new DigitalWire(p, null);
-            this.wire.getShape().setP2(p.getWorldTargetPos());
-            this.wire.getShape().setC2(p.getWorldTargetPos());
+            this.wire = new DigitalWire(this.port, null);
+            this.wire.getShape().setP2(this.port.getWorldTargetPos());
+            this.wire.getShape().setC2(this.port.getWorldTargetPos());
         }
 
         return undefined;
@@ -75,16 +76,16 @@ export class DigitalWiringTool extends WiringTool {
     public onMouseUp(input: Input, _: number): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        const ports = this.designer.getObjects()
+        const ports = this.designer.getObjects().reverse()
                 // Map objects to ports
                 .flatMap((o) => o.getPorts())
                 // Filter by the opposite of whatever this.port is
                 .filter((p) => (this.port instanceof InputPort ? p instanceof OutputPort : p instanceof InputPort))
                 // Filter out InputPort's that already have connections
-                .filter((p) => (p instanceof InputPort ? p.getInput() != null : true));
+                .filter((p) => (p instanceof InputPort ? p.getInput() == null : true));
 
-        // Find first port that's being clicked on
-        const port = ports.find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos));
+        // Find first port that's being clicked on that isn't this.port
+        const port = ports.find((p) => p != this.port && CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, worldMousePos));
 
         if (port) {
             // Create action
@@ -97,7 +98,10 @@ export class DigitalWiringTool extends WiringTool {
     }
 
     public deactivate(event: string, input: Input, button?: number): Action {
-        return this.action.execute();
+        const action = this.action;
+        // Reset action
+        this.action = undefined;
+        return (action ? action.execute() : undefined);
     }
 
 }

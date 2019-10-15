@@ -10,7 +10,6 @@ import {Action} from "core/actions/Action";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 export class PlaceComponentTool extends Tool {
-
     private designer: CircuitDesigner;
     private camera: Camera;
 
@@ -23,38 +22,35 @@ export class PlaceComponentTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(): boolean {
-        return false;
+    public shouldActivate(): boolean {
+        return this.component != undefined;
     }
 
-    public deactivate(event: string): boolean {
+    public activate(): Action {
+        return undefined;
+    }
+
+    public shouldDeactivate(event: string): boolean {
         return (event == "onclick");
     }
 
-    public setComponent(component: Component, instant: boolean = false): void {
+    public deactivate(): Action {
+        const action = new PlaceAction(this.designer, this.component);
+
+        this.component = undefined;
+
+        return action.execute();
+    }
+
+    public begin(component: Component): void {
         this.component = component;
-        if (instant) {
-            // Place the object immediately
-            this.designer.addObject(component);
-            return;
-        }
     }
 
     public onMouseMove(input: Input): boolean {
+        // Update position of component
         const pos = this.camera.getWorldPos(input.getMousePos());
         this.component.setPos(pos);
         return true;
-    }
-
-    public onClick(): boolean {
-        // Place object
-        this.designer.addObject(this.component);
-
-        return true;
-    }
-
-    public getAction(): Action {
-        return new PlaceAction(this.designer, this.component);
     }
 
     public getComponent(): Component {

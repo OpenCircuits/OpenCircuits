@@ -11,11 +11,11 @@ import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 import {CircuitView} from "site/shared/views/CircuitView";
 
 import {Tool} from "core/tools/Tool";
-import {SelectionTool} from "core/tools/SelectionTool";
 import {ToolManager} from "core/tools/ToolManager";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {PanTool} from "core/tools/PanTool";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models/Component";
 
 export abstract class DesignerController {
     private active: boolean;
@@ -26,6 +26,7 @@ export abstract class DesignerController {
     protected view: CircuitView;
 
     protected toolManager: ToolManager;
+    private selectionTool: SelectionTool;
 
     private renderQueue: RenderQueue;
 
@@ -36,7 +37,11 @@ export abstract class DesignerController {
         this.view = view;
 
         // utils
-        this.toolManager = new ToolManager(this.view.getCamera(), this.designer);
+        this.selectionTool = new SelectionTool(this.designer, this.getCamera());
+        this.toolManager = new ToolManager(this.selectionTool);
+
+        this.toolManager.addTools(new PanTool(this.getCamera()));
+
         this.renderQueue = new RenderQueue(() =>
             this.view.render(this.designer,
                              this.getSelections(),
@@ -69,12 +74,8 @@ export abstract class DesignerController {
         this.toolManager.addAction(action);
     }
 
-    public placeComponent(comp: Component, instant: boolean = false): void {
-        this.toolManager.placeComponent(comp, instant);
-    }
-
     public clearSelections(): void {
-        this.addAction(CreateDeselectAllAction(this.toolManager.getSelectionTool()).execute());
+        this.addAction(CreateDeselectAllAction(this.getSelectionTool()).execute());
     }
 
     public render(): void {
@@ -146,7 +147,7 @@ export abstract class DesignerController {
     }
 
     public getSelections(): Selectable[] {
-        return this.toolManager.getSelectionTool().getSelections();
+        return this.selectionTool.getSelections();
     }
 
     public getCurrentTool(): Tool {
@@ -154,7 +155,7 @@ export abstract class DesignerController {
     }
 
     public getSelectionTool(): SelectionTool {
-        return this.toolManager.getSelectionTool();
+        return this.selectionTool;
     }
 
     public getCanvas(): HTMLCanvasElement {

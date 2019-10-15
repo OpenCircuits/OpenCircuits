@@ -17,8 +17,8 @@ import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
 export class SplitWireTool extends TranslateTool {
     private splitAction: GroupAction;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
-        super(designer, camera);
+    public constructor(camera: Camera) {
+        super(camera);
     }
 
     public shouldActivate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
