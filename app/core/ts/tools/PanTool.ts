@@ -3,11 +3,11 @@ import {MIDDLE_MOUSE_BUTTON,
 import {Camera} from "math/Camera";
 import {Input} from "core/utils/Input";
 import {Tool} from "core/tools/Tool";
+import {Action} from "core/actions/Action";
 
 import {SelectionTool} from "./SelectionTool";
 
 export class PanTool extends Tool {
-
     private camera: Camera;
 
     private isDragging: boolean;
@@ -18,29 +18,37 @@ export class PanTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
-
-        this.isDragging = false;
-
         if (event == "keydown" && button === OPTION_KEY)
             return true;
-
         if (event == "mousedrag" && (button === MIDDLE_MOUSE_BUTTON ||
-                                     input.getTouchCount() == 2)) {
-            this.onMouseDrag(input); // Explicitly drag
+                                     input.getTouchCount() == 2))
             return true;
-        }
-
         return false;
     }
 
-    public deactivate(event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): Action {
+        this.isDragging = false;
+
+        if (event == "mousedrag")
+            this.onMouseDrag(input); // Explicitly call drag event
+
+        return undefined;
+    }
+
+    public shouldDeactivate(event: string, input: Input, button?: number): boolean {
         // Deactivate if stopped dragging by releasing mouse
         //  or if no dragging happened and OPTION_KEY was released
         return (event == "mouseup" ||
                !this.isDragging && event == "keyup" && button === OPTION_KEY);
+    }
+
+    public deactivate(): Action {
+        this.isDragging = false;
+
+        return undefined;
     }
 
     public onMouseDrag(input: Input): boolean {

@@ -55,7 +55,7 @@ export abstract class Wire extends CullableObject {
         }
     }
 
-    public abstract split(): Node & Component;
+    public abstract split(): Node;
 
     // public setInput(c: OutputPort): void {
     //     if (c == this.input)

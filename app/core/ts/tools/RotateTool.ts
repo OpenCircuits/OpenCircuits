@@ -10,14 +10,15 @@ import {SelectionTool} from "core/tools/SelectionTool";
 
 import {Component} from "core/models/Component";
 
+import {Action} from "core/actions/Action";
 import {RotateAction} from "core/actions/transform/RotateAction";
 
 export class RotateTool extends Tool {
     private camera: Camera;
 
-    private components: Array<Component>;
-    private initialAngles: Array<number>;
-    private currentAngles: Array<number>;
+    private components: Component[];
+    private initialAngles: number[];
+    private currentAngles: number[];
 
     private midpoint: Vector;
 
@@ -30,49 +31,58 @@ export class RotateTool extends Tool {
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input): boolean {
+    public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
-        if (!(event == "mousedown"))
+        if (!(event == "mousedown" && input.getTouchCount() == 1))
             return false;
-        if (!(input.getTouchCount() == 1))
-            return false;
-
         const selections = currentTool.getSelections();
         if (selections.length == 0)
             return false;
 
-        // Make sure everything is a component
-        if (!selections.every((e) => e instanceof Component))
+        // Make sure selections are all components
+        if (selections.some((s) => !(s instanceof Component)))
             return false;
 
+        // Make sure the mouse is on the rotation circle
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-
-        // Check if mouse clicked on rotation circle
-        const midpoint = currentTool.calculateMidpoint();
-        const d = worldMousePos.sub(midpoint).len2();
-        if (d <= ROTATION_CIRCLE_R2 && d >= ROTATION_CIRCLE_R1) {
-            this.components = <Array<Component>>selections;
-
-            // Copy initial angles
-            this.initialAngles = [];
-            this.currentAngles = [];
-            for (const obj of this.components) {
-                this.initialAngles.push(obj.getAngle());
-                this.currentAngles.push(obj.getAngle());
-            }
-
-            this.midpoint = midpoint;
-            this.startAngle = worldMousePos.sub(midpoint).angle();
-            this.prevAngle = this.startAngle;
-
-            return true;
-        }
-        return false;
+        const d = worldMousePos.sub(currentTool.calculateMidpoint()).len2();
+        return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
 
-    public deactivate(event: string, _: Input): boolean {
+    public activate(currentTool: Tool, event: string, input: Input): Action {
+        if (!(currentTool instanceof SelectionTool))
+            throw new Error("Tool not selection tool!");
+
+        const selections = currentTool.getSelections() as Component[];
+        const midpoint = currentTool.calculateMidpoint();
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        this.components = selections;
+
+        // Copy initial angles
+        this.initialAngles = [];
+        this.currentAngles = [];
+        for (const obj of this.components) {
+            this.initialAngles.push(obj.getAngle());
+            this.currentAngles.push(obj.getAngle());
+        }
+
+        this.midpoint = midpoint;
+        this.startAngle = worldMousePos.sub(midpoint).angle();
+        this.prevAngle = this.startAngle;
+
+        return undefined;
+    }
+
+    public shouldDeactivate(event: string, _: Input): boolean {
         return (event == "mouseup");
+    }
+
+    public deactivate(): Action {
+        const finalAngles = this.components.map((c) => c.getAngle());
+
+        return new RotateAction(this.components, this.midpoint, this.initialAngles, finalAngles);
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
@@ -83,36 +93,20 @@ export class RotateTool extends Tool {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
         const dAngle = worldMousePos.sub(this.midpoint).angle() - this.prevAngle;
 
-        for (let i = 0; i < this.components.length; i++) {
-            const obj = this.components[i];
+        // Calculate actual new angle
+        this.currentAngles = this.currentAngles.map(a => a + dAngle);
 
-            // Calculate new angle and store it before snapping
-            let newAngle = this.currentAngles[i] + dAngle;
+        // Get the regular new angle, or snapped angle if shift is held
+        const newAngles = input.isShiftKeyDown() ?
+                this.currentAngles.map((a) => Math.floor(a/(Math.PI/4))*Math.PI/4) :
+                this.currentAngles;
 
-            // Store the un-snapped angle so that it snaps after
-            //  a certain threshold
-            this.currentAngles[i] = newAngle;
+        // Set rotation of each component
+        this.components.forEach((c, i) => c.setRotationAbout(newAngles[i], this.midpoint));
 
-            // Snap to grid if shift is held
-            if (input.isShiftKeyDown())
-                newAngle = Math.floor(newAngle/(Math.PI/4))*Math.PI/4;
-
-            // Set rotation
-            obj.setRotationAbout(newAngle, this.midpoint);
-        }
         this.prevAngle += dAngle;
 
         return true;
-    }
-
-    public getAction(): RotateAction {
-        // Copy final positions
-        const finalAngles = [];
-        for (const obj of this.components)
-            finalAngles.push(obj.getAngle());
-
-        // Return action
-        return new RotateAction(this.components, this.midpoint, this.initialAngles, finalAngles);
     }
 
     public getMidpoint(): Vector {

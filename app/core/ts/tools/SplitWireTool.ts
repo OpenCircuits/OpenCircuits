@@ -21,17 +21,22 @@ export class SplitWireTool extends TranslateTool {
         super(designer, camera);
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
-        if (!(event == "mousedrag"))
-            return false;
-        if (!(input.getTouchCount() == 1))
+        if (!(event == "mousedrag" && input.getTouchCount() == 1))
             return false;
 
-        const wire = currentTool.getCurrentlyPressedObj();
-        if (!(wire instanceof Wire))
-            return false;
+        // Make sure we're pressing a wire
+        const currentPressedObj = currentTool.getCurrentlyPressedObj();
+        return (currentPressedObj instanceof Wire);
+    }
+
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): Action {
+        if (!(currentTool instanceof SelectionTool))
+            throw new Error("Tool not selection tool!");
+
+        const wire = currentTool.getCurrentlyPressedObj() as Wire;
 
         // Create new wire port
         const wirePort = wire.split();
@@ -40,13 +45,19 @@ export class SplitWireTool extends TranslateTool {
         // Create action
         this.splitAction = new GroupAction();
 
-        // Set wireport as selections and being pressed
+        // Set wireport as selection and being pressed
         this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
         this.splitAction.add(new SelectAction(currentTool, wirePort).execute());
         this.splitAction.add(CreateSplitWireAction(wire, wirePort).execute());
         currentTool.setCurrentlyPressedObj(wirePort);
 
-        return super.activate(currentTool, event, input, button);
+        super.activate(currentTool, event, input, button);
+
+        return this.splitAction;
+    }
+
+    public deactivate(): Action {
+        return new GroupAction([this.splitAction, super.deactivate()]);
     }
 
     // Override TranslateTool onKeyUp so that we can't duplicate the WirePorts
@@ -54,10 +65,4 @@ export class SplitWireTool extends TranslateTool {
         return false;
     }
 
-    public getAction(): Action {
-        const group = new GroupAction();
-        group.add(this.splitAction);
-        group.add(super.getAction());
-        return group;
-    }
 }
