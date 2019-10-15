@@ -2,7 +2,7 @@ import "jest";
 
 import {SHIFT_KEY,
         DELETE_KEY,
-        BACKSPACE_KEY} from "digital/utils/Constants";
+        BACKSPACE_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 

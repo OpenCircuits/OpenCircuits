@@ -2,7 +2,7 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "digital/utils/Constants";
+        SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 

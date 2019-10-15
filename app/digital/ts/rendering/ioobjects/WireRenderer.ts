@@ -1,7 +1,7 @@
 import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
-        WIRE_THICKNESS} from "digital/utils/Constants";
+        WIRE_THICKNESS} from "core/utils/Constants";
 import {Renderer} from "../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
 import {DigitalWire} from "digital/models/DigitalWire";

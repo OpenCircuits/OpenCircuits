@@ -1,7 +1,7 @@
 import "jest";
 
 import {OPTION_KEY,
-        MIDDLE_MOUSE_BUTTON} from "digital/utils/Constants";
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";

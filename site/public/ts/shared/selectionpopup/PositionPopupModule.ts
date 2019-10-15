@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {GRID_SIZE} from "digital/utils/Constants";
+import {GRID_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Component} from "core/models/Component";

@@ -2,6 +2,7 @@ import {Graph} from "math/Graph";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
+import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
@@ -93,6 +94,77 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
                            objs.includes(w.getP2Component()));
 
     return new IOObjectSet((<IOObject[]>objs).concat(wires));
+}
+
+
+/**
+ * Get's all the wires/WirePorts going out from this wire
+ *  Note: this path is UN-ORDERED!
+ *
+ * @param  w The wire to start from
+ * @return   The array of wires/WirePorts in this path (incuding w)
+ */
+export function GetPath(w: Wire): Array<Wire | Node> {
+    const path: Array<Wire | Node> = [];
+
+    // Breadth First Search
+    const queue = new Array<Wire | Node>(w);
+    const visited = new Set<Wire | Node>();
+
+    while(queue.length > 0) {
+        const q = queue.shift();
+
+        visited.add(q);
+        path.push(q);
+        if (q instanceof Wire) {
+            const p1 = q.getP1Component();
+            const p2 = q.getP2Component();
+            if (isNode(p1) && !visited.has(p1))
+                queue.push(p1);
+            if (isNode(p2) && !visited.has(p2))
+                queue.push(p2);
+        } else {
+            // Push all of the Node's connecting wires, filted by if they've been visited
+            queue.push(...q.getConnections().filter((w) => !visited.has(w)));
+        }
+    }
+
+    return path;
+}
+
+/**
+ * Gathers all wires + wireports in the path from the inputs/outputs
+ *  of the given component.
+ *
+ * @param  obj  The component
+ * @return      An array of connections + WirePorts
+ */
+export function GetAllPaths(obj: Component): Array<Wire | Node> {
+    // Get all distinct connections
+    const wires = [...new Set(obj.getConnections())];
+
+    // Get all distinct paths
+    return [...new Set(wires.flatMap((w) => GetPath(w)))];
+}
+
+/**
+ * Creates a Separated group from the given list of objects.
+ *  It also retrieves all "paths" going out from each object.
+ *
+ * @param  objects The list of objects
+ * @return         A SeparatedComponentCollection of the objects
+ */
+export function GatherGroup(objects: IOObject[]): IOObjectSet {
+    const group = new IOObjectSet(objects);
+
+    // Gather all connecting paths
+    const wires = group.getWires();
+    const components = group.getComponents();
+
+    const paths = [...new Set(wires.flatMap((w) => GetPath(w)).concat(
+                              components.flatMap((c) => GetAllPaths(c))))];
+
+    return new IOObjectSet((components as IOObject[]).concat(wires, paths));
 }
 
 /**

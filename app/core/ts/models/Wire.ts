@@ -1,5 +1,5 @@
 import {DEFAULT_SIZE,
-        WIRE_THICKNESS} from "digital/utils/Constants";
+        WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";

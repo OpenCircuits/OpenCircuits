@@ -1,6 +1,6 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "digital/utils/Constants";
+import {SPACEBAR_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 

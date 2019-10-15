@@ -1,15 +1,16 @@
-import {IO_PORT_RADIUS} from "digital/utils/Constants";
+import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
+
 import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent} from "analog/models/AnalogComponent";
 import {Node} from "core/models/Node";
-import {AnalogPort} from "../ports/AnalogPort";
+import {AnalogComponent} from "analog/models/AnalogComponent";
+
+import {AnalogPort} from "analog/models/ports/AnalogPort";
 
 export class AnalogNode extends AnalogComponent implements Node {
-    discriminator: "NODE_INTERFACE";
 
     public constructor() {
         super(new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));

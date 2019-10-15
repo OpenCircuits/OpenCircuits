@@ -1,4 +1,4 @@
-import {GRID_SIZE} from "digital/utils/Constants";
+import {GRID_SIZE} from "core/utils/Constants";
 import {GRID_LINE_COLOR} from "./Styles";
 
 import {V} from "Vector";

@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY, A_KEY, X_KEY,
-        IO_PORT_RADIUS} from "digital/utils/Constants";
+        IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 import {CircleContains,
         BezierContains,} from "math/MathUtils";
@@ -12,7 +12,7 @@ import {DefaultTool} from "./DefaultTool";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {Node} from "core/models/Node";
+import {Node, isNode} from "core/models/Node";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -232,7 +232,7 @@ export class SelectionTool extends DefaultTool {
         }
         if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
-            const wirePorts = selections.filter((o) => o instanceof Node) as Node[];
+            const wirePorts = selections.filter((o) => isNode(o)) as Node[];
             if (selections.length != wirePorts.length)
                 return false;
             this.action.add(CreateDeselectAllAction(this).execute());

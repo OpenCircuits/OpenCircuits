@@ -2,7 +2,7 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR} from "digital/utils/Constants";
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Renderer} from "../../../../../core/ts/rendering/Renderer";

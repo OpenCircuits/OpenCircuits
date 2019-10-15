@@ -1,4 +1,4 @@
-import {IO_PORT_LENGTH} from "digital/utils/Constants";
+import {IO_PORT_LENGTH} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";

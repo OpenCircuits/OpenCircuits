@@ -1,6 +1,6 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
-        LEFT_MOUSE_BUTTON} from "digital/utils/Constants";
+        LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";

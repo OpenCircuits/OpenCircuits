@@ -3,7 +3,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 import {CreateDeletePathAction} from "core/actions/deletion/DeletePathActionFactory";
 
-import {GetPath} from "digital/utils/ComponentUtils";
+import {GetPath} from "core/utils/ComponentUtils";
 
 import {Port} from "core/models/ports/Port";
 import {DigitalComponent} from "digital/models/DigitalComponent";

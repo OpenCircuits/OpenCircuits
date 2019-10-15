@@ -7,11 +7,13 @@ import {IOObject} from "core/models/IOObject";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 
+import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {Component} from "core/models/Component";
 
 /**
  * Helper class to hold different groups of components.
@@ -83,82 +85,6 @@ export class DigitalObjectSet extends IOObjectSet {
     public getComponents(): DigitalComponent[] {
         return this.inputs.concat(this.outputs, this.others);
     }
-}
-
-
-/**
- * Get's all the wires/WirePorts going out from this wire
- *  Note: this path is UN-ORDERED!
- *
- * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (incuding w)
- */
-export function GetPath(w: DigitalWire): Array<DigitalWire | DigitalNode> {
-    const path: Array<DigitalWire | DigitalNode> = [];
-
-    // Go to beginning of path
-    let i = w.getP1Component();
-    while (i instanceof DigitalNode) {
-        w = i.getInputs()[0];
-        i = w.getP1Component();
-    }
-
-    path.push(w);
-
-    // Outputs
-    let o = w.getP2Component();
-    while (o instanceof DigitalNode) {
-        // Push the wireport and next wire
-        path.push(o);
-        path.push(w = o.getOutputs()[0]);
-        o = w.getP2Component();
-    }
-
-    return path;
-}
-
-/**
- * Gathers all wires + wireports in the path from the inputs/outputs
- *  of the given component.
- *
- * @param  obj  The component
- * @return      An array of connections + WirePorts
- */
-export function GetAllPaths(obj: DigitalComponent): Array<DigitalWire | DigitalNode> {
-    let path: Array<DigitalWire | DigitalNode> = [];
-
-    // Get all paths
-    const wires = new Set(obj.getInputs().concat(obj.getOutputs()));
-    for (const wire of wires)
-        path = path.concat(GetPath(wire).filter((o) => !path.includes(o)));
-
-    return path;
-}
-
-/**
- * Creates a Separated group from the given list of objects.
- *  It also retrieves all "paths" going out from each object.
- *
- * @param  objects The list of objects
- * @return         A SeparatedComponentCollection of the objects
- */
-export function GatherGroup(objects: IOObject[]): DigitalObjectSet {
-    const group = new DigitalObjectSet(objects);
-
-    // Gather all connecting paths
-    let wires = group.getWires();
-    let components = group.getComponents();
-    for (const obj of objects) {
-        const path = (obj instanceof DigitalWire ? GetPath(obj) : GetAllPaths(obj as DigitalComponent));
-
-        // Add wires and wireports
-        wires      = wires.concat(
-                                path.filter((o) => o instanceof DigitalWire && !wires.includes(o))      as DigitalWire[]);
-        components = components.concat(
-                                path.filter((o) => o instanceof DigitalNode && !components.includes(o)) as DigitalNode[])
-    }
-
-    return new DigitalObjectSet((components as IOObject[]).concat(wires));
 }
 
 export function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {

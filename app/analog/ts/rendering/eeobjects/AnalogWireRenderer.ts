@@ -1,14 +1,14 @@
 import {DEFAULT_FILL_COLOR,
-        DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
-        WIRE_THICKNESS} from "digital/utils/Constants";
-import {Renderer} from "core/rendering/Renderer";
+        WIRE_THICKNESS} from "core/utils/Constants";
 import {Camera} from "math/Camera";
-import {AnalogWire} from "analog/models/AnalogWire";
 
-import {Curve} from "core/rendering/shapes/Curve";
-import {Line} from "core/rendering/shapes/Line";
-import {Style} from "core/rendering/Style";
+import {Renderer} from "core/rendering/Renderer";
+import {Curve}    from "core/rendering/shapes/Curve";
+import {Line}     from "core/rendering/shapes/Line";
+import {Style}    from "core/rendering/Style";
+
+import {AnalogWire} from "analog/models/AnalogWire";
 
 export const AnalogWireRenderer = (() => {
 return {

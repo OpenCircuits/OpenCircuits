@@ -1,6 +1,6 @@
 import {IO_PORT_LENGTH,
         IO_PORT_LINE_WIDTH,
-        DEFAULT_BORDER_WIDTH} from "digital/utils/Constants";
+        DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";

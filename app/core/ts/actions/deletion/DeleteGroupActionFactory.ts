@@ -2,7 +2,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {DeleteAction} from "core/actions/addition/PlaceAction";
 import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 
-import {GatherGroup} from "digital/utils/ComponentUtils";
+import {GatherGroup} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 

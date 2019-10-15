@@ -1,6 +1,6 @@
 import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY} from "digital/utils/Constants";
+        SPACEBAR_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";

@@ -4,7 +4,7 @@ import {AnalogComponent} from "analog/models/AnalogComponent";
 import {IOObject} from "core/models/IOObject";
 
 export class AnalogObjectSet extends IOObjectSet {
-    protected wires: AnalogWire[];
+    protected wires: Set<AnalogWire>;
 
     private sources: AnalogComponent[];
     private grounds: AnalogComponent[];
@@ -25,7 +25,7 @@ export class AnalogObjectSet extends IOObjectSet {
     }
 
     public getWires(): AnalogWire[] {
-        return this.wires.slice(); // Shallow copy
+        return Array.from(this.wires);
     }
 
     public getSources(): AnalogComponent[] {

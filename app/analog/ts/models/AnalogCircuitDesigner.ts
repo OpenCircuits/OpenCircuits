@@ -6,6 +6,7 @@ import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {AnalogComponent} from "./AnalogComponent";
 import {AnalogWire} from "./AnalogWire";
 import {AnalogPort} from "./ports/AnalogPort";
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 export class AnalogCircuitDesigner extends CircuitDesigner {
     private objects: AnalogComponent[];
@@ -90,18 +91,13 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         return new AnalogWire(p1, p2);
     }
 
-    public addGroup(group: AnalogObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a)
+    public addGroup(group: IOObjectSet): void {
+        for (const c of group.getComponents())
+            this.addObject(c as AnalogComponent);
 
-        for (const b of group.getWires()) {
-            this.wires.push(b);
-            b.setDesigner(this);
-        }
+        for (const w of group.getWires())
+            this.addWire(w as AnalogWire);
     }
-    // public abstract addObject(obj: Component): void;
-    // public abstract addWire(wire: Wire): void;
-    // public abstract addGroup(group: IOObjectSet): void;
 
     public addObjects(objects: AnalogComponent[]): void {
         for (const object of objects)

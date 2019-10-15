@@ -1,6 +1,6 @@
 import {DEBUG_CULLBOXES,
         DEBUG_SELECTION_BOUNDS,
-        IO_PORT_SELECT_RADIUS} from "digital/utils/Constants";
+        IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
 import {DEBUG_CULLBOX_STYLE,
         DEBUG_SELECTION_BOUNDS_STYLE} from "./Styles";
 

@@ -1,4 +1,4 @@
-import {Z_KEY, Y_KEY} from "digital/utils/Constants";
+import {Z_KEY, Y_KEY} from "core/utils/Constants";
 import {Input} from "core/utils/Input";
 import {Tool} from "core/tools/Tool";
 

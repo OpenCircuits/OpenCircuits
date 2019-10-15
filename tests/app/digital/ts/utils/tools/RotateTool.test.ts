@@ -1,6 +1,6 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";

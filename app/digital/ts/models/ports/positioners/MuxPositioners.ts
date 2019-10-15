@@ -1,5 +1,5 @@
 import {DEFAULT_SIZE,
-        IO_PORT_LENGTH} from "digital/utils/Constants";
+        IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
