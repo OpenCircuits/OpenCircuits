@@ -65,9 +65,3 @@ export class InputPort extends Port {
     }
 
 }
-
-export class InputPortSet extends PortSet<InputPort> {
-    public constructor(parent: DigitalComponent, count: ClampedValue, positioner?: Positioner<InputPort>) {
-        super(parent, InputPort, count, positioner);
-    }
-}

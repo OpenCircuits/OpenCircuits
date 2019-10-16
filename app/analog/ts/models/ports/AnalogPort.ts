@@ -44,9 +44,3 @@ export class AnalogPort extends Port {
     }
 
 }
-
-export class AnalogPortSet extends PortSet<AnalogPort> {
-    public constructor(parent: AnalogComponent, count: ClampedValue, positioner?: Positioner<AnalogPort>) {
-        super(parent, AnalogPort, count, positioner);
-    }
-}

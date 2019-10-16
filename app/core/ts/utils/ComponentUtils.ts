@@ -220,10 +220,7 @@ export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
     const graph: Graph<number, number> = CreateGraph(groups);
 
     // Copy components
-    const copies: Component[] = [];
-    for (const obj of objs)
-        copies.push(obj.copy());
-
+    const copies = objs.map((o) => o.copy());
 
     // Copy connections
     const wireCopies: Wire[] = [];
@@ -239,7 +236,7 @@ export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
 
             // Find indices of which ports the wire should be connected to
             const i1 = objs[i].getPorts().indexOf(w.getP1());
-            const i2 = objs[i].getPorts().indexOf(w.getP2());
+            const i2 = objs[j].getPorts().indexOf(w.getP2());
 
             const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
             wireCopies.push(wire);

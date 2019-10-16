@@ -5,12 +5,13 @@ import {ClampedValue} from "math/ClampedValue";
 import {Vector} from "Vector";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 import {AnalogWire} from "./AnalogWire";
-import {AnalogPort, AnalogPortSet} from "./ports/AnalogPort";
+import {AnalogPort} from "./ports/AnalogPort";
+import {PortSet} from "core/models/ports/PortSets";
 
 export abstract class AnalogComponent extends Component {
     protected designer: AnalogCircuitDesigner;
 
-    protected ports: AnalogPortSet;
+    protected ports: PortSet<AnalogPort>;
 
     public voltage: number;
     public current: number;
@@ -19,7 +20,7 @@ export abstract class AnalogComponent extends Component {
     protected constructor(portCount: ClampedValue, size: Vector, positioner?: Positioner<AnalogPort>) {
         super(size);
 
-        this.ports = new AnalogPortSet(this, portCount, positioner);
+        this.ports = new PortSet<AnalogPort>(this, portCount, positioner, AnalogPort);
     }
 
     public setDesigner(designer?: AnalogCircuitDesigner): void {

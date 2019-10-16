@@ -8,7 +8,7 @@ import {Positioner} from "./positioners/Positioner";
 export class PortSet<T extends Port> {
     private parent: Component;
 
-    // Keep track of old ports so that we can keep references intact 
+    // Keep track of old ports so that we can keep references intact
     //  for wire connections and such when we change the port count
     private oldPorts: T[];
     private currentPorts: T[];
@@ -19,8 +19,8 @@ export class PortSet<T extends Port> {
 
     private positioner: Positioner<T>;
 
-    public constructor(parent: Component, type: new(c: Component) => T,
-                       count: ClampedValue, positioner: Positioner<T> = new Positioner<T>()) {
+    public constructor(parent: Component, count: ClampedValue,
+                       positioner: Positioner<T> = new Positioner<T>(), type: new(c: Component) => T) {
         this.parent = parent;
         this.type = type;
         this.count = count;
@@ -86,7 +86,7 @@ export class PortSet<T extends Port> {
     }
 
     public copy(newParent: Component): PortSet<T> {
-        const copy = new PortSet<T>(newParent, this.type, this.count.copy());
+        const copy = new PortSet<T>(newParent, this.count.copy(), this.positioner, this.type);
 
         // Copy port positions
         copy.currentPorts.forEach((p, i) => {

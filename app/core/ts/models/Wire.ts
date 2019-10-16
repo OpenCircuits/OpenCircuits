@@ -120,6 +120,8 @@ export abstract class Wire extends CullableObject {
         const copy = <Wire>super.copy();
         copy.p1 = p1;
         copy.p2 = p2;
+        p1.connect(copy);
+        p2.connect(copy);
         copy.straight = this.straight;
         return copy;
     }
