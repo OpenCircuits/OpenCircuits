@@ -23,6 +23,8 @@ func main() {
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
 	sqlitePathConfig := flag.String("sqlitePath", "data/sql/sqlite", "The path to the sqlite working directory")
+	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
+	portConfig := flag.String("port", "8080", "Port to serve application")
 	flag.Parse()
 
 	// Register authentication method
@@ -64,5 +66,5 @@ func main() {
 	api.RegisterRoutes(router, authManager, exampleCsif, userCsif)
 
 	// TODO: add flags for this
-	router.Run("0.0.0.0:8080")
+	router.Run(*ipAddressConfig + ":" + *portConfig)
 }
