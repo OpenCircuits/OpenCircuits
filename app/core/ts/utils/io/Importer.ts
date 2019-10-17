@@ -38,16 +38,17 @@ export const Importer = (() => {
 
                 if (open) {
                     designer.reset();
-    
+
                     const reader = new FileReader();
                     reader.onload = () => {
                         resolve(this.LoadCircuit(designer, reader.result.toString()));
                     }
-                    reader.onabort = reader.onerror = reject;
-    
+                    reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
+
                     reader.readAsText(file);
+                } else {
+                    reject("User cancelled save");
                 }
-                reject();
             });
         }
     }
