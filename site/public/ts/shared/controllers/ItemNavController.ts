@@ -72,7 +72,10 @@ export class ItemNavController {
             child.onclick = () => onClick();
             // Pin all the data we need to make a new component onto the drag event
             // ! WARNING: this encoding will break if any components have a semicolon in their xmlId
-            child.ondragstart = (event) => event.dataTransfer.setData("custom/component", `${not};${xmlId}`);
+            child.ondragstart = (event) => {
+                event.dataTransfer.setData("custom/component", `${not};${xmlId}`);
+                event.dataTransfer.dropEffect = "copy";
+            };
 
 
             child.addEventListener("touchstart", (event) => {
