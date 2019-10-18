@@ -17,6 +17,8 @@ import {IC} from "digital/models/ioobjects/other/IC";
 
 import {CopyController} from "../../shared/controllers/CopyController";
 import {DigitalCircuitController} from "./DigitalCircuitController";
+import { DigitalNode } from "digital/models/ioobjects/other/DigitalNode";
+import { isNode } from "core/models/Node";
 
 export class DigitalCopyController extends CopyController {
 
@@ -25,12 +27,31 @@ export class DigitalCopyController extends CopyController {
     }
 
     protected copy(e: ClipboardEvent, main: DigitalCircuitController): void {
+        console.log("HERE");
         const selections = main.getSelections();
         const objs = selections.filter((o) => o instanceof IOObject) as IOObject[];
 
         // Create sub-circuit with just selections to save
         const designer = new DigitalCircuitDesigner(-1);
         designer.addGroup(CopyGroup(objs));
+
+        const objs2 = designer.getObjects();
+        console.log(objs2);
+        for (const obj of objs2) {
+            if (isNode(obj)) {
+                console.log(obj);
+                console.log(obj.getConnections().length);
+                console.log(designer.getWires().length);
+                if ((obj.getConnections().length) < 2) {
+                    designer.removeObject(obj);
+                    if (designer.getWires().length == 1) {
+                        designer.removeWire(designer.getWires()[0]);
+                    }
+                }
+            }
+        }
+
+
 
         // Add all necessary IC data
         const icDatas = selections.filter((o) => o instanceof IC)
