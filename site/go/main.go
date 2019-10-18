@@ -65,6 +65,5 @@ func main() {
 	authManager.RegisterHandlers(router)
 	api.RegisterRoutes(router, authManager, exampleCsif, userCsif)
 
-	// TODO: add flags for this
 	router.Run(*ipAddressConfig + ":" + *portConfig)
 }
