@@ -15,7 +15,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     private updateCallback: () => void;
 
-    public constructor(callback: () => void = function(){}) {
+    public constructor(callback: () => void = () => {}) {
         super();
 
         this.updateCallback = callback;

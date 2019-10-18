@@ -1,7 +1,7 @@
 import {Transform} from "math/Transform";
 
-import {CopyGroup} from "core/utils/ComponentUtils"
-import {IOObjectSet} from "core/utils/ComponentUtils";
+import {CopyGroup,
+        IOObjectSet} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 
