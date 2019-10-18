@@ -55,10 +55,10 @@
 
     "fix:css": "csscomb ./site/public/scss",
 
-    "lint": "eslint --ext .ts ./app/ ./site/public/ts/",
+    "lint": "eslint --ext .ts ./site/public/ts",
 
     "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
-    "start-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
+    "start-win": "concurrently \"cd build && server.exe -no_auth\" \"opener http://localhost:8080\"",
     "start:ee": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
     "start:ee-win": "concurrently \"cd build && server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
 
