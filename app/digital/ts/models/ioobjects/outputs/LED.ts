@@ -69,7 +69,7 @@ export class LED extends Component {
     // @Override
     public activate(signal: boolean, i: number = 0): void {
         this.onTransformChange();
-        this.getCullBox();
+        super.activate(signal, i);
     }
 
     public setColor(color: string): void {
