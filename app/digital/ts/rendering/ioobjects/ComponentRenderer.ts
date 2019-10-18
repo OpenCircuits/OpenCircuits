@@ -113,7 +113,7 @@ export const ComponentRenderer = (() => {
                 // draw the LED glow
                 if (object.isOn()) {
                     const glow_img = Images.GetImage(object.getOnImageName());
-                    const LED_GLOW_SIZE = V(ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_RADIUS).scale(2);
+                    const LED_GLOW_SIZE = V(ROTATION_CIRCLE_RADIUS).scale(2);
                     renderer.image(glow_img, V(), LED_GLOW_SIZE, object.getColor());
                 }
 
@@ -121,8 +121,9 @@ export const ComponentRenderer = (() => {
                 if (tint !== undefined)
                     renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
             }
-            else if (imgName)
+            else if (imgName) {
                 renderer.image(Images.GetImage(imgName), V(), size, tint);
+            }
 
             // Render the IOLabels, does not render labels if they are blank
             IOLabelRenderer.render(renderer, camera, object);
