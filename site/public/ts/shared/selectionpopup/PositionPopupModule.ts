@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {GRID_SIZE} from "digital/utils/Constants";
+import {GRID_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Component} from "core/models/Component";
@@ -51,9 +51,9 @@ export class PositionPopupModule extends SelectionPopupModule {
     public push(): void {
         const components = this.circuitController.getSelections() as Component[];
 
-        this.circuitController.addAction(CreateGroupTranslateAction(components,
-                components.map(c => V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5)))
+        this.circuitController.addAction(CreateGroupTranslateAction(components, components
+                .map(c => V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                            this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5)))
         ).execute());
 
         this.circuitController.render();

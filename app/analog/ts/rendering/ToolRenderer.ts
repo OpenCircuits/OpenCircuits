@@ -1,28 +1,28 @@
 import {ROTATION_CIRCLE_RADIUS,
-        ROTATION_CIRCLE_THICKNESS} from "digital/utils/Constants";
+        ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
 import {ROTATION_CIRCLE_COLOR,
         ROTATION_ARC_STYLE,
-        SELECTION_BOX_STYLE} from "../../../core/ts/rendering/Styles";
+        SELECTION_BOX_STYLE} from "core/rendering/Styles";
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";
-import {Renderer} from "../../../core/ts/rendering/Renderer";
 
-import {ToolManager} from "core/tools/ToolManager";
-import {SelectionTool} from "core/tools/SelectionTool";
-import {RotateTool} from "core/tools/RotateTool";
+import {Renderer}  from "core/rendering/Renderer";
+import {Style}     from "core/rendering/Style";
+import {ArcCircle} from "core/rendering/shapes/ArcCircle";
+import {Circle}    from "core/rendering/shapes/Circle";
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+
+import {ToolManager}        from "core/tools/ToolManager";
+import {SelectionTool}      from "core/tools/SelectionTool";
+import {RotateTool}         from "core/tools/RotateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
-import {WiringTool} from "core/tools/WiringTool";
+import {WiringTool}         from "core/tools/WiringTool";
 
 import {AnalogComponentRenderer} from "./eeobjects/AnalogComponentRenderer";
 import {AnalogWireRenderer} from "./eeobjects/AnalogWireRenderer";
 
 import {Component} from "core/models/Component";
 import {AnalogWire} from "analog/models/AnalogWire";
-
-import {Style} from "../../../core/ts/rendering/Style";
-import {ArcCircle} from "../../../core/ts/rendering/shapes/ArcCircle";
-import {Circle} from "../../../core/ts/rendering/shapes/Circle";
-import {Rectangle} from "../../../core/ts/rendering/shapes/Rectangle";
 import {AnalogComponent} from "analog/models/AnalogComponent";
 
 export const ToolRenderer = (() => {
@@ -50,8 +50,10 @@ export const ToolRenderer = (() => {
         render(renderer: Renderer, camera: Camera, toolManager: ToolManager): void {
             const tool = toolManager.getCurrentTool();
 
+            const selectionTool = toolManager.getDefaultTool() as SelectionTool;
+
             // If a wire has been selected, then don't draw the rotation box
-            const selections = toolManager.getSelectionTool().getSelections();
+            const selections = selectionTool.getSelections();
             const hasOnlyComponents = selections.every((s) => s instanceof Component);
 
             if (tool instanceof SelectionTool) {

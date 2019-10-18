@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
-        WIRE_SNAP_THRESHOLD} from "digital/utils/Constants";
+        WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
@@ -87,7 +87,7 @@ export abstract class Component extends CullableObject {
         return RectContains(this.getTransform(), v) &&
                 !this.isWithinPressBounds(v);
     }
-    
+
     public abstract getPorts(): Port[];
 
     public getConnections(): Wire[] {

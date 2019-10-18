@@ -1,4 +1,4 @@
-import {DEFAULT_SIZE} from "digital/utils/Constants";
+import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";

@@ -1,15 +1,17 @@
-import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
-import {AnalogCircuitDesigner} from "analog/models/AnalogCircuitDesigner";
-import {MainDesignerView} from "../views/MainDesignerView";
-
-import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
-import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
-
 import {CreateComponentFromXML} from "analog/utils/ComponentFactory";
+import {AnalogWiringTool} from "analog/tools/AnalogWiringTool";
+import {AnalogCircuitDesigner} from "analog/models/AnalogCircuitDesigner";
 
-import {ContextMenuController} from "../../shared/controllers/ContextMenuController";
-import {LoginController} from "../../shared/controllers/LoginController";
-import {SideNavController} from "../../shared/controllers/SideNavController";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
+import {LoginController} from "site/shared/controllers/LoginController";
+import {SideNavController} from "site/shared/controllers/SideNavController";
+
+import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
+import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
+
+import {MainDesignerView} from "site/analog/views/MainDesignerView";
+import {SplitWireTool} from "core/tools/SplitWireTool";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
@@ -22,6 +24,9 @@ export class AnalogCircuitController extends MainDesignerController {
         super(new AnalogCircuitDesigner(() => this.render()),
               new MainDesignerView(),
               CreateComponentFromXML);
+
+        this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()),
+                                  new SplitWireTool(this.getCamera()));
 
         this.selectionPopup.addModules(
             new TitlePopupModule(this),
@@ -38,7 +43,7 @@ export class AnalogCircuitController extends MainDesignerController {
         return await this.loginController.initAuthentication();
     }
 
-    public loadCircuit(contents: XMLDocument): void {
+    public loadCircuit(_contents: XMLDocument): void {
         // const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
         // this.headerController.setProjectName(name);
     }

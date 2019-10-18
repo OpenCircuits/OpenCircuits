@@ -23,9 +23,9 @@ export class Resistor extends AnalogComponent {
         return "Resistor";
     }
 
-	public getImageName() {
-		return "resistor.svg";
-	}
+    public getImageName(): string {
+        return "resistor.svg";
+    }
 
     public getXMLName(): string {
         return "resistor";

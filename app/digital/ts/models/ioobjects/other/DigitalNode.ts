@@ -1,4 +1,4 @@
-import {IO_PORT_RADIUS} from "digital/utils/Constants";
+import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {CircleContains} from "math/MathUtils";

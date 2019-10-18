@@ -1,15 +1,16 @@
 import {DEFAULT_SIZE,
-        IO_PORT_LENGTH} from "digital/utils/Constants";
+        IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
 
-import {DigitalObjectSet,
-        CopyGroup,
+import {CopyGroup,
         CreateGraph,
-        CreateGroup,
+        CreateGroup} from "core/utils/ComponentUtils";
+
+import {DigitalObjectSet,
         SaveGroup,
         LoadGroup} from "digital/utils/ComponentUtils";
 
@@ -30,8 +31,8 @@ export class ICData {
 
     private collection: DigitalObjectSet;
 
-    private inputPorts:  Array<InputPort>;
-    private outputPorts: Array<OutputPort>;
+    private inputPorts:  InputPort[];
+    private outputPorts: OutputPort[];
 
     public constructor(collection?: DigitalObjectSet) {
         this.transform = new Transform(V(0,0), V(0,0));
@@ -129,7 +130,7 @@ export class ICData {
     }
 
     public copy(): DigitalObjectSet {
-        return CopyGroup(this.collection);
+        return new DigitalObjectSet(CopyGroup(this.collection).toList());
     }
 
     public save(node: XMLNode, icIdMap: Map<ICData, number>): void {
@@ -186,7 +187,7 @@ export class ICData {
         this.collection = LoadGroup(groupNode, icIdMap);
     }
 
-    public static IsValid(objects: Array<IOObject> | DigitalObjectSet): boolean {
+    public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SevenSegmentDisplay, Label];
 
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
@@ -212,7 +213,7 @@ export class ICData {
     }
 
     public static Create(objects: IOObject[]): ICData {
-        const copies = CopyGroup(objects);
+        const copies = new DigitalObjectSet(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
 

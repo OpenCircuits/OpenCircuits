@@ -5,9 +5,8 @@ import {Node} from "core/models/Node";
 
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
-import {Component} from "core/models/Component";
 
-export function CreateSplitWireAction(w: Wire, port: Component & Node): GroupAction {
+export function CreateSplitWireAction(w: Wire, port: Node): GroupAction {
     const action = new GroupAction();
 
     action.add(new DisconnectAction(w));
@@ -18,7 +17,7 @@ export function CreateSplitWireAction(w: Wire, port: Component & Node): GroupAct
     return action;
 }
 
-export function CreateSnipWireAction(port: Component & Node): GroupAction {
+export function CreateSnipWireAction(port: Node): GroupAction {
     const wires = port.getP1().getWires().concat(port.getP2().getWires());
     if (wires.length != 2)
         throw new Error("Cannot create snip action with WirePort of >2 wires!");
@@ -37,6 +36,6 @@ export function CreateSnipWireAction(port: Component & Node): GroupAction {
     return action;
 }
 
-export function CreateGroupSnipAction(ports: (Component & Node)[]): GroupAction {
+export function CreateGroupSnipAction(ports: Node[]): GroupAction {
     return new GroupAction(ports.map(p => CreateSnipWireAction(p)));
 }

@@ -1,4 +1,4 @@
-import {SHIFT_KEY} from "digital/utils/Constants";
+import {SHIFT_KEY} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";

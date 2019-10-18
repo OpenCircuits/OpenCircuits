@@ -3,7 +3,7 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR,
-        GATE_NOT_CIRCLE_RADIUS} from "digital/utils/Constants";
+        GATE_NOT_CIRCLE_RADIUS} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 
 import {Renderer} from "../../../../../core/ts/rendering/Renderer";

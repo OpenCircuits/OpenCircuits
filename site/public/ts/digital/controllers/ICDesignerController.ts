@@ -1,16 +1,11 @@
 import {IO_PORT_LENGTH,
         IO_PORT_LINE_WIDTH,
-        DEFAULT_BORDER_WIDTH} from "digital/utils/Constants";
+        DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 import {RectContains,
         GetNearestPointOnRect} from "math/MathUtils";
-
-import {TranslateTool} from "core/tools/TranslateTool";
-import {RotateTool} from "core/tools/RotateTool";
-import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
-import {WiringTool} from "core/tools/WiringTool";
 
 import {ICDesignerView} from "../views/ICDesignerView";
 
@@ -66,15 +61,9 @@ export class ICDesignerController extends DesignerController {
         this.view.setConfirmButtonListener(() => this.confirm());
         this.view.setCancelButtonListener(()  => this.cancel());
 
-        // Disable some tools
-        this.toolManager.disableTool(TranslateTool);
-        this.toolManager.disableTool(RotateTool);
-        this.toolManager.disableTool(PlaceComponentTool);
-        this.toolManager.disableTool(WiringTool);
-
-        // Disable other functionality
+        // Disable some functionality
         this.toolManager.disableActions();
-        this.toolManager.getSelectionTool().disableSelections();
+        this.getSelectionTool().disableSelections();
 
         this.hide();
     }

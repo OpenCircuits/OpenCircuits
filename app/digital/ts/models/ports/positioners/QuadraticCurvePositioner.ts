@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_WIDTH} from "digital/utils/Constants";
+import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 

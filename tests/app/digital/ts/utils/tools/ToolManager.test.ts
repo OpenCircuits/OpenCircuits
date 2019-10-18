@@ -1,6 +1,6 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -18,14 +18,14 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
 
 import {Place} from "../../Helpers";
 
 describe("Tool Manager", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(-1);
-    const toolManager = new ToolManager(camera, designer);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);

@@ -5,6 +5,7 @@ import {Vector,V} from "Vector";
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
 import {Component} from "core/models/Component";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 export class ItemNavController {
     private tab: JQuery<HTMLElement>;
@@ -34,7 +35,7 @@ export class ItemNavController {
             const not = child.dataset.not == "true";
 
             const onClick = (): void => {
-                main.placeComponent(CreateFromXML(xmlId, not), false);
+                main.placeComponent(CreateFromXML(xmlId, not));
 
                 // Unfocus element
                 if (child instanceof HTMLElement)
@@ -49,7 +50,9 @@ export class ItemNavController {
                 const pos = main.getCamera().getWorldPos(p);
 
                 component.setPos(pos);
-                main.placeComponent(component, true);
+
+                // Instantly add component
+                main.addAction(new PlaceAction(main.getDesigner(), component).execute());
 
                 main.render();
             }

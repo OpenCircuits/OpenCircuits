@@ -1,11 +1,17 @@
 
 export class Edge<V, E> {
+    private source: V;
     private target: V;
     private weight: E;
 
-    public constructor(target: V, weight: E) {
+    public constructor(source: V, target: V, weight: E) {
+        this.source = source;
         this.target = target;
         this.weight = weight;
+    }
+
+    public getSource(): V {
+        return this.source;
     }
 
     public getTarget(): V {
@@ -20,10 +26,12 @@ export class Edge<V, E> {
 export class Graph<V, E> {
     private list: Map<V, Edge<V, E>[]>;
     private reverseList: Map<V, Edge<V, E>[]>;
+    private edges: Edge<V, E>[];
 
     public constructor() {
         this.list = new Map<V, Edge<V, E>[]>();
         this.reverseList = new Map<V, Edge<V, E>[]>();
+        this.edges = [];
     }
 
     private bfs(visited: Map<V, boolean>, v: V): void {
@@ -49,8 +57,10 @@ export class Graph<V, E> {
         if (!this.list.has(target))
             throw new Error("Graph doesn't have node of value: " + target);
 
-        this.list.get(source).push(new Edge<V,E>(target, weight));
-        this.reverseList.get(target).push(new Edge<V,E>(source, weight));
+        const e = new Edge<V, E>(source, target, weight);
+        this.edges.push(e);
+        this.list.get(source).push(e);
+        this.reverseList.get(target).push(e);
     }
 
     public isConnected(): boolean {
@@ -87,6 +97,10 @@ export class Graph<V, E> {
         for (const val of this.list.keys())
             nodes.push(val);
         return nodes;
+    }
+
+    public getEdges(): Edge<V, E>[] {
+        return this.edges.slice();
     }
 
 }

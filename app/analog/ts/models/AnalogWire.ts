@@ -1,6 +1,5 @@
 import {Wire} from "core/models/Wire";
 import {AnalogPort} from "./ports/AnalogPort";
-import {AnalogComponent} from "./AnalogComponent";
 import {AnalogNode} from "./eeobjects/AnalogNode";
 
 export class AnalogWire extends Wire {

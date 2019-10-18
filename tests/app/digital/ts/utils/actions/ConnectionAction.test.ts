@@ -8,7 +8,7 @@ import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {Place} from "../../Helpers";
 
-describe("PlaceAction", () => {
+describe("Connection Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new LED();

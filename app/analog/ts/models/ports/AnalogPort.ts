@@ -1,14 +1,10 @@
 import {Vector} from "Vector";
 
 import {Component} from "core/models/Component";
-import {Wire}      from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
 import {AnalogComponent} from "../AnalogComponent";
 import {AnalogWire} from "../AnalogWire";
-import {PortSet} from "core/models/ports/PortSets";
-import {ClampedValue} from "math/ClampedValue";
-import {Positioner} from "core/models/ports/positioners/Positioner";
 
 export class AnalogPort extends Port {
     protected parent: AnalogComponent;
@@ -43,10 +39,4 @@ export class AnalogPort extends Port {
         return this.parent;
     }
 
-}
-
-export class AnalogPortSet extends PortSet<AnalogPort> {
-    public constructor(parent: AnalogComponent, count: ClampedValue, positioner?: Positioner<AnalogPort>) {
-        super(parent, AnalogPort, count, positioner);
-    }
 }

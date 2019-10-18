@@ -1,3 +1,6 @@
+export const DEBUG_CULLBOXES = false;
+export const DEBUG_SELECTION_BOUNDS = false;
+
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
 export const WIRE_DIST_ITERATIONS = 10;

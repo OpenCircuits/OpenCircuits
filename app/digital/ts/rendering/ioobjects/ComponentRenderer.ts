@@ -2,7 +2,7 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "digital/utils/Constants";
+        SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -17,12 +17,12 @@ import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
 import {Selectable} from "core/utils/Selectable";
 
-import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
-import {Latch}               from "digital/models/ioobjects/latches/Latch";
-import {Encoder}             from "digital/models/ioobjects/other/Encoder";
-import {Decoder}             from "digital/models/ioobjects/other/Decoder";
-import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
+import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
+import {Latch}               from "digital/models/ioobjects/latches/Latch";
+import {Encoder}             from "digital/models/ioobjects/other/Encoder";
+import {Decoder}             from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
 import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";

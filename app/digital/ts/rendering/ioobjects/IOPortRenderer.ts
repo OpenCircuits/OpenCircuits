@@ -4,7 +4,7 @@ import {DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         IO_PORT_LINE_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "digital/utils/Constants";
+        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Renderer} from "../../../../core/ts/rendering/Renderer";
 import {Port} from "core/models/ports/Port";

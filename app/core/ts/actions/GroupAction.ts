@@ -1,5 +1,4 @@
 import {Action} from "core/actions/Action";
-import {ReversableAction} from "./ReversableAction";
 
 export class GroupAction implements Action {
     private actions: Action[];

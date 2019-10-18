@@ -3,7 +3,7 @@ import {DRAG_TIME,
         SHIFT_KEY,
         CONTROL_KEY,
         COMMAND_KEY,
-        OPTION_KEY} from "digital/utils/Constants";
+        OPTION_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";

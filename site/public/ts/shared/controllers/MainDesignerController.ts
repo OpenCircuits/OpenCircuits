@@ -2,8 +2,8 @@ import {Vector} from "Vector";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
-import {TranslateTool} from "core/tools/TranslateTool";
 import {RotateTool} from "core/tools/RotateTool";
+import {TranslateTool} from "core/tools/TranslateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
 import {WiringTool} from "core/tools/WiringTool";
 
@@ -25,20 +25,24 @@ export abstract class MainDesignerController extends DesignerController {
         this.itemNav = new ItemNavController(this, CreateFromXML);
         this.selectionPopup = new SelectionPopupController(this);
 
-        this.toolManager.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
+        this.toolManager.addTools(new RotateTool(this.getCamera()),
+                                  new TranslateTool(this.getCamera()),
+                                  new PlaceComponentTool(this.designer, this.getCamera()));
+
+        this.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
     }
 
     public setEditMode(editMode: boolean): void {
         // Disable some tools
-        this.toolManager.disableTool(TranslateTool, !editMode);
-        this.toolManager.disableTool(RotateTool, !editMode);
-        this.toolManager.disableTool(PlaceComponentTool, !editMode);
-        this.toolManager.disableTool(WiringTool, !editMode);
+        this.toolManager.setDisabled(RotateTool, !editMode);
+        this.toolManager.setDisabled(TranslateTool, !editMode);
+        this.toolManager.setDisabled(PlaceComponentTool, !editMode);
+        this.toolManager.setDisabled(WiringTool, !editMode);
 
         // Disable actions/selections
         this.toolManager.disableActions(!editMode);
         this.clearSelections();
-        this.toolManager.getSelectionTool().disableSelections(!editMode);
+        this.getSelectionTool().disableSelections(!editMode);
 
         // Toggle ItemNavController
         if (this.itemNav.isOpen())
@@ -51,6 +55,11 @@ export abstract class MainDesignerController extends DesignerController {
             this.itemNav.disable();
 
         this.render();
+    }
+
+    public placeComponent(comp: Component): void {
+        const placeTool = this.toolManager.getTool(PlaceComponentTool) as PlaceComponentTool;
+        placeTool.begin(comp);
     }
 
     public abstract loadCircuit(contents: XMLDocument): void;

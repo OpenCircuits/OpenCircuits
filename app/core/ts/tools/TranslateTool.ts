@@ -1,8 +1,6 @@
 import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY} from "digital/utils/Constants";
-
-import {CopyGroup} from "digital/utils/ComponentUtils";
+        SPACEBAR_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";
@@ -11,7 +9,6 @@ import {Tool} from "core/tools/Tool";
 
 import {SelectionTool} from "core/tools/SelectionTool";
 
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component} from "core/models/Component";
 
 import {Action} from "core/actions/Action";
@@ -21,43 +18,49 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
 
 export class TranslateTool extends Tool {
-    protected designer: CircuitDesigner;
     protected camera: Camera;
 
     protected pressedComponent: Component;
-    protected components: Array<Component>;
-    protected initialPositions: Array<Vector>;
+    protected components: Component[];
+    protected initialPositions: Vector[];
 
     private action: GroupAction;
-    private startPos: Vector;
 
-    public constructor(designer: CircuitDesigner, camera: Camera) {
+    public constructor(camera: Camera) {
         super();
 
-        this.designer = designer;
         this.camera = camera;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, _input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedrag"))
             return false;
 
+        // Make sure everything is a component
         const selections = currentTool.getSelections();
         const currentPressedObj = currentTool.getCurrentlyPressedObj();
-
-        // Make sure everything is a component
         if (!(currentPressedObj instanceof Component))
             return false;
-        if (!selections.every((e) => e instanceof Component))
+        if (selections.some((e) => !(e instanceof Component)))
             return false;
+
+        return true;
+    }
+
+    public activate(currentTool: Tool, event: string, input: Input, _?: number): void {
+        if (!(currentTool instanceof SelectionTool))
+            throw new Error("Tool not selection tool!");
+
+        const selections = currentTool.getSelections() as Component[];
+        const currentPressedObj = currentTool.getCurrentlyPressedObj() as Component;
 
         // Translate multiple objects if they are all selected
         this.pressedComponent = currentPressedObj;
         this.components = [currentPressedObj];
         if (selections.includes(currentPressedObj))
-            this.components = selections as Array<Component>;
+            this.components = selections;
 
         // Copy initial positions
         this.initialPositions = this.components.map((o) => o.getPos());
@@ -66,30 +69,39 @@ export class TranslateTool extends Tool {
 
         // Explicitly drag
         this.onMouseDrag(input, 0);
-
-        return true;
     }
 
-    public deactivate(event: string, _: Input): boolean {
+    public shouldDeactivate(event: string, _: Input): boolean {
         return (event == "mouseup");
+    }
+
+    public deactivate(): Action {
+        this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
+
+        return this.action;
     }
 
     public onMouseDrag(input: Input, button: number): boolean {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
 
-        const dPos = this.camera.getWorldPos(input.getMousePos()).sub(
-            this.camera.getWorldPos(input.getMouseDownPos()));
+        const worldMouseDownPos = this.camera.getWorldPos(input.getMouseDownPos());
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
-        for (let i = 0; i < this.components.length; i++) {
-            let newPos = this.initialPositions[i].add(dPos);
-            if (input.isShiftKeyDown()) {
-                newPos = V(Math.floor(newPos.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                           Math.floor(newPos.y/GRID_SIZE + 0.5) * GRID_SIZE);
-            }
-            // Don't add action since we can have one action at the end
-            new TranslateAction(this.components[i], newPos).execute();
-        }
+        // Find change in position by subtracting current pos by initial pos
+        const dPos = worldMousePos.sub(worldMouseDownPos);
+
+        // Calculate new positions
+        const newPositions = this.initialPositions.map((p) => p.add(dPos));
+
+        // Calculate positions if shifted
+        const shiftedPositions = input.isShiftKeyDown() ?
+                newPositions.map((p) => V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
+                                          Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE)) :
+                newPositions;
+
+        // Execute translate but don't save to group action since we do that in 'deactivate'
+        this.components.forEach((c, i) => new TranslateAction(c, shiftedPositions[i]).execute());
 
         return true;
     }
@@ -97,20 +109,14 @@ export class TranslateTool extends Tool {
     public onKeyUp(_: Input, key: number): boolean {
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
-            const group = CopyGroup(this.components);
-            this.action.add(new CopyGroupAction(this.designer, this.components, group));
-            this.designer.addGroup(group);
+            const designer = this.components[0].getDesigner();
+            // const group = CopyGroup(this.components);
+            this.action.add(new CopyGroupAction(designer, this.components).execute());
+            // this.designer.addGroup(group);
 
             return true;
         }
         return false;
-    }
-
-    public getAction(): Action {
-        this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
-
-        // Return action
-        return this.action;
     }
 
 }

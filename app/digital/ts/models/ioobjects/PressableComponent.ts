@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_WIDTH} from "../../utils/Constants";
+import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";

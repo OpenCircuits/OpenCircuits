@@ -1,5 +1,5 @@
 import {DEFAULT_SIZE,
-        WIRE_THICKNESS} from "digital/utils/Constants";
+        WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";
@@ -55,7 +55,7 @@ export abstract class Wire extends CullableObject {
         }
     }
 
-    public abstract split(): Node & Component;
+    public abstract split(): Node;
 
     // public setInput(c: OutputPort): void {
     //     if (c == this.input)
@@ -116,9 +116,14 @@ export abstract class Wire extends CullableObject {
                 .getTopRight().add(WIRE_THICKNESS/2);
     }
 
-    public copyInto(w: Wire): void {
-        w.straight = this.straight;
-        this.onTransformChange();
+    public copy(p1?: Port, p2?: Port): Wire {
+        const copy = <Wire>super.copy();
+        copy.p1 = p1;
+        copy.p2 = p2;
+        p1.connect(copy);
+        p2.connect(copy);
+        copy.straight = this.straight;
+        return copy;
     }
 
     public save(node: XMLNode): void {

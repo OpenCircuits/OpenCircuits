@@ -16,15 +16,13 @@ export const Images = (() => {
         GetImage: function(img: string): HTMLImageElement {
             return images.get(img);
         },
-        Load: function(onFinishLoading: () => void): void {
+        Load: async function(): Promise<void> {
             const promises =
                 IMAGE_FILE_NAMES.map((name) =>
                     new Promise((resolve, _) => loadImage(name, resolve))
                 );
 
-            Promise.all(promises).then(() => {
-                onFinishLoading();
-            });
+            await Promise.all(promises);
         }
     };
 })();

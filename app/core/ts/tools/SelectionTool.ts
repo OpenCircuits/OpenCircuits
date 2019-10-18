@@ -1,17 +1,18 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY, A_KEY, X_KEY,
-        IO_PORT_RADIUS} from "digital/utils/Constants";
+        IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 import {CircleContains,
         BezierContains,} from "math/MathUtils";
 
 import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
+import {DefaultTool} from "./DefaultTool";
 
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
-import {Node} from "core/models/Node";
+import {Node, isNode} from "core/models/Node";
 
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
@@ -31,7 +32,7 @@ import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
-export class SelectionTool extends Tool {
+export class SelectionTool extends DefaultTool {
 
     private designer: CircuitDesigner;
     private camera: Camera;
@@ -118,18 +119,17 @@ export class SelectionTool extends Tool {
 
 
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public activate(currentTool: Tool, event: string, input: Input, button?: number): void {
         if (event == "mouseup")
             this.onMouseUp(input, button);
         if (event == "onclick" && !(currentTool instanceof PlaceComponentTool))
             this.onClick(input, button);
-        return false;
     }
 
-    public deactivate(): boolean {
+    public deactivate(): Action {
         this.selectionBox.deactivate();
 
-        return false;
+        return undefined;
     }
 
 
@@ -232,7 +232,7 @@ export class SelectionTool extends Tool {
         }
         if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
-            const wirePorts = selections.filter((o) => o instanceof Node) as Node[];
+            const wirePorts = selections.filter((o) => isNode(o)) as Node[];
             if (selections.length != wirePorts.length)
                 return false;
             this.action.add(CreateDeselectAllAction(this).execute());

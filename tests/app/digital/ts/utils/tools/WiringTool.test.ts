@@ -3,7 +3,6 @@ import "jest";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
-import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
@@ -11,14 +10,14 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
 
 import {Place} from "../../Helpers";
 
 describe("Wiring Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(0);
-    const toolManager = new ToolManager(camera, designer);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
@@ -89,8 +88,8 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led1 = new LED();
         const led2 = new LED();
-        led1.setPos(V(100, 50));
-        led2.setPos(V(100, -50));
+        led1.setPos(V(100, 200));
+        led2.setPos(V(100, -200));
         Place(designer, [sw, led1, led2]);
 
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),

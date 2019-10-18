@@ -1,4 +1,4 @@
-import {IO_PORT_LENGTH} from "digital/utils/Constants";
+import {IO_PORT_LENGTH} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
@@ -51,6 +51,11 @@ export abstract class Port implements Selectable {
 
     public abstract connect(w: Wire): void;
     public abstract disconnect(w: Wire): void;
+
+    // Finds index of this port in the parent
+    public getIndex(): number {
+        return this.parent.getPorts().indexOf(this);
+    }
 
     public getParent(): Component {
         return this.parent;

@@ -3,6 +3,7 @@
 module.exports = {
     collectCoverage: true,
     testEnvironment: "jsdom",
+    setupFiles: ["core-js"],
     moduleFileExtensions: [
         "js",
         "ts"

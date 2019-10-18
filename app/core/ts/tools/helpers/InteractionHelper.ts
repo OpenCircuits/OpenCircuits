@@ -3,7 +3,7 @@ import {BezierContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";
-import {IsPressable} from "core/utils/Pressable";
+import {isPressable} from "core/utils/Pressable";
 import {Selectable} from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
@@ -36,7 +36,7 @@ export class InteractionHelper {
         // Check if we're pressing an object
         const pressedObj = objects.find((o) => o.isWithinPressBounds(worldMousePos));
         if (pressedObj) {
-            if (IsPressable(pressedObj))
+            if (isPressable(pressedObj))
                 pressedObj.press();
             this.isPressingPressableObj = true;
             this.currentlyPressedObj = pressedObj;
@@ -62,7 +62,7 @@ export class InteractionHelper {
         // Release currently pressed object
         if (this.isPressingPressableObj) {
             this.isPressingPressableObj = false;
-            if (IsPressable(this.currentlyPressedObj))
+            if (isPressable(this.currentlyPressedObj))
                 this.currentlyPressedObj.release();
             this.currentlyPressedObj = undefined;
             return true;
@@ -77,9 +77,9 @@ export class InteractionHelper {
         const objects = this.designer.getObjects().reverse();
 
         // Find clicked object
-        const clickedObj = objects.filter(o => IsPressable(o))
-                                  .find((o) => o.isWithinPressBounds(worldMousePos));
-        if (IsPressable(clickedObj)) {
+        const clickedObj = objects.filter(o => isPressable(o))
+                .find((o) => o.isWithinPressBounds(worldMousePos));
+        if (isPressable(clickedObj)) {
             clickedObj.click();
             return true;
         }

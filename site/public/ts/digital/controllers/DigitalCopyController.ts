@@ -2,7 +2,7 @@ import {V} from "Vector";
 
 import {Exporter} from "core/utils/io/Exporter";
 import {Importer} from "core/utils/io/Importer";
-import {CopyGroup} from "digital/utils/ComponentUtils";
+import {CopyGroup} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
@@ -31,7 +31,6 @@ export class DigitalCopyController extends CopyController {
         // Create sub-circuit with just selections to save
         const designer = new DigitalCircuitDesigner(-1);
         designer.addGroup(CopyGroup(objs));
-
 
         // Add all necessary IC data
         const icDatas = selections.filter((o) => o instanceof IC)
