@@ -25,12 +25,12 @@ export class LED extends Component {
     public getMinPos(): Vector {
         const min = V(Infinity);
 
-        //if the LED is on, create a new border width
+        // if the LED is on, create a new border width
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
-        if(this.inputs.first.getIsOn())
+        if (this.inputs.first.getIsOn())
             newBorderWidth += 50;
 
-        //find the corners of the object using the new border width
+        // find the corners of the object using the new border width
         const corners = this.transform.getCorners().map(
             v => v.sub(newBorderWidth)
         );
@@ -40,7 +40,7 @@ export class LED extends Component {
             p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
-        //return the minimum position from all of these vectors
+        // return the minimum position from all of these vectors
         return Vector.min(min, ...corners, ...ports);
     }
 
@@ -48,9 +48,9 @@ export class LED extends Component {
     public getMaxPos(): Vector {
         const max = V(-Infinity);
 
-        //if the LED is on, create a new border width
+        // if the LED is on, create a new border width
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
-        if(this.inputs.first.getIsOn())
+        if (this.inputs.first.getIsOn())
             newBorderWidth += 50;
 
         // Find maximum pos from corners of transform
