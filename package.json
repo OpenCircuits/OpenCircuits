@@ -38,32 +38,23 @@
   "scripts": {
     "build": "webpack --config webpack.digital.js --mode=development",
     "build:prod": "webpack --config webpack.digital.js --mode=production",
-
     "build:ee": "webpack --config webpack.analog.js --mode=development",
     "build:ee:prod": "webpack --config webpack.analog.js --mode=production",
-
     "build:go": "(npm run copy && cd site/go && go build -o ./../../build/server)",
     "build:go-win": "(cd site/go && go build -o ./../../build/server.exe)",
     "build:css": "node-sass ./site/public/scss -o ./build/css",
     "build:all": "concurrently \"npm:build\" \"npm:build:ee\" \"npm:build:go\" \"npm:build:css\"",
-
     "copy": "copyfiles -u 1 site/data/* site/templates/* build/ && copyfiles -u 2 site/public/examples/* site/public/img/* build/",
-
     "docker:build": "docker build -t opencircuits/opencircuits .",
     "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
     "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
-
     "fix:css": "csscomb ./site/public/scss",
-
     "lint": "eslint --ext .ts ./app/ ./site/public/ts/",
-
     "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
     "start-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
     "start:ee": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
     "start:ee-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
-
     "test": "jest",
-
     "watch": "npm run build -- --watch",
     "watch:ee": "npm run build:ee -- --watch",
     "watch:css": "npm run build:css -- --watch",
