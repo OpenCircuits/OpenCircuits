@@ -6,7 +6,7 @@ export interface Node extends Component {
     getP2(): Port;
 }
 
-export function isNode(c: any): c is Node {
+export function isNode(c: unknown): c is Node {
     if (!(c instanceof Component))
         return false;
     return (c as Node).getP1 != undefined &&

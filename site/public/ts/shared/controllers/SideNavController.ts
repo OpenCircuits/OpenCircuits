@@ -45,7 +45,7 @@ export class SideNavController {
         // Set up onclick listeners to example circuits
         const exampleCircuits = Array.from(this.exampleCircuitsList.children()) as HTMLElement[];
         for (const exampleCircuit of exampleCircuits) {
-            const id = exampleCircuit.id.split("-").slice(2).join('-');
+            const id = exampleCircuit.id.split("-").slice(2).join("-");
             const name = exampleCircuit.children[1].children[0].innerHTML;
             const desc = exampleCircuit.children[1].children[1].innerHTML;
             const data = new CircuitMetadataBuilder()
@@ -58,7 +58,7 @@ export class SideNavController {
         }
     }
 
-    private toggleEditMode() {
+    private toggleEditMode(): void {
         this.editMode = !this.editMode;
 
         this.main.setEditMode(this.editMode);

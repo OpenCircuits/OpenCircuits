@@ -97,7 +97,7 @@ export class DigitalWiringTool extends WiringTool {
         return true;
     }
 
-    public deactivate(event: string, input: Input, button?: number): Action {
+    public deactivate(): Action {
         const action = this.action;
         // Reset action
         this.action = undefined;

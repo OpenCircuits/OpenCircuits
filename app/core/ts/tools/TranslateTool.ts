@@ -32,7 +32,7 @@ export class TranslateTool extends Tool {
         this.camera = camera;
     }
 
-    public shouldActivate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, _input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedrag"))

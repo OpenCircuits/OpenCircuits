@@ -7,13 +7,10 @@ import {IOObject} from "core/models/IOObject";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 
-import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 
-import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
-import {Component} from "core/models/Component";
 
 /**
  * Helper class to hold different groups of components.

@@ -43,7 +43,7 @@ export class AnalogCircuitController extends MainDesignerController {
         return await this.loginController.initAuthentication();
     }
 
-    public loadCircuit(contents: XMLDocument): void {
+    public loadCircuit(_contents: XMLDocument): void {
         // const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
         // this.headerController.setProjectName(name);
     }

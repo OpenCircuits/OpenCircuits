@@ -161,8 +161,8 @@ export function GatherGroup(objects: IOObject[]): IOObjectSet {
     const wires = group.getWires();
     const components = group.getComponents();
 
-    const paths = [...new Set(wires.flatMap((w) => GetPath(w)).concat(
-                              components.flatMap((c) => GetAllPaths(c))))];
+    const paths = [...new Set(wires.flatMap((w) => GetPath(w))
+            .concat(components.flatMap((c) => GetAllPaths(c))))];
 
     return new IOObjectSet((components as IOObject[]).concat(wires, paths));
 }

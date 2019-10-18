@@ -1,6 +1,6 @@
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {V}     from "Vector";
+import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "../AnalogComponent";
@@ -25,9 +25,9 @@ export class Battery extends AnalogComponent {
         return "Battery";
     }
 
-	public getImageName() {
-		return "voltagesource.svg";
-	}
+    public getImageName(): string {
+        return "voltagesource.svg";
+    }
 
     public getXMLName(): string {
         return "battery";
