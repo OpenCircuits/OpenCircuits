@@ -43,8 +43,6 @@ export class XORGate extends Gate {
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
 
-        // corners[0][0] -= BOX_WIDTH;
-
         // Find minimum pos from ports
         const ports = this.getPorts().map(
             p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
