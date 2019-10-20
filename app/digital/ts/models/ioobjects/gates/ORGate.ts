@@ -28,7 +28,7 @@ export class ORGate extends Gate {
     }
 
     public getMinPos(): Vector {
-        const min = V(Infinity);
+        const min = super.getMinPos();
 
         // Find minimum pos from corners of transform
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
@@ -41,12 +41,7 @@ export class ORGate extends Gate {
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
 
-        // Find minimum pos from ports
-        const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
-        );
-
-        return Vector.min(min, ...corners, ...ports);
+        return Vector.min(min, ...corners);
     }
 
     public getMaxPos(): Vector {
