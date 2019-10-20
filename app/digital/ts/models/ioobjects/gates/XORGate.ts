@@ -1,4 +1,5 @@
-import {DEFAULT_BORDER_WIDTH,
+import {DEFAULT_SIZE,
+        DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH} from "../../../utils/Constants";
 import {Vector,V} from "Vector";
@@ -30,25 +31,20 @@ export class XORGate extends Gate {
     }
 
     public getMinPos(): Vector {
-        const min = V(Infinity);
 
+        let min = super.getMinPos();
         // Find minimum pos from corners of transform
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if(this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += 50;
         if(this.numInputs() == 8)
-            BOX_WIDTH += 100;
+            BOX_WIDTH += 50*2;
 
         const corners = this.transform.getCorners().map(
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
 
-        // Find minimum pos from ports
-        const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
-        );
-
-        return Vector.min(min, ...corners, ...ports);
+        return Vector.min(min, ...corners);
     }
 
     public getMaxPos(): Vector {
