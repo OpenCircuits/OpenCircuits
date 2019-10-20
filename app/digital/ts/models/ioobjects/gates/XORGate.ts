@@ -35,9 +35,9 @@ export class XORGate extends Gate {
         let min = super.getMinPos();
         // Find minimum pos from corners of transform
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
-        if(this.numInputs() >3 && this.numInputs() < 7)
+        if (this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
-        if(this.numInputs() == 8)
+        if (this.numInputs() == 8)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
 
         const corners = this.transform.getCorners().map(
@@ -51,9 +51,9 @@ export class XORGate extends Gate {
         const max = super.getMaxPos();
 
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
-        if(this.numInputs() >3 && this.numInputs() < 7)
+        if (this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
-        if(this.numInputs() == 8)
+        if (this.numInputs() == 8)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
 
         // Find maximum pos from corners of transform
