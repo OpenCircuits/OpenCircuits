@@ -45,7 +45,7 @@ export class ORGate extends Gate {
     }
 
     public getMaxPos(): Vector {
-        const max = V(-Infinity);
+        const max = super.getMaxPos();
 
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if(this.numInputs() >3 && this.numInputs() < 7)
@@ -58,12 +58,7 @@ export class ORGate extends Gate {
             v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
 
-        // Find maximum pos from ports
-        const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
-        );
-
-        return Vector.max(max, ...corners, ...ports);
+        return Vector.max(max, ...corners);
     }
 
     public getXMLName(): string {
