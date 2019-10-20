@@ -1,7 +1,7 @@
-import {DEFAULT_SIZE,
-        DEFAULT_BORDER_WIDTH,
+import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "../../../utils/Constants";
+        IO_PORT_BORDER_WIDTH,
+        GATE_OR_CULLBOX_OFFSET} from "../../../utils/Constants";
 import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
@@ -36,9 +36,9 @@ export class XORGate extends Gate {
         // Find minimum pos from corners of transform
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if(this.numInputs() >3 && this.numInputs() < 7)
-            BOX_WIDTH += 50;
+            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
         if(this.numInputs() == 8)
-            BOX_WIDTH += 50*2;
+            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
 
         const corners = this.transform.getCorners().map(
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
@@ -52,9 +52,9 @@ export class XORGate extends Gate {
 
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if(this.numInputs() >3 && this.numInputs() < 7)
-            BOX_WIDTH += 50;
+            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
         if(this.numInputs() == 8)
-            BOX_WIDTH += 50*2;
+            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
 
         // Find maximum pos from corners of transform
         const corners = this.transform.getCorners().map(
