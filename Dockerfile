@@ -23,7 +23,7 @@ RUN go build -o /go/bin/server .
 ############################
 FROM node:8-alpine AS runner
 
-EXPOSE 8080
+EXPOSE 80
 
 # Install git.
 # Git is required for fetching the dependencies.
@@ -44,4 +44,4 @@ RUN npm run build:css
 COPY --from=builder /go/bin/server ./build/server
 
 # Command to run at start of container
-CMD cd ./build && ./server
+CMD cd ./build && ./server --port=80

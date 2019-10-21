@@ -42,7 +42,7 @@
     "build:css": "node-sass ./site/public/scss -o ./build/css",
     "build:all": "concurrently \"npm:build\" \"npm:build:go\" \"npm:build:css\"",
     "docker:build": "docker build -t opencircuits/opencircuits .",
-    "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
+    "docker:start": "docker run -p 8080:80 --name opencircuits opencircuits/opencircuits",
     "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
     "fix:css": "csscomb ./site/public/scss",
     "lint": "eslint --ext .ts ./site/public/ts",
