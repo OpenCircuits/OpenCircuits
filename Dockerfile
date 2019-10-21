@@ -3,11 +3,10 @@
 ############################
 FROM golang:1.13-alpine AS builder
 
-# Install git.
+# Install git and gcc
 # Git is required for fetching the dependencies.
-RUN apk update 
-RUN apk add git
-RUN apk add build-base
+# GCC is required for sqlite3
+RUN apk add --no-cache git build-base
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/site/go
 COPY ./site/go/ .
@@ -28,13 +27,16 @@ EXPOSE 8080
 
 # Install git.
 # Git is required for fetching the dependencies.
-RUN apk update 
-RUN apk add git
+RUN apk add --no-cache git
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/
-COPY . .
 
+# Copy package.json to install dependencies and cache
+COPY package.json .
 RUN npm install
+
+# Copy the rest of the project to build
+COPY . .
 RUN npm run build 
 RUN npm run build:css
 
