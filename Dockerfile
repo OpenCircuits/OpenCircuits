@@ -9,10 +9,15 @@ FROM golang:1.13-alpine AS builder
 RUN apk add --no-cache git build-base
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/site/go
-COPY ./site/go/ .
 
-# Get dependencies
+# Copy go.mod to build
+COPY ./site/go/go.mod .
+
+# Install dependencies
 RUN go mod download
+
+# Copy the rest of the project to build
+COPY ./site/go/ .
 
 # Build the binary.
 RUN go build -o /go/bin/server .
@@ -31,14 +36,19 @@ RUN apk add --no-cache git
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/
 
-# Copy package.json to install dependencies and cache
+# Copy package.json to install dependencies
 COPY package.json .
+
+# Install dependencies
 RUN npm install
 
 # Copy the rest of the project to build
 COPY . .
+
+# Build the rest of the project
 RUN npm run build && \
     npm run build:css
+
 
 # Copy our static executable.
 COPY --from=builder /go/bin/server ./build/server
