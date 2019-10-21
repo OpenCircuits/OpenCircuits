@@ -10,7 +10,7 @@ RUN apk add --no-cache git build-base
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/site/go
 
-# Copy go.mod to build
+# Copy go.mod to get go modules
 COPY ./site/go/go.mod .
 
 # Install dependencies
@@ -36,7 +36,7 @@ RUN apk add --no-cache git
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/
 
-# Copy package.json to install dependencies
+# Copy package.json to install node packages
 COPY package.json .
 
 # Install dependencies
