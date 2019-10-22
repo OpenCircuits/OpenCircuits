@@ -31,13 +31,14 @@ export class ORGate extends Gate {
     public getMinPos(): Vector {
         const min = super.getMinPos();
 
-        // Find minimum pos from corners of transform
+
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if (this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
         if (this.numInputs() == 8)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
-
+            
+        // Find minimum pos from corners of transform
         const corners = this.transform.getCorners().map(
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
