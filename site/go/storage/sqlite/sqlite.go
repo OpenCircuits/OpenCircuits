@@ -17,6 +17,7 @@ type sqliteCircuitStorageInterface struct {
 	storeEntryStmt   *sql.Stmt
 	createEntryStmt  *sql.Stmt
 	enumCircuitsStmt *sql.Stmt
+	deleteEntryStmt  *sql.Stmt
 }
 
 func NewInterfaceFactory(sqliteDir string) (interfaces.CircuitStorageInterfaceFactory, error) {
@@ -83,6 +84,10 @@ func genSqliteInterface(workingDir string) (*sqliteCircuitStorageInterface, erro
 	if err != nil {
 		return nil, err
 	}
+	store.deleteEntryStmt, err = dot.Prepare(db, "delete-user-circuit")
+	if err != nil {
+		return nil, err
+	}
 
 	store.db = db
 
@@ -137,6 +142,12 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
 	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.Version, circuit.Metadata.Thumbnail, circuit.Metadata.ID)
+	if err != nil {
+		panic(err)
+	}
+}
+func (d sqliteCircuitStorageInterface) DeleteCircuit(id model.CircuitId) {
+	_, err := d.deleteEntryStmt.Exec(id)
 	if err != nil {
 		panic(err)
 	}
