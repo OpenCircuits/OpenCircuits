@@ -31,8 +31,7 @@ export class XORGate extends Gate {
     }
 
     public getMinPos(): Vector {
-
-        let min = super.getMinPos();
+        const min = super.getMinPos();
         // Find minimum pos from corners of transform
         var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if (this.numInputs() >3 && this.numInputs() < 7)
