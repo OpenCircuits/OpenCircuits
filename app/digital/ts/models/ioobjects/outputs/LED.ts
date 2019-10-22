@@ -3,7 +3,7 @@ import {DEFAULT_SIZE,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
         LED_LIGHT_RADIUS,
-        LED_BULB_WIDTH} from "digital/utils/Constants";
+        LED_WIDTH} from "digital/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
@@ -30,7 +30,7 @@ export class LED extends Component {
         // if the LED is on, create a new border width to account for the light
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
         if (this.inputs.first.getIsOn())
-            newBorderWidth += (LED_LIGHT_RADIUS - LED_BULB_WIDTH/2);
+            newBorderWidth += (LED_LIGHT_RADIUS - LED_WIDTH/2);
 
         // find the corners of the object using the new border width
         const corners = this.transform.getCorners().map(
@@ -53,7 +53,7 @@ export class LED extends Component {
         // if the LED is on, create a new border width to account for the light
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
         if (this.inputs.first.getIsOn())
-            newBorderWidth += (LED_LIGHT_RADIUS - LED_BULB_WIDTH/2);
+            newBorderWidth += (LED_LIGHT_RADIUS - LED_WIDTH/2);
 
         // Find maximum pos from corners of transform
         const corners = this.transform.getCorners().map(
