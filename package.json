@@ -42,6 +42,7 @@
   "scripts": {
     "build":     "run-p build:js:digital build:js:analog build:go build:css",
     "build-win": "run-p build:js:digital build:js:analog win:build:go build:css",
+    "build:js":  "run-p build:js:digital build:js:analog",
     "build:js:digital": "webpack --config webpack.digital.js --mode=development",
     "build:js:analog":  "webpack --config webpack.analog.js  --mode=development",
     "build:js:digital-prod": "webpack --config webpack.digital.js --mode=production",
