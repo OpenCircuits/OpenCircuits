@@ -1,75 +1,70 @@
 {
   "name": "opencircuits",
-  "description": "Travis-CI check for OpenCircuits",
+  "description": "OpenCircuits",
   "author": "Leon Montealegre",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/OpenCircuits/OpenCircuits.git"
   },
   "devDependencies": {
-    "@types/gapi": "0.0.39",
-    "@types/gapi.auth2": "0.0.50",
-    "@types/hammerjs": "^2.0.36",
-    "@types/intro.js": "^2.4.5",
     "@types/jest": "^23.3.14",
-    "@types/jquery": "^3.3.30",
-    "@types/jspdf": "^1.3.1",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "concurrently": "^4.1.2",
     "copy-webpack-plugin": "^4.6.0",
     "copyfiles": "^2.1.1",
-    "eslint": "^6.0.1",
-    "hammerjs": "^2.0.8",
-    "intro.js": "^2.9.3",
+    "csscomb": "^4.3.0",
+    "eslint": "^5.16.0",
     "jest": "^24.4.0",
-    "jquery": "^3.4.1",
-    "jspdf": "^1.5.3",
     "node-sass": "^4.12.0",
+    "npm-run-all": "^4.1.5",
     "opener": "^1.5.1",
-    "ts-jest": "^24.0.0",
+    "ts-jest": "^24.1.0",
     "ts-loader": "^5.3.1",
-    "typescript": "^3.2.2",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.1.2"
-  },
-  "scripts": {
-    "build": "webpack --config webpack.digital.js --mode=development",
-    "build:prod": "webpack --config webpack.digital.js --mode=production",
-
-    "build:ee": "webpack --config webpack.analog.js --mode=development",
-    "build:ee:prod": "webpack --config webpack.analog.js --mode=production",
-
-    "build:go": "(npm run copy && cd site/go && go build -o ./../../build/server)",
-    "build:go-win": "(cd site/go && go build -o ./../../build/server.exe)",
-    "build:css": "node-sass ./site/public/scss -o ./build/css",
-    "build:all": "concurrently \"npm:build\" \"npm:build:ee\" \"npm:build:go\" \"npm:build:css\"",
-
-    "copy": "copyfiles -u 1 site/data/* site/templates/* build/ && copyfiles -u 2 site/public/examples/* site/public/img/* build/",
-
-    "docker:build": "docker build -t opencircuits/opencircuits .",
-    "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
-    "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
-
-    "fix:css": "csscomb ./site/public/scss",
-
-    "lint": "eslint --ext .ts ./app/ ./site/public/ts/",
-
-    "start": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
-    "start-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
-    "start:ee": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
-    "start:ee-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
-
-    "test": "jest",
-
-    "watch": "npm run build -- --watch",
-    "watch:ee": "npm run build:ee -- --watch",
-    "watch:css": "npm run build:css -- --watch",
-    "watch:all": "concurrently \"npm:watch\" \"npm:watch:ee\" \"npm:watch:css\""
+    "typescript": "^3.6.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9"
   },
   "dependencies": {
-    "csscomb": "^4.3.0"
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.50",
+    "@types/hammerjs": "^2.0.36",
+    "@types/intro.js": "^2.4.5",
+    "@types/jquery": "^3.3.30",
+    "@types/jspdf": "^1.3.1",
+    "hammerjs": "^2.0.8",
+    "intro.js": "^2.9.3",
+    "jquery": "^3.4.1",
+    "jspdf": "^1.5.3"
+  },
+  "scripts": {
+    "build":     "run-p build:js:digital build:js:analog build:go build:css",
+    "build-win": "run-p build:js:digital build:js:analog win:build:go build:css",
+    "build:js:digital": "webpack --config webpack.digital.js --mode=development",
+    "build:js:analog":  "webpack --config webpack.analog.js  --mode=development",
+    "build:js:digital-prod": "webpack --config webpack.digital.js --mode=production",
+    "build:js:analog-prod":  "webpack --config analog.digital.js  --mode=production",
+    "build:go":     "run-s copy && cd site/go && go build -o ./../../build/server",
+    "build:go-win": "run-s copy && cd site/go && go build -o ./../../build/server.exe",
+    "build:css": "node-sass ./site/public/scss -o ./build/css",
+    "start":     "run-s start:digital",
+    "start-win": "run-s start:digital-win",
+    "start:digital":     "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
+    "start:analog":      "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
+    "start:digital-win": "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080\"",
+    "start:analog-win":  "concurrently \"cd ./build && ./server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
+    "docker:build": "docker build -t opencircuits/opencircuits .",
+    "docker:start": "docker run -p 8080:8080 --name opencircuits opencircuits/opencircuits",
+    "docker:stop":  "docker container stop opencircuits && docker container rm opencircuits",
+    "copy": "copyfiles -u 1 site/data/* site/templates/* build/ && copyfiles -u 2 site/public/examples/* site/public/img/* build/",
+    "fix:css": "csscomb ./site/public/scss",
+    "lint": "eslint --ext .ts ./app/ ./site/public/ts/",
+    "test": "jest",
+    "watch" : "run-p watch:digital watch:analog watch:css",
+    "watch:digital": "npm run build:js:digital -- --watch",
+    "watch:analog":  "npm run build:js:analog  -- --watch",
+    "watch:css":     "npm run build:css -- --watch"
   }
 }
