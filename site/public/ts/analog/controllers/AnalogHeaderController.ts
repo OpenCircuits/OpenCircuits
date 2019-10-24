@@ -7,11 +7,11 @@ export class AnalogHeaderController extends HeaderController {
         super(main);
     }
 
-    protected async onLoadCircuit(main: AnalogCircuitController, file: File): Promise<string> {
+    protected async onLoadCircuit(_main: AnalogCircuitController, _file: File): Promise<string> {
         return new Promise(resolve => resolve(""));
     }
 
-    protected onSaveCircuit(main: AnalogCircuitController): void {
+    protected onSaveCircuit(_main: AnalogCircuitController): void {
     }
 
 }

@@ -34,9 +34,9 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.currentTool = tool;
     }
 
-    private deactivate(tool: Tool, event: string, input: Input, button?: number): void {
+    private deactivate(tool: Tool): void {
         // Deactivate tool and check if it added an action
-        const action = tool.deactivate(event, input, button);
+        const action = tool.deactivate();
         this.addAction(action);
     }
 
@@ -46,7 +46,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         // Check if we should deactivate the current tool
         if (this.currentTool != this.defaultTool) {
             if (this.currentTool.shouldDeactivate(event, input, button)) {
-                this.deactivate(this.currentTool, event, input, button);
+                this.deactivate(this.currentTool);
                 this.activate(this.defaultTool, event, input, button);
                 return true;
             }
@@ -65,7 +65,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         const activeTools = this.tools.filter((t) => !t.isDisabled());
         const newTool = activeTools.find((t) => t.shouldActivate(this.defaultTool, event, input, button));
         if (newTool) {
-            this.deactivate(this.defaultTool, event, input, button);
+            this.deactivate(this.defaultTool);
             this.activate(newTool, event, input, button);
             return true;
         }
@@ -89,8 +89,15 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
     public setDisabled(toolType: Function, disabled: boolean): void {
         const tool = this.getTool(toolType);
-        if (tool)
+        if (tool) {
             tool.setDisabled(disabled);
+
+            // Deactivate the tool if it's currently being used
+            if (tool == this.currentTool) {
+                this.deactivate(tool);
+                this.currentTool = this.defaultTool;
+            }
+        }
     }
 
     public disableActions(disabled: boolean = true): void {

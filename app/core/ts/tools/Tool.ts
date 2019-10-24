@@ -34,7 +34,7 @@ export abstract class Tool implements MouseListener, KeyboardListener {
 
     public activate(_currentTool: Tool, _event: string, _input: Input, _button?: number): void {
     }
-    public deactivate(_event: string, _input: Input, _button?: number): Action {
+    public deactivate(): Action {
         return undefined;
     }
 
