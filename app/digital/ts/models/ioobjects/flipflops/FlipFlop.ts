@@ -4,14 +4,14 @@ import {ClampedValue} from "math/ClampedValue";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {InputPort} from "../../ports/InputPort";
-import {Positioner} from "../../ports/positioners/Positioner";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
 //
 // FlipFlop is an abstract superclass for general flip flops.
 //
-export abstract class FlipFlop extends Component {
+export abstract class FlipFlop extends DigitalComponent {
     protected clock: boolean = false;
     protected state: boolean = false;
     protected lastClock: boolean = false;

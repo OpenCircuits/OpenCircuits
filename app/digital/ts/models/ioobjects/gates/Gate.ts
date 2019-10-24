@@ -3,16 +3,16 @@ import {ClampedValue} from "math/ClampedValue";
 import {Name} from "core/utils/Name";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {Component} from "../Component";
+import {Positioner} from "core/models/ports/positioners/Positioner"
 
-import {InputPort} from "../../ports/InputPort";
-import {Positioner} from "../../ports/positioners/Positioner"
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {InputPort} from "digital/models/ports/InputPort";
 
 //
 // Gate is an abstract superclass for simple logical gates.
 // Gate should always be a component with exactly 1 output port
 //
-export abstract class Gate extends Component {
+export abstract class Gate extends DigitalComponent {
     protected not: boolean = false;
 
     public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector, inputPositioner?: Positioner<InputPort>) {

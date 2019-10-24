@@ -1,24 +1,25 @@
 import {DEFAULT_SIZE,
-        IO_PORT_LENGTH} from "../../../utils/Constants";
+        IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
 
-import {SeparatedComponentCollection,
-        CopyGroup,
+import {CopyGroup,
         CreateGraph,
-        CreateGroup,
+        CreateGroup} from "core/utils/ComponentUtils";
+
+import {DigitalObjectSet,
         SaveGroup,
         LoadGroup} from "digital/utils/ComponentUtils";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
-import {IOObject} from "../IOObject";
-import {Port} from "../../ports/Port";
-import {InputPort} from "../../ports/InputPort";
-import {OutputPort} from "../../ports/OutputPort";
+import {IOObject} from "core/models/IOObject";
+import {Port} from "core/models/ports/Port";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
 import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
@@ -28,12 +29,12 @@ import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
 export class ICData {
     private transform: Transform;
 
-    private collection: SeparatedComponentCollection;
+    private collection: DigitalObjectSet;
 
-    private inputPorts:  Array<InputPort>;
-    private outputPorts: Array<OutputPort>;
+    private inputPorts:  InputPort[];
+    private outputPorts: OutputPort[];
 
-    public constructor(collection?: SeparatedComponentCollection) {
+    public constructor(collection?: DigitalObjectSet) {
         this.transform = new Transform(V(0,0), V(0,0));
         this.collection = collection;
         this.inputPorts  = [];
@@ -41,19 +42,23 @@ export class ICData {
 
         if (collection) {
             this.calculateSize();
-            this.createPorts(InputPort, this.inputPorts, this.collection.inputs, -1);
-            this.createPorts(OutputPort, this.outputPorts, this.collection.outputs, 1);
+            this.createPorts(InputPort,  this.inputPorts,  this.collection.getInputs(), -1);
+            this.createPorts(OutputPort, this.outputPorts, this.collection.getOutputs(), 1);
             this.positionPorts();
         }
     }
 
     private calculateSize(): void {
+        const inputs  = this.collection.getInputs();
+        const outputs = this.collection.getOutputs();
+
         // Set start size based on length of names and amount of ports
         let longestName = 0;
-        for (const obj of this.collection.inputs.concat(this.collection.outputs))
+        for (const obj of inputs.concat(outputs))
             longestName = Math.max(obj.getName().length, longestName);
+
         const w = DEFAULT_SIZE + 20*longestName;
-        const h = DEFAULT_SIZE/2*(Math.max(this.collection.inputs.length, this.collection.outputs.length));
+        const h = DEFAULT_SIZE/2*(Math.max(inputs.length, outputs.length));
         this.transform.setSize(V(w, h));
     }
 
@@ -98,11 +103,11 @@ export class ICData {
     }
 
     public getInputCount(): number {
-        return this.collection.inputs.length;
+        return this.collection.getInputs().length;
     }
 
     public getOutputCount(): number {
-        return this.collection.outputs.length;
+        return this.collection.getOutputs().length;
     }
 
     public getSize(): Vector {
@@ -124,8 +129,8 @@ export class ICData {
         return ports;
     }
 
-    public copy(): SeparatedComponentCollection {
-        return CopyGroup(this.collection);
+    public copy(): DigitalObjectSet {
+        return new DigitalObjectSet(CopyGroup(this.collection).toList());
     }
 
     public save(node: XMLNode, icIdMap: Map<ICData, number>): void {
@@ -151,7 +156,7 @@ export class ICData {
 
         // Save internal circuit
         const circuitNode = node.createChild("circuit");
-        SaveGroup(circuitNode, this.collection.getAllComponents(), this.collection.wires, icIdMap);
+        SaveGroup(circuitNode, this.collection.getComponents(), this.collection.getWires(), icIdMap);
     }
 
     public load(node: XMLNode, icIdMap: Map<number, ICData>): void {
@@ -182,14 +187,14 @@ export class ICData {
         this.collection = LoadGroup(groupNode, icIdMap);
     }
 
-    public static IsValid(objects: Array<IOObject> | SeparatedComponentCollection): boolean {
+    public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SevenSegmentDisplay, Label];
 
-        const group = (objects instanceof SeparatedComponentCollection) ? (objects) : (CreateGroup(objects));
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
         const graph = CreateGraph(group);
 
-        const objs = group.getAllComponents();
-        const wires = group.wires;
+        const objs  = group.getComponents();
+        const wires = group.getWires();
 
         // Make sure it's a connected circuit
         if (!graph.isConnected())
@@ -200,15 +205,15 @@ export class ICData {
             return false;
 
         // Make sure all wires connected to components are in the group
-        const allWires = objs.reduce((acc, o) => acc = acc.concat(o.getInputs(), o.getOutputs()), []);
+        const allWires = objs.flatMap(o => o.getConnections());
         if (allWires.some((w) => !wires.includes(w)))
             return false;
 
         return true;
     }
 
-    public static Create(objects: Array<IOObject>): ICData {
-        const copies = CopyGroup(objects);
+    public static Create(objects: IOObject[]): ICData {
+        const copies = new DigitalObjectSet(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
 
@@ -217,12 +222,12 @@ export class ICData {
         //  things like ConstantHigh and ConstantLow which aren't interactive
         const INPUT_WHITELIST = [Switch, Button];
 
-        const inputs = copies.inputs.filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
-        const components = copies.components.concat(copies.inputs)
+        const inputs = copies.getInputs().filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
+        const others = copies.getOthers().concat(copies.getInputs())
                 .filter((c) => !INPUT_WHITELIST.some((type) => c instanceof type));
 
-        copies.inputs = inputs;
-        copies.components = components;
+        copies.setInputs(inputs);
+        copies.setOthers(others);
 
         return new ICData(copies);
     }

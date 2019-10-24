@@ -1,31 +1,35 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 
-import {ToolManager} from "digital/tools/ToolManager";
+import {SelectionTool} from "core/tools/SelectionTool";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+
+import {Place} from "../../Helpers";
 
 describe("Rotate Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
-    const toolManager = new ToolManager(camera, designer);
+    const designer = new DigitalCircuitDesigner(-1);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
+
+    const selectionTool = toolManager.getDefaultTool() as SelectionTool;
 
     InitializeInput(input, toolManager);
 
     function selections(): Selectable[] {
-        return toolManager.getSelectionTool().getSelections();
+        return selectionTool.getSelections();
     }
 
     describe("Single Object", () => {
@@ -33,7 +37,7 @@ describe("Rotate Tool", () => {
 
         beforeAll(() => {
             // Add object
-            designer.addObject(obj);
+            Place(designer, [obj]);
         });
 
         beforeEach(() => {
