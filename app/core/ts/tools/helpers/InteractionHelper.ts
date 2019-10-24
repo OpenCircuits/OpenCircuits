@@ -6,6 +6,7 @@ import {Selectable} from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject} from "core/models/IOObject";
+import {Vector} from "Vector";
 
 export class InteractionHelper {
     private designer: CircuitDesigner;
@@ -20,23 +21,28 @@ export class InteractionHelper {
         this.currentlyPressedObj = undefined;
     }
 
+    private findObject(pos: Vector): IOObject {
+        const objects = this.designer.getObjects().reverse();
+        const wires = this.designer.getWires().reverse();
+
+        const objs = (objects as IOObject[]).concat(wires);
+        return objs.find(o => (isPressable(o) && o.isWithinPressBounds(pos)) ||
+                               o.isWithinSelectBounds(pos));
+    }
+
     public setCurrentlyPressedObj(obj: Selectable): void {
         this.currentlyPressedObj = obj;
     }
 
     public press(input: Input): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        const objects = this.designer.getObjects().reverse();
-        const wires = this.designer.getWires().reverse();
 
-        const objs = (objects as IOObject[]).concat(wires);
+        // Find and press object
+        const obj = this.findObject(worldMousePos);
 
-        // Check if we're pressing a pressable object or regular object
-        const o = objs.find(o => (isPressable(o) && o.isWithinPressBounds(worldMousePos)) ||
-                                  o.isWithinSelectBounds(worldMousePos));
-        this.currentlyPressedObj = o;
-        if (isPressable(o)) {
-            o.press();
+        this.currentlyPressedObj = obj;
+        if (isPressable(obj)) {
+            obj.press();
             return true;
         }
 
@@ -58,11 +64,10 @@ export class InteractionHelper {
 
     public click(input: Input): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        const objects = this.designer.getObjects().reverse();
 
-        // Find clicked object
-        const obj = objects.find((o) => isPressable(o) && o.isWithinPressBounds(worldMousePos)) as Pressable;
-        if (obj) {
+        // Find and click object
+        const obj = this.findObject(worldMousePos);
+        if (isPressable(obj)) {
             obj.click();
             return true;
         }
