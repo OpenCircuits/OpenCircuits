@@ -50,6 +50,9 @@ func main() {
 	} else if *userCsifConfig == "gcp_datastore_emu" {
 		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), *dsProjectId, *dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
+	} else if *userCsifConfig == "gcp_datastore" {
+		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
+		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}
 
 	// Create the example circuit storage interface

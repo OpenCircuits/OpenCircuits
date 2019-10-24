@@ -3,6 +3,7 @@ package gcp_datastore
 import (
 	"cloud.google.com/go/datastore"
 	"context"
+	"errors"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"google.golang.org/api/iterator"
@@ -58,9 +59,15 @@ type datastoreStorageInterface struct {
 }
 
 func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (interfaces.CircuitStorageInterfaceFactory, error) {
-	// TODO: this will handle the case for production environments
-	//		 this will deduce the required information from environment variables
-	panic("Not implemented")
+	projectId := os.Getenv("DATASTORE_PROJECT_ID")
+	if projectId == "" {
+		return nil, errors.New("DATASTORE_PROJECT_ID environment variable must be set")
+	}
+	ds, err := datastore.NewClient(ctx, projectId, ops...)
+	if err != nil {
+		return nil, err
+	}
+	return &datastoreStorageInterface{dsClient: ds, ctx: ctx}, nil
 }
 
 // Creates a new GCP datastore instance for use with the local datastore emulator
