@@ -1,18 +1,18 @@
 import {DEFAULT_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SELECTED_FILL_COLOR,
-        WIRE_THICKNESS} from "digital/utils/Constants";
-import {Renderer} from "../Renderer";
+        WIRE_THICKNESS} from "core/utils/Constants";
+import {Renderer} from "../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
-import {Wire} from "digital/models/ioobjects/Wire";
+import {DigitalWire} from "digital/models/DigitalWire";
 
-import {Curve} from "../shapes/Curve";
-import {Line} from "../shapes/Line";
-import {Style} from "../Style";
+import {Curve} from "../../../../core/ts/rendering/shapes/Curve";
+import {Line} from "../../../../core/ts/rendering/shapes/Line";
+import {Style} from "../../../../core/ts/rendering/Style";
 
 export const WireRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, wire: Wire, selected: boolean): void {
+        render(renderer: Renderer, camera: Camera, wire: DigitalWire, selected: boolean): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
 

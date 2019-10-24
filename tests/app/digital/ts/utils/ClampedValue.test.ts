@@ -4,7 +4,7 @@ import {ClampedValue} from "math/ClampedValue";
 
 describe("ClampedValue", () => {
     describe("Constructor", () => {
-        it("One parameter", () => {
+        test("One parameter", () => {
             const v1 = new ClampedValue(1);
             expect(v1.getValue()).toBe(1);
             expect(v1.getMinValue()).toBe(1);
@@ -20,7 +20,7 @@ describe("ClampedValue", () => {
             expect(v3.getMinValue()).toBe(-123);
             expect(v3.getMaxValue()).toBe(-123);
         });
-        it("All parameters", () => {
+        test("All parameters", () => {
             const v1 = new ClampedValue(1, 1, 1);
             expect(v1.getValue()).toBe(1);
             expect(v1.getMinValue()).toBe(1);
@@ -38,7 +38,7 @@ describe("ClampedValue", () => {
         });
     });
     describe("Modifiers", () => {
-        it("Set Value", () => {
+        test("Set Value", () => {
             const v1 = new ClampedValue(1, 1, 1);
             v1.setValue(7);
             expect(v1.getValue()).toBe(1);

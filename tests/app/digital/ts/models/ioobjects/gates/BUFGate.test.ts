@@ -1,28 +1,30 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
+import {Place, Connect} from "../../../Helpers";
+
 describe("BUFGate", () => {
     describe("BUFGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch, o = new LED(), buf_gate = new BUFGate();
 
-        designer.addObjects([a, o, buf_gate]);
-        designer.connect(a, 0, buf_gate, 0);
-        designer.connect(buf_gate, 0, o, 0);
+        Place(designer, [a, o, buf_gate]);
+        Connect(a, 0, buf_gate, 0);
+        Connect(buf_gate, 0, o, 0);
 
-        it("Initial State", () => {
+        test("Initial State", () => {
             expect(o.isOn()).toBe(false);
         });
-        it("Input on", () => {
+        test("Input on", () => {
             a.activate(true);
 
             expect(o.isOn()).toBe(true);
         });
-        it("Input off", () => {
+        test("Input off", () => {
             a.activate(false);
 
             expect(o.isOn()).toBe(false);
@@ -30,22 +32,22 @@ describe("BUFGate", () => {
     });
 
     describe("NOTGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), o = new LED(), not_gate = new BUFGate(true);
 
-        designer.addObjects([a, o, not_gate]);
-        designer.connect(a, 0, not_gate, 0);
-        designer.connect(not_gate, 0, o, 0);
+        Place(designer, [a, o, not_gate]);
+        Connect(a, 0, not_gate, 0);
+        Connect(not_gate, 0, o, 0);
 
-        it("Initial State", () => {
+        test("Initial State", () => {
             expect(o.isOn()).toBe(true);
         });
-        it("Input on", () => {
+        test("Input on", () => {
             a.activate(true);
 
             expect(o.isOn()).toBe(false);
         });
-        it("Input off", () => {
+        test("Input off", () => {
             a.activate(false);
 
             expect(o.isOn()).toBe(true);
@@ -53,7 +55,7 @@ describe("BUFGate", () => {
     });
 
     describe("Copy", () => {
-        it("BUFGate Copy", () => {
+        test("BUFGate Copy", () => {
             let a = new BUFGate();
             a.setInputPortCount(4);
             let b = <BUFGate>a.copy();
@@ -64,7 +66,7 @@ describe("BUFGate", () => {
             expect(b.numOutputs()).toEqual(a.numOutputs());
             expect(b.numInputs()).toEqual(a.numInputs());
         });
-        it("NOTGate Copy", () => {
+        test("NOTGate Copy", () => {
             let a = new BUFGate(true);
             a.setInputPortCount(4);
 

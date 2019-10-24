@@ -1,4 +1,4 @@
-import {Component} from "digital/models/ioobjects/Component";
+import {Component} from "core/models/Component";
 
 import {Switch}       from "digital/models/ioobjects/inputs/Switch";
 import {Button}       from "digital/models/ioobjects/inputs/Button";
@@ -30,14 +30,14 @@ import {Decoder}       from "digital/models/ioobjects/other/Decoder";
 import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}         from "digital/models/ioobjects/other/Label";
-import {WirePort}      from "digital/models/ioobjects/other/WirePort";
+import {DigitalNode}   from "digital/models/ioobjects/other/DigitalNode";
 
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
 const OUTPUTS   = [LED, SevenSegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];
-const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, Label, WirePort];
+const OTHER     = [Encoder, Decoder, Multiplexer, Demultiplexer, Label, DigitalNode];
 
 const XML_COMPONENTS = new Map<string, new (...args: unknown[]) => Component>();
 const XML_NAMES = new Map<new (...args: unknown[]) => Component, string>();

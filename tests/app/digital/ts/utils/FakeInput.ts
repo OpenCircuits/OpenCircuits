@@ -1,4 +1,4 @@
-import {LEFT_MOUSE_BUTTON} from "digital/utils/Constants";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Input} from "core/utils/Input";

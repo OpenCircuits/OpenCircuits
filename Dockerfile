@@ -5,7 +5,9 @@ FROM golang:1.13-alpine AS builder
 
 # Install git.
 # Git is required for fetching the dependencies.
-RUN apk update && apk add git
+RUN apk update
+RUN apk add git
+RUN apk add build-base
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/site/go
 COPY ./site/go/ .
@@ -14,7 +16,7 @@ COPY ./site/go/ .
 RUN go mod download
 
 # Build the binary.
-RUN CGO_ENABLED=0 go build -o /go/bin/server .
+RUN go build -o /go/bin/server .
 
 
 ############################
@@ -26,13 +28,15 @@ EXPOSE 8080
 
 # Install git.
 # Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
+RUN apk update
+RUN apk add git
 
 WORKDIR /go/src/github.com/OpenCircuits/OpenCircuits/
 COPY . .
 
 RUN npm install
-RUN npm run build && npm run build:css
+RUN npm run build:js
+RUN npm run build:css
 
 # Copy our static executable.
 COPY --from=builder /go/bin/server ./build/server
