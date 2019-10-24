@@ -131,13 +131,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
 
-        // Remove all input and output wires
-        // const inputs = obj.getInputs();
-        // const outputs = obj.getOutputs();
-        // const wires = inputs.concat(outputs);
-        // for (const wire of wires)
-        //     this.removeWire(wire);
-
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
     }
@@ -145,10 +138,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     public removeWire(wire: AnalogWire): void {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
-
-        // Completely disconnect from the circuit
-        // wire.getInput().disconnect(wire);
-        // wire.getOutput().disconnect();
 
         this.wires.splice(this.wires.indexOf(wire), 1);
         wire.setDesigner(undefined);
