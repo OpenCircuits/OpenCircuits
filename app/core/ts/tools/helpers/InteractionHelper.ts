@@ -1,5 +1,3 @@
-
-import {BezierContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";

@@ -1,10 +1,7 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY, X_KEY,
-        IO_PORT_RADIUS} from "core/utils/Constants";
-import {Vector,V} from "Vector";
-import {CircleContains,
-        BezierContains,} from "math/MathUtils";
+        ESC_KEY, A_KEY, X_KEY} from "core/utils/Constants";
+import {Vector, V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
 import {Tool} from "./Tool";
