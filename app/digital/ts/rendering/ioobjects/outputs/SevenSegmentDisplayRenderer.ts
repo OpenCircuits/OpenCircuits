@@ -2,18 +2,18 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR} from "digital/utils/Constants";
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 import {V} from "Vector";
 
-import {Renderer} from "../../Renderer";
+import {Renderer} from "../../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
 
 import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
 
 import {Images} from "digital/utils/Images";
 
-import {Rectangle} from "../../shapes/Rectangle";
-import {Style} from "../../Style";
+import {Rectangle} from "../../../../../core/ts/rendering/shapes/Rectangle";
+import {Style} from "../../../../../core/ts/rendering/Style";
 
 export const SevenSegmentDisplayRenderer = (() => {
     return {
