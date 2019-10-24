@@ -1,3 +1,5 @@
+import {Vector} from "Vector";
+
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {XMLable} from "core/utils/io/xml/XMLable";
 
@@ -13,7 +15,9 @@ export abstract class IOObject implements Selectable, XMLable {
     protected constructor() {
         this.name = new Name(this.getDisplayName());
     }
-    
+
+    public abstract isWithinSelectBounds(v: Vector): boolean;
+
     // public abstract activate(signal: boolean, i?: number): void;
 
     public setDesigner(designer?: CircuitDesigner): void {

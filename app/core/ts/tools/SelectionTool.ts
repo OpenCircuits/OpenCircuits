@@ -31,6 +31,7 @@ import {SelectAction,
 import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Wire} from "core/models/Wire";
 
 export class SelectionTool extends DefaultTool {
 
@@ -176,35 +177,32 @@ export class SelectionTool extends DefaultTool {
 
         // Clear selections if no shift key
         if (!input.isShiftKeyDown()) {
+            render = (this.selections.size > 0); // Render if selections were actually cleared
             this.action.add(CreateDeselectAllAction(this).execute());
-            render = true; // Render if selections were actually cleared
         }
 
         // Check if a pressable object was clicked
-        const objects = this.designer.getObjects().reverse();
         if (this.interactionHelper.click(input))
             return true;
 
-        // Find selected object
-        const selectedObj = objects.find((o) => o.isWithinSelectBounds(worldMousePos));
-        if (selectedObj) {
-            const deselect = this.shouldDeselect(selectedObj, input.isShiftKeyDown());
-            this.action.add(new SelectAction(this, selectedObj, deselect).execute());
-            this.action.add(new ShiftAction(selectedObj).execute());
-            return true;
+        const objects = this.designer.getObjects().reverse();
+        const wires = this.designer.getWires().reverse();
+        const objs = (objects as (Component | Wire)[]).concat(wires);
+
+        // Check if an object was clicked
+        const obj = objs.find(o => o.isWithinSelectBounds(worldMousePos));
+
+        // Return early if we clicked a wire and if a port was clicked because we want to prioritize that
+        if (obj instanceof Wire) {
+            if (objects.some((o) => o.getPorts().some(p => p.isWithinSelectBounds(worldMousePos))))
+                return false;
         }
 
-        // Check if a port was clicked
-        if (objects.some((o) => o.getPorts().some(
-            (p) => CircleContains(p.getWorldTargetPos(), IO_PORT_RADIUS, worldMousePos))))
-            return false;
-
-        // Check if a wire was clicked then select it
-        const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
-        if (w) {
-            const deselect = this.shouldDeselect(w, input.isShiftKeyDown());
-            this.action.add(new SelectAction(this, w, deselect).execute());
-            this.action.add(new ShiftAction(w).execute());
+        // Select object
+        if (obj) {
+            const deselect = this.shouldDeselect(obj, input.isShiftKeyDown());
+            this.action.add(new SelectAction(this, obj, deselect).execute());
+            this.action.add(new ShiftAction(obj).execute());
             return true;
         }
 

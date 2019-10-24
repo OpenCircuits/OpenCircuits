@@ -35,8 +35,7 @@ export class WiringTool extends Tool {
     }
 
     protected findPort(objects: Component[], pos: Vector): Port {
-        return objects.flatMap((o) => o.getPorts())
-                .find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, pos));
+        return objects.flatMap((o) => o.getPorts()).find(p => p.isWithinSelectBounds(pos));
     }
 
     public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {
