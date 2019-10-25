@@ -2,6 +2,7 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
@@ -45,4 +46,21 @@ export class LED extends DigitalComponent {
     public getXMLName(): string {
         return "led";
     }
+
+    public copy(): LED {
+        const copy = <LED>super.copy();
+        copy.color = this.color;
+        return copy;
+    }
+
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("color", this.getColor());
+    }
+
+    public load(node: XMLNode): void {
+        super.load(node);
+        this.setColor(node.getAttribute("color"));
+    }
+
 }

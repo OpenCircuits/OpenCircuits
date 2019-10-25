@@ -7,12 +7,12 @@ import {CircuitMetadata,
         CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 export class SideNavController {
-    private tab = $("#header-sidenav-open-tab");
-    private sidenav = $("#sidenav");
-    private overlay = $("#overlay");
-    private context = $("#content");
-    private sidenavModeCheckbox = $("#sidenav-mode-checkbox");
-    private exampleCircuitsList = $("#example-circuit-list");
+    private tab: JQuery<HTMLElement> = $("#header-sidenav-open-tab");
+    private sidenav: JQuery<HTMLElement> = $("#sidenav");
+    private overlay: JQuery<HTMLElement> = $("#overlay");
+    private context: JQuery<HTMLElement> = $("#content");
+    private sidenavModeCheckbox: JQuery<HTMLElement>= $("#sidenav-mode-checkbox");
+    private exampleCircuitsList: JQuery<HTMLElement> = $("#example-circuit-list");
 
     private open: boolean;
     private disabled: boolean;
