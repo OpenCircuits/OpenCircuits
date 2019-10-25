@@ -32,7 +32,7 @@ export class TranslateTool extends Tool {
         this.camera = camera;
     }
 
-    public shouldActivate(currentTool: Tool, event: string, input: Input, _?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, _input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedrag"))
@@ -110,9 +110,7 @@ export class TranslateTool extends Tool {
         // Duplicate group when we press the spacebar
         if (key == SPACEBAR_KEY) {
             const designer = this.components[0].getDesigner();
-            // const group = CopyGroup(this.components);
             this.action.add(new CopyGroupAction(designer, this.components).execute());
-            // this.designer.addGroup(group);
 
             return true;
         }

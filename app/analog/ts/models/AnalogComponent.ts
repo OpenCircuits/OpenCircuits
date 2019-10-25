@@ -1,6 +1,5 @@
 import {Component} from "core/models/Component";
 import {AnalogCircuitDesigner} from "./AnalogCircuitDesigner";
-import {Port} from "core/models/ports/Port";
 import {ClampedValue} from "math/ClampedValue";
 import {Vector} from "Vector";
 import {Positioner} from "core/models/ports/positioners/Positioner";

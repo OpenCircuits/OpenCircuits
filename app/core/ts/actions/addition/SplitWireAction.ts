@@ -5,7 +5,6 @@ import {Node} from "core/models/Node";
 
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
-import {Component} from "core/models/Component";
 
 export function CreateSplitWireAction(w: Wire, port: Node): GroupAction {
     const action = new GroupAction();

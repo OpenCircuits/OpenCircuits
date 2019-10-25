@@ -1,26 +1,33 @@
-
-import {BezierContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";
-import {IsPressable} from "core/utils/Pressable";
+import {isPressable, Pressable} from "core/utils/Pressable";
 import {Selectable} from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {IOObject} from "core/models/IOObject";
+import {Vector} from "Vector";
 
 export class InteractionHelper {
     private designer: CircuitDesigner;
     private camera: Camera;
 
-    private isPressingPressableObj: boolean;
     private currentlyPressedObj: Selectable;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         this.designer = designer;
         this.camera = camera;
 
-        this.isPressingPressableObj = false;
         this.currentlyPressedObj = undefined;
+    }
+
+    private findObject(pos: Vector): IOObject {
+        const objects = this.designer.getObjects().reverse();
+        const wires = this.designer.getWires().reverse();
+
+        const objs = (objects as IOObject[]).concat(wires);
+        return objs.find(o => (isPressable(o) && o.isWithinPressBounds(pos)) ||
+                               o.isWithinSelectBounds(pos));
     }
 
     public setCurrentlyPressedObj(obj: Selectable): void {
@@ -29,58 +36,39 @@ export class InteractionHelper {
 
     public press(input: Input): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        const objects = this.designer.getObjects().reverse();
 
-        this.isPressingPressableObj = false;
+        // Find and press object
+        const obj = this.findObject(worldMousePos);
 
-        // Check if we're pressing an object
-        const pressedObj = objects.find((o) => o.isWithinPressBounds(worldMousePos));
-        if (pressedObj) {
-            if (IsPressable(pressedObj))
-                pressedObj.press();
-            this.isPressingPressableObj = true;
-            this.currentlyPressedObj = pressedObj;
+        this.currentlyPressedObj = obj;
+        if (isPressable(obj)) {
+            obj.press();
             return true;
         }
-
-        // Check if we're pressing an object within it's select bounds
-        const selectedObj = objects.find((o) => o.isWithinSelectBounds(worldMousePos));
-        if (selectedObj) {
-            this.currentlyPressedObj = selectedObj;
-            return false;
-        }
-
-        // Check if we're pressing a wire
-        const w = this.designer.getWires().find((w) => BezierContains(w.getShape(), worldMousePos));
-        if (w)
-            this.currentlyPressedObj = w;
 
         return false;
     }
 
     public release(): boolean {
         // Release currently pressed object
-        if (this.isPressingPressableObj) {
-            this.isPressingPressableObj = false;
-            if (IsPressable(this.currentlyPressedObj))
-                this.currentlyPressedObj.release();
-            this.currentlyPressedObj = undefined;
+        const obj = this.currentlyPressedObj;
+        this.currentlyPressedObj = undefined;
+
+        if (isPressable(obj)) {
+            obj.release();
             return true;
         }
-        this.currentlyPressedObj = undefined;
 
         return false;
     }
 
     public click(input: Input): boolean {
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
-        const objects = this.designer.getObjects().reverse();
 
-        // Find clicked object
-        const clickedObj = objects.filter(o => IsPressable(o))
-                                  .find((o) => o.isWithinPressBounds(worldMousePos));
-        if (IsPressable(clickedObj)) {
-            clickedObj.click();
+        // Find and click object
+        const obj = this.findObject(worldMousePos);
+        if (isPressable(obj)) {
+            obj.click();
             return true;
         }
 

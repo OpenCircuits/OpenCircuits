@@ -12,21 +12,21 @@ import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
 
 export class LoginController {
-    private loginPopup = $("#login-popup");
-    private overlay = $("#overlay");
+    private loginPopup: JQuery<HTMLElement> = $("#login-popup");
+    private overlay:    JQuery<HTMLElement> = $("#overlay");
 
-    private loginHeaderContainer = $("#header-login-container");
-    private loginHeaderButton = $("#header-signin-button");
-    private logoutHeaderButton = $("#header-signout-button");
+    private loginHeaderContainer: JQuery<HTMLElement> = $("#header-login-container");
+    private loginHeaderButton:    JQuery<HTMLElement> = $("#header-signin-button");
+    private logoutHeaderButton:   JQuery<HTMLElement> = $("#header-signout-button");
 
-    private saveHeaderButton = $("#header-save-button");
+    private saveHeaderButton: JQuery<HTMLElement> = $("#header-save-button");
 
     private open: boolean;
     private disabled: boolean;
 
     // Put authentication type meta-tags here (used to determine if an auth method is enabled)
-    private noAuthMeta = $("#no_auth_enable");
-    private googleAuthMeta = $("#google-signin-client_id");
+    private noAuthMeta:     JQuery<HTMLElement> = $("#no_auth_enable");
+    private googleAuthMeta: JQuery<HTMLElement> = $("#google-signin-client_id");
 
     private sidenav: SideNavController;
 

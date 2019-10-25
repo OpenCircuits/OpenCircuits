@@ -65,7 +65,7 @@ export class AnalogWiringTool extends WiringTool {
         return true;
     }
 
-    public deactivate(event: string, input: Input, button?: number): Action {
+    public deactivate(): Action {
         return this.action.execute();
     }
 

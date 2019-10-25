@@ -2,7 +2,6 @@ import {Camera}            from "math/Camera";
 import {Renderer}          from "core/rendering/Renderer";
 import {Grid}              from "core/rendering/Grid";
 import {DebugRenderer}     from "core/rendering/DebugRenderer";
-import {ToolRenderer}      from "digital/rendering/ToolRenderer";
 
 import {ToolManager} from "core/tools/ToolManager";
 import {Selectable}  from "core/utils/Selectable";
@@ -10,7 +9,6 @@ import {Selectable}  from "core/utils/Selectable";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
-import {Tool} from "core/tools/Tool";
 
 export abstract class CircuitView {
     protected canvas: HTMLCanvasElement;

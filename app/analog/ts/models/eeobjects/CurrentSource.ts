@@ -25,9 +25,9 @@ export class CurrentSource extends AnalogComponent {
         return "CurrentSource";
     }
 
-	public getImageName() {
-		return "currentsource.svg";
-	}
+    public getImageName(): string {
+        return "currentsource.svg";
+    }
 
     public getXMLName(): string {
         return "cursource";

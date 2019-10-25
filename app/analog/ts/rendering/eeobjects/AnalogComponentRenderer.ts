@@ -1,33 +1,24 @@
-import {DEFAULT_FILL_COLOR,
-        DEFAULT_BORDER_COLOR,
-        DEFAULT_BORDER_WIDTH,
-        SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Renderer} from "core/rendering/Renderer";
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 
-import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
 import {Selectable} from "core/utils/Selectable";
 
 import {Images} from "analog/utils/Images";
 
-import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style} from "core/rendering/Style";
 import {AnalogComponent} from "analog/models/AnalogComponent";
 
 export const AnalogComponentRenderer = (() => {
 
-    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean): void {
-        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH)
-        renderer.draw(new Rectangle(V(), transform.getSize()), style);
-    }
+    // const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean): void {
+    //     const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+    //     const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+    //     const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH)
+    //     renderer.draw(new Rectangle(V(), transform.getSize()), style);
+    // }
 
     return {
         render(renderer: Renderer, camera: Camera, object: AnalogComponent, selected: boolean, selections: Selectable[]): void {
@@ -40,7 +31,7 @@ export const AnalogComponentRenderer = (() => {
             const transform = object.getTransform();
             const imgName = object.getImageName();
 
-            let size = transform.getSize();
+            const size = transform.getSize();
 
             // Transform the renderer
             renderer.transform(camera, transform);

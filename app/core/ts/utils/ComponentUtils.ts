@@ -66,7 +66,7 @@ export class IOObjectSet {
  * @return    All the ports attached to the given list of objects
  */
 export function GetAllPorts(objs: Component[]): Port[] {
-    return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
+    return objs.flatMap((o) => o.getPorts());
 }
 
 /**
@@ -161,8 +161,8 @@ export function GatherGroup(objects: IOObject[]): IOObjectSet {
     const wires = group.getWires();
     const components = group.getComponents();
 
-    const paths = [...new Set(wires.flatMap((w) => GetPath(w)).concat(
-                              components.flatMap((c) => GetAllPaths(c))))];
+    const paths = [...new Set(wires.flatMap((w) => GetPath(w))
+            .concat(components.flatMap((c) => GetAllPaths(c))))];
 
     return new IOObjectSet((components as IOObject[]).concat(wires, paths));
 }

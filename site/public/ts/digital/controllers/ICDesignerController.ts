@@ -7,11 +7,6 @@ import {Transform} from "math/Transform";
 import {RectContains,
         GetNearestPointOnRect} from "math/MathUtils";
 
-import {TranslateTool} from "core/tools/TranslateTool";
-import {RotateTool} from "core/tools/RotateTool";
-import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
-import {WiringTool} from "core/tools/WiringTool";
-
 import {ICDesignerView} from "../views/ICDesignerView";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";

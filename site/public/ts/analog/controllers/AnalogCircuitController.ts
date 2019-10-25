@@ -6,6 +6,7 @@ import {MainDesignerController} from "site/shared/controllers/MainDesignerContro
 import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
+import {AnalogHeaderController} from "./AnalogHeaderController";
 
 import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
@@ -17,6 +18,7 @@ export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
     private sideNav: SideNavController;
     private loginController: LoginController;
+    private headerController: AnalogHeaderController;
 
     protected designer: AnalogCircuitDesigner;
 
@@ -35,6 +37,7 @@ export class AnalogCircuitController extends MainDesignerController {
 
         this.contextMenu = new ContextMenuController(this);
         this.sideNav = new SideNavController(this);
+        this.headerController = new AnalogHeaderController(this);
 
         this.loginController = new LoginController(this, this.sideNav);
     }
@@ -43,7 +46,7 @@ export class AnalogCircuitController extends MainDesignerController {
         return await this.loginController.initAuthentication();
     }
 
-    public loadCircuit(contents: XMLDocument): void {
+    public loadCircuit(_contents: XMLDocument): void {
         // const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
         // this.headerController.setProjectName(name);
     }

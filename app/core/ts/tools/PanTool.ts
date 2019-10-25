@@ -29,14 +29,14 @@ export class PanTool extends Tool {
         return false;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, button?: number): void {
+    public activate(_: Tool, event: string, input: Input): void {
         this.isDragging = false;
 
         if (event == "mousedrag")
             this.onMouseDrag(input); // Explicitly call drag event
     }
 
-    public shouldDeactivate(event: string, input: Input, button?: number): boolean {
+    public shouldDeactivate(event: string, _: Input, button?: number): boolean {
         // Deactivate if stopped dragging by releasing mouse
         //  or if no dragging happened and OPTION_KEY was released
         return (event == "mouseup" ||

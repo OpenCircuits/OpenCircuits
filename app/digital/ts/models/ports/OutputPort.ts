@@ -1,10 +1,7 @@
 import {Vector,V} from "Vector";
-import {ClampedValue} from "math/ClampedValue";
 
-import {Wire}       from "core/models/Wire";
-import {Port}	    from "core/models/ports/Port";
-import {PortSet}    from "core/models/ports/PortSets";
-import {Positioner} from "core/models/ports/positioners/Positioner";
+import {Wire} from "core/models/Wire";
+import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalWire}      from "../DigitalWire";
