@@ -5,13 +5,13 @@ import {Matrix2x3} from "math/Matrix";
 
 describe("Matrix2x3", () => {
     describe("Constructor", () => {
-        it("No parameters", () => {
+        test("No parameters", () => {
             const m = new Matrix2x3();
                                     // [1 0 0]
                                     // [0 1 0]
             expect(m["mat"]).toEqual([1, 0, 0, 1, 0, 0]);
         });
-        it("One (matrix) parameter", () => {
+        test("One (matrix) parameter", () => {
             const m1 = new Matrix2x3();
             m1["mat"] = [6, 5, 4, 3, 2, 1];
             const m2 = new Matrix2x3(m1);
@@ -25,12 +25,12 @@ describe("Matrix2x3", () => {
         });
     });
     describe("Modifiers", () => {
-        it("Zero", () => {
+        test("Zero", () => {
             const m = new Matrix2x3();
             m.zero();
             expect(m["mat"]).toEqual([0, 0, 0, 0, 0, 0]);
         });
-        it("Identity", () => {
+        test("Identity", () => {
             const m = new Matrix2x3();
             m["mat"] = [0, 0, 0, 0, 0, 0];
             m.identity();
@@ -38,7 +38,7 @@ describe("Matrix2x3", () => {
                                     // [0 1 0]
             expect(m["mat"]).toEqual([1, 0, 0, 1, 0, 0]);
         });
-        it("Translate", () => {
+        test("Translate", () => {
             {
                 const m = new Matrix2x3();
                 const v = new Vector(5, -2);
@@ -61,7 +61,7 @@ describe("Matrix2x3", () => {
                 expect(m["mat"]).toEqual([1, 2, 3, 4, -1, 2]);
             }
         });
-        it("Rotate", () => {
+        test("Rotate", () => {
             {
                 const m = new Matrix2x3();
                 m.rotate(Math.PI / 2);
@@ -87,7 +87,7 @@ describe("Matrix2x3", () => {
                 expect(m["mat"][5]).toBe(0);
             }
         });
-        it("Scale", () => {
+        test("Scale", () => {
             {
                 const m = new Matrix2x3();
                 const v = new Vector(5, -2);
@@ -112,7 +112,7 @@ describe("Matrix2x3", () => {
         });
     });
     describe("Operators", () => {
-        it("Mul", () => {
+        test("Mul", () => {
             const m = new Matrix2x3();
             m["mat"] = [1, 2, 3, 4, 5, 6];
             const v1 = new Vector(-1, -2);
@@ -122,7 +122,7 @@ describe("Matrix2x3", () => {
             expect(v2.x).toBe(-2);
             expect(v2.y).toBe(-4);
         });
-        it("Mult", () => {
+        test("Mult", () => {
             const m1 = new Matrix2x3();
             m1["mat"] = [1, 2, 3, 4, 5, 6];
             const m2 = new Matrix2x3();
@@ -138,7 +138,7 @@ describe("Matrix2x3", () => {
                                     // [32 20 14]
             expect(m3["mat"]).toEqual([21, 32, 13, 20, 10, 14]);
         });
-        it("Inverse", () => {
+        test("Inverse", () => {
             {
                 const m = new Matrix2x3();
                 const i = m.inverse();

@@ -1,11 +1,10 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
-
-export class Clock extends Component {
+export class Clock extends DigitalComponent {
     private frequency: number;
     private isOn: boolean;
 

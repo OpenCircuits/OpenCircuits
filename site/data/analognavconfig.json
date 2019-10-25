@@ -1,0 +1,32 @@
+{
+  "imgRoot": "img/analog/icons",
+  "sections": [
+    {
+      "id": "sources",
+      "label": "Sources",
+      "items": [
+        {
+          "id": "battery",
+          "label": "Battery",
+          "icon": "voltagesource.svg"
+        },
+        {
+          "id": "cursource",
+          "label": "Current Source",
+          "icon": "currentsource.svg"
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "items": [
+        {
+          "id": "resistor",
+          "label": "Resistor",
+          "icon": "resistor.svg"
+        }
+      ]
+    }
+  ]
+}

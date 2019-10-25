@@ -1,14 +1,14 @@
 import {Vector,V} from "Vector";
 
-import {Component} from "../ioobjects/Component";
-import {Wire}      from "../ioobjects/Wire";
-
-import {Port}	   from "./Port";
+import {Port} from "core/models/ports/Port";
+import {DigitalComponent} from "../DigitalComponent";
+import {DigitalWire} from "../DigitalWire";
 
 export class InputPort extends Port {
-    private input?: Wire;
+    protected parent: DigitalComponent;
+    private input?: DigitalWire;
 
-    public constructor(parent: Component) {
+    public constructor(parent: DigitalComponent) {
         super(parent);
         this.input = undefined;
     }
@@ -21,10 +21,17 @@ export class InputPort extends Port {
 
         // Get designer to propagate signal, exit if undefined
         const designer = this.parent.getDesigner();
-        if (designer == undefined)
+        if (!designer)
             return;
 
         designer.propagate(this.parent, this.isOn);
+    }
+
+    public connect(wire: DigitalWire): void {
+        if (this.input)
+            throw new Error("Cannot connect to Input Port! Connection already exists!");
+        this.input = wire;
+        this.activate(wire.getIsOn());
     }
 
     public disconnect(): void {
@@ -33,11 +40,11 @@ export class InputPort extends Port {
         this.activate(false);
     }
 
-    public setInput(input: Wire): void {
+    public setInput(input: DigitalWire): void {
         this.input = input;
     }
 
-    public getInput(): Wire {
+    public getInput(): DigitalWire {
         return this.input;
     }
 
@@ -45,8 +52,12 @@ export class InputPort extends Port {
         return V(-1, 0);
     }
 
-    public getWires(): Array<Wire> {
+    public getWires(): DigitalWire[] {
         return this.getInput() ? [this.getInput()] : [];
+    }
+
+    public getParent(): DigitalComponent {
+        return this.parent;
     }
 
 }

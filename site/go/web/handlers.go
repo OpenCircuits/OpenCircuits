@@ -2,10 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -13,39 +9,51 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
-type Item struct {
+type item struct {
 	ID    string `json:"id"`
 	Label string `json:"label"`
 	Icon  string `json:"icon"`
 	Not   bool   `json:"not"`
 }
 
-type Section struct {
+type section struct {
 	ID    string `json:"id"`
 	Label string `json:"label"`
-	Items []Item `json:"items"`
+	Items []item `json:"items"`
 }
 
-type NavConfig struct {
-	Sections []Section `json:"sections"`
+type navConfig struct {
+	ImgRoot  string    `json:"imgRoot"`
+	Sections []section `json:"sections"`
 }
 
-var navConfig NavConfig
+var digitalNavConfig navConfig
+var analogNavConfig navConfig
 
-func init() {
+func loadNavConfig(path string, config *navConfig) {
 	// Load the sections from the json file TODO: don't cache this (or make a way to make it dirty)
-	file, err := ioutil.ReadFile("./data/itemnavconfig.json")
+	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("File error: %v\n", err)
 		os.Exit(1)
 	}
-	err = json.Unmarshal(file, &navConfig)
+	err = json.Unmarshal(file, config)
 	if err != nil {
 		log.Printf("Failed to unmarshall json: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+func init() {
+	loadNavConfig("./data/digitalnavconfig.json", &digitalNavConfig)
+	loadNavConfig("./data/analognavconfig.json", &analogNavConfig)
 }
 
 func getLastModifiedTime(path string) time.Time {
@@ -78,13 +86,38 @@ func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.Ci
 
 		exampleCircuits := examplesCsif.CreateCircuitStorageInterface().EnumerateCircuits("example")
 
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		c.HTML(http.StatusOK, "index.gohtml", gin.H{
 			"examples":  exampleCircuits,
-			"navConfig": navConfig,
+			"navConfig": digitalNavConfig,
 			"l":         loggedIn,
 			"userId":    userID,
 			"authData":  authData,
-			"bundleJs":  getBustedName("./Bundle.js"),
+			"bundleJs":  getBustedName("./Bundle.digital.js"),
+		})
+	}
+}
+
+func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		userID := session.Get("user-id")
+		loggedIn := userID != nil
+
+		authData := struct {
+			Headers []template.HTML
+			Buttons []template.HTML
+		}{}
+		for _, a := range manager.AuthMethods {
+			authData.Headers = append(authData.Headers, a.GetLoginHeader())
+			authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+		}
+
+		c.HTML(http.StatusOK, "analog.gohtml", gin.H{
+			"navConfig": analogNavConfig,
+			"l":         loggedIn,
+			"userId":    userID,
+			"authData":  authData,
+			"bundleJs":  getBustedName("./Bundle.analog.js"),
 		})
 	}
 }

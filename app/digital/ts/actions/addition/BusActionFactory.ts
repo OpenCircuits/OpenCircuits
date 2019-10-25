@@ -1,5 +1,5 @@
-import {GroupAction} from "../GroupAction";
-import {ConnectionAction} from "./ConnectionAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
