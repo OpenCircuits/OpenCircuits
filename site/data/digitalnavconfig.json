@@ -1,0 +1,163 @@
+{
+  "imgRoot": "img/icons",
+  "sections": [
+    {
+      "id": "inputs",
+      "label": "Inputs",
+      "items": [
+        {
+          "id": "constlow",
+          "label": "Constant Low",
+          "icon": "constantlow.svg"
+        },
+        {
+          "id": "consthigh",
+          "label": "Constant High",
+          "icon": "constanthigh.svg"
+        },
+        {
+          "id": "button",
+          "label": "Button",
+          "icon": "button.svg"
+        },
+        {
+          "id": "switch",
+          "label": "Switch",
+          "icon": "switch.svg"
+        },
+        {
+          "id": "clock",
+          "label": "Clock",
+          "icon": "clock.svg"
+        }
+      ]
+    },
+    {
+      "id": "outputs",
+      "label": "Outputs",
+      "items": [
+        {
+          "id": "led",
+          "label": "LED",
+          "icon": "led.svg"
+        },
+        {
+          "id": "sevensegmentdisplay",
+          "label": "7 Segment Display",
+          "icon": "sevensegmentdisplay.svg"
+        }
+      ]
+    },
+    {
+      "id": "gates",
+      "label": "Logic Gates",
+      "items": [
+        {
+          "id": "buf",
+          "label": "Buffer",
+          "icon": "bufgate.svg",
+          "not": false
+        },
+        {
+          "id": "buf",
+          "label": "NOT",
+          "icon": "notgate.svg",
+          "not": true
+        },
+        {
+          "id": "and",
+          "label": "AND",
+          "icon": "andgate.svg",
+          "not": false
+        },
+        {
+          "id": "and",
+          "label": "NAND",
+          "icon": "nandgate.svg",
+          "not": true
+        },
+        {
+          "id": "or",
+          "label": "OR",
+          "icon": "orgate.svg",
+          "not": false
+        },
+        {
+          "id": "or",
+          "label": "NOR",
+          "icon": "norgate.svg",
+          "not": true
+        },
+        {
+          "id": "xor",
+          "label": "XOR",
+          "icon": "xorgate.svg",
+          "not": false
+        },
+        {
+          "id": "xor",
+          "label": "XNOR",
+          "icon": "xnorgate.svg",
+          "not": true
+        }
+      ]
+    },
+    {
+      "id": "flipflops",
+      "label": "Flip Flops",
+      "items": [
+        {
+          "id": "srff",
+          "label": "SR Flip Flop",
+          "icon": "srflipflop.svg"
+        },
+        {
+          "id": "jkff",
+          "label": "JK Flip Flop",
+          "icon": "srflipflop.svg"
+        },
+        {
+          "id": "dff",
+          "label": "D Flip Flop",
+          "icon": "srflipflop.svg"
+        },
+        {
+          "id": "tff",
+          "label": "T Flip Flop",
+          "icon": "srflipflop.svg"
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "items": [
+        {
+          "id": "mux",
+          "label": "Mux",
+          "icon": "multiplexer.svg"
+        },
+        {
+          "id": "demux",
+          "label": "Demux",
+          "icon": "demultiplexer.svg"
+        },
+        {
+          "id": "encoder",
+          "label": "Encoder",
+          "icon": "encoder.svg"
+        },
+        {
+          "id": "decoder",
+          "label": "Decoder",
+          "icon": "decoder.svg"
+        },
+        {
+          "id": "label",
+          "label": "Label",
+          "icon": "label.svg"
+        }
+      ]
+    }
+  ]
+}

@@ -3,29 +3,30 @@ import "jest";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
-import {ToolManager} from "digital/tools/ToolManager";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
-import {Component}       from "digital/models/ioobjects/Component";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+
+import {Place} from "../../Helpers";
 
 describe("Wiring Tool", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(0);
-    const toolManager = new ToolManager(camera, designer);
+    const designer = new DigitalCircuitDesigner(0);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
 
-    function expectToBeConnected(obj1: Component, obj2: Component): void {
+    function expectToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
         const connections = obj1.getOutputs().map((w) => w.getOutputComponent());
         expect(connections).toContain(obj2);
     }
-    function expectNotToBeConnected(obj1: Component, obj2: Component): void {
+    function expectNotToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
         const connections = obj1.getOutputs().map((w) => w.getOutputComponent());
         expect(connections).not.toContain(obj2);
     }
@@ -39,7 +40,7 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led = new LED();
         led.setPos(V(100, 0));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         input.click(sw.getOutputPort(0).getWorldTargetPos())
                 .click(led.getInputPort(0).getWorldTargetPos());
@@ -51,7 +52,7 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led = new LED();
         led.setPos(V(100, 0));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led.getInputPort(0).getWorldTargetPos());
@@ -63,7 +64,7 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led = new LED();
         led.setPos(V(100, 0));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         input.click(led.getInputPort(0).getWorldTargetPos())
                 .click(sw.getOutputPort(0).getWorldTargetPos());
@@ -75,7 +76,7 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led = new LED();
         led.setPos(V(100, 0));
-        designer.addObjects([sw, led]);
+        Place(designer, [sw, led]);
 
         input.drag(led.getInputPort(0).getWorldTargetPos(),
                    sw.getOutputPort(0).getWorldTargetPos());
@@ -87,9 +88,9 @@ describe("Wiring Tool", () => {
         const sw = new Switch();
         const led1 = new LED();
         const led2 = new LED();
-        led1.setPos(V(100, 50));
-        led2.setPos(V(100, -50));
-        designer.addObjects([sw, led1, led2]);
+        led1.setPos(V(100, 200));
+        led2.setPos(V(100, -200));
+        Place(designer, [sw, led1, led2]);
 
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led1.getInputPort(0).getWorldTargetPos());
@@ -106,7 +107,7 @@ describe("Wiring Tool", () => {
         const led = new LED();
         sw1.setPos(V(-100, 50));
         sw2.setPos(V(-100, -50));
-        designer.addObjects([sw1, sw2, led]);
+        Place(designer, [sw1, sw2, led]);
 
         input.drag(led.getInputPort(0).getWorldTargetPos(),
                    sw1.getOutputPort(0).getWorldTargetPos());
