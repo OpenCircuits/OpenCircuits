@@ -1,15 +1,15 @@
-import {IO_PORT_RADIUS} from "digital/utils/Constants";
+import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "../../ports/positioners/ConstantSpacePositioner";
+import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {InputPort} from "../../ports/InputPort";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class SevenSegmentDisplay extends Component {
+export class SevenSegmentDisplay extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(7),
               new ClampedValue(0),

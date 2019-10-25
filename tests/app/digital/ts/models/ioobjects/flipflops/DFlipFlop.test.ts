@@ -1,25 +1,27 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {DFlipFlop}       from "digital/models/ioobjects/flipflops/DFlipFlop";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
+import {Place, Connect} from "../../../Helpers";
+
 describe("DFlipFLop", () => {
-    const designer = new CircuitDesigner(0);
+    const designer = new DigitalCircuitDesigner(0);
     const clk = new Switch(), data = new Switch(), f = new DFlipFlop(), l0 = new LED(), l1 = new LED();
 
-    designer.addObjects([clk, data, f, l1, l0]);
-    designer.connect(clk, 0,  f, 0);
-    designer.connect(data, 0,  f, 1);
-    designer.connect(f, 0,  l0, 0);
-    designer.connect(f, 1,  l1, 0);
+    Place(designer, [clk, data, f, l1, l0]);
+    Connect(clk, 0, f, 0);
+    Connect(data, 0, f, 1);
+    Connect(f, 0, l0, 0);
+    Connect(f, 1, l1, 0);
 
-    it("Initial State", () => {
+    test("Initial State", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(false);
     });
-    it("Toggle the Data without the Clock", () => {
+    test("Toggle the Data without the Clock", () => {
         data.activate(true);
 
         expect(l1.isOn()).toBe(false);
@@ -30,7 +32,7 @@ describe("DFlipFLop", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(true);
     });
-    it("Latch to Off", () => {
+    test("Latch to Off", () => {
         clk.activate(true);
 
         expect(l1.isOn()).toBe(false);
@@ -41,7 +43,7 @@ describe("DFlipFLop", () => {
         expect(l1.isOn()).toBe(false);
         expect(l0.isOn()).toBe(true);
     });
-    it("Latch to On", () => {
+    test("Latch to On", () => {
         data.activate(true);
         clk.activate(true);
 
@@ -53,7 +55,7 @@ describe("DFlipFLop", () => {
         expect(l1.isOn()).toBe(true);
         expect(l0.isOn()).toBe(false);
     });
-    it("Change During Latch", () => {
+    test("Change During Latch", () => {
         data.activate(false);
         clk.activate(true);
 

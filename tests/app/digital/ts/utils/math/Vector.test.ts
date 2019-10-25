@@ -4,22 +4,22 @@ import {Vector} from "Vector";
 
 describe("Vector", () => {
     describe("Constructor", () => {
-        it("No parameters", () => {
+        test("No parameters", () => {
             const v = new Vector();
             expect(v.x).toBe(0);
             expect(v.y).toBe(0);
         });
-        it("One (number) parameter", () => {
+        test("One (number) parameter", () => {
             const v = new Vector(5);
             expect(v.x).toBe(5);
             expect(v.y).toBe(5);
         });
-        it("Two (number) parameters", () => {
+        test("Two (number) parameters", () => {
             const v = new Vector(5, 5);
             expect(v.x).toBe(5);
             expect(v.y).toBe(5);
         });
-        it("One (vector) parameter", () => {
+        test("One (vector) parameter", () => {
             const v1 = new Vector(5, 5);
             const v2 = new Vector(v1);
             expect(v2.x).toBe(5);
@@ -27,7 +27,7 @@ describe("Vector", () => {
         });
     });
     describe("Operators", () => {
-        it("Add (numbers)", () => {
+        test("Add (numbers)", () => {
             const v1 = new Vector(1, 1);
             const v2 = v1.add(5, 5);
             expect(v1.x).toBe(1);
@@ -35,7 +35,7 @@ describe("Vector", () => {
             expect(v2.x).toBe(6);
             expect(v2.y).toBe(6);
         });
-        it("Add (vector)", () => {
+        test("Add (vector)", () => {
             const v1 = new Vector(1, 1);
             const v2 = new Vector(5, 5);
             const v3 = v1.add(v2);
@@ -46,7 +46,7 @@ describe("Vector", () => {
             expect(v3.x).toBe(6);
             expect(v3.y).toBe(6);
         });
-        it("Sub (numbers)", () => {
+        test("Sub (numbers)", () => {
             const v1 = new Vector(6, 6);
             const v2 = v1.sub(5, 5);
             expect(v1.x).toBe(6);
@@ -54,7 +54,7 @@ describe("Vector", () => {
             expect(v2.x).toBe(1);
             expect(v2.y).toBe(1);
         });
-        it("Sub (vector)", () => {
+        test("Sub (vector)", () => {
             const v1 = new Vector(6, 6);
             const v2 = new Vector(5, 5);
             const v3 = v1.sub(v2);
@@ -65,7 +65,7 @@ describe("Vector", () => {
             expect(v3.x).toBe(1);
             expect(v3.y).toBe(1);
         });
-        it("Scale (number)", () => {
+        test("Scale (number)", () => {
             const v1 = new Vector(1, 2);
             const v2 = v1.scale(5);
             expect(v1.x).toBe(1);
@@ -73,7 +73,7 @@ describe("Vector", () => {
             expect(v2.x).toBe(5);
             expect(v2.y).toBe(10);
         });
-        it("Scale (vector)", () => {
+        test("Scale (vector)", () => {
             const v1 = new Vector(2, 3);
             const v2 = new Vector(5, 10);
             const v3 = v1.scale(v2);
@@ -84,7 +84,7 @@ describe("Vector", () => {
             expect(v3.x).toBe(10);
             expect(v3.y).toBe(30);
         });
-        it("Copy", () => {
+        test("Copy", () => {
             const v1 = new Vector(2, 3);
             const v2 = v1.copy();
             expect(v1).not.toBe(v2);
@@ -93,7 +93,7 @@ describe("Vector", () => {
         });
     });
     describe("Math", () => {
-        it("Normalize", () => {
+        test("Normalize", () => {
             {
                 const v = new Vector(5, 0);
                 const n = v.normalize();
@@ -119,7 +119,7 @@ describe("Vector", () => {
                 expect(n.y).toBeCloseTo(Math.sqrt(2)/2, 1e-3);
             }
         });
-        it("Len", () => {
+        test("Len", () => {
             {
                 const v = new Vector(0, 0);
                 const l = v.len();
@@ -149,7 +149,7 @@ describe("Vector", () => {
                 expect(l).toBeCloseTo(582.1932668797, 1e-3);
             }
         });
-        it("Len2", () => {
+        test("Len2", () => {
             {
                 const v = new Vector(0, 0);
                 const l = v.len2();
@@ -179,7 +179,7 @@ describe("Vector", () => {
                 expect(l).toBe(338949);
             }
         });
-        it("DistanceTo", () => {
+        test("DistanceTo", () => {
             {
                 const v1 = new Vector(1, 2);
                 const v2 = new Vector(4, 6);
@@ -191,7 +191,7 @@ describe("Vector", () => {
                 expect(d).toBeCloseTo(5, 1e-3);
             }
         });
-        it("Dot", () => {
+        test("Dot", () => {
             {
                 const v1 = new Vector(1, 2);
                 const v2 = new Vector(4, 6);
@@ -203,7 +203,7 @@ describe("Vector", () => {
                 expect(d).toBe(16);
             }
         });
-        it("Project", () => {
+        test("Project", () => {
             {
                 const v1 = new Vector(8, 4);
                 const v2 = new Vector(1, 0);
@@ -218,7 +218,7 @@ describe("Vector", () => {
         });
     });
     describe("Utility", () => {
-        it("Min", () => {
+        test("Min", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
@@ -227,7 +227,7 @@ describe("Vector", () => {
                 expect(min.y).toBe(5);
             }
         });
-        it("Max", () => {
+        test("Max", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
