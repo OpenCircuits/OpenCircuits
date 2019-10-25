@@ -50,7 +50,7 @@ export class Input {
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.keyCode);
-                if (e.keyCode in PREVENTED_KEYBINDS)
+                if (PREVENTED_KEYBINDS.includes(e.keyCode))
                     e.preventDefault();
             }
         }, false);
