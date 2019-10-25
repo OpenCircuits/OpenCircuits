@@ -4,10 +4,7 @@ module.exports = {
     collectCoverage: true,
     testEnvironment: "jsdom",
     setupFiles: ["core-js"],
-    moduleFileExtensions: [
-        "js",
-        "ts"
-    ],
+    moduleFileExtensions: ["ts", "js"],
     transform: {
         "\\.(ts)$": "ts-jest"
     },

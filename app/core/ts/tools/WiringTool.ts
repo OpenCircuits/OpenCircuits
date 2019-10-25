@@ -1,19 +1,17 @@
-import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
-import {Tool} from "core/tools/Tool";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Port} from "core/models/ports/Port";
-import {Wire} from "core/models/Wire";
-
-import {CircleContains} from "math/MathUtils";
+import {Vector} from "Vector";
 import {Camera} from "math/Camera";
 
+import {Tool} from "core/tools/Tool";
 import {SelectionTool} from "core/tools/SelectionTool";
-
-import {Input} from "core/utils/Input";
 
 import {Action} from "core/actions/Action";
 import {Component} from "core/models/Component";
-import {Vector} from "Vector";
+
+import {Input} from "core/utils/Input";
+
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Port} from "core/models/ports/Port";
+import {Wire} from "core/models/Wire";
 
 export class WiringTool extends Tool {
     protected designer: CircuitDesigner;
@@ -35,8 +33,7 @@ export class WiringTool extends Tool {
     }
 
     protected findPort(objects: Component[], pos: Vector): Port {
-        return objects.flatMap((o) => o.getPorts())
-                .find((p) => CircleContains(p.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, pos));
+        return objects.flatMap((o) => o.getPorts()).find(p => p.isWithinSelectBounds(pos));
     }
 
     public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {

@@ -205,7 +205,7 @@ export class ICData {
             return false;
 
         // Make sure all wires connected to components are in the group
-        const allWires = objs.reduce((acc, o) => acc = acc.concat(o.getConnections()), []);
+        const allWires = objs.flatMap(o => o.getConnections());
         if (allWires.some((w) => !wires.includes(w)))
             return false;
 

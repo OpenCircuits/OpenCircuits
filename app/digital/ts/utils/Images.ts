@@ -14,10 +14,10 @@ export const Images = (() => {
     const loadImage = function(imageName: string, resolve: (num?: number) => void): void {
         const img = new Image();
         img.onload = () => resolve(1);
-        img.onabort = img.onerror = (e) => console.error(e);
+        img.onabort = img.onerror = (e) => { throw new Error(e.toString()); };
         img.src = "img/items/" + imageName;
         images.set(imageName, img);
-    }
+    };
 
     return {
         GetImage: function(img: string): HTMLImageElement {
