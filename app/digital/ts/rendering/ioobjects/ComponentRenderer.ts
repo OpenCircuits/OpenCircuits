@@ -3,29 +3,30 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
+        ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
+import {Transform} from "math/Transform";
+import {Camera} from "math/Camera";
 
-import {Renderer} from "../Renderer";
+import {Renderer} from "core/rendering/Renderer";
+
+import {Selectable} from "core/utils/Selectable";
+
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
-import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
-import {Selectable} from "core/utils/Selectable";
-
-import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
-import {Latch}               from "digital/models/ioobjects/latches/Latch";
-import {Encoder}             from "digital/models/ioobjects/other/Encoder";
-import {Decoder}             from "digital/models/ioobjects/other/Decoder";
-import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
+import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
+import {Latch}               from "digital/models/ioobjects/latches/Latch";
+import {Encoder}             from "digital/models/ioobjects/other/Encoder";
+import {Decoder}             from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
-import {Component}           from "digital/models/ioobjects/Component";
+import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
@@ -34,8 +35,8 @@ import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
 
-import {Rectangle} from "../shapes/Rectangle";
-import {Style} from "../Style";
+import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
+import {Style} from "../../../../core/ts/rendering/Style";
 
 export const ComponentRenderer = (() => {
 
@@ -47,7 +48,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Array<Selectable>): void {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;

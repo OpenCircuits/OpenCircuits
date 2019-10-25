@@ -1,42 +1,44 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
+import {Place, Connect} from "../../../Helpers";
+
 describe("ORGate", () => {
     describe("ORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ORGate(), o = new LED();
 
-        designer.addObjects([a, b, g, o]);
-        designer.connect(a, 0,  g, 0);
-        designer.connect(b, 0,  g, 1);
-        designer.connect(g, 0,  o, 0);
+        Place(designer, [a, b, g, o]);
+        Connect(a, 0,  g, 0);
+        Connect(b, 0,  g, 1);
+        Connect(g, 0,  o, 0);
 
-        it("Initial State", () => {
+        test("Initial State", () => {
             expect(o.isOn()).toBe(false);
         });
-        it("Input A OR B Off", () => {
+        test("Input A OR B Off", () => {
             a.activate(false);
             b.activate(false);
 
             expect(o.isOn()).toBe(false);
         });
-        it("Input A On", () => {
+        test("Input A On", () => {
             a.activate(true);
             b.activate(false);
 
             expect(o.isOn()).toBe(true);
         });
-        it("Input B On", () => {
+        test("Input B On", () => {
             a.activate(false);
             b.activate(true);
 
             expect(o.isOn()).toBe(true);
         });
-        it("Input A OR B On", () => {
+        test("Input A OR B On", () => {
             a.activate(true);
             b.activate(true);
 
@@ -45,36 +47,36 @@ describe("ORGate", () => {
     });
 
     describe("NORGate", () => {
-        const designer = new CircuitDesigner(0);
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new Switch(), g = new ORGate(true), o = new LED();
 
-        designer.addObjects([a, b, g, o]);
-        designer.connect(a, 0,  g, 0);
-        designer.connect(b, 0,  g, 1);
-        designer.connect(g, 0,  o, 0);
+        Place(designer, [a, b, g, o]);
+        Connect(a, 0,  g, 0);
+        Connect(b, 0,  g, 1);
+        Connect(g, 0,  o, 0);
 
-        it("Initial State", () => {
+        test("Initial State", () => {
             expect(o.isOn()).toBe(true);
         });
-        it("Input A and B Off", () => {
+        test("Input A and B Off", () => {
             a.activate(false);
             b.activate(false);
 
             expect(o.isOn()).toBe(true);
         });
-        it("Input A On", () => {
+        test("Input A On", () => {
             a.activate(true);
             b.activate(false);
 
             expect(o.isOn()).toBe(false);
         });
-        it("Input B On", () => {
+        test("Input B On", () => {
             a.activate(false);
             b.activate(true);
 
             expect(o.isOn()).toBe(false);
         });
-        it("Input A and B On", () => {
+        test("Input A and B On", () => {
             a.activate(true);
             b.activate(true);
 
@@ -83,7 +85,7 @@ describe("ORGate", () => {
     });
 
     describe("Copy", () => {
-        it("ORGate Copy", () => {
+        test("ORGate Copy", () => {
             let a = new ORGate();
             a.setInputPortCount(4);
             let b = <ORGate>a.copy();
@@ -94,7 +96,7 @@ describe("ORGate", () => {
             expect(b.numOutputs()).toEqual(a.numOutputs());
             expect(b.numInputs()).toEqual(a.numInputs());
         });
-        it("NORGate Copy", () => {
+        test("NORGate Copy", () => {
             let a = new ORGate(true);
             a.setInputPortCount(4);
 

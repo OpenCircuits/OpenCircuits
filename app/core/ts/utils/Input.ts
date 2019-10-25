@@ -4,7 +4,7 @@ import {DRAG_TIME,
         CONTROL_KEY,
         COMMAND_KEY,
         OPTION_KEY,
-        BACKSPACE_KEY} from "digital/utils/Constants";
+        BACKSPACE_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -260,6 +260,7 @@ export class Input {
         this.callListeners("mouseenter");
     }
     protected onMouseLeave(): void {
+        this.touchCount = 0;
         this.mouseDown = false;
 
         // call each listener

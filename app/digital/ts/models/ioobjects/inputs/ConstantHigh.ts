@@ -1,11 +1,11 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class ConstantHigh extends Component {
+export class ConstantHigh extends DigitalComponent {
 
-    public constructor(){
+    public constructor() {
         super(new ClampedValue(0), new ClampedValue(1), V(50, 50));
         super.activate(true);
     }
@@ -19,7 +19,7 @@ export class ConstantHigh extends Component {
     }
 
     // @Override
-    public copy(): Component {
+    public copy(): DigitalComponent {
         const c = super.copy();
         c.activate(true);
         return c;
