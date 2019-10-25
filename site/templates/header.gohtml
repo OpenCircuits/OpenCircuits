@@ -2,13 +2,13 @@
 <header id="header">
     <div class="header__left">
         <div>
-            <span title="Side Bar" id="header-sidenav-open-tab" role="button" tabindex="0">&#9776;</span>
+            <span id="header-sidenav-open-tab" title="Side Bar" role="button" tabindex="0">&#9776;</span>
         </div>
         <div>
-            <input id="header-project-name-input" type="text" value="Untitled Circuit*" alt="Name of project">
+            <input id="header-project-name-input" title="Circuit Name" type="text" value="Untitled Circuit*" alt="Name of project">
         </div>
         <div>
-            <button id="header-save-button" class="hide">Save</button>
+            <button id="header-save-button" title="Save the circuit remotely" class="hide">Save</button>
         </div>
     </div>
 
@@ -65,19 +65,15 @@
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
             </button>
             <div class="header__right__dropdown__content">
-                <div id="header-new-button" type="button" title="New Circuit">
-                    <img src="img/icons/download.svg" height="100%" alt="Push current scene"/>
-                    <a>New Circuit</a>
-                </div>
-                <div id="header-download-button" type="button" title="Download">
+                <div id="header-download-button" type="button" title="Download circuit locally">
                     <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
                     <a>Download</a>
                 </div>
-                <div id="header-download-pdf-button" type="button" title="Download as PDF">
+                <div id="header-download-pdf-button" type="button" title="Save circuit as PDF">
                     <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF"/>
                     <a>Download as PDF</a>
                 </div>
-                <div id="header-download-png-button" type="button" title="Download as PNG">
+                <div id="header-download-png-button" type="button" title="Save circuit as PNG">
                     <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG"/>
                     <a>Download as PNG</a>
                 </div>
@@ -86,11 +82,11 @@
 
         <div class="header__right__account">
             <div id="header-login-container" class="header__right__account__login">
-                <button id="header-signin-button">Sign In</button>
+                <button id="header-signin-button" title="Sign in">Sign In</button>
                 <span id="header-login-or">or</span>
-                <button id="header-createaccount-button">Create Account</button>
+                <button id="header-createaccount-button"title="Create a new account">Create Account</button>
             </div>
-            <button id="header-signout-button" class="hide">Sign Out</button>
+            <button id="header-signout-button" class="hide" title="Sign out">Sign Out</button>
         </div>
     </div>
 </header>
