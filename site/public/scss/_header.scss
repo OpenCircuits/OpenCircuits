@@ -70,37 +70,72 @@ header {
     }
 }
 
-.header__center__logo {
+// .header__center__logo {
+//     position: absolute;
+//     top: 2px;
+//     bottom: 0;
+//     left: 50%;
+
+//     width: 200px;
+//     margin-left: -100px;
+
+//     color: $secondary-color;
+
+//     @media (max-width: 900px) {
+//         & {
+//             display: none;
+//         }
+//     }
+// }
+
+// .header__center__github {
+//     position: absolute;
+//     top: 10px;
+//     bottom: 0;
+//     left: 50%;
+
+//     width: 40px;
+//     height: 40px;
+//     margin-left: 110px;
+
+//     color: $secondary-color;
+
+//     @media (max-width: 1000px) {
+//         & {
+//             display: none;
+//         }
+//     }
+// }
+
+
+.header__center {
     position: absolute;
-    top: 2px;
     bottom: 0;
     left: 50%;
 
-    width: 200px;
-    margin-left: -100px;
-
     color: $secondary-color;
+
+    $logo-width: 200px;
+    $github-margin: 10px;
+
+    &__logo {
+        @extend .header__center;
+        top: 2px;
+
+        width: $logo-width;
+        margin-left: -$logo-width/2;
+    }
+
+    &__github {
+        @extend .header__center;
+        top: 8px;
+
+        width: $header-height - 2*$header-padding;
+        height: $header-height - 2*$header-padding;
+        margin-left: $logo-width/2 + $github-margin;
+    }
 
     @media (max-width: 900px) {
-        & {
-            display: none;
-        }
-    }
-}
-
-.header__center__github {
-    position: absolute;
-    top: 10px;
-    bottom: 0;
-    left: 50%;
-
-    width: 40px;
-    height: 40px;
-    margin-left: 110px;
-
-    color: $secondary-color;
-
-    @media (max-width: 1000px) {
         & {
             display: none;
         }
