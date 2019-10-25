@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-import {Vector,V} from "Vector";
+import {V} from "Vector";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 
