@@ -46,9 +46,8 @@ RUN npm install
 COPY . .
 
 # Build the rest of the project
-RUN npm run build && \
+RUN npm run build:js && \
     npm run build:css
-
 
 # Copy our static executable.
 COPY --from=builder /go/bin/server ./build/server

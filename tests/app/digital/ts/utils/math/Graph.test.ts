@@ -5,7 +5,7 @@ import {Graph} from "math/Graph";
 
 describe("Graph", () => {
     describe("isConnected", () => {
-        it("Test 1", () => {
+        test("Test 1", () => {
             const graph = new Graph<string, string>();
 
             graph.createNode("a");
@@ -19,7 +19,7 @@ describe("Graph", () => {
 
             expect(graph.isConnected()).toBe(true);
         });
-        it("Test 2", () => {
+        test("Test 2", () => {
             const graph = new Graph<string, string>();
 
             // Full-Adder

@@ -1,12 +1,12 @@
-import {DEFAULT_SIZE} from "digital/utils/Constants";
+import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class LED extends Component {
+export class LED extends DigitalComponent {
     private color: string;
 
     public constructor() {

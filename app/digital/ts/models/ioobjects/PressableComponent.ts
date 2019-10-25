@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_WIDTH} from "../../utils/Constants";
+import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
@@ -6,10 +6,11 @@ import {RectContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {Pressable} from "core/utils/Pressable";
 
-import {Component} from "./Component";
+import {DigitalComponent} from "../DigitalComponent";
 
-export abstract class PressableComponent extends Component {
+export abstract class PressableComponent extends DigitalComponent implements Pressable {
     protected pressableBox: Transform;
     protected on: boolean;
 
@@ -37,8 +38,21 @@ export abstract class PressableComponent extends Component {
     public release(): void {
     }
 
+    /**
+     * Determines whether or not a point is within
+     *  this component's "pressable" bounds
+     * @param  v The point
+     * @return   True if the point is within this component,
+     *           false otherwise
+     */
     public isWithinPressBounds(v: Vector): boolean {
         return RectContains(this.pressableBox, v);
+    }
+
+    public isWithinSelectBounds(v: Vector): boolean {
+        // Only true if we're normally in bounds and also not in the press bounds
+        //   i.e. prevents selecting when pressing the button part of the Button
+        return super.isWithinSelectBounds(v) && !this.isWithinPressBounds(v);
     }
 
     public getPressableBox(): Transform {
