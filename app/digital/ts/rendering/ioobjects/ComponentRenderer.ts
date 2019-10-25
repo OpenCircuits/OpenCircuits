@@ -3,7 +3,7 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
+        LED_GLOW_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Transform} from "math/Transform";
@@ -106,16 +106,15 @@ export const ComponentRenderer = (() => {
                 drawBox(renderer, transform, selected);
 
             // Draw tinted image
-            let tint = (selected ? SELECTED_FILL_COLOR : undefined);
+            const tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (object instanceof LED) {
                 // draw the LED object
                 renderer.image(Images.GetImage(imgName), V(), size, object.getColor());
 
                 // draw the LED glow
                 if (object.isOn()) {
-                    const glow_img = Images.GetImage(object.getOnImageName());
-                    const LED_GLOW_SIZE = V(ROTATION_CIRCLE_RADIUS).scale(2);
-                    renderer.image(glow_img, V(), LED_GLOW_SIZE, object.getColor());
+                    const glowImg = Images.GetImage(object.getOnImageName());
+                    renderer.image(glowImg, V(), V(LED_GLOW_SIZE), object.getColor());
                 }
 
                 // tint green on top if selected

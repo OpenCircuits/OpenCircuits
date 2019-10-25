@@ -1,7 +1,7 @@
 import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";
-import {isPressable, Pressable} from "core/utils/Pressable";
+import {isPressable} from "core/utils/Pressable";
 import {Selectable} from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
