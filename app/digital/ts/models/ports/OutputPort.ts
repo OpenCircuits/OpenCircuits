@@ -1,14 +1,17 @@
 import {Vector,V} from "Vector";
 
-import {Component} from "../ioobjects/Component";
-import {Wire}      from "../ioobjects/Wire";
+import {Wire} from "core/models/Wire";
+import {Port} from "core/models/ports/Port";
 
-import {Port}	   from "./Port";
+import {DigitalComponent} from "../DigitalComponent";
+import {DigitalWire}      from "../DigitalWire";
 
 export class OutputPort extends Port {
-    private connections: Array<Wire>;
+    protected parent: DigitalComponent;
 
-    public constructor(parent: Component) {
+    private connections: DigitalWire[];
+
+    public constructor(parent: DigitalComponent) {
         super(parent);
         this.connections = [];
     }
@@ -27,26 +30,26 @@ export class OutputPort extends Port {
 
         // Get designer to propagate signal, exit if undefined
         const designer = this.parent.getDesigner();
-        if (designer == undefined)
+        if (!designer)
             return;
 
         for (const w of this.connections)
             designer.propagate(w, this.isOn);
     }
 
-    public connect(w: Wire): void {
+    public connect(w: DigitalWire): void {
         this.connections.push(w);
         w.activate(this.isOn);
     }
 
-    public disconnect(w: Wire): void {
+    public disconnect(w: DigitalWire): void {
         // find index and splice
         const i = this.connections.indexOf(w);
         if (i != -1)
             this.connections.splice(i, 1);
     }
 
-    public getConnections(): Array<Wire> {
+    public getConnections(): DigitalWire[] {
         return this.connections.slice(); // Shallow copy array
     }
 
@@ -54,8 +57,11 @@ export class OutputPort extends Port {
         return V(1, 0);
     }
 
-    public getWires(): Array<Wire> {
+    public getWires(): Wire[] {
         return this.getConnections();
     }
 
+    public getParent(): DigitalComponent {
+        return this.parent;
+    }
 }

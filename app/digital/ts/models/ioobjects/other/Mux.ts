@@ -1,24 +1,25 @@
-import {DEFAULT_SIZE} from "digital/utils/Constants";
+import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {InputPort} from "../../ports/InputPort";
-import {OutputPort} from "../../ports/OutputPort";
-import {InputPortSet} from "../../ports/PortSets";
-import {Positioner} from "../../ports/positioners/Positioner";
-import {MuxSelectPositioner} from "../../ports/positioners/MuxPositioners";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {Component} from "../Component";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
+import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
-export abstract class Mux extends Component {
-    protected selects: InputPortSet;
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {PortSet} from "core/models/ports/PortSets";
+
+export abstract class Mux extends DigitalComponent {
+    protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
                        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>, selectPortCount?: number) {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
-        this.selects = new InputPortSet(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner());
+        this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
 
         if(selectPortCount != null)
           this.setSelectPortCount(selectPortCount);

@@ -48,7 +48,7 @@ $sidenav-border-width: 5px;
             margin: 0;
             padding: 0.5em 1em 0.5em 0.5em;
 
-            cursor: pointer;
+            cursor: default;
             transition: 0.5s;
 
             color: lighten($secondary-color, 10%);
@@ -79,6 +79,8 @@ $sidenav-border-width: 5px;
 
             border-bottom: solid $sidenav-border-width/3 $secondary-color;
             background-color: lighten($primary-color, 5%);
+
+            cursor: pointer;
 
             & img {
                 width: $img-width;

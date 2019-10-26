@@ -1,29 +1,31 @@
 import "jest";
 
-import {ROTATION_CIRCLE_RADIUS} from "digital/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Tool}          from "digital/tools/Tool";
-import {ToolManager}   from "digital/tools/ToolManager";
-import {SelectionTool} from "digital/tools/SelectionTool";
-import {RotateTool}    from "digital/tools/RotateTool";
-import {WiringTool}    from "digital/tools/WiringTool";
+import {Tool}          from "core/tools/Tool";
+import {SelectionTool} from "core/tools/SelectionTool";
+import {RotateTool}    from "core/tools/RotateTool";
+import {ToolManager}   from "core/tools/ToolManager";
+import {WiringTool}    from "core/tools/WiringTool";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+
+import {Place} from "../../Helpers";
 
 describe("Tool Manager", () => {
     const camera = new Camera(500, 500);
-    const designer = new CircuitDesigner(-1);
-    const toolManager = new ToolManager(camera, designer);
+    const designer = new DigitalCircuitDesigner(-1);
+    const toolManager = CreateDefaultToolManager(designer, camera);
     const input = new FakeInput(camera.getCenter());
 
     InitializeInput(input, toolManager);
@@ -42,7 +44,7 @@ describe("Tool Manager", () => {
         const l = new LED();
         l.setPos(V(200, 0));
 
-        designer.addObjects([s, l]);
+        Place(designer, [s, l]);
 
         const lPortPos = l.getInputPort(0).getWorldTargetPos();
         const sPortPos = s.getOutputPort(0).getWorldTargetPos();
@@ -86,7 +88,7 @@ describe("Tool Manager", () => {
         a.setPos(V(0, 0));
         l.setPos(V(200, 0));
 
-        designer.addObjects([s1, s2, a, l]);
+        Place(designer, [s1, s2, a, l]);
 
         const s1PortPos = s1.getOutputPort(0).getWorldTargetPos();
         const s2PortPos = s2.getOutputPort(0).getWorldTargetPos();

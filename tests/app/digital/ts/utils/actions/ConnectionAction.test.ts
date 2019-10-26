@@ -1,18 +1,20 @@
 import "jest";
 
-import {CircuitDesigner} from "digital/models/CircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {ConnectionAction} from "digital/actions/addition/ConnectionAction";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-describe("PlaceAction", () => {
-    it("Undo/Redo 1", () => {
-        const designer = new CircuitDesigner(0);
+import {Place} from "../../Helpers";
+
+describe("Connection Action", () => {
+    test("Undo/Redo 1", () => {
+        const designer = new DigitalCircuitDesigner(0);
         const a = new Switch(), b = new LED();
 
-        designer.addObject(a);
-        designer.addObject(b);
+        Place(designer, [a]);
+        Place(designer, [b]);
 
         a.activate(true);
 
