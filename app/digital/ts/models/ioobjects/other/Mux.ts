@@ -53,4 +53,13 @@ export abstract class Mux extends DigitalComponent {
         return super.getInputPorts().concat(this.selects.getPorts());
     }
 
+    // @Override
+    public copy(): Mux {
+        const copy = <Mux>super.copy();
+
+        copy.selects = this.inputs.copy(copy);
+
+        return copy;
+    }
+
 }
