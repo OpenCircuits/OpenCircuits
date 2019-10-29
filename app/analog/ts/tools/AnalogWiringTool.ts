@@ -66,7 +66,10 @@ export class AnalogWiringTool extends WiringTool {
     }
 
     public deactivate(): Action {
-        return this.action.execute();
+        const action = this.action;
+        // Reset action
+        this.action = undefined;
+        return (action ? action.execute() : undefined);
     }
 
 }
