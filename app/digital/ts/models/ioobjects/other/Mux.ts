@@ -22,9 +22,9 @@ export abstract class Mux extends DigitalComponent {
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
 
         if(selectPortCount != null)
-          this.setSelectPortCount(selectPortCount.getValue());
+            this.setSelectPortCount(selectPortCount.getValue());
         else
-          this.setSelectPortCount(2);
+            this.setSelectPortCount(2);
     }
 
     public setSelectPortCount(val: number): void {
