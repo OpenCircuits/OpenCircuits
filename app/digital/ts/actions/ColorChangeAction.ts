@@ -1,4 +1,4 @@
-import {Action} from "./Action";
+import {Action} from "core/actions/Action";
 import {LED} from "digital/models/ioobjects/outputs/LED";
 
 export class ColorChangeAction implements Action {

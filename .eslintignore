@@ -1,2 +1,2 @@
 site/public/ts/polyfill.js
-site/public/ts/utils/Browser.ts
+app/core/ts/utils/Browser.ts

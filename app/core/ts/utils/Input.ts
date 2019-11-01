@@ -3,7 +3,8 @@ import {DRAG_TIME,
         SHIFT_KEY,
         CONTROL_KEY,
         COMMAND_KEY,
-        OPTION_KEY} from "digital/utils/Constants";
+        OPTION_KEY,
+        BACKSPACE_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -42,10 +43,16 @@ export class Input {
     }
 
     private hookupKeyboardEvents(): void {
+        const PREVENTED_KEYBINDS = [
+            BACKSPACE_KEY, // some browsers map backspace to previous page, but we use it for delete element
+        ];
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyDown(e.keyCode)
+            if (!(document.activeElement instanceof HTMLInputElement)) {
+                this.onKeyDown(e.keyCode);
+                if (PREVENTED_KEYBINDS.includes(e.keyCode))
+                    e.preventDefault();
+            }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
@@ -253,6 +260,7 @@ export class Input {
         this.callListeners("mouseenter");
     }
     protected onMouseLeave(): void {
+        this.touchCount = 0;
         this.mouseDown = false;
 
         // call each listener

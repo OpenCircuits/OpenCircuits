@@ -3,7 +3,7 @@
     "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": false,
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "moduleResolution": "node",
     "module": "es6",
     "target": "es5",
@@ -12,15 +12,19 @@
     "downlevelIteration": true,
     "allowJs": true,
     "typeRoots" : [
-      "./site/public/ts/utils/typings",
+      "site/public/ts/shared/utils/typings",
       "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
     ],
     "baseUrl": ".",
     "paths": {
         "Vector": ["app/core/ts/utils/math/Vector"],
         "math/*": ["app/core/ts/utils/math/*"],
-        "core/utils/*": ["app/core/ts/utils/*"],
-        "digital/*": ["app/digital/ts/*"]
+        "core/*": ["app/core/ts/*"],
+        "digital/*": ["app/digital/ts/*"],
+        "analog/*": ["app/analog/ts/*"],
+        "site/shared/*": ["site/public/ts/shared/*"],
+        "site/digital/*": ["site/public/ts/digital/*"],
+        "site/analog/*": ["site/public/ts/analog/*"]
     }
 
   },

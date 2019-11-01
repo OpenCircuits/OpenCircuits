@@ -14,23 +14,22 @@ export const Images = (() => {
     const loadImage = function(imageName: string, resolve: (num?: number) => void): void {
         const img = new Image();
         img.onload = () => resolve(1);
+        img.onabort = img.onerror = (e) => { throw new Error(e.toString()); };
         img.src = "img/items/" + imageName;
         images.set(imageName, img);
-    }
+    };
 
     return {
         GetImage: function(img: string): HTMLImageElement {
             return images.get(img);
         },
-        Load: function(onFinishLoading: () => void): void {
+        Load: async function(): Promise<void> {
             const promises =
                 IMAGE_FILE_NAMES.map((name) =>
                     new Promise((resolve, _) => loadImage(name, resolve))
                 );
 
-            Promise.all(promises).then(() => {
-                onFinishLoading();
-            });
+            await Promise.all(promises);
         }
     };
 })();
