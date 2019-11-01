@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
@@ -65,11 +64,7 @@ func getLastModifiedTime(path string) time.Time {
 	return file.ModTime()
 }
 
-func getBustedName(path string) string {
-	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
-}
-
-func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory) func(c *gin.Context) {
+func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory, cache StaticCache) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		userID := session.Get("user-id")
@@ -92,12 +87,12 @@ func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.Ci
 			"l":         loggedIn,
 			"userId":    userID,
 			"authData":  authData,
-			"bundleJs":  getBustedName("./Bundle.digital.js"),
+			"scripts":   cache.getBustedNames("./Bundle.digital.js"),
 		})
 	}
 }
 
-func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory) func(c *gin.Context) {
+func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory, cache StaticCache) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		userID := session.Get("user-id")
@@ -117,13 +112,7 @@ func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.C
 			"l":         loggedIn,
 			"userId":    userID,
 			"authData":  authData,
-			"bundleJs":  getBustedName("./Bundle.analog.js"),
+			"scripts":   cache.getBustedNames("./Bundle.analog.js"),
 		})
-	}
-}
-
-func noCacheHandler(path string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.File(path)
 	}
 }
