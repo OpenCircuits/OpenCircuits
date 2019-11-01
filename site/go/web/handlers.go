@@ -87,7 +87,7 @@ func indexHandler(manager auth.AuthenticationManager, examplesCsif interfaces.Ci
 			"l":         loggedIn,
 			"userId":    userID,
 			"authData":  authData,
-			"scripts":   cache.getBustedNames("./Bundle.digital.js"),
+			"scripts":   cache.GetBustedNames("./Bundle.digital.js"),
 		})
 	}
 }
@@ -112,7 +112,7 @@ func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.C
 			"l":         loggedIn,
 			"userId":    userID,
 			"authData":  authData,
-			"scripts":   cache.getBustedNames("./Bundle.analog.js"),
+			"scripts":   cache.GetBustedNames("./Bundle.analog.js"),
 		})
 	}
 }

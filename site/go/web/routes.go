@@ -21,9 +21,9 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager, e
 	router.StaticFile("/Bundle.analog.js", "./Bundle.analog.js")
 	router.StaticFile("/Bundle.analog.js.map", "./Bundle.analog.js.map")
 
-	cache, err := NewStaticCache([]string{"./Bundle.digital.js", "./Bundle.analog.js"})
+	cache, err := NewDebugCache([]string{"./Bundle.digital.js", "./Bundle.analog.js"})
 	core.CheckErrorMessage(err, "Failed to initialize static cache: ")
-	cache.registerRoutes(router)
+	cache.RegisterRoutes(router)
 
 	router.GET("/", indexHandler(authManager, examplesCsif, cache))
 	router.GET("/analog", analogHandler(authManager, examplesCsif, cache))
