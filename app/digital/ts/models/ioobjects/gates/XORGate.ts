@@ -33,7 +33,7 @@ export class XORGate extends Gate {
     public getMinPos(): Vector {
         const min = super.getMinPos();
 
-        var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
+        let BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if (this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
         if (this.numInputs() == 8)
@@ -50,7 +50,7 @@ export class XORGate extends Gate {
     public getMaxPos(): Vector {
         const max = super.getMaxPos();
 
-        var BOX_WIDTH = DEFAULT_BORDER_WIDTH;
+        let BOX_WIDTH = DEFAULT_BORDER_WIDTH;
         if (this.numInputs() >3 && this.numInputs() < 7)
             BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
         if (this.numInputs() == 8)
