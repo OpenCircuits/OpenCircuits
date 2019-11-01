@@ -7,13 +7,13 @@ import {AnalogNode}    from "analog/models/eeobjects/AnalogNode";
 
 const OBJECTS = [Battery, CurrentSource, Resistor, AnalogNode];
 
-let XML_COMPONENTS = new Map<string, any>();
-let XML_NAMES = new Map<any, string>();
+const XML_COMPONENTS = new Map<string, new (...args: unknown[]) => AnalogComponent>();
+const XML_NAMES = new Map<new (...args: unknown[]) => AnalogComponent, string>();
 
 // Helper to add a bunch of types to the COMPONENTS map
-function addXMLTypes(types: any[]): string[] {
-    let arr = [];
-    for (let type of types) {
+function addXMLTypes(types: Array<new () => AnalogComponent>): string[] {
+    const arr = [];
+    for (const type of types) {
         const name = new type().getXMLName();
         XML_COMPONENTS.set(name, type);
         XML_NAMES.set(type, name);
@@ -33,20 +33,16 @@ const XML_OBJECTS = addXMLTypes(OBJECTS);
  */
 export function CreateComponentFromXML(tag: string, not: boolean = false): AnalogComponent {
     if (XML_COMPONENTS.has(tag)) {
-        let type = XML_COMPONENTS.get(tag);
-        return <AnalogComponent>(new type(not));
+        const type = XML_COMPONENTS.get(tag);
+        return new type(not);
     }
     return undefined;
 }
 
-export function GetXMLName(type: any): string {
+export function GetXMLName(type: new (...args: unknown[]) => AnalogComponent): string {
     return XML_NAMES.get(type);
 }
 
-export function GetAllComponentXMLNames() {
+export function GetAllComponentXMLNames(): string[] {
     return XML_OBJECTS.slice();
-}
-
-export function GetAllComponentTypes() {
-    return OBJECTS.slice();
 }

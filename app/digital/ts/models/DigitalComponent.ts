@@ -1,26 +1,29 @@
-import {Component} from "core/models/Component";
-import {DigitalCircuitDesigner} from "./DigitalCircuitDesigner";
-import {Port} from "core/models/ports/Port";
-import {ClampedValue} from "math/ClampedValue";
 import {Vector} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+
+import {Component} from "core/models/Component";
+
+import {Port} from "core/models/ports/Port";
+import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
-import {InputPort, InputPortSet} from "./ports/InputPort";
-import {OutputPort, OutputPortSet} from "./ports/OutputPort";
-import {Wire} from "core/models/Wire";
+
+import {DigitalCircuitDesigner} from "./DigitalCircuitDesigner";
 import {DigitalWire} from "./DigitalWire";
+import {InputPort} from "./ports/InputPort";
+import {OutputPort} from "./ports/OutputPort";
 
 export abstract class DigitalComponent extends Component {
     protected designer: DigitalCircuitDesigner;
 
-    protected inputs:  InputPortSet;
-    protected outputs: OutputPortSet;
+    protected inputs:  PortSet<InputPort>;
+    protected outputs: PortSet<OutputPort>;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                           inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super(size);
 
-        this.inputs  = new InputPortSet (this, inputPortCount, inputPositioner);
-        this.outputs = new OutputPortSet(this, outputPortCount, outputPositioner);
+        this.inputs  = new PortSet<InputPort> (this, inputPortCount, inputPositioner, InputPort);
+        this.outputs = new PortSet<OutputPort>(this, outputPortCount, outputPositioner, OutputPort);
     }
 
     /**
@@ -101,9 +104,7 @@ export abstract class DigitalComponent extends Component {
 
     public getOutputs(): DigitalWire[] {
         // Accumulate all the OutputPort connections
-        return this.getOutputPorts().reduce(
-            (acc, p) => acc.concat(p.getConnections()), []
-        );
+        return this.getOutputPorts().flatMap(p => p.getConnections());
     }
 
     public numOutputs(): number {

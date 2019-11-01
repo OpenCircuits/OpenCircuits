@@ -1,7 +1,9 @@
 import "jest";
 
-import {Connect, CreateGroup,
-        GatherGroup, CopyGroup} from "digital/utils/ComponentUtils";
+import {CreateGroup, GatherGroup,
+        CopyGroup} from "core/utils/ComponentUtils";
+
+import {Connect} from "digital/utils/ComponentUtils";
 
 import {DigitalNode}         from "digital/models/ioobjects/other/DigitalNode";
 import {Button}              from "digital/models/ioobjects/inputs/Button";
@@ -15,199 +17,14 @@ import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
 import {DFlipFlop}           from "digital/models/ioobjects/flipflops/DFlipFlop";
 import {DLatch}              from "digital/models/ioobjects/latches/DLatch";
 import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
-
-// describe("CreateWire", () => {
-//     test("Wire 0", () => {
-//         let i  = new Button();
-//         let o  = new LED();
-//         let p1 = i.getOutputPort(0);
-//         let p2 = o.getInputPort(0);
-//         let wire = CreateWire(p1,p2);
-//         expect(wire.getOutput()).toBe(p2);
-//         expect(wire.getInput()).toBe(p1);
-//         expect(wire.getInputComponent()).toBe(i);
-//         expect(wire.getOutputComponent()).toBe(o);
-
-//         expect(i.getOutputs().length).toBe(1);
-//         expect(i.getOutputs()[0]).toBe(wire);
-//     });
-//     test("Wire 1", () => {
-//         let i  = new ConstantLow();
-//         let o  = new SevenSegmentDisplay();
-//         let p1 = i.getOutputPort(0);
-//         let p2 = o.getInputPort(0);
-//         let wire = CreateWire(p1,p2);
-
-//         expect(wire.getOutput()).toBe(p2);
-//         expect(wire.getInput()).toBe(p1);
-//         expect(wire.getInputComponent()).toBe(i);
-//         expect(wire.getOutputComponent()).toBe(o);
-
-//         expect(i.getOutputs().length).toBe(1);
-//         expect(i.getOutputs()[0]).toBe(wire);
-//     });
-//     test("Wire 2", () => {
-//         let i  = new ConstantHigh();
-//         let o  = new LED();
-//         let p1 = i.getOutputPort(0);
-//         let p2 = o.getInputPort(0);
-//         let wire = CreateWire(p1,p2);
-
-//         expect(wire.getOutput()).toBe(p2);
-//         expect(wire.getInput()).toBe(p1);
-//         expect(wire.getInputComponent()).toBe(i);
-//         expect(wire.getOutputComponent()).toBe(o);
-
-//         expect(i.getOutputs().length).toBe(1);
-//         expect(i.getOutputs()[0]).toBe(wire);
-//     });
-//     test("Wire 3", () => {
-//         let i  = new Button();
-//         let o1 = new LED();
-//         let o2 = new SevenSegmentDisplay();
-//         let p1 = o1.getInputPort(0);
-//         let p2 = o2.getInputPort(0);
-//         let p3 = i.getOutputPort(0);
-//         let wire1 = CreateWire(p3,p1);
-//         let wire2 = CreateWire(p3,p2);
-
-//         expect(wire1.getOutput()).toBe(p1);
-//         expect(wire1.getInput()).toBe(p3);
-//         expect(wire1.getInputComponent()).toBe(i);
-//         expect(wire1.getOutputComponent()).toBe(o1);
-
-//         expect(wire2.getOutput()).toBe(p2);
-//         expect(wire2.getInput()).toBe(p3);
-//         expect(wire2.getInputComponent()).toBe(i);
-//         expect(wire2.getOutputComponent()).toBe(o2);
-
-//         expect(i.getOutputs().length).toBe(2);
-//         expect(i.getOutputs()[0]).toBe(wire1);
-//         expect(i.getOutputs()[1]).toBe(wire2);
-//     });
-// });
-
-// describe("Connect", () => {
-//     test("Connection 0", () => {
-//         let c1   = new Button();
-//         let c2   = new LED();
-//         let wire = Connect(c1, 0, c2, 0);
-
-//         expect(wire.getInputComponent()).toBe(c1);
-//         expect(wire.getOutputComponent()).toBe(c2);
-//         expect(wire.getInput()).toBe(c1.getOutputPort(0));
-//         expect(wire.getOutput()).toBe(c2.getInputPort(0));
-//     });
-//     test("Connection 1", () => {
-//         let c1 = new ConstantLow();
-//         let c2 = new SevenSegmentDisplay();
-//         let c4 = new LED();
-//         let w1 = Connect(c1, 0, c2, 0);
-//         let w2 = Connect(c1, 0, c4, 0);
-
-//         expect(w1.getInputComponent()).toBe(c1);
-//         expect(w1.getOutputComponent()).toBe(c2);
-//         expect(w1.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w1.getOutput()).toBe(c2.getInputPort(0));
-
-//         expect(w2.getInputComponent()).toBe(c1);
-//         expect(w2.getOutputComponent()).toBe(c4);
-//         expect(w2.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w2.getOutput()).toBe(c4.getInputPort(0));
-//     });
-//     test("Connection 2", () => {
-//         let c1 = new ConstantHigh();
-//         let c2 = new SevenSegmentDisplay();
-//         let c3 = new LED();
-//         let w1 = Connect(c1, 0, c2, 0);
-//         let w2 = Connect(c1, 0, c3, 0);
-//         expect(w1.getInputComponent()).toBe(c1);
-//         expect(w1.getOutputComponent()).toBe(c2);
-//         expect(w1.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w1.getOutput()).toBe(c2.getInputPort(0));
-
-//         expect(w2.getInputComponent()).toBe(c1);
-//         expect(w2.getOutputComponent()).toBe(c3);
-//         expect(w2.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w2.getOutput()).toBe(c3.getInputPort(0));
-//     });
-//     test("Connection 3", () => {
-//         let c1 = new Switch();
-//         let c2 = new SevenSegmentDisplay();
-//         let w1 = Connect(c1, 0, c2, 0);
-//         let w2 = Connect(c1, 0, c2, 1);
-//         let w3 = Connect(c1, 0, c2, 2);
-//         let w4 = Connect(c1, 0, c2, 3);
-//         let w5 = Connect(c1, 0, c2, 4);
-//         let w6 = Connect(c1, 0, c2, 5);
-//         let w7 = Connect(c1, 0, c2, 6);
-
-//         expect(w1.getInputComponent()).toBe(c1);
-//         expect(w1.getOutputComponent()).toBe(c2);
-//         expect(w1.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w1.getOutput()).toBe(c2.getInputPort(0));
-
-//         expect(w2.getInputComponent()).toBe(c1);
-//         expect(w2.getOutputComponent()).toBe(c2);
-//         expect(w2.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w2.getOutput()).toBe(c2.getInputPort(1));
-
-//         expect(w3.getInputComponent()).toBe(c1);
-//         expect(w3.getOutputComponent()).toBe(c2);
-//         expect(w3.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w3.getOutput()).toBe(c2.getInputPort(2));
-
-//         expect(w4.getInputComponent()).toBe(c1);
-//         expect(w4.getOutputComponent()).toBe(c2);
-//         expect(w4.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w4.getOutput()).toBe(c2.getInputPort(3));
-
-//         expect(w5.getInputComponent()).toBe(c1);
-//         expect(w5.getOutputComponent()).toBe(c2);
-//         expect(w5.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w5.getOutput()).toBe(c2.getInputPort(4));
-
-//         expect(w6.getInputComponent()).toBe(c1);
-//         expect(w6.getOutputComponent()).toBe(c2);
-//         expect(w6.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w6.getOutput()).toBe(c2.getInputPort(5));
-
-//         expect(w7.getInputComponent()).toBe(c1);
-//         expect(w7.getOutputComponent()).toBe(c2);
-//         expect(w7.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w7.getOutput()).toBe(c2.getInputPort(6));
-//     });
-//     test("Connection 4", () => {
-//         let c1 = new Switch();
-//         let c2 = new Button();
-//         let c3 = new ANDGate();
-//         let c4 = new LED();
-//         let w1 = Connect(c1, 0, c3, 1);
-//         let w2 = Connect(c2, 0, c3, 0);
-//         let w3 = Connect(c3, 0, c4, 0);
-
-//         expect(w1.getInputComponent()).toBe(c1);
-//         expect(w1.getOutputComponent()).toBe(c3);
-//         expect(w1.getInput()).toBe(c1.getOutputPort(0));
-//         expect(w1.getOutput()).toBe(c3.getInputPort(1));
-
-//         expect(w2.getInputComponent()).toBe(c2);
-//         expect(w2.getOutputComponent()).toBe(c3);
-//         expect(w2.getInput()).toBe(c2.getOutputPort(0));
-//         expect(w2.getOutput()).toBe(c3.getInputPort(0));
-
-//         expect(w3.getInputComponent()).toBe(c3);
-//         expect(w3.getOutputComponent()).toBe(c4);
-//         expect(w3.getInput()).toBe(c3.getOutputPort(0));
-//         expect(w3.getOutput()).toBe(c4.getInputPort(0));
-//     });
-
-// });
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {Component} from "core/models/Component";
+import {DigitalWire} from "digital/models/DigitalWire";
 
 // describe("SeparateGroup", () => {
 //     const NUM_SAMPLES = 10;
 //     function shuffle(a: Array<any>): Array<any> {
-//         for (let i = a.length - 1; i > 0; i--) {
+//         for (const i = a.length - 1; i > 0; i--) {
 //             const j = Math.floor(Math.random() * (i + 1));
 //             [a[i], a[j]] = [a[j], a[i]];
 //         }
@@ -215,13 +32,13 @@ import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 //     }
 
 //     test("Group 1", () => {
-//         let group = [new Button(), new ConstantHigh(), new Switch(),
+//         const group = [new Button(), new ConstantHigh(), new Switch(),
 //                      new LED(), new ANDGate(), new DFlipFlop(), new DLatch(),
 //                      new SRLatch(), new SevenSegmentDisplay(), new ConstantLow()];
-//         for (let i = 0; i < NUM_SAMPLES; i++) {
+//         for (const i = 0; i < NUM_SAMPLES; i++) {
 //             shuffle(group);
 
-//             let separatedGroup = SeparateGroup(group);
+//             const separatedGroup = SeparateGroup(group);
 //             expect(separatedgroup.getInputs().length).toBe(4);
 //             expect(separatedgroup.getOutputs().length).toBe(2);
 //             expect(separatedgroup.getOthers().length).toBe(4);
@@ -229,11 +46,11 @@ import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 //         }
 //     });
 //     test("Group 2", () => {
-//         let group = [new Button(), new ConstantHigh(), new Switch(), new ConstantLow()];
-//         for (let i = 0; i < NUM_SAMPLES; i++) {
+//         const group = [new Button(), new ConstantHigh(), new Switch(), new ConstantLow()];
+//         for (const i = 0; i < NUM_SAMPLES; i++) {
 //             shuffle(group);
 
-//             let separatedGroup = SeparateGroup(group);
+//             const separatedGroup = SeparateGroup(group);
 //             expect(separatedgroup.getInputs().length).toBe(4);
 //             expect(separatedgroup.getOutputs().length).toBe(0);
 //             expect(separatedgroup.getOthers().length).toBe(0);
@@ -241,13 +58,13 @@ import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 //         }
 //     });
 //     test("Group 3", () => {
-//         let group = [new Button(), new ConstantHigh(), new Switch(),
+//         const group = [new Button(), new ConstantHigh(), new Switch(),
 //                      new LED(), new Button(), new DFlipFlop(), new Button(),
 //                      new SRLatch(), new Button(), new ConstantLow()];
-//         for (let i = 0; i < NUM_SAMPLES; i++) {
+//         for (const i = 0; i < NUM_SAMPLES; i++) {
 //             shuffle(group);
 
-//             let separatedGroup = SeparateGroup(group);
+//             const separatedGroup = SeparateGroup(group);
 //             expect(separatedgroup.getInputs().length).toBe(7);
 //             expect(separatedgroup.getOutputs().length).toBe(1);
 //             expect(separatedgroup.getOthers().length).toBe(2);
@@ -255,13 +72,13 @@ import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 //         }
 //     });
 //     test("Group 4", () => {
-//         let group = [new ANDGate(), new LED(), new ANDGate(),
+//         const group = [new ANDGate(), new LED(), new ANDGate(),
 //                      new LED(), new ANDGate(), new LED(), new ANDGate(),
 //                      new ANDGate(), new LED(), new ANDGate()];
-//         for (let i = 0; i < NUM_SAMPLES; i++) {
+//         for (const i = 0; i < NUM_SAMPLES; i++) {
 //             shuffle(group);
 
-//             let separatedGroup = SeparateGroup(group);
+//             const separatedGroup = SeparateGroup(group);
 //             expect(separatedgroup.getInputs().length).toBe(0);
 //             expect(separatedgroup.getOutputs().length).toBe(4);
 //             expect(separatedgroup.getOthers().length).toBe(6);
@@ -272,60 +89,37 @@ import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 
 describe("CreateGroup", () => {
     test("Group 0", () => {
-        let group = CreateGroup([]);
+        const group = CreateGroup([]);
 
-        expect(group.getInputs().length).toBe(0);
-        expect(group.getOutputs().length).toBe(0);
-        expect(group.getOthers().length).toBe(0);
         expect(group.getWires().length).toBe(0);
         expect(group.getComponents().length).toBe(0);
     });
     test("Group 1", () => {
-        let i1 = new Switch();
-        let i2 = new Switch();
-        let g  = new ANDGate();
-        let o1 = new LED();
+        const i1 = new Switch();
+        const i2 = new Switch();
+        const g  = new ANDGate();
+        const o1 = new LED();
 
         Connect(i1, 0,  g, 0);
         Connect(i2, 0,  g, 1);
         Connect(g,  0, o1, 0);
 
-        let group = CreateGroup([i1,i2,g,o1]);
-
-        expect(group.getInputs().length).toBe(2);
-        expect(group.getInputs()[0]).toBe(i1);
-        expect(group.getInputs()[1]).toBe(i2);
-
-        expect(group.getOutputs().length).toBe(1);
-        expect(group.getOutputs()[0]).toBe(o1);
-
-        expect(group.getOthers().length).toBe(1);
-        expect(group.getOthers()[0]).toBe(g);
+        const group = CreateGroup([i1,i2,g,o1]);
 
         expect(group.getWires().length).toBe(3);
         expect(group.getComponents().length).toBe(4);
     });
     test("Group 2", () => {
-        let i1 = new Switch();
-        let i2 = new Button();
-        let g  = new ORGate();
-        let o1 = new LED();
+        const i1 = new Switch();
+        const i2 = new Button();
+        const g  = new ORGate();
+        const o1 = new LED();
 
-        let group = CreateGroup([i1,i2,g,o1]);
+        const group = CreateGroup([i1,i2,g,o1]);
 
         Connect(i1, 0,  g, 0);
         Connect(i2, 0,  g, 1);
         Connect(g,  0, o1, 0);
-
-        expect(group.getInputs().length).toBe(2);
-        expect(group.getInputs()[0]).toBe(i1);
-        expect(group.getInputs()[1]).toBe(i2);
-
-        expect(group.getOutputs().length).toBe(1);
-        expect(group.getOutputs()[0]).toBe(o1);
-
-        expect(group.getOthers().length).toBe(1);
-        expect(group.getOthers()[0]).toBe(g);
 
         expect(group.getWires().length).toBe(0);
         expect(group.getComponents().length).toBe(4);
@@ -342,9 +136,7 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Gate", () => {
             const group = GatherGroup([gate]);
 
-            expect(group.getOthers().length).toBe(1);
             expect(group.getWires().length).toBe(1);
-            expect(group.getOthers()[0]).toBe(gate);
             expect(group.getWires()[0]).toBe(wire);
         });
     });
@@ -358,17 +150,14 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Gate", () => {
             const group = GatherGroup([gate]);
 
-            expect(group.getOthers().length).toBe(2);
             expect(group.getWires().length).toBe(2);
-            expect(group.getOthers().includes(gate)).toBe(true);
-            expect(group.getOthers().includes(wp)).toBe(true);
             expect(group.getWires().includes(wire1)).toBe(true);
             expect(group.getWires().includes(wire2)).toBe(true);
         });
         test("Gather WirePort", () => {
             const removed = GatherGroup([wp]);
 
-            const components = removed.getOthers();
+            const components = removed.getComponents();
             const wires = removed.getWires();
 
             expect(components.length).toBe(1);
@@ -380,7 +169,7 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Wire1", () => {
             const removed = GatherGroup([wire1]);
 
-            const components = removed.getOthers();
+            const components = removed.getComponents();
             const wires = removed.getWires();
 
             expect(components.length).toBe(1);
@@ -392,7 +181,7 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Wire2", () => {
             const removed = GatherGroup([wire2]);
 
-            const components = removed.getOthers();
+            const components = removed.getComponents();
             const wires = removed.getWires();
 
             expect(components.length).toBe(1);
@@ -424,7 +213,7 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Gate", () => {
             const removed = GatherGroup([gate]);
 
-            const components = removed.getOthers();
+            const components = removed.getComponents();
             const wires = removed.getWires();
 
             expect(components.length).toBe(4);
@@ -448,344 +237,109 @@ describe("CreateGraph", () => {
 });
 
 describe("CopyGroup", () => {
+    /**
+     * Helper function to expect a full copy with different scenarios
+     *
+     * @param  types    The list of types of DigitalComponents to create
+     * @param  i1       The list of connections to connect different components
+     *                      Each connection is defined by 4 numbers
+     *                       0. The index of the first component (in types)
+     *                       1. The index of the port from the first component
+     *                       2. The index of the second component (in types)
+     *                       3. The index of the port from the second component
+     */
+    function expectCopy(types: Array<new () => DigitalComponent>, connections: Array<[number, number, number, number]>): void {
+        const originals = types.map((t) => new t());
+        connections.forEach((c) => Connect(originals[c[0]], c[1], originals[c[2]], c[3]));
+
+        const copy = CopyGroup(originals);
+
+        const components = copy.getComponents() as DigitalComponent[];
+        const wires = copy.getWires() as DigitalWire[];
+
+        // Expect same amount of componnets/wires
+        expect(components.length).toBe(types.length);
+        expect(wires.length).toBe(connections.length);
+
+        // Expect each component to be instance of the given types
+        components.forEach((c, i) => {
+            expect(c).toBeInstanceOf(types[i]);
+        });
+
+        // Expect each copied component not .toBe the same as the original
+        components.forEach((c, i) => {
+            expect(c).not.toBe(originals[i]);
+        });
+
+        // Expect each connection to be connected to the correct original component
+        components.forEach((c, i) => {
+            const o = originals[i];
+            expect(c.numOutputs()).toBe(o.numOutputs());
+            c.getOutputs().forEach((p, j) => {
+                const o2 = o.getOutputs()[j].getOutputComponent();
+                const i2 = originals.indexOf(o2);
+                expect(p.getOutputComponent()).toBe(components[i2]);
+            });
+            expect(c.numInputs()).toBe(o.numInputs());
+            c.getInputs().forEach((p, j) => {
+                const o2 = o.getInputs()[j].getInputComponent();
+                const i2 = originals.indexOf(o2);
+                expect(p.getInputComponent()).toBe(components[i2]);
+            });
+        });
+    }
+
     test("Group 0", () => {
-        let copy = CopyGroup([]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(0);
-        expect(components.length).toBe(0);
-        expect(outputs.length).toBe(0);
-        expect(wires.length).toBe(0);
-
-        expect(inputs[0]).not.toBe(0);
-        expect(components[0]).not.toBe(0);
-        expect(outputs[0]).not.toBe(0);
+        expectCopy([], []);
     });
     test("Group 1", () => {
-        let i1 = new Switch();
-        let i2 = new Switch();
-        let g  = new ANDGate();
-        let o1 = new LED();
-
-        Connect(i1, 0,  g, 0);
-        Connect(i2, 0,  g, 1);
-        Connect(g,  0, o1, 0);
-
-        let copy = CopyGroup([i1, i2, g, o1]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(2);
-        expect(components.length).toBe(1);
-        expect(outputs.length).toBe(1);
-        expect(wires.length).toBe(3);
-
-        expect(inputs[0]).not.toBe(i1);
-        expect(inputs[0]).not.toBe(i2);
-        expect(inputs[1]).not.toBe(i1);
-        expect(inputs[1]).not.toBe(i2);
-        expect(components[0]).not.toBe(g);
-        expect(outputs[0]).not.toBe(o1);
-
-        expect(inputs[0].getOutputs().length).toBe(1);
-        expect(inputs[0].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-        expect(inputs[1].getOutputs().length).toBe(1);
-        expect(inputs[1].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-
-        expect(components[0].getOutputs().length).toBe(1);
-        expect(components[0].getOutputs()[0].getOutputComponent()).toBe(outputs[0]);
-        expect(components[0].getInputs().length).toBe(2);
-        expect(components[0].getInputs()[0].getInputComponent()).toBe(inputs[0]);
-        expect(components[0].getInputs()[1].getInputComponent()).toBe(inputs[1]);
-
-        expect(outputs[0].getInputs().length).toBe(1);
-        expect(outputs[0].getInputs()[0].getInputComponent()).toBe(components[0]);
+        expectCopy([Switch,     Switch,      ANDGate,      LED],
+                   [[0,0,/* ---------------> */2,0            ],
+                    [            1,0,/* ---> */2,1            ],
+                    [                          2,0,/* -> */3,0]]);
     });
     test("Group 2", () => {
-        let i1 = new Switch();
-
-        let copy = CopyGroup([i1]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(1);
-        expect(components.length).toBe(0);
-        expect(outputs.length).toBe(0);
-        expect(wires.length).toBe(0);
-
-        expect(inputs[0]).not.toBe(i1);
+        expectCopy([Switch], []);
     });
     test("Group 3", () => {
-        let i = new Switch();
-        let o = new SevenSegmentDisplay();
-
-        Connect(i,0,o,0);
-
-        let copy = CopyGroup([i,o]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(1);
-        expect(components.length).toBe(0);
-        expect(outputs.length).toBe(1);
-        expect(wires.length).toBe(1);
-
-        expect(inputs[0]).not.toBe(i);
-        expect(outputs[0]).not.toBe(o);
-
-        expect(inputs[0].getOutputs().length).toBe(1);
-        expect(inputs[0].getOutputs()[0].getOutputComponent()).toBe(outputs[0]);
-        expect(outputs[0].getInputs().length).toBe(1);
-        expect(outputs[0].getInputs()[0].getInputComponent()).toBe(inputs[0]);
+        expectCopy([Switch, SevenSegmentDisplay],
+                   [[0,0,/* ---> */1,0]]);
     });
     test("Group 4", () => {
-        let i1 = new Button();
-        let i2 = new Switch();
-        let i3 = new Button();
-        let o1 = new LED();
-        let o2 = new LED();
-        let c1 = new ORGate();
-        let c2 = new ANDGate();
-
-        Connect(i2,0,c2,0);
-        Connect(c2,0,o2,0);
-
-        Connect(i1,0,c1,0);
-        Connect(i3,0,c1,1);
-        Connect(c1,0,o1,0);
-
-        let copy1 = CopyGroup([i1,i3,c1,o1]);
-        let copy2 = CopyGroup([i2,c2,o2]);
-
-        const inputs1 = copy1.getInputs();
-        const components1 = copy1.getOthers();
-        const outputs1 = copy1.getOutputs();
-        const wires1 = copy1.getWires();
-
-        expect(inputs1.length).toBe(2);
-        expect(components1.length).toBe(1);
-        expect(outputs1.length).toBe(1);
-        expect(wires1.length).toBe(3);
-
-        expect(inputs1[0]).not.toBe(i1);
-        expect(inputs1[0]).not.toBe(i3);
-        expect(inputs1[1]).not.toBe(i1);
-        expect(inputs1[1]).not.toBe(i3);
-        expect(outputs1[0]).not.toBe(o1);
-        expect(components1[0]).not.toBe(c1);
-
-        expect(inputs1[0].getOutputs().length).toBe(1);
-        expect(inputs1[0].getOutputs()[0].getOutputComponent()).toBe(components1[0]);
-        expect(inputs1[1].getOutputs().length).toBe(1);
-        expect(inputs1[1].getOutputs()[0].getOutputComponent()).toBe(components1[0]);
-        expect(outputs1[0].getInputs().length).toBe(1);
-        expect(outputs1[0].getInputs()[0].getInputComponent()).toBe(components1[0]);
-
-        const inputs2 = copy2.getInputs();
-        const components2 = copy2.getOthers();
-        const outputs2 = copy2.getOutputs();
-        const wires2 = copy2.getWires();
-
-        expect(inputs2.length).toBe(1);
-        expect(components2.length).toBe(1);
-        expect(outputs2.length).toBe(1);
-        expect(wires2.length).toBe(2);
-
-        expect(inputs2[0]).not.toBe(i2);
-        expect(outputs2[0]).not.toBe(o2);
-        expect(components2[0]).not.toBe(c2);
-
-        expect(inputs2[0].getOutputs().length).toBe(1);
-        expect(inputs2[0].getOutputs()[0].getOutputComponent()).toBe(components2[0]);
-        expect(outputs2[0].getInputs().length).toBe(1);
-        expect(outputs2[0].getInputs()[0].getInputComponent()).toBe(components2[0]);
+        expectCopy([Button,     Button,     ORGate,       LED],
+                   [[0,0,/* --------------> */2,0            ],
+                    [            1,0,/* --> */2,1            ],
+                    [                         2,0,/* -> */3,0]]);
+        expectCopy([Switch,     ANDGate,     LED],
+                   [[0,0,/* -> */1,0            ],
+                    [            1,0,/* -> */2,0]]);
     });
     test("Group 5", () => {
-        let i1 = new Button();
-        let i2 = new Switch();
-        let o1 = new SevenSegmentDisplay();
-        let c1 = new ORGate();
-        let c2 = new ORGate();
-        let c3 = new ANDGate();
-
-        Connect(i1,0,c1,0);
-        Connect(i1,0,c2,0);
-        Connect(i2,0,c1,1);
-        Connect(i2,0,c2,1);
-        Connect(c1,0,c3,0);
-        Connect(c2,0,c3,1);
-        Connect(c1,0,o1,0);
-        Connect(c1,0,o1,1);
-        Connect(c3,0,o1,2);
-        Connect(c3,0,o1,3);
-        Connect(c3,0,o1,4);
-        Connect(c2,0,o1,5);
-        Connect(c2,0,o1,6);
-
-        let copy = CopyGroup([i1,i2,c1,c2,c3,o1]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(2);
-        expect(components.length).toBe(3);
-        expect(outputs.length).toBe(1);
-        expect(wires.length).toBe(13);
-
-        expect(inputs[0]).not.toBe(i1);
-        expect(inputs[0]).not.toBe(i2);
-        expect(inputs[1]).not.toBe(i2);
-        expect(inputs[1]).not.toBe(i1);
-        expect(components[0]).not.toBe(c1);
-        expect(components[0]).not.toBe(c3);
-        expect(components[0]).not.toBe(c2);
-        expect(components[1]).not.toBe(c2);
-        expect(components[1]).not.toBe(c1);
-        expect(components[1]).not.toBe(c3);
-        expect(components[2]).not.toBe(c3);
-        expect(components[2]).not.toBe(c2);
-        expect(components[2]).not.toBe(c1);
-        expect(outputs[0]).not.toBe(o1);
-
-        expect(inputs[0].getOutputs().length).toBe(2);
-        expect(inputs[0].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-        expect(inputs[0].getOutputs()[1].getOutputComponent()).toBe(components[1]);
-        expect(inputs[1].getOutputs().length).toBe(2);
-        expect(inputs[1].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-        expect(inputs[1].getOutputs()[1].getOutputComponent()).toBe(components[1]);
-
-        expect(outputs[0].getInputs().length).toBe(7);
-        expect(outputs[0].getInputs()[0].getInputComponent()).toBe(components[0]);
-        expect(outputs[0].getInputs()[1].getInputComponent()).toBe(components[0]);
-        expect(outputs[0].getInputs()[2].getInputComponent()).toBe(components[2]);
-        expect(outputs[0].getInputs()[3].getInputComponent()).toBe(components[2]);
-        expect(outputs[0].getInputs()[4].getInputComponent()).toBe(components[2]);
-        expect(outputs[0].getInputs()[5].getInputComponent()).toBe(components[1]);
-        expect(outputs[0].getInputs()[6].getInputComponent()).toBe(components[1]);
-
-        expect(components[0].getInputs().length).toBe(2);
-        expect(components[0].getInputs()[0].getInputComponent()).toBe(inputs[0]);
-        expect(components[0].getInputs()[1].getInputComponent()).toBe(inputs[1]);
-        expect(components[0].getOutputs().length).toBe(3);
-        expect(components[0].getOutputs()[0].getOutputComponent()).toBe(components[2]);
-        expect(components[0].getOutputs()[1].getOutputComponent()).toBe(outputs[0]);
-        expect(components[0].getOutputs()[2].getOutputComponent()).toBe(outputs[0]);
-
-        expect(components[1].getInputs().length).toBe(2);
-        expect(components[1].getInputs()[0].getInputComponent()).toBe(inputs[0]);
-        expect(components[1].getInputs()[1].getInputComponent()).toBe(inputs[1]);
-        expect(components[0].getOutputs().length).toBe(3);
-        expect(components[0].getOutputs()[0].getOutputComponent()).toBe(components[2]);
-        expect(components[0].getOutputs()[1].getOutputComponent()).toBe(outputs[0]);
-        expect(components[0].getOutputs()[2].getOutputComponent()).toBe(outputs[0]);
-
-        expect(components[2].getInputs().length).toBe(2);
-        expect(components[2].getInputs()[0].getInputComponent()).toBe(components[0]);
-        expect(components[2].getInputs()[1].getInputComponent()).toBe(components[1]);
-        expect(components[2].getOutputs().length).toBe(3);
-        expect(components[2].getOutputs()[0].getOutputComponent()).toBe(outputs[0]);
-        expect(components[2].getOutputs()[1].getOutputComponent()).toBe(outputs[0]);
-        expect(components[2].getOutputs()[2].getOutputComponent()).toBe(outputs[0]);
+        expectCopy([Button,   Switch,   ORGate,   ORGate,   ANDGate,   SevenSegmentDisplay],
+                   [[0,0,/* -----------> */2,0                                  ],
+                    [0,0,/* ----------------------> */3,0                       ],
+                    [          1,0,/* -> */2,1                                  ],
+                    [          1,0,/* ------------> */3,1                       ],
+                    [                    2,0,/* -----------> */4,0              ],
+                    [                    2,0,/* -------------------------> */5,0],
+                    [                    2,0,/* -------------------------> */5,1],
+                    [                              3,0,/* -> */4,1              ],
+                    [                              3,0,/* ---------------> */5,5],
+                    [                              3,0,/* ---------------> */5,6],
+                    [                                          3,0,/* ---> */5,2],
+                    [                                          3,0,/* ---> */5,3],
+                    [                                          3,0,/* ---> */5,4]]);
     });
     test("Group 6", () => {
-        let i1 = new Switch();
-        let i2 = new Button();
-        let o1 = new LED();
-        let o2 = new SevenSegmentDisplay();
-        let c1 = new ANDGate();
-        let c2 = new ORGate();
-        let p1 = new DigitalNode();
-        let p2 = new DigitalNode();
-
-        Connect(i1,0,c1,0);
-        Connect(c1,0,p2,0);
-        Connect(p2,0,o1,0);
-        Connect(c1,0,c2,0);
-        Connect(i2,0,p1,0);
-        Connect(p1,0,c1,1);
-        Connect(i2,0,o2,0);
-        Connect(i2,0,o2,3);
-        Connect(i2,0,o2,5);
-
-        let copy = CopyGroup([i1,i2,o1,o2,c1,c2,p1,p2]);
-
-        const inputs = copy.getInputs();
-        const components = copy.getOthers();
-        const outputs = copy.getOutputs();
-        const wires = copy.getWires();
-
-        expect(inputs.length).toBe(2);
-        expect(components.length).toBe(4);
-        expect(outputs.length).toBe(2);
-        expect(wires.length).toBe(9);
-
-        expect(inputs[0]).not.toBe(i1);
-        expect(inputs[0]).not.toBe(i2);
-        expect(inputs[1]).not.toBe(i2);
-        expect(inputs[1]).not.toBe(i1);
-        expect(components[0]).not.toBe(c1);
-        expect(components[0]).not.toBe(c2);
-        expect(components[0]).not.toBe(p1);
-        expect(components[0]).not.toBe(p2);
-        expect(components[1]).not.toBe(c1);
-        expect(components[1]).not.toBe(c2);
-        expect(components[1]).not.toBe(p1);
-        expect(components[1]).not.toBe(p2);
-        expect(components[2]).not.toBe(c1);
-        expect(components[2]).not.toBe(c2);
-        expect(components[2]).not.toBe(p1);
-        expect(components[2]).not.toBe(p2);
-        expect(components[3]).not.toBe(c1);
-        expect(components[3]).not.toBe(c2);
-        expect(components[3]).not.toBe(p1);
-        expect(components[3]).not.toBe(p2);
-        expect(outputs[0]).not.toBe(o1);
-        expect(outputs[0]).not.toBe(o2);
-        expect(outputs[1]).not.toBe(o1);
-        expect(outputs[1]).not.toBe(o2);
-
-        expect(inputs[0].getOutputs().length).toBe(1);
-        expect(inputs[0].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-        expect(inputs[1].getOutputs().length).toBe(4);
-        expect(inputs[1].getOutputs()[0].getOutputComponent()).toBe(components[2]);
-        expect(inputs[1].getOutputs()[1].getOutputComponent()).toBe(outputs[1]);
-        expect(inputs[1].getOutputs()[2].getOutputComponent()).toBe(outputs[1]);
-        expect(inputs[1].getOutputs()[3].getOutputComponent()).toBe(outputs[1]);
-
-        expect(outputs[0].getInputs().length).toBe(1);
-        expect(outputs[0].getInputs()[0].getInputComponent()).toBe(components[3]);
-        expect(outputs[1].getInputs().length).toBe(3);
-        expect(outputs[1].getInputs()[0].getInputComponent()).toBe(inputs[1]);
-        expect(outputs[1].getInputs()[1].getInputComponent()).toBe(inputs[1]);
-        expect(outputs[1].getInputs()[2].getInputComponent()).toBe(inputs[1]);
-
-        expect(components[0].getInputs().length).toBe(2);
-        expect(components[0].getInputs()[0].getInputComponent()).toBe(inputs[0]);
-        expect(components[0].getInputs()[1].getInputComponent()).toBe(components[2]);
-        expect(components[1].getInputs().length).toBe(1);
-        expect(components[1].getInputs()[0].getInputComponent()).toBe(components[0]);
-        expect(components[2].getInputs().length).toBe(1);
-        expect(components[2].getInputs()[0].getInputComponent()).toBe(inputs[1]);
-        expect(components[2].getOutputs().length).toBe(1);
-        expect(components[2].getOutputs()[0].getOutputComponent()).toBe(components[0]);
-        expect(components[3].getInputs().length).toBe(1);
-        expect(components[3].getInputs()[0].getInputComponent()).toBe(components[0]);
-        expect(components[3].getOutputs().length).toBe(1);
-        expect(components[3].getOutputs()[0].getOutputComponent()).toBe(outputs[0]);
+        expectCopy([Switch,    Button,    DigitalNode,     ANDGate,    DigitalNode,    ORGate,     LED,     SevenSegmentDisplay],
+                   [[0,0,/* ------------------------------> */3,0                                                      ],
+                    [           1,0,/* ---> */2,0                                                                      ],
+                    [                         2,0,/* -----> */3,1                                                      ],
+                    [                                         3,0,/* --> */4,0                                         ],
+                    [                                                      4,0,/* -------------> */6,0                 ],
+                    [                                         3,0,/* ----------------> */5,0                           ],
+                    [           1,0,/* -------------------------------------------------------------------------> */7,0],
+                    [           1,0,/* -------------------------------------------------------------------------> */7,3],
+                    [           1,0,/* -------------------------------------------------------------------------> */7,5]]);
     });
 });

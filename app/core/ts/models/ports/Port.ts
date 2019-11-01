@@ -1,10 +1,11 @@
-import {IO_PORT_LENGTH} from "core/utils/Constants";
-import {Vector,V} from "Vector";
+import {IO_PORT_LENGTH, IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
+import {Vector, V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
 
 import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
+import {CircleContains} from "math/MathUtils";
 
 export abstract class Port implements Selectable {
     protected parent: Component;
@@ -51,6 +52,15 @@ export abstract class Port implements Selectable {
 
     public abstract connect(w: Wire): void;
     public abstract disconnect(w: Wire): void;
+
+    public isWithinSelectBounds(v: Vector): boolean {
+        return CircleContains(this.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, v);
+    }
+
+    // Finds index of this port in the parent
+    public getIndex(): number {
+        return this.parent.getPorts().indexOf(this);
+    }
 
     public getParent(): Component {
         return this.parent;

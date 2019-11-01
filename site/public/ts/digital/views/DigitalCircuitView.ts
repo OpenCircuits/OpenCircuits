@@ -3,7 +3,6 @@ import {CircuitView} from "../../shared/views/CircuitView";
 import {Selectable} from "core/utils/Selectable";
 
 import {Component} from "core/models/Component";
-import {Wire} from "core/models/Wire";
 import {WireRenderer} from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 import {DigitalWire} from "digital/models/DigitalWire";

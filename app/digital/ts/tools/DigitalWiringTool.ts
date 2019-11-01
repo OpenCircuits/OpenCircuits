@@ -16,6 +16,7 @@ import {DigitalWire} from "digital/models/DigitalWire";
 
 export class DigitalWiringTool extends WiringTool {
     protected designer: DigitalCircuitDesigner;
+    protected wire: DigitalWire;
 
     private action: ConnectionAction;
 
@@ -51,6 +52,7 @@ export class DigitalWiringTool extends WiringTool {
             this.wire = new DigitalWire(this.port, null);
             this.wire.getShape().setP2(this.port.getWorldTargetPos());
             this.wire.getShape().setC2(this.port.getWorldTargetPos());
+            this.wire.activate(this.port.getIsOn());
         }
 
         return undefined;
@@ -97,7 +99,7 @@ export class DigitalWiringTool extends WiringTool {
         return true;
     }
 
-    public deactivate(event: string, input: Input, button?: number): Action {
+    public deactivate(): Action {
         const action = this.action;
         // Reset action
         this.action = undefined;

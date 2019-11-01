@@ -52,7 +52,7 @@ export class DigitalWire extends Wire {
     }
 
     public copy(p1?: OutputPort, p2?: InputPort): DigitalWire {
-        const copy = <DigitalWire>super.copy();
+        const copy = <DigitalWire>super.copy(p1, p2);
         copy.isOn = this.isOn;
         return copy;
     }

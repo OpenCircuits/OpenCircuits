@@ -5,7 +5,6 @@ import {SelectionTool} from "core/tools/SelectionTool";
 import {Input} from "core/utils/Input";
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
 
 import {Action} from "core/actions/Action";
@@ -21,7 +20,7 @@ export class SplitWireTool extends TranslateTool {
         super(camera);
     }
 
-    public shouldActivate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
+    public shouldActivate(currentTool: Tool, event: string, input: Input): boolean {
         if (!(currentTool instanceof SelectionTool))
             return false;
         if (!(event == "mousedrag" && input.getTouchCount() == 1))
