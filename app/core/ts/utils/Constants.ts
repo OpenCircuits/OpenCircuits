@@ -29,6 +29,8 @@ export const WIRE_SNAP_THRESHOLD    = 10;
 
 export const GATE_NOT_CIRCLE_RADIUS = 5;
 
+export const GATE_OR_CULLBOX_OFFSET = 50;
+
 export const ROTATION_CIRCLE_RADIUS = 75;
 export const ROTATION_CIRCLE_THICKNESS = 5;
 export const ROTATION_CIRCLE_THRESHOLD = 8;
