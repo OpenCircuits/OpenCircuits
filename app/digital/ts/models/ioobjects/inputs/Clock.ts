@@ -55,11 +55,11 @@ export class Clock extends DigitalComponent {
         node.addAttribute("frequency",this.frequency);
     }
 
-      public copy(): Clock {
+    public copy(): Clock {
         const copy = <Clock>super.copy();
         copy.frequency = this.frequency;
         return copy;
-      }
+    }
 
     public load(node: XMLNode): void {
         super.load(node);
