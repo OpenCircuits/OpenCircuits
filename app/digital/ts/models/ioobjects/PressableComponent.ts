@@ -88,6 +88,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         const copy = <PressableComponent>super.copy();
         copy.pressableBox = this.pressableBox.copy();
         copy.pressableBox.setParent(copy.transform);
+        copy.activate(this.isOn());
         return copy;
     }
 
