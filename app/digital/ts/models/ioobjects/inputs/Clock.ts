@@ -52,7 +52,7 @@ export class Clock extends DigitalComponent {
 
     public save(node: XMLNode): void {
         super.save(node);
-        node.addAttribute("frequency",this.frequency);
+        node.addAttribute("frequency", this.frequency);
     }
 
     public copy(): Clock {
