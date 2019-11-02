@@ -60,12 +60,11 @@ export class ORGate extends Gate {
 
 export function getQuadraticOffset(numInputs: number){
 
-    if (this.numInputs() > 3 && this.numInputs() < 7)
+    if (numInputs > 3 && numInputs < 7)
         return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
     
-    else if (this.numInputs() == 8)
+    else if (numInputs == 8)
         return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
 
-    else
-        return 0;
+    return 0;
 }
