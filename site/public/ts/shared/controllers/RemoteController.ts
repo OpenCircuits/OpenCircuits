@@ -83,7 +83,7 @@ export const RemoteController = (() => {
                 const contents = await LoadExampleCircuit(metadata);
                 callback(contents);
                 return {
-                    metadata: metadata
+                    metadata: CircuitMetadata.Default()
                 };
             });
         },
