@@ -50,15 +50,15 @@ export class Clock extends DigitalComponent {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
     }
 
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("frequency", this.frequency);
-    }
-
     public copy(): Clock {
         const copy = <Clock>super.copy();
         copy.frequency = this.frequency;
         return copy;
+    }
+
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("frequency", this.frequency);
     }
 
     public load(node: XMLNode): void {
