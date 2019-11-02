@@ -35,7 +35,7 @@ export class XORGate extends Gate {
     public getMinPos(): Vector {
         const min = super.getMinPos();
 
-        let BOX_WIDTH = getQuadraticOffset(this.numInputs());
+        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
 
         // Find minimum pos from corners of transform
         const corners = this.transform.getCorners().map(
@@ -48,7 +48,7 @@ export class XORGate extends Gate {
     public getMaxPos(): Vector {
         const max = super.getMaxPos();
 
-        let BOX_WIDTH = getQuadraticOffset(this.numInputs());
+        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
 
         // Find maximum pos from corners of transform
         const corners = this.transform.getCorners().map(
