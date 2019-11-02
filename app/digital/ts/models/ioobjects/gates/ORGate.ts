@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
-        GATE_OR_CULLBOX_OFFSET} from "../../../utils/Constants";
+        GATE_OR_CULLBOX_OFFSET} from "../../../../../core/ts/utils/Constants";
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
@@ -32,11 +32,7 @@ export class ORGate extends Gate {
         const min = super.getMinPos();
 
 
-        let BOX_WIDTH = DEFAULT_BORDER_WIDTH;
-        if (this.numInputs() >3 && this.numInputs() < 7)
-            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
-        if (this.numInputs() == 8)
-            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
+        let BOX_WIDTH = getQuadraticOffset(this.numInputs());
             
         // Find minimum pos from corners of transform
         const corners = this.transform.getCorners().map(
@@ -49,11 +45,7 @@ export class ORGate extends Gate {
     public getMaxPos(): Vector {
         const max = super.getMaxPos();
 
-        let BOX_WIDTH = DEFAULT_BORDER_WIDTH;
-        if (this.numInputs() >3 && this.numInputs() < 7)
-            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET;
-        if (this.numInputs() == 8)
-            BOX_WIDTH += GATE_OR_CULLBOX_OFFSET*2;
+        let BOX_WIDTH = getQuadraticOffset(this.numInputs());
 
         // Find maximum pos from corners of transform
         const corners = this.transform.getCorners().map(
@@ -66,4 +58,13 @@ export class ORGate extends Gate {
     public getXMLName(): string {
         return "or";
     }
+}
+
+export function getQuadraticOffset(numInputs: number){
+
+    if (this.numInputs() > 3 && this.numInputs() < 7)
+            return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
+    
+    if (this.numInputs() == 8)
+            return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
 }
