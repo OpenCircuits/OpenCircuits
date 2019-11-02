@@ -1,6 +1,4 @@
 import {DEFAULT_BORDER_WIDTH,
-        IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH,
         GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
