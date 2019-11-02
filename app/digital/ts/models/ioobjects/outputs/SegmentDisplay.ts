@@ -9,7 +9,9 @@ import {InputPort} from "../../ports/InputPort";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class SevenSegmentDisplay extends DigitalComponent {
+export type SegmentType = "vertical" | "horizontal" | "diagonal" | "horizontal0.5";
+
+export class SegmentDisplay extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(7),
               new ClampedValue(0),
@@ -19,14 +21,14 @@ export class SevenSegmentDisplay extends DigitalComponent {
         this.setInputPortCount(7);
     }
 
-    public getSegments(): Array<Vector> {
-        return [V( 0,   -1), V(1, 0),
-                V( 1, -0.5), V(0, 1),
-                V( 1,  0.5), V(0, 1),
-                V( 0,    1), V(1, 0),
-                V(-1,  0.5), V(0, 1),
-                V(-1, -0.5), V(0, 1),
-                V( 0,    0), V(1, 0)];
+    public getSegments(): Array<[Vector, SegmentType]> {
+        return [[V( 0,   -1), "horizontal"],
+                [V( 0.5, -0.5), "vertical"],
+                [V( 0.5,  0.5), "vertical"],
+                [V( 0,    1), "horizontal"],
+                [V(-0.5,  0.5), "vertical"],
+                [V(-0.5, -0.5), "vertical"],
+                [V( 0,    0), "horizontal"]];
     }
 
     public getDisplayName(): string {
