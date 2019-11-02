@@ -25,7 +25,7 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     const view = new DigitalCircuitView(tmp, vw, vh);
 
     // Center and zoom the camera so everything fits with no distortion
-    const center = V((min.x + max.x)/2, (min.y + max.y)/2);
+    const center = min.add(max).scale(0.5);
     const camera = view.getCamera();
     camera.setPos(center);
     // Zoom out a bit more than we need so components on edges have some breathing room
