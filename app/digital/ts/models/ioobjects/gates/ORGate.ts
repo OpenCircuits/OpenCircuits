@@ -6,6 +6,17 @@ import {Gate} from "./Gate";
 
 import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
 
+export function getQuadraticOffset(numInputs: number): number {
+
+    if (numInputs > 3 && numInputs < 7)
+        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
+    
+    else if (numInputs == 8)
+        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
+
+    return 0;
+}
+
 export class ORGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -56,15 +67,4 @@ export class ORGate extends Gate {
     public getXMLName(): string {
         return "or";
     }
-}
-
-export function getQuadraticOffset(numInputs: number){
-
-    if (numInputs > 3 && numInputs < 7)
-        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
-    
-    else if (numInputs == 8)
-        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
-
-    return 0;
 }
