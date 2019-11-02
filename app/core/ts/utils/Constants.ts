@@ -1,5 +1,5 @@
-export const DEBUG_CULLBOXES = false;
-export const DEBUG_SELECTION_BOUNDS = false;
+export const DEBUG_CULLBOXES = true;
+export const DEBUG_SELECTION_BOUNDS = true;
 
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
@@ -28,6 +28,9 @@ export const WIRE_THICKNESS = 7.0;
 export const WIRE_SNAP_THRESHOLD    = 10;
 
 export const GATE_NOT_CIRCLE_RADIUS = 5;
+
+export const LED_LIGHT_RADIUS = 75;
+export const LED_WIDTH = 50;
 
 export const ROTATION_CIRCLE_RADIUS = 75;
 export const ROTATION_CIRCLE_THICKNESS = 5;

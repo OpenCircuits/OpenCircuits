@@ -3,10 +3,11 @@ import {DEFAULT_SIZE,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
         LED_LIGHT_RADIUS,
-        LED_WIDTH} from "digital/utils/Constants";
+        LED_WIDTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
