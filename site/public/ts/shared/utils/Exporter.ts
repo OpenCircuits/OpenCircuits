@@ -7,12 +7,8 @@ import {V} from "Vector";
 //! No idea what happens if the designer is empty, divide-by-zero seems plausible
 //? how empty designers should be handled -- return empty canvas?
 function RenderCircuit(designer: DigitalCircuitDesigner): HTMLCanvasElement {
-    // Thumbnails are a set size and should be square
     // 256 is arbitrary, could increase or decrease for more detail or less memory respectively
-    const canvas = document.createElement("canvas");
     const THUMBNAIL_SIZE = 256;
-    canvas.width = THUMBNAIL_SIZE;
-    canvas.height = THUMBNAIL_SIZE;
 
     // Find bounding box of the circuit
     let xmin = Infinity;
@@ -20,24 +16,29 @@ function RenderCircuit(designer: DigitalCircuitDesigner): HTMLCanvasElement {
     let xmax = -Infinity;
     let ymax = -Infinity;
     for (let c of designer.getObjects()) {
-        const min = c.getMinPos();
+        const cullbox = c.getCullBox();
+        const min = cullbox.getTopLeft();
+        const max = cullbox.getBottomRight();
         xmin = Math.min(min.x, xmin);
         ymin = Math.min(min.y, ymin);
-
-        const max = c.getMaxPos();
         xmax = Math.max(max.x, xmax);
         ymax = Math.max(max.y, ymax);
     }
 
-    // Center and zoom the camera so everything fits with no distortion
     //! Warning: several pieces of CircuitView classes rely on there being a screen and a window
+    const canvas = document.createElement("canvas");
+    const vw = THUMBNAIL_SIZE/window.innerWidth;
+    const vh = THUMBNAIL_SIZE/window.innerHeight;
+    const view = new DigitalCircuitView(canvas, vw, vh);
+
+    // Center and zoom the camera so everything fits with no distortion
     const center = V((xmin + xmax)/2, (ymin + ymax)/2);
-    const zoom = Math.max((xmax - xmin)/THUMBNAIL_SIZE, (ymax - ymin)/THUMBNAIL_SIZE);
-    const view = new DigitalCircuitView(canvas);
     const camera = view.getCamera();
     camera.setPos(center);
+    const zoom = Math.max((xmax - xmin)/THUMBNAIL_SIZE, (ymax - ymin)/THUMBNAIL_SIZE) * 1.1; // zoom out 10% more than required
     camera.zoomBy(zoom); // zoomTo would be ideal but does calculations in screen space, whereas zoomBy is entirely world space
 
+    // Do the actual render
     view.render(designer, [], undefined);
     return canvas;
 }
