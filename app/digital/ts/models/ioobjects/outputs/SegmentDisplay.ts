@@ -1,3 +1,5 @@
+import Segments from "./Segments.json";
+
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
@@ -22,13 +24,11 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     public getSegments(): Array<[Vector, SegmentType]> {
-        return [[V( 0,   -1), "horizontal"],
-                [V( 0.5, -0.5), "vertical"],
-                [V( 0.5,  0.5), "vertical"],
-                [V( 0,    1), "horizontal"],
-                [V(-0.5,  0.5), "vertical"],
-                [V(-0.5, -0.5), "vertical"],
-                [V( 0,    0), "horizontal"]];
+        const segments = Segments["7"];
+
+        return segments.map((value: [number[], SegmentType]) =>
+            [V(value[0][0], value[0][1]), value[1]]
+        );
     }
 
     public getDisplayName(): string {

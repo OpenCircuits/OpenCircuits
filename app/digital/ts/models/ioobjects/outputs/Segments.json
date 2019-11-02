@@ -1,0 +1,11 @@
+{
+    "7": [
+        [[ 0,   -1], "horizontal"],
+        [[ 0.5, -0.5], "vertical"],
+        [[ 0.5,  0.5], "vertical"],
+        [[ 0,    1], "horizontal"],
+        [[-0.5,  0.5], "vertical"],
+        [[-0.5, -0.5], "vertical"],
+        [[ 0,    0], "horizontal"]
+    ]
+}
