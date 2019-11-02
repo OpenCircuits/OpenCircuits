@@ -40,6 +40,7 @@ $tab-padding: 8px;
         font-size: 1em;
         font-weight: bold;
 
+        vertical-align: top;
         width: calc(49% - 5px);
         padding: 1vh 1vh 1vh 1vh;
 
@@ -61,9 +62,6 @@ $tab-padding: 8px;
     top: $header-total-height - $header-border-width;
     left: 0;
 
-    width: $tab-width;
-    padding: 0 $tab-padding 0 $tab-padding;
-
     cursor: pointer;
     transition: 0.5s;
 
@@ -75,6 +73,8 @@ $tab-padding: 8px;
 
     &:after {
         content: '+';
+        width: $tab-width;
+        margin: 0 $tab-padding 0 $tab-padding;
     }
 
     &__closed {
