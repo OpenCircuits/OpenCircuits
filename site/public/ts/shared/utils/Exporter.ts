@@ -3,26 +3,22 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 import {V, Vector} from "Vector";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, THUMBNAIL_SIZE} from "./Constants";
+import {CullableObject} from "core/models/CullableObject";
 
 // Returns a 256x256 canvas on which the given circuit is centered
 //! No idea what happens if the designer is empty, divide-by-zero seems plausible
 //? how should empty designers be handled -- return empty canvas?
 function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesigner): void {
     // Find bounding box of the circuit
-    let min = V(Infinity);
-    let max = V(-Infinity);
-    for (let c of designer.getObjects()) {
-        const cullbox = c.getCullBox();
-        max = Vector.max(max, cullbox.getTopRight());
-        min = Vector.min(min, cullbox.getBottomLeft());
-    }
+    const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
+    const min = Vector.min(...all.map(o => o.getMinPos()));
+    const max = Vector.max(...all.map(o => o.getMinPos()));
 
     //! Warning: several pieces of CircuitView classes rely on there being a screen and a window
     // I think using this vw and vh cancels it out, but I'm not confident in that
     const vw = THUMBNAIL_SIZE/window.innerWidth;
     const vh = THUMBNAIL_SIZE/window.innerHeight;
-    const tmp = document.createElement("canvas");
-    const view = new DigitalCircuitView(tmp, vw, vh);
+    const view = new DigitalCircuitView(canvas, vw, vh);
 
     // Center and zoom the camera so everything fits with no distortion
     const center = min.add(max).scale(0.5);
@@ -33,31 +29,21 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     const zoom = Math.max(relative_size.x, relative_size.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
     camera.zoomBy(zoom);
 
-    // Create background the same color as the site to composite the image on top of
-    // NOTE: can't just fill the first canvas before the render since the first thing the renderer does it clear it
-    canvas.width = THUMBNAIL_SIZE;
-    canvas.height = THUMBNAIL_SIZE;
-    const context = canvas.getContext("2d");
-    context.fillStyle = window.getComputedStyle(document.body, null).getPropertyValue("background-color");
-    context.fillRect(0, 0, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-
-    // Do the render, and composite it on top of the background
+    // Do the render
     view.render(designer, []);
-    context.drawImage(tmp, 0, 0, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-    canvas.remove();
 }
 
 export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false): string {
     const writer = new XMLWriter(designer.getXMLName());
-    writer.setVersion("1.1");
+    writer.setVersion("1.2");
     writer.setName(name);
     if (thumbnail) {
-        // Render to a small temporary canvas (which gets garbage-collected once done)
+        // Render to a small temporary canvas
         const canvas = document.createElement("canvas");
         RenderCircuit(canvas, designer);
         const thumbnail = canvas.toDataURL("image/png", 0.9);
-        canvas.remove();
         writer.setThumbnail(thumbnail);
+        canvas.remove();
     } else {
         writer.setThumbnail("data:,");
     }
