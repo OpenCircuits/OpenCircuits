@@ -51,10 +51,10 @@ export class AnalogCircuitController extends MainDesignerController {
         // this.headerController.setProjectName(name);
     }
 
-    public saveCircuit(): string {
+    public saveCircuit(thumbnail: boolean = true): string {
         return "AAAA";
         // const circuit = this.getDesigner();
-        // return Exporter.WriteCircuit(circuit, this.headerController.getProjectName());
+        // return Exporter.WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): AnalogCircuitDesigner {

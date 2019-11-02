@@ -56,15 +56,18 @@ function RenderCircuit(designer: DigitalCircuitDesigner): HTMLCanvasElement {
     return composite;
 }
 
-export function WriteCircuit(designer: DigitalCircuitDesigner, name: string): string {
-    // Render to a small temporary canvas (which gets garbage-collected once done)
-    const canvas = RenderCircuit(designer);
-    const thumbnail = canvas.toDataURL("image/png", 0.9);
-
+export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false): string {
     const writer = new XMLWriter(designer.getXMLName());
     writer.setVersion("1.1");
     writer.setName(name);
-    writer.setThumbnail(thumbnail);
+    if (thumbnail) {
+        // Render to a small temporary canvas (which gets garbage-collected once done)
+        const canvas = RenderCircuit(designer);
+        const thumbnail = canvas.toDataURL("image/png", 0.9);
+        writer.setThumbnail(thumbnail);
+    } else {
+        writer.setThumbnail("data:,");
+    }
 
     designer.save(writer.getContentsNode());
 
