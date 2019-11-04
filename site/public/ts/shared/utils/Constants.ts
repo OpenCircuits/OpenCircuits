@@ -1,2 +1,2 @@
 export const THUMBNAIL_SIZE = 256;
-export const THUMBNAIL_ZOOM_PADDING_RATIO = 1.025;
+export const THUMBNAIL_ZOOM_PADDING_RATIO = 1.15;

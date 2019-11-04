@@ -1,7 +1,7 @@
 import {XMLWriter} from "../../../../../app/core/ts/utils/io/xml/XMLWriter";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, THUMBNAIL_SIZE} from "./Constants";
 import {CullableObject} from "core/models/CullableObject";
 
@@ -12,7 +12,7 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     // Find bounding box of the circuit
     const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
     const min = Vector.min(...all.map(o => o.getMinPos()));
-    const max = Vector.max(...all.map(o => o.getMinPos()));
+    const max = Vector.max(...all.map(o => o.getMaxPos()));
 
     //! Warning: several pieces of CircuitView classes rely on there being a screen and a window
     // I think using this vw and vh cancels it out, but I'm not confident in that
@@ -25,8 +25,8 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     const camera = view.getCamera();
     camera.setPos(center);
     // Zoom out a bit more than we need so components on edges have some breathing room
-    const relative_size = max.sub(min).scale(1/THUMBNAIL_SIZE);
-    const zoom = Math.max(relative_size.x, relative_size.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
+    const relativeSize = max.sub(min).scale(1/THUMBNAIL_SIZE);
+    const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
     camera.zoomBy(zoom);
 
     // Do the render
