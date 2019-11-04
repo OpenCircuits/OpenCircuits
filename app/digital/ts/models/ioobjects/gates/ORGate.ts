@@ -6,14 +6,12 @@ import {Gate} from "./Gate";
 
 import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
 
-export function getQuadraticOffset(numInputs: number): number {
-
-    //The wire extensions stay the same for inputs 4-6 so the offset is constant
-    //We don't have to worry about 7 since the port positioning gives a proper cullbox
+export function GetQuadraticOffset(numInputs: number): number {
+    // The wire extensions stay the same for inputs 4-6 so the offset is constant
+    // We don't have to worry about 7 since the port positioning gives a proper cullbox
     if (numInputs > 3 && numInputs < 7)
         return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
-    
-    //At 8 inputs the wire extensions get bigger so we increase the offset
+    // At 8 inputs the wire extensions get bigger so we increase the offset
     else if (numInputs == 8)
         return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
 
@@ -42,13 +40,11 @@ export class ORGate extends Gate {
 
     public getMinPos(): Vector {
         const min = super.getMinPos();
-
-
-        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
             
         // Find minimum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
-            v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
+            v => v.sub(DEFAULT_BORDER_WIDTH, BOX_WIDTH)
         );
 
         return Vector.min(min, ...corners);
@@ -57,11 +53,10 @@ export class ORGate extends Gate {
     public getMaxPos(): Vector {
         const max = super.getMaxPos();
 
-        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
-
         // Find maximum pos from corners of transform
+        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
-            v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
+            v => v.add(DEFAULT_BORDER_WIDTH, BOX_WIDTH)
         );
 
         return Vector.max(max, ...corners);
