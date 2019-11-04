@@ -10,10 +10,11 @@ export function GetQuadraticOffset(numInputs: number): number {
     // The wire extensions stay the same for inputs 4-6 so the offset is constant
     // We don't have to worry about 7 since the port positioning gives a proper cullbox
     if (numInputs > 3 && numInputs < 7)
-        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
+        return DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
+
     // At 8 inputs the wire extensions get bigger so we increase the offset
-    else if (numInputs == 8)
-        return  DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
+    if (numInputs == 8)
+        return DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
 
     return 0;
 }
