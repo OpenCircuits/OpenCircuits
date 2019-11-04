@@ -3,7 +3,7 @@ import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
 
-import{getQuadraticOffset} from "./ORGate";
+import {GetQuadraticOffset} from "./ORGate";
 
 import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
 
@@ -32,9 +32,8 @@ export class XORGate extends Gate {
     public getMinPos(): Vector {
         const min = super.getMinPos();
 
-        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
-
         // Find minimum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
             v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
@@ -45,9 +44,8 @@ export class XORGate extends Gate {
     public getMaxPos(): Vector {
         const max = super.getMaxPos();
 
-        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
-
         // Find maximum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
             v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
         );
