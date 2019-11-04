@@ -5,6 +5,11 @@ import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Vector, V} from "Vector";
+import {CullableObject} from "core/models/CullableObject";
+import {EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "site/shared/utils/Constants";
+import {BoundingBox} from "math/BoundingBox";
 
 /**
  * Helper class to hold different groups of components.
@@ -245,4 +250,13 @@ export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
 
     const group = copies as IOObject[];
     return new IOObjectSet(group.concat(wireCopies));
+}
+
+// Find a minimal bounding box enclosing all cullable objects in a given array
+// Note that if the array is empty, min and max will both be (0, 0)
+export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
+    const min = Vector.min(...all.map(o => o.getMinPos()));
+    const max = Vector.max(...all.map(o => o.getMaxPos()));
+
+    return new BoundingBox(min, max);
 }

@@ -1,23 +1,28 @@
 import {XMLWriter} from "../../../../../app/core/ts/utils/io/xml/XMLWriter";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
-import {Vector} from "Vector";
-import {THUMBNAIL_ZOOM_PADDING_RATIO, THUMBNAIL_SIZE} from "./Constants";
+import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
+import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 import {CullableObject} from "core/models/CullableObject";
 
-// Returns a 256x256 canvas on which the given circuit is centered
-//! No idea what happens if the designer is empty, divide-by-zero seems plausible
-//? how should empty designers be handled -- return empty canvas?
-function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesigner): void {
-    // Find bounding box of the circuit
+// Renders a view of the given circuit on the given canvas element
+// Canvas is resized to a square with side length of size
+// If the circuit is empty, only draws a grid centered on the world origin
+function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesigner, size: number = DEFAULT_THUMBNAIL_SIZE): void {
     const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
-    const min = Vector.min(...all.map(o => o.getMinPos()));
-    const max = Vector.max(...all.map(o => o.getMaxPos()));
+    // Define a 10x10 world bounding box for empty circuits, so they have a defined grid resolution
+    let min = EMPTY_CIRCUIT_MIN;
+    let max = EMPTY_CIRCUIT_MAX;
+    if (all.length > 0) {
+        const bbox = CircuitBoundingBox(all);
+        min = bbox.getMin();
+        max = bbox.getMax();
+    }
 
     //! Warning: several pieces of CircuitView classes rely on there being a screen and a window
-    // I think using this vw and vh cancels it out, but I'm not confident in that
-    const vw = THUMBNAIL_SIZE/window.innerWidth;
-    const vh = THUMBNAIL_SIZE/window.innerHeight;
+    // Using this vw and vh cancels it out, but that will change if
+    const vw = size/window.innerWidth;
+    const vh = size/window.innerHeight;
     const view = new DigitalCircuitView(canvas, vw, vh);
 
     // Center and zoom the camera so everything fits with no distortion
@@ -25,8 +30,8 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     const camera = view.getCamera();
     camera.setPos(center);
     // Zoom out a bit more than we need so components on edges have some breathing room
-    const relativeSize = max.sub(min).scale(1/THUMBNAIL_SIZE);
-    const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
+    const relative_size = max.sub(min).scale(1/size);
+    const zoom = Math.max(relative_size.x, relative_size.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
     camera.zoomBy(zoom);
 
     // Do the render
