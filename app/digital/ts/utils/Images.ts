@@ -6,7 +6,10 @@ export const Images = (() => {
                               "buf.svg", "and.svg", "or.svg",
                               "segment_horizontal.svg",
                               "segment_vertical.svg",
-                              "segment_diagonal.svg",
+                              "segment_diagonaltr.svg",
+                              "segment_diagonaltl.svg",
+                              "segment_diagonalbr.svg",
+                              "segment_diagonalbl.svg",
                               "clock.svg", "clockOn.svg",
                               "keyboard.svg", "base.svg"];
 
