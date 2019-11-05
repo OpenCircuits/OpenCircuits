@@ -10,7 +10,7 @@ import {CullableObject} from "core/models/CullableObject";
 // If the circuit is empty, only draws a grid centered on the world origin
 function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesigner, size: number = DEFAULT_THUMBNAIL_SIZE): void {
     const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
-    // Define a 10x10 world bounding box for empty circuits, so they have a defined grid resolution
+    // Define a 10x10 (in grid units) world bounding box for empty circuits, so they have a defined grid resolution
     let min = EMPTY_CIRCUIT_MIN;
     let max = EMPTY_CIRCUIT_MAX;
     if (all.length > 0) {
@@ -38,7 +38,7 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     view.render(designer, []);
 }
 
-export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false, thumbnailSize = DEFAULT_THUMBNAIL_SIZE): string {
+export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): string {
     const writer = new XMLWriter(designer.getXMLName());
     writer.setVersion("1.2");
     writer.setName(name);
@@ -57,7 +57,7 @@ export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thu
 
     return writer.serialize();
 }
-export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, thumbnail: boolean = false, thumbnailSize = DEFAULT_THUMBNAIL_SIZE): void {
+export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
