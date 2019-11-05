@@ -55,7 +55,7 @@ export class ORGate extends Gate {
         const max = super.getMaxPos();
 
         // Find maximum pos from corners of transform
-        const BOX_WIDTH = getQuadraticOffset(this.numInputs());
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
             v => v.add(DEFAULT_BORDER_WIDTH, BOX_WIDTH)
         );
