@@ -17,15 +17,12 @@ export abstract class Mux extends DigitalComponent {
     protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
-                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>, selectPortCount?: ClampedValue) {
+                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
-
-        if(selectPortCount != null)
-            this.setSelectPortCount(selectPortCount.getValue());
-        else
-            this.setSelectPortCount(2);
+        
+        this.setSelectPortCount(2);
     }
 
     public setSelectPortCount(val: number): void {
