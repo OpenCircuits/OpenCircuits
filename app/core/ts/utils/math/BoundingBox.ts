@@ -16,11 +16,11 @@ export class BoundingBox {
     public getMax(): Vector {
         return this.max.copy();
     }
-    public setMin(min: Vector) {
+    public setMin(min: Vector): void {
         this.min.x = min.x;
         this.min.y = min.y;
     }
-    public setMax(max: Vector) {
+    public setMax(max: Vector): void {
         this.max.x = max.x;
         this.max.y = max.y;
     }

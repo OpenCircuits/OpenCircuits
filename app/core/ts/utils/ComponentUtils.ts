@@ -5,10 +5,8 @@ import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Vector, V} from "Vector";
+import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
-import {EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "site/shared/utils/Constants";
 import {BoundingBox} from "math/BoundingBox";
 
 /**
