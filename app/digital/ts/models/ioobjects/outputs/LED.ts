@@ -25,7 +25,7 @@ export class LED extends Component {
 
     // @Override
     public getMinPos(): Vector {
-        const min = V(Infinity);
+        const min = super.getMinPos();
 
         // if the LED is on, create a new border width to account for the light
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
@@ -37,18 +37,13 @@ export class LED extends Component {
             v => v.sub(newBorderWidth)
         );
 
-        // Find minimum pos from ports
-        const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
-        );
-
         // return the minimum position from all of these vectors
-        return Vector.min(min, ...corners, ...ports);
+        return Vector.min(min, ...corners);
     }
 
     // @Override
     public getMaxPos(): Vector {
-        const max = V(-Infinity);
+        const max = super.getMaxPos();
 
         // if the LED is on, create a new border width to account for the light
         let newBorderWidth = DEFAULT_BORDER_WIDTH;
@@ -60,12 +55,7 @@ export class LED extends Component {
             v => v.add(newBorderWidth)
         );
 
-        // Find maximum pos from ports
-        const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
-        );
-
-        return Vector.max(max, ...corners, ...ports);
+        return Vector.max(max, ...corners);
     }
 
     // @Override
