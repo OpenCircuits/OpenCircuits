@@ -1,9 +1,9 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class Label extends Component {
+export class Label extends DigitalComponent {
 
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(0), V(60, 30));

@@ -3,14 +3,16 @@ import {DEFAULT_SIZE,
         IO_PORT_RADIUS,
         IO_PORT_BORDER_WIDTH,
         LED_LIGHT_RADIUS,
-        LED_WIDTH} from "digital/utils/Constants";
+        LED_WIDTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Component} from "../Component";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
-export class LED extends Component {
+import {DigitalComponent} from "digital/models/DigitalComponent";
+
+export class LED extends DigitalComponent {
     private color: string;
 
     public constructor() {
@@ -91,4 +93,21 @@ export class LED extends Component {
     public getXMLName(): string {
         return "led";
     }
+
+    public copy(): LED {
+        const copy = <LED>super.copy();
+        copy.color = this.color;
+        return copy;
+    }
+
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("color", this.getColor());
+    }
+
+    public load(node: XMLNode): void {
+        super.load(node);
+        this.setColor(node.getAttribute("color"));
+    }
+
 }

@@ -46,17 +46,17 @@ import {Transform} from "math/Transform";
 
 describe("Transform", () => {
     describe("Constructor", () => {
-        it("No parameters", () => {
+        test("No parameters", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             // tests
         });
-        it("All parameters", () => {
+        test("All parameters", () => {
             const t = new Transform(V(5, 5), V(10, 10), 0);
             // tests
         });
     });
     describe("Modifiers", () => {
-        it("Rotate About", () => {
+        test("Rotate About", () => {
             {
                 const t = new Transform(V(0,0), V(0,0), 0);
                 t.rotateAbout(Math.PI/2, V(0,0));
@@ -93,7 +93,7 @@ describe("Transform", () => {
                 expect(t.getPos().y).toBeCloseTo(0, 1e-3);
             }
         });
-        it("Set Parent", () => {
+        test("Set Parent", () => {
             const t1 = new Transform(V(0,0), V(0,0), 0);
             const t2 = new Transform(V(0,0), V(0,0), 0);
             expect(t2.getParent()).toBe(undefined);
@@ -101,7 +101,7 @@ describe("Transform", () => {
             t2.setParent(t1);
             expect(t2.getParent()).toBe(t1);
         });
-        it("Set Pos", () => {
+        test("Set Pos", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             const v = new Vector(5, 5);
             expect(t.getPos().x).toBe(0);
@@ -113,14 +113,14 @@ describe("Transform", () => {
             expect(v.x).toBe(5);
             expect(v.y).toBe(5);
         });
-        it("Set Angle", () => {
+        test("Set Angle", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             expect(t.getAngle()).toBe(0);
 
             t.setAngle(53);
             expect(t.getAngle()).toBe(53);
         });
-        it("Set Scale", () => {
+        test("Set Scale", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             const v = new Vector(5, 5);
             expect(t.getScale().x).toBe(1);
@@ -132,7 +132,7 @@ describe("Transform", () => {
             expect(v.x).toBe(5);
             expect(v.y).toBe(5);
         });
-        it("Set Size", () => {
+        test("Set Size", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             const v = new Vector(5, 5);
             expect(t.getSize().x).toBe(0);
@@ -146,7 +146,7 @@ describe("Transform", () => {
             expect(v.x).toBe(5);
             expect(v.y).toBe(5);
         });
-        it("Set Width", () => {
+        test("Set Width", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             expect(t.getSize().x).toBe(0);
             expect(t.getSize().y).toBe(0);
@@ -157,7 +157,7 @@ describe("Transform", () => {
             expect(t.getSize().y).toBe(0);
             expect(t.getRadius()).toBeCloseTo(2.5, 1e-3);
         });
-        it("Set Height", () => {
+        test("Set Height", () => {
             const t = new Transform(V(0,0), V(0,0), 0);
             expect(t.getSize().x).toBe(0);
             expect(t.getSize().y).toBe(0);
@@ -180,21 +180,21 @@ describe("Transform", () => {
     // print(): void;
     // copy(): Transform;
     describe("Getters", () => {
-        it("To Local Space", () => {
+        test("To Local Space", () => {
             const v = new Vector();
             const t = new Transform(V(0,0), V(0,0), 0);
             // stuff
             const v2 = t.toLocalSpace(v);
             // tests
         });
-        it("To World Space", () => {
+        test("To World Space", () => {
             const v = new Vector();
             const t = new Transform(V(0,0), V(0,0), 0);
             // stuff
             const v2 = t.toWorldSpace(v);
             // tests
         });
-        it("Corners", () => {
+        test("Corners", () => {
             {
                 const t = new Transform(V(0,0), V(5,5), 0);
                 expect(t.getCorners().length).toBe(4);
@@ -212,7 +212,7 @@ describe("Transform", () => {
                 expect(t.getTopLeft().y).toBeCloseTo(2.5, 1e-3);
             }
         });
-        it("Copy", () => {
+        test("Copy", () => {
             const t1 = new Transform(V(4,3), V(7,5), 12);
             const t2 = t1.copy();
 

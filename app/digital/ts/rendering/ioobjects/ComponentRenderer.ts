@@ -2,29 +2,31 @@ import {DEFAULT_FILL_COLOR,
         DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "digital/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        LED_GLOW_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+import {Transform} from "math/Transform";
+import {Camera} from "math/Camera";
 
-import {Renderer} from "../Renderer";
+import {Renderer} from "core/rendering/Renderer";
+
+import {Selectable} from "core/utils/Selectable";
+
 import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
 
-import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
-import {Selectable} from "core/utils/Selectable";
-
-import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
-import {Latch}               from "digital/models/ioobjects/latches/Latch";
-import {Encoder}             from "digital/models/ioobjects/other/Encoder";
-import {Decoder}             from "digital/models/ioobjects/other/Decoder";
-import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
+import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
+import {Latch}               from "digital/models/ioobjects/latches/Latch";
+import {Encoder}             from "digital/models/ioobjects/other/Encoder";
+import {Decoder}             from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
-import {Component}           from "digital/models/ioobjects/Component";
+import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
@@ -33,8 +35,8 @@ import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
 
-import {Rectangle} from "../shapes/Rectangle";
-import {Style} from "../Style";
+import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
+import {Style} from "../../../../core/ts/rendering/Style";
 
 export const ComponentRenderer = (() => {
 
@@ -46,7 +48,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Array<Selectable>): void {
+        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -104,17 +106,23 @@ export const ComponentRenderer = (() => {
                 drawBox(renderer, transform, selected);
 
             // Draw tinted image
-            let tint = (selected ? SELECTED_FILL_COLOR : undefined);
-            if (object instanceof LED)
-                tint = object.getColor();
-
-            if (imgName)
-                renderer.image(Images.GetImage(imgName), V(), size, tint);
-
-            // Draw LED turned on
+            const tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (object instanceof LED) {
-                if (object.isOn())
-                    renderer.image(Images.GetImage(object.getOnImageName()), V(), size.scale(3), object.getColor());
+                // draw the LED object
+                renderer.image(Images.GetImage(imgName), V(), size, object.getColor());
+
+                // draw the LED glow
+                if (object.isOn()) {
+                    const glowImg = Images.GetImage(object.getOnImageName());
+                    renderer.image(glowImg, V(), V(LED_GLOW_SIZE), object.getColor());
+                }
+
+                // tint green on top if selected
+                if (tint)
+                    renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
+            }
+            else if (imgName) {
+                renderer.image(Images.GetImage(imgName), V(), size, tint);
             }
 
             // Render the IOLabels, does not render labels if they are blank

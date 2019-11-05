@@ -1,10 +1,10 @@
-import {Action} from "../Action";
-import {PortChangeAction} from "./PortChangeAction";
+import {Action} from "core/actions/Action";
+import {DigitalPortChangeAction} from "./DigitalPortChangeAction";
 
-import {Component} from "digital/models/ioobjects/Component";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
-export class OutputPortChangeAction extends PortChangeAction {
-    public constructor(obj: Component, target: number) {
+export class OutputPortChangeAction extends DigitalPortChangeAction {
+    public constructor(obj: DigitalComponent, target: number) {
         super(obj, target, obj.getOutputPorts().length);
 
         this.action = super.createAction(this.obj.getOutputPorts(),
