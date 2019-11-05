@@ -16,7 +16,7 @@ export function GetQuadraticOffset(numInputs: number): number {
     if (numInputs == 8)
         return DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
 
-    return 0;
+    return DEFAULT_BORDER_WIDTH;
 }
 
 export class ORGate extends Gate {
