@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-import {Exporter} from "core/utils/io/Exporter";
+import {WriteCircuit} from "site/shared/utils/Exporter";
 import {Importer} from "core/utils/io/Importer";
 import {CopyGroup} from "core/utils/ComponentUtils";
 
@@ -43,7 +43,7 @@ export class DigitalCopyController extends CopyController {
         });
 
         // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/xml", Exporter.WriteCircuit(designer, "clipboard"));
+        e.clipboardData.setData("text/xml", WriteCircuit(designer, "clipboard"));
         e.preventDefault();
     }
 
