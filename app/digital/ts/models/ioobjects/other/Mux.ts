@@ -21,7 +21,7 @@ export abstract class Mux extends DigitalComponent {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
-        
+
         this.setSelectPortCount(2);
     }
 
@@ -54,22 +54,20 @@ export abstract class Mux extends DigitalComponent {
     // @Override
     public copy(): Mux {
         const copy = <Mux>super.copy();
-
         copy.selects = this.selects.copy(copy);
-
         return copy;
     }
 
     // @Override
     public save(node: XMLNode): void {
         super.save(node);
-        node.addAttribute("selects",this.numSelects());
+        node.addAttribute("selects", this.numSelects());
     }
 
     // @Override
     public load(node: XMLNode): void {
         super.load(node);
-        this.setSelectPortCount(node.getIntAttribute("selects"))
+        this.setSelectPortCount(node.getIntAttribute("selects"));
     }
 
 }
