@@ -1,8 +1,23 @@
-import {V} from "Vector";
+import {DEFAULT_BORDER_WIDTH,
+        GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
+import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
 
 import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
+
+export function GetQuadraticOffset(numInputs: number): number {
+    // The wire extensions stay the same for inputs 4-6 so the offset is constant
+    // We don't have to worry about 7 since the port positioning gives a proper cullbox
+    if (numInputs > 3 && numInputs < 7)
+        return DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET;
+
+    // At 8 inputs the wire extensions get bigger so we increase the offset
+    if (numInputs == 8)
+        return DEFAULT_BORDER_WIDTH + GATE_OR_CULLBOX_OFFSET*2;
+
+    return DEFAULT_BORDER_WIDTH;
+}
 
 export class ORGate extends Gate {
 
@@ -22,6 +37,30 @@ export class ORGate extends Gate {
 
     public getImageName(): string {
         return "or.svg";
+    }
+
+    public getMinPos(): Vector {
+        const min = super.getMinPos();
+            
+        // Find minimum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
+        const corners = this.transform.getCorners().map(
+            v => v.sub(DEFAULT_BORDER_WIDTH, BOX_WIDTH)
+        );
+
+        return Vector.min(min, ...corners);
+    }
+
+    public getMaxPos(): Vector {
+        const max = super.getMaxPos();
+
+        // Find maximum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
+        const corners = this.transform.getCorners().map(
+            v => v.add(DEFAULT_BORDER_WIDTH, BOX_WIDTH)
+        );
+
+        return Vector.max(max, ...corners);
     }
 
     public getXMLName(): string {
