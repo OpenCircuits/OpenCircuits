@@ -5,7 +5,7 @@ import $ from "jquery";
 // import test from "./tours/test.json";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
-import {SavePDF, SavePNG} from "core/utils/io/ImageExporter";
+import {SavePDF, SavePNG} from "site/shared/utils/ImageExporter";
 
 export abstract class HeaderController {
     protected projectNameInput: JQuery<HTMLElement>;

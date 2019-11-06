@@ -1,6 +1,9 @@
-import {V} from "Vector";
+import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
+
+import {GetQuadraticOffset} from "./ORGate";
 
 import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
 
@@ -24,6 +27,30 @@ export class XORGate extends Gate {
 
     public getImageName(): string {
         return "or.svg";
+    }
+
+    public getMinPos(): Vector {
+        const min = super.getMinPos();
+
+        // Find minimum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
+        const corners = this.transform.getCorners().map(
+            v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
+        );
+
+        return Vector.min(min, ...corners);
+    }
+
+    public getMaxPos(): Vector {
+        const max = super.getMaxPos();
+
+        // Find maximum pos from corners of transform
+        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
+        const corners = this.transform.getCorners().map(
+            v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
+        );
+
+        return Vector.max(max, ...corners);
     }
 
     public getXMLName(): string {
