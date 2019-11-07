@@ -6,7 +6,7 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {Place} from "../../Helpers";
+import {Place} from "test/helpers/Helpers";
 import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
 

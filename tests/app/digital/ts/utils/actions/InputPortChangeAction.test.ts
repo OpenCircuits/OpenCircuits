@@ -6,7 +6,7 @@ import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-import {Place, Connect} from "../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("Input Port Change Action", () => {
     test("Undo/Redo 1", () => {

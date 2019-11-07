@@ -4,7 +4,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect, Remove} from "../Helpers";
+import {Place, Connect, Remove} from "test/helpers/Helpers";
 
 describe("CircuitDesigner", () => {
     describe("Empty Circuit", () => {

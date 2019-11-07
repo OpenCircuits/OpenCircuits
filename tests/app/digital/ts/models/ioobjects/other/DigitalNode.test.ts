@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 import {DigitalNode}     from "digital/models/ioobjects/other/DigitalNode";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("Digital Node", () => {
     const designer = new DigitalCircuitDesigner(0);
