@@ -22,25 +22,11 @@ export class DigitalPortChangeAction extends PortChangeAction {
         // Disconnect all the wires coming out from
         //  each port that will be removed
         while (ports.length > target) {
-            const port = ports.pop();
-            port.getWires().forEach((w) =>
-                group.add(CreateDeletePathAction(GetPath(w as DigitalWire)))
-            );
+            const wires = ports.pop().getWires();
+            group.add(wires.map(w => CreateDeletePathAction(GetPath(w as DigitalWire))));
         }
 
         return group;
-    }
-
-    public execute(): Action {
-        super.execute();
-        this.obj.setInputPortCount(this.targetCount);
-        return this;
-    }
-
-    public undo(): Action {
-        this.obj.setInputPortCount(this.initialCount);
-        super.undo();
-        return this;
     }
 
 }

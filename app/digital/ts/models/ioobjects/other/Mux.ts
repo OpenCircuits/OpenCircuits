@@ -11,6 +11,8 @@ import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositione
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
+import {DigitalWire} from "digital/models/DigitalWire";
+import {Port} from "core/models/ports/Port";
 
 export abstract class Mux extends DigitalComponent {
     protected selects: PortSet<InputPort>;
@@ -46,8 +48,17 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getInputPorts(): Array<InputPort> {
-        return super.getInputPorts().concat(this.selects.getPorts());
+    public getInputs(): DigitalWire[] {
+        // Get each wire connected to each InputPort
+        //  and then filter out the null ones
+        return super.getInputs().concat(
+                this.getSelectPorts().map((p) => p.getInput())
+                        .filter((w) => w != null));
+    }
+
+    // @Override
+    public getPorts(): Port[] {
+        return super.getPorts().concat(this.getSelectPorts());
     }
 
 }
