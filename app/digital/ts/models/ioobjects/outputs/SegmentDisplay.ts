@@ -15,16 +15,16 @@ export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl
 
 export class SegmentDisplay extends DigitalComponent {
     public constructor() {
-        super(new ClampedValue(9),
+        super(new ClampedValue(14),
               new ClampedValue(0),
               V(70, 100),
               new ConstantSpacePositioner<InputPort>(2*IO_PORT_RADIUS+1));
 
-        this.setInputPortCount(9);
+        this.setInputPortCount(14);
     }
 
     public getSegments(): Array<[Vector, SegmentType]> {
-        const segments = Segments["9"];
+        const segments = Segments["14"];
 
         // Turns the array into an array of Vectors and SegmentTypes
         return segments.map((value: [number[], SegmentType]) =>
