@@ -35,7 +35,7 @@ export const SegmentDisplayRenderer = (() => {
 
             // Draw lights
             const segments = display.getSegments();
-            for (let i = 0; i < segments.length; i++) {
+            for (let i = segments.length - 1; i >= 0; i--) {
                 const pos = segments[i][0].scale(V(w, w));
                 const type = segments[i][1];
                 const on  = display.getInputPort(i).getIsOn();
