@@ -6,6 +6,7 @@ export const Images = (() => {
                               "buf.svg", "and.svg", "or.svg",
                               "segment_horizontal.svg",
                               "segment_vertical.svg",
+                              "segment_horizontal0.5.svg",
                               "segment_diagonaltr.svg",
                               "segment_diagonaltl.svg",
                               "segment_diagonalbr.svg",
