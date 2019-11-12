@@ -57,6 +57,10 @@ export class PortSet<T extends Port> {
         this.positioner.updatePortPositions(this.currentPorts);
     }
 
+    /**
+     * Updates the positions of the ports in the set. Allows for
+     * position updating even when the size does not change
+     */
     public updatePortPositions(): void {
         this.positioner.updatePortPositions(this.currentPorts);
     }

@@ -61,23 +61,19 @@ export class MuxOutputPositioner extends Positioner<OutputPort> {
     public updatePortPositions(ports: Array<OutputPort>): void {
         ports.forEach((port, i) => {
             const height = port.getParent().getSize().y;
-
-            // Calculate x position of port
-
-            // Calculate y position of the port
-            //let y = -height/2*(i - ports.length/2 + 0.5)
-
-            //if(port.getParent().getInputPortCount().getValue() <= Math.pow(2,2)){
-            let l = port.getParent().getSize().x + 10*port.getParent().getInputPortCount().getValue();
-            
-
-
             /*
                 TODO: get the normal x value then add, not current x value
                       change the origin position based on IO_PORT_LENGTH so its not too long
             */
+
+            // set the target position of the port
+            let l = port.getParent().getSize().x; //+ DEFAULT_SIZE;
+            
             port.setTargetPos(V(l, port.getTargetPos().y));
-            //port.setOriginPos(V())
+            // set the origin position to be a DEFAULT_SIZE away from the target position
+            port.setOriginPos(port.getTargetPos().sub(V(DEFAULT_SIZE, 0)))
+            //let l = 10*Math.max(port.getParent().getInputPortCount().getValue(), port.getParent().getOutputPortCount().getValue());
+            //port.setTargetPos(port.getTargetPos().add(V(l, l)))
         });
     }
 }
