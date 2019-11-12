@@ -99,11 +99,4 @@ export class Camera {
         return this.getMatrix().mul(v.sub(this.center));
     }
 
-    public save(node: XMLNode): void {
-        node.addVectorAttribute("", this.getPos());
-    }
-
-    public load(node: XMLNode): void {
-        this.setPos(node.getVectorAttribute(""));
-    }
 }
