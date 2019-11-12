@@ -30,11 +30,12 @@ export class SideNavCircuitPreview {
         const id = this.metadata.getId();
         const name = this.metadata.getName();
         const desc = this.metadata.getDesc();
+        const thumbnail = this.metadata.getThumbnail();
 
         this.element = $("#user-circuit-list").append(`
             <div id="user-circuit-${id}" class="sidenav__content__circuit" title="Load circuit">
                 <span class="sidenav__content__circuit__icon">
-                    <img src="./img/icon.svg">
+                    <img src="${thumbnail}">
                 </span>
                 <span class="sidenav__content__circuit__text">
                         <div class="sidenav__content__circuit__text__name">${name}</div>

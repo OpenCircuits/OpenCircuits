@@ -15,10 +15,7 @@ export abstract class CircuitView {
     protected renderer: Renderer;
     protected camera: Camera;
 
-    public constructor(canvasId: string, vw: number = 1, vh: number = 1) {
-        const canvas = document.getElementById(canvasId);
-        if (!(canvas instanceof HTMLCanvasElement))
-            throw new Error("Canvas element not found!");
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1) {
         this.canvas = canvas;
         this.renderer = new Renderer(this.canvas, vw, vh);
         this.camera = new Camera(this.canvas.width, this.canvas.height);
@@ -26,7 +23,8 @@ export abstract class CircuitView {
         this.resize();
     }
 
-    public render(designer: CircuitDesigner, selections: Selectable[], toolManager: ToolManager): void {
+    // toolManager changed to be optional because the exporter doesn't want to create a dummy tool manager
+    public render(designer: CircuitDesigner, selections: Selectable[], toolManager?: ToolManager): void {
         this.renderer.clear();
 
         // Render grid
@@ -43,7 +41,8 @@ export abstract class CircuitView {
             this.renderObject(object, selections);
 
         // Render current tool
-        this.renderTools(toolManager);
+        if (toolManager)
+            this.renderTools(toolManager);
 
         // Render debug visualizations
         DebugRenderer.render(this.renderer, this.camera, designer.getObjects(), designer.getWires());

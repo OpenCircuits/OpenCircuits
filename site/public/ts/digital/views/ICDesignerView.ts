@@ -6,7 +6,10 @@ export class ICDesignerView extends DigitalCircuitView {
     private cancelButton: HTMLButtonElement;
 
     public constructor() {
-        super("ic-canvas", 0.84, 0.76);
+        const canvas = document.getElementById("ic-canvas");
+        if (!(canvas instanceof HTMLCanvasElement))
+            throw new Error("Canvas element not found!");
+        super(canvas, 0.84, 0.76);
 
         // Get HTML elements
         const div = document.getElementById("ic-designer");

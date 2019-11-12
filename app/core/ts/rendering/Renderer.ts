@@ -99,7 +99,7 @@ export class Renderer {
         const pos = center.sub(size.scale(0.5));
 
         this.context.drawImage(img, pos.x, pos.y, size.x, size.y);
-        if (tint != undefined)
+        if (tint)
             this.overlayTint(img, center, size, tint);
     }
     public overlayTint(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
