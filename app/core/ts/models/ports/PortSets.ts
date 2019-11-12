@@ -57,6 +57,10 @@ export class PortSet<T extends Port> {
         this.positioner.updatePortPositions(this.currentPorts);
     }
 
+    public updatePortPositions(): void {
+        this.positioner.updatePortPositions(this.currentPorts);
+    }
+
     public get(i: number): T {
         return this.currentPorts[i];
     }
