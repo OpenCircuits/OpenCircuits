@@ -1,15 +1,16 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
-import {MuxPositioner} from "../../ports/positioners/MuxPositioners";
+import {MuxPositioner, MuxOutputPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
+
 
 export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-              new MuxPositioner<InputPort>());
+              new MuxPositioner<InputPort>(), new MuxOutputPositioner);
     }
 
     /**
@@ -27,7 +28,8 @@ export class Multiplexer extends Mux {
         super.setSelectPortCount(val);
         super.setInputPortCount(Math.pow(2, val));
         //do this next line in another way, idiot
-        this.outputs.setPortCount(this.numOutputs())
+        //(new MuxOutputPositioner).updatePortPositions(this.outputs)
+        //this.outputs.setPortCount(this.numOutputs())
     }
 
     public getDisplayName(): string {

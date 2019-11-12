@@ -77,6 +77,22 @@ export class MuxOutputPositioner extends Positioner<OutputPort> {
                       change the origin position based on IO_PORT_LENGTH so its not too long
             */
             port.setTargetPos(V(l, port.getTargetPos().y));
+            //port.setOriginPos(V())
         });
+    }
+}
+
+export class DemuxInputPositioner extends Positioner<InputPort> {
+    /**
+     * Port positioning for Demultiplexer input port
+     * 
+     * @paramm arr the array of input ports
+     */
+    public updatePortPositions(ports: Array<InputPort>): void {
+        ports.forEach((port, i) => {
+            //const xPos = port.getParent().getSize().x;
+            let l = port.getParent().getSize().x - 10*port.getParent().getInputPortCount().getValue();
+            //port.setTargetPos(V())
+        });       
     }
 }
