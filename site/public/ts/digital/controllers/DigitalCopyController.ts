@@ -43,7 +43,7 @@ export class DigitalCopyController extends CopyController {
         });
 
         // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/xml", WriteCircuit(designer, "clipboard"));
+        e.clipboardData.setData("text/xml", WriteCircuit(main, "clipboard"));
         e.preventDefault();
     }
 

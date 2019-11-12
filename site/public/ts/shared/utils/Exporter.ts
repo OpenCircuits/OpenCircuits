@@ -4,6 +4,7 @@ import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
 import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 import {CullableObject} from "core/models/CullableObject";
+import { DigitalCircuitController } from "site/digital/controllers/DigitalCircuitController";
 
 // Renders a view of the given circuit on the given canvas element
 // Canvas is resized to a square with side length of size
@@ -38,10 +39,13 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
     view.render(designer, []);
 }
 
-export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): string {
+export function WriteCircuit(main: DigitalCircuitController, name: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): string {
+    const designer = main.getDesigner();
     const writer = new XMLWriter(designer.getXMLName());
+    const camera = main.getCamera();
     writer.setVersion("1.2");
     writer.setName(name);
+    writer.setCamera(camera);
     if (thumbnail) {
         // Render to a small temporary canvas
         const canvas = document.createElement("canvas");
@@ -57,12 +61,13 @@ export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thu
 
     return writer.serialize();
 }
-export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
+export function SaveFile(main: DigitalCircuitController, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
+    const designer = main.getDesigner();
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
 
-    const data = WriteCircuit(designer, projectName, thumbnail, thumbnailSize);
+    const data = WriteCircuit(main, projectName, thumbnail, thumbnailSize);
 
     const filename = projectName + ".circuit";
 

@@ -1,4 +1,5 @@
 import {XMLNode} from "./XMLNode";
+import {Camera} from "core/utils/math/Camera"
 
 export class XMLWriter {
     private root: XMLDocument;
@@ -6,12 +7,14 @@ export class XMLWriter {
 
     private metadataNode: XMLNode;
     private contentsNode: XMLNode;
+    private cameraNode: XMLNode;
 
     public constructor(rootTag: string) {
         this.root = new DOMParser().parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><"+rootTag+"></"+rootTag+">", "text/xml");
         this.rootNode = new XMLNode(this.root, this.root.childNodes[0]);
         this.metadataNode = this.rootNode.createChild("metadata");
         this.contentsNode = this.rootNode.createChild("contents");
+        this.cameraNode = this.rootNode.createChild("camera");
     }
 
     public setName(name: string): void {
@@ -24,6 +27,10 @@ export class XMLWriter {
 
     public setVersion(version: string): void {
         this.metadataNode.addAttribute("version", version);
+    }
+
+    public setCamera(camera: Camera): void {
+        this.cameraNode.addVectorAttribute("", camera.getPos());
     }
 
     public getContentsNode(): XMLNode {
