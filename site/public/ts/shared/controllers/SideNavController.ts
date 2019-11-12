@@ -81,7 +81,19 @@ export class SideNavController {
         RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
             data.forEach((d) => {
                 const preview = new SideNavCircuitPreview(d);
-                preview.onClick(() => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)));
+                preview.onClick(
+                    () => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)), 
+                    () => {
+                        if (confirm("Are you sure you want to delete circuit \"" + d.getName() + "\"?")) {
+                            RemoteController.DeleteUserCircuit(d, (succ) => {
+                                if (!succ) {
+                                    alert("Failed to delete circuit!");
+                                } else {
+                                    this.updateUserCircuits()
+                                }
+                            });
+                        }
+                    });
                 this.userCircuits.push(preview);
             });
         });

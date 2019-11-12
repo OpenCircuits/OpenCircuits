@@ -6,6 +6,7 @@ export class SideNavCircuitPreview {
     private metadata: CircuitMetadata;
 
     private element: JQuery<HTMLElement>;
+    private deleteElement: JQuery<HTMLElement>;
 
     public constructor(metadata: CircuitMetadata) {
         this.metadata = metadata;
@@ -17,8 +18,12 @@ export class SideNavCircuitPreview {
         this.element.remove();
     }
 
-    public onClick(callback: () => void): void {
-        this.element.click(callback);
+    public onClick(loadCallback: () => void, deleteCallback: () => void): void {
+        this.element.click(loadCallback);
+        this.deleteElement.click((e) => {
+            deleteCallback();
+            e.stopPropagation(); 
+        });
     }
 
     private build(): void {
@@ -28,12 +33,18 @@ export class SideNavCircuitPreview {
 
         this.element = $("#user-circuit-list").append(`
             <div id="user-circuit-${id}" class="sidenav__content__circuit" title="Load circuit">
-                <img src="./img/icon.svg">
-                <div class="sidenav__content__circuit__text">
-                    <span class="sidenav__content__circuit__text__name">${name}</span>
-                    <span class="sidenav__content__circuit__text__desc">${desc}</span>
-                </div>
+                <span class="sidenav__content__circuit__icon">
+                    <img src="./img/icon.svg">
+                </span>
+                <span class="sidenav__content__circuit__text">
+                        <div class="sidenav__content__circuit__text__name">${name}</div>
+                        <div class="sidenav__content__circuit__text__desc">${desc}</div>
+                </span>
+                <span class="sidenav__content__circuit__controls">
+                    <img class="circuit_options" width="20px" src="img/icons/close-24px.svg" title="Delete Circuit">
+                </span>
             </div>
         `).children(":last-child");
+        this.deleteElement = this.element.find("img.circuit_options");
     }
 }

@@ -1,7 +1,8 @@
 import {AuthState} from "../../digital/auth/AuthState";
-import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {CircuitMetadata, CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {CreateUserCircuit, UpdateUserCircuit,
-        QueryUserCircuits, LoadUserCircuit} from "../api/Circuits";
+        QueryUserCircuits, LoadUserCircuit,
+        DeleteUserCircuit} from "../api/Circuits";
 import {LoadExampleCircuit} from "../api/Example";
 
 export const RemoteController = (() => {
@@ -96,5 +97,16 @@ export const RemoteController = (() => {
                 };
             });
         },
+        DeleteUserCircuit(metadata: CircuitMetadata, callback: (result: boolean) => Promise<void> | void = Promise.resolve): void {
+            Chain(async (data: RemoteData) => {
+                const result = await DeleteUserCircuit(data.authState, metadata.getId());
+                callback(result);
+                if (data.metadata !== undefined && data.metadata.getId() === metadata.getId()) {
+                    return {
+                        metadata: metadata.buildOn().withId("").build()
+                    }
+                }
+            });
+        }
     }
 })();
