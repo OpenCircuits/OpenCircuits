@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {SRLatch}         from "digital/models/ioobjects/latches/SRLatch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("SRLatch", () => {
     const designer = new DigitalCircuitDesigner(0);

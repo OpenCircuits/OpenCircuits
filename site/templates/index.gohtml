@@ -31,14 +31,14 @@
         {{template "sidenav" .}}
 
         <div id="content" class="content">
-            {{template "header" .}}
+            {{template "header" "img/icons/logo.svg"}}
 
             {{template "loginpopup" .}}
 
             {{template "quickstartpopup" .}}
 
             {{template "itemnav" .}}
-            <div id="itemnav-open-tab" class="tab"></div>
+            <div id="itemnav-open-tab" class="tab" title="Circuit Components"></div>
 
             <canvas id="canvas" class="canvas"></canvas>
 

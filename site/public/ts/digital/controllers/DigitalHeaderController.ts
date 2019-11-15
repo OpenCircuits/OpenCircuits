@@ -1,5 +1,5 @@
 import {Importer} from "core/utils/io/Importer";
-import {Exporter} from "core/utils/io/Exporter";
+import {SaveFile} from "site/shared/utils/Exporter";
 
 import {HeaderController} from "../../shared/controllers/HeaderController";
 import {DigitalCircuitController} from "./DigitalCircuitController";
@@ -15,7 +15,7 @@ export class DigitalHeaderController extends HeaderController {
     }
 
     protected onSaveCircuit(main: DigitalCircuitController): void {
-        Exporter.SaveFile(main.getDesigner(), this.projectNameInput.val() as string);
+        SaveFile(main.getDesigner(), this.projectNameInput.val() as string, true);
     }
 
 }

@@ -63,19 +63,6 @@ export abstract class Component extends CullableObject {
         this.onTransformChange();
     }
 
-
-    /**
-     * Determines whether or not a point is within
-     *  this component's "pressable" bounds (always false)
-     *  for most components
-     * @param  v The point
-     * @return   True if the point is within this component,
-     *           false otherwise
-     */
-    public isWithinPressBounds(_: Vector): boolean {
-        return false;
-    }
-
     /**
      * Determines whether or not a point is within
      *  this component's "selectable" bounds
@@ -84,8 +71,7 @@ export abstract class Component extends CullableObject {
      *           false otherwise
      */
     public isWithinSelectBounds(v: Vector): boolean {
-        return RectContains(this.getTransform(), v) &&
-                !this.isWithinPressBounds(v);
+        return RectContains(this.getTransform(), v);
     }
 
     public abstract getPorts(): Port[];

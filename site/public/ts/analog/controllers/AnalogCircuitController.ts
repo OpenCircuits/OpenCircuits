@@ -6,6 +6,7 @@ import {MainDesignerController} from "site/shared/controllers/MainDesignerContro
 import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
+import {AnalogHeaderController} from "./AnalogHeaderController";
 
 import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
@@ -17,6 +18,7 @@ export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
     private sideNav: SideNavController;
     private loginController: LoginController;
+    private headerController: AnalogHeaderController;
 
     protected designer: AnalogCircuitDesigner;
 
@@ -35,6 +37,7 @@ export class AnalogCircuitController extends MainDesignerController {
 
         this.contextMenu = new ContextMenuController(this);
         this.sideNav = new SideNavController(this);
+        this.headerController = new AnalogHeaderController(this);
 
         this.loginController = new LoginController(this, this.sideNav);
     }
@@ -48,10 +51,10 @@ export class AnalogCircuitController extends MainDesignerController {
         // this.headerController.setProjectName(name);
     }
 
-    public saveCircuit(): string {
+    public saveCircuit(_: boolean = true): string {
         return "AAAA";
         // const circuit = this.getDesigner();
-        // return Exporter.WriteCircuit(circuit, this.headerController.getProjectName());
+        // return Exporter.WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): AnalogCircuitDesigner {

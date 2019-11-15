@@ -4,9 +4,8 @@ import $ from "jquery";
 //
 // import test from "./tours/test.json";
 
-import {Exporter} from "core/utils/io/Exporter";
-
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {SavePDF, SavePNG} from "site/shared/utils/ImageExporter";
 
 export abstract class HeaderController {
     protected projectNameInput: JQuery<HTMLElement>;
@@ -57,11 +56,11 @@ export abstract class HeaderController {
         });
 
         $("#header-download-pdf-button").click(() => {
-            Exporter.SavePDF(main.getCanvas(), this.projectNameInput.val() as string);
+            SavePDF(main.getCanvas(), this.projectNameInput.val() as string);
         });
 
         $("#header-download-png-button").click(() => {
-            Exporter.SavePNG(main.getCanvas(), this.projectNameInput.val() as string);
+            SavePNG(main.getCanvas(), this.projectNameInput.val() as string);
         });
     }
 

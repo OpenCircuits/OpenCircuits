@@ -91,11 +91,7 @@ export const ToolRenderer = (() => {
             }
             else if (tool instanceof WiringTool) {
                 // Draw fake wire
-                const wire = tool.getWire();
-                // const port = wire.getP1() || wire.getP2();
-                // if (port != null)
-                //     wire.activate(port.getIsOn());
-                WireRenderer.render(renderer, camera, wire as DigitalWire, false);
+                WireRenderer.render(renderer, camera, tool.getWire() as DigitalWire, false);
             }
 
         }

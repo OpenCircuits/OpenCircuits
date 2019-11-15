@@ -2,7 +2,9 @@ import {DEFAULT_SIZE,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
+import {BezierContains} from "math/MathUtils";
 import {BezierCurve} from "math/BezierCurve";
+
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {CullableObject}   from "./CullableObject";
@@ -57,21 +59,9 @@ export abstract class Wire extends CullableObject {
 
     public abstract split(): Node;
 
-    // public setInput(c: OutputPort): void {
-    //     if (c == this.input)
-    //         return;
-
-    //     this.input = c;
-    //     this.onTransformChange();
-    // }
-
-    // public setOutput(c: InputPort): void {
-    //     if (c == this.output)
-    //         return;
-
-    //     this.output = c;
-    //     this.onTransformChange();
-    // }
+    public isWithinSelectBounds(v: Vector): boolean {
+        return BezierContains(this.getShape(), v);
+    }
 
     public setIsStraight(straight: boolean): void {
         if (straight == this.straight)

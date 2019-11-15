@@ -4,10 +4,7 @@ module.exports = {
     collectCoverage: true,
     testEnvironment: "jsdom",
     setupFiles: ["core-js"],
-    moduleFileExtensions: [
-        "js",
-        "ts"
-    ],
+    moduleFileExtensions: ["ts", "js"],
     transform: {
         "\\.(ts)$": "ts-jest"
     },
@@ -17,6 +14,7 @@ module.exports = {
         "math/(.*)$": "<rootDir>/app/core/ts/utils/math/$1.ts",
         "core/(.*)$": "<rootDir>/app/core/ts/$1.ts",
         "digital/(.*)$": "<rootDir>/app/digital/ts/$1.ts",
-        "analog/(.*)$": "<rootDir>/app/analog/ts/$1.ts"
+        "analog/(.*)$": "<rootDir>/app/analog/ts/$1.ts",
+        "test/helpers/(.*)": "<rootDir>/tests/helpers/$1.ts"
     }
 };

@@ -3,7 +3,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
 
 import {Importer} from "core/utils/io/Importer";
-import {Exporter} from "core/utils/io/Exporter";
+import {WriteCircuit} from "site/shared/utils/Exporter";
 
 import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
@@ -76,9 +76,9 @@ export class DigitalCircuitController extends MainDesignerController {
         this.headerController.setProjectName(name);
     }
 
-    public saveCircuit(): string {
+    public saveCircuit(thumbnail: boolean = true): string {
         const circuit = this.getDesigner();
-        return Exporter.WriteCircuit(circuit, this.headerController.getProjectName());
+        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): DigitalCircuitDesigner {

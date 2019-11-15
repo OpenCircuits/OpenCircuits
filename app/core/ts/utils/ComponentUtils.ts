@@ -5,6 +5,9 @@ import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
+import {Vector} from "Vector";
+import {CullableObject} from "core/models/CullableObject";
+import {BoundingBox} from "math/BoundingBox";
 
 /**
  * Helper class to hold different groups of components.
@@ -66,7 +69,7 @@ export class IOObjectSet {
  * @return    All the ports attached to the given list of objects
  */
 export function GetAllPorts(objs: Component[]): Port[] {
-    return objs.map((o) => o.getPorts()).reduce((acc, ports) => acc = acc.concat(ports), []);
+    return objs.flatMap((o) => o.getPorts());
 }
 
 /**
@@ -245,4 +248,13 @@ export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
 
     const group = copies as IOObject[];
     return new IOObjectSet(group.concat(wireCopies));
+}
+
+// Find a minimal bounding box enclosing all cullable objects in a given array
+// Note that if the array is empty, min and max will both be (0, 0)
+export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
+    const min = Vector.min(...all.map(o => o.getMinPos()));
+    const max = Vector.max(...all.map(o => o.getMaxPos()));
+
+    return new BoundingBox(min, max);
 }

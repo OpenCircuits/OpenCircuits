@@ -2,6 +2,7 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -11,6 +12,8 @@ import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositione
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
+import {DigitalWire} from "digital/models/DigitalWire";
+import {Port} from "core/models/ports/Port";
 
 export abstract class Mux extends DigitalComponent {
     protected selects: PortSet<InputPort>;
@@ -46,8 +49,36 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getInputPorts(): Array<InputPort> {
-        return super.getInputPorts().concat(this.selects.getPorts());
+    public getInputs(): DigitalWire[] {
+        // Get each wire connected to each InputPort
+        //  and then filter out the null ones
+        return super.getInputs().concat(
+            this.getSelectPorts().map((p) => p.getInput())
+                    .filter((w) => w != null));
+    }
+
+    // @Override
+    public getPorts(): Port[] {
+        return super.getPorts().concat(this.getSelectPorts());
+    }
+
+    // @Override
+    public copy(): Mux {
+        const copy = <Mux>super.copy();
+        copy.selects = this.selects.copy(copy);
+        return copy;
+    }
+
+    // @Override
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("selects", this.numSelects());
+    }
+
+    // @Override
+    public load(node: XMLNode): void {
+        super.load(node);
+        this.setSelectPortCount(node.getIntAttribute("selects"));
     }
 
 }
