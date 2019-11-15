@@ -2,6 +2,7 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 import {InputPort} from "../../ports/InputPort";
@@ -41,6 +42,18 @@ export class Decoder extends DigitalComponent {
 
     public getXMLName(): string {
         return "decoder";
+    }
+
+    // @Override
+    public save(node: XMLNode): void {
+        super.save(node);
+        node.addAttribute("inputs",this.numInputs());
+    }
+
+    // @Override
+    public load(node: XMLNode): void {
+        super.load(node);
+        this.setInputPortCount(node.getIntAttribute("inputs"))
     }
 
 }
