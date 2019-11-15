@@ -18,6 +18,10 @@ import {IC} from "digital/models/ioobjects/other/IC";
 import {Selectable} from "core/utils/Selectable";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
+import {GroupAction} from "core/actions/GroupAction";
+import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 // Creates a rectangle for the collision box for a port on the IC
 //  and determines if the given 'mousePos' is within it
@@ -69,15 +73,22 @@ export class ICDesignerController extends DesignerController {
     }
 
     private confirm(): void {
-        // Add the ICData and IC to the main designer
         const designer = this.mainController.getDesigner();
-        designer.addICData(this.icdata);
-        designer.addObject(this.ic.copy());
+        const selectionTool = this.mainController.getSelectionTool();
+
+        const ic = this.ic.copy();
 
         this.hide();
 
-        // Clear selections and render the main designer
-        this.mainController.clearSelections();
+        // Create action to deselect all, add ICData and an instance of the IC, then select it
+        const action = new GroupAction();
+        action.add(CreateDeselectAllAction(selectionTool));
+        action.add(new CreateICDataAction(this.icdata, designer));
+        action.add(new PlaceAction(designer, ic));
+        action.add(new SelectAction(selectionTool, ic));
+
+        // Add action and render
+        this.mainController.addAction(action.execute());
         this.mainController.render();
     }
 
