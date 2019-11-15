@@ -1,10 +1,12 @@
 import {Action} from "core/actions/Action";
-import {DigitalPortChangeAction} from "./DigitalPortChangeAction";
-import {InputPortChangeAction} from "./InputPortChangeAction";
+import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
+import {Port} from "core/models/ports/Port";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
-export class SelectPortChangeAction extends DigitalPortChangeAction {
+import {InputPortChangeAction} from "./InputPortChangeAction";
+
+export class SelectPortChangeAction extends PortChangeAction {
     protected obj: Mux;
 
     protected inputAction: InputPortChangeAction;
@@ -13,9 +15,10 @@ export class SelectPortChangeAction extends DigitalPortChangeAction {
         super(obj, target, obj.getSelectPorts().length);
 
         this.inputAction = new InputPortChangeAction(obj, Math.pow(2, target));
+    }
 
-        this.action = super.createAction(this.obj.getSelectPorts(),
-                                         this.targetCount);
+    protected getPorts(): Port[] {
+        return this.obj.getSelectPorts();
     }
 
     public execute(): Action {
@@ -26,8 +29,8 @@ export class SelectPortChangeAction extends DigitalPortChangeAction {
     }
 
     public undo(): Action {
-        this.inputAction.undo();
         this.obj.setSelectPortCount(this.initialCount);
+        this.inputAction.undo();
         super.undo();
         return this;
     }
