@@ -7,7 +7,7 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
-import {Place, Connect} from "../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("IC Action", () => {
     test("Undo/Redo 1", () => {
