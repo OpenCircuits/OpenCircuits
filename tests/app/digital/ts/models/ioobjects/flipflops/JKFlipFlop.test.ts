@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {JKFlipFlop}      from "digital/models/ioobjects/flipflops/JKFlipFlop";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("JKFlipFLop", () => {
     const designer = new DigitalCircuitDesigner(0);

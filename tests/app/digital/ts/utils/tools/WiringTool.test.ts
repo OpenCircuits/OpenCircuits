@@ -10,9 +10,9 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
 
-import {Place} from "../../Helpers";
+import {Place} from "test/helpers/Helpers";
 
 describe("Wiring Tool", () => {
     const camera = new Camera(500, 500);

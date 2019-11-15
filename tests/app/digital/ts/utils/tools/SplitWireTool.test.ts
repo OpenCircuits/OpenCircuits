@@ -10,9 +10,9 @@ import {LED}         from "digital/models/ioobjects/outputs/LED";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
 
-import {Place} from "../../Helpers";
+import {Place} from "test/helpers/Helpers";
 import {CONTROL_KEY, Z_KEY} from "core/utils/Constants";
 
 describe("Wiring Tool", () => {
