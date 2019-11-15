@@ -46,12 +46,12 @@ export class CircuitMetadata {
 
     public buildOn(): CircuitMetadataBuilder {
         return new CircuitMetadataBuilder()
-            .withId(this.id)
-            .withName(this.name)
-            .withOwner(this.owner)
-            .withDesc(this.desc)
-            .withThumbnail(this.thumbnail)
-            .withVersion(this.version);
+                .withId(this.id)
+                .withName(this.name)
+                .withOwner(this.owner)
+                .withDesc(this.desc)
+                .withThumbnail(this.thumbnail)
+                .withVersion(this.version);
     }
 }
 

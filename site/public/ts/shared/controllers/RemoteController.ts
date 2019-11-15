@@ -1,5 +1,5 @@
 import {AuthState} from "../../digital/auth/AuthState";
-import {CircuitMetadata, CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+import {CircuitMetadata} from "core/models/CircuitMetadata";
 import {CreateUserCircuit, UpdateUserCircuit,
         QueryUserCircuits, LoadUserCircuit,
         DeleteUserCircuit} from "../api/Circuits";
