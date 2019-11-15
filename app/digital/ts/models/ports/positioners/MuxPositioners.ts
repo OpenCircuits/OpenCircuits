@@ -1,7 +1,7 @@
 import {DEFAULT_SIZE,
         IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 import {InputPort} from "../InputPort";
@@ -65,13 +65,26 @@ export class MuxOutputPositioner extends Positioner<OutputPort> {
                 TODO: get the normal x value then add, not current x value
                       change the origin position based on IO_PORT_LENGTH so its not too long
             */
-
+/*
+            // calculate the number of select ports (cannot be )
+            let sel = Math.log2(port.getParent().getInputPortCount().getValue());
             // set the target position of the port
-            let l = port.getParent().getSize().x; //+ DEFAULT_SIZE;
-            
-            port.setTargetPos(V(l, port.getTargetPos().y));
+            //let l = port.getParent().getSize().x; //+ DEFAULT_SIZE;
+            //let l = port.getParent().getPos().x// + port.getParent().getSize().x;
+            //let l = port.getParent().getTransform().getBottomRight().x
+            //let l = port.getParent().getMaxPos().x;
+
+            let l = Vector.max(...port.getParent().getTransform().getCorners());
+
+            port.setOriginPos(V(l.x, port.getParent().getSize().y));
             // set the origin position to be a DEFAULT_SIZE away from the target position
-            port.setOriginPos(port.getTargetPos().sub(V(DEFAULT_SIZE, 0)))
+            port.setTargetPos(port.getOriginPos().add(V(IO_PORT_LENGTH, 0)))
+            */
+            port.setTargetPos(port.getParent().getSize())
+            let width = port.getParent().getSize().x;
+            //port.setOriginPos(port.getTargetPos().sub(V(IO_PORT_LENGTH, 0)));
+            port.setOriginPos(V(width/2, 0));
+            port.setTargetPos(V(width/2 + IO_PORT_LENGTH - DEFAULT_SIZE/2, 0));
             //let l = 10*Math.max(port.getParent().getInputPortCount().getValue(), port.getParent().getOutputPortCount().getValue());
             //port.setTargetPos(port.getTargetPos().add(V(l, l)))
         });
@@ -87,7 +100,9 @@ export class DemuxInputPositioner extends Positioner<InputPort> {
     public updatePortPositions(ports: Array<InputPort>): void {
         ports.forEach((port, i) => {
             //const xPos = port.getParent().getSize().x;
-            let l = port.getParent().getSize().x - 10*port.getParent().getInputPortCount().getValue();
+            //let l = port.getParent().getSize().x - 10*port.getParent().getInputPortCount().getValue();
+            let l = port.getParent().getSize().x;
+            //port.setOriginPos()
             //port.setTargetPos(V())
         });       
     }
