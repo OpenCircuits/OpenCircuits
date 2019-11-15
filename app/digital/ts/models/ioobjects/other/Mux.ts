@@ -52,8 +52,8 @@ export abstract class Mux extends DigitalComponent {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return super.getInputs().concat(
-                this.getSelectPorts().map((p) => p.getInput())
-                        .filter((w) => w != null));
+            this.getSelectPorts().map((p) => p.getInput())
+                    .filter((w) => w != null));
     }
 
     // @Override
