@@ -3,6 +3,7 @@ import {DRAG_TIME,
         SHIFT_KEY,
         CONTROL_KEY,
         COMMAND_KEY,
+        D_KEY,
         OPTION_KEY,
         BACKSPACE_KEY} from "core/utils/Constants";
 
@@ -42,15 +43,30 @@ export class Input {
         this.setupHammer();
     }
 
+    private isPreventedCombination(newKey: number): boolean {
+        const PREVENTED_COMBINATIONS = [
+            [[D_KEY], [CONTROL_KEY, COMMAND_KEY]],
+            [BACKSPACE_KEY],
+        ];
+        return PREVENTED_COMBINATIONS.some((combination) => {
+            return combination.flat().includes(newKey) &&
+                   combination.every(keys =>
+                       keys.some(key => this.isKeyDown(key)));
+        });
+    }
+
     private hookupKeyboardEvents(): void {
         const PREVENTED_KEYBINDS = [
-            BACKSPACE_KEY, // some browsers map backspace to previous page, but we use it for delete element
+            BACKSPACE_KEY // some browsers map backspace to previous page, but we use it for delete element
         ];
+
+        //some browsers map shorcuts to crtl d but we use it to duplicate elements
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.keyCode);
-                if (PREVENTED_KEYBINDS.includes(e.keyCode))
+
+                if (this.isPreventedCombination(e.keyCode))
                     e.preventDefault();
             }
         }, false);

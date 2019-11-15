@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY, X_KEY} from "core/utils/Constants";
+        ESC_KEY, A_KEY, D_KEY, X_KEY} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
@@ -25,10 +25,13 @@ import {ShiftAction} from "../actions/ShiftAction";
 import {SelectAction,
         CreateGroupSelectAction,
         CreateDeselectAllAction} from "../actions/selection/SelectAction";
+import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
+
+
 
 export class SelectionTool extends DefaultTool {
 
@@ -207,14 +210,26 @@ export class SelectionTool extends DefaultTool {
     }
 
     public onKeyDown(input: Input, key: number): boolean {
+
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
             this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
             return true;
         }
 
-        if (this.selections.size == 0)
+        if (this.selections.size == 0){
             return false;
+        }
+
+        if (input.isModifierKeyDown() && key == D_KEY) {
+          const selections = Array.from(this.selections);
+          const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
+
+          this.action.add(new CopyGroupAction(this.designer,objs)).execute();
+
+          return true;
+        }
+
 
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
             const selections = Array.from(this.selections);
