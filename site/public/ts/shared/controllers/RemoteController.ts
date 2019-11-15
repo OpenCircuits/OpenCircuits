@@ -51,13 +51,12 @@ export const RemoteController = (() => {
         },
         Logout(callback: () => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
-                if (data.authState)
-                    await data.authState.logOut();
+                await data.authState.logOut();
                 await callback();
                 return {
                     authState: undefined
                 }
-            });
+            }, true);
         },
         SaveCircuit(circuitData: string, callback: () => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
@@ -95,7 +94,7 @@ export const RemoteController = (() => {
                 return {
                     metadata: metadata
                 };
-            });
+            }, true);
         },
         DeleteUserCircuit(metadata: CircuitMetadata, callback: (result: boolean) => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
@@ -106,7 +105,7 @@ export const RemoteController = (() => {
                         metadata: metadata.buildOn().withId("").build()
                     }
                 }
-            });
+            }, true);
         }
     }
 })();
