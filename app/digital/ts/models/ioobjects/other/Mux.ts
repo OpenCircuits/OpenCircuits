@@ -7,7 +7,7 @@ import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {MuxSelectPositioner, MuxOutputPositioner} from "digital/models/ports/positioners/MuxPositioners";
+import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";

@@ -1,11 +1,10 @@
 import {DEFAULT_SIZE,
         IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 import {InputPort} from "../InputPort";
-import {OutputPort} from "../OutputPort";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -31,7 +30,7 @@ export class MuxPositioner<T extends Port> extends Positioner<T> {
 export class MuxSelectPositioner extends Positioner<InputPort> {
 
     /**
-     * Port positiong for Multiplexer/Demultiplexer select lines
+     * Port positioning for Multiplexer/Demultiplexer select lines
      *
      * @param arr The array of input ports
      */
@@ -52,36 +51,17 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
 
 }
 
-export class MuxOutputPositioner extends Positioner<OutputPort> {
+export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
     /**
-     * Port positioning for Multiplexer output ports
+     * Port positioning for Multiplexer output port and Demultiplexer input port
      * 
-     * @paramm arr The array of output ports
+     * @param ports the array of ports to be positioned
      */
-    public updatePortPositions(ports: Array<OutputPort>): void {
-        ports.forEach((port) => {
-            // Set the origin position to the right edge of the Mux
-            let width = port.getParent().getSize().x;
-            port.setOriginPos(V(width/2, 0));
-            // Set the target position such that the port wire length is consistent
-            port.setTargetPos(V(width/2 + IO_PORT_LENGTH - DEFAULT_SIZE/2, 0));
-        });
-    }
-}
-
-export class DemuxInputPositioner extends Positioner<InputPort> {
-    /**
-     * Port positioning for Demultiplexer input port
-     * 
-     * @paramm arr the array of input ports
-     */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: Array<T>): void {
         ports.forEach((port, i) => {
-            // Set the origin position to the left edge of the Demux
-            let width = port.getParent().getSize().x;
-            port.setOriginPos(V(-width/2, 0));
-            // Set the target position such that the port wire length is consistent
-            port.setTargetPos(V(-width/2 - IO_PORT_LENGTH + DEFAULT_SIZE/2, 0));
-        });       
+            const width = port.getParent().getSize().x;
+            port.setOriginPos(V(port.getInitialDir().scale(width/2)))
+            port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH + (width - DEFAULT_SIZE)/2)));
+        });
     }
 }
