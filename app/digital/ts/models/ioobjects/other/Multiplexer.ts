@@ -5,7 +5,6 @@ import {MuxPositioner, MuxSinglePortPositioner} from "../../ports/positioners/Mu
 
 import {Mux} from "./Mux";
 
-
 export class Multiplexer extends Mux {
 
     public constructor() {

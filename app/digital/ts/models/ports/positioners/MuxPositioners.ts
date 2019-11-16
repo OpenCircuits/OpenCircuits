@@ -8,7 +8,6 @@ import {InputPort} from "../InputPort";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-
 export class MuxPositioner<T extends Port> extends Positioner<T> {
 
     public updatePortPositions(ports: Array<T>): void {
@@ -60,8 +59,10 @@ export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
     public updatePortPositions(ports: Array<T>): void {
         ports.forEach((port, i) => {
             const width = port.getParent().getSize().x;
+            // Set the origin of the port to the left side of the Mux
             port.setOriginPos(V(port.getInitialDir().scale(width/2)))
-            port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH + (width - DEFAULT_SIZE)/2)));
+            // Set the target position such that the port wire length is consistent
+            port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH+(width-DEFAULT_SIZE)/2)));
         });
     }
 }
