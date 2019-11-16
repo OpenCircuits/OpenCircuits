@@ -4,7 +4,7 @@ import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 import {Vector} from "Vector";
-import { DigitalCircuitDesigner } from "digital/models/DigitalCircuitDesigner";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Importer = (() => {
     return {
