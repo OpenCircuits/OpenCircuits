@@ -1,7 +1,8 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
-import {MuxPositioner, MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
+import {MuxPositioner,
+        MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
 

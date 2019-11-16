@@ -57,7 +57,7 @@ export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
      * @param ports the array of ports to be positioned
      */
     public updatePortPositions(ports: Array<T>): void {
-        ports.forEach((port, i) => {
+        ports.forEach((port) => {
             const width = port.getParent().getSize().x;
             // Set the origin of the port to the left side of the Mux
             port.setOriginPos(V(port.getInitialDir().scale(width/2)))
