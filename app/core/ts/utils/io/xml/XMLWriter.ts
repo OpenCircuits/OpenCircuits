@@ -31,6 +31,7 @@ export class XMLWriter {
 
     public setCamera(camera: Camera): void {
         this.cameraNode.addVectorAttribute("", camera.getPos());
+        this.cameraNode.addAttribute("zoom",camera.getZoom());
     }
 
     public getContentsNode(): XMLNode {

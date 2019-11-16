@@ -4,6 +4,7 @@ import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 import {Vector} from "Vector";
+import {XMLNode} from "./xml/XMLNode";
 
 export const Importer = (() => {
     return {
@@ -20,7 +21,10 @@ export const Importer = (() => {
                 ResolveVersionConflict(reader);
 
             designer.load(reader.getContentsNode());
-            const camPos = new Vector(reader.getCameraNode().getFloatAttribute("x"),reader.getCameraNode().getFloatAttribute("y"));
+            const camNode = reader.getCameraNode();
+            const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
+            const zoom = camNode.getFloatAttribute("zoom");
+            main.getCamera().zoomBy(zoom);
             main.getCamera().setPos(camPos);
             return reader.getName();
         },
