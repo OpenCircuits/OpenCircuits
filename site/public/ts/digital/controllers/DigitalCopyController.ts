@@ -52,7 +52,7 @@ export class DigitalCopyController extends CopyController {
         const contents = e.clipboardData.getData("text/xml");
 
         const designer = new DigitalCircuitDesigner(-1);
-        Importer.LoadCircuit(main, contents);
+        Importer.PasteCircuit(main.getDesigner(), contents);
 
         const group = CopyGroup(designer.getGroup());
         const objs = group.getComponents();
