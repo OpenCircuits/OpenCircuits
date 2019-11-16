@@ -77,7 +77,6 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
         return WriteCircuit(this, this.headerController.getProjectName(), thumbnail);
     }
 

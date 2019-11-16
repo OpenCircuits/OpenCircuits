@@ -2,10 +2,8 @@ import {SAVED} from "../Config";
 
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import { MainDesignerController } from "site/shared/controllers/MainDesignerController";
-import { DigitalCircuitController } from "site/digital/controllers/DigitalCircuitController";
-import { Vector } from "Vector";
+import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
+import {Vector} from "Vector";
 
 export const Importer = (() => {
     return {

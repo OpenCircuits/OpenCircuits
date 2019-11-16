@@ -4,7 +4,7 @@ import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
 import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 import {CullableObject} from "core/models/CullableObject";
-import { DigitalCircuitController } from "site/digital/controllers/DigitalCircuitController";
+import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 
 // Renders a view of the given circuit on the given canvas element
 // Canvas is resized to a square with side length of size
@@ -62,7 +62,6 @@ export function WriteCircuit(main: DigitalCircuitController, name: string, thumb
     return writer.serialize();
 }
 export function SaveFile(main: DigitalCircuitController, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
-    const designer = main.getDesigner();
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
