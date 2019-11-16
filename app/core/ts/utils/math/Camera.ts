@@ -2,7 +2,6 @@ import {Vector,V} from "./Vector";
 import {Transform} from "./Transform";
 import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 export class Camera {
     private pos: Vector;

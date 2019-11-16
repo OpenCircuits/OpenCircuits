@@ -11,7 +11,7 @@ export class DigitalHeaderController extends HeaderController {
     }
 
     protected async onLoadCircuit(main: DigitalCircuitController, file: File): Promise<string> {
-        return await Importer.PromptLoadCircuitFromFile(main.getDesigner(), file);
+        return await Importer.PromptLoadCircuitFromFile(main, file);
     }
 
     protected onSaveCircuit(main: DigitalCircuitController): void {
