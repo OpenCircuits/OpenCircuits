@@ -20,9 +20,6 @@ export abstract class Mux extends DigitalComponent {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
-        // is this next line the best way to declare this?
-        //this.outputs = new PortSet<OutputPort>(this, new ClampedValue(1, 1, Math.pow(2, 8)), new MuxOutputPositioner(), OutputPort)
-        
         this.setSelectPortCount(2);
     }
 

@@ -77,11 +77,11 @@ export class DemuxInputPositioner extends Positioner<InputPort> {
      */
     public updatePortPositions(ports: Array<InputPort>): void {
         ports.forEach((port, i) => {
-            //const xPos = port.getParent().getSize().x;
-            //let l = port.getParent().getSize().x - 10*port.getParent().getInputPortCount().getValue();
-            let l = port.getParent().getSize().x;
-            //port.setOriginPos()
-            //port.setTargetPos(V())
+            // Set the origin position to the left edge of the Demux
+            let width = port.getParent().getSize().x;
+            port.setOriginPos(V(-width/2, 0));
+            // Set the target position such that the port wire length is consistent
+            port.setTargetPos(V(-width/2 - IO_PORT_LENGTH + DEFAULT_SIZE/2, 0));
         });       
     }
 }
