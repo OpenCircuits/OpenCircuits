@@ -59,34 +59,12 @@ export class MuxOutputPositioner extends Positioner<OutputPort> {
      * @paramm arr The array of output ports
      */
     public updatePortPositions(ports: Array<OutputPort>): void {
-        ports.forEach((port, i) => {
-            const height = port.getParent().getSize().y;
-            /*
-                TODO: get the normal x value then add, not current x value
-                      change the origin position based on IO_PORT_LENGTH so its not too long
-            */
-/*
-            // calculate the number of select ports (cannot be )
-            let sel = Math.log2(port.getParent().getInputPortCount().getValue());
-            // set the target position of the port
-            //let l = port.getParent().getSize().x; //+ DEFAULT_SIZE;
-            //let l = port.getParent().getPos().x// + port.getParent().getSize().x;
-            //let l = port.getParent().getTransform().getBottomRight().x
-            //let l = port.getParent().getMaxPos().x;
-
-            let l = Vector.max(...port.getParent().getTransform().getCorners());
-
-            port.setOriginPos(V(l.x, port.getParent().getSize().y));
-            // set the origin position to be a DEFAULT_SIZE away from the target position
-            port.setTargetPos(port.getOriginPos().add(V(IO_PORT_LENGTH, 0)))
-            */
-            port.setTargetPos(port.getParent().getSize())
+        ports.forEach((port) => {
+            // Set the origin position to the right edge of the Mux
             let width = port.getParent().getSize().x;
-            //port.setOriginPos(port.getTargetPos().sub(V(IO_PORT_LENGTH, 0)));
             port.setOriginPos(V(width/2, 0));
+            // Set the target position such that the port wire length is consistent
             port.setTargetPos(V(width/2 + IO_PORT_LENGTH - DEFAULT_SIZE/2, 0));
-            //let l = 10*Math.max(port.getParent().getInputPortCount().getValue(), port.getParent().getOutputPortCount().getValue());
-            //port.setTargetPos(port.getTargetPos().add(V(l, l)))
         });
     }
 }
