@@ -69,7 +69,7 @@
     "watch:analog": "npm run build:js:analog  -- --watch",
     "watch:css": "npm run build:css -- --watch",
     "init:prod": "echo \"runtime: go113\nenv_variables:\n  DATASTORE_PROJECT_ID: \\\"PROJECT_ID\\\"\" >> app.yaml",
-    "copy:prod": "copyfiles -u 2 \"site/go/**/*\" build/ && copyfiles app.yaml build/ && npm run copy",
+    "copy:prod": "copyfiles -u 2 \"site/go/**/*\" build/ && copyfiles app.yaml build/ && copyfiles -u 2 site/secrets/credentials.json build/ && npm run copy",
     "build:prod": "rimraf ./build && run-p copy:prod build:css build:js:digital-prod build:js:analog-prod && cd ./build && gcloud app deploy"
   }
 }
