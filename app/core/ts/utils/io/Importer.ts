@@ -8,35 +8,23 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Importer = (() => {
     return {
-        LoadCircuit: function(main: DigitalCircuitController, fileContents: string | XMLDocument): string {
+        LoadCircuit: function(main: DigitalCircuitController, fileContents: string | XMLDocument,loadCamera: boolean): string {
             const designer = main.getDesigner();
-            const name = this.PasteCircuit(designer,fileContents);
+            
             const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
             if (root.getElementsByTagName("parsererror").length > 0)
                 return;
 
             const reader = new XMLReader(root);
-
-            const camNode = reader.getCameraNode();
+            designer.load(reader.getContentsNode());
+            if(loadCamera){
+                const camNode = reader.getCameraNode();
             const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
             const zoom = camNode.getFloatAttribute("zoom");
-            main.getCamera().zoomBy(zoom);
+            main.getCamera().setZoom(zoom);
             main.getCamera().setPos(camPos);
+            }
             return name;
-        },
-        PasteCircuit: function(designer: DigitalCircuitDesigner, fileContents: string | XMLDocument): string {
-            const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
-            if (root.getElementsByTagName("parsererror").length > 0)
-                return;
-
-            const reader = new XMLReader(root);
-
-            // Check for old version of save
-            if (reader.getVersion() == -1)
-                ResolveVersionConflict(reader);
-
-            designer.load(reader.getContentsNode());
-            return reader.getName();
         },
         PromptLoadCircuit: function(main: DigitalCircuitController, contents: string | XMLDocument): string {
             const designer = main.getDesigner();
@@ -45,7 +33,7 @@ export const Importer = (() => {
             if (open) {
                 designer.reset();
 
-                return this.LoadCircuit(main, contents);
+                return this.LoadCircuit(main, contents, true);
             }
 
             return undefined;
@@ -60,7 +48,7 @@ export const Importer = (() => {
 
                     const reader = new FileReader();
                     reader.onload = () => {
-                        resolve(this.LoadCircuit(main, reader.result.toString()));
+                        resolve(this.LoadCircuit(main, reader.result.toString(), true));
                     }
                     reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
 
