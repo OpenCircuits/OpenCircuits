@@ -20,6 +20,10 @@ import {DigitalWire} from "digital/models/DigitalWire";
  *  Output components (anything with 0 input ports  and >0 output ports)
  *  Wires             (wires)
  *  Other             (anything else)
+ *
+ * Note that .getComponents() does NOT contain wires
+ *  A helper method to get all the components including them
+ *  is included as toList()
  */
 export class DigitalObjectSet extends IOObjectSet {
     protected wires: Set<DigitalWire>;

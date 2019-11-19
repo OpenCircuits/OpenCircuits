@@ -21,9 +21,9 @@ import {RectContains} from "math/MathUtils";
  *  Wires             (wires)
  *  Components        (anything else)
  *
- * Note that .components does NOT contain inputs and outputs
+ * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as getAllComponents()
+ *  is included as toList()
  */
 export class IOObjectSet {
     protected components: Set<Component>;

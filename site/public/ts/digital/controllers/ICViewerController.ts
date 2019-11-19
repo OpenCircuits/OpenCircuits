@@ -6,13 +6,17 @@ import {IC} from "digital/models/ioobjects/other/IC";
 import {Selectable} from "core/utils/Selectable";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
-import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+import {IOObjectSet, CircuitBoundingBox} from "core/utils/ComponentUtils";
+import {CullableObject} from "core/models/CullableObject";
+import {V} from "Vector";
+import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 
 export class ICViewerController extends DesignerController {
     protected designer: DigitalCircuitDesigner;
     protected view: ICViewerView;
 
-    private inside: DigitalComponent[];
+    private inside: DigitalObjectSet;
 
     private mainController: DigitalCircuitController;
 
@@ -44,14 +48,25 @@ export class ICViewerController extends DesignerController {
         this.setActive(true);
 
         // Store copy of IC components
-        this.inside = ic.getData().copy().getComponents();
+        this.inside = ic.getData().copy();
 
         // Reset designer and add the internal components
         this.designer.reset();
-        this.designer.addObjects(this.inside);
+        this.designer.addGroup(this.inside);
 
-        // Show the view
-        // TODO: adjust zoom?
+        // Adjust the camera so it all fits in the viewer
+        let bbox = CircuitBoundingBox(this.inside.toList() as CullableObject[]);
+        let min = bbox.getMin();
+        let max = bbox.getMax();
+        // Center and zoom the camera so everything fits with no distortion
+        const center = min.add(max).scale(0.5);
+        const camera = this.view.getCamera();
+        camera.setPos(center);
+        // Zoom out a bit more than we need so components on edges have some breathing room
+        const canvas = this.view.getCanvas();
+        const relativeSize = max.sub(min).scale(V(1/canvas.width, 1/canvas.height));
+        const zoom = Math.max(relativeSize.x, relativeSize.y) * IC_VIEWER_ZOOM_PADDING_RATIO;
+        camera.zoomBy(zoom);
         this.view.show();
 
         // Render
