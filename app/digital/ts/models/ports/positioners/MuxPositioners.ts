@@ -51,6 +51,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
 }
 
 export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
+    
     /**
      * Port positioning for Multiplexer output port and Demultiplexer input port
      * 
@@ -65,4 +66,5 @@ export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
             port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH+(width-DEFAULT_SIZE)/2)));
         });
     }
+    
 }

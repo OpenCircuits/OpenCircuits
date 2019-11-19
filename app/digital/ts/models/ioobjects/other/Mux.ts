@@ -20,7 +20,7 @@ export abstract class Mux extends DigitalComponent {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
-        
+
         this.setSelectPortCount(2);
     }
 
@@ -29,7 +29,7 @@ export abstract class Mux extends DigitalComponent {
         const width = Math.max(DEFAULT_SIZE/2*(val-1), DEFAULT_SIZE);
         const height = DEFAULT_SIZE/2*Math.pow(2, val);
         this.transform.setSize(V(width+10, height));
-        
+
         this.selects.setPortCount(val);
     }
 
