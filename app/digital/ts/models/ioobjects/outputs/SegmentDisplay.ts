@@ -10,21 +10,22 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 import {InputPort} from "../../ports/InputPort";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import { SegmentDisplayPositioner } from "digital/models/ports/positioners/SegmentDisplayPositioner";
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
 export class SegmentDisplay extends DigitalComponent {
     public constructor() {
-        super(new ClampedValue(14),
+        super(new ClampedValue(7, 7, 16),
               new ClampedValue(0),
               V(70, 100),
-              new ConstantSpacePositioner<InputPort>(2*IO_PORT_RADIUS+1));
+              new SegmentDisplayPositioner());
 
-        this.setInputPortCount(14);
+        this.setInputPortCount(7);
     }
 
     public getSegments(): Array<[Vector, SegmentType]> {
-        const segments = Segments["14"];
+        const segments = Segments[this.getInputPorts().length + ""];
 
         // Turns the array into an array of Vectors and SegmentTypes
         return segments.map((value: [number[], SegmentType]) =>
