@@ -66,7 +66,7 @@ export class ICViewerController extends DesignerController {
         const canvas = this.view.getCanvas();
         const relativeSize = max.sub(min).scale(V(1/canvas.width, 1/canvas.height));
         const zoom = Math.max(relativeSize.x, relativeSize.y) * IC_VIEWER_ZOOM_PADDING_RATIO;
-        camera.zoomBy(zoom);
+        camera.zoomBy(zoom / camera.getZoom());
         this.view.show();
 
         // Render
@@ -81,6 +81,8 @@ export class ICViewerController extends DesignerController {
         this.mainController.setActive(true);
     }
 
+    // TODO: how to stop user from toggling things?
+    // IDEA: wrap InteractionHandler with Actions
     protected onMouseDown(button: number): boolean {
         return super.onMouseDown(button);
     }

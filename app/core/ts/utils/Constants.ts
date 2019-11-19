@@ -64,4 +64,4 @@ export const Y_KEY = 89;
 export const Z_KEY = 90;
 export const COMMAND_KEY = 91;
 
-export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.25;
+export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
