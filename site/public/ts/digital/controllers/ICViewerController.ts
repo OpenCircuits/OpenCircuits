@@ -7,7 +7,7 @@ import {Selectable} from "core/utils/Selectable";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-import {IOObjectSet, CircuitBoundingBox} from "core/utils/ComponentUtils";
+import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 import {CullableObject} from "core/models/CullableObject";
 import {V} from "Vector";
 import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
@@ -55,9 +55,9 @@ export class ICViewerController extends DesignerController {
         this.designer.addGroup(this.inside);
 
         // Adjust the camera so it all fits in the viewer
-        let bbox = CircuitBoundingBox(this.inside.toList() as CullableObject[]);
-        let min = bbox.getMin();
-        let max = bbox.getMax();
+        const bbox = CircuitBoundingBox(this.inside.toList() as CullableObject[]);
+        const min = bbox.getMin();
+        const max = bbox.getMax();
         // Center and zoom the camera so everything fits with no distortion
         const center = min.add(max).scale(0.5);
         const camera = this.view.getCamera();
