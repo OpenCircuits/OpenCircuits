@@ -18,9 +18,9 @@ import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
 
-import {Place, Connect} from "../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);

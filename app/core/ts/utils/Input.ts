@@ -247,7 +247,7 @@ export class Input {
         this.callListeners("mousemove");
     }
     protected onMouseUp(button: number = 0): void {
-        this.touchCount--;
+        this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
         this.mouseDown = false;
         this.mouseDownButton = -1;
 

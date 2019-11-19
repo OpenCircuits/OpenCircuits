@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {XORGate}         from "digital/models/ioobjects/gates/XORGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("XORGate", () => {
     describe("XORGate", () => {
