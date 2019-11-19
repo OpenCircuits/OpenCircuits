@@ -51,5 +51,8 @@ module.exports = (env, argv) => {
         PRODUCTION: JSON.stringify(!(argv.mode === 'development'))
     }));
 
+    if (argv.mode === 'production')
+        delete config.devtool;
+
     return config;
 };
