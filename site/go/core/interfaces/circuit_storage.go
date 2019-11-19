@@ -15,6 +15,8 @@ type CircuitStorageInterface interface {
 	UpdateCircuit(c model.Circuit)
 	// Makes a new blank circuit
 	NewCircuit() model.Circuit
+	// Deletes a circuit by ID
+	DeleteCircuit(id model.CircuitId)
 	// Releases the resources the interface holds.  No guarantees are made about the state of this object beyond this
 	// point.  Call this when done using the interface.
 	Close()

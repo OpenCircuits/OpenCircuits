@@ -108,3 +108,18 @@ func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	}
 	c.XML(http.StatusOK, metadataList{Metadata: circuits})
 }
+
+func circuitDeleteHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
+	circuitId := c.Param("id")
+	storageInterface := m.CreateCircuitStorageInterface()
+
+	// The initial "Can Delete" logic is the same as "Is Owner"
+	circuit := storageInterface.LoadCircuit(circuitId)
+	if circuit == nil || circuit.Metadata.Owner != userId {
+		c.XML(http.StatusForbidden, nil)
+		return
+	}
+
+	storageInterface.DeleteCircuit(circuitId)
+	c.XML(http.StatusOK, nil)
+}

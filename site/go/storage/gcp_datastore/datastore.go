@@ -140,6 +140,13 @@ func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 
+func (d datastoreStorageInterface) DeleteCircuit(id model.CircuitId) {
+	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", id, nil))
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (d *datastoreStorageInterface) Close() {
 	if err := d.dsClient.Close(); err != nil {
 		panic(err)
