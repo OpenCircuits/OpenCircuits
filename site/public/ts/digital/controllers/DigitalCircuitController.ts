@@ -26,9 +26,12 @@ import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
+import {ICViewerButtonPopupModule} from "./selectionpopup/ViewICButtonPopupModule";
+import {ICViewerController} from "./ICViewerController";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
+    private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
     private headerController: DigitalHeaderController;
@@ -47,6 +50,7 @@ export class DigitalCircuitController extends MainDesignerController {
                                   new SplitWireTool(this.getCamera()));
 
         this.icController = new ICDesignerController(this);
+        this.icViewer = new ICViewerController(this);
 
         this.selectionPopup.addModules(
             new TitlePopupModule(this),
@@ -56,6 +60,7 @@ export class DigitalCircuitController extends MainDesignerController {
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
+            new ICViewerButtonPopupModule(this, this.icViewer),
             new BusButtonPopupModule(this)
         );
 

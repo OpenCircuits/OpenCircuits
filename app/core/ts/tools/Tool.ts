@@ -62,6 +62,10 @@ export abstract class Tool implements MouseListener, KeyboardListener {
         return false;
     }
 
+    public onDoubleClick(_input: Input, _button: number): boolean {
+        return false;
+    }
+
     public onKeyDown(_input: Input, _key: number): boolean {
         return false;
     }

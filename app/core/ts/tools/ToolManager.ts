@@ -143,6 +143,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
         return this.onEvent((i: Input,b?: number) => this.currentTool.onClick(i,b), "onclick", input, button);
     }
 
+    public onDoubleClick(input: Input, button: number): boolean {
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onDoubleClick(i,b), "ondblclick", input, button);
+    }
+
     public onKeyDown(input: Input, key: number): boolean {
         return this.onEvent((i: Input,b?: number) => this.currentTool.onKeyDown(i,b), "keydown", input, key);
     }

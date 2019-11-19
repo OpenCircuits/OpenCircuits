@@ -34,8 +34,8 @@ export class FakeInput extends Input {
         super.onClick(pos, button);
         return this;
     }
-    public doubleClick(): FakeInput {
-        super.onDoubleClick();
+    public doubleClick(button: number): FakeInput {
+        super.onDoubleClick(button);
         return this;
     }
 

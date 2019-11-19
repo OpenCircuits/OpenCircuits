@@ -5,9 +5,12 @@ import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
-import {Vector} from "Vector";
+import {Vector, V} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
 import {BoundingBox} from "math/BoundingBox";
+import {IO_PORT_LINE_WIDTH} from "./Constants";
+import {Transform} from "math/Transform";
+import {RectContains} from "math/MathUtils";
 
 /**
  * Helper class to hold different groups of components.
@@ -257,4 +260,21 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     const max = Vector.max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
+}
+
+// Creates a rectangle for the collision box for a port on the IC
+//  and determines if the given 'mousePos' is within it
+export function PortContains(port: Port, mousePos: Vector): boolean {
+    const origin = port.getOriginPos();
+    const target = port.getTargetPos();
+
+    // Get properties of collision box
+    const pos   = target.add(origin).scale(0.5);
+    const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
+    const angle = target.sub(origin).angle();
+
+    const rect  = new Transform(pos, size, angle);
+    rect.setParent(port.getParent().getTransform());
+
+    return RectContains(rect, mousePos);
 }
