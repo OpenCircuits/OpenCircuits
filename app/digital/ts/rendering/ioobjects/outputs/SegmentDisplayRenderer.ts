@@ -4,7 +4,7 @@ import {DEFAULT_BORDER_WIDTH,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR,
         DEFAULT_ON_COLOR} from "core/utils/Constants";
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
@@ -15,8 +15,23 @@ import {Style} from "core/rendering/Style";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
 import {Images} from "digital/utils/Images";
+import { Line } from "core/rendering/shapes/Line";
 
 export const SegmentDisplayRenderer = (() => {
+    // const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
+    //     const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
+    //     // Draw line to visually match input ports
+    //     const l1 =  (size.y/2)*((inputs-1)/2);
+    //     const l2 = -(size.y/2)*((inputs-1)/2);
+
+    //     const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
+    //     const p1 = V(-s, l1);
+    //     const p2 = V(-s, l2);
+
+    //     renderer.draw(new Line(p1, p2), style);
+    // }
+
     return {
         render(renderer: Renderer, _: Camera, display: SegmentDisplay, selected: boolean): void {
             const transform = display.getTransform();
@@ -32,6 +47,9 @@ export const SegmentDisplayRenderer = (() => {
             const w = 35;
             const h = 9;
 
+            const p1 = display.getPorts()[0].getOriginPos();
+            const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos();
+            renderer.draw(new Line(p1, p2), style);            
 
             // Draw lights
             const segments = display.getSegments();
