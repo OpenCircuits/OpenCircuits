@@ -4,27 +4,35 @@ import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
 import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 import {Vector} from "Vector";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Importer = (() => {
     return {
         LoadCircuit: function(main: DigitalCircuitController, fileContents: string | XMLDocument,loadCamera: boolean): string {
             const designer = main.getDesigner();
-            
+
             const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
             if (root.getElementsByTagName("parsererror").length > 0)
                 return;
 
             const reader = new XMLReader(root);
+
+            // Check for old version of save
+            if (reader.getVersion() == -1)
+                ResolveVersionConflict(reader);
+
             designer.load(reader.getContentsNode());
+            
             if(loadCamera){
                 const camNode = reader.getCameraNode();
-            const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
-            const zoom = camNode.getFloatAttribute("zoom");
-            main.getCamera().setZoom(zoom);
-            main.getCamera().setPos(camPos);
+                if(camNode){
+                    const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
+                    const zoom = camNode.getFloatAttribute("zoom");
+                    main.getCamera().setZoom(zoom);
+                    main.getCamera().setPos(camPos);
+                }
             }
-            return name;
+
+            return reader.getName();
         },
         PromptLoadCircuit: function(main: DigitalCircuitController, contents: string | XMLDocument): string {
             const designer = main.getDesigner();
