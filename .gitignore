@@ -11,6 +11,7 @@ build
 site/data/config.txt
 site/public/js/combined-min.js
 tests/index.js
+app.yaml
 package-lock.json
 yarn.lock
 

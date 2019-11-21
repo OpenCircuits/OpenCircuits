@@ -1,15 +1,16 @@
 package gcp_datastore
 
 import (
-	"cloud.google.com/go/datastore"
 	"context"
 	"errors"
+	"os"
+	"strconv"
+
+	"cloud.google.com/go/datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-	"os"
-	"strconv"
 )
 
 // A flat data structure to load data to/from
@@ -18,19 +19,20 @@ type datastoreCircuit struct {
 	Name            string
 	Owner           model.UserId
 	Desc            string
-	Thumbnail       string
+	Thumbnail       string `datastore:",noindex"`
 	Version         string
-	CircuitDesigner string
+	CircuitDesigner string `datastore:",noindex"`
 }
 
 func (dCircuit datastoreCircuit) toCircuit(id model.CircuitId) model.Circuit {
 	return model.Circuit{
 		Metadata: model.CircuitMetadata{
-			ID:      id,
-			Name:    dCircuit.Name,
-			Owner:   dCircuit.Owner,
-			Desc:    dCircuit.Desc,
-			Version: dCircuit.Version,
+			ID:        id,
+			Name:      dCircuit.Name,
+			Owner:     dCircuit.Owner,
+			Desc:      dCircuit.Desc,
+			Thumbnail: dCircuit.Thumbnail,
+			Version:   dCircuit.Version,
 		},
 		Designer: model.CircuitDesigner{
 			RawContent: dCircuit.CircuitDesigner,
