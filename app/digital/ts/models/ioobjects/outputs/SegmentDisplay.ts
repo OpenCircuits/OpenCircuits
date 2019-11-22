@@ -1,16 +1,12 @@
 import Segments from "./Segments.json";
 
-import {IO_PORT_RADIUS} from "core/utils/Constants";
-
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
-
-import {InputPort} from "../../ports/InputPort";
+import {Name} from "core/utils/Name";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import { SegmentDisplayPositioner } from "digital/models/ports/positioners/SegmentDisplayPositioner";
+import {SegmentDisplayPositioner} from "digital/models/ports/positioners/SegmentDisplayPositioner";
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
@@ -24,6 +20,14 @@ export class SegmentDisplay extends DigitalComponent {
         this.setInputPortCount(7);
     }
 
+    public setInputPortCount(val: number): void {
+        super.setInputPortCount(val);
+        // We do not want to reset the user typed name so we check 
+        //  if it was set in the first place
+        if (!this.name.isSet())
+            this.name = new Name(this.getDisplayName());
+    }
+
     public getSegments(): Array<[Vector, SegmentType]> {
         const segments = Segments[this.getInputPorts().length + ""];
 
@@ -34,7 +38,9 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     public getDisplayName(): string {
-        return "7 Segment Display";
+        if (this.inputs == undefined)
+            return "Segment Display"
+        return this.getInputPorts().length + " Segment Display";
     }
 
     public getXMLName(): string {
