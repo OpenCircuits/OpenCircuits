@@ -44,6 +44,7 @@ export class SegmentCountPopupModule extends SelectionPopupModule {
             selections.map(s => new InputPortChangeAction(s, targetCount))
         ).execute());
 
+        this.circuitController.getSelectionPopup().update();
         this.circuitController.render();
     }
 }
