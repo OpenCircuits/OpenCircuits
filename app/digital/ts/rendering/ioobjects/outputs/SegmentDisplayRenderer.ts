@@ -47,8 +47,8 @@ export const SegmentDisplayRenderer = (() => {
             const w = 35;
             const h = 9;
 
-            const p1 = display.getPorts()[0].getOriginPos();
-            const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos();
+            const p1 = display.getPorts()[0].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
+            const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
             renderer.draw(new Line(p1, p2), style);            
 
             // Draw lights
