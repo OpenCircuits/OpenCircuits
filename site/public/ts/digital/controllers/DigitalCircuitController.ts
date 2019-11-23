@@ -26,7 +26,7 @@ import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
-import { SegmentCountPopupModule } from "./selectionpopup/SegmentCountPopupModule";
+import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
