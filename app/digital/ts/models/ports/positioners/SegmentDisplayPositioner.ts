@@ -2,8 +2,7 @@ import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 
-import {Positioner} from "core/models/ports/positioners/Positioner";
-import { IO_PORT_RADIUS } from "core/utils/Constants";
+import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 export class SegmentDisplayPositioner {
 
