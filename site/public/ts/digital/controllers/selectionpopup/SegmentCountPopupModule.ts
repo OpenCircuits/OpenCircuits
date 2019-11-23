@@ -3,12 +3,9 @@ import $ from "jquery";
 import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
-import {LED} from "digital/models/ioobjects/outputs/LED";
-
 import {GroupAction} from "core/actions/GroupAction";
-import {ColorChangeAction} from "digital/actions/ColorChangeAction";
-import { SegmentDisplay } from "digital/models/ioobjects/outputs/SegmentDisplay";
-import { InputPortChangeAction } from "digital/actions/ports/InputPortChangeAction";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
 export class SegmentCountPopupModule extends SelectionPopupModule {
     private count: HTMLSelectElement;
