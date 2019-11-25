@@ -1,7 +1,7 @@
 import {Input} from "core/utils/Input";
 import {MouseListener} from "core/utils/MouseListener";
 import {KeyboardListener} from "core/utils/KeyboardListener";
-import {Action} from "app/core/ts/actions/Action";
+import {Action} from "core/actions/Action";
 
 import {Tool} from "core/tools/Tool";
 
