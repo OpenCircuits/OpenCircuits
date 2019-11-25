@@ -29,7 +29,7 @@ export class MuxPositioner<T extends Port> extends Positioner<T> {
 export class MuxSelectPositioner extends Positioner<InputPort> {
 
     /**
-     * Port positiong for Multiplexer/Demultiplexer select lines
+     * Port positioning for Multiplexer/Demultiplexer select lines
      *
      * @param arr The array of input ports
      */
@@ -48,4 +48,23 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
         });
     }
 
+}
+
+export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
+    
+    /**
+     * Port positioning for Multiplexer output port and Demultiplexer input port
+     * 
+     * @param ports the array of ports to be positioned
+     */
+    public updatePortPositions(ports: Array<T>): void {
+        ports.forEach((port) => {
+            const width = port.getParent().getSize().x;
+            // Set the origin of the port to the left side of the Mux
+            port.setOriginPos(V(port.getInitialDir().scale(width/2)))
+            // Set the target position such that the port wire length is consistent
+            port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH+(width-DEFAULT_SIZE)/2)));
+        });
+    }
+    
 }

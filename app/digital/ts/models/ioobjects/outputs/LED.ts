@@ -1,7 +1,5 @@
 import {DEFAULT_SIZE,
         DEFAULT_BORDER_WIDTH,
-        IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH,
         LED_LIGHT_RADIUS,
         LED_WIDTH} from "core/utils/Constants";
 

@@ -4,7 +4,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Clock}           from "digital/models/ioobjects/inputs/Clock";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe ("Clock", () => {
     var designer = new DigitalCircuitDesigner(0), c = new Clock(), l = new LED();

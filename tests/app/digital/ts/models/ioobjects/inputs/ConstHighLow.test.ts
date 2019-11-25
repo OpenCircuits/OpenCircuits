@@ -5,7 +5,7 @@ import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
 import {ConstantLow}     from "digital/models/ioobjects/inputs/ConstantLow";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe ("ConstHighLow", () => {
     describe("ConstHigh", () => {

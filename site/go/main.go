@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
@@ -30,6 +32,12 @@ func main() {
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
 	portConfig := flag.String("port", "8080", "Port to serve application")
 	flag.Parse()
+
+	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
+	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
+		*googleAuthConfig = "credentials.json"
+		*userCsifConfig = "gcp_datastore"
+	}
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}

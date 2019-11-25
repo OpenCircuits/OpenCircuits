@@ -43,4 +43,5 @@ func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, exam
 	router.GET("/api/circuits", authenticatedHandler(manager, circuitHandler(userCsif, circuitQueryHandler)))
 	router.POST("/api/circuits", authenticatedHandler(manager, circuitHandler(userCsif, circuitCreateHandler)))
 	router.PUT("/api/circuits/:id", authenticatedHandler(manager, circuitHandler(userCsif, circuitStoreHandler)))
+	router.POST("/api/circuits/:id/delete", authenticatedHandler(manager, circuitHandler(userCsif, circuitDeleteHandler)))
 }
