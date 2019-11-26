@@ -64,6 +64,18 @@ export class SideNavController {
         this.main.setEditMode(this.editMode);
     }
 
+    private deleteUserCircuit(metadata: CircuitMetadata): void {
+        if (confirm("Are you sure you want to delete circuit \"" + metadata.getName() + "\"?")) {
+            RemoteController.DeleteUserCircuit(metadata, (succ) => {
+                if (!succ) {
+                    alert("Failed to delete circuit!");
+                    return;
+                }
+                this.updateUserCircuits();
+            });
+        }
+    }
+
     private loadCircuit(contents: XMLDocument): void {
         this.main.loadCircuit(contents);
         if (this.isOpen)
@@ -81,7 +93,9 @@ export class SideNavController {
         RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
             data.forEach((d) => {
                 const preview = new SideNavCircuitPreview(d);
-                preview.onClick(() => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)));
+                preview.onClick(
+                    () => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)), 
+                    () => this.deleteUserCircuit(d));
                 this.userCircuits.push(preview);
             });
         });

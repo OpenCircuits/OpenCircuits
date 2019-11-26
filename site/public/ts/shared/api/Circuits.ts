@@ -82,3 +82,25 @@ export function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[]> {
         }
     );
 }
+
+export function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<boolean> {
+    return new Promise<XMLDocument>((resolve, reject) => {
+        $.ajax({
+            method: "POST",
+            url: "api/circuits/" + circuitId + "/delete",
+            headers: {
+                "authType": auth.getType(),
+                "authId": auth.getId()
+            }
+        }).done(resolve).fail(reject);
+    }).then(
+        (xml: XMLDocument) => {
+            return true;
+        },
+        (reason) => {
+            console.error("Failed to delete user circuit!", reason);
+            return false;
+        }
+    );
+}
+

@@ -6,7 +6,7 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {Place, Connect} from "../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 

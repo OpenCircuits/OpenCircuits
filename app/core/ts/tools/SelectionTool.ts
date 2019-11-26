@@ -31,11 +31,10 @@ import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Wire} from "core/models/Wire";
 
 export class SelectionTool extends DefaultTool {
+    protected designer: CircuitDesigner;
+    protected camera: Camera;
 
-    private designer: CircuitDesigner;
-    private camera: Camera;
-
-    private selections: Set<Selectable>;
+    protected selections: Set<Selectable>;
 
     // These functions are called every time the selections change
     // TODO: pass selections as argument
@@ -46,7 +45,7 @@ export class SelectionTool extends DefaultTool {
 
     private disabledSelections: boolean;
 
-    private action: GroupAction;
+    protected action: GroupAction;
 
     public constructor(designer: CircuitDesigner, camera: Camera) {
         super();

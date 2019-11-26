@@ -24,7 +24,8 @@
         "analog/*": ["app/analog/ts/*"],
         "site/shared/*": ["site/public/ts/shared/*"],
         "site/digital/*": ["site/public/ts/digital/*"],
-        "site/analog/*": ["site/public/ts/analog/*"]
+        "site/analog/*": ["site/public/ts/analog/*"],
+        "test/helpers/*": ["tests/helpers/*"]
     }
 
   },
