@@ -72,7 +72,7 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this, contents);
+        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents, this.getCamera());
         this.headerController.setProjectName(name);
     }
 

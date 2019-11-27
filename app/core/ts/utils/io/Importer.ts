@@ -1,14 +1,13 @@
 import {SAVED} from "../Config";
-
+import {Vector} from "Vector";
 import {XMLReader} from "./xml/XMLReader";
 import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
-import {Vector} from "Vector";
+import {Camera} from "math/Camera";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 export const Importer = (() => {
     return {
-        LoadCircuit: function(main: DigitalCircuitController, fileContents: string | XMLDocument,loadCamera: boolean): string {
-            const designer = main.getDesigner();
+        LoadCircuit: function(designer: DigitalCircuitDesigner, fileContents: string | XMLDocument, camera?: Camera): string {
 
             const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
             if (root.getElementsByTagName("parsererror").length > 0)
@@ -22,32 +21,30 @@ export const Importer = (() => {
 
             designer.load(reader.getContentsNode());
             
-            if(loadCamera){
+            if (camera){
                 const camNode = reader.getCameraNode();
-                if(camNode){
+                if (camNode){
                     const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
                     const zoom = camNode.getFloatAttribute("zoom");
-                    main.getCamera().setZoom(zoom);
-                    main.getCamera().setPos(camPos);
+                    camera.setZoom(zoom);
+                    camera.setPos(camPos);
                 }
             }
 
             return reader.getName();
         },
-        PromptLoadCircuit: function(main: DigitalCircuitController, contents: string | XMLDocument): string {
-            const designer = main.getDesigner();
+        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument, camera: Camera): string {
             const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
 
             if (open) {
                 designer.reset();
 
-                return this.LoadCircuit(main, contents, true);
+                return this.LoadCircuit(designer, contents, Camera);
             }
 
             return undefined;
         },
-        PromptLoadCircuitFromFile: function(main: DigitalCircuitController, file: File): Promise<string> {
-            const designer = main.getDesigner();
+        PromptLoadCircuitFromFile: function(designer: DigitalCircuitDesigner, file: File, camera: Camera): Promise<string> {
             return new Promise<string>((resolve, reject) => {
                 const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
 
@@ -56,7 +53,7 @@ export const Importer = (() => {
 
                     const reader = new FileReader();
                     reader.onload = () => {
-                        resolve(this.LoadCircuit(main, reader.result.toString(), true));
+                        resolve(this.LoadCircuit(designer, reader.result.toString(), camera));
                     }
                     reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
 
