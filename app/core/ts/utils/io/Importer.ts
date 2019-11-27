@@ -21,9 +21,9 @@ export const Importer = (() => {
 
             designer.load(reader.getContentsNode());
             
-            if (camera){
+            if (camera) {
                 const camNode = reader.getCameraNode();
-                if (camNode){
+                if (camNode) {
                     const camPos = new Vector(camNode.getFloatAttribute("x"),camNode.getFloatAttribute("y"));
                     const zoom = camNode.getFloatAttribute("zoom");
                     camera.setZoom(zoom);
