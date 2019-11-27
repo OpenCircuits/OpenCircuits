@@ -81,25 +81,4 @@ export abstract class Mux extends DigitalComponent {
         this.setSelectPortCount(node.getIntAttribute("selects"));
     }
 
-    // @Override
-    public copy(): Mux {
-        const copy = <Mux>super.copy();
-
-        copy.selects = this.selects.copy(copy);
-
-        return copy;
-    }
-
-    // @Override
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("selects",this.numSelects());
-    }
-
-    // @Override
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setSelectPortCount(node.getIntAttribute("selects"))
-    }
-
 }
