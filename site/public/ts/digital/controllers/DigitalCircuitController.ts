@@ -71,9 +71,13 @@ export class DigitalCircuitController extends MainDesignerController {
         return await this.loginController.initAuthentication();
     }
 
-    public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
-        this.headerController.setProjectName(name);
+    public loadCircuit(contents: string): void {
+        const circuit = Importer.PromptLoadCircuit(contents);
+
+        console.log(circuit);
+
+        this.designer = circuit.getContents() as DigitalCircuitDesigner;
+        this.headerController.setProjectName(circuit.getMetadata().getName());
     }
 
     public saveCircuit(thumbnail: boolean = true): string {

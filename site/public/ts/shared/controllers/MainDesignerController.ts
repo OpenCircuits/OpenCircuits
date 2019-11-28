@@ -62,7 +62,11 @@ export abstract class MainDesignerController extends DesignerController {
         placeTool.begin(comp);
     }
 
-    public abstract loadCircuit(contents: XMLDocument): void;
+    public setDesigner(designer: CircuitDesigner): void {
+        this.designer.replace(designer);
+    }
+
+    public abstract loadCircuit(contents: string): void;
     public abstract saveCircuit(): string;
 
     public setActive(on: boolean): void {

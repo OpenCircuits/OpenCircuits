@@ -43,16 +43,15 @@ export class DigitalCopyController extends CopyController {
         });
 
         // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/xml", WriteCircuit(designer, "clipboard"));
+        e.clipboardData.setData("text/json", WriteCircuit(designer, "clipboard"));
         e.preventDefault();
     }
 
     protected paste(e: ClipboardEvent, main: DigitalCircuitController): void{
         const mainDesigner = main.getDesigner();
-        const contents = e.clipboardData.getData("text/xml");
+        const contents = e.clipboardData.getData("text/json");
 
-        const designer = new DigitalCircuitDesigner(-1);
-        Importer.LoadCircuit(designer, contents);
+        const designer = Importer.LoadCircuit(contents).getContents() as DigitalCircuitDesigner;
 
         const group = CopyGroup(designer.getGroup());
         const objs = group.getComponents();

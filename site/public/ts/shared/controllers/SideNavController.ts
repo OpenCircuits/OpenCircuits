@@ -76,7 +76,7 @@ export class SideNavController {
         }
     }
 
-    private loadCircuit(contents: XMLDocument): void {
+    private loadCircuit(contents: string): void {
         this.main.loadCircuit(contents);
         if (this.isOpen)
             this.toggle();
@@ -94,7 +94,7 @@ export class SideNavController {
             data.forEach((d) => {
                 const preview = new SideNavCircuitPreview(d);
                 preview.onClick(
-                    () => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)), 
+                    () => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)),
                     () => this.deleteUserCircuit(d));
                 this.userCircuits.push(preview);
             });

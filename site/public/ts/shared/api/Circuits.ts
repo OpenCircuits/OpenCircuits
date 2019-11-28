@@ -6,7 +6,7 @@ import {CircuitMetadata} from "core/models/CircuitMetadata";
 import {XMLToCircuitMetadata, XMLToCircuitMetadataList} from "./Utils";
 
 export function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata> {
-    return new Promise<XMLDocument>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         $.ajax({
             method: "POST",
             url: "api/circuits",
@@ -17,8 +17,8 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<Circui
             data: data
         }).done(resolve).fail(reject);
     }).then(
-        (xml: XMLDocument) => {
-            return XMLToCircuitMetadata(xml);
+        (xml: string) => {
+            return null;//XMLToCircuitMetadata(xml);
         },
         (reason) => {
             console.error("Failed to create user circuit!", reason);
@@ -28,7 +28,7 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<Circui
 }
 
 export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<CircuitMetadata> {
-    return new Promise<XMLDocument>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         $.ajax({
             method: "PUT",
             url: "api/circuits/" + circuitId,
@@ -39,8 +39,8 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
             data: data
         }).done(resolve).fail(reject);
     }).then(
-        (xml: XMLDocument) => {
-            return XMLToCircuitMetadata(xml);
+        (xml: string) => {
+            return null;//XMLToCircuitMetadata(xml);
         },
         (reason) => {
             console.error("Failed to update user circuit!", reason);
@@ -49,8 +49,8 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
     );
 }
 
-export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<XMLDocument> {
-    return new Promise<XMLDocument>((resolve, reject) => {
+export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
         $.ajax({
             method: "GET",
             url: `api/circuits/${circuitId}`,
@@ -63,7 +63,7 @@ export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<XML
 }
 
 export function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[]> {
-    return new Promise<XMLDocument>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         $.ajax({
             method: "GET",
             url: "api/circuits",
@@ -73,8 +73,8 @@ export function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[]> {
             }
         }).done(resolve).fail(reject);
     }).then(
-        (xml: XMLDocument) => {
-            return XMLToCircuitMetadataList(xml);
+        (xml: string) => {
+            return null;//XMLToCircuitMetadataList(xml);
         },
         (reason) => {
             console.error("Failed to update user circuit!", reason);
@@ -84,7 +84,7 @@ export function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[]> {
 }
 
 export function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<boolean> {
-    return new Promise<XMLDocument>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         $.ajax({
             method: "POST",
             url: "api/circuits/" + circuitId + "/delete",
@@ -94,7 +94,7 @@ export function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<b
             }
         }).done(resolve).fail(reject);
     }).then(
-        (xml: XMLDocument) => {
+        (xml: string) => {
             return true;
         },
         (reason) => {

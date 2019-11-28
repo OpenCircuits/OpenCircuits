@@ -3,6 +3,10 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
 import {CircuitBoundingBox} from "core/utils/ComponentUtils";
+import {Serialize} from "core/utils/Serializer";
+import {Circuit} from "core/utils/io/Importer";
+
+import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {CullableObject} from "core/models/CullableObject";
 
 // Renders a view of the given circuit on the given canvas element
@@ -39,23 +43,41 @@ function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesign
 }
 
 export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): string {
-    const writer = new XMLWriter(designer.getXMLName());
-    writer.setVersion("1.2");
-    writer.setName(name);
+    let thumb = "data;,";
     if (thumbnail) {
         // Render to a small temporary canvas
         const canvas = document.createElement("canvas");
         RenderCircuit(canvas, designer, thumbnailSize);
-        const thumbnail = canvas.toDataURL("image/png", 0.9);
-        writer.setThumbnail(thumbnail);
-        canvas.remove();
-    } else {
-        writer.setThumbnail("data:,");
+        thumb = canvas.toDataURL("image/png", 0.9);
     }
 
-    designer.save(writer.getContentsNode());
+    const thingy = new Circuit(
+        new CircuitMetadataBuilder()
+                .withVersion("1.2")
+                .withName(name)
+                .withThumbnail(thumb)
+                .build(),
+        designer);
 
-    return writer.serialize();
+    return Serialize(thingy);
+
+    // const writer = new XMLWriter(designer.getXMLName());
+    // writer.setVersion("1.2");
+    // writer.setName(name);
+    // if (thumbnail) {
+    //     // Render to a small temporary canvas
+    //     const canvas = document.createElement("canvas");
+    //     RenderCircuit(canvas, designer, thumbnailSize);
+    //     const thumbnail = canvas.toDataURL("image/png", 0.9);
+    //     writer.setThumbnail(thumbnail);
+    //     canvas.remove();
+    // } else {
+    //     writer.setThumbnail("data:,");
+    // }
+
+    // designer.save(writer.getContentsNode());
+
+    // return writer.serialize();
 }
 export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
     // Get name
@@ -66,7 +88,7 @@ export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, 
 
     const filename = projectName + ".circuit";
 
-    const file = new Blob([data], {type: "text/xml"});
+    const file = new Blob([data], {type: "text/json"});
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
     } else { // Others

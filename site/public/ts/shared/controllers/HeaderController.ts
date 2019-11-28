@@ -52,6 +52,7 @@ export abstract class HeaderController {
         });
 
         $("#header-download-button").click(() => {
+            console.log("ASDADASDASD");
             this.onSaveCircuit(main);
         });
 

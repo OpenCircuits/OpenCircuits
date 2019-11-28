@@ -58,7 +58,7 @@ func NewExampleCircuitStorageInterfaceFactory(configPath string) interfaces.Circ
 			Desc:      "example",
 			Thumbnail: example.Thumbnail,
 		}
-		circuit.Designer.RawContent = string(contents)
+		circuit.Designer = string(contents)
 		circuitInterface.UpdateCircuit(circuit)
 	}
 
