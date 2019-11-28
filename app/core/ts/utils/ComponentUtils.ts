@@ -241,34 +241,7 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 
     copies.forEach(c => c.setDesigner(designer));
 
-    // const graph: Graph<number, number> = CreateGraph(groups);
-
-    // // Copy components
-    // const copies = objs.map((o) => o.copy());
-
-    // // Copy connections
-    // const wireCopies: Wire[] = [];
-    // for (const i of graph.getNodes()) {
-    //     const c1 = copies[i];
-    //     const connections = graph.getConnections(i);
-
-    //     for (const connection of connections) {
-    //         const j = connection.getTarget();
-    //         const c2 = copies[j];
-
-    //         const w = wires[connection.getWeight()];
-
-    //         // Find indices of which ports the wire should be connected to
-    //         const i1 = objs[i].getPorts().indexOf(w.getP1());
-    //         const i2 = objs[j].getPorts().indexOf(w.getP2());
-
-    //         const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
-    //         wireCopies.push(wire);
-    //     }
-    // }
-
-    // const group = copies as IOObject[];
-    return new IOObjectSet(copies);//group.concat(wireCopies));
+    return new IOObjectSet(copies);
 }
 
 // Find a minimal bounding box enclosing all cullable objects in a given array
