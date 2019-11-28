@@ -11,6 +11,7 @@ import {Wire} from "core/models/Wire";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {serializable} from "core/utils/Serializer";
 
 /**
  * Helper class to hold different groups of components.
@@ -25,6 +26,7 @@ import {DigitalWire} from "digital/models/DigitalWire";
  *  A helper method to get all the components including them
  *  is included as getAllComponents()
  */
+@serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {
     protected wires: Set<DigitalWire>;
 
@@ -32,7 +34,7 @@ export class DigitalObjectSet extends IOObjectSet {
     private outputs: DigitalComponent[];
     private others:  DigitalComponent[];
 
-    public constructor(set: IOObject[]) {
+    public constructor(set: IOObject[] = []) {
         super(set);
 
         this.inputs  = [];
