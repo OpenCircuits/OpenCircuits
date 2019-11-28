@@ -1,6 +1,3 @@
-import {XMLWriter} from "../../../../../app/core/ts/utils/io/xml/XMLWriter";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
 import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 import {Serialize} from "core/utils/Serializer";
@@ -8,6 +5,9 @@ import {Circuit} from "core/utils/io/Importer";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {CullableObject} from "core/models/CullableObject";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
 
 // Renders a view of the given circuit on the given canvas element
 // Canvas is resized to a square with side length of size

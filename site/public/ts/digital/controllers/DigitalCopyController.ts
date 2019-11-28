@@ -53,7 +53,7 @@ export class DigitalCopyController extends CopyController {
 
         const designer = Importer.LoadCircuit(contents).getContents() as DigitalCircuitDesigner;
 
-        const group = CopyGroup(designer.getGroup());
+        const group = CopyGroup(designer.getGroup().toList());
         const objs = group.getComponents();
 
         const action = new GroupAction();
