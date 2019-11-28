@@ -3,23 +3,24 @@ import "jest";
 import {CreateGroup, GatherGroup,
         CopyGroup} from "core/utils/ComponentUtils";
 
-import {Connect} from "digital/utils/ComponentUtils";
-
 import {DigitalNode}         from "digital/models/ioobjects/other/DigitalNode";
 import {Button}              from "digital/models/ioobjects/inputs/Button";
-import {ConstantHigh}        from "digital/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow}         from "digital/models/ioobjects/inputs/ConstantLow";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
 import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
-import {DFlipFlop}           from "digital/models/ioobjects/flipflops/DFlipFlop";
-import {DLatch}              from "digital/models/ioobjects/latches/DLatch";
-import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {Component} from "core/models/Component";
 import {DigitalWire} from "digital/models/DigitalWire";
+
+function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
+    const p1 = c1.getOutputPort(i1);
+    const p2 = c2.getInputPort(i2);
+    const wire = new DigitalWire(p1, p2);
+    p1.connect(wire);
+    p2.connect(wire);
+    return wire;
+}
 
 // describe("SeparateGroup", () => {
 //     const NUM_SAMPLES = 10;
