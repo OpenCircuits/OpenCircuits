@@ -1,7 +1,9 @@
 import {Vector,V}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
+import {serializable} from "../Serializer";
 
+@serializable("BezierCurve")
 export class BezierCurve {
     private p1: Vector;
     private p2: Vector;
@@ -11,7 +13,7 @@ export class BezierCurve {
     private boundingBox: Transform;
     private dirty: boolean;
 
-    public constructor(p1: Vector, p2: Vector, c1: Vector, c2: Vector) {
+    public constructor(p1: Vector = V(), p2: Vector = V(), c1: Vector = V(), c2: Vector = V()) {
         this.p1 = p1.copy();
         this.p2 = p2.copy();
         this.c1 = c1.copy();

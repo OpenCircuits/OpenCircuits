@@ -2,28 +2,32 @@ import {Vector,V} from "./Vector";
 import {Transform} from "./Transform";
 import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
+import {serializable, serialize} from "../Serializer";
 
+@serializable("Camera")
 export class Camera {
+    @serialize
     private pos: Vector;
+    @serialize
     private zoom: number;
 
-    private center: Vector;
     private transform: Transform;
 
     private mat: Matrix2x3;
     private inv: Matrix2x3;
 
+    @serialize
     private width: number;
+    @serialize
     private height: number;
 
     private dirty: boolean;
 
-    public constructor(width: number, height: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
+    public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
         this.width = width;
         this.height = height;
         this.pos = startPos;
         this.zoom = startZoom;
-        this.center = V(width,height).scale(0.5);
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
     }
@@ -45,7 +49,6 @@ export class Camera {
     public resize(width: number, height: number): void {
         this.width = width;
         this.height = height;
-        this.center = V(this.width, this.height).scale(0.5);
     }
     public setPos(pos: Vector): void {
         this.dirty = true;
@@ -92,9 +95,9 @@ export class Camera {
         return this.inv.copy();
     }
     public getScreenPos(v: Vector): Vector {
-        return this.getInverseMatrix().mul(v).add(this.center);
+        return this.getInverseMatrix().mul(v).add(this.getCenter());
     }
     public getWorldPos(v: Vector): Vector {
-        return this.getMatrix().mul(v.sub(this.center));
+        return this.getMatrix().mul(v.sub(this.getCenter()));
     }
 }

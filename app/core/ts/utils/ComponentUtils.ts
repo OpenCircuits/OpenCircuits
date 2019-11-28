@@ -8,6 +8,7 @@ import {Port} from "core/models/ports/Port";
 import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
 import {BoundingBox} from "math/BoundingBox";
+import {serializable} from "./Serializer";
 
 /**
  * Helper class to hold different groups of components.
@@ -22,11 +23,12 @@ import {BoundingBox} from "math/BoundingBox";
  *  A helper method to get all the components including them
  *  is included as getAllComponents()
  */
+@serializable("IOObjectSet")
 export class IOObjectSet {
     protected components: Set<Component>;
     protected wires: Set<Wire>;
 
-    public constructor(set: IOObject[]) {
+    public constructor(set: IOObject[] = []) {
         this.components = new Set<Component>(set.filter(o => o instanceof Component) as Component[]);
         this.wires      = new Set<Wire>     (set.filter(o => o instanceof Wire)      as Wire[]);
     }

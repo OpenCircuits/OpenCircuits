@@ -1,47 +1,47 @@
 import {SAVED} from "../Config";
 
-import {XMLReader} from "./xml/XMLReader";
-import {ResolveVersionConflict} from "./VersionConflictResolver";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {Deserialize, serializable} from "../Serializer";
+import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+
+@serializable("Circuit")
+export class Circuit {
+    private metadata: CircuitMetadata;
+    private contents: CircuitDesigner;
+
+    public constructor(metadata?: CircuitMetadata, contents?: CircuitDesigner) {
+        this.metadata = metadata;
+        this.contents = contents;
+    }
+
+    public getMetadata(): CircuitMetadata {
+        return this.metadata;
+    }
+
+    public getContents(): CircuitDesigner {
+        return this.contents;
+    }
+}
 
 export const Importer = (() => {
     return {
-        LoadCircuit: function(designer: DigitalCircuitDesigner, fileContents: string | XMLDocument): string {
-            const root = (fileContents instanceof XMLDocument) ? (fileContents) : (<XMLDocument>new DOMParser().parseFromString(fileContents, "text/xml"));
-            if (root.getElementsByTagName("parsererror").length > 0)
-                return;
-
-            const reader = new XMLReader(root);
-
-            // Check for old version of save
-            if (reader.getVersion() == -1)
-                ResolveVersionConflict(reader);
-
-            designer.load(reader.getContentsNode());
-
-            return reader.getName();
+        LoadCircuit: function(fileContents: string): Circuit {
+            return Deserialize<Circuit>(fileContents);
         },
-        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument): string {
+        PromptLoadCircuit: function(contents: string): Circuit {
             const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
-
-            if (open) {
-                designer.reset();
-
-                return this.LoadCircuit(designer, contents);
-            }
-
+            if (open)
+                return this.LoadCircuit(contents);
             return undefined;
         },
-        PromptLoadCircuitFromFile: function(designer: DigitalCircuitDesigner, file: File): Promise<string> {
-            return new Promise<string>((resolve, reject) => {
+        PromptLoadCircuitFromFile: function(file: File): Promise<Circuit> {
+            return new Promise<Circuit>((resolve, reject) => {
                 const open = SAVED || confirm("Are you sure you want to overwrite your current scene?");
 
                 if (open) {
-                    designer.reset();
-
                     const reader = new FileReader();
                     reader.onload = () => {
-                        resolve(this.LoadCircuit(designer, reader.result.toString()));
+                        resolve(this.LoadCircuit(reader.result.toString()));
                     }
                     reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
 
@@ -52,5 +52,4 @@ export const Importer = (() => {
             });
         }
     }
-
 })();

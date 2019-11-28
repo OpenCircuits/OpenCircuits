@@ -1,5 +1,6 @@
 import {Vector,V}  from "./Vector";
 import {Matrix2x3} from "./Matrix";
+import {serialize, serializable} from "../Serializer";
 
 /**
  * Class representing a Transform.
@@ -9,11 +10,21 @@ import {Matrix2x3} from "./Matrix";
  * For performance reasons the transform also stores a list of corners
  *  to be able to quickly apply intersection testing.
  */
+@serializable("Transform")
 export class Transform {
+    @serialize
     private parent?: Transform;
+
+    @serialize
     private pos: Vector;
+
+    @serialize
     private scale: Vector;
+
+    @serialize
     private angle: number;
+
+    @serialize
     private size: Vector;
 
     private corners: Array<Vector>;
@@ -36,7 +47,7 @@ export class Transform {
      * @param  {Vector} size    The initial size of the transform
      * @param  {number} angle   The initial angle of the transform
      */
-    public constructor(pos: Vector, size: Vector, angle: number = 0) {
+    public constructor(pos: Vector = V(0), size: Vector = V(1), angle: number = 0) {
         this.parent = undefined;
 
         this.pos = V(pos.x, pos.y);
