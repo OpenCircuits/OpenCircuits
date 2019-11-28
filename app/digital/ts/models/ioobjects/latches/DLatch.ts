@@ -1,5 +1,7 @@
 import {Latch} from "./Latch";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("DLatch")
 export class DLatch extends Latch {
 
     public constructor() {

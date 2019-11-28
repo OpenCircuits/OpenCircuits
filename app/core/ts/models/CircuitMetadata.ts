@@ -1,4 +1,6 @@
+import {serializable} from "core/utils/Serializer";
 
+@serializable("CircuitMetadata")
 export class CircuitMetadata {
     private id: string;
     private name: string;
@@ -7,7 +9,7 @@ export class CircuitMetadata {
     private thumbnail: string;
     private version: string;
 
-    public constructor(builder: CircuitMetadataBuilder) {
+    public constructor(builder: CircuitMetadataBuilder = new CircuitMetadataBuilder()) {
         this.id = builder.id;
         this.name = builder.name;
         this.owner = builder.owner;

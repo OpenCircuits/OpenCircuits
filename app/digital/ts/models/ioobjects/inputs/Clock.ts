@@ -4,9 +4,14 @@ import {ClampedValue} from "math/ClampedValue";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {serializable, serialize} from "core/utils/Serializer";
 
+@serializable("Clock")
 export class Clock extends DigitalComponent {
+    @serialize
     private frequency: number;
+
+    @serialize
     private isOn: boolean;
 
     public constructor() {

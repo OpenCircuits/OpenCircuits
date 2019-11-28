@@ -9,15 +9,23 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {ICData} from "./ICData";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("IC")
 export class IC extends DigitalComponent {
     private data: ICData;
 
     private collection: DigitalObjectSet;
 
-    public constructor(data: ICData) {
+    public constructor(data?: ICData) {
+        // if no data was provided then provide blank arguments
+        if (!data) {
+            super(new ClampedValue(0), new ClampedValue(0), V());
+            return;
+        }
+
         super(new ClampedValue(data.getInputCount()),
-              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
+              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE));
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 

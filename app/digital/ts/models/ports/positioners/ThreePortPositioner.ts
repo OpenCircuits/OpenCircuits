@@ -2,7 +2,9 @@ import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 import {Positioner} from "core/models/ports/positioners/Positioner";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("ThreePortPositioner")
 export class ThreePortPositioner extends Positioner<InputPort> {
 
     /**

@@ -3,7 +3,9 @@ import {V} from "Vector";
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 
 import {FlipFlop} from "./FlipFlop";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("JKFlipFlop")
 export class JKFlipFlop extends FlipFlop {
 
     public constructor() {

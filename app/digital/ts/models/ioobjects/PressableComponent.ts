@@ -9,9 +9,13 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {Pressable} from "core/utils/Pressable";
 
 import {DigitalComponent} from "../DigitalComponent";
+import {serialize} from "core/utils/Serializer";
 
 export abstract class PressableComponent extends DigitalComponent implements Pressable {
+    @serialize
     protected pressableBox: Transform;
+
+    @serialize
     protected on: boolean;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector, pSize: Vector) {

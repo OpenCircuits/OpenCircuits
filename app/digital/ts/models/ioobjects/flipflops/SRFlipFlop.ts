@@ -3,7 +3,9 @@ import {V} from "Vector";
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 
 import {FlipFlop} from "./FlipFlop";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("SRFlipFlop")
 export class SRFlipFlop extends FlipFlop {
 
     public constructor() {

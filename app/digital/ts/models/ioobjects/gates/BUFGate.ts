@@ -1,7 +1,10 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serializable} from "core/utils/Serializer";
+
 import {Gate} from "./Gate";
 
+@serializable("BUFGate")
 export class BUFGate extends Gate {
 
     public constructor(not: boolean = false) {

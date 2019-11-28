@@ -14,6 +14,9 @@ export abstract class CircuitDesigner {
 
     public abstract removeWire(wire: Wire): void;
 
+    public abstract replace(designer: CircuitDesigner): void;
+    public abstract merge(designer: CircuitDesigner): void;
+
     public abstract shift(obj: Component | Wire, i?: number): number;
 
     public abstract getObjects(): Component[];

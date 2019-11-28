@@ -1,9 +1,4 @@
-import {XMLable} from "core/utils/io/xml/XMLable";
-import {XMLNode} from "core/utils/io/xml/XMLNode";
-
-import {DigitalObjectSet,
-        SaveGroup,
-        LoadGroup} from "digital/utils/ComponentUtils";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
@@ -17,14 +12,23 @@ import {OutputPort} from "./ports/OutputPort";
 
 import {DigitalWire}      from "./DigitalWire";
 import {DigitalComponent} from "./DigitalComponent";
+import {serializable, serialize} from "core/utils/Serializer";
 
-export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
+@serializable("DigitalCircuitDesigner")
+export class DigitalCircuitDesigner extends CircuitDesigner {
+    @serialize
     private ics: ICData[];
 
+    @serialize
     private objects: DigitalComponent[];
+
+    @serialize
     private wires: DigitalWire[];
+
     private propagationQueue: Propagation[];
     private updateRequests: number;
+
+    @serialize
     private propagationTime: number;
 
     private updateCallback: () => void;
@@ -185,57 +189,16 @@ export class DigitalCircuitDesigner extends CircuitDesigner implements XMLable {
         wire.setDesigner(undefined);
     }
 
-    public save(node: XMLNode): void {
-        const icDataNode  = node.createChild("icdata");
+    public replace(designer: DigitalCircuitDesigner) {
+        this.reset();
 
-        const icIdMap = new Map<ICData, number>();
-
-        // Create ICData map
-        let icId = 0;
-        for (const ic of this.ics)
-            icIdMap.set(ic, icId++);
-
-        // Save ICs
-        for (const ic of this.ics) {
-            const icNode = icDataNode.createChild("icdata");
-            const icid = icIdMap.get(ic);
-
-            icNode.addAttribute("icid", icid);
-            ic.save(icNode, icIdMap);
-        }
-
-        SaveGroup(node, this.objects, this.wires, icIdMap);
+        this.ics = designer.ics;
+        this.objects = designer.objects;
+        this.wires = designer.wires;
+        this.propagationTime = designer.propagationTime;
     }
-
-    public load(node: XMLNode): void {
-        const icDataNode  = node.findChild("icdata");
-
-        const icIdMap = new Map<number, ICData>();
-        const ics = icDataNode.getChildren();
-
-        // Create ICData map
-        for (const ic of ics) {
-            const icid = ic.getIntAttribute("icid");
-            icIdMap.set(icid, new ICData())
-        }
-
-        // Load ICs
-        for (const ic of ics) {
-            const icid = ic.getIntAttribute("icid");
-            icIdMap.get(icid).load(ic, icIdMap);
-        }
-
-        const group = LoadGroup(node, icIdMap);
-
-        // Add all objects/wires
-        group.getComponents().forEach((c) => this.addObject(c));
-        group.getWires().forEach((w) => {
-            this.wires.push(w);
-            w.setDesigner(this);
-        });
-
-        // Update since the circuit has changed
-        this.updateCallback();
+    public merge(designer: CircuitDesigner) {
+        // TODO
     }
 
     // Shift an object to a certain position

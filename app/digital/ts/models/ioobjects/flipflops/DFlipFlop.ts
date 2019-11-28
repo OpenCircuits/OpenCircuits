@@ -1,6 +1,9 @@
 import {V} from "Vector";
+import {serializable} from "core/utils/Serializer";
+
 import {FlipFlop} from "./FlipFlop";
 
+@serializable("DFlipFlop")
 export class DFlipFlop extends FlipFlop {
 
     public constructor() {

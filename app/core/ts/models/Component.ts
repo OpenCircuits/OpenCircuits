@@ -6,6 +6,7 @@ import {DEFAULT_BORDER_WIDTH,
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
+import {serialize}    from "core/utils/Serializer";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Port}       from "./ports/Port";
@@ -22,6 +23,7 @@ function Snap(wire: Wire, x: number, c: number): number {
 }
 
 export abstract class Component extends CullableObject {
+    @serialize
     protected transform: Transform;
 
     protected constructor(size: Vector) {

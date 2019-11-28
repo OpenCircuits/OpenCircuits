@@ -1,9 +1,11 @@
 import {Vector,V} from "Vector";
 import {Transform} from "math/Transform";
+import {serialize} from "core/utils/Serializer";
 
 import {IOObject} from "./IOObject"
 
 export abstract class CullableObject extends IOObject {
+    @serialize
     private cullTransform: Transform;
 
     private dirty: boolean;

@@ -1,12 +1,15 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+
 import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {Gate} from "./Gate";
+import {serializable} from "core/utils/Serializer";
 
+import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
+
+import {Gate} from "./Gate";
 import {GetQuadraticOffset} from "./ORGate";
 
-import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
-
+@serializable("XORGate")
 export class XORGate extends Gate {
 
     public constructor(not: boolean = false) {

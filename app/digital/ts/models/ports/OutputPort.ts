@@ -5,13 +5,15 @@ import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalWire}      from "../DigitalWire";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("DigitalOutputPort")
 export class OutputPort extends Port {
     protected parent: DigitalComponent;
 
     private connections: DigitalWire[];
 
-    public constructor(parent: DigitalComponent) {
+    public constructor(parent?: DigitalComponent) {
         super(parent);
         this.connections = [];
     }

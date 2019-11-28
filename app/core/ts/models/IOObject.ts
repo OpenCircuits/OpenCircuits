@@ -4,12 +4,16 @@ import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {XMLable} from "core/utils/io/xml/XMLable";
 
 import {Selectable} from "core/utils/Selectable";
+import {serialize} from "core/utils/Serializer";
 import {Name} from "core/utils/Name";
 
 import {CircuitDesigner} from "./CircuitDesigner";
 
 export abstract class IOObject implements Selectable, XMLable {
+    @serialize
     protected designer?: CircuitDesigner;
+
+    @serialize
     protected name: Name;
 
     protected constructor() {

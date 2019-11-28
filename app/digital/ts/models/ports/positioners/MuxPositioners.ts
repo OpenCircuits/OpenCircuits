@@ -7,7 +7,9 @@ import {Port} from "core/models/ports/Port";
 import {InputPort} from "../InputPort";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("MuxPositioner")
 export class MuxPositioner<T extends Port> extends Positioner<T> {
 
     public updatePortPositions(ports: Array<T>): void {
@@ -26,6 +28,7 @@ export class MuxPositioner<T extends Port> extends Positioner<T> {
 
 }
 
+@serializable("MuxSelectPositioner")
 export class MuxSelectPositioner extends Positioner<InputPort> {
 
     /**
@@ -50,11 +53,12 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
 
 }
 
+@serializable("MuxSinglePortPositioner")
 export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
-    
+
     /**
      * Port positioning for Multiplexer output port and Demultiplexer input port
-     * 
+     *
      * @param ports the array of ports to be positioned
      */
     public updatePortPositions(ports: Array<T>): void {
@@ -66,5 +70,5 @@ export class MuxSinglePortPositioner<T extends Port> extends Positioner<T> {
             port.setTargetPos(V(port.getInitialDir().scale(IO_PORT_LENGTH+(width-DEFAULT_SIZE)/2)));
         });
     }
-    
+
 }

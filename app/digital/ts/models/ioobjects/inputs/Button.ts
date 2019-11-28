@@ -3,7 +3,9 @@ import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
 import {PressableComponent} from "../PressableComponent";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("Button")
 export class Button extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),

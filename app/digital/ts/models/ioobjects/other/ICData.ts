@@ -25,7 +25,9 @@ import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
+import {serializable, serialize} from "core/utils/Serializer";
 
+@serializable("ICData")
 export class ICData {
     private transform: Transform;
 

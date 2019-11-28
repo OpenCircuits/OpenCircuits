@@ -1,7 +1,9 @@
 import {Latch} from "./Latch";
 
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("SRLatch")
 export class SRLatch extends Latch {
 
     public constructor() {

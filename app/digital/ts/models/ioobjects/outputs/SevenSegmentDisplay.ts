@@ -8,7 +8,9 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 import {InputPort} from "../../ports/InputPort";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("SevenSegmentDisplay")
 export class SevenSegmentDisplay extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(7),

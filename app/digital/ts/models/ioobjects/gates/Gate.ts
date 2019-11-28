@@ -1,7 +1,8 @@
-import {Vector} from "Vector";
+import {Vector}       from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {Name} from "core/utils/Name";
-import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {serialize}    from "core/utils/Serializer";
+import {Name}         from "core/utils/Name";
+import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
@@ -13,6 +14,7 @@ import {InputPort} from "digital/models/ports/InputPort";
 // Gate should always be a component with exactly 1 output port
 //
 export abstract class Gate extends DigitalComponent {
+    @serialize
     protected not: boolean = false;
 
     public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector, inputPositioner?: Positioner<InputPort>) {

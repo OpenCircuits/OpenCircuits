@@ -9,8 +9,11 @@ import {ClampedValue} from "math/ClampedValue";
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable, serialize} from "core/utils/Serializer";
 
+@serializable("LED")
 export class LED extends DigitalComponent {
+    @serialize
     private color: string;
 
     public constructor() {

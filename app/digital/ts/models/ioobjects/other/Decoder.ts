@@ -9,7 +9,9 @@ import {InputPort} from "../../ports/InputPort";
 import {OutputPort} from "../../ports/OutputPort";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("Decoder")
 export class Decoder extends DigitalComponent {
 
     public constructor() {

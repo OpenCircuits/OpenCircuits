@@ -5,7 +5,9 @@ import {MuxPositioner,
         MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("Demultiplexer")
 export class Demultiplexer extends Mux {
 
     public constructor() {

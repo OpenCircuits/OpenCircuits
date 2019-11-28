@@ -14,8 +14,10 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {Port} from "core/models/ports/Port";
+import {serialize} from "core/utils/Serializer";
 
 export abstract class Mux extends DigitalComponent {
+    @serialize
     protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,

@@ -8,7 +8,9 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {Node} from "core/models/Node";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("DigitalNode")
 export class DigitalNode extends DigitalComponent implements Node {
 
     public constructor() {

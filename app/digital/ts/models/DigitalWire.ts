@@ -4,14 +4,19 @@ import {OutputPort} from "./ports/OutputPort";
 import {DigitalComponent} from "./DigitalComponent";
 import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
+import {serializable, serialize} from "core/utils/Serializer";
 
+@serializable("DigitalWire")
 export class DigitalWire extends Wire {
+    @serialize
     protected p1: OutputPort;
+    @serialize
     protected p2: InputPort;
 
+    @serialize
     private isOn: boolean;
 
-    public constructor(input: OutputPort, output: InputPort) {
+    public constructor(input?: OutputPort, output?: InputPort) {
         super(input, output);
 
         this.isOn = false;

@@ -11,12 +11,17 @@ import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {Port} from "./ports/Port";
 import {Node} from "./Node";
+import {serialize} from "core/utils/Serializer";
 
 export abstract class Wire extends CullableObject {
+    @serialize
     protected p1: Port;
+    @serialize
     protected p2: Port;
 
+    @serialize
     private shape: BezierCurve;
+    @serialize
     private straight: boolean;
 
     private dirtyShape: boolean;

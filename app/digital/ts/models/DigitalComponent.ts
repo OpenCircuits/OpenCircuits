@@ -1,5 +1,6 @@
 import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serialize} from "core/utils/Serializer";
 
 import {Component} from "core/models/Component";
 
@@ -13,9 +14,12 @@ import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
 export abstract class DigitalComponent extends Component {
+    @serialize
     protected designer: DigitalCircuitDesigner;
 
+    @serialize
     protected inputs:  PortSet<InputPort>;
+    @serialize
     protected outputs: PortSet<OutputPort>;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,

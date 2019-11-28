@@ -2,7 +2,9 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("ConstantLow")
 export class ConstantLow extends DigitalComponent {
 
     public constructor() {

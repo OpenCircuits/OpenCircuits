@@ -4,7 +4,9 @@ import {Component} from "core/models/Component";
 import {Port}      from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
+import {serializable} from "core/utils/Serializer";
 
+@serializable("PortSet")
 export class PortSet<T extends Port> {
     private parent: Component;
 
@@ -19,8 +21,10 @@ export class PortSet<T extends Port> {
 
     private positioner: Positioner<T>;
 
-    public constructor(parent: Component, count: ClampedValue,
-                       positioner: Positioner<T> = new Positioner<T>(), type: new(c: Component) => T) {
+    public constructor();
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component) => T);
+    public constructor(parent?: Component, count?: ClampedValue,
+                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component) => T) {
         this.parent = parent;
         this.type = type;
         this.count = count;
@@ -29,7 +33,8 @@ export class PortSet<T extends Port> {
         this.oldPorts = [];
         this.currentPorts = [];
 
-        this.setPortCount(count.getValue());
+        if (count)
+            this.setPortCount(count.getValue());
     }
 
     /**
