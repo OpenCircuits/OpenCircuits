@@ -1,13 +1,11 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serialize} from "core/utils/Serializer";
 
-import {XMLNode} from "core/utils/io/xml/XMLNode";
-
-import {InputPort} from "../../ports/InputPort";
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {serialize} from "core/utils/Serializer";
+import {InputPort} from "digital/models/ports/InputPort";
 
 //
 // Latch is an abstract superclass for general latches.
@@ -26,17 +24,4 @@ export abstract class Latch extends DigitalComponent {
         this.getOutputPort(1).setName("Q ");
     }
 
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        node.addAttribute("inputs", this.numInputs());
-        node.addAttribute("outputs", this.numOutputs());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        this.setInputPortCount(node.getIntAttribute("inputs"));
-        this.setOutputPortCount(node.getIntAttribute("outputs"));
-    }
 }

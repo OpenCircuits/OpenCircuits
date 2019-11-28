@@ -7,23 +7,25 @@ const uuidKey = Symbol("__UUID__");
 const typeKey = "type";
 const dataKey = "data";
 
-type serializeProperties = [new () => Object, [(obj: any, refs: Map<Object, string>, root: any) => any,
-                                               (data: any, refs: Map<string, Object>, root: any) => any]];
+type customBehavior = [(obj: any, refs: Map<Object, string>, root: any, customBehavior: (obj: Object) => boolean) => any,
+                       (data: any, refs: Map<string, Object>, root: any) => any];
+
+type serializeProperties = [new () => Object, customBehavior];
 
 const serializableObjects = new Map<string, serializeProperties>();
 
 // /** Add built-in objects as serializable */
 serializable("Array", [
-    (obj: Array<any>, refs: Map<Object, string>, root: any) => {
-        return obj.map((v) => serializeProp(v, refs, root));
+    (obj: Array<any>, refs: Map<Object, string>, root: any, customBehavior: (obj: Object) => boolean) => {
+        return obj.map((v) => serializeProp(v, refs, root, customBehavior));
     },
     (data: Array<any>, refs: Map<string, Object>, root: any) => {
         return data.map((v) => deserializeProp(v, refs, root));
     }
 ])(Array);
 serializable("Set", [
-    (obj: Set<any>, refs: Map<Object, string>, root: any) => {
-        return Array.from(obj).map((v) => serializeProp(v, refs, root));
+    (obj: Set<any>, refs: Map<Object, string>, root: any, customBehavior: (obj: Object) => boolean) => {
+        return Array.from(obj).map((v) => serializeProp(v, refs, root, customBehavior));
     },
     (data: Array<any>, refs: Map<string, Object>, root: any) => {
         return new Set(data.map((v) => deserializeProp(v, refs, root)));
@@ -42,9 +44,9 @@ serializable("Function", [
 ])(Function);
 // /*****************************************/
 
-export function Serialize(obj: Object): string {
+export function Serialize(obj: Object, customBehavior: (obj: Object) => boolean = (_) => true): string {
     const root = {};
-    serial(obj, new Map<Object, string>(), root);
+    serial(obj, new Map<Object, string>(), root, customBehavior);
 
     if (VERBOSE)
         console.log("Serialized: ", JSON.stringify(root));
@@ -52,20 +54,23 @@ export function Serialize(obj: Object): string {
     return JSON.stringify(root);
 }
 
-function serializeProp(prop: any, refs: Map<Object, string>, root: any): any {
+function serializeProp(prop: any, refs: Map<Object, string>, root: any, customBehavior: (obj: Object) => boolean): any {
     // primitives should be trivially saved
     if (!(prop instanceof Object))
         return prop;
 
     // if object is a known type then save it as a reference
-    if (serial(prop, refs, root))
+    if (serial(prop, refs, root, customBehavior))
         return { "ref": refs.get(prop) }
 
     // TODO: add check for maps/sets/other built-ins
     throw new Error("Unknown property! " + prop);
 }
 
-function serial(obj: Object, refs: Map<Object, string>, root: any): boolean {
+function serial(obj: Object, refs: Map<Object, string>, root: any, customBehavior: (obj: Object) => boolean): boolean {
+    if (!customBehavior(obj))
+        return true;
+
     const uuid = Reflect.getMetadata(uuidKey, obj.constructor.prototype);
     // if it's an unknown type, then we can't serialize it
     if (!uuid)
@@ -81,14 +86,14 @@ function serial(obj: Object, refs: Map<Object, string>, root: any): boolean {
 
     // if custom serialization then use that
     if (serializableObjects.get(uuid)[1]) {
-        newObj[dataKey] = serializableObjects.get(uuid)[1][0](obj, refs, root);
+        newObj[dataKey] = serializableObjects.get(uuid)[1][0](obj, refs, root, customBehavior);
     } else { // otherwise go through each key and serialize it
         // get metadata-defined keys or all keys
         let keys = Reflect.getMetadataKeys(obj).filter(key => key != uuidKey);
         if (keys.length == 0)
             keys = Object.keys(obj);
         keys.forEach((key: string) => {
-            newObj[dataKey][key] = serializeProp(obj[key], refs, root);
+            newObj[dataKey][key] = serializeProp(obj[key], refs, root, customBehavior);
         });
     }
 
@@ -115,7 +120,7 @@ function construct(uuid: string): Object {
 
 function deserial(num: string, refs: Map<string, Object>, root: any): boolean {
     // check if we already deserialized the given obj
-    if (refs.has(num))
+    if (num == undefined || refs.has(num))
         return true;
 
     // if it's an unknown type, then we can't deserialize it
@@ -159,8 +164,7 @@ export function serialize(target: any, propertyKey: string): void {
     Reflect.defineMetadata(propertyKey, true, target);
 }
 
-export function serializable(uuid: string, customSerialization: [(obj: any, refs: Map<Object, string>, root: any) => any,
-                                                                 (obj: any, refs: Map<string, Object>, root: any) => any] = undefined): (c: new () => Object) => void {
+export function serializable(uuid: string, customSerialization: customBehavior = undefined): (c: new () => Object) => void {
     return function(constructor: new () => Object): any {
         if (serializableObjects.has(uuid))
             throw new Error("Object with UUID " + uuid + " already exists! Cannot have duplicates!");

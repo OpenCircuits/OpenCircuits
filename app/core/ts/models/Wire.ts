@@ -5,8 +5,6 @@ import {V,Vector} from "Vector";
 import {BezierContains} from "math/MathUtils";
 import {BezierCurve} from "math/BezierCurve";
 
-import {XMLNode} from "core/utils/io/xml/XMLNode";
-
 import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {Port} from "./ports/Port";
@@ -109,44 +107,6 @@ export abstract class Wire extends CullableObject {
     public getMaxPos(): Vector {
         return this.getShape().getBoundingBox()
                 .getTopRight().add(WIRE_THICKNESS/2);
-    }
-
-    public copy(p1?: Port, p2?: Port): Wire {
-        const copy = <Wire>super.copy();
-        copy.p1 = p1;
-        copy.p2 = p2;
-        p1.connect(copy);
-        p2.connect(copy);
-        copy.straight = this.straight;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        // save properties
-        node.addAttribute("straight", this.straight);
-
-        // write curve
-        const curveNode = node.createChild("curve");
-        curveNode.addVectorAttribute("p1", this.shape.getP1());
-        curveNode.addVectorAttribute("p2", this.shape.getP2());
-        curveNode.addVectorAttribute("c1", this.shape.getC1());
-        curveNode.addVectorAttribute("c2", this.shape.getC2());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        // load properties
-        this.straight = node.getBooleanAttribute("straight");
-
-        // load curve
-        const curveNode = node.findChild("curve");
-        this.shape.setP1(curveNode.getVectorAttribute("p1"));
-        this.shape.setP2(curveNode.getVectorAttribute("p2"));
-        this.shape.setC1(curveNode.getVectorAttribute("c1"));
-        this.shape.setC2(curveNode.getVectorAttribute("c2"));
     }
 
     public getDisplayName(): string {

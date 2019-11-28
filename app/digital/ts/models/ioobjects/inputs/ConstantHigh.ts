@@ -20,13 +20,6 @@ export class ConstantHigh extends DigitalComponent {
         return "consthigh";
     }
 
-    // @Override
-    public copy(): DigitalComponent {
-        const c = super.copy();
-        c.activate(true);
-        return c;
-    }
-
     public getImageName(): string {
         return "constHigh.svg";
     }

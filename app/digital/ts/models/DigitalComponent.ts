@@ -128,14 +128,4 @@ export abstract class DigitalComponent extends Component {
         return this.designer;
     }
 
-
-    public copy(): DigitalComponent {
-        const copy = <DigitalComponent>super.copy();
-
-        copy.inputs = this.inputs.copy(copy);
-        copy.outputs = this.outputs.copy(copy);
-
-        return copy;
-    }
-
 }

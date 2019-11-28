@@ -5,16 +5,13 @@ import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
+import {serializable} from "core/utils/Serializer";
 
 import {CopyGroup,
         CreateGraph,
         CreateGroup} from "core/utils/ComponentUtils";
 
-import {DigitalObjectSet,
-        SaveGroup,
-        LoadGroup} from "digital/utils/ComponentUtils";
-
-import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 import {Port} from "core/models/ports/Port";
@@ -25,7 +22,6 @@ import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
-import {serializable, serialize} from "core/utils/Serializer";
 
 @serializable("ICData")
 export class ICData {
@@ -132,61 +128,7 @@ export class ICData {
     }
 
     public copy(): DigitalObjectSet {
-        return new DigitalObjectSet(CopyGroup(this.collection).toList());
-    }
-
-    public save(node: XMLNode, icIdMap: Map<ICData, number>): void {
-        node.addVectorAttribute("size", this.transform.getSize());
-
-        // Save Input Ports
-        const inputsNode = node.createChild("inputs");
-        for (const input of this.inputPorts) {
-            const inputNode = inputsNode.createChild("input");
-            inputNode.addAttribute("name", input.getName());
-            inputNode.addVectorAttribute("origin", input.getOriginPos());
-            inputNode.addVectorAttribute("target", input.getTargetPos());
-        }
-
-        // Save Output Ports
-        const outputsNode = node.createChild("outputs");
-        for (const output of this.outputPorts) {
-            const outputNode = outputsNode.createChild("output");
-            outputNode.addAttribute("name", output.getName());
-            outputNode.addVectorAttribute("origin", output.getOriginPos());
-            outputNode.addVectorAttribute("target", output.getTargetPos());
-        }
-
-        // Save internal circuit
-        const circuitNode = node.createChild("circuit");
-        SaveGroup(circuitNode, this.collection.getComponents(), this.collection.getWires(), icIdMap);
-    }
-
-    public load(node: XMLNode, icIdMap: Map<number, ICData>): void {
-        this.setSize(node.getVectorAttribute("size"));
-
-        // Load inputs
-        const inputNodes = node.findChild("inputs").getChildren();
-        for (const input of inputNodes) {
-            const port = new InputPort(undefined);
-            port.setName(input.getAttribute("name"));
-            port.setOriginPos(input.getVectorAttribute("origin"));
-            port.setTargetPos(input.getVectorAttribute("target"));
-            this.inputPorts.push(port);
-        }
-
-        // Load outputs
-        const outputNodes = node.findChild("outputs").getChildren();
-        for (const output of outputNodes) {
-            const port = new OutputPort(undefined);
-            port.setName(output.getAttribute("name"));
-            port.setOriginPos(output.getVectorAttribute("origin"));
-            port.setTargetPos(output.getVectorAttribute("target"));
-            this.outputPorts.push(port);
-        }
-
-        // Load components
-        const groupNode = node.findChild("circuit");
-        this.collection = LoadGroup(groupNode, icIdMap);
+        return new DigitalObjectSet(CopyGroup(this.collection.toList()).toList());
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {

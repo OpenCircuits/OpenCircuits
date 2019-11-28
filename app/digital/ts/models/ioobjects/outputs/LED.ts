@@ -5,11 +5,9 @@ import {DEFAULT_SIZE,
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
+import {serializable, serialize} from "core/utils/Serializer";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {serializable, serialize} from "core/utils/Serializer";
 
 @serializable("LED")
 export class LED extends DigitalComponent {
@@ -93,22 +91,6 @@ export class LED extends DigitalComponent {
 
     public getXMLName(): string {
         return "led";
-    }
-
-    public copy(): LED {
-        const copy = <LED>super.copy();
-        copy.color = this.color;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("color", this.getColor());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setColor(node.getAttribute("color"));
     }
 
 }

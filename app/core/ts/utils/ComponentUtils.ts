@@ -8,7 +8,8 @@ import {Port} from "core/models/ports/Port";
 import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
 import {BoundingBox} from "math/BoundingBox";
-import {serializable} from "./Serializer";
+import {serializable, Serialize, Deserialize} from "./Serializer";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 /**
  * Helper class to hold different groups of components.
@@ -216,40 +217,58 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
  * @param  objects [description]
  * @return         [description]
  */
-export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
-    // Separate out the given objects
-    const groups = (objects instanceof IOObjectSet) ? (objects) : (CreateGroup(objects));
-    const objs = groups.getComponents();
-    const wires = groups.getWires();
+export function CopyGroup(objects: IOObject[]): IOObjectSet {
+    if (objects.length == 0)
+        return new IOObjectSet();
 
-    const graph: Graph<number, number> = CreateGraph(groups);
+    // Make sure to get all immediate connections
+    objects = CreateGroup(objects).toList();
 
-    // Copy components
-    const copies = objs.map((o) => o.copy());
+    const designer = objects[0].getDesigner();
+    if (!objects.every(o => o.getDesigner() == designer))
+        throw new Error("Can't copy group with mismatched circuit designers!");
 
-    // Copy connections
-    const wireCopies: Wire[] = [];
-    for (const i of graph.getNodes()) {
-        const c1 = copies[i];
-        const connections = graph.getConnections(i);
+    const str = Serialize(objects, (o) => {
+        // don't serialize the circuit designer
+        if (o instanceof CircuitDesigner)
+            return false;
+        // don't serialize objects outside of the list
+        if (o instanceof IOObject && !objects.includes(o))
+            return false;
+        return true;
+    });
+    const copies = Deserialize<IOObject[]>(str);
 
-        for (const connection of connections) {
-            const j = connection.getTarget();
-            const c2 = copies[j];
+    copies.forEach(c => c.setDesigner(designer));
 
-            const w = wires[connection.getWeight()];
+    // const graph: Graph<number, number> = CreateGraph(groups);
 
-            // Find indices of which ports the wire should be connected to
-            const i1 = objs[i].getPorts().indexOf(w.getP1());
-            const i2 = objs[j].getPorts().indexOf(w.getP2());
+    // // Copy components
+    // const copies = objs.map((o) => o.copy());
 
-            const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
-            wireCopies.push(wire);
-        }
-    }
+    // // Copy connections
+    // const wireCopies: Wire[] = [];
+    // for (const i of graph.getNodes()) {
+    //     const c1 = copies[i];
+    //     const connections = graph.getConnections(i);
 
-    const group = copies as IOObject[];
-    return new IOObjectSet(group.concat(wireCopies));
+    //     for (const connection of connections) {
+    //         const j = connection.getTarget();
+    //         const c2 = copies[j];
+
+    //         const w = wires[connection.getWeight()];
+
+    //         // Find indices of which ports the wire should be connected to
+    //         const i1 = objs[i].getPorts().indexOf(w.getP1());
+    //         const i2 = objs[j].getPorts().indexOf(w.getP2());
+
+    //         const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
+    //         wireCopies.push(wire);
+    //     }
+    // }
+
+    // const group = copies as IOObject[];
+    return new IOObjectSet(copies);//group.concat(wireCopies));
 }
 
 // Find a minimal bounding box enclosing all cullable objects in a given array

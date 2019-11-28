@@ -1,7 +1,6 @@
 import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {serialize} from "core/utils/Serializer";
-import {XMLNode} from "core/utils/io/xml/XMLNode";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -26,19 +25,5 @@ export abstract class FlipFlop extends DigitalComponent {
 
         this.getOutputPort(0).setName("Q'");
         this.getOutputPort(1).setName("Q ");
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        node.addAttribute("inputs", this.numInputs());
-        node.addAttribute("outputs", this.numOutputs());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        this.setInputPortCount(node.getIntAttribute("inputs"));
-        this.setOutputPortCount(node.getIntAttribute("outputs"));
     }
 }

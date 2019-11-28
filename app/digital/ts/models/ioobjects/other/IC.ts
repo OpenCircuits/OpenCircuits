@@ -84,12 +84,6 @@ export class IC extends DigitalComponent {
         }
     }
 
-    public copy(): IC {
-        const copy = new IC(this.data);
-        copy.transform = this.transform.copy();
-        return copy;
-    }
-
     public getData(): ICData {
         return this.data;
     }

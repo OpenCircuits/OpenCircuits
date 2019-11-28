@@ -4,12 +4,10 @@ import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
-
-import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {serialize} from "core/utils/Serializer";
 import {Pressable} from "core/utils/Pressable";
 
 import {DigitalComponent} from "../DigitalComponent";
-import {serialize} from "core/utils/Serializer";
 
 export abstract class PressableComponent extends DigitalComponent implements Pressable {
     @serialize
@@ -86,26 +84,6 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
             max = Vector.max(max, v);
         });
         return max;
-    }
-
-    public copy(): PressableComponent {
-        const copy = <PressableComponent>super.copy();
-        copy.pressableBox = this.pressableBox.copy();
-        copy.pressableBox.setParent(copy.transform);
-        copy.activate(this.isOn());
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        node.addAttribute("isOn", this.isOn());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        this.activate(node.getBooleanAttribute("isOn"));
     }
 
     public getImageName(): string {

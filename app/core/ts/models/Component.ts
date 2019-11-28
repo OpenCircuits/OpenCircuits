@@ -7,7 +7,6 @@ import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {serialize}    from "core/utils/Serializer";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Port}       from "./ports/Port";
 
@@ -130,26 +129,6 @@ export abstract class Component extends CullableObject {
 
         return Vector.max(max, ...corners, ...ports);
     }
-
-
-    public copy(): Component {
-        const copy = <Component>super.copy();
-        copy.transform = this.transform.copy();
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addVectorAttribute("", this.getPos());
-        node.addAttribute("angle", this.getAngle());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setPos(node.getVectorAttribute(""));
-        this.setAngle(node.getFloatAttribute("angle"));
-    }
-
 
     public getImageName(): string {
         return undefined;

@@ -1,10 +1,8 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serializable, serialize} from "core/utils/Serializer";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-
-import {XMLNode} from "core/utils/io/xml/XMLNode";
-import {serializable, serialize} from "core/utils/Serializer";
 
 @serializable("Clock")
 export class Clock extends DigitalComponent {
@@ -55,19 +53,4 @@ export class Clock extends DigitalComponent {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
     }
 
-    public copy(): Clock {
-        const copy = <Clock>super.copy();
-        copy.frequency = this.frequency;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("frequency", this.frequency);
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.frequency = node.getIntAttribute("frequency");
-    }
 }

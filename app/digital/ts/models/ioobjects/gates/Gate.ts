@@ -2,7 +2,6 @@ import {Vector}       from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {serialize}    from "core/utils/Serializer";
 import {Name}         from "core/utils/Name";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
@@ -40,26 +39,6 @@ export abstract class Gate extends DigitalComponent {
 
     public isNot(): boolean {
         return this.not;
-    }
-
-    public copy(): Gate {
-        const copy = <Gate>super.copy();
-        copy.not = this.not;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        node.addAttribute("inputs", this.numInputs());
-        node.addAttribute("not", this.not);
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        this.setInputPortCount(node.getIntAttribute("inputs"));
-        this.setNot(node.getBooleanAttribute("not"));
     }
 
 }
