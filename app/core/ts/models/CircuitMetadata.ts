@@ -1,45 +1,45 @@
 import {serializable} from "core/utils/Serializer";
 
+@serializable("CircuitMetadataDef")
+export class CircuitMetadataDef {
+    id: string;
+    name: string;
+    owner: string;
+    desc: string;
+    thumbnail: string;
+    version: string;
+}
+
 @serializable("CircuitMetadata")
 export class CircuitMetadata {
-    private id: string;
-    private name: string;
-    private owner: string;
-    private desc: string;
-    private thumbnail: string;
-    private version: string;
+    private data: CircuitMetadataDef;
 
-    public constructor(builder: CircuitMetadataBuilder = new CircuitMetadataBuilder()) {
-        this.id = builder.id;
-        this.name = builder.name;
-        this.owner = builder.owner;
-        this.desc = builder.desc;
-        this.thumbnail = builder.thumbnail;
-        this.version = builder.version;
+    public constructor(data?: CircuitMetadataDef) {
+        this.data = data;
     }
 
     public getId(): string {
-        return this.id;
+        return this.data.id;
     }
 
     public getName(): string {
-        return this.name;
+        return this.data.name;
     }
 
     public getOwner(): string {
-        return this.owner;
+        return this.data.owner;
     }
 
     public getDesc(): string {
-        return this.desc;
+        return this.data.desc;
     }
 
     public getThumbnail(): string {
-        return this.thumbnail;
+        return this.data.thumbnail;
     }
 
     public getVersion(): string {
-        return this.version;
+        return this.data.version;
     }
 
     public static Default(): CircuitMetadata {
@@ -48,64 +48,60 @@ export class CircuitMetadata {
 
     public buildOn(): CircuitMetadataBuilder {
         return new CircuitMetadataBuilder()
-                .withId(this.id)
-                .withName(this.name)
-                .withOwner(this.owner)
-                .withDesc(this.desc)
-                .withThumbnail(this.thumbnail)
-                .withVersion(this.version);
+                .withId(this.data.id)
+                .withName(this.data.name)
+                .withOwner(this.data.owner)
+                .withDesc(this.data.desc)
+                .withThumbnail(this.data.thumbnail)
+                .withVersion(this.data.version);
     }
 }
 
 export class CircuitMetadataBuilder {
-    public id: string;
-    public name: string;
-    public owner: string;
-    public desc: string;
-    public thumbnail: string;
-    public version: string;
+    private data: CircuitMetadataDef;
 
     public constructor() {
-        this.id = "";
-        this.name = "Untitled Circuit";
-        this.owner = "";
-        this.desc = "";
-        this.thumbnail = "";
-        this.version = "1.1";
+        this.data = new CircuitMetadataDef();
+        this.data.id = "";
+        this.data.name = "Untitled Circuit";
+        this.data.owner = "";
+        this.data.desc = "";
+        this.data.thumbnail = "";
+        this.data.version = "1.1";
     }
 
     public withId(id: string): CircuitMetadataBuilder {
-        this.id = id;
+        this.data.id = id;
         return this;
     }
 
     public withName(name: string): CircuitMetadataBuilder {
-        this.name = name;
+        this.data.name = name;
         return this;
     }
 
     public withOwner(owner: string): CircuitMetadataBuilder {
-        this.owner = owner;
+        this.data.owner = owner;
         return this;
     }
 
     public withDesc(desc: string): CircuitMetadataBuilder {
-        this.desc = desc;
+        this.data.desc = desc;
         return this;
     }
 
     public withThumbnail(thumbnail: string): CircuitMetadataBuilder {
-        this.thumbnail = thumbnail;
+        this.data.thumbnail = thumbnail;
         return this;
     }
 
     public withVersion(version: string): CircuitMetadataBuilder {
-        this.version = version;
+        this.data.version = version;
         return this;
     }
 
     public build(): CircuitMetadata {
-        return new CircuitMetadata(this);
+        return new CircuitMetadata(this.data);
     }
 
 }
