@@ -3,7 +3,8 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR,
-        DEFAULT_ON_COLOR} from "core/utils/Constants";
+        DEFAULT_ON_COLOR,
+        SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
@@ -18,20 +19,7 @@ import {Images} from "digital/utils/Images";
 import {Line} from "core/rendering/shapes/Line";
 
 export const SegmentDisplayRenderer = (() => {
-    // const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
-    //     const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
-    //     // Draw line to visually match input ports
-    //     const l1 =  (size.y/2)*((inputs-1)/2);
-    //     const l2 = -(size.y/2)*((inputs-1)/2);
-
-    //     const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-    //     const p1 = V(-s, l1);
-    //     const p2 = V(-s, l2);
-
-    //     renderer.draw(new Line(p1, p2), style);
-    // }
-
+   
     return {
         render(renderer: Renderer, _: Camera, display: SegmentDisplay, selected: boolean): void {
             const transform = display.getTransform();
@@ -44,7 +32,6 @@ export const SegmentDisplayRenderer = (() => {
             const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
             renderer.draw(new Rectangle(V(), size), style);
 
-            const w = 35;
             const p1 = display.getPorts()[0].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
             const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
             renderer.draw(new Line(p1, p2), style);            
@@ -52,7 +39,7 @@ export const SegmentDisplayRenderer = (() => {
             // Draw lights
             const segments = display.getSegments();
             for (let i = segments.length - 1; i >= 0; i--) {
-                const pos = segments[i][0].scale(V(w));
+                const pos = segments[i][0].scale(V(SEGMENT_DISPLAY_WIDTH));
                 const type = segments[i][1];
                 const on  = display.getInputPort(i).getIsOn();
 
