@@ -9,3 +9,6 @@ INSERT INTO circuits(id, designer, ownerId, name, version, thumbnail) VALUES (?,
 
 -- name: query-user-circuits
 SELECT id, name, ownerId, version, thumbnail FROM circuits WHERE ownerId=?;
+
+-- name: delete-user-circuit
+DELETE FROM circuits WHERE id=?;

@@ -1,7 +1,8 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {InputPort} from "../../ports/InputPort";
-import {MuxPositioner} from "../../ports/positioners/MuxPositioners";
+import {MuxPositioner,
+        MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
 
@@ -9,7 +10,7 @@ export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-              new MuxPositioner<InputPort>());
+              new MuxPositioner<InputPort>(), new MuxSinglePortPositioner());
     }
 
     /**
@@ -26,6 +27,8 @@ export class Multiplexer extends Mux {
     public setSelectPortCount(val: number): void {
         super.setSelectPortCount(val);
         super.setInputPortCount(Math.pow(2, val));
+        // update the output port to align with the right edge of the Mux
+        this.outputs.updatePortPositions();
     }
 
     public getDisplayName(): string {

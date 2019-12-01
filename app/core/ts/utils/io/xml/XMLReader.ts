@@ -6,6 +6,7 @@ export class XMLReader {
 
     private metadataNode: XMLNode;
     private contentsNode: XMLNode;
+    private cameraNode: XMLNode;
 
     public constructor(root: XMLDocument) {
         this.root = root;
@@ -13,6 +14,7 @@ export class XMLReader {
 
         this.metadataNode = this.rootNode.findChild("metadata");
         this.contentsNode = this.rootNode.findChild("contents");
+        this.cameraNode = this.rootNode.findChild("camera");
 
         // Old file version didn't have Metadata
         if (!this.metadataNode) {
@@ -37,6 +39,10 @@ export class XMLReader {
 
     public getContentsNode(): XMLNode {
         return this.contentsNode;
+    }
+
+    public getCameraNode(): XMLNode {
+        return this.cameraNode;
     }
 
 }

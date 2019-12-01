@@ -43,7 +43,7 @@ export class DigitalCopyController extends CopyController {
         });
 
         // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/xml", WriteCircuit(designer, "clipboard"));
+        e.clipboardData.setData("text/xml", WriteCircuit(main, "clipboard"));
         e.preventDefault();
     }
 
@@ -52,7 +52,7 @@ export class DigitalCopyController extends CopyController {
         const contents = e.clipboardData.getData("text/xml");
 
         const designer = new DigitalCircuitDesigner(-1);
-        Importer.LoadCircuit(designer, contents);
+        Importer.LoadCircuit(main.getDesigner(), contents);
 
         const group = CopyGroup(designer.getGroup());
         const objs = group.getComponents();
