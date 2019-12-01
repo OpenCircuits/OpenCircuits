@@ -78,6 +78,10 @@ export abstract class MainDesignerController extends DesignerController {
         }
     }
 
+    public getSelectionPopup(): SelectionPopupController {
+        return this.selectionPopup;
+    }
+
     protected onMouseDrag(button: number): boolean {
         if (super.onMouseDrag(button)) {
             this.selectionPopup.hide();
