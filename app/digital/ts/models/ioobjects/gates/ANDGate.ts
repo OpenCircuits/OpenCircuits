@@ -4,7 +4,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {ANDGatePositioner} from "../../ports/positioners/ANDGatePositioner";
 
 import {Gate} from "./Gate";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("ANDGate")
 export class ANDGate extends Gate {

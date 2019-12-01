@@ -1,7 +1,7 @@
 import {Vector} from "Vector";
 
 import {Selectable} from "core/utils/Selectable";
-import {serialize} from "core/utils/Serializer";
+import {serialize} from "serialeazy";
 import {Name} from "core/utils/Name";
 
 import {CircuitDesigner} from "./CircuitDesigner";

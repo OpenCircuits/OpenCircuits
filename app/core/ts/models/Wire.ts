@@ -9,7 +9,7 @@ import {CullableObject}   from "./CullableObject";
 import {Component}  from "./Component";
 import {Port} from "./ports/Port";
 import {Node} from "./Node";
-import {serialize} from "core/utils/Serializer";
+import {serialize} from "serialeazy";
 
 export abstract class Wire extends CullableObject {
     @serialize

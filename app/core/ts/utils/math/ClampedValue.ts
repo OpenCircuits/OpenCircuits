@@ -1,5 +1,5 @@
 import {Clamp} from "./MathUtils";
-import {serializable} from "../Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("ClampedValue")
 export class ClampedValue {

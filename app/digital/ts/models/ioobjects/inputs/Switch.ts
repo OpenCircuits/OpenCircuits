@@ -2,7 +2,7 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {PressableComponent} from "../PressableComponent";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("Switch")
 export class Switch extends PressableComponent {

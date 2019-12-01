@@ -9,7 +9,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {ICData} from "./ICData";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("IC")
 export class IC extends DigitalComponent {

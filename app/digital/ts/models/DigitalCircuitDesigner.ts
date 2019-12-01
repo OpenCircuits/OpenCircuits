@@ -12,7 +12,7 @@ import {OutputPort} from "./ports/OutputPort";
 
 import {DigitalWire}      from "./DigitalWire";
 import {DigitalComponent} from "./DigitalComponent";
-import {serializable, serialize} from "core/utils/Serializer";
+import {serializable, serialize} from "serialeazy";
 
 @serializable("DigitalCircuitDesigner")
 export class DigitalCircuitDesigner extends CircuitDesigner {

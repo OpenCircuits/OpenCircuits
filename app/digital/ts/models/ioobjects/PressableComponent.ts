@@ -4,7 +4,7 @@ import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "core/utils/Serializer";
+import {serialize} from "serialeazy";
 import {Pressable} from "core/utils/Pressable";
 
 import {DigitalComponent} from "../DigitalComponent";

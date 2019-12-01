@@ -3,7 +3,7 @@ import {Vector,V} from "Vector";
 import {Port} from "core/models/ports/Port";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalWire} from "../DigitalWire";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("DigitalInputPort")
 export class InputPort extends Port {

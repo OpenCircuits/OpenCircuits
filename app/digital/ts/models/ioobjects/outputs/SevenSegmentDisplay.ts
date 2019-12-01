@@ -8,7 +8,7 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 import {InputPort} from "../../ports/InputPort";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("SevenSegmentDisplay")
 export class SevenSegmentDisplay extends DigitalComponent {

@@ -39,7 +39,8 @@
     "hammerjs": "^2.0.8",
     "intro.js": "^2.9.3",
     "jquery": "^3.4.1",
-    "jspdf": "^1.5.3"
+    "jspdf": "^1.5.3",
+    "serialeazy": "^1.0.0"
   },
   "scripts": {
     "build": "run-p build:js:digital build:js:analog build:go build:css",

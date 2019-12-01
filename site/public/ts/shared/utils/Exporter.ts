@@ -1,6 +1,6 @@
 import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
 import {CircuitBoundingBox} from "core/utils/ComponentUtils";
-import {Serialize} from "core/utils/Serializer";
+import {Serialize} from "serialeazy";
 import {Circuit} from "core/utils/io/Importer";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";

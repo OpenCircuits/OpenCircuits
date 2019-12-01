@@ -1,4 +1,4 @@
-import {serializable, serialize} from "core/utils/Serializer";
+import {serializable, serialize} from "serialeazy";
 
 import {Wire} from "core/models/Wire";
 

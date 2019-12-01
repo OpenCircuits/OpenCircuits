@@ -1,7 +1,7 @@
 import {Latch} from "./Latch";
 
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("SRLatch")
 export class SRLatch extends Latch {

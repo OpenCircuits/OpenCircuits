@@ -1,4 +1,4 @@
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";

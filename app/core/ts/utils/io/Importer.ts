@@ -1,6 +1,6 @@
 import {SAVED} from "../Config";
 
-import {Deserialize, serializable} from "../Serializer";
+import {Deserialize, serializable} from "serialeazy";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 

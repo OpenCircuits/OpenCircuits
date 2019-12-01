@@ -1,7 +1,7 @@
 import {V} from "Vector";
 
 import {Port} from "core/models/ports/Port";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("Positioner")
 export class Positioner<T extends Port> {

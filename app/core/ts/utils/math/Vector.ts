@@ -1,4 +1,4 @@
-import {serializable, serialize} from "../Serializer";
+import {serializable, serialize} from "serialeazy";
 
 @serializable("Vector")
 export class Vector {

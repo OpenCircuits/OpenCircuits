@@ -3,7 +3,7 @@ import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
 import {PressableComponent} from "../PressableComponent";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("Button")
 export class Button extends PressableComponent {

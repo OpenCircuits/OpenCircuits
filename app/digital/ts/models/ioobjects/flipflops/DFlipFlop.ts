@@ -1,5 +1,5 @@
 import {V} from "Vector";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 import {FlipFlop} from "./FlipFlop";
 

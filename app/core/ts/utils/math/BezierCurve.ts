@@ -1,7 +1,7 @@
 import {Vector,V}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
-import {serializable} from "../Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("BezierCurve")
 export class BezierCurve {

@@ -1,6 +1,6 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "core/utils/Serializer";
+import {serialize} from "serialeazy";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 

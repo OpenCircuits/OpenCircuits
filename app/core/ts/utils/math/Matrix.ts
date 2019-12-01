@@ -1,5 +1,5 @@
 import {Vector,V} from "./Vector";
-import {serializable} from "../Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("Matrix2x3")
 export class Matrix2x3 {

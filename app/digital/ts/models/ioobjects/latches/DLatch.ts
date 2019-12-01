@@ -1,5 +1,5 @@
 import {Latch} from "./Latch";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("DLatch")
 export class DLatch extends Latch {

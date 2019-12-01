@@ -2,7 +2,7 @@ import {Vector,V} from "./Vector";
 import {Transform} from "./Transform";
 import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
-import {serializable, serialize} from "../Serializer";
+import {serializable, serialize} from "serialeazy";
 
 @serializable("Camera")
 export class Camera {

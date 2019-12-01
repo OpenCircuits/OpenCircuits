@@ -1,6 +1,6 @@
 import {Vector,V} from "Vector";
 import {Transform} from "math/Transform";
-import {serialize} from "core/utils/Serializer";
+import {serialize} from "serialeazy";
 
 import {IOObject} from "./IOObject"
 

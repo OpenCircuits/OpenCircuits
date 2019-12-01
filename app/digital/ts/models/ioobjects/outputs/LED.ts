@@ -5,7 +5,7 @@ import {DEFAULT_SIZE,
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {serializable, serialize} from "core/utils/Serializer";
+import {serializable, serialize} from "serialeazy";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 

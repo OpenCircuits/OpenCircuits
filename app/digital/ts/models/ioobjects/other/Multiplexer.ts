@@ -5,7 +5,7 @@ import {MuxPositioner,
         MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("Multiplexer")
 export class Multiplexer extends Mux {

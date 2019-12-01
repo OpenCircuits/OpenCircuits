@@ -1,6 +1,6 @@
 import {V} from "Vector";
 import {FlipFlop} from "./FlipFlop";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("TFlipFlop")
 export class TFlipFlop extends FlipFlop {

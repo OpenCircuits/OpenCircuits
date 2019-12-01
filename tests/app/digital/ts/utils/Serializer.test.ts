@@ -1,5 +1,5 @@
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Deserialize, Serialize} from "core/utils/Serializer";
+import {Deserialize, Serialize} from "serialeazy";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {V} from "Vector";
 

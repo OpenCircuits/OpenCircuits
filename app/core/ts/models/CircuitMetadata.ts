@@ -1,4 +1,4 @@
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("CircuitMetadataDef")
 export class CircuitMetadataDef {

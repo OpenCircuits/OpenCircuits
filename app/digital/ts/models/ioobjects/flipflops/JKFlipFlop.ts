@@ -3,7 +3,7 @@ import {V} from "Vector";
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 
 import {FlipFlop} from "./FlipFlop";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("JKFlipFlop")
 export class JKFlipFlop extends FlipFlop {

@@ -1,4 +1,4 @@
-import {serializable} from "./Serializer";
+import {serializable} from "serialeazy";
 
 /**
  * Utility class to help keep track of a string

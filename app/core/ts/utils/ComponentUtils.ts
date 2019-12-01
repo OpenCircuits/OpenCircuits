@@ -8,7 +8,7 @@ import {Port} from "core/models/ports/Port";
 import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
 import {BoundingBox} from "math/BoundingBox";
-import {serializable, Serialize, Deserialize} from "./Serializer";
+import {serializable, Serialize, Deserialize} from "serialeazy";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 /**

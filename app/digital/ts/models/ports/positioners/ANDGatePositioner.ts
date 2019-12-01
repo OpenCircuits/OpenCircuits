@@ -3,7 +3,7 @@ import {V} from "Vector";
 import {InputPort} from "../InputPort";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("ANDGatePositioner")
 export class ANDGatePositioner extends Positioner<InputPort> {

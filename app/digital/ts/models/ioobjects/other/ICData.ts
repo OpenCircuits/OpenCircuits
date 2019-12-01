@@ -5,7 +5,7 @@ import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 import {CopyGroup,
         CreateGraph,

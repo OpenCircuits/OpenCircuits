@@ -4,7 +4,7 @@ import {Component} from "core/models/Component";
 import {Port}      from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
-import {serializable} from "core/utils/Serializer";
+import {serializable} from "serialeazy";
 
 @serializable("PortSet")
 export class PortSet<T extends Port> {
