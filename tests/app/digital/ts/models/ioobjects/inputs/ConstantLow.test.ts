@@ -4,7 +4,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ConstantLow}     from "digital/models/ioobjects/inputs/ConstantLow";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("Constant Low", () => {
     const designer = new DigitalCircuitDesigner(0);

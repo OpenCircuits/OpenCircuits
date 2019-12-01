@@ -1,7 +1,11 @@
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE,
+        DEFAULT_BORDER_WIDTH,
+        LED_LIGHT_RADIUS,
+        LED_WIDTH} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+
 import {XMLNode}      from "core/utils/io/xml/XMLNode";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
@@ -17,6 +21,47 @@ export class LED extends DigitalComponent {
 
         // Make port face down instead of sideways
         this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
+    }
+
+    // @Override
+    public getMinPos(): Vector {
+        const min = super.getMinPos();
+
+        // if the LED is on, create a new border width to account for the light
+        let newBorderWidth = DEFAULT_BORDER_WIDTH;
+        if (this.inputs.first.getIsOn())
+            newBorderWidth += (LED_LIGHT_RADIUS - LED_WIDTH/2);
+
+        // find the corners of the object using the new border width
+        const corners = this.transform.getCorners().map(
+            v => v.sub(newBorderWidth)
+        );
+
+        // return the minimum position from all of these vectors
+        return Vector.min(min, ...corners);
+    }
+
+    // @Override
+    public getMaxPos(): Vector {
+        const max = super.getMaxPos();
+
+        // if the LED is on, create a new border width to account for the light
+        let newBorderWidth = DEFAULT_BORDER_WIDTH;
+        if (this.inputs.first.getIsOn())
+            newBorderWidth += (LED_LIGHT_RADIUS - LED_WIDTH/2);
+
+        // Find maximum pos from corners of transform
+        const corners = this.transform.getCorners().map(
+            v => v.add(newBorderWidth)
+        );
+
+        return Vector.max(max, ...corners);
+    }
+
+    // @Override
+    public activate(signal: boolean, i: number = 0): void {
+        this.onTransformChange();
+        super.activate(signal, i);
     }
 
     public setColor(color: string): void {
