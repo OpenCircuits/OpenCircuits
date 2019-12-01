@@ -72,13 +72,12 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
+        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents, this.getCamera());
         this.headerController.setProjectName(name);
     }
 
     public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
-        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
+        return WriteCircuit(this, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): DigitalCircuitDesigner {
