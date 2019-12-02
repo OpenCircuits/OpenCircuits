@@ -18,11 +18,11 @@ export abstract class Wire extends CullableObject {
     protected p2: Port;
 
     @serialize
-    private shape: BezierCurve;
+    protected shape: BezierCurve;
     @serialize
-    private straight: boolean;
+    protected straight: boolean;
 
-    private dirtyShape: boolean;
+    protected dirtyShape: boolean;
 
     public constructor(p1: Port, p2: Port) {
         super();
@@ -41,7 +41,7 @@ export abstract class Wire extends CullableObject {
         this.dirtyShape = true;
     }
 
-    private updateCurve(): void {
+    protected updateCurve(): void {
         if (!this.dirtyShape)
             return;
         this.dirtyShape = false;

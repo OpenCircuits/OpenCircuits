@@ -5,6 +5,7 @@ import {Circuit} from "core/utils/io/Importer";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {CullableObject} from "core/models/CullableObject";
+import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
@@ -79,12 +80,12 @@ export function WriteCircuit(designer: DigitalCircuitDesigner, name: string, thu
 
     // return writer.serialize();
 }
-export function SaveFile(designer: DigitalCircuitDesigner, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
+export function SaveFile(main: DigitalCircuitController, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
 
-    const data = WriteCircuit(designer, projectName, thumbnail, thumbnailSize);
+    const data = WriteCircuit(main, projectName, thumbnail, thumbnailSize);
 
     const filename = projectName + ".circuit";
 

@@ -7,7 +7,7 @@ import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
 import {Clock}        from "digital/models/ioobjects/inputs/Clock";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
 import {Gate}    from "digital/models/ioobjects/gates/Gate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
@@ -33,7 +33,7 @@ import {Label}         from "digital/models/ioobjects/other/Label";
 import {DigitalNode}   from "digital/models/ioobjects/other/DigitalNode";
 
 const INPUTS    = [Switch, Button, ConstantLow, ConstantHigh, Clock];
-const OUTPUTS   = [LED, SevenSegmentDisplay];
+const OUTPUTS   = [LED, SegmentDisplay];
 const GATES     = [BUFGate, ANDGate, ORGate, XORGate];
 const LATCHES   = [DLatch, SRLatch];
 const FLIPFLOPS = [DFlipFlop, JKFlipFlop, SRFlipFlop, TFlipFlop];

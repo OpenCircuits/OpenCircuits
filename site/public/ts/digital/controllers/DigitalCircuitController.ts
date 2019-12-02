@@ -26,6 +26,7 @@ import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
+import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -56,7 +57,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
-            new BusButtonPopupModule(this)
+            new BusButtonPopupModule(this),
+            new SegmentCountPopupModule(this)
         );
 
         this.contextMenu = new ContextMenuController(this);
@@ -81,8 +83,7 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
-        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
+        return WriteCircuit(this, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): DigitalCircuitDesigner {

@@ -54,6 +54,10 @@ export class Camera {
         this.dirty = true;
         this.pos = pos;
     }
+    public setZoom(zoom: number): void{
+        this.dirty = true;
+        this.zoom = zoom;
+    }
     public translate(dv: Vector): void {
         this.dirty = true;
         this.pos = this.pos.add(dv);
@@ -100,4 +104,5 @@ export class Camera {
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));
     }
+
 }

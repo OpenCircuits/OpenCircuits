@@ -7,7 +7,7 @@ import {DigitalNode}         from "digital/models/ioobjects/other/DigitalNode";
 import {Button}              from "digital/models/ioobjects/inputs/Button";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
 import {DigitalComponent} from "digital/models/DigitalComponent";
@@ -303,7 +303,7 @@ describe("CopyGroup", () => {
         expectCopy([Switch], []);
     });
     test("Group 3", () => {
-        expectCopy([Switch, SevenSegmentDisplay],
+        expectCopy([Switch, SegmentDisplay],
                    [[0,0,/* ---> */1,0]]);
     });
     test("Group 4", () => {
@@ -316,7 +316,7 @@ describe("CopyGroup", () => {
                     [            1,0,/* -> */2,0]]);
     });
     test("Group 5", () => {
-        expectCopy([Button,   Switch,   ORGate,   ORGate,   ANDGate,   SevenSegmentDisplay],
+        expectCopy([Button,   Switch,   ORGate,   ORGate,   ANDGate,   SegmentDisplay],
                    [[0,0,/* -----------> */2,0                                  ],
                     [0,0,/* ----------------------> */3,0                       ],
                     [          1,0,/* -> */2,1                                  ],
@@ -332,7 +332,7 @@ describe("CopyGroup", () => {
                     [                                          3,0,/* ---> */5,4]]);
     });
     test("Group 6", () => {
-        expectCopy([Switch,    Button,    DigitalNode,     ANDGate,    DigitalNode,    ORGate,     LED,     SevenSegmentDisplay],
+        expectCopy([Switch,    Button,    DigitalNode,     ANDGate,    DigitalNode,    ORGate,     LED,     SegmentDisplay],
                    [[0,0,/* ------------------------------> */3,0                                                      ],
                     [           1,0,/* ---> */2,0                                                                      ],
                     [                         2,0,/* -----> */3,1                                                      ],

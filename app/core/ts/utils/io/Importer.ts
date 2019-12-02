@@ -41,7 +41,7 @@ export const Importer = (() => {
                 if (open) {
                     const reader = new FileReader();
                     reader.onload = () => {
-                        resolve(this.LoadCircuit(reader.result.toString()));
+                        resolve(this.LoadCircuit(reader.result.toString()))
                     }
                     reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
 

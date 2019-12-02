@@ -19,7 +19,7 @@ export class DigitalHeaderController extends HeaderController {
     }
 
     protected onSaveCircuit(main: DigitalCircuitController): void {
-        SaveFile(main.getDesigner(), this.projectNameInput.val() as string, true);
+        SaveFile(main, this.projectNameInput.val() as string, true);
     }
 
 }
