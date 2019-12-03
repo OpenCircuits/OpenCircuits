@@ -50,6 +50,7 @@ export abstract class DesignerController {
         // input
         this.input = new Input(this.view.getCanvas());
         this.input.addListener("click",     (b) => !this.active || this.onClick(b));
+        this.input.addListener("dblclick",  (b) => !this.active || this.onDoubleClick(b))
         this.input.addListener("mousedown", (b) => !this.active || this.onMouseDown(b));
         this.input.addListener("mousedrag", (b) => !this.active || this.onMouseDrag(b));
         this.input.addListener("mousemove", ( ) => !this.active || this.onMouseMove());
@@ -116,6 +117,14 @@ export abstract class DesignerController {
 
     protected onClick(button: number): boolean {
         if (this.toolManager.onClick(this.input, button)) {
+            this.render();
+            return true;
+        }
+        return false;
+    }
+
+    protected onDoubleClick(button: number): boolean {
+        if (this.toolManager.onDoubleClick(this.input, button)) {
             this.render();
             return true;
         }

@@ -102,6 +102,14 @@ export abstract class MainDesignerController extends DesignerController {
         return false;
     }
 
+    protected onDoubleClick(button: number): boolean {
+        if (super.onDoubleClick(button)) {
+            this.selectionPopup.update();
+            return true;
+        }
+        return false;
+    }
+
     protected onKeyDown(key: number): boolean {
         if (super.onKeyDown(key)) {
             this.selectionPopup.update();
