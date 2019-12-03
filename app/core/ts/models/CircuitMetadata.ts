@@ -2,12 +2,12 @@ import {serializable} from "serialeazy";
 
 @serializable("CircuitMetadataDef")
 export class CircuitMetadataDef {
-    id: string;
-    name: string;
-    owner: string;
-    desc: string;
-    thumbnail: string;
-    version: string;
+    public id: string;
+    public name: string;
+    public owner: string;
+    public desc: string;
+    public thumbnail: string;
+    public version: string;
 }
 
 @serializable("CircuitMetadata")

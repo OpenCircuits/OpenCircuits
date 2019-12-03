@@ -6,7 +6,6 @@ import {RenderQueue} from "core/utils/RenderQueue";
 import {Selectable} from "core/utils/Selectable";
 
 import {Action} from "core/actions/Action";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 

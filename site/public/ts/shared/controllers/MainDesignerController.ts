@@ -109,10 +109,10 @@ export abstract class MainDesignerController extends DesignerController {
 
         const data = new Circuit(
             new CircuitMetadataBuilder()
-                .withName(name)
-                .withThumbnail(thumb)
-                .build()
-                .getDef(),
+                    .withName(name)
+                    .withThumbnail(thumb)
+                    .build()
+                    .getDef(),
             Serialize(this.designer)
         );
 

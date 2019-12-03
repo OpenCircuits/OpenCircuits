@@ -15,12 +15,10 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<Circui
             },
             data: data
         }).done(resolve).fail(reject);
-    })
-    .catch((reason) => {
+    }).catch((reason) => {
         console.error("Failed to create user circuit!", reason);
         return undefined;
-    })
-    .then(
+    }).then(
         (def: CircuitMetadataDef) => {
             return new CircuitMetadata(def);
         },

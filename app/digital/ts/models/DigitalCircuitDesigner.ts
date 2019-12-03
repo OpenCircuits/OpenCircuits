@@ -189,7 +189,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         wire.setDesigner(undefined);
     }
 
-    public replace(designer: DigitalCircuitDesigner) {
+    public replace(designer: DigitalCircuitDesigner): void {
         super.replace(designer);
 
         this.ics = designer.ics;
