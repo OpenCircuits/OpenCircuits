@@ -11,8 +11,6 @@ import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup
 import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
 import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
 
-import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
-
 import {ICDesignerController} from "./ICDesignerController";
 import {ContextMenuController} from "../../shared/controllers/ContextMenuController";
 import {DigitalCopyController} from "./DigitalCopyController";
@@ -39,8 +37,7 @@ export class DigitalCircuitController extends MainDesignerController {
     public constructor() {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
-              new ThumnailGenerator(DigitalCircuitView),
-              CreateComponentFromXML);
+              new ThumnailGenerator(DigitalCircuitView));
 
 
         this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()),

@@ -33,13 +33,12 @@ export abstract class MainDesignerController extends DesignerController {
 
     protected constructor(designer: CircuitDesigner,
                           view: CircuitView,
-                          thumbnailGenerator: ThumnailGenerator,
-                          CreateFromXML: (tag: string, not?: boolean) => Component) {
+                          thumbnailGenerator: ThumnailGenerator) {
         super(designer, view);
 
         this.thumbnailGenerator = thumbnailGenerator;
 
-        this.itemNav = new ItemNavController(this, CreateFromXML);
+        this.itemNav = new ItemNavController(this);
         this.selectionPopup = new SelectionPopupController(this);
 
         this.headerController = new HeaderController(this);
