@@ -1,10 +1,15 @@
 import $ from "jquery";
 
-import {MainDesignerController} from "./MainDesignerController";
-import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
-import {RemoteController} from "./RemoteController";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "../utils/Constants";
+import {SAVED} from "core/utils/Config";
+
 import {CircuitMetadata,
         CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+
+import {SideNavCircuitPreview} from "site/shared/views/SideNavCircuitPreview";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {RemoteController} from "site/shared/controllers/RemoteController";
+import {HeaderController} from "./HeaderController";
 
 export class SideNavController {
     private tab: JQuery<HTMLElement> = $("#header-sidenav-open-tab");
@@ -22,9 +27,11 @@ export class SideNavController {
     private userCircuits: SideNavCircuitPreview[];
 
     private main: MainDesignerController;
+    private header: HeaderController;
 
-    public constructor(main: MainDesignerController) {
+    public constructor(main: MainDesignerController, header: HeaderController) {
         this.main = main;
+        this.header = header;
 
         this.open = false;
         this.disabled = false;
@@ -38,8 +45,7 @@ export class SideNavController {
         this.sidenavModeCheckbox.change(() => this.toggleEditMode());
 
         this.overlay.click(() => {
-            if (this.isOpen())
-                this.toggle();
+            this.close();
         });
 
         // Set up onclick listeners to example circuits
@@ -77,9 +83,13 @@ export class SideNavController {
     }
 
     private loadCircuit(contents: string): void {
-        this.main.loadCircuit(contents);
-        if (this.isOpen)
-            this.toggle();
+        const open = SAVED || confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+
+        const data = this.main.loadCircuit(contents);
+        this.header.setProjectName(data.getName());
+        this.close();
     }
 
     public clearUserCircuits(): void {
@@ -99,6 +109,11 @@ export class SideNavController {
                 this.userCircuits.push(preview);
             });
         });
+    }
+
+    public close(): void {
+        if (this.isOpen())
+            this.toggle();
     }
 
     public toggle(): void {

@@ -2,6 +2,7 @@ import $ from "jquery";
 
 import {AuthState} from "../../digital/auth/AuthState";
 import {CircuitMetadata, CircuitMetadataDef} from "core/models/CircuitMetadata";
+import {Circuit} from "core/models/Circuit";
 
 export function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata> {
     return new Promise<CircuitMetadataDef>((resolve, reject) => {
@@ -21,7 +22,6 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<Circui
     })
     .then(
         (def: CircuitMetadataDef) => {
-            console.log(def);
             return new CircuitMetadata(def);
         },
         (reason) => {
@@ -32,7 +32,7 @@ export function CreateUserCircuit(auth: AuthState, data: string): Promise<Circui
 }
 
 export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<CircuitMetadata> {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<CircuitMetadataDef>((resolve, reject) => {
         $.ajax({
             method: "PUT",
             url: "api/circuits/" + circuitId,
@@ -43,8 +43,8 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
             data: data
         }).done(resolve).fail(reject);
     }).then(
-        (xml: string) => {
-            return null;//XMLToCircuitMetadata(xml);
+        (def: CircuitMetadataDef) => {
+            return new CircuitMetadata(def);
         },
         (reason) => {
             console.error("Failed to update user circuit!", reason);
@@ -54,7 +54,7 @@ export function UpdateUserCircuit(auth: AuthState, circuitId: string, data: stri
 }
 
 export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<Circuit>((resolve, reject) => {
         $.ajax({
             method: "GET",
             url: `api/circuits/${circuitId}`,
@@ -63,9 +63,8 @@ export function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<str
                 "authId": auth.getId()
             }
         }).done(resolve).fail(reject);
-    }).then((str) => {
-        console.log(str);
-        return str;
+    }).then((json: Circuit) => {
+        return JSON.stringify(json); // TODO: fix this cause this is a hack
     });
 }
 

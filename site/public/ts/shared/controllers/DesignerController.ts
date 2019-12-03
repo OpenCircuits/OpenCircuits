@@ -74,10 +74,6 @@ export abstract class DesignerController {
         this.toolManager.addAction(action);
     }
 
-    public clearSelections(): void {
-        this.addAction(CreateDeselectAllAction(this.getSelectionTool()).execute());
-    }
-
     public render(): void {
         this.renderQueue.render();
     }
