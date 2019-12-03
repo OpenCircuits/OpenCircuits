@@ -45,12 +45,7 @@ export class Clock extends DigitalComponent {
         return "Clock";
     }
 
-    public getXMLName(): string {
-        return "clock";
-    }
-
     public getImageName(): string {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
     }
-
 }

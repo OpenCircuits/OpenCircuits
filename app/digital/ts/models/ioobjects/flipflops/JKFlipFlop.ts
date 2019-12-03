@@ -7,7 +7,6 @@ import {serializable} from "serialeazy";
 
 @serializable("JKFlipFlop")
 export class JKFlipFlop extends FlipFlop {
-
     public constructor() {
         super(3, V(80, 120), new ThreePortPositioner());
 
@@ -38,9 +37,5 @@ export class JKFlipFlop extends FlipFlop {
 
     public getDisplayName(): string {
         return "JK Flip Flop";
-    }
-
-    public getXMLName(): string {
-        return "jkff";
     }
 }

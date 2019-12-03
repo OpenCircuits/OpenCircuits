@@ -47,9 +47,4 @@ export class Encoder extends DigitalComponent {
     public getDisplayName(): string {
         return "Encoder";
     }
-
-    public getXMLName(): string {
-        return "encoder";
-    }
-
 }

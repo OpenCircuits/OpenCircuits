@@ -112,8 +112,4 @@ export abstract class Wire extends CullableObject {
     public getDisplayName(): string {
         return "Wire";
     }
-
-    public getXMLName(): string {
-        return "wire";
-    }
 }

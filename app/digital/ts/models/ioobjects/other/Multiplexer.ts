@@ -36,9 +36,4 @@ export class Multiplexer extends Mux {
     public getDisplayName(): string {
         return "Multiplexer";
     }
-
-    public getXMLName(): string {
-        return "mux";
-    }
-
 }

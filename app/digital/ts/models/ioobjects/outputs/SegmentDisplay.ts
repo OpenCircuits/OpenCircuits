@@ -45,8 +45,4 @@ export class SegmentDisplay extends DigitalComponent {
             return "Segment Display"
         return this.getInputPorts().length + " Segment Display";
     }
-
-    public getXMLName(): string {
-        return "sevensegmentdisplay";
-    }
 }

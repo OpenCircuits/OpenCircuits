@@ -16,10 +16,6 @@ export class ConstantLow extends DigitalComponent {
         return "Constant Low";
     }
 
-    public getXMLName(): string {
-        return "constlow";
-    }
-
     public getImageName(): string {
         return "constLow.svg";
     }

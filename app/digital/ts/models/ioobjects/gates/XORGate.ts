@@ -55,8 +55,4 @@ export class XORGate extends Gate {
 
         return Vector.max(max, ...corners);
     }
-
-    public getXMLName(): string {
-        return "xor";
-    }
 }

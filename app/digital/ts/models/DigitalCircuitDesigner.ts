@@ -230,9 +230,4 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     public getICData(): ICData[] {
         return this.ics.slice(); // Shallow copy array
     }
-
-    public getXMLName(): string {
-        return "circuit";
-    }
-
 }

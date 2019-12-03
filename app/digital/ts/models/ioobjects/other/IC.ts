@@ -88,8 +88,4 @@ export class IC extends DigitalComponent {
     public getDisplayName(): string {
         return "IC";
     }
-
-    public getXMLName(): string {
-        return "ic";
-    }
 }

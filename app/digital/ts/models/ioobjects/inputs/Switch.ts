@@ -33,8 +33,4 @@ export class Switch extends PressableComponent {
     public getOnImageName(): string {
         return "switchDown.svg";
     }
-
-    public getXMLName(): string {
-        return "switch";
-    }
 }

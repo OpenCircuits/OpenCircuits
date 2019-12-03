@@ -39,8 +39,4 @@ export class SRFlipFlop extends FlipFlop {
     public getDisplayName(): string {
         return "SR Flip Flop";
     }
-
-    public getXMLName(): string {
-        return "srff";
-    }
 }

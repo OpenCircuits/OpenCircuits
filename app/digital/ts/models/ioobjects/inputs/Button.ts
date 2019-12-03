@@ -41,8 +41,4 @@ export class Button extends PressableComponent {
     public getOnImageName(): string {
         return "buttonDown.svg";
     }
-
-    public getXMLName(): string {
-        return "button";
-    }
 }

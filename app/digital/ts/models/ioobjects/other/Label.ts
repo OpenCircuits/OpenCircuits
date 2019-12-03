@@ -14,9 +14,4 @@ export class Label extends DigitalComponent {
     public getDisplayName(): string {
         return "LABEL";
     }
-
-    public getXMLName(): string {
-        return "label";
-    }
-
 }

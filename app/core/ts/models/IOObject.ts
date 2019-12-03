@@ -37,6 +37,4 @@ export abstract class IOObject implements Selectable {
     }
 
     public abstract getDisplayName(): string;
-    public abstract getXMLName(): string;
-
 }

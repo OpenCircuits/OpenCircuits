@@ -40,9 +40,4 @@ export class Decoder extends DigitalComponent {
     public getDisplayName(): string {
         return "Decoder";
     }
-
-    public getXMLName(): string {
-        return "decoder";
-    }
-
 }

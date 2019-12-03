@@ -65,8 +65,4 @@ export class ORGate extends Gate {
 
         return Vector.max(max, ...corners);
     }
-
-    public getXMLName(): string {
-        return "or";
-    }
 }

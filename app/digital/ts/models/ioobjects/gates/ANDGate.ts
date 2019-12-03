@@ -26,8 +26,4 @@ export class ANDGate extends Gate {
     public getImageName(): string {
         return "and.svg";
     }
-
-    public getXMLName(): string {
-        return "and";
-    }
 }

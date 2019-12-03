@@ -88,9 +88,4 @@ export class LED extends DigitalComponent {
     public getOnImageName(): string {
         return "ledLight.svg"
     }
-
-    public getXMLName(): string {
-        return "led";
-    }
-
 }

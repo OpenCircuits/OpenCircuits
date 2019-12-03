@@ -36,8 +36,4 @@ export class SRLatch extends Latch {
     public getDisplayName(): string {
         return "SR Latch";
     }
-
-    public getXMLName(): string {
-        return "srl";
-    }
 }

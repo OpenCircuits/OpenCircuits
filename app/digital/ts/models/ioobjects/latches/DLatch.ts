@@ -24,8 +24,4 @@ export class DLatch extends Latch {
     public getDisplayName(): string {
         return "D Latch";
     }
-
-    public getXMLName(): string {
-        return "dl";
-    }
 }

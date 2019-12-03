@@ -49,8 +49,4 @@ export class DigitalNode extends DigitalComponent implements Node {
     public getDisplayName(): string {
         return "Port";
     }
-
-    public getXMLName(): string {
-        return "port";
-    }
 }

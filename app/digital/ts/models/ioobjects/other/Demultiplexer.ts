@@ -36,8 +36,4 @@ export class Demultiplexer extends Mux {
     public getDisplayName(): string {
         return "Demultiplexer";
     }
-
-    public getXMLName(): string {
-        return "demux";
-    }
 }

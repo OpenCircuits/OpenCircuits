@@ -16,10 +16,6 @@ export class ConstantHigh extends DigitalComponent {
         return "Constant High";
     }
 
-    public getXMLName(): string {
-        return "consthigh";
-    }
-
     public getImageName(): string {
         return "constHigh.svg";
     }
