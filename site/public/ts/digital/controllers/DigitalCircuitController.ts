@@ -30,6 +30,7 @@ import {ICViewerButtonPopupModule} from "./selectionpopup/ViewICButtonPopupModul
 import {ICViewerController} from "./ICViewerController";
 import {IC} from "digital/models/ioobjects/other/IC";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -63,7 +64,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
             new ICViewerButtonPopupModule(this, this.icViewer),
-            new BusButtonPopupModule(this)
+            new BusButtonPopupModule(this),
+            new SegmentCountPopupModule(this),
         );
 
         this.contextMenu = new ContextMenuController(this);
@@ -79,13 +81,12 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
+        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents, this.getCamera());
         this.headerController.setProjectName(name);
     }
 
     public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
-        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
+        return WriteCircuit(this, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): DigitalCircuitDesigner {

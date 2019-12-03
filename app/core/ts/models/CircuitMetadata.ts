@@ -43,6 +43,16 @@ export class CircuitMetadata {
     public static Default(): CircuitMetadata {
         return new CircuitMetadataBuilder().build();
     }
+
+    public buildOn(): CircuitMetadataBuilder {
+        return new CircuitMetadataBuilder()
+                .withId(this.id)
+                .withName(this.name)
+                .withOwner(this.owner)
+                .withDesc(this.desc)
+                .withThumbnail(this.thumbnail)
+                .withVersion(this.version);
+    }
 }
 
 export class CircuitMetadataBuilder {

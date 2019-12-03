@@ -24,7 +24,7 @@ import {OutputPort} from "digital/models/ports/OutputPort";
 import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
-import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
+import {SegmentDisplay} from "../outputs/SegmentDisplay";
 
 export class ICData {
     private transform: Transform;
@@ -188,7 +188,7 @@ export class ICData {
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
-        const BLACKLIST = [SevenSegmentDisplay, Label];
+        const BLACKLIST = [SegmentDisplay, Label];
 
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
         const graph = CreateGraph(group);

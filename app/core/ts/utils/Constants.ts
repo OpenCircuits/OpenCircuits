@@ -15,6 +15,7 @@ export const SELECTED_FILL_COLOR   = "#1cff3e";
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
 export const DEFAULT_BORDER_WIDTH = 2;
+export const SEGMENT_DISPLAY_WIDTH = 35;
 
 export const DRAG_TIME = 50;
 

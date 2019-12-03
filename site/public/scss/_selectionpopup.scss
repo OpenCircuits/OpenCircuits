@@ -29,6 +29,16 @@
         background-color: transparent;
     }
 
+    & select {
+        width: calc(100% - 2*2px - 2*2px);
+        margin-bottom: 1px;
+        padding: 2px;
+
+        color: $secondary-color;
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, 0.8)        
+    }
+
     & button {
         font-size: 0.8em;
 
