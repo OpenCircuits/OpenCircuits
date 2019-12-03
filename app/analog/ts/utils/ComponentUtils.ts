@@ -1,8 +1,12 @@
+import {serializable} from "serialeazy";
+
 import {IOObjectSet} from "core/utils/ComponentUtils";
-import {AnalogWire} from "analog/models/AnalogWire";
-import {AnalogComponent} from "analog/models/AnalogComponent";
 import {IOObject} from "core/models/IOObject";
 
+import {AnalogWire} from "analog/models/AnalogWire";
+import {AnalogComponent} from "analog/models/AnalogComponent";
+
+@serializable("AnalogObjectSet")
 export class AnalogObjectSet extends IOObjectSet {
     protected wires: Set<AnalogWire>;
 
@@ -10,7 +14,7 @@ export class AnalogObjectSet extends IOObjectSet {
     private grounds: AnalogComponent[];
     private others:  AnalogComponent[];
 
-    public constructor(set: IOObject[]) {
+    public constructor(set: IOObject[] = []) {
         super(set);
 
         this.sources = [];

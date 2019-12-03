@@ -1,12 +1,14 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent} from "../AnalogComponent";
+import {AnalogComponent} from "analog/models/AnalogComponent";
 
+@serializable("Resistor")
 export class Resistor extends AnalogComponent {
-
     public constructor(resistance: number = 5) {
         super(new ClampedValue(2), V(50, 30));
 
@@ -26,9 +28,4 @@ export class Resistor extends AnalogComponent {
     public getImageName(): string {
         return "resistor.svg";
     }
-
-    public getXMLName(): string {
-        return "resistor";
-    }
-
 }
