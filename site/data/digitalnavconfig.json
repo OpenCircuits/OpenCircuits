@@ -6,27 +6,27 @@
       "label": "Inputs",
       "items": [
         {
-          "id": "constlow",
+          "id": "ConstantLow",
           "label": "Constant Low",
           "icon": "constantlow.svg"
         },
         {
-          "id": "consthigh",
+          "id": "ConstantHigh",
           "label": "Constant High",
           "icon": "constanthigh.svg"
         },
         {
-          "id": "button",
+          "id": "Button",
           "label": "Button",
           "icon": "button.svg"
         },
         {
-          "id": "switch",
+          "id": "Switch",
           "label": "Switch",
           "icon": "switch.svg"
         },
         {
-          "id": "clock",
+          "id": "Clock",
           "label": "Clock",
           "icon": "clock.svg"
         }
@@ -37,13 +37,13 @@
       "label": "Outputs",
       "items": [
         {
-          "id": "led",
+          "id": "LED",
           "label": "LED",
           "icon": "led.svg"
         },
         {
-          "id": "sevensegmentdisplay",
-          "label": "7 Segment Display",
+          "id": "SegmentDisplay",
+          "label": "Segment Display",
           "icon": "sevensegmentdisplay.svg"
         }
       ]
@@ -53,52 +53,44 @@
       "label": "Logic Gates",
       "items": [
         {
-          "id": "buf",
+          "id": "BUFGate",
           "label": "Buffer",
-          "icon": "bufgate.svg",
-          "not": false
+          "icon": "bufgate.svg"
         },
         {
-          "id": "buf",
+          "id": "NOTGate",
           "label": "NOT",
-          "icon": "notgate.svg",
-          "not": true
+          "icon": "notgate.svg"
         },
         {
-          "id": "and",
+          "id": "ANDGate",
           "label": "AND",
-          "icon": "andgate.svg",
-          "not": false
+          "icon": "andgate.svg"
         },
         {
-          "id": "and",
+          "id": "NANDGate",
           "label": "NAND",
-          "icon": "nandgate.svg",
-          "not": true
+          "icon": "nandgate.svg"
         },
         {
-          "id": "or",
+          "id": "ORGate",
           "label": "OR",
-          "icon": "orgate.svg",
-          "not": false
+          "icon": "orgate.svg"
         },
         {
-          "id": "or",
+          "id": "NORGate",
           "label": "NOR",
-          "icon": "norgate.svg",
-          "not": true
+          "icon": "norgate.svg"
         },
         {
-          "id": "xor",
+          "id": "XORGate",
           "label": "XOR",
-          "icon": "xorgate.svg",
-          "not": false
+          "icon": "xorgate.svg"
         },
         {
-          "id": "xor",
+          "id": "NXORGate",
           "label": "XNOR",
-          "icon": "xnorgate.svg",
-          "not": true
+          "icon": "xnorgate.svg"
         }
       ]
     },
@@ -107,24 +99,40 @@
       "label": "Flip Flops",
       "items": [
         {
-          "id": "srff",
-          "label": "SR Flip Flop",
+          "id": "SRFlipFlop",
+          "label": "SR",
           "icon": "srflipflop.svg"
         },
         {
-          "id": "jkff",
-          "label": "JK Flip Flop",
-          "icon": "srflipflop.svg"
+          "id": "JKFlipFlop",
+          "label": "JK",
+          "icon": "jkflipflop.svg"
         },
         {
-          "id": "dff",
-          "label": "D Flip Flop",
-          "icon": "srflipflop.svg"
+          "id": "DFlipFlop",
+          "label": "D",
+          "icon": "dflipflop.svg"
         },
         {
-          "id": "tff",
-          "label": "T Flip Flop",
-          "icon": "srflipflop.svg"
+          "id": "TFlipFlop",
+          "label": "T",
+          "icon": "tflipflop.svg"
+        }
+      ]
+    },
+    {
+      "id": "latches",
+      "label": "Latches",
+      "items": [
+        {
+          "id": "DLatch",
+          "label": "D",
+          "icon": "dlatch.svg"
+        },
+        {
+          "id": "SRLatch",
+          "label": "SR",
+          "icon": "srlatch.svg"
         }
       ]
     },
@@ -133,27 +141,27 @@
       "label": "Other",
       "items": [
         {
-          "id": "mux",
+          "id": "Multiplexer",
           "label": "Mux",
           "icon": "multiplexer.svg"
         },
         {
-          "id": "demux",
+          "id": "Demultiplexer",
           "label": "Demux",
           "icon": "demultiplexer.svg"
         },
         {
-          "id": "encoder",
+          "id": "Encoder",
           "label": "Encoder",
           "icon": "encoder.svg"
         },
         {
-          "id": "decoder",
+          "id": "Decoder",
           "label": "Decoder",
           "icon": "decoder.svg"
         },
         {
-          "id": "label",
+          "id": "Label",
           "label": "Label",
           "icon": "label.svg"
         }
