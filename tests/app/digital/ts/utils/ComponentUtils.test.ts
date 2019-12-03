@@ -12,6 +12,8 @@ import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {ICData} from "digital/models/ioobjects/other/ICData";
+import {IC} from "digital/models/ioobjects/other/IC";
 
 function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
@@ -342,5 +344,39 @@ describe("CopyGroup", () => {
                     [           1,0,/* -------------------------------------------------------------------------> */7,0],
                     [           1,0,/* -------------------------------------------------------------------------> */7,3],
                     [           1,0,/* -------------------------------------------------------------------------> */7,5]]);
+    });
+    test("Group 7 - Semi Select", () => {
+        const objs = [new Switch(), new LED()];
+        Connect(objs[0], 0, objs[1], 0);
+
+        const copy = CopyGroup([objs[0]]); // Just copy switch
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const s_copy = copy.getComponents()[0];
+
+        expect(s_copy).toBeInstanceOf(Switch);
+        expect(s_copy.getConnections()).toHaveLength(0);
+    });
+    test("Group 8 - IC", () => {
+        const objs = [new Switch(), new LED()];
+        Connect(objs[0], 0, objs[1], 0);
+
+        const data = ICData.Create(objs);
+        const ic = new IC(data);
+
+        const copy = CopyGroup([ic]);
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const ic_copy = copy.getComponents()[0];
+
+        expect(ic_copy).toBeInstanceOf(IC);
+
+        const data_copy = (ic_copy as IC).getData();
+
+        expect(data_copy).toEqual(data);
     });
 });
