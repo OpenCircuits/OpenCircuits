@@ -66,3 +66,10 @@ export class ORGate extends Gate {
         return Vector.max(max, ...corners);
     }
 }
+
+@serializable("NORGate")
+export class NORGate extends ORGate {
+    public constructor() {
+        super(true);
+    }
+}

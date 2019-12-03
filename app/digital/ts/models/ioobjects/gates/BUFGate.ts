@@ -24,3 +24,10 @@ export class BUFGate extends Gate {
         return "buf.svg";
     }
 }
+
+@serializable("NOTGate")
+export class NOTGate extends BUFGate {
+    public constructor() {
+        super(true);
+    }
+}

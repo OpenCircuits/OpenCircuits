@@ -27,3 +27,10 @@ export class ANDGate extends Gate {
         return "and.svg";
     }
 }
+
+@serializable("NANDGate")
+export class NANDGate extends ANDGate {
+    public constructor() {
+        super(true);
+    }
+}

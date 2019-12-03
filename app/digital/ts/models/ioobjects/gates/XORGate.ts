@@ -56,3 +56,10 @@ export class XORGate extends Gate {
         return Vector.max(max, ...corners);
     }
 }
+
+@serializable("XNORGate")
+export class XNORGate extends XORGate {
+    public constructor() {
+        super(true);
+    }
+}
