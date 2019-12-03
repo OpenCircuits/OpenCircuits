@@ -93,7 +93,7 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public onDoubleClick(button: number): boolean {
-        let render = super.onDoubleClick(button);
+        const render = super.onDoubleClick(button);
 
         if (button !== LEFT_MOUSE_BUTTON)
             return render;
