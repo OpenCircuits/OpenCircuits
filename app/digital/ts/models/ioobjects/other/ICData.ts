@@ -161,6 +161,9 @@ export class ICData {
         if (!this.IsValid(copies))
             return undefined;
 
+        // Set designer of copies to null
+        copies.toList().forEach((obj) => obj.setDesigner(undefined));
+
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not
         //  things like ConstantHigh and ConstantLow which aren't interactive

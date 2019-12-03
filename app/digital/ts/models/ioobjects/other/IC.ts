@@ -57,13 +57,10 @@ export class IC extends DigitalComponent {
     public setDesigner(designer?: DigitalCircuitDesigner): void {
         super.setDesigner(designer);
 
-        // Set designer of all internal components/wires
-        const components = this.collection.getComponents();
-        for (const obj of components)
+        // Set designer of all internal objects
+        const objs = this.collection.toList();
+        for (const obj of objs)
             obj.setDesigner(designer);
-        const wires = this.collection.getWires();
-        for (const wire of wires)
-            wire.setDesigner(designer);
     }
 
     public update(): void {

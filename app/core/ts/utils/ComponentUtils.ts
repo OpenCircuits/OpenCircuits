@@ -210,6 +210,21 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     return graph;
 }
 
+export function SerializeForCopy(objects: IOObject[]): string {
+    // Make sure to get all immediate connections
+    objects = CreateGroup(objects).toList();
+
+    return Serialize(objects, (o) => {
+        // don't serialize the circuit designer
+        if (o instanceof CircuitDesigner)
+            return false;
+        // don't serialize objects outside of the list
+        if (o instanceof IOObject && !objects.includes(o))
+            return false;
+        return true;
+    });
+}
+
 /**
  * Copies a group of objects including connections that are
  *  present within the objects
@@ -221,25 +236,10 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     if (objects.length == 0)
         return new IOObjectSet();
 
-    // Make sure to get all immediate connections
-    objects = CreateGroup(objects).toList();
+    const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
 
-    const designer = objects[0].getDesigner();
-    if (!objects.every(o => o.getDesigner() == designer))
-        throw new Error("Can't copy group with mismatched circuit designers!");
-
-    const str = Serialize(objects, (o) => {
-        // don't serialize the circuit designer
-        if (o instanceof CircuitDesigner)
-            return false;
-        // don't serialize objects outside of the list
-        if (o instanceof IOObject && !objects.includes(o))
-            return false;
-        return true;
-    });
-    const copies = Deserialize<IOObject[]>(str);
-
-    copies.forEach(c => c.setDesigner(designer));
+    // It's assumed that every object has the same designer
+    copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
     return new IOObjectSet(copies);
 }

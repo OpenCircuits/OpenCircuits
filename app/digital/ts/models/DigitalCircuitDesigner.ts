@@ -190,15 +190,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public replace(designer: DigitalCircuitDesigner) {
-        this.reset();
+        super.replace(designer);
 
         this.ics = designer.ics;
-        this.objects = designer.objects;
-        this.wires = designer.wires;
         this.propagationTime = designer.propagationTime;
-    }
-    public merge(designer: CircuitDesigner) {
-        // TODO
     }
 
     // Shift an object to a certain position

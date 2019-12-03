@@ -42,6 +42,10 @@ export class CircuitMetadata {
         return this.data.version;
     }
 
+    public getDef(): CircuitMetadataDef {
+        return this.data;
+    }
+
     public static Default(): CircuitMetadata {
         return new CircuitMetadataBuilder().build();
     }
