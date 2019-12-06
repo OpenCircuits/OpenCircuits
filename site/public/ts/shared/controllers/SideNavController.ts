@@ -61,7 +61,7 @@ export class SideNavController {
     private toggleEditMode(): void {
         this.editMode = !this.editMode;
 
-        this.main.setEditMode(this.editMode);
+        this.main.setLocked(this.editMode);
     }
 
     private deleteUserCircuit(metadata: CircuitMetadata): void {
