@@ -54,7 +54,7 @@ export class DigitalCopyController extends CopyController {
 
         // Deselect current selections, then select new objs
         action.add(CreateDeselectAllAction(main.getSelectionTool()));
-        action.add(CreateGroupSelectAction(main.getSelectionTool(), objs));
+        action.add(CreateGroupSelectAction(main.getSelectionTool(), components));
 
         // Translate the copies over a bit
         action.add(CreateGroupTranslateAction(components, components.map((o) => o.getPos().add(V(5, 5)))));

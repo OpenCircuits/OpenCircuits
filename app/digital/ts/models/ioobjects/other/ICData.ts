@@ -127,6 +127,10 @@ export class ICData {
         return ports;
     }
 
+    public getGroup(): DigitalObjectSet {
+        return this.collection;
+    }
+
     public copy(): DigitalObjectSet {
         return new DigitalObjectSet(CopyGroup(this.collection.toList()).toList());
     }

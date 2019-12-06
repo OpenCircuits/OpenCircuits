@@ -1,3 +1,5 @@
+import {serializable, serialize} from "serialeazy";
+
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -9,12 +11,18 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {ICData} from "./ICData";
-import {serializable} from "serialeazy";
 
-@serializable("IC")
+@serializable("IC", {
+     customPostDeserialization: (obj: IC) => {
+        obj.collection = obj.data.copy();
+        obj.redirectOutputs();
+    }
+})
 export class IC extends DigitalComponent {
+    @serialize
     private data: ICData;
 
+    // @serialize
     private collection: DigitalObjectSet;
 
     public constructor(data?: ICData) {
@@ -29,8 +37,14 @@ export class IC extends DigitalComponent {
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 
+        this.redirectOutputs();
+        this.update();
+    }
+
+    private redirectOutputs(): void {
         // Redirect activate function for output objects
         const outputs = this.collection.getOutputs();
+        // console.log(this.collection);
         for (let i = 0; i < this.numOutputs(); i++) {
             const port = this.getOutputPort(i);
             const output = outputs[i];
@@ -38,8 +52,6 @@ export class IC extends DigitalComponent {
                 port.activate(on);
             }
         }
-
-        this.update();
     }
 
     private copyPorts(): void {

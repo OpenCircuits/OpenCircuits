@@ -14,6 +14,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
@@ -361,9 +362,9 @@ describe("CopyGroup", () => {
     });
     test("Group 8 - IC", () => {
         const objs = [new Switch(), new LED()];
-        Connect(objs[0], 0, objs[1], 0);
+        const wire = Connect(objs[0], 0, objs[1], 0);
 
-        const data = ICData.Create(objs);
+        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
         const ic = new IC(data);
 
         const copy = CopyGroup([ic]);
@@ -374,9 +375,28 @@ describe("CopyGroup", () => {
         const ic_copy = copy.getComponents()[0];
 
         expect(ic_copy).toBeInstanceOf(IC);
+    });
+    test("Group 8 - IC in IC", () => {
+        const objs = [new Switch(), new LED()];
+        const wire = Connect(objs[0], 0, objs[1], 0);
 
-        const data_copy = (ic_copy as IC).getData();
+        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
+        const ic = new IC(data);
 
-        expect(data_copy).toEqual(data);
+        const objs2 = [new Switch(), new LED()];
+        const wire2a = Connect(objs2[0], 0, ic, 0);
+        const wire2b = Connect(ic, 0, objs2[1], 0);
+
+        const data2 = new ICData(new DigitalObjectSet([objs2[0], wire2a, ic, wire2b, objs2[1]]));
+        const ic2 = new IC(data2);
+
+        const copy = CopyGroup([ic2], true);
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const ic_copy = copy.getComponents()[0];
+
+        expect(ic_copy).toBeInstanceOf(IC);
     });
 });

@@ -1,15 +1,18 @@
+import {serializable, Serialize, Deserialize} from "serialeazy";
+
+import {Vector} from "Vector";
 import {Graph} from "math/Graph";
+import {BoundingBox} from "math/BoundingBox";
 
 import {IOObject} from "core/models/IOObject";
-import {Component} from "core/models/Component";
-import {Node, isNode} from "core/models/Node";
-import {Wire} from "core/models/Wire";
-import {Port} from "core/models/ports/Port";
-import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
-import {BoundingBox} from "math/BoundingBox";
-import {serializable, Serialize, Deserialize} from "serialeazy";
+import {Component} from "core/models/Component";
+import {Wire} from "core/models/Wire";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Node, isNode} from "core/models/Node";
+import {Port} from "core/models/ports/Port";
+
+import {IC} from "digital/models/ioobjects/other/IC";
 
 /**
  * Helper class to hold different groups of components.
@@ -214,13 +217,26 @@ export function SerializeForCopy(objects: IOObject[]): string {
     // Make sure to get all immediate connections
     objects = CreateGroup(objects).toList();
 
+    // This is a hack
+    // Gets all layers of ICs and internal IC objects
+    // TODO: maybe make ICs a core model as a component that contains other components
+    let icObjects = [];
+    let objs = objects;
+    let ics: Array<any>;
+    do {
+        ics = objs.filter((obj) => "getData" in obj);
+        objs = ics.flatMap((ic) => ic["getData"]().getGroup().toList());
+        icObjects = icObjects.concat(objs);
+    } while (ics.length > 0);
+
     return Serialize(objects, (o) => {
         // don't serialize the circuit designer
         if (o instanceof CircuitDesigner)
             return false;
         // don't serialize objects outside of the list
-        if (o instanceof IOObject && !objects.includes(o))
+        if (o instanceof IOObject && !(objects.includes(o) || icObjects.includes(o)))
             return false;
+        // console.log("okay to go", o.constructor.name);
         return true;
     });
 }
@@ -232,11 +248,13 @@ export function SerializeForCopy(objects: IOObject[]): string {
  * @param  objects [description]
  * @return         [description]
  */
-export function CopyGroup(objects: IOObject[]): IOObjectSet {
+export function CopyGroup(objects: IOObject[], print = false): IOObjectSet {
     if (objects.length == 0)
         return new IOObjectSet();
 
     const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
+
+    // console.log(copies);
 
     // It's assumed that every object has the same designer
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
