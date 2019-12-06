@@ -33,7 +33,7 @@ export const Importer = (() => {
 
             return reader.getName();
         },
-        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument, camera: Camera): string {
+        PromptLoadCircuit: function(designer: DigitalCircuitDesigner, contents: string | XMLDocument, _camera: Camera): string {
             const open = SAVED || confirm("Are you sure you want overwrite your current scene?");
 
             if (open) {

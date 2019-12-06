@@ -94,7 +94,7 @@ export function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<b
             }
         }).done(resolve).fail(reject);
     }).then(
-        (xml: XMLDocument) => {
+        (_xml: XMLDocument) => {
             return true;
         },
         (reason) => {
