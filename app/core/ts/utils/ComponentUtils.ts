@@ -8,11 +8,9 @@ import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
 import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
 
-import {IC} from "digital/models/ioobjects/other/IC";
 
 /**
  * Helper class to hold different groups of components.
@@ -217,28 +215,52 @@ export function SerializeForCopy(objects: IOObject[]): string {
     // Make sure to get all immediate connections
     objects = CreateGroup(objects).toList();
 
-    // This is a hack
-    // Gets all layers of ICs and internal IC objects
-    // TODO: maybe make ICs a core model as a component that contains other components
-    let icObjects = [];
-    let objs = objects;
-    let ics: Array<any>;
-    do {
-        ics = objs.filter((obj) => "getData" in obj);
-        objs = ics.flatMap((ic) => ic["getData"]().getGroup().toList());
-        icObjects = icObjects.concat(objs);
-    } while (ics.length > 0);
+    // Serialize with custom functionality
+    //  The idea is to serialize just the objects and connections in `objects`
+    //  So we filter out any connections that are not part of the list so that
+    //  nothing else connected to those connections (that aren't in the list)
+    //  get serialized.
+    //  Also ignore serializing the CircuitDesigner from any IOObjects so that
+    //  the entire circuit doesn't get serialized
+    return Serialize(objects, [
+        {
+            type: Port,
+            customBehavior: {
+                customSerialization: (serializer, port: Port, refs, root, custom) => {
+                    const parent = port.getParent();
+                    const data = serializer.defaultSerialization(port, refs, root, custom);
 
-    return Serialize(objects, (o) => {
-        // don't serialize the circuit designer
-        if (o instanceof CircuitDesigner)
-            return false;
-        // don't serialize objects outside of the list
-        if (o instanceof IOObject && !(objects.includes(o) || icObjects.includes(o)))
-            return false;
-        // console.log("okay to go", o.constructor.name);
-        return true;
-    });
+                    // check if we're serializing an object that isn't an IC
+                    //  (since it's in our original list and any objects outside
+                    //   that list should either not be serialized [which we're
+                    //   about to prevent] or be in an IC)
+                    let connections = port.getWires();
+                    if (objects.includes(parent)) {
+                        // prevent connections not in our list from being serialized
+                        connections = connections.filter((wire) => {
+                            return (objects.includes(wire));
+                        });
+                    }
+
+                    data["connections"] = serializer.serializeProperty(connections, refs, root, custom);
+
+                    return data;
+                },
+                customKeyFilter: (_: Port, key: string) => {
+                    return (key != "connections"); // don't serialize connections (by default)
+                                                   //  we'll handle them above
+                }
+            }
+        },
+        {
+            type: IOObject,
+            customBehavior: {
+                customKeyFilter: (_: IOObject, key: string) => {
+                    return (key != "designer"); // don't serialize designer
+                }
+            }
+        }
+    ]);
 }
 
 /**
@@ -253,8 +275,6 @@ export function CopyGroup(objects: IOObject[], print = false): IOObjectSet {
         return new IOObjectSet();
 
     const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
-
-    // console.log(copies);
 
     // It's assumed that every object has the same designer
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
