@@ -8,11 +8,10 @@ import {serializable} from "serialeazy";
 @serializable("DigitalInputPort")
 export class InputPort extends Port {
     protected parent: DigitalComponent;
-    private input?: DigitalWire;
+    protected connections: DigitalWire[];
 
     public constructor(parent?: DigitalComponent) {
         super(parent);
-        this.input = undefined;
     }
 
     public activate(signal: boolean): void {
@@ -30,36 +29,32 @@ export class InputPort extends Port {
     }
 
     public connect(wire: DigitalWire): void {
-        if (this.input)
+        if (this.connections.length == 1)
             throw new Error("Cannot connect to Input Port! Connection already exists!");
-        this.input = wire;
+        this.connections = [wire];
         this.activate(wire.getIsOn());
     }
 
     public disconnect(): void {
         // remove input and propagate false signal
-        this.input = undefined;
+        this.connections = [];
         this.activate(false);
     }
 
-    public setInput(input: DigitalWire): void {
-        this.input = input;
-    }
-
     public getInput(): DigitalWire {
-        return this.input;
+        return this.connections[0];
     }
 
     public getInitialDir(): Vector {
         return V(-1, 0);
     }
 
-    public getWires(): DigitalWire[] {
-        return this.getInput() ? [this.getInput()] : [];
-    }
-
     public getParent(): DigitalComponent {
         return this.parent;
+    }
+
+    public getWires(): DigitalWire[] {
+        return this.connections;
     }
 
 }

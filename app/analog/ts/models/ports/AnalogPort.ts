@@ -12,7 +12,7 @@ import {AnalogWire} from "../AnalogWire";
 export class AnalogPort extends Port {
     protected parent: AnalogComponent;
 
-    private connections: AnalogWire[];
+    protected connections: AnalogWire[];
 
     public constructor(parent?: Component) {
         super(parent);
