@@ -14,7 +14,6 @@ import {ICData} from "./ICData";
 
 @serializable("IC", {
      customPostDeserialization: (obj: IC) => {
-        obj.collection = obj.data.copy();
         obj.redirectOutputs();
     }
 })
@@ -22,7 +21,7 @@ export class IC extends DigitalComponent {
     @serialize
     private data: ICData;
 
-    // @serialize
+    @serialize
     private collection: DigitalObjectSet;
 
     public constructor(data?: ICData) {
