@@ -15,6 +15,11 @@ import {DigitalWire} from "digital/models/DigitalWire";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+import {PortSet} from "core/models/ports/PortSets";
+import {InputPort} from "digital/models/ports/InputPort";
+import {ClampedValue} from "math/ClampedValue";
+import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+import {Serialize, Deserialize} from "serialeazy";
 
 function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
@@ -376,7 +381,7 @@ describe("CopyGroup", () => {
 
         expect(ic_copy).toBeInstanceOf(IC);
     });
-    test("Group 8 - IC in IC", () => {
+    test("Group 9 - IC in IC", () => {
         const objs = [new Switch(), new LED()];
         const wire = Connect(objs[0], 0, objs[1], 0);
 
