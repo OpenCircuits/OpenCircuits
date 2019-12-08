@@ -5,7 +5,9 @@ import {V} from "Vector";
 import {InputPort} from "../InputPort";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+import {serializable} from "serialeazy";
 
+@serializable("QuadraticCurvePositioner")
 export class QuadraticCurvePositioner extends Positioner<InputPort> {
 
     /**

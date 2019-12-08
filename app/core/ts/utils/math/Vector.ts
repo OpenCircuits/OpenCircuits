@@ -1,5 +1,11 @@
+import {serializable, serialize} from "serialeazy";
+
+@serializable("Vector")
 export class Vector {
+    @serialize
     public x: number;
+
+    @serialize
     public y: number;
 
     public constructor();

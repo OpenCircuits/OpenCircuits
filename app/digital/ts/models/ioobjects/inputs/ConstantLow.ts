@@ -2,7 +2,9 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "serialeazy";
 
+@serializable("ConstantLow")
 export class ConstantLow extends DigitalComponent {
 
     public constructor() {
@@ -12,10 +14,6 @@ export class ConstantLow extends DigitalComponent {
 
     public getDisplayName(): string {
         return "Constant Low";
-    }
-
-    public getXMLName(): string {
-        return "constlow";
     }
 
     public getImageName(): string {

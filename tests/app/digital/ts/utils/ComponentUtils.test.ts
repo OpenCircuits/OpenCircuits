@@ -3,23 +3,27 @@ import "jest";
 import {CreateGroup, GatherGroup,
         CopyGroup} from "core/utils/ComponentUtils";
 
-import {Connect} from "digital/utils/ComponentUtils";
-
 import {DigitalNode}         from "digital/models/ioobjects/other/DigitalNode";
 import {Button}              from "digital/models/ioobjects/inputs/Button";
-import {ConstantHigh}        from "digital/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow}         from "digital/models/ioobjects/inputs/ConstantLow";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
-import {DFlipFlop}           from "digital/models/ioobjects/flipflops/DFlipFlop";
-import {DLatch}              from "digital/models/ioobjects/latches/DLatch";
-import {SRLatch}             from "digital/models/ioobjects/latches/SRLatch";
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {Component} from "core/models/Component";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {ICData} from "digital/models/ioobjects/other/ICData";
+import {IC} from "digital/models/ioobjects/other/IC";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+
+function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
+    const p1 = c1.getOutputPort(i1);
+    const p2 = c2.getInputPort(i2);
+    const wire = new DigitalWire(p1, p2);
+    p1.connect(wire);
+    p2.connect(wire);
+    return wire;
+}
 
 // describe("SeparateGroup", () => {
 //     const NUM_SAMPLES = 10;
@@ -341,5 +345,151 @@ describe("CopyGroup", () => {
                     [           1,0,/* -------------------------------------------------------------------------> */7,0],
                     [           1,0,/* -------------------------------------------------------------------------> */7,3],
                     [           1,0,/* -------------------------------------------------------------------------> */7,5]]);
+    });
+    test("Group 7 - Semi Select", () => {
+        const objs = [new Switch(), new LED()];
+        Connect(objs[0], 0, objs[1], 0);
+
+        const copy = CopyGroup([objs[0]]); // Just copy switch
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const s_copy = copy.getComponents()[0];
+
+        expect(s_copy).toBeInstanceOf(Switch);
+        expect(s_copy.getConnections()).toHaveLength(0);
+    });
+    test("Group 8 - IC", () => {
+        const objs = [new Switch(), new LED()];
+        const wire = Connect(objs[0], 0, objs[1], 0);
+
+        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
+        const ic = new IC(data);
+
+        const copy = CopyGroup([ic]);
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const ic_copy = copy.getComponents()[0];
+
+        expect(ic_copy).toBeInstanceOf(IC);
+    });
+    test("Group 9 - IC in IC", () => {
+        const objs = [new Switch(), new LED()];
+        const wire = Connect(objs[0], 0, objs[1], 0);
+
+        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
+        const ic = new IC(data);
+
+        const objs2 = [new Switch(), new LED()];
+        const wire2a = Connect(objs2[0], 0, ic, 0);
+        const wire2b = Connect(ic, 0, objs2[1], 0);
+
+        const data2 = new ICData(new DigitalObjectSet([objs2[0], wire2a, ic, wire2b, objs2[1]]));
+        const ic2 = new IC(data2);
+
+        const copy = CopyGroup([ic2]);
+
+        expect(copy.getWires()).toHaveLength(0);
+        expect(copy.getComponents()).toHaveLength(1);
+
+        const ic_copy = copy.getComponents()[0];
+
+        expect(ic_copy).toBeInstanceOf(IC);
+    });
+    describe("Group 10 - Floating Nodes", () => {
+        const objs = [new Switch(), new DigitalNode(), new DigitalNode(), new LED(), new LED()];
+        Connect(objs[0], 0, objs[1], 0);
+        Connect(objs[1], 0, objs[2], 0);
+        Connect(objs[2], 0, objs[3], 0);
+        Connect(objs[2], 0, objs[4], 0);
+
+        test("Group 10a – One Node", () => {
+            const copy = CopyGroup([objs[1]]);
+
+            expect(copy.getWires()).toHaveLength(0);
+            expect(copy.getComponents()).toHaveLength(0);
+        });
+
+        test("Group 10b – Two Nodes", () => {
+            const copy = CopyGroup([objs[1], objs[2]]);
+
+            expect(copy.getWires()).toHaveLength(0);
+            expect(copy.getComponents()).toHaveLength(0);
+        });
+
+        test("Group 10c – Switch + Two Nodes", () => {
+            const copy = CopyGroup([objs[0], objs[1], objs[2]]);
+
+            expect(copy.getWires()).toHaveLength(0);
+            expect(copy.getComponents()).toHaveLength(1);
+
+            const s_copy = copy.getComponents()[0];
+
+            expect(s_copy).toBeInstanceOf(Switch);
+            expect(s_copy.getConnections()).toHaveLength(0);
+        });
+
+        test("Group 10d – Node with 2 LEDs", () => {
+            const copy = CopyGroup([objs[2], objs[3], objs[4]]);
+
+            expect(copy.getWires()).toHaveLength(0);
+            expect(copy.getComponents()).toHaveLength(2);
+
+            const l0_copy = copy.getComponents()[0];
+            const l1_copy = copy.getComponents()[1];
+
+            expect(l0_copy).toBeInstanceOf(LED);
+            expect(l0_copy.getConnections()).toHaveLength(0);
+            expect(l1_copy).toBeInstanceOf(LED);
+            expect(l1_copy.getConnections()).toHaveLength(0);
+        });
+
+        test("Group 10e – Switch with both Nodes and 1 LED", () => {
+            const copy = CopyGroup([objs[0], objs[1], objs[2], objs[3]]);
+
+            expect(copy.getWires()).toHaveLength(3);
+            expect(copy.getComponents()).toHaveLength(4);
+
+            const s_copy = copy.getComponents()[0];
+            const n0_copy = copy.getComponents()[1];
+            const n1_copy = copy.getComponents()[2];
+            const l_copy = copy.getComponents()[3];
+
+            expect(s_copy).toBeInstanceOf(Switch);
+            expect(s_copy.getConnections()).toHaveLength(1);
+            expect(n0_copy).toBeInstanceOf(DigitalNode);
+            expect(n0_copy.getConnections()).toHaveLength(2);
+            expect(n1_copy).toBeInstanceOf(DigitalNode);
+            expect(n1_copy.getConnections()).toHaveLength(2);
+            expect(l_copy).toBeInstanceOf(LED);
+            expect(l_copy.getConnections()).toHaveLength(1);
+        });
+
+        test("Group 10f – Copy whole group", () => {
+            const copy = CopyGroup([objs[0], objs[1], objs[2], objs[3], objs[4]]);
+
+            expect(copy.getWires()).toHaveLength(4);
+            expect(copy.getComponents()).toHaveLength(5);
+
+            const s_copy = copy.getComponents()[0];
+            const n0_copy = copy.getComponents()[1];
+            const n1_copy = copy.getComponents()[2];
+            const l0_copy = copy.getComponents()[3];
+            const l1_copy = copy.getComponents()[4];
+
+            expect(s_copy).toBeInstanceOf(Switch);
+            expect(s_copy.getConnections()).toHaveLength(1);
+            expect(n0_copy).toBeInstanceOf(DigitalNode);
+            expect(n0_copy.getConnections()).toHaveLength(2);
+            expect(n1_copy).toBeInstanceOf(DigitalNode);
+            expect(n1_copy.getConnections()).toHaveLength(3);
+            expect(l0_copy).toBeInstanceOf(LED);
+            expect(l0_copy.getConnections()).toHaveLength(1);
+            expect(l1_copy).toBeInstanceOf(LED);
+            expect(l1_copy.getConnections()).toHaveLength(1);
+        });
     });
 });

@@ -97,7 +97,7 @@ func genSqliteInterface(workingDir string) (*sqliteCircuitStorageInterface, erro
 
 func (d sqliteCircuitStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {
 	var c model.Circuit
-	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.ID, &c.Designer.RawContent, &c.Metadata.Name, &c.Metadata.Owner, &c.Metadata.Version, &c.Metadata.Thumbnail)
+	err := d.loadEntryStmt.QueryRow(id).Scan(&c.Metadata.ID, &c.Designer, &c.Metadata.Name, &c.Metadata.Owner, &c.Metadata.Version, &c.Metadata.Thumbnail)
 	if err == sql.ErrNoRows || err != nil {
 		return nil
 	}
@@ -141,7 +141,7 @@ func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
-	_, err := d.storeEntryStmt.Exec(circuit.Designer.RawContent, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.Version, circuit.Metadata.Thumbnail, circuit.Metadata.ID)
+	_, err := d.storeEntryStmt.Exec(circuit.Designer, circuit.Metadata.Name, circuit.Metadata.Owner, circuit.Metadata.Version, circuit.Metadata.Thumbnail, circuit.Metadata.ID)
 	if err != nil {
 		panic(err)
 	}

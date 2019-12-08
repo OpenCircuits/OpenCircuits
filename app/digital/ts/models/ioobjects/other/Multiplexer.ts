@@ -5,7 +5,9 @@ import {MuxPositioner,
         MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
+import {serializable} from "serialeazy";
 
+@serializable("Multiplexer")
 export class Multiplexer extends Mux {
 
     public constructor() {
@@ -34,9 +36,4 @@ export class Multiplexer extends Mux {
     public getDisplayName(): string {
         return "Multiplexer";
     }
-
-    public getXMLName(): string {
-        return "mux";
-    }
-
 }

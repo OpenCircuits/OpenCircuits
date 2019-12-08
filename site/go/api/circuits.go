@@ -1,13 +1,14 @@
 package api
 
 import (
-	"encoding/xml"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
-	"github.com/gin-gonic/gin"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/gin-gonic/gin"
 )
 
 func circuitHandler(m interfaces.CircuitStorageInterfaceFactory, f func(_ interfaces.CircuitStorageInterfaceFactory, _ *gin.Context, _ model.UserId)) func(_ *gin.Context, _ model.UserId) {
@@ -23,7 +24,7 @@ func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 	}
 
 	var newCircuit model.Circuit
-	err = xml.Unmarshal(x, &newCircuit)
+	err = json.Unmarshal(x, &newCircuit)
 	if err != nil {
 		return model.Circuit{}, err
 	}
@@ -36,18 +37,17 @@ func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	storageInterface := m.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.XML(http.StatusNotFound, nil)
+		c.JSON(http.StatusNotFound, nil)
 		return
-	} else {
-		if circuit.Metadata.Owner != userId {
-			c.XML(http.StatusForbidden, nil)
-			return
-		}
+	}
+	if circuit.Metadata.Owner != userId {
+		c.JSON(http.StatusForbidden, nil)
+		return
 	}
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -55,7 +55,7 @@ func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	storageInterface.UpdateCircuit(*circuit)
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	c.XML(http.StatusAccepted, circuit.Metadata)
+	c.JSON(http.StatusAccepted, circuit.Metadata)
 }
 
 func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -63,7 +63,7 @@ func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
-		c.XML(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -73,7 +73,7 @@ func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 	storageInterface.UpdateCircuit(circuit)
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	c.XML(http.StatusAccepted, circuit.Metadata)
+	c.JSON(http.StatusAccepted, circuit.Metadata)
 }
 
 func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -82,22 +82,17 @@ func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Cont
 	storageInterface := m.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.XML(http.StatusNotFound, nil)
+		c.JSON(http.StatusNotFound, nil)
 		return
 	}
 
 	// Only owner can access... for now
 	if circuit.Metadata.Owner != userId {
-		c.XML(http.StatusNotFound, nil)
+		c.JSON(http.StatusNotFound, nil)
 		return
 	}
 
-	c.XML(http.StatusOK, circuit)
-}
-
-// XML is killing me
-type metadataList struct {
-	Metadata []model.CircuitMetadata `xml:"metadata"`
+	c.JSON(http.StatusOK, circuit)
 }
 
 func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -106,7 +101,7 @@ func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	if circuits == nil {
 		circuits = []model.CircuitMetadata{}
 	}
-	c.XML(http.StatusOK, metadataList{Metadata: circuits})
+	c.JSON(http.StatusOK, circuits)
 }
 
 func circuitDeleteHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -116,10 +111,10 @@ func circuitDeleteHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 	// The initial "Can Delete" logic is the same as "Is Owner"
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil || circuit.Metadata.Owner != userId {
-		c.XML(http.StatusForbidden, nil)
+		c.JSON(http.StatusForbidden, nil)
 		return
 	}
 
 	storageInterface.DeleteCircuit(circuitId)
-	c.XML(http.StatusOK, nil)
+	c.JSON(http.StatusOK, nil)
 }

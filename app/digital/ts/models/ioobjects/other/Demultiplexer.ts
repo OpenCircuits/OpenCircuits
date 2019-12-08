@@ -5,7 +5,9 @@ import {MuxPositioner,
         MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
 import {Mux} from "./Mux";
+import {serializable} from "serialeazy";
 
+@serializable("Demultiplexer")
 export class Demultiplexer extends Mux {
 
     public constructor() {
@@ -33,9 +35,5 @@ export class Demultiplexer extends Mux {
 
     public getDisplayName(): string {
         return "Demultiplexer";
-    }
-
-    public getXMLName(): string {
-        return "demux";
     }
 }
