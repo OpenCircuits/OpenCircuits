@@ -14,7 +14,18 @@ export abstract class CircuitDesigner {
 
     public abstract removeWire(wire: Wire): void;
 
+    public replace(designer: CircuitDesigner): void {
+        this.reset();
+
+        for (const obj of designer.getObjects())
+            this.addObject(obj);
+        for (const wire of designer.getWires())
+            this.addWire(wire);
+    }
+
     public abstract shift(obj: Component | Wire, i?: number): number;
+
+    public abstract reset(): void;
 
     public abstract getObjects(): Component[];
     public abstract getWires(): Wire[];

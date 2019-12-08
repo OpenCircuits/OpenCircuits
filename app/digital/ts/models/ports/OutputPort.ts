@@ -1,17 +1,18 @@
 import {Vector,V} from "Vector";
 
-import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalWire}      from "../DigitalWire";
+import {serializable} from "serialeazy";
 
+@serializable("DigitalOutputPort")
 export class OutputPort extends Port {
     protected parent: DigitalComponent;
 
-    private connections: DigitalWire[];
+    protected connections: DigitalWire[];
 
-    public constructor(parent: DigitalComponent) {
+    public constructor(parent?: DigitalComponent) {
         super(parent);
         this.connections = [];
     }
@@ -57,8 +58,8 @@ export class OutputPort extends Port {
         return V(1, 0);
     }
 
-    public getWires(): Wire[] {
-        return this.getConnections();
+    public getWires(): DigitalWire[] {
+        return this.connections;
     }
 
     public getParent(): DigitalComponent {

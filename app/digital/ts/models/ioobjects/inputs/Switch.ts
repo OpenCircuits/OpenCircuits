@@ -2,7 +2,9 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {PressableComponent} from "../PressableComponent";
+import {serializable} from "serialeazy";
 
+@serializable("Switch")
 export class Switch extends PressableComponent {
 
     public constructor() {
@@ -30,9 +32,5 @@ export class Switch extends PressableComponent {
 
     public getOnImageName(): string {
         return "switchDown.svg";
-    }
-
-    public getXMLName(): string {
-        return "switch";
     }
 }

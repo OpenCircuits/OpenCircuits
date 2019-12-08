@@ -1,5 +1,6 @@
 import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serialize} from "serialeazy";
 
 import {Component} from "core/models/Component";
 
@@ -13,9 +14,12 @@ import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
 export abstract class DigitalComponent extends Component {
+    @serialize
     protected designer: DigitalCircuitDesigner;
 
+    @serialize
     protected inputs:  PortSet<InputPort>;
+    @serialize
     protected outputs: PortSet<OutputPort>;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
@@ -122,16 +126,6 @@ export abstract class DigitalComponent extends Component {
 
     public getDesigner(): DigitalCircuitDesigner {
         return this.designer;
-    }
-
-
-    public copy(): DigitalComponent {
-        const copy = <DigitalComponent>super.copy();
-
-        copy.inputs = this.inputs.copy(copy);
-        copy.outputs = this.outputs.copy(copy);
-
-        return copy;
     }
 
 }

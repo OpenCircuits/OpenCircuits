@@ -18,6 +18,8 @@ export abstract class Port implements Selectable {
     protected origin: Vector;
     protected target: Vector;
 
+    protected connections: Wire[];
+
     protected constructor(parent: Component, dir?: Vector) {
         this.parent = parent;
         this.isOn = false;
@@ -27,6 +29,8 @@ export abstract class Port implements Selectable {
         this.dir = dir || this.getInitialDir();
         this.origin = V(0, 0);
         this.target = this.dir.scale(IO_PORT_LENGTH);
+
+        this.connections = [];
     }
 
     private updateDir(): void {
@@ -99,6 +103,7 @@ export abstract class Port implements Selectable {
         return this.getTargetPos();
     }
 
-    public abstract getWires(): Wire[];
-
+    public getWires(): Wire[] {
+        return this.connections;
+    }
 }

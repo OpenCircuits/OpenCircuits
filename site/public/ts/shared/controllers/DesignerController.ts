@@ -6,7 +6,6 @@ import {RenderQueue} from "core/utils/RenderQueue";
 import {Selectable} from "core/utils/Selectable";
 
 import {Action} from "core/actions/Action";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
@@ -72,10 +71,6 @@ export abstract class DesignerController {
 
     public addAction(action: Action): void {
         this.toolManager.addAction(action);
-    }
-
-    public clearSelections(): void {
-        this.addAction(CreateDeselectAllAction(this.getSelectionTool()).execute());
     }
 
     public render(): void {

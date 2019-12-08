@@ -76,7 +76,7 @@ export class ICDesignerController extends DesignerController {
         const designer = this.mainController.getDesigner();
         const selectionTool = this.mainController.getSelectionTool();
 
-        const ic = this.ic.copy();
+        const ic = new IC(this.icdata);
 
         this.hide();
 

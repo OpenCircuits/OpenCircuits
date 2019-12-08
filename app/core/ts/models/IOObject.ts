@@ -1,15 +1,16 @@
 import {Vector} from "Vector";
 
-import {XMLNode} from "core/utils/io/xml/XMLNode";
-import {XMLable} from "core/utils/io/xml/XMLable";
-
 import {Selectable} from "core/utils/Selectable";
+import {serialize} from "serialeazy";
 import {Name} from "core/utils/Name";
 
 import {CircuitDesigner} from "./CircuitDesigner";
 
-export abstract class IOObject implements Selectable, XMLable {
+export abstract class IOObject implements Selectable {
+    @serialize
     protected designer?: CircuitDesigner;
+
+    @serialize
     protected name: Name;
 
     protected constructor() {
@@ -35,20 +36,5 @@ export abstract class IOObject implements Selectable, XMLable {
         return this.name.getName();
     }
 
-    public copy(): IOObject {
-        const copy = new (<new () => IOObject>this.constructor)();
-        copy.name = new Name(this.name.getName());
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        node.addAttribute("name", this.name.getName());
-    }
-    public load(node: XMLNode): void {
-        this.name = new Name(node.getAttribute("name"));
-    }
-
     public abstract getDisplayName(): string;
-    public abstract getXMLName(): string;
-
 }

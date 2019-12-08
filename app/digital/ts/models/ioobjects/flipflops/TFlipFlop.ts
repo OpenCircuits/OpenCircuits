@@ -1,6 +1,8 @@
 import {V} from "Vector";
 import {FlipFlop} from "./FlipFlop";
+import {serializable} from "serialeazy";
 
+@serializable("TFlipFlop")
 export class TFlipFlop extends FlipFlop {
 
     public constructor() {
@@ -23,9 +25,5 @@ export class TFlipFlop extends FlipFlop {
 
     public getDisplayName(): string {
         return "T Flip Flop";
-    }
-
-    public getXMLName(): string {
-        return "tff";
     }
 }

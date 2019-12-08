@@ -2,9 +2,6 @@ import {MainDesignerController} from "site/shared/controllers/MainDesignerContro
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Importer} from "core/utils/io/Importer";
-import {WriteCircuit} from "site/shared/utils/Exporter";
-
 import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule}       from "site/digital/controllers/selectionpopup/ICButtonPopupModule";
@@ -14,24 +11,24 @@ import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup
 import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
 import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
 
-import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
-
 import {ICDesignerController} from "./ICDesignerController";
 import {ContextMenuController} from "../../shared/controllers/ContextMenuController";
 import {DigitalCopyController} from "./DigitalCopyController";
-import {DigitalHeaderController} from "./DigitalHeaderController";
 
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
+import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
+
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {DigitalCircuitView} from "../views/DigitalCircuitView";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
-    private headerController: DigitalHeaderController;
     private sideNav: SideNavController;
     private loginController: LoginController;
 
@@ -40,7 +37,7 @@ export class DigitalCircuitController extends MainDesignerController {
     public constructor() {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
-              CreateComponentFromXML);
+              new ThumbnailGenerator(DigitalCircuitView));
 
 
         this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()),
@@ -56,29 +53,19 @@ export class DigitalCircuitController extends MainDesignerController {
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
-            new BusButtonPopupModule(this)
+            new BusButtonPopupModule(this),
+            new SegmentCountPopupModule(this)
         );
 
         this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
-        this.headerController = new DigitalHeaderController(this);
-        this.sideNav = new SideNavController(this);
+        this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
     }
 
     public async init(): Promise<void> {
         return await this.loginController.initAuthentication();
-    }
-
-    public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
-        this.headerController.setProjectName(name);
-    }
-
-    public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
-        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): DigitalCircuitDesigner {

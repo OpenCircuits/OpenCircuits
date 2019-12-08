@@ -5,16 +5,13 @@ import {Vector, V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
+import {serializable} from "serialeazy";
 
 import {CopyGroup,
         CreateGraph,
         CreateGroup} from "core/utils/ComponentUtils";
 
-import {DigitalObjectSet,
-        SaveGroup,
-        LoadGroup} from "digital/utils/ComponentUtils";
-
-import {XMLNode} from "core/utils/io/xml/XMLNode";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 import {Port} from "core/models/ports/Port";
@@ -24,8 +21,9 @@ import {OutputPort} from "digital/models/ports/OutputPort";
 import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
-import {SevenSegmentDisplay} from "../outputs/SevenSegmentDisplay";
+import {SegmentDisplay} from "../outputs/SegmentDisplay";
 
+@serializable("ICData")
 export class ICData {
     private transform: Transform;
 
@@ -129,66 +127,16 @@ export class ICData {
         return ports;
     }
 
+    public getGroup(): DigitalObjectSet {
+        return this.collection;
+    }
+
     public copy(): DigitalObjectSet {
-        return new DigitalObjectSet(CopyGroup(this.collection).toList());
-    }
-
-    public save(node: XMLNode, icIdMap: Map<ICData, number>): void {
-        node.addVectorAttribute("size", this.transform.getSize());
-
-        // Save Input Ports
-        const inputsNode = node.createChild("inputs");
-        for (const input of this.inputPorts) {
-            const inputNode = inputsNode.createChild("input");
-            inputNode.addAttribute("name", input.getName());
-            inputNode.addVectorAttribute("origin", input.getOriginPos());
-            inputNode.addVectorAttribute("target", input.getTargetPos());
-        }
-
-        // Save Output Ports
-        const outputsNode = node.createChild("outputs");
-        for (const output of this.outputPorts) {
-            const outputNode = outputsNode.createChild("output");
-            outputNode.addAttribute("name", output.getName());
-            outputNode.addVectorAttribute("origin", output.getOriginPos());
-            outputNode.addVectorAttribute("target", output.getTargetPos());
-        }
-
-        // Save internal circuit
-        const circuitNode = node.createChild("circuit");
-        SaveGroup(circuitNode, this.collection.getComponents(), this.collection.getWires(), icIdMap);
-    }
-
-    public load(node: XMLNode, icIdMap: Map<number, ICData>): void {
-        this.setSize(node.getVectorAttribute("size"));
-
-        // Load inputs
-        const inputNodes = node.findChild("inputs").getChildren();
-        for (const input of inputNodes) {
-            const port = new InputPort(undefined);
-            port.setName(input.getAttribute("name"));
-            port.setOriginPos(input.getVectorAttribute("origin"));
-            port.setTargetPos(input.getVectorAttribute("target"));
-            this.inputPorts.push(port);
-        }
-
-        // Load outputs
-        const outputNodes = node.findChild("outputs").getChildren();
-        for (const output of outputNodes) {
-            const port = new OutputPort(undefined);
-            port.setName(output.getAttribute("name"));
-            port.setOriginPos(output.getVectorAttribute("origin"));
-            port.setTargetPos(output.getVectorAttribute("target"));
-            this.outputPorts.push(port);
-        }
-
-        // Load components
-        const groupNode = node.findChild("circuit");
-        this.collection = LoadGroup(groupNode, icIdMap);
+        return new DigitalObjectSet(CopyGroup(this.collection.toList()).toList());
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
-        const BLACKLIST = [SevenSegmentDisplay, Label];
+        const BLACKLIST = [SegmentDisplay, Label];
 
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
         const graph = CreateGraph(group);
@@ -216,6 +164,9 @@ export class ICData {
         const copies = new DigitalObjectSet(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
+
+        // Set designer of copies to null
+        copies.toList().forEach((obj) => obj.setDesigner(undefined));
 
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not

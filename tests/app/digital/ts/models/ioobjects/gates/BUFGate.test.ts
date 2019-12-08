@@ -53,30 +53,4 @@ describe("BUFGate", () => {
             expect(o.isOn()).toBe(true);
         });
     });
-
-    describe("Copy", () => {
-        test("BUFGate Copy", () => {
-            let a = new BUFGate();
-            a.setInputPortCount(4);
-            let b = <BUFGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(BUFGate);
-            expect(b.isNot()).toBe(false);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
-        });
-        test("NOTGate Copy", () => {
-            let a = new BUFGate(true);
-            a.setInputPortCount(4);
-
-            let b = <BUFGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(BUFGate);
-            expect(b.isNot()).toBe(true);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
-        });
-    });
 });
