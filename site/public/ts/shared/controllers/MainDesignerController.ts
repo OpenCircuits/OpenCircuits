@@ -31,6 +31,8 @@ export abstract class MainDesignerController extends DesignerController {
 
     protected thumbnailGenerator: ThumbnailGenerator;
 
+    private locked: boolean;
+
     protected constructor(designer: CircuitDesigner,
                           view: CircuitView,
                           thumbnailGenerator: ThumbnailGenerator) {
@@ -40,8 +42,9 @@ export abstract class MainDesignerController extends DesignerController {
 
         this.itemNav = new ItemNavController(this);
         this.selectionPopup = new SelectionPopupController(this);
-
         this.headerController = new HeaderController(this);
+
+        this.locked = false;
 
         this.toolManager.addTools(new RotateTool(this.getCamera()),
                                   new TranslateTool(this.getCamera()),
@@ -50,27 +53,29 @@ export abstract class MainDesignerController extends DesignerController {
         this.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
     }
 
-    public setEditMode(editMode: boolean): void {
+    public setLocked(locked: boolean): void {
+        this.locked = locked;
+
         // Disable some tools
-        this.toolManager.setDisabled(RotateTool, !editMode);
-        this.toolManager.setDisabled(TranslateTool, !editMode);
-        this.toolManager.setDisabled(PlaceComponentTool, !editMode);
-        this.toolManager.setDisabled(WiringTool, !editMode);
+        this.toolManager.setDisabled(RotateTool, locked);
+        this.toolManager.setDisabled(TranslateTool, locked);
+        this.toolManager.setDisabled(PlaceComponentTool, locked);
+        this.toolManager.setDisabled(WiringTool, locked);
 
         // Disable actions/selections
-        this.toolManager.disableActions(!editMode);
+        this.toolManager.disableActions(locked);
         this.clearSelections();
-        this.getSelectionTool().disableSelections(!editMode);
+        this.getSelectionTool().disableSelections(locked);
 
         // Toggle ItemNavController
         if (this.itemNav.isOpen())
             this.itemNav.toggle();
 
         // Disable or re-enable ItemNavController
-        if (editMode)
-            this.itemNav.enable();
-        else
+        if (locked)
             this.itemNav.disable();
+        else
+            this.itemNav.enable();
 
         this.render();
     }
@@ -135,6 +140,10 @@ export abstract class MainDesignerController extends DesignerController {
         } else {
             this.itemNav.enable();
         }
+    }
+
+    public isLocked(): boolean {
+        return this.locked;
     }
 
     public getSelectionPopup(): SelectionPopupController {

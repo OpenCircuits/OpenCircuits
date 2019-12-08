@@ -16,13 +16,10 @@ export class SideNavController {
     private sidenav: JQuery<HTMLElement> = $("#sidenav");
     private overlay: JQuery<HTMLElement> = $("#overlay");
     private context: JQuery<HTMLElement> = $("#content");
-    private sidenavModeCheckbox: JQuery<HTMLElement>= $("#sidenav-mode-checkbox");
     private exampleCircuitsList: JQuery<HTMLElement> = $("#example-circuit-list");
 
     private open: boolean;
     private disabled: boolean;
-
-    private editMode: boolean;
 
     private userCircuits: SideNavCircuitPreview[];
 
@@ -36,13 +33,9 @@ export class SideNavController {
         this.open = false;
         this.disabled = false;
 
-        this.editMode = true;
-
         this.userCircuits = [];
 
         this.tab.click(() => this.toggle());
-
-        this.sidenavModeCheckbox.change(() => this.toggleEditMode());
 
         this.overlay.click(() => {
             this.close();
@@ -62,12 +55,6 @@ export class SideNavController {
                     .build();
             exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, (c) => this.loadCircuit(c));
         }
-    }
-
-    private toggleEditMode(): void {
-        this.editMode = !this.editMode;
-
-        this.main.setEditMode(this.editMode);
     }
 
     private deleteUserCircuit(metadata: CircuitMetadata): void {
