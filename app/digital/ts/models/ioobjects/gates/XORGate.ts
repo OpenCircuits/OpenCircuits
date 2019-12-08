@@ -1,12 +1,15 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+
 import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {Gate} from "./Gate";
+import {serializable} from "serialeazy";
 
+import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
+
+import {Gate} from "./Gate";
 import {GetQuadraticOffset} from "./ORGate";
 
-import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
-
+@serializable("XORGate")
 export class XORGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -52,8 +55,11 @@ export class XORGate extends Gate {
 
         return Vector.max(max, ...corners);
     }
+}
 
-    public getXMLName(): string {
-        return "xor";
+@serializable("XNORGate")
+export class XNORGate extends XORGate {
+    public constructor() {
+        super(true);
     }
 }

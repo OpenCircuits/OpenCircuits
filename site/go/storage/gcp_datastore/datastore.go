@@ -34,9 +34,7 @@ func (dCircuit datastoreCircuit) toCircuit(id model.CircuitId) model.Circuit {
 			Thumbnail: dCircuit.Thumbnail,
 			Version:   dCircuit.Version,
 		},
-		Designer: model.CircuitDesigner{
-			RawContent: dCircuit.CircuitDesigner,
-		},
+		Designer: dCircuit.CircuitDesigner,
 	}
 }
 
@@ -49,7 +47,7 @@ func fromCircuit(c model.Circuit) (*datastore.Key, datastoreCircuit) {
 			Desc:            c.Metadata.Desc,
 			Thumbnail:       c.Metadata.Thumbnail,
 			Version:         c.Metadata.Version,
-			CircuitDesigner: c.Designer.RawContent,
+			CircuitDesigner: c.Designer,
 		}
 }
 

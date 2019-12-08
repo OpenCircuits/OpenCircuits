@@ -4,7 +4,9 @@ import {ClampedValue} from "math/ClampedValue";
 import {ANDGatePositioner} from "../../ports/positioners/ANDGatePositioner";
 
 import {Gate} from "./Gate";
+import {serializable} from "serialeazy";
 
+@serializable("ANDGate")
 export class ANDGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -24,8 +26,11 @@ export class ANDGate extends Gate {
     public getImageName(): string {
         return "and.svg";
     }
+}
 
-    public getXMLName(): string {
-        return "and";
+@serializable("NANDGate")
+export class NANDGate extends ANDGate {
+    public constructor() {
+        super(true);
     }
 }

@@ -1,31 +1,31 @@
-import {CreateComponentFromXML} from "analog/utils/ComponentFactory";
 import {AnalogWiringTool} from "analog/tools/AnalogWiringTool";
 import {AnalogCircuitDesigner} from "analog/models/AnalogCircuitDesigner";
+
+import {SplitWireTool} from "core/tools/SplitWireTool";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
-import {AnalogHeaderController} from "./AnalogHeaderController";
 
 import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
 
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
-import {SplitWireTool} from "core/tools/SplitWireTool";
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {AnalogCircuitView} from "../views/AnalogCircuitView";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
     private sideNav: SideNavController;
     private loginController: LoginController;
-    private headerController: AnalogHeaderController;
 
     protected designer: AnalogCircuitDesigner;
 
     public constructor() {
         super(new AnalogCircuitDesigner(() => this.render()),
               new MainDesignerView(),
-              CreateComponentFromXML);
+              new ThumbnailGenerator(AnalogCircuitView));
 
         this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()),
                                   new SplitWireTool(this.getCamera()));
@@ -36,25 +36,13 @@ export class AnalogCircuitController extends MainDesignerController {
         );
 
         this.contextMenu = new ContextMenuController(this);
-        this.sideNav = new SideNavController(this);
-        this.headerController = new AnalogHeaderController(this);
+        this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
     }
 
     public async init(): Promise<void> {
         return await this.loginController.initAuthentication();
-    }
-
-    public loadCircuit(_contents: XMLDocument): void {
-        // const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
-        // this.headerController.setProjectName(name);
-    }
-
-    public saveCircuit(_: boolean = true): string {
-        return "AAAA";
-        // const circuit = this.getDesigner();
-        // return Exporter.WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
     }
 
     public getDesigner(): AnalogCircuitDesigner {

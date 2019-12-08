@@ -9,9 +9,10 @@ import {Node} from "core/models/Node";
 import {AnalogComponent} from "analog/models/AnalogComponent";
 
 import {AnalogPort} from "analog/models/ports/AnalogPort";
+import {serializable} from "serialeazy";
 
+@serializable("AnalogNode")
 export class AnalogNode extends AnalogComponent implements Node {
-
     public constructor() {
         super(new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
 

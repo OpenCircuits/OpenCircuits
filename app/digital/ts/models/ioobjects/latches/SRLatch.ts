@@ -1,7 +1,9 @@
 import {Latch} from "./Latch";
 
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
+import {serializable} from "serialeazy";
 
+@serializable("SRLatch")
 export class SRLatch extends Latch {
 
     public constructor() {
@@ -33,9 +35,5 @@ export class SRLatch extends Latch {
 
     public getDisplayName(): string {
         return "SR Latch";
-    }
-
-    public getXMLName(): string {
-        return "srl";
     }
 }

@@ -6,6 +6,7 @@ import {Images} from "digital/utils/Images";
 import {LoadingScreen} from "site/shared/views/LoadingScreen";
 import {DigitalCircuitController} from "./controllers/DigitalCircuitController";
 
+import "digital/models/ioobjects";
 
 // Prompt for exit
 window.onbeforeunload = (e) => {

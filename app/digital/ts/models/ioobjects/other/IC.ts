@@ -1,3 +1,5 @@
+import {serializable, serialize} from "serialeazy";
+
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -10,19 +12,38 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {ICData} from "./ICData";
 
+@serializable("IC", {
+    customPostDeserialization: (obj: IC) => {
+        obj.redirectOutputs();
+    }
+})
 export class IC extends DigitalComponent {
+    @serialize
     private data: ICData;
 
+    @serialize
     private collection: DigitalObjectSet;
 
-    public constructor(data: ICData) {
+    public constructor(data?: ICData) {
+        // if no data was provided then provide blank arguments
+        if (!data) {
+            super(new ClampedValue(0), new ClampedValue(0), V());
+            return;
+        }
+
         super(new ClampedValue(data.getInputCount()),
-              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE, DEFAULT_SIZE));
+              new ClampedValue(data.getOutputCount()), V(DEFAULT_SIZE));
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 
+        this.redirectOutputs();
+        this.update();
+    }
+
+    private redirectOutputs(): void {
         // Redirect activate function for output objects
         const outputs = this.collection.getOutputs();
+        // console.log(this.collection);
         for (let i = 0; i < this.numOutputs(); i++) {
             const port = this.getOutputPort(i);
             const output = outputs[i];
@@ -30,8 +51,6 @@ export class IC extends DigitalComponent {
                 port.activate(on);
             }
         }
-
-        this.update();
     }
 
     private copyPorts(): void {
@@ -49,13 +68,10 @@ export class IC extends DigitalComponent {
     public setDesigner(designer?: DigitalCircuitDesigner): void {
         super.setDesigner(designer);
 
-        // Set designer of all internal components/wires
-        const components = this.collection.getComponents();
-        for (const obj of components)
+        // Set designer of all internal objects
+        const objs = this.collection.toList();
+        for (const obj of objs)
             obj.setDesigner(designer);
-        const wires = this.collection.getWires();
-        for (const wire of wires)
-            wire.setDesigner(designer);
     }
 
     public update(): void {
@@ -76,21 +92,11 @@ export class IC extends DigitalComponent {
         }
     }
 
-    public copy(): IC {
-        const copy = new IC(this.data);
-        copy.transform = this.transform.copy();
-        return copy;
-    }
-
     public getData(): ICData {
         return this.data;
     }
 
     public getDisplayName(): string {
         return "IC";
-    }
-
-    public getXMLName(): string {
-        return "ic";
     }
 }

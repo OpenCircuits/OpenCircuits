@@ -78,7 +78,7 @@ export const RemoteController = (() => {
                 await callback(list);
             }, true);
         },
-        LoadExampleCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+        LoadExampleCircuit(metadata: CircuitMetadata, callback: (contents: string) => Promise<void> | void = Promise.resolve): void {
             Chain(async (_data: RemoteData) => {
                 const contents = await LoadExampleCircuit(metadata);
                 callback(contents);
@@ -87,7 +87,7 @@ export const RemoteController = (() => {
                 };
             });
         },
-        LoadUserCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+        LoadUserCircuit(metadata: CircuitMetadata, callback: (contents: string) => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
                 const contents = await LoadUserCircuit(data.authState, metadata.getId());
                 callback(contents);

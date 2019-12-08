@@ -1,7 +1,10 @@
+import {serializable} from "serialeazy";
+
 /**
  * Utility class to help keep track of a string
  *  and when it has been changed
  */
+@serializable("Name")
 export class Name {
     private name: string;
     private set: boolean;
@@ -10,7 +13,7 @@ export class Name {
      * Constructor for Name
      * @param name The initial name
      */
-    public constructor(name: string) {
+    public constructor(name?: string) {
         this.name = name;
         this.set = false;
     }

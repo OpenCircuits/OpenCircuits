@@ -3,7 +3,9 @@ import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
 import {PressableComponent} from "../PressableComponent";
+import {serializable} from "serialeazy";
 
+@serializable("Button")
 export class Button extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),
@@ -38,9 +40,5 @@ export class Button extends PressableComponent {
 
     public getOnImageName(): string {
         return "buttonDown.svg";
-    }
-
-    public getXMLName(): string {
-        return "button";
     }
 }
