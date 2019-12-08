@@ -3,11 +3,13 @@ import {V} from "Vector";
 import {Port} from "core/models/ports/Port";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+import {serializable} from "serialeazy";
 
+@serializable("ConstantSpacePositioner")
 export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
     private spacing: number;
 
-    public constructor(spacing: number) {
+    public constructor(spacing?: number) {
         super();
         this.spacing = spacing;
     }

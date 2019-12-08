@@ -1,76 +1,7 @@
-import {XMLWriter} from "../../../../../app/core/ts/utils/io/xml/XMLWriter";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalCircuitView} from "site/digital/views/DigitalCircuitView";
-import {THUMBNAIL_ZOOM_PADDING_RATIO, DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX} from "./Constants";
-import {CircuitBoundingBox} from "core/utils/ComponentUtils";
-import {CullableObject} from "core/models/CullableObject";
-import {DigitalCircuitController} from "site/digital/controllers/DigitalCircuitController";
 
-// Renders a view of the given circuit on the given canvas element
-// Canvas is resized to a square with side length of size
-// If the circuit is empty, only draws a grid centered on the world origin
-function RenderCircuit(canvas: HTMLCanvasElement, designer: DigitalCircuitDesigner, size: number = DEFAULT_THUMBNAIL_SIZE): void {
-    const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
-    // Define a 10x10 (in grid units) world bounding box for empty circuits, so they have a defined grid resolution
-    let min = EMPTY_CIRCUIT_MIN;
-    let max = EMPTY_CIRCUIT_MAX;
-    if (all.length > 0) {
-        const bbox = CircuitBoundingBox(all);
-        min = bbox.getMin();
-        max = bbox.getMax();
-    }
-
-    //! Warning: several pieces of CircuitView classes rely on there being a screen and a window
-    // Using this vw and vh cancels it out, but that will change if
-    const vw = size/window.innerWidth;
-    const vh = size/window.innerHeight;
-    const view = new DigitalCircuitView(canvas, vw, vh);
-
-    // Center and zoom the camera so everything fits with no distortion
-    const center = min.add(max).scale(0.5);
-    const camera = view.getCamera();
-    camera.setPos(center);
-    // Zoom out a bit more than we need so components on edges have some breathing room
-    const relativeSize = max.sub(min).scale(1/size);
-    const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
-    camera.zoomBy(zoom);
-
-    // Do the render
-    view.render(designer, []);
-}
-
-export function WriteCircuit(main: DigitalCircuitController, name: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): string {
-    const designer = main.getDesigner();
-    const writer = new XMLWriter(designer.getXMLName());
-    const camera = main.getCamera();
-    writer.setVersion("1.2");
-    writer.setName(name);
-    writer.setCamera(camera);
-    if (thumbnail) {
-        // Render to a small temporary canvas
-        const canvas = document.createElement("canvas");
-        RenderCircuit(canvas, designer, thumbnailSize);
-        const thumbnail = canvas.toDataURL("image/png", 0.9);
-        writer.setThumbnail(thumbnail);
-        canvas.remove();
-    } else {
-        writer.setThumbnail("data:,");
-    }
-
-    designer.save(writer.getContentsNode());
-
-    return writer.serialize();
-}
-export function SaveFile(main: DigitalCircuitController, projectName: string, thumbnail: boolean = false, thumbnailSize: number = DEFAULT_THUMBNAIL_SIZE): void {
-    // Get name
-    if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
-
-    const data = WriteCircuit(main, projectName, thumbnail, thumbnailSize);
-
-    const filename = projectName + ".circuit";
-
-    const file = new Blob([data], {type: "text/xml"});
+export function SaveFile(data: string, name: string): void {
+    const filename = name + ".circuit";
+    const file = new Blob([data], {type: "text/json"});
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
     } else { // Others

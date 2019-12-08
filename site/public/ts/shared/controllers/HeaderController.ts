@@ -1,18 +1,17 @@
 import $ from "jquery";
 
-// import introJs from "intro.js";
-//
-// import test from "./tours/test.json";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "site/shared/utils/Constants";
+import {SAVED} from "core/utils/Config";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {SavePDF, SavePNG} from "site/shared/utils/ImageExporter";
+import {LoadFile} from "site/shared/utils/Importer";
+import {SaveFile} from "../utils/Exporter";
 
-export abstract class HeaderController {
-    protected projectNameInput: JQuery<HTMLElement>;
+export class HeaderController {
+    protected projectNameInput: JQuery<HTMLElement> = $("input#header-project-name-input");
 
     public constructor(main: MainDesignerController) {
-        this.projectNameInput = $("input#header-project-name-input");
-
         this.setupDropdown();
         this.setupIOInputs(main);
         this.setupHelpMenu();
@@ -48,7 +47,7 @@ export abstract class HeaderController {
         const header = this;
 
         $("input#header-file-input").change(async function(): Promise<void> {
-            header.setProjectName(await header.onLoadCircuit(main, $(this).prop("files")[0]));
+            header.onLoadCircuit(main, $(this).prop("files")[0]);
         });
 
         $("#header-download-button").click(() => {
@@ -66,11 +65,7 @@ export abstract class HeaderController {
 
     private setupHelpMenu(): void {
         $("#header-help-tour-button").click(() => {
-            // // Open ItemNav for tutorial
-            // if (!ItemNavController.IsOpen())
-            //     ItemNavController.Toggle();
-            //
-            // introJs().setOptions(test).start();
+            // TODO: Tutorial
         });
 
         $("#header-help-quick-start-button").click(() => {
@@ -92,8 +87,21 @@ export abstract class HeaderController {
                 .removeClass("white");
     }
 
-    protected async abstract onLoadCircuit(main: MainDesignerController, file: File): Promise<string>;
-    protected abstract onSaveCircuit(main: MainDesignerController): void;
+    protected async onLoadCircuit(main: MainDesignerController, file: File): Promise<void> {
+        // Prompt to load
+        const open = SAVED || confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+
+        // Load circuit and metadata
+        const metadata = main.loadCircuit(await LoadFile(file));
+
+        this.setProjectName(metadata.getName());
+    }
+
+    protected onSaveCircuit(main: MainDesignerController): void {
+        SaveFile(main.saveCircuit(false), this.getProjectName());
+    }
 
     public setProjectName(name?: string): void {
         if (name)

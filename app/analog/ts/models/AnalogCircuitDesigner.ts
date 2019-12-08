@@ -1,17 +1,22 @@
-import {AnalogObjectSet} from "../utils/ComponentUtils";
+import {serializable, serialize} from "serialeazy";
+
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
+import {AnalogObjectSet} from "analog/utils/ComponentUtils";
+
 import {AnalogComponent} from "./AnalogComponent";
 import {AnalogWire} from "./AnalogWire";
 import {AnalogPort} from "./ports/AnalogPort";
-import {IOObjectSet} from "core/utils/ComponentUtils";
 
+@serializable("AnalogCircuitDesigner")
 export class AnalogCircuitDesigner extends CircuitDesigner {
+    @serialize
     private objects: AnalogComponent[];
+    @serialize
     private wires: AnalogWire[];
-    private updateRequests: number;
 
     private updateCallback: () => void;
 
@@ -26,7 +31,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     public reset(): void {
         this.objects = [];
         this.wires   = [];
-        this.updateRequests = 0;
     }
 
     /**
@@ -142,24 +146,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         this.wires.splice(this.wires.indexOf(wire), 1);
         wire.setDesigner(undefined);
     }
-
-    // public save(node: XMLNode): void {
-    //     SaveGroup(node, this.objects, this.wires);
-    // }
-
-    // public load(node: XMLNode): void {
-    //     const group = LoadGroup(node);
-
-    //     // Add all objects/wires
-    //     group.getAllComponents().forEach((c) => this.addObject(c));
-    //     group.wires.forEach((w) => {
-    //         this.wires.push(w);
-    //         w.setDesigner(this);
-    //     });
-
-    //     // Update since the circuit has changed
-    //     this.updateCallback();
-    // }
 
     // Shift an object to a certain position
     //  within it's list

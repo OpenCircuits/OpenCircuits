@@ -1,9 +1,12 @@
+import {serializable} from "serialeazy";
+
+import {IO_PORT_RADIUS} from "core/utils/Constants";
+
 import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
 
-import {IO_PORT_RADIUS} from "core/utils/Constants";
-
+@serializable("SegmentDisplayPositioner")
 export class SegmentDisplayPositioner {
 
     /**

@@ -65,9 +65,17 @@ export class Graph<V, E> {
         return (visited.size === this.size());
     }
 
+    public getSources(): V[] {
+        return this.getNodes().filter((n) => this.reverseList.get(n).length === 0);
+    }
+
+    public getSinks(): V[] {
+        return this.getNodes().filter((n) => this.list.get(n).length === 0);
+    }
+
     public getEndNodes(): V[] {
-        // Get nodes with degree of exactly 1
-        return this.getNodes().filter((n) => this.getDegree(n) == 1);
+        // Get nodes that are sources/sinks
+        return this.getSources().concat(this.getSinks());
     }
 
     public size(): number {

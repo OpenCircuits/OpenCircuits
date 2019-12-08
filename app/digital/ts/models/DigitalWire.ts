@@ -1,17 +1,23 @@
+import {serializable, serialize} from "serialeazy";
+
 import {Wire} from "core/models/Wire";
+
+import {DigitalComponent} from "./DigitalComponent";
 import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
-import {DigitalComponent} from "./DigitalComponent";
-import {XMLNode} from "core/utils/io/xml/XMLNode";
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
+@serializable("DigitalWire")
 export class DigitalWire extends Wire {
+    @serialize
     protected p1: OutputPort;
+    @serialize
     protected p2: InputPort;
 
+    @serialize
     private isOn: boolean;
 
-    public constructor(input: OutputPort, output: InputPort) {
+    public constructor(input?: OutputPort, output?: InputPort) {
         super(input, output);
 
         this.isOn = false;
@@ -49,25 +55,5 @@ export class DigitalWire extends Wire {
 
     public getIsOn(): boolean {
         return this.isOn;
-    }
-
-    public copy(p1?: OutputPort, p2?: InputPort): DigitalWire {
-        const copy = <DigitalWire>super.copy(p1, p2);
-        copy.isOn = this.isOn;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-
-        node.addAttribute("on", this.isOn);
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-
-        // load state and properties
-        this.activate(node.getBooleanAttribute("on"));
-        this.p1.activate(this.isOn);
     }
 }

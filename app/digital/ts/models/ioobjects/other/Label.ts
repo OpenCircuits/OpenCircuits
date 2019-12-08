@@ -2,7 +2,9 @@ import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "serialeazy";
 
+@serializable("Label")
 export class Label extends DigitalComponent {
 
     public constructor() {
@@ -12,9 +14,4 @@ export class Label extends DigitalComponent {
     public getDisplayName(): string {
         return "LABEL";
     }
-
-    public getXMLName(): string {
-        return "label";
-    }
-
 }

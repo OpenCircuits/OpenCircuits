@@ -2,9 +2,11 @@ import {DEFAULT_BORDER_WIDTH,
         GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {Gate} from "./Gate";
+import {serializable} from "serialeazy";
 
-import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
+import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
+
+import {Gate} from "./Gate";
 
 export function GetQuadraticOffset(numInputs: number): number {
     // The wire extensions stay the same for inputs 4-6 so the offset is constant
@@ -19,6 +21,7 @@ export function GetQuadraticOffset(numInputs: number): number {
     return DEFAULT_BORDER_WIDTH;
 }
 
+@serializable("ORGate")
 export class ORGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -41,7 +44,7 @@ export class ORGate extends Gate {
 
     public getMinPos(): Vector {
         const min = super.getMinPos();
-            
+
         // Find minimum pos from corners of transform
         const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
         const corners = this.transform.getCorners().map(
@@ -62,8 +65,11 @@ export class ORGate extends Gate {
 
         return Vector.max(max, ...corners);
     }
+}
 
-    public getXMLName(): string {
-        return "or";
+@serializable("NORGate")
+export class NORGate extends ORGate {
+    public constructor() {
+        super(true);
     }
 }

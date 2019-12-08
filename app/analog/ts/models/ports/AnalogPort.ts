@@ -1,3 +1,5 @@
+import {serializable} from "serialeazy";
+
 import {Vector} from "Vector";
 
 import {Component} from "core/models/Component";
@@ -6,12 +8,13 @@ import {Port} from "core/models/ports/Port";
 import {AnalogComponent} from "../AnalogComponent";
 import {AnalogWire} from "../AnalogWire";
 
+@serializable("AnalogPort")
 export class AnalogPort extends Port {
     protected parent: AnalogComponent;
 
-    private connections: AnalogWire[];
+    protected connections: AnalogWire[];
 
-    public constructor(parent: Component) {
+    public constructor(parent?: Component) {
         super(parent);
         this.connections = [];
     }

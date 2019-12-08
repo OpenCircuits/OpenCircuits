@@ -1,3 +1,5 @@
+import {serializable} from "serialeazy";
+
 import Segments from "./Segments.json";
 
 import {Vector, V} from "Vector";
@@ -10,6 +12,7 @@ import {SegmentDisplayPositioner} from "digital/models/ports/positioners/Segment
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
+@serializable("SegmentDisplay")
 export class SegmentDisplay extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(7, 7, 16),
@@ -22,7 +25,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     public setInputPortCount(val: number): void {
         super.setInputPortCount(val);
-        // We do not want to reset the user typed name so we check 
+        // We do not want to reset the user typed name so we check
         //  if it was set in the first place
         if (!this.name.isSet())
             this.name = new Name(this.getDisplayName());
@@ -41,9 +44,5 @@ export class SegmentDisplay extends DigitalComponent {
         if (this.inputs == undefined)
             return "Segment Display"
         return this.getInputPorts().length + " Segment Display";
-    }
-
-    public getXMLName(): string {
-        return "sevensegmentdisplay";
     }
 }

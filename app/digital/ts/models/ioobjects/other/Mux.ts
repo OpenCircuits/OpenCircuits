@@ -2,7 +2,7 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
+import {serialize} from "serialeazy";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -16,6 +16,7 @@ import {DigitalWire} from "digital/models/DigitalWire";
 import {Port} from "core/models/ports/Port";
 
 export abstract class Mux extends DigitalComponent {
+    @serialize
     protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
@@ -60,25 +61,6 @@ export abstract class Mux extends DigitalComponent {
     // @Override
     public getPorts(): Port[] {
         return super.getPorts().concat(this.getSelectPorts());
-    }
-
-    // @Override
-    public copy(): Mux {
-        const copy = <Mux>super.copy();
-        copy.selects = this.selects.copy(copy);
-        return copy;
-    }
-
-    // @Override
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("selects", this.numSelects());
-    }
-
-    // @Override
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setSelectPortCount(node.getIntAttribute("selects"));
     }
 
 }

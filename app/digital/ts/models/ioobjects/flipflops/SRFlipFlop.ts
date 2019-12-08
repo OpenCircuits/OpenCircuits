@@ -3,7 +3,9 @@ import {V} from "Vector";
 import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 
 import {FlipFlop} from "./FlipFlop";
+import {serializable} from "serialeazy";
 
+@serializable("SRFlipFlop")
 export class SRFlipFlop extends FlipFlop {
 
     public constructor() {
@@ -36,9 +38,5 @@ export class SRFlipFlop extends FlipFlop {
 
     public getDisplayName(): string {
         return "SR Flip Flop";
-    }
-
-    public getXMLName(): string {
-        return "srff";
     }
 }
