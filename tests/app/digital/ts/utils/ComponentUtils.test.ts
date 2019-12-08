@@ -390,7 +390,7 @@ describe("CopyGroup", () => {
         const data2 = new ICData(new DigitalObjectSet([objs2[0], wire2a, ic, wire2b, objs2[1]]));
         const ic2 = new IC(data2);
 
-        const copy = CopyGroup([ic2], true);
+        const copy = CopyGroup([ic2]);
 
         expect(copy.getWires()).toHaveLength(0);
         expect(copy.getComponents()).toHaveLength(1);
