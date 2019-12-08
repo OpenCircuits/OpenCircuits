@@ -9,7 +9,7 @@ import {TranslateTool} from "core/tools/TranslateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
 import {WiringTool} from "core/tools/WiringTool";
 
-import {Circuit} from "core/models/Circuit";
+import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {CircuitMetadata,
         CircuitMetadataBuilder} from "core/models/CircuitMetadata";
@@ -93,10 +93,14 @@ export abstract class MainDesignerController extends DesignerController {
         const circuit = JSON.parse(contents) as Circuit;
 
         // Deserialize circuit
-        const designer = Deserialize<CircuitDesigner>(circuit.contents);
+        const data = Deserialize<ContentsData>(circuit.contents);
+
+        // Load camera
+        this.getCamera().setPos(data.camera.getPos());
+        this.getCamera().setZoom(data.camera.getZoom());
 
         // Replace circuit contents with new ones (to keep references intact TODO: change this?)
-        this.designer.replace(designer);
+        this.designer.replace(data.designer);
 
         this.render();
 
@@ -113,7 +117,8 @@ export abstract class MainDesignerController extends DesignerController {
                     .withThumbnail(thumb)
                     .build()
                     .getDef(),
-            Serialize(this.designer)
+            this.designer,
+            this.getCamera()
         );
 
         return JSON.stringify(data);
