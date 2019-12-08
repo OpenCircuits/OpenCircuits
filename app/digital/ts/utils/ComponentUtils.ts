@@ -13,11 +13,11 @@ import {DigitalWire} from "digital/models/DigitalWire";
  *  Input components  (anything with 0 output ports and >0  input ports)
  *  Output components (anything with 0 input ports  and >0 output ports)
  *  Wires             (wires)
- *  Components        (anything else)
+ *  Other             (anything else)
  *
- * Note that .components does NOT contain inputs and outputs
+ * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as getAllComponents()
+ *  is included as toList()
  */
 @serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {

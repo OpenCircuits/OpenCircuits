@@ -20,6 +20,10 @@ import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
+import {ICViewerButtonPopupModule} from "./selectionpopup/ViewICButtonPopupModule";
+import {ICViewerController} from "./ICViewerController";
+import {IC} from "digital/models/ioobjects/other/IC";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
 
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
@@ -27,6 +31,7 @@ import {DigitalCircuitView} from "../views/DigitalCircuitView";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
+    private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
     private sideNav: SideNavController;
@@ -44,6 +49,7 @@ export class DigitalCircuitController extends MainDesignerController {
                                   new SplitWireTool(this.getCamera()));
 
         this.icController = new ICDesignerController(this);
+        this.icViewer = new ICViewerController(this);
 
         this.selectionPopup.addModules(
             new TitlePopupModule(this),
@@ -53,8 +59,9 @@ export class DigitalCircuitController extends MainDesignerController {
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
+            new ICViewerButtonPopupModule(this, this.icViewer),
             new BusButtonPopupModule(this),
-            new SegmentCountPopupModule(this)
+            new SegmentCountPopupModule(this),
         );
 
         this.contextMenu = new ContextMenuController(this);
@@ -72,4 +79,26 @@ export class DigitalCircuitController extends MainDesignerController {
         return this.designer;
     }
 
+    public onDoubleClick(button: number): boolean {
+        const render = super.onDoubleClick(button);
+
+        if (button !== LEFT_MOUSE_BUTTON)
+            return render;
+
+        const worldMousePos = this.getCamera().getWorldPos(this.input.getMousePos());
+
+        const objs = this.designer.getObjects().reverse();
+        const ics = objs.filter(c => c instanceof IC) as IC[];
+
+        // Check if an IC was clicked
+        const ic = ics.find(o => o.isWithinSelectBounds(worldMousePos));
+
+        // Open up that IC
+        if (ic) {
+            this.icViewer.show(ic);
+            return true;
+        }
+
+        return render;
+    }
 }

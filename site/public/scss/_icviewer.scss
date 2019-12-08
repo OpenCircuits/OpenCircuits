@@ -1,4 +1,4 @@
-.icdesigner {
+.icviewer {
     & canvas {
         position: fixed;
         z-index: 2;
@@ -29,17 +29,17 @@
             color: white;
         }
 
-        &__confirm {
-            left: 8vw;
+        // &__edit {
+        //     left: 8vw;
 
-            background-color: $success-color;
+        //     background-color: $success-color;
 
-            &:active {
-                background-color: darken($success-color, 10%);
-            }
-        }
+        //     &:active {
+        //         background-color: darken($success-color, 10%);
+        //     }
+        // }
 
-        &__cancel {
+        &__close {
             right: 8vw;
 
             background-color: $danger-color;
