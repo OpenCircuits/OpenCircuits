@@ -1,4 +1,4 @@
-import {Deserialize, Serialize} from "serialeazy";
+import {Deserialize} from "serialeazy";
 
 import {Vector} from "Vector";
 

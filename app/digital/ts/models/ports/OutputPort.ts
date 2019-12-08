@@ -1,6 +1,5 @@
 import {Vector,V} from "Vector";
 
-import {Wire} from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "../DigitalComponent";

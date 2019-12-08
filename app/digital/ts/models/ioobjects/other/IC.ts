@@ -13,7 +13,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {ICData} from "./ICData";
 
 @serializable("IC", {
-     customPostDeserialization: (obj: IC) => {
+    customPostDeserialization: (obj: IC) => {
         obj.redirectOutputs();
     }
 })

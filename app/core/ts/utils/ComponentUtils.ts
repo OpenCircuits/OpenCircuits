@@ -261,8 +261,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
                     return data;
                 },
                 customKeyFilter: (_: Port, key: string) => {
-                    return (key != "connections"); // don't serialize connections (by default)
-                                                   //  we'll handle them above
+                    return (key != "connections"); // don't serialize connections (handle them above)
                 }
             }
         },
@@ -284,7 +283,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
  * @param  objects [description]
  * @return         [description]
  */
-export function CopyGroup(objects: IOObject[], print = false): IOObjectSet {
+export function CopyGroup(objects: IOObject[]): IOObjectSet {
     if (objects.length == 0)
         return new IOObjectSet();
 

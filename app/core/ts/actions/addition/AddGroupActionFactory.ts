@@ -1,4 +1,3 @@
-import {Action} from "../Action";
 import {GroupAction} from "../GroupAction";
 import {PlaceAction} from "./PlaceAction";
 import {ConnectionAction} from "./ConnectionAction";
@@ -6,10 +5,6 @@ import {ConnectionAction} from "./ConnectionAction";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-
-// export class AddGroupAction extends Action {
-
-// }
 
 export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectSet): GroupAction {
     const action = new GroupAction();
