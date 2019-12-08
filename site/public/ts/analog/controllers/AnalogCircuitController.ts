@@ -12,7 +12,7 @@ import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
 
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
-import {ThumnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {AnalogCircuitView} from "../views/AnalogCircuitView";
 
 export class AnalogCircuitController extends MainDesignerController {
@@ -25,7 +25,7 @@ export class AnalogCircuitController extends MainDesignerController {
     public constructor() {
         super(new AnalogCircuitDesigner(() => this.render()),
               new MainDesignerView(),
-              new ThumnailGenerator(AnalogCircuitView));
+              new ThumbnailGenerator(AnalogCircuitView));
 
         this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()),
                                   new SplitWireTool(this.getCamera()));

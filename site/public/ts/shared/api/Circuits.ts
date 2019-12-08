@@ -107,4 +107,3 @@ export function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<b
         }
     );
 }
-

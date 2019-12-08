@@ -4,7 +4,7 @@ export function LoadFile(file: File): Promise<string> {
         const reader = new FileReader();
         reader.onload = () => {
             resolve(reader.result.toString());
-        }
+        };
         reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
         reader.readAsText(file);
     });

@@ -8,7 +8,7 @@ import {CullableObject} from "core/models/CullableObject";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
-export class ThumnailGenerator {
+export class ThumbnailGenerator {
     private view: CircuitView;
     private size: number;
 

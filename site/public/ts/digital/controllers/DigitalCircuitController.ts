@@ -22,7 +22,7 @@ import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
 import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
 
-import {ThumnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
 
 export class DigitalCircuitController extends MainDesignerController {
@@ -37,7 +37,7 @@ export class DigitalCircuitController extends MainDesignerController {
     public constructor() {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
-              new ThumnailGenerator(DigitalCircuitView));
+              new ThumbnailGenerator(DigitalCircuitView));
 
 
         this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()),

@@ -15,7 +15,7 @@ import {CircuitMetadata,
         CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {Component} from "core/models/Component";
 
-import {ThumnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
@@ -29,11 +29,11 @@ export abstract class MainDesignerController extends DesignerController {
     protected selectionPopup: SelectionPopupController;
     protected headerController: HeaderController;
 
-    protected thumbnailGenerator: ThumnailGenerator;
+    protected thumbnailGenerator: ThumbnailGenerator;
 
     protected constructor(designer: CircuitDesigner,
                           view: CircuitView,
-                          thumbnailGenerator: ThumnailGenerator) {
+                          thumbnailGenerator: ThumbnailGenerator) {
         super(designer, view);
 
         this.thumbnailGenerator = thumbnailGenerator;

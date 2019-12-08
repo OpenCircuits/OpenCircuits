@@ -66,11 +66,11 @@ export class Graph<V, E> {
     }
 
     public getSources(): V[] {
-        return this.getNodes().filter((n) => this.reverseList.get(n).length == 0);
+        return this.getNodes().filter((n) => this.reverseList.get(n).length === 0);
     }
 
     public getSinks(): V[] {
-        return this.getNodes().filter((n) => this.list.get(n).length == 0);
+        return this.getNodes().filter((n) => this.list.get(n).length === 0);
     }
 
     public getEndNodes(): V[] {
