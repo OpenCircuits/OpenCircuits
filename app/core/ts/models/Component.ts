@@ -1,7 +1,6 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH,
-        WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
@@ -12,14 +11,6 @@ import {Port}       from "./ports/Port";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
-
-function Snap(wire: Wire, x: number, c: number): number {
-    if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
-        wire.setIsStraight(true);
-        return c;
-    }
-    return x;
-}
 
 export abstract class Component extends CullableObject {
     @serialize
@@ -37,19 +28,6 @@ export abstract class Component extends CullableObject {
     }
 
     public setPos(v: Vector): void {
-        // Snap to connections
-        for (const port of this.getPorts()) {
-            const pos = port.getWorldTargetPos().sub(this.getPos());
-            const wires = port.getWires();
-            for (const w of wires) {
-                // Get the port that isn't the current port
-                const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
-                w.setIsStraight(false);
-                v.x = Snap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
-                v.y = Snap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
-            }
-        }
-
         this.transform.setPos(v);
         this.onTransformChange();
     }
