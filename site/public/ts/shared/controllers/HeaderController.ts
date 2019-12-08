@@ -15,6 +15,7 @@ export class HeaderController {
         this.setupDropdown();
         this.setupIOInputs(main);
         this.setupHelpMenu();
+        this.setupOther(main);
     }
 
     private setupDropdown(): void {
@@ -85,6 +86,15 @@ export class HeaderController {
                 .removeClass("show");
         $(".header__right__dropdown__button")
                 .removeClass("white");
+    }
+
+    private setupOther(main: MainDesignerController): void {
+        $("#header-lock-button").click(() => {
+            $("#header-lock-icon-unlocked").toggleClass("hide");
+            $("#header-lock-icon-locked").toggleClass("hide");
+
+            main.setLocked(!main.isLocked());
+        });
     }
 
     protected async onLoadCircuit(main: MainDesignerController, file: File): Promise<void> {
