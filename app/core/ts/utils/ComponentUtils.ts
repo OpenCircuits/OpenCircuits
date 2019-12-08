@@ -105,13 +105,13 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 
 
 /**
- * Get's all the wires/WirePorts going out from this wire
+ * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
  *
  * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (incuding w)
+ * @return   The array of wires/WirePorts in this path (including w)
  */
-export function GetPath(w: Wire): Array<Wire | Node> {
+export function GetPath(w: Wire | Node): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
@@ -131,7 +131,7 @@ export function GetPath(w: Wire): Array<Wire | Node> {
             if (isNode(p2) && !visited.has(p2))
                 queue.push(p2);
         } else {
-            // Push all of the Node's connecting wires, filted by if they've been visited
+            // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
         }
     }
@@ -213,7 +213,21 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
 
 export function SerializeForCopy(objects: IOObject[]): string {
     // Make sure to get all immediate connections
-    objects = CreateGroup(objects).toList();
+    const group = CreateGroup(objects);
+
+    // Remove floating paths in the list
+    //  This is to prevent individual (floating) Nodes from be pasted
+    //  Do this by getting all nodes marked as "end nodes" in a graph and then if
+    //  any of the end nodes are actually Nodes, remove the paths with them since
+    //  being end nodes would imply they only have 0/1 connections
+    const components = group.getComponents();
+    const graph = CreateGraph(group);
+    const ends = graph.getEndNodes();
+    const badBoys = ends
+            .filter((i) => isNode(components[i]))
+            .flatMap((i) => GetPath(components[i] as Node)) as IOObject[];
+
+    objects = group.toList().filter((obj) => !badBoys.includes(obj));
 
     // Serialize with custom functionality
     //  The idea is to serialize just the objects and connections in `objects`
