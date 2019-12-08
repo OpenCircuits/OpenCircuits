@@ -97,17 +97,4 @@ export class PortSet<T extends Port> {
     public isEmpty(): boolean {
         return this.currentPorts.length == 0;
     }
-
-    public copy(newParent: Component): PortSet<T> {
-        const copy = new PortSet<T>(newParent, this.count.copy(), this.positioner, this.type);
-
-        // Copy port positions
-        copy.currentPorts.forEach((p, i) => {
-            p.setOriginPos(this.currentPorts[i].getOriginPos());
-            p.setTargetPos(this.currentPorts[i].getTargetPos());
-        });
-
-        return copy;
-    }
-
 }
