@@ -1,8 +1,10 @@
 import {DEBUG_CULLBOXES,
         DEBUG_SELECTION_BOUNDS,
-        IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
+        IO_PORT_SELECT_RADIUS,
+        DEBUG_PRESSABLE_BOUNDS} from "core/utils/Constants";
 import {DEBUG_CULLBOX_STYLE,
-        DEBUG_SELECTION_BOUNDS_STYLE} from "./Styles";
+        DEBUG_SELECTION_BOUNDS_STYLE,
+        DEBUG_PRESSABLE_BOUNDS_STYLE} from "./Styles";
 
 import {V} from "Vector";
 
@@ -16,6 +18,7 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {Circle} from "./shapes/Circle";
 import {Rectangle} from "./shapes/Rectangle";
+import {Pressable, isPressable} from "core/utils/Pressable";
 
 export const DebugRenderer = (() => {
     return {
@@ -26,6 +29,17 @@ export const DebugRenderer = (() => {
                 for (const cullBox of cullboxes) {
                     renderer.transform(camera, cullBox);
                     renderer.draw(new Rectangle(V(), cullBox.getSize()), DEBUG_CULLBOX_STYLE, 0.5);
+                }
+                renderer.restore();
+            }
+
+            if (DEBUG_PRESSABLE_BOUNDS) {
+                const pressables = objects.filter((c) => isPressable(c)) as Pressable[];
+                const cullboxes = pressables.map((p) => p.getPressableBox());
+                renderer.save();
+                for (const cullBox of cullboxes) {
+                    renderer.transform(camera, cullBox);
+                    renderer.draw(new Rectangle(V(), cullBox.getSize()), DEBUG_PRESSABLE_BOUNDS_STYLE, 0.5);
                 }
                 renderer.restore();
             }
