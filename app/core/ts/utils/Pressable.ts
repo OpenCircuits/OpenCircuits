@@ -1,4 +1,5 @@
 import {Vector} from "Vector";
+import {Transform} from "math/Transform";
 
 import {Component} from "core/models/Component";
 
@@ -7,6 +8,7 @@ export interface Pressable extends Component {
     click(): void;
     release(): void;
     isWithinPressBounds(v: Vector): boolean;
+    getPressableBox(): Transform;
 }
 
 export function isPressable(p: unknown): p is Pressable {

@@ -1,4 +1,5 @@
 export const DEBUG_CULLBOXES = false;
+export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;

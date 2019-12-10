@@ -75,12 +75,12 @@ export class TranslateTool extends Tool {
         return true;
     }
 
-    public activate(currentTool: Tool, event: string, input: Input, _?: number): void {
+    public activate(currentTool: Tool, _: string, input: Input, __?: number, pressedObj?: Component): void {
         if (!(currentTool instanceof SelectionTool))
             throw new Error("Tool not selection tool!");
 
         const selections = currentTool.getSelections() as Component[];
-        const currentPressedObj = currentTool.getCurrentlyPressedObj() as Component;
+        const currentPressedObj = pressedObj || currentTool.getCurrentlyPressedObj() as Component;
 
         // Translate multiple objects if they are all selected
         this.pressedComponent = currentPressedObj;

@@ -48,9 +48,8 @@ export class SplitWireTool extends TranslateTool {
         this.splitAction.add(CreateDeselectAllAction(currentTool).execute());
         this.splitAction.add(new SelectAction(currentTool, wirePort).execute());
         this.splitAction.add(CreateSplitWireAction(wire, wirePort).execute());
-        currentTool.setCurrentlyPressedObj(wirePort);
 
-        super.activate(currentTool, event, input, button);
+        super.activate(currentTool, event, input, button, wirePort);
     }
 
     public deactivate(): Action {

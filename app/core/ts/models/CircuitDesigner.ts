@@ -2,6 +2,7 @@ import {Component} from "./Component";
 import {Wire} from "./Wire";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 import {Port} from "./ports/Port";
+import {IOObject} from "./IOObject";
 
 export abstract class CircuitDesigner {
     public abstract addObject(obj: Component): void;
@@ -29,4 +30,8 @@ export abstract class CircuitDesigner {
 
     public abstract getObjects(): Component[];
     public abstract getWires(): Wire[];
+
+    public getAll(): IOObject[] {
+        return (this.getObjects() as IOObject[]).concat(this.getWires());
+    }
 }
