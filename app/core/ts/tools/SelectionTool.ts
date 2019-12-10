@@ -102,10 +102,6 @@ export class SelectionTool extends DefaultTool {
     }
 
 
-    public setCurrentlyPressedObj(obj: IOObject): void {
-        this.interactionHelper.setCurrentlyPressedObj(obj);
-    }
-
     public addSelectionChangeListener(func: {(): void}): void {
         this.callbacks.push(func);
     }
@@ -171,15 +167,15 @@ export class SelectionTool extends DefaultTool {
 
         let render = false;
 
+        // Check if a pressable object was clicked
+        if (this.interactionHelper.click(input))
+            return true;
+
         // Clear selections if no shift key
         if (!input.isShiftKeyDown()) {
             render = (this.selections.size > 0); // Render if selections were actually cleared
             this.action.add(CreateDeselectAllAction(this).execute());
         }
-
-        // Check if a pressable object was clicked
-        if (this.interactionHelper.click(input))
-            return true;
 
         const objects = this.designer.getObjects().reverse();
         const wires = this.designer.getWires().reverse();
