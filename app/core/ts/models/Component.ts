@@ -37,6 +37,11 @@ export abstract class Component extends CullableObject {
         this.onTransformChange();
     }
 
+    public setSize(s: Vector): void {
+        this.transform.setSize(s);
+        this.onTransformChange();
+    }
+
     public setRotationAbout(a: number, c: Vector): void {
         this.transform.setRotationAbout(a, c);
         this.onTransformChange();
@@ -75,13 +80,16 @@ export abstract class Component extends CullableObject {
         return this.transform.copy();
     }
 
+    public getOffset(): Vector {
+        return V(DEFAULT_BORDER_WIDTH);
+    }
 
     public getMinPos(): Vector {
         const min = V(Infinity);
 
-        // Find minimum pos from corners of transform
+        // Find minimum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.sub(DEFAULT_BORDER_WIDTH)
+            v => v.sub(this.getOffset())
         );
 
         // Find minimum pos from ports
@@ -95,9 +103,9 @@ export abstract class Component extends CullableObject {
     public getMaxPos(): Vector {
         const max = V(-Infinity);
 
-        // Find maximum pos from corners of transform
+        // Find maximum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.add(DEFAULT_BORDER_WIDTH)
+            v => v.add(this.getOffset())
         );
 
         // Find maximum pos from ports
