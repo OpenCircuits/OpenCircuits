@@ -73,4 +73,13 @@ func (mem *memCircuitStorage) NewCircuit() model.Circuit {
 	return c
 }
 
+func (mem *memCircuitStorage) DeleteCircuit(id model.CircuitId) {
+	v, ok := mem.idxMap[id]
+	if !ok {
+		return
+	}
+	mem.m[v] = model.Circuit{}
+	delete(mem.idxMap, id)
+}
+
 func (mem *memCircuitStorage) Close() {}

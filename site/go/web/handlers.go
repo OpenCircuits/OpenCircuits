@@ -19,7 +19,6 @@ type item struct {
 	ID    string `json:"id"`
 	Label string `json:"label"`
 	Icon  string `json:"icon"`
-	Not   bool   `json:"not"`
 }
 
 type section struct {

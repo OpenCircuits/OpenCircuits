@@ -1,17 +1,19 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {V}     from "Vector";
+import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent} from "../AnalogComponent";
+import {AnalogComponent} from "analog/models/AnalogComponent";
 
+@serializable("CurrentSource")
 export class CurrentSource extends AnalogComponent {
-
     public constructor(current: number = .005) {
-        super(new ClampedValue(2), V(50, 50));
+        super(new ClampedValue(2), V(50));
 
         // Ensure no negative/zero current!!!
-        if (current > 0){
+        if (current > 0) {
             this.current = current;
         } else {
             this.current = .005;
@@ -28,9 +30,4 @@ export class CurrentSource extends AnalogComponent {
     public getImageName(): string {
         return "currentsource.svg";
     }
-
-    public getXMLName(): string {
-        return "cursource";
-    }
-
 }

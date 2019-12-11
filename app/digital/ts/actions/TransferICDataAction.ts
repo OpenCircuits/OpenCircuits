@@ -4,19 +4,15 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 export class TransferICDataAction implements Action {
-    private origin: DigitalCircuitDesigner;
     private target: DigitalCircuitDesigner;
 
-    private data: Array<ICData>;
+    private data: ICData[];
 
-    public constructor(origin: DigitalCircuitDesigner, target: DigitalCircuitDesigner) {
-        this.origin = origin;
+    public constructor(data1: ICData[], target: DigitalCircuitDesigner) {
         this.target = target;
 
-        const data1 = this.origin.getICData();
-        const data2 = this.target.getICData();
-
         // Filter out the ICs that the target doesn't already have
+        const data2 = this.target.getICData();
         this.data = data1.filter((ic) => !data2.includes(ic));
     }
 

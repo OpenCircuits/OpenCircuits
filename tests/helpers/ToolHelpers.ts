@@ -22,6 +22,7 @@ export function InitializeInput(input: Input, toolManager: ToolManager): void {
     input.addListener("mousedrag", (b?: number) => { toolManager.onMouseDrag(input, b); });
     input.addListener("mouseup",   (b?: number) => { toolManager.onMouseUp(input, b); });
     input.addListener("click",     (b?: number) => { toolManager.onClick(input, b); });
+    input.addListener("dblclick",  (b?: number) => { toolManager.onDoubleClick(input, b); });
 }
 
 export function CreateDefaultToolManager(designer: DigitalCircuitDesigner, camera: Camera): ToolManager {

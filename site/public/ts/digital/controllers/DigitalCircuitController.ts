@@ -2,9 +2,6 @@ import {MainDesignerController} from "site/shared/controllers/MainDesignerContro
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {MainDesignerView} from "../views/MainDesignerView";
 
-import {Importer} from "core/utils/io/Importer";
-import {WriteCircuit} from "site/shared/utils/Exporter";
-
 import {TitlePopupModule}          from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopupModule";
 import {ICButtonPopupModule}       from "site/digital/controllers/selectionpopup/ICButtonPopupModule";
@@ -14,24 +11,29 @@ import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup
 import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
 import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
 
-import {CreateComponentFromXML} from "digital/utils/ComponentFactory";
-
 import {ICDesignerController} from "./ICDesignerController";
 import {ContextMenuController} from "../../shared/controllers/ContextMenuController";
 import {DigitalCopyController} from "./DigitalCopyController";
-import {DigitalHeaderController} from "./DigitalHeaderController";
 
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
 
 import {SplitWireTool} from "core/tools/SplitWireTool";
 import {DigitalWiringTool} from "digital/tools/DigitalWiringTool";
+import {ICViewerButtonPopupModule} from "./selectionpopup/ViewICButtonPopupModule";
+import {ICViewerController} from "./ICViewerController";
+import {IC} from "digital/models/ioobjects/other/IC";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
+
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {DigitalCircuitView} from "../views/DigitalCircuitView";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
+    private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
-    private headerController: DigitalHeaderController;
     private sideNav: SideNavController;
     private loginController: LoginController;
 
@@ -40,13 +42,14 @@ export class DigitalCircuitController extends MainDesignerController {
     public constructor() {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
-              CreateComponentFromXML);
+              new ThumbnailGenerator(DigitalCircuitView));
 
 
         this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()),
                                   new SplitWireTool(this.getCamera()));
 
         this.icController = new ICDesignerController(this);
+        this.icViewer = new ICViewerController(this);
 
         this.selectionPopup.addModules(
             new TitlePopupModule(this),
@@ -56,13 +59,14 @@ export class DigitalCircuitController extends MainDesignerController {
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
             new ICButtonPopupModule(this, this.icController),
-            new BusButtonPopupModule(this)
+            new ICViewerButtonPopupModule(this, this.icViewer),
+            new BusButtonPopupModule(this),
+            new SegmentCountPopupModule(this),
         );
 
         this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
-        this.headerController = new DigitalHeaderController(this);
-        this.sideNav = new SideNavController(this);
+        this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
     }
@@ -71,18 +75,30 @@ export class DigitalCircuitController extends MainDesignerController {
         return await this.loginController.initAuthentication();
     }
 
-    public loadCircuit(contents: XMLDocument): void {
-        const name = Importer.PromptLoadCircuit(this.getDesigner(), contents);
-        this.headerController.setProjectName(name);
-    }
-
-    public saveCircuit(thumbnail: boolean = true): string {
-        const circuit = this.getDesigner();
-        return WriteCircuit(circuit, this.headerController.getProjectName(), thumbnail);
-    }
-
     public getDesigner(): DigitalCircuitDesigner {
         return this.designer;
     }
 
+    public onDoubleClick(button: number): boolean {
+        const render = super.onDoubleClick(button);
+
+        if (button !== LEFT_MOUSE_BUTTON)
+            return render;
+
+        const worldMousePos = this.getCamera().getWorldPos(this.input.getMousePos());
+
+        const objs = this.designer.getObjects().reverse();
+        const ics = objs.filter(c => c instanceof IC) as IC[];
+
+        // Check if an IC was clicked
+        const ic = ics.find(o => o.isWithinSelectBounds(worldMousePos));
+
+        // Open up that IC
+        if (ic) {
+            this.icViewer.show(ic);
+            return true;
+        }
+
+        return render;
+    }
 }

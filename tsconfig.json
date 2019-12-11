@@ -10,6 +10,8 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
     "typeRoots" : [
       "site/public/ts/shared/utils/typings",
@@ -24,7 +26,8 @@
         "analog/*": ["app/analog/ts/*"],
         "site/shared/*": ["site/public/ts/shared/*"],
         "site/digital/*": ["site/public/ts/digital/*"],
-        "site/analog/*": ["site/public/ts/analog/*"]
+        "site/analog/*": ["site/public/ts/analog/*"],
+        "test/helpers/*": ["tests/helpers/*"]
     }
 
   },

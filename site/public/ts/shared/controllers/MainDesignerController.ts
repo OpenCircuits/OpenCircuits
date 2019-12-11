@@ -1,29 +1,50 @@
+import {Deserialize} from "serialeazy";
+
 import {Vector} from "Vector";
 
-import {CircuitView} from "site/shared/views/CircuitView";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {RotateTool} from "core/tools/RotateTool";
 import {TranslateTool} from "core/tools/TranslateTool";
 import {PlaceComponentTool} from "core/tools/PlaceComponentTool";
 import {WiringTool} from "core/tools/WiringTool";
 
+import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {CircuitMetadata,
+        CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {Component} from "core/models/Component";
+
+import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+
+import {CircuitView} from "site/shared/views/CircuitView";
+
 import {ItemNavController} from "site/shared/controllers/ItemNavController";
-import {DesignerController} from "./DesignerController";
 import {SelectionPopupController} from "site/shared/controllers/SelectionPopupController";
+import {DesignerController} from "site/shared/controllers/DesignerController";
+import {HeaderController} from "site/shared/controllers/HeaderController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
     protected selectionPopup: SelectionPopupController;
+    protected headerController: HeaderController;
+
+    protected thumbnailGenerator: ThumbnailGenerator;
+
+    private locked: boolean;
 
     protected constructor(designer: CircuitDesigner,
                           view: CircuitView,
-                          CreateFromXML: (tag: string, not?: boolean) => Component) {
+                          thumbnailGenerator: ThumbnailGenerator) {
         super(designer, view);
 
-        this.itemNav = new ItemNavController(this, CreateFromXML);
+        this.thumbnailGenerator = thumbnailGenerator;
+
+        this.itemNav = new ItemNavController(this);
         this.selectionPopup = new SelectionPopupController(this);
+        this.headerController = new HeaderController(this);
+
+        this.locked = false;
 
         this.toolManager.addTools(new RotateTool(this.getCamera()),
                                   new TranslateTool(this.getCamera()),
@@ -32,29 +53,35 @@ export abstract class MainDesignerController extends DesignerController {
         this.getSelectionTool().addSelectionChangeListener(() => this.selectionPopup.update());
     }
 
-    public setEditMode(editMode: boolean): void {
+    public setLocked(locked: boolean): void {
+        this.locked = locked;
+
         // Disable some tools
-        this.toolManager.setDisabled(RotateTool, !editMode);
-        this.toolManager.setDisabled(TranslateTool, !editMode);
-        this.toolManager.setDisabled(PlaceComponentTool, !editMode);
-        this.toolManager.setDisabled(WiringTool, !editMode);
+        this.toolManager.setDisabled(RotateTool, locked);
+        this.toolManager.setDisabled(TranslateTool, locked);
+        this.toolManager.setDisabled(PlaceComponentTool, locked);
+        this.toolManager.setDisabled(WiringTool, locked);
 
         // Disable actions/selections
-        this.toolManager.disableActions(!editMode);
+        this.toolManager.disableActions(locked);
         this.clearSelections();
-        this.getSelectionTool().disableSelections(!editMode);
+        this.getSelectionTool().disableSelections(locked);
 
         // Toggle ItemNavController
         if (this.itemNav.isOpen())
             this.itemNav.toggle();
 
         // Disable or re-enable ItemNavController
-        if (editMode)
-            this.itemNav.enable();
-        else
+        if (locked)
             this.itemNav.disable();
+        else
+            this.itemNav.enable();
 
         this.render();
+    }
+
+    public clearSelections(): void {
+        this.addAction(CreateDeselectAllAction(this.getSelectionTool()).execute());
     }
 
     public placeComponent(comp: Component): void {
@@ -62,8 +89,45 @@ export abstract class MainDesignerController extends DesignerController {
         placeTool.begin(comp);
     }
 
-    public abstract loadCircuit(contents: XMLDocument): void;
-    public abstract saveCircuit(): string;
+    public setDesigner(designer: CircuitDesigner): void {
+        this.designer.replace(designer);
+    }
+
+    public loadCircuit(contents: string): CircuitMetadata {
+        // This is a hack to allow golang to interface with the json easier
+        const circuit = JSON.parse(contents) as Circuit;
+
+        // Deserialize circuit
+        const data = Deserialize<ContentsData>(circuit.contents);
+
+        // Load camera
+        this.getCamera().setPos(data.camera.getPos());
+        this.getCamera().setZoom(data.camera.getZoom());
+
+        // Replace circuit contents with new ones (to keep references intact TODO: change this?)
+        this.designer.replace(data.designer);
+
+        this.render();
+
+        return new CircuitMetadata(circuit.metadata);
+    }
+
+    public saveCircuit(thumbnail: boolean = true): string {
+        const name = this.headerController.getProjectName();
+        const thumb = (thumbnail) ? (this.thumbnailGenerator.generate(this.designer)) : ("data;,");
+
+        const data = new Circuit(
+            new CircuitMetadataBuilder()
+                    .withName(name)
+                    .withThumbnail(thumb)
+                    .build()
+                    .getDef(),
+            this.designer,
+            this.getCamera()
+        );
+
+        return JSON.stringify(data);
+    }
 
     public setActive(on: boolean): void {
         super.setActive(on);
@@ -76,6 +140,14 @@ export abstract class MainDesignerController extends DesignerController {
         } else {
             this.itemNav.enable();
         }
+    }
+
+    public isLocked(): boolean {
+        return this.locked;
+    }
+
+    public getSelectionPopup(): SelectionPopupController {
+        return this.selectionPopup;
     }
 
     protected onMouseDrag(button: number): boolean {
@@ -96,6 +168,14 @@ export abstract class MainDesignerController extends DesignerController {
 
     protected onClick(button: number): boolean {
         if (super.onClick(button)) {
+            this.selectionPopup.update();
+            return true;
+        }
+        return false;
+    }
+
+    protected onDoubleClick(button: number): boolean {
+        if (super.onDoubleClick(button)) {
             this.selectionPopup.update();
             return true;
         }

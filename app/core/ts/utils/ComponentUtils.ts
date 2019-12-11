@@ -1,13 +1,19 @@
+import {serializable, Serialize, Deserialize} from "serialeazy";
+
+import {IO_PORT_LINE_WIDTH} from "./Constants";
+
+import {Vector, V} from "Vector";
 import {Graph} from "math/Graph";
+import {Transform} from "math/Transform";
+import {BoundingBox} from "math/BoundingBox";
+import {RectContains} from "math/MathUtils";
 
 import {IOObject} from "core/models/IOObject";
-import {Component} from "core/models/Component";
-import {Node, isNode} from "core/models/Node";
-import {Wire} from "core/models/Wire";
-import {Port} from "core/models/ports/Port";
-import {Vector} from "Vector";
 import {CullableObject} from "core/models/CullableObject";
-import {BoundingBox} from "math/BoundingBox";
+import {Component} from "core/models/Component";
+import {Wire} from "core/models/Wire";
+import {Node, isNode} from "core/models/Node";
+import {Port} from "core/models/ports/Port";
 
 /**
  * Helper class to hold different groups of components.
@@ -18,15 +24,16 @@ import {BoundingBox} from "math/BoundingBox";
  *  Wires             (wires)
  *  Components        (anything else)
  *
- * Note that .components does NOT contain inputs and outputs
+ * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as getAllComponents()
+ *  is included as toList()
  */
+@serializable("IOObjectSet")
 export class IOObjectSet {
     protected components: Set<Component>;
     protected wires: Set<Wire>;
 
-    public constructor(set: IOObject[]) {
+    public constructor(set: IOObject[] = []) {
         this.components = new Set<Component>(set.filter(o => o instanceof Component) as Component[]);
         this.wires      = new Set<Wire>     (set.filter(o => o instanceof Wire)      as Wire[]);
     }
@@ -101,13 +108,13 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 
 
 /**
- * Get's all the wires/WirePorts going out from this wire
+ * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
  *
  * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (incuding w)
+ * @return   The array of wires/WirePorts in this path (including w)
  */
-export function GetPath(w: Wire): Array<Wire | Node> {
+export function GetPath(w: Wire | Node): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
@@ -127,7 +134,7 @@ export function GetPath(w: Wire): Array<Wire | Node> {
             if (isNode(p2) && !visited.has(p2))
                 queue.push(p2);
         } else {
-            // Push all of the Node's connecting wires, filted by if they've been visited
+            // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
         }
     }
@@ -207,6 +214,71 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     return graph;
 }
 
+export function SerializeForCopy(objects: IOObject[]): string {
+    // Make sure to get all immediate connections
+    const group = CreateGroup(objects);
+
+    // Remove floating paths in the list
+    //  This is to prevent individual (floating) Nodes from be pasted
+    //  Do this by getting all nodes marked as "end nodes" in a graph and then if
+    //  any of the end nodes are actually Nodes, remove the paths with them since
+    //  being end nodes would imply they only have 0/1 connections
+    const components = group.getComponents();
+    const graph = CreateGraph(group);
+    const ends = graph.getEndNodes();
+    const badBoys = ends
+            .filter((i) => isNode(components[i]))
+            .flatMap((i) => GetPath(components[i] as Node)) as IOObject[];
+
+    objects = group.toList().filter((obj) => !badBoys.includes(obj));
+
+    // Serialize with custom functionality
+    //  The idea is to serialize just the objects and connections in `objects`
+    //  So we filter out any connections that are not part of the list so that
+    //  nothing else connected to those connections (that aren't in the list)
+    //  get serialized.
+    //  Also ignore serializing the CircuitDesigner from any IOObjects so that
+    //  the entire circuit doesn't get serialized
+    return Serialize(objects, [
+        {
+            type: Port,
+            customBehavior: {
+                customSerialization: (serializer, port: Port, refs, root, custom) => {
+                    const parent = port.getParent();
+                    const data = serializer.defaultSerialization(port, refs, root, custom);
+
+                    // check if we're serializing an object that isn't an IC
+                    //  (since it's in our original list and any objects outside
+                    //   that list should either not be serialized [which we're
+                    //   about to prevent] or be in an IC)
+                    let connections = port.getWires();
+                    if (objects.includes(parent)) {
+                        // prevent connections not in our list from being serialized
+                        connections = connections.filter((wire) => {
+                            return (objects.includes(wire));
+                        });
+                    }
+
+                    data["connections"] = serializer.serializeProperty(connections, refs, root, custom);
+
+                    return data;
+                },
+                customKeyFilter: (_: Port, key: string) => {
+                    return (key != "connections"); // don't serialize connections (handle them above)
+                }
+            }
+        },
+        {
+            type: IOObject,
+            customBehavior: {
+                customKeyFilter: (_: IOObject, key: string) => {
+                    return (key != "designer"); // don't serialize designer
+                }
+            }
+        }
+    ]);
+}
+
 /**
  * Copies a group of objects including connections that are
  *  present within the objects
@@ -214,40 +286,16 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
  * @param  objects [description]
  * @return         [description]
  */
-export function CopyGroup(objects: IOObject[] | IOObjectSet): IOObjectSet {
-    // Separate out the given objects
-    const groups = (objects instanceof IOObjectSet) ? (objects) : (CreateGroup(objects));
-    const objs = groups.getComponents();
-    const wires = groups.getWires();
+export function CopyGroup(objects: IOObject[]): IOObjectSet {
+    if (objects.length == 0)
+        return new IOObjectSet();
 
-    const graph: Graph<number, number> = CreateGraph(groups);
+    const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
 
-    // Copy components
-    const copies = objs.map((o) => o.copy());
+    // It's assumed that every object has the same designer
+    copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
-    // Copy connections
-    const wireCopies: Wire[] = [];
-    for (const i of graph.getNodes()) {
-        const c1 = copies[i];
-        const connections = graph.getConnections(i);
-
-        for (const connection of connections) {
-            const j = connection.getTarget();
-            const c2 = copies[j];
-
-            const w = wires[connection.getWeight()];
-
-            // Find indices of which ports the wire should be connected to
-            const i1 = objs[i].getPorts().indexOf(w.getP1());
-            const i2 = objs[j].getPorts().indexOf(w.getP2());
-
-            const wire = w.copy(c1.getPorts()[i1], c2.getPorts()[i2]);
-            wireCopies.push(wire);
-        }
-    }
-
-    const group = copies as IOObject[];
-    return new IOObjectSet(group.concat(wireCopies));
+    return new IOObjectSet(copies);
 }
 
 // Find a minimal bounding box enclosing all cullable objects in a given array
@@ -257,4 +305,21 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     const max = Vector.max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
+}
+
+// Creates a rectangle for the collision box for a port on the IC
+//  and determines if the given 'mousePos' is within it
+export function PortContains(port: Port, mousePos: Vector): boolean {
+    const origin = port.getOriginPos();
+    const target = port.getTargetPos();
+
+    // Get properties of collision box
+    const pos   = target.add(origin).scale(0.5);
+    const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
+    const angle = target.sub(origin).angle();
+
+    const rect  = new Transform(pos, size, angle);
+    rect.setParent(port.getParent().getTransform());
+
+    return RectContains(rect, mousePos);
 }

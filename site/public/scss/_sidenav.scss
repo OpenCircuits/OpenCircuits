@@ -56,18 +56,6 @@ $sidenav-border-width: 5px;
             border-bottom-width: 3px;
             background-color: lighten($primary-color, 10%);
         }
-        &__switch {
-            position: relative;
-
-            display: inline-block;
-
-            width: 100%;
-            height: 34px;
-
-            & input {
-                opacity: 0;
-            }
-        }
         &__circuit {
             $img-width: 50px;
             $height: 50px;
@@ -81,21 +69,27 @@ $sidenav-border-width: 5px;
             background-color: lighten($primary-color, 5%);
 
             cursor: pointer;
+            display: flex;
 
-            & img {
+            &__icon {
+                img {
+                    width: $img-width;
+                    height: $img-width;
+
+                    border-radius: 5px;
+                    background-color: $background-color;
+                }
                 width: $img-width;
-                height: $img-width;
-
-                border-radius: 5px;
-                background-color: $background-color;
+                padding: 0 5px 0 0;
             }
             &__text {
                 display: inline-block;
 
-                width: $sidenav-width - $img-width - $sidenav-border-width - $padding-h*2 - 20px;
+                flex-grow: 1;
+                width: 50px;
 
                 vertical-align: top;
-                & span {
+                & div {
                     display: block;
                     overflow: hidden;
 
@@ -106,6 +100,13 @@ $sidenav-border-width: 5px;
                     font-weight: bold;
 
                     margin-top: 7px;
+                }
+            }
+            &__controls {
+                width: 20px;
+                padding: 0 0 0 5px;
+                img.circuit_options {
+                    height: 100%;
                 }
             }
         }
@@ -121,61 +122,6 @@ $sidenav-border-width: 5px;
                 text-decoration: none;
 
                 color: lighten($secondary-color, 25%);
-            }
-        }
-        &__slider {
-            font-size: 20px;
-
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-
-            cursor: pointer;
-            -webkit-transition: 0.4s;
-                    transition: 0.4s;
-
-            background-color: $primary-color;
-
-            &:after {
-                float: right;
-
-                margin-top: calc(34px / 2 - 20px / 2 - 1px);
-                margin-right: 10px;
-
-                content: 'Play Mode';
-
-                color: #565656;
-            }
-            &:before {
-                position: absolute;
-                left: 0;
-
-                width: 50%;
-                height: 34px;
-
-                content: '';
-                -webkit-transition: 0.4s;
-                        transition: 0.4s;
-
-                background-color: white;
-            }
-            input:checked + &:after {
-                float: left;
-
-                margin-top: calc(34px / 2 - 20px / 2 - 1px);
-                margin-left: 10px;
-
-                content: 'Edit Mode';
-
-                color: #eee;
-            }
-            input:checked + & {
-                background-color: #3cacf2;
-            }
-            input:checked + &:before {
-                left: 50%;
             }
         }
     }

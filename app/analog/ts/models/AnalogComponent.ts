@@ -1,15 +1,21 @@
-import {Component} from "core/models/Component";
-import {AnalogCircuitDesigner} from "./AnalogCircuitDesigner";
-import {ClampedValue} from "math/ClampedValue";
+import {serialize} from "serialeazy";
+
 import {Vector} from "Vector";
-import {Positioner} from "core/models/ports/positioners/Positioner";
-import {AnalogWire} from "./AnalogWire";
-import {AnalogPort} from "./ports/AnalogPort";
+import {ClampedValue} from "math/ClampedValue";
+
+import {Component} from "core/models/Component";
 import {PortSet} from "core/models/ports/PortSets";
+import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {AnalogPort} from "./ports/AnalogPort";
+import {AnalogCircuitDesigner} from "./AnalogCircuitDesigner";
+import {AnalogWire} from "./AnalogWire";
 
 export abstract class AnalogComponent extends Component {
+    @serialize
     protected designer: AnalogCircuitDesigner;
 
+    @serialize
     protected ports: PortSet<AnalogPort>;
 
     public voltage: number;
@@ -37,13 +43,4 @@ export abstract class AnalogComponent extends Component {
     public getDesigner(): AnalogCircuitDesigner {
         return this.designer;
     }
-
-    public copy(): AnalogComponent {
-        const copy = <AnalogComponent>super.copy();
-
-        copy.ports = this.ports.copy(copy);
-
-        return copy;
-    }
-
 }

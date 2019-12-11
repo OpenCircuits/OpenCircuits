@@ -1,5 +1,11 @@
+import {serializable, serialize} from "serialeazy";
+
+@serializable("Vector")
 export class Vector {
+    @serialize
     public x: number;
+
+    @serialize
     public y: number;
 
     public constructor();
@@ -68,6 +74,9 @@ export class Vector {
     }
     public project(v: Vector): Vector {
         return this.scale(v.dot(this) / this.len2());
+    }
+    public negativeReciprocal(): Vector {
+        return new Vector(this.y, -this.x);
     }
     public copy(): Vector {
         return new Vector(this.x, this.y);

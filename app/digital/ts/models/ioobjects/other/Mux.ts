@@ -1,7 +1,8 @@
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serialize} from "serialeazy";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -11,8 +12,11 @@ import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositione
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
+import {DigitalWire} from "digital/models/DigitalWire";
+import {Port} from "core/models/ports/Port";
 
 export abstract class Mux extends DigitalComponent {
+    @serialize
     protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
@@ -46,8 +50,22 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getInputPorts(): Array<InputPort> {
-        return super.getInputPorts().concat(this.selects.getPorts());
+    public getOffset(): Vector {
+        return super.getOffset().add(0, MULTIPLEXER_HEIGHT_OFFSET/2);
+    }
+
+    // @Override
+    public getInputs(): DigitalWire[] {
+        // Get each wire connected to each InputPort
+        //  and then filter out the null ones
+        return super.getInputs().concat(
+            this.getSelectPorts().map((p) => p.getInput())
+                    .filter((w) => w != null));
+    }
+
+    // @Override
+    public getPorts(): Port[] {
+        return super.getPorts().concat(this.getSelectPorts());
     }
 
 }

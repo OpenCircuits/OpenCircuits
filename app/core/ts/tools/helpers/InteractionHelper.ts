@@ -1,12 +1,12 @@
+import {Vector} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";
-import {isPressable} from "core/utils/Pressable";
+import {isPressable, Pressable} from "core/utils/Pressable";
 import {Selectable} from "core/utils/Selectable";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject} from "core/models/IOObject";
-import {Vector} from "Vector";
 
 export class InteractionHelper {
     private designer: CircuitDesigner;
@@ -26,12 +26,11 @@ export class InteractionHelper {
         const wires = this.designer.getWires().reverse();
 
         const objs = (objects as IOObject[]).concat(wires);
-        return objs.find(o => (isPressable(o) && o.isWithinPressBounds(pos)) ||
-                               o.isWithinSelectBounds(pos));
+        return objs.find(o => (isPressable(o) && o.isWithinPressBounds(pos)) || o.isWithinSelectBounds(pos));
     }
 
-    public setCurrentlyPressedObj(obj: Selectable): void {
-        this.currentlyPressedObj = obj;
+    private pressing(obj: IOObject, pos: Vector): obj is Pressable {
+        return (isPressable(obj) && obj.isWithinPressBounds(pos));
     }
 
     public press(input: Input): boolean {
@@ -41,7 +40,7 @@ export class InteractionHelper {
         const obj = this.findObject(worldMousePos);
 
         this.currentlyPressedObj = obj;
-        if (isPressable(obj)) {
+        if (this.pressing(obj, worldMousePos)) {
             obj.press();
             return true;
         }
@@ -67,7 +66,7 @@ export class InteractionHelper {
 
         // Find and click object
         const obj = this.findObject(worldMousePos);
-        if (isPressable(obj)) {
+        if (this.pressing(obj, worldMousePos)) {
             obj.click();
             return true;
         }

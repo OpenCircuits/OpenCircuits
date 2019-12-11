@@ -1,8 +1,10 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {serializable} from "serialeazy";
 
+@serializable("ConstantHigh")
 export class ConstantHigh extends DigitalComponent {
 
     public constructor() {
@@ -10,19 +12,13 @@ export class ConstantHigh extends DigitalComponent {
         super.activate(true);
     }
 
+    // @Override
+    public getOffset(): Vector {
+        return V();
+    }
+
     public getDisplayName(): string {
         return "Constant High";
-    }
-
-    public getXMLName(): string {
-        return "consthigh";
-    }
-
-    // @Override
-    public copy(): DigitalComponent {
-        const c = super.copy();
-        c.activate(true);
-        return c;
     }
 
     public getImageName(): string {

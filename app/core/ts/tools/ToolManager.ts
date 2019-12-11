@@ -1,7 +1,7 @@
 import {Input} from "core/utils/Input";
 import {MouseListener} from "core/utils/MouseListener";
 import {KeyboardListener} from "core/utils/KeyboardListener";
-import {Action} from "app/core/ts/actions/Action";
+import {Action} from "core/actions/Action";
 
 import {Tool} from "core/tools/Tool";
 
@@ -141,6 +141,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
     public onClick(input: Input, button: number): boolean {
         return this.onEvent((i: Input,b?: number) => this.currentTool.onClick(i,b), "onclick", input, button);
+    }
+
+    public onDoubleClick(input: Input, button: number): boolean {
+        return this.onEvent((i: Input,b?: number) => this.currentTool.onDoubleClick(i,b), "ondblclick", input, button);
     }
 
     public onKeyDown(input: Input, key: number): boolean {

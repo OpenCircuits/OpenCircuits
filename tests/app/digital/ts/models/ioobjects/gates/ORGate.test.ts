@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("ORGate", () => {
     describe("ORGate", () => {
@@ -81,32 +81,6 @@ describe("ORGate", () => {
             b.activate(true);
 
             expect(o.isOn()).toBe(false);
-        });
-    });
-
-    describe("Copy", () => {
-        test("ORGate Copy", () => {
-            let a = new ORGate();
-            a.setInputPortCount(4);
-            let b = <ORGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(ORGate);
-            expect(b.isNot()).toBe(false);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
-        });
-        test("NORGate Copy", () => {
-            let a = new ORGate(true);
-            a.setInputPortCount(4);
-
-            let b = <ORGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(ORGate);
-            expect(b.isNot()).toBe(true);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

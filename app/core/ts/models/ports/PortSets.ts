@@ -4,7 +4,9 @@ import {Component} from "core/models/Component";
 import {Port}      from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
+import {serializable} from "serialeazy";
 
+@serializable("PortSet")
 export class PortSet<T extends Port> {
     private parent: Component;
 
@@ -19,8 +21,10 @@ export class PortSet<T extends Port> {
 
     private positioner: Positioner<T>;
 
-    public constructor(parent: Component, count: ClampedValue,
-                       positioner: Positioner<T> = new Positioner<T>(), type: new(c: Component) => T) {
+    public constructor();
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component) => T);
+    public constructor(parent?: Component, count?: ClampedValue,
+                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component) => T) {
         this.parent = parent;
         this.type = type;
         this.count = count;
@@ -29,7 +33,8 @@ export class PortSet<T extends Port> {
         this.oldPorts = [];
         this.currentPorts = [];
 
-        this.setPortCount(count.getValue());
+        if (count)
+            this.setPortCount(count.getValue());
     }
 
     /**
@@ -54,6 +59,14 @@ export class PortSet<T extends Port> {
             this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
 
         // update positions
+        this.positioner.updatePortPositions(this.currentPorts);
+    }
+
+    /**
+     * Updates the positions of the ports in the set. Allows for
+     * position updating even when the size does not change
+     */
+    public updatePortPositions(): void {
         this.positioner.updatePortPositions(this.currentPorts);
     }
 
@@ -84,17 +97,4 @@ export class PortSet<T extends Port> {
     public isEmpty(): boolean {
         return this.currentPorts.length == 0;
     }
-
-    public copy(newParent: Component): PortSet<T> {
-        const copy = new PortSet<T>(newParent, this.count.copy(), this.positioner, this.type);
-
-        // Copy port positions
-        copy.currentPorts.forEach((p, i) => {
-            p.setOriginPos(this.currentPorts[i].getOriginPos());
-            p.setTargetPos(this.currentPorts[i].getTargetPos());
-        });
-
-        return copy;
-    }
-
 }

@@ -1,12 +1,15 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+
 import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {Gate} from "./Gate";
+import {serializable} from "serialeazy";
 
+import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
+
+import {Gate} from "./Gate";
 import {GetQuadraticOffset} from "./ORGate";
 
-import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
-
+@serializable("XORGate")
 export class XORGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -21,6 +24,11 @@ export class XORGate extends Gate {
         super.activate(on);
     }
 
+    // @Override
+    public getOffset(): Vector {
+        return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
+    }
+
     public getDisplayName(): string {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
@@ -28,32 +36,11 @@ export class XORGate extends Gate {
     public getImageName(): string {
         return "or.svg";
     }
+}
 
-    public getMinPos(): Vector {
-        const min = super.getMinPos();
-
-        // Find minimum pos from corners of transform
-        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
-        const corners = this.transform.getCorners().map(
-            v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
-        );
-
-        return Vector.min(min, ...corners);
-    }
-
-    public getMaxPos(): Vector {
-        const max = super.getMaxPos();
-
-        // Find maximum pos from corners of transform
-        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
-        const corners = this.transform.getCorners().map(
-            v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
-        );
-
-        return Vector.max(max, ...corners);
-    }
-
-    public getXMLName(): string {
-        return "xor";
+@serializable("XNORGate")
+export class XNORGate extends XORGate {
+    public constructor() {
+        super(true);
     }
 }

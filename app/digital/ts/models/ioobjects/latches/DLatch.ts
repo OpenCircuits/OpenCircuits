@@ -1,5 +1,7 @@
 import {Latch} from "./Latch";
+import {serializable} from "serialeazy";
 
+@serializable("DLatch")
 export class DLatch extends Latch {
 
     public constructor() {
@@ -21,9 +23,5 @@ export class DLatch extends Latch {
 
     public getDisplayName(): string {
         return "D Latch";
-    }
-
-    public getXMLName(): string {
-        return "dl";
     }
 }

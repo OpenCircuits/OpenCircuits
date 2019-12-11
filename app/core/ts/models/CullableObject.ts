@@ -1,9 +1,11 @@
 import {Vector,V} from "Vector";
 import {Transform} from "math/Transform";
+import {serialize} from "serialeazy";
 
 import {IOObject} from "./IOObject"
 
 export abstract class CullableObject extends IOObject {
+    @serialize
     private cullTransform: Transform;
 
     private dirty: boolean;
@@ -34,12 +36,6 @@ export abstract class CullableObject extends IOObject {
     public getCullBox(): Transform {
         this.updateCullTransform();
         return this.cullTransform;
-    }
-
-    public copy(): CullableObject {
-        const copy = <CullableObject>super.copy();
-        copy.cullTransform = this.cullTransform.copy();
-        return copy;
     }
 
     public abstract getMinPos(): Vector;

@@ -4,8 +4,13 @@ export const Images = (() => {
                               "switchUp.svg", "switchDown.svg",
                               "led.svg", "ledLight.svg",
                               "buf.svg", "and.svg", "or.svg",
-                              "segment1.svg", "segment2.svg",
-                              "segment3.svg", "segment4.svg",
+                              "segment_horizontal.svg",
+                              "segment_vertical.svg",
+                              "segment_horizontal0.5.svg",
+                              "segment_diagonaltr.svg",
+                              "segment_diagonaltl.svg",
+                              "segment_diagonalbr.svg",
+                              "segment_diagonalbl.svg",
                               "clock.svg", "clockOn.svg",
                               "keyboard.svg", "base.svg"];
 
