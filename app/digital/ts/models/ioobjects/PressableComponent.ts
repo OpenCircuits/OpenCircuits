@@ -66,24 +66,21 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
     }
 
     public getMinPos(): Vector {
-        let min = super.getMinPos();
-
+        const min = super.getMinPos();
         // Find minimum pos from corners of selection box
-        this.pressableBox.getCorners().forEach((v) => {
-            v = v.sub(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
-            min = Vector.min(min, v);
-        });
-        return min;
+        const corners = this.pressableBox.getCorners().map((v) =>
+            v.sub(this.getOffset())
+        );
+        return Vector.min(min, ...corners);
     }
 
     public getMaxPos(): Vector {
-        let max = super.getMaxPos();
-        // Find minimum pos from corners of selection box
-        this.pressableBox.getCorners().forEach((v) => {
-            v = v.add(V(DEFAULT_BORDER_WIDTH, DEFAULT_BORDER_WIDTH));
-            max = Vector.max(max, v);
-        });
-        return max;
+        const max = super.getMaxPos();
+        // Find maximum pos from corners of selection box
+        const corners = this.pressableBox.getCorners().map((v) =>
+            v.add(this.getOffset())
+        );
+        return Vector.max(max, ...corners);
     }
 
     public getImageName(): string {

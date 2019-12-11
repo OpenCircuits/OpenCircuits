@@ -1,6 +1,6 @@
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {serialize} from "serialeazy";
 
@@ -24,7 +24,7 @@ export abstract class Mux extends DigitalComponent {
         super(inputPortCount, outputPortCount, V(DEFAULT_SIZE+10, 2*DEFAULT_SIZE), inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
-        
+
         this.setSelectPortCount(2);
     }
 
@@ -47,6 +47,11 @@ export abstract class Mux extends DigitalComponent {
 
     public numSelects(): number {
         return this.selects.length;
+    }
+
+    // @Override
+    public getOffset(): Vector {
+        return super.getOffset().add(0, MULTIPLEXER_HEIGHT_OFFSET/2);
     }
 
     // @Override
