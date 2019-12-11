@@ -2,7 +2,8 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR} from "core/utils/Constants";
+        SELECTED_FILL_COLOR,
+        MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Renderer} from "../../../../../core/ts/rendering/Renderer";
@@ -28,16 +29,16 @@ export const MultiplexerRenderer = (() => {
             if (mul instanceof Multiplexer){
                 const p1 = V(-transform.getSize().x/2 , transform.getSize().y/2 + 7);
                 const p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2 - 7);
-                const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + 18);
-                const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - 18);
+                const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
+                const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
             else {
                 const p1 = V(transform.getSize().x/2 , transform.getSize().y/2 + 7);
                 const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2 - 7);
-                const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + 18);
-                const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - 18);
+                const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
+                const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
