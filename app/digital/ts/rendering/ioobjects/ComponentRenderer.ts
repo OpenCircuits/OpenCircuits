@@ -84,9 +84,9 @@ export const ComponentRenderer = (() => {
             if (object instanceof Label) {
                 // Calculate size
                 const width = renderer.getTextWidth(object.getName()) + 20;
-                transform.setSize(V(width, size.y));
+                object.setSize(V(width, size.y));
 
-                drawBox(renderer, transform, selected);
+                drawBox(renderer, object.getTransform(), selected);
 
                 renderer.text(object.getName(), V(), "center");
             }

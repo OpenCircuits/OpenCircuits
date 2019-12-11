@@ -24,36 +24,17 @@ export class XORGate extends Gate {
         super.activate(on);
     }
 
+    // @Override
+    public getOffset(): Vector {
+        return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
+    }
+
     public getDisplayName(): string {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
 
     public getImageName(): string {
         return "or.svg";
-    }
-
-    public getMinPos(): Vector {
-        const min = super.getMinPos();
-
-        // Find minimum pos from corners of transform
-        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
-        const corners = this.transform.getCorners().map(
-            v => v.sub(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
-        );
-
-        return Vector.min(min, ...corners);
-    }
-
-    public getMaxPos(): Vector {
-        const max = super.getMaxPos();
-
-        // Find maximum pos from corners of transform
-        const BOX_WIDTH = GetQuadraticOffset(this.numInputs());
-        const corners = this.transform.getCorners().map(
-            v => v.add(DEFAULT_BORDER_WIDTH,BOX_WIDTH)
-        );
-
-        return Vector.max(max, ...corners);
     }
 }
 

@@ -1,4 +1,4 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {serializable, serialize} from "serialeazy";
 
@@ -35,6 +35,11 @@ export class Clock extends DigitalComponent {
         this.isOn = bool;
         if (this.designer != undefined)
             this.designer.forceUpdate();
+    }
+
+    // @Override
+    public getOffset(): Vector {
+        return V();
     }
 
     public getFrequency(): number {
