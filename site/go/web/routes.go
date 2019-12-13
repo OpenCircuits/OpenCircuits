@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/gin-gonic/gin"
 )
@@ -20,10 +21,11 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager, e
 	router.StaticFile("/Bundle.analog.js", "./Bundle.analog.js")
 	router.StaticFile("/Bundle.analog.js.map", "./Bundle.analog.js.map")
 
-	// TODO: this is a hack to get bundles not to cache
-	router.GET("/Bundle.digital.js?ver=:id", noCacheHandler("./Bundle.digital.js"))
-	router.GET("/Bundle.analog.js?ver=:id", noCacheHandler("./Bundle.analog.js"))
+	cache, err := NewDebugCache([]string{"./Bundle.digital.js", "./Bundle.analog.js"})
+	core.CheckErrorMessage(err, "Failed to initialize static cache: ")
+	cache.RegisterRoutes(router)
 
-	router.GET("/", indexHandler(authManager, examplesCsif))
-	router.GET("/analog", analogHandler(authManager, examplesCsif))
+	router.GET("/", indexHandler(authManager, examplesCsif, cache))
+	router.GET("/analog", analogHandler(authManager, examplesCsif, cache))
+
 }
