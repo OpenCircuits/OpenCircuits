@@ -50,7 +50,7 @@ export class ItemNavController {
             }
         }
 
-        // Set onclicks for each item
+        // Set on-clicks for each item
         const children = Array.from(this.itemnav.children());
         for (const child of children) {
             if (!(child instanceof HTMLButtonElement))
@@ -59,14 +59,15 @@ export class ItemNavController {
             const uuid = child.dataset.uuid;
 
             // On click cause instant place
-            const onClick = (): void => {
-                main.placeComponent(Create<Component>(uuid));
+            child.onclick = () => {
+                main.setPlaceToolComponent(Create<Component>(uuid));
             }
-
-            child.onclick = () => onClick();
 
             // Add uuid data to drag event
             child.ondragstart = (event) => {
+                // Cancel potential click-to-place event when we start dragging
+                main.setPlaceToolComponent(undefined);
+
                 event.dataTransfer.setData("custom/component", uuid);
                 event.dataTransfer.dropEffect = "copy";
             };

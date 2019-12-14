@@ -84,9 +84,9 @@ export abstract class MainDesignerController extends DesignerController {
         this.addAction(CreateDeselectAllAction(this.getSelectionTool()).execute());
     }
 
-    public placeComponent(comp: Component): void {
+    public setPlaceToolComponent(comp: Component): void {
         const placeTool = this.toolManager.getTool(PlaceComponentTool) as PlaceComponentTool;
-        placeTool.begin(comp);
+        placeTool.setComponent(comp);
     }
 
     public setDesigner(designer: CircuitDesigner): void {
