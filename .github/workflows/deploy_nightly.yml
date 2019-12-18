@@ -1,0 +1,37 @@
+name: Build and Deploy to GAE
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Setup GCloud
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set Node.js 10.x
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: Install
+      run: npm install
+
+    - name: Build
+      run: npm build:prod
+
+    - name: Deploy
+      working-directory: ./build
+      run: gcloud app deploy -y
+
