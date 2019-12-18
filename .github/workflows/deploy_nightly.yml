@@ -29,7 +29,7 @@ jobs:
       run: npm install
 
     - name: Build
-      run: npm build:prod
+      run: npm run build:prod
 
     - name: Deploy
       working-directory: ./build
