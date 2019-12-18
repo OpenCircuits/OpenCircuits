@@ -33,5 +33,5 @@ jobs:
 
     - name: Deploy
       working-directory: ./build
-      run: gcloud app deploy -y
+      run: gcloud app deploy
 
