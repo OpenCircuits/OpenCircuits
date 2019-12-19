@@ -30,6 +30,12 @@ jobs:
     - name: Install
       run: npm install
 
+    - name: Create app.yaml
+      run: |
+        echo "runtime: go113" >> app.yaml
+        echo "env_variables:" >> app.yaml
+        echo "  DATASTORE_PROJECT_ID: "\"$CLOUDSDK_CORE_PROJECT\" >> app.yaml
+
     - name: Build
       run: npm run build:prod
 
