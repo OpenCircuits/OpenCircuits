@@ -30,11 +30,10 @@ jobs:
     - name: Install
       run: npm install
 
-    - name: Create app.yaml
+    - name: Create OAuth credentials and app.yaml
       run: |
-        echo "runtime: go113" >> app.yaml
-        echo "env_variables:" >> app.yaml
-        echo "  DATASTORE_PROJECT_ID: "\"$CLOUDSDK_CORE_PROJECT\" >> app.yaml
+        echo ${{ secrets.OAUTH_CREDENTIALS }} >> ./site/secrets/credentials.json
+        echo ${{ secrets.APP_YAML }} >> app.yaml
 
     - name: Build
       run: npm run build:prod
