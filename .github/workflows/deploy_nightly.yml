@@ -1,4 +1,4 @@
-name: Build and Deploy to GAE
+name: Build and Deploy to GAE for update-to-date builds
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
 
