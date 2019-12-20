@@ -41,6 +41,8 @@ export abstract class CopyController {
         // Delete the selections
         main.addAction(CreateDeselectAllAction(main.getSelectionTool()).execute());
         main.addAction(CreateDeleteGroupAction(objs).execute());
+
+        main.render();
     }
 
     private onPaste(e: ClipboardEvent, main: MainDesignerController): void {
