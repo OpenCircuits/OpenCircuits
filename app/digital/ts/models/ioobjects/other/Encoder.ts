@@ -27,19 +27,14 @@ export class Encoder extends DigitalComponent {
         if (onPorts.length != 1)
             return; // Undefined behavior
 
-        let index = this.getInputPorts().indexOf(onPorts[0]);
-        // const bits = index.toString(2).padStart(this.outputs.length, "0").split("");
-        // bits.forEach((bit, i) => {
+        // Get index of which port is on
+        const index = this.getInputPorts().indexOf(onPorts[0]);
 
-        // })
-        for (let i = this.outputs.length-1; i >= 0; i--) {
-            const num = 1 << i;
-            const activate = (num <= index);
-
-            super.activate(activate, i);
-            if (activate)
-                index -= num;
-        }
+        // Convert index to list of bits in binary
+        const bits = index.toString(2).padStart(this.outputs.length, "0").split("").reverse();
+        bits.forEach((bit, i) => {
+            super.activate(bit == "1", i);
+        });
     }
 
     public setOutputPortCount(val: number): void {
