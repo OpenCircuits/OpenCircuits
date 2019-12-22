@@ -19,16 +19,21 @@ export class Decoder extends DigitalComponent {
               V(DEFAULT_SIZE, DEFAULT_SIZE*2),
               new ConstantSpacePositioner<InputPort>(DEFAULT_SIZE/2),
               new ConstantSpacePositioner<OutputPort>(DEFAULT_SIZE/2));
+
+        // activate 0th port for initial state
+        super.activate(true, 0);
     }
 
     public activate(): void {
-        let num = 0;
-        for (let i = 0; i < this.inputs.length; i++)
-            num = num | ((this.inputs.get(i).getIsOn() ? 1 : 0) << i);
+        // Convert binary input to index of which output should be on
+        const num = this.getInputPorts()
+                .map(port => (port.getIsOn() ? 1 : 0))
+                .reduce((prev, cur, i) => prev | (cur << i), 0);
 
         // Turn everything off except i === num
-        for (let i = 0; i < this.outputs.length; i++)
+        this.getOutputPorts().forEach((_, i) => {
             super.activate(i === num, i);
+        });
     }
 
     public setInputPortCount(val: number): void {
