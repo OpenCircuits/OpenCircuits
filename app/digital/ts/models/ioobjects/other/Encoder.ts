@@ -23,11 +23,15 @@ export class Encoder extends DigitalComponent {
 
     public activate(): void {
         // Filter ports that are on then map to their indices
-        const onPorts = this.getInputPorts().filter((p) => p.getIsOn()).map((_, i) => i);
+        const onPorts = this.getInputPorts().filter((p) => p.getIsOn());
         if (onPorts.length != 1)
             return; // Undefined behavior
 
-        let index = onPorts[0];
+        let index = this.getInputPorts().indexOf(onPorts[0]);
+        // const bits = index.toString(2).padStart(this.outputs.length, "0").split("");
+        // bits.forEach((bit, i) => {
+
+        // })
         for (let i = this.outputs.length-1; i >= 0; i--) {
             const num = 1 << i;
             const activate = (num <= index);
