@@ -54,7 +54,8 @@ export const RemoteController = (() => {
                 await data.authState.logOut();
                 await callback();
                 return {
-                    authState: undefined
+                    authState: undefined,
+                    metadata: CircuitMetadata.Default()
                 }
             }, true);
         },
