@@ -2,36 +2,34 @@ import {LEFT_MOUSE_BUTTON,
         DELETE_KEY, BACKSPACE_KEY,
         ESC_KEY, A_KEY, D_KEY, X_KEY} from "core/utils/Constants";
 import {Vector, V} from "Vector";
+import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
-import {Tool} from "./Tool";
-import {DefaultTool} from "./DefaultTool";
+import {Input} from "core/utils/Input";
 
 import {IOObject} from "core/models/IOObject";
+import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
 
+import {Action} from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction"
+import {ShiftAction} from "core/actions/ShiftAction";
+import {SelectAction,
+        CreateGroupSelectAction,
+        CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {CopyGroupAction} from "core/actions/CopyGroupAction";
+import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+
+import {Tool} from "./Tool";
+import {DefaultTool} from "./DefaultTool";
 import {PlaceComponentTool} from "./PlaceComponentTool"
 
 import {SelectionBox} from "./helpers/SelectionBox";
 import {InteractionHelper} from "./helpers/InteractionHelper";
-
-import {Input} from "core/utils/Input";
-import {Camera} from "math/Camera";
-
-import {Action} from "../actions/Action";
-import {GroupAction} from "../actions/GroupAction"
-import {ShiftAction} from "../actions/ShiftAction";
-import {SelectAction,
-        CreateGroupSelectAction,
-        CreateDeselectAllAction} from "../actions/selection/SelectAction";
-import {CopyGroupAction} from "core/actions/CopyGroupAction";
-import {CreateGroupSnipAction} from "../actions/addition/SplitWireAction";
-import {CreateDeleteGroupAction} from "../actions/deletion/DeleteGroupActionFactory";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Wire} from "core/models/Wire";
-
-
 
 export class SelectionTool extends DefaultTool {
     protected designer: CircuitDesigner;
@@ -205,27 +203,34 @@ export class SelectionTool extends DefaultTool {
     }
 
     public onKeyDown(input: Input, key: number): boolean {
-
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
             this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
             return true;
         }
 
-        if (this.selections.size == 0){
+        if (this.selections.size == 0)
             return false;
-        }
 
+        // CTRL/CMD + D to duplicate selected objects
         if (input.isModifierKeyDown() && key == D_KEY) {
-          const selections = Array.from(this.selections);
-          const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
+            const selections = Array.from(this.selections);
+            const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
 
-          this.action.add(new CopyGroupAction(this.designer,objs)).execute();
+            const action = new CopyGroupAction(this.designer, objs);
+            const newObjs = action.getCopies();
+            const comps = newObjs.getComponents();
 
-          return true;
+            // Copy the group and then select them and move them over slightly
+            this.action.add(action.execute());
+            this.action.add(CreateDeselectAllAction(this).execute());
+            this.action.add(CreateGroupSelectAction(this, newObjs.toList()).execute());
+            this.action.add(CreateGroupTranslateAction(comps, comps.map((o) => o.getPos().add(V(5, 5)))).execute());
+
+            return true;
         }
 
-
+        // DELETE to remove selected objects
         if (key == DELETE_KEY || key == BACKSPACE_KEY) {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
@@ -235,6 +240,8 @@ export class SelectionTool extends DefaultTool {
 
             return true;
         }
+
+        // X to snip selected wireports
         if (key == X_KEY) { // Snip wire port(s)
             const selections = Array.from(this.selections);
             const wirePorts = selections.filter((o) => isNode(o)) as Node[];
@@ -244,6 +251,8 @@ export class SelectionTool extends DefaultTool {
             this.action.add(CreateGroupSnipAction(wirePorts).execute());
             return true;
         }
+
+        // ESC to deselect everything
         if (key == ESC_KEY) {
             this.action.add(CreateDeselectAllAction(this).execute());
             return true;
