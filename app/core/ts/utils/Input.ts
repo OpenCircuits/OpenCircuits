@@ -3,8 +3,10 @@ import {DRAG_TIME,
         SHIFT_KEY,
         CONTROL_KEY,
         COMMAND_KEY,
+        D_KEY,
         OPTION_KEY,
-        BACKSPACE_KEY} from "core/utils/Constants";
+        BACKSPACE_KEY,
+        META_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -42,15 +44,30 @@ export class Input {
         this.setupHammer();
     }
 
-    private hookupKeyboardEvents(): void {
-        const PREVENTED_KEYBINDS = [
-            BACKSPACE_KEY, // some browsers map backspace to previous page, but we use it for delete element
+    private isPreventedCombination(newKey: number): boolean {
+        // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
+        //  So we need to disable some certain combinations of keys
+        const PREVENTED_COMBINATIONS = [
+            [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
+            [BACKSPACE_KEY],
         ];
+
+        // Check if some combination has every key pressed and newKey is one of them
+        //  and return true if that's the case
+        return PREVENTED_COMBINATIONS.some((combination) => {
+            return combination.flat().includes(newKey) &&
+                   combination.every(keys =>
+                       keys.some(key => this.isKeyDown(key)));
+        });
+    }
+
+    private hookupKeyboardEvents(): void {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.keyCode);
-                if (PREVENTED_KEYBINDS.includes(e.keyCode))
+
+                if (this.isPreventedCombination(e.keyCode))
                     e.preventDefault();
             }
         }, false);
@@ -155,7 +172,7 @@ export class Input {
         return this.isKeyDown(SHIFT_KEY);
     }
     public isModifierKeyDown(): boolean {
-        return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY));
+        return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
     public isOptionKeyDown(): boolean {
         return this.isKeyDown(OPTION_KEY);
