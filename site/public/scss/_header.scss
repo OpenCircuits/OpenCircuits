@@ -6,6 +6,7 @@ $header-total-height: $header-height + 2*$header-padding + $header-border-width;
 $header-border: 0 solid $secondary-color;
 
 $header-button-height: 30px;
+$header-lock-height: 18px;
 
 header {
     position: fixed;
@@ -29,10 +30,8 @@ header {
 
         height: $header-height - 2*$header-padding;
         margin-top: $header-padding;
-
-        cursor: pointer;
     }
-    & button {
+    & #header-save-button {
         height: $header-button-height;
         line-height: $header-button-height;
         margin-top: $header-padding;
@@ -50,6 +49,17 @@ header {
             background-color: darken($success-color, 10%);
         }
     }
+    & #header-lock-button {
+        background-color: transparent;
+        margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
+        margin-right: 5px;
+
+        cursor: pointer;
+
+        img {
+            height: $header-lock-height;
+        }
+    }
     & input {
         font-size: 24px;
 
@@ -65,6 +75,8 @@ header {
 
         margin-right: 10px;
         color: $secondary-color;
+
+        cursor: pointer;
 
         vertical-align: middle;
     }

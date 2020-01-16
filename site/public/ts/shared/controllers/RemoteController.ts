@@ -1,7 +1,8 @@
 import {AuthState} from "../../digital/auth/AuthState";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 import {CreateUserCircuit, UpdateUserCircuit,
-        QueryUserCircuits, LoadUserCircuit} from "../api/Circuits";
+        QueryUserCircuits, LoadUserCircuit,
+        DeleteUserCircuit} from "../api/Circuits";
 import {LoadExampleCircuit} from "../api/Example";
 
 export const RemoteController = (() => {
@@ -50,13 +51,12 @@ export const RemoteController = (() => {
         },
         Logout(callback: () => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
-                if (data.authState)
-                    await data.authState.logOut();
+                await data.authState.logOut();
                 await callback();
                 return {
                     authState: undefined
                 }
-            });
+            }, true);
         },
         SaveCircuit(circuitData: string, callback: () => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
@@ -78,23 +78,34 @@ export const RemoteController = (() => {
                 await callback(list);
             }, true);
         },
-        LoadExampleCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+        LoadExampleCircuit(metadata: CircuitMetadata, callback: (contents: string) => Promise<void> | void = Promise.resolve): void {
             Chain(async (_data: RemoteData) => {
                 const contents = await LoadExampleCircuit(metadata);
                 callback(contents);
                 return {
-                    metadata: metadata
+                    metadata: CircuitMetadata.Default()
                 };
             });
         },
-        LoadUserCircuit(metadata: CircuitMetadata, callback: (contents: XMLDocument) => Promise<void> | void = Promise.resolve): void {
+        LoadUserCircuit(metadata: CircuitMetadata, callback: (contents: string) => Promise<void> | void = Promise.resolve): void {
             Chain(async (data: RemoteData) => {
                 const contents = await LoadUserCircuit(data.authState, metadata.getId());
                 callback(contents);
                 return {
                     metadata: metadata
                 };
-            });
+            }, true);
         },
+        DeleteUserCircuit(metadata: CircuitMetadata, callback: (result: boolean) => Promise<void> | void = Promise.resolve): void {
+            Chain(async (data: RemoteData) => {
+                const result = await DeleteUserCircuit(data.authState, metadata.getId());
+                callback(result);
+                if (data.metadata !== undefined && data.metadata.getId() === metadata.getId()) {
+                    return {
+                        metadata: metadata.buildOn().withId("").build()
+                    }
+                }
+            }, true);
+        }
     }
 })();

@@ -1,5 +1,7 @@
 import $ from "jquery";
 
+import {Create} from "serialeazy";
+
 import {V} from "Vector";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
@@ -14,7 +16,7 @@ export class ItemNavController {
     private open: boolean;
     private disabled: boolean;
 
-    public constructor(main: MainDesignerController, CreateFromXML: (tag: string, not?: boolean) => Component) {
+    public constructor(main: MainDesignerController) {
         this.tab = $("#itemnav-open-tab");
         this.itemnav = $("#itemnav");
 
@@ -28,23 +30,18 @@ export class ItemNavController {
         const canvas = main.getCanvas();
         canvas.ondragover = (ev: DragEvent) => {
             const isComponent = ev.dataTransfer.types.includes("custom/component");
-            if (isComponent) {
+            if (isComponent)
                 ev.preventDefault();
-            }
         };
 
         // And instruct it to add new components when they are dragged over
         canvas.ondrop = (ev: DragEvent) => {
-            const data = ev.dataTransfer.getData("custom/component");
-            if (data !== "") {
-                const parse = data.split(";");
-                const not = parse[0] == "true";
-                const xmlId = parse[1];
+            const uuid = ev.dataTransfer.getData("custom/component");
+            if (uuid !== "") {
+                const component = Create<Component>(uuid);
 
-                const component = CreateFromXML(xmlId, not) as Component;
-                const pos = main.getCamera().getWorldPos(V(ev.pageX, ev.pageY));
-
-                component.setPos(pos);
+                // Set position at drop location
+                component.setPos(main.getCamera().getWorldPos(V(ev.pageX, ev.pageY)));
 
                 // Instantly add component
                 main.addAction(new PlaceAction(main.getDesigner(), component).execute());
@@ -53,30 +50,27 @@ export class ItemNavController {
             }
         }
 
-        // const headerHeight = document.getElementById("header").offsetHeight + 10;
-
-        // Set onclicks for each item
+        // Set on-clicks for each item
         const children = Array.from(this.itemnav.children());
         for (const child of children) {
             if (!(child instanceof HTMLButtonElement))
                 continue;
 
-            const xmlId = child.dataset.xmlid;
-            const not = child.dataset.not == "true";
+            const uuid = child.dataset.uuid;
 
-            const onClick = (): void => {
-                const component = CreateFromXML(xmlId, not) as Component;
-                main.placeComponent(component);
+            // On click cause instant place
+            child.onclick = () => {
+                main.setPlaceToolComponent(Create<Component>(uuid));
             }
 
-            child.onclick = () => onClick();
-            // Pin all the data we need to make a new component onto the drag event
-            // ! WARNING: this encoding will break if any components have a semicolon in their xmlId
+            // Add uuid data to drag event
             child.ondragstart = (event) => {
-                event.dataTransfer.setData("custom/component", `${not};${xmlId}`);
+                // Cancel potential click-to-place event when we start dragging
+                main.setPlaceToolComponent(undefined);
+
+                event.dataTransfer.setData("custom/component", uuid);
                 event.dataTransfer.dropEffect = "copy";
             };
-
 
             child.addEventListener("touchstart", (event) => {
                 event.preventDefault();

@@ -1,8 +1,7 @@
 import {IO_PORT_LENGTH,
-        IO_PORT_LINE_WIDTH,
         DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V} from "Vector";
 import {Transform} from "math/Transform";
 import {RectContains,
         GetNearestPointOnRect} from "math/MathUtils";
@@ -18,23 +17,11 @@ import {IC} from "digital/models/ioobjects/other/IC";
 import {Selectable} from "core/utils/Selectable";
 import {DigitalCircuitController} from "./DigitalCircuitController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
-
-// Creates a rectangle for the collision box for a port on the IC
-//  and determines if the given 'mousePos' is within it
-function PortContains(port: Port, mousePos: Vector): boolean {
-    const origin = port.getOriginPos();
-    const target = port.getTargetPos();
-
-    // Get properties of collision box
-    const pos   = target.add(origin).scale(0.5);
-    const size  = V(target.sub(origin).len(), IO_PORT_LINE_WIDTH*2);
-    const angle = target.sub(origin).angle();
-
-    const rect  = new Transform(pos, size, angle);
-    rect.setParent(port.getParent().getTransform());
-
-    return RectContains(rect, mousePos);
-}
+import {GroupAction} from "core/actions/GroupAction";
+import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {PortContains} from "core/utils/ComponentUtils";
 
 export class ICDesignerController extends DesignerController {
     protected designer: DigitalCircuitDesigner;
@@ -69,15 +56,22 @@ export class ICDesignerController extends DesignerController {
     }
 
     private confirm(): void {
-        // Add the ICData and IC to the main designer
         const designer = this.mainController.getDesigner();
-        designer.addICData(this.icdata);
-        designer.addObject(this.ic.copy());
+        const selectionTool = this.mainController.getSelectionTool();
+
+        const ic = new IC(this.icdata);
 
         this.hide();
 
-        // Clear selections and render the main designer
-        this.mainController.clearSelections();
+        // Create action to deselect all, add ICData and an instance of the IC, then select it
+        const action = new GroupAction();
+        action.add(CreateDeselectAllAction(selectionTool));
+        action.add(new CreateICDataAction(this.icdata, designer));
+        action.add(new PlaceAction(designer, ic));
+        action.add(new SelectAction(selectionTool, ic));
+
+        // Add action and render
+        this.mainController.addAction(action.execute());
         this.mainController.render();
     }
 

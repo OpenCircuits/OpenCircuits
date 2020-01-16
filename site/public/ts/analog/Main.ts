@@ -6,6 +6,7 @@ import {Images} from "analog/utils/Images";
 import {LoadingScreen} from "site/shared/views/LoadingScreen";
 import {AnalogCircuitController} from "./controllers/AnalogCircuitController";
 
+import "analog/models/eeobjects";
 
 // Prompt for exit
 window.onbeforeunload = (e) => {

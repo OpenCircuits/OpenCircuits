@@ -1,12 +1,14 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent} from "../AnalogComponent";
+import {AnalogComponent} from "analog/models/AnalogComponent";
 
+@serializable("Battery")
 export class Battery extends AnalogComponent {
-
     public constructor(voltage: number = 5) {
         super(new ClampedValue(2), V(50, 50));
 
@@ -28,9 +30,4 @@ export class Battery extends AnalogComponent {
     public getImageName(): string {
         return "voltagesource.svg";
     }
-
-    public getXMLName(): string {
-        return "battery";
-    }
-
 }

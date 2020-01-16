@@ -1,13 +1,13 @@
 {{define "itemnav"}}
 <nav id="itemnav" class="itemnav itemnav__move">
-    {{ $asdf := .navConfig.ImgRoot }}
+    {{ $img := .navConfig.ImgRoot }}
     {{ range $i, $section := .navConfig.Sections }}
         <h4 id="itemnav-section-{{ $section.ID }}" unselectable>{{ $section.Label }}</h4>
         {{ range $k, $item := $section.Items }}
             <button id="itemnav-section-{{ $section.ID }}-button-{{ $item.ID }}" type="button"
-                    data-xmlid="{{ $item.ID }}" data-not="{{ $item.Not }}">
+                    data-uuid="{{ $item.ID }}">
                 <img id="itemnav-section-{{ $section.ID }}-img-{{ $item.ID }}"
-                     src="{{ $asdf }}/{{ $section.ID }}/{{ $item.Icon }}" alt="{{ $item.Label }}"/>
+                     src="{{ $img }}/{{ $section.ID }}/{{ $item.Icon }}" alt="{{ $item.Label }}"/>
                 <br/>{{ $item.Label}}
             </button>
         {{end}}

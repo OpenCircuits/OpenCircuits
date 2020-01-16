@@ -9,7 +9,7 @@ import {Camera} from "math/Camera";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {FakeInput} from "../FakeInput";
-import {InitializeInput, CreateDefaultToolManager} from "./Helpers";
+import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
 
 describe("Pan Tool", () => {
     const camera = new Camera(500, 500);

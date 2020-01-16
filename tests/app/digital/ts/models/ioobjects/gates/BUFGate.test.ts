@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("BUFGate", () => {
     describe("BUFGate", () => {
@@ -51,32 +51,6 @@ describe("BUFGate", () => {
             a.activate(false);
 
             expect(o.isOn()).toBe(true);
-        });
-    });
-
-    describe("Copy", () => {
-        test("BUFGate Copy", () => {
-            let a = new BUFGate();
-            a.setInputPortCount(4);
-            let b = <BUFGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(BUFGate);
-            expect(b.isNot()).toBe(false);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
-        });
-        test("NOTGate Copy", () => {
-            let a = new BUFGate(true);
-            a.setInputPortCount(4);
-
-            let b = <BUFGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(BUFGate);
-            expect(b.isNot()).toBe(true);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

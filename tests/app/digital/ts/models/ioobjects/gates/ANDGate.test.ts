@@ -5,7 +5,7 @@ import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {Place, Connect} from "../../../Helpers";
+import {Place, Connect} from "test/helpers/Helpers";
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {
@@ -81,32 +81,6 @@ describe("ANDGate", () => {
             b.activate(true);
 
             expect(o.isOn()).toBe(false);
-        });
-    });
-
-    describe("Copy", () => {
-        test("ANDGate Copy", () => {
-            let a = new ANDGate();
-            a.setInputPortCount(4);
-            let b = <ANDGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(ANDGate);
-            expect(b.isNot()).toBe(false);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
-        });
-        test("NANDGate Copy", () => {
-            let a = new ANDGate(true);
-            a.setInputPortCount(4);
-
-            let b = <ANDGate>a.copy();
-
-            expect(a).not.toBe(b);
-            expect(b).toBeInstanceOf(ANDGate);
-            expect(b.isNot()).toBe(true);
-            expect(b.numOutputs()).toEqual(a.numOutputs());
-            expect(b.numInputs()).toEqual(a.numInputs());
         });
     });
 });

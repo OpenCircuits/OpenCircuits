@@ -1,10 +1,15 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serializable, serialize} from "serialeazy";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+@serializable("Clock")
 export class Clock extends DigitalComponent {
+    @serialize
     private frequency: number;
+
+    @serialize
     private isOn: boolean;
 
     public constructor() {
@@ -32,16 +37,17 @@ export class Clock extends DigitalComponent {
             this.designer.forceUpdate();
     }
 
+    // @Override
+    public getOffset(): Vector {
+        return V();
+    }
+
     public getFrequency(): number {
         return this.frequency;
     }
 
     public getDisplayName(): string {
         return "Clock";
-    }
-
-    public getXMLName(): string {
-        return "clock";
     }
 
     public getImageName(): string {

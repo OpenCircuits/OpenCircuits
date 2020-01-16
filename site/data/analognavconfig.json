@@ -6,12 +6,12 @@
       "label": "Sources",
       "items": [
         {
-          "id": "battery",
+          "id": "Battery",
           "label": "Battery",
           "icon": "voltagesource.svg"
         },
         {
-          "id": "cursource",
+          "id": "CurrentSource",
           "label": "Current Source",
           "icon": "currentsource.svg"
         }
@@ -22,7 +22,7 @@
       "label": "Other",
       "items": [
         {
-          "id": "resistor",
+          "id": "Resistor",
           "label": "Resistor",
           "icon": "resistor.svg"
         }

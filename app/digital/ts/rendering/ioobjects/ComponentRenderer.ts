@@ -17,7 +17,7 @@ import {IOLabelRenderer} from "./IOLabelRenderer";
 import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
-import {SevenSegmentDisplayRenderer} from "./outputs/SevenSegmentDisplayRenderer";
+import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 
 import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
 import {Latch}               from "digital/models/ioobjects/latches/Latch";
@@ -30,7 +30,7 @@ import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {SevenSegmentDisplay} from "digital/models/ioobjects/outputs/SevenSegmentDisplay";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
@@ -84,9 +84,9 @@ export const ComponentRenderer = (() => {
             if (object instanceof Label) {
                 // Calculate size
                 const width = renderer.getTextWidth(object.getName()) + 20;
-                transform.setSize(V(width, size.y));
+                object.setSize(V(width, size.y));
 
-                drawBox(renderer, transform, selected);
+                drawBox(renderer, object.getTransform(), selected);
 
                 renderer.text(object.getName(), V(), "center");
             }
@@ -96,8 +96,8 @@ export const ComponentRenderer = (() => {
                 GateRenderer.render(renderer, camera, object, selected);
             else if (object instanceof Multiplexer || object instanceof Demultiplexer)
                 MultiplexerRenderer.render(renderer, camera, object, selected);
-            else if (object instanceof SevenSegmentDisplay)
-                SevenSegmentDisplayRenderer.render(renderer, camera, object, selected);
+            else if (object instanceof SegmentDisplay)
+                SegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
@@ -118,7 +118,7 @@ export const ComponentRenderer = (() => {
                 }
 
                 // tint green on top if selected
-                if (tint !== undefined)
+                if (tint)
                     renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
             }
             else if (imgName) {

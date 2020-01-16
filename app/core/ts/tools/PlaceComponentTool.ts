@@ -27,7 +27,7 @@ export class PlaceComponentTool extends Tool {
     }
 
     public shouldDeactivate(event: string): boolean {
-        return (event == "onclick");
+        return (event == "onclick") || this.component == undefined;
     }
 
     public deactivate(): Action {
@@ -38,7 +38,7 @@ export class PlaceComponentTool extends Tool {
         return action.execute();
     }
 
-    public begin(component: Component): void {
+    public setComponent(component: Component): void {
         this.component = component;
     }
 

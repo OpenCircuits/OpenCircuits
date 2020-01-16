@@ -31,7 +31,7 @@
         {{template "sidenav" .}}
 
         <div id="content" class="content">
-            {{template "header" .}}
+            {{template "header" "img/icons/logo.svg"}}
 
             {{template "loginpopup" .}}
 
@@ -44,12 +44,14 @@
 
             {{template "icdesigner"}}
 
+            {{template "icviewer"}}
+
             {{template "selectionpopup"}}
 
             {{template "contextmenu" .}}
         </div>
 
-        <script src="{{.bundleJs}}"></script>
+        {{template "scripts" .}}
     </body>
 
 </html>

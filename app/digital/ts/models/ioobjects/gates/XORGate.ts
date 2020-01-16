@@ -1,9 +1,15 @@
-import {V} from "Vector";
+import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+
+import {Vector,V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serializable} from "serialeazy";
+
+import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
+
 import {Gate} from "./Gate";
+import {GetQuadraticOffset} from "./ORGate";
 
-import {QuadraticCurvePositioner} from "../../ports/positioners/QuadraticCurvePositioner";
-
+@serializable("XORGate")
 export class XORGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -18,6 +24,11 @@ export class XORGate extends Gate {
         super.activate(on);
     }
 
+    // @Override
+    public getOffset(): Vector {
+        return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
+    }
+
     public getDisplayName(): string {
         return this.not ? "XNOR Gate" : "XOR Gate";
     }
@@ -25,8 +36,11 @@ export class XORGate extends Gate {
     public getImageName(): string {
         return "or.svg";
     }
+}
 
-    public getXMLName(): string {
-        return "xor";
+@serializable("XNORGate")
+export class XNORGate extends XORGate {
+    public constructor() {
+        super(true);
     }
 }

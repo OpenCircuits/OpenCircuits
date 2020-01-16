@@ -1,4 +1,5 @@
 export const DEBUG_CULLBOXES = false;
+export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;
@@ -15,6 +16,9 @@ export const SELECTED_FILL_COLOR   = "#1cff3e";
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
 export const DEFAULT_BORDER_WIDTH = 2;
+export const SEGMENT_DISPLAY_WIDTH = 35;
+
+export const MULTIPLEXER_HEIGHT_OFFSET = 18;
 
 export const DRAG_TIME = 50;
 
@@ -28,6 +32,10 @@ export const WIRE_THICKNESS = 7.0;
 export const WIRE_SNAP_THRESHOLD    = 10;
 
 export const GATE_NOT_CIRCLE_RADIUS = 5;
+export const GATE_OR_CULLBOX_OFFSET = 50;
+
+export const LED_LIGHT_RADIUS = 75;
+export const LED_WIDTH = 50;
 
 export const ROTATION_CIRCLE_RADIUS = 75;
 export const ROTATION_CIRCLE_THICKNESS = 5;
@@ -60,3 +68,5 @@ export const X_KEY = 88;
 export const Y_KEY = 89;
 export const Z_KEY = 90;
 export const COMMAND_KEY = 91;
+
+export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;

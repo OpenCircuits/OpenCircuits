@@ -1,27 +1,19 @@
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH,
-        WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
+import {serialize}    from "serialeazy";
 
 import {Port}       from "./ports/Port";
 
 import {CullableObject}   from "./CullableObject";
 import {Wire}       from "./Wire";
 
-function Snap(wire: Wire, x: number, c: number): number {
-    if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
-        wire.setIsStraight(true);
-        return c;
-    }
-    return x;
-}
-
 export abstract class Component extends CullableObject {
+    @serialize
     protected transform: Transform;
 
     protected constructor(size: Vector) {
@@ -36,25 +28,17 @@ export abstract class Component extends CullableObject {
     }
 
     public setPos(v: Vector): void {
-        // Snap to connections
-        for (const port of this.getPorts()) {
-            const pos = port.getWorldTargetPos().sub(this.getPos());
-            const wires = port.getWires();
-            for (const w of wires) {
-                // Get the port that isn't the current port
-                const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
-                w.setIsStraight(false);
-                v.x = Snap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
-                v.y = Snap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
-            }
-        }
-
         this.transform.setPos(v);
         this.onTransformChange();
     }
 
     public setAngle(a: number): void {
         this.transform.setAngle(a);
+        this.onTransformChange();
+    }
+
+    public setSize(s: Vector): void {
+        this.transform.setSize(s);
         this.onTransformChange();
     }
 
@@ -96,13 +80,16 @@ export abstract class Component extends CullableObject {
         return this.transform.copy();
     }
 
+    public getOffset(): Vector {
+        return V(DEFAULT_BORDER_WIDTH);
+    }
 
     public getMinPos(): Vector {
         const min = V(Infinity);
 
-        // Find minimum pos from corners of transform
+        // Find minimum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.sub(DEFAULT_BORDER_WIDTH)
+            v => v.sub(this.getOffset())
         );
 
         // Find minimum pos from ports
@@ -116,9 +103,9 @@ export abstract class Component extends CullableObject {
     public getMaxPos(): Vector {
         const max = V(-Infinity);
 
-        // Find maximum pos from corners of transform
+        // Find maximum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.add(DEFAULT_BORDER_WIDTH)
+            v => v.add(this.getOffset())
         );
 
         // Find maximum pos from ports
@@ -128,26 +115,6 @@ export abstract class Component extends CullableObject {
 
         return Vector.max(max, ...corners, ...ports);
     }
-
-
-    public copy(): Component {
-        const copy = <Component>super.copy();
-        copy.transform = this.transform.copy();
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addVectorAttribute("", this.getPos());
-        node.addAttribute("angle", this.getAngle());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setPos(node.getVectorAttribute(""));
-        this.setAngle(node.getFloatAttribute("angle"));
-    }
-
 
     public getImageName(): string {
         return undefined;

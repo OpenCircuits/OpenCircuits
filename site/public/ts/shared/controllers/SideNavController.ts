@@ -1,45 +1,44 @@
 import $ from "jquery";
 
-import {MainDesignerController} from "./MainDesignerController";
-import {SideNavCircuitPreview} from "../views/SideNavCircuitPreview";
-import {RemoteController} from "./RemoteController";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "../utils/Constants";
+import {SAVED} from "core/utils/Config";
+
 import {CircuitMetadata,
         CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+
+import {SideNavCircuitPreview} from "site/shared/views/SideNavCircuitPreview";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {RemoteController} from "site/shared/controllers/RemoteController";
+import {HeaderController} from "./HeaderController";
 
 export class SideNavController {
     private tab: JQuery<HTMLElement> = $("#header-sidenav-open-tab");
     private sidenav: JQuery<HTMLElement> = $("#sidenav");
     private overlay: JQuery<HTMLElement> = $("#overlay");
     private context: JQuery<HTMLElement> = $("#content");
-    private sidenavModeCheckbox: JQuery<HTMLElement>= $("#sidenav-mode-checkbox");
     private exampleCircuitsList: JQuery<HTMLElement> = $("#example-circuit-list");
 
     private open: boolean;
     private disabled: boolean;
 
-    private editMode: boolean;
-
     private userCircuits: SideNavCircuitPreview[];
 
     private main: MainDesignerController;
+    private header: HeaderController;
 
-    public constructor(main: MainDesignerController) {
+    public constructor(main: MainDesignerController, header: HeaderController) {
         this.main = main;
+        this.header = header;
 
         this.open = false;
         this.disabled = false;
-
-        this.editMode = true;
 
         this.userCircuits = [];
 
         this.tab.click(() => this.toggle());
 
-        this.sidenavModeCheckbox.change(() => this.toggleEditMode());
-
         this.overlay.click(() => {
-            if (this.isOpen())
-                this.toggle();
+            this.close();
         });
 
         // Set up onclick listeners to example circuits
@@ -58,16 +57,26 @@ export class SideNavController {
         }
     }
 
-    private toggleEditMode(): void {
-        this.editMode = !this.editMode;
-
-        this.main.setEditMode(this.editMode);
+    private deleteUserCircuit(metadata: CircuitMetadata): void {
+        if (confirm("Are you sure you want to delete circuit \"" + metadata.getName() + "\"?")) {
+            RemoteController.DeleteUserCircuit(metadata, (succ) => {
+                if (!succ) {
+                    alert("Failed to delete circuit!");
+                    return;
+                }
+                this.updateUserCircuits();
+            });
+        }
     }
 
-    private loadCircuit(contents: XMLDocument): void {
-        this.main.loadCircuit(contents);
-        if (this.isOpen)
-            this.toggle();
+    private loadCircuit(contents: string): void {
+        const open = SAVED || confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+
+        const data = this.main.loadCircuit(contents);
+        this.header.setProjectName(data.getName());
+        this.close();
     }
 
     public clearUserCircuits(): void {
@@ -81,10 +90,17 @@ export class SideNavController {
         RemoteController.ListCircuits(async (data: CircuitMetadata[]) => {
             data.forEach((d) => {
                 const preview = new SideNavCircuitPreview(d);
-                preview.onClick(() => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)));
+                preview.onClick(
+                    () => RemoteController.LoadUserCircuit(d, (c) => this.loadCircuit(c)),
+                    () => this.deleteUserCircuit(d));
                 this.userCircuits.push(preview);
             });
         });
+    }
+
+    public close(): void {
+        if (this.isOpen())
+            this.toggle();
     }
 
     public toggle(): void {

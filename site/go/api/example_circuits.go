@@ -14,11 +14,11 @@ func getExampleCircuitHandler(csif interfaces.CircuitStorageInterfaceFactory) fu
 
 		loadedCircuit := circuitInterface.LoadCircuit(exampleID)
 		if loadedCircuit == nil {
-			c.XML(http.StatusNotFound, nil)
+			c.JSON(http.StatusNotFound, nil)
 			return
 		}
 
-		c.Header("Content-Type", "text/xml")
-		c.String(http.StatusOK, loadedCircuit.Designer.RawContent)
+		c.Header("Content-Type", "text/json")
+		c.String(http.StatusOK, loadedCircuit.Designer)
 	}
 }

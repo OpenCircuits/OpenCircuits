@@ -1,7 +1,10 @@
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
+import {serializable} from "serialeazy";
+
 import {Gate} from "./Gate";
 
+@serializable("BUFGate")
 export class BUFGate extends Gate {
 
     public constructor(not: boolean = false) {
@@ -20,8 +23,11 @@ export class BUFGate extends Gate {
     public getImageName(): string {
         return "buf.svg";
     }
+}
 
-    public getXMLName(): string {
-        return "buf";
+@serializable("NOTGate")
+export class NOTGate extends BUFGate {
+    public constructor() {
+        super(true);
     }
 }

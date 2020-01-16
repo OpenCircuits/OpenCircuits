@@ -1,12 +1,17 @@
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE,
+        DEFAULT_BORDER_WIDTH,
+        LED_LIGHT_RADIUS,
+        LED_WIDTH} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {XMLNode}      from "core/utils/io/xml/XMLNode";
+import {serializable, serialize} from "serialeazy";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+@serializable("LED")
 export class LED extends DigitalComponent {
+    @serialize
     private color: string;
 
     public constructor() {
@@ -17,6 +22,18 @@ export class LED extends DigitalComponent {
 
         // Make port face down instead of sideways
         this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
+    }
+
+    // @Override
+    public activate(signal: boolean, i: number = 0): void {
+        this.onTransformChange();
+        super.activate(signal, i);
+    }
+
+    // @Override
+    public getOffset(): Vector {
+        // Add extra offset if this LED is on (to account for light)
+        return super.getOffset().add((this.isOn() ? (LED_LIGHT_RADIUS - LED_WIDTH/2) : (0)));
     }
 
     public setColor(color: string): void {
@@ -42,25 +59,4 @@ export class LED extends DigitalComponent {
     public getOnImageName(): string {
         return "ledLight.svg"
     }
-
-    public getXMLName(): string {
-        return "led";
-    }
-
-    public copy(): LED {
-        const copy = <LED>super.copy();
-        copy.color = this.color;
-        return copy;
-    }
-
-    public save(node: XMLNode): void {
-        super.save(node);
-        node.addAttribute("color", this.getColor());
-    }
-
-    public load(node: XMLNode): void {
-        super.load(node);
-        this.setColor(node.getAttribute("color"));
-    }
-
 }
