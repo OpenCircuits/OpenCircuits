@@ -11,7 +11,6 @@ import {MainDesignerController} from "./MainDesignerController";
 import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
 import {addSetSavedCallback, setSAVED} from "core/utils/Config";
-import {SaveAction} from "core/actions/SaveAction";
 
 export class LoginController {
     private loginPopup: JQuery<HTMLElement> = $("#login-popup");
