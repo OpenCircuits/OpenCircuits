@@ -104,6 +104,9 @@ export abstract class MainDesignerController extends DesignerController {
         this.getCamera().setPos(data.camera.getPos());
         this.getCamera().setZoom(data.camera.getZoom());
 
+        this.clearSelections();
+        this.toolManager.reset();
+
         // Replace circuit contents with new ones (to keep references intact TODO: change this?)
         this.designer.replace(data.designer);
 

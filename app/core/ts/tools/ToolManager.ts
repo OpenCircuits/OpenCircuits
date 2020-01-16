@@ -57,7 +57,7 @@ export class ToolManager implements MouseListener, KeyboardListener {
         // Default tools are special as they can continuously add actions
         //   (since other tools only add actions when activating/deactivating)
         // and are also the only tool that can transition to another tool
-        //   (meaning that a regular tool cannot immeadiately switch to another regular tool)
+        //   (meaning that a regular tool cannot immediately switch to another regular tool)
 
         // Add action from default tool
         this.addAction(this.defaultTool.getAction());
@@ -125,6 +125,13 @@ export class ToolManager implements MouseListener, KeyboardListener {
         if (tool)
             return !tool.isDisabled();
         return false;
+    }
+
+    public reset(): void {
+        this.currentTool.deactivate();
+        this.currentTool = this.defaultTool;
+
+        this.actionManager.reset();
     }
 
     public onMouseDown(input: Input, button: number): boolean {
