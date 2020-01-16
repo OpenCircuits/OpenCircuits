@@ -70,6 +70,10 @@ export class ItemNavController {
 
                 event.dataTransfer.setData("custom/component", uuid);
                 event.dataTransfer.dropEffect = "copy";
+
+                // Blur the element so that pressing SPACE after dragging
+                //  doesn't cause the element to get clicked
+                child.blur();
             };
 
             child.addEventListener("touchstart", (event) => {
