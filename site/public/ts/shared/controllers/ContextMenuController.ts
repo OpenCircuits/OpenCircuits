@@ -33,12 +33,13 @@ export class ContextMenuController {
     private onMouseDown(_: MouseEvent): void {
         this.hide();
     }
-    
+
+    // Temporarily disabled ability to show until the menu is fixed
     public show(): void {
-        this.contextmenu.classList.remove("invisible");
+        // this.contextmenu.classList.remove("invisible");
     }
 
     public hide(): void {
-        this.contextmenu.classList.add("invisible");
+        // this.contextmenu.classList.add("invisible");
     }
 }
