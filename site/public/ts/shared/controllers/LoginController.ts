@@ -10,6 +10,7 @@ import {NoAuthState} from "../../digital/auth/NoAuthState";
 import {MainDesignerController} from "./MainDesignerController";
 import {RemoteController} from "./RemoteController";
 import {SideNavController} from "./SideNavController";
+import {addSetSavedCallback, setSAVED} from "core/utils/Config";
 
 export class LoginController {
     private loginPopup: JQuery<HTMLElement> = $("#login-popup");
@@ -46,14 +47,24 @@ export class LoginController {
         this.saveHeaderButton.click(async () => {
             const data = main.saveCircuit();
             RemoteController.SaveCircuit(data, async () => {
+                // set saved to true (which calls callbacks to set the button as invisible)
+                setSAVED(true);
                 return sidenav.updateUserCircuits();
             });
         });
+
+        // add callback for saving to hide/show save button
+        addSetSavedCallback((v) => {
+            if (v)
+                this.saveHeaderButton.addClass("invisible");
+            else
+                this.saveHeaderButton.removeClass("invisible");
+        })
     }
 
     private onLogin(): void {
         this.loginHeaderContainer.addClass("hide");
-        this.saveHeaderButton.removeClass("hide");
+        this.saveHeaderButton.removeClass("invisible");
         this.logoutHeaderButton.removeClass("hide");
         this.hide();
 
@@ -62,7 +73,7 @@ export class LoginController {
 
     private onLogout(): void {
         this.loginHeaderContainer.removeClass("hide");
-        this.saveHeaderButton.addClass("hide");
+        this.saveHeaderButton.addClass("invisible");
         this.logoutHeaderButton.addClass("hide");
 
         this.sidenav.clearUserCircuits();

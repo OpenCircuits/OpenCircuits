@@ -1,3 +1,4 @@
+import {setSAVED} from "core/utils/Config";
 import {Input} from "core/utils/Input";
 import {MouseListener} from "core/utils/MouseListener";
 import {KeyboardListener} from "core/utils/KeyboardListener";
@@ -83,8 +84,11 @@ export class ToolManager implements MouseListener, KeyboardListener {
 
     public addAction(action?: Action): void {
         // Check if action exists, then add it to stack
-        if (action)
+        //  also set the app as not saved since an action was made
+        if (action) {
             this.actionManager.add(action);
+            setSAVED(false);
+        }
     }
 
     public setDisabled(toolType: Function, disabled: boolean): void {

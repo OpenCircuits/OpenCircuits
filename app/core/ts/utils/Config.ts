@@ -1,5 +1,11 @@
-export let SAVED = true;
-export function setSAVED(b: boolean): void {SAVED = b;}
+const callbacks: Array<(val: boolean) => void> = [];
 
-export let LABEL = true;
-export function setLABEL(b: boolean): void {LABEL = b;}
+export let SAVED = true;
+
+export function setSAVED(b: boolean): void {
+    SAVED = b;
+    callbacks.forEach((callback) => callback(b));
+}
+export function addSetSavedCallback(callback: (val: boolean) => void): void {
+    callbacks.push(callback);
+}
