@@ -10,6 +10,7 @@ import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 import {DOMRectToTransform} from "site/shared/utils/DOMUtils";
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {Browser} from "core/utils/Browser";
 
 export class ItemNavController {
     private tab: JQuery<HTMLElement>;
@@ -51,11 +52,13 @@ export class ItemNavController {
 
             const uuid = child.dataset.uuid;
 
-            // On click cause instant place
-            child.onclick = (ev) => {
-                console.log(ev);
-                main.setPlaceToolComponent(Create<Component>(uuid));
+            // On click cause instant place (desktop only)
+            if (!Browser.mobile) {
+                child.onclick = () => {
+                    main.setPlaceToolComponent(Create<Component>(uuid));
+                }
             }
+
 
             // Add uuid data to drag event
             child.ondragstart = (event) => {
@@ -83,10 +86,9 @@ export class ItemNavController {
             child.ontouchend = (ev) => {
                 if (!touchDragging)
                     return;
-                console.log("asd");
                 touchDragging = false;
 
-                // Determine if the touch is over the canvas and not some other element
+                // Determine if the touch is over the canvas and not over the ItemNav or header
                 const touch = ev.changedTouches[0];
                 const pos = V(touch.pageX, touch.pageY);
                 const rect1 = DOMRectToTransform(this.itemnav[0].getBoundingClientRect());
