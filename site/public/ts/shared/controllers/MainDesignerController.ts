@@ -67,15 +67,7 @@ export abstract class MainDesignerController extends DesignerController {
         this.clearSelections();
         this.getSelectionTool().disableSelections(locked);
 
-        // Toggle ItemNavController
-        if (this.itemNav.isOpen())
-            this.itemNav.toggle();
-
-        // Disable or re-enable ItemNavController
-        if (locked)
-            this.itemNav.disable();
-        else
-            this.itemNav.enable();
+        this.itemNav.setActive(!locked);
 
         this.render();
     }
@@ -135,14 +127,7 @@ export abstract class MainDesignerController extends DesignerController {
     public setActive(on: boolean): void {
         super.setActive(on);
 
-        if (!on) {
-            // Hide and disable ItemNavController
-            if (this.itemNav.isOpen())
-                this.itemNav.toggle();
-            this.itemNav.disable();
-        } else {
-            this.itemNav.enable();
-        }
+        this.itemNav.setActive(on);
     }
 
     public isLocked(): boolean {
