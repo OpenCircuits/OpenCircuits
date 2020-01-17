@@ -25,7 +25,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
     private wires: DigitalWire[];
 
+    @serialize
     private propagationQueue: Propagation[];
+
+    @serialize
     private updateRequests: number;
 
     @serialize
@@ -169,11 +172,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
 
-        // Remove all input and output wires
-        // const wires = obj.getInputs().concat(obj.getOutputs());
-        // for (const wire of wires)
-        //     this.removeWire(wire);
-
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
     }
@@ -181,9 +179,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     public removeWire(wire: DigitalWire): void {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
-        // Completely disconnect from the circuit
-        // wire.getInput().disconnect(wire);
-        // wire.getOutput().disconnect();
 
         this.wires.splice(this.wires.indexOf(wire), 1);
         wire.setDesigner(undefined);
@@ -194,6 +189,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         this.ics = designer.ics;
         this.propagationTime = designer.propagationTime;
+
+        // Copy propagations so that circuit will continue
+        //  propagating if it was previously doing so
+        this.propagationQueue = designer.propagationQueue.slice();
+        this.updateRequests = designer.updateRequests;
+
+        this.update();
     }
 
     // Shift an object to a certain position
