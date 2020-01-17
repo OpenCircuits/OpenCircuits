@@ -2,12 +2,15 @@ import $ from "jquery";
 
 import {Create} from "serialeazy";
 
-import {V} from "Vector";
-
-import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {V, Vector} from "Vector";
+import {RectContains} from "math/MathUtils";
 
 import {Component} from "core/models/Component";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
+
+import {DOMRectToTransform} from "site/shared/utils/DOMUtils";
+import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
+import {Browser} from "core/utils/Browser";
 
 export class ItemNavController {
     private tab: JQuery<HTMLElement>;
@@ -37,17 +40,8 @@ export class ItemNavController {
         // And instruct it to add new components when they are dragged over
         canvas.ondrop = (ev: DragEvent) => {
             const uuid = ev.dataTransfer.getData("custom/component");
-            if (uuid !== "") {
-                const component = Create<Component>(uuid);
-
-                // Set position at drop location
-                component.setPos(main.getCamera().getWorldPos(V(ev.pageX, ev.pageY)));
-
-                // Instantly add component
-                main.addAction(new PlaceAction(main.getDesigner(), component).execute());
-
-                main.render();
-            }
+            if (uuid !== "")
+                this.placeComponent(main, uuid, V(ev.pageX, ev.pageY));
         }
 
         // Set on-clicks for each item
@@ -58,10 +52,13 @@ export class ItemNavController {
 
             const uuid = child.dataset.uuid;
 
-            // On click cause instant place
-            child.onclick = () => {
-                main.setPlaceToolComponent(Create<Component>(uuid));
+            // On click cause instant place (desktop only)
+            if (!Browser.mobile) {
+                child.onclick = () => {
+                    main.setPlaceToolComponent(Create<Component>(uuid));
+                }
             }
+
 
             // Add uuid data to drag event
             child.ondragstart = (event) => {
@@ -76,18 +73,49 @@ export class ItemNavController {
                 child.blur();
             };
 
-            child.addEventListener("touchstart", (event) => {
-                event.preventDefault();
-            })
-            child.addEventListener("touchend", (event) => {
-                event.preventDefault();
-            }, false);
+            /**
+             * CUSTOM DRAG + DROP FOR TOUCH (MOBILE)
+             */
+            let touchDragging = false;
+            child.ontouchstart = (event) => {
+                if (event.touches.length == 1) {
+                    main.setPlaceToolComponent(undefined);
+                    touchDragging = true;
+                }
+            }
+            child.ontouchend = (ev) => {
+                if (!touchDragging)
+                    return;
+                touchDragging = false;
+
+                // Determine if the touch is over the canvas and not over the ItemNav or header
+                const touch = ev.changedTouches[0];
+                const pos = V(touch.pageX, touch.pageY);
+                const rect1 = DOMRectToTransform(this.itemnav[0].getBoundingClientRect());
+                const rect2 = DOMRectToTransform($("#header")[0].getBoundingClientRect());
+                if (RectContains(rect1, pos) || RectContains(rect2, pos))
+                    return;
+
+                this.placeComponent(main, uuid, pos);
+            }
         }
     }
 
     private toggleElements(): void {
         this.itemnav.toggleClass("itemnav__move");
         this.tab.toggleClass("tab__closed");
+    }
+
+    private placeComponent(main: MainDesignerController, uuid: string, pos: Vector): void {
+        const component = Create<Component>(uuid);
+
+        // Set position at drop location
+        component.setPos(main.getCamera().getWorldPos(pos));
+
+        // Instantly add component
+        main.addAction(new PlaceAction(main.getDesigner(), component).execute());
+
+        main.render();
     }
 
     public toggle(): void {
