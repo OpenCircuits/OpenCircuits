@@ -25,7 +25,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
     private wires: DigitalWire[];
 
+    @serialize
     private propagationQueue: Propagation[];
+
+    @serialize
     private updateRequests: number;
 
     @serialize
@@ -194,6 +197,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         this.ics = designer.ics;
         this.propagationTime = designer.propagationTime;
+
+        // Copy propagations so that circuit will continue
+        //  propagating if it was previously doing so
+        this.propagationQueue = designer.propagationQueue.slice();
+        this.updateRequests = designer.updateRequests;
+
+        this.update();
     }
 
     // Shift an object to a certain position
