@@ -172,11 +172,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
 
-        // Remove all input and output wires
-        // const wires = obj.getInputs().concat(obj.getOutputs());
-        // for (const wire of wires)
-        //     this.removeWire(wire);
-
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
     }
@@ -184,9 +179,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     public removeWire(wire: DigitalWire): void {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
-        // Completely disconnect from the circuit
-        // wire.getInput().disconnect(wire);
-        // wire.getOutput().disconnect();
 
         this.wires.splice(this.wires.indexOf(wire), 1);
         wire.setDesigner(undefined);
