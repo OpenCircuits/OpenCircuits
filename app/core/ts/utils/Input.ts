@@ -49,7 +49,7 @@ export class Input {
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [BACKSPACE_KEY],
+            [[BACKSPACE_KEY]],
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
