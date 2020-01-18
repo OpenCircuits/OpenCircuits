@@ -1,18 +1,22 @@
 
 export class ItemNavItem {
     private uuid: string;
-    private el: HTMLButtonElement;
+    private el: JQuery<HTMLButtonElement>;
 
-    public constructor(el: HTMLButtonElement) {
-        this.uuid = el.dataset.uuid;
+    public constructor(el: JQuery<HTMLButtonElement>) {
+        this.uuid = el[0].dataset.uuid;
         this.el = el;
+    }
+
+    public remove(): void {
+        this.el.remove();
     }
 
     public getUUID(): string {
         return this.uuid;
     }
 
-    public getElement(): HTMLButtonElement {
+    public getElement(): JQuery<HTMLButtonElement> {
         return this.el;
     }
 }

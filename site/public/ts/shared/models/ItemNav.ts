@@ -15,7 +15,7 @@ export class ItemNav {
         for (const child of children) {
             // If header, then move to next section
             if (child instanceof HTMLHeadingElement) {
-                this.sections.push(new ItemNavSection(child.innerHTML));
+                this.sections.push(new ItemNavSection($(child)));
                 continue;
             }
             // Now only get button children (there shouldn't be any type)
@@ -23,8 +23,12 @@ export class ItemNav {
                 continue;
 
             const section = this.sections[this.sections.length - 1];
-            section.addItem(new ItemNavItem(child));
+            section.addItem(new ItemNavItem($(child)));
         }
+    }
+
+    public addSection(section: ItemNavSection): void {
+        this.sections.push(section);
     }
 
     public getSections(): ItemNavSection[] {

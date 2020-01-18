@@ -1,10 +1,10 @@
 import {ItemNavItem} from "./ItemNavItem";
 
 export class ItemNavSection {
-    private header: string;
+    private header: JQuery<HTMLHeadingElement>;
     private items: ItemNavItem[];
 
-    public constructor(header: string) {
+    public constructor(header: JQuery<HTMLHeadingElement>) {
         this.header = header;
         this.items = [];
     }
@@ -13,7 +13,12 @@ export class ItemNavSection {
         this.items.push(item);
     }
 
-    public getHeader(): string {
+    public removeItems(): void {
+        this.items.forEach((item) => item.remove());
+        this.items = [];
+    }
+
+    public getHeader(): JQuery<HTMLHeadingElement> {
         return this.header;
     }
 
