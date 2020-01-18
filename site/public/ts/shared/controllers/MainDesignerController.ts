@@ -19,10 +19,11 @@ import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
-import {ItemNavController} from "site/shared/controllers/ItemNavController";
 import {SelectionPopupController} from "site/shared/controllers/SelectionPopupController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
 import {HeaderController} from "site/shared/controllers/HeaderController";
+
+import {ItemNavController} from "./ItemNavController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
@@ -40,7 +41,6 @@ export abstract class MainDesignerController extends DesignerController {
 
         this.thumbnailGenerator = thumbnailGenerator;
 
-        this.itemNav = new ItemNavController(this);
         this.selectionPopup = new SelectionPopupController(this);
         this.headerController = new HeaderController(this);
 
