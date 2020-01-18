@@ -73,6 +73,8 @@ export class ICDesignerController extends DesignerController {
         // Add action and render
         this.mainController.addAction(action.execute());
         this.mainController.render();
+
+        this.mainController.updateICs();
     }
 
     private cancel(): void {
