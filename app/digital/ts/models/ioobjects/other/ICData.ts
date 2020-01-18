@@ -25,6 +25,8 @@ import {SegmentDisplay} from "../outputs/SegmentDisplay";
 
 @serializable("ICData")
 export class ICData {
+    private name: string;
+
     private transform: Transform;
 
     private collection: DigitalObjectSet;
@@ -33,6 +35,7 @@ export class ICData {
     private outputPorts: OutputPort[];
 
     public constructor(collection?: DigitalObjectSet) {
+        this.name = ""; // TODO: have names
         this.transform = new Transform(V(0,0), V(0,0));
         this.collection = collection;
         this.inputPorts  = [];
@@ -98,6 +101,10 @@ export class ICData {
 
     public setSize(v: Vector): void {
         this.transform.setSize(v);
+    }
+
+    public getName(): string {
+        return this.name;
     }
 
     public getInputCount(): number {
