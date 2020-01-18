@@ -15,15 +15,19 @@ import {ItemNav} from "../models/ItemNav";
 import {ItemNavItem} from "../models/ItemNavItem";
 
 export class ItemNavController {
-    private tab: JQuery<HTMLElement>;
-    private itemnav: JQuery<HTMLElement>;
+    protected tab: JQuery<HTMLElement>;
+    protected itemnav: JQuery<HTMLElement>;
 
-    private open: boolean;
-    private disabled: boolean;
+    protected nav: ItemNav;
 
-    private nav: ItemNav;
+    protected open: boolean;
+    protected disabled: boolean;
+
+    protected main: MainDesignerController;
 
     public constructor(main: MainDesignerController) {
+        this.main = main;
+
         this.tab = $("#itemnav-open-tab");
         this.itemnav = $("#itemnav");
 
@@ -47,28 +51,28 @@ export class ItemNavController {
         canvas.ondrop = (ev: DragEvent) => {
             const uuid = ev.dataTransfer.getData("custom/component");
             if (uuid !== "")
-                this.placeComponent(main, uuid, V(ev.pageX, ev.pageY));
+                this.placeComponent(uuid, V(ev.pageX, ev.pageY));
         }
 
         for (const item of this.nav.getSections().flatMap(s => s.getItems()))
-            this.hookupListeners(main, item);
+            this.hookupListeners(item);
     }
 
-    private hookupListeners(main: MainDesignerController, item: ItemNavItem): void {
+    protected hookupListeners(item: ItemNavItem): void {
         const uuid = item.getUUID();
-        const child = item.getElement();
+        const child = item.getElement()[0];
 
         // On click cause instant place (desktop only)
         if (!Browser.mobile) {
             child.onclick = () => {
-                main.setPlaceToolComponent(Create<Component>(uuid));
+                this.main.setPlaceToolComponent(this.createComponent(uuid));
             }
         }
 
         // Add uuid data to drag event
         child.ondragstart = (event) => {
             // Cancel potential click-to-place event when we start dragging
-            main.setPlaceToolComponent(undefined);
+            this.main.setPlaceToolComponent(undefined);
 
             event.dataTransfer.setData("custom/component", uuid);
             event.dataTransfer.dropEffect = "copy";
@@ -84,7 +88,7 @@ export class ItemNavController {
         let touchDragging = false;
         child.ontouchstart = (event) => {
             if (event.touches.length == 1) {
-                main.setPlaceToolComponent(undefined);
+                this.main.setPlaceToolComponent(undefined);
                 touchDragging = true;
             }
         }
@@ -101,7 +105,7 @@ export class ItemNavController {
             if (RectContains(rect1, pos) || RectContains(rect2, pos))
                 return;
 
-            this.placeComponent(main, uuid, pos);
+            this.placeComponent(uuid, pos);
         }
     }
 
@@ -110,16 +114,20 @@ export class ItemNavController {
         this.tab.toggleClass("tab__closed");
     }
 
-    private placeComponent(main: MainDesignerController, uuid: string, pos: Vector): void {
-        const component = Create<Component>(uuid);
+    private placeComponent(uuid: string, pos: Vector): void {
+        const component = this.createComponent(uuid);
 
         // Set position at drop location
-        component.setPos(main.getCamera().getWorldPos(pos));
+        component.setPos(this.main.getCamera().getWorldPos(pos));
 
         // Instantly add component
-        main.addAction(new PlaceAction(main.getDesigner(), component).execute());
+        this.main.addAction(new PlaceAction(this.main.getDesigner(), component).execute());
 
-        main.render();
+        this.main.render();
+    }
+
+    protected createComponent(uuid: string): Component {
+        return Create<Component>(uuid);
     }
 
     public setActive(active: boolean): void {
