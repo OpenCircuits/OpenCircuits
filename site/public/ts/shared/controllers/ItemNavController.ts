@@ -11,17 +11,27 @@ import {PlaceAction} from "core/actions/addition/PlaceAction";
 import {DOMRectToTransform} from "site/shared/utils/DOMUtils";
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {Browser} from "core/utils/Browser";
+import {ItemNav} from "../models/ItemNav";
+import {ItemNavItem} from "../models/ItemNavItem";
 
 export class ItemNavController {
-    private tab: JQuery<HTMLElement>;
-    private itemnav: JQuery<HTMLElement>;
+    protected tab: JQuery<HTMLElement>;
+    protected itemnav: JQuery<HTMLElement>;
 
-    private open: boolean;
-    private disabled: boolean;
+    protected nav: ItemNav;
+
+    protected open: boolean;
+    protected disabled: boolean;
+
+    protected main: MainDesignerController;
 
     public constructor(main: MainDesignerController) {
+        this.main = main;
+
         this.tab = $("#itemnav-open-tab");
         this.itemnav = $("#itemnav");
+
+        this.nav = new ItemNav("itemnav");
 
         this.open = false;
         this.disabled = false;
@@ -41,63 +51,61 @@ export class ItemNavController {
         canvas.ondrop = (ev: DragEvent) => {
             const uuid = ev.dataTransfer.getData("custom/component");
             if (uuid !== "")
-                this.placeComponent(main, uuid, V(ev.pageX, ev.pageY));
+                this.placeComponent(uuid, V(ev.pageX, ev.pageY));
         }
 
-        // Set on-clicks for each item
-        const children = Array.from(this.itemnav.children());
-        for (const child of children) {
-            if (!(child instanceof HTMLButtonElement))
-                continue;
+        for (const item of this.nav.getSections().flatMap(s => s.getItems()))
+            this.hookupListeners(item);
+    }
 
-            const uuid = child.dataset.uuid;
+    protected hookupListeners(item: ItemNavItem): void {
+        const uuid = item.getUUID();
+        const child = item.getElement()[0];
 
-            // On click cause instant place (desktop only)
-            if (!Browser.mobile) {
-                child.onclick = () => {
-                    main.setPlaceToolComponent(Create<Component>(uuid));
-                }
+        // On click cause instant place (desktop only)
+        if (!Browser.mobile) {
+            child.onclick = () => {
+                this.main.setPlaceToolComponent(this.createComponent(uuid));
             }
+        }
 
+        // Add uuid data to drag event
+        child.ondragstart = (event) => {
+            // Cancel potential click-to-place event when we start dragging
+            this.main.setPlaceToolComponent(undefined);
 
-            // Add uuid data to drag event
-            child.ondragstart = (event) => {
-                // Cancel potential click-to-place event when we start dragging
-                main.setPlaceToolComponent(undefined);
+            event.dataTransfer.setData("custom/component", uuid);
+            event.dataTransfer.dropEffect = "copy";
 
-                event.dataTransfer.setData("custom/component", uuid);
-                event.dataTransfer.dropEffect = "copy";
+            // Blur the element so that pressing SPACE after dragging
+            //  doesn't cause the element to get clicked
+            child.blur();
+        };
 
-                // Blur the element so that pressing SPACE after dragging
-                //  doesn't cause the element to get clicked
-                child.blur();
-            };
-
-            /**
-             * CUSTOM DRAG + DROP FOR TOUCH (MOBILE)
-             */
-            let touchDragging = false;
-            child.ontouchstart = (event) => {
-                if (event.touches.length == 1) {
-                    main.setPlaceToolComponent(undefined);
-                    touchDragging = true;
-                }
+        /**
+         * CUSTOM DRAG + DROP FOR TOUCH (MOBILE)
+         */
+        let touchDragging = false;
+        child.ontouchstart = (event) => {
+            if (event.touches.length == 1) {
+                this.main.setPlaceToolComponent(undefined);
+                touchDragging = true;
             }
-            child.ontouchend = (ev) => {
-                if (!touchDragging)
-                    return;
-                touchDragging = false;
+        }
+        child.ontouchend = (ev) => {
+            if (!touchDragging)
+                return;
+            touchDragging = false;
 
-                // Determine if the touch is over the canvas and not over the ItemNav or header
-                const touch = ev.changedTouches[0];
-                const pos = V(touch.pageX, touch.pageY);
-                const rect1 = DOMRectToTransform(this.itemnav[0].getBoundingClientRect());
-                const rect2 = DOMRectToTransform($("#header")[0].getBoundingClientRect());
-                if (RectContains(rect1, pos) || RectContains(rect2, pos))
-                    return;
+            // Determine if the touch is over the canvas and not over the ItemNav or header
+            const touch = ev.changedTouches[0];
+            const pos = V(touch.pageX, touch.pageY);
+            const rect1 = DOMRectToTransform(this.itemnav[0].getBoundingClientRect());
+            const rect2 = DOMRectToTransform($("#header")[0].getBoundingClientRect());
+            if (RectContains(rect1, pos) || RectContains(rect2, pos))
+                return;
 
-                this.placeComponent(main, uuid, pos);
-            }
+            this.placeComponent(uuid, pos);
         }
     }
 
@@ -106,16 +114,31 @@ export class ItemNavController {
         this.tab.toggleClass("tab__closed");
     }
 
-    private placeComponent(main: MainDesignerController, uuid: string, pos: Vector): void {
-        const component = Create<Component>(uuid);
+    private placeComponent(uuid: string, pos: Vector): void {
+        const component = this.createComponent(uuid);
 
         // Set position at drop location
-        component.setPos(main.getCamera().getWorldPos(pos));
+        component.setPos(this.main.getCamera().getWorldPos(pos));
 
         // Instantly add component
-        main.addAction(new PlaceAction(main.getDesigner(), component).execute());
+        this.main.addAction(new PlaceAction(this.main.getDesigner(), component).execute());
 
-        main.render();
+        this.main.render();
+    }
+
+    protected createComponent(uuid: string): Component {
+        return Create<Component>(uuid);
+    }
+
+    public setActive(active: boolean): void {
+        if (!active) {
+            // Hide and disable ItemNavController
+            if (this.isOpen())
+                this.toggle();
+            this.disable();
+        } else {
+            this.enable();
+        }
     }
 
     public toggle(): void {

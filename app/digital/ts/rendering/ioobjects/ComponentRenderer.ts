@@ -37,13 +37,14 @@ import {Images} from "digital/utils/Images";
 
 import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
 import {Style} from "../../../../core/ts/rendering/Style";
+import {ICRenderer} from "./other/ICRenderer";
 
 export const ComponentRenderer = (() => {
 
     const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean): void {
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH)
+        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
 
@@ -98,11 +99,11 @@ export const ComponentRenderer = (() => {
                 MultiplexerRenderer.render(renderer, camera, object, selected);
             else if (object instanceof SegmentDisplay)
                 SegmentDisplayRenderer.render(renderer, camera, object, selected);
+            else if (object instanceof IC)
+                ICRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
-                drawBox(renderer, transform, selected);
-            else if (object instanceof IC)
                 drawBox(renderer, transform, selected);
 
             // Draw tinted image

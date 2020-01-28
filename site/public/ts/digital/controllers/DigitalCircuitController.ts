@@ -28,6 +28,8 @@ import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule"
 
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
+import {DigitalItemNavController} from "./DigitalItemNavController";
+import {CircuitMetadata} from "core/models/CircuitMetadata";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -38,12 +40,14 @@ export class DigitalCircuitController extends MainDesignerController {
     private loginController: LoginController;
 
     protected designer: DigitalCircuitDesigner;
+    protected itemNav: DigitalItemNavController;
 
     public constructor() {
         super(new DigitalCircuitDesigner(1, () => this.render()),
               new MainDesignerView(),
               new ThumbnailGenerator(DigitalCircuitView));
 
+        this.itemNav = new DigitalItemNavController(this);
 
         this.toolManager.addTools(new DigitalWiringTool(this.designer, this.getCamera()),
                                   new SplitWireTool(this.getCamera()));
@@ -73,6 +77,18 @@ export class DigitalCircuitController extends MainDesignerController {
 
     public async init(): Promise<void> {
         return await this.loginController.initAuthentication();
+    }
+
+    public loadCircuit(contents: string): CircuitMetadata {
+        const metadata = super.loadCircuit(contents);
+
+        this.itemNav.updateICSection(this.getDesigner().getICData());
+
+        return metadata;
+    }
+
+    public updateICs(): void {
+        this.itemNav.updateICSection(this.getDesigner().getICData());
     }
 
     public getDesigner(): DigitalCircuitDesigner {
