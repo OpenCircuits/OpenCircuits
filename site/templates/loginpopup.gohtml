@@ -3,10 +3,10 @@
     <h1>Sign In</h1>
     <hr/>
     {{ range $a := .authData.Buttons }}
-        <div type="button">{{ $a }}</div>
+        <div>{{ $a }}</div>
         <hr/>
     {{ end }}
-    <div class="login__popup__label">Email</div>
+    {{/* <div class="login__popup__label">Email</div>
     <input type="email" name="email" aria-label="Email" aria-required="true" required="required" value="" tabindex="0">
     <div class="login__popup__label">Password</div>
     <div class="login__popup__password__container">
@@ -17,6 +17,6 @@
     </div>
     <button type="submit">Sign In</button>
     <div class="login__popup__text">or</div>
-    <button type="submit">Create an Account</button>
+    <button type="submit">Create an Account</button> */}}
 </div>
 {{end}}
