@@ -19,10 +19,11 @@ import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
-import {ItemNavController} from "site/shared/controllers/ItemNavController";
 import {SelectionPopupController} from "site/shared/controllers/SelectionPopupController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
 import {HeaderController} from "site/shared/controllers/HeaderController";
+
+import {ItemNavController} from "./ItemNavController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
@@ -40,7 +41,6 @@ export abstract class MainDesignerController extends DesignerController {
 
         this.thumbnailGenerator = thumbnailGenerator;
 
-        this.itemNav = new ItemNavController(this);
         this.selectionPopup = new SelectionPopupController(this);
         this.headerController = new HeaderController(this);
 
@@ -67,15 +67,7 @@ export abstract class MainDesignerController extends DesignerController {
         this.clearSelections();
         this.getSelectionTool().disableSelections(locked);
 
-        // Toggle ItemNavController
-        if (this.itemNav.isOpen())
-            this.itemNav.toggle();
-
-        // Disable or re-enable ItemNavController
-        if (locked)
-            this.itemNav.disable();
-        else
-            this.itemNav.enable();
+        this.itemNav.setActive(!locked);
 
         this.render();
     }
@@ -135,14 +127,7 @@ export abstract class MainDesignerController extends DesignerController {
     public setActive(on: boolean): void {
         super.setActive(on);
 
-        if (!on) {
-            // Hide and disable ItemNavController
-            if (this.itemNav.isOpen())
-                this.itemNav.toggle();
-            this.itemNav.disable();
-        } else {
-            this.itemNav.enable();
-        }
+        this.itemNav.setActive(on);
     }
 
     public isLocked(): boolean {

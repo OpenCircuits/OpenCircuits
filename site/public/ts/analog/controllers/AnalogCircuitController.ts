@@ -7,6 +7,7 @@ import {MainDesignerController} from "site/shared/controllers/MainDesignerContro
 import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
+import {ItemNavController} from "site/shared/controllers/ItemNavController";
 
 import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
@@ -26,6 +27,8 @@ export class AnalogCircuitController extends MainDesignerController {
         super(new AnalogCircuitDesigner(() => this.render()),
               new MainDesignerView(),
               new ThumbnailGenerator(AnalogCircuitView));
+
+        this.itemNav = new ItemNavController(this);
 
         this.toolManager.addTools(new AnalogWiringTool(this.designer, this.getCamera()),
                                   new SplitWireTool(this.getCamera()));
