@@ -40,14 +40,13 @@ $tab-padding: 8px;
         font-size: 1em;
         font-weight: bold;
 
-        vertical-align: top;
         width: calc(49% - 5px);
         padding: 1vh 1vh 1vh 1vh;
 
-        word-break: break-all;
-
         cursor: pointer;
         transition: 0.3s;
+        vertical-align: top;
+        word-break: break-all;
 
         color: darken($secondary-color, 5%);
     }
@@ -74,9 +73,10 @@ $tab-padding: 8px;
     background-color: rgba($background-color, 0.7);
 
     &:after {
-        content: '+';
         width: $tab-width;
         margin: 0 $tab-padding 0 $tab-padding;
+
+        content: '+';
     }
 
     &__closed {

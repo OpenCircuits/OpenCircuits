@@ -32,15 +32,15 @@ header {
         margin-top: $header-padding;
     }
     & #header-save-button {
-        height: $header-button-height;
         line-height: $header-button-height;
+
+        height: $header-button-height;
         margin-top: $header-padding;
         padding-right: 7px;
         padding-left: 7px;
 
-        transition: .5s;
-
         cursor: pointer;
+        transition: 0.5s;
 
         color: #ddd;
         border-radius: 4px;
@@ -52,11 +52,12 @@ header {
         }
     }
     & #header-lock-button {
-        background-color: transparent;
         margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
         margin-right: 5px;
 
         cursor: pointer;
+
+        background-color: transparent;
 
         img {
             height: $header-lock-height;
@@ -76,11 +77,11 @@ header {
         line-height: $header-height - 2*$header-padding;
 
         margin-right: 10px;
-        color: $secondary-color;
 
         cursor: pointer;
-
         vertical-align: middle;
+
+        color: $secondary-color;
     }
 }
 
@@ -133,20 +134,22 @@ header {
     $github-margin: 10px;
 
     &__logo {
-        @extend .header__center;
         top: 2px;
 
         width: $logo-width;
         margin-left: -$logo-width/2;
+
+        @extend .header__center;
     }
 
     &__github {
-        @extend .header__center;
         top: 8px;
 
         width: $header-height - 2*$header-padding;
         height: $header-height - 2*$header-padding;
         margin-left: $logo-width/2 + $github-margin;
+
+        @extend .header__center;
     }
 
     @media (max-width: 900px) {
@@ -275,10 +278,11 @@ header {
             margin-top: 0;
         }
         & button {
+            line-height: $header-button-height;
+
             float: right;
 
             height: $header-button-height;
-            line-height: $header-button-height;
             margin-top: $header-padding;
             margin-left: 0;
             padding-right: 5px;

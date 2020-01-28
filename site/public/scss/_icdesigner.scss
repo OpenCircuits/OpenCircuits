@@ -8,9 +8,9 @@ $icdesigner-margin-h: 8vw;
         z-index: 2;
 
         margin-top: $icdesigner-margin-top;
+        margin-right: $icdesigner-margin-h;
         margin-bottom: $icdesigner-margin-bottom;
         margin-left: $icdesigner-margin-h;
-        margin-right: $icdesigner-margin-h;
 
         color: $secondary-color;
         border: 1px solid $secondary-color;
@@ -22,22 +22,25 @@ $icdesigner-margin-h: 8vw;
         position: absolute;
         z-index: 3;
         top: $icdesigner-margin-top;
+
         width: 100vw;
 
         &__name {
             $icdesigner-name-input-width: 15vw;
 
             font-size: 16px;
+
             position: absolute;
+            left: calc(50vw - #{$icdesigner-name-input-width / 2} - 32px);
+
             width: $icdesigner-name-input-width;
             padding: 15px 32px;
 
-            color: $primary-color;
-            background-color: $ic-background-color;
-
-            left:  calc(50vw - #{$icdesigner-name-input-width / 2} - 32px);
             text-align: center;
+
+            color: $primary-color;
             border: 1px solid black;
+            background-color: $ic-background-color;
         }
     }
 
