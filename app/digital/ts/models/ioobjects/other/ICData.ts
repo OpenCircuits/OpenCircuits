@@ -57,10 +57,14 @@ export class ICData {
         let longestName = 0;
         for (const obj of inputs.concat(outputs))
             longestName = Math.max(obj.getName().length, longestName);
+        longestName += this.getName().length; // Add name of IC
 
-        const w = DEFAULT_SIZE + 20*longestName;
+        const w = DEFAULT_SIZE + 15*longestName;
         const h = DEFAULT_SIZE/2*(Math.max(inputs.length, outputs.length));
-        this.transform.setSize(V(w, h));
+
+        // Only set size if the current size is too small
+        this.transform.setSize(V(w < this.getSize().x ? this.getSize().x : w,
+                                 h < this.getSize().y ? this.getSize().y : h));
     }
 
     private createPorts(type: typeof InputPort | typeof OutputPort, ports: Array<Port>, arr: Array<IOObject>, side: -1 | 1): void {
@@ -101,6 +105,8 @@ export class ICData {
 
     public setName(name: string): void {
         this.name = name;
+        this.calculateSize();
+        this.positionPorts();
     }
 
     public setSize(v: Vector): void {
