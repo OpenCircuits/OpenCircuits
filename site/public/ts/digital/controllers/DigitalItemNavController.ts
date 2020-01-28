@@ -34,13 +34,14 @@ export class DigitalItemNavController extends ItemNavController {
     }
 
     public updateICSection(ics: ICData[]): void {
+        this.icSection.removeItems();
+
         if (ics.length == 0) {
             $(this.icSection.getHeader()).hide();
             return;
         }
 
         this.icSection.getHeader().show();
-        this.icSection.removeItems();
 
         ics.forEach((ic, i) => {
             const newItem = new ItemNavItem($(`
