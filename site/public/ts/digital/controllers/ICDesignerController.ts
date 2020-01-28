@@ -47,6 +47,12 @@ export class ICDesignerController extends DesignerController {
 
         this.view.setConfirmButtonListener(() => this.confirm());
         this.view.setCancelButtonListener(()  => this.cancel());
+        this.view.setOnNameChangeListener((name) => {
+            if (this.ic) {
+                this.icdata.setName(name);
+                this.ic.setName(name);
+            }
+        });
 
         // Disable some functionality
         this.toolManager.disableActions();

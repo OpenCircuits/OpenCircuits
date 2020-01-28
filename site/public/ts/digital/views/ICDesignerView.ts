@@ -2,6 +2,7 @@ import {DigitalCircuitView} from "./DigitalCircuitView";
 
 export class ICDesignerView extends DigitalCircuitView {
     private div: HTMLDivElement;
+    private nameInput: HTMLInputElement;
     private confirmButton: HTMLButtonElement;
     private cancelButton: HTMLButtonElement;
 
@@ -16,6 +17,10 @@ export class ICDesignerView extends DigitalCircuitView {
         if (!(div instanceof HTMLDivElement))
             throw new Error("IC Designer DIV element not found!");
 
+        const input = document.getElementById("ic-name-input");
+        if (!(input instanceof HTMLInputElement))
+            throw new Error("IC Designer name input element not found!");
+
         const confirmButton = document.getElementById("ic-confirmbutton");
         if (!(confirmButton instanceof HTMLButtonElement))
             throw new Error("IC Confirm Button element not found!");
@@ -25,6 +30,7 @@ export class ICDesignerView extends DigitalCircuitView {
             throw new Error("IC Cancel Button element not found!");
 
         this.div = div;
+        this.nameInput = input;
         this.confirmButton = confirmButton;
         this.cancelButton  = cancelButton;
 
@@ -45,6 +51,10 @@ export class ICDesignerView extends DigitalCircuitView {
 
     public setCancelButtonListener(listener: () => void): void {
         this.cancelButton.onclick = () => listener();
+    }
+
+    public setOnNameChangeListener(listener: (name: string) => void): void {
+        this.nameInput.onchange = () => listener(this.nameInput.value);
     }
 
     public hide(): void {

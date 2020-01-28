@@ -99,6 +99,10 @@ export class ICData {
         }
     }
 
+    public setName(name: string): void {
+        this.name = name;
+    }
+
     public setSize(v: Vector): void {
         this.transform.setSize(v);
     }
