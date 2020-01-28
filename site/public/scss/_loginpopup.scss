@@ -53,6 +53,13 @@
     & button:active {
         background-color: #ccc;
     }
+    & div {
+        text-align: center;
+    }
+
+    & hr {
+        margin-top: 20px;
+    }
 
     &__text {
         margin-top: 5px;
