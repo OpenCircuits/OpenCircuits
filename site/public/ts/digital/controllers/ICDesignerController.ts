@@ -50,7 +50,8 @@ export class ICDesignerController extends DesignerController {
         this.view.setOnNameChangeListener((name) => {
             if (this.ic) {
                 this.icdata.setName(name);
-                this.ic.setName(name);
+                this.ic.update();
+                this.render();
             }
         });
 
@@ -93,6 +94,9 @@ export class ICDesignerController extends DesignerController {
         // Create ICData and instance of the IC
         this.icdata = ICData.Create(objs);
         this.ic = new IC(this.icdata);
+
+        // Clear name input
+        this.view.clearName();
 
         // Reset designer and add IC
         this.designer.reset();

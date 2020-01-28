@@ -57,6 +57,10 @@ export class ICDesignerView extends DigitalCircuitView {
         this.nameInput.onchange = () => listener(this.nameInput.value);
     }
 
+    public clearName(): void {
+        this.nameInput.value = "";
+    }
+
     public hide(): void {
         this.div.classList.add("invisible");
     }
