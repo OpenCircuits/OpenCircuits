@@ -12,6 +12,7 @@ import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {GetPath} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction"
@@ -163,7 +164,6 @@ export class SelectionTool extends DefaultTool {
     public onClick(input: Input, button: number): boolean {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
-
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         let render = false;
@@ -172,7 +172,7 @@ export class SelectionTool extends DefaultTool {
         if (this.interactionHelper.click(input))
             return true;
 
-        // Clear selections if no shift key
+        // Clear selections if no shift keys
         if (!input.isShiftKeyDown()) {
             render = (this.selections.size > 0); // Render if selections were actually cleared
             this.action.add(CreateDeselectAllAction(this).execute());
@@ -198,6 +198,32 @@ export class SelectionTool extends DefaultTool {
             this.action.add(new ShiftAction(obj).execute());
             return true;
         }
+
+        return render;
+    }
+
+    public onDoubleClick(input: Input, button: number): boolean {
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());//Get current mouse positions
+
+        let render = false;
+
+        // Clear selections if no shift keys
+        if (!input.isShiftKeyDown()) {
+            render = (this.selections.size > 0); // Render if selections were actually cleared
+            this.action.add(CreateDeselectAllAction(this).execute());
+        }
+
+        const wires = this.designer.getWires().reverse();
+
+        // Check if a wire object was clicked
+        const wire = wires.find(o => o.isWithinSelectBounds(worldMousePos));
+        //If a wire is selected
+        if(wire){
+            console.log("Wire Selected!");
+            this.action.add(CreateGroupSelectAction(this,GetPath(wire)).execute());
+            return true;
+        }
+
 
         return render;
     }
