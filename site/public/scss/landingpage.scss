@@ -1,0 +1,140 @@
+body {
+    background-color: #444444;
+    color: #888888;
+}
+
+#navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #151515;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: inline-block;
+    padding: 5px 16px;
+    text-align: center;
+    font-size: 35px;
+}
+
+/* Introduction stylesheets */
+
+.intro-container {
+    position: relative;
+}
+
+.intro-box {
+    position: absolute;
+    background: #151515;
+    z-index: 100000;
+    top: 50px;
+    left: 50%;
+    width: 450px;
+    height: 110px;
+    margin-left: -250px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #000000;
+    padding: 50px 50px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: box;
+    display: flex;
+}
+
+.intro-box-text {
+    text-align: left;
+}
+
+.banner-container {
+    text-align: center;
+    height: 310px;
+    position: relative;
+    background: #000 url("icons/background_grid.png") center;
+    -webkit-background-size: auto 310px;
+    -moz-background-size: auto 310px;
+    background-size: auto 310px;
+}
+
+#info_blurb {
+    font-size: 115%;
+    color: #666;
+    margin: 5px 0;
+    line-height: 1.5em;
+    width: 20em;
+}
+
+#bigbuttons {
+    position: absolute;
+    left: 50%;
+    top: 420px;
+}
+
+#bigbutton1 {
+    background-color: #151515;
+    width: 300px;
+    height: 120px;
+    font-size: 25px;
+    border-radius: 25px;
+    border: none;
+    margin-left: -350px;
+    box-shadow: 0 0 15px #000000;
+}
+
+#bigbutton2 {
+    background-color: #151515;
+    width: 354px;
+    height: 120px;
+    font-size: 25px;
+    border-radius: 25px;
+    border: none;
+    margin-left: 104px;
+    box-shadow: 0 0 15px #000000;
+}
+
+.button {
+    transition: .5s;
+}
+
+#bigbutton1:hover {
+    box-shadow: 0px 0px 15px #888888;
+}
+
+#bigbutton2:hover {
+    box-shadow: 0px 0px 15px #CC5E5E;
+}
+
+#gitbutton {
+    width: 50px;
+    height: auto;
+    border-radius: 50px;
+}
+
+#logo {
+    width: 200px;
+}
+
+#analog_logo {
+    width: 254px;
+}
+
+#info_blurb {
+    color: white;
+    font-size: 20px;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #151515;
+    color: #888888;
+    text-align: center;
+}
