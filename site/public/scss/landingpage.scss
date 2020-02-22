@@ -22,98 +22,23 @@ li a {
     font-size: 35px;
 }
 
-/* Introduction stylesheets */
-
-.intro-container {
-    position: relative;
-}
-
-.intro-box {
+.buttons {
     position: absolute;
-    background: #151515;
-    z-index: 100000;
-    top: 50px;
-    left: 50%;
-    width: 450px;
-    height: 110px;
-    margin-left: -250px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #000000;
-    padding: 50px 50px;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: box;
-    display: flex;
-}
-
-.intro-box-text {
-    text-align: left;
-}
-
-.banner-container {
-    text-align: center;
-    height: 310px;
-    position: relative;
-    background: #000 url("icons/background_grid.png") center;
-    -webkit-background-size: auto 310px;
-    -moz-background-size: auto 310px;
-    background-size: auto 310px;
-}
-
-#info_blurb {
-    font-size: 115%;
-    color: #666;
-    margin: 5px 0;
-    line-height: 1.5em;
-    width: 20em;
-}
-
-#bigbuttons {
-    position: absolute;
-    left: 50%;
-    top: 420px;
+    background-color: #151515;
+    left: 200px;
+    height: 120px;
+    transition: .5s;
+    border-radius: 25px;
+    width: 350px;
+    cursor: pointer;
 }
 
 #bigbutton1 {
-    background-color: #151515;
-    width: 300px;
-    height: 120px;
-    font-size: 25px;
-    border-radius: 25px;
-    border: none;
-    margin-left: -350px;
-    box-shadow: 0 0 15px #000000;
+    margin-top: 80px;
 }
 
 #bigbutton2 {
-    background-color: #151515;
-    width: 354px;
-    height: 120px;
-    font-size: 25px;
-    border-radius: 25px;
-    border: none;
-    margin-left: 104px;
-    box-shadow: 0 0 15px #000000;
-}
-
-.button {
-    transition: .5s;
-}
-
-#bigbutton1:hover {
-    box-shadow: 0px 0px 15px #888888;
-}
-
-#bigbutton2:hover {
-    box-shadow: 0px 0px 15px #CC5E5E;
-}
-
-#gitbutton {
-    width: 50px;
-    height: auto;
-    border-radius: 50px;
+    margin-top: 240px;
 }
 
 #logo {
@@ -124,9 +49,28 @@ li a {
     width: 254px;
 }
 
-#info_blurb {
+.big_orgate {
+    position: absolute;
+    left: 600px;
+    width: 1000px;
+}
+
+#orgate {
+    width: 500px;
+    height: auto;
+    margin-top: -30px;
+}
+
+#dig-text {
+    left: 300px;
     color: white;
     font-size: 20px;
+}
+
+#gitbutton {
+    width: 50px;
+    height: auto;
+    border-radius: 50px;
 }
 
 .footer {
