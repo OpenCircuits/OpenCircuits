@@ -4,9 +4,13 @@ body {
 }
 
 #navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 5px;
     overflow: hidden;
     background-color: #151515;
 }
@@ -22,23 +26,59 @@ li a {
     font-size: 35px;
 }
 
+#container {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    width: 1300px;
+    height: 500px;
+    transform: translate(-50%,0%);
+}
+
 .buttons {
     position: absolute;
-    background-color: #151515;
-    left: 200px;
-    height: 120px;
-    transition: .5s;
-    border-radius: 25px;
+    left: 0px;
+    
     width: 350px;
+    height: 120px;
+
     cursor: pointer;
+
+    border-radius: 25px;
+    border: 2px solid white;
+    background-color: #151515;
 }
 
 #bigbutton1 {
-    margin-top: 80px;
+    top: 110px;
+}
+
+.buttons:hover ~ #wire3 {
+    background-image: linear-gradient(to right, rgb(60,172,242), rgb(60,172,242), rgba(0,0,0,0));
+}
+
+.buttons:hover ~ #default-text {
+    color: transparent;
+}
+
+#bigbutton1:hover ~ #wire1 {
+    background-color: rgb(60,172,242);
+}
+
+#bigbutton1:hover ~ #dig-text {
+    color: white;
 }
 
 #bigbutton2 {
-    margin-top: 240px;
+    top: 270px;
+}
+
+#bigbutton2:hover ~ #wire2 {
+    background: rgb(60,172,242);
+}
+
+#bigbutton2:hover ~ #ana-text {
+    color: white;
 }
 
 #logo {
@@ -49,26 +89,35 @@ li a {
     width: 254px;
 }
 
-.big_orgate {
+#orgate {
     position: absolute;
-    left: 600px;
-    width: 1000px;
-    border: 3px solid #73AD21;
+    left: 400px;
+    width: auto;
+    height: 500px;
 }
 
-#orgate {
-    width: 500px;
-    height: auto;
-    margin-top: -30px;
-    border: 3px solid #73AD21;
+.desc{
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    margin: 0;
+    transform: translate(0%, -50%);
+    color: white;
+    font-size: 30px;
+    width: 340px;
+    transition: 0.2s;
 }
 
 #dig-text {
-    left: 300px;
-    color: white;
-    font-size: 20px;
-    width: 300px;
-    border: 3px solid #73AD21;
+    color: transparent;
+}
+
+#ana-text {
+    color: transparent;
+}
+
+#default-text {
+    display: block;
 }
 
 #gitbutton {
@@ -77,11 +126,39 @@ li a {
     border-radius: 50px;
 }
 
+#wire1 {
+    position: absolute;
+    left: 250px;
+    top: 155px;
+    background: black;
+    transition: 0.2s;
+    z-index: -100;
+}
+
+#wire2 {
+    position: absolute;
+    left: 250px;
+    top: 315px;
+    background: black;
+    transition: 0.2s;
+    z-index: -100;
+}
+
+#wire3 {
+    position: absolute;
+    left: 800px;
+    top: 235px;
+    background: linear-gradient(to right, black, black,  rgba(0,0,0,0));
+    transition: 0.2s;
+    z-index: -100;
+}
+
 .footer {
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
+    height: 60px;
     background-color: #151515;
     color: #888888;
     text-align: center;

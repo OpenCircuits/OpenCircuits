@@ -44,17 +44,22 @@
         <li> <a> about us </a> </li>
     </ul>
 
-    <div class = "containter">
+    <div id = "container">
         <button class = "buttons" id="bigbutton1" onclick="window.location.href = 'https://opencircuits.io';" target="_blank">
             <img id = "logo" src="img/icons/logo.svg">
         </button>	
         <button class = "buttons" id="bigbutton2" onclick="window.location.href = 'https://opencircuits.io/analog';" target="_blank">
             <img id = "analog_logo" src="img/analog/icons/logo.svg">
         </button>
-        <div class = "big_orgate">
-            <img id = "orgate" src="img/icons/gates/orgate.svg">
-            <p id = "dig-text">The Digital Version is for logical gate-based circuits, switches, and more.</p>
-        </div>
+
+        <svg id = "wire1" width="300" height="30"></svg>
+        <svg id = "wire2" width="300" height="30"></svg>
+        <svg id = "wire3" width="150" height="30"></svg>
+
+        <img id = "orgate" src="img/icons/gates/orgate.svg">
+        <p class = "desc" id = "default-text">Welcome to OpenCircuits, a free online circuit designer!</p>
+        <p class = "desc" id = "dig-text">The Digital version is for logical gate-based circuits, switches, and more.</p>
+        <p class = "desc" id = "ana-text">The Analog version is for analog physics-based circuits with current and stuff.</p>
     </div>
 
     <div class = "footer">
