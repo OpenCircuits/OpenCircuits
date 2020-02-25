@@ -53,18 +53,22 @@ li a {
     position: absolute;
     left: 600px;
     width: 1000px;
+    border: 3px solid #73AD21;
 }
 
 #orgate {
     width: 500px;
     height: auto;
     margin-top: -30px;
+    border: 3px solid #73AD21;
 }
 
 #dig-text {
     left: 300px;
     color: white;
     font-size: 20px;
+    width: 300px;
+    border: 3px solid #73AD21;
 }
 
 #gitbutton {
