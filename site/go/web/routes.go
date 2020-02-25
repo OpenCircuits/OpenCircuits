@@ -27,5 +27,6 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager, e
 
 	router.GET("/", indexHandler(authManager, examplesCsif, cache))
 	router.GET("/analog", analogHandler(authManager, examplesCsif, cache))
+	router.GET("/videos", videosPageHandler(authManager, examplesCsif, cache))
 
 }

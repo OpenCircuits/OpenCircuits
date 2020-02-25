@@ -115,3 +115,9 @@ func analogHandler(manager auth.AuthenticationManager, examplesCsif interfaces.C
 		})
 	}
 }
+
+func videosPageHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory, cache StaticCache) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "videotutorials.gohtml", gin.H{})
+	}
+}
