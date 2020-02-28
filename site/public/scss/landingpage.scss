@@ -10,7 +10,7 @@ body {
     width: 100%;
     list-style-type: none;
     margin: 0;
-    padding: 5px;
+    padding: 0;
     overflow: hidden;
     background-color: #151515;
 }
@@ -18,12 +18,24 @@ body {
 li {
     float: left;
 }
-
+  
 li a {
-    display: inline-block;
-    padding: 5px 16px;
+    display: block;
+    color: white;
     text-align: center;
-    font-size: 35px;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#gitbutton {
+    float: left;
+    width: 40px;
+    height: auto;
+    border-radius: 50px;
+    padding: 5px;
+    cursor: pointer;
 }
 
 #container {
@@ -120,18 +132,11 @@ li a {
     display: block;
 }
 
-#gitbutton {
-    width: 50px;
-    height: auto;
-    border-radius: 50px;
-}
-
 #wire1 {
     position: absolute;
     left: 250px;
     top: 155px;
-    background: black;
-    transition: 0.2s;
+    background: white;
     z-index: -100;
 }
 
@@ -139,8 +144,7 @@ li a {
     position: absolute;
     left: 250px;
     top: 315px;
-    background: black;
-    transition: 0.2s;
+    background: white;
     z-index: -100;
 }
 
@@ -148,13 +152,12 @@ li a {
     position: absolute;
     left: 800px;
     top: 235px;
-    background: linear-gradient(to right, black, black,  rgba(0,0,0,0));
-    transition: 0.2s;
+    background: linear-gradient(to right, white, white,  rgba(0,0,0,0));
     z-index: -100;
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
