@@ -203,14 +203,12 @@ export class SelectionTool extends DefaultTool {
     }
 
     public onDoubleClick(input: Input, button: number): boolean {
-        //Get current mouse positions
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         let render = false;
 
         // Clear selections if no shift keys
-        if (!input.isShiftKeyDown())
-        {
+        if (!input.isShiftKeyDown()) {
             // Render if selections were actually cleared
             render = (this.selections.size > 0);
             this.action.add(CreateDeselectAllAction(this).execute());
@@ -220,10 +218,9 @@ export class SelectionTool extends DefaultTool {
 
         // Check if a wire object was clicked
         const wire = wires.find(o => o.isWithinSelectBounds(worldMousePos));
-        //If a wire is selected
-        if(wire)
-        {
-            //Add CreateGroupSelectAction to this.action
+        // If a wire is selected
+        if (wire) {
+            // Add CreateGroupSelectAction to this.action
             this.action.add(CreateGroupSelectAction(this, GetPath(wire)).execute());
             return true;
         }
