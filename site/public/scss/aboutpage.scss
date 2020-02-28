@@ -1,8 +1,36 @@
 body {
     background-color: #444444;
-    color: #888888;
+    color: #BBBBBB;
 }
 
 
+div.topline{
+    font-size: 50px;
+}
 
+div.smalltitle{
+    font-size: 30px;
+}
 
+div.maintext{
+    font-size: 20px;
+}
+
+div.authors{
+    font-size: 25px;
+}
+
+li{
+    margin: 0 0 3px 0;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #151515;
+    color: #888888;
+    text-align: center;
+}

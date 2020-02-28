@@ -17,7 +17,7 @@ Robbie Dexter (Fall 2019 - current)
 Vincent Huang (Fall 2019 - current)  
 Chris Lambertson (Fall 2019 - current)  
 Natasha Rosa (Fall 2019 - current)  
-Daniel (Fall 2019 - current)  
+Daniel Wisdom(Fall 2019 - current)  
 
 Rahul Jain (Spring 2019)  
 Hannah Lim (Spring 2019)  

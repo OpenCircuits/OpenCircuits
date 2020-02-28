@@ -121,3 +121,9 @@ func landingPageHandler(manager auth.AuthenticationManager, examplesCsif interfa
 		c.HTML(http.StatusOK, "landingpage.gohtml", gin.H{})
 	}
 }
+
+func aboutPageHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory, cache StaticCache) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "aboutus.gohtml", gin.H{})
+	}
+}
