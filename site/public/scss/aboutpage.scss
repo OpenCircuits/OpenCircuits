@@ -58,13 +58,20 @@ div.smalltitle{
     font-size: 30px;
 }
 
+div.largetitle{
+    font-size: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 div.maintext{
+    text-align: center;
     font-size: 25px;
 }
 
 div.authors{
+    padding-left: 25px;
     line-height: 1.3;
-    padding-left: 35px;
     font-size: 25px;
 }
 
