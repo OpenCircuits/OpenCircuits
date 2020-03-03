@@ -3,6 +3,52 @@ body {
     color: #BBBBBB;
 }
 
+#navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #151515;
+    z-index: 1000;
+}
+
+li {
+    float: left;
+}
+  
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#gitbutton {
+    float: left;
+    width: 40px;
+    height: auto;
+    border-radius: 50px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+
+
+div.allText
+{
+    position: absolute;
+    top: 50px;
+    padding-bottom: 80px;
+}
+
+
 
 div.topline{
     font-size: 50px;
@@ -13,10 +59,12 @@ div.smalltitle{
 }
 
 div.maintext{
-    font-size: 20px;
+    font-size: 25px;
 }
 
 div.authors{
+    line-height: 1.3;
+    padding-left: 35px;
     font-size: 25px;
 }
 
