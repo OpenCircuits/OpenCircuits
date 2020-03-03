@@ -12,6 +12,7 @@ import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {GetPath} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction"
@@ -163,7 +164,6 @@ export class SelectionTool extends DefaultTool {
     public onClick(input: Input, button: number): boolean {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
-
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         let render = false;
@@ -172,7 +172,7 @@ export class SelectionTool extends DefaultTool {
         if (this.interactionHelper.click(input))
             return true;
 
-        // Clear selections if no shift key
+        // Clear selections if no shift keys
         if (!input.isShiftKeyDown()) {
             render = (this.selections.size > 0); // Render if selections were actually cleared
             this.action.add(CreateDeselectAllAction(this).execute());
@@ -202,6 +202,31 @@ export class SelectionTool extends DefaultTool {
         return render;
     }
 
+    public onDoubleClick(input: Input, button: number): boolean {
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        let render = false;
+
+        // Clear selections if no shift keys
+        if (!input.isShiftKeyDown()) {
+            // Render if selections were actually cleared
+            render = (this.selections.size > 0);
+            this.action.add(CreateDeselectAllAction(this).execute());
+        }
+
+        const wires = this.designer.getWires().reverse();
+
+        // Check if a wire object was clicked
+        const wire = wires.find(o => o.isWithinSelectBounds(worldMousePos));
+        // If a wire is selected
+        if (wire) {
+            // Add CreateGroupSelectAction to this.action
+            this.action.add(CreateGroupSelectAction(this, GetPath(wire)).execute());
+            return true;
+        }
+        return render;
+    }
+
     public onKeyDown(input: Input, key: number): boolean {
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
@@ -216,7 +241,6 @@ export class SelectionTool extends DefaultTool {
         if (input.isModifierKeyDown() && key == D_KEY) {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
-
             const action = new CopyGroupAction(this.designer, objs);
             const newObjs = action.getCopies();
             const comps = newObjs.getComponents();
