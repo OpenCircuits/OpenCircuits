@@ -75,8 +75,15 @@ export class HeaderController {
             $("#overlay").removeClass("invisible");
         });
 
+        $("#header-help-shortcuts-button").click(() => {
+            this.closeDropdowns();
+            $("#keyboard-shortcuts-popup").removeClass("invisible");
+            $("#overlay").removeClass("invisible");
+        })
+
         $("#overlay").click(() => {
             $("#quick-start-popup").addClass("invisible");
+            $("#keyboard-shortcuts-popup").addClass("invisible");
             $("#overlay").addClass("invisible");
         })
     }
