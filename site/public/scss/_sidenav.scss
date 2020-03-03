@@ -62,19 +62,16 @@ $sidenav-border-width: 5px;
             $padding-v: 4px;
             $padding-h: 6px;
 
-            display: flex;
-
             height: $height;
             padding: $padding-v $padding-h $padding-v $padding-h;
-
-            cursor: pointer;
 
             border-bottom: solid $sidenav-border-width/3 $secondary-color;
             background-color: lighten($primary-color, 5%);
 
+            cursor: pointer;
+            display: flex;
+
             &__icon {
-                width: $img-width;
-                padding: 0 5px 0 0;
                 img {
                     width: $img-width;
                     height: $img-width;
@@ -82,11 +79,13 @@ $sidenav-border-width: 5px;
                     border-radius: 5px;
                     background-color: $background-color;
                 }
+                width: $img-width;
+                padding: 0 5px 0 0;
             }
             &__text {
                 display: inline-block;
-                flex-grow: 1;
 
+                flex-grow: 1;
                 width: 50px;
 
                 vertical-align: top;
@@ -123,6 +122,12 @@ $sidenav-border-width: 5px;
                 text-decoration: none;
 
                 color: lighten($secondary-color, 25%);
+            }
+
+            &__history {
+                margin-top: 180px;
+                margin-left: 215px;
+                text-align: right;
             }
         }
     }
