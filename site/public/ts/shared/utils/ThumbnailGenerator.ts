@@ -1,7 +1,8 @@
-import {DEFAULT_THUMBNAIL_SIZE, EMPTY_CIRCUIT_MIN,
-        EMPTY_CIRCUIT_MAX, THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
+import {DEFAULT_THUMBNAIL_SIZE,
+        THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
 
-import {CircuitBoundingBox} from "core/utils/ComponentUtils";
+import {FitCamera} from "core/utils/ComponentUtils";
+import {BoundingBox} from "core/utils/math/BoundingBox"
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {CullableObject} from "core/models/CullableObject";
@@ -24,22 +25,16 @@ export class ThumbnailGenerator {
     public generate(designer: CircuitDesigner): string {
         const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
 
-        // Define world bounding box for empty circuits so that it shows a little bit of grid
-        const bbox = CircuitBoundingBox(all);
-        const min = (all.length == 0) ? (EMPTY_CIRCUIT_MIN) : (bbox.getMin());
-        const max = (all.length == 0) ? (EMPTY_CIRCUIT_MAX) : (bbox.getMax());
+        // // Center and zoom the camera so everything fits
+        // //  with extra padding on sides
+        // const relativeSize = bbox.getMax().sub(bbox.getMin()).scale(1/this.size);
+        // const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
 
-        // Center and zoom the camera so everything fits
-        //  with extra padding on sides
-        const center = min.add(max).scale(0.5);
-        const relativeSize = max.sub(min).scale(1/this.size);
-        const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
-
-        // Move camera
-        const camera = this.view.getCamera();
-        camera.setPos(center);
-        camera.setZoom(zoom);
-
+        // // Move camera
+        // const camera = this.view.getCamera();
+        // camera.setPos(bbox.getCenter());
+        // camera.setZoom(zoom);
+        FitCamera(this.view.getCamera(), all, THUMBNAIL_ZOOM_PADDING_RATIO);
         // Render the circuit
         this.view.render(designer, []);
 

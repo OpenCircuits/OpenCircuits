@@ -1,13 +1,16 @@
-import {LEFT_MOUSE_BUTTON,
-        DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY, D_KEY, X_KEY} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, DELETE_KEY,
+        BACKSPACE_KEY, ESC_KEY,
+        A_KEY, D_KEY, F_KEY, X_KEY,
+        FIT_PADDING_RATIO} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 import {Input} from "core/utils/Input";
+import {FitCamera} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
+import {CullableObject} from "core/models/CullableObject";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
@@ -206,6 +209,14 @@ export class SelectionTool extends DefaultTool {
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
             this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
+            return true;
+        }
+
+        if (key === F_KEY) {
+            const objs = this.selections.size === 0
+                ? (this.designer.getObjects() as CullableObject[]).concat(this.designer.getWires())
+                : this.getSelections().filter(o => o instanceof CullableObject) as CullableObject[];
+            FitCamera(this.camera, objs, FIT_PADDING_RATIO);
             return true;
         }
 
