@@ -310,6 +310,7 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     return new BoundingBox(min, max);
 }
 
+// Zooms and translates camera to fit objs with adjustable padding ratio
 export function FitCamera(camera: Camera, objs: CullableObject[], padding: number): void {
     const bbox = objs.length === 0
         ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)

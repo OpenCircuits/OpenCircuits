@@ -26,6 +26,7 @@ import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {Tool} from "./Tool";
 import {DefaultTool} from "./DefaultTool";
@@ -212,11 +213,18 @@ export class SelectionTool extends DefaultTool {
             return true;
         }
 
+        // Fit to screen command
         if (key === F_KEY) {
+            const initialPos = this.camera.getPos();
+            const initialZoom = this.camera.getZoom();
+
+            // Fit to selections, if any; otherwise, fit all CullableObjects
             const objs = this.selections.size === 0
                 ? (this.designer.getObjects() as CullableObject[]).concat(this.designer.getWires())
                 : this.getSelections().filter(o => o instanceof CullableObject) as CullableObject[];
+
             FitCamera(this.camera, objs, FIT_PADDING_RATIO);
+            this.action.add(MoveCameraAction.postMoveCameraAction(this.camera, initialPos, initialZoom));
             return true;
         }
 

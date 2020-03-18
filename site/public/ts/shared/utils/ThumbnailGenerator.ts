@@ -25,16 +25,8 @@ export class ThumbnailGenerator {
     public generate(designer: CircuitDesigner): string {
         const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
 
-        // // Center and zoom the camera so everything fits
-        // //  with extra padding on sides
-        // const relativeSize = bbox.getMax().sub(bbox.getMin()).scale(1/this.size);
-        // const zoom = Math.max(relativeSize.x, relativeSize.y) * THUMBNAIL_ZOOM_PADDING_RATIO;
-
-        // // Move camera
-        // const camera = this.view.getCamera();
-        // camera.setPos(bbox.getCenter());
-        // camera.setZoom(zoom);
         FitCamera(this.view.getCamera(), all, THUMBNAIL_ZOOM_PADDING_RATIO);
+
         // Render the circuit
         this.view.render(designer, []);
 
