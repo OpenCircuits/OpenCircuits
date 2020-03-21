@@ -75,6 +75,6 @@ export const META_KEY = 224;
 
 export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
-export const FIT_PADDING_RATIO = 1.1;
+export const FIT_PADDING_RATIO = 1.2;
 export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
 export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
