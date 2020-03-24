@@ -310,12 +310,18 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     return new BoundingBox(min, max);
 }
 
-// Zooms and translates camera to fit objs with adjustable padding ratio
-export function FitCamera(camera: Camera, objs: CullableObject[], padding: number): void {
+/**
+ * Calculates camera position and zoom to fit objs to
+ * the camera's view with adjustable padding. If objs
+ * is empty, uses a default size.
+ *
+ * @return Tuple of desired camera position and zoom
+ */
+export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
     const bbox = objs.length === 0
         ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
         : CircuitBoundingBox(objs);
-    camera.setPos(bbox.getCenter());
+    const finalPos = bbox.getCenter();
 
     const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
     const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
@@ -323,7 +329,9 @@ export function FitCamera(camera: Camera, objs: CullableObject[], padding: numbe
     // Determine which bbox dimension will limit zoom level
     const xRatio = bbox.getWidth()/worldSize.x;
     const yRatio = bbox.getHeight()/worldSize.y;
-    camera.zoomBy(Math.max(xRatio, yRatio) * padding);
+    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+
+    return [finalPos, finalZoom];
 }
 
 // Creates a rectangle for the collision box for a port on the IC

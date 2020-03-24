@@ -21,16 +21,6 @@ export class MoveCameraAction implements Action {
         this.finalZoom = finalZoom;
     }
 
-    // Static method conveniently creates a MoveCameraAction after the
-    // camera is moved (the constructor is for before the camera is moved)
-    public static postMoveCameraAction(camera: Camera, initialPos: Vector, initialZoom: number): MoveCameraAction {
-        const action = new MoveCameraAction(camera, camera.getPos(), camera.getZoom());
-        action.initialPos = initialPos;
-        action.initialZoom = initialZoom;
-
-        return action;
-    }
-
     public execute(): Action {
         this.camera.setPos(this.finalPos);
         this.camera.setZoom(this.finalZoom);

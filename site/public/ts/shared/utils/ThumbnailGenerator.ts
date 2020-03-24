@@ -1,13 +1,15 @@
 import {DEFAULT_THUMBNAIL_SIZE,
         THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
 
-import {FitCamera} from "core/utils/ComponentUtils";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 import {BoundingBox} from "core/utils/math/BoundingBox"
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {CullableObject} from "core/models/CullableObject";
 
 import {CircuitView} from "site/shared/views/CircuitView";
+
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 export class ThumbnailGenerator {
     private view: CircuitView;
@@ -25,7 +27,8 @@ export class ThumbnailGenerator {
     public generate(designer: CircuitDesigner): string {
         const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
 
-        FitCamera(this.view.getCamera(), all, THUMBNAIL_ZOOM_PADDING_RATIO);
+        const finalCamera = GetCameraFit(this.view.getCamera(), all, THUMBNAIL_ZOOM_PADDING_RATIO);
+        new MoveCameraAction(this.view.getCamera(), finalCamera[0], finalCamera[1]).execute();
 
         // Render the circuit
         this.view.render(designer, []);

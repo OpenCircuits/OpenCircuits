@@ -7,7 +7,7 @@ import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 import {Input} from "core/utils/Input";
-import {FitCamera} from "core/utils/ComponentUtils";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
@@ -215,16 +215,14 @@ export class SelectionTool extends DefaultTool {
 
         // Fit to screen command
         if (key === F_KEY) {
-            const initialPos = this.camera.getPos();
-            const initialZoom = this.camera.getZoom();
-
             // Fit to selections, if any; otherwise, fit all CullableObjects
             const objs = this.selections.size === 0
                 ? (this.designer.getObjects() as CullableObject[]).concat(this.designer.getWires())
                 : this.getSelections().filter(o => o instanceof CullableObject) as CullableObject[];
 
-            FitCamera(this.camera, objs, FIT_PADDING_RATIO);
-            this.action.add(MoveCameraAction.postMoveCameraAction(this.camera, initialPos, initialZoom));
+            // Get tuple of final camera position and zoom
+            const finalCamera = GetCameraFit(this.camera, objs, FIT_PADDING_RATIO);
+            this.action.add(new MoveCameraAction(this.camera, finalCamera[0], finalCamera[1]).execute());
             return true;
         }
 
