@@ -9,8 +9,6 @@ import {CullableObject} from "core/models/CullableObject";
 
 import {CircuitView} from "site/shared/views/CircuitView";
 
-import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
-
 export class ThumbnailGenerator {
     private view: CircuitView;
     private size: number;
@@ -28,7 +26,8 @@ export class ThumbnailGenerator {
         const all = (<CullableObject[]>designer.getObjects()).concat(designer.getWires());
 
         const finalCamera = GetCameraFit(this.view.getCamera(), all, THUMBNAIL_ZOOM_PADDING_RATIO);
-        new MoveCameraAction(this.view.getCamera(), finalCamera[0], finalCamera[1]).execute();
+        this.view.getCamera().setPos(finalCamera[0]);
+        this.view.getCamera().setZoom(finalCamera[1]);
 
         // Render the circuit
         this.view.render(designer, []);
