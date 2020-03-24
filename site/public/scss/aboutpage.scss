@@ -22,13 +22,17 @@ li {
   
 li a {
     display: block;
-    color: white;
+    color: #BBB;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 18px;
     cursor: pointer;
 }
+
+li a:hover { color: white; }
+
+#about-link { color: white; }
 
 #gitbutton {
     float: left;

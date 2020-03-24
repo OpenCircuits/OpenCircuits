@@ -13,6 +13,7 @@ body {
     padding: 0;
     overflow: hidden;
     background-color: #151515;
+    z-index: 1000;
 }
 
 li {
@@ -21,13 +22,17 @@ li {
   
 li a {
     display: block;
-    color: white;
+    color: #BBB;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 18px;
     cursor: pointer;
 }
+
+li a:hover { color: white; }
+
+#home-link { color: white; }
 
 #gitbutton {
     float: left;
@@ -45,6 +50,7 @@ li a {
     width: 1300px;
     height: 500px;
     transform: translate(-50%,0%);
+    // border: 2px solid blue;
 }
 
 .buttons {
@@ -117,7 +123,6 @@ li a {
     color: white;
     font-size: 30px;
     width: 340px;
-    transition: 0.2s;
 }
 
 #dig-text {
@@ -156,6 +161,25 @@ li a {
     z-index: -100;
 }
 
+#tutorials {
+    position: absolute;
+    top: 600px;
+    width: 1300px;
+    height: 300px;
+    left: 50%;
+    transform: translate(-50%,0%);
+    margin-bottom: 400px;
+    border: 2px solid green;
+}
+
+#tutorials p {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
 .footer {
     position: fixed;
     left: 0;
@@ -165,4 +189,5 @@ li a {
     background-color: #151515;
     color: #888888;
     text-align: center;
+    z-index: 100;
 }
