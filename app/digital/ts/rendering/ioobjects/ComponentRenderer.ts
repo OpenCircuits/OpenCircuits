@@ -48,6 +48,33 @@ export const ComponentRenderer = (() => {
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
 
+    const drawCoder = function(renderer: Renderer, transform: Transform, selected: boolean, coder: Component): void {
+        let align: CanvasTextAlign = "right";
+        let p = V(transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
+        var digitCount: number, labelCount: number;
+        if (coder instanceof Encoder)
+        {
+            let encoder = coder as Encoder;
+            align = "left";
+            p = V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11);
+            digitCount = encoder.getOutputPortCount().getValue();
+            labelCount = encoder.getInputPortCount().getValue();
+        }
+        else
+        {
+            let decoder = coder as Decoder;
+            digitCount = decoder.getInputPortCount().getValue();
+            labelCount = decoder.getOutputPortCount().getValue();
+        }
+        let numStr = "0".repeat(digitCount);
+        drawBox(renderer, transform, selected);
+        for (let i = 0; i < labelCount; i++) {
+            renderer.text(numStr, p, align);
+            numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
+            p.y -= 25;
+        }
+    }
+
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
             // Check if object is on the screen
@@ -104,7 +131,7 @@ export const ComponentRenderer = (() => {
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
-                drawBox(renderer, transform, selected);
+                drawCoder(renderer, transform, selected, object);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);

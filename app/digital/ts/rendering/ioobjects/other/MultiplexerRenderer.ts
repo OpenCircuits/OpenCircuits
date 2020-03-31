@@ -34,7 +34,8 @@ export const MultiplexerRenderer = (() => {
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
-
+               
+                // Label inputs with binary string representations
                 const align: CanvasTextAlign = "left";
                 const inputCount = mul.getInputPortCount().getValue();
                 let p = V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11);
@@ -54,6 +55,7 @@ export const MultiplexerRenderer = (() => {
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
 
+                // Label outputs with binary string representations
                 const align: CanvasTextAlign = "right";
                 const outputCount = mul.getOutputPortCount().getValue();
                 let p = V(transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
