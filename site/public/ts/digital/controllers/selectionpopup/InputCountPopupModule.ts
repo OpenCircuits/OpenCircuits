@@ -14,6 +14,7 @@ import {Decoder} from "digital/models/ioobjects/other/Decoder";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
+import {Clamp} from "math/MathUtils";
 
 export class InputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
@@ -63,18 +64,22 @@ export class InputCountPopupModule extends SelectionPopupModule {
 
     public push(): void {
         const selections = this.circuitController.getSelections() as Array<Gate | Mux | Decoder>;
-        const countAsNumber = this.count.valueAsNumber;
-
-        this.circuitController.addAction(new GroupAction(
-            selections.map(o => {
-                if (o instanceof Gate && !(o instanceof BUFGate))
-                    return new InputPortChangeAction(o,  countAsNumber);
-                else if (o instanceof Mux)
-                    return new SelectPortChangeAction(o, countAsNumber);
-                else // Decoder
-                    return new InputPortChangeAction(o,  countAsNumber);
-            })
-        ).execute());
+        let countAsNumber = this.count.valueAsNumber;
+        if (countAsNumber % 1 === 0) // cannot be NaN
+        {
+            countAsNumber = Clamp(countAsNumber, parseInt(this.count.min), parseInt(this.count.max));
+            this.count.value = countAsNumber.toString();
+            this.circuitController.addAction(new GroupAction(
+                selections.map(o => {
+                    if (o instanceof Gate && !(o instanceof BUFGate))
+                        return new InputPortChangeAction(o,  countAsNumber);
+                    else if (o instanceof Mux)
+                        return new SelectPortChangeAction(o, countAsNumber);
+                    else // Decoder
+                        return new InputPortChangeAction(o,  countAsNumber);
+                })
+            ).execute());
+        }
 
         this.circuitController.render();
     }

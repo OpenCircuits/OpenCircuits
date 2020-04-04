@@ -8,6 +8,7 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
 import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
+import {Clamp} from "math/MathUtils";
 
 export class ClockFrequencyPopupModule extends SelectionPopupModule {
     private input: HTMLInputElement;
@@ -26,7 +27,7 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
                 .filter(o => o instanceof Clock)
                 .map(o => o as Clock);
 
-        // Only enable if there's exactly 1 type, so just Gates or just Muxes or just Decoders
+        // Only enable if there's only clocks
         const enable = selections.length > 0 && (selections.length == clocks.length);
 
         if (enable) {
@@ -45,8 +46,12 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
 
     public push(): void {
         const selections = this.circuitController.getSelections() as Clock[];
-        const countAsNumber = this.input.valueAsNumber;
-
+        let countAsNumber = this.input.valueAsNumber;
+        // if the user enters garbage, then they get the default 1000 ms
+        if (countAsNumber !== countAsNumber)
+            countAsNumber = 1000;
+        countAsNumber = Clamp(countAsNumber, parseInt(this.input.min), parseInt(this.input.max));
+        this.input.value = countAsNumber.toString();
         this.circuitController.addAction(new GroupAction(
             selections.map(c => new ClockFrequencyChangeAction(c, countAsNumber))
         ).execute());

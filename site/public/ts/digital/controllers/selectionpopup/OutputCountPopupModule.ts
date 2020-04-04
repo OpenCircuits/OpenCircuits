@@ -10,6 +10,7 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
 import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
+import {Clamp} from "math/MathUtils";
 
 export class OutputCountPopupModule extends SelectionPopupModule {
     private count: HTMLInputElement;
@@ -27,7 +28,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
         const encoders = selections
                 .filter(o => o instanceof Encoder) as Encoder[];
 
-        // Only enable if there's exactly 1 type, so just Gates or just Muxes or just Decoders
+        // Only enable if there's only encoders
         const enable = selections.length > 0 && (selections.length == encoders.length);
 
         if (enable) {
@@ -51,11 +52,15 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
     public push(): void {
         const selections = this.circuitController.getSelections() as Encoder[];
-        const countAsNumber = this.count.valueAsNumber;
-
-        this.circuitController.addAction(new GroupAction(
-            selections.map(o => new OutputPortChangeAction(o, countAsNumber))
-        ).execute());
+        let countAsNumber = this.count.valueAsNumber;
+        if (countAsNumber % 1 === 0) // cannot be NaN
+        {
+            countAsNumber = Clamp(countAsNumber, parseInt(this.count.min), parseInt(this.count.max));
+            this.count.value = countAsNumber.toString();
+            this.circuitController.addAction(new GroupAction(
+                selections.map(o => new OutputPortChangeAction(o, countAsNumber))
+            ).execute());
+        }
 
         this.circuitController.render();
     }
