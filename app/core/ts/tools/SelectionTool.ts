@@ -1,13 +1,16 @@
-import {LEFT_MOUSE_BUTTON,
-        DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY, D_KEY, X_KEY} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, DELETE_KEY,
+        BACKSPACE_KEY, ESC_KEY,
+        A_KEY, D_KEY, F_KEY, X_KEY,
+        FIT_PADDING_RATIO} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 import {Input} from "core/utils/Input";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
+import {CullableObject} from "core/models/CullableObject";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
@@ -24,6 +27,7 @@ import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {Tool} from "./Tool";
 import {DefaultTool} from "./DefaultTool";
@@ -231,6 +235,19 @@ export class SelectionTool extends DefaultTool {
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
             this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
+            return true;
+        }
+
+        // Fit to screen command
+        if (key === F_KEY) {
+            // Fit to selections, if any; otherwise, fit all CullableObjects
+            const objs = this.selections.size === 0
+                ? (this.designer.getObjects() as CullableObject[]).concat(this.designer.getWires())
+                : this.getSelections().filter(o => o instanceof CullableObject) as CullableObject[];
+
+            // Get tuple of final camera position and zoom
+            const finalCamera = GetCameraFit(this.camera, objs, FIT_PADDING_RATIO);
+            this.action.add(new MoveCameraAction(this.camera, finalCamera[0], finalCamera[1]).execute());
             return true;
         }
 
