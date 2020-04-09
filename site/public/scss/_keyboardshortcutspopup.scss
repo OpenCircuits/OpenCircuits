@@ -6,7 +6,7 @@
     z-index: 9;
     top: 10vh;
     left: 50%;
-
+    
     overflow: auto;
 
     width: $width;
@@ -16,7 +16,6 @@
 
     border-radius: 10px;
     background: #fff;
-
 
     & h1 {
         font-weight: normal;
@@ -28,6 +27,28 @@
         border-bottom: 1px solid #ddd;
         color: #666;
     }
+    &__toggle-container{
+        font-weight: thick;
+        white-space: nowrap;
+    }
+    & button{
+        width: 50%;
+        float: left;
+        padding: 5px 0;
+        margin: 0;
+        border: 1px solid rgba(0,0,0,0.2);  
+    }
+    & button:active{
+        background-color: #f5f5f5;
+    }
+    #windows-option{
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    #mac-option{
+        border-bottom-right-radius: 5px;
+        border-top-right-radius: 5px;
+    }
     & th, td {
         padding: 8px;
         width: 70%;
@@ -35,15 +56,16 @@
         border-bottom: 1px solid #ddd;
         color: black;
     }
-    & tr:hover{background-color: #f5f5f5;}
-
+    & tbody{
+        tr:hover{background-color: #f5f5f5;}
+        white-space: nowrap;
+    }
     & table {
         display: table;
         border-collapse: collapse;
         border-spacing: 2px;
         border-color: grey;
     }
-
     &__key {
         padding: 3px 5px;
         border: 1px solid #bbb;
@@ -51,6 +73,5 @@
         white-space: nowrap;
         margin-right: 3px;
         color: black; 
-
     }
 }

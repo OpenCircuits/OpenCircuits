@@ -79,6 +79,41 @@ export class HeaderController {
             this.closeDropdowns();
             $("#keyboard-shortcuts-popup").removeClass("invisible");
             $("#overlay").removeClass("invisible");
+            $("#windows-option").click(function(){
+                this.setAttribute("aria-pressed","true");
+                $("#toggle-mac").addClass("hide");
+                $("#toggle").removeClass("hide");
+                $("#toggle-mac1").addClass("hide");
+                $("#toggle1").removeClass("hide");
+                $("#toggle-mac2").addClass("hide");
+                $("#toggle2").removeClass("hide");
+                $("#toggle-mac3").addClass("hide");
+                $("#toggle3").removeClass("hide");
+                $("#toggle-mac4").addClass("hide");
+                $("#toggle4").removeClass("hide");
+                $("#toggle-mac5").addClass("hide");
+                $("#toggle5").removeClass("hide");
+                $("#toggle-mac6").addClass("hide");
+                $("#toggle6").removeClass("hide");
+            })
+            
+            $("#mac-option").click(function(){
+                this.setAttribute("aria-pressed","true");
+                $("#toggle").addClass("hide");
+                $("#toggle-mac").removeClass("hide");
+                $("#toggle1").addClass("hide");
+                $("#toggle-mac1").removeClass("hide");
+                $("#toggle2").addClass("hide");
+                $("#toggle-mac2").removeClass("hide");
+                $("#toggle3").addClass("hide");
+                $("#toggle-mac3").removeClass("hide");
+                $("#toggle4").addClass("hide");
+                $("#toggle-mac4").removeClass("hide");
+                $("#toggle5").addClass("hide");
+                $("#toggle-mac5").removeClass("hide");
+                $("#toggle6").addClass("hide");
+                $("#toggle-mac6").removeClass("hide");
+            })
         })
 
         $("#overlay").click(() => {
