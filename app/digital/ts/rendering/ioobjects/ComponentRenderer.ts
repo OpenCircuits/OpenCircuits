@@ -49,28 +49,22 @@ export const ComponentRenderer = (() => {
     }
 
     const drawCoder = function(renderer: Renderer, transform: Transform, selected: boolean, coder: Component): void {
-        let align: CanvasTextAlign = "right";
-        let p = V(transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
-        var digitCount: number, labelCount: number;
-        if (coder instanceof Encoder)
-        {
-            const encoder = coder as Encoder;
-            align = "left";
-            p = V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11);
-            digitCount = encoder.getOutputPortCount().getValue();
-            labelCount = encoder.getInputPortCount().getValue();
-        }
-        else
-        {
-            const decoder = coder as Decoder;
-            digitCount = decoder.getInputPortCount().getValue();
-            labelCount = decoder.getOutputPortCount().getValue();
-        }
-        let numStr = "0".repeat(digitCount);
         drawBox(renderer, transform, selected);
-        for (let i = 0; i < labelCount; i++) {
+
+        // Label the side ports with binary strings
+        let align: CanvasTextAlign = coder instanceof Encoder ? "left" : "right";
+        let p = coder instanceof Encoder ?
+            V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11) :
+            V( transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
+        let digitCount = coder instanceof Encoder ? 
+            (coder as Encoder).getOutputPortCount().getValue() : 
+            (coder as Decoder).getInputPortCount().getValue();
+        let numStr = "0".repeat(digitCount);
+
+        for (let i = 0; i < Math.pow(2, digitCount); i++) {
             renderer.text(numStr, p, align);
             p.y -= 25;
+            // Increment the binary string
             numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
         }
     }
