@@ -3,10 +3,10 @@ import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
 import {Port} from "core/models/ports/Port";
 import {Mux} from "digital/models/ioobjects/other/Mux";
+import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 
 import {InputPortChangeAction} from "./InputPortChangeAction";
 import {OutputPortChangeAction} from "./OutputPortChangeAction";
-import {Multiplexer} from "digital/models/ioobjects";
 
 export class SelectPortChangeAction extends PortChangeAction {
     protected obj: Mux;
