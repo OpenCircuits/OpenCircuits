@@ -54,7 +54,7 @@ export const ComponentRenderer = (() => {
         var digitCount: number, labelCount: number;
         if (coder instanceof Encoder)
         {
-            let encoder = coder as Encoder;
+            const encoder = coder as Encoder;
             align = "left";
             p = V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11);
             digitCount = encoder.getOutputPortCount().getValue();
@@ -62,7 +62,7 @@ export const ComponentRenderer = (() => {
         }
         else
         {
-            let decoder = coder as Decoder;
+            const decoder = coder as Decoder;
             digitCount = decoder.getInputPortCount().getValue();
             labelCount = decoder.getOutputPortCount().getValue();
         }
@@ -70,8 +70,8 @@ export const ComponentRenderer = (() => {
         drawBox(renderer, transform, selected);
         for (let i = 0; i < labelCount; i++) {
             renderer.text(numStr, p, align);
-            numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
             p.y -= 25;
+            numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
         }
     }
 

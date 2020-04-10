@@ -22,8 +22,6 @@ export const MultiplexerRenderer = (() => {
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
             const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-            const selectCount = mul.getSelectPortCount().getValue();
-
             //
             // Creates the Multiplexer and Demultiplexer the correct size
             //
@@ -33,19 +31,7 @@ export const MultiplexerRenderer = (() => {
                 const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
-                renderer.draw(new Polygon([p1, p2, p3, p4]), style);
-               
-                // Label inputs with binary string representations
-                const align: CanvasTextAlign = "left";
-                const inputCount = mul.getInputPortCount().getValue();
-                let p = V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11);
-                let numStr = "0".repeat(selectCount);
-                for (let i = 0; i < inputCount; i++) {
-                    renderer.text(numStr, p, align);
-                    // increment the binary string
-                    numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
-                    p.y -= 25;
-                }
+                renderer.draw(new Polygon([p1, p2, p3, p4]), style);               
             }
             else {
                 const p1 = V(transform.getSize().x/2 , transform.getSize().y/2 + 7);
@@ -54,17 +40,22 @@ export const MultiplexerRenderer = (() => {
                 const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
+            }
 
-                // Label outputs with binary string representations
-                const align: CanvasTextAlign = "right";
-                const outputCount = mul.getOutputPortCount().getValue();
-                let p = V(transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
-                let numStr = "0".repeat(selectCount);
-                for (let i = 0; i < outputCount; i++) {
-                    renderer.text(numStr, p, align);
-                    numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
-                    p.y -= 25;
-                }
+            // Label inputs with binary string representations
+            const selectCount = mul.getSelectPortCount().getValue();
+            const align: CanvasTextAlign = (mul instanceof Multiplexer ? "left" : "right");
+            const portLabelPosition = mul instanceof Multiplexer ? 
+                V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11) :
+                V( transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
+            let numStr = "0".repeat(selectCount);
+
+            for (let i = 0; i < Math.pow(2, selectCount); i++) {
+                renderer.text(numStr, portLabelPosition, align);
+                portLabelPosition.y -= 25;
+                // increment the binary string
+                const changeIndex = numStr.lastIndexOf("0");
+                numStr = numStr.substr(0, changeIndex) + "1" + "0".repeat(numStr.length - changeIndex - 1);
             }
         }
     }
