@@ -52,11 +52,11 @@ export const ComponentRenderer = (() => {
         drawBox(renderer, transform, selected);
 
         // Label the side ports with binary strings
-        let align: CanvasTextAlign = coder instanceof Encoder ? "left" : "right";
-        let p = coder instanceof Encoder ?
+        const align: CanvasTextAlign = coder instanceof Encoder ? "left" : "right";
+        const p = coder instanceof Encoder ?
             V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11) :
             V( transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
-        let digitCount = coder instanceof Encoder ? 
+        const digitCount = coder instanceof Encoder ? 
             (coder as Encoder).getOutputPortCount().getValue() : 
             (coder as Decoder).getInputPortCount().getValue();
         let numStr = "0".repeat(digitCount);
