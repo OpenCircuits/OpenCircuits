@@ -16,7 +16,7 @@ export class SelectPortChangeAction extends PortChangeAction {
     public constructor(obj: Mux, target: number) {
         super(obj, target, obj.getSelectPorts().length);
 
-        if (Mux instanceof Multiplexer)
+        if (obj instanceof Multiplexer)
             this.sidePortAction = new InputPortChangeAction(obj, Math.pow(2, target));
         else
             this.sidePortAction = new OutputPortChangeAction(obj, Math.pow(2, target));
@@ -28,14 +28,14 @@ export class SelectPortChangeAction extends PortChangeAction {
 
     public execute(): Action {
         super.execute();
-        this.sidePortAction.execute();
         this.obj.setSelectPortCount(this.targetCount);
+        this.sidePortAction.execute();
         return this;
     }
 
     public undo(): Action {
-        this.obj.setSelectPortCount(this.initialCount);
         this.sidePortAction.undo();
+        this.obj.setSelectPortCount(this.initialCount);
         super.undo();
         return this;
     }

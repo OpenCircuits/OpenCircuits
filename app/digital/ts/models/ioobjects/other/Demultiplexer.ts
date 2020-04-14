@@ -28,7 +28,6 @@ export class Demultiplexer extends Mux {
 
     public setSelectPortCount(val: number): void {
         super.setSelectPortCount(val);
-        super.setOutputPortCount(Math.pow(2, val));
         // update the input port to align with the left edge of the DeMux
         this.inputs.updatePortPositions();
     }

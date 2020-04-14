@@ -41,22 +41,6 @@ export const MultiplexerRenderer = (() => {
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
-
-            // Label inputs with binary string representations
-            const selectCount = mul.getSelectPortCount().getValue();
-            const align: CanvasTextAlign = (mul instanceof Multiplexer ? "left" : "right");
-            const portLabelPosition = mul instanceof Multiplexer ? 
-                V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11) :
-                V( transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
-            let numStr = "0".repeat(selectCount);
-
-            for (let i = 0; i < Math.pow(2, selectCount); i++) {
-                renderer.text(numStr, portLabelPosition, align);
-                portLabelPosition.y -= 25;
-                // increment the binary string
-                const changeIndex = numStr.lastIndexOf("0");
-                numStr = numStr.substr(0, changeIndex) + "1" + "0".repeat(numStr.length - changeIndex - 1);
-            }
         }
     }
 })();

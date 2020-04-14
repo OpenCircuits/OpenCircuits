@@ -39,9 +39,9 @@ export class Encoder extends DigitalComponent {
 
     public setOutputPortCount(val: number): void {
         // Calculate width using an approximation of the text with of a single "0" = 8.342285
-        const width = Math.max(8 + val * 8.342285, DEFAULT_SIZE);
+        const padding = 8;
+        const width = Math.max(2 * padding + val * 8.342285, DEFAULT_SIZE);
         this.transform.setSize(V(width, DEFAULT_SIZE/2*Math.pow(2, val)));
-        super.setInputPortCount(Math.pow(2, val));
         super.setOutputPortCount(val);
     }
 

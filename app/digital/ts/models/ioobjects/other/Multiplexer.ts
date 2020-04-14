@@ -28,7 +28,6 @@ export class Multiplexer extends Mux {
 
     public setSelectPortCount(val: number): void {
         super.setSelectPortCount(val);
-        super.setInputPortCount(Math.pow(2, val));
         // update the output port to align with the right edge of the Mux
         this.outputs.updatePortPositions();
     }

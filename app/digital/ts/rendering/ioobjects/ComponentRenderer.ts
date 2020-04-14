@@ -48,24 +48,21 @@ export const ComponentRenderer = (() => {
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
 
-    const drawCoder = function(renderer: Renderer, transform: Transform, selected: boolean, coder: Component): void {
-        drawBox(renderer, transform, selected);
-
-        // Label the side ports with binary strings
-        const align: CanvasTextAlign = coder instanceof Encoder ? "left" : "right";
-        const p = coder instanceof Encoder ?
-            V(-transform.getSize().x/2 + 4, transform.getSize().y/2 - 11) :
-            V( transform.getSize().x/2 - 4, transform.getSize().y/2 - 11);
-        const digitCount = coder instanceof Encoder ? 
-            (coder as Encoder).getOutputPortCount().getValue() : 
-            (coder as Decoder).getInputPortCount().getValue();
+    const setBinaryLabels = function (component: Component): void {
+        const digitCount = component instanceof Multiplexer || component instanceof Demultiplexer ?
+            (component as Multiplexer).getSelectPortCount().getValue() :
+            component instanceof Encoder ?
+                (component as Encoder).getOutputPortCount().getValue() :
+                (component as Decoder).getInputPortCount().getValue();
+        const ports = component instanceof Multiplexer ? (component as Multiplexer).getInputPorts() :
+            component instanceof Demultiplexer ? (component as Demultiplexer).getOutputPorts() :
+            component instanceof Encoder ? (component as Encoder).getInputPorts() :
+            (component as Decoder).getOutputPorts();
         let numStr = "0".repeat(digitCount);
 
         for (let i = 0; i < Math.pow(2, digitCount); i++) {
-            renderer.text(numStr, p, align);
-            p.y -= 25;
-            // Increment the binary string
-            numStr = numStr.substr(0, numStr.lastIndexOf("0")) + "1" + "0".repeat(numStr.length - numStr.lastIndexOf("0") - 1);
+            ports[i].setName(numStr);
+            numStr = (numStr.substr(0, numStr.lastIndexOf("0")) + "1").padEnd(digitCount, "0");
         }
     }
 
@@ -116,16 +113,20 @@ export const ComponentRenderer = (() => {
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
-            else if (object instanceof Multiplexer || object instanceof Demultiplexer)
+            else if (object instanceof Multiplexer || object instanceof Demultiplexer) {
                 MultiplexerRenderer.render(renderer, camera, object, selected);
+                setBinaryLabels(object);
+            }
             else if (object instanceof SegmentDisplay)
                 SegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
-            else if (object instanceof Encoder || object instanceof Decoder)
-                drawCoder(renderer, transform, selected, object);
+            else if (object instanceof Encoder || object instanceof Decoder) {
+                drawBox(renderer, transform, selected);
+                setBinaryLabels(object);
+            }
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);

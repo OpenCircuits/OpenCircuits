@@ -30,9 +30,9 @@ export abstract class Mux extends DigitalComponent {
 
     public setSelectPortCount(val: number): void {
         // Calculate size
-        const width = Math.max(DEFAULT_SIZE/2*(val-1), DEFAULT_SIZE);
+        const width = Math.max(DEFAULT_SIZE/2*(val-1), DEFAULT_SIZE) + 10;
         const height = DEFAULT_SIZE/2*Math.pow(2, val);
-        this.transform.setSize(V(width+10, height));
+        this.transform.setSize(V(width, height));
 
         this.selects.setPortCount(val);
     }
