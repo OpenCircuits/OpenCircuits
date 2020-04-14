@@ -30,7 +30,7 @@ import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
@@ -49,15 +49,11 @@ export const ComponentRenderer = (() => {
     }
 
     const setBinaryLabels = function (component: Component): void {
-        const digitCount = component instanceof Multiplexer || component instanceof Demultiplexer ?
-            (component as Multiplexer).getSelectPortCount().getValue() :
-            component instanceof Encoder ?
-                (component as Encoder).getOutputPortCount().getValue() :
-                (component as Decoder).getInputPortCount().getValue();
         const ports = component instanceof Multiplexer ? (component as Multiplexer).getInputPorts() :
             component instanceof Demultiplexer ? (component as Demultiplexer).getOutputPorts() :
             component instanceof Encoder ? (component as Encoder).getInputPorts() :
             (component as Decoder).getOutputPorts();
+        const digitCount = Math.log2(ports.length);
         let numStr = "0".repeat(digitCount);
 
         for (let i = 0; i < Math.pow(2, digitCount); i++) {
