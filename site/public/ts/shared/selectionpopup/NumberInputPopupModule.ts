@@ -27,7 +27,7 @@ export abstract class NumberInputPopupModule extends SelectionPopupModule {
     }
 
     public push(): void {
-        let input = this.getInput();
+        const input = this.getInput();
         if (!isNaN(input)) {
             this.executeChangeAction(input);
             this.circuitController.render();
