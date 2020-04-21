@@ -13,11 +13,9 @@ import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 import {Decoder} from "digital/models/ioobjects/other/Decoder";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
-import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
-import {Clamp} from "math/MathUtils";
+import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
-export class InputCountPopupModule extends SelectionPopupModule {
-    private count: HTMLInputElement;
+export class InputCountPopupModule extends NumberInputPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
@@ -54,6 +52,7 @@ export class InputCountPopupModule extends SelectionPopupModule {
 
             this.count.value = same ? counts[0].getValue().toString() : "";
             this.count.placeholder = same ? "" : "-";
+            this.previousCount = same ? counts[0].getValue() : NaN;
 
             this.count.min = min.toString();
             this.count.max = max.toString();
@@ -62,25 +61,17 @@ export class InputCountPopupModule extends SelectionPopupModule {
         this.setEnabled(enable);
     }
 
-    public push(): void {
+    public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Array<Gate | Mux | Decoder>;
-        let countAsNumber = this.count.valueAsNumber;
-        if (countAsNumber % 1 === 0) // cannot be NaN
-        {
-            countAsNumber = Clamp(countAsNumber, parseInt(this.count.min), parseInt(this.count.max));
-            this.count.value = countAsNumber.toString();
-            this.circuitController.addAction(new GroupAction(
-                selections.map(o => {
-                    if (o instanceof Gate && !(o instanceof BUFGate))
-                        return new InputPortChangeAction(o,  countAsNumber);
-                    else if (o instanceof Mux)
-                        return new SelectPortChangeAction(o, countAsNumber);
-                    else // Decoder
-                        return new InputPortChangeAction(o,  countAsNumber);
-                })
-            ).execute());
-        }
-
-        this.circuitController.render();
+        this.circuitController.addAction(new GroupAction(
+            selections.map(o => {
+                if (o instanceof Gate && !(o instanceof BUFGate))
+                    return new InputPortChangeAction(o,  newCount);
+                else if (o instanceof Mux)
+                    return new SelectPortChangeAction(o, newCount);
+                else // Decoder
+                    return new InputPortChangeAction(o,  newCount);
+            })
+        ).execute());
     }
 }

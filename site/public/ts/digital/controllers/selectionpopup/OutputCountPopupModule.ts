@@ -9,11 +9,9 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 
 import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
-import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
-import {Clamp} from "math/MathUtils";
+import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
-export class OutputCountPopupModule extends SelectionPopupModule {
-    private count: HTMLInputElement;
+export class OutputCountPopupModule extends NumberInputPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
@@ -42,6 +40,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
             this.count.value = same ? counts[0].getValue().toString() : "";
             this.count.placeholder = same ? "" : "-";
+            this.previousCount = same ? counts[0].getValue() : NaN;
 
             this.count.min = min.toString();
             this.count.max = max.toString();
@@ -50,18 +49,10 @@ export class OutputCountPopupModule extends SelectionPopupModule {
         this.setEnabled(enable);
     }
 
-    public push(): void {
+    public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Encoder[];
-        let countAsNumber = this.count.valueAsNumber;
-        if (countAsNumber % 1 === 0) // cannot be NaN
-        {
-            countAsNumber = Clamp(countAsNumber, parseInt(this.count.min), parseInt(this.count.max));
-            this.count.value = countAsNumber.toString();
-            this.circuitController.addAction(new GroupAction(
-                selections.map(o => new OutputPortChangeAction(o, countAsNumber))
-            ).execute());
-        }
-
-        this.circuitController.render();
+        this.circuitController.addAction(new GroupAction(
+            selections.map(o => new OutputPortChangeAction(o, newCount))
+        ).execute());
     }
 }

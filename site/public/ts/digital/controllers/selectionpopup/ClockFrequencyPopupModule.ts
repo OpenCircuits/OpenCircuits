@@ -7,18 +7,16 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 
 import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
-import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
-import {Clamp} from "math/MathUtils";
+import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
-export class ClockFrequencyPopupModule extends SelectionPopupModule {
-    private input: HTMLInputElement;
+export class ClockFrequencyPopupModule extends NumberInputPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
         super(circuitController, $("div#popup-clock-delay-text"));
 
-        this.input = this.el.find("input#popup-clock-delay")[0] as HTMLInputElement;
-        this.input.onchange = () => this.push();
+        this.count = this.el.find("input#popup-clock-delay")[0] as HTMLInputElement;
+        this.count.onchange = () => this.push();
     }
 
     public pull(): void {
@@ -37,25 +35,18 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
 
             const same = counts.every((count) => count === counts[0]);
 
-            this.input.value = same ? counts[0].toString() : "";
-            this.input.placeholder = same ? "" : "-";
+            this.count.value = same ? counts[0].toString() : "";
+            this.count.placeholder = same ? "" : "-";
+            this.previousCount = same ? counts[0] : NaN;
         }
 
         this.setEnabled(enable);
     }
 
-    public push(): void {
+    public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Clock[];
-        let countAsNumber = this.input.valueAsNumber;
-        // if the user enters garbage, then they get the default 1000 ms
-        if (countAsNumber !== countAsNumber)
-            countAsNumber = 1000;
-        countAsNumber = Clamp(countAsNumber, parseInt(this.input.min), parseInt(this.input.max));
-        this.input.value = countAsNumber.toString();
         this.circuitController.addAction(new GroupAction(
-            selections.map(c => new ClockFrequencyChangeAction(c, countAsNumber))
+            selections.map(c => new ClockFrequencyChangeAction(c, newCount))
         ).execute());
-
-        this.circuitController.render();
     }
 }
