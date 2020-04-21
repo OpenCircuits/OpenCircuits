@@ -19,7 +19,7 @@ export abstract class CopyController {
         return main.isActive() && main.getCurrentTool() == main.getSelectionTool();
     }
 
-    protected abstract copy(e: ClipboardEvent, main: MainDesignerController): void;
+    public abstract copy(e: ClipboardEvent, main: MainDesignerController): void;
     protected abstract paste(e: ClipboardEvent, main: MainDesignerController): void;
 
     private onCopy(e: ClipboardEvent, main: MainDesignerController): void {

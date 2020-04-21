@@ -22,7 +22,7 @@ export class DigitalCopyController extends CopyController {
         super(main);
     }
 
-    protected copy(e: ClipboardEvent, main: DigitalCircuitController): void {
+    public copy(e: ClipboardEvent, main: DigitalCircuitController): void {
         const selections = main.getSelections();
         const objs = selections.filter((o) => o instanceof IOObject) as IOObject[];
 
@@ -33,7 +33,9 @@ export class DigitalCopyController extends CopyController {
 
     protected paste(e: ClipboardEvent, main: DigitalCircuitController): void{
         // Load clipboard data and deserialize
-        const contents = e.clipboardData.getData("text/json");
+        let contents = e.clipboardData.getData("text/json");
+        if (!contents)
+            contents = e.clipboardData.getData("text/plain");
         const objs = Deserialize<IOObject[]>(contents);
 
         const mainDesigner = main.getDesigner();

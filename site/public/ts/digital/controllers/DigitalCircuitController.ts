@@ -68,8 +68,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new SegmentCountPopupModule(this),
         );
 
-        this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
+        this.contextMenu = new ContextMenuController(this);
         this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);

@@ -174,7 +174,17 @@ export abstract class DesignerController {
         return this.designer;
     }
 
+    public getInput(): Input{
+        return this.input;
+    }
+
+    public getToolManager(): ToolManager{
+        return this.toolManager;
+    }
+    
     public isActive(): boolean {
         return this.active;
     }
+
+
 }
