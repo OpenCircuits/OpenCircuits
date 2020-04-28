@@ -48,20 +48,6 @@ export const ComponentRenderer = (() => {
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
 
-    const setBinaryLabels = function (component: Component): void {
-        const ports = component instanceof Multiplexer ? (component as Multiplexer).getInputPorts() :
-            component instanceof Demultiplexer ? (component as Demultiplexer).getOutputPorts() :
-            component instanceof Encoder ? (component as Encoder).getInputPorts() :
-            (component as Decoder).getOutputPorts();
-        const digitCount = Math.log2(ports.length);
-        let numStr = "0".repeat(digitCount);
-
-        for (let i = 0; i < Math.pow(2, digitCount); i++) {
-            ports[i].setName(numStr);
-            numStr = (numStr.substr(0, numStr.lastIndexOf("0")) + "1").padEnd(digitCount, "0");
-        }
-    }
-
     return {
         render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
             // Check if object is on the screen
@@ -111,7 +97,6 @@ export const ComponentRenderer = (() => {
                 GateRenderer.render(renderer, camera, object, selected);
             else if (object instanceof Multiplexer || object instanceof Demultiplexer) {
                 MultiplexerRenderer.render(renderer, camera, object, selected);
-                setBinaryLabels(object);
             }
             else if (object instanceof SegmentDisplay)
                 SegmentDisplayRenderer.render(renderer, camera, object, selected);
@@ -121,7 +106,6 @@ export const ComponentRenderer = (() => {
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder) {
                 drawBox(renderer, transform, selected);
-                setBinaryLabels(object);
             }
 
             // Draw tinted image

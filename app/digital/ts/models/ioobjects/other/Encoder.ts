@@ -19,6 +19,7 @@ export class Encoder extends DigitalComponent {
               V(DEFAULT_SIZE, DEFAULT_SIZE*2),
               new ConstantSpacePositioner<InputPort>(DEFAULT_SIZE/2),
               new ConstantSpacePositioner<OutputPort>(DEFAULT_SIZE/2));
+        this.setBinaryLabels();
     }
 
     public activate(): void {
@@ -43,9 +44,21 @@ export class Encoder extends DigitalComponent {
         const width = Math.max(2 * padding + val * 8.342285, DEFAULT_SIZE);
         this.transform.setSize(V(width, DEFAULT_SIZE/2*Math.pow(2, val)));
         super.setOutputPortCount(val);
+        this.setBinaryLabels();
     }
 
     public getDisplayName(): string {
         return "Encoder";
+    }
+
+    public setBinaryLabels(): void {
+        const ports = this.getInputPorts();
+        const digitCount = Math.log2(ports.length);
+        let numStr = "0".repeat(digitCount);
+
+        for (let i = 0; i < Math.pow(2, digitCount); i++) {
+            ports[i].setName(numStr);
+            numStr = (numStr.substr(0, numStr.lastIndexOf("0")) + "1").padEnd(digitCount, "0");
+        }
     }
 }

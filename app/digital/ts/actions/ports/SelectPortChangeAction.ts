@@ -30,6 +30,7 @@ export class SelectPortChangeAction extends PortChangeAction {
         super.execute();
         this.obj.setSelectPortCount(this.targetCount);
         this.sidePortAction.execute();
+        this.obj.setBinaryLabels();
         return this;
     }
 
@@ -37,6 +38,7 @@ export class SelectPortChangeAction extends PortChangeAction {
         this.sidePortAction.undo();
         this.obj.setSelectPortCount(this.initialCount);
         super.undo();
+        this.obj.setBinaryLabels();
         return this;
     }
 
