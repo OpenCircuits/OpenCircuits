@@ -17,13 +17,12 @@ Happy Coding!
 -OpenCircuiits Team
 
 # Tips:
-* If you are unfamiliar with Visual Studio 2, I would highly suggest watching this video to get familiar with the IDE: https://www.youtube.com/watch?v=BpSbKmZkKFQ
+If you are unfamiliar with Visual Studio 2, I would highly suggest watching this video to get familiar with the IDE: https://www.youtube.com/watch?v=BpSbKmZkKFQ
 
 * If you are unfamiliar with CSS or HTML (the backbone languages of OpenCircuits), I would suggest going through CodeAcademy to get familiar: https://www.codecademy.com/
 
-
 # Useful Terminal Commands:
-* If you want to view your coding edits live, enter the following into your terminal:
+If you want to view your coding edits live, enter the following into your terminal:
 * npm run build
 * cd build
 * ./server
