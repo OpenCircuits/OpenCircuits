@@ -30,3 +30,9 @@ Happy Coding!
 * cd build
 * ./server
 * (then open a web browser and type http://localhost:8080/ into the URL)
+
+
+![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet1.png)
+![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet2.png)
+![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet3.png)
+![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet4.png)
