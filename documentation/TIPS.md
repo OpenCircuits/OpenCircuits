@@ -17,11 +17,9 @@ Happy Coding!
 -OpenCircuiits Team
 
 # Tips:
-* If you are unfamiliar with Visual Studio 2, I would highly suggest watching this video to get familiar with the IDE
-* https://www.youtube.com/watch?v=BpSbKmZkKFQ
+* If you are unfamiliar with Visual Studio 2, I would highly suggest watching this video to get familiar with the IDE: https://www.youtube.com/watch?v=BpSbKmZkKFQ
 
-* If you are unfamiliar with CSS or HTML (the backbone languages of OpenCircuits), I would suggest going through CodeAcademy to get familiar.
-* https://www.codecademy.com/
+* If you are unfamiliar with CSS or HTML (the backbone languages of OpenCircuits), I would suggest going through CodeAcademy to get familiar: https://www.codecademy.com/
 
 
 # Useful Terminal Commands:
@@ -31,8 +29,7 @@ Happy Coding!
 * ./server
 * (then open a web browser and type http://localhost:8080/ into the URL)
 
-
-![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet1.png)
+![image](/Users/mahmoudbaloul/Desktop/RCOS-CheetSheet1.png)
 ![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet2.png)
 ![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet3.png)
 ![image](/⁨Users/⁨mahmoudbaloul⁩/⁨Desktop⁩/RCOS-CheetSheet4.png)
