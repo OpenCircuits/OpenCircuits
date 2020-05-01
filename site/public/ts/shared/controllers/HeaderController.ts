@@ -81,6 +81,7 @@ export class HeaderController {
             $("#overlay").removeClass("invisible");
             $("#windows-option").click(function(){
                 this.setAttribute("aria-pressed","true");
+                $("mac-option").removeClass("selected")
                 $("#toggle-mac").addClass("hide");
                 $("#toggle").removeClass("hide");
                 $("#toggle-mac1").addClass("hide");
@@ -99,6 +100,7 @@ export class HeaderController {
             
             $("#mac-option").click(function(){
                 this.setAttribute("aria-pressed","true");
+                $("windows-option").removeClass("selected")
                 $("#toggle").addClass("hide");
                 $("#toggle-mac").removeClass("hide");
                 $("#toggle1").addClass("hide");
