@@ -95,18 +95,16 @@ export const ComponentRenderer = (() => {
             // Specific renderers
             if (object instanceof Gate)
                 GateRenderer.render(renderer, camera, object, selected);
-            else if (object instanceof Multiplexer || object instanceof Demultiplexer) {
+            else if (object instanceof Multiplexer || object instanceof Demultiplexer)
                 MultiplexerRenderer.render(renderer, camera, object, selected);
-            }
             else if (object instanceof SegmentDisplay)
                 SegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
-            else if (object instanceof Encoder || object instanceof Decoder) {
+            else if (object instanceof Encoder || object instanceof Decoder)
                 drawBox(renderer, transform, selected);
-            }
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);

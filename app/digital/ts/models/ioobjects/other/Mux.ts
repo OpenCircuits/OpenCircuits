@@ -14,10 +14,12 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {Port} from "core/models/ports/Port";
+import {PortLabeler} from "digital/actions/ports/PortLabeler";
 
 export abstract class Mux extends DigitalComponent {
     @serialize
     protected selects: PortSet<InputPort>;
+    public portLabeler: PortLabeler;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
                        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
@@ -26,7 +28,8 @@ export abstract class Mux extends DigitalComponent {
         this.selects = new PortSet<InputPort>(this, new ClampedValue(2, 1, 8), new MuxSelectPositioner(), InputPort);
 
         this.setSelectPortCount(2);
-        this.setBinaryLabels();
+        this.portLabeler = new PortLabeler(this);
+        this.portLabeler.setBinaryLabels();
     }
 
     public setSelectPortCount(val: number): void {
@@ -67,18 +70,5 @@ export abstract class Mux extends DigitalComponent {
     // @Override
     public getPorts(): Port[] {
         return super.getPorts().concat(this.getSelectPorts());
-    }
-
-    public abstract getLabeledPorts(): Port[];
-
-    public setBinaryLabels(): void {
-        const ports = this.getLabeledPorts();
-        const digitCount = Math.log2(ports.length);
-        let numStr = "0".repeat(digitCount);
-
-        for (let i = 0; i < Math.pow(2, digitCount); i++) {
-            ports[i].setName(numStr);
-            numStr = (numStr.substr(0, numStr.lastIndexOf("0")) + "1").padEnd(digitCount, "0");
-        }
     }
 }

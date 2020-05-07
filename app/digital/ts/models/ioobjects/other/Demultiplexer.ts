@@ -1,7 +1,6 @@
 import {ClampedValue} from "math/ClampedValue";
 
 import {OutputPort} from "../../ports/OutputPort";
-import {Port} from "../../../../../core/ts/models/ports/Port";
 import {MuxPositioner,
         MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
 
@@ -35,9 +34,5 @@ export class Demultiplexer extends Mux {
 
     public getDisplayName(): string {
         return "Demultiplexer";
-    }
-
-    public getLabeledPorts(): Port[] {
-        return this.getOutputPorts();
     }
 }
