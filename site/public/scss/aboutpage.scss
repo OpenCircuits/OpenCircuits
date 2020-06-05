@@ -1,14 +1,14 @@
 @import '_navbar';
 
 body {
-    background-color: #444444;
-    color: #888888;
+    background-image: url(../img/grid_square.png);
+    background-repeat: repeat;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
 #about-link { color: white; }
 
 .about_container_1 {
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 25px;
     color: white;
 

@@ -1,8 +1,10 @@
 @import '_navbar';
 
 body {
-    background-color: #444444;
-    color: #888888;
+    background-image: url(../img/grid_square.png);
+    background-repeat: repeat;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    color: black;
 }
 
 #home-link { color: white; }
@@ -48,7 +50,7 @@ body {
 }
 
 #bigbutton1:hover ~ #dig-text {
-    color: white;
+    color: black;
 }
 
 #bigbutton2 {
@@ -60,7 +62,7 @@ body {
 }
 
 #bigbutton2:hover ~ #ana-text {
-    color: white;
+    color: black;
 }
 
 #logo {
@@ -84,7 +86,6 @@ body {
     top: 50%;
     margin: 0;
     transform: translate(0%, -50%);
-    color: white;
     font-size: 30px;
     width: 340px;
 }
@@ -137,7 +138,6 @@ body {
 }
 
 #tutorials p {
-    color: white;
     position: absolute;
     top: 50%;
     left: 50%;
