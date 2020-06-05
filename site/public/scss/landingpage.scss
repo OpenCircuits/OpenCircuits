@@ -1,3 +1,13 @@
+$navbar-height: 50px;
+$navbar-padding: 5px;
+$navbar-border-width: 5px;
+$navbar-total-height: $navbar-height + 2*$navbar-padding + $navbar-border-width;
+
+$navbar-border: 0 solid #888;
+
+$navbar-button-height: 30px;
+$navbar-lock-height: 18px;
+
 body {
     background-color: #444444;
     color: #888888;
@@ -5,43 +15,73 @@ body {
 
 #navbar {
     position: fixed;
+    z-index: 3;
     top: 0px;
     left: 0px;
     width: 100%;
     list-style-type: none;
     margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #151515;
-    z-index: 1000;
+    height: $navbar-height;
+    padding: $navbar-padding;
+
+    border: $navbar-border;
+    border-bottom-width: $navbar-border-width;
+    background-color: #222;
 }
 
-li {
-    float: left;
-}
-  
-li a {
-    display: block;
-    color: #BBB;
-    text-align: center;
-    padding: 14px 16px;
+.navbar {
+    $button-width: 100px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     text-decoration: none;
-    font-size: 18px;
-    cursor: pointer;
-}
+    color: #888888;
 
-li a:hover { color: white; }
+
+    &_github {
+        top: 8px;
+
+        width: $navbar-height - 2*$navbar-padding;
+        height: $navbar-height - 2*$navbar-padding;
+        margin-left: -$button-width;
+
+        @extend .navbar;
+    }
+
+    &_home {
+        top: $navbar-height/2 - $navbar-padding;
+        color: white;
+        margin-left: 0px;
+
+        @extend .navbar;
+    }
+
+    &_about {
+        top: $navbar-height/2 - $navbar-padding;
+        color: #BBB;
+        margin-left: $button-width;
+
+        @extend .navbar;
+    }
+}
+// li {
+//     float: left;
+// }
+  
+// li a {
+//     display: block;
+//     color: #BBB;
+//     text-align: center;
+//     padding: 14px 16px;
+//     text-decoration: none;
+//     font-size: 18px;
+//     cursor: pointer;
+// }
+
+#navbar a:hover { color: white; }
 
 #home-link { color: white; }
-
-#gitbutton {
-    float: left;
-    width: 40px;
-    height: auto;
-    border-radius: 50px;
-    padding: 5px;
-    cursor: pointer;
-}
 
 #container {
     position: absolute;
@@ -178,16 +218,4 @@ li a:hover { color: white; }
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-}
-
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #151515;
-    color: #888888;
-    text-align: center;
-    z-index: 100;
 }
