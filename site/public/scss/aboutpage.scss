@@ -1,60 +1,11 @@
-$navbar-height: 50px;
-$navbar-padding: 5px;
-$navbar-border-width: 5px;
-$navbar-total-height: $navbar-height + 2*$navbar-padding + $navbar-border-width;
+@import '_navbar';
 
-$navbar-border: 0 solid #888;
-
-$navbar-button-height: 30px;
-$navbar-lock-height: 18px;
-
-// body {
-//     background-color: #444444;
-//     color: #888888;
-// }
-
-// #navbar {
-//     position: fixed;
-//     z-index: 3;
-//     top: 0px;
-//     left: 0px;
-//     width: 100%;
-//     list-style-type: none;
-//     margin: 0;
-//     height: $navbar-height;
-//     padding: $navbar-padding;
-
-//     border: $navbar-border;
-//     border-bottom-width: $navbar-border-width;
-//     background-color: #222;
-// }
-
-// li {
-//     float: left;
-// }
-  
-// li a {
-//     display: block;
-//     color: #BBB;
-//     text-align: center;
-//     padding: 14px 16px;
-//     text-decoration: none;
-//     font-size: 18px;
-//     cursor: pointer;
-// }
-
-#navbar a:hover { color: white; }
+body {
+    background-color: #444444;
+    color: #888888;
+}
 
 #about-link { color: white; }
-
-// #gitbutton {
-//     float: left;
-//     width: 40px;
-//     height: auto;
-//     border-radius: 50px;
-//     padding: 5px;
-//     cursor: pointer;
-// }
 
 .about_container_1 {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -63,7 +14,7 @@ $navbar-lock-height: 18px;
 
     $container-width: 640px;
     position: absolute;
-    top: $navbar-total-height + 20px;
+    top: 85px;
     left: 50%;
     margin-left: -$container-width/2;
     width: $container-width;
