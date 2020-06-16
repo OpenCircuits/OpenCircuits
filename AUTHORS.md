@@ -24,6 +24,7 @@ Hannah Lim (Spring 2019)
 Terry Nguyen (Spring 2019)  
 Rohan Patel (Spring 2019)  
 Noah Prisament (Spring 2019)  
+Calynn Vitus (Fall 2018 - Spring 2019)
 
 Samuel Guava (Fall 2018)  
 Jonah Leventhal (Fall 2018)  
