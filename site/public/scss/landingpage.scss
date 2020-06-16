@@ -16,7 +16,6 @@ body {
     width: 1300px;
     height: 500px;
     transform: translate(-50%,0%);
-    // border: 2px solid blue;
 }
 
 .buttons {
@@ -126,20 +125,24 @@ body {
     z-index: -100;
 }
 
-#tutorials {
+// =========================== KEY FEATURES ===========================
+
+#container2 {
     position: absolute;
     top: 600px;
-    width: 1300px;
-    height: 300px;
     left: 50%;
+    width: 800px;
+    height: 500px;
     transform: translate(-50%,0%);
-    margin-bottom: 400px;
-    border: 2px solid green;
+    
+    font-size: 25px;
 }
 
-#tutorials p {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-}
+
+
+// #tutorials p {
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%,-50%);
+// }
