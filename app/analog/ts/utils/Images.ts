@@ -1,6 +1,6 @@
 export const Images = (() => {
     const IMAGE_FILE_NAMES = ["voltagesource.svg", "currentsource.svg",
-                              "resistor.svg"];
+                              "resistor.svg", "capacitor.svg"];
 
     const images: Map<string, HTMLImageElement> = new Map();
 

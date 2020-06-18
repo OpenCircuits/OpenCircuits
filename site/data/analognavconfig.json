@@ -25,6 +25,11 @@
           "id": "Resistor",
           "label": "Resistor",
           "icon": "resistor.svg"
+        },
+        {
+          "id": "Capacitor",
+          "label": "Capacitor",
+          "icon": "capacitor.svg"
         }
       ]
     }
