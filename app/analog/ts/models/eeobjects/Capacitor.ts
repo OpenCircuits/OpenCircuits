@@ -35,6 +35,10 @@ export class Capacitor extends AnalogComponent {
         return "capacitor.svg";
     }
 
+    public getCapacitance(): number {
+        return this.capacitance;
+    }
+
     public setCapacitance(newCapacitance: number): void {
         if (newCapacitance > 0) {
             this.capacitance = newCapacitance;

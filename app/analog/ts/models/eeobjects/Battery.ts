@@ -31,6 +31,10 @@ export class Battery extends AnalogComponent {
         return "voltagesource.svg";
     }
 
+    public getVoltage(): number {
+        return this.voltage;
+    }
+
     public setVoltage(newVoltage: number): void {
         if (newVoltage > 0) {
             this.voltage = newVoltage;

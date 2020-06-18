@@ -12,6 +12,8 @@ import {ItemNavController} from "site/shared/controllers/ItemNavController";
 import {TitlePopupModule}    from "site/shared/selectionpopup/TitlePopupModule";
 import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModule";
 import {ResistancePopupModule} from "./selectionpopup/ResistancePopupModule";
+import {VoltagePopupModule} from "./selectionpopup/VoltagePopupModule";
+import {CapacitancePopupModule} from "./selectionpopup/CapacitancePopupModule";
 
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
@@ -37,7 +39,9 @@ export class AnalogCircuitController extends MainDesignerController {
         this.selectionPopup.addModules(
             new TitlePopupModule(this),
             new PositionPopupModule(this),
-            new ResistancePopupModule(this)
+            new ResistancePopupModule(this),
+            new VoltagePopupModule(this),
+            new CapacitancePopupModule(this)
         );
 
         this.contextMenu = new ContextMenuController(this);
