@@ -51,6 +51,12 @@
                         <input id="popup-position-y" type="number" step="0.5" alt="Y-Position of object(s)"/>
                     </label>
                 </div>
+                <div id="popup-resistance-text" class="hide">Resistance
+                    <label id="popup-resistance-label" unselectable disabled>
+                        <input id="popup-resistance" type="number" value="1000" min="200" max="10000" step="100"
+                               alt="Resistance in Ohms"/>
+                    </label>
+                </div>
             </div>
 
             {{template "contextmenu" .}}

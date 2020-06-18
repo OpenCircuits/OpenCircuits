@@ -17,6 +17,7 @@ export class Capacitor extends AnalogComponent {
         super(new ClampedValue(2), V(20, 30));
 
         this.capacitance = capacitance;
+        this.resistance = 0;
 
         // copied from Resistor.ts
         this.ports.getPorts()[0].setOriginPos(V(this.getSize().x/2, 0));
@@ -32,5 +33,11 @@ export class Capacitor extends AnalogComponent {
 
     public getImageName(): string {
         return "capacitor.svg";
+    }
+
+    public setCapacitance(newCapacitance: number): void {
+        if (newCapacitance > 0) {
+            this.capacitance = newCapacitance;
+        }
     }
 }

@@ -28,4 +28,14 @@ export class Resistor extends AnalogComponent {
     public getImageName(): string {
         return "resistor.svg";
     }
+
+    public getResistance(): number {
+        return this.resistance;
+    }
+
+    public setResistance(newResistance: number): void {
+        if (newResistance > 0) {
+            this.resistance = newResistance;
+        }
+    }
 }
