@@ -1,0 +1,90 @@
+.keyboardshortcuts__popup {
+    $width: 80%;
+    $h-padding: 40px;
+
+    position: absolute;
+    z-index: 9;
+    top: 10vh;
+    left: 50%;
+
+    overflow: auto;
+
+    width: $width;
+    max-height: 85vh;
+    margin-left: calc(-#{$width/2} - #{$h-padding});
+    padding: 15px $h-padding 25px;
+
+    border-radius: 10px;
+    background: #fff;
+
+    & h1 {
+        font-weight: normal;
+
+        margin-bottom: 20px;
+        padding-bottom: 5px;
+
+        text-align: center;
+
+        color: #666;
+        border-bottom: 1px solid #ddd;
+    }
+    &__toggle__container {
+        font-weight: thick;
+
+        white-space: nowrap;
+    }
+    &__button {
+        float: left;
+
+        width: 50%;
+        margin: 0;
+        padding: 5px 0;
+
+        border: 1px solid rgba(0,0,0,0.2);
+    }
+    &__button:active {
+        background-color: #f5f5f5;
+    }
+    & #header-help-shortcuts-win-option {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    & #header-help-shortcuts-mac-option {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+    & th, td {
+        width: 100%;
+        padding: 8px;
+
+        text-align: left;
+
+        color: black;
+        border-bottom: 1px solid #ddd;
+    }
+    & tbody {
+        white-space: nowrap;
+
+        & tr:hover {
+            background-color: #f5f5f5;
+        }
+    }
+    & table {
+        display: table;
+
+        border-spacing: 2px;
+        border-collapse: collapse;
+
+        border-color: grey;
+    }
+    &__key {
+        margin-right: 3px;
+        padding: 3px 5px;
+
+        white-space: nowrap;
+
+        color: black;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+    }
+}
