@@ -6,7 +6,7 @@
     z-index: 9;
     top: 10vh;
     left: 50%;
-    
+
     overflow: auto;
 
     width: $width;
@@ -24,54 +24,67 @@
         padding-bottom: 5px;
 
         text-align: center;
-        border-bottom: 1px solid #ddd;
+
         color: #666;
+        border-bottom: 1px solid #ddd;
     }
-    &__toggle-container{
+    &__toggle__container {
         font-weight: thick;
+
         white-space: nowrap;
     }
-    &__button{
-        width: 50%;
+    &__button {
         float: left;
-        padding: 5px 0;
+
+        width: 50%;
         margin: 0;
-        border: 1px solid rgba(0,0,0,0.2); 
+        padding: 5px 0;
+
+        border: 1px solid rgba(0,0,0,0.2);
     }
-    &__button:active{
+    &__button:active {
         background-color: #f5f5f5;
     }
-    #windows-option{
+    & #header-help-shortcuts-win-option {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
     }
-    #mac-option{
-        border-bottom-right-radius: 5px;
+    & #header-help-shortcuts-mac-option {
         border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
     }
     & th, td {
-        padding: 8px;
         width: 100%;
+        padding: 8px;
+
         text-align: left;
-        border-bottom: 1px solid #ddd;
+
         color: black;
+        border-bottom: 1px solid #ddd;
     }
-    & tbody{
-        tr:hover{background-color: #f5f5f5;}
+    & tbody {
         white-space: nowrap;
+
+        & tr:hover {
+            background-color: #f5f5f5;
+        }
     }
     & table {
         display: table;
-        border-collapse: collapse;
+
         border-spacing: 2px;
+        border-collapse: collapse;
+
         border-color: grey;
     }
     &__key {
+        margin-right: 3px;
         padding: 3px 5px;
+
+        white-space: nowrap;
+
+        color: black;
         border: 1px solid #bbb;
         border-radius: 3px;
-        white-space: nowrap;
-        margin-right: 3px;
-        color: black; 
     }
 }

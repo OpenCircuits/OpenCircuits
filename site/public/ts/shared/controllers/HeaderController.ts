@@ -75,54 +75,43 @@ export class HeaderController {
             $("#overlay").removeClass("invisible");
         });
 
-        $("#header-help-shortcuts-button").click(() => {
-            this.closeDropdowns();
-            $("#keyboard-shortcuts-popup").removeClass("invisible");
-            $("#overlay").removeClass("invisible");
-            $("#windows-option").click(function(){
-                this.setAttribute("aria-pressed","true");
-                $("mac-option").removeClass("selected")
-                $("#toggle-mac").addClass("hide");
-                $("#toggle").removeClass("hide");
-                $("#toggle-mac1").addClass("hide");
-                $("#toggle1").removeClass("hide");
-                $("#toggle-mac2").addClass("hide");
-                $("#toggle2").removeClass("hide");
-                $("#toggle-mac3").addClass("hide");
-                $("#toggle3").removeClass("hide");
-                $("#toggle-mac4").addClass("hide");
-                $("#toggle4").removeClass("hide");
-                $("#toggle-mac5").addClass("hide");
-                $("#toggle5").removeClass("hide");
-                $("#toggle-mac6").addClass("hide");
-                $("#toggle6").removeClass("hide");
-            })
-            
-            $("#mac-option").click(function(){
-                this.setAttribute("aria-pressed","true");
-                $("windows-option").removeClass("selected")
-                $("#toggle").addClass("hide");
-                $("#toggle-mac").removeClass("hide");
-                $("#toggle1").addClass("hide");
-                $("#toggle-mac1").removeClass("hide");
-                $("#toggle2").addClass("hide");
-                $("#toggle-mac2").removeClass("hide");
-                $("#toggle3").addClass("hide");
-                $("#toggle-mac3").removeClass("hide");
-                $("#toggle4").addClass("hide");
-                $("#toggle-mac4").removeClass("hide");
-                $("#toggle5").addClass("hide");
-                $("#toggle-mac5").removeClass("hide");
-                $("#toggle6").addClass("hide");
-                $("#toggle-mac6").removeClass("hide");
-            })
-        })
+        this.setupKeyboardShortcutsMenu();
 
         $("#overlay").click(() => {
             $("#quick-start-popup").addClass("invisible");
             $("#keyboard-shortcuts-popup").addClass("invisible");
             $("#overlay").addClass("invisible");
-        })
+        });
+    }
+
+    private setupKeyboardShortcutsMenu(): void {
+        function toggleWindows(): void {
+            $("#header-help-shortcuts-mac-option").removeClass("selected");
+            $("#header-help-shortcuts-win-option").addClass("selected");
+
+            $(".keyboardshortcuts__popup__toggle__win").removeClass("hide");
+            $(".keyboardshortcuts__popup__toggle__mac").addClass("hide");
+        }
+        function toggleMac(): void {
+            $("#header-help-shortcuts-win-option").removeClass("selected");
+            $("#header-help-shortcuts-mac-option").addClass("selected");
+
+            $(".keyboardshortcuts__popup__toggle__mac").removeClass("hide");
+            $(".keyboardshortcuts__popup__toggle__win").addClass("hide");
+        }
+
+        // Check if platform is Mac and set mac as selected if true
+        if (navigator.platform.indexOf("Mac") > -1)
+            toggleMac();
+
+        $("#header-help-shortcuts-button").click(() => {
+            this.closeDropdowns();
+            $("#keyboard-shortcuts-popup").removeClass("invisible");
+            $("#overlay").removeClass("invisible");
+
+            $("#header-help-shortcuts-win-option").click(toggleWindows);
+            $("#header-help-shortcuts-mac-option").click(toggleMac);
+        });
     }
 
     private closeDropdowns(): void {
