@@ -67,6 +67,7 @@ export class ICDesignerController extends DesignerController {
         const selectionTool = this.mainController.getSelectionTool();
 
         const ic = new IC(this.icdata);
+        ic.setPos(this.mainController.getCamera().getPos());
 
         this.hide();
 

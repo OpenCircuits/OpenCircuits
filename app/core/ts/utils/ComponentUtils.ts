@@ -1,12 +1,15 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
-import {IO_PORT_LINE_WIDTH} from "./Constants";
+import {IO_PORT_LINE_WIDTH,
+        EMPTY_CIRCUIT_MAX,
+        EMPTY_CIRCUIT_MIN} from "./Constants";
 
 import {Vector, V} from "Vector";
 import {Graph} from "math/Graph";
 import {Transform} from "math/Transform";
 import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
+import {Camera} from "math/Camera";
 
 import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
@@ -305,6 +308,30 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     const max = Vector.max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
+}
+
+/**
+ * Calculates camera position and zoom to fit objs to
+ * the camera's view with adjustable padding. If objs
+ * is empty, uses a default size.
+ *
+ * @return Tuple of desired camera position and zoom
+ */
+export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
+    const bbox = objs.length === 0
+        ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
+        : CircuitBoundingBox(objs);
+    const finalPos = bbox.getCenter();
+
+    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
+
+    // Determine which bbox dimension will limit zoom level
+    const xRatio = bbox.getWidth()/worldSize.x;
+    const yRatio = bbox.getHeight()/worldSize.y;
+    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+
+    return [finalPos, finalZoom];
 }
 
 // Creates a rectangle for the collision box for a port on the IC
