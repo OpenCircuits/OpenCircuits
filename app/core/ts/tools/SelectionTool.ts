@@ -1,17 +1,21 @@
-import {LEFT_MOUSE_BUTTON,
-        DELETE_KEY, BACKSPACE_KEY,
-        ESC_KEY, A_KEY, D_KEY, X_KEY} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, DELETE_KEY,
+        BACKSPACE_KEY, ESC_KEY,
+        A_KEY, D_KEY, F_KEY, X_KEY,
+        FIT_PADDING_RATIO} from "core/utils/Constants";
 import {Vector, V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Selectable} from "core/utils/Selectable";
 import {Input} from "core/utils/Input";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
+import {CullableObject} from "core/models/CullableObject";
 import {Wire} from "core/models/Wire";
 import {Component} from "core/models/Component";
 import {Node, isNode} from "core/models/Node";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {GetPath} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction"
@@ -23,6 +27,7 @@ import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {Tool} from "./Tool";
 import {DefaultTool} from "./DefaultTool";
@@ -163,7 +168,6 @@ export class SelectionTool extends DefaultTool {
     public onClick(input: Input, button: number): boolean {
         if (button !== LEFT_MOUSE_BUTTON)
             return false;
-
         const worldMousePos = this.camera.getWorldPos(input.getMousePos());
 
         let render = false;
@@ -172,7 +176,7 @@ export class SelectionTool extends DefaultTool {
         if (this.interactionHelper.click(input))
             return true;
 
-        // Clear selections if no shift key
+        // Clear selections if no shift keys
         if (!input.isShiftKeyDown()) {
             render = (this.selections.size > 0); // Render if selections were actually cleared
             this.action.add(CreateDeselectAllAction(this).execute());
@@ -202,10 +206,48 @@ export class SelectionTool extends DefaultTool {
         return render;
     }
 
+    public onDoubleClick(input: Input, button: number): boolean {
+        const worldMousePos = this.camera.getWorldPos(input.getMousePos());
+
+        let render = false;
+
+        // Clear selections if no shift keys
+        if (!input.isShiftKeyDown()) {
+            // Render if selections were actually cleared
+            render = (this.selections.size > 0);
+            this.action.add(CreateDeselectAllAction(this).execute());
+        }
+
+        const wires = this.designer.getWires().reverse();
+
+        // Check if a wire object was clicked
+        const wire = wires.find(o => o.isWithinSelectBounds(worldMousePos));
+        // If a wire is selected
+        if (wire) {
+            // Add CreateGroupSelectAction to this.action
+            this.action.add(CreateGroupSelectAction(this, GetPath(wire)).execute());
+            return true;
+        }
+        return render;
+    }
+
     public onKeyDown(input: Input, key: number): boolean {
         // If modifier key and a key are pressed, select all
         if (input.isModifierKeyDown() && key == A_KEY) {
             this.action.add(CreateGroupSelectAction(this, this.designer.getObjects()).execute());
+            return true;
+        }
+
+        // Fit to screen command
+        if (key === F_KEY) {
+            // Fit to selections, if any; otherwise, fit all CullableObjects
+            const objs = this.selections.size === 0
+                ? (this.designer.getObjects() as CullableObject[]).concat(this.designer.getWires())
+                : this.getSelections().filter(o => o instanceof CullableObject) as CullableObject[];
+
+            // Get tuple of final camera position and zoom
+            const finalCamera = GetCameraFit(this.camera, objs, FIT_PADDING_RATIO);
+            this.action.add(new MoveCameraAction(this.camera, finalCamera[0], finalCamera[1]).execute());
             return true;
         }
 
@@ -216,7 +258,6 @@ export class SelectionTool extends DefaultTool {
         if (input.isModifierKeyDown() && key == D_KEY) {
             const selections = Array.from(this.selections);
             const objs = selections.filter(o => o instanceof IOObject) as IOObject[];
-
             const action = new CopyGroupAction(this.designer, objs);
             const newObjs = action.getCopies();
             const comps = newObjs.getComponents();

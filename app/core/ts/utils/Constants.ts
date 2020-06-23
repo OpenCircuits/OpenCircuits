@@ -1,3 +1,5 @@
+import {V} from "Vector";
+
 export const DEBUG_CULLBOXES = false;
 export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;
@@ -63,6 +65,7 @@ export const DELETE_KEY = 46;
 export const A_KEY = 65;
 export const C_KEY = 67;
 export const D_KEY = 68;
+export const F_KEY = 70;
 export const V_KEY = 86;
 export const X_KEY = 88;
 export const Y_KEY = 89;
@@ -71,3 +74,7 @@ export const COMMAND_KEY = 91;
 export const META_KEY = 224;
 
 export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
+
+export const FIT_PADDING_RATIO = 1.2;
+export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
+export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
