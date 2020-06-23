@@ -4,34 +4,34 @@ import {SelectionPopupModule} from "./SelectionPopupModule";
 
 export abstract class NumberInputPopupModule extends SelectionPopupModule {
     protected count: HTMLInputElement;
-    protected previousCount = NaN;
+    protected previousCount: number;
 
     /**
-     * Sanitizes and clamps the user number input,
-     *  updates the displayed number if needed
+     * Gets the sanitized and clamped user number input
      * @return The cleaned input if the user entered a number,
      *          NaN if the new and previous count are both NaN
      */
-    public getInput(): number {
-        let countAsNumber = this.count.valueAsNumber || this.previousCount;
-
-        if (isNaN(countAsNumber)) {
-            this.count.value = "-";
+    private getInput(): number {
+        const countAsNumber = this.count.valueAsNumber || this.previousCount;
+        if (isNaN(countAsNumber))
             return NaN;
-        }
 
-        countAsNumber = Clamp(Math.round(countAsNumber), parseInt(this.count.min), parseInt(this.count.max));
-        this.count.value = countAsNumber.toString();
-        this.previousCount = countAsNumber;
-        return countAsNumber;
+        return Clamp(Math.round(countAsNumber), parseInt(this.count.min), parseInt(this.count.max));
     }
 
     public push(): void {
         const input = this.getInput();
-        if (!isNaN(input)) {
-            this.executeChangeAction(input);
-            this.circuitController.render();
+
+        if (isNaN(input)) {
+            this.count.value = "-";
+            return;
         }
+
+        this.count.value = input.toString();
+        this.previousCount = input;
+
+        this.executeChangeAction(input);
+        this.circuitController.render();
     }
 
     /**
