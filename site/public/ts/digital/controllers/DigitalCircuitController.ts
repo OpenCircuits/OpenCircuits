@@ -91,6 +91,10 @@ export class DigitalCircuitController extends MainDesignerController {
         this.itemNav.updateICSection(this.getDesigner().getICData());
     }
 
+    public getCopyController(): DigitalCopyController {
+        return this.copyController;
+    }
+
     public getDesigner(): DigitalCircuitDesigner {
         return this.designer;
     }
