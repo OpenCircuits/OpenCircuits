@@ -14,6 +14,7 @@ import {PositionPopupModule} from "site/shared/selectionpopup/PositionPopupModul
 
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
+import {CopyController} from "site/shared/controllers/CopyController";
 import {AnalogCircuitView} from "../views/AnalogCircuitView";
 
 export class AnalogCircuitController extends MainDesignerController {
@@ -46,6 +47,10 @@ export class AnalogCircuitController extends MainDesignerController {
 
     public async init(): Promise<void> {
         return await this.loginController.initAuthentication();
+    }
+
+    public getCopyController(): CopyController {
+        return undefined;
     }
 
     public getDesigner(): AnalogCircuitDesigner {

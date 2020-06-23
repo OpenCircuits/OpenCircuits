@@ -75,10 +75,43 @@ export class HeaderController {
             $("#overlay").removeClass("invisible");
         });
 
+        this.setupKeyboardShortcutsMenu();
+
         $("#overlay").click(() => {
             $("#quick-start-popup").addClass("invisible");
+            $("#keyboard-shortcuts-popup").addClass("invisible");
             $("#overlay").addClass("invisible");
-        })
+        });
+    }
+
+    private setupKeyboardShortcutsMenu(): void {
+        function toggleWindows(): void {
+            $("#header-help-shortcuts-mac-option").removeClass("selected");
+            $("#header-help-shortcuts-win-option").addClass("selected");
+
+            $(".keyboardshortcuts__popup__toggle__win").removeClass("hide");
+            $(".keyboardshortcuts__popup__toggle__mac").addClass("hide");
+        }
+        function toggleMac(): void {
+            $("#header-help-shortcuts-win-option").removeClass("selected");
+            $("#header-help-shortcuts-mac-option").addClass("selected");
+
+            $(".keyboardshortcuts__popup__toggle__mac").removeClass("hide");
+            $(".keyboardshortcuts__popup__toggle__win").addClass("hide");
+        }
+
+        // Check if platform is Mac and set mac as selected if true
+        if (navigator.platform.indexOf("Mac") > -1)
+            toggleMac();
+
+        $("#header-help-shortcuts-button").click(() => {
+            this.closeDropdowns();
+            $("#keyboard-shortcuts-popup").removeClass("invisible");
+            $("#overlay").removeClass("invisible");
+
+            $("#header-help-shortcuts-win-option").click(toggleWindows);
+            $("#header-help-shortcuts-mac-option").click(toggleMac);
+        });
     }
 
     private closeDropdowns(): void {

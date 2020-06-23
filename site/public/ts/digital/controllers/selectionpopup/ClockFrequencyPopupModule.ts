@@ -7,17 +7,16 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 
 import {Clock} from "digital/models/ioobjects/inputs/Clock";
 
-import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
+import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
-export class ClockFrequencyPopupModule extends SelectionPopupModule {
-    private input: HTMLInputElement;
+export class ClockFrequencyPopupModule extends NumberInputPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
         super(circuitController, $("div#popup-clock-delay-text"));
 
-        this.input = this.el.find("input#popup-clock-delay")[0] as HTMLInputElement;
-        this.input.onchange = () => this.push();
+        this.count = this.el.find("input#popup-clock-delay")[0] as HTMLInputElement;
+        this.count.onchange = () => this.push();
     }
 
     public pull(): void {
@@ -26,7 +25,7 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
                 .filter(o => o instanceof Clock)
                 .map(o => o as Clock);
 
-        // Only enable if there's exactly 1 type, so just Gates or just Muxes or just Decoders
+        // Only enable if there's only clocks
         const enable = selections.length > 0 && (selections.length == clocks.length);
 
         if (enable) {
@@ -36,21 +35,18 @@ export class ClockFrequencyPopupModule extends SelectionPopupModule {
 
             const same = counts.every((count) => count === counts[0]);
 
-            this.input.value = same ? counts[0].toString() : "";
-            this.input.placeholder = same ? "" : "-";
+            this.count.value = same ? counts[0].toString() : "";
+            this.count.placeholder = same ? "" : "-";
+            this.previousCount = same ? counts[0] : NaN;
         }
 
         this.setEnabled(enable);
     }
 
-    public push(): void {
+    public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Clock[];
-        const countAsNumber = this.input.valueAsNumber;
-
         this.circuitController.addAction(new GroupAction(
-            selections.map(c => new ClockFrequencyChangeAction(c, countAsNumber))
+            selections.map(c => new ClockFrequencyChangeAction(c, newCount))
         ).execute());
-
-        this.circuitController.render();
     }
 }
