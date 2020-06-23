@@ -50,26 +50,40 @@ export abstract class Wire extends CullableObject {
             const pos = this.p1.getWorldTargetPos();
             const dir = this.p1.getWorldDir();
             this.shape.setP1(pos);
-            this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
+            if(this.straight) {
+                this.shape.setC1(pos);
+            }
+            else {
+                this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
+            }
         }
         if (this.p2 != null) {
             const pos = this.p2.getWorldTargetPos();
             const dir = this.p2.getWorldDir();
             this.shape.setP2(pos);
-            this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
+            if(this.straight) {
+                this.shape.setC2(pos);
+            }
+            else {
+                this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
+            }
         }
     }
 
     public abstract split(): Node;
 
     public isWithinSelectBounds(v: Vector): boolean {
-        return BezierContains(this.getShape(), v);
+        //if(this.straight) {
+        //    return true;
+        //}
+        //else {
+            return BezierContains(this.getShape(), v);
+        //}
     }
 
     public setIsStraight(straight: boolean): void {
         if (straight == this.straight)
             return;
-
         this.straight = straight;
         this.onTransformChange();
     }
