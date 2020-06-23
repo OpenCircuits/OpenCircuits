@@ -135,12 +135,10 @@ export class ToolManager implements MouseListener, KeyboardListener {
     }
 
     public undo(): void {
-        //Command actionManager to undo an action
         this.actionManager.undo();
     }
 
     public redo(): void {
-        //Command actionManager to redo an action
         this.actionManager.redo();
     }
 
