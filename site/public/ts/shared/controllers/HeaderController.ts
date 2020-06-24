@@ -128,6 +128,11 @@ export class HeaderController {
 
             main.setLocked(!main.isLocked());
         });
+
+        $(".cookie__banner").click(() => {
+            const banner = document.getElementById("cookie-banner");
+            banner.classList.add("invisible");
+        });
     }
 
     protected async onLoadCircuit(main: MainDesignerController, file: File): Promise<void> {
