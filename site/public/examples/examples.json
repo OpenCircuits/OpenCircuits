@@ -9,6 +9,11 @@
             "name": "SR-Latch Gate Implementation",
             "file": "example2.circuit",
             "thumbnail": "./img/thumbnails/example2.png"
-        }
+        },
+	{
+            "name": "Full Adder Circuit",
+            "file": "Full Adder Circuit.circuit",
+            "thumbnail": "./img/thumbnails/example2.png"
+	}
     ]
 }
