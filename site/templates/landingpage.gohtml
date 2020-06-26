@@ -1,82 +1,114 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8"/>
+    <head>
+        <meta charset="utf-8"/>
 
-    <!-- Primary Meta Tags -->
-    <title>Open Circuits | Home</title>
-    <meta name="title" content="OpenCircuits — free online digital circuit designer">
-    <meta name="Description" content="Make circuits from the comfort of your brower with Opencircuits">
+        <!-- Primary Meta Tags -->
+        <title>Open Circuits | Home</title>
+        <meta name="title" content="OpenCircuits — free online digital circuit designer">
+        <meta name="Description" content="Make circuits from the comfort of your browser with Opencircuits">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://opencircuits.io/">
-    <meta property="og:title" content="OpenCircuits — free online digital circuit designer">
-    <meta property="og:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
-    <meta property="og:image" content="img/external_image.png">
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://opencircuits.io/">
+        <meta property="og:title" content="OpenCircuits — free online digital circuit designer">
+        <meta property="og:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
+        <meta property="og:image" content="img/external_image.png">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://opencircuits.io/">
-    <meta property="twitter:title" content="OpenCircuits — free online digital circuit designer">
-    <meta property="twitter:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
-    <meta property="twitter:image" content="external_image.png">
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="https://opencircuits.io/">
+        <meta property="twitter:title" content="OpenCircuits — free online digital circuit designer">
+        <meta property="twitter:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
+        <meta property="twitter:image" content="external_image.png">
 
-    <meta name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
-    <meta name="theme-color" content="#999"/>
+        <meta name="viewport"
+                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+        <meta name="theme-color" content="#999"/>
 
-    <link rel="stylesheet" href="css/landingpage.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-    <link rel="manifest" href="img/manifest.json">
-    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
-</head>
+        <link rel="stylesheet" href="css/landingpage.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+        <link rel="manifest" href="img/manifest.json">
+        <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
+    </head>
 
-<div id="navbar">
-    <a href="https://github.com/OpenCircuits/OpenCircuits/" target="_blank">
-        <img id="github" class="navbar_github" src="img/icons/github.svg" height="100%" alt="GitHub logo"/>
-    </a>
-    <a id="home-link" class="navbar_home" href = "/home"> Home </a>
-    <a id="about-link" class="navbar_about" href = "/home/about" > About </a> 
-</div>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="img/icons/logo.svg" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarsExample07">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/about">About <span class="sr-only">(current)</span></a>
+                        </li>
+                    </ul>
+                    <div class="form-inline my-2 my-md-0">
+                        <button title="Sign in"  class="btn btn-outline-light">Sign In</button>
+                        <button title="Sign out" class="btn btn-outline-light hide">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-<body>
-    <div id = "container">
-        <button class = "buttons" id="bigbutton1" onclick="window.location.href = '../';" target="_blank">
-            <img id = "logo" src="img/icons/logo.svg">
-        </button>	
-        <button class = "buttons" id="bigbutton2" onclick="window.location.href = '../analog';" target="_blank">
-            <img id = "analog_logo" src="img/analog/icons/logo.svg">
-        </button>
+        <main role="main">
+            <div class="container-fluid bg-secondary">
+                <div class="row">
+                    <h2>The free, easy to use, circuit designer and simulator.</h2>
+                </div>
+                <div class="row">
 
-        <svg id = "wire1" width="300" height="30"></svg>
-        <svg id = "wire2" width="300" height="30"></svg>
-        <svg id = "wire3" width="150" height="30"></svg>
+                </div>
+            </div>
+        </main>
 
-        <img id = "orgate" src="img/icons/gates/orgate.svg">
-        <p class = "desc" id = "default-text">Welcome to OpenCircuits, a free online circuit builder!</p>
-        <p class = "desc" id = "dig-text">Use Boolean logic gates, multiplexers, and other advanced components</p>
-        <p class = "desc" id = "ana-text">Simulate physical circuits to manipulate current and voltage over time</p>
-    </div>
+        {{/* <div id="container">
+            <button class = "buttons" id="bigbutton1" onclick="window.location.href = '../';" target="_blank">
+                <img id = "logo" src="img/icons/logo.svg">
+            </button>
+            <button class = "buttons" id="bigbutton2" onclick="window.location.href = '../analog';" target="_blank">
+                <img id = "analog_logo" src="img/analog/icons/logo.svg">
+            </button>
 
-    <div id = "container2">
-        <h2>Key Features</h2>
-        <ul>
-            <li>Design and build simple or complex circuits</li>
-            <li>Create a circuit and turn it into an IC for easy reuse</li>
-            <li>Save and load circuits to your hard drive</li>
-            <li>Smooth and lag-free, even for complex circuits</li>
-            <li>LEDs and 7-segment-displays</li>
-            <li>Keyboard and mouse gates for interactive circuits</li>
-            <li>Runs on any device with ES6 support</li>
-            <li>Can be used by professors, students, and hobbyists alike</li>
-            <li>Open-source and completely free to use</li>
-        </ul>
-    </div>
+            <svg id = "wire1" width="300" height="30"></svg>
+            <svg id = "wire2" width="300" height="30"></svg>
+            <svg id = "wire3" width="150" height="30"></svg>
 
-</body>
+            <img id = "orgate" src="img/icons/gates/orgate.svg">
+            <p class = "desc" id = "default-text">Welcome to OpenCircuits, a free online circuit builder!</p>
+            <p class = "desc" id = "dig-text">Use Boolean logic gates, multiplexers, and other advanced components</p>
+            <p class = "desc" id = "ana-text">Simulate physical circuits to manipulate current and voltage over time</p>
+        </div>
+
+        <div id = "container2">
+            <h2>Key Features</h2>
+            <ul>
+                <li>Design and build simple or complex circuits</li>
+                <li>Create a circuit and turn it into an IC for easy reuse</li>
+                <li>Save and load circuits to your hard drive</li>
+                <li>Smooth and lag-free, even for complex circuits</li>
+                <li>LEDs and 7-segment-displays</li>
+                <li>Keyboard and mouse gates for interactive circuits</li>
+                <li>Runs on any device with ES6 support</li>
+                <li>Can be used by professors, students, and hobbyists alike</li>
+                <li>Open-source and completely free to use</li>
+            </ul>
+        </div> */}}
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </body>
 
 </html>

@@ -1,148 +1,170 @@
-@import '_navbar';
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'utils', 'theme';
 
 body {
-    background-image: url(../img/grid_square.png);
-    background-repeat: repeat;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    color: black;
-}
+    font-family: Arial, sans-serif;
 
-#home-link { color: white; }
+    overflow: hidden;
 
-#container {
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    width: 1300px;
-    height: 500px;
-    transform: translate(-50%,0%);
-}
-
-.buttons {
-    position: absolute;
-    left: 0px;
-    
-    width: 350px;
-    height: 120px;
-
-    cursor: pointer;
-
-    border-radius: 25px;
-    border: 2px solid white;
-    background-color: #151515;
-}
-
-#bigbutton1 {
-    top: 110px;
-}
-
-.buttons:hover ~ #wire3 {
-    background-image: linear-gradient(to right, rgb(60,172,242), rgb(60,172,242), rgba(0,0,0,0));
-}
-
-.buttons:hover ~ #default-text {
-    color: transparent;
-}
-
-#bigbutton1:hover ~ #wire1 {
-    background-color: rgb(60,172,242);
-}
-
-#bigbutton1:hover ~ #dig-text {
-    color: black;
-}
-
-#bigbutton2 {
-    top: 270px;
-}
-
-#bigbutton2:hover ~ #wire2 {
-    background: rgb(60,172,242);
-}
-
-#bigbutton2:hover ~ #ana-text {
-    color: black;
-}
-
-#logo {
-    width: 200px;
-}
-
-#analog_logo {
-    width: 254px;
-}
-
-#orgate {
-    position: absolute;
-    left: 400px;
-    width: auto;
-    height: 500px;
-}
-
-.desc{
-    position: absolute;
-    right: 0px;
-    top: 50%;
     margin: 0;
-    transform: translate(0%, -50%);
-    font-size: 30px;
-    width: 340px;
+    padding: 0;
+
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+
+    color: #fff;
+    outline: none;
+    background-color: $background-color;
+
+    -webkit-touch-callout: none;
+     -khtml-user-select: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
 }
-
-#dig-text {
-    color: transparent;
-}
-
-#ana-text {
-    color: transparent;
-}
-
-#default-text {
-    display: block;
-}
-
-#wire1 {
-    position: absolute;
-    left: 250px;
-    top: 155px;
-    background: white;
-    z-index: -100;
-}
-
-#wire2 {
-    position: absolute;
-    left: 250px;
-    top: 315px;
-    background: white;
-    z-index: -100;
-}
-
-#wire3 {
-    position: absolute;
-    left: 800px;
-    top: 235px;
-    background: linear-gradient(to right, white, white,  rgba(0,0,0,0));
-    z-index: -100;
-}
-
-// =========================== KEY FEATURES ===========================
-
-#container2 {
-    position: absolute;
-    top: 600px;
-    left: 50%;
-    width: 800px;
-    height: 500px;
-    transform: translate(-50%,0%);
-    
-    font-size: 25px;
-}
-
-
-
-// #tutorials p {
-//     position: absolute;
-//     top: 50%;
-//     left: 50%;
-//     transform: translate(-50%,-50%);
+// body {
+//     // background-image: url(../img/grid_square.png);
+//     // background-repeat: repeat;
+//     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+//     color: black;
 // }
+
+// #home-link { color: white; }
+
+// #container {
+//     position: absolute;
+//     top: 100px;
+//     left: 50%;
+//     width: 1300px;
+//     height: 500px;
+//     transform: translate(-50%,0%);
+// }
+
+// .buttons {
+//     position: absolute;
+//     left: 0px;
+
+//     width: 350px;
+//     height: 120px;
+
+//     cursor: pointer;
+
+//     border-radius: 25px;
+//     border: 2px solid white;
+//     background-color: #151515;
+// }
+
+// #bigbutton1 {
+//     top: 110px;
+// }
+
+// .buttons:hover ~ #wire3 {
+//     background-image: linear-gradient(to right, rgb(60,172,242), rgb(60,172,242), rgba(0,0,0,0));
+// }
+
+// .buttons:hover ~ #default-text {
+//     color: transparent;
+// }
+
+// #bigbutton1:hover ~ #wire1 {
+//     background-color: rgb(60,172,242);
+// }
+
+// #bigbutton1:hover ~ #dig-text {
+//     color: black;
+// }
+
+// #bigbutton2 {
+//     top: 270px;
+// }
+
+// #bigbutton2:hover ~ #wire2 {
+//     background: rgb(60,172,242);
+// }
+
+// #bigbutton2:hover ~ #ana-text {
+//     color: black;
+// }
+
+// #logo {
+//     width: 200px;
+// }
+
+// #analog_logo {
+//     width: 254px;
+// }
+
+// #orgate {
+//     position: absolute;
+//     left: 400px;
+//     width: auto;
+//     height: 500px;
+// }
+
+// .desc{
+//     position: absolute;
+//     right: 0px;
+//     top: 50%;
+//     margin: 0;
+//     transform: translate(0%, -50%);
+//     font-size: 30px;
+//     width: 340px;
+// }
+
+// #dig-text {
+//     color: transparent;
+// }
+
+// #ana-text {
+//     color: transparent;
+// }
+
+// #default-text {
+//     display: block;
+// }
+
+// #wire1 {
+//     position: absolute;
+//     left: 250px;
+//     top: 155px;
+//     background: white;
+//     z-index: -100;
+// }
+
+// #wire2 {
+//     position: absolute;
+//     left: 250px;
+//     top: 315px;
+//     background: white;
+//     z-index: -100;
+// }
+
+// #wire3 {
+//     position: absolute;
+//     left: 800px;
+//     top: 235px;
+//     background: linear-gradient(to right, white, white,  rgba(0,0,0,0));
+//     z-index: -100;
+// }
+
+// // =========================== KEY FEATURES ===========================
+
+// #container2 {
+//     position: absolute;
+//     top: 600px;
+//     left: 50%;
+//     width: 800px;
+//     height: 500px;
+//     transform: translate(-50%,0%);
+
+//     font-size: 25px;
+// }
+
+
+
+// // #tutorials p {
+// //     position: absolute;
+// //     top: 50%;
+// //     left: 50%;
+// //     transform: translate(-50%,-50%);
+// // }
