@@ -68,8 +68,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new SegmentCountPopupModule(this),
         );
 
-        this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
+        this.contextMenu = new ContextMenuController(this);
         this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
@@ -89,6 +89,10 @@ export class DigitalCircuitController extends MainDesignerController {
 
     public updateICs(): void {
         this.itemNav.updateICSection(this.getDesigner().getICData());
+    }
+
+    public getCopyController(): DigitalCopyController {
+        return this.copyController;
     }
 
     public getDesigner(): DigitalCircuitDesigner {
