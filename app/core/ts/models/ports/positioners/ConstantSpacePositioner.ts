@@ -15,7 +15,7 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
     }
 
     /**
-     * Port positiong for constant spacing that doesn't
+     * Port positioning for constant spacing that doesn't
      *  depend on the parent's size
      *
      * @param arr The array of input ports

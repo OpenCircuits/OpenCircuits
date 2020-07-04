@@ -9,7 +9,7 @@ import {serializable} from "serialeazy";
 export class ANDGatePositioner extends Positioner<InputPort> {
 
     /**
-     * Port positiong for AND gates along the
+     * Port positioning for AND gates along the
      *
      * @param arr The array of ports (either in or out ports)
      */
