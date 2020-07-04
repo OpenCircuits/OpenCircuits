@@ -1,8 +1,9 @@
+import {serializable} from "serialeazy";
+
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {serializable} from "serialeazy";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
@@ -17,8 +18,8 @@ export class Encoder extends DigitalComponent {
         super(new ClampedValue(4,2,Math.pow(2,8)),
               new ClampedValue(2,1,8),
               V(DEFAULT_SIZE, DEFAULT_SIZE*2),
-              new ConstantSpacePositioner<InputPort>(DEFAULT_SIZE/2),
-              new ConstantSpacePositioner<OutputPort>(DEFAULT_SIZE/2));
+              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE),
+              new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
     }
 
     public activate(): void {
@@ -35,12 +36,6 @@ export class Encoder extends DigitalComponent {
         bits.forEach((bit, i) => {
             super.activate(bit == "1", i);
         });
-    }
-
-    public setOutputPortCount(val: number): void {
-        this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*Math.pow(2, val)));
-        super.setInputPortCount(Math.pow(2, val));
-        super.setOutputPortCount(val);
     }
 
     public getDisplayName(): string {
