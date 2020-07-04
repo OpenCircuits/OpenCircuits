@@ -10,6 +10,10 @@ import {serializable} from "serialeazy";
 @serializable("QuadraticCurvePositioner")
 export class QuadraticCurvePositioner extends Positioner<InputPort> {
 
+    public constructor() {
+        super("left");
+    }
+
     /**
      * Port positioning for OR/XOR gates along the quadratic curves
      *

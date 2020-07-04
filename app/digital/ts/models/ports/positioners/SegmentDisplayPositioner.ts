@@ -5,9 +5,10 @@ import {IO_PORT_RADIUS} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {InputPort} from "../InputPort";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 
 @serializable("SegmentDisplayPositioner")
-export class SegmentDisplayPositioner {
+export class SegmentDisplayPositioner extends Positioner<InputPort> {
 
     /**
      * Port positioning for segment displays for different inputs
