@@ -4,15 +4,15 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
-import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
-
-import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
+import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 import {Decoder} from "digital/models/ioobjects/other/Decoder";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
+import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
 export class InputCountPopupModule extends NumberInputPopupModule {
@@ -68,9 +68,9 @@ export class InputCountPopupModule extends NumberInputPopupModule {
                 if (o instanceof Gate && !(o instanceof BUFGate))
                     return new InputPortChangeAction(o,  newCount);
                 else if (o instanceof Mux)
-                    return new SelectPortChangeAction(o, newCount);
+                    return new MuxPortChangeAction(o, newCount);
                 else // Decoder
-                    return new InputPortChangeAction(o,  newCount);
+                    return new CoderPortChangeAction(o,  newCount);
             })
         ).execute());
     }
