@@ -1,5 +1,7 @@
 import {V} from "Vector";
 
+export const SAVE_VERSION = "2.1";
+
 export const DEBUG_CULLBOXES = false;
 export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;

@@ -1,5 +1,6 @@
 import $ from "jquery";
 
+import {SAVE_VERSION} from "core/utils/Constants";
 import {OVERWRITE_CIRCUIT_MESSAGE} from "../utils/Constants";
 import {SAVED} from "core/utils/Config";
 
@@ -51,7 +52,7 @@ export class SideNavController {
                     .withId(id)
                     .withName(name)
                     .withDesc(desc)
-                    .withVersion("1.1")
+                    .withVersion(SAVE_VERSION)
                     .build();
             exampleCircuit.onclick = () => RemoteController.LoadExampleCircuit(data, (c) => this.loadCircuit(c));
         }
