@@ -80,4 +80,15 @@ describe("SRFlipFlop", () => {
 
         expect.anything();
     });
+    test("PRE and CLR", () => {
+        PRE.activate(ON);
+        expectState(ON);
+        PRE.activate(OFF);
+        expectState(ON);
+
+        CLR.activate(ON);
+        expectState(OFF);
+        CLR.activate(OFF);
+        expectState(OFF);
+    });
 });
