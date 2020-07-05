@@ -14,6 +14,7 @@ import {SelectionTool} from "core/tools/SelectionTool";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
+import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 
@@ -122,8 +123,8 @@ describe("Selection Tool", () => {
 
         test("Click to Select Wire", () => {
             const obj1 = new Switch();
-            const obj2 = new ANDGate();
-            obj2.setPos(V(200, -12.5));
+            const obj2 = new BUFGate();
+            obj2.setPos(V(200, 0));
 
             Place(designer, [obj1, obj2]);
             const wire = Connect(obj1, 0, obj2, 0).getWire();
