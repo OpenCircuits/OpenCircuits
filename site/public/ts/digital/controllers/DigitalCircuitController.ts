@@ -30,6 +30,7 @@ import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
 import {DigitalItemNavController} from "./DigitalItemNavController";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {VersionConflictResolver} from "../utils/DigitalVersionConflictResolver";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -80,6 +81,8 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: string): CircuitMetadata {
+        VersionConflictResolver(contents);
+
         const metadata = super.loadCircuit(contents);
 
         this.itemNav.updateICSection(this.getDesigner().getICData());

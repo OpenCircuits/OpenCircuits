@@ -7,8 +7,12 @@ import {serializable} from "serialeazy";
 @serializable("ThreePortPositioner")
 export class ThreePortPositioner extends Positioner<InputPort> {
 
+    public constructor() {
+        super("left");
+    }
+
     /**
-     * Port positiong SR Latch/JK + SR Flipflop inputs
+     * Port positioning SR Latch/JK + SR Flipflop inputs
      *  It nudges the endpoints closer together slightly
      *
      * @param arr The array of ports (either in or out ports)

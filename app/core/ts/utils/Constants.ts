@@ -1,5 +1,7 @@
 import {V} from "Vector";
 
+export const SAVE_VERSION = "2.1";
+
 export const DEBUG_CULLBOXES = false;
 export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;
@@ -24,7 +26,7 @@ export const MULTIPLEXER_HEIGHT_OFFSET = 18;
 
 export const DRAG_TIME = 50;
 
-export const IO_PORT_LENGTH = 60;
+export const IO_PORT_LENGTH = 35;
 export const IO_PORT_RADIUS = 7;
 export const IO_PORT_SELECT_RADIUS = IO_PORT_RADIUS + 10;
 export const IO_PORT_BORDER_WIDTH = 1;

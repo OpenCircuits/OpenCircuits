@@ -3,7 +3,7 @@ import $ from "jquery";
 import {ClampedValue} from "math/ClampedValue";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
+import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
 import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 
@@ -52,7 +52,7 @@ export class OutputCountPopupModule extends NumberInputPopupModule {
     public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Encoder[];
         this.circuitController.addAction(new GroupAction(
-            selections.map(o => new OutputPortChangeAction(o, newCount))
+            selections.map(o => new CoderPortChangeAction(o, newCount))
         ).execute());
     }
 }
