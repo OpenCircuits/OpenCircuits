@@ -7,8 +7,8 @@ import {Positioner, Dir} from "core/models/ports/positioners/Positioner";
 export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
     private spacing: number;
 
-    public constructor(dir?: Dir, spacing?: number) {
-        super(dir);
+    public constructor(dir?: Dir, spacing?: number, shortenEdges: boolean = true) {
+        super(dir, undefined, shortenEdges);
         this.spacing = spacing;
     }
 

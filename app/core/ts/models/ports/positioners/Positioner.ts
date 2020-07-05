@@ -19,16 +19,25 @@ export class Positioner<T extends Port> {
 
     private dir: Vector;
     private length: number;
+    private shortenEdges: boolean;
 
-    public constructor(dir?: Dir, length: number = IO_PORT_LENGTH) {
+    public constructor(dir?: Dir, length: number = IO_PORT_LENGTH, shortenEdges: boolean = true) {
         this.dir = Positioner.DIRS.get(dir) || V();
         this.length = length;
+        this.shortenEdges = shortenEdges;
     }
 
-    protected calcSpacingPos(i: number, numPorts: number, size: number, shortenEdges: boolean = true): number {
-        let l = size/2 * (i - numPorts/2 + 0.5);
-        if (shortenEdges && i === 0) l++;
-        if (shortenEdges && i == numPorts-1) l--;
+    protected calcSpacingPos(i: number, numPorts: number, size: number): number {
+        const midpoint = (numPorts - 1) / 2;
+
+        // Shift index over by the midpoint, which maps the indices to be centered around the origin
+        //  then multiply by a scale (size) to expand it about the origin
+        // AKA: mapping i = [0, N-1] to [-(N-1)/2, (N-1)/2]
+        let l = size/2 * (i - midpoint);
+
+        if (this.shortenEdges && i === 0) l++;
+        if (this.shortenEdges && i == numPorts-1) l--;
+
         return l;
     }
 

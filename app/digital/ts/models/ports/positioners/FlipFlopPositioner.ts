@@ -18,8 +18,8 @@ export class FlipFlopPositioner extends Positioner<InputPort> {
         this.numInputs = numInputs;
     }
 
-    protected calcSpacingPos(i: number, numPorts: number, size: number, shortenEdges: boolean = true): number {
-        return super.calcSpacingPos(i, numPorts, size, shortenEdges) * (this.numInputs == 3 ? 3/4 : 1);
+    protected calcSpacingPos(i: number, numPorts: number, size: number): number {
+        return super.calcSpacingPos(i, numPorts, size) * (this.numInputs == 3 ? 3/4 : 1);
     }
 
     /**
