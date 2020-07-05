@@ -2,26 +2,26 @@ import {V} from "Vector";
 import {serializable} from "serialeazy";
 
 import {FlipFlop} from "./FlipFlop";
+import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
 
 @serializable("DFlipFlop")
 export class DFlipFlop extends FlipFlop {
+    public static readonly DATA_PORT = 2;
 
     public constructor() {
-        super(2, V(80, 80));
-        this.getInputPort(0).setName(">");
-        this.getInputPort(1).setName("D");
+        super(1, V(100, 120), new FlipFlopPositioner(2));
+
+        this.getInputPort(DFlipFlop.DATA_PORT).setName("D");
     }
 
     // @Override
-    public activate(): void {
-        this.lastClock = this.clock;
-        this.clock = this.inputs.get(0).getIsOn();
-        const data = this.inputs.get(1).getIsOn();
-        if (this.clock && !this.lastClock)
-            this.state = data;
+    protected getNextState(): boolean {
+        const data = this.inputs.get(DFlipFlop.DATA_PORT).getIsOn();
 
-        super.activate(this.state, 1);
-        super.activate(!this.state, 0);
+        if (this.up())
+            return data;
+
+        return this.state;
     }
 
     public getDisplayName(): string {
