@@ -10,16 +10,9 @@ import {InputPort} from "../InputPort";
 
 @serializable("FlipFlopPositioner")
 export class FlipFlopPositioner extends Positioner<InputPort> {
-    private numInputs: number;
 
     public constructor(numInputs?: number) {
-        super("left");
-
-        this.numInputs = numInputs;
-    }
-
-    protected calcSpacingPos(i: number, numPorts: number, size: number): number {
-        return super.calcSpacingPos(i, numPorts, size) * (this.numInputs == 3 ? 3/4 : 1);
+        super("left", (numInputs == 3 ? 3/4 : 1));
     }
 
     /**

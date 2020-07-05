@@ -8,7 +8,7 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
     private spacing: number;
 
     public constructor(dir?: Dir, spacing?: number, shortenEdges: boolean = true) {
-        super(dir, undefined, shortenEdges);
+        super(dir, undefined, undefined, shortenEdges);
         this.spacing = spacing;
     }
 

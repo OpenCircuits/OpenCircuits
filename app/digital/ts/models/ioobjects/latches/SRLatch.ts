@@ -1,13 +1,15 @@
-import {Latch} from "./Latch";
-
-import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 import {serializable} from "serialeazy";
+
+import {Positioner} from "core/models/ports/positioners/Positioner";
+import {InputPort} from "digital/models/ports/InputPort";
+
+import {Latch} from "./Latch";
 
 @serializable("SRLatch")
 export class SRLatch extends Latch {
 
     public constructor() {
-        super(3, new ThreePortPositioner());
+        super(3, new Positioner<InputPort>("left", 3/4));
 
         this.getInputPort(0).setName("R");
         this.getInputPort(1).setName(">");

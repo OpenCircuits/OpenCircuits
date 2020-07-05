@@ -18,11 +18,13 @@ export class Positioner<T extends Port> {
     ]);
 
     private dir: Vector;
+    private scale: number;
     private length: number;
     private shortenEdges: boolean;
 
-    public constructor(dir?: Dir, length: number = IO_PORT_LENGTH, shortenEdges: boolean = true) {
+    public constructor(dir?: Dir, scale: number = 1, length: number = IO_PORT_LENGTH, shortenEdges: boolean = true) {
         this.dir = Positioner.DIRS.get(dir) || V();
+        this.scale = scale;
         this.length = length;
         this.shortenEdges = shortenEdges;
     }
@@ -33,7 +35,7 @@ export class Positioner<T extends Port> {
         // Shift index over by the midpoint, which maps the indices to be centered around the origin
         //  then multiply by a scale (size) to expand it about the origin
         // AKA: mapping i = [0, N-1] to [-(N-1)/2, (N-1)/2]
-        let l = size/2 * (i - midpoint);
+        let l = this.scale * size/2 * (i - midpoint);
 
         if (this.shortenEdges && i === 0) l++;
         if (this.shortenEdges && i == numPorts-1) l--;
