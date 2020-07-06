@@ -81,7 +81,7 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: string): CircuitMetadata {
-        VersionConflictResolver(contents);
+        contents = VersionConflictResolver(contents);
 
         const metadata = super.loadCircuit(contents);
 
