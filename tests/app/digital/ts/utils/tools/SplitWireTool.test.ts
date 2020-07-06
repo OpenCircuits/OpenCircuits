@@ -1,4 +1,5 @@
 import "jest";
+import "test/helpers/Extensions";
 
 import {V} from "Vector";
 
