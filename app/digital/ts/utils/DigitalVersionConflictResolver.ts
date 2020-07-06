@@ -1,19 +1,19 @@
 import {serializable, addCustomBehavior} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE, IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Circuit} from "core/models/Circuit";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
-import {Multiplexer, Demultiplexer, ANDGate} from "digital/models/ioobjects";
+import {Multiplexer, Demultiplexer, ANDGate, SegmentDisplay} from "digital/models/ioobjects";
 import {OutputPort} from "digital/models/ports/OutputPort";
 import {InputPort} from "digital/models/ports/InputPort";
 
 class Blank {}
 
-export function VersionConflictResolver(contents: string): void {
-    const circuit = JSON.parse(contents) as Circuit;
+export function VersionConflictResolver(contents: string | Circuit): void {
+    const circuit = (typeof(contents) == "string" ? JSON.parse(contents) as Circuit : contents);
 
     const v = parseFloat(circuit.metadata.version);
 
@@ -44,8 +44,16 @@ export function VersionConflictResolver(contents: string): void {
                 obj["inputs"].updatePortPositions();
             }
         });
+        addCustomBehavior<SegmentDisplay>("SegmentDisplay", {
+            customDeserialization: (s, obj, data, refs, root) => {
+                s.defaultDeserialize(obj, data, refs, root);
+                obj["inputs"]["positioner"] = new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false);
+                obj["inputs"].updatePortPositions();
+            }
+        });
         serializable("MuxPositioner", {customDeserialization: () => {}})(Blank);
         serializable("MuxSinglePortPositioner", {customDeserialization: () => {}})(Blank);
         serializable("ANDGatePositioner", {customDeserialization: () => {}})(Blank);
+        serializable("SegmentDisplayPositioner", {customDeserialization: () => {}})(Blank);
     }
 }
