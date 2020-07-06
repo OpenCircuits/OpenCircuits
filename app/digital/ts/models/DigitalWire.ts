@@ -2,9 +2,11 @@ import {serializable, serialize} from "serialeazy";
 
 import {Wire} from "core/models/Wire";
 
-import {DigitalComponent} from "./DigitalComponent";
+import {DigitalComponent} from "./index";
+
 import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
+
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
 @serializable("DigitalWire")

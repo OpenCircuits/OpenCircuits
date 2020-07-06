@@ -9,8 +9,8 @@ import {Port} from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalCircuitDesigner} from "./DigitalCircuitDesigner";
-import {DigitalWire} from "./DigitalWire";
+import {DigitalWire, DigitalCircuitDesigner} from "./index";
+
 import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
