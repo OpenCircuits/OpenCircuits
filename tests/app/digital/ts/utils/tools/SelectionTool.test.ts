@@ -16,11 +16,13 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
 
 import {Place, Connect} from "test/helpers/Helpers";
+
 
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
@@ -131,6 +133,30 @@ describe("Selection Tool", () => {
             input.click(V(100, 0));
             expect(selections().length).toBe(1);
             expect(selections()).toContain(wire);
+        });
+
+        test("Click to Select Straight Horizontal Wire", () => {
+            const obj1 = new Switch();
+            const obj2 = new LED();
+            obj1.setPos(V(-5, 2));
+
+            Place(designer, [obj1, obj2]);
+            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+
+            input.click(V(-1, 2));
+            expect(selections().length).toBe(1);
+        });
+
+        test("Click to Select Straight Vertical Wire", () => {
+            const obj1 = new Switch();
+            const obj2 = new LED();
+            obj2.setPos(V(1.2, -4));
+
+            Place(designer, [obj1, obj2]);
+            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+
+            input.click(V(1.2, -0.5));
+            expect(selections().length).toBe(1);
         });
 
         test("Select then Delete ANDGate", () => {
