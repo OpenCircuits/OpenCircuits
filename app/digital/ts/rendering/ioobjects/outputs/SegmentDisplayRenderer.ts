@@ -19,12 +19,12 @@ import {Images} from "digital/utils/Images";
 import {Line} from "core/rendering/shapes/Line";
 
 export const SegmentDisplayRenderer = (() => {
-   
+
     return {
         render(renderer: Renderer, _: Camera, display: SegmentDisplay, selected: boolean): void {
             const transform = display.getTransform();
 
-            const size = transform.getSize();
+            const size = transform.getSize().sub(DEFAULT_BORDER_WIDTH);
 
             // Draw background
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
@@ -34,7 +34,7 @@ export const SegmentDisplayRenderer = (() => {
 
             const p1 = display.getPorts()[0].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
             const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
-            renderer.draw(new Line(p1, p2), style);            
+            renderer.draw(new Line(p1, p2), style);
 
             // Draw lights
             const segments = display.getSegments();

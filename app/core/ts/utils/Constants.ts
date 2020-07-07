@@ -1,8 +1,11 @@
 import {V} from "Vector";
 
+export const SAVE_VERSION = "2.1";
+
 export const DEBUG_CULLBOXES = false;
 export const DEBUG_PRESSABLE_BOUNDS = false;
 export const DEBUG_SELECTION_BOUNDS = false;
+export const DEBUG_NO_FILL = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);
@@ -11,10 +14,10 @@ export const WIRE_NEWTON_ITERATIONS = 5;
 
 export const DEFAULT_SIZE = 50;
 export const GRID_SIZE    = 50;
-export const DEFAULT_FILL_COLOR    = "#ffffff";
+export const DEFAULT_FILL_COLOR    = (DEBUG_NO_FILL ? undefined : "#ffffff");
 export const DEFAULT_BORDER_COLOR  = "#000000";
 export const DEFAULT_ON_COLOR      = "#3cacf2";
-export const SELECTED_FILL_COLOR   = "#1cff3e";
+export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
 export const DEFAULT_BORDER_WIDTH = 2;
@@ -24,7 +27,7 @@ export const MULTIPLEXER_HEIGHT_OFFSET = 18;
 
 export const DRAG_TIME = 50;
 
-export const IO_PORT_LENGTH = 60;
+export const IO_PORT_LENGTH = 35;
 export const IO_PORT_RADIUS = 7;
 export const IO_PORT_SELECT_RADIUS = IO_PORT_RADIUS + 10;
 export const IO_PORT_BORDER_WIDTH = 1;
