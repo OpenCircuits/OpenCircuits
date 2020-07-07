@@ -1,8 +1,11 @@
 import "jest";
 
+import "test/helpers/Extensions";
+
 import {SHIFT_KEY,
         DELETE_KEY,
-        BACKSPACE_KEY} from "core/utils/Constants";
+        BACKSPACE_KEY,
+        IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -17,6 +20,7 @@ import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
+import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
@@ -132,6 +136,42 @@ describe("Selection Tool", () => {
             input.click(V(100, 0));
             expect(selections().length).toBe(1);
             expect(selections()).toContain(wire);
+        });
+
+        test("Click to Select Straight Horizontal Wire", () => {
+            const obj1 = new Switch();
+            const obj2 = new BUFGate();
+
+            // Move obj1 s.t. the Port is on the origin
+            obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
+            expect(obj1.getOutputPortPos(0)).toApproximatelyEqual(V(0, 0));
+
+            obj2.setPos(V(200, 0));
+
+            Place(designer, [obj1, obj2]);
+            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+
+            input.click(V(20, 0));
+            expect(selections().length).toBe(1);
+        });
+
+        test("Click to Select Straight Vertical Wire", () => {
+            const obj1 = new Switch();
+            const obj2 = new BUFGate();
+
+            // Move obj1 s.t. the Port is on the origin
+            obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
+            expect(obj1.getOutputPortPos(0)).toApproximatelyEqual(V(0, 0));
+
+            // Move obj2 s.t. the Port is on the origin + 200 vertically
+            obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
+            expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
+
+            Place(designer, [obj1, obj2]);
+            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+
+            input.click(V(0, 20));
+            expect(selections().length).toBe(1);
         });
 
         test("Select then Delete ANDGate", () => {
