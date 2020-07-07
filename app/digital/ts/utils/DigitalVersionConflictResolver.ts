@@ -23,7 +23,7 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             c[positionerRef] = {"type": type, "data": {}};
         }
 
-        const transformations = {
+        const transformations: Record<string, Array<{ports: string, positioner: string}>> = {
             "Multiplexer":    [{ports: "inputs",  positioner: "ConstantSpacePositioner"},
                                {ports: "outputs", positioner: "Positioner"}],
             "Demultiplexer":  [{ports: "outputs", positioner: "ConstantSpacePositioner"},
@@ -34,7 +34,7 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             "SRFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
             "JKFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
             "SRLatch":        [{ports: "inputs",  positioner: "Positioner"}]
-        } as Record<string, Array<{ports: string, positioner: string}>>;
+        };
 
         Object.keys(c).forEach((key) => {
             const val = c[key];
