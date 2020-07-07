@@ -7,7 +7,6 @@ import {Camera} from "math/Camera";
 import {DigitalWire} from "digital/models/DigitalWire";
 
 import {Curve} from "../../../../core/ts/rendering/shapes/Curve";
-import {Line} from "../../../../core/ts/rendering/shapes/Line";
 import {Style} from "../../../../core/ts/rendering/Style";
 
 export const WireRenderer = (() => {

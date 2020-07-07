@@ -51,7 +51,7 @@ export abstract class Wire extends CullableObject {
             const dir = this.p1.getWorldDir();
             this.shape.setP1(pos);
             // To create a straight bezier curve, c1 must be at the same position as p1
-            if(this.straight) {
+            if (this.straight) {
                 this.shape.setC1(pos);
             }
             else {
@@ -63,7 +63,7 @@ export abstract class Wire extends CullableObject {
             const dir = this.p2.getWorldDir();
             this.shape.setP2(pos);
             // To create a straight bezier curve, c2 must be at the same position as p2
-            if(this.straight) {
+            if (this.straight) {
                 this.shape.setC2(pos);
             }
             else {
