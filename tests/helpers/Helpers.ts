@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
