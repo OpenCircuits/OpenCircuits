@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import "jest";
 
 import v1_1muxesJson from "./saves/v1.1_muxes.json";

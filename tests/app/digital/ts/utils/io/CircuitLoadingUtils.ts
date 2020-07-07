@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-
 import "jest";
 import "test/helpers/Extensions";
 

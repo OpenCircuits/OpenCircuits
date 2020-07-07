@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-inner-declarations */
-/* eslint-disable @typescript-eslint/no-object-literal-type-assertion */
-
 import {Circuit} from "core/models/Circuit";
 
 type SerializationDataTypes = string | number | boolean | {ref: string}
