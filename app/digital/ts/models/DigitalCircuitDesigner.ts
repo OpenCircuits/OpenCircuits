@@ -1,3 +1,5 @@
+import {serializable, serialize} from "serialeazy";
+
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -7,12 +9,10 @@ import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 import {ICData}    from "./ioobjects/other/ICData";
 
+import {DigitalWire, DigitalComponent} from "./index";
+
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
-
-import {DigitalWire}      from "./DigitalWire";
-import {DigitalComponent} from "./DigitalComponent";
-import {serializable, serialize} from "serialeazy";
 
 @serializable("DigitalCircuitDesigner")
 export class DigitalCircuitDesigner extends CircuitDesigner {

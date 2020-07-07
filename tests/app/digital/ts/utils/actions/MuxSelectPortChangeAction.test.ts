@@ -6,7 +6,7 @@ import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
+import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
 import {Place, Connect} from "test/helpers/Helpers";
 
@@ -23,7 +23,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // change select port count
-        const a1 = new SelectPortChangeAction(mux, 4).execute();
+        const a1 = new MuxPortChangeAction(mux, 4).execute();
 
         // initial
         expect(mux.getSelectPortCount().getValue()).toBe(4);
@@ -59,7 +59,7 @@ describe("Select Port Change Action", () => {
         expect(designer.getWires()).toHaveLength(3);
 
         // change select port count
-        const a1 = new SelectPortChangeAction(mux, 1).execute();
+        const a1 = new MuxPortChangeAction(mux, 1).execute();
 
         // initial
         expect(designer.getObjects()).toHaveLength(2);

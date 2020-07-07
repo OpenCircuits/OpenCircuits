@@ -1,26 +1,26 @@
 import {V} from "Vector";
 import {FlipFlop} from "./FlipFlop";
 import {serializable} from "serialeazy";
+import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
 
 @serializable("TFlipFlop")
 export class TFlipFlop extends FlipFlop {
+    public static readonly TGL_PORT = 2;
 
     public constructor() {
-        super(2, V(80, 80));
-        this.getInputPort(0).setName(">");
-        this.getInputPort(1).setName("T");
+        super(1, V(100, 120), new FlipFlopPositioner(2));
+
+        this.getInputPort(TFlipFlop.TGL_PORT).setName("T");
     }
 
     // @Override
-    public activate(): void {
-        this.lastClock = this.clock;
-        this.clock   = this.inputs.get(0).getIsOn();
-        const toggle = this.inputs.get(1).getIsOn();
-        if (this.clock && !this.lastClock && toggle)
-            this.state = !this.state;
+    protected getNextState(): boolean {
+        const toggle = this.inputs.get(TFlipFlop.TGL_PORT).getIsOn();
 
-        super.activate(this.state, 0);
-        super.activate(!this.state, 1);
+        if (this.up() && toggle)
+            return !this.state;
+
+        return this.state;
     }
 
     public getDisplayName(): string {

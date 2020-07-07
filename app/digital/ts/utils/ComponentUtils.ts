@@ -3,8 +3,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalWire} from "digital/models/DigitalWire";
+import {DigitalComponent, DigitalWire} from "digital/models/index";
 
 /**
  * Helper class to hold different groups of components.
