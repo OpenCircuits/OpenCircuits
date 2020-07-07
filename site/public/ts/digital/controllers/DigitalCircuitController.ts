@@ -25,12 +25,12 @@ import {ICViewerController} from "./ICViewerController";
 import {IC} from "digital/models/ioobjects/other/IC";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
+import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
 
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
 import {DigitalItemNavController} from "./DigitalItemNavController";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
-import {VersionConflictResolver} from "../utils/DigitalVersionConflictResolver";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -81,7 +81,7 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: string): CircuitMetadata {
-        VersionConflictResolver(contents);
+        contents = VersionConflictResolver(contents);
 
         const metadata = super.loadCircuit(contents);
 

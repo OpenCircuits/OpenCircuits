@@ -1,14 +1,16 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalComponent} from "digital/models/index";
+
 import {Node} from "core/models/Node";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {serializable} from "serialeazy";
 
 @serializable("DigitalNode")
 export class DigitalNode extends DigitalComponent implements Node {
