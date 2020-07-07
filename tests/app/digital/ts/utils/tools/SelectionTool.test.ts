@@ -23,7 +23,6 @@ import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelper
 
 import {Place, Connect} from "test/helpers/Helpers";
 
-
 describe("Selection Tool", () => {
     const camera = new Camera(500, 500);
     const designer = new DigitalCircuitDesigner(0);
