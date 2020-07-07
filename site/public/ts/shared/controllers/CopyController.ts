@@ -19,14 +19,16 @@ export abstract class CopyController {
         return main.isActive() && main.getCurrentTool() == main.getSelectionTool();
     }
 
-    protected abstract copy(e: ClipboardEvent, main: MainDesignerController): void;
-    protected abstract paste(e: ClipboardEvent, main: MainDesignerController): void;
+    public abstract copy(main: MainDesignerController): string;
+    public abstract paste(data: string, main: MainDesignerController): void;
 
     private onCopy(e: ClipboardEvent, main: MainDesignerController): void {
         if (!this.isActive(main))
             return;
 
-        this.copy(e, main);
+        // Export the circuit as XML and put it in the clipboard
+        e.clipboardData.setData("text/json", this.copy(main));
+        e.preventDefault();
     }
 
     private onCut(e: ClipboardEvent, main: MainDesignerController): void {
@@ -49,7 +51,11 @@ export abstract class CopyController {
         if (!this.isActive(main))
             return;
 
-        this.paste(e, main);
+
+        // Load clipboard
+        const data = e.clipboardData.getData("text/json") ||
+                     e.clipboardData.getData("text/plain");
+        this.paste(data, main);
     }
 
 }

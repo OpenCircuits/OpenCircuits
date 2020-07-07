@@ -7,79 +7,93 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 
 import {Place, Connect} from "test/helpers/Helpers";
 
-describe("JKFlipFLop", () => {
-    const designer = new DigitalCircuitDesigner(0);
-    const clk = new Switch(), s = new Switch(), r = new Switch(),
-    	f = new JKFlipFlop(), l0 = new LED(), l1 = new LED();
+describe("JKFlipFlop", () => {
+    const ON = true, OFF = false;
 
-    Place(designer, [clk, s, r, f, l1, l0]);
-    Connect(clk, 0, f, 1);
-    Connect(s, 0, f, 0);
-    Connect(r, 0, f , 2);
-    Connect(f, 0, l0, 0);
-    Connect(f, 1, l1, 0);
+    const designer = new DigitalCircuitDesigner(0);
+    const C = new Switch(), J = new Switch(), K = new Switch(), PRE = new Switch();
+    const f = new JKFlipFlop(), CLR = new Switch(), Q = new LED(), Q2 = new LED();
+
+    Place(designer, [C, J, K, PRE, CLR, f, Q, Q2]);
+    Connect(C,  0, f, JKFlipFlop.CLK_PORT);
+    Connect(J, 0, f, JKFlipFlop.SET_PORT);
+    Connect(K, 0, f, JKFlipFlop.RST_PORT);
+    Connect(PRE, 0, f, JKFlipFlop.PRE_PORT);
+    Connect(CLR, 0, f, JKFlipFlop.CLR_PORT);
+    Connect(f, JKFlipFlop.Q_PORT,  Q, 0);
+    Connect(f, JKFlipFlop.Q2_PORT, Q2, 0);
+
+    function expectState(state: boolean): void {
+        expect(Q.isOn()).toBe(state);
+        expect(Q2.isOn()).toBe(!state);
+    }
 
     test("Initial State", () => {
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
     test("Turn On an Input", () => {
-        clk.activate(false);
-        s.activate(true);
-        s.activate(false);
+        C.activate(OFF);
+        J.activate(ON);
+        J.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
     test("Set", () => {
-		s.activate(true);
-		clk.activate(true);
-        s.activate(false);
-        clk.activate(false);
+        J.activate(ON);
+        C.activate(ON);
+        J.activate(OFF);
+        C.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(ON);
     });
     test("Set while On, Reset falling edge", () => {
-    	s.activate(true);
-		clk.activate(true);
-        s.activate(false);
-        r.activate(true);
-        clk.activate(false);
+        J.activate(ON);
+        C.activate(ON);
+        J.activate(OFF);
+        K.activate(ON);
+        C.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(ON);
     });
     test("Reset", () => {
-    	clk.activate(true);
-        r.activate(false);
-        clk.activate(false);
+        C.activate(ON);
+        K.activate(OFF);
+        C.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
     test("Reset while Off, Set falling edge", () => {
-		r.activate(true);
-		clk.activate(true);
-        r.activate(false);
-        s.activate(true);
-        clk.activate(false);
+        K.activate(ON);
+        C.activate(ON);
+        K.activate(OFF);
+        J.activate(ON);
+        C.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
-	});
+        expectState(OFF);
+    });
     test("Set and Reset", () => {
-	    r.activate(true);
-	    clk.activate(true);
-	    clk.activate(false);
+        J.activate(ON);
+        K.activate(ON);
 
-    	expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        C.activate(ON);
+        C.activate(OFF);
 
-        clk.activate(true);
-        clk.activate(false);
+        expectState(ON);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        C.activate(ON);
+        C.activate(OFF);
+
+        expectState(OFF);
+    });
+    test("PRE and CLR", () => {
+        PRE.activate(ON);
+        expectState(ON);
+        PRE.activate(OFF);
+        expectState(ON);
+
+        CLR.activate(ON);
+        expectState(OFF);
+        CLR.activate(OFF);
+        expectState(OFF);
     });
 });
