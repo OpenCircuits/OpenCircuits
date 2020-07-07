@@ -23,7 +23,7 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             const set = c[val.data[ports]["ref"]]; // Get PortSet from (inputs/outputs) of Component
             const positionerRef = set.data["positioner"]["ref"]; // Get positioner ID from PortSet
 
-            c[positionerRef] = {"type": type, "data": {} };
+            c[positionerRef] = {"type": type, "data": {}};
         }
 
         const transformations = {
