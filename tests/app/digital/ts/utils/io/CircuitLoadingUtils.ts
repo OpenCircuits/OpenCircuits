@@ -56,7 +56,7 @@ expect.extend({
 
             expectSameComponent(w1.getP1Component(), w2.getP1Component());
             expectSameComponent(w1.getP2Component(), w2.getP2Component());
-        })
+        });
 
         return {
             message: `expected ${received} to not be the same as ${expected}`,
