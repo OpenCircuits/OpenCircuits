@@ -36,79 +36,178 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+            <h5 class="my-0 mr-md-auto font-weight-normal">
                 <a class="navbar-brand" href="#">
-                    <img src="img/icons/logo.svg" />
+                    <img src="img/icon.svg" height="80px" style="margin-top: -20px; margin-bottom: -20px" />
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarsExample07">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/home/about">About <span class="sr-only">(current)</span></a>
-                        </li>
-                    </ul>
-                    <div class="form-inline my-2 my-md-0">
-                        <button title="Sign in"  class="btn btn-outline-light">Sign In</button>
-                        <button title="Sign out" class="btn btn-outline-light hide">Sign Out</button>
+            </h5>
+            <a class="btn btn-outline-success mr-md-3 header-simulator-btn" href="#">Simulator</a>
+            <nav class="my-2 my-md-0">
+                <a class="p-2 text-dark" href="#">Learn</a>
+                <a class="p-2 text-dark" href="#">Examples</a>
+                <a class="p-2 text-dark" href="#">Contribute</a>
+                <a class="p-2 text-dark" href="#">About</a>
+                <a class="btn btn-outline-primary ml-md-3" href="#">Sign up</a>
+            </nav>
+        </div>
+
+        <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-left">
+            <h1 class="display-4">Build and simulate digital circuits</h1>
+            <p class="lead">Quickly build and test digital circuitry with an easy-to-use, online, and completely free interface!</p>
+        </div>
+
+        <div class="container-fluid circuit-launch-wrapper mb-5">
+            <a id="digital-circuit-btn" class="btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-1 circuit-launch-wrapper-btn-selected">
+                <img id="logo" src="img/icons/logo.svg">
+            </a>
+            <a id="analog-circuit-btn" class="btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-2">
+                <img id="analog_logo" src="img/analog/icons/logo.svg">
+            </a>
+
+            <div class="circuit-launch-wrapper-wire1"></div>
+            <div class="circuit-launch-wrapper-wire2"></div>
+            <div class="circuit-launch-wrapper-wire3"></div>
+
+            <div class="circuit-launch-wrapper-output-div">
+                <div id="digital-output" class="card text-center h-100">
+                    <img class="card-img-top p-2" src="img/icons/logo.svg" />
+                    <div class="card-body p-2">
+                        <p class="card-text font-weight-light">The original OpenCircuits with entirely digital components.</p>
+                        <a href="../" class="btn btn-success">Launch Simulator</a>
+                    </div>
+                </div>
+                <div id="analog-output" class="card text-center h-100 d-none">
+                    <img class="card-img-top p-2" src="img/analog/icons/logo.svg" />
+                    <div class="card-body p-2">
+                        <p class="card-text font-weight-light">The new, in progress, OpenCircuits EE with analog components.</p>
+                        <a href="/analog" class="btn btn-success btn disabled">Coming Soon...</a>
                     </div>
                 </div>
             </div>
-        </nav>
 
-        <main role="main">
-            <div class="container-fluid bg-secondary">
-                <div class="row">
-                    <h2>The free, easy to use, circuit designer and simulator.</h2>
-                </div>
-                <div class="row">
-
-                </div>
-            </div>
-        </main>
-
-        {{/* <div id="container">
-            <button class = "buttons" id="bigbutton1" onclick="window.location.href = '../';" target="_blank">
-                <img id = "logo" src="img/icons/logo.svg">
-            </button>
-            <button class = "buttons" id="bigbutton2" onclick="window.location.href = '../analog';" target="_blank">
-                <img id = "analog_logo" src="img/analog/icons/logo.svg">
-            </button>
-
-            <svg id = "wire1" width="300" height="30"></svg>
-            <svg id = "wire2" width="300" height="30"></svg>
-            <svg id = "wire3" width="150" height="30"></svg>
-
-            <img id = "orgate" src="img/icons/gates/orgate.svg">
-            <p class = "desc" id = "default-text">Welcome to OpenCircuits, a free online circuit builder!</p>
-            <p class = "desc" id = "dig-text">Use Boolean logic gates, multiplexers, and other advanced components</p>
-            <p class = "desc" id = "ana-text">Simulate physical circuits to manipulate current and voltage over time</p>
+            <img class="circuit-launch-wrapper-gate" src="img/icons/gates/xorgate.svg">
         </div>
 
-        <div id = "container2">
-            <h2>Key Features</h2>
-            <ul>
-                <li>Design and build simple or complex circuits</li>
-                <li>Create a circuit and turn it into an IC for easy reuse</li>
-                <li>Save and load circuits to your hard drive</li>
-                <li>Smooth and lag-free, even for complex circuits</li>
-                <li>LEDs and 7-segment-displays</li>
-                <li>Keyboard and mouse gates for interactive circuits</li>
-                <li>Runs on any device with ES6 support</li>
-                <li>Can be used by professors, students, and hobbyists alike</li>
-                <li>Open-source and completely free to use</li>
-            </ul>
-        </div> */}}
+        <div class="container">
 
+            <div class="card-deck mb-3 text-center">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Free</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>10 users included</li>
+                            <li>2 GB of storage</li>
+                            <li>Email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
+                    </div>
+                </div>
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Pro</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>20 users included</li>
+                            <li>10 GB of storage</li>
+                            <li>Priority email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-primary">Get started</button>
+                    </div>
+                </div>
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Enterprise</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>30 users included</li>
+                            <li>15 GB of storage</li>
+                            <li>Phone and email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                <div class="row">
+                <div class="col-12 col-md">
+                    <img class="mb-2" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="24" height="24">
+                    <small class="d-block mb-3 text-muted">© 2017-2018</small>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Features</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Cool stuff</a></li>
+                        <li><a class="text-muted" href="#">Random feature</a></li>
+                        <li><a class="text-muted" href="#">Team feature</a></li>
+                        <li><a class="text-muted" href="#">Stuff for developers</a></li>
+                        <li><a class="text-muted" href="#">Another one</a></li>
+                        <li><a class="text-muted" href="#">Last time</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Resource</a></li>
+                        <li><a class="text-muted" href="#">Resource name</a></li>
+                        <li><a class="text-muted" href="#">Another resource</a></li>
+                        <li><a class="text-muted" href="#">Final resource</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>About</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Team</a></li>
+                        <li><a class="text-muted" href="#">Locations</a></li>
+                        <li><a class="text-muted" href="#">Privacy</a></li>
+                        <li><a class="text-muted" href="#">Terms</a></li>
+                    </ul>
+                </div>
+                </div>
+            </footer>
+        </div>
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    </body>
+        <script>
+            // Script for the buttons
+            const digital = $("#digital-output");
+            const analog  = $("#analog-output");
 
+            const digitalBtn = $("#digital-circuit-btn");
+            const analogBtn  = $("#analog-circuit-btn");
+
+            digitalBtn.click(() => {
+                analog.addClass("d-none");
+                analogBtn.removeClass("circuit-launch-wrapper-btn-selected");
+
+                digitalBtn.addClass("circuit-launch-wrapper-btn-selected");
+                digital.removeClass("d-none");
+            });
+            analogBtn.click(() => {
+                digital.addClass("d-none");
+                digitalBtn.removeClass("circuit-launch-wrapper-btn-selected");
+
+                analogBtn.addClass("circuit-launch-wrapper-btn-selected");
+                analog.removeClass("d-none");
+            });
+        </script>
+    </body>
 </html>
