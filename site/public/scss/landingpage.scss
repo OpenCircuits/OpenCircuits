@@ -25,10 +25,16 @@ html {
     min-width: 220px;
 }
 
-.border-top { border-top: 1px solid #e5e5e5; }
-.border-bottom { border-bottom: 1px solid #e5e5e5; }
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
 
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
 
 .header-simulator-btn {
     @media (max-width: $min-width-sm) {
@@ -45,7 +51,6 @@ nav {
 }
 
 .circuit-launch-wrapper {
-
     // Variables for normal view
     $height: 400px;
 
@@ -59,7 +64,6 @@ nav {
 
     $output-width: 250px;
 
-
     // Variables for compressed view
     $height-md: 30vw;
 
@@ -71,7 +75,6 @@ nav {
 
     $output-width-md: 25vw;
 
-
     // Variables for mobile view
     $height-sm: 30vw;
 
@@ -82,7 +85,6 @@ nav {
     $wire-width-sm: 20vw;
 
     $output-width-sm: 25vw;
-
 
 
     position: relative;
@@ -97,8 +99,8 @@ nav {
 
     &-gate {
         position: absolute;
-
         left: calc(52% - #{$height/2});
+
         height: 100%;
 
         @media (max-width: $min-width-md) {
@@ -110,10 +112,10 @@ nav {
     }
     &-btn-1, &-btn-2 {
         position: absolute;
-
         right: calc(50% + #{$wire-width});
-        height: $btn-height;
+
         width: $btn-width;
+        height: $btn-height;
 
         border-color: #999;
 
@@ -130,20 +132,24 @@ nav {
 
         @media (max-width: $min-width-md) {
             right: calc(50% + #{$wire-width-md});
-            height: $btn-height-md;
+
             width: $btn-width-md;
+            height: $btn-height-md;
         }
         @media (max-width: $min-width-sm) {
             right: calc(50% + #{$wire-width-sm});
-            height: $btn-height-sm;
+
             width: $btn-width-sm;
+            height: $btn-height-sm;
         }
         @media (max-width: $min-width-sm) {
             height: auto;
-            padding-left: 0.25rem !important;
             padding-right: 0.25rem !important;
+            padding-left: 0.25rem !important;
+
             & img {
                 width: 100%;
+
                 vertical-align: middle;
             }
         }
@@ -186,8 +192,9 @@ nav {
 
         width: $wire-width;
         height: $wire-height;
-        background-color: black;
+
         border: solid 1px black;
+        background-color: black;
 
         @media (max-width: $min-width-md) {
             width: $wire-width-md;
@@ -199,8 +206,8 @@ nav {
         }
     }
     &-wire1 {
-        right: 50%;
         top: calc(#{$btn-1-top} + #{$btn-height/2} - #{$wire-height/2});
+        right: 50%;
 
         @media (max-width: $min-width-md) {
             top: calc(#{$btn-1-top} + #{$btn-height-md/2} - #{$wire-height-md/2});
@@ -221,8 +228,8 @@ nav {
         }
     }
     &-wire3 {
-        left: 50%;
         top: calc(50% - #{$wire-height/2});
+        left: 50%;
 
         @media (max-width: $min-width-md) {
             top: calc(50% - #{$wire-height-md/2});
@@ -234,11 +241,11 @@ nav {
 
     &-output-div {
         position: absolute;
-
-        left: calc(50% + #{$wire-width});
-        height: 80%;
         top: 10%;
+        left: calc(50% + #{$wire-width});
+
         width: $output-width;
+        height: 80%;
 
         border: solid 1px black;
         border-radius: 5px;
@@ -267,14 +274,15 @@ nav {
 
                 .btn-success {
                     position: absolute;
+                    right: 0;
                     bottom: 0;
                     left: 0;
-                    right: 0;
 
                     border-radius: 0;
 
                     @media (max-width: $min-width-sm) {
                         line-height: calc(#{$height-sm}*0.8 - 25vw * 0.2583163265 - 1rem);
+
                         height: calc(#{$height-sm}*0.8 - 25vw * 0.2583163265 - 0.5rem);
                     }
                 }
@@ -282,12 +290,14 @@ nav {
         }
 
         @media (max-width: $min-width-md) {
-            width: $output-width-md;
             left: calc(50% + #{$wire-width-md});
+
+            width: $output-width-md;
         }
         @media (max-width: $min-width-sm) {
-            width: $output-width-sm;
             left: calc(50% + #{$wire-width-sm});
+
+            width: $output-width-sm;
         }
     }
 }
