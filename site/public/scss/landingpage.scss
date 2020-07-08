@@ -6,11 +6,10 @@ $min-width-sm: 768px;
 
 
 html {
-    font-size: 14px;
-}
-@media (min-width: $min-width-sm) {
-    html {
-        font-size: 16px;
+    font-size: 16px;
+
+    @media (max-width: $min-width-sm) {
+        font-size: 14px;
     }
 }
 
