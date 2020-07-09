@@ -159,13 +159,45 @@ header {
     }
 }
 .cookie__banner{
+    border-radius: 4px;
+    margin: 5px;
+    padding: 3px;
+    z-index: -2;
     position: absolute;
     top: $header-total-height;
+    display:inline-block;
 
-    width:100%;
+    left:33%;
+
+    width:33%;
     background-color:$primary-color;
+    color: $secondary-color;
 
     text-align:center;
+
+    & button
+    {
+        line-height: $header-button-height;
+
+            //float: right;
+
+            height: $header-button-height;
+            margin-top: $header-padding;
+            margin-left: 0;
+            padding-right: 5px;
+            padding-left: 5px;
+
+            cursor: pointer;
+
+            color: #aaa;
+            border: thin solid #888;
+            border-radius: 4px;
+
+            &:hover {
+                color: #bbb;
+                border-color: #aaa;
+            }
+    }
 }
 
 .header__right {

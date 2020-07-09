@@ -129,9 +129,12 @@ export class HeaderController {
             main.setLocked(!main.isLocked());
         });
 
-        $(".cookie__banner").click(() => {
+        $(".cookie__banner__accept").click(() => {
             const banner = document.getElementById("cookie-banner");
             banner.classList.add("invisible");
+        });
+        $(".cookie__banner__decline").click(() => {
+            window.location.href = "https://www.google.com/";
         });
     }
 
