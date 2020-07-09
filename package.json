@@ -36,6 +36,7 @@
     "@types/intro.js": "^2.4.5",
     "@types/jquery": "^3.3.30",
     "@types/jspdf": "^1.3.1",
+    "bootstrap": "^4.5.0",
     "hammerjs": "^2.0.8",
     "intro.js": "^2.9.3",
     "jquery": "^3.4.1",
