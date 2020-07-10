@@ -7,7 +7,6 @@ import {Camera} from "math/Camera";
 import {DigitalWire} from "digital/models/DigitalWire";
 
 import {Curve} from "../../../../core/ts/rendering/shapes/Curve";
-import {Line} from "../../../../core/ts/rendering/shapes/Line";
 import {Style} from "../../../../core/ts/rendering/Style";
 
 export const WireRenderer = (() => {
@@ -25,15 +24,11 @@ export const WireRenderer = (() => {
             const p1 = camera.getScreenPos(curve.getP1());
             const p2 = camera.getScreenPos(curve.getP2());
 
-            if (wire.isStraight()) {
-                renderer.draw(new Line(p1, p2), style);
-            } else {
-                // get bezier points
-                const c1 = camera.getScreenPos(curve.getC1());
-                const c2 = camera.getScreenPos(curve.getC2());
+            // get bezier points
+            const c1 = camera.getScreenPos(curve.getC1());
+            const c2 = camera.getScreenPos(curve.getC2());
 
-                renderer.draw(new Curve(p1, p2, c1, c2), style);
-            }
+            renderer.draw(new Curve(p1, p2, c1, c2), style);
         }
     };
 })();

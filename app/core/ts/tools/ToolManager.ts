@@ -134,6 +134,14 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.actionManager.reset();
     }
 
+    public undo(): void {
+        this.actionManager.undo();
+    }
+
+    public redo(): void {
+        this.actionManager.redo();
+    }
+
     public onMouseDown(input: Input, button: number): boolean {
         return this.onEvent((i: Input,b?: number) => this.currentTool.onMouseDown(i,b), "mousedown", input, button);
     }

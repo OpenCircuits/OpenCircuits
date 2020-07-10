@@ -1,18 +1,20 @@
+import {serializable} from "serialeazy";
+
+import {DEFAULT_SIZE} from "core/utils/Constants";
+
 import {ClampedValue} from "math/ClampedValue";
 
-import {InputPort} from "../../ports/InputPort";
-import {MuxPositioner,
-        MuxSinglePortPositioner} from "../../ports/positioners/MuxPositioners";
+import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
+import {InputPort} from "../../ports/InputPort";
 import {Mux} from "./Mux";
-import {serializable} from "serialeazy";
 
 @serializable("Multiplexer")
 export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-              new MuxPositioner<InputPort>(), new MuxSinglePortPositioner());
+              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE));
     }
 
     /**
@@ -28,7 +30,6 @@ export class Multiplexer extends Mux {
 
     public setSelectPortCount(val: number): void {
         super.setSelectPortCount(val);
-        super.setInputPortCount(Math.pow(2, val));
         // update the output port to align with the right edge of the Mux
         this.outputs.updatePortPositions();
     }
