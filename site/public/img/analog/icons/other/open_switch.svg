@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="30">
+<circle cx = "15" cy = "15" r = "3" />
+<circle cx = "15" cy = "15" r = "2" fill = "white" />
+<circle cx = "45" cy = "15" r = "3" />
+<circle cx = "45" cy = "15" r = "2" fill = "white" />
+<path d="M 5 15
+l 7 0
+m 5 -1
+l 22 -12
+m 9 13
+l 7 0"
+stroke="black" stroke-width="1" stroke-linejoin="bevel" fill="none"></path>
+</svg>
