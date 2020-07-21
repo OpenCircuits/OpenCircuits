@@ -1,5 +1,7 @@
 import $ from "jquery";
 
+import {GetCookie,SetCookie} from "../utils/Cookies";
+
 import {OVERWRITE_CIRCUIT_MESSAGE} from "site/shared/utils/Constants";
 import {SAVED} from "core/utils/Config";
 
@@ -15,6 +17,7 @@ export class HeaderController {
         this.setupDropdown();
         this.setupIOInputs(main);
         this.setupHelpMenu();
+        this.setupCookieBanner();
         this.setupOther(main);
     }
 
@@ -121,20 +124,32 @@ export class HeaderController {
                 .removeClass("white");
     }
 
+    private setupCookieBanner(): void {
+        //no need to show them a banner we know they've agreed to
+        if(GetCookie("cookie_consent") != "")
+        {
+            $("#cookie-banner").addClass("invisible")
+        }
+
+        $(".cookie__banner__accept").click(() => {
+
+            $("#cookie-banner").addClass("invisible")
+            
+            //a 30 year expiration date should make this never appear again
+            SetCookie("cookie_consent","accepted",10000);
+        });
+        $(".cookie__banner__decline").click(() => {
+            window.location.href = "https://www.google.com/";
+        });
+    }
+
+
     private setupOther(main: MainDesignerController): void {
         $("#header-lock-button").click(() => {
             $("#header-lock-icon-unlocked").toggleClass("hide");
             $("#header-lock-icon-locked").toggleClass("hide");
 
             main.setLocked(!main.isLocked());
-        });
-
-        $(".cookie__banner__accept").click(() => {
-            const banner = document.getElementById("cookie-banner");
-            banner.classList.add("invisible");
-        });
-        $(".cookie__banner__decline").click(() => {
-            window.location.href = "https://www.google.com/";
         });
     }
 

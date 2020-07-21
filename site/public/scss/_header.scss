@@ -315,11 +315,13 @@ header {
 }
 
 .cookie__banner {
-    position: absolute;
-    top: $header-total-height;
-    left: 33%;
 
-    width: 33%;
+    position: fixed;
+    
+    bottom: 0%;
+    
+    left: 33%;
+    right: 33%;
 
     border-radius: 4px;
     margin: 5px;
