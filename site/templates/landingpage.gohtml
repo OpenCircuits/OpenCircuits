@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8"/>
+
+        <!-- Primary Meta Tags -->
+        <title>Open Circuits | Home</title>
+        <meta name="title" content="OpenCircuits — free online digital circuit designer">
+        <meta name="Description" content="Make circuits from the comfort of your browser with Opencircuits">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://opencircuits.io/">
+        <meta property="og:title" content="OpenCircuits — free online digital circuit designer">
+        <meta property="og:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
+        <meta property="og:image" content="img/external_image.png">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="https://opencircuits.io/">
+        <meta property="twitter:title" content="OpenCircuits — free online digital circuit designer">
+        <meta property="twitter:description" content="OpenCircuits is an online digital circuit designer and simulator. Easy to use and completely free. Create your own circuits or experiment with others!">
+        <meta property="twitter:image" content="external_image.png">
+
+        <meta name="viewport"
+                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+        <meta name="theme-color" content="#999"/>
+
+        <link rel="stylesheet" href="css/landingpage.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+        <link rel="manifest" href="img/manifest.json">
+        <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">
+    </head>
+
+    <body>
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+            <h5 class="my-0 mr-md-auto font-weight-normal">
+                <a class="navbar-brand" href="#">
+                    <img src="img/icon.svg" height="80px" style="margin-top: -20px; margin-bottom: -20px" />
+                </a>
+            </h5>
+            <a class="btn btn-outline-success mr-md-3 header-simulator-btn" href="../">Simulator</a>
+            <nav class="my-2 my-md-0">
+                <a class="p-2 text-dark disabled" href="">Learn</a>
+                <a class="p-2 text-dark disabled" href="">Examples</a>
+                <a class="p-2 text-dark disabled" href="">Contribute</a>
+                <a class="p-2 text-dark disabled" href="">About</a>
+                <a class="btn btn-outline-primary ml-md-3 disabled" href="">Sign up</a>
+            </nav>
+        </div>
+
+        <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-left">
+            <h1 class="display-4">Build and simulate digital circuits</h1>
+            <p class="lead">Quickly build and test digital circuitry with an easy-to-use, online, and completely free interface!</p>
+        </div>
+
+        <div class="container-fluid circuit-launch-wrapper mb-5">
+            <a id="digital-circuit-btn" class="btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-1 circuit-launch-wrapper-btn-selected">
+                <img id="logo" src="img/icons/logo.svg">
+            </a>
+            <a id="analog-circuit-btn" class="btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-2">
+                <img id="analog_logo" src="img/analog/icons/logo.svg">
+            </a>
+
+            <div class="circuit-launch-wrapper-wire1"></div>
+            <div class="circuit-launch-wrapper-wire2"></div>
+            <div class="circuit-launch-wrapper-wire3"></div>
+
+            <div class="circuit-launch-wrapper-output-div">
+                <div id="digital-output" class="card text-center h-100">
+                    <img class="card-img-top p-2" src="img/icons/logo.svg" />
+                    <div class="card-body p-2">
+                        <p class="card-text font-weight-light">The original OpenCircuits with entirely digital components.</p>
+                        <div class="extra-info p-1">
+                            <img src="img/thumbnails/example2.png" />
+                        </div>
+                        <a href="../" class="btn btn-success">Launch Simulator</a>
+                    </div>
+                </div>
+                <div id="analog-output" class="card text-center h-100 d-none">
+                    <img class="card-img-top p-2" src="img/analog/icons/logo.svg" />
+                    <div class="card-body p-2">
+                        <p class="card-text font-weight-light">The new, in progress, OpenCircuits EE with analog components.</p>
+                        <a href="/analog" class="btn btn-success btn disabled">Coming Soon...</a>
+                    </div>
+                </div>
+            </div>
+
+            <img class="circuit-launch-wrapper-gate" src="img/icons/gates/xorgate.svg">
+        </div>
+
+        <div class="container">
+            <!-- BELOW IS TEMPLATE FOR CARDS TO FEATURE CIRCUITS WHEN BACKEND PART IS COMPLETE -->
+            {{/* <div class="card-deck mb-3 text-center">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Free</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>10 users included</li>
+                            <li>2 GB of storage</li>
+                            <li>Email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
+                    </div>
+                </div>
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Pro</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>20 users included</li>
+                            <li>10 GB of storage</li>
+                            <li>Priority email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-primary">Get started</button>
+                    </div>
+                </div>
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Enterprise</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>30 users included</li>
+                            <li>15 GB of storage</li>
+                            <li>Phone and email support</li>
+                            <li>Help center access</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
+                    </div>
+                </div>
+            </div> */}}
+
+            <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                <div class="row">
+                <div class="col-12 col-md">
+                    <img class="mb-1" src="img/icon.svg" alt="" width="48" height="48">
+                    <small class="d-block mb-3 text-muted">© 2017-2020</small>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Simulators</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="../">OpenCircuits</a></li>
+                        <li><a class="text-muted disabled" href="#">OpenCircuits EE</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted disabled" href="">Learn</a></li>
+                        <li><a class="text-muted disabled" href="">Examples</a></li>
+                        <li><a class="text-muted disabled" href="">Documentation</a></li>
+                        <li><a class="text-muted" href="https://github.com/OpenCircuits/OpenCircuits" target="_blank">Contribute</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>About</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted disabled" href="">Team</a></li>
+                        <li><a class="text-muted disabled" href="">Privacy</a></li>
+                        <li><a class="text-muted disabled" href="">Terms</a></li>
+                    </ul>
+                </div>
+                </div>
+            </footer>
+        </div>
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <script>
+            // Script for the buttons
+            const digital = $("#digital-output");
+            const analog  = $("#analog-output");
+
+            const digitalBtn = $("#digital-circuit-btn");
+            const analogBtn  = $("#analog-circuit-btn");
+
+            digitalBtn.click(() => {
+                analog.addClass("d-none");
+                analogBtn.removeClass("circuit-launch-wrapper-btn-selected");
+
+                digitalBtn.addClass("circuit-launch-wrapper-btn-selected");
+                digital.removeClass("d-none");
+            });
+            analogBtn.click(() => {
+                digital.addClass("d-none");
+                digitalBtn.removeClass("circuit-launch-wrapper-btn-selected");
+
+                analogBtn.addClass("circuit-launch-wrapper-btn-selected");
+                analog.removeClass("d-none");
+            });
+        </script>
+    </body>
+</html>

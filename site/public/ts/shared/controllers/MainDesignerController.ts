@@ -24,6 +24,7 @@ import {DesignerController} from "site/shared/controllers/DesignerController";
 import {HeaderController} from "site/shared/controllers/HeaderController";
 
 import {ItemNavController} from "./ItemNavController";
+import {CopyController} from "./CopyController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
@@ -133,6 +134,8 @@ export abstract class MainDesignerController extends DesignerController {
     public isLocked(): boolean {
         return this.locked;
     }
+
+    public abstract getCopyController(): CopyController;
 
     public getSelectionPopup(): SelectionPopupController {
         return this.selectionPopup;

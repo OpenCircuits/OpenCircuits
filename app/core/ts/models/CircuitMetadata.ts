@@ -1,5 +1,7 @@
 import {serializable} from "serialeazy";
 
+import {SAVE_VERSION} from "core/utils/Constants";
+
 @serializable("CircuitMetadataDef")
 export class CircuitMetadataDef {
     public id: string;
@@ -71,7 +73,7 @@ export class CircuitMetadataBuilder {
         this.data.owner = "";
         this.data.desc = "";
         this.data.thumbnail = "";
-        this.data.version = "1.1";
+        this.data.version = SAVE_VERSION;
     }
 
     public withId(id: string): CircuitMetadataBuilder {

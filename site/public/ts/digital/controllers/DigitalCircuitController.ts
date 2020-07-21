@@ -25,6 +25,7 @@ import {ICViewerController} from "./ICViewerController";
 import {IC} from "digital/models/ioobjects/other/IC";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
+import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
 
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
@@ -68,8 +69,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new SegmentCountPopupModule(this),
         );
 
-        this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
+        this.contextMenu = new ContextMenuController(this);
         this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
@@ -80,6 +81,8 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: string): CircuitMetadata {
+        contents = VersionConflictResolver(contents);
+
         const metadata = super.loadCircuit(contents);
 
         this.itemNav.updateICSection(this.getDesigner().getICData());
@@ -89,6 +92,10 @@ export class DigitalCircuitController extends MainDesignerController {
 
     public updateICs(): void {
         this.itemNav.updateICSection(this.getDesigner().getICData());
+    }
+
+    public getCopyController(): DigitalCopyController {
+        return this.copyController;
     }
 
     public getDesigner(): DigitalCircuitDesigner {

@@ -1,16 +1,15 @@
+import {serializable} from "serialeazy";
+
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {ANDGatePositioner} from "../../ports/positioners/ANDGatePositioner";
-
 import {Gate} from "./Gate";
-import {serializable} from "serialeazy";
 
 @serializable("ANDGate")
 export class ANDGate extends Gate {
 
     public constructor(not: boolean = false) {
-        super(not, new ClampedValue(2,2,8), V(50, 50), new ANDGatePositioner());
+        super(not, new ClampedValue(2,2,8), V(50, 50));
     }
 
     // @Override

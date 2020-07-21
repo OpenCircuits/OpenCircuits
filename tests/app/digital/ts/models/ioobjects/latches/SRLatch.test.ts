@@ -8,91 +8,89 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 import {Place, Connect} from "test/helpers/Helpers";
 
 describe("SRLatch", () => {
-    const designer = new DigitalCircuitDesigner(0);
-    const clk = new Switch(), s = new Switch(), r = new Switch(),
-    	l = new SRLatch(), l0 = new LED(), l1 = new LED();
+    const ON = true, OFF = false;
 
-    Place(designer, [clk, s, r, l, l1, l0]);
-    Connect(clk, 0,  l, 1);
-    Connect(s, 0,  l, 2);
-    Connect(r, 0,  l, 0);
-    Connect(l, 0,  l0, 0);
-    Connect(l, 1,  l1, 0);
+    const designer = new DigitalCircuitDesigner(0);
+    const E = new Switch(), S = new Switch(), R = new Switch();
+    const l = new SRLatch(), Q = new LED(), Q2 = new LED();
+
+    Place(designer, [E, S, R, l, Q, Q2]);
+    Connect(E, 0, l, SRLatch.E_PORT);
+    Connect(S, 0, l, SRLatch.SET_PORT);
+    Connect(R, 0, l, SRLatch.RST_PORT);
+    Connect(l, SRLatch.Q_PORT, Q, 0);
+    Connect(l, SRLatch.Q2_PORT, Q2, 0);
+
+    function expectState(state: boolean): void {
+        expect(Q.isOn()).toBe(state);
+        expect(Q2.isOn()).toBe(!state);
+    }
 
     test("Initial State", () => {
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
-    test("Toggle the Data without the Clock", () => {
-        s.activate(true);
+    test("Toggle the Data without being enabled", () => {
+        E.activate(OFF);
+        S.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        s.activate(false);
+        S.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch Off", () => {
-        clk.activate(true);
-        s.activate(true);
-        s.activate(false);
+        E.activate(ON);
+        S.activate(ON);
+        S.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        r.activate(true);
-        r.activate(false);
+        R.activate(ON);
+        R.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch in False State", () => {
-        clk.activate(false);
+        E.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        s.activate(true);
-        s.activate(false);
+        S.activate(ON);
+        S.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        r.activate(true);
-        r.activate(false);
+        R.activate(ON);
+        R.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch in True State", () => {
-    	clk.activate(true);
+        E.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        s.activate(true);
-        s.activate(false);
-        clk.activate(false);
+        S.activate(ON);
+        S.activate(OFF);
+        E.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        s.activate(true);
-        s.activate(false);
+        S.activate(ON);
+        S.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        r.activate(true);
+        R.activate(ON);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
     });
     test("Set and Reset, undefined behavior", () => {
-        clk.activate(true);
-        s.activate(true);
-        clk.activate(false);
+        E.activate(ON);
+        S.activate(ON);
+        E.activate(OFF);
+
+        expect.anything();
     });
 });
