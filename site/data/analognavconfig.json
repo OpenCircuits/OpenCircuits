@@ -12,7 +12,7 @@
         },
         {
           "id": "CurrentSource",
-          "label": "Current Source",
+          "label": "Current\nXource",
           "icon": "currentsource.svg"
         }
       ]
@@ -30,6 +30,11 @@
           "id": "Capacitor",
           "label": "Capacitor",
           "icon": "capacitor.svg"
+        },
+        {
+          "id": "Switch",
+          "label": "Switch",
+          "icon": "analog_switch.svg"
         }
       ]
     }
