@@ -127,3 +127,9 @@ func aboutPageHandler(manager auth.AuthenticationManager, examplesCsif interface
 		c.HTML(http.StatusOK, "aboutus.gohtml", gin.H{})
 	}
 }
+
+func libraryPageHandler(manager auth.AuthenticationManager, examplesCsif interfaces.CircuitStorageInterfaceFactory, cache StaticCache) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "library.gohtml", gin.H{})
+	}
+}

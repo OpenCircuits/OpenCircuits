@@ -29,4 +29,5 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager, e
 	router.GET("/analog", analogHandler(authManager, examplesCsif, cache))
 	router.GET("/home", landingPageHandler(authManager, examplesCsif, cache))
 	router.GET("/home/about", aboutPageHandler(authManager, examplesCsif, cache))
+	router.GET("/home/library", libraryPageHandler(authManager, examplesCsif, cache))
 }
