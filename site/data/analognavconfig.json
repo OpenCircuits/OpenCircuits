@@ -32,7 +32,7 @@
           "icon": "capacitor.svg"
         },
         {
-          "id": "Switch",
+          "id": "AnalogSwitch",
           "label": "Switch",
           "icon": "analog_switch.svg"
         }
