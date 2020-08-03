@@ -19,7 +19,7 @@ export class AnalogSwitch extends AnalogComponent implements Pressable {
     protected closed: boolean;
 
     public constructor() {
-        super(new ClampedValue(2), V(50, 30));
+        super(new ClampedValue(2), V(50, 40));
 
         this.ports.getPorts()[0].setOriginPos(V(this.getSize().x/2, 0));
         this.ports.getPorts()[0].setTargetPos(V(IO_PORT_LENGTH, 0));
@@ -27,7 +27,7 @@ export class AnalogSwitch extends AnalogComponent implements Pressable {
         this.ports.getPorts()[1].setOriginPos(V(-this.getSize().x/2, 0));
         this.ports.getPorts()[1].setTargetPos(V(-IO_PORT_LENGTH, 0));
 
-        this.pressableBox = new Transform(V(), V(30, 20));
+        this.pressableBox = new Transform(V(), V(30, 30));
         this.pressableBox.setParent(this.transform);
 
         this.closed = false;
