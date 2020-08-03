@@ -7,12 +7,12 @@
       "items": [
         {
           "id": "Battery",
-          "label": "Battery",
+          "label": "Voltage Source",
           "icon": "voltagesource.svg"
         },
         {
           "id": "CurrentSource",
-          "label": "Current\nXource",
+          "label": "Current Source",
           "icon": "currentsource.svg"
         }
       ]
