@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="30" viewBox = "20 5 20 20">
+<path d="
+M 30 5
+l 0 10
+m -10 0
+l 20 0 
+m -17.5 3
+l 15 0
+m -12.5 3
+l 10 0
+m -7.5 3
+l 5 0
+"
+stroke="black" stroke-width="1" stroke-linecap="round" fill="none"></path>
+</svg>

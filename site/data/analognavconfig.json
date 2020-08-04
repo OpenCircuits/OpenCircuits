@@ -35,6 +35,11 @@
           "id": "AnalogSwitch",
           "label": "Switch",
           "icon": "analog_switch.svg"
+        },
+        {
+          "id": "Ground",
+          "label": "Ground",
+          "icon": "ground.svg"
         }
       ]
     }
