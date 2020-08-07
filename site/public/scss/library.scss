@@ -9,13 +9,43 @@ body {
 
 #about-link { color: white; }
 
-.library_container_1 {
+.library_header_1 {
     font-size: 25px;
     color: black;
 
     $container-width: 640px;
-    position: absolute;
+    position: relative;
     top: 85px;
+    left: 50%;
+    margin-left: -$container-width/2;
+    width: $container-width;
+    padding: 5px;
+}
+
+.library_container {
+    font-size: 25px;
+    color: #222;
+
+    border: 2px solid #222;
+    border-radius: 5px;
+    $container-width: 1280px;
+    position: relative;
+    top: 85px;
+    left: 50%;
+    margin-left: -$container-width/2;
+    width: $container-width;
+    padding: 5px;
+}
+
+.ic_container {
+    font-size: 25px;
+    color: #888;
+
+    border: 2px solid #888;
+    border-radius: 5px;
+    $container-width: 640px;
+    position: relative;
+    top: 5px;
     left: 50%;
     margin-left: -$container-width/2;
     width: $container-width;
