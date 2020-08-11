@@ -5,7 +5,12 @@ import {ClampedValue} from "math/ClampedValue";
 import {PressableComponent} from "../PressableComponent";
 import {serializable} from "serialeazy";
 
-@serializable("Button")
+
+const customButtonBehavior = {
+    customPostDeserialization : (b) => {b.release();}
+};
+
+@serializable("Button",customButtonBehavior)
 export class Button extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),
