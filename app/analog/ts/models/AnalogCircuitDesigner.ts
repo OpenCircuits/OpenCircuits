@@ -10,7 +10,7 @@ import {AnalogObjectSet} from "analog/utils/ComponentUtils";
 import {AnalogComponent} from "./AnalogComponent";
 import {AnalogWire} from "./AnalogWire";
 import {AnalogPort} from "./ports/AnalogPort";
-import { Battery } from "./eeobjects";
+import { Battery, Resistor, Capacitor } from "./eeobjects";
 
 @serializable("AnalogCircuitDesigner")
 export class AnalogCircuitDesigner extends CircuitDesigner {
@@ -362,11 +362,95 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     }
 
+    //Returns a string listing all the node values with an entry of NetNodes.
+    //Input the index of the NetNodes array, and the NetNodes array itself.
+    //Note that the string will not end with a " " character
+    private nodeString(nvals:number[]): string {
+        let result: string = "";
+        for (let i: number = 0; i < nvals.length; ++i) {
+            if (i < nvals.length - 1) {
+                result += nvals[i] + " ";
+            }
+            else {
+                result += nvals[i];
+            }
+            
+        }
+
+        return result;
+    }
+
+    //Converts the information stored in object[] and NetNodes[] to create the netlist string
+    //The nvals[] array within NetNodes[] must be initialized with the labelNodes() before calling this function, otherwise every component will be connected to node -1
+    //The order of components in the netlist may not be desirable, as it relies on the order of the objects array. 
+    //  However, this order does not functionally change the netlist. It just may not be incredibly organized
+    private stringifyNetList(NetNodes: { name:string, xpos:number, ypos:number, nvals:number[]}[]): string {
+        //First line is always the title of the netlist
+        let result: string = "OpenCircuits Outputted Netlist\n";
+
+        //----------------------------------------------------------------
+        //This line is required for the program NetlistViewer for testing. 
+        //If you're not running test cases, leave this line commented out
+        //----------------------------------------------------------------
+        //result += ".SUBCKT OpenCircuits\n";
+
+        //A bunch of counter variables for each component. Used to properly name each on in the netlist.
+        let batteryCount: number = 0;
+        let resistorCount: number = 0;
+        let capacitorCount: number = 0;
+
+        //Iterate through the objects array. The line format is different for each possible component.
+        //Note that the ground component is not explicitly defined in the netlist. It is instead represented as the node value 0.
+        //  If a port has node value 0, it is connected to a ground.
+        for (let i: number = 0; i < this.objects.length; ++i) {
+            //Voltage battery
+            //Example: v1 1 0 dc 10
+            if (this.objects[i].getName() == "Battery") {
+                //Needs to be cast to the Battery object in order to use the getVoltage() function
+                let temp: Battery = this.objects[i] as Battery;
+
+                //Special case: As the order of the node values printed matters for a battery, the nvals array inputted into nodeString must be reversed
+                let tempNVals: number[] = [NetNodes[i].nvals[1], NetNodes[i].nvals[0]];
+                
+                result += "v" + batteryCount + " " + this.nodeString(tempNVals) + " dc " + temp.getVoltage() + "\n";
+                ++batteryCount;
+            }
+
+            //Resistor
+            //Example: r1 2 0 3.3k
+            //The resistance value stored in the Resistor class is assumed to be in kilo-ohms
+            else if(this.objects[i].getName() == "Resistor") {
+                let temp: Resistor = this.objects[i] as Resistor;
+                result += "r" + resistorCount + " " + this.nodeString(NetNodes[i].nvals) + " " + temp.getResistance() + "k\n";
+            }
+
+            //Capacitor
+            //Example: c1 1 2 47u ic=0
+            //The capacitance value stored in the Capacitor class is assumed to be in micro-farads
+            //The last argument is an optional value for initial voltage in the capacitor.
+            //  This value has not yet been implemented. By default, ic = 0.
+            else if(this.objects[i].getName() == "Capacitor") {
+                let temp: Capacitor = this.objects[i] as Capacitor;
+                result += "c" + capacitorCount + " " + this.nodeString(NetNodes[i].nvals) + " " + temp.getCapacitance() + "u ic=0\n";
+            }
+        }
+
+        //----------------------------------------------------------------
+        //This line is required for the program NetlistViewer for testing.
+        //If you're not running test cases, leave this line commented out  
+        //----------------------------------------------------------------
+        //result += ".ENDS OpenCircuits\n"; 
+
+        //Note that the final end does not end with a newline character. This is intentional, and a quirk of how netlists are required to work.
+        result += ".end";
+
+
+        return result;
+    }
+
     //Converts the circuit diagram to a netlist that can then be thrown into NGSpice
     //IMPORTANT NOTE: Node 0 MUST be the ground
     public giveNetList(): string {
-        var s = "hey this is a netlist\n";
-
         //Stores information on what node values should be assigned to each port of a component
         //name is a component's name
         //xpos and ypos are the values stored in cullTransform.pos
@@ -408,8 +492,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         }
 
         
-
-        
         //objects[0].ports.currentPorts[0].connections[0].p2.parent.name
         //AKA the component pointed to by the first connection of the first port of objects[0]
         //console.log("The tested component is: " + this.objects[0].getPorts()[0].getWires()[0].getP2Component().getName());
@@ -428,9 +510,8 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
             this.labelNodes(0, NetNodes);
         }
 
-        this.objects.forEach(element => {
-            s += element.getDisplayName() + "\n"
-        });
+
+        let s: string = this.stringifyNetList(NetNodes);
         return s;
     }
 
