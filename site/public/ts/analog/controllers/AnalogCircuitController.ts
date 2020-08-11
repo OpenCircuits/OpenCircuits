@@ -18,11 +18,13 @@ import {CapacitancePopupModule} from "./selectionpopup/CapacitancePopupModule";
 import {MainDesignerView} from "site/analog/views/MainDesignerView";
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {AnalogCircuitView} from "../views/AnalogCircuitView";
+import { AnalogAnalysisController } from "./AnalogAnalysisController";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
     private sideNav: SideNavController;
     private loginController: LoginController;
+    private analogAnalysisController: AnalogAnalysisController;
 
     protected designer: AnalogCircuitDesigner;
 
@@ -48,6 +50,8 @@ export class AnalogCircuitController extends MainDesignerController {
         this.sideNav = new SideNavController(this, this.headerController);
 
         this.loginController = new LoginController(this, this.sideNav);
+
+        this.analogAnalysisController = new AnalogAnalysisController(this.designer);
     }
 
     public async init(): Promise<void> {
