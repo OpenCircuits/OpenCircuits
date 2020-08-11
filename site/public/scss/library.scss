@@ -1,9 +1,12 @@
 @import '_navbar';
 @import '_theme';
 
+$library-width:1280px;
+
 body {
-    background-image: url(../img/grid_square.png);
-    background-repeat: repeat;
+    background-color: #eee;
+    //background-image: url(../img/grid_square.png);
+    //background-repeat: repeat;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
@@ -13,7 +16,7 @@ body {
     font-size: 25px;
     color: black;
 
-    $container-width: 640px;
+    $container-width: $library-width/2;//640px;
     position: relative;
     top: 85px;
     left: 50%;
@@ -23,13 +26,20 @@ body {
 }
 
 .library_container {
-    font-size: 25px;
-    color: #222;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 
-    border: 2px solid #222;
-    border-radius: 5px;
-    $container-width: 1280px;
+    font-size: 25px;
+    color: $primary-color;
+    //background-color: $background-color;
+
+    //border: 2px solid $primary-color;
+    //border-radius: 5px;
+    $container-width: $library-width;//1280px;
     position: relative;
+    overflow-x: hidden;
+
     top: 85px;
     left: 50%;
     margin-left: -$container-width/2;
@@ -38,18 +48,64 @@ body {
 }
 
 .ic_container {
-    font-size: 25px;
-    color: #888;
+    font-size: 20px;
+    color: $primary-color;
 
-    border: 2px solid #888;
+    border: 2px solid $secondary-color;
     border-radius: 5px;
-    $container-width: 640px;
-    position: relative;
-    top: 5px;
-    left: 50%;
-    margin-left: -$container-width/2;
+    $container-width: calc(49% - 40px);
+    //position: relative;
+    vertical-align: top;
+    word-break: break-word;
+    margin: 10px;
     width: $container-width;
-    padding: 5px;
+    padding: 10px;
+
+    & h4 {
+        font-size: 24px;
+
+        margin-bottom: 10px;
+
+        cursor: default;
+        text-align: left;
+
+        color: $primary-color;
+    }
+    & h2 {
+        font-size: 22px;
+        //margin-bottom: 10px;
+        display: inline;
+        cursor: default;
+        text-align: left;
+
+        color: $primary-color;
+    }
+    & button {
+        font-size: 1em;
+        font-weight: bold;
+
+        width: calc(24% - 5px);
+        padding: 1vh 1vh 1vh 1vh;
+
+        cursor: pointer;
+        vertical-align: bottom;
+        word-break: break-all;
+
+        margin-top: 10px;
+
+        background-color: $success-color;
+        border-radius: 5px;
+        color: #fff;
+        //color: darken($secondary-color, 5%);
+    }
+    & button:hover {
+        background-color: darken($success-color, 5%);
+    }
+    & img {
+        float: right;
+        width: 50%;
+        margin-left: 10px;
+    }
 }
 
 #rcos-link {
