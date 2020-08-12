@@ -342,6 +342,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
             //If no more ports can be analyzed, break off the infinite loop
             //If the function hasn't already recursed into standalone ports, recurse into a modified component if it still has unlabelled nodes. 
+            //      OR a modified component is connected to another component with unlabelled nodes
             //i.e. After the battery, it may recurse into a capacitor that is connected to the battery.
             //This ensures proper ordering of the nodes.
             if (finishedFlag) {
@@ -352,7 +353,23 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
                                 this.labelNodes(modifiedNodes[i], NetNodes);
                             }
                         }
+                        
                     }
+
+                    //A final check to ensure all nodes in all components have been labelled.
+                    //If not, recurses into each component referenced by modifiedNodes as a last-ditch, semi-brute force method. Causes the worst-case runtime
+                    //This allows the user to connect components without using standalone ports (refer to the test cases)
+                    for (let i: number = 0; i < NetNodes.length; ++i) {
+                        for (let k: number = 0; k < NetNodes[i].nvals.length; ++k) {
+                            if (NetNodes[i].nvals[k] == -1) {
+                                for (let j: number = 0; j < modifiedNodes.length; ++j) {
+                                    this.labelNodes(modifiedNodes[j], NetNodes);
+                                }
+                                
+                            }
+                        }
+                    }
+
                 }
 
                 break;
@@ -395,9 +412,9 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         //result += ".SUBCKT OpenCircuits\n";
 
         //A bunch of counter variables for each component. Used to properly name each on in the netlist.
-        let batteryCount: number = 0;
-        let resistorCount: number = 0;
-        let capacitorCount: number = 0;
+        let batteryCount: number = 1;
+        let resistorCount: number = 1;
+        let capacitorCount: number = 1;
 
         //Iterate through the objects array. The line format is different for each possible component.
         //Note that the ground component is not explicitly defined in the netlist. It is instead represented as the node value 0.
@@ -422,6 +439,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
             else if(this.objects[i].getName() == "Resistor") {
                 let temp: Resistor = this.objects[i] as Resistor;
                 result += "r" + resistorCount + " " + this.nodeString(NetNodes[i].nvals) + " " + temp.getResistance() + "k\n";
+                ++resistorCount;
             }
 
             //Capacitor
@@ -432,6 +450,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
             else if(this.objects[i].getName() == "Capacitor") {
                 let temp: Capacitor = this.objects[i] as Capacitor;
                 result += "c" + capacitorCount + " " + this.nodeString(NetNodes[i].nvals) + " " + temp.getCapacitance() + "u ic=0\n";
+                ++capacitorCount;
             }
         }
 
