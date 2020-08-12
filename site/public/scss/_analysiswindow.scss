@@ -1,0 +1,76 @@
+$start-button-width: 60px;
+$start-button-height: 30px;
+
+.analysiswindow {
+    position: absolute;
+    bottom: 30px;
+    left: 30px; 
+
+    width: 300px;
+    height: 200px;
+    padding: 1em;
+
+    color: $secondary-color;
+    border: 3px solid $secondary-color;
+    border-radius: 10px;
+    outline: none;
+    background-color: rgba(white, 0.8);
+
+    & div {
+        margin-top: 6px;
+        margin-bottom: 2px;
+    }
+    & input {
+        width: calc(100% - 2*2px - 2*2px);
+        margin-bottom: 1px;
+        padding: 2px;
+
+        color: $secondary-color;
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, 0.8);
+    }
+    & input[type='text'],
+    input[type='color'] {
+        border: 0;
+        background-color: transparent;
+    }
+
+    & select {
+        width: calc(100% - 2*2px - 2*2px);
+        margin-bottom: 1px;
+        padding: 2px;
+
+        color: $secondary-color;
+        border: solid 2px rgba($background-color, 0.5);
+        background-color: rgba(white, 0.8);
+    }
+
+    & .startbutton {
+        position: absolute;
+        font-size: 0.8em;
+        top: 5%;
+        left: 75%;
+        
+        width: $start-button-width;
+        height: $start-button-height;
+        
+        padding: 4px;
+
+        color: white;
+        border-width: thin;
+        border-style: solid;
+        border-radius: 3px;
+        background-color: darken(green, 5%);
+
+        transition-duration: 0.05s;
+    }
+    & .startbutton:hover {
+        background-color: green;
+    }
+    & .startbutton:active {
+        width: 0.9 * $start-button-width;
+        margin-left: 0.05 * $start-button-width;
+        height: 0.9 * $start-button-height;
+        margin-top: 0.05 * $start-button-height;
+    }
+}

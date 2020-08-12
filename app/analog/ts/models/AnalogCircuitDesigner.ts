@@ -19,6 +19,8 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     @serialize
     private wires: AnalogWire[];
 
+    private netlist: string[];
+
     private updateCallback: () => void;
 
     public constructor(callback: () => void = () => {}) {
@@ -42,55 +44,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     public forceUpdate(): void {
         this.updateCallback();
     }
-
-    // public simulate(): void { //ASSUMING SERIES, THIS IS BAD IF NOT
-    //     const batteries = this.objects.filter(c => c instanceof Battery);
-    //     if (batteries.length > 1)
-    //         throw new Error("Only 1 battery allowed for simulation currently!");
-
-    //     const battery = batteries[0];
-
-    //     const totalVoltage = battery.voltage;
-
-    //     // Calculate total resistance
-    //     let totalResistance = 0;
-    //     {
-    //         let obj = battery.getOutputs()[0].getOutput().getParent();
-    //         while (obj != battery) {
-    //             totalResistance += obj.getResistance();
-
-    //             if (obj.getOutputs().length <= 0)
-    //                 throw new Error("Disconnected circuit!");
-    //             if (obj.getOutputs().length > 1)
-    //                 throw new Error("Circuit is not in series!");
-
-    //             obj = obj.getOutputs()[0].getOutput().getParent();
-    //         }
-    //     }
-
-    //     const current = totalVoltage / totalResistance;
-
-    //     // Set currents
-    //     this.objects.forEach(c => c.current = current);
-    //     this.wires.forEach(w => w.current = current);
-
-    //     // Set voltages
-    //     let voltage = totalVoltage;
-    //     {
-    //         battery.getOutputs()[0].setVoltage(voltage);
-    //         let obj = battery.getOutputs()[0].getOutput().getParent();
-    //         while (obj != battery) {
-    //             const voltageDrop = current * obj.getResistance();
-
-    //             obj.setVoltage(voltageDrop > 0 ? voltageDrop : voltage);
-    //             voltage -= voltageDrop;
-
-    //             obj.getOutputs()[0].setVoltage(voltage);
-
-    //             obj = obj.getOutputs()[0].getOutput().getParent();
-    //         }
-    //     }
-    // }
 
     public createWire(p1: AnalogPort, p2: AnalogPort): AnalogWire {
         return new AnalogWire(p1, p2);
@@ -532,6 +485,29 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
         let s: string = this.stringifyNetList(NetNodes);
         return s;
+    }
+
+    private updateNetList(): void {
+        this.netlist = [];
+        let temp: string = this.giveNetList();
+        this.netlist = temp.split("\n");
+
+        //this.netlist.push("test array");
+        //this.netlist.push("V1 1 0 1");
+        //this.netlist.push("R1 1 2 1");
+        //this.netlist.push("C1 2 0 1 ic=0");
+        //this.netlist.push(".tran 10u 3 uic");
+        //this.netlist.push(".end");
+        console.log("netlist updated");
+    }
+
+    public startSimulation(): void {
+        this.updateNetList();
+        
+    }
+
+    public getNetList(): string[] {
+        return this.netlist;
     }
 
 }
