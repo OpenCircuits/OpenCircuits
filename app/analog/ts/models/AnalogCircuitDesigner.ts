@@ -354,6 +354,11 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     //The nvals[] array within NetNodes[] must be initialized with the labelNodes() before calling this function, otherwise every component will be connected to node -1
     //The order of components in the netlist may not be desirable, as it relies on the order of the objects array. 
     //  However, this order does not functionally change the netlist. It just may not be incredibly organized
+
+    //When adding a new component to the netlist parser, do the following:
+    // - Add a new counter variable for the naming convention
+    // - Add an elseiif statement to all the others in the for loop. 
+    //      You should (hopefully) be fine if you copy-paste a pre-existing else-if statement. Just triple-check that all variables were changed appropriately!
     private stringifyNetList(NetNodes: { name:string, xpos:number, ypos:number, nvals:number[]}[]): string {
         //First line is always the title of the netlist
         let result: string = "OpenCircuits Outputted Netlist\n";
