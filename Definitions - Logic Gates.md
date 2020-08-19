@@ -1,6 +1,6 @@
 # Welcome to OpenCircuits!
 
-I wanted to create this document to define the logic gate electrical components used OpenCircuits. This document will the components used in the side-bar.
+I wanted to create this document to define the logic gate electrical components used OpenCircuits.
 
 # Buffer
 A digital buffer (or a voltage buffer) is an electronic circuit element that is used to isolate the input from the output, providing either no voltage or a voltage that is same as the input voltage. It draws very little current and will not disturb the original circuit.
