@@ -1,39 +1,39 @@
+import {serializable} from "serialeazy";
+
 import {V} from "Vector";
 
-import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
+import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
 
 import {FlipFlop} from "./FlipFlop";
-import {serializable} from "serialeazy";
 
 @serializable("SRFlipFlop")
 export class SRFlipFlop extends FlipFlop {
+    public static readonly SET_PORT = 2;
+    public static readonly RST_PORT = 4;
 
     public constructor() {
-        super(3, V(80, 120), new ThreePortPositioner());
+        super(2, V(100, 120), new FlipFlopPositioner(3));
 
-        this.getInputPort(0).setName("R");
-        this.getInputPort(1).setName(">");
-        this.getInputPort(2).setName("S");
+        this.getInputPort(SRFlipFlop.SET_PORT).setName("S");
+        this.getInputPort(SRFlipFlop.RST_PORT).setName("R");
     }
 
     // @Override
-    public activate(): void {
-        this.lastClock = this.clock;
-        this.clock  = this.inputs.get(1).getIsOn();
-        const set   = this.inputs.get(0).getIsOn();
-        const reset = this.inputs.get(2).getIsOn();
-        if (this.clock && !this.lastClock) {
+    protected getNextState(): boolean {
+        const set   = this.inputs.get(SRFlipFlop.SET_PORT).getIsOn();
+        const reset = this.inputs.get(SRFlipFlop.RST_PORT).getIsOn();
+
+        if (this.up()) {
             if (set && reset) {
-                // undefined behavior
+                // undefined
             } else if (set) {
-                this.state = true;
+                return true;
             } else if (reset) {
-                this.state = false;
+                return false;
             }
         }
 
-        super.activate(this.state, 0);
-        super.activate(!this.state, 1);
+        return this.state;
     }
 
     public getDisplayName(): string {

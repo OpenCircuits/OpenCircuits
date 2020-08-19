@@ -1,68 +1,68 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {TFlipFlop}       from "digital/models/ioobjects/flipflops/TFlipFlop";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+import {TFlipFlop}              from "digital/models/ioobjects/flipflops/TFlipFlop";
+import {LED}                    from "digital/models/ioobjects/outputs/LED";
 
 import {Place, Connect} from "test/helpers/Helpers";
 
-describe("TFlipFLop", () => {
-    const designer = new DigitalCircuitDesigner(0);
-    const clk = new Switch(), tgl = new Switch(), f = new TFlipFlop(), l0 = new LED(), l1 = new LED();
+describe("TFlipFlop", () => {
+    const ON = true, OFF = false;
 
-    Place(designer, [clk, tgl, f, l1, l0]);
-    Connect(clk, 0,  f, 0);
-    Connect(tgl, 0,  f, 1);
-    Connect(f, 0,  l0, 0);
-    Connect(f, 1,  l1, 0);
+    const designer = new DigitalCircuitDesigner(0);
+    const C = new Switch(), T = new Switch(), PRE = new Switch(), CLR = new Switch();
+    const f = new TFlipFlop(), Q = new LED(), Q2 = new LED();
+
+    Place(designer, [C, T, PRE, CLR, f, Q, Q2]);
+    Connect(C,  0, f, TFlipFlop.CLK_PORT);
+    Connect(T, 0, f, TFlipFlop.TGL_PORT);
+    Connect(PRE, 0, f, TFlipFlop.PRE_PORT);
+    Connect(CLR, 0, f, TFlipFlop.CLR_PORT);
+    Connect(f, TFlipFlop.Q_PORT,  Q, 0);
+    Connect(f, TFlipFlop.Q2_PORT, Q2, 0);
+
+    function expectState(state: boolean): void {
+        expect(Q.isOn()).toBe(state);
+        expect(Q2.isOn()).toBe(!state);
+    }
 
     test("Initial State", () => {
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
-    test("Turn On the Toggle", () => {
-        clk.activate(false);
-        tgl.activate(true);
-
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+    test("Toggle the Data without the Clock", () => {
+        T.activate(ON);
+        expectState(OFF);
+        T.activate(OFF)
+        expectState(OFF);
     });
-    test("Turn On the Clock, 1", () => {
-        clk.activate(true);
-
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+    test("Clock on and off w/o data on", () => {
+        C.activate(ON);
+        expectState(OFF);
+        C.activate(OFF);
+        expectState(OFF);
     });
-    test("Turn Off the Clock, 1", () => {
-        clk.activate(false);
+    test("Flip Flop Toggle", () => {
+        T.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        C.activate(ON);
+        expectState(ON);
+
+        C.activate(OFF);
+        expectState(ON);
+
+        C.activate(ON);
+        expectState(OFF);
     });
-    test("Turn On the Clock, 2", () => {
-        clk.activate(true);
+    test("PRE and CLR", () => {
+        PRE.activate(ON);
+        expectState(ON);
+        PRE.activate(OFF);
+        expectState(ON);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
-    });
-    test("Turn Off the Clock, 2", () => {
-        clk.activate(false);
-
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
-    });
-    test("Turn Off the Toggle", () => {
-        tgl.activate(false);
-
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
-    });
-    test("Pulse the Clock with the Toggle Off", () => {
-        clk.activate(true);
-        clk.activate(false);
-
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        CLR.activate(ON);
+        expectState(OFF);
+        CLR.activate(OFF);
+        expectState(OFF);
     });
 });

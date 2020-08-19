@@ -36,9 +36,14 @@ export abstract class Wire extends CullableObject {
         this.dirtyShape = true;
     }
 
-    public onTransformChange(): void {
-        super.onTransformChange();
-        this.dirtyShape = true;
+    private calculateShape(port: Port): [Vector, Vector] {
+        const pos = port.getWorldTargetPos();
+        const dir = port.getWorldDir();
+
+        // For straight bezier curves, Control point needs to be at the Point
+        const c = (this.straight) ? (pos) : (pos.add(dir.scale(DEFAULT_SIZE)));
+
+        return [pos, c];
     }
 
     protected updateCurve(): void {
@@ -46,18 +51,21 @@ export abstract class Wire extends CullableObject {
             return;
         this.dirtyShape = false;
 
-        if (this.p1 != null) {
-            const pos = this.p1.getWorldTargetPos();
-            const dir = this.p1.getWorldDir();
-            this.shape.setP1(pos);
-            this.shape.setC1(dir.scale(DEFAULT_SIZE).add(pos));
+        if (this.p1) {
+            const [p1, c1] = this.calculateShape(this.p1);
+            this.shape.setP1(p1);
+            this.shape.setC1(c1);
         }
-        if (this.p2 != null) {
-            const pos = this.p2.getWorldTargetPos();
-            const dir = this.p2.getWorldDir();
-            this.shape.setP2(pos);
-            this.shape.setC2(dir.scale(DEFAULT_SIZE).add(pos));
+        if (this.p2) {
+            const [p2, c2] = this.calculateShape(this.p2);
+            this.shape.setP2(p2);
+            this.shape.setC2(c2);
         }
+    }
+
+    public onTransformChange(): void {
+        super.onTransformChange();
+        this.dirtyShape = true;
     }
 
     public abstract split(): Node;

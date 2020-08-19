@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/99583ef8e70e4f138ff64f748d541883)](https://www.codacy.com/app/LeonMontealegre/OpenCircuits?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenCircuits/OpenCircuits&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/52689df193bd42d4b819ef670e2853b4)](https://www.codacy.com/gh/OpenCircuits/OpenCircuits?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenCircuits/OpenCircuits&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/16d70cd0-8f54-4691-9b6e-ea250d09e88f)](https://codebeat.co/projects/github-com-opencircuits-opencircuits-master)
 [![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/opencircuits/opencircuits.svg)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
@@ -35,6 +35,12 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 *   Runs on any device with ES6 support
 *   Can be used by professors, students, and hobbyists alike
 *   Open-source and completely free to use
+
+## Screenshots
+
+<img src="https://imgur.com/xBc75jL.png" width="80%" />
+<img src="https://imgur.com/UUPyzcx.png" width="80%" />
+<img src="https://imgur.com/gQPQACz.png" width="80%" />
 
 ## Contact Us
 

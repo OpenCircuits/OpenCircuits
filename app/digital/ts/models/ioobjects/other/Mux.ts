@@ -8,7 +8,7 @@ import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
+import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxSelectPositioners";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
@@ -29,11 +29,6 @@ export abstract class Mux extends DigitalComponent {
     }
 
     public setSelectPortCount(val: number): void {
-        // Calculate size
-        const width = Math.max(DEFAULT_SIZE/2*(val-1), DEFAULT_SIZE);
-        const height = DEFAULT_SIZE/2*Math.pow(2, val);
-        this.transform.setSize(V(width+10, height));
-
         this.selects.setPortCount(val);
     }
 

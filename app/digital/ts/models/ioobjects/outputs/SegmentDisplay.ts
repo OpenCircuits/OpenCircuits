@@ -2,13 +2,15 @@ import {serializable} from "serialeazy";
 
 import Segments from "./Segments.json";
 
+import {IO_PORT_RADIUS} from "core/utils/Constants";
+
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {Name} from "core/utils/Name";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {SegmentDisplayPositioner} from "digital/models/ports/positioners/SegmentDisplayPositioner";
+import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
@@ -18,7 +20,7 @@ export class SegmentDisplay extends DigitalComponent {
         super(new ClampedValue(7, 7, 16),
               new ClampedValue(0),
               V(70, 100),
-              new SegmentDisplayPositioner());
+              new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false));
 
         this.setInputPortCount(7);
     }

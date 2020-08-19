@@ -1,36 +1,35 @@
-import {Latch} from "./Latch";
-
-import {ThreePortPositioner} from "../../ports/positioners/ThreePortPositioner";
 import {serializable} from "serialeazy";
+
+import {Positioner} from "core/models/ports/positioners/Positioner";
+import {InputPort} from "digital/models/ports/InputPort";
+
+import {Latch} from "./Latch";
 
 @serializable("SRLatch")
 export class SRLatch extends Latch {
+    public static readonly SET_PORT = 0;
+    public static readonly RST_PORT = 2;
 
     public constructor() {
-        super(3, new ThreePortPositioner());
+        super(2, new Positioner<InputPort>("left", 3/4));
 
-        this.getInputPort(0).setName("R");
-        this.getInputPort(1).setName(">");
-        this.getInputPort(2).setName("S");
+        this.getInputPort(SRLatch.SET_PORT).setName("S");
+        this.getInputPort(SRLatch.RST_PORT).setName("R");
     }
 
-    // @Override
-    public activate(): void {
-        this.clock  = this.inputs.get(1).getIsOn();
-        const set   = this.inputs.get(2).getIsOn();
-        const reset = this.inputs.get(0).getIsOn();
-        if (this.clock) {
-            if (set && reset) {
-                // undefined behavior
-            } else if (set) {
-                this.state = true;
-            } else if (reset) {
-                this.state = false;
-            }
+    protected getNextState(): boolean {
+        const set   = this.inputs.get(SRLatch.SET_PORT).getIsOn();
+        const reset = this.inputs.get(SRLatch.RST_PORT).getIsOn();
+
+        if (set && reset) {
+            // undefined behavior
+        } else if (set) {
+            return true;
+        } else if (reset) {
+            return false;
         }
 
-        super.activate(this.state, 1);
-        super.activate(!this.state, 0);
+        return this.state;
     }
 
     public getDisplayName(): string {
