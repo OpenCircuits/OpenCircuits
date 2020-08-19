@@ -1,6 +1,5 @@
 # Welcome to OpenCircuits!
-
-I wanted to create this document to define the inputs electrical components used OpenCircuits. This document will the components used in the side-bar.
+I wanted to create this document to define the input electrical components used OpenCircuits. 
 
 # Constant Low
 A constant low means that power is constantly not suppled
