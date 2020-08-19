@@ -25,3 +25,6 @@ True if either A or B are True, but False if both are True
 
 # XNOR
 XOR followed by NOT: True if A and B are both True or both False
+
+* Source 1: https://en.wikipedia.org/wiki/Digital_buffer#:~:text=A%20digital%20buffer%20(or%20a,not%20disturb%20the%20original%20circuit.
+* Source 2: https://techterms.com/definition/logicgate
