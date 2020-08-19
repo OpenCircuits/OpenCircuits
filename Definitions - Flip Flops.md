@@ -1,3 +1,7 @@
+# Welcome to OpenCircuits!
+
+I wanted to create this document to define the flip flop electrical components used OpenCircuits.
+
 # SR
 When the clock rises from 0 to 1, the value remembered by the flip-flop remains unchanged if R and S are both 0, becomes 0 if the R input (Reset) is 1, and becomes 1 if the S input (Set) is 1. The behavior in unspecified if both inputs are 1. (In Logisim, the value in the flip-flop remains unchanged.)
 
