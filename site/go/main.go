@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"net"
 	"os"
+	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
@@ -19,6 +21,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func getPort() string {
+	for port := 8080; port <= 65535; port++ {
+		ln, err := net.Listen("tcp", ":" + strconv.Itoa(port))
+		if err == nil {
+			ln.Close()
+			return strconv.Itoa(port)
+		}
+	}
+	return "8080"
+}
+
 func main() {
 	var err error
 
@@ -30,7 +43,7 @@ func main() {
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
-	portConfig := flag.String("port", "8080", "Port to serve application")
+	portConfig := flag.String("port", getPort(), "Port to serve application")
 	flag.Parse()
 
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
