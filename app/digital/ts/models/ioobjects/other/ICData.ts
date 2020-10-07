@@ -163,14 +163,10 @@ export class ICData {
         const group2 = CreateGroup(arr.concat(group.getWires(),group.getComponents().filter(o => !(o instanceof Label))));
 
 
-        //group = group.getComponents().filter(o => o instanceof Label);
-        //const newgroup = group[].filter(o => !(o instanceof Label));
         const graph = CreateGraph(group2);
 
         
-        //console.log("This is what a wrote" + objects);
         // Make sure it's a connected circuit
-        //Problem for me because if label is there, then It will always fail
         if (!graph.isConnected())
             return false;
 
