@@ -22,6 +22,7 @@ import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
+import { Component, Wire } from "core/models";
 
 @serializable("ICData")
 export class ICData {
@@ -153,15 +154,23 @@ export class ICData {
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
-        const BLACKLIST = [SegmentDisplay, Label];
-
+        const BLACKLIST = [SegmentDisplay];
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
-        const graph = CreateGraph(group);
-
         const objs  = group.getComponents();
         const wires = group.getWires();
+        //filter out the labels(since they technically aren't part of the components)
+        const arr = [];
+        const group2 = CreateGroup(arr.concat(group.getWires(),group.getComponents().filter(o => !(o instanceof Label))));
 
+
+        //group = group.getComponents().filter(o => o instanceof Label);
+        //const newgroup = group[].filter(o => !(o instanceof Label));
+        const graph = CreateGraph(group2);
+
+        
+        //console.log("This is what a wrote" + objects);
         // Make sure it's a connected circuit
+        //Problem for me because if label is there, then It will always fail
         if (!graph.isConnected())
             return false;
 
