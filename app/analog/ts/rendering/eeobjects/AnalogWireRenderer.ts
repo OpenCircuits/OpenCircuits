@@ -5,7 +5,6 @@ import {Camera} from "math/Camera";
 
 import {Renderer} from "core/rendering/Renderer";
 import {Curve}    from "core/rendering/shapes/Curve";
-import {Line}     from "core/rendering/shapes/Line";
 import {Style}    from "core/rendering/Style";
 
 import {AnalogWire} from "analog/models/AnalogWire";
@@ -25,15 +24,11 @@ export const AnalogWireRenderer = (() => {
             const p1 = camera.getScreenPos(curve.getP1());
             const p2 = camera.getScreenPos(curve.getP2());
 
-            if (wire.isStraight()) {
-                renderer.draw(new Line(p1, p2), style);
-            } else {
             // get bezier points
-                const c1 = camera.getScreenPos(curve.getC1());
-                const c2 = camera.getScreenPos(curve.getC2());
+            const c1 = camera.getScreenPos(curve.getC1());
+            const c2 = camera.getScreenPos(curve.getC2());
 
-                renderer.draw(new Curve(p1, p2, c1, c2), style);
-            }
+            renderer.draw(new Curve(p1, p2, c1, c2), style);
         }
     };
 })();

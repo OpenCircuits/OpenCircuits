@@ -1,6 +1,7 @@
+import {serialize} from "serialeazy";
+
 import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "serialeazy";
 
 import {Component} from "core/models/Component";
 
@@ -8,8 +9,8 @@ import {Port} from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalCircuitDesigner} from "./DigitalCircuitDesigner";
-import {DigitalWire} from "./DigitalWire";
+import {DigitalWire, DigitalCircuitDesigner} from "./index";
+
 import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
@@ -23,7 +24,8 @@ export abstract class DigitalComponent extends Component {
     protected outputs: PortSet<OutputPort>;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
-                          inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+                          inputPositioner:  Positioner<InputPort>  = new Positioner<InputPort>("left"),
+                          outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right")) {
         super(size);
 
         this.inputs  = new PortSet<InputPort> (this, inputPortCount, inputPositioner, InputPort);

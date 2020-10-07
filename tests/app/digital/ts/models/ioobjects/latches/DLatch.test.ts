@@ -1,78 +1,75 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {DLatch}          from "digital/models/ioobjects/latches/DLatch";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+import {DLatch}                 from "digital/models/ioobjects/latches/DLatch";
+import {LED}                    from "digital/models/ioobjects/outputs/LED";
 
 import {Place, Connect} from "test/helpers/Helpers";
 
 describe("DLatch", () => {
-    const designer = new DigitalCircuitDesigner(0);
-    const clk = new Switch(), data = new Switch(), l = new DLatch(), l0 = new LED(), l1 = new LED();
+    const ON = true, OFF = false;
 
-    Place(designer, [clk, data, l, l1, l0]);
-    Connect(clk, 0,  l, 0);
-    Connect(data, 0,  l, 1);
-    Connect(l, 0,  l0, 0);
-    Connect(l, 1,  l1, 0);
+    const designer = new DigitalCircuitDesigner(0);
+    const E = new Switch(), D = new Switch(), l = new DLatch(), Q = new LED(), Q2 = new LED();
+
+    Place(designer, [E, D, l, Q, Q2]);
+    Connect(E, 0, l, DLatch.E_PORT);
+    Connect(D, 0, l, DLatch.DATA_PORT);
+    Connect(l, DLatch.Q_PORT, Q, 0);
+    Connect(l, DLatch.Q2_PORT, Q2, 0);
+
+    function expectState(state: boolean): void {
+        expect(Q.isOn()).toBe(state);
+        expect(Q2.isOn()).toBe(!state);
+    }
 
     test("Initial State", () => {
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(false);
+        expectState(OFF);
     });
-    test("Toggle the Data without the Clock", () => {
-        data.activate(true);
+    test("Toggle the Data without being enabled", () => {
+        E.activate(OFF);
+        D.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        data.activate(false);
+        D.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch Off", () => {
-        clk.activate(true);
+        E.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        data.activate(true);
+        D.activate(ON);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        data.activate(false);
+        D.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch in False State", () => {
-        clk.activate(false);
+        E.activate(OFF);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
 
-        data.activate(true);
+        D.activate(ON);
 
-        expect(l1.isOn()).toBe(false);
-        expect(l0.isOn()).toBe(true);
+        expectState(OFF);
     });
     test("Latch in True State", () => {
-        clk.activate(true);
+        E.activate(ON);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        clk.activate(false);
+        E.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
 
-        data.activate(false);
+        D.activate(OFF);
 
-        expect(l1.isOn()).toBe(true);
-        expect(l0.isOn()).toBe(false);
+        expectState(ON);
     });
 });
