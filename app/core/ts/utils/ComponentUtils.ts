@@ -18,6 +18,8 @@ import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
 
+import {isPressable} from "core/utils/Pressable"
+
 /**
  * Helper class to hold different groups of components.
  *
@@ -297,6 +299,13 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 
     // It's assumed that every object has the same designer
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
+
+    // Unpresses button of newly placed copy
+    for(let object of copies) {
+        if(isPressable(object)) {
+            object.release();
+        }
+    }
 
     return new IOObjectSet(copies);
 }
