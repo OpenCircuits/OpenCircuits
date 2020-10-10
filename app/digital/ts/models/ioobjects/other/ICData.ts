@@ -22,7 +22,6 @@ import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
-import { Component, Wire } from "core/models";
 
 @serializable("ICData")
 export class ICData {
@@ -162,9 +161,7 @@ export class ICData {
         const arr = [];
         const group2 = CreateGroup(arr.concat(wires,objs.filter(o => !(o instanceof Label))));
 
-
         const graph = CreateGraph(group2);
-
         
         // Make sure it's a connected circuit
         if (!graph.isConnected())
