@@ -1,6 +1,8 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
-        LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+        LEFT_MOUSE_BUTTON,
+        WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+        
 
 import {Vector} from "Vector";
 import {Camera} from "math/Camera";
@@ -10,6 +12,7 @@ import {SelectionTool} from "core/tools/SelectionTool";
 
 import {Component} from "core/models/Component";
 
+import {Wire} from "core/models/Wire";
 import {Action} from "core/actions/Action";
 import {RotateAction} from "core/actions/transform/RotateAction";
 
@@ -100,11 +103,36 @@ export class RotateTool extends Tool {
                 this.currentAngles;
 
         // Set rotation of each component
+        this.components.forEach(c => this.SnapPos(c));
         this.components.forEach((c, i) => c.setRotationAbout(newAngles[i], this.midpoint));
-
         this.prevAngle += dAngle;
+        
 
         return true;
+    }
+
+    public SnapPos(obj: Component): void {
+        function DoSnap(wire: Wire, x: number, c: number): number {
+            if (Math.abs(x - c) <= (WIRE_SNAP_THRESHOLD - 5)) {
+                wire.setIsStraight(true);
+            }
+            return x;
+        }
+    
+        const v = obj.getPos();
+        // Snap to connections
+        for (const port of obj.getPorts()) {
+            const pos = port.getWorldTargetPos().sub(obj.getPos());
+            const wires = port.getWires();
+            for (const w of wires) {
+                // Get the port that isn't the current port
+                const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
+                w.setIsStraight(false);
+                v.x = DoSnap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
+                v.y = DoSnap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
+            }
+        }
+        obj.setPos(v);
     }
 
     public getMidpoint(): Vector {
