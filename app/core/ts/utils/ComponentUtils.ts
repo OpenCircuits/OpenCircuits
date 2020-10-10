@@ -301,7 +301,7 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
     // Unpresses button of newly placed copy
-    for(let object of copies) {
+    for(const object of copies) {
         if(isPressable(object)) {
             object.release();
         }
