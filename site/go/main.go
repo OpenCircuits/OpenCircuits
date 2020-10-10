@@ -21,6 +21,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func getPort() string {
+	for port := 8080; port <= 65535; port++ {
+		ln, err := net.Listen("tcp", ":" + strconv.Itoa(port))
+		if err == nil {
+			ln.Close()
+			return strconv.Itoa(port)
+		}
+	}
+	return "8080"
+}
+
 func main() {
 	var err error
 
@@ -87,16 +98,7 @@ func main() {
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
-		portString := "8080"
-		for port := 8080; port <= 65535; port++ {
-			portString = strconv.Itoa(port)
-			ln, err := net.Listen("tcp", ":" + portString)
-			if err == nil {
-				ln.Close()
-				break
-			}
-		}
-		*portConfig = portString
+		*portConfig = getPort()
 	}
 
 	router.Run(*ipAddressConfig + ":" + *portConfig)
