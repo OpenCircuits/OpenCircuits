@@ -160,7 +160,7 @@ export class ICData {
         const wires = group.getWires();
         //filter out the labels(since they technically aren't part of the components)
         const arr = [];
-        const group2 = CreateGroup(arr.concat(group.getWires(),group.getComponents().filter(o => !(o instanceof Label))));
+        const group2 = CreateGroup(arr.concat(wires,objs.filter(o => !(o instanceof Label))));
 
 
         const graph = CreateGraph(group2);
