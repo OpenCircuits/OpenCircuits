@@ -18,7 +18,7 @@ import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
 
-import {isPressable} from "core/utils/Pressable"
+import {isPressable} from "core/utils/Pressable";
 
 /**
  * Helper class to hold different groups of components.
