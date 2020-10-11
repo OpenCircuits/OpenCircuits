@@ -128,15 +128,17 @@ export class Renderer {
         this.context.drawImage(this.tintCanvas, 0, 0, size.x, size.y, pos.x, pos.y, size.x, size.y);
         this.context.globalAlpha = prevAlpha;
     }
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {
+    
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
         this.save();
         this.context.font = FONT;
-        this.context.fillStyle = "#000";
+        this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
         this.context.fillText(txt, pos.x, pos.y);
         this.restore();
     }
+
     public getTextWidth(txt: string): number {
         this.context.font = FONT;
         this.context.textBaseline = "middle";
