@@ -13,7 +13,7 @@ export class LabelTextColorPopupModule extends SelectionPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
-        super(circuitController, $("div#popup-color-text"));
+        super(circuitController, $("div#popup-colortext-text"));
 
         this.textColor = this.el.find("input#popup-color-picker")[0] as HTMLInputElement;
         this.textColor.onchange = () => this.push();
