@@ -31,6 +31,7 @@ import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
 import {DigitalItemNavController} from "./DigitalItemNavController";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {SaveShortcut} from "core/tools/Saveshortcut";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
@@ -123,5 +124,12 @@ export class DigitalCircuitController extends MainDesignerController {
         }
 
         return render;
+    }
+    protected onKeyDown(key: number): boolean {
+        SaveShortcut(this,this.sideNav,this.input,key);
+        if (super.onKeyDown(key)) {
+            return true;
+        }
+        return false;
     }
 }
