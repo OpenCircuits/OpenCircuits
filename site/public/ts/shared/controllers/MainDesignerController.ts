@@ -25,7 +25,7 @@ import {HeaderController} from "site/shared/controllers/HeaderController";
 
 import {ItemNavController} from "./ItemNavController";
 import {CopyController} from "./CopyController";
-
+import { DownloadShortcut } from "core/tools/DownloadShortcut";
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
     protected selectionPopup: SelectionPopupController;
@@ -174,6 +174,7 @@ export abstract class MainDesignerController extends DesignerController {
     }
 
     protected onKeyDown(key: number): boolean {
+        DownloadShortcut(this,this.headerController.getProjectName(),this.input,key);
         if (super.onKeyDown(key)) {
             this.selectionPopup.update();
             return true;
