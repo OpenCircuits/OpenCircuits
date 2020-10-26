@@ -107,6 +107,13 @@ export const RemoteController = (() => {
                     }
                 }
             }, true);
+        },
+        IsLoggedIn(): Promise<boolean> {
+            return new Promise<boolean>((resolve, _) => {
+                Chain(async (data: RemoteData) => {
+                    resolve(data.authState != undefined);
+                });
+            });
         }
     }
 })();
