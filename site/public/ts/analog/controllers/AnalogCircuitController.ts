@@ -16,6 +16,7 @@ import {MainDesignerView} from "site/analog/views/MainDesignerView";
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {CopyController} from "site/shared/controllers/CopyController";
 import {AnalogCircuitView} from "../views/AnalogCircuitView";
+import {SaveShortcut} from "core/tools/Saveshortcut";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
@@ -55,6 +56,14 @@ export class AnalogCircuitController extends MainDesignerController {
 
     public getDesigner(): AnalogCircuitDesigner {
         return this.designer;
+    }
+    
+    protected onKeyDown(key: number): boolean {
+        SaveShortcut(this,this.sideNav,this.input,key);
+        if (super.onKeyDown(key)) {
+            return true;
+        }
+        return false;
     }
 
 }
