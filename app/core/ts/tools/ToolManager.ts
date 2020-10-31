@@ -9,7 +9,7 @@ import {Tool} from "core/tools/Tool";
 import {ActionHelper} from "./ActionHelper";
 import {ActionManager} from "../actions/ActionManager";
 import {DefaultTool} from "./DefaultTool";
-import {Saveshortcuts} from "core/tools/Saveshortcut.ts";
+
 
 export class ToolManager implements MouseListener, KeyboardListener {
     private tools: Tool[];
@@ -75,10 +75,6 @@ export class ToolManager implements MouseListener, KeyboardListener {
         // Re-render on action update
         if (this.actionHelper.onEvent(this.currentTool, event, input, button))
             return true;
-
-
-        if (Saveshortcut.save_shortcut(main,input,button,log,head))
-            true;
 
         return didSomething;
     }
