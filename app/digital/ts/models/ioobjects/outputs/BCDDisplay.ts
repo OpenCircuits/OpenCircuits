@@ -7,12 +7,12 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {Name} from "core/utils/Name";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {SegmentDisplayPositioner} from "digital/models/ports/positioners/SegmentDisplayPositioner";
+import {BCDDisplayPositioner} from "digital/models/ports/positioners/BCDDisplayPositioner";
+import { SegmentDisplay } from "./SegmentDisplay";
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
 @serializable("BCDDisplay")
-export class BCDDisplay extends DigitalComponent {
+export class BCDDisplay extends SegmentDisplay {
 
 }
