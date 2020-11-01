@@ -1,0 +1,16 @@
+$historybox-height: 500px;
+$historybox-width: 250px;
+
+.historybox {
+    
+    width: $historybox-width;
+    height: $historybox-height;
+
+    position: absolute;
+    bottom: 0px;
+    z-index: 6;
+
+    background-color: cyan;
+
+
+}
