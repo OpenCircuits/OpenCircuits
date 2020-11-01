@@ -3,16 +3,15 @@ import $ from "jquery";
 import {ClampedValue} from "math/ClampedValue";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
+import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
 import {MainDesignerController} from "../../../shared/controllers/MainDesignerController";
 
 import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
-import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
+import {NumberInputPopupModule} from "../../../shared/selectionpopup/NumberInputPopupModule"
 
-export class OutputCountPopupModule extends SelectionPopupModule {
-    private count: HTMLInputElement;
+export class OutputCountPopupModule extends NumberInputPopupModule {
 
     public constructor(circuitController: MainDesignerController) {
         // Title module does not have a wrapping div
@@ -27,7 +26,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
         const encoders = selections
                 .filter(o => o instanceof Encoder) as Encoder[];
 
-        // Only enable if there's exactly 1 type, so just Gates or just Muxes or just Decoders
+        // Only enable if there's only encoders
         const enable = selections.length > 0 && (selections.length == encoders.length);
 
         if (enable) {
@@ -41,6 +40,7 @@ export class OutputCountPopupModule extends SelectionPopupModule {
 
             this.count.value = same ? counts[0].getValue().toString() : "";
             this.count.placeholder = same ? "" : "-";
+            this.previousCount = same ? counts[0].getValue() : NaN;
 
             this.count.min = min.toString();
             this.count.max = max.toString();
@@ -49,14 +49,10 @@ export class OutputCountPopupModule extends SelectionPopupModule {
         this.setEnabled(enable);
     }
 
-    public push(): void {
+    public executeChangeAction(newCount: number): void {
         const selections = this.circuitController.getSelections() as Encoder[];
-        const countAsNumber = this.count.valueAsNumber;
-
         this.circuitController.addAction(new GroupAction(
-            selections.map(o => new OutputPortChangeAction(o, countAsNumber))
+            selections.map(o => new CoderPortChangeAction(o, newCount))
         ).execute());
-
-        this.circuitController.render();
     }
 }

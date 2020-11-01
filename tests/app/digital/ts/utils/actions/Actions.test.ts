@@ -6,7 +6,7 @@ import {LED}             from "digital/models/ioobjects/outputs/LED";
 import {Multiplexer}     from "digital/models/ioobjects/other/Multiplexer";
 
 import {ActionManager}          from "core/actions/ActionManager";
-import {SelectPortChangeAction} from "digital/actions/ports/SelectPortChangeAction";
+import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateBusAction}        from "digital/actions/addition/BusActionFactory";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
@@ -33,14 +33,14 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
 
-               .add(new SelectPortChangeAction(m, 3).execute())
+                .add(new MuxPortChangeAction(m, 3).execute())
 
-               .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                    [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
+                .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
+                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
 
-               .undo().undo().undo()
-               .redo().redo().redo()
-               .undo().undo().undo();
+                .undo().undo().undo()
+                .redo().redo().redo()
+                .undo().undo().undo();
 
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);
@@ -63,16 +63,16 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
 
-               .add(new SelectPortChangeAction(m, 3).execute())
+                .add(new MuxPortChangeAction(m, 3).execute())
 
-               .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                    [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
+                .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
+                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
 
-               .add(new SelectPortChangeAction(m, 2).execute())
+                .add(new MuxPortChangeAction(m, 2).execute())
 
-               .undo().undo().undo().undo()
-               .redo().redo().redo().redo()
-               .undo().undo().undo().undo();
+                .undo().undo().undo().undo()
+                .redo().redo().redo().redo()
+                .undo().undo().undo().undo();
 
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);
@@ -90,13 +90,13 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(CreateGroupPlaceAction(designer, [a,b]).execute())
 
-               .add(new ConnectionAction(a.getOutputPort(0), b.getInputPort(0)).execute())
+                .add(new ConnectionAction(a.getOutputPort(0), b.getInputPort(0)).execute())
 
-               .add(CreateSplitWireAction(a.getOutputs()[0], n).execute())
+                .add(CreateSplitWireAction(a.getOutputs()[0], n).execute())
 
-               .undo().undo().undo()
-               .redo().redo().redo()
-               .undo().undo().undo();
+                .undo().undo().undo()
+                .redo().redo().redo()
+                .undo().undo().undo();
 
         expect(designer.getObjects().length).toBe(0);
         expect(designer.getWires().length).toBe(0);

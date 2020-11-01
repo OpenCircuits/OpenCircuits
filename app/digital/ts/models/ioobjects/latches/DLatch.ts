@@ -3,22 +3,17 @@ import {serializable} from "serialeazy";
 
 @serializable("DLatch")
 export class DLatch extends Latch {
+    public static readonly DATA_PORT = 0;
 
     public constructor() {
-        super(2);
-        this.getInputPort(0).setName(">");
-        this.getInputPort(1).setName("D");
+        super(1);
+
+        this.getInputPort(DLatch.DATA_PORT).setName("D");
     }
 
-    // @Override
-    public activate(): void {
-        this.clock = this.inputs.get(0).getIsOn();
-        const data = this.inputs.get(1).getIsOn();
-        if (this.clock)
-            this.state = data;
-
-        super.activate(this.state, 1);
-        super.activate(!this.state, 0);
+    protected getNextState(): boolean {
+        const data = this.inputs.get(DLatch.DATA_PORT).getIsOn();
+        return data;
     }
 
     public getDisplayName(): string {
