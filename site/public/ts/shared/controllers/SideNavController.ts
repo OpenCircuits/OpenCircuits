@@ -26,6 +26,9 @@ export class SideNavController {
     private main: MainDesignerController;
     private header: HeaderController;
 
+    private historyButton: JQuery<HTMLElement> = $("#history-button");
+    private historyBox: JQuery<HTMLElement> = $("#history-box");
+
     public constructor(main: MainDesignerController, header: HeaderController) {
         this.main = main;
         this.header = header;
@@ -39,6 +42,13 @@ export class SideNavController {
 
         this.overlay.click(() => {
             this.close();
+        });
+
+        this.historyBox.hide();
+
+        this.historyButton.click(() => {
+            console.log("It works!!!")
+            this.historyBox.show()
         });
 
         // Set up onclick listeners to example circuits
