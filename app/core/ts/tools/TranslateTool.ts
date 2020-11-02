@@ -18,31 +18,6 @@ import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
 import {Wire} from "core/models/Wire";
 
-function SnapPos(obj: Component): void {
-    function DoSnap(wire: Wire, x: number, c: number): number {
-        if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
-            wire.setIsStraight(true);
-            return c;
-        }
-        return x;
-    }
-
-    const v = obj.getPos();
-    // Snap to connections
-    for (const port of obj.getPorts()) {
-        const pos = port.getWorldTargetPos().sub(obj.getPos());
-        const wires = port.getWires();
-        for (const w of wires) {
-            // Get the port that isn't the current port
-            const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
-            w.setIsStraight(false);
-            v.x = DoSnap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
-            v.y = DoSnap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
-        }
-    }
-    obj.setPos(v);
-}
-
 export class TranslateTool extends Tool {
     protected camera: Camera;
 
@@ -103,7 +78,6 @@ export class TranslateTool extends Tool {
 
     public deactivate(): Action {
         this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
-
         return this.action;
     }
 
@@ -129,6 +103,9 @@ export class TranslateTool extends Tool {
         // Execute translate but don't save to group action since we do that in 'deactivate'
         this.components.forEach((c, i) => c.setPos(shiftedPositions[i]));
 
+        //Snap component midpoints
+        MidSnap(this.components);
+
         // Snap at the end instead of one-by-one (fixes #417)
         this.components.forEach(c => SnapPos(c));
 
@@ -146,4 +123,47 @@ export class TranslateTool extends Tool {
         return false;
     }
 
+}
+
+function SnapPos(obj: Component): void {
+    function DoSnap(wire: Wire, x: number, c: number): number {
+        if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
+            wire.setIsStraight(true);
+            return c;
+        }
+        return x;
+    }
+
+    const v = obj.getPos();
+    // Snap to connections
+    for (const port of obj.getPorts()) {
+        const pos = port.getWorldTargetPos().sub(obj.getPos());
+        const wires = port.getWires();
+        for (const w of wires) {
+            // Get the port that isn't the current port
+            const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
+            w.setIsStraight(false);
+            v.x = DoSnap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
+            v.y = DoSnap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
+        }
+    }
+    obj.setPos(v);
+}
+
+function MidSnap(obj: Component[]) {
+    function DoSnap(x: number, c: number): number {
+        if (Math.abs(x - c) <= 10) {
+            return c;
+        }
+        return x;
+    }
+    for(let i = 0; i < obj.length; i++) {
+        const v = obj[i].getPos();
+        for(let j = (i + 1); j < obj.length; j++) {
+            const w = obj[j].getPos();
+            v.x = DoSnap(v.x, w.x);
+            v.y = DoSnap(v.y, w.y);
+        }
+        obj[i].setPos(v);
+    }
 }
