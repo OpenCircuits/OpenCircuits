@@ -3,22 +3,26 @@
     <div class="sidenav__accountinfo">
         {{ .userId }}
     </div>
-    <div class="sidenav__content">
-        <h4 unselectable>My Circuits</h4>
-        <div id="user-circuit-list"></div>
-        <h4 unselectable>Examples</h4>
-        <div id="example-circuit-list">
-            {{ range $i, $example := .examples }}
-                {{ template "sidenavcircuit" $example }}
-            {{end}}
+    <div class="sidenav__wrapper">
+        <div class="sidenav__content">
+            <h4 unselectable>My Circuits</h4>
+            <div id="user-circuit-list"></div>
+            <h4 unselectable>Examples</h4>
+            <div id="example-circuit-list">
+                {{ range $i, $example := .examples }}
+                    {{ template "sidenavcircuit" $example }}
+                {{end}}
+            </div>
+            <div class="sidenav__message">
+                A program made with love by <a href="http://www.leonmontealeg.re/" target="_blank">Leon Montealegre</a>
+                and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank">team</a>
+            </div>
         </div>
-        <div class="sidenav__content__footer">
-            A program made with love by <a href="http://www.leonmontealeg.re/" target="_blank">Leon Montealegre</a>
-            and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank">team</a>
+        <div class="sidenav__footer">
+            <button id="history-button" class="sidenav__footer__history" title="History">
+                <img src="img/icons/history-24px.svg">
+            </button>
         </div>
-        <button id="history-button" class="sidenav__content__footer__history" title="History">
-            <img src="img/icons/history-24px.svg">
-        </button>
     </div>
 </div>
 {{end}}

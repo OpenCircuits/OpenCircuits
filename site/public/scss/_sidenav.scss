@@ -1,6 +1,11 @@
 $sidenav-width: 250px;
 $sidenav-border-width: 5px;
 
+$sidenav-message-margin: 25px;
+
+$sidenav-footer-height: 50px;
+$sidenav-footer-margin-y: 10px;
+
 .sidenav {
     position: fixed;
     z-index: 6;
@@ -35,10 +40,18 @@ $sidenav-border-width: 5px;
         border-bottom-width: 3px;
         background-color: lighten($primary-color, 20%);
     }
-    &__content {
-        overflow-y: auto;
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-        height: 100%;
+        height: calc(100% - 60px);
+
+        overflow-y: auto;
+    }
+    &__content {
+        // max-height: 100%;
+        flex: 1;
 
         & h4 {
             font-size: 24px;
@@ -110,25 +123,32 @@ $sidenav-border-width: 5px;
                 }
             }
         }
-        &__footer {
-            height: 120px;
-            padding: 50px 25px 50px 25px;
+    }
+    &__message {
+        padding: 50px 25px 20px 25px;
 
-            text-align: center;
+        text-align: center;
 
-            color: $secondary-color;
+        color: $secondary-color;
 
-            & a {
-                text-decoration: none;
+        & a {
+            text-decoration: none;
 
-                color: lighten($secondary-color, 25%);
-            }
+            color: lighten($secondary-color, 25%);
+        }
+    }
+    &__footer {
+        position: relative;
 
-            &__history {
-                margin-top: 180px;
-                margin-left: 215px;
-                text-align: right;
-            }
+        height: $sidenav-footer-height;
+        padding: 10px 25px 10px 25px;
+
+        flex-shrink: 0;
+
+        &__history {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
         }
     }
 }
