@@ -105,6 +105,7 @@ export class TranslateTool extends Tool {
 
         //Snap component midpoints
         MidSnap(this.components);
+        EdgeSnap(this.components);
 
         // Snap at the end instead of one-by-one (fixes #417)
         this.components.forEach(c => SnapPos(c));
@@ -161,6 +162,24 @@ function MidSnap(obj: Component[]) {
         const v = obj[i].getPos();
         for(let j = (i + 1); j < obj.length; j++) {
             const w = obj[j].getPos();
+            v.x = DoSnap(v.x, w.x);
+            v.y = DoSnap(v.y, w.y);
+        }
+        obj[i].setPos(v);
+    }
+}
+
+function EdgeSnap(obj: Component[]) {
+    function DoSnap(x: number, c: number): number {
+        if (Math.abs(x - c) <= 10) {
+            return c;
+        }
+        return x;
+    }
+    for(let i = 0; i < obj.length; i++) {
+        const v = obj[i].getPos();
+        for(let j = (i + 1); j < obj.length; j++) {
+            const w = obj[j].getOffset(); 
             v.x = DoSnap(v.x, w.x);
             v.y = DoSnap(v.y, w.y);
         }
