@@ -1,6 +1,7 @@
 import {serializable} from "serialeazy";
 
-import Segments from "./Segments.json";
+import Segments from "./Segments.json"
+import BCDFont from "./BCDFont.json";
 
 import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
@@ -16,12 +17,12 @@ export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl
 export class BCDDisplay extends DigitalComponent{
 
     public constructor(){
-        super(new ClampedValue(7, 7, 16),
+        super(new ClampedValue(3, 3, 3),
               new ClampedValue(0),
               V(70, 100),
               new BCDDisplayPositioner());
 
-        this.setInputPortCount(7);
+        this.setInputPortCount(3);
     }
 
     public setInputPortCount(val: number): void {
@@ -32,11 +33,22 @@ export class BCDDisplay extends DigitalComponent{
             this.name = new Name(this.getDisplayName());
     }
 
-    //public getBinaryNum(): number {}
-    //Insert code for getting the binary number based on the inputs.
+    //access the index of the BCDFont based on the decimal number 
+    public getBCDFont(val: number): Array<number>{
+        const BCDNum = BCDFont[this.getInputPortCount().getValue() + ""][val];
+        return BCDNum;
+    }
+    public getSegments(): Array<[Vector, SegmentType]> {
+        //hardcoding 7 for now, the only one being used by a 3 input BCD Display
+        const segments = Segments[7 + ""];
+        // Turns the array into an array of Vectors and SegmentTypes
+        return segments.map((value: [number[], SegmentType]) =>
+            [V(value[0][0], value[0][1]), value[1]]
+        );
+    }
 
     public getDisplayName(): string {
         if (this.inputs == undefined)
             return "BCD Display"
         return this.getInputPorts().length + " BCD Display";
-}
+}}

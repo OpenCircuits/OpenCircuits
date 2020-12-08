@@ -10,7 +10,7 @@ import {InputPort} from "../InputPort";
 export class BCDDisplayPositioner {
 
     /**
-     * Port positiong for segment displays for different inputs
+     * Port positioning for segment displays for different inputs
      *
      * @param arr The array of ports (either in or out ports)
      */
