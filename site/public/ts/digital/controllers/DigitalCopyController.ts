@@ -22,19 +22,15 @@ export class DigitalCopyController extends CopyController {
         super(main);
     }
 
-    protected copy(e: ClipboardEvent, main: DigitalCircuitController): void {
+    public copy(main: DigitalCircuitController): string {
         const selections = main.getSelections();
         const objs = selections.filter((o) => o instanceof IOObject) as IOObject[];
 
-        // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/json", SerializeForCopy(objs));
-        e.preventDefault();
+        return SerializeForCopy(objs);
     }
 
-    protected paste(e: ClipboardEvent, main: DigitalCircuitController): void{
-        // Load clipboard data and deserialize
-        const contents = e.clipboardData.getData("text/json");
-        const objs = Deserialize<IOObject[]>(contents);
+    public paste(data: string, main: DigitalCircuitController): void {
+        const objs = Deserialize<IOObject[]>(data);
 
         const mainDesigner = main.getDesigner();
 

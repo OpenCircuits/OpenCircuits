@@ -144,6 +144,7 @@ describe("Translate Tool", () => {
 
             // Set port to vertically align with Switch and horizontally with LED
             port.setPos(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
+            sw.setPos(V(0, 0));
             led.setPos(V(100, 0));
 
             Place(designer, [sw, led, port]);

@@ -1,0 +1,30 @@
+@import '_navbar';
+
+body {
+    background-image: url(../img/grid_square.png);
+    background-repeat: repeat;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+#about-link { color: white; }
+
+.about_container_1 {
+    font-size: 25px;
+    color: black;
+
+    $container-width: 640px;
+    position: absolute;
+    top: 85px;
+    left: 50%;
+    margin-left: -$container-width/2;
+    width: $container-width;
+    padding: 5px;
+}
+
+#rcos-link {
+    text-decoration: none;
+}
+
+li {
+    margin: 0 0 3px 0;
+}
