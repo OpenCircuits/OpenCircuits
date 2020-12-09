@@ -11,6 +11,8 @@ import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
+import {isPressable} from "core/utils/Pressable";
+
 import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
 import {Component} from "core/models/Component";
@@ -18,7 +20,6 @@ import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
 
-import {isPressable} from "core/utils/Pressable";
 
 /**
  * Helper class to hold different groups of components.
@@ -301,10 +302,10 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
     // Unpresses button of newly placed copy
-    for(const object of copies) {
-        if(isPressable(object)) {
+    //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545
+    for (const object of copies) {
+        if (isPressable(object))
             object.release();
-        }
     }
 
     return new IOObjectSet(copies);
