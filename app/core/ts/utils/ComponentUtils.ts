@@ -246,9 +246,9 @@ export function SerializeForCopy(objects: IOObject[]): string {
         {
             type: Port,
             customBehavior: {
-                customSerialization: (serializer, port: Port, refs, root, custom) => {
+                customSerialization: (serializer, port: Port) => {
                     const parent = port.getParent();
-                    const data = serializer.defaultSerialization(port, refs, root, custom);
+                    const data = serializer.defaultSerialization(port);
 
                     // check if we're serializing an object that isn't an IC
                     //  (since it's in our original list and any objects outside
@@ -262,7 +262,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
                         });
                     }
 
-                    data["connections"] = serializer.serializeProperty(connections, refs, root, custom);
+                    data["connections"] = serializer.serializeProperty(connections);
 
                     return data;
                 },

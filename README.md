@@ -36,6 +36,12 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 *   Can be used by professors, students, and hobbyists alike
 *   Open-source and completely free to use
 
+## Screenshots
+
+<img src="https://imgur.com/xBc75jL.png" width="80%" />
+<img src="https://imgur.com/UUPyzcx.png" width="80%" />
+<img src="https://imgur.com/gQPQACz.png" width="80%" />
+
 ## Contact Us
 
 If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io.
