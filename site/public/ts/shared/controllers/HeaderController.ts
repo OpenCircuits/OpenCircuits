@@ -125,21 +125,15 @@ export class HeaderController {
     }
 
     private setupCookieBanner(): void {
-        //no need to show them a banner we know they've agreed to
-        if(GetCookie("cookie_consent") != "")
-        {
+        // No need to show them a banner we know they've agreed to
+        if (GetCookie("cookie_consent") != "")
             $("#cookie-banner").addClass("invisible");
-        }
 
         $(".cookie__banner__accept").click(() => {
-
             $("#cookie-banner").addClass("invisible");
 
-            //a 30 year expiration date should make this never appear again
-            SetCookie("cookie_consent","accepted",10000);
-        });
-        $(".cookie__banner__decline").click(() => {
-            window.location.href = "https://www.google.com/";
+            // A 30 year expiration date should make this never appear again
+            SetCookie("cookie_consent","accepted", 10000);
         });
     }
 
