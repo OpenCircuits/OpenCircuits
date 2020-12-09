@@ -314,46 +314,6 @@ header {
     }
 }
 
-.cookie__banner {
-
-    position: fixed;
-
-    bottom: 0%;
-
-    left: 33%;
-    right: 33%;
-
-    border-radius: 4px;
-    margin: 5px;
-    padding: 3px;
-
-    background-color: $primary-color;
-    color: $secondary-color;
-
-    text-align: center;
-
-    & button {
-        line-height: $header-button-height;
-        height: $header-button-height;
-        margin-top: $header-padding;
-        margin-left: 0;
-        padding-right: 5px;
-        padding-left: 5px;
-
-        cursor: pointer;
-
-        color: #aaa;
-        border: thin solid #888;
-        border-radius: 4px;
-
-        &:hover {
-            color: #bbb;
-            border-color: #aaa;
-        }
-    }
-}
-
-
 #header-login-dropdown-content {
     height: auto;
     margin-top: 0;
