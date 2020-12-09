@@ -65,8 +65,7 @@ input {
     position: absolute;
     z-index: 0;
 
-    //adding full height of header overshoots and causes camera to zoom too low
-    top: $header-total-height/2;
+    top: $header-total-height;
     bottom: 0;
 
     width: 100%;
