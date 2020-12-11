@@ -1,5 +1,5 @@
 import {DEFAULT_SIZE,
-    WIRE_SNAP_THRESHOLD,
+        WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
