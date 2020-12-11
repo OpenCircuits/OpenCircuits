@@ -7,7 +7,7 @@ import {Component} from "core/models/Component";
 import {MainDesignerController} from "../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
@@ -51,7 +51,7 @@ export class PositionPopupModule extends SelectionPopupModule {
     public push(): void {
         const components = this.circuitController.getSelections() as Component[];
 
-        this.circuitController.addAction(CreateGroupTranslateAction(components, components
+        this.circuitController.addAction(new TranslateAction(components, components
                 .map(c => V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
                             this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5)))
         ).execute());

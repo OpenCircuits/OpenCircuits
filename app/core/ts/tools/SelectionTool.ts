@@ -26,7 +26,7 @@ import {SelectAction,
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
-import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {Tool} from "./Tool";
@@ -266,7 +266,7 @@ export class SelectionTool extends DefaultTool {
             this.action.add(action.execute());
             this.action.add(CreateDeselectAllAction(this).execute());
             this.action.add(CreateGroupSelectAction(this, newObjs.toList()).execute());
-            this.action.add(CreateGroupTranslateAction(comps, comps.map((o) => o.getPos().add(V(5, 5)))).execute());
+            this.action.add(new TranslateAction(comps, comps.map(o => o.getPos().add(V(5, 5)))).execute());
 
             return true;
         }
