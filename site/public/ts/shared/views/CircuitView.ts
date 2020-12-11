@@ -15,9 +15,9 @@ export abstract class CircuitView {
     protected renderer: Renderer;
     protected camera: Camera;
 
-    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1) {
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1, dw: number = 0, dh: number = 0) {
         this.canvas = canvas;
-        this.renderer = new Renderer(this.canvas, vw, vh);
+        this.renderer = new Renderer(this.canvas, vw, vh, dw, dh);
         this.camera = new Camera(this.canvas.width, this.canvas.height);
 
         this.resize();

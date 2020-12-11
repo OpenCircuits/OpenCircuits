@@ -11,8 +11,8 @@ import {ToolRenderer} from "analog/rendering/ToolRenderer";
 
 export class AnalogCircuitView extends CircuitView {
 
-    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1) {
-        super(canvas, vw, vh);
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1, dw: number = 0, dh: number = 0) {
+        super(canvas, vw, vh, dw, dh);
     }
 
     protected renderWire(wire: AnalogWire, selections: Selectable[]): void {
