@@ -1,10 +1,10 @@
 import {DEFAULT_BORDER_WIDTH,
-    DEFAULT_BORDER_COLOR,
-    DEFAULT_FILL_COLOR,
-    SELECTED_BORDER_COLOR,
-    SELECTED_FILL_COLOR,
-    DEFAULT_ON_COLOR,
-    SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
+        DEFAULT_BORDER_COLOR,
+        DEFAULT_FILL_COLOR,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR,
+        DEFAULT_ON_COLOR,
+        SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
@@ -36,35 +36,29 @@ export const BCDDisplayRenderer = (() => {
             const p2 = display.getPorts()[display.getPorts().length-1].getOriginPos().sub(DEFAULT_BORDER_WIDTH/2, 0);
             renderer.draw(new Line(p1, p2), style);   
             
-            // Draw lights
-
-            //converting Binary Number to Decimal
+            //Converting Binary Number to Decimal
             const inputNum = display.getInputPortCount().getValue();
-            var binToDec = 0;
+            let binToDec = 0;
             for (let i = 0; i < inputNum; i++){
-                //I want to change the way the order of the ports are read
-                //the top being the 0th place and the bottom being the 4s place
                 const on = display.getInputPort(i).getIsOn();
-                if (on && i == 2){
-                    binToDec += 2**0;
-                }
-                else if (on && i == 1){
-                    binToDec += 2**1;
-                }
-                else if (on && i == 0){
-                    binToDec += 2**2;
+                //Flips the order of the inputs so they are in top down order
+                let power = Math.abs(i - (inputNum - 1))
+                if (on){
+                    binToDec += 2**power;
                 }
                 else{ 
                     continue;
                 }
             }
+
+            // Draw lights
             const segments = display.getSegments();
             //accesses array of indicies that correlates to the indicies in the Segments.json
             const segmentsIndicies = display.getBCDFont(binToDec);
             for (let i = segmentsIndicies.length - 1; i >= 0 ; i--) {
                 const pos = segments[segmentsIndicies[i]][0].scale(V(SEGMENT_DISPLAY_WIDTH));
                 const type = segments[segmentsIndicies[i]][1];
-                //checks if input is on
+                //input is always true, the indicies are set for each number configuration
                 const on  = true;
 
                 const col = (on ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));

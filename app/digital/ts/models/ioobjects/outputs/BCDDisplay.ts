@@ -9,7 +9,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {Name} from "core/utils/Name";
 
 import {BCDDisplayPositioner} from "digital/models/ports/positioners/BCDDisplayPositioner";
-import { DigitalComponent } from "digital/models/DigitalComponent";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
@@ -17,7 +17,7 @@ export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl
 export class BCDDisplay extends DigitalComponent{
 
     public constructor(){
-        super(new ClampedValue(3, 3, 3),
+        super(new ClampedValue(3, 3, 4),
               new ClampedValue(0),
               V(70, 100),
               new BCDDisplayPositioner());
@@ -39,8 +39,8 @@ export class BCDDisplay extends DigitalComponent{
         return BCDNum;
     }
     public getSegments(): Array<[Vector, SegmentType]> {
-        //hardcoding 7 for now, the only one being used by a 3 input BCD Display
-        const segments = Segments[7 + ""];
+        //hardcoding "7", the only segment configuration needed
+        const segments = Segments["7"];
         // Turns the array into an array of Vectors and SegmentTypes
         return segments.map((value: [number[], SegmentType]) =>
             [V(value[0][0], value[0][1]), value[1]]
@@ -51,4 +51,5 @@ export class BCDDisplay extends DigitalComponent{
         if (this.inputs == undefined)
             return "BCD Display"
         return this.getInputPorts().length + " BCD Display";
-}}
+    }
+}

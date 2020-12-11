@@ -39,7 +39,7 @@ import {Images} from "digital/utils/Images";
 import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
 import {Style} from "../../../../core/ts/rendering/Style";
 import {ICRenderer} from "./other/ICRenderer";
-import { BCDDisplay } from "digital/models/ioobjects";
+import {BCDDisplay} from "digital/models/ioobjects";
 
 export const ComponentRenderer = (() => {
 
