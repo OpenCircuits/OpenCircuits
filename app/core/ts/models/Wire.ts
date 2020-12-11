@@ -1,4 +1,5 @@
 import {DEFAULT_SIZE,
+    WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
@@ -36,6 +37,21 @@ export abstract class Wire extends CullableObject {
         this.dirtyShape = true;
     }
 
+    private checkStraight(): void {
+        if (!this.p1 || !this.p2)
+            return;
+
+        const pos1 = this.p1.getWorldTargetPos();
+        const pos2 = this.p2.getWorldTargetPos();
+
+        if (Math.abs(pos1.x - pos2.x) <= WIRE_SNAP_THRESHOLD ||
+            Math.abs(pos1.y - pos2.y) <= WIRE_SNAP_THRESHOLD) {
+            this.setIsStraight(true);
+        } else {
+            this.setIsStraight(false);
+        }
+    }
+
     private calculateShape(port: Port): [Vector, Vector] {
         const pos = port.getWorldTargetPos();
         const dir = port.getWorldDir();
@@ -50,6 +66,8 @@ export abstract class Wire extends CullableObject {
         if (!this.dirtyShape)
             return;
         this.dirtyShape = false;
+
+        this.checkStraight();
 
         if (this.p1) {
             const [p1, c1] = this.calculateShape(this.p1);
@@ -104,6 +122,7 @@ export abstract class Wire extends CullableObject {
     }
 
     public isStraight(): boolean {
+        this.checkStraight();
         return this.straight;
     }
 
