@@ -33,6 +33,8 @@ export class RotateAction implements Action {
 
     public undo(): Action {
         this.setAngles(this.initialAngles);
+
         return this;
     }
+
 }
