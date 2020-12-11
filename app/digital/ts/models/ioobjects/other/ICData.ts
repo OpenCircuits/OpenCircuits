@@ -9,7 +9,8 @@ import {serializable} from "serialeazy";
 
 import {CopyGroup,
         CreateGraph,
-        CreateGroup} from "core/utils/ComponentUtils";
+        CreateGroup,
+        IOObjectSet} from "core/utils/ComponentUtils";
 
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
@@ -153,13 +154,17 @@ export class ICData {
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
-        const BLACKLIST = [SegmentDisplay, Label];
+        const BLACKLIST = [SegmentDisplay];
 
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
-        const graph = CreateGraph(group);
 
         const objs  = group.getComponents();
         const wires = group.getWires();
+
+        // Filter out the labels so that they don't make the graph 'disconnected'
+        //  and we can still have labels within the IC (issue #555)
+        const filteredGroup = new IOObjectSet((<IOObject[]>wires).concat(objs.filter(o => !(o instanceof Label))));
+        const graph = CreateGraph(filteredGroup);
 
         // Make sure it's a connected circuit
         if (!graph.isConnected())
