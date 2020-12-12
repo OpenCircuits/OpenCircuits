@@ -173,4 +173,8 @@ export class ToolManager implements MouseListener, KeyboardListener {
     public onKeyUp(input: Input, key: number): boolean {
         return this.onEvent((i: Input,b?: number) => this.currentTool.onKeyUp(i,b), "keyup", input, key);
     }
+
+    public getActionManager(): ActionManager {
+        return this.actionManager;
+    }
 }

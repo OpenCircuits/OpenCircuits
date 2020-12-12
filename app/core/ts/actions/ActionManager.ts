@@ -60,4 +60,8 @@ export class ActionManager {
         this.redoStack = [];
     }
 
+    public getHistory(): Action[] {
+        return this.undoStack.slice();
+    }
+
 }

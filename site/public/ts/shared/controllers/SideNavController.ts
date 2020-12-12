@@ -39,17 +39,21 @@ export class SideNavController {
 
         this.userCircuits = [];
 
-        this.tab.click(() => this.toggle());
+        this.tab.click(() => {
+            this.toggle()
+            this.historyBox.hide();
+        });
 
         this.overlay.click(() => {
             this.close();
+            this.historyBox.hide();
         });
 
         this.historyBox.hide();
 
         this.historyButton.click(() => {
-            console.log("It works!!!")
-            this.historyBox.show()
+            this.updateHistoryBox();
+            this.historyBox.toggle();
         });
 
         // Set up onclick listeners to example circuits
@@ -107,6 +111,19 @@ export class SideNavController {
                 this.userCircuits.push(preview);
             });
         });
+    }
+
+    public updateHistoryBox(): void {
+        const history = this.main.getToolManager().getActionManager().getHistory();
+        this.historyBox.empty();
+
+        if (history.length == 0) {
+            this.historyBox.append(`<div class="historybox__entry">There is no history yet!</div>`);
+        } else {
+            for (const action of history)
+                this.historyBox.prepend(`<div class="historybox__entry">${action.getName()}</div>`);
+        }
+
     }
 
     public close(): void {
