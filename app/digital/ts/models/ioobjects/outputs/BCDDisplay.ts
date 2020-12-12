@@ -17,12 +17,12 @@ export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl
 export class BCDDisplay extends DigitalComponent{
 
     public constructor(){
-        super(new ClampedValue(3, 3, 4),
+        super(new ClampedValue(6, 6, 6),
               new ClampedValue(0),
               V(70, 100),
               new BCDDisplayPositioner());
 
-        this.setInputPortCount(3);
+        this.setInputPortCount(6);
     }
 
     public setInputPortCount(val: number): void {
