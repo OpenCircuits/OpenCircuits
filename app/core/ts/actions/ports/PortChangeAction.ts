@@ -59,4 +59,8 @@ export abstract class PortChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Port Change";
+    }
+
 }

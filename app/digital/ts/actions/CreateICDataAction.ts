@@ -21,4 +21,8 @@ export class CreateICDataAction implements Action {
         this.target.removeICData(this.data);
         return this;
     }
+
+    public getName(): string {
+        return "Create IC Data";
+    }
 }

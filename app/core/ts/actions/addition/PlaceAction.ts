@@ -28,6 +28,10 @@ export class PlaceAction extends ReversableAction {
         return this;
     }
 
+    public getName(): string {
+        return "Place Action";
+    }
+
 }
 
 export class DeleteAction extends PlaceAction {

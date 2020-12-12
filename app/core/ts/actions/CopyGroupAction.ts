@@ -44,4 +44,8 @@ export class CopyGroupAction implements Action {
         return this.copy;
     }
 
+    public getName(): string {
+        return "Copy";
+    }
+
 }

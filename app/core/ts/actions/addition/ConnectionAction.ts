@@ -58,6 +58,10 @@ export class ConnectionAction extends ReversableAction {
         return this.wire;
     }
 
+    public getName(): string {
+        return "Wire Connection";
+    }
+
 }
 
 export class DisconnectAction extends ConnectionAction {

@@ -29,6 +29,10 @@ export class SelectAction extends ReversableAction {
         return this;
     }
 
+    public getName(): string {
+        return "Select Tool";
+    }
+
 }
 
 export class DeselectAction extends SelectAction {

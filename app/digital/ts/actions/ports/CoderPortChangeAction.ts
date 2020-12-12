@@ -56,4 +56,8 @@ export class CoderPortChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Coder Port Change";
+    }
+
 }
