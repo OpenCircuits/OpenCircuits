@@ -1,16 +1,31 @@
-$historybox-height: 500px;
+$historybox-height: 60vh;
 $historybox-width: 250px;
 
 .historybox {
-    
     width: $historybox-width;
     height: $historybox-height;
+
+    border: $sidenav-border-width solid $secondary-color;
+    background-color: $primary-color;
 
     position: absolute;
     bottom: 0px;
     z-index: 6;
 
-    background-color: cyan;
+    overflow-y: auto;
 
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    &__entry {
+        height: 50px;
+        line-height: 50px;
+
+        margin: 5px;
+        text-align: center;
+
+        border: 1px solid $secondary-color;
+        border-radius: 7px;
+    }
 
 }
