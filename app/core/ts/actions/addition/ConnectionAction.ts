@@ -59,7 +59,7 @@ export class ConnectionAction extends ReversableAction {
     }
 
     public getName(): string {
-        return "Wire Connection";
+        return `Connected ${this.p1.getParent().getName()} to ${this.p2.getParent().getName()}`;
     }
 
 }

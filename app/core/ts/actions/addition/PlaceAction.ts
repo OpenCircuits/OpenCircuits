@@ -29,7 +29,7 @@ export class PlaceAction extends ReversableAction {
     }
 
     public getName(): string {
-        return "Place Action";
+        return `Placed ${this.obj.getName()}`;
     }
 
 }
