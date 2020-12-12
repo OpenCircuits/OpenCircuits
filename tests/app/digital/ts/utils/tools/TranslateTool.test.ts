@@ -1,6 +1,6 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, SPACEBAR_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -190,6 +190,37 @@ describe("Translate Tool", () => {
             expect(port2.getPos()).toEqual(V(sw2.getOutputPortPos(0).x, led2.getInputPortPos(0).y));
             expect(port2.getInputs()[0].isStraight()).toBe(true);
             expect(port2.getOutputs()[0].isStraight()).toBe(true);
+        });
+
+        // TODO: More cloning tests
+    });
+
+    describe("Snapping", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+        });
+
+        test("Midpoint Snap", () => {
+            const sw   = new Switch();
+            const led  = new LED();
+
+            // Set switch and LED initial positions
+            sw.setPos(V(0, 0));
+            led.setPos(V(100, 100));
+
+            Place(designer, [sw, led]);
+
+            // Drag LED and move to approximately same Y as switch
+            input.press(V(100, 100))
+                    .pressKey(LEFT_MOUSE_BUTTON)
+                    .moveTo(V(10, 0.01))
+                    .releaseKey(LEFT_MOUSE_BUTTON)
+                    .release();
+
+            // Expect LED to have snapped to 10,0
+            expect(sw.getPos()).toEqual(V(0, 0));
+            expect(led.getPos()).toEqual(V(10, 0));
         });
 
         // TODO: More cloning tests

@@ -153,7 +153,7 @@ function SnapPos(obj: Component): void {
 
 function MidSnap(obj: Component[]) {
     function DoSnap(x: number, c: number): number {
-        if (Math.abs(x - c) <= 10) {
+        if (Math.abs(x - c) <= 0.5) {
             return c;
         }
         return x;
@@ -171,7 +171,7 @@ function MidSnap(obj: Component[]) {
 
 function EdgeSnap(obj: Component[]) {
     function DoSnap(x: number, c: number): number {
-        if (Math.abs(x - c) <= 10) {
+        if (Math.abs(x - c) <= 0.5) {
             return c;
         }
         return x;
@@ -186,3 +186,4 @@ function EdgeSnap(obj: Component[]) {
         obj[i].setPos(v);
     }
 }
+
