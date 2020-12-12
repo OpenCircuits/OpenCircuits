@@ -42,7 +42,7 @@ export const BCDDisplayRenderer = (() => {
             for (let i = 0; i < inputNum; i++){
                 const on = display.getInputPort(i).getIsOn();
                 //Flips the order of the inputs so they are in top down order
-                let power = Math.abs(i - (inputNum - 1))
+                const power = Math.abs(i - (inputNum - 1))
                 if (on){
                     binToDec += 2**power;
                 }
