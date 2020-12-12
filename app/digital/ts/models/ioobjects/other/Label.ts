@@ -8,7 +8,7 @@ import {serializable} from "serialeazy";
 export class Label extends DigitalComponent {
     
     private color: string;
-
+    private textColor: string;
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(0), V(60, 30));
         this.color = "#ffffff"; 
@@ -24,6 +24,14 @@ export class Label extends DigitalComponent {
 
     public setColor(color: string): void {
         this.color = color;
+    }
+
+    public getTextColor(): string {
+        return this.textColor;
+    }
+
+    public setTextColor(textColor: string): void {
+        this.textColor = textColor;
     }
 
 }
