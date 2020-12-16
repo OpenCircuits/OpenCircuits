@@ -31,7 +31,7 @@ export class LabelTextColorPopupModule extends SelectionPopupModule {
                 same = labels[i].getTextColor() == color;
             }
 
-            this.textColor.value = same ? color : "#cccccc";
+            this.textColor.value = same ? color : "#000000";
         }
 
         this.setEnabled(enable);
