@@ -21,9 +21,9 @@ import {CircuitView} from "site/shared/views/CircuitView";
 
 import {SelectionPopupController} from "site/shared/controllers/SelectionPopupController";
 import {DesignerController} from "site/shared/controllers/DesignerController";
-import {HeaderController} from "site/shared/controllers/HeaderController"
+import {HeaderController} from "site/shared/controllers/HeaderController";
 
-import {Shortcuts} from "../utils/Shortcuts";;
+import {Shortcuts} from "../utils/Shortcuts";
 
 import {SideNavController} from "./SideNavController";
 import {ItemNavController} from "./ItemNavController";

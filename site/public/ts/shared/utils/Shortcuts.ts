@@ -3,8 +3,8 @@ import {Input} from "core/utils/Input";
 
 import {RemoteController} from "../controllers/RemoteController";
 
-export namespace Shortcuts {
-    export async function onKeyDown(input: Input, key: number, saveCircuit: () => void, downloadCircuit: () => void): Promise<void> {
+export class Shortcuts {
+    public static async onKeyDown(input: Input, key: number, saveCircuit: () => void, downloadCircuit: () => void): Promise<void> {
         if (!(input.isModifierKeyDown() && key == S_KEY))
             return;
 
