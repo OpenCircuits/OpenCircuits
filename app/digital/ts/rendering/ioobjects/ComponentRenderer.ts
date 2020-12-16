@@ -18,7 +18,6 @@ import {IOPortRenderer} from "./IOPortRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
-import {BCDDisplayRenderer} from "./outputs/BCDDisplayRenderer";
 
 import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
 import {Latch}               from "digital/models/ioobjects/latches/Latch";
@@ -39,7 +38,6 @@ import {Images} from "digital/utils/Images";
 import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
 import {Style} from "../../../../core/ts/rendering/Style";
 import {ICRenderer} from "./other/ICRenderer";
-import {BCDDisplay} from "digital/models/ioobjects";
 
 export const ComponentRenderer = (() => {
 
@@ -101,8 +99,6 @@ export const ComponentRenderer = (() => {
                 MultiplexerRenderer.render(renderer, camera, object, selected);
             else if (object instanceof SegmentDisplay)
                 SegmentDisplayRenderer.render(renderer, camera, object, selected);
-            else if (object instanceof BCDDisplay)
-                BCDDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof IC)
                 ICRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
