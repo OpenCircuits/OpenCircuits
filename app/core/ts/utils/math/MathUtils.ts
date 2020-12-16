@@ -323,3 +323,17 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 export function CalculateMidpoint(positions: Array<Vector>): Vector {
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
 }
+
+/**
+ * Calculates the decimal value of a binary-coded-decimal
+ *  represented by a list of booleans
+ *
+ * @param  {Array<boolean>} bcd
+ *         The binary-coded-decimal as a list of booleans
+ *
+ * @return {number}
+ *         The decimal equivalent of the binary-coded-decimal
+ */
+export function BCDtoDecimal(bcd: boolean[]): number {
+    return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
+}
