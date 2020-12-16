@@ -1,4 +1,4 @@
-import {serializable} from "serialeazy";
+import {serializable, serialize} from "serialeazy";
 
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
@@ -7,7 +7,9 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 @serializable("Label")
 export class Label extends DigitalComponent {
+    @serialize
     private color: string;
+    @serialize
     private textColor: string;
 
     public constructor() {
