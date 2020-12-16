@@ -108,12 +108,8 @@ export class TranslateTool extends Tool {
         // Execute translate but don't save to group action since we do that in 'deactivate'
         this.components.forEach((c, i) => c.setPos(shiftedPositions[i]));
 
-        //Snap component midpoints
-        MidSnap(this.components);
-        EdgeSnap(this.components);
-
         // Snap at the end instead of one-by-one (fixes #417)
-        this.components.forEach(c => SnapPos(c));
+        this.components.forEach(c => SnapPos(c, this.components));
 
         return true;
     }
@@ -130,40 +126,3 @@ export class TranslateTool extends Tool {
     }
 
 }
-
-function MidSnap(obj: Component[]) {
-    function DoSnap(x: number, c: number): number {
-        if (Math.abs(x - c) <= 0.5) {
-            return c;
-        }
-        return x;
-    }
-    for(let i = 0; i < obj.length; i++) {
-        const v = obj[i].getPos();
-        for(let j = (i + 1); j < obj.length; j++) {
-            const w = obj[j].getPos();
-            v.x = DoSnap(v.x, w.x);
-            v.y = DoSnap(v.y, w.y);
-        }
-        obj[i].setPos(v);
-    }
-}
-
-function EdgeSnap(obj: Component[]) {
-    function DoSnap(x: number, c: number): number {
-        if (Math.abs(x - c) <= 0.5) {
-            return c;
-        }
-        return x;
-    }
-    for(let i = 0; i < obj.length; i++) {
-        const v = obj[i].getPos();
-        for(let j = (i + 1); j < obj.length; j++) {
-            const w = obj[j].getOffset();
-            v.x = DoSnap(v.x, w.x);
-            v.y = DoSnap(v.y, w.y);
-        }
-        obj[i].setPos(v);
-    }
-}
-

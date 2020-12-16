@@ -34,7 +34,10 @@ export const IO_PORT_BORDER_WIDTH = 1;
 export const IO_PORT_LINE_WIDTH   = 2;
 
 export const WIRE_THICKNESS = 7.0;
-export const WIRE_SNAP_THRESHOLD    = 10;
+
+export const WIRE_SNAP_THRESHOLD = 10;
+export const OBJ_MIDPOINT_SNAP_THRESHOLD = 10;
+export const OBJ_EDGE_SNAP_THRESHOLD = 10;
 
 export const GATE_NOT_CIRCLE_RADIUS = 5;
 export const GATE_OR_CULLBOX_OFFSET = 50;

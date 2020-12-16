@@ -1,7 +1,10 @@
-import {WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+import {WIRE_SNAP_THRESHOLD,
+        OBJ_MIDPOINT_SNAP_THRESHOLD,
+        OBJ_EDGE_SNAP_THRESHOLD} from "core/utils/Constants";
+
 import {Component} from "core/models";
 
-export function SnapPos(obj: Component): void {
+function SnapPorts(obj: Component): void {
     const DoSnap = (x: number, c: number) =>
         (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) ? c : x;
 
@@ -18,5 +21,58 @@ export function SnapPos(obj: Component): void {
             v.y = DoSnap(v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
         }
     }
+
     obj.setPos(v);
+}
+
+function SnapMidpoint(obj: Component, ignored: Component[]): void {
+    const DoSnap = (x: number, c: number) =>
+        (Math.abs(x - c) <= OBJ_MIDPOINT_SNAP_THRESHOLD) ? c : x;
+
+    const v = obj.getPos();
+
+    const objs = obj.getDesigner().getObjects();
+    for (const obj2 of objs) {
+        if (obj2 == obj || ignored.includes(obj2))
+            continue;
+        const pos = obj2.getPos();
+        v.x = DoSnap(v.x, pos.x);
+        v.y = DoSnap(v.y, pos.y);
+    }
+
+    obj.setPos(v);
+}
+
+function SnapEdges(obj: Component, ignored: Component[]): void {
+    const DoSnap = (x: number, c: number) =>
+        (Math.abs(x - c) <= OBJ_EDGE_SNAP_THRESHOLD) ? c : x;
+
+    const v = obj.getPos();
+    const s = obj.getSize();
+
+    const objs = obj.getDesigner().getObjects();
+    for (const obj2 of objs) {
+        if (obj2 == obj || ignored.includes(obj2))
+            continue;
+        const pos = obj2.getPos();
+        const size = obj2.getSize();
+
+        v.x = DoSnap(v.x + s.x/2, pos.x - size.x/2) - s.x/2; // Left -> Right edge
+        v.x = DoSnap(v.x - s.x/2, pos.x - size.x/2) + s.x/2; // Left -> Left edge
+        v.x = DoSnap(v.x - s.x/2, pos.x + size.x/2) + s.x/2; // Right -> Left edge
+        v.x = DoSnap(v.x + s.x/2, pos.x + size.x/2) - s.x/2; // Right -> Right edge
+
+        v.y = DoSnap(v.y + s.y/2, pos.y - size.y/2) - s.y/2; // Top -> Bottom edge
+        v.y = DoSnap(v.y - s.y/2, pos.y - size.y/2) + s.y/2; // Top -> Top edge
+        v.y = DoSnap(v.y - s.y/2, pos.y + size.y/2) + s.y/2; // Bottom -> Top edge
+        v.y = DoSnap(v.y + s.y/2, pos.y + size.y/2) - s.y/2; // Bottom -> Bottom edge
+    }
+
+    obj.setPos(v);
+}
+
+export function SnapPos(obj: Component, ignored: Component[] = []): void {
+    SnapEdges(obj, ignored);
+    SnapMidpoint(obj, ignored);
+    SnapPorts(obj);
 }
