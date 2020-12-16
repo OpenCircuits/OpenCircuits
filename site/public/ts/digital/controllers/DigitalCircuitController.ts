@@ -7,6 +7,7 @@ import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopu
 import {ICButtonPopupModule}       from "site/digital/controllers/selectionpopup/ICButtonPopupModule";
 import {BusButtonPopupModule}      from "site/digital/controllers/selectionpopup/BusButtonPopupModule";
 import {ColorPopupModule}          from "site/digital/controllers/selectionpopup/ColorPopupModule";
+import {LabelTextColorPopupModule} from "site/digital/controllers/selectionpopup/LabelTextColorPopupModule";
 import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup/InputCountPopupModule";
 import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
 import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
@@ -60,6 +61,7 @@ export class DigitalCircuitController extends MainDesignerController {
             new TitlePopupModule(this),
             new PositionPopupModule(this),
             new ColorPopupModule(this),
+            new LabelTextColorPopupModule(this),
             new InputCountPopupModule(this),
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
