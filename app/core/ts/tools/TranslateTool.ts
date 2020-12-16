@@ -14,13 +14,8 @@ import {Component} from "core/models/Component";
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
-<<<<<<< HEAD
-import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
-import {Wire} from "core/models/Wire";
-=======
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {SnapPos} from "core/actions/transform/SnapUtils";
->>>>>>> 42de5a4e965853dc38a241381c69e34777d2f337
 
 export class TranslateTool extends Tool {
     protected camera: Camera;
@@ -81,9 +76,6 @@ export class TranslateTool extends Tool {
     }
 
     public deactivate(): Action {
-<<<<<<< HEAD
-        this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
-=======
         const finalPositions = this.components.map((o) => o.getPos());
 
         // Reset to initial positons then make actions to set back to final
@@ -91,7 +83,6 @@ export class TranslateTool extends Tool {
 
         this.action.add(new TranslateAction(this.components, finalPositions).execute());
 
->>>>>>> 42de5a4e965853dc38a241381c69e34777d2f337
         return this.action;
     }
 
@@ -140,31 +131,6 @@ export class TranslateTool extends Tool {
 
 }
 
-function SnapPos(obj: Component): void {
-    function DoSnap(wire: Wire, x: number, c: number): number {
-        if (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) {
-            wire.setIsStraight(true);
-            return c;
-        }
-        return x;
-    }
-
-    const v = obj.getPos();
-    // Snap to connections
-    for (const port of obj.getPorts()) {
-        const pos = port.getWorldTargetPos().sub(obj.getPos());
-        const wires = port.getWires();
-        for (const w of wires) {
-            // Get the port that isn't the current port
-            const port2 = (w.getP1() == port ? w.getP2() : w.getP1());
-            w.setIsStraight(false);
-            v.x = DoSnap(w, v.x + pos.x, port2.getWorldTargetPos().x) - pos.x;
-            v.y = DoSnap(w, v.y + pos.y, port2.getWorldTargetPos().y) - pos.y;
-        }
-    }
-    obj.setPos(v);
-}
-
 function MidSnap(obj: Component[]) {
     function DoSnap(x: number, c: number): number {
         if (Math.abs(x - c) <= 0.5) {
@@ -193,7 +159,7 @@ function EdgeSnap(obj: Component[]) {
     for(let i = 0; i < obj.length; i++) {
         const v = obj[i].getPos();
         for(let j = (i + 1); j < obj.length; j++) {
-            const w = obj[j].getOffset(); 
+            const w = obj[j].getOffset();
             v.x = DoSnap(v.x, w.x);
             v.y = DoSnap(v.y, w.y);
         }
