@@ -1,27 +1,29 @@
 import {Action} from "core/actions/Action";
+
 import {LED} from "digital/models/ioobjects/outputs/LED";
+import {Label} from "digital/models/ioobjects/other/Label";
 
 export class ColorChangeAction implements Action {
-    private led: LED;
+    private component: LED | Label;
 
     private initialColor: string;
     private targetColor: string;
 
-    public constructor(led: LED, targetCol: string) {
-        this.led = led;
+    public constructor(component: LED | Label, targetCol: string) {
+        this.component = component;
 
-        this.initialColor = led.getColor();
+        this.initialColor = component.getColor();
         this.targetColor = targetCol;
     }
 
     public execute(): Action {
-        this.led.setColor(this.targetColor);
+        this.component.setColor(this.targetColor);
 
         return this;
     }
 
     public undo(): Action {
-        this.led.setColor(this.initialColor);
+        this.component.setColor(this.initialColor);
 
         return this;
     }
