@@ -1,5 +1,7 @@
 import $ from "jquery";
 
+import {GetCookie,SetCookie} from "../utils/Cookies";
+
 import {OVERWRITE_CIRCUIT_MESSAGE} from "site/shared/utils/Constants";
 import {SAVED} from "core/utils/Config";
 
@@ -15,6 +17,7 @@ export class HeaderController {
         this.setupDropdown();
         this.setupIOInputs(main);
         this.setupHelpMenu();
+        this.setupCookieBanner();
         this.setupOther(main);
     }
 
@@ -121,6 +124,20 @@ export class HeaderController {
                 .removeClass("white");
     }
 
+    private setupCookieBanner(): void {
+        // No need to show them a banner we know they've agreed to
+        if (GetCookie("cookie_consent") != "")
+            $("#cookie-banner").addClass("invisible");
+
+        $(".cookie__banner__accept").click(() => {
+            $("#cookie-banner").addClass("invisible");
+
+            // A 30 year expiration date should make this never appear again
+            SetCookie("cookie_consent","accepted", 10000);
+        });
+    }
+
+
     private setupOther(main: MainDesignerController): void {
         $("#header-lock-button").click(() => {
             $("#header-lock-icon-unlocked").toggleClass("hide");
@@ -142,7 +159,7 @@ export class HeaderController {
         this.setProjectName(metadata.getName());
     }
 
-    protected onSaveCircuit(main: MainDesignerController): void {
+    public onSaveCircuit(main: MainDesignerController): void {
         SaveFile(main.saveCircuit(false), this.getProjectName());
     }
 

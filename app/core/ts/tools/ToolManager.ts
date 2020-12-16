@@ -10,6 +10,7 @@ import {ActionHelper} from "./ActionHelper";
 import {ActionManager} from "../actions/ActionManager";
 import {DefaultTool} from "./DefaultTool";
 
+
 export class ToolManager implements MouseListener, KeyboardListener {
     private tools: Tool[];
     private defaultTool: DefaultTool;

@@ -11,8 +11,8 @@ import {ToolRenderer} from "digital/rendering/ToolRenderer";
 
 export class DigitalCircuitView extends CircuitView {
 
-    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1) {
-        super(canvas, vw, vh);
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1, vh: number = 1, dw: number = 0, dh: number = 0) {
+        super(canvas, vw, vh, dw, dh);
     }
 
     protected renderWire(wire: DigitalWire, selections: Selectable[]): void {

@@ -1,7 +1,6 @@
 import {GRID_SIZE,
         LEFT_MOUSE_BUTTON,
-        SPACEBAR_KEY,
-        WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+        SPACEBAR_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {Camera} from "math/Camera";
@@ -15,8 +14,13 @@ import {Component} from "core/models/Component";
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
+<<<<<<< HEAD
 import {CreateGroupPostTranslateAction} from "core/actions/transform/GroupPostTranslateActionFactory";
 import {Wire} from "core/models/Wire";
+=======
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {SnapPos} from "core/actions/transform/SnapUtils";
+>>>>>>> 42de5a4e965853dc38a241381c69e34777d2f337
 
 export class TranslateTool extends Tool {
     protected camera: Camera;
@@ -77,7 +81,17 @@ export class TranslateTool extends Tool {
     }
 
     public deactivate(): Action {
+<<<<<<< HEAD
         this.action.add(CreateGroupPostTranslateAction(this.components, this.initialPositions).execute());
+=======
+        const finalPositions = this.components.map((o) => o.getPos());
+
+        // Reset to initial positons then make actions to set back to final
+        this.components.forEach((o, i) => o.setPos(this.initialPositions[i]));
+
+        this.action.add(new TranslateAction(this.components, finalPositions).execute());
+
+>>>>>>> 42de5a4e965853dc38a241381c69e34777d2f337
         return this.action;
     }
 

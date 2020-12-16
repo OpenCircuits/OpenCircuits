@@ -4,6 +4,7 @@ import {DRAG_TIME,
         CONTROL_KEY,
         COMMAND_KEY,
         D_KEY,
+        S_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
         META_KEY} from "core/utils/Constants";
@@ -48,6 +49,7 @@ export class Input {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
+            [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
         ];

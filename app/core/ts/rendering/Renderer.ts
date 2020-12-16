@@ -18,13 +18,17 @@ export class Renderer {
     private tintContext: CanvasRenderingContext2D;
 
     private vw: number;
+    private dw: number;
     private vh: number;
+    private dh: number;
 
-    public constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0) {
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0, dw: number = 0, dh: number = 0) {
         this.canvas = canvas;
         this.tintCanvas = document.createElement("canvas");
         this.vw = vw;
         this.vh = vh;
+        this.dw = dw;
+        this.dh = dh;
 
         this.context = this.canvas.getContext("2d");
 
@@ -41,8 +45,8 @@ export class Renderer {
         return V(this.canvas.width, this.canvas.height);
     }
     public resize(): void {
-        this.canvas.width = window.innerWidth * this.vw;
-        this.canvas.height = window.innerHeight * this.vh;
+        this.canvas.width  = window.innerWidth  * this.vw + this.dw;
+        this.canvas.height = window.innerHeight * this.vh + this.dh;
     }
     public clear(): void {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
