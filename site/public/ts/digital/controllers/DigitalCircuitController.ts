@@ -38,8 +38,6 @@ export class DigitalCircuitController extends MainDesignerController {
     private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
-    private sideNav: SideNavController;
-    private loginController: LoginController;
 
     protected designer: DigitalCircuitDesigner;
     protected itemNav: DigitalItemNavController;
@@ -73,9 +71,6 @@ export class DigitalCircuitController extends MainDesignerController {
 
         this.copyController = new DigitalCopyController(this);
         this.contextMenu = new ContextMenuController(this);
-        this.sideNav = new SideNavController(this, this.headerController);
-
-        this.loginController = new LoginController(this, this.sideNav);
     }
 
     public async init(): Promise<void> {
@@ -126,4 +121,5 @@ export class DigitalCircuitController extends MainDesignerController {
 
         return render;
     }
+
 }

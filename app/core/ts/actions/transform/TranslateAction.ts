@@ -1,39 +1,42 @@
 import {Vector} from "Vector";
 
-import {GroupAction} from "core/actions/GroupAction";
 import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
 
+import {SnapPos} from "./SnapUtils";
+
+// Translate can be applied to single components,
+//  but if you need to translate multiple components at
+//  once you MUST do it as a group to avoid the issue #417
+//  https://github.com/OpenCircuits/OpenCircuits/issues/417
 export class TranslateAction implements Action {
-    protected object: Component;
+    protected objs: Component[];
+    protected initialPositions: Vector[];
+    protected targetPositions: Vector[];
 
-    protected initialPosition: Vector;
-    protected targetPosition: Vector;
+    public constructor(objs: Component[], targetPositions: Vector[]) {
+        this.objs = objs;
 
-    public constructor(object: Component, targetPosition: Vector) {
-        this.object = object;
-
-        this.initialPosition = object.getPos();
-        this.targetPosition = targetPosition;
+        this.initialPositions = objs.map(o => o.getPos());
+        this.targetPositions = targetPositions;
     }
 
     public execute(): Action {
-        this.object.setPos(this.targetPosition);
+        this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
+
+        // Always snap afterwards to avoid issue #417
+        this.objs.forEach(o => SnapPos(o));
 
         return this;
     }
 
     public undo(): Action {
-        this.object.setPos(this.initialPosition);
+        this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
+
+        // Always snap afterwards to avoid issue #417
+        this.objs.forEach(o => SnapPos(o));
 
         return this;
     }
-
-}
-
-export function CreateGroupTranslateAction(objs: Array<Component>, targetPositions: Array<Vector>): GroupAction {
-    return objs.reduce((acc, o, i) => {
-        return acc.add(new TranslateAction(o, targetPositions[i]));
-    }, new GroupAction());
 }

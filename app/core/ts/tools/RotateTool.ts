@@ -99,7 +99,7 @@ export class RotateTool extends Tool {
                 this.currentAngles.map((a) => Math.floor(a/(Math.PI/4))*Math.PI/4) :
                 this.currentAngles;
 
-        // Set rotation of each component
+        // Set rotation
         this.components.forEach((c, i) => c.setRotationAbout(newAngles[i], this.midpoint));
 
         this.prevAngle += dAngle;

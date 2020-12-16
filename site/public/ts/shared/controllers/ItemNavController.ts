@@ -51,7 +51,7 @@ export class ItemNavController {
         canvas.ondrop = (ev: DragEvent) => {
             const uuid = ev.dataTransfer.getData("custom/component");
             if (uuid !== "")
-                this.placeComponent(uuid, V(ev.pageX, ev.pageY));
+                this.placeComponent(uuid, V(ev.pageX, ev.pageY - $("#header")[0].getBoundingClientRect().height));
         }
 
         for (const item of this.nav.getSections().flatMap(s => s.getItems()))
@@ -105,7 +105,7 @@ export class ItemNavController {
             if (RectContains(rect1, pos) || RectContains(rect2, pos))
                 return;
 
-            this.placeComponent(uuid, pos);
+            this.placeComponent(uuid, pos.sub(V(0, $("#header")[0].getBoundingClientRect().height)));
         }
     }
 
