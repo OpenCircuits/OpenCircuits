@@ -1,9 +1,14 @@
 import {serializable} from "serialeazy";
+
+import {BCDtoDecimal} from "math/MathUtils";
+
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 
 import {DigitalComponent, DigitalWire} from "digital/models/index";
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
 /**
  * Helper class to hold different groups of components.
@@ -76,4 +81,8 @@ export class DigitalObjectSet extends IOObjectSet {
     public getComponents(): DigitalComponent[] {
         return this.inputs.concat(this.outputs, this.others);
     }
+}
+
+export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
+    return BCDtoDecimal(ports.map(p => p.getIsOn()));
 }
