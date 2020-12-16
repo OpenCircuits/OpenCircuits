@@ -23,13 +23,19 @@ import {SelectionPopupController} from "site/shared/controllers/SelectionPopupCo
 import {DesignerController} from "site/shared/controllers/DesignerController";
 import {HeaderController} from "site/shared/controllers/HeaderController";
 
+import {Shortcuts} from "../utils/Shortcuts";
+
+import {SideNavController} from "./SideNavController";
 import {ItemNavController} from "./ItemNavController";
+import {LoginController} from "./LoginController";
 import {CopyController} from "./CopyController";
 
 export abstract class MainDesignerController extends DesignerController {
     protected itemNav: ItemNavController;
     protected selectionPopup: SelectionPopupController;
     protected headerController: HeaderController;
+    protected sideNav: SideNavController;
+    protected loginController: LoginController;
 
     protected thumbnailGenerator: ThumbnailGenerator;
 
@@ -44,6 +50,8 @@ export abstract class MainDesignerController extends DesignerController {
 
         this.selectionPopup = new SelectionPopupController(this);
         this.headerController = new HeaderController(this);
+        this.sideNav = new SideNavController(this, this.headerController);
+        this.loginController = new LoginController(this, this.sideNav);
 
         this.locked = false;
 
@@ -174,6 +182,12 @@ export abstract class MainDesignerController extends DesignerController {
     }
 
     protected onKeyDown(key: number): boolean {
+        Shortcuts.onKeyDown(this.input, key, () => {
+            this.loginController.save(this); // Remote save
+        }, () => {
+            this.headerController.onSaveCircuit(this); // Local download
+        });
+
         if (super.onKeyDown(key)) {
             this.selectionPopup.update();
             return true;

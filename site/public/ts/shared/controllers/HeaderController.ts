@@ -159,7 +159,7 @@ export class HeaderController {
         this.setProjectName(metadata.getName());
     }
 
-    protected onSaveCircuit(main: MainDesignerController): void {
+    public onSaveCircuit(main: MainDesignerController): void {
         SaveFile(main.saveCircuit(false), this.getProjectName());
     }
 
