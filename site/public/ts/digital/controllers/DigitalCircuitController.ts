@@ -7,6 +7,7 @@ import {PositionPopupModule}       from "site/shared/selectionpopup/PositionPopu
 import {ICButtonPopupModule}       from "site/digital/controllers/selectionpopup/ICButtonPopupModule";
 import {BusButtonPopupModule}      from "site/digital/controllers/selectionpopup/BusButtonPopupModule";
 import {ColorPopupModule}          from "site/digital/controllers/selectionpopup/ColorPopupModule";
+import {LabelTextColorPopupModule} from "site/digital/controllers/selectionpopup/LabelTextColorPopupModule";
 import {InputCountPopupModule}     from "site/digital/controllers/selectionpopup/InputCountPopupModule";
 import {OutputCountPopupModule}    from "site/digital/controllers/selectionpopup/OutputCountPopupModule";
 import {ClockFrequencyPopupModule} from "site/digital/controllers/selectionpopup/ClockFrequencyPopupModule";
@@ -25,6 +26,7 @@ import {ICViewerController} from "./ICViewerController";
 import {IC} from "digital/models/ioobjects/other/IC";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 import {SegmentCountPopupModule} from "./selectionpopup/SegmentCountPopupModule";
+import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
 
 import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
@@ -36,8 +38,6 @@ export class DigitalCircuitController extends MainDesignerController {
     private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
-    private sideNav: SideNavController;
-    private loginController: LoginController;
 
     protected designer: DigitalCircuitDesigner;
     protected itemNav: DigitalItemNavController;
@@ -59,6 +59,7 @@ export class DigitalCircuitController extends MainDesignerController {
             new TitlePopupModule(this),
             new PositionPopupModule(this),
             new ColorPopupModule(this),
+            new LabelTextColorPopupModule(this),
             new InputCountPopupModule(this),
             new OutputCountPopupModule(this),
             new ClockFrequencyPopupModule(this),
@@ -68,11 +69,8 @@ export class DigitalCircuitController extends MainDesignerController {
             new SegmentCountPopupModule(this),
         );
 
-        this.contextMenu = new ContextMenuController(this);
         this.copyController = new DigitalCopyController(this);
-        this.sideNav = new SideNavController(this, this.headerController);
-
-        this.loginController = new LoginController(this, this.sideNav);
+        this.contextMenu = new ContextMenuController(this);
     }
 
     public async init(): Promise<void> {
@@ -80,6 +78,8 @@ export class DigitalCircuitController extends MainDesignerController {
     }
 
     public loadCircuit(contents: string): CircuitMetadata {
+        contents = VersionConflictResolver(contents);
+
         const metadata = super.loadCircuit(contents);
 
         this.itemNav.updateICSection(this.getDesigner().getICData());
@@ -89,6 +89,10 @@ export class DigitalCircuitController extends MainDesignerController {
 
     public updateICs(): void {
         this.itemNav.updateICSection(this.getDesigner().getICData());
+    }
+
+    public getCopyController(): DigitalCopyController {
+        return this.copyController;
     }
 
     public getDesigner(): DigitalCircuitDesigner {
@@ -117,4 +121,5 @@ export class DigitalCircuitController extends MainDesignerController {
 
         return render;
     }
+
 }

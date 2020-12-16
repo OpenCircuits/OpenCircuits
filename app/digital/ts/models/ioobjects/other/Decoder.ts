@@ -17,8 +17,8 @@ export class Decoder extends DigitalComponent {
         super(new ClampedValue(2,1,8),
               new ClampedValue(4,2,Math.pow(2,8)),
               V(DEFAULT_SIZE, DEFAULT_SIZE*2),
-              new ConstantSpacePositioner<InputPort>(DEFAULT_SIZE/2),
-              new ConstantSpacePositioner<OutputPort>(DEFAULT_SIZE/2));
+              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE),
+              new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
 
         // activate 0th port for initial state
         super.activate(true, 0);
@@ -34,12 +34,6 @@ export class Decoder extends DigitalComponent {
         this.getOutputPorts().forEach((_, i) => {
             super.activate(i === num, i);
         });
-    }
-
-    public setInputPortCount(val: number): void {
-        this.transform.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2*Math.pow(2, val)));
-        super.setInputPortCount(val);
-        super.setOutputPortCount(Math.pow(2, val));
     }
 
     public getDisplayName(): string {

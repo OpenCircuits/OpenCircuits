@@ -18,13 +18,17 @@ export class Renderer {
     private tintContext: CanvasRenderingContext2D;
 
     private vw: number;
+    private dw: number;
     private vh: number;
+    private dh: number;
 
-    public constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0) {
+    public constructor(canvas: HTMLCanvasElement, vw: number = 1.0, vh: number = 1.0, dw: number = 0, dh: number = 0) {
         this.canvas = canvas;
         this.tintCanvas = document.createElement("canvas");
         this.vw = vw;
         this.vh = vh;
+        this.dw = dw;
+        this.dh = dh;
 
         this.context = this.canvas.getContext("2d");
 
@@ -41,8 +45,8 @@ export class Renderer {
         return V(this.canvas.width, this.canvas.height);
     }
     public resize(): void {
-        this.canvas.width = window.innerWidth * this.vw;
-        this.canvas.height = window.innerHeight * this.vh;
+        this.canvas.width  = window.innerWidth  * this.vw + this.dw;
+        this.canvas.height = window.innerHeight * this.vh + this.dh;
     }
     public clear(): void {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -128,15 +132,17 @@ export class Renderer {
         this.context.drawImage(this.tintCanvas, 0, 0, size.x, size.y, pos.x, pos.y, size.x, size.y);
         this.context.globalAlpha = prevAlpha;
     }
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign): void {
+    
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
         this.save();
         this.context.font = FONT;
-        this.context.fillStyle = "#000";
+        this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
         this.context.fillText(txt, pos.x, pos.y);
         this.restore();
     }
+
     public getTextWidth(txt: string): number {
         this.context.font = FONT;
         this.context.textBaseline = "middle";

@@ -2,7 +2,7 @@ import {V} from "Vector";
 import {IOObjectSet, SerializeForCopy} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {CreateGroupTranslateAction} from "core/actions/transform/TranslateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
@@ -22,19 +22,15 @@ export class DigitalCopyController extends CopyController {
         super(main);
     }
 
-    protected copy(e: ClipboardEvent, main: DigitalCircuitController): void {
+    public copy(main: DigitalCircuitController): string {
         const selections = main.getSelections();
         const objs = selections.filter((o) => o instanceof IOObject) as IOObject[];
 
-        // Export the circuit as XML and put it in the clipboard
-        e.clipboardData.setData("text/json", SerializeForCopy(objs));
-        e.preventDefault();
+        return SerializeForCopy(objs);
     }
 
-    protected paste(e: ClipboardEvent, main: DigitalCircuitController): void{
-        // Load clipboard data and deserialize
-        const contents = e.clipboardData.getData("text/json");
-        const objs = Deserialize<IOObject[]>(contents);
+    public paste(data: string, main: DigitalCircuitController): void {
+        const objs = Deserialize<IOObject[]>(data);
 
         const mainDesigner = main.getDesigner();
 
@@ -57,7 +53,7 @@ export class DigitalCopyController extends CopyController {
         action.add(CreateGroupSelectAction(main.getSelectionTool(), components));
 
         // Translate the copies over a bit
-        action.add(CreateGroupTranslateAction(components, components.map((o) => o.getPos().add(V(5, 5)))));
+        action.add(new TranslateAction(components, components.map(o => o.getPos().add(V(5, 5)))));
 
         main.addAction(action.execute());
         main.render();

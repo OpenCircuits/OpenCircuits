@@ -1,12 +1,17 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
-import {IO_PORT_LINE_WIDTH} from "./Constants";
+import {IO_PORT_LINE_WIDTH,
+        EMPTY_CIRCUIT_MAX,
+        EMPTY_CIRCUIT_MIN} from "./Constants";
 
 import {Vector, V} from "Vector";
 import {Graph} from "math/Graph";
 import {Transform} from "math/Transform";
 import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
+import {Camera} from "math/Camera";
+
+import {isPressable} from "core/utils/Pressable";
 
 import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
@@ -14,6 +19,7 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+
 
 /**
  * Helper class to hold different groups of components.
@@ -243,9 +249,9 @@ export function SerializeForCopy(objects: IOObject[]): string {
         {
             type: Port,
             customBehavior: {
-                customSerialization: (serializer, port: Port, refs, root, custom) => {
+                customSerialization: (serializer, port: Port) => {
                     const parent = port.getParent();
-                    const data = serializer.defaultSerialization(port, refs, root, custom);
+                    const data = serializer.defaultSerialization(port);
 
                     // check if we're serializing an object that isn't an IC
                     //  (since it's in our original list and any objects outside
@@ -259,7 +265,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
                         });
                     }
 
-                    data["connections"] = serializer.serializeProperty(connections, refs, root, custom);
+                    data["connections"] = serializer.serializeProperty(connections);
 
                     return data;
                 },
@@ -295,6 +301,13 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     // It's assumed that every object has the same designer
     copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
+    // Unpresses button of newly placed copy
+    //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545
+    for (const object of copies) {
+        if (isPressable(object))
+            object.release();
+    }
+
     return new IOObjectSet(copies);
 }
 
@@ -305,6 +318,30 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
     const max = Vector.max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
+}
+
+/**
+ * Calculates camera position and zoom to fit objs to
+ * the camera's view with adjustable padding. If objs
+ * is empty, uses a default size.
+ *
+ * @return Tuple of desired camera position and zoom
+ */
+export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
+    const bbox = objs.length === 0
+        ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
+        : CircuitBoundingBox(objs);
+    const finalPos = bbox.getCenter();
+
+    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
+
+    // Determine which bbox dimension will limit zoom level
+    const xRatio = bbox.getWidth()/worldSize.x;
+    const yRatio = bbox.getHeight()/worldSize.y;
+    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+
+    return [finalPos, finalZoom];
 }
 
 // Creates a rectangle for the collision box for a port on the IC

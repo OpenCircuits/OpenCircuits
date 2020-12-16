@@ -10,6 +10,7 @@ import {ActionHelper} from "./ActionHelper";
 import {ActionManager} from "../actions/ActionManager";
 import {DefaultTool} from "./DefaultTool";
 
+
 export class ToolManager implements MouseListener, KeyboardListener {
     private tools: Tool[];
     private defaultTool: DefaultTool;
@@ -132,6 +133,14 @@ export class ToolManager implements MouseListener, KeyboardListener {
         this.currentTool = this.defaultTool;
 
         this.actionManager.reset();
+    }
+
+    public undo(): void {
+        this.actionManager.undo();
+    }
+
+    public redo(): void {
+        this.actionManager.redo();
     }
 
     public onMouseDown(input: Input, button: number): boolean {

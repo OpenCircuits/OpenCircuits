@@ -45,12 +45,7 @@ export class LoginController {
         });
 
         this.saveHeaderButton.click(async () => {
-            const data = main.saveCircuit();
-            RemoteController.SaveCircuit(data, async () => {
-                // set saved to true (which calls callbacks to set the button as invisible)
-                setSAVED(true);
-                return sidenav.updateUserCircuits();
-            });
+            this.save(main);
         });
 
         // add callback for saving to hide/show save button
@@ -130,6 +125,15 @@ export class LoginController {
                 this.onNoAuthLogin(username);
             $("#no-auth-submit").click(() => this.onNoAuthSubmitted());
         }
+    }
+
+    public save(main: MainDesignerController): void {
+        const data = main.saveCircuit();
+        RemoteController.SaveCircuit(data, async () => {
+            // set saved to true (which calls callbacks to set the button as invisible)
+            setSAVED(true);
+            return this.sidenav.updateUserCircuits();
+        });
     }
 
     public show(): void {
