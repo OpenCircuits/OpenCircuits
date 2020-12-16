@@ -41,9 +41,9 @@ import {ICRenderer} from "./other/ICRenderer";
 
 export const ComponentRenderer = (() => {
 
-    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean): void {
+    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol: string = "#ffffff"): void {
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+        const fillCol   = (selected ? SELECTED_FILL_COLOR   : fillcol);
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
@@ -87,9 +87,9 @@ export const ComponentRenderer = (() => {
                 const width = renderer.getTextWidth(object.getName()) + 20;
                 object.setSize(V(width, size.y));
 
-                drawBox(renderer, object.getTransform(), selected);
+                drawBox(renderer, object.getTransform(), selected, object.getColor());
 
-                renderer.text(object.getName(), V(), "center");
+                renderer.text(object.getName(), V(), "center", object.getTextColor());
             }
 
             // Specific renderers

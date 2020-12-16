@@ -4,6 +4,7 @@ import {MainDesignerController} from "../../../shared/controllers/MainDesignerCo
 import {SelectionPopupModule} from "../../../shared/selectionpopup/SelectionPopupModule";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
+import {Label} from "digital/models/ioobjects/other/Label";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {ColorChangeAction} from "digital/actions/ColorChangeAction";
@@ -21,24 +22,27 @@ export class ColorPopupModule extends SelectionPopupModule {
 
     public pull(): void {
         const selections = this.circuitController.getSelections();
-        const leds = selections.filter(o => o instanceof LED) as LED[];
-        const enable = selections.length == leds.length && leds.length > 0;
+        const leds   = selections.filter(o => o instanceof LED) as LED[];
+        const labels = selections.filter(o => o instanceof Label) as Label[];
+
+        const enable = selections.length > 0 && (selections.length == leds.length ||
+                                                 selections.length == labels.length);
 
         if (enable) {
-            const color: string = leds[0].getColor();
-            let same = true;
-            for (let i = 1; i < leds.length && same; ++i) {
-                same = leds[i].getColor() == color;
-            }
+            const colors: string[] = [];
+            leds.forEach(l => colors.push(l.getColor()));
+            labels.forEach(l => colors.push(l.getColor()));
 
-            this.color.value = same ? color : "#cccccc";
+            const same = colors.every((color) => color == colors[0]);
+
+            this.color.value = same ? colors[0] : "#ffffff";
         }
 
         this.setEnabled(enable);
     }
 
     public push(): void {
-        const selections = this.circuitController.getSelections() as LED[];
+        const selections = this.circuitController.getSelections() as (LED | Label)[];
         const targetColor = this.color.value;
 
         this.circuitController.addAction(new GroupAction(
