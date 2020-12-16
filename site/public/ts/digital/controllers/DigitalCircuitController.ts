@@ -31,15 +31,12 @@ import {ThumbnailGenerator} from "site/shared/utils/ThumbnailGenerator";
 import {DigitalCircuitView} from "../views/DigitalCircuitView";
 import {DigitalItemNavController} from "./DigitalItemNavController";
 import {CircuitMetadata} from "core/models/CircuitMetadata";
-import {SaveShortcut} from "core/tools/Saveshortcut";
 
 export class DigitalCircuitController extends MainDesignerController {
     private icController: ICDesignerController;
     private icViewer: ICViewerController;
     private contextMenu: ContextMenuController;
     private copyController: DigitalCopyController;
-    private sideNav: SideNavController;
-    private loginController: LoginController;
 
     protected designer: DigitalCircuitDesigner;
     protected itemNav: DigitalItemNavController;
@@ -72,9 +69,6 @@ export class DigitalCircuitController extends MainDesignerController {
 
         this.copyController = new DigitalCopyController(this);
         this.contextMenu = new ContextMenuController(this);
-        this.sideNav = new SideNavController(this, this.headerController);
-
-        this.loginController = new LoginController(this, this.sideNav);
     }
 
     public async init(): Promise<void> {
@@ -125,11 +119,5 @@ export class DigitalCircuitController extends MainDesignerController {
 
         return render;
     }
-    protected onKeyDown(key: number): boolean {
-        SaveShortcut(this,this.sideNav,this.input,key);
-        if (super.onKeyDown(key)) {
-            return true;
-        }
-        return false;
-    }
+
 }
