@@ -24,8 +24,8 @@ export class SegmentCountPopupModule extends SelectionPopupModule {
         const enable = selections.length == segmentDisplays.length && segmentDisplays.length > 0;
 
         if (enable) {
-            const segmentCount = segmentDisplays[0].getInputPorts().length;
-            const same = segmentDisplays.every((segment) => segment.getInputPorts().length == segmentCount);
+            const segmentCount = segmentDisplays[0].getSegmentCount();
+            const same = segmentDisplays.every((segment) => segment.getSegmentCount() == segmentCount);
 
             this.count.value = same ? segmentCount + "" : "-";
         }

@@ -41,7 +41,7 @@ export const SegmentDisplayRenderer = (() => {
             for (let i = segments.length - 1; i >= 0; i--) {
                 const pos = segments[i][0].scale(V(SEGMENT_DISPLAY_WIDTH));
                 const type = segments[i][1];
-                const on  = display.getInputPort(i).getIsOn();
+                const on  = display.isSegmentOn(i);
 
                 const col = (on ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
 
