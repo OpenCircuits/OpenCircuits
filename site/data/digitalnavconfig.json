@@ -48,7 +48,7 @@
         },
         {
           "id": "BCDDisplay",
-          "label": "BCD\nDisplay",
+          "label": "BCD Display",
           "icon": "sevensegmentdisplay.svg"
         }
       ]
