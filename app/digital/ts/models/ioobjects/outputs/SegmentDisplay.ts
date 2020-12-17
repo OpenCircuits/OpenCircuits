@@ -20,7 +20,7 @@ export class SegmentDisplay extends DigitalComponent {
     protected segmentCount: number;
 
     public constructor(numInputs?: ClampedValue) {
-        super(numInputs ?? new ClampedValue(7, 7, 16),
+        super(numInputs || new ClampedValue(7, 7, 16),
               new ClampedValue(0),
               V(70, 100),
               new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false));
@@ -43,7 +43,7 @@ export class SegmentDisplay extends DigitalComponent {
         this.setSegmentCount(val);
     }
 
-    public isSegmentOn(segment: number) {
+    public isSegmentOn(segment: number): boolean {
         return this.getInputPort(segment).getIsOn();
     }
 
