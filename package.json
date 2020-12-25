@@ -42,7 +42,7 @@
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
     "serialeazy": "^2.0.3",
-    "svg2canvas": "^0.0.8"
+    "svg2canvas": "^0.0.9"
   },
   "scripts": {
     "build": "run-p build:js:digital build:js:analog build:go build:css",

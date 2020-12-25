@@ -109,6 +109,10 @@ export class Renderer {
         this.restore();
     }
 
+    public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {
+        return this.context.createRadialGradient(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);
+    }
+
     public getTextWidth(txt: string): number {
         this.context.font = FONT;
         this.context.textBaseline = "middle";

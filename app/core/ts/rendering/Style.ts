@@ -1,12 +1,12 @@
 
 export class Style {
 
-    public readonly fillColor?: string;
+    public readonly fillColor?: string | CanvasGradient;
     public readonly borderColor?: string;
 
     public readonly borderSize?: number;
 
-    public constructor(fillColor?: string, borderColor?: string, borderSize?: number) {
+    public constructor(fillColor?: string | CanvasGradient, borderColor?: string, borderSize?: number) {
         this.fillColor = fillColor;
         this.borderColor = borderColor;
         this.borderSize = borderSize;

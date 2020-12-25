@@ -1,9 +1,7 @@
-import {DEFAULT_FILL_COLOR,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR,
-        LED_GLOW_SIZE} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Transform} from "math/Transform";
@@ -38,6 +36,7 @@ import {Images} from "digital/utils/Images";
 import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
 import {Style} from "../../../../core/ts/rendering/Style";
 import {ICRenderer} from "./other/ICRenderer";
+import {LEDRenderer} from "./outputs/LEDRenderer";
 
 export const ComponentRenderer = (() => {
 
@@ -109,18 +108,7 @@ export const ComponentRenderer = (() => {
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (object instanceof LED) {
-                // draw the LED object
-                renderer.image(Images.GetImage(imgName), V(), size, object.getColor());
-
-                // // draw the LED glow
-                // if (object.isOn()) {
-                //     const glowImg = Images.GetImage(object.getOnImageName());
-                //     renderer.image(glowImg, V(), V(LED_GLOW_SIZE), object.getColor());
-                // }
-
-                // // tint green on top if selected
-                // if (tint)
-                //     renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
+                LEDRenderer.render(renderer, camera, object, selected);
             }
             else if (imgName) {
                 renderer.image(Images.GetImage(imgName), V(), size, tint);
