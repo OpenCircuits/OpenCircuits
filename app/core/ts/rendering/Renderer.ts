@@ -6,8 +6,6 @@ import {Vector,V} from "Vector";
 import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
 
-import {Browser} from "core/utils/Browser";
-
 import {FONT} from "./Styles";
 import {Style} from "./Style";
 
@@ -17,7 +15,6 @@ export class Renderer {
     private canvas: HTMLCanvasElement;
     private tintCanvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private tintContext: CanvasRenderingContext2D;
 
     private vw: number;
     private dw: number;
@@ -33,12 +30,6 @@ export class Renderer {
         this.dh = dh;
 
         this.context = this.canvas.getContext("2d");
-
-        // Largest image we ever want tinted is the LED glow, which is the same size as the rotation circle
-        // If we add a new larger image we want to tint, this will need to be updated
-        this.tintCanvas.width = 2 * ROTATION_CIRCLE_RADIUS;
-        this.tintCanvas.height = 2 * ROTATION_CIRCLE_RADIUS;
-        this.tintContext = this.tintCanvas.getContext("2d");
     }
     public setCursor(cursor: string): void {
         this.canvas.style.cursor = cursor;
