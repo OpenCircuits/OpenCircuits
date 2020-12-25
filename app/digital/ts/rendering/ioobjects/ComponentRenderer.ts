@@ -112,15 +112,15 @@ export const ComponentRenderer = (() => {
                 // draw the LED object
                 renderer.image(Images.GetImage(imgName), V(), size, object.getColor());
 
-                // draw the LED glow
-                if (object.isOn()) {
-                    const glowImg = Images.GetImage(object.getOnImageName());
-                    renderer.image(glowImg, V(), V(LED_GLOW_SIZE), object.getColor());
-                }
+                // // draw the LED glow
+                // if (object.isOn()) {
+                //     const glowImg = Images.GetImage(object.getOnImageName());
+                //     renderer.image(glowImg, V(), V(LED_GLOW_SIZE), object.getColor());
+                // }
 
-                // tint green on top if selected
-                if (tint)
-                    renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
+                // // tint green on top if selected
+                // if (tint)
+                //     renderer.overlayTint(Images.GetImage(imgName), V(), size, tint);
             }
             else if (imgName) {
                 renderer.image(Images.GetImage(imgName), V(), size, tint);

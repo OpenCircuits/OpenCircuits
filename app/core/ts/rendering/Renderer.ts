@@ -1,3 +1,5 @@
+import {parseColor, SVGDrawing} from "svg2canvas";
+
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
@@ -99,40 +101,13 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: HTMLImageElement, center: Vector, size: Vector, tint?: string): void {
+    public image(img: SVGDrawing, center: Vector, size: Vector, tint?: string): void {
         const pos = center.sub(size.scale(0.5));
+        const col = (tint ? parseColor(tint) : undefined);
 
-        this.context.drawImage(img, pos.x, pos.y, size.x, size.y);
-        if (tint)
-            this.overlayTint(img, center, size, tint);
+        img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
-    public overlayTint(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
-        // Clear the region of the tint canvas we draw to
-        this.tintContext.clearRect(0, 0, size.x, size.y);
 
-        // Draw to tint canvas
-        // Rendering code separated because firefox handles alpha blending differently
-        this.tintContext.fillStyle = tint;
-        if (Browser.name !== "Firefox") {
-            // Fill the tint canvas with the tint color and then pare it down to match the image
-            this.tintContext.fillRect(0, 0, size.x, size.y);
-            this.tintContext.globalCompositeOperation = "destination-atop";
-            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
-        } else {
-            // Draw the image then replace its color with the tint color
-            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
-            this.tintContext.globalCompositeOperation = "source-atop";
-            this.tintContext.fillRect(0, 0, size.x, size.y);
-        }
-
-        // Blit the tint canvas to the main canvas
-        const pos = center.sub(size.scale(0.5));
-        const prevAlpha = this.context.globalAlpha;
-        this.context.globalAlpha = 0.5;
-        this.context.drawImage(this.tintCanvas, 0, 0, size.x, size.y, pos.x, pos.y, size.x, size.y);
-        this.context.globalAlpha = prevAlpha;
-    }
-    
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
         this.save();
         this.context.font = FONT;

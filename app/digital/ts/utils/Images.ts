@@ -1,4 +1,7 @@
 import $ from "jquery";
+
+import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
+
 import {DEBUG_NO_FILL} from "core/utils/Constants";
 
 export const Images = (() => {
@@ -17,28 +20,31 @@ export const Images = (() => {
                               "clock.svg", "clockOn.svg",
                               "keyboard.svg", "base.svg"];
 
-    const images: Map<string, HTMLImageElement> = new Map();
+    const images: Map<string, SVGDrawing> = new Map();
 
     const loadImage = function(imageName: string, resolve: (num?: number) => void): void {
         $.get(`img/items/${imageName}`, function(svgXML) {
-            let svgStr = new XMLSerializer().serializeToString(svgXML);
-            if (DEBUG_NO_FILL)
-                svgStr = svgStr.replace(/fill="#[(a-zA-Z0-9)]+"/, "fill=\"none\"");
+            const drawing = CreateDrawingFromSVG(svgXML);
 
-            const data = btoa(svgStr);
+            images.set(imageName, drawing);
+            // let svgStr = new XMLSerializer().serializeToString(svgXML);
+            // if (DEBUG_NO_FILL)
+            //     svgStr = svgStr.replace(/fill="#[(a-zA-Z0-9)]+"/, "fill=\"none\"");
 
-            const img = new Image();
-            img.onabort = img.onerror = (e) => { throw new Error(e.toString()); };
-            img.src = "data:image/svg+xml;base64,"+data;
+            // const data = btoa(svgStr);
 
-            images.set(imageName, img);
+            // const img = new Image();
+            // img.onabort = img.onerror = (e) => { throw new Error(e.toString()); };
+            // img.src = "data:image/svg+xml;base64,"+data;
+
+            // images.set(imageName, img);
 
             resolve(1);
         });
     };
 
     return {
-        GetImage: function(img: string): HTMLImageElement {
+        GetImage: function(img: string): SVGDrawing {
             return images.get(img);
         },
         Load: async function(): Promise<void> {
