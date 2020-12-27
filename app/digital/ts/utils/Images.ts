@@ -23,20 +23,11 @@ export const Images = (() => {
 
     const loadImage = function(imageName: string, resolve: (num?: number) => void): void {
         $.get(`img/items/${imageName}`, function(svgXML) {
-            const drawing = CreateDrawingFromSVG(svgXML);
+            const drawing = CreateDrawingFromSVG(svgXML, DEBUG_NO_FILL ? {
+                fillStyle: "none"
+            } : {});
 
             images.set(imageName, drawing);
-            // let svgStr = new XMLSerializer().serializeToString(svgXML);
-            // if (DEBUG_NO_FILL)
-            //     svgStr = svgStr.replace(/fill="#[(a-zA-Z0-9)]+"/, "fill=\"none\"");
-
-            // const data = btoa(svgStr);
-
-            // const img = new Image();
-            // img.onabort = img.onerror = (e) => { throw new Error(e.toString()); };
-            // img.src = "data:image/svg+xml;base64,"+data;
-
-            // images.set(imageName, img);
 
             resolve(1);
         });
