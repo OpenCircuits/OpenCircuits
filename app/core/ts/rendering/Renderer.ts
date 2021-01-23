@@ -1,10 +1,10 @@
+import {parseColor, SVGDrawing} from "svg2canvas";
+
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
-
-import {Browser} from "core/utils/Browser";
 
 import {FONT} from "./Styles";
 import {Style} from "./Style";
@@ -15,7 +15,6 @@ export class Renderer {
     private canvas: HTMLCanvasElement;
     private tintCanvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private tintContext: CanvasRenderingContext2D;
 
     private vw: number;
     private dw: number;
@@ -31,12 +30,6 @@ export class Renderer {
         this.dh = dh;
 
         this.context = this.canvas.getContext("2d");
-
-        // Largest image we ever want tinted is the LED glow, which is the same size as the rotation circle
-        // If we add a new larger image we want to tint, this will need to be updated
-        this.tintCanvas.width = 2 * ROTATION_CIRCLE_RADIUS;
-        this.tintCanvas.height = 2 * ROTATION_CIRCLE_RADIUS;
-        this.tintContext = this.tintCanvas.getContext("2d");
     }
     public setCursor(cursor: string): void {
         this.canvas.style.cursor = cursor;
@@ -99,40 +92,13 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: HTMLImageElement, center: Vector, size: Vector, tint?: string): void {
+    public image(img: SVGDrawing, center: Vector, size: Vector, tint?: string): void {
         const pos = center.sub(size.scale(0.5));
+        const col = (tint ? parseColor(tint) : undefined);
 
-        this.context.drawImage(img, pos.x, pos.y, size.x, size.y);
-        if (tint)
-            this.overlayTint(img, center, size, tint);
+        img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
-    public overlayTint(img: HTMLImageElement, center: Vector, size: Vector, tint: string): void {
-        // Clear the region of the tint canvas we draw to
-        this.tintContext.clearRect(0, 0, size.x, size.y);
 
-        // Draw to tint canvas
-        // Rendering code separated because firefox handles alpha blending differently
-        this.tintContext.fillStyle = tint;
-        if (Browser.name !== "Firefox") {
-            // Fill the tint canvas with the tint color and then pare it down to match the image
-            this.tintContext.fillRect(0, 0, size.x, size.y);
-            this.tintContext.globalCompositeOperation = "destination-atop";
-            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
-        } else {
-            // Draw the image then replace its color with the tint color
-            this.tintContext.drawImage(img, 0, 0, size.x, size.y);
-            this.tintContext.globalCompositeOperation = "source-atop";
-            this.tintContext.fillRect(0, 0, size.x, size.y);
-        }
-
-        // Blit the tint canvas to the main canvas
-        const pos = center.sub(size.scale(0.5));
-        const prevAlpha = this.context.globalAlpha;
-        this.context.globalAlpha = 0.5;
-        this.context.drawImage(this.tintCanvas, 0, 0, size.x, size.y, pos.x, pos.y, size.x, size.y);
-        this.context.globalAlpha = prevAlpha;
-    }
-    
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
         this.save();
         this.context.font = FONT;
@@ -141,6 +107,10 @@ export class Renderer {
         this.context.textBaseline = "middle";
         this.context.fillText(txt, pos.x, pos.y);
         this.restore();
+    }
+
+    public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {
+        return this.context.createRadialGradient(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);
     }
 
     public getTextWidth(txt: string): number {
