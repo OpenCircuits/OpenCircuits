@@ -5,9 +5,9 @@ import {createStore, applyMiddleware} from "redux";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 
-import {reducers} from "./site/state/reducers";
+import {reducers} from "./state/reducers";
 
-import {App} from "./site/containers/App";
+import {App} from "./containers/App";
 
 import {Images} from "digital/utils/Images";
 import "digital/models/ioobjects";

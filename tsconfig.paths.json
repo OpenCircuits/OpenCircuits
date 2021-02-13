@@ -2,11 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "Vector": ["lib/core/src/utils/math/Vector"],
-      "math/*": ["lib/core/src/utils/math/*"],
-      "core/*": ["lib/core/src/*"],
-      "digital/*": ["src/app/*"],
-      "site/*": ["src/site/*"]
+      "Vector":    ["src/app/core/utils/math/Vector"],
+      "math/*":    ["src/app/core/utils/math/*"],
+      "core/*":    ["src/app/core/*"],
+      "digital/*": ["src/app/digital/*"],
+      "shared/*":  ["src/site/shared/*"],
+      "site/*":    ["src/site/pages/*"],
     }
   }
 }

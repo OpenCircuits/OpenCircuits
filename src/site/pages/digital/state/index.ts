@@ -1,10 +1,10 @@
-import {UserInfoState} from "./UserInfo/state";
-import {CircuitInfoState} from "./CircuitInfo/state";
-import {HeaderState} from "./Header/state";
-import {SideNavState} from "./SideNav/state";
-import {ItemNavState} from "./ItemNav/state";
-import {ICDesignerState} from "./ICDesigner/state";
-import {ICViewerState} from "./ICViewer/state";
+import {UserInfoState}    from "shared/state/UserInfo/state";
+import {CircuitInfoState} from "shared/state/CircuitInfo/state";
+import {HeaderState}      from "shared/state/Header/state";
+import {SideNavState}     from "shared/state/SideNav/state";
+import {ItemNavState}     from "shared/state/ItemNav/state";
+import {ICDesignerState}  from "./ICDesigner/state";
+import {ICViewerState}    from "./ICViewer/state";
 
 
 export type AppState = {

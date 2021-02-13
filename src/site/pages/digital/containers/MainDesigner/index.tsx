@@ -1,7 +1,7 @@
 import {Create} from "serialeazy";
 import {useEffect, useLayoutEffect, useRef} from "react";
 
-import {HEADER_HEIGHT} from "site/utils/Constants";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
@@ -38,25 +38,26 @@ import {WireRenderer}           from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer}      from "digital/rendering/ioobjects/ComponentRenderer";
 import {ToolRenderer} from "digital/rendering/ToolRenderer";
 
-import {ICDesigner} from "site/containers/ICDesigner";
-import {SelectionPopup}       from "site/containers/SelectionPopup";
-import {PositionModule}       from "site/containers/SelectionPopup/modules/PositionModule";
-import {InputCountModule}     from "site/containers/SelectionPopup/modules/InputCountModule";
-import {ColorModule}          from "site/containers/SelectionPopup/modules/ColorModule";
-import {ClockFrequencyModule} from "site/containers/SelectionPopup/modules/ClockFrequencyModule";
-import {OutputCountModule}    from "site/containers/SelectionPopup/modules/OutputCountModule";
-import {SegmentCountModule}   from "site/containers/SelectionPopup/modules/SegmentCountModule";
-import {TextColorModule}      from "site/containers/SelectionPopup/modules/TextColorModule";
-import {BusButtonModule}      from "site/containers/SelectionPopup/modules/BusButtonModule";
-import {ViewICButtonModule}   from "site/containers/SelectionPopup/modules/ViewICButtonModule";
-import {CreateICButtonModule} from "site/containers/SelectionPopup/modules/CreateICButtonModule";
+import {SelectionPopup}       from "shared/containers/SelectionPopup";
+import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
+import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
+import {InputCountModule}     from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {ColorModule}          from "site/digital/containers/SelectionPopup/modules/ColorModule";
+import {ClockFrequencyModule} from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
+import {OutputCountModule}    from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {SegmentCountModule}   from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+import {TextColorModule}      from "site/digital/containers/SelectionPopup/modules/TextColorModule";
+import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
+import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 
-import {useWindowSize} from "site/utils/hooks/useWindowSize";
+import {ICDesigner} from "site/digital/containers/ICDesigner";
+
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import "./index.scss";
 import {connect} from "react-redux";
-import {AppState} from "site/state";
-import {AddICData, RemoveICData} from "site/state/ItemNav/actions";
+import {AppState} from "site/digital/state";
+import {AddICData, RemoveICData} from "shared/state/ItemNav/actions";
 import {ICViewer} from "../ICViewer";
 
 

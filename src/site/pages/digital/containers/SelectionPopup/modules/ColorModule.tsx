@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {ColorChangeAction} from "digital/actions/ColorChangeAction";
 import {Label, LED} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[LED, Label], string> = {

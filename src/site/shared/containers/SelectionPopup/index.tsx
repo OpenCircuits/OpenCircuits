@@ -1,6 +1,6 @@
 import {useLayoutEffect, useState} from "react";
 
-import {HEADER_HEIGHT} from "site/utils/Constants";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";

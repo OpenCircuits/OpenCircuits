@@ -2,13 +2,13 @@ import {combineReducers} from "redux";
 
 import {AppState} from ".";
 
-import {userInfoReducer} from "./UserInfo/reducers";
-import {circuitInfoReducer} from "./CircuitInfo/reducers";
-import {headerReducer} from "./Header/reducers";
-import {sideNavReducer} from "./SideNav/reducers";
-import {itemNavReducer} from "./ItemNav/reducers";
-import {icDesignerReducer} from "./ICDesigner/reducers";
-import {icViewerReducer} from "./ICViewer/reducers";
+import {userInfoReducer}    from "shared/state/UserInfo/reducers";
+import {circuitInfoReducer} from "shared/state/CircuitInfo/reducers";
+import {headerReducer}      from "shared/state/Header/reducers";
+import {sideNavReducer}     from "shared/state/SideNav/reducers";
+import {itemNavReducer}     from "shared/state/ItemNav/reducers";
+import {icDesignerReducer}  from "./ICDesigner/reducers";
+import {icViewerReducer}    from "./ICViewer/reducers";
 
 
 export const reducers = combineReducers<AppState>({

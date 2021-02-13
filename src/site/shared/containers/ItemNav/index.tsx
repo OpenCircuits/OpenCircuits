@@ -1,9 +1,9 @@
 import React from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "site/state";
-import {ToggleItemNav} from "site/state/ItemNav/actions";
-import {ICItemNavData} from "site/state/ItemNav/state";
+import {AppState} from "shared/state";
+import {ToggleItemNav} from "shared/state/ItemNav/actions";
+import {ICItemNavData} from "shared/state/ItemNav/state";
 
 import "./index.scss";
 

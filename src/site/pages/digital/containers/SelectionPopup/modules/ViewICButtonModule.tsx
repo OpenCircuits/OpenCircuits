@@ -1,10 +1,10 @@
 import {connect} from "react-redux";
 import {InputPort} from "digital/models/ports/InputPort";
-import {AppState} from "site/state";
-import {ButtonPopupModule, UseModuleProps} from "./Module";
+import {AppState} from "site/digital/state";
+import {ButtonPopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects";
-import {OpenICViewer} from "site/state/ICViewer/actions";
+import {OpenICViewer} from "site/digital/state/ICViewer/actions";
 
 
 type OwnProps = UseModuleProps;

@@ -1,10 +1,10 @@
 import {Dispatch} from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "site/state";
-import {AllSharedActions} from "site/state/actions";
-import {HeaderMenus, HeaderPopups} from "site/state/Header/state";
-import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "site/state/Header/actions";
+import {AppState} from "shared/state";
+import {AllSharedActions} from "shared/state/actions";
+import {HeaderMenus, HeaderPopups} from "shared/state/Header/state";
+import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header/actions";
 
 import {Dropdown} from "./Dropdown";
 

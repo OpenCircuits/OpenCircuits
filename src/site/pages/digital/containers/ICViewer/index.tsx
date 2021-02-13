@@ -2,7 +2,7 @@ import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 
 import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
-import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/utils/Constants";
+import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Camera} from "math/Camera";
 
@@ -30,9 +30,9 @@ import {WireRenderer} from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 import {ToolRenderer} from "digital/rendering/ToolRenderer";
 
-import {useWindowSize} from "site/utils/hooks/useWindowSize";
-import {CloseICViewer} from "site/state/ICViewer/actions";
-import {AppState} from "site/state";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {CloseICViewer} from "site/digital/state/ICViewer/actions";
+import {AppState} from "site/digital/state";
 
 import "./index.scss";
 
@@ -46,7 +46,7 @@ type StateProps = {
     data: ICData;
 }
 type DispatchProps = {
-    closeDesigner: (cancelled?: boolean) => void;
+    closeViewer: () => void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -88,9 +88,9 @@ export const ICViewer = (() => {
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
         (state: AppState) => ({ active: state.icViewer.active,
                                 data: state.icViewer.ic }),
-        { closeDesigner: CloseICViewer }
+        { closeViewer: CloseICViewer }
     )(
-        ({active, data, onActivate, onClose, closeDesigner}: Props) => {
+        ({active, data, onActivate, onClose, closeViewer}: Props) => {
             const {w, h} = useWindowSize();
             const canvas = useRef<HTMLCanvasElement>();
 
@@ -111,6 +111,7 @@ export const ICViewer = (() => {
                 const renderers = CreateDigitalRenderers(renderer);
 
                 circuitInfo.input = input;
+                input.block(); // Initially block input
 
                 input.addListener((event) => {
                     const change = toolManager.onEvent(event, circuitInfo);
@@ -128,6 +129,9 @@ export const ICViewer = (() => {
                 // Callback
                 onActivate();
 
+                // Unlock input
+                circuitInfo.input.unblock();
+
                 const inside = data.copy();
 
                 // Reset designer and add IC insides
@@ -141,6 +145,16 @@ export const ICViewer = (() => {
                 renderQueue.render();
             }, [active, data, onActivate]);
 
+
+            const close = () => {
+                // Block input while closed
+                circuitInfo.input.block();
+
+                onClose();
+                closeViewer();
+            }
+
+
             return (
                 <div className="icviewer" style={{ display: (active ? "initial" : "none") }}>
                     <canvas ref={canvas}
@@ -148,7 +162,7 @@ export const ICViewer = (() => {
                             height={h*IC_DESIGNER_VH} />
 
                     <div className="icviewer__buttons">
-                        <button name="close" onClick={() => { onClose(); closeDesigner(true); }}>
+                        <button name="close" onClick={() => close()}>
                             Close
                         </button>
                     </div>

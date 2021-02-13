@@ -3,10 +3,10 @@ import {connect} from "react-redux";
 import {Component} from "core/models";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
-import {AppState} from "site/state";
-import {OpenICDesigner} from "site/state/ICDesigner/actions";
+import {AppState} from "site/digital/state";
+import {OpenICDesigner} from "site/digital/state/ICDesigner/actions";
 
-import {ButtonPopupModule, UseModuleProps} from "./Module";
+import {ButtonPopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 
 
 type OwnProps = UseModuleProps

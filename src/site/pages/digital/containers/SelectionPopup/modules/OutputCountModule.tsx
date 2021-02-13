@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {Encoder} from "digital/models/ioobjects";
 import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {CreateModule, ModuleConfig, PopupModule} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Encoder], number> = {

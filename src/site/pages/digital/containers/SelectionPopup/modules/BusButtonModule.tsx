@@ -1,7 +1,7 @@
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {ButtonPopupModule, UseModuleProps} from "./Module";
+import {ButtonPopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 
 
 export const BusButtonModule = (props: UseModuleProps) =>  (

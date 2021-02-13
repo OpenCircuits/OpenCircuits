@@ -3,12 +3,12 @@ import {connect} from "react-redux";
 
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
-import {AppState} from "site/state";
-import {AllSharedActions} from "site/state/actions";
-import {ToggleSideNav} from "site/state/SideNav/actions";
+import {AppState} from "shared/state";
+import {AllSharedActions} from "shared/state/actions";
+import {ToggleSideNav} from "shared/state/SideNav/actions";
 
-import {Overlay} from "site/components/Overlay";
-import {CircuitPreview} from "site/components/CircuitPreview";
+import {Overlay} from "shared/components/Overlay";
+import {CircuitPreview} from "shared/components/CircuitPreview";
 
 import "./index.scss";
 

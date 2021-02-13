@@ -1,10 +1,10 @@
 import {Dispatch} from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "site/state";
-import {AllSharedActions} from "site/state/actions";
-import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved} from "site/state/CircuitInfo/actions";
-import {ToggleSideNav} from "site/state/SideNav/actions";
+import {AppState} from "shared/state";
+import {AllSharedActions} from "shared/state/actions";
+import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {ToggleSideNav} from "shared/state/SideNav/actions";
 
 import "./index.scss";
 

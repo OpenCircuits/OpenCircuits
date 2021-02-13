@@ -1,7 +1,7 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 
-import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/utils/Constants";
+import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
@@ -35,9 +35,9 @@ import {WireRenderer} from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 import {ToolRenderer} from "digital/rendering/ToolRenderer";
 
-import {useWindowSize} from "site/utils/hooks/useWindowSize";
-import {CloseICDesigner} from "site/state/ICDesigner/actions";
-import {AppState} from "site/state";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {CloseICDesigner} from "site/digital/state/ICDesigner/actions";
+import {AppState} from "site/digital/state";
 
 import "./index.scss";
 
@@ -134,6 +134,7 @@ export const ICDesigner = (() => {
                 const renderers = CreateDigitalRenderers(renderer);
 
                 circuitInfo.input = input;
+                input.block(); // Initially block input
 
                 input.addListener((event) => {
                     const change = toolManager.onEvent(event, circuitInfo);
@@ -165,6 +166,9 @@ export const ICDesigner = (() => {
                 // Clear name
                 setName({ name: "" });
 
+                // Unlock input
+                circuitInfo.input.unblock();
+
                 // Callback
                 onActivate();
 
@@ -180,6 +184,16 @@ export const ICDesigner = (() => {
                 renderQueue.render();
             }, [active, data, setName, onActivate]);
 
+
+            const close = (cancelled: boolean = false) => {
+                // Block input while closed
+                circuitInfo.input.block();
+
+                onClose((cancelled ? undefined : data));
+                closeDesigner(cancelled);
+            }
+
+
             return (
                 <div className="icdesigner" style={{ display: (active ? "initial" : "none") }}>
                     <canvas ref={canvas}
@@ -192,10 +206,10 @@ export const ICDesigner = (() => {
                            onChange={(ev) => setName({name: ev.target.value})} />
 
                     <div className="icdesigner__buttons">
-                        <button name="confirm" onClick={() => { onClose(data); closeDesigner(); }}>
+                        <button name="confirm" onClick={() => close()}>
                             Confirm
                         </button>
-                        <button name="cancel"  onClick={() => { onClose(); closeDesigner(true); }}>
+                        <button name="cancel"  onClick={() => close(true)}>
                             Cancel
                         </button>
                     </div>

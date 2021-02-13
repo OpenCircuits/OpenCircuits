@@ -1,12 +1,12 @@
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {Header} from "../Header";
-import {SideNav} from "../SideNav";
-import {ItemNav} from "../ItemNav";
+import {Header} from "shared/containers/Header";
+import {SideNav} from "shared/containers/SideNav";
+import {ItemNav} from "shared/containers/ItemNav";
 import {MainDesigner} from "../MainDesigner";
 
-import exampleConfig from "site/data/examples/examples.json";
-import itemNavConfig from "site/data/itemNavConfig.json";
+import exampleConfig from "site/digital/data/examples/examples.json";
+import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 import "./index.css";
 

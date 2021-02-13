@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {ClockFrequencyChangeAction} from "digital/actions/ClockFrequencyChangeAction";
 import {Clock} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Clock], number> = {

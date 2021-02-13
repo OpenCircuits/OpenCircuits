@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAction";
 import {Label} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Label], string> = {

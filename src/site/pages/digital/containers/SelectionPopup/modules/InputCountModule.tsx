@@ -11,7 +11,7 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
-import {CreateModule, ModuleConfig, PopupModule} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[ANDGate, NANDGate, ORGate,
