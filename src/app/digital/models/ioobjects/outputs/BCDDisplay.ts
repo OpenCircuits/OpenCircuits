@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import BCDFont from "./BCDFont.json";
+import {BCDFont} from "./BCDFont";
 
 import {ClampedValue} from "math/ClampedValue";
 import {PortsToDecimal} from "digital/utils/ComponentUtils";

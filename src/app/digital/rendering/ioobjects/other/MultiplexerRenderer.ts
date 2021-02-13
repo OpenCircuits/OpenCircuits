@@ -6,13 +6,13 @@ import {DEFAULT_BORDER_WIDTH,
         MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 import {V} from "Vector";
 
-import {Renderer} from "../../../../../core/ts/rendering/Renderer";
+import {Renderer} from "core/rendering/Renderer";
 import {Camera} from "math/Camera";
 import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 
-import {Polygon} from "../../../../../core/ts/rendering/shapes/Polygon";
-import {Style} from "../../../../../core/ts/rendering/Style";
+import {Polygon} from "core/rendering/shapes/Polygon";
+import {Style} from "core/rendering/Style";
 
 export const MultiplexerRenderer = (() => {
 

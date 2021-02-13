@@ -1,13 +1,14 @@
-import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+import {serialize} from "serialeazy";
 
 import {Vector,V}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "serialeazy";
+
 import {Pressable} from "core/utils/Pressable";
 
 import {DigitalComponent} from "../DigitalComponent";
+
 
 export abstract class PressableComponent extends DigitalComponent implements Pressable {
     @serialize

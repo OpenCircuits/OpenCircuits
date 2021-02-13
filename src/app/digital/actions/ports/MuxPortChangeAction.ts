@@ -17,13 +17,14 @@ export class MuxPortChangeAction extends PortChangeAction {
 
     protected otherPortAction: PortChangeAction;
 
-    public constructor(obj: Mux, target: number) {
-        super(obj, target, obj.getSelectPorts().length);
+    public constructor(obj: Mux, initial: number, target: number) {
+        super(obj.getDesigner(), target, initial);
+        this.obj = obj;
 
         if (obj instanceof Multiplexer)
-            this.otherPortAction = new InputPortChangeAction(obj, Math.pow(2, target));
+            this.otherPortAction = new InputPortChangeAction(obj, initial, Math.pow(2, target));
         else
-            this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, target));
+            this.otherPortAction = new OutputPortChangeAction(obj, initial, Math.pow(2, target));
     }
 
     protected changeSize(val: number): void {

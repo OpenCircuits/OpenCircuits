@@ -34,13 +34,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
     private propagationTime: number;
 
-    private updateCallback: () => void;
+    private updateCallback?: () => void;
 
-    public constructor(propagationTime: number = 1, callback: () => void = () => {}) {
+    public constructor(propagationTime: number = 1, callback?: () => void) {
         super();
 
         this.propagationTime = propagationTime;
-        this.updateCallback  = callback;
+        this.updateCallback = callback;
 
         this.reset();
     }
@@ -53,13 +53,18 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.updateRequests = 0;
     }
 
+    public setCallback(callback: () => void): void {
+        this.updateCallback = callback;
+    }
+
     /**
      * Method to call when you want to force an update
      * 	Used when something changed but isn't propagated
      * 	(i.e. Clock updated but wasn't connected to anything)
      */
     public forceUpdate(): void {
-        this.updateCallback();
+        if (this.updateCallback)
+            this.updateCallback();
     }
 
     /**
@@ -80,7 +85,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.updateRequests++;
 
         // instant propagation
-        if (this.propagationTime == 0)
+        if (this.propagationTime === 0)
             this.update();
         else if (this.propagationTime > 0)
             setTimeout(() => this.update(), this.propagationTime);
@@ -107,10 +112,11 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         this.updateRequests--;
 
-        this.updateCallback();
+        if (this.updateCallback)
+            this.updateCallback();
 
         if (this.updateRequests > 0) {
-            if (this.propagationTime == 0)
+            if (this.propagationTime === 0)
                 this.update();
             else
                 setTimeout(() => this.update(), this.propagationTime);
@@ -119,8 +125,16 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         return true;
     }
 
-    public createWire(p1: OutputPort, p2: InputPort): DigitalWire {
-        return new DigitalWire(p1, p2);
+    public createWire(p1: OutputPort, p2?: InputPort): DigitalWire;
+    public createWire(p2: InputPort, p1?: OutputPort): DigitalWire;
+    public createWire(p1: InputPort | OutputPort, p2?: InputPort | OutputPort): DigitalWire | undefined {
+        const input  = (p1 instanceof InputPort  ? p1 : p2) as InputPort;
+        const output = (p1 instanceof OutputPort ? p1 : p2) as OutputPort;
+
+        // Return undefined if InputPort already has a connection
+        if (input && input.getWires().length !== 0)
+            return;
+        return new DigitalWire(output, input);
     }
 
     public addGroup(group: IOObjectSet): void {
@@ -157,7 +171,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (this.wires.includes(wire))
             throw new Error("Attempted to add a wire that already existed!");
 
-        wire.setDesigner(this);
         this.wires.push(wire);
     }
 
@@ -181,7 +194,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             throw new Error("Attempted to remove wire that doesn't exist!");
 
         this.wires.splice(this.wires.indexOf(wire), 1);
-        wire.setDesigner(undefined);
     }
 
     public replace(designer: DigitalCircuitDesigner): void {
@@ -209,7 +221,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             throw new Error("Can't move object! Object doesn't exist!");
 
         // Shift object to position
-        i = (i == undefined ? arr.length : i);
+        i = (i === undefined ? arr.length : i);
         arr.splice(i0, 1);
         arr.splice(i, 0, obj);
 
@@ -218,7 +230,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return new DigitalObjectSet((<IOObject[]>this.objects).concat(this.wires));
+        return new DigitalObjectSet((this.objects as IOObject[]).concat(this.wires));
     }
 
     public getObjects(): DigitalComponent[] {

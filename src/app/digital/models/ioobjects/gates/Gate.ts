@@ -28,7 +28,7 @@ export abstract class Gate extends DigitalComponent {
 
     private setNot(not: boolean): void {
         // if flipped then flip output
-        if (not != this.not)
+        if (not !== this.not)
             this.outputs.first.activate(!this.outputs.first.getIsOn());
         this.not = not;
 

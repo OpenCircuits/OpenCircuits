@@ -6,18 +6,19 @@ import {DEFAULT_BORDER_WIDTH,
         GATE_NOT_CIRCLE_RADIUS} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 
-import {Renderer} from "../../../../../core/ts/rendering/Renderer";
 import {Camera} from "math/Camera";
+
+import {Renderer}  from "core/rendering/Renderer";
+import {Style}     from "core/rendering/Style";
+import {Circle}    from "core/rendering/shapes/Circle";
+import {Line}      from "core/rendering/shapes/Line";
+import {QuadCurve} from "core/rendering/shapes/QuadCurve";
 
 import {Gate}    from "digital/models/ioobjects/gates/Gate";
 import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
 import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
-import {Circle} from "../../../../../core/ts/rendering/shapes/Circle";
-import {Line} from "../../../../../core/ts/rendering/shapes/Line";
-import {QuadCurve} from "../../../../../core/ts/rendering/shapes/QuadCurve";
-import {Style} from "../../../../../core/ts/rendering/Style";
 
 export const GateRenderer = (() => {
 

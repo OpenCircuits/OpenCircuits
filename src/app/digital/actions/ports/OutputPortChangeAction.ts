@@ -7,8 +7,9 @@ import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 export class OutputPortChangeAction extends PortChangeAction {
     protected obj: DigitalComponent;
 
-    public constructor(obj: DigitalComponent, target: number) {
-        super(obj, target, obj.getOutputPorts().length);
+    public constructor(obj: DigitalComponent, initial: number, target: number) {
+        super(obj.getDesigner(), target, initial);
+        this.obj = obj;
     }
 
     protected getPorts(): Port[] {

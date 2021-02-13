@@ -17,8 +17,8 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
         const c = JSON.parse(contents) as Record<string, SerializationEntry>;
 
         const replacePositioner = (val: SerializationEntry, ports: string, type: string): void => {
-            const set = c[val.data[ports]["ref"]]; // Get PortSet from (inputs/outputs) of Component
-            const positionerRef = set.data["positioner"]["ref"]; // Get positioner ID from PortSet
+            const set = c[(val.data[ports] as {ref: string})["ref"]]; // Get PortSet from (inputs/outputs) of Component
+            const positionerRef = (set.data["positioner"] as {ref: string})["ref"]; // Get positioner ID from PortSet
 
             c[positionerRef] = {"type": type, "data": {}};
         }

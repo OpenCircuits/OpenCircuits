@@ -33,7 +33,7 @@ export class Clock extends DigitalComponent {
     public activate(bool: boolean): void {
         super.activate(bool);
         this.isOn = bool;
-        if (this.designer != undefined)
+        if (this.designer !== undefined)
             this.designer.forceUpdate();
     }
 

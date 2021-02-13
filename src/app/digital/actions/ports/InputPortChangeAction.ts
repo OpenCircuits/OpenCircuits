@@ -1,14 +1,17 @@
 import {Action} from "core/actions/Action";
+import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
 import {Port} from "core/models/ports/Port";
+
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {PortChangeAction} from "core/actions/ports/PortChangeAction";
+
 
 export class InputPortChangeAction extends PortChangeAction {
     protected obj: DigitalComponent;
 
-    public constructor(obj: DigitalComponent, target: number) {
-        super(obj, target, obj.getInputPorts().length);
+    public constructor(obj: DigitalComponent, initial: number, target: number) {
+        super(obj.getDesigner(), target, initial);
+        this.obj = obj;
     }
 
     protected getPorts(): Port[] {

@@ -8,6 +8,7 @@ import {InputPort} from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
+import {Port} from "core/models";
 
 @serializable("DigitalWire")
 export class DigitalWire extends Wire {
@@ -22,17 +23,34 @@ export class DigitalWire extends Wire {
     public constructor(input?: OutputPort, output?: InputPort) {
         super(input, output);
 
+        this.p1 = input;
+        this.p2 = output;
         this.isOn = false;
     }
 
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
-        if (signal == this.isOn)
+        if (signal === this.isOn)
             return;
 
         this.isOn = signal;
         if (this.p2 != null)
             this.p2.activate(signal);
+    }
+
+    public canConnectTo(port: Port): boolean {
+        if (!super.canConnectTo(port))
+            return false;
+
+        // If p1 is defined then `port` must be an InputPort to connect
+        if (this.p1 && port instanceof InputPort) {
+            // If `port` is an InputPort then it
+            //  must not already have a connection
+            return port.getInput() === undefined;
+        }
+
+        // if p2 is defined then `port` must be an OutputPort
+        return (this.p2 && port instanceof OutputPort);
     }
 
     public split(): DigitalNode {

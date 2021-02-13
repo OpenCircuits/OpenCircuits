@@ -24,6 +24,7 @@ import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
 
+
 @serializable("ICData")
 export class ICData {
     private name: string;
@@ -97,7 +98,7 @@ export class ICData {
             const pos = target.add(target.sub(origin).normalize().scale(10000));
 
             const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
-            const v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-25, IO_PORT_LENGTH+size.y/2-25))).add(p);
+            const v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-0, IO_PORT_LENGTH+size.y/2-0))).add(p);
 
             port.setOriginPos(p);
             port.setTargetPos(v);
@@ -187,8 +188,8 @@ export class ICData {
         if (!this.IsValid(copies))
             return undefined;
 
-        // Set designer of copies to null
-        copies.toList().forEach((obj) => obj.setDesigner(undefined));
+        // // Set designer of copies to null
+        // copies.toList().forEach((obj) => obj.setDesigner(undefined));
 
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not

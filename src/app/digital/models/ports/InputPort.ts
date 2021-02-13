@@ -12,11 +12,13 @@ export class InputPort extends Port {
 
     public constructor(parent?: DigitalComponent) {
         super(parent);
+        this.parent = parent;
+        this.connections = [];
     }
 
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
-        if (signal == this.isOn)
+        if (signal === this.isOn)
             return;
         this.isOn = signal;
 
@@ -29,7 +31,7 @@ export class InputPort extends Port {
     }
 
     public connect(wire: DigitalWire): void {
-        if (this.connections.length == 1)
+        if (this.connections.length === 1)
             throw new Error("Cannot connect to Input Port! Connection already exists!");
         this.connections = [wire];
         this.activate(wire.getIsOn());

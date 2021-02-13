@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
 
 import {DEBUG_NO_FILL} from "core/utils/Constants";
@@ -21,16 +19,17 @@ export const Images = (() => {
 
     const images: Map<string, SVGDrawing> = new Map();
 
-    const loadImage = function(imageName: string, resolve: (num?: number) => void): void {
-        $.get(`img/items/${imageName}`, function(svgXML) {
-            const drawing = CreateDrawingFromSVG(svgXML, DEBUG_NO_FILL ? {
-                fillStyle: "none"
-            } : {});
+    const loadImage = async function(imageName: string): Promise<number> {
+        const svg = await fetch(`img/items/${imageName}`);
+        const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
 
-            images.set(imageName, drawing);
+        const drawing = CreateDrawingFromSVG(svgXML, DEBUG_NO_FILL ? {
+            fillStyle: "none"
+        } : {});
 
-            resolve(1);
-        });
+        images.set(imageName, drawing);
+
+        return 1;
     };
 
     return {
@@ -39,8 +38,8 @@ export const Images = (() => {
         },
         Load: async function(): Promise<void> {
             const promises =
-                IMAGE_FILE_NAMES.map((name) =>
-                    new Promise((resolve, _) => loadImage(name, resolve))
+                IMAGE_FILE_NAMES.map(async (name) =>
+                    await loadImage(name)
                 );
 
             await Promise.all(promises);

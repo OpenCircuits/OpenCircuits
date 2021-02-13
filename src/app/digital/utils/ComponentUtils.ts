@@ -25,8 +25,6 @@ import {OutputPort} from "digital/models/ports/OutputPort";
  */
 @serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {
-    protected wires: Set<DigitalWire>;
-
     private inputs:  DigitalComponent[];
     private outputs: DigitalComponent[];
     private others:  DigitalComponent[];
@@ -42,10 +40,10 @@ export class DigitalObjectSet extends IOObjectSet {
         const objs = set.filter(o => o instanceof DigitalComponent) as DigitalComponent[];
         for (const obj of objs) {
             // Input => >0 output ports and 0 input ports
-            if (obj.numInputs() == 0 && obj.numOutputs() > 0)
+            if (obj.numInputs() === 0 && obj.numOutputs() > 0)
                 this.inputs.push(obj);
             // Output => >0 input ports and 0 output ports
-            else if (obj.numInputs() > 0 && obj.numOutputs() == 0)
+            else if (obj.numInputs() > 0 && obj.numOutputs() === 0)
                 this.outputs.push(obj);
             // Component => neither just input or output
             else
@@ -63,7 +61,7 @@ export class DigitalObjectSet extends IOObjectSet {
     }
 
     public getWires(): DigitalWire[] {
-        return Array.from(this.wires);
+        return Array.from(this.wires) as DigitalWire[];
     }
 
     public getInputs(): DigitalComponent[] {

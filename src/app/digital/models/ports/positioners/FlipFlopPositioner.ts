@@ -12,7 +12,7 @@ import {InputPort} from "../InputPort";
 export class FlipFlopPositioner extends Positioner<InputPort> {
 
     public constructor(numInputs?: number) {
-        super("left", (numInputs == 3 ? 3/4 : 1));
+        super("left", (numInputs === 3 ? 3/4 : 1));
     }
 
     /**

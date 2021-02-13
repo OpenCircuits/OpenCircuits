@@ -1,6 +1,6 @@
 import {serializable, serialize} from "serialeazy";
 
-import Segments from "./Segments.json";
+import {SegmentType, Segments} from "./Segments";
 
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
@@ -12,7 +12,6 @@ import {Name} from "core/utils/Name";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
-export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
 @serializable("SegmentDisplay")
 export class SegmentDisplay extends DigitalComponent {

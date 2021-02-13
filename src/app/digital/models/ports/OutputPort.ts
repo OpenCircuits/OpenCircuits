@@ -1,19 +1,21 @@
+import {serializable} from "serialeazy";
+
 import {Vector,V} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalWire}      from "../DigitalWire";
-import {serializable} from "serialeazy";
+
 
 @serializable("DigitalOutputPort")
 export class OutputPort extends Port {
     protected parent: DigitalComponent;
-
     protected connections: DigitalWire[];
 
     public constructor(parent?: DigitalComponent) {
         super(parent);
+        this.parent = parent;
         this.connections = [];
     }
 
@@ -25,7 +27,7 @@ export class OutputPort extends Port {
      */
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
-        if (signal == this.isOn)
+        if (signal === this.isOn)
             return;
         this.isOn = signal;
 
@@ -46,7 +48,7 @@ export class OutputPort extends Port {
     public disconnect(w: DigitalWire): void {
         // find index and splice
         const i = this.connections.indexOf(w);
-        if (i != -1)
+        if (i !== -1)
             this.connections.splice(i, 1);
     }
 

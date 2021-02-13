@@ -1,4 +1,6 @@
-{
+export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
+
+export const Segments: Record<string, [[number, number], SegmentType][]> = {
     "7": [
         [[ 0,      -1], "horizontal"],
         [[ 0.5,  -0.5],   "vertical"],

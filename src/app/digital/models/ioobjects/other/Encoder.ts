@@ -25,7 +25,7 @@ export class Encoder extends DigitalComponent {
     public activate(): void {
         // Filter ports that are on then map to their indices
         const onPorts = this.getInputPorts().filter((p) => p.getIsOn());
-        if (onPorts.length != 1)
+        if (onPorts.length !== 1)
             return; // Undefined behavior
 
         // Get index of which port is on
@@ -34,7 +34,7 @@ export class Encoder extends DigitalComponent {
         // Convert index to list of bits in binary
         const bits = index.toString(2).padStart(this.outputs.length, "0").split("").reverse();
         bits.forEach((bit, i) => {
-            super.activate(bit == "1", i);
+            super.activate(bit === "1", i);
         });
     }
 

@@ -3,7 +3,7 @@ import {Clamp,
         GetNearestPointOnRect} from "math/MathUtils";
 
 import {Camera} from "math/Camera";
-import {Renderer} from "../../../../core/ts/rendering/Renderer";
+import {Renderer} from "core/rendering/Renderer";
 import {Component} from "core/models/Component";
 
 export const IOLabelRenderer = (() => {

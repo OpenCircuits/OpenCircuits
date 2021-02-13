@@ -19,18 +19,18 @@ export class CoderPortChangeAction implements Action {
     protected inputPortAction: InputPortChangeAction;
     protected outputPortAction: OutputPortChangeAction;
 
-    public constructor(obj: Encoder | Decoder, target: number) {
+    public constructor(obj: Encoder | Decoder, initial: number, target: number) {
         this.obj = obj;
         this.targetCount = target;
 
         if (obj instanceof Encoder) {
             this.initialCount = obj.getOutputPortCount().getValue();
-            this.inputPortAction  = new InputPortChangeAction(obj, Math.pow(2, target));
-            this.outputPortAction = new OutputPortChangeAction(obj, target);
+            this.inputPortAction  = new InputPortChangeAction(obj, initial, Math.pow(2, target));
+            this.outputPortAction = new OutputPortChangeAction(obj, initial, target);
         } else {
             this.initialCount = obj.getInputPortCount().getValue();
-            this.inputPortAction  = new InputPortChangeAction(obj, target);
-            this.outputPortAction = new OutputPortChangeAction(obj, Math.pow(2, target));
+            this.inputPortAction  = new InputPortChangeAction(obj, initial, target);
+            this.outputPortAction = new OutputPortChangeAction(obj, initial, Math.pow(2, target));
         }
     }
 

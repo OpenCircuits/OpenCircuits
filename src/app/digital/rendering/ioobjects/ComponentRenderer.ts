@@ -5,17 +5,13 @@ import {DEFAULT_BORDER_COLOR,
 
 import {V} from "Vector";
 import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
 
-import {Renderer} from "core/rendering/Renderer";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Component}   from "core/models/Component";
 
-import {Selectable} from "core/utils/Selectable";
-
-import {IOLabelRenderer} from "./IOLabelRenderer";
-import {IOPortRenderer} from "./IOPortRenderer";
-import {GateRenderer} from "./gates/GateRenderer";
-import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
-import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
+import {Renderer}    from "core/rendering/Renderer";
+import {Rectangle}   from "core/rendering/shapes/Rectangle";
+import {Style}       from "core/rendering/Style";
 
 import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
 import {Latch}               from "digital/models/ioobjects/latches/Latch";
@@ -24,19 +20,22 @@ import {Decoder}             from "digital/models/ioobjects/other/Decoder";
 import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
-import {Component}           from "core/models/Component";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {IC}                  from "digital/models/ioobjects/other/IC";
 
 import {Images} from "digital/utils/Images";
 
-import {Rectangle} from "../../../../core/ts/rendering/shapes/Rectangle";
-import {Style} from "../../../../core/ts/rendering/Style";
-import {ICRenderer} from "./other/ICRenderer";
+import {IOLabelRenderer} from "./IOLabelRenderer";
+import {IOPortRenderer} from "./IOPortRenderer";
+import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
+import {ICRenderer}  from "./other/ICRenderer";
+import {GateRenderer} from "./gates/GateRenderer";
 import {LEDRenderer} from "./outputs/LEDRenderer";
+import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
+
 
 export const ComponentRenderer = (() => {
 
@@ -48,10 +47,12 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: Component, selected: boolean, selections: Selectable[]): void {
+        render(renderer: Renderer, {camera, selections}: CircuitInfo, object: Component): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
+
+            const selected = selections.has(object);
 
             renderer.save();
 
@@ -66,7 +67,7 @@ export const ComponentRenderer = (() => {
             // Draw IO ports
             const ports = object.getPorts();
             for (const port of ports) {
-                const portSelected = selections.includes(port);
+                const portSelected = selections.has(port);
                 IOPortRenderer.renderPort(renderer, port, selected, portSelected);
             }
 
@@ -118,6 +119,10 @@ export const ComponentRenderer = (() => {
             IOLabelRenderer.render(renderer, camera, object);
 
             renderer.restore();
+        },
+        renderAll(renderer: Renderer, info: CircuitInfo, objects: Component[]): void {
+            for (const obj of objects)
+                ComponentRenderer.render(renderer, info, obj);
         }
     };
 })();
