@@ -1,0 +1,171 @@
+{
+    "imgRoot": "img/itemnav",
+    "sections": [
+      {
+        "id": "inputs",
+        "label": "Inputs",
+        "items": [
+          {
+            "id": "ConstantLow",
+            "label": "Constant Low",
+            "icon": "constantlow.svg"
+          },
+          {
+            "id": "ConstantHigh",
+            "label": "Constant High",
+            "icon": "constanthigh.svg"
+          },
+          {
+            "id": "Button",
+            "label": "Button",
+            "icon": "button.svg"
+          },
+          {
+            "id": "Switch",
+            "label": "Switch",
+            "icon": "switch.svg"
+          },
+          {
+            "id": "Clock",
+            "label": "Clock",
+            "icon": "clock.svg"
+          }
+        ]
+      },
+      {
+        "id": "outputs",
+        "label": "Outputs",
+        "items": [
+          {
+            "id": "LED",
+            "label": "LED",
+            "icon": "led.svg"
+          },
+          {
+            "id": "SegmentDisplay",
+            "label": "Segment Display",
+            "icon": "sevensegmentdisplay.svg"
+          }
+        ]
+      },
+      {
+        "id": "gates",
+        "label": "Logic Gates",
+        "items": [
+          {
+            "id": "BUFGate",
+            "label": "Buffer",
+            "icon": "bufgate.svg"
+          },
+          {
+            "id": "NOTGate",
+            "label": "NOT",
+            "icon": "notgate.svg"
+          },
+          {
+            "id": "ANDGate",
+            "label": "AND",
+            "icon": "andgate.svg"
+          },
+          {
+            "id": "NANDGate",
+            "label": "NAND",
+            "icon": "nandgate.svg"
+          },
+          {
+            "id": "ORGate",
+            "label": "OR",
+            "icon": "orgate.svg"
+          },
+          {
+            "id": "NORGate",
+            "label": "NOR",
+            "icon": "norgate.svg"
+          },
+          {
+            "id": "XORGate",
+            "label": "XOR",
+            "icon": "xorgate.svg"
+          },
+          {
+            "id": "XNORGate",
+            "label": "XNOR",
+            "icon": "xnorgate.svg"
+          }
+        ]
+      },
+      {
+        "id": "flipflops",
+        "label": "Flip Flops",
+        "items": [
+          {
+            "id": "SRFlipFlop",
+            "label": "SR",
+            "icon": "srflipflop.svg"
+          },
+          {
+            "id": "JKFlipFlop",
+            "label": "JK",
+            "icon": "jkflipflop.svg"
+          },
+          {
+            "id": "DFlipFlop",
+            "label": "D",
+            "icon": "dflipflop.svg"
+          },
+          {
+            "id": "TFlipFlop",
+            "label": "T",
+            "icon": "tflipflop.svg"
+          }
+        ]
+      },
+      {
+        "id": "latches",
+        "label": "Latches",
+        "items": [
+          {
+            "id": "DLatch",
+            "label": "D",
+            "icon": "dlatch.svg"
+          },
+          {
+            "id": "SRLatch",
+            "label": "SR",
+            "icon": "srlatch.svg"
+          }
+        ]
+      },
+      {
+        "id": "other",
+        "label": "Other",
+        "items": [
+          {
+            "id": "Multiplexer",
+            "label": "Mux",
+            "icon": "multiplexer.svg"
+          },
+          {
+            "id": "Demultiplexer",
+            "label": "Demux",
+            "icon": "demultiplexer.svg"
+          },
+          {
+            "id": "Encoder",
+            "label": "Encoder",
+            "icon": "encoder.svg"
+          },
+          {
+            "id": "Decoder",
+            "label": "Decoder",
+            "icon": "decoder.svg"
+          },
+          {
+            "id": "Label",
+            "label": "Label",
+            "icon": "label.svg"
+          }
+        ]
+      }
+    ]
+  }

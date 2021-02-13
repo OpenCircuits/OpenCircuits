@@ -1,0 +1,8 @@
+@import "theme";
+
+$header-height: 50px;
+$header-padding: 5px;
+$header-border-width: 5px;
+$header-total-height: $header-height + 2*$header-padding + $header-border-width;
+
+$header-border: 0 solid $secondary-color;

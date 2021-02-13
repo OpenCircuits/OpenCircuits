@@ -1,0 +1,64 @@
+@import "~site/utils/constants", "~site/utils/theme", "../constants";
+
+.header__left {
+    margin-left: 7px;
+
+    & div {
+        float: left;
+
+        height: $header-height - 2*$header-padding;
+        margin-top: $header-padding;
+    }
+    &__save {
+        line-height: $header-button-height;
+
+        height: $header-button-height;
+        margin-top: $header-padding;
+        padding-right: 7px;
+        padding-left: 7px;
+
+        cursor: pointer;
+        transition: 0.5s;
+
+        color: #ddd;
+        border-radius: 4px;
+        background-color: $success-color;
+        &:hover {
+            color: #ccc;
+            border-color: #aaa;
+            background-color: darken($success-color, 10%);
+        }
+    }
+    &__lock {
+        margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
+        margin-right: 5px;
+
+        cursor: pointer;
+
+        background-color: transparent;
+
+        img {
+            height: $header-lock-height;
+        }
+    }
+    & input {
+        font-size: 24px;
+
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        height: $header-height - 2*$header-padding;
+        margin-right: 10px;
+
+        color: $secondary-color;
+    }
+    & span {
+        font-size: 24px;
+        line-height: $header-height - 2*$header-padding;
+
+        margin-right: 10px;
+
+        cursor: pointer;
+        vertical-align: middle;
+
+        color: $secondary-color;
+    }
+}

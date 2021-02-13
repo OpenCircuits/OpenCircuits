@@ -1,0 +1,147 @@
+@import "~site/utils/constants", "~site/utils/theme", "../constants";
+
+.header__right {
+    margin-right: 14px;
+
+    & div {
+        float: right;
+
+        height: $header-height - 2*$header-padding;
+        margin-top: $header-padding;
+
+        cursor: pointer;
+    }
+    & button {
+        height: $header-height - 2*$header-padding;
+        margin-left: $header-padding;
+
+        cursor: pointer;
+    }
+    & img {
+        display: block;
+
+        height: 85%;
+        margin: auto;
+    }
+    #header-help-img {
+        height: 75%;
+    }
+
+    &__dropdown {
+        position: relative;
+
+        display: inline-block;
+
+        & div {
+            height: auto;
+            margin-top: 0;
+        }
+
+        &__content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+
+            padding: 10px;
+            padding-top: 15px;
+
+            border-radius: 6px 0 6px 6px;
+            background-color: #fff;
+            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+
+            & h1 {
+                font-size: 1.5em;
+
+                margin: 0;
+                margin-top: 10px;
+                padding: 0;
+
+                color: darken($secondary-color, 20%);
+            }
+            & h1:first-child {
+                margin-top: 0;
+            }
+            & hr {
+                margin: 0;
+            }
+            & span {
+                padding: 12px 16px;
+
+                color: $secondary-color;
+            }
+            & img {
+                display: inline;
+
+                vertical-align: middle;
+            }
+            & div {
+                float: left;
+
+                width: 100%;
+                height: 40px;
+                padding-top: 5px;
+
+                white-space: nowrap;
+            }
+            & div:last-child {
+                padding-bottom: 0;
+            }
+            & div:hover {
+                background-color: #f1f1f1;
+            }
+
+            .disabled {
+                background-color: darken(white, 10%);
+            }
+        }
+        &:hover &__button {
+            background-color: lighten($primary-color, 10%);
+        }
+    }
+
+    &__account {
+        margin-top: 0;
+        margin-right: 10px;
+
+        cursor: default;
+
+        & div {
+            margin-top: 0;
+        }
+        & button {
+            line-height: $header-button-height;
+
+            float: right;
+
+            height: $header-button-height;
+            margin-top: $header-padding;
+            margin-left: 0;
+            padding-right: 5px;
+            padding-left: 5px;
+
+            cursor: pointer;
+
+            color: #aaa;
+            border: thin solid #888;
+            border-radius: 4px;
+
+            &:hover {
+                color: #bbb;
+                border-color: #aaa;
+            }
+        }
+
+        #header-login-or {
+            margin-right: 10px;
+            margin-left: 10px;
+
+            color: #aaa;
+        }
+
+        @media (max-width: 500px) {
+            & {
+                display: none;
+            }
+        }
+    }
+}

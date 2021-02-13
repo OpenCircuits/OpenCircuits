@@ -1,0 +1,61 @@
+@import "~site/utils/constants";
+
+.icviewer {
+    position: absolute;
+    z-index: 5;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(200, 200, 200, 0.5);;
+
+    & canvas {
+        position: absolute;
+
+        left: 50%;
+        top: 50%;
+
+        transform: translate(-50%, -50%);
+
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 3px;
+        background-color: $ic-background-color;
+    }
+
+    &__buttons {
+        position: absolute;
+        bottom: 12vh;
+
+        width: 100vw;
+
+        & button {
+            font-size: 16px;
+
+            position: absolute;
+
+            width: 30vw;
+            padding: 15px 32px;
+
+            color: white;
+
+            &[name="close"] {
+                right: 8vw;
+                background-color: $danger-color;
+                &:active {
+                    background-color: darken($danger-color, 10%);
+                }
+            }
+        }
+
+        // &__edit {
+        //     left: 8vw;
+
+        //     background-color: $success-color;
+
+        //     &:active {
+        //         background-color: darken($success-color, 10%);
+        //     }
+        // }
+    }
+}

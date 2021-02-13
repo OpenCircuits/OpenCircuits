@@ -1,0 +1,27 @@
+
+.App {
+    transition: 0.5s;
+}
+
+body {
+    color: #fff;
+    background-color: #ccc;
+}
+
+.white {
+    background-color: #fff !important;
+}
+.show {
+    display: block;
+}
+.hide {
+    display: none;
+}
+.invisible {
+    visibility: hidden;
+
+    opacity: 0;
+}
+.selected {
+    background-color: rgba(71, 129, 185, 0.15) !important;
+}

@@ -1,0 +1,11 @@
+@import "~site/utils/constants";
+
+.main__canvas {
+    position: absolute;
+    z-index: 0;
+
+    top: $header-total-height;
+    bottom: 0;
+
+    cursor: default;
+}

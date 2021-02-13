@@ -1,0 +1,15 @@
+
+.overlay {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    cursor: pointer;
+    transition: 0.3s;
+
+    background-color: rgba(200, 200, 200, 0.5);
+}

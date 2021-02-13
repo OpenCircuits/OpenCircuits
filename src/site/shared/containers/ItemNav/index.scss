@@ -1,0 +1,96 @@
+@import "~site/utils/constants";
+
+$itemnav-width: 215px;
+
+$tab-width: 18px;
+$tab-padding: 8px;
+
+.itemnav {
+    position: fixed;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+
+    overflow-x: hidden;
+
+    width: $itemnav-width;
+    height: calc(100% - #{$header-total-height});
+
+    transition: all 0.5s;
+
+    border: $header-border;
+    border-right-width: $header-border-width;
+    background-color: rgba($background-color, 0.7);
+
+    &__move {
+        left: -$itemnav-width - $header-border-width;
+    }
+
+    & h4 {
+        font-size: 24px;
+
+        margin-bottom: 15px;
+
+        cursor: default;
+        transition: 0.5s;
+        text-align: center;
+
+        color: #fff;
+        text-shadow: -1px 1px 3px darken(#fff, 40%);
+    }
+    & button {
+        font-size: 1em;
+        font-weight: bold;
+
+        width: calc(49% - 5px);
+        padding: 1vh 1vh 1vh 1vh;
+
+        cursor: pointer;
+        transition: 0.3s;
+        vertical-align: top;
+        word-break: break-all;
+
+        color: darken($secondary-color, 5%);
+    }
+    & img {
+        width: 100%;
+    }
+}
+
+.tab {
+    font-size: 2em;
+
+    position: fixed;
+    z-index: 4;
+    top: $header-total-height - $header-border-width;
+    left: 0;
+
+    cursor: pointer;
+    transition: 0.5s;
+
+    color: #000;
+    border: $header-border;
+    border-width: $header-border-width;
+    border-bottom-right-radius: 15px;
+    background-color: rgba($background-color, 0.7);
+
+    &:after {
+        width: $tab-width;
+        margin: 0 $tab-padding 0 $tab-padding;
+
+        content: '+';
+    }
+
+    &__closed {
+        font-size: 2.5em;
+
+        left: $itemnav-width - ($tab-width + 2*$tab-padding + 2*$header-border-width) - 15px;
+
+        border-color: transparent;
+        background-color: transparent;
+
+        &:after {
+            content: '×';
+        }
+    }
+}
