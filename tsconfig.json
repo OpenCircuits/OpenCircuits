@@ -1,37 +1,34 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "outDir": "./build/",
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "lib": ["es2019", "dom"],
-    "moduleResolution": "node",
-    "module": "es6",
     "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "noImplicitAny": true,
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "typeRoots" : [
-      "site/public/ts/shared/utils/typings",
-      "node_modules/@types" // path to your typings directory (relative to tsconfig.json)
-    ],
-    "baseUrl": ".",
-    "paths": {
-        "Vector": ["app/core/ts/utils/math/Vector"],
-        "math/*": ["app/core/ts/utils/math/*"],
-        "core/*": ["app/core/ts/*"],
-        "digital/*": ["app/digital/ts/*"],
-        "analog/*": ["app/analog/ts/*"],
-        "site/shared/*": ["site/public/ts/shared/*"],
-        "site/digital/*": ["site/public/ts/digital/*"],
-        "site/analog/*": ["site/public/ts/analog/*"],
-        "test/helpers/*": ["tests/helpers/*"]
-    }
-
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "strict": false
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "src"
   ]
 }

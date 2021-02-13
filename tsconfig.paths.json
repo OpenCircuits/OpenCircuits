@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "Vector": ["lib/core/src/utils/math/Vector"],
+      "math/*": ["lib/core/src/utils/math/*"],
+      "core/*": ["lib/core/src/*"],
+      "digital/*": ["src/app/*"],
+      "site/*": ["src/site/*"]
+    }
+  }
+}

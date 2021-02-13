@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="300px" enable-background="new 0 0 500 300" viewBox="0 0 500 300">
+<rect y="0" stroke="#000" stroke-width="10" fill="#E6E7E8" width="500" height="300"/>
+<rect x="125" y="230" fill="#BCBEC0" width="250" height="40"/>
+<rect x="35" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="111" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="187" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="415" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="339" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="263" y="40" fill="#BCBEC0" width="50" height="50"/>
+<rect x="35" y="130" fill="#BCBEC0" width="50" height="50"/>
+<rect x="111" y="130" fill="#BCBEC0" width="50" height="50"/>
+<rect x="187" y="130" fill="#BCBEC0" width="50" height="50"/>
+<rect x="415" y="130" fill="#BCBEC0" width="50" height="50"/>
+<rect x="339" y="130" fill="#BCBEC0" width="50" height="50"/>
+<rect x="263" y="130" fill="#BCBEC0" width="50" height="50"/>
+</svg>
