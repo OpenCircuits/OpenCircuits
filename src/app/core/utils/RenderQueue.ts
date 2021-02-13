@@ -7,13 +7,14 @@
  */
 export class RenderQueue {
     private queued: number;
-    private renderFunction: () => void;
+    private renderFunction?: () => void;
+    private lastFrameId: number;
 
     /**
      * Constructor for RenderQueue
      * @param renderFunction The callback actual render function
      */
-    public constructor(renderFunction: () => void) {
+    public constructor(renderFunction?: () => void) {
         this.queued = 0;
         this.renderFunction = renderFunction;
     }
@@ -23,7 +24,12 @@ export class RenderQueue {
      */
     private actualRender(): void {
         this.queued = 0;
-        this.renderFunction();
+        if (this.renderFunction)
+            this.renderFunction();
+    }
+
+    public setRenderFunction(renderFunction?: () => void): void {
+        this.renderFunction = renderFunction;
     }
 
     /**
@@ -31,8 +37,12 @@ export class RenderQueue {
      */
     public render(): void {
         if (this.queued === 0)
-            requestAnimationFrame(() => this.actualRender());
+            this.lastFrameId = requestAnimationFrame(() => this.actualRender());
         this.queued++;
+    }
+
+    public cancel(): void {
+        cancelAnimationFrame(this.lastFrameId);
     }
 
 }

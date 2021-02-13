@@ -3,28 +3,28 @@ import {GroupAction} from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
 import {Selectable} from "core/utils/Selectable";
+import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
-import {SelectionTool} from "core/tools/SelectionTool";
 
 export class SelectAction extends ReversableAction {
-    private selectionTool: SelectionTool;
+    private selections: SelectionsWrapper;
     private obj: Selectable;
 
-    public constructor(selectionTool: SelectionTool, obj: Selectable, flip: boolean = false) {
+    public constructor(selections: SelectionsWrapper, obj: Selectable, flip: boolean = false) {
         super(flip);
 
-        this.selectionTool = selectionTool;
+        this.selections = selections;
         this.obj = obj;
     }
 
     protected normalExecute(): Action {
-        this.selectionTool.select(this.obj);
+        this.selections.select(this.obj);
 
         return this;
     }
 
     protected normalUndo(): Action {
-        this.selectionTool.deselect(this.obj);
+        this.selections.deselect(this.obj);
 
         return this;
     }
@@ -32,21 +32,21 @@ export class SelectAction extends ReversableAction {
 }
 
 export class DeselectAction extends SelectAction {
-    public constructor(selectionTool: SelectionTool, obj: Selectable) {
-        super(selectionTool, obj, true);
+    public constructor(selections: SelectionsWrapper, obj: Selectable) {
+        super(selections, obj, true);
     }
 }
 
 
-export function CreateGroupSelectAction(selectionTool: SelectionTool, objs: Array<Selectable>): GroupAction {
+export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
     return objs.reduce((acc, s) => {
-        return acc.add(new SelectAction(selectionTool, s));
+        return acc.add(new SelectAction(selections, s));
     }, new GroupAction());
 }
 
-export function CreateDeselectAllAction(selectionTool: SelectionTool): GroupAction {
-    const objs = selectionTool.getSelections();
+export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
+    const objs = selections.get();
     return objs.reduce((acc, s) => {
-        return acc.add(new DeselectAction(selectionTool, s));
+        return acc.add(new DeselectAction(selections, s));
     }, new GroupAction());
 }

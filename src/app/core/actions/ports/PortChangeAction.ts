@@ -9,20 +9,18 @@ import {Port} from "core/models/ports/Port";
 import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
 
+
 export abstract class PortChangeAction implements Action {
     protected designer: CircuitDesigner;
-
-    protected obj: Component;
 
     protected targetCount: number;
     protected initialCount: number;
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(obj: Component, target: number, initialCount: number) {
-        this.designer = obj.getDesigner();
+    protected constructor(designer: CircuitDesigner, target: number, initialCount: number) {
+        this.designer = designer;
 
-        this.obj = obj;
         this.targetCount = target;
         this.initialCount = initialCount;
     }
@@ -35,7 +33,7 @@ export abstract class PortChangeAction implements Action {
         //  that will be remove if target < ports.length
         while (ports.length > this.targetCount) {
             const wires = ports.pop().getWires();
-            action.add(wires.map(w => CreateDeletePathAction(GetPath(w))));
+            action.add(wires.map(w => CreateDeletePathAction(this.designer, GetPath(w))));
         }
 
         return action;

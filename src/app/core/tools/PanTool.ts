@@ -1,61 +1,53 @@
 import {MIDDLE_MOUSE_BUTTON,
-        OPTION_KEY} from "core/utils/Constants";
-import {Camera} from "math/Camera";
-import {Input} from "core/utils/Input";
-import {Tool} from "core/tools/Tool";
-import {Action} from "core/actions/Action";
+        OPTION_KEY}  from "core/utils/Constants";
 
-import {SelectionTool} from "./SelectionTool";
+import {Event}       from "core/utils/Events";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
-export class PanTool extends Tool {
-    private camera: Camera;
+import {Tool}        from "core/tools/Tool";
 
-    private isDragging: boolean;
 
-    public constructor(camera: Camera) {
-        super();
+export const PanTool: Tool = (() => {
+    let isDragging = false;
 
-        this.camera = camera;
-    }
+    return {
+        shouldActivate(event: Event, {input}: CircuitInfo): boolean {
+            // Activate if the user just pressed the "option key"
+            //  or if the user began dragging with either 2 fingers
+            //                           or the middle mouse button
+            return (event.type === "keydown"   && (event.key === OPTION_KEY)) ||
+                   (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
+                                                   input.getTouchCount() === 2));
+        },
+        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+            // Deactivate if stopped dragging by releasing mouse
+            //  or if no dragging happened and OPTION_KEY was released
+            return (event.type === "mouseup") ||
+                   (event.type === "keyup" && !isDragging && event.key === OPTION_KEY);
+        },
 
-    public shouldActivate(currentTool: Tool, event: string, input: Input, button?: number): boolean {
-        if (!(currentTool instanceof SelectionTool))
-            return false;
-        if (event == "keydown" && button === OPTION_KEY)
+
+        onActivate(event: Event, info: CircuitInfo): void {
+            if (event.type === "mousedrag")
+                this.onEvent(event, info); // Explicitly call drag event
+        },
+        onDeactivate({}: Event, {}: CircuitInfo): void {
+            isDragging = false;
+        },
+
+
+        onEvent(event: Event, {input, camera}: CircuitInfo): boolean {
+            if (event.type !== "mousedrag")
+                return false;
+
+            isDragging = true;
+
+            const dPos = input.getDeltaMousePos();
+            camera.translate(dPos.scale(-1 * camera.getZoom()));
+
+            // Return true since we did something
+            //  that requires a re-render
             return true;
-        if (event == "mousedrag" && (button === MIDDLE_MOUSE_BUTTON ||
-                                     input.getTouchCount() == 2))
-            return true;
-        return false;
+        }
     }
-
-    public activate(_: Tool, event: string, input: Input): void {
-        this.isDragging = false;
-
-        if (event == "mousedrag")
-            this.onMouseDrag(input); // Explicitly call drag event
-    }
-
-    public shouldDeactivate(event: string, _: Input, button?: number): boolean {
-        // Deactivate if stopped dragging by releasing mouse
-        //  or if no dragging happened and OPTION_KEY was released
-        return (event == "mouseup" ||
-               !this.isDragging && event == "keyup" && button === OPTION_KEY);
-    }
-
-    public deactivate(): Action {
-        this.isDragging = false;
-
-        return undefined;
-    }
-
-    public onMouseDrag(input: Input): boolean {
-        this.isDragging = true;
-
-        const dPos = input.getDeltaMousePos();
-        this.camera.translate(dPos.scale(-1*this.camera.getZoom()));
-
-        return true;
-    }
-
-}
+})();

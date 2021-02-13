@@ -298,8 +298,9 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 
     const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
 
-    // It's assumed that every object has the same designer
-    copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
+    // CAREFUL THIS MIGHT BE NECESSARY SOMEWHERE
+    // // It's assumed that every object has the same designer
+    // copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
     // Unpresses button of newly placed copy
     //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545

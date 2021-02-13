@@ -31,8 +31,8 @@ export class PlaceAction extends ReversableAction {
 }
 
 export class DeleteAction extends PlaceAction {
-    public constructor(obj: Component) {
-        super(obj.getDesigner(), obj, true);
+    public constructor(designer: CircuitDesigner, obj: Component) {
+        super(designer, obj, true);
     }
 }
 

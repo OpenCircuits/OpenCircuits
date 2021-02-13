@@ -3,15 +3,16 @@ import {GRID_LINE_COLOR} from "./Styles";
 
 import {V} from "Vector";
 
-import {Renderer} from "./Renderer";
-import {Camera} from "math/Camera";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
+import {Renderer} from "./Renderer";
 import {Style} from "./Style";
+
 
 export const Grid = (() => {
 
     return {
-        render(renderer: Renderer, camera: Camera): void {
+        render(renderer: Renderer, {camera}: CircuitInfo): void {
             const step = GRID_SIZE/camera.getZoom();
 
             const cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));

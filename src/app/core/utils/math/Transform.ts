@@ -253,4 +253,8 @@ export class Transform {
         trans.dirty = true;
         return trans;
     }
+
+    public static fromCorners(p1: Vector, p2: Vector): Transform {
+        return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+    }
 }

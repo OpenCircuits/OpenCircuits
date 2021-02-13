@@ -43,6 +43,7 @@ export const LED_LIGHT_RADIUS = 75;
 export const LED_LIGHT_INTENSITY = 0.75;
 export const LED_WIDTH = 50;
 
+export const ROTATION_SNAP_AMT = Math.PI/4;
 export const ROTATION_CIRCLE_RADIUS = 75;
 export const ROTATION_CIRCLE_THICKNESS = 5;
 export const ROTATION_CIRCLE_THRESHOLD = 8;

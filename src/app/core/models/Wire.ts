@@ -86,6 +86,16 @@ export abstract class Wire extends CullableObject {
         this.dirtyShape = true;
     }
 
+    public canConnectTo(port: Port): boolean {
+        if (this.p1 && this.p2)
+            return false;
+        if (this.p1)
+            return port !== this.p1;
+        if (this.p2)
+            return port !== this.p2;
+        return true;
+    }
+
     public abstract split(): Node;
 
     public isWithinSelectBounds(v: Vector): boolean {

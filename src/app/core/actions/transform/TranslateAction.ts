@@ -15,10 +15,10 @@ export class TranslateAction implements Action {
     protected initialPositions: Vector[];
     protected targetPositions: Vector[];
 
-    public constructor(objs: Component[], targetPositions: Vector[]) {
+    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[]) {
         this.objs = objs;
 
-        this.initialPositions = objs.map(o => o.getPos());
+        this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
     }
 
