@@ -14,6 +14,32 @@ import {DigitalWire, DigitalComponent} from "./index";
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
 
+
+export type PropagationEvent = {
+    type: "propagation";
+}
+export type ForcedEvent = {
+    type: "forced";
+}
+export type ObjEvent = {
+    type: "obj";
+    op: "added" | "removed";
+    obj: DigitalComponent;
+}
+export type WireEvent = {
+    type: "wire";
+    op: "added" | "removed";
+    wire: DigitalWire;
+}
+export type ICDataEvent = {
+    type: "ic";
+    op: "added" | "removed";
+    data: ICData;
+}
+export type DigitalEvent =
+    PropagationEvent | ForcedEvent | ObjEvent | WireEvent | ICDataEvent;
+
+
 @serializable("DigitalCircuitDesigner")
 export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
@@ -34,13 +60,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
     private propagationTime: number;
 
-    private updateCallback?: () => void;
+    private updateCallbacks: ((ev: DigitalEvent) => void)[];
 
-    public constructor(propagationTime: number = 1, callback?: () => void) {
+    public constructor(propagationTime: number = 1) {
         super();
 
         this.propagationTime = propagationTime;
-        this.updateCallback = callback;
+        this.updateCallbacks = [];
 
         this.reset();
     }
@@ -53,8 +79,16 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.updateRequests = 0;
     }
 
-    public setCallback(callback: () => void): void {
-        this.updateCallback = callback;
+    public addCallback(callback: (ev: DigitalEvent) => void): void {
+        this.updateCallbacks.push(callback);
+    }
+
+    public removeCallback(callback: (ev: DigitalEvent) => void): void {
+        this.updateCallbacks.splice(this.updateCallbacks.indexOf(callback), 1);
+    }
+
+    private callback(ev: DigitalEvent): void {
+        this.updateCallbacks.forEach(c => c(ev));
     }
 
     /**
@@ -63,8 +97,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
      * 	(i.e. Clock updated but wasn't connected to anything)
      */
     public forceUpdate(): void {
-        if (this.updateCallback)
-            this.updateCallback();
+        this.callback({ type: "forced" });
     }
 
     /**
@@ -112,8 +145,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         this.updateRequests--;
 
-        if (this.updateCallback)
-            this.updateCallback();
+        this.callback({ type: "propagation" });
 
         if (this.updateRequests > 0) {
             if (this.propagationTime === 0)
@@ -147,11 +179,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     public addICData(data: ICData): void {
         this.ics.push(data);
+        this.callback({ type: "ic", op: "added", data });
     }
 
     public removeICData(data: ICData): void {
         const i = this.ics.indexOf(data);
         this.ics.splice(i, 1);
+        this.callback({ type: "ic", op: "removed", data });
     }
 
     public addObjects(objects: DigitalComponent[]): void {
@@ -165,6 +199,8 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         obj.setDesigner(this);
         this.objects.push(obj);
+
+        this.callback({ type: "obj", op: "added", obj });
     }
 
     public addWire(wire: DigitalWire): void {
@@ -172,6 +208,8 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             throw new Error("Attempted to add a wire that already existed!");
 
         this.wires.push(wire);
+
+        this.callback({ type: "wire", op: "added", wire });
     }
 
     public remove(o: DigitalComponent | DigitalWire): void {
@@ -187,6 +225,8 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
+
+        this.callback({ type: "obj", op: "removed", obj });
     }
 
     public removeWire(wire: DigitalWire): void {
@@ -194,6 +234,8 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             throw new Error("Attempted to remove wire that doesn't exist!");
 
         this.wires.splice(this.wires.indexOf(wire), 1);
+
+        this.callback({ type: "wire", op: "removed", wire });
     }
 
     public replace(designer: DigitalCircuitDesigner): void {
