@@ -2,13 +2,16 @@
 // potential, simpler building system
 
 const webpack = require("webpack");
+const resolve = require("resolve");
 const path = require("path");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
+const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 const WatchMissingNodeModulesPlugin = require("react-dev-utils/WatchMissingNodeModulesPlugin");
+const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
 
 const getAliases = require("./utils/getAliases");
 
@@ -206,7 +209,18 @@ module.exports = function(config) {
             }),
 
             // Allow hot updates in dev build
-            isDevelopment && (new webpack.HotModuleReplacementPlugin())
+            isDevelopment && (new webpack.HotModuleReplacementPlugin()),
+
+            new ForkTsCheckerWebpackPlugin({
+                typescript: resolve.sync("typescript", { basedir: config.nodeModulesPath }),
+                async: isDevelopment,
+                useTypescriptIncrementalApi: true,
+                checkSyntacticErrors: true,
+                tsconfig: config.packageTSConfigPath,
+                reportFiles: ['src/**'],
+                silent: true,
+                formatter: isProduction ? typescriptFormatter : undefined
+            })
         ].filter(Boolean), /* Filter out all boolean values from non-included plugins */
 
         performance: false

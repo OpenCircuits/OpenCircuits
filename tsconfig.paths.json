@@ -6,6 +6,7 @@
       "math/*":    ["src/app/core/utils/math/*"],
       "core/*":    ["src/app/core/*"],
       "digital/*": ["src/app/digital/*"],
+      "analog/*":  ["src/app/analog/*"],
       "shared/*":  ["src/site/shared/*"],
       "site/*":    ["src/site/pages/*"],
     }

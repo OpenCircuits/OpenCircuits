@@ -1,3 +1,8 @@
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = "development";
+process.env.NODE_ENV = "development";
+
+
 // Remove clearConsole cause it's annoying
 require('react-dev-utils/clearConsole');
 const clearConsole = ()=>{
@@ -7,15 +12,6 @@ const clearConsole = ()=>{
         console.log("\r\n");
 }
 require.cache[require.resolve('react-dev-utils/clearConsole')].exports = clearConsole;
-
-// // Fix formatwebpack messages
-// const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
-// const formatWebpackMessages2 = (json) => {
-//     const errors   = (json.errors   || []).map(e => (e.message || e));
-//     const warnings = (json.warnings || []).map(w => (w.message || w));
-//     return formatWebpackMessages({ errors, warnings });
-// }
-// require.cache[require.resolve("react-dev-utils/formatWebpackMessages")].exports = formatWebpackMessages2;
 
 
 
@@ -29,9 +25,6 @@ const openBrowser = require("react-dev-utils/openBrowser");
 const getConfig = require("./config");
 
 module.exports = async function devBuild(args) {
-    // Do this as the first thing so that any code reading it knows the right env.
-    process.env.BABEL_ENV = "development";
-    process.env.NODE_ENV = "development";
 
 
     try {
@@ -92,7 +85,7 @@ module.exports = async function devBuild(args) {
 
             clearConsole();
 
-            console.log(chalk.cyan('Starting the development server...\n'));
+            console.log(chalk.cyan("Starting the development server...\n"));
             openBrowser(urls.localUrlForBrowser);
         });
 
