@@ -1,4 +1,4 @@
-import {AllSharedActions} from "shared/shared/state/actions";
+import {AllSharedActions} from "shared/state/actions";
 import {ICDesignerActions} from "./ICDesigner/actions";
 import {ICViewerActions} from "./ICViewer/actions";
 

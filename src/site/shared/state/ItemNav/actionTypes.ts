@@ -1,5 +1,2 @@
 
 export const TOGGLE_ITEMNAV_ID = "TOGGLE_ITEMNAV_ID";
-
-export const ADD_IC_DATA_ID = "ADD_IC_DATA_ID";
-export const REMOVE_IC_DATA_ID = "REMOVE_IC_DATA_ID";

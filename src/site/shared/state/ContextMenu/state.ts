@@ -1,5 +1,5 @@
 
-export type ItemNavState = {
+export type ContextMenuState = {
     isEnabled: boolean;
     isOpen: boolean;
 }
