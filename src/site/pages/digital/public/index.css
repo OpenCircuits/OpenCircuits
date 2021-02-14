@@ -56,7 +56,7 @@ input {
 
     border-radius: 50%;
     background-color: #999;
-    background-image: url('../img/icon.svg');
+    background-image: url("/img/icons/icon.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;
