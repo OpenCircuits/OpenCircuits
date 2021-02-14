@@ -2,6 +2,7 @@ import {HistoryManager} from "core/actions/HistoryManager";
 import {CircuitDesigner} from "core/models";
 import {Camera} from "math/Camera";
 import {Input} from "./Input";
+import {RenderQueue} from "./RenderQueue";
 import {Selectable} from "./Selectable";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
@@ -18,4 +19,6 @@ export type CircuitInfo = {
 
     selections: SelectionsWrapper;
     currentlyPressedObject?: Selectable;
+
+    renderer: RenderQueue;
 }
