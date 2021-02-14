@@ -8,6 +8,8 @@ import {MainDesigner} from "../MainDesigner";
 import exampleConfig from "site/digital/data/examples/examples.json";
 
 import "./index.css";
+import {KeyboardShortcutsPopup} from "../KeyboardShortcutsPopup";
+import {QuickStartPopup} from "../QuickStartPopup";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -37,9 +39,9 @@ export function App() {
 
                 {/* <ICViewer /> */}
 
-                {/* <KeyboardShortcutsPopup /> */}
+                <QuickStartPopup />
+                <KeyboardShortcutsPopup />
                 {/* <LoginPopup /> */}
-                {/* <QuickStartPopup /> */}
             </main>
         </div>
     );

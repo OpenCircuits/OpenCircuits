@@ -33,7 +33,7 @@ const _TutorialDropdown = ({ curMenu, openMenu, openPopup, closeMenus }: Props) 
         </div>
         <h1>Resources</h1>
         <hr/>
-        <div onClick={() => openPopup("quick_start")}>
+        <div onClick={() => { closeMenus(); openPopup("quick_start"); }}>
             <img src="img/icons/quick_start.svg" height="100%" alt="Check out our Quick Start guide" />
             <span>Quick Start</span>
         </div>
@@ -49,7 +49,7 @@ const _TutorialDropdown = ({ curMenu, openMenu, openPopup, closeMenus }: Props) 
             <img src="img/icons/help_center.svg" height="100%" alt="Check out our Help Center" />
             <span>Help Center</span>
         </div>
-        <div onClick={() => openPopup("keyboard_shortcuts")}>
+        <div onClick={() => { closeMenus(); openPopup("keyboard_shortcuts"); }}>
             <img src="img/icons/keyboard.svg" height="100%" alt="See our Keyboard Shortcuts" />
             <span>Keyboard Shortcuts</span>
         </div>
