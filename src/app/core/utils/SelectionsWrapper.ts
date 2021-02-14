@@ -56,6 +56,9 @@ export class SelectionsWrapper {
     }
 
     public midpoint(all: boolean = false): Vector {
+        if (this.amount() === 0)
+            return V();
+
         // Filter out selections that we can get the position of
         const selections =
             Array.from(this.selections)
