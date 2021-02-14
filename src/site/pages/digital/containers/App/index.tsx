@@ -6,7 +6,6 @@ import {ItemNav} from "shared/containers/ItemNav";
 import {MainDesigner} from "../MainDesigner";
 
 import exampleConfig from "site/digital/data/examples/examples.json";
-import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 import "./index.css";
 
@@ -28,7 +27,6 @@ export function App() {
 
             <main>
                 <Header img="img/icons/logo.svg" />
-                <ItemNav config={itemNavConfig} />
 
                 <MainDesigner />
                 {/* <MainDesigner /> */}

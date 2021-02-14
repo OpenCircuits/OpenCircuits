@@ -40,18 +40,22 @@ import {CloseICDesigner} from "site/digital/state/ICDesigner/actions";
 import {AppState} from "site/digital/state";
 
 import "./index.scss";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GroupAction} from "core/actions/GroupAction";
+import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 
 type OwnProps = {
-    onActivate: () => void;
-    onClose: (data?: ICData) => void;
+    mainInfo: CircuitInfo;
 }
 type StateProps = {
     active: boolean;
     data: ICData;
 }
 type DispatchProps = {
-    closeDesigner: (cancelled?: boolean) => void;
+    CloseICDesigner: typeof CloseICDesigner;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -59,7 +63,7 @@ export const ICDesigner = (() => {
     const camera = new Camera();
     const renderQueue = new RenderQueue();
     const history = new HistoryManager();
-    const designer = new DigitalCircuitDesigner(1, () => renderQueue.render());
+    const designer = new DigitalCircuitDesigner(1);
     const selections = new SelectionsWrapper();
 
     const toolManager = new ToolManager(
@@ -76,6 +80,7 @@ export const ICDesigner = (() => {
         designer,
         input: undefined, // Initialize on init
         selections,
+        renderer: renderQueue,
         ic: undefined
     };
     function CreateDigitalRenderers(renderer: Renderer) {
@@ -108,9 +113,9 @@ export const ICDesigner = (() => {
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
         (state: AppState) => ({ active: state.icDesigner.active,
                                 data: state.icDesigner.ic }),
-        { closeDesigner: CloseICDesigner }
+        { CloseICDesigner }
     )(
-        ({active, data, onActivate, onClose, closeDesigner}: Props) => {
+        ({active, data, mainInfo, CloseICDesigner}: Props) => {
             const {w, h} = useWindowSize();
             const canvas = useRef<HTMLCanvasElement>();
             const [{name}, setName] = useState({ name: "" });
@@ -132,6 +137,8 @@ export const ICDesigner = (() => {
                 const renderer = new Renderer(canvas.current);
                 const input = new Input(canvas.current);
                 const renderers = CreateDigitalRenderers(renderer);
+
+                designer.addCallback(() => renderQueue.render());
 
                 circuitInfo.input = input;
                 input.block(); // Initially block input
@@ -169,8 +176,8 @@ export const ICDesigner = (() => {
                 // Unlock input
                 circuitInfo.input.unblock();
 
-                // Callback
-                onActivate();
+                // Block input for main designer
+                mainInfo.input.block();
 
                 // Reset designer and add IC
                 designer.reset();
@@ -182,15 +189,33 @@ export const ICDesigner = (() => {
                 camera.setPos(V());
 
                 renderQueue.render();
-            }, [active, data, setName, onActivate]);
+            }, [active, data, mainInfo, setName]);
 
 
             const close = (cancelled: boolean = false) => {
                 // Block input while closed
                 circuitInfo.input.block();
 
-                onClose((cancelled ? undefined : data));
-                closeDesigner(cancelled);
+                if (!cancelled) {
+                    // Create IC on center of screen
+                    const ic = new IC(data);
+                    ic.setPos(mainInfo.camera.getPos());
+
+                    // Deselect other things, create IC and select it
+                    const action = new GroupAction([
+                        CreateDeselectAllAction(mainInfo.selections),
+                        new CreateICDataAction(data, mainInfo.designer as DigitalCircuitDesigner),
+                        new PlaceAction(mainInfo.designer, ic),
+                        new SelectAction(mainInfo.selections, ic)
+                    ]);
+                    mainInfo.history.add(action.execute());
+                    mainInfo.renderer.render();
+                }
+
+                // Unblock main input
+                mainInfo.input.unblock();
+
+                CloseICDesigner(cancelled);
             }
 
 

@@ -14,45 +14,60 @@ import {TitleModule} from "./modules/TitleModule";
 import {UseModuleProps} from "./modules/Module";
 
 import "./index.scss";
-import {CreateICButtonModule} from "./modules/CreateICButtonModule";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 type Props = {
-    camera: Camera;
-    selections: SelectionsWrapper;
+    info: CircuitInfo;
     modules: ((props: UseModuleProps) => JSX.Element)[];
-    addAction: (action: Action) => void;
-    render: () => void;
-    eventHandler: {
-        addListener: (listener: (ev: Event, change: boolean) => void) => void;
-    };
 }
-export function SelectionPopup({modules, camera, selections, addAction, render, eventHandler}: Props) {
+export function SelectionPopup({info, modules}: Props) {
+    const {input, camera, history, designer, selections, renderer} = info;
     const [state, setState] = useState({
         visible: false,
         pos: V()
     });
 
     useLayoutEffect(() => {
-        eventHandler.addListener((ev, change) => {
-            const getPos = () => camera.getScreenPos(selections.midpoint(true));
+        let lastPos = V();
+        let lastVisible = false;
+        let dragging = false;
+
+        const getPos = () => {
+            const pos = camera.getScreenPos(selections.midpoint(true));
+            if (pos.x === lastPos.x && pos.y === lastPos.y)
+                return lastPos;
+            return pos;
+        };
+
+        const update = (ev: Event) => {
+            if (ev.type === "mousedrag")
+                dragging = true;
+            if (ev.type === "mouseup")
+                dragging = false;
+
+            const pos = getPos();
 
             // Don't show popup if dragging
-            if (ev.type === "mousedrag" && change) {
-                setState({
-                    pos: getPos(),
-                    visible: false
-                });
-            } else if (ev.type === "mouseup" || change) {
-                setState({
-                    pos: getPos(),
-                    visible: (selections.amount() > 0)
-                });
-            }
-        });
+            const visible = (dragging ? false : (selections.amount() > 0));
+
+            // Nothing changed so don't update the state
+            if (pos === lastPos && visible === lastVisible)
+                return;
+
+            setState({ pos, visible });
+
+            lastPos = pos;
+            lastVisible = visible;
+        }
+
+        if (!input)
+            return;
+        input.addListener(update);
+        // designer.addCallback(update);
 
         return () => {console.log("I SHOULD NOT BE HERE")}
-    }, [eventHandler, camera, selections]);
+    }, [input, camera, selections, setState]);
 
     return (
         <div className="selection-popup"
@@ -62,12 +77,14 @@ export function SelectionPopup({modules, camera, selections, addAction, render, 
                 visibility: (state.visible ? "visible": "hidden")
              }}
              tabIndex={-1}>
-            <TitleModule selections={selections} addAction={addAction} render={render} />
+            <TitleModule selections={selections}
+                         addAction={(a) => history.add(a)}
+                         render={() => renderer.render()} />
             <hr />
             {modules.map((m,i) => m({
                 selections,
-                addAction,
-                render,
+                addAction: (a: Action) => history.add(a),
+                render: () => renderer.render(),
                 key: `selection-popup-module-${i}`
             } as any))}
         </div>

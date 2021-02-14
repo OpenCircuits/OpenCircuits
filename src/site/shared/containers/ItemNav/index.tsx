@@ -1,24 +1,26 @@
 import React from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "shared/state";
+import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
 import {ICItemNavData} from "shared/state/ItemNav/state";
 
 import "./index.scss";
 
 
+export type ItemNavItem = {
+    id: string;
+    label: string;
+    icon: string;
+}
+export type ItemNavSection = {
+    id: string;
+    label: string;
+    items: ItemNavItem[];
+}
 export type ItemNavConfig = {
     imgRoot: string;
-    sections: {
-        id: string;
-        label: string;
-        items: {
-            id: string;
-            label: string;
-            icon: string;
-        }[];
-    }[];
+    sections: ItemNavSection[];
 }
 
 
@@ -37,8 +39,7 @@ type DispatchProps = {
 
 type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ isOpen, isEnabled, isLocked, ics, config, toggle }: Props) {
-    return (
-    <>
+    return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
             <div className={`tab ${isOpen ? "tab__closed" : ""}`}
@@ -46,11 +47,11 @@ function _ItemNav({ isOpen, isEnabled, isLocked, ics, config, toggle }: Props) {
                  onClick={() => toggle()}></div>
         }
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
-            {config.sections.map((section) =>
-                <React.Fragment key={`itemnav-section-${section.id}`}>
+            {config.sections.map((section, i) =>
+                <React.Fragment key={`itemnav-section-${i}`}>
                     <h4>{section.label}</h4>
-                    {section.items.map((item) =>
-                        <button key={`itemnav-section-${section.id}-item-${item.id}`}
+                    {section.items.map((item, j) =>
+                        <button key={`itemnav-section-${i}-item-${j}`}
                                 onDragStart={(ev) => {
                                     ev.dataTransfer.setData("custom/component", item.id);
                                     ev.dataTransfer.dropEffect = "copy";
@@ -62,25 +63,12 @@ function _ItemNav({ isOpen, isEnabled, isLocked, ics, config, toggle }: Props) {
                     )}
                 </React.Fragment>
             )}
-            {ics.length > 0 ? <h4>ICs</h4> : null}
-            {ics.map(ic =>
-                <button key={`itemnav-section-ics-item-${ic.index}`}
-                        onDragStart={(ev) => {
-                            ev.dataTransfer.setData("custom/component", `ic/${ic.index}`);
-                            ev.dataTransfer.dropEffect = "copy";
-                        }}>
-                    <img src={"/img/itemnav/other/multiplexer.svg"} alt={ic.name} />
-                    <br />
-                    {ic.name}
-                </button>
-            )}
         </nav>
-    </>
-    );
+    </>);
 }
 
 
-const MapState = (state: AppState) => ({
+const MapState = (state: SharedAppState) => ({
     isLocked: state.circuit.isLocked,
     isEnabled: state.itemNav.isEnabled,
     isOpen: state.itemNav.isOpen,
@@ -90,4 +78,7 @@ const MapDispatch = {
     toggle: ToggleItemNav
 };
 
-export const ItemNav = connect<StateProps, DispatchProps, OwnProps, AppState>(MapState, MapDispatch)(_ItemNav);
+export const ItemNav = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+    MapState,
+    MapDispatch
+)(_ItemNav);

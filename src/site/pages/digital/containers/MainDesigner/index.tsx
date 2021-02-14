@@ -9,12 +9,9 @@ import {Camera} from "math/Camera";
 import {SelectionsWrapper}  from "core/utils/SelectionsWrapper";
 import {RenderQueue}        from "core/utils/RenderQueue";
 import {Input}              from "core/utils/Input";
-import {CircuitInfo}        from "core/utils/CircuitInfo";
 import {Event}              from "core/utils/Events";
 
 import {HistoryManager} from "core/actions/HistoryManager";
-import {GroupAction} from "core/actions/GroupAction";
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
 import {PlaceAction}    from "core/actions/addition/PlaceAction";
 
 import {ToolManager}        from "core/tools/ToolManager";
@@ -30,9 +27,6 @@ import {Renderer}           from "core/rendering/Renderer";
 import {CreateRenderers}    from "core/rendering/CreateRenderers";
 import {Grid}               from "core/rendering/Grid";
 
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
-
-import {IC} from "digital/models/ioobjects";
 import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
 import {WireRenderer}           from "digital/rendering/ioobjects/WireRenderer";
 import {ComponentRenderer}      from "digital/rendering/ioobjects/ComponentRenderer";
@@ -57,15 +51,19 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import "./index.scss";
 import {connect} from "react-redux";
 import {AppState} from "site/digital/state";
-import {AddICData, RemoveICData} from "shared/state/ItemNav/actions";
 import {ICViewer} from "../ICViewer";
+import {ContextMenu} from "shared/containers/ContextMenu";
+import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/actions";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalItemNav} from "../DigitalItemNav";
+import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
 
 type OwnProps = {}
 type StateProps = {}
 type DispatchProps = {
-    addICData: typeof AddICData;
-    removeICData: typeof RemoveICData;
+    OpenContextMenu: typeof OpenContextMenu;
+    CloseContextMenu: typeof CloseContextMenu;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -73,16 +71,8 @@ export const MainDesigner = (() => {
     const camera = new Camera();
     const renderQueue = new RenderQueue();
     const history = new HistoryManager();
-    const designer = new DigitalCircuitDesigner(1, () => renderQueue.render());
+    const designer = new DigitalCircuitDesigner(1);
     const selections = new SelectionsWrapper();
-
-    type listener = (ev: Event, change: boolean) => void;
-    const eventHandler = {
-        listeners: [] as listener[],
-        addListener: (l: listener) => {
-            eventHandler.listeners.push(l);
-        }
-    }
 
     const toolManager = new ToolManager(
         new InteractionTool(),
@@ -94,7 +84,7 @@ export const MainDesigner = (() => {
         SelectionBoxTool
     );
 
-    const circuitInfo: CircuitInfo = {
+    const circuitInfo: DigitalCircuitInfo = {
         locked: false,
 
         history,
@@ -103,7 +93,9 @@ export const MainDesigner = (() => {
         designer,
 
         input: undefined, // Initialize on init
-        selections
+        selections,
+
+        renderer: renderQueue
     };
     function CreateDigitalRenderers(renderer: Renderer) {
         return CreateRenderers(renderer, circuitInfo, {
@@ -129,9 +121,9 @@ export const MainDesigner = (() => {
 
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
         undefined,
-        { addICData: AddICData, removeICData: RemoveICData }
+        { OpenContextMenu, CloseContextMenu }
     )(
-        ({addICData, removeICData}: Props) => {
+        ({OpenContextMenu, CloseContextMenu}: Props) => {
             const {w, h} = useWindowSize();
             const canvas = useRef<HTMLCanvasElement>();
 
@@ -145,17 +137,23 @@ export const MainDesigner = (() => {
 
 
             // Initial function called after the canvas first shows up
-            useEffect(() => {
+            useLayoutEffect(() => {
                 const renderer = new Renderer(canvas.current);
                 const input = new Input(canvas.current);
                 const renderers = CreateDigitalRenderers(renderer);
 
+                designer.addCallback(() => renderQueue.render());
+
                 circuitInfo.input = input;
+
+                canvas.current.addEventListener("contextmenu", (e) => { e.preventDefault(); OpenContextMenu(); });
 
                 input.addListener((event) => {
                     const change = toolManager.onEvent(event, circuitInfo);
                     if (change) renderQueue.render();
-                    eventHandler.listeners.forEach(l => l(event, change));
+
+                    if (event.type === "mousedown")
+                        CloseContextMenu();
                 });
 
                 renderQueue.setRenderFunction(() => render(renderers));
@@ -163,64 +161,26 @@ export const MainDesigner = (() => {
             }, []); // Pass empty array so that this only runs once on mount
 
             return (<>
-                <SelectionPopup camera={camera}
+                <DigitalItemNav info={circuitInfo} />
+
+
+                <SelectionPopup info={circuitInfo}
                                 modules={[PositionModule, InputCountModule,
                                           OutputCountModule, SegmentCountModule,
                                           ClockFrequencyModule,
                                           ColorModule, TextColorModule,
                                           BusButtonModule, CreateICButtonModule,
-                                          ViewICButtonModule]}
-                                selections={selections}
-                                addAction={(a) => {
-                                    history.add(a);
-                                    eventHandler.listeners.forEach(l => l({type:"unknown"}, true));
-                                }}
-                                render={() => renderQueue.render()}
-                                eventHandler={eventHandler} />
+                                          ViewICButtonModule]} />
 
 
-                <ICDesigner onActivate={() => {
-                                // Stop events on MainDesigner while ICDesigner is open
-                                circuitInfo.input.block();
-                            }}
-                            onClose={(data) => {
-                                if (data) {
-                                    // Create IC on center of screen
-                                    const ic = new IC(data);
-                                    ic.setPos(camera.getPos());
-
-                                    let index = -1;
-
-                                    const icDataAction = {
-                                        execute: () => {
-                                            designer.addICData(data);
-                                            if (index === -1)
-                                                index = designer.getICData().indexOf(data);
-                                            addICData({ name: ic.getName(), index });
-                                            return icDataAction;
-                                        },
-                                        undo: () => {
-                                            designer.removeICData(data);
-                                            removeICData(index);
-                                            return icDataAction;
-                                        }
-                                    };
-
-                                    // Deselect other things, create IC and select it
-                                    const action = new GroupAction([
-                                        CreateDeselectAllAction(selections),
-                                        icDataAction,
-                                        new PlaceAction(designer, ic),
-                                        new SelectAction(selections, ic)
-                                    ]);
-                                    history.add(action.execute());
-                                    renderQueue.render();
-                                }
-                                circuitInfo.input.unblock();
-                            }} />
+                <ICDesigner mainInfo={circuitInfo} />
 
                 <ICViewer onActivate={() => circuitInfo.input.block()}
                           onClose   ={() => circuitInfo.input.unblock()} />
+
+
+                <ContextMenu info={circuitInfo}
+                             paste={(data) => DigitalPaste(data, circuitInfo)} />
 
 
                 <canvas className="main__canvas"
