@@ -22,7 +22,7 @@ type RendererInstance2<O, T> = {
 
 // }
 
-export const CreateRenderers = <A, B1, B2, C1, C2, D/*, E*/>(
+export const CreateRenderers = <A, B1, B2, C1, C2, D, E>(
     renderer: Renderer,
     info: CircuitInfo,
     renderers: {
@@ -30,7 +30,7 @@ export const CreateRenderers = <A, B1, B2, C1, C2, D/*, E*/>(
         wireRenderer: RendererInstance2<B1, B2>,
         componentRenderer: RendererInstance2<C1, C2>,
         toolRenderer: RendererInstance<D>,
-        // debugRenderer: RendererInstance<E>
+        debugRenderer: RendererInstance<E>
     }
 ) => ({
     renderer,
@@ -48,6 +48,9 @@ export const CreateRenderers = <A, B1, B2, C1, C2, D/*, E*/>(
     },
     Tools: {
         render: (extra?: D) => renderers.toolRenderer.render(renderer, info, extra)
+    },
+    Debug: {
+        render: (extra?: E) => renderers.debugRenderer.render(renderer, info, extra)
     }
 })
 

@@ -9,10 +9,8 @@ import {DEBUG_CULLBOX_STYLE,
 import {V} from "Vector";
 
 import {Renderer} from "./Renderer";
-import {Camera} from "math/Camera";
 
-import {Wire} from "core/models/Wire";
-import {Component} from "core/models/Component";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GetAllPorts} from "core/utils/ComponentUtils";
 
@@ -22,7 +20,13 @@ import {Pressable, isPressable} from "core/utils/Pressable";
 
 export const DebugRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, objects: Component[], wires: Wire[]): void {
+        render(renderer: Renderer, info: CircuitInfo): void {
+            const {camera, designer} = info;
+
+            const objects = designer.getObjects();
+            const wires = designer.getWires();
+
+
             if (DEBUG_CULLBOXES) {
                 const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));
                 renderer.save();
