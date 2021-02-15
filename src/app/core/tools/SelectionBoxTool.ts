@@ -17,7 +17,9 @@ export const SelectionBoxTool = (() => {
     let p1: Vector, p2: Vector;
 
     return {
-        shouldActivate(event: Event, {input, selections, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, {locked, input, selections, currentlyPressedObject}: CircuitInfo): boolean {
+            if (locked)
+                return false;
             // Activate if the user began dragging on empty canvas
             return (event.type === "mousedrag" &&
                     input.getTouchCount() === 1 &&

@@ -2,18 +2,20 @@ import {Vector} from "Vector";
 
 
 export type EventType =
-    "click"      |
-    "dblclick"   |
+    "click"       |
+    "dblclick"    |
 
-    "mouseenter" |
-    "mousemove"  |
-    "mousedown"  |
-    "mousedrag"  |
-    "mouseup"    |
-    "mouseleave" |
-    "zoom"       |
+    "mouseenter"  |
+    "mousemove"   |
+    "mousedown"   |
+    "mousedrag"   |
+    "mouseup"     |
+    "mouseleave"  |
+    "zoom"        |
 
-    "keydown"    |
+    "contextmenu" |
+
+    "keydown"     |
     "keyup";
 
 
@@ -31,7 +33,7 @@ export type ZoomEvent = {
     pos: Vector;
 }
 export type OtherEvent = {
-    type: "mouseenter" | "mousemove" | "mouseleave" | "unknown";
+    type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
 }
 
 export type Event = MouseEvent | KeyboardEvent | ZoomEvent | OtherEvent;

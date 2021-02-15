@@ -60,10 +60,10 @@ export const ICViewer = (() => {
     const circuitInfo: CircuitInfo = {
         locked: false,
         history: undefined,
-        camera,
-        designer,
+        camera, designer,
         input: undefined, // Initialize on init
-        selections: selections
+        selections, toolManager,
+        renderer: renderQueue
     };
     function CreateDigitalRenderers(renderer: Renderer) {
         return CreateRenderers(renderer, circuitInfo, {

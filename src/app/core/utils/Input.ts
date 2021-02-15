@@ -91,14 +91,15 @@ export class Input {
 
     private hookupMouseEvents(): void {
         // Mouse events
-        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
-        this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
-        this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
-        this.canvas.addEventListener("mouseleave", (_: MouseEvent) => this.onMouseLeave(), false);
+        this.canvas.addEventListener("click",       (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("dblclick",    (e: MouseEvent) => this.onDoubleClick(e.button), false);
+        this.canvas.addEventListener("wheel",       (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        this.canvas.addEventListener("mousedown",   (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("mouseup",     (e: MouseEvent) => this.onMouseUp(e.button), false);
+        this.canvas.addEventListener("mousemove",   (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        this.canvas.addEventListener("mouseenter",  (_: MouseEvent) => this.onMouseEnter(), false);
+        this.canvas.addEventListener("mouseleave",  (_: MouseEvent) => this.onMouseLeave(), false);
+        this.canvas.addEventListener("contextmenu", (e: MouseEvent) => { e.preventDefault(); this.callListeners({ type: "contextmenu" }); });
     }
 
     private hookupTouchEvents(): void {

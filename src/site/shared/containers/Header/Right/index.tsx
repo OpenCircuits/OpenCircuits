@@ -1,5 +1,5 @@
 import {TutorialDropdown} from "./TutorialDropdown";
-import {OpenFileButton} from "./OpenFileButton";
+import {OnLoadFunc, OpenFileButton} from "./OpenFileButton";
 import {DownloadMenuDropdown, OnDownloadFunc} from "./DownloadMenuDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
 
@@ -7,13 +7,14 @@ import "./index.scss";
 
 
 type Props = {
-    onDownload: OnDownloadFunc
+    onLoad: OnLoadFunc;
+    onDownload: OnDownloadFunc;
 }
-export const HeaderRight = ({onDownload}: Props) => {
+export const HeaderRight = ({onLoad, onDownload}: Props) => {
     return (
         <div className="header__right">
             <TutorialDropdown />
-            <OpenFileButton />
+            <OpenFileButton onLoad={onLoad} />
             <DownloadMenuDropdown onDownload={onDownload} />
             <SignInOutButtons />
         </div>

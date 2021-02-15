@@ -37,9 +37,6 @@ export class InteractionTool extends DefaultTool {
     public onEvent(event: Event, info: CircuitInfo): boolean {
         const {locked, input, camera, currentlyPressedObject} = info;
 
-        if (locked)
-            return false;
-
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = this.findObject(worldMousePos, info);
 
@@ -73,6 +70,9 @@ export class InteractionTool extends DefaultTool {
                 }
                 break;
         }
+
+        if (locked)
+            return false;
 
         return super.onEvent(event, info);
     }
