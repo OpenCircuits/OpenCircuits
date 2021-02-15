@@ -4,7 +4,7 @@ const path = require("path");
 const defaultNames = {
     entry: "src/site/pages/digital/",
     public: "src/site/pages/digital/public",
-    output: "build",
+    output: "build/site",
     mainHtml: "index.html",
     bundleName: "bundle.js"
 };

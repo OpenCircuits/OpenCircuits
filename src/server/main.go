@@ -23,7 +23,7 @@ import (
 
 func getPort() string {
 	for port := 8080; port <= 65535; port++ {
-		ln, err := net.Listen("tcp", ":" + strconv.Itoa(port))
+		ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 		if err == nil {
 			ln.Close()
 			return strconv.Itoa(port)
@@ -39,7 +39,7 @@ func main() {
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	sqlitePathConfig := flag.String("sqlitePath", "data/sql/sqlite", "The path to the sqlite working directory")
+	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
@@ -76,9 +76,6 @@ func main() {
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}
 
-	// Create the example circuit storage interface
-	exampleCsif := storage.NewExampleCircuitStorageInterfaceFactory("./examples/examples.json")
-
 	// Route through Gin
 	router := gin.Default()
 	router.Use(gin.Recovery())
@@ -92,9 +89,9 @@ func main() {
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
 	// Register pages
-	web.RegisterPages(router, authManager, exampleCsif)
+	web.RegisterPages(router, authManager)
 	authManager.RegisterHandlers(router)
-	api.RegisterRoutes(router, authManager, exampleCsif, userCsif)
+	api.RegisterRoutes(router, authManager, userCsif)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
