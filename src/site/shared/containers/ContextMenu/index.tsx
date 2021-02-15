@@ -1,14 +1,17 @@
+import {useEffect} from "react";
+import {connect} from "react-redux";
 
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
-import {GroupAction} from "core/actions/GroupAction";
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {IOObject} from "core/models";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
-import {Selectable} from "core/utils/Selectable";
-import {connect} from "react-redux";
+
+import {IOObject} from "core/models";
+
+import {GroupAction} from "core/actions/GroupAction";
+import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+
 import {SharedAppState} from "shared/state";
-import {CloseContextMenu} from "shared/state/ContextMenu/actions";
+import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/actions";
 
 import "./index.scss";
 
@@ -27,12 +30,26 @@ type StateProps = {
     isOpen: boolean;
 }
 type DispatchProps = {
-    close: () => void;
+    OpenContextMenu: typeof OpenContextMenu;
+    CloseContextMenu: typeof CloseContextMenu;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _ContextMenu = ({isOpen, info, paste, close}: Props) => {
-    const {input, history, designer, selections, renderer} = info;
+const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: Props) => {
+    const {locked, input, history, designer, selections, renderer} = info;
+
+
+    useEffect(() => {
+        if (!input)
+            return;
+
+        input.addListener((ev) => {
+            if (ev.type === "contextmenu")
+                OpenContextMenu();
+            else if (ev.type === "mousedown")
+                CloseContextMenu();
+        });
+    }, [input])
 
 
     const copy = () => {
@@ -84,6 +101,18 @@ const _ContextMenu = ({isOpen, info, paste, close}: Props) => {
     const onUndo = async () => history.undo();
     const onRedo = async () => history.redo();
 
+
+    /* Helper function for buttons to call the function and render/close the popup */
+    const doFunc = (func: () => void) => {
+        // Don't do anything if locked
+        if (locked)
+            return;
+        func();
+        renderer.render();
+        close();
+    }
+
+
     const pos = input?.getMousePos();
 
     return (
@@ -93,18 +122,18 @@ const _ContextMenu = ({isOpen, info, paste, close}: Props) => {
                  top: `${pos?.y + 65}px`,
                  display: (isOpen ? "initial" : "none")
              }}>
-            <button title="Cut"        onClick={() => { onCut();       renderer.render(); close(); }}>Cut</button>
-            <button title="Copy"       onClick={() => { onCopy();      renderer.render(); close(); }}>Copy</button>
-            <button title="Paste"      onClick={() => { onPaste();     renderer.render(); close(); }}>Paste</button>
-            <button title="Select All" onClick={() => { onSelectAll(); renderer.render(); close(); }}>Select All</button>
+            <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
+            <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>
+            <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
+            <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
             <hr/>
-            <button title="Undo" onClick={() => { onUndo(); renderer.render(); close(); }}>Undo</button>
-            <button title="Redo" onClick={() => { onRedo(); renderer.render(); close(); }}>Redo</button>
+            <button title="Undo" onClick={() => doFunc(onUndo)}>Undo</button>
+            <button title="Redo" onClick={() => doFunc(onRedo)}>Redo</button>
         </div>
     );
 }
 
 export const ContextMenu = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     (state) => ({ isOpen: state.contextMenu.isOpen }),
-    { close: CloseContextMenu }
+    { OpenContextMenu, CloseContextMenu }
 )(_ContextMenu);

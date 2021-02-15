@@ -1,5 +1,6 @@
 import {Create} from "serialeazy";
-import {useEffect, useLayoutEffect, useRef} from "react";
+import {useLayoutEffect, useRef} from "react";
+import {connect} from "react-redux";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -12,6 +13,7 @@ import {Input}              from "core/utils/Input";
 
 import {HistoryManager} from "core/actions/HistoryManager";
 import {PlaceAction}    from "core/actions/addition/PlaceAction";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {ToolManager}        from "core/tools/ToolManager";
 import {InteractionTool}    from "core/tools/InteractionTool";
@@ -22,6 +24,7 @@ import {WiringTool}         from "core/tools/WiringTool";
 import {SplitWireTool}      from "core/tools/SplitWireTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
 
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
@@ -36,37 +39,34 @@ import {TextColorModule}      from "site/digital/containers/SelectionPopup/modul
 import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 
-import {ICDesigner} from "site/digital/containers/ICDesigner";
-
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-
-import "./index.scss";
-import {connect} from "react-redux";
-import {AppState} from "site/digital/state";
-import {ICViewer} from "../ICViewer";
 import {ContextMenu} from "shared/containers/ContextMenu";
-import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/actions";
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+import {ICDesigner} from "site/digital/containers/ICDesigner";
+import {AppState} from "site/digital/state";
+
+import {ICViewer} from "../ICViewer";
 import {DigitalItemNav} from "../DigitalItemNav";
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {DigitalHeader} from "../DigitalHeader";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
+
+import "./index.scss";
 
 
 type OwnProps = {}
-type StateProps = {}
-type DispatchProps = {
-    OpenContextMenu: typeof OpenContextMenu;
-    CloseContextMenu: typeof CloseContextMenu;
+type StateProps = {
+    isLocked: boolean;
 }
+type DispatchProps = {}
 
 type Props = StateProps & DispatchProps & OwnProps;
 export const MainDesigner = (() => {
     const camera = new Camera();
-    const renderQueue = new RenderQueue();
     const history = new HistoryManager();
     const designer = new DigitalCircuitDesigner(1);
     const selections = new SelectionsWrapper();
+    const renderQueue = new RenderQueue();
 
     const toolManager = new ToolManager(
         new InteractionTool(),
@@ -80,24 +80,18 @@ export const MainDesigner = (() => {
 
     const circuitInfo: DigitalCircuitInfo = {
         locked: false,
-
-        history,
-        camera,
-
-        designer,
-
+        history, camera, designer,
         input: undefined, // Initialize on init
-        selections,
-
+        selections, toolManager,
         renderer: renderQueue
     };
 
 
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
-        undefined,
-        { OpenContextMenu, CloseContextMenu }
+        (state) => ({ isLocked: state.circuit.isLocked }),
+        { }
     )(
-        ({OpenContextMenu, CloseContextMenu}: Props) => {
+        ({isLocked}: Props) => {
             const {w, h} = useWindowSize();
             const canvas = useRef<HTMLCanvasElement>();
 
@@ -122,17 +116,10 @@ export const MainDesigner = (() => {
                     toolManager
                 });
 
-                // Add context menu listener
-                // TODO: find better place for this
-                canvas.current.addEventListener("contextmenu", (e) => { e.preventDefault(); OpenContextMenu(); });
-
                 // Add input listener
                 circuitInfo.input.addListener((event) => {
                     const change = toolManager.onEvent(event, circuitInfo);
                     if (change) renderQueue.render();
-
-                    if (event.type === "mousedown")
-                        CloseContextMenu();
                 });
 
                 // Add render callbacks and set render function
@@ -142,12 +129,22 @@ export const MainDesigner = (() => {
                 renderQueue.render();
             }, []); // Pass empty array so that this only runs once on mount
 
+
+            // Lock/unlock circuit
+            useLayoutEffect(() => {
+                circuitInfo.locked = isLocked;
+                if (isLocked) // Deselect everything
+                    history.add(CreateDeselectAllAction(selections).execute());
+                history.setDisabled(isLocked);
+                selections.setDisabled(isLocked);
+            }, [isLocked]);
+
+
             return (<>
                 <DigitalHeader info={circuitInfo}
                                canvas={canvas} />
 
                 <DigitalItemNav info={circuitInfo} />
-
 
                 <SelectionPopup info={circuitInfo}
                                 modules={[PositionModule, InputCountModule,
