@@ -9,7 +9,6 @@ import {Camera} from "math/Camera";
 import {SelectionsWrapper}  from "core/utils/SelectionsWrapper";
 import {RenderQueue}        from "core/utils/RenderQueue";
 import {Input}              from "core/utils/Input";
-import {Event}              from "core/utils/Events";
 
 import {HistoryManager} from "core/actions/HistoryManager";
 import {PlaceAction}    from "core/actions/addition/PlaceAction";
@@ -23,14 +22,7 @@ import {WiringTool}         from "core/tools/WiringTool";
 import {SplitWireTool}      from "core/tools/SplitWireTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 
-import {Renderer}           from "core/rendering/Renderer";
-import {CreateRenderers}    from "core/rendering/CreateRenderers";
-import {Grid}               from "core/rendering/Grid";
-
 import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
-import {WireRenderer}           from "digital/rendering/ioobjects/WireRenderer";
-import {ComponentRenderer}      from "digital/rendering/ioobjects/ComponentRenderer";
-import {ToolRenderer} from "digital/rendering/ToolRenderer";
 
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
@@ -57,6 +49,8 @@ import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/action
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalItemNav} from "../DigitalItemNav";
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
+import {DigitalHeader} from "../DigitalHeader";
+import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 
 type OwnProps = {}
@@ -97,26 +91,6 @@ export const MainDesigner = (() => {
 
         renderer: renderQueue
     };
-    function CreateDigitalRenderers(renderer: Renderer) {
-        return CreateRenderers(renderer, circuitInfo, {
-            gridRenderer: Grid,
-            wireRenderer: WireRenderer,
-            componentRenderer: ComponentRenderer,
-            toolRenderer: ToolRenderer
-        });
-    }
-    function render({renderer, Grid, Wires, Components, Tools}: ReturnType<typeof CreateDigitalRenderers>) {
-        const selections = circuitInfo.selections.get();
-
-        renderer.clear();
-
-        Grid.render();
-
-        Wires.renderAll(designer.getWires(), selections);
-        Components.renderAll(designer.getObjects(), selections);
-
-        Tools.render(toolManager);
-    }
 
 
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
@@ -138,17 +112,22 @@ export const MainDesigner = (() => {
 
             // Initial function called after the canvas first shows up
             useLayoutEffect(() => {
-                const renderer = new Renderer(canvas.current);
-                const input = new Input(canvas.current);
-                const renderers = CreateDigitalRenderers(renderer);
+                // Create input w/ canvas
+                circuitInfo.input = new Input(canvas.current);
 
-                designer.addCallback(() => renderQueue.render());
+                // Get render function
+                const renderFunc = GetRenderFunc({
+                    canvas: canvas.current,
+                    info: circuitInfo,
+                    toolManager
+                });
 
-                circuitInfo.input = input;
-
+                // Add context menu listener
+                // TODO: find better place for this
                 canvas.current.addEventListener("contextmenu", (e) => { e.preventDefault(); OpenContextMenu(); });
 
-                input.addListener((event) => {
+                // Add input listener
+                circuitInfo.input.addListener((event) => {
                     const change = toolManager.onEvent(event, circuitInfo);
                     if (change) renderQueue.render();
 
@@ -156,11 +135,17 @@ export const MainDesigner = (() => {
                         CloseContextMenu();
                 });
 
-                renderQueue.setRenderFunction(() => render(renderers));
+                // Add render callbacks and set render function
+                designer.addCallback(() => renderQueue.render());
+
+                renderQueue.setRenderFunction(() => renderFunc());
                 renderQueue.render();
             }, []); // Pass empty array so that this only runs once on mount
 
             return (<>
+                <DigitalHeader info={circuitInfo}
+                               canvas={canvas} />
+
                 <DigitalItemNav info={circuitInfo} />
 
 

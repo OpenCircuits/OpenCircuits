@@ -1,13 +1,15 @@
 import {HeaderLeft} from "./Left";
 import {HeaderRight} from "./Right";
+import {OnDownloadFunc} from "./Right/DownloadMenuDropdown";
 
 import "./index.scss";
 
 
 type Props = {
     img: string;
+    onDownload: OnDownloadFunc;
 }
-export const Header = ({ img }: Props) => (
+export const Header = ({ img, onDownload }: Props) => (
     <header id="header">
         <HeaderLeft />
 
@@ -20,6 +22,6 @@ export const Header = ({ img }: Props) => (
             </a>
         </div>
 
-        <HeaderRight />
+        <HeaderRight onDownload={onDownload} />
     </header>
 );

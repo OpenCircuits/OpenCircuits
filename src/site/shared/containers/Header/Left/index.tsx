@@ -1,8 +1,6 @@
-import {Dispatch} from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "shared/state";
-import {AllSharedActions} from "shared/state/actions";
+import {SharedAppState} from "shared/state";
 import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
 
@@ -56,15 +54,15 @@ const _HeaderLeft = ({ isLocked, isSaved, circuitName, toggleLock, toggleSideNav
 /*
  * Redux state connection
  */
-const MapState = (state: AppState) => ({
+const MapState = (state: SharedAppState) => ({
     circuitName: state.circuit.name,
     isSaved:     state.circuit.isSaved,
     isLocked:    state.circuit.isLocked
 });
-const MapDispatch = (dispatch: Dispatch<AllSharedActions>) => ({
-    toggleLock:     ()             => dispatch(ToggleCircuitLocked()),
-    save:           ()             => dispatch(SetCircuitSaved()),
-    toggleSideNav:  ()             => dispatch(ToggleSideNav()),
-    setCircuitName: (name: string) => dispatch(SetCircuitName(name)),
-});
-export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, AppState>(MapState, MapDispatch)(_HeaderLeft);
+const MapDispatch = {
+    toggleLock:     ToggleCircuitLocked,
+    save:           SetCircuitSaved,
+    toggleSideNav:  ToggleSideNav,
+    setCircuitName: SetCircuitName
+};
+export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(MapState, MapDispatch)(_HeaderLeft);

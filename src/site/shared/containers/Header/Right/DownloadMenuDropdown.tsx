@@ -1,38 +1,40 @@
-import {Dispatch} from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "shared/state";
-import {AllSharedActions} from "shared/state/actions";
+import {SharedAppState} from "shared/state";
 import {HeaderMenus} from "shared/state/Header/state";
 import {OpenHeaderMenu, CloseHeaderMenus} from "shared/state/Header/actions";
 
 import {Dropdown} from "./Dropdown";
 
 
-type OwnProps = {}
+export type OnDownloadFunc = (type: "regular" | "pdf" | "png") => void;
+
+type OwnProps = {
+    onDownload: OnDownloadFunc;
+}
 type StateProps = {
     curMenu: HeaderMenus;
 }
 type DispatchProps = {
-    openMenu: (menu: HeaderMenus) => void;
-    closeMenus: () => void;
+    OpenHeaderMenu: typeof OpenHeaderMenu;
+    CloseHeaderMenus: typeof CloseHeaderMenus;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _DownloadMenuDropdown = ({ curMenu, openMenu, closeMenus }: Props) => (
+const _DownloadMenuDropdown = ({ onDownload, curMenu, OpenHeaderMenu, CloseHeaderMenus }: Props) => (
     <Dropdown open={(curMenu === "download")}
-              onClick={() => openMenu("download")}
-              onClose={() => closeMenus()}
+              onClick={() => OpenHeaderMenu("download")}
+              onClose={() => CloseHeaderMenus()}
               btnInfo={{title: "Download current scene", src: "img/icons/download.svg"}}>
-        <div title="Download circuit locally">
+        <div title="Download circuit locally" onClick={() => onDownload("regular")}>
             <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
             <span>Download</span>
         </div>
-        <div title="Save circuit as PDF">
+        <div title="Save circuit as PDF" onClick={() => onDownload("pdf")}>
             <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF"/>
             <span>Download as PDF</span>
         </div>
-        <div title="Save circuit as PNG">
+        <div title="Save circuit as PNG" onClick={() => onDownload("png")}>
             <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG"/>
             <span>Download as PNG</span>
         </div>
@@ -40,14 +42,7 @@ const _DownloadMenuDropdown = ({ curMenu, openMenu, closeMenus }: Props) => (
 );
 
 
-/*
- * Redux state connection
- */
-const MapState = (state: AppState) => ({
-    curMenu: state.header.curMenu
-});
-const MapDispatch = (dispatch: Dispatch<AllSharedActions>) => ({
-    openMenu:   (menu: HeaderMenus) => dispatch(OpenHeaderMenu(menu)),
-    closeMenus: ()                  => dispatch(CloseHeaderMenus())
-});
-export const DownloadMenuDropdown = connect<StateProps, DispatchProps, OwnProps, AppState>(MapState, MapDispatch)(_DownloadMenuDropdown);
+export const DownloadMenuDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+    (state: SharedAppState) => ({ curMenu: state.header.curMenu }),
+    { OpenHeaderMenu, CloseHeaderMenus }
+)(_DownloadMenuDropdown);
