@@ -1,5 +1,3 @@
-import {ToolManager} from "core/tools/ToolManager";
-
 import {CreateRenderers} from "core/rendering/CreateRenderers";
 import {Grid}            from "core/rendering/Grid";
 import {Renderer}        from "core/rendering/Renderer";
@@ -15,9 +13,8 @@ import {ToolRenderer}      from "digital/rendering/ToolRenderer";
 type Info = {
     canvas: HTMLCanvasElement;
     info: DigitalCircuitInfo;
-    toolManager: ToolManager;
 }
-export function GetRenderFunc({canvas, info, toolManager}: Info) {
+export function GetRenderFunc({canvas, info}: Info) {
     const renderer = new Renderer(canvas);
 
     const renderers = CreateRenderers(renderer, info, {
@@ -30,7 +27,7 @@ export function GetRenderFunc({canvas, info, toolManager}: Info) {
 
     return function render() {
         const {Grid, Wires, Components, Tools, Debug} = renderers;
-        const {designer, selections} = info;
+        const {designer, selections, toolManager} = info;
 
         renderer.clear();
 

@@ -1,27 +1,32 @@
+import {Circuit} from "core/models/Circuit";
 import {connect} from "react-redux";
 
 import {SharedAppState} from "shared/state";
-import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import "./index.scss";
 
 
-type OwnProps = {}
+type OwnProps = {
+    helpers: CircuitInfoHelpers;
+}
 type StateProps = {
-    isLocked: boolean;
-    isSaved: boolean;
     circuitName: string;
+    isSaved: boolean;
+    isLocked: boolean;
+    isLoggedIn: boolean;
+    isLoading: boolean;
 }
 type DispatchProps = {
     toggleLock: () => void;
     toggleSideNav: () => void;
     setCircuitName: (name: string) => void;
-    save: () => void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, circuitName, toggleLock, toggleSideNav, setCircuitName, save }: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName }: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -43,9 +48,10 @@ const _HeaderLeft = ({ isLocked, isSaved, circuitName, toggleLock, toggleSideNav
                    alt="Name of project" />
         </div>
         <div>
-            <button className={`header__left__save ${isSaved ? "invisible" : ""}`}
+            <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                     title="Save the circuit remotely"
-                    onClick={() => save()}>Save</button>
+                    disabled={isLoading}
+                    onClick={() => helpers.SaveCircuitRemote()}>Save</button>
         </div>
     </div>
 );
@@ -57,12 +63,16 @@ const _HeaderLeft = ({ isLocked, isSaved, circuitName, toggleLock, toggleSideNav
 const MapState = (state: SharedAppState) => ({
     circuitName: state.circuit.name,
     isSaved:     state.circuit.isSaved,
-    isLocked:    state.circuit.isLocked
+    isLocked:    state.circuit.isLocked,
+    isLoggedIn:  state.user.isLoggedIn,
+    isLoading:   state.user.loading
 });
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
-    save:           SetCircuitSaved,
     toggleSideNav:  ToggleSideNav,
-    setCircuitName: SetCircuitName
+    setCircuitName: SetCircuitName,
 };
-export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(MapState, MapDispatch)(_HeaderLeft);
+export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+    MapState,
+    MapDispatch
+)(_HeaderLeft);

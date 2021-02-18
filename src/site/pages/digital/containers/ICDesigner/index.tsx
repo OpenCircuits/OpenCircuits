@@ -45,6 +45,9 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {Setup} from "site/digital/utils/CircuitInfo/Setup";
+import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
+import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 
 type OwnProps = {
@@ -60,48 +63,15 @@ type DispatchProps = {
 
 type Props = StateProps & DispatchProps & OwnProps;
 export const ICDesigner = (() => {
-    const camera = new Camera();
-    const renderQueue = new RenderQueue();
-    const history = new HistoryManager();
-    const designer = new DigitalCircuitDesigner(1);
-    const selections = new SelectionsWrapper();
-
-    const toolManager = new ToolManager(
+    const info = CreateInfo(
         new DefaultTool(FitToScreenHandler, RedoHandler, UndoHandler),
-        PanTool,
-        ICPortTool,
-        ICResizeTool
+        PanTool, ICPortTool, ICResizeTool
     );
 
-    const circuitInfo: ICCircuitInfo = {
-        locked: false,
-        history,
-        camera,
-        designer,
-        input: undefined, // Initialize on init
-        selections,
-        renderer: renderQueue,
+    const icInfo: ICCircuitInfo = {
+        ...info,
         ic: undefined
     };
-    function CreateDigitalRenderers(renderer: Renderer) {
-        return CreateRenderers(renderer, circuitInfo, {
-            gridRenderer: Grid,
-            wireRenderer: WireRenderer,
-            componentRenderer: ComponentRenderer,
-            toolRenderer: ToolRenderer
-        });
-    }
-    function render({renderer, Grid, Wires, Components, Tools}: ReturnType<typeof CreateDigitalRenderers>) {
-        renderer.clear();
-
-        Grid.render();
-
-        Wires.renderAll(designer.getWires(), []);
-        Components.renderAll(designer.getObjects(), []);
-
-        Tools.render(toolManager);
-    }
-
 
     const EdgesToCursors: Record<ICEdge, string> = {
         "none": "default",
@@ -116,6 +86,8 @@ export const ICDesigner = (() => {
         { CloseICDesigner }
     )(
         ({active, data, mainInfo, CloseICDesigner}: Props) => {
+            const {camera, designer, history, selections, toolManager, renderer} = info;
+
             const {w, h} = useWindowSize();
             const canvas = useRef<HTMLCanvasElement>();
             const [{name}, setName] = useState({ name: "" });
@@ -133,31 +105,32 @@ export const ICDesigner = (() => {
 
             // Initial function called after the canvas first shows up
             useEffect(() => {
-                console.log("should only happen once1");
-                const renderer = new Renderer(canvas.current);
-                const input = new Input(canvas.current);
-                const renderers = CreateDigitalRenderers(renderer);
+                // Create input w/ canvas
+                icInfo.input = new Input(canvas.current);
 
-                designer.addCallback(() => renderQueue.render());
+                // Get render function
+                const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
-                circuitInfo.input = input;
-                input.block(); // Initially block input
-
-                input.addListener((event) => {
-                    const change = toolManager.onEvent(event, circuitInfo);
+                // Add input listener
+                icInfo.input.addListener((event) => {
+                    const change = toolManager.onEvent(event, icInfo);
 
                     // Change cursor
-                    let newCursor = ICPortTool.findPort(circuitInfo) === undefined ? "none" : "move";
+                    let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
                     if (newCursor === "none")
-                        newCursor = EdgesToCursors[ICResizeTool.findEdge(circuitInfo)];
+                        newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
                     setCursor({ cursor: newCursor });
 
-                    if (change) renderQueue.render();
+                    if (change) renderer.render();
                 });
 
-                renderQueue.setRenderFunction(() => render(renderers));
-                renderQueue.render();
+                // Add render callbacks and set render function
+                designer.addCallback(() => renderer.render());
+
+                renderer.setRenderFunction(() => renderFunc());
+                renderer.render();
             }, [setCursor]); // Pass empty array so that this only runs once on mount
+
 
             useLayoutEffect(() => {
                 if (!data)

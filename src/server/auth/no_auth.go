@@ -2,8 +2,8 @@ package auth
 
 import (
 	"errors"
+
 	"github.com/gin-gonic/gin"
-	"html/template"
 )
 
 type noLoginAuthenticationProvider struct {
@@ -26,15 +26,4 @@ func (nl noLoginAuthenticationProvider) ExtractIdentity(token string) (string, e
 
 func (nl noLoginAuthenticationProvider) AuthHeaderPrefix() string {
 	return "no_auth"
-}
-
-func (nl noLoginAuthenticationProvider) GetLoginButton() template.HTML {
-	return `
-<div class="login__popup__label">NoAuth Login</div>
-<div><input id="no-auth-user-input" type="text" placeholder="username"/></div>
-<button id="no-auth-submit">Submit</button>`
-}
-
-func (nl noLoginAuthenticationProvider) GetLoginHeader() template.HTML {
-	return `<meta id="no_auth_enable" content="true">`
 }

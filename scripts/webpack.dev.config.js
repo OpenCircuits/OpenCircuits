@@ -4,14 +4,19 @@ const redirectServedPath = require("react-dev-utils/redirectServedPathMiddleware
 const noopServiceWorkerMiddleware = require("react-dev-utils/noopServiceWorkerMiddleware");
 const ignoredFiles = require("react-dev-utils/ignoredFiles");
 
+const proxy = require("http-proxy-middleware");
+
+
 const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/sockjs-node'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
-module.exports = function(allowedHost, config) {
+module.exports = function(proxyConfig, allowedHost, config) {
     const host = process.env.HOST || "localhost";
 
     return {
+        disableHostCheck: !proxyConfig,
+
         compress: true,
 
         // Silence regular logs
@@ -51,9 +56,15 @@ module.exports = function(allowedHost, config) {
 
         public: allowedHost,
 
+        proxy: proxyConfig,
+
         before(app, server) {
             app.use(evalSourceMapMiddleware(server));
             app.use(errorOverlayMiddleware());
+
+            // Add API proxying
+            //  TODO: figure out a better way to specify port
+            app.use(proxy("/api", { target: "http://localhost:8080/" }));
         },
         after(app) {
             app.use(redirectServedPath("/"));

@@ -1,71 +1,81 @@
-import {Dispatch} from "react";
 import {connect} from "react-redux";
 
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
-import {AppState} from "shared/state";
-import {AllSharedActions} from "shared/state/actions";
+import {SharedAppState} from "shared/state";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
+import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 
 import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
 
 import "./index.scss";
+import {AuthState} from "shared/api/auth/AuthState";
 
 
 type OwnProps = {
     exampleCircuits: CircuitMetadata[];
 }
 type StateProps = {
+    auth: AuthState;
     isOpen: boolean;
+    isLoggedIn: boolean;
     userCircuits: CircuitMetadata[];
 }
 type DispatchProps = {
-    toggle: () => void;
+    LoadUserCircuits: typeof LoadUserCircuits;
+    ToggleSideNav: typeof ToggleSideNav;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _SideNav({ isOpen, userCircuits, exampleCircuits, toggle }: Props) {
-    return (
-    <>
-        <Overlay isOpen={isOpen} close={toggle} />
+const _SideNav = ({ auth, isOpen, isLoggedIn, userCircuits, exampleCircuits, ToggleSideNav }: Props) => {
 
-        <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
-            <div className="sidenav__accountinfo"></div>
-            <div className="sidenav__content">
-                <h4 unselectable="on">My Circuits</h4>
-                <div>
-                {userCircuits.map((circuit, i) =>
-                    <CircuitPreview key={`sidenav-user-circuit-${i}`}
-                                    data={circuit}
-                                    onClick={() => {/* RemoteController.LoadUserCircuit(circuit, onCircuitLoad) */}} />
-                )}
+
+    return (
+        <>
+            <Overlay isOpen={isOpen} close={ToggleSideNav} />
+
+            <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
+                <div className="sidenav__accountinfo">
+                    {auth ? `Hello, ${auth.getId()}!` : null}
                 </div>
-                <h4 unselectable="on">Examples</h4>
-                <div>
-                {exampleCircuits.map((example, i) =>
-                    <CircuitPreview key={`sidenav-example-circuit-${i}`}
-                                    readonly
-                                    data={example}
-                                    onClick={() => {/* RemoteController.LoadExampleCircuit(example, onCircuitLoad) */}} />
-                )}
-                </div>
-                <div className="sidenav__content__footer">
-                    A program made with love by <a href="http://leonmontealeg.re/" target="_blank" rel="noopener noreferrer">Leon Montealegre </a>
-                    and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank" rel="noopener noreferrer">team</a>
+                <div className="sidenav__content">
+                    <h4 unselectable="on">My Circuits</h4>
+                    <div>
+                    {userCircuits.map((circuit, i) =>
+                        <CircuitPreview key={`sidenav-user-circuit-${i}`}
+                                        data={circuit}
+                                        onClick={() => {console.log("hi");/* RemoteController.LoadUserCircuit(circuit, onCircuitLoad) */}}
+                                        onDelete={() => {console.log("delete")}} />
+                    )}
+                    </div>
+                    <h4 unselectable="on">Examples</h4>
+                    <div>
+                    {exampleCircuits.map((example, i) =>
+                        <CircuitPreview key={`sidenav-example-circuit-${i}`}
+                                        readonly
+                                        data={example}
+                                        onClick={() => {/* RemoteController.LoadExampleCircuit(example, onCircuitLoad) */}}
+                                        onDelete={() => { /* Do nothing */ }} />
+                    )}
+                    </div>
+                    <div className="sidenav__content__footer">
+                        A program made with love by <a href="http://leonmontealeg.re/" target="_blank" rel="noopener noreferrer">Leon Montealegre </a>
+                        and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank" rel="noopener noreferrer">team</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </>
+        </>
     );
 }
 
 
-const MapState = (state: AppState) => ({
-    isOpen: state.sideNav.isOpen,
-    userCircuits: state.user.circuits
-});
-const MapDispatch = (dispatch: Dispatch<AllSharedActions>) => ({
-    toggle: () => dispatch(ToggleSideNav())
-});
-export const SideNav = connect<StateProps, DispatchProps, OwnProps, AppState>(MapState, MapDispatch)(_SideNav);
+export const SideNav = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+    (state) => ({
+        auth: state.user.auth,
+        isOpen: state.sideNav.isOpen,
+        isLoggedIn: state.user.isLoggedIn,
+        userCircuits: state.user.circuits
+    }),
+    { LoadUserCircuits, ToggleSideNav } as any
+)(_SideNav);

@@ -1,19 +1,18 @@
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {HeaderLeft} from "./Left";
 import {HeaderRight} from "./Right";
-import {OnDownloadFunc} from "./Right/DownloadMenuDropdown";
-import {OnLoadFunc} from "./Right/OpenFileButton";
 
 import "./index.scss";
 
 
 type Props = {
     img: string;
-    onLoad: OnLoadFunc;
-    onDownload: OnDownloadFunc;
+    helpers: CircuitInfoHelpers;
 }
-export const Header = ({ img, onLoad, onDownload }: Props) => (
+export const Header = ({ img, helpers }: Props) => (
     <header id="header">
-        <HeaderLeft />
+        <HeaderLeft helpers={helpers} />
 
         <div>
             <a href="/home" target="_blank">
@@ -24,6 +23,6 @@ export const Header = ({ img, onLoad, onDownload }: Props) => (
             </a>
         </div>
 
-        <HeaderRight onLoad={onLoad} onDownload={onDownload} />
+        <HeaderRight helpers={helpers} />
     </header>
 );

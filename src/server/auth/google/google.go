@@ -2,13 +2,13 @@ package google
 
 import (
 	"encoding/json"
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/api/oauth2/v2"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/gin-gonic/gin"
+	"google.golang.org/api/oauth2/v2"
 )
 
 type authenticationMethod struct {
@@ -65,12 +65,4 @@ func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
 
 func (g authenticationMethod) AuthHeaderPrefix() string {
 	return "google"
-}
-
-func (g authenticationMethod) GetLoginButton() template.HTML {
-	return `<div id="login-popup-google-signin"></div>`
-}
-
-func (g authenticationMethod) GetLoginHeader() template.HTML {
-	return template.HTML(`<meta id="google-signin-client_id" name="google-signin-client_id" content="` + g.config.ID + `">`)
 }

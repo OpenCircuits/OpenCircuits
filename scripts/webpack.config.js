@@ -13,39 +13,19 @@ const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpack
 const WatchMissingNodeModulesPlugin = require("react-dev-utils/WatchMissingNodeModulesPlugin");
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
 
+
+const PnpWebpackPlugin = require('pnp-webpack-plugin');
+const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+
+
 const getAliases = require("./utils/getAliases");
-
-
-
-
-
-
-class WatchTSConfigPathsPlugin {
-    constructor(path) {
-      this.path = path;
-    }
-
-    apply(compiler) {
-      compiler.hooks.emit.tap('WatchTSConfigPathsPlugin', compilation => {
-        var missingDeps = Array.from(compilation.missingDependencies);
-        var path = this.path;
-
-        // If any missing files are expected to appear in node_modules...
-        if (missingDeps.some(file => file.includes(path))) {
-          // ...tell webpack to watch node_modules recursively until they appear.
-          compilation.contextDependencies.add(path);
-        }
-      });
-    }
-  }
-
-  module.exports = WatchMissingNodeModulesPlugin;
-
 
 
 module.exports = function(config) {
     const isProduction  = config.mode == "production";
     const isDevelopment = !isProduction;
+
+    console.log("dev?", isDevelopment, "prod?", isProduction)
 
     return {
         mode: config.mode,
@@ -67,35 +47,61 @@ module.exports = function(config) {
             // Build folder (only for production)
             path: isProduction ? config.outputPath : undefined,
 
+            pathinfo: isDevelopment, // ********IDK
+
             // One main bundle and one file per chunk, no real files in development
             filename: isProduction ? "static/js/[name].[contenthash:8].js" :
                                      `static/js/${config.bundleName}`,
 
+            futureEmitAssets: true, // ********IDK
+
+            chunkFilename: isProduction ? "static/js/[name].[contenthash:8].chunk.js" :
+                                          "static/js/[name].chunk.js",  // ********IDK
+
             // Used to determine where the app is being served from
             //  *Requires trailing slash
-            publicPath: "/"
+            publicPath: "/",
+
+            devtoolModuleFilenameTemplate: isProduction ? (info => path.relative(config.entryPath, info.absoluteResourcePath).replace(/\\/g, "/")) :
+                                                          (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")), // ********IDK
+
+            jsonpFunction: `webpackJsonp${config.packageJsonPath}`, // ********IDK
+
+            globalObject: "this" // ********IDK
         },
 
         resolve: {
+            // modules: ["node_modules", config.nodeModulesPath].concat()
+            extensions: [".ts", ".js", ".tsx", ".jsx", ".json"],
+
             alias: getAliases(),
-            extensions: [".ts", ".js", ".tsx", ".jsx", ".json"]
+
+            plugins: [ // ********IDK
+                PnpWebpackPlugin
+            ]
+        },
+
+        resolveLoader: {
+            plugins: [ PnpWebpackPlugin.moduleLoader(module) ]
         },
 
         module: {
             rules: [
-                // // First run linter:
-                // config.lint && {
-                //     test: /\.(js|jsx|ts|tsx)$/,
-                //     enforce: "pre",
-                //     use: [{
-                //         options: {
-                //             cache: true,
-                //             formatter: require.resolve("react-dev-utils/eslintFormatter"),
-                //             eslintPath: require.resolve("eslint"),
-                //         },
-                //         loader: require.resolve("eslint-loader")
-                //     }]
-                // },
+                // First run linter:
+                {
+                    test: /\.(js|jsx|ts|tsx)$/,
+                    enforce: "pre",
+                    use: [{
+                        options: {
+                            cache: true,
+                            formatter: require.resolve("react-dev-utils/eslintFormatter"),
+                            eslintPath: require.resolve("eslint"),
+                            resolvePluginsRelativeTo: __dirname
+                        },
+                        loader: require.resolve("eslint-loader")
+                    }],
+                    include: path.join(process.cwd(), "src")
+                },
                 {
                     oneOf: [
                         { // Images (GIF/JPEG/PNG)
@@ -107,16 +113,17 @@ module.exports = function(config) {
                         },
                         { // JS + TypeScript
                             test: /\.(js|jsx|ts|tsx)$/,
+                            include: path.join(process.cwd(), "src"),
                             loader: require.resolve("babel-loader"),
                             options: {
-                                presets: [
-                                    [
-                                        require.resolve("babel-preset-react-app"),
-                                        {
-                                            runtime: "automatic"
-                                        }
-                                    ]
-                                ],
+                                // presets: [
+                                //     [
+                                //         require.resolve("babel-preset-react-app"),
+                                //         {
+                                //             runtime: "automatic"
+                                //         }
+                                //     ]
+                                // ],
 
                                 customize: require.resolve("babel-preset-react-app/webpack-overrides"),
 
@@ -189,7 +196,8 @@ module.exports = function(config) {
             // Provide some environment variables to the JS code
             new webpack.DefinePlugin({
                 "process.env": {
-                    "NODE_ENV": JSON.stringify(config.mode)
+                    "NODE_ENV": JSON.stringify(config.mode),
+                    "AUTH_TYPES": JSON.stringify("no_auth")
                 }
             }),
 
@@ -198,8 +206,6 @@ module.exports = function(config) {
 
             // Makes it so you don't have to restart dev server when updating node_modules
             isDevelopment && new WatchMissingNodeModulesPlugin(config.nodeModulesPath),
-
-            isDevelopment && new WatchTSConfigPathsPlugin(config.packageTSConfigPathsPath),
 
             // Extract css files in production build
             isProduction && new MiniCssExtractPlugin({

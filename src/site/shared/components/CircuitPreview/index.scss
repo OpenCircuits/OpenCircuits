@@ -52,6 +52,12 @@
         padding: 0 0 0 5px;
         img.circuit_options {
             height: 100%;
+            transition: transform 0.5s;
+
+            &:hover {
+                cursor: pointer;
+                transform: rotate(90deg);
+            }
         }
     }
 }

@@ -1,21 +1,22 @@
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {TutorialDropdown} from "./TutorialDropdown";
-import {OnLoadFunc, OpenFileButton} from "./OpenFileButton";
-import {DownloadMenuDropdown, OnDownloadFunc} from "./DownloadMenuDropdown";
+import {OpenFileButton} from "./OpenFileButton";
+import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
 
 import "./index.scss";
 
 
 type Props = {
-    onLoad: OnLoadFunc;
-    onDownload: OnDownloadFunc;
+    helpers: CircuitInfoHelpers;
 }
-export const HeaderRight = ({onLoad, onDownload}: Props) => {
+export const HeaderRight = ({ helpers }: Props) => {
     return (
         <div className="header__right">
             <TutorialDropdown />
-            <OpenFileButton onLoad={onLoad} />
-            <DownloadMenuDropdown onDownload={onDownload} />
+            <OpenFileButton helpers={helpers} />
+            <DownloadMenuDropdown helpers={helpers} />
             <SignInOutButtons />
         </div>
     );

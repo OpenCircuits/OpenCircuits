@@ -5,12 +5,17 @@ import {createStore, applyMiddleware} from "redux";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 
+import {Images} from "digital/utils/Images";
+
+import "digital/models/ioobjects";
+
+import {GetCookie} from "shared/utils/Cookies";
+import {NoAuthState} from "shared/api/auth/NoAuthState";
+import {Login} from "shared/state/UserInfo/actions";
+
 import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
-
-import {Images} from "digital/utils/Images";
-import "digital/models/ioobjects";
 
 
 async function Init(): Promise<void> {
@@ -19,10 +24,24 @@ async function Init(): Promise<void> {
 
     const store = createStore(reducers, applyMiddleware(thunk));
 
+    // Initialize auth
+    const AuthMethods: Record<string, () => Promise<void>> = {
+        "no_auth": async () => {
+            const username = GetCookie("no_auth_username");
+            if (username)
+                await store.dispatch<any>(Login(new NoAuthState(username)));
+        },
+        "google": async () => {
+        }
+    };
+    await Promise.all((process.env.AUTH_TYPES ?? "").split(" ").map(a => AuthMethods[a]()));
+
+    const AppView = App(store);
+
     ReactDOM.render(
         <React.StrictMode>
             <Provider store={store}>
-                <App />
+                <AppView />
             </Provider>
         </React.StrictMode>,
         document.getElementById("root")
