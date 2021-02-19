@@ -28,7 +28,7 @@ const _LoginPopup = ({curPopup, Login, CloseHeaderPopups}: Props) => {
                className="login__popup"
                isOpen={(curPopup === "login")}
                close={CloseHeaderPopups}>
-            {(process.env.AUTH_TYPES ?? "").split(" ").map((s, i) => (
+            {(process.env.REACT_APP_AUTH_TYPES ?? "").split(" ").map((s, i) => (
                 <Fragment key={`login-popup-auth-${s}`}>
                     {s !== "no_auth" ? (<div></div>) :
                     <div>
@@ -55,5 +55,5 @@ const _LoginPopup = ({curPopup, Login, CloseHeaderPopups}: Props) => {
 
 export const LoginPopup = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     (state) => ({ curPopup: state.header.curPopup }),
-    { Login, CloseHeaderPopups }
+    { Login, CloseHeaderPopups } as any
 )(_LoginPopup);

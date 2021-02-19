@@ -25,7 +25,7 @@ export function GetDigitalCircuitInfoHelpers(store: Store<AppState>, canvas: Ref
             const {circuit} = store.getState();
 
             // Prompt to load
-            const open = circuit.isSaved || confirm(OVERWRITE_CIRCUIT_MESSAGE);
+            const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
             if (!open)
                 return;
 

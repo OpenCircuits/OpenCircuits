@@ -20,7 +20,7 @@ export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectS
         const out = wire.getP2();
         inp.disconnect(wire);
         out.disconnect(wire);
-        action.add(new ConnectionAction(inp, out));
+        action.add(new ConnectionAction(designer, inp, out));
     }
 
     return action;

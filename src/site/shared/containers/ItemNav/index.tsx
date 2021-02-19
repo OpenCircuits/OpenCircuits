@@ -3,7 +3,6 @@ import {connect} from "react-redux";
 
 import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
-import {ICItemNavData} from "shared/state/ItemNav/state";
 
 import "./index.scss";
 
@@ -31,14 +30,13 @@ type StateProps = {
     isOpen: boolean;
     isEnabled: boolean;
     isLocked: boolean;
-    ics: ICItemNavData[];
 }
 type DispatchProps = {
     toggle: () => void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ isOpen, isEnabled, isLocked, ics, config, toggle }: Props) {
+function _ItemNav({ isOpen, isEnabled, isLocked, config, toggle }: Props) {
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
@@ -71,8 +69,7 @@ function _ItemNav({ isOpen, isEnabled, isLocked, ics, config, toggle }: Props) {
 const MapState = (state: SharedAppState) => ({
     isLocked: state.circuit.isLocked,
     isEnabled: state.itemNav.isEnabled,
-    isOpen: state.itemNav.isOpen,
-    ics: state.itemNav.ics
+    isOpen: state.itemNav.isOpen
 });
 const MapDispatch = {
     toggle: ToggleItemNav

@@ -99,7 +99,7 @@ export const ICDesigner = (() => {
                 if (!active)
                     return;
                 camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-                renderQueue.render(); // Re-render
+                renderer.render(); // Re-render
             }, [active, w, h]);
 
 
@@ -136,7 +136,7 @@ export const ICDesigner = (() => {
                 if (!data)
                     return;
                 data.setName(name);
-                renderQueue.render();
+                renderer.render();
             }, [name, data]);
 
             // Happens when activated
@@ -147,27 +147,27 @@ export const ICDesigner = (() => {
                 setName({ name: "" });
 
                 // Unlock input
-                circuitInfo.input.unblock();
+                icInfo.input.unblock();
 
                 // Block input for main designer
                 mainInfo.input.block();
 
                 // Reset designer and add IC
                 designer.reset();
-                circuitInfo.ic = new IC(data);
-                circuitInfo.ic.setPos(V());
-                designer.addObject(circuitInfo.ic);
+                icInfo.ic = new IC(data);
+                icInfo.ic.setPos(V());
+                designer.addObject(icInfo.ic);
 
                 // Set camera
                 camera.setPos(V());
 
-                renderQueue.render();
+                renderer.render();
             }, [active, data, mainInfo, setName]);
 
 
             const close = (cancelled: boolean = false) => {
                 // Block input while closed
-                circuitInfo.input.block();
+                icInfo.input.block();
 
                 if (!cancelled) {
                     // Create IC on center of screen

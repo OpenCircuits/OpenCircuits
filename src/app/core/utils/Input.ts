@@ -1,4 +1,4 @@
-import * as Hammer from "hammerjs";
+import Hammer from "hammerjs";
 
 import {DRAG_TIME,
         LEFT_MOUSE_BUTTON,

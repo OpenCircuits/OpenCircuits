@@ -1,4 +1,4 @@
-import {AllSharedActions} from "../actions";
+import {AllActions} from "../actions";
 
 import {OPEN_IC_DESIGNER_ID, CLOSE_IC_DESIGNER_ID} from "./actionTypes";
 import {ICDesignerState} from "./state";
@@ -9,7 +9,7 @@ const initialState = {
     ic: undefined
 } as ICDesignerState;
 
-export function icDesignerReducer(state = initialState, action: AllSharedActions): ICDesignerState {
+export function icDesignerReducer(state = initialState, action: AllActions): ICDesignerState {
     switch (action.type) {
         case OPEN_IC_DESIGNER_ID:
             return {

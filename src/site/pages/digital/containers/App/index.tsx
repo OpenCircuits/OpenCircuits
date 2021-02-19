@@ -1,3 +1,4 @@
+import React from "react";
 import {createStore, applyMiddleware, Store} from "redux";
 import {Provider} from "react-redux";
 import thunk from "redux-thunk";
@@ -13,15 +14,7 @@ import {WiringTool}         from "core/tools/WiringTool";
 import {SplitWireTool}      from "core/tools/SplitWireTool";
 import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
 
-import {SideNav} from "shared/containers/SideNav";
-import {MainDesigner} from "../MainDesigner";
-
-import exampleConfig from "site/digital/data/examples/examples.json";
-
-import {KeyboardShortcutsPopup} from "../KeyboardShortcutsPopup";
-import {QuickStartPopup} from "../QuickStartPopup";
-import {LoginPopup} from "shared/containers/LoginPopup";
-
+import {LoginPopup}           from "shared/containers/LoginPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
@@ -35,6 +28,13 @@ import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modul
 import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 
 
+import exampleConfig from "site/digital/data/examples/examples.json";
+
+
+import {MainDesigner} from "../MainDesigner";
+import {KeyboardShortcutsPopup} from "../KeyboardShortcutsPopup";
+import {QuickStartPopup} from "../QuickStartPopup";
+
 import {ICDesigner} from "site/digital/containers/ICDesigner";
 import {ICViewer} from "../ICViewer";
 import {DigitalItemNav} from "../DigitalItemNav";
@@ -42,6 +42,7 @@ import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {ContextMenu} from "shared/containers/ContextMenu";
 
 
+import {SideNav} from "shared/containers/SideNav";
 import {reducers} from "../../state/reducers";
 import {GetCookie} from "shared/utils/Cookies";
 import {Login} from "shared/state/UserInfo/actions";
@@ -114,7 +115,6 @@ export const App = ((store: Store<AppState>) => {
                     <KeyboardShortcutsPopup />
 
                     <LoginPopup />
-                    {/* <LoginPopup /> */}
                 </main>
             </div>
         );

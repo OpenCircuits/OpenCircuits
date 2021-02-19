@@ -7,8 +7,6 @@ import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
 import {HeaderPopups}      from "shared/state/Header/state";
 
-import "./index.scss";
-
 
 type OwnProps = {}
 type StateProps = {

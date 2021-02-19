@@ -1,8 +1,6 @@
-import {Dispatch} from "react";
 import {connect} from "react-redux";
 
-import {AppState} from "shared/state";
-import {AllSharedActions} from "shared/state/actions";
+import {SharedAppState} from "shared/state";
 import {HeaderMenus, HeaderPopups} from "shared/state/Header/state";
 import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header/actions";
 
@@ -57,12 +55,15 @@ const _TutorialDropdown = ({ curMenu, openMenu, openPopup, closeMenus }: Props) 
 );
 
 
-const MapState = (state: AppState) => ({
+const MapState = (state: SharedAppState) => ({
     curMenu: state.header.curMenu
 });
-const MapDispatch = (dispatch: Dispatch<AllSharedActions>) => ({
-    openMenu: (menu: HeaderMenus) => dispatch(OpenHeaderMenu(menu)),
-    openPopup: (popup: HeaderPopups) => dispatch(OpenHeaderPopup(popup)),
-    closeMenus: () => dispatch(CloseHeaderMenus())
-});
-export const TutorialDropdown = connect<StateProps, DispatchProps, OwnProps, AppState>(MapState, MapDispatch)(_TutorialDropdown);
+const MapDispatch = {
+    openMenu: OpenHeaderMenu,
+    openPopup: OpenHeaderPopup,
+    closeMenus: CloseHeaderMenus
+};
+export const TutorialDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+    MapState,
+    MapDispatch
+)(_TutorialDropdown);

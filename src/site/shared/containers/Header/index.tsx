@@ -1,3 +1,4 @@
+import React from "react";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {HeaderLeft} from "./Left";

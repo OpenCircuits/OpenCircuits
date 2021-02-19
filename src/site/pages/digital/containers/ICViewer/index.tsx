@@ -51,38 +51,38 @@ type DispatchProps = {
 
 type Props = StateProps & DispatchProps & OwnProps;
 export const ICViewer = (() => {
-    const camera = new Camera();
-    const renderQueue = new RenderQueue();
-    const designer = new DigitalCircuitDesigner(1, () => renderQueue.render());
-    const toolManager = new ToolManager(new InteractionTool([]), PanTool);
-    const selections = new SelectionsWrapper();
+    // const camera = new Camera();
+    // const renderQueue = new RenderQueue();
+    // const designer = new DigitalCircuitDesigner(1, () => renderQueue.render());
+    // const toolManager = new ToolManager(new InteractionTool([]), PanTool);
+    // const selections = new SelectionsWrapper();
 
-    const circuitInfo: CircuitInfo = {
-        locked: false,
-        history: undefined,
-        camera, designer,
-        input: undefined, // Initialize on init
-        selections, toolManager,
-        renderer: renderQueue
-    };
-    function CreateDigitalRenderers(renderer: Renderer) {
-        return CreateRenderers(renderer, circuitInfo, {
-            gridRenderer: Grid,
-            wireRenderer: WireRenderer,
-            componentRenderer: ComponentRenderer,
-            toolRenderer: ToolRenderer
-        });
-    }
-    function render({renderer, Grid, Wires, Components, Tools}: ReturnType<typeof CreateDigitalRenderers>) {
-        renderer.clear();
+    // const circuitInfo: CircuitInfo = {
+    //     locked: false,
+    //     history: undefined,
+    //     camera, designer,
+    //     input: undefined, // Initialize on init
+    //     selections, toolManager,
+    //     renderer: renderQueue
+    // };
+    // function CreateDigitalRenderers(renderer: Renderer) {
+    //     return CreateRenderers(renderer, circuitInfo, {
+    //         gridRenderer: Grid,
+    //         wireRenderer: WireRenderer,
+    //         componentRenderer: ComponentRenderer,
+    //         toolRenderer: ToolRenderer
+    //     });
+    // }
+    // function render({renderer, Grid, Wires, Components, Tools}: ReturnType<typeof CreateDigitalRenderers>) {
+    //     renderer.clear();
 
-        Grid.render();
+    //     Grid.render();
 
-        Wires.renderAll(designer.getWires(), []);
-        Components.renderAll(designer.getObjects(), []);
+    //     Wires.renderAll(designer.getWires(), []);
+    //     Components.renderAll(designer.getObjects(), []);
 
-        Tools.render(toolManager);
-    }
+    //     Tools.render(toolManager);
+    // }
 
 
     return connect<StateProps, DispatchProps, OwnProps, AppState>(
@@ -91,73 +91,73 @@ export const ICViewer = (() => {
         { closeViewer: CloseICViewer }
     )(
         ({active, data, onActivate, onClose, closeViewer}: Props) => {
-            const {w, h} = useWindowSize();
-            const canvas = useRef<HTMLCanvasElement>();
+            // const {w, h} = useWindowSize();
+            // const canvas = useRef<HTMLCanvasElement>();
 
-            // On resize (useLayoutEffect happens sychronously so
-            //  there's no pause/glitch when resizing the screen)
-            useLayoutEffect(() => {
-                if (!active)
-                    return;
-                camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-                renderQueue.render(); // Re-render
-            }, [active, w, h]);
-
-
-            // Initial function called after the canvas first shows up
-            useEffect(() => {
-                const renderer = new Renderer(canvas.current);
-                const input = new Input(canvas.current);
-                const renderers = CreateDigitalRenderers(renderer);
-
-                circuitInfo.input = input;
-                input.block(); // Initially block input
-
-                input.addListener((event) => {
-                    const change = toolManager.onEvent(event, circuitInfo);
-                    if (change) renderQueue.render();
-                });
-
-                renderQueue.setRenderFunction(() => render(renderers));
-                renderQueue.render();
-            }, []); // Pass empty array so that this only runs once on mount
-
-            // Happens when activated
-            useLayoutEffect(() => {
-                if (!active || !data)
-                    return;
-                // Callback
-                onActivate();
-
-                // Unlock input
-                circuitInfo.input.unblock();
-
-                const inside = data.copy();
-
-                // Reset designer and add IC insides
-                designer.reset();
-                designer.addGroup(inside);
-
-                // Adjust the camera so it all fits in the viewer
-                const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
-                new MoveCameraAction(camera, pos, zoom).execute();
-
-                renderQueue.render();
-            }, [active, data, onActivate]);
+            // // On resize (useLayoutEffect happens sychronously so
+            // //  there's no pause/glitch when resizing the screen)
+            // useLayoutEffect(() => {
+            //     if (!active)
+            //         return;
+            //     camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
+            //     renderQueue.render(); // Re-render
+            // }, [active, w, h]);
 
 
-            const close = () => {
-                // Block input while closed
-                circuitInfo.input.block();
+            // // Initial function called after the canvas first shows up
+            // useEffect(() => {
+            //     const renderer = new Renderer(canvas.current);
+            //     const input = new Input(canvas.current);
+            //     const renderers = CreateDigitalRenderers(renderer);
 
-                onClose();
-                closeViewer();
-            }
+            //     circuitInfo.input = input;
+            //     input.block(); // Initially block input
+
+            //     input.addListener((event) => {
+            //         const change = toolManager.onEvent(event, circuitInfo);
+            //         if (change) renderQueue.render();
+            //     });
+
+            //     renderQueue.setRenderFunction(() => render(renderers));
+            //     renderQueue.render();
+            // }, []); // Pass empty array so that this only runs once on mount
+
+            // // Happens when activated
+            // useLayoutEffect(() => {
+            //     if (!active || !data)
+            //         return;
+            //     // Callback
+            //     onActivate();
+
+            //     // Unlock input
+            //     circuitInfo.input.unblock();
+
+            //     const inside = data.copy();
+
+            //     // Reset designer and add IC insides
+            //     designer.reset();
+            //     designer.addGroup(inside);
+
+            //     // Adjust the camera so it all fits in the viewer
+            //     const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
+            //     new MoveCameraAction(camera, pos, zoom).execute();
+
+            //     renderQueue.render();
+            // }, [active, data, onActivate]);
+
+
+            // const close = () => {
+            //     // Block input while closed
+            //     circuitInfo.input.block();
+
+            //     onClose();
+            //     closeViewer();
+            // }
 
 
             return (
                 <div className="icviewer" style={{ display: (active ? "initial" : "none") }}>
-                    <canvas ref={canvas}
+                    {/* <canvas ref={canvas}
                             width={w*IC_DESIGNER_VW}
                             height={h*IC_DESIGNER_VH} />
 
@@ -165,7 +165,7 @@ export const ICViewer = (() => {
                         <button name="close" onClick={() => close()}>
                             Close
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             );
         }

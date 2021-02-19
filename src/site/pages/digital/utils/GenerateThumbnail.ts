@@ -35,8 +35,11 @@ export const GenerateThumbnail = (() => {
 
         const render = GetRenderFunc({
             canvas,
-            info: {...info, camera},
-            toolManager: new ToolManager(new DefaultTool())
+            info: {
+                ...info,
+                camera,
+                toolManager: new ToolManager(new DefaultTool())
+            }
         });
 
         render();
