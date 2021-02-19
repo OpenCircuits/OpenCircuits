@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import {createStore, applyMiddleware} from "redux";
-import thunk from "redux-thunk";
+import thunk, {ThunkMiddleware} from "redux-thunk";
 import {Provider} from "react-redux";
 
 import {Images} from "digital/utils/Images";
@@ -16,13 +16,15 @@ import {Login} from "shared/state/UserInfo/actions";
 import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
+import {AppState, AppStore} from "./state";
+import {AllActions} from "./state/actions";
 
 
 async function Init(): Promise<void> {
     // Load images
     await Images.Load();
 
-    const store = createStore(reducers, applyMiddleware(thunk));
+    const store: AppStore = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
 
     // Initialize auth
     const AuthMethods: Record<string, () => Promise<void>> = {

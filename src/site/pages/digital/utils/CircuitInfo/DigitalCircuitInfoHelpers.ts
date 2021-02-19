@@ -12,14 +12,14 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {SaveCircuit, SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 
-import {AppState} from "../../state";
+import {AppStore} from "../../state";
 import {GenerateThumbnail} from "../GenerateThumbnail";
 import {RefObject} from "react";
 import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
 import {SaveFile} from "shared/utils/Exporter";
 
 
-export function GetDigitalCircuitInfoHelpers(store: Store<AppState>, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
+export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
         LoadCircuit: async (circuitData) => {
             const {circuit} = store.getState();
@@ -60,7 +60,7 @@ export function GetDigitalCircuitInfoHelpers(store: Store<AppState>, canvas: Ref
             if (circuit.saving || user.loading)
                 return;
 
-            SaveCircuit(helpers.GetSerializedCircuit());
+            store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
         },
 
         SaveCircuitToFile: async (type) => {

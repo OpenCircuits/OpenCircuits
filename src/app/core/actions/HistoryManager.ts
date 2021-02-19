@@ -1,5 +1,9 @@
 import {Action} from "core/actions/Action";
 
+
+type HistoryCallbackType = "add" | "undo" | "redo";
+type HistoryCallback = (type: HistoryCallbackType) => void;
+
 /**
  * Manages undo/redo actions
  */
@@ -9,10 +13,25 @@ export class HistoryManager {
 
     private disabled: boolean;
 
+    private callbacks: HistoryCallback[];
+
     public constructor() {
         this.undoStack = [];
         this.redoStack = [];
         this.disabled = false;
+        this.callbacks = [];
+    }
+
+    private callback(type: HistoryCallbackType): void {
+        this.callbacks.forEach(c => c(type));
+    }
+
+    public addCallback(callback: HistoryCallback): void {
+        this.callbacks.push(callback);
+    }
+
+    public removeCallback(callback: HistoryCallback): void {
+        this.callbacks.splice(this.callbacks.indexOf(callback), 1);
     }
 
     public setDisabled(disabled = true): void {
@@ -29,6 +48,8 @@ export class HistoryManager {
 
         this.redoStack = [];
         this.undoStack.push(action);
+
+        this.callback("add");
 
         return this;
     }
@@ -47,6 +68,8 @@ export class HistoryManager {
 
             // add to redo stack
             this.redoStack.push(action);
+
+            this.callback("undo");
         }
 
         return this;
@@ -66,6 +89,8 @@ export class HistoryManager {
 
             // add back to undo stack
             this.undoStack.push(action);
+
+            this.callback("redo");
         }
 
         return this;

@@ -1,6 +1,6 @@
 import {AllSharedActions} from "../actions";
 
-import {SET_CIRCUIT_ID_ID, SET_CIRCUIT_NAME_ID, SET_CIRCUIT_SAVED_ID, TOGGLE_CIRCUIT_LOCKED_ID} from "./actionTypes";
+import {SET_CIRCUIT_ID_ID, SET_CIRCUIT_NAME_ID, SET_CIRCUIT_SAVED_ID, SET_CIRCUIT_SAVING_FINISH_ID, SET_CIRCUIT_SAVING_START_ID, TOGGLE_CIRCUIT_LOCKED_ID} from "./actionTypes";
 import {CircuitInfoState} from "./state";
 
 
@@ -31,6 +31,19 @@ export function circuitInfoReducer(state = initialState, action: AllSharedAction
                 ...state,
                 isSaved: action.saved
             };
+        case SET_CIRCUIT_SAVING_START_ID:
+            return {
+                ...state,
+                saving: true,
+                error: ""
+            };
+        case SET_CIRCUIT_SAVING_FINISH_ID:
+            return {
+                ...state,
+                saving: false,
+                isSaved: (action.err === undefined),
+                error: action.err
+            }
         case TOGGLE_CIRCUIT_LOCKED_ID:
             return {
                 ...state,

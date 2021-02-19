@@ -49,10 +49,11 @@ import {Login} from "shared/state/UserInfo/actions";
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 
 import "./index.css";
-import {AppState} from "site/digital/state";
+import {AppStore} from "site/digital/state";
 import {Setup} from "site/digital/utils/CircuitInfo/Setup";
 import {Header} from "shared/containers/Header";
 import {createRef} from "react";
+import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -65,7 +66,7 @@ const exampleCircuits = exampleConfig.examples.map((example) =>
         .build()
 );
 
-export const App = ((store: Store<AppState>) => {
+export const App = ((store: AppStore) => {
     const canvas = createRef<HTMLCanvasElement>();
 
     // Setup circuit and get the CircuitInfo and helpers
@@ -76,6 +77,10 @@ export const App = ((store: Store<AppState>) => {
         TranslateTool, WiringTool,
         SplitWireTool, SelectionBoxTool
     );
+
+    info.history.addCallback(() => {
+        store.dispatch(SetCircuitSaved(false));
+    });
 
 
     return function AppView() {

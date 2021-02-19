@@ -43,5 +43,5 @@ module.exports = {
             path.resolve("src/site/shared"),  // (2)
         ]),
         addWebpackAlias(getAliases())
-    ),
+    )
 }
