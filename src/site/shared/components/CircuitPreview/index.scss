@@ -1,0 +1,63 @@
+@import "~shared/utils/theme";
+
+.circuit__preview {
+    $img-width: 50px;
+    $height: 50px;
+    $padding-v: 4px;
+    $padding-h: 6px;
+
+    display: flex;
+
+    height: $height;
+    padding: $padding-v $padding-h $padding-v $padding-h;
+
+    cursor: pointer;
+
+    border-bottom: solid 1px $secondary-color;
+    background-color: lighten($primary-color, 5%);
+
+    &__icon {
+        width: $img-width;
+        padding: 0 5px 0 0;
+        img {
+            width: $img-width;
+            height: $img-width;
+
+            border-radius: 5px;
+            background-color: $background-color;
+        }
+    }
+    &__text {
+        display: inline-block;
+        flex-grow: 1;
+
+        width: 50px;
+
+        vertical-align: top;
+        & div {
+            display: block;
+            overflow: hidden;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        &__name {
+            font-weight: bold;
+
+            margin-top: 7px;
+        }
+    }
+    &__controls {
+        width: 20px;
+        padding: 0 0 0 5px;
+        img.circuit_options {
+            height: 100%;
+            transition: transform 0.5s;
+
+            &:hover {
+                cursor: pointer;
+                transform: rotate(90deg);
+            }
+        }
+    }
+}

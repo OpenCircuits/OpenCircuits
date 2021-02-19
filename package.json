@@ -9,73 +9,59 @@
     "url": "git://github.com/OpenCircuits/OpenCircuits.git"
   },
   "devDependencies": {
-    "@types/gapi": "0.0.39",
-    "@types/gapi.auth2": "0.0.50",
-    "@types/hammerjs": "^2.0.36",
-    "@types/intro.js": "^2.4.7",
-    "@types/jest": "^23.3.14",
-    "@types/jquery": "^3.5.1",
-    "@types/jspdf": "^1.3.3",
-    "@typescript-eslint/eslint-plugin": "^1.11.0",
-    "@typescript-eslint/parser": "^1.11.0",
-    "concurrently": "^5.3.0",
-    "copy-webpack-plugin": "^5.1.1",
-    "copyfiles": "^2.3.0",
-    "csscomb": "^4.3.0",
-    "eslint": "^5.16.0",
-    "jest": "^26.2.2",
-    "node-sass": "^4.13.1",
-    "npm-run-all": "^4.1.5",
-    "opener": "^1.5.1",
-    "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^26.1.4",
-    "ts-loader": "^5.3.1",
-    "typescript": "^3.9.7",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/hammerjs": "^2.0.38",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "customize-cra": "^1.0.0",
+    "node-sass": "^5.0.0",
+    "react-app-rewired": "^2.1.8",
+    "react-scripts": "4.0.2",
+    "typescript": "^4.1.2"
   },
   "dependencies": {
-    "bootstrap": "^4.5.2",
     "hammerjs": "^2.0.8",
-    "intro.js": "^2.9.3",
-    "jquery": "^3.4.1",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
     "serialeazy": "^2.0.3",
     "svg2canvas": "^0.0.10"
   },
   "scripts": {
-    "build": "run-p build:js:digital build:js:analog build:go build:css",
-    "build-win": "run-p build:js:digital build:js:analog build:go-win build:css",
-    "build:js": "run-p build:js:digital build:js:analog",
-    "build:js:digital": "webpack --config webpack.digital.js --mode=development",
-    "build:js:analog": "webpack --config webpack.analog.js  --mode=development",
-    "build:js:digital-prod": "webpack --config webpack.digital.js --mode=production",
-    "build:js:analog-prod": "webpack --config webpack.analog.js  --mode=production",
-    "build:go": "run-s copy && cd site/go && go build -o ./../../build/server",
-    "build:go-win": "run-s copy && cd site/go && go build -o ./../../build/server.exe",
-    "build:css": "node-sass ./site/public/scss -o ./build/css",
-    "start": "run-s start:digital",
-    "start-win": "run-s start:digital-win",
-    "start:digital": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080\"",
-    "start:analog": "concurrently \"cd ./build && ./server -no_auth\" \"opener http://localhost:8080/analog\"",
-    "start:digital-win": "concurrently \"cd build && server.exe -no_auth\" \"opener http://localhost:8080\"",
-    "start:analog-win": "concurrently \"cd build && server.exe -no_auth\" \"opener http://localhost:8080/analog\"",
-    "docker:build": "docker build -t opencircuits/opencircuits .",
-    "docker:start": "docker run -p 8080:80 --name opencircuits opencircuits/opencircuits",
-    "docker:stop": "docker container stop opencircuits && docker container rm opencircuits",
-    "copy": "copyfiles -u 1 site/data/* site/templates/* build/ && copyfiles -u 2 site/public/examples/* site/public/img/* build/",
-    "fix:css": "csscomb ./site/public/scss",
-    "lint": "eslint --ext .ts ./app/ ./site/public/ts/",
-    "test": "jest --coverage=\"False\"",
-    "coverage": "jest",
-    "watch": "run-p watch:digital watch:analog watch:css",
-    "watch:digital": "npm run build:js:digital -- --watch",
-    "watch:analog": "npm run build:js:analog  -- --watch",
-    "watch:css": "npm run build:css -- --watch",
-    "init:prod": "echo \"runtime: go113\nenv_variables:\n  DATASTORE_PROJECT_ID: \\\"PROJECT_ID\\\"\" >> app.yaml",
-    "copy:prod": "copyfiles -u 2 \"site/go/**/*\" build/ && copyfiles app.yaml build/ && copyfiles -u 2 site/secrets/credentials.json build/ && npm run copy",
-    "build:prod": "rimraf ./build && run-p copy:prod build:css build:js:digital-prod build:js:analog-prod",
-    "deploy": "cd ./build && gcloud app deploy"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "start:server": "node ./scripts/start-server.js",
+    "build:server": "node ./scripts/build-server.js",
+    "test": "react-app-rewired test"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

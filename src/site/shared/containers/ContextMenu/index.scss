@@ -1,0 +1,30 @@
+@import "~shared/utils/constants";
+
+.contextmenu {
+    position: fixed;
+    z-index: 1;
+
+    width: 100px;
+    padding: 1em;
+
+    border: 1px solid $secondary-color;
+    border-radius: 3px;
+    background-color: rgba(white, 0.8);
+
+    & button {
+        width: 100%;
+        margin-top: 0.1em;
+        padding: 0.4em;
+
+        text-align: left;
+
+        color: darken($secondary-color, 20%);
+    }
+    & button:hover {
+        background-color: rgba(51, 103, 214, 0.5);
+    }
+    & button:disabled {
+        color: #aaa;
+        background-color: transparent;
+    }
+}
