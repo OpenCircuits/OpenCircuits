@@ -24,8 +24,6 @@ async function Init(): Promise<void> {
 
     const store = createStore(reducers, applyMiddleware(thunk));
 
-    console.log(process.env);
-
     // Initialize auth
     const AuthMethods: Record<string, () => Promise<void>> = {
         "no_auth": async () => {
@@ -39,9 +37,6 @@ async function Init(): Promise<void> {
     await Promise.all((process.env.REACT_APP_AUTH_TYPES ?? "").split(" ").map(a => AuthMethods[a]()));
 
     const AppView = App(store);
-
-    // console.log("hello2");
-
     ReactDOM.render(
         <React.StrictMode>
             <Provider store={store}>

@@ -124,6 +124,9 @@ export const ICDesigner = (() => {
                     if (change) renderer.render();
                 });
 
+                // Input should be blocked initially
+                icInfo.input.block();
+
                 // Add render callbacks and set render function
                 designer.addCallback(() => renderer.render());
 
