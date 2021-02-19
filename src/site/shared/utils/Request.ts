@@ -6,7 +6,7 @@ type Props = {
     data?: string;
     async?: boolean;
 }
-export function APIRequest({method, url, headers, data, async}: Props): Promise<string> {
+export function Request({method, url, headers, data, async}: Props): Promise<string> {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -16,7 +16,7 @@ export function APIRequest({method, url, headers, data, async}: Props): Promise<
         // Set headers
         Object.entries(headers).forEach(([name, value]) => xhr.setRequestHeader(name, value));
 
-        xhr.onload = function () {
+        xhr.onload = function() {
             if (this.status >= 200 && this.status < 400)
                 resolve(this.response);
             else

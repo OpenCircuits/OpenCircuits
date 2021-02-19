@@ -17,17 +17,20 @@ import {GenerateThumbnail} from "../GenerateThumbnail";
 import {RefObject} from "react";
 import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
 import {SaveFile} from "shared/utils/Exporter";
+import {LoadUserCircuits} from "shared/state/UserInfo/actions";
+import {DeleteUserCircuit} from "shared/api/Circuits";
 
 
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
-        LoadCircuit: async (circuitData) => {
+        LoadCircuit: async (getData) => {
             const {circuit} = store.getState();
 
             // Prompt to load
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
-            if (!open)
-                return;
+            if (!open) return;
+
+            const circuitData = await getData();
 
             const {camera, history, designer, selections, renderer} = info;
 
@@ -60,7 +63,8 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             if (circuit.saving || user.loading)
                 return;
 
-            store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
+            await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
+            await store.dispatch(LoadUserCircuits());
         },
 
         SaveCircuitToFile: async (type) => {
@@ -77,6 +81,24 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     SaveFile(helpers.GetSerializedCircuit(), circuit.name);
                     break;
             }
+        },
+
+        DeleteCircuitRemote: async (circuitData) => {
+            const {user} = store.getState();
+
+            // Can't delete if not logged in
+            if (!user.auth)
+                return;
+
+            const shouldDelete = window.confirm(`Are you sure you want to delete circuit "${circuitData.getName()}"?`);
+            if (!shouldDelete)
+                return;
+
+            await DeleteUserCircuit(user.auth, circuitData.getId());
+
+            store.dispatch(SetCircuitId("")); // Reset id
+
+            await store.dispatch(LoadUserCircuits());
         },
 
         GetSerializedCircuit: () => {

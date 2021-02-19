@@ -28,7 +28,7 @@ import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modul
 import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 
 
-import exampleConfig from "site/digital/data/examples/examples.json";
+import exampleConfig from "site/digital/data/examples.json";
 
 
 import {MainDesigner} from "../MainDesigner";
@@ -58,7 +58,7 @@ import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
     new CircuitMetadataBuilder()
-        .withId(example.id)
+        .withId(example.file)
         .withName(example.name)
         .withOwner("Example")
         .withDesc("Example Circuit")
@@ -88,7 +88,8 @@ export const App = ((store: AppStore) => {
 
         return (
             <div className="App">
-                <SideNav exampleCircuits={exampleCircuits} />
+                <SideNav helpers={helpers}
+                         exampleCircuits={exampleCircuits} />
 
                 <main>
                     <MainDesigner info={info} />

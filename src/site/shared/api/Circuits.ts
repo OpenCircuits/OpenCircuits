@@ -1,12 +1,12 @@
 import {CircuitMetadata, CircuitMetadataDef} from "core/models/CircuitMetadata";
 import {Circuit} from "core/models/Circuit";
 import {AuthState} from "./auth/AuthState";
-import {APIRequest} from "shared/utils/APIRequest";
+import {Request} from "shared/utils/Request";
 
 
 export async function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata | undefined> {
     try {
-        return new CircuitMetadata(JSON.parse(await APIRequest({
+        return new CircuitMetadata(JSON.parse(await Request({
             method: "POST",
             url: "api/circuits",
             headers: {
@@ -23,7 +23,7 @@ export async function CreateUserCircuit(auth: AuthState, data: string): Promise<
 
 export async function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<CircuitMetadata | undefined> {
     try {
-        return new CircuitMetadata(JSON.parse(await APIRequest({
+        return new CircuitMetadata(JSON.parse(await Request({
             method: "PUT",
             url: `api/circuits/${circuitId}`,
             headers: {
@@ -40,14 +40,14 @@ export async function UpdateUserCircuit(auth: AuthState, circuitId: string, data
 
 export async function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string | undefined> {
     try {
-        return JSON.stringify(await APIRequest({
+        return await Request({
             method: "GET",
             url: `api/circuits/${circuitId}`,
             headers: {
                 "authType": auth.getType(),
                 "authId": auth.getId()
             }
-        }));
+        });
     } catch (e) {
         console.error("Failed to load user circuit!", e);
         return undefined;
@@ -56,7 +56,7 @@ export async function LoadUserCircuit(auth: AuthState, circuitId: string): Promi
 
 export async function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[] | undefined> {
     try {
-        const arr = JSON.parse(await APIRequest({
+        const arr = JSON.parse(await Request({
             method: "GET",
             url: "api/circuits",
             headers: {
@@ -73,7 +73,7 @@ export async function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadat
 
 export async function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<boolean> {
     try {
-        return (await APIRequest({
+        return (await Request({
             method: "POST",
             url: `api/circuits/${circuitId}/delete`,
             headers: {
