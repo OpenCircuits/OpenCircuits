@@ -36,9 +36,9 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "start-server": "cd build && ./server -no_auth",
     "build": "react-app-rewired build",
-    "build:go": "mkdir -p build/sql/sqlite && cp src/server/data/sql/sqlite/* build/sql/sqlite && cd src/server && go build -o ../../build/server",
+    "start:server": "node ./scripts/start-server.js",
+    "build:server": "node ./scripts/build-server.js",
     "test": "react-app-rewired test"
   },
   "babel": {
