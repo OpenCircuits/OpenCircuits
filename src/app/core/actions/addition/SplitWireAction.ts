@@ -11,10 +11,10 @@ import {PlaceAction, DeleteAction} from "./PlaceAction";
 export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: Node): GroupAction {
     const action = new GroupAction();
 
-    action.add(new DisconnectAction(designer, w));
-    action.add(new PlaceAction(designer, port));
-    action.add(new ConnectionAction(designer, w.getP1(), port.getP1()));
-    action.add(new ConnectionAction(designer, port.getP2(), w.getP2()));
+    action.add(new DisconnectAction(designer, w).execute());
+    action.add(new PlaceAction(designer, port).execute());
+    action.add(new ConnectionAction(designer, w.getP1(), port.getP1()).execute());
+    action.add(new ConnectionAction(designer, port.getP2(), w.getP2()).execute());
 
     return action;
 }
