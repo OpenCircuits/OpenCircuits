@@ -56,6 +56,9 @@ export const SplitWireTool: Tool = (() => {
             action.add(CreateSplitWireAction(designer, wire, port));
 
             info.currentlyPressedObject = port;
+
+            // Set initial position
+            initialPosition = new Vector(camera.getWorldPos(input.getMousePos()));
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
