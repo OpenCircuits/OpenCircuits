@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["./react-app-env.d.ts"],
+    "composite": true
+  },
+  "include": ["."],
+  "references": [{ "path": "../../app" }]
+}

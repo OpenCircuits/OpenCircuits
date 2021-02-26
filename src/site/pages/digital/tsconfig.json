@@ -1,0 +1,15 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../../shared"
+    },
+    {
+      "path": "../../../app"
+    }
+  ],
+  "compilerOptions": {}
+}

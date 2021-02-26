@@ -1,34 +1,8 @@
 {
-  "extends": "./tsconfig.paths.json",
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "noImplicitAny": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "isolatedModules": true,
-    "strict": false
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src"
+  "files": [],
+  "references": [
+    { "path": "src/app" },
+    { "path": "src/site/shared" },
+    { "path": "src/site/pages/digital" }
   ]
 }
