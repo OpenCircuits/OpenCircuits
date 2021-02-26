@@ -1,0 +1,26 @@
+{
+  "name": "shared",
+  "description": "OpenCircuits",
+  "author": "Leon Montealegre",
+  "version": "0.0.2",
+  "license": "GPL-3.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/OpenCircuits/OpenCircuits.git"
+  },
+  "dependencies": {
+    "app": "^0.0.2",
+    "jspdf": "^2.3.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "test": ""
+  }
+}
