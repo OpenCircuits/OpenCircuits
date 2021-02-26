@@ -18,6 +18,7 @@ import {reducers} from "./state/reducers";
 import {App} from "./containers/App";
 import {AppState, AppStore} from "./state";
 import {AllActions} from "./state/actions";
+import {QuickStartPopup} from "./containers/QuickStartPopup";
 
 
 async function Init(): Promise<void> {
@@ -42,7 +43,9 @@ async function Init(): Promise<void> {
     ReactDOM.render(
         <React.StrictMode>
             <Provider store={store}>
-                <AppView />
+                {/* <AppView /> */}
+                {AppView()}
+                <QuickStartPopup />
             </Provider>
         </React.StrictMode>,
         document.getElementById("root")
