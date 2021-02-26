@@ -15,7 +15,7 @@ import {Node, Wire} from "core/models";
 
 
 export const SplitWireTool: Tool = (() => {
-    let initalPosition: Vector;
+    let initialPosition: Vector;
     let port: Node;
     let action: GroupAction;
 
@@ -53,12 +53,15 @@ export const SplitWireTool: Tool = (() => {
             // Set wireport as selection and being pressed
             action.add(CreateDeselectAllAction(selections).execute());
             action.add(new SelectAction(selections, port).execute());
-            action.add(CreateSplitWireAction(designer, wire, port).execute());
+            action.add(CreateSplitWireAction(designer, wire, port));
 
             info.currentlyPressedObject = port;
+
+            // Set initial position
+            initialPosition = camera.getWorldPos(input.getMousePos());
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
-            history.add(action.add(new TranslateAction([port], [initalPosition], [port.getPos()])));
+            history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
         },
 
 
@@ -74,12 +77,12 @@ export const SplitWireTool: Tool = (() => {
             const dPos = worldMousePos.sub(worldMouseDownPos);
 
             // Calculate new position and et snapped positions if shift is held
-            const curPosition = initalPosition.add(dPos);
+            const curPosition = initialPosition.add(dPos);
             const newPosition = input.isShiftKeyDown() ? snap(curPosition) : curPosition;
 
             // Execute translate but don't save to group
             //  action since we do that onDeactivate
-            new TranslateAction([port], [initalPosition], [newPosition]).execute();
+            new TranslateAction([port], [initialPosition], [newPosition]).execute();
 
             return true;
         }
