@@ -54,6 +54,10 @@ export class ConnectionAction extends ReversableAction {
         return this.wire;
     }
 
+    public getName(): string {
+        return `Connected ${this.p1.getParent().getName()} to ${this.p2.getParent().getName()}`;
+    }
+
 }
 
 export class DisconnectAction extends ConnectionAction {

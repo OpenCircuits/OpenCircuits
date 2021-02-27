@@ -40,4 +40,7 @@ export class GroupAction implements Action {
         return true;
     }
 
+    public getName(): string {
+        return "Group";
+    }
 }

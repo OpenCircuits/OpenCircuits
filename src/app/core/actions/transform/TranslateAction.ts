@@ -39,4 +39,8 @@ export class TranslateAction implements Action {
 
         return this;
     }
+
+    public getName(): string {
+        return "Move Object";
+    }
 }
