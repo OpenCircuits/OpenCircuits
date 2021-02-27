@@ -30,4 +30,8 @@ export class InputPortChangeAction extends PortChangeAction {
         return this;
     }
 
+    public getName(): string {
+        return "Inport Change";
+    }
+
 }

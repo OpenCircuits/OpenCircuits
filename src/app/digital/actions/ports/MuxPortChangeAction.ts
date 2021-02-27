@@ -57,4 +57,8 @@ export class MuxPortChangeAction extends PortChangeAction {
         return this;
     }
 
+    public getName(): string {
+        return "Mux Port Change";
+    }
+
 }
