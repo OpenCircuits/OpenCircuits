@@ -53,6 +53,12 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     disabled={isLoading}
                     onClick={() => helpers.SaveCircuitRemote()}>Save</button>
         </div>
+        <div>
+            <input className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
+                   title="Turn auto save on"
+                   type='checkbox'
+            ></input>
+        </div>
     </div>
 );
 
