@@ -22,9 +22,9 @@ const _TutorialDropdown = ({ curMenu, openMenu, openPopup, closeMenus }: Props) 
     <Dropdown open={(curMenu === "tools")}
               onClick={() => openMenu("tools")}
               onClose={() => closeMenus()}
-              btnInfo={{title: "Help", src: "img/icons/build-24px.svg"}}>
         <div onClick={() => { closeMenus(); openPopup("quick_start"); }}>
-            <img src="img/icons/bool-expr-input-icon.svg" height="100%" alt="Check out our Quick Start guide" />
+              btnInfo={{title: "Help", src: "img/icons/tools.svg"}}>
+            <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="" />
             <span>Boolean Expression to Circuit</span>
         </div>
     </Dropdown>
