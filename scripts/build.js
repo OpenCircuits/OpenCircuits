@@ -1,5 +1,6 @@
 const os = require("os");
-const {spawn, execSync} = require("child_process");
+const {mkdirSync, copyFileSync, readdirSync} = require("fs");
+const {spawn} = require("child_process");
 const ora = require("ora");
 const chalk = require("chalk");
 const prompts = require("prompts");
@@ -18,8 +19,10 @@ const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 function build_server() {
     return new Promise((resolve, reject) => {
         // Create directory and copy files
-        execSync("mkdir -p build/sql/sqlite");
-        execSync("cp src/server/data/sql/sqlite/* build/sql/sqlite");
+        mkdirSync("build/sql/sqlite", { recursive: true });
+        const files = readdirSync("src/server/data/sql/sqlite/");
+        for (const file of files)
+            copyFileSync(`src/server/data/sql/sqlite/${file}`, `build/sql/sqlite/${file}`);
 
         const cmd = (os.platform() === "win32" ?
                         "cd src/server && go build -o ../../build/server.exe" :
