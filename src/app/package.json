@@ -15,6 +15,11 @@
     "svg2canvas": "^0.0.10"
   },
   "scripts": {
-    "test": ""
+    "test": "jest --watch"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   }
 }
