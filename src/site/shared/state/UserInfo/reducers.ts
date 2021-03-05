@@ -10,7 +10,8 @@ const initialState = {
     isLoggedIn: false,
     circuits: [],
     loading: false,
-    error: undefined
+    error: undefined,
+    autoSave: false
 } as UserInfoState;
 
 export function userInfoReducer(state = initialState, action: AllSharedActions): UserInfoState {

@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 
 import {SharedAppState} from "shared/state";
 import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
+import {SetAutoSave} from "shared/state/UserInfo/actions"
 import {ToggleSideNav} from "shared/state/SideNav/actions";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
@@ -18,6 +19,7 @@ type StateProps = {
     isLocked: boolean;
     isLoggedIn: boolean;
     isLoading: boolean;
+    isAutoSave: boolean;
 }
 type DispatchProps = {
     toggleLock: () => void;
@@ -57,7 +59,8 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
             <input className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                    title="Turn auto save on"
                    type='checkbox'
-            ></input>
+        
+            />Auto Save
         </div>
     </div>
 );
@@ -71,8 +74,10 @@ const MapState = (state: SharedAppState) => ({
     isSaved:     state.circuit.isSaved,
     isLocked:    state.circuit.isLocked,
     isLoggedIn:  state.user.isLoggedIn,
-    isLoading:   state.user.loading
+    isLoading:   state.user.loading,
+    isAutoSave:  state.user.autoSave
 });
+
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
     toggleSideNav:  ToggleSideNav,

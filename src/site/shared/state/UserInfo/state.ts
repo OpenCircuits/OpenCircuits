@@ -8,4 +8,5 @@ export type UserInfoState = {
     circuits: CircuitMetadata[];
     loading: boolean;
     error: string;
+    autoSave: boolean;
 }
