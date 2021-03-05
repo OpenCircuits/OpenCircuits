@@ -51,7 +51,7 @@ export const WiringTool = (() => {
                 return false;
             const ports = findPorts(info);
             // Activate if the user drags or clicks on a port
-            return ((event.type === "mousedrag" && input.getTouchCount() === 1) ||
+            return ((event.type === "mousedown" && input.getTouchCount() === 1) ||
                     (event.type === "click")) &&
                     ports.length > 0 &&
                     designer.createWire(ports[0], undefined) !== undefined;
