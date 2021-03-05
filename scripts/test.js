@@ -1,41 +1,21 @@
-const os = require("os");
-const {spawn, execSync} = require("child_process");
-const ora = require("ora");
-const chalk = require("chalk");
 const prompts = require("prompts");
+const {spawn} = require("child_process");
+const chalk = require("chalk");
 const yargs = require("yargs/yargs");
 
 
 const DIRS = [
-    { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
-    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital", disabled: true },
+    { title: "Server",  description: "The backend server for OpenCircuits", value: "server", disabled: true },
+    { title: "App",     description: "The app for OpenCircuits",            value: "app"},
+    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital", disabled: true},
     { title: "Analog",  description: "The anlog version of OpenCircuits",   value: "analog", disabled: true },
     { title: "Landing", description: "The landing page for OpenCircuits",   value: "landing", disabled: true }
 ];
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
-
-function build_server() {
+function launch_test(dir, flags) {
     return new Promise((resolve, reject) => {
-        // Create directory and copy files
-        execSync("mkdir -p build/sql/sqlite");
-        execSync("cp src/server/data/sql/sqlite/* build/sql/sqlite");
-
-        const cmd = (os.platform() === "win32" ?
-                        "cd src/server && go build -o ../../build/server.exe" :
-                        "cd src/server && go build -o ../../build/server");
-
-        spawn(cmd, {
-            shell: true,
-            stdio: "inherit"
-        }).on("exit", () => {
-            resolve();
-        });
-    });
-}
-function build_dir(dir) {
-    return new Promise((resolve, reject) => {
-        spawn(`cd ${dir} && npm run build`, {
+        spawn(`cd ${dir} && npm run test -- ${flags}`, {
             shell: true,
             stdio: "inherit"
         }).on("exit", () => {
@@ -62,13 +42,16 @@ function build_dir(dir) {
         dirs = [await prompts({
             type: "select",
             name: "value",
-            message: "Pick a project to build",
+            message: "Pick a project",
             choices: DIRS,
-            initial: 0
+            initial: 1
         }).value];
         if (!dirs[0])
             return;
     }
+
+    const flags = (ci ? "--ci " : "") +
+                  (dirs.length > 1 || ci ? "--watch=false " : "");
 
     // Launch test in each directory
     for (const dir of dirs) {
@@ -82,16 +65,6 @@ function build_dir(dir) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
-
-        const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
-
-        if (dir === "server") {
-            await build_server();
-        } else {
-            await build_dir(`src/site/pages/${type.value}`);
-        }
-
-        spinner.stop();
-        console.log(`${chalk.greenBright("Done!")}`);
+        await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags);
     }
 })();

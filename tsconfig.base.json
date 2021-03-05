@@ -31,7 +31,8 @@
       "digital/*":      ["src/app/digital/*"],
       "analog/*":       ["src/app/analog/*"],
       "shared/*":       ["src/site/shared/*"],
-      "site/digital/*": ["src/site/pages/digital/src/*"]
+      "site/digital/*": ["src/site/pages/digital/src/*"],
+      "test/helpers/*": ["src/app/tests/helpers/*"]
     }
   },
   "exclude": [
