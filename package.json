@@ -15,9 +15,7 @@
       "src/site/shared",
       "src/site/pages/*"
     ],
-    "nohoist": [
-      "**/react-scripts/, **/react-scripts/**, **/@types/**"
-    ]
+    "nohoist": ["**/**"]
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -38,9 +36,8 @@
   },
   "scripts": {
     "start": "node ./scripts/start.js",
-    "build": "react-app-rewired build",
-    "build:server": "node ./scripts/build.js",
-    "test": "react-app-rewired test"
+    "build": "node ./scripts/build.js",
+    "test": "node ./scripts/test.js"
   },
   "babel": {
     "presets": [

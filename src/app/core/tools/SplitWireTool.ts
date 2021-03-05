@@ -58,7 +58,7 @@ export const SplitWireTool: Tool = (() => {
             info.currentlyPressedObject = port;
 
             // Set initial position
-            initialPosition = camera.getWorldPos(input.getMousePos());
+            initialPosition = camera.getWorldPos(input.getMouseDownPos());
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
@@ -76,7 +76,7 @@ export const SplitWireTool: Tool = (() => {
 
             const dPos = worldMousePos.sub(worldMouseDownPos);
 
-            // Calculate new position and et snapped positions if shift is held
+            // Calculate new position and get snapped positions if shift is held
             const curPosition = initialPosition.add(dPos);
             const newPosition = input.isShiftKeyDown() ? snap(curPosition) : curPosition;
 
