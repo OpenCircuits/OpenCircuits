@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Build & Test [Node]
+name: Build & Test
 
 on:
   push:
@@ -14,10 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
+
     - name: Use Node.js 15.x
       uses: actions/setup-node@v1
       with:
         node-version: 15.x
+
     - run: npm install
-    - run: npm run build --if-present
-    - run: npm test
+
+    - name: Build backend [Golang]
+      run: npm run build -- server --ci
+
+    - name: Run tests (App) [TypeScript]
+      run: npm test -- app --ci
