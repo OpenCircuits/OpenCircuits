@@ -39,13 +39,13 @@ function launch_test(dir, flags) {
         dirs = Object.keys(DIR_MAP);
     } else if (dirs.length === 0) {
         // Prompt user for directory
-        dirs = [await prompts({
+        dirs = [(await prompts({
             type: "select",
             name: "value",
             message: "Pick a project",
             choices: DIRS,
             initial: 1
-        }).value];
+        })).value];
         if (!dirs[0])
             return;
     }
