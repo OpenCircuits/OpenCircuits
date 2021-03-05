@@ -51,7 +51,7 @@ function launch_test(dir, flags) {
     }
 
     const flags = (ci ? "--ci " : "") +
-                  (dirs.length > 1 ? "--watch=false " : "");
+                  (dirs.length > 1 || ci ? "--watch=false " : "");
 
     // Launch test in each directory
     for (const dir of dirs) {
