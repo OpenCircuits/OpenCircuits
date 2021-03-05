@@ -1,24 +1,28 @@
 const os = require("os");
+const {spawn, execSync} = require("child_process");
+const ora = require("ora");
+const chalk = require("chalk");
 const prompts = require("prompts");
-const {spawn} = require("child_process");
 
 
 function build_server() {
+    const spinner = ora("Building...").start();
+
     // Create directory and copy files
     execSync("mkdir -p build/sql/sqlite");
     execSync("cp src/server/data/sql/sqlite/* build/sql/sqlite");
 
-    if (os.platform() === "win32") {
-        spawn("cd src/server && go build -o ../../build/server.exe", {
-            shell: true,
-            stdio: "inherit"
-        });
-    } else {
-        spawn("cd src/server && go build -o ../../build/server", {
-            shell: true,
-            stdio: "inherit"
-        });
-    }
+    const cmd = (os.platform() === "win32" ?
+                    "cd src/server && go build -o ../../build/server.exe" :
+                    "cd src/server && go build -o ../../build/server");
+
+    spawn(cmd, {
+        shell: true,
+        stdio: "inherit"
+    }).on("exit", () => {
+        spinner.stop();
+        console.log(`${chalk.greenBright("Done!")}`);
+    });
 }
 
 
