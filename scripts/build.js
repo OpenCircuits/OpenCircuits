@@ -59,13 +59,13 @@ function build_dir(dir) {
         dirs = Object.keys(DIR_MAP);
     } else if (dirs.length === 0) {
         // Prompt user for directory
-        dirs = [await prompts({
+        dirs = [(await prompts({
             type: "select",
             name: "value",
             message: "Pick a project to build",
             choices: DIRS,
             initial: 0
-        }).value];
+        })).value];
         if (!dirs[0])
             return;
     }

@@ -66,4 +66,5 @@ export type UserInfoActions =
     LoginAction             |
     LogoutAction            |
     LoadCircuitsStartAction |
-    LoadCircuitsFinishAction;
+    LoadCircuitsFinishAction|
+    SetAutoSave;
