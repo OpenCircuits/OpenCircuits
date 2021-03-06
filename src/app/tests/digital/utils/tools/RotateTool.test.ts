@@ -105,18 +105,20 @@ describe("Rotate Tool", () => {
                     .press();
 
             for (let i = 0; i < 100; i++) {
-                for (let j = 0; j < 2*Math.PI; j += 2*Math.PI/10) {
+                for (let j = 0; j <= 2*Math.PI; j += 2*Math.PI/10) {
                     const pos = V(ROTATION_CIRCLE_RADIUS*Math.cos(j), ROTATION_CIRCLE_RADIUS*Math.sin(j));
-                    input.move(pos);
+                    input.moveTo(midpoint.add(pos));
+                    expect(obj1.getAngle()).toBeCloseToAngle(j);
+                    expect(obj2.getAngle()).toBeCloseToAngle(j);
                 }
             }
             input.release();
 
             const newMidpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
 
-            expect(newMidpoint).toApproximatelyEqual(midpoint);
+            expect(newMidpoint).toApproximatelyEqual(midpoint); // Make sure midpoint stayed in the same place
             expect(obj1.getAngle()).toBeCloseTo(0);
             expect(obj2.getAngle()).toBeCloseTo(0);
-        })
+        });
     });
 });
