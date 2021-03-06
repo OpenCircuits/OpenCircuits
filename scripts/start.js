@@ -5,7 +5,7 @@ const {spawn} = require("child_process");
 
 function start_server() {
     if (os.platform() === "win32") {
-        spawn("cd build && ./server.exe -no_auth", {
+        spawn("cd build && server.exe -no_auth", {
             shell: true,
             stdio: "inherit"
         });
