@@ -14,6 +14,13 @@ export class GoogleAuthState implements AuthState {
         return auth2.currentUser.get().getAuthResponse().id_token;
     }
 
+    public getName(): string {
+        const auth2 = gapi.auth2.getAuthInstance();
+        if (!auth2.isSignedIn.get())
+            return "";
+        return auth2.currentUser.get().getBasicProfile().getName();
+    }
+
     public logOut(): Promise<object> {
         return gapi.auth2.getAuthInstance().signOut();
     }
