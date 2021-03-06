@@ -4,7 +4,7 @@ const ts = require("typescript");
 
 
 function getAliases() {
-    const root = "../../../.."
+    const root = "../../../..";
     const file = path.resolve(__dirname, "tsconfig.json");
 
     const rawConfig = ts.readConfigFile(file, ts.sys.readFile).config;
@@ -24,8 +24,6 @@ function getAliases() {
         });
     }
 
-    console.log(aliases);
-
     return aliases;
 }
 
@@ -41,13 +39,6 @@ module.exports = {
             path.resolve(__dirname, "../../shared"),
             path.resolve(__dirname, "src")
         ]),
-        addWebpackAlias({
-            ...getAliases(),
-            // react: path.resolve("./node_modules/react"),
-            // "react-dom": path.resolve("./node_modules/react-dom"),
-            // "react-redux": path.resolve("./node_modules/react-redux"),
-            // "redux": path.resolve("./node_modules/redux"),
-            // "redux-thunk": path.resolve("./node_modules/redux-thunk")
-        })
+        addWebpackAlias(getAliases())
     )
 }
