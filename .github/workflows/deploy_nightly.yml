@@ -31,7 +31,7 @@ jobs:
       run: npm install --loglevel=error
 
     - name: Build
-      run: npm run build -- --ci server digital
+      run: npm run build -- --ci --prod server digital
 
     - name: Create OAuth credentials and app.yaml
       run: |
