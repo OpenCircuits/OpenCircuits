@@ -13,7 +13,8 @@ export function headerReducer(state = initialState, action: AllSharedActions): H
         case OPEN_HEADER_MENU_ID:
             return {
                 ...state,
-                curMenu: action.menu
+                // Close the menu by clicking on its icon while it is open
+                curMenu: ((state.curMenu === action.menu) ? ("none") : (action.menu))
             };
         case OPEN_HEADER_POPUP_ID:
             return {
