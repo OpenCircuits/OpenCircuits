@@ -28,16 +28,15 @@ jobs:
         node-version: 15.x
 
     - name: Install
-      run: npm install
+      run: npm install --loglevel=error
 
     - name: Build
       run: npm run build -- --ci server digital
 
     - name: Create OAuth credentials and app.yaml
       run: |
-        mkdir -p ./site/secrets
-        echo "${{ secrets.OAUTH_CREDENTIALS }}" >> ./site/secrets/credentials.json
-        echo "${{ secrets.APP_YAML }}" >> app.yaml
+        echo "${{ secrets.OAUTH_CREDENTIALS }}" >> ./build/credentials.json
+        echo "${{ secrets.APP_YAML }}" >> ./build/app.yaml
 
     - name: Deploy
       working-directory: ./build
