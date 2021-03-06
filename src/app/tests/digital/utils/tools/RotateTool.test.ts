@@ -1,4 +1,5 @@
 import "jest";
+import "test/helpers/Extensions";
 
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
@@ -88,6 +89,34 @@ describe("Rotate Tool", () => {
                     .release();
             expect(obj1.getAngle()).toBeCloseTo(-Math.PI/4);
             expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);
+        });
+
+        test("Rotate objects 100 times around", () => {
+            input.drag(V(-40, -40),
+                       V(40, 40)); // Select objects
+
+            expect(selections.get().length).toBe(2);
+            expect(selections.get()).toContain(obj1);
+            expect(selections.get()).toContain(obj2);
+
+            const midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
+            input.moveTo(midpoint) // Move to midpoint of objects
+                    .move(V(ROTATION_CIRCLE_RADIUS, 0))
+                    .press();
+
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 2*Math.PI; j += 2*Math.PI/10) {
+                    const pos = V(ROTATION_CIRCLE_RADIUS*Math.cos(j), ROTATION_CIRCLE_RADIUS*Math.sin(j));
+                    input.move(pos);
+                }
+            }
+            input.release();
+
+            const newMidpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
+
+            expect(newMidpoint).toApproximatelyEqual(midpoint);
+            expect(obj1.getAngle()).toBeCloseTo(0);
+            expect(obj2.getAngle()).toBeCloseTo(0);
         })
     });
 });
