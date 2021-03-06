@@ -1,6 +1,8 @@
 const os = require("os");
-const {mkdirSync, copyFileSync, readdirSync} = require("fs");
+const {mkdirSync, copyFileSync, readdirSync,
+       renameSync, existsSync, rmdirSync} = require("fs");
 const {spawn} = require("child_process");
+
 const ora = require("ora");
 const chalk = require("chalk");
 const prompts = require("prompts");
@@ -9,7 +11,7 @@ const yargs = require("yargs/yargs");
 
 const DIRS = [
     { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
-    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital", disabled: true },
+    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital" },
     { title: "Analog",  description: "The anlog version of OpenCircuits",   value: "analog", disabled: true },
     { title: "Landing", description: "The landing page for OpenCircuits",   value: "landing", disabled: true }
 ];
@@ -42,6 +44,14 @@ function build_dir(dir) {
             shell: true,
             stdio: "inherit"
         }).on("exit", () => {
+            if (existsSync(`${dir}/build`)) {
+                // Remove build/site folder
+                if (existsSync("build/site"))
+                    rmdirSync("build/site", { recursive: true });
+
+                // Successful build, move folder to <rootDir>/build/site
+                renameSync(`${dir}/build`, "build/site");
+            }
             resolve();
         });
     });
@@ -86,15 +96,15 @@ function build_dir(dir) {
             continue;
         }
 
-        const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
 
         if (dir === "server") {
+            const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
             await build_server();
+            spinner.stop();
         } else {
-            await build_dir(`src/site/pages/${type.value}`);
+            await build_dir(`src/site/pages/${dir}`);
         }
 
-        spinner.stop();
         console.log(`${chalk.greenBright("Done!")}`);
     }
 })();
