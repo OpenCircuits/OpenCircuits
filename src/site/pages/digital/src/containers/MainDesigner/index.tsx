@@ -45,7 +45,7 @@ const _MainDesigner = ({info, isLocked}: Props) => {
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        camera.resize(w, h); // Update camera size when w/h changes
+        camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes
         renderer.render(); // Re-render
     }, [w, h]);
 
