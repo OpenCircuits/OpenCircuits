@@ -22,22 +22,22 @@ jobs:
         service_account_email: ${{ secrets.GCP_SA_EMAIL }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Set Node.js 10.x
+    - name: Set Node.js 15.x
       uses: actions/setup-node@master
       with:
-        node-version: 10.x
+        node-version: 15.x
 
     - name: Install
       run: npm install
 
+    - name: Build
+      run: npm run build -- --ci server digital
+
     - name: Create OAuth credentials and app.yaml
       run: |
-        mkdir ./site/secrets
+        mkdir -p ./site/secrets
         echo "${{ secrets.OAUTH_CREDENTIALS }}" >> ./site/secrets/credentials.json
         echo "${{ secrets.APP_YAML }}" >> app.yaml
-
-    - name: Build
-      run: npm run build:prod
 
     - name: Deploy
       working-directory: ./build
