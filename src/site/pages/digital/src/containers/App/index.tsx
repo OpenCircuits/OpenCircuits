@@ -35,6 +35,8 @@ import {MainDesigner} from "../MainDesigner";
 import {KeyboardShortcutsPopup} from "../KeyboardShortcutsPopup";
 import {QuickStartPopup} from "../QuickStartPopup";
 
+import {ExprToCircuitPopup} from "../ExprToCircuitPopup";
+
 import {ICDesigner} from "site/digital/containers/ICDesigner";
 import {ICViewer} from "../ICViewer";
 import {DigitalItemNav} from "../DigitalItemNav";
@@ -119,6 +121,8 @@ export const App = ((store: AppStore) => {
 
                     <QuickStartPopup />
                     <KeyboardShortcutsPopup />
+
+                    <ExprToCircuitPopup />
 
                     <LoginPopup />
                 </main>
