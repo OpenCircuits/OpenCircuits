@@ -1,6 +1,6 @@
 import {AllSharedActions} from "../actions";
 import {LOAD_CIRCUITS_FINISH_ID, LOAD_CIRCUITS_START_ID,
-        LOGIN_ACTION_ID, LOGOUT_ACTION_ID} from "./actionTypes";
+        LOGIN_ACTION_ID, LOGOUT_ACTION_ID, SET_AUTOSAVE} from "./actionTypes";
 
 import {UserInfoState} from "./state";
 
@@ -30,6 +30,9 @@ export function userInfoReducer(state = initialState, action: AllSharedActions):
             if (!state.auth)
                 return {...state, circuits: [], loading: false, error: "Not logged in!"};
             return {...state, circuits: (action.circuits ?? []), error: action.err, loading: false};
+        case SET_AUTOSAVE:
+            return {
+                ...state, autoSave: !state.autoSave }
         default:
             return state;
     }

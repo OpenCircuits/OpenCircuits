@@ -29,11 +29,13 @@ export type LoadCircuitsFinishAction = {
     err?: string;
     circuits: CircuitMetadata[];
 }
-export type SetAutoSave = {
+export type SetAutoSaveAction = {
     type: typeof SET_AUTOSAVE;
-    isAutoSave: boolean;
 }
 
+export const SetAutoSave = () => ({
+    type: SET_AUTOSAVE
+}) as SetAutoSaveAction;
 
 
 export function Login(auth: AuthState): ThunkResult<Promise<void>> {
@@ -67,4 +69,4 @@ export type UserInfoActions =
     LogoutAction            |
     LoadCircuitsStartAction |
     LoadCircuitsFinishAction|
-    SetAutoSave;
+    SetAutoSaveAction;
