@@ -4,6 +4,7 @@ declare global {
     namespace jest {
         interface Matchers<R> {
             toApproximatelyEqual(expected: any, epsilon?: number): CustomMatcherResult;
+            toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
         }
     }
 }
@@ -49,6 +50,23 @@ expect.extend({
         return {
             message: () => `expected ${received} not to be approximately equal to ${expected}`,
             pass: true
+        };
+    },
+
+    toBeCloseToAngle(received: any, otherAngle: number, epsilon: number = 1e-4) {
+        // If both are numbers, then pass
+        if (!isNaN(received) && !isNaN(otherAngle)) {
+            const diff = Math.atan2(Math.sin(otherAngle - received), Math.cos(otherAngle - received));
+            const pass = Math.abs(diff) <= epsilon;
+            return {
+                message: () => `expected angle ${received*180/Math.PI}° ${pass ? "" : "not "}to be approximately equal to angle ${otherAngle*180/Math.PI}°`,
+                pass
+            };
+        }
+
+        return {
+            message: () => `expected ${received} and ${otherAngle} to be numbers (angles)`,
+            pass: false
         };
     }
 });

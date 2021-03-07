@@ -74,7 +74,10 @@
 }
 
 #login-popup-google-signin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-left: calc(300px/2 - 240px/2);
 }
