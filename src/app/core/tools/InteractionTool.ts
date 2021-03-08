@@ -61,7 +61,7 @@ export class InteractionTool extends DefaultTool {
             case "mouseup":
                 // Release currently pressed object
                 if (isPressable(currentlyPressedObject)) {
-                    currentlyPressedObject.press();
+                    currentlyPressedObject.release();
                     info.currentlyPressedObject = undefined;
                     return true;
                 }
