@@ -67,6 +67,19 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             await store.dispatch(LoadUserCircuits());
         },
 
+        AutoSaveCircuit: async() => {
+            const {circuit, user} = store.getState();
+            while (true && user.autoSave) {
+                if (!circuit.isSaved) { 
+                    await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
+                    await store.dispatch(LoadUserCircuits());
+                }
+                else {
+                    break;
+                }
+            }
+        },
+
         SaveCircuitToFile: async (type) => {
             const {circuit} = store.getState();
 

@@ -7,5 +7,5 @@ export type CircuitInfoHelpers = {
     SaveCircuitToFile: (type: "pdf" | "png" | "circuit") => Promise<void>;
     DeleteCircuitRemote: (circuit: CircuitMetadata) => Promise<void>;
     GetSerializedCircuit: () => string;
-    // setAutoSave: () => Promise<void>;
+    AutoSaveCircuit: () => Promise<void>;
 }
