@@ -68,7 +68,7 @@ export function SelectionPopup({info, modules}: Props) {
                 clickthrough = false;
                 setTimeout(() => setState((prevState) => 
                     { 
-                        return { visible: prevState.visible, pos: prevState.pos, clickthrough }
+                        return { ...prevState, clickthrough }
                     }),
                 500);
             }
