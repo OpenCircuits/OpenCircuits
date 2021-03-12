@@ -1,6 +1,6 @@
 import {useLayoutEffect, useState} from "react";
 
-import {HEADER_HEIGHT} from "shared/utils/Constants";
+import {HEADER_HEIGHT, DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
@@ -70,7 +70,7 @@ export function SelectionPopup({info, modules}: Props) {
                     { 
                         return { ...prevState, clickthrough }
                     }),
-                500);
+                DOUBLE_CLICK_DURATION);
             }
 
             lastPos = pos;
