@@ -1,21 +1,23 @@
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {HeaderPopups} from "shared/state/Header/state";
 
 import {HeaderLeft} from "./Left";
 import {HeaderRight} from "./Right";
 
 import "./index.scss";
 
-// type Tool = {
-//     popupName: string;
-//     img: string;
-// }
+type Tool = {
+    popupName: HeaderPopups;
+    img: string;
+    text: string;
+}
+
 type Props = {
     img: string;
     helpers: CircuitInfoHelpers;
-    extraToolsPopupNames: string[];
-    extraToolsimgNames: string[];
+    extraTools: Tool[];
 }
-export const Header = ({ img, helpers, extraToolsPopupNames, extraToolsimgNames }: Props) => (
+export const Header = ({ img, helpers, extraTools }: Props) => (
     <header id="header">
         <HeaderLeft helpers={helpers} />
 
@@ -28,6 +30,6 @@ export const Header = ({ img, helpers, extraToolsPopupNames, extraToolsimgNames 
             </a>
         </div>
 
-        <HeaderRight helpers={helpers} extraToolsPopupNames={extraToolsPopupNames} extraToolsimgNames={extraToolsimgNames} />
+        <HeaderRight helpers={helpers} extraTools={extraTools} />
     </header>
 );

@@ -1,4 +1,5 @@
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {HeaderPopups} from "shared/state/Header/state";
 
 import {TutorialDropdown} from "./TutorialDropdown";
 import {OpenFileButton} from "./OpenFileButton";
@@ -8,19 +9,25 @@ import {SignInOutButtons} from "./SignInOutButtons";
 
 import "./index.scss";
 
+type Tool = {
+    popupName: HeaderPopups;
+    img: string;
+    text: string;
+}
 
 type Props = {
     helpers: CircuitInfoHelpers;
-    extraToolsPopupNames: string[];
-    extraToolsimgNames: string[];
+    extraTools: Tool[];
 }
-export const HeaderRight = ({ helpers, extraToolsPopupNames, extraToolsimgNames }: Props) => {
+export const HeaderRight = ({ helpers, extraTools }: Props) => {
     return (
         <div className="header__right">
             <TutorialDropdown />
             <OpenFileButton helpers={helpers} />
             <DownloadMenuDropdown helpers={helpers} />
-            <ToolsDropdown extraToolsPopupNames={extraToolsPopupNames} extraToolsimgNames={extraToolsimgNames} />
+            {extraTools.length > 0 && // Render only if there are tools
+                <ToolsDropdown extraTools={extraTools} />
+            }
             <SignInOutButtons />
         </div>
     );

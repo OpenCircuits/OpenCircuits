@@ -5,7 +5,13 @@ import {HeaderMenus, HeaderPopups} from "shared/state/Header/state";
 import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header/actions";
 
 import {Dropdown} from "./Dropdown";
+import {ToolsList} from "./ToolsList";
 
+type Tool = {
+    popupName: HeaderPopups;
+    img: string;
+    text: string;
+}
 
 type OwnProps = {}
 type StateProps = {
@@ -17,21 +23,21 @@ type DispatchProps = {
     closeMenus: () => void;
 }
 type ExtraToolsProps = {
-    extraToolsPopupNames: string[];
-    extraToolsimgNames: string[];
-}
-
-function ToolsList(extraToolsPopupNames: string[], extraToolsimgNames: string[]) {
-
+    extraTools: Tool[];
 }
 
 type Props = StateProps & DispatchProps & ExtraToolsProps & OwnProps;
-const _ToolsDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraToolsPopupNames, extraToolsimgNames }: Props) => (
+const _ToolsDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraTools }: Props) => (
     <Dropdown open={(curMenu === "tools")}
               onClick={() => openMenu("tools")}
               onClose={() => closeMenus()}
               btnInfo={{title: "Tools", src: "img/icons/tools.svg"}}>
-        <ToolsList extraToolsPopupNames={[]} extraToolsimgNames={[]} />
+        {extraTools.map(tool => (
+            <div key={tool.popupName} onClick={() => { closeMenus(); openPopup(tool.popupName); }}>
+                <img src={tool.img} height="100%" alt="" />
+                <span>{tool.text}</span>
+            </div>
+        ))}
     </Dropdown>
 );
 
