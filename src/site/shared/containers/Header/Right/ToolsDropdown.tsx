@@ -16,17 +16,22 @@ type DispatchProps = {
     openPopup: (popup: HeaderPopups) => void;
     closeMenus: () => void;
 }
+type ExtraToolsProps = {
+    extraToolsPopupNames: string[];
+    extraToolsimgNames: string[];
+}
 
-type Props = StateProps & DispatchProps & OwnProps;
-const _TutorialDropdown = ({ curMenu, openMenu, openPopup, closeMenus }: Props) => (
+function ToolsList(extraToolsPopupNames: string[], extraToolsimgNames: string[]) {
+
+}
+
+type Props = StateProps & DispatchProps & ExtraToolsProps & OwnProps;
+const _ToolsDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraToolsPopupNames, extraToolsimgNames }: Props) => (
     <Dropdown open={(curMenu === "tools")}
               onClick={() => openMenu("tools")}
               onClose={() => closeMenus()}
-              btnInfo={{title: "Help", src: "img/icons/tools.svg"}}>
-        <div onClick={() => { closeMenus(); openPopup("expr_to_circuit"); }}>
-            <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="" />
-            <span>Boolean Expression to Circuit</span>
-        </div>
+              btnInfo={{title: "Tools", src: "img/icons/tools.svg"}}>
+        <ToolsList extraToolsPopupNames={[]} extraToolsimgNames={[]} />
     </Dropdown>
 );
 
@@ -42,4 +47,4 @@ const MapDispatch = {
 export const ToolsDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,
     MapDispatch
-)(_TutorialDropdown);
+)(_ToolsDropdown);

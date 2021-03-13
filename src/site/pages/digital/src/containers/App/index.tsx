@@ -39,6 +39,7 @@ import {ExprToCircuitPopup} from "../ExprToCircuitPopup";
 
 import {ICDesigner} from "site/digital/containers/ICDesigner";
 import {ICViewer} from "../ICViewer";
+import {DigitalHeader} from "../DigitalHeader";
 import {DigitalItemNav} from "../DigitalItemNav";
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {ContextMenu} from "shared/containers/ContextMenu";
@@ -96,7 +97,7 @@ export const App = ((store: AppStore) => {
                 <main>
                     <MainDesigner info={info} />
 
-                    <Header img="img/icons/logo.svg"
+                    <DigitalHeader img="img/icons/logo.svg"
                             helpers={helpers} />
 
                     <DigitalItemNav info={info} />

@@ -362,8 +362,6 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(inputMap, "!!!a", o);
             designer.addGroup(objectSet);
 
-            console.log(objectSet);
-
             test("Initial State", () => {
                 expect(o.isOn()).toBe(true);
             });
