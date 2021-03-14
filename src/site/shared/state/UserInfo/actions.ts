@@ -33,10 +33,17 @@ export type SetAutoSaveAction = {
     type: typeof SET_AUTOSAVE;
 }
 
+/*
 export const SetAutoSave = () => ({
     type: SET_AUTOSAVE
 }) as SetAutoSaveAction;
+*/
 
+export function SetAutoSave(): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        dispatch({type: SET_AUTOSAVE})
+    }
+}
 
 export function Login(auth: AuthState): ThunkResult<Promise<void>> {
     return async (dispatch) => {

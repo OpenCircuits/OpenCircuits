@@ -29,6 +29,16 @@
             background-color: darken($success-color, 10%);
         }
     }
+    &__auto-save {
+        display: inline-block;
+        position: relative;
+        margin-left: -50px;
+        margin-bottom: 20px;
+        input[type="checkbox"] + span {
+            height: 100px;
+            width: 100px;
+        }
+    }
     &__lock {
         margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
         margin-right: 5px;

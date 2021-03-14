@@ -1,11 +1,12 @@
 import {Circuit} from "core/models/Circuit";
 import {connect} from "react-redux";
-
 import {SharedAppState} from "shared/state";
 import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
 import {SetAutoSave} from "shared/state/UserInfo/actions";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
+import {SAVE_TIME} from "shared/utils/Constants";
 
 import "./index.scss";
 
@@ -57,10 +58,17 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     onClick={() => helpers.SaveCircuitRemote()}>Save</button>
         </div>
         <div>
-            <button className={`header__left__save ${!isLoggedIn ? "invisible" : ""}`}
+            <input className={`header__left__auto-save ${!isLoggedIn ? "invisible" : ""}`}
                    title="Turn auto save on"
-                   onClick={() => setAutoSave()}
-                   >Auto Save: {isAutoSave ? "On" : "Off"}</button>
+                   type="checkbox"
+                   checked={isAutoSave}
+                   onChange={ async () => {
+                        setAutoSave();
+                        /* helpers.AutoSaveCircuit(); */
+                        // isAutoSave ? setInterval(() => helpers.AutoSaveCircuit(), SAVE_TIME) : console.log("STOP THE COUNT");
+                   }}
+                   /*>Auto Save: {isAutoSave ? "On" : "Off"}</input>*/
+            />Auto Save: {isAutoSave ? "On" : "Off"}
         </div>
     </div>
 );
