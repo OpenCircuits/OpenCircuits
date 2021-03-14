@@ -93,6 +93,9 @@ function build_dir(dir) {
     if (prod)
         rmSync("build", { recursive: true, force: true });
 
+    // If manual production build, copy secrets
+    if (prod && !ci)
+        copy_dir("src/secrets", "build");
 
     // Launch test in each directory
     for (const dir of dirs) {
