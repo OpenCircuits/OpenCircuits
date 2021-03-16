@@ -26,14 +26,14 @@ export function SelectionPopup({info, modules}: Props) {
     const [state, setState] = useState({
         visible: false,
         pos: V(),
-        clickthrough: false
+        clickThrough: false
     });
 
     useLayoutEffect(() => {
         let lastPos = V();
         let lastVisible = false;
         let dragging = false;
-        let clickthrough = false;
+        let clickThrough = false;
 
         const getPos = () => {
             const pos = camera.getScreenPos(selections.midpoint(true));
@@ -50,7 +50,7 @@ export function SelectionPopup({info, modules}: Props) {
 
             // Let user click through box so it doesn't block a double click
             if (ev.type === "click")
-                clickthrough = true
+                clickThrough = true;
 
             const pos = getPos();
 
@@ -61,16 +61,15 @@ export function SelectionPopup({info, modules}: Props) {
             if (pos === lastPos && visible === lastVisible)
                 return;
 
-            setState({ pos, visible, clickthrough });
+            setState({ pos, visible, clickThrough });
 
             // Set up a callback that will make the box clickable if it's currently not clickable
-            if (clickthrough === true) {
-                clickthrough = false;
-                setTimeout(() => setState((prevState) => 
-                    { 
-                        return { ...prevState, clickthrough }
-                    }),
-                DOUBLE_CLICK_DURATION);
+            if (clickThrough) {
+                clickThrough = false;
+                setTimeout(() => 
+                    setState((prevState) => ({ ...prevState, clickThrough })), 
+                    DOUBLE_CLICK_DURATION
+                );
             }
 
             lastPos = pos;
@@ -91,7 +90,7 @@ export function SelectionPopup({info, modules}: Props) {
                 left: `${state.pos.x}px`,
                 top:  `${state.pos.y + HEADER_HEIGHT}px`,
                 visibility: (state.visible ? "visible": "hidden"),
-                pointerEvents: (state.clickthrough ? "none" : "auto")
+                pointerEvents: (state.clickThrough ? "none" : "auto")
              }}
              tabIndex={-1}>
             <TitleModule selections={selections}
