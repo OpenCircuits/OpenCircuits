@@ -51,35 +51,42 @@ const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, userCircuits, exampleCirc
             <div className="sidenav__accountinfo">
                 {auth ? `Hello, ${auth.getId()}!` : null}
             </div>
-            <div className="sidenav__content">
-                <h4 unselectable="on">My Circuits</h4>
-                <div>
-                {userCircuits.map((circuit, i) =>
-                    <CircuitPreview key={`sidenav-user-circuit-${i}`}
-                                    data={circuit}
-                                    onClick={async () => {
-                                        await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
-                                        ToggleSideNav();
-                                    }}
-                                    onDelete={() => helpers.DeleteCircuitRemote(circuit)} />
-                )}
+            <div className="sidenav__wrapper">
+                <div className="sidenav__content">
+                    <h4 unselectable="on">My Circuits</h4>
+                    <div>
+                    {userCircuits.map((circuit, i) =>
+                        <CircuitPreview key={`sidenav-user-circuit-${i}`}
+                                        data={circuit}
+                                        onClick={async () => {
+                                            await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
+                                            ToggleSideNav();
+                                        }}
+                                        onDelete={() => helpers.DeleteCircuitRemote(circuit)} />
+                    )}
+                    </div>
+                    <h4 unselectable="on">Examples</h4>
+                    <div>
+                    {exampleCircuits.map((example, i) =>
+                        <CircuitPreview key={`sidenav-example-circuit-${i}`}
+                                        readonly
+                                        data={example}
+                                        onClick={async () => {
+                                            await helpers.LoadCircuit(() => LoadExampleCircuit(example));
+                                            ToggleSideNav();
+                                        }}
+                                        onDelete={() => { /* Do nothing */ }} />
+                    )}
+                    </div>
+                    <div className="sidenav__content__footer">
+                        A program made with love by <a href="http://leonmontealeg.re/" target="_blank" rel="noopener noreferrer">Leon Montealegre </a>
+                        and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank" rel="noopener noreferrer">team</a>
+                    </div>
                 </div>
-                <h4 unselectable="on">Examples</h4>
-                <div>
-                {exampleCircuits.map((example, i) =>
-                    <CircuitPreview key={`sidenav-example-circuit-${i}`}
-                                    readonly
-                                    data={example}
-                                    onClick={async () => {
-                                        await helpers.LoadCircuit(() => LoadExampleCircuit(example));
-                                        ToggleSideNav();
-                                    }}
-                                    onDelete={() => { /* Do nothing */ }} />
-                )}
-                </div>
-                <div className="sidenav__content__footer">
-                    A program made with love by <a href="http://leonmontealeg.re/" target="_blank" rel="noopener noreferrer">Leon Montealegre </a>
-                    and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md" target="_blank" rel="noopener noreferrer">team</a>
+                <div className="sidenav__footer">
+                    <button id="history-button" className="sidenav__footer__history" title="History">
+                        <img src="img/icons/history.svg"></img>
+                    </button>
                 </div>
             </div>
         </div>
