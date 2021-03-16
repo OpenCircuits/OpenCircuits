@@ -9,7 +9,7 @@ import {AuthState} from "shared/api/auth/AuthState";
 import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {SharedAppState} from "shared/state";
-import {ToggleSideNav} from "shared/state/SideNav/actions";
+import {CloseHistoryBox, OpenHistoryBox, ToggleSideNav} from "shared/state/SideNav/actions";
 import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 
 import {Overlay} from "shared/components/Overlay";
@@ -35,17 +35,24 @@ type StateProps = {
     auth: AuthState;
     isOpen: boolean;
     isLoggedIn: boolean;
+    isHistoryBoxOpen: boolean;
     userCircuits: CircuitMetadata[];
 }
 type DispatchProps = {
     LoadUserCircuits: typeof LoadUserCircuits;
     ToggleSideNav: typeof ToggleSideNav;
+    OpenHistoryBox: typeof OpenHistoryBox;
+    CloseHistoryBox: typeof CloseHistoryBox;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, userCircuits, exampleCircuits, ToggleSideNav }: Props) => (
+const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, isHistoryBoxOpen, userCircuits, exampleCircuits, 
+                    ToggleSideNav, OpenHistoryBox, CloseHistoryBox }: Props) => (
     <>
-        <Overlay isOpen={isOpen} close={ToggleSideNav} />
+        <Overlay isOpen={isOpen} close={() => {
+            CloseHistoryBox();
+            ToggleSideNav();
+        }} />
 
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
@@ -84,12 +91,17 @@ const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, userCircuits, exampleCirc
                     </div>
                 </div>
                 <div className="sidenav__footer">
-                    <button id="history-button" className="sidenav__footer__history" title="History">
+                    <button className="sidenav__footer__history" title="History" onClick={() => {
+                        if (isHistoryBoxOpen) CloseHistoryBox();
+                        else OpenHistoryBox();
+                    }}>
                         <img src="img/icons/history.svg"></img>
                     </button>
                 </div>
             </div>
         </div>
+
+        <div className="historybox" style={{display: (isHistoryBoxOpen ? "initial" : "none")}}></div>
     </>
 );
 
@@ -99,7 +111,8 @@ export const SideNav = connect<StateProps, DispatchProps, OwnProps, SharedAppSta
         auth: state.user.auth,
         isOpen: state.sideNav.isOpen,
         isLoggedIn: state.user.isLoggedIn,
+        isHistoryBoxOpen: state.sideNav.isHistoryBoxOpen,
         userCircuits: state.user.circuits
     }),
-    { LoadUserCircuits, ToggleSideNav } as any
+    { LoadUserCircuits, ToggleSideNav, OpenHistoryBox, CloseHistoryBox } as any
 )(_SideNav);
