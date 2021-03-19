@@ -1,6 +1,6 @@
 import {useLayoutEffect, useState} from "react";
 
-import {HEADER_HEIGHT} from "shared/utils/Constants";
+import {HEADER_HEIGHT, DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
@@ -25,13 +25,15 @@ export function SelectionPopup({info, modules}: Props) {
     const {input, camera, history, designer, selections, renderer} = info;
     const [state, setState] = useState({
         visible: false,
-        pos: V()
+        pos: V(),
+        clickThrough: false
     });
 
     useLayoutEffect(() => {
         let lastPos = V();
         let lastVisible = false;
         let dragging = false;
+        let clickThrough = false;
 
         const getPos = () => {
             const pos = camera.getScreenPos(selections.midpoint(true));
@@ -46,6 +48,10 @@ export function SelectionPopup({info, modules}: Props) {
             if (ev.type === "mouseup")
                 dragging = false;
 
+            // Let user click through box so it doesn't block a double click
+            if (ev.type === "click")
+                clickThrough = true;
+
             const pos = getPos();
 
             // Don't show popup if dragging
@@ -55,7 +61,16 @@ export function SelectionPopup({info, modules}: Props) {
             if (pos === lastPos && visible === lastVisible)
                 return;
 
-            setState({ pos, visible });
+            setState({ pos, visible, clickThrough });
+
+            // Set up a callback that will make the box clickable if it's currently not clickable
+            if (clickThrough) {
+                clickThrough = false;
+                setTimeout(() => 
+                    setState((prevState) => ({ ...prevState, clickThrough })), 
+                    DOUBLE_CLICK_DURATION
+                );
+            }
 
             lastPos = pos;
             lastVisible = visible;
@@ -74,7 +89,8 @@ export function SelectionPopup({info, modules}: Props) {
              style={{
                 left: `${state.pos.x}px`,
                 top:  `${state.pos.y + HEADER_HEIGHT}px`,
-                visibility: (state.visible ? "visible": "hidden")
+                visibility: (state.visible ? "visible": "hidden"),
+                pointerEvents: (state.clickThrough ? "none" : "auto")
              }}
              tabIndex={-1}>
             <TitleModule selections={selections}
