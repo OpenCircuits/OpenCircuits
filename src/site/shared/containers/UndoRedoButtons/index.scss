@@ -5,3 +5,20 @@
     bottom: 0;
     right: 0;
 }
+
+.UndoRedo button {
+    padding: 15px 15px;
+    color: #000;
+    border: 0 solid #888;
+    border-width: 5px;
+    border-radius: 15px;
+    background-color: rgba(204, 204, 204, 0.7);
+}
+
+.UndoRedo button:hover {
+    background-color: rgba(139,139,139,0.7);
+}
+
+#rightmost {
+    margin-left: 10px;
+}
