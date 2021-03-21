@@ -11,5 +11,7 @@
       "path": "../../../app"
     }
   ],
-  "compilerOptions": {}
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
 }

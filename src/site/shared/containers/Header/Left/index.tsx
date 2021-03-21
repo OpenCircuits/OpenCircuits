@@ -51,8 +51,12 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
             <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                     title="Save the circuit remotely"
                     disabled={isLoading}
-                    onClick={() => helpers.SaveCircuitRemote()}>Save</button>
+                   
+                    onClick={() => helpers.SaveCircuitRemote()}><b>{isLoading ? 'saving' 
+                                                                              : 'save'}</b></button>
         </div>
+        
+
     </div>
 );
 

@@ -1,51 +1,42 @@
-# [![OpenCircuits Repo](https://github.com/OpenCircuits/OpenCircuits/blob/master/src/site/pages/digital/public/img/icons/logo.svg)](https://github.com/OpenCircuits/OpenCircuits)
+# The Go Programming Language
 
-[![GitHub license](https://img.shields.io/github/license/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/blob/master/LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/graphs/contributors)
-[![GitHub top language](https://img.shields.io/github/languages/top/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/search?l=javascript)
-[![GitHub issues](https://img.shields.io/github/issues/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/issues)
-[![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
+Go is an open source programming language that makes it easy to build simple,
+reliable, and efficient software.
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/52689df193bd42d4b819ef670e2853b4)](https://www.codacy.com/gh/OpenCircuits/OpenCircuits?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenCircuits/OpenCircuits&amp;utm_campaign=Badge_Grade)
-[![codebeat badge](https://codebeat.co/badges/16d70cd0-8f54-4691-9b6e-ea250d09e88f)](https://codebeat.co/projects/github-com-opencircuits-opencircuits-master)
-[![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/opencircuits/opencircuits.svg)](https://hub.docker.com/r/opencircuits/opencircuits/builds/)
+![Gopher image](https://golang.org/doc/gopher/fiveyears.jpg)
+*Gopher image by [Renee French][rf], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
 
-## Website
+Our canonical Git repository is located at https://go.googlesource.com/go.
+There is a mirror of the repository at https://github.com/golang/go.
 
-Found at [OpenCircuits.io](http://www.opencircuits.io/).
+Unless otherwise noted, the Go source files are distributed under the
+BSD-style license found in the LICENSE file.
 
-## Usage
+### Download and Install
 
-Instructions and tutorials located in the [wiki](https://github.com/OpenCircuits/OpenCircuits/wiki).
+#### Binary Distributions
 
-## Background
+Official binary distributions are available at https://golang.org/dl/.
 
-OpenCircuits is an open source circuit designer created by [Leon Montealegre](https://leonmontealegre.com/), originally for an independent study for [Professor Paul Wilkinson](http://www.drpjw.org/) of Pasadena City College.
-OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits).
+After downloading a binary release, visit https://golang.org/doc/install
+for installation instructions.
 
-## Key Features
+#### Install From Source
 
-*   Create and design simple or complex circuits
-*   Create a circuit and turn it into an IC for easy reuse
-*   Save and load circuits to your hard drive
-*   Very smooth and lag-free for even complex circuits
-*   LEDs and 7-segment-displays
-*   Keyboard and mouse gates to make an interactive circuit
-*   Runs on any device with ES6 support
-*   Can be used by professors, students, and hobbyists alike
-*   Open-source and completely free to use
+If a binary distribution is not available for your combination of
+operating system and architecture, visit
+https://golang.org/doc/install/source
+for source installation instructions.
 
-## Screenshots
+### Contributing
 
-<img src="https://imgur.com/xBc75jL.png" width="80%" />
-<img src="https://imgur.com/UUPyzcx.png" width="80%" />
-<img src="https://imgur.com/gQPQACz.png" width="80%" />
+Go is the work of thousands of contributors. We appreciate your help!
 
-## Contact Us
+To contribute, please read the contribution guidelines at https://golang.org/doc/contribute.html.
 
-If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io.
+Note that the Go project uses the issue tracker for bug reports and
+proposals only. See https://golang.org/wiki/Questions for a list of
+places to ask questions about the Go language.
 
-
-## LICENSING
-OpenCircuits is under the GPL-3.0 license.
+[rf]: https://reneefrench.blogspot.com/
+[cc3-by]: https://creativecommons.org/licenses/by/3.0/
