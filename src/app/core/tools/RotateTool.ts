@@ -75,7 +75,9 @@ export const RotateTool = (() => {
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
             const components = selections.get() as Component[];
-            const dAngle = getAngle(worldMousePos, selections.midpoint()) - prevAngle;
+
+            const midpoint = selections.midpoint();
+            const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
 
             // Calculate new angles
             currentAngles = currentAngles.map(a => a + dAngle);
@@ -86,7 +88,7 @@ export const RotateTool = (() => {
                 currentAngles;
 
             // Set the rotations
-            components.forEach((c, i) => c.setRotationAbout(newAngles[i], selections.midpoint()));
+            components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
 
             prevAngle += dAngle;
 

@@ -20,6 +20,10 @@ export class NoAuthState implements AuthState {
         return this.userName;
     }
 
+    public getName(): string {
+        return this.userName;
+    }
+
     public logOut(): Promise<object> {
         SetCookie(NO_AUTH_USERNAME_COOKIE, "");
         return Promise.resolve(null);
