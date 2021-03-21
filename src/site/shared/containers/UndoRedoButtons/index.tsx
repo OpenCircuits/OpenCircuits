@@ -27,7 +27,7 @@ const _UndoRedoButtons = ({info, isLocked}: Props) => {
 
 
     return (
-        <div className="undoButton">
+        <div className="UndoRedo">
             <button title="Undo" onClick={() => doFunc(onUndo)}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)}>Redo</button>
         </div>

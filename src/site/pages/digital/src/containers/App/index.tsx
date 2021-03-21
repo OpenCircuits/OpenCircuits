@@ -40,7 +40,7 @@ import {ICViewer} from "../ICViewer";
 import {DigitalItemNav} from "../DigitalItemNav";
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {ContextMenu} from "shared/containers/ContextMenu";
-
+import {UndoRedoButtons} from "shared/containers/UndoRedoButtons";
 
 import {SideNav} from "shared/containers/SideNav";
 import {reducers} from "../../state/reducers";
@@ -98,6 +98,8 @@ export const App = ((store: AppStore) => {
                             helpers={helpers} />
 
                     <DigitalItemNav info={info} />
+                    
+                    <UndoRedoButtons info={info} />
 
                     <SelectionPopup info={info}
                                     modules={[PositionModule, InputCountModule,
