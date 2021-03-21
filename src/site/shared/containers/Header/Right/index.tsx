@@ -19,7 +19,7 @@ export const HeaderRight = ({ helpers }: Props) => {
             <OpenFileButton helpers={helpers} />
             <DownloadMenuDropdown helpers={helpers} />
             <SignInOutButtons />
-            <AutoSaveButton />
+            <AutoSaveButton helpers={helpers} />
         </div>
     );
 }
