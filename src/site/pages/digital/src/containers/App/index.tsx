@@ -26,6 +26,7 @@ import {SegmentCountModule}   from "site/digital/containers/SelectionPopup/modul
 import {TextColorModule}      from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {AddLabelButtonModule} from "site/digital/containers/SelectionPopup/modules/AddLabelButtonModule";
 
 
 import exampleConfig from "site/digital/data/examples.json";
@@ -105,7 +106,7 @@ export const App = ((store: AppStore) => {
                                             ClockFrequencyModule,
                                             ColorModule, TextColorModule,
                                             BusButtonModule, CreateICButtonModule,
-                                            ViewICButtonModule]} />
+                                            ViewICButtonModule, AddLabelButtonModule]} />
 
 
                     <ICDesigner mainInfo={info} />
