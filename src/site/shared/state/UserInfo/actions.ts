@@ -7,7 +7,7 @@ import {QueryUserCircuits} from "shared/api/Circuits";
 
 import {SharedAppState} from "..";
 import {LOAD_CIRCUITS_FINISH_ID, LOAD_CIRCUITS_START_ID,
-        LOGIN_ACTION_ID, LOGOUT_ACTION_ID, SET_AUTOSAVE} from "./actionTypes";
+        LOGIN_ACTION_ID, LOGOUT_ACTION_ID, SET_AUTOSAVE_ACTION_ID} from "./actionTypes";
 import {ThunkAction} from "redux-thunk";
 
 
@@ -30,12 +30,11 @@ export type LoadCircuitsFinishAction = {
     circuits: CircuitMetadata[];
 }
 export type SetAutoSaveAction = {
-    type: typeof SET_AUTOSAVE;
-    auth: AuthState;
+    type: typeof SET_AUTOSAVE_ACTION_ID;
 }
 
-export const SetAutoSave = () => ({
-    type: SET_AUTOSAVE
+export const SetAutoSave = () => ({ 
+    type: SET_AUTOSAVE_ACTION_ID 
 }) as SetAutoSaveAction;
 
 export function Login(auth: AuthState): ThunkResult<Promise<void>> {

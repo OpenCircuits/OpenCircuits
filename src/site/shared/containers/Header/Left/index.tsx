@@ -2,11 +2,8 @@ import {Circuit} from "core/models/Circuit";
 import {connect} from "react-redux";
 import {SharedAppState} from "shared/state";
 import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
-import {SetAutoSave} from "shared/state/UserInfo/actions";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-
-import {SAVE_TIME} from "shared/utils/Constants";
 
 import "./index.scss";
 
@@ -14,6 +11,7 @@ import "./index.scss";
 type OwnProps = {
     helpers: CircuitInfoHelpers;
 }
+
 type StateProps = {
     circuitName: string;
     isSaved: boolean;
@@ -22,15 +20,15 @@ type StateProps = {
     isLoading: boolean;
     isAutoSave: boolean;
 }
+
 type DispatchProps = {
     toggleLock: () => void;
     toggleSideNav: () => void;
     setCircuitName: (name: string) => void;
-    setAutoSave: () => void;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName, setAutoSave, isAutoSave}: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName, isAutoSave}: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -57,20 +55,8 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     disabled={isLoading}
                     onClick={() => helpers.SaveCircuitRemote()}>Save</button>
         </div>
-        <div>
-            <input className={`header__left__auto-save ${!isLoggedIn ? "invisible" : ""}`}
-                   title="Turn auto save on"
-                   type="checkbox"
-                   checked={isAutoSave}
-                   onChange={ async () => {
-                        setAutoSave();
-                   }}
-                   /*>Auto Save: {isAutoSave ? "On" : "Off"}</input>*/
-            />Auto Save: {isAutoSave ? "On" : "Off"}
-        </div>
     </div>
 );
-
 
 /*
  * Redux state connection
@@ -87,8 +73,7 @@ const MapState = (state: SharedAppState) => ({
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
     toggleSideNav:  ToggleSideNav,
-    setCircuitName: SetCircuitName,
-    setAutoSave:    SetAutoSave
+    setCircuitName: SetCircuitName
 };
 export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,
