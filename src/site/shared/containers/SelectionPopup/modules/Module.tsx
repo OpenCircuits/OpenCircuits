@@ -4,6 +4,7 @@ import {Clamp} from "math/MathUtils";
 import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
+import { CircuitDesigner } from "core/models";
 
 
 export type ModuleTypes = number | string;
@@ -33,6 +34,7 @@ type State = {
 }
 
 export type UseModuleProps = {
+    designer: CircuitDesigner;
     selections: SelectionsWrapper;
     addAction: (action: Action) => void;
     render: () => void;
