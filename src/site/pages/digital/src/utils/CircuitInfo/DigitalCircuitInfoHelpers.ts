@@ -20,6 +20,7 @@ import {SaveFile} from "shared/utils/Exporter";
 import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 import {DeleteUserCircuit} from "shared/api/Circuits";
 
+import {SAVE_TIME} from "shared/utils/Constants";
 
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
@@ -70,7 +71,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
         AutoSaveCircuit: async() => {
             const {circuit, user} = store.getState();
             if (user.autoSave && !circuit.isSaved) {
-                helpers.SaveCircuitRemote();
+                setInterval(() => helpers.SaveCircuitRemote(), SAVE_TIME);
             }
 
         },

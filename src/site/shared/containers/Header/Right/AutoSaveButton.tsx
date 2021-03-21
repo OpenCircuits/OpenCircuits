@@ -4,8 +4,6 @@ import {SetAutoSave} from "shared/state/UserInfo/actions";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-import {SAVE_TIME} from "shared/utils/Constants";
-
 import "./index.scss";
 
 type OwnProps = {
@@ -26,7 +24,7 @@ const _AutoSaveButton = ({isLoggedIn, isAutoSave, helpers, setAutoSave}: Props) 
                 style={{ display: (isLoggedIn ? "initial" : "none") }}
                 onClick={ () => {
                     setAutoSave();
-                    setInterval(() => helpers.AutoSaveCircuit(), SAVE_TIME);
+                    helpers.AutoSaveCircuit();
                 }}
         >Auto Save: {isAutoSave ? "On" : "Off"}
         </button>
