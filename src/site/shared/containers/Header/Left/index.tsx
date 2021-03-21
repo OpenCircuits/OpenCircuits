@@ -64,8 +64,6 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                    checked={isAutoSave}
                    onChange={ async () => {
                         setAutoSave();
-                        /* helpers.AutoSaveCircuit(); */
-                        // isAutoSave ? setInterval(() => helpers.AutoSaveCircuit(), SAVE_TIME) : console.log("STOP THE COUNT");
                    }}
                    /*>Auto Save: {isAutoSave ? "On" : "Off"}</input>*/
             />Auto Save: {isAutoSave ? "On" : "Off"}
@@ -96,3 +94,4 @@ export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedApp
     MapState,
     MapDispatch
 )(_HeaderLeft);
+
