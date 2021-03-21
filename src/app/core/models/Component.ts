@@ -77,7 +77,7 @@ export abstract class Component extends CullableObject {
     }
 
     public getTransform(): Transform {
-        return this.transform.copy();
+        return this.transform;
     }
 
     public getOffset(): Vector {

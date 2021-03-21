@@ -249,6 +249,7 @@ export class Transform {
 
     public copy(): Transform {
         const trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
+        trans.parent = this.parent;
         trans.scale = this.scale.copy();
         trans.dirty = true;
         return trans;
