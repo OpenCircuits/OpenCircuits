@@ -99,7 +99,9 @@ export const App = ((store: AppStore) => {
 
                     <DigitalItemNav info={info} />
                     
-                    <UndoRedoButtons info={info} />
+                    <UndoRedoButtons info={info}
+                                     undoImg = "img/icons/undo.svg"
+                                     redoImg = "img/icons/redo.svg" />
 
                     <SelectionPopup info={info}
                                     modules={[PositionModule, InputCountModule,

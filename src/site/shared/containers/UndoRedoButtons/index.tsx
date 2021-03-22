@@ -4,6 +4,8 @@ import {connect} from "react-redux";
 import {SharedAppState} from "shared/state";
 
 type OwnProps = {
+    undoImg: string;
+    redoImg: string;
     info: CircuitInfo;
 }
 
@@ -13,7 +15,7 @@ type StateProps = {
 type DispatchProps = {}
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _UndoRedoButtons = ({info, isLocked}: Props) => {
+const _UndoRedoButtons = ({info, undoImg, redoImg, isLocked}: Props) => {
     const {history} = info;
 
     const doFunc = (func: () => void) => {
@@ -28,8 +30,8 @@ const _UndoRedoButtons = ({info, isLocked}: Props) => {
 
     return (
         <div className="UndoRedo">
-            <button title="Undo" onClick={() => doFunc(onUndo)}>Undo</button>
-            <button title="Redo" id="rightmost" onClick={() => doFunc(onRedo)}>Redo</button>
+            <button title="Undo" onClick={() => doFunc(onUndo)}> <img className="Undo_Logo" src={undoImg}  alt="" /></button>
+            <button title="Redo" id="rightmost" onClick={() => doFunc(onRedo)}> <img className="Redo_Logo" src={redoImg}  alt="" /></button>
         </div>
     );
 }
