@@ -15,10 +15,14 @@
     background-color: rgba(204, 204, 204, 0.7);
 }
 
-.UndoRedo button:hover {
-    background-color: rgba(139,139,139,0.7);
+//Hover only on Desktop
+@media (min-width: 1281px)  {
+    .UndoRedo button:hover {
+        background-color: rgba(139,139,139,0.7);
+    }
 }
 
 #rightmost {
     margin-left: 10px;
 }
+
