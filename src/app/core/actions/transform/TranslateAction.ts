@@ -4,7 +4,7 @@ import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
 
-import {SnapPos} from "./SnapUtils";
+import {SnapPos, SnapMidpoint} from "./SnapUtils";
 
 // Translate can be applied to single components,
 //  but if you need to translate multiple components at
@@ -17,7 +17,6 @@ export class TranslateAction implements Action {
 
     public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[]) {
         this.objs = objs;
-
         this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
     }
@@ -28,6 +27,11 @@ export class TranslateAction implements Action {
         // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
 
+        //Midpoint snap
+        //Need list of all components
+        
+        this.objs.forEach(o => SnapMidpoint(o, this.objs))
+
         return this;
     }
 
@@ -37,6 +41,8 @@ export class TranslateAction implements Action {
         // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
 
+        //Midpoint snap
+        this.objs.forEach(o => SnapMidpoint(o, this.objs))
         return this;
     }
 }
