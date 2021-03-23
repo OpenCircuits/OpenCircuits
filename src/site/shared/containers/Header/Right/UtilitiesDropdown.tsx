@@ -5,9 +5,8 @@ import {HeaderMenus, HeaderPopups} from "shared/state/Header/state";
 import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header/actions";
 
 import {Dropdown} from "./Dropdown";
-import {ToolsList} from "./ToolsList";
 
-type Tool = {
+type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
@@ -22,17 +21,17 @@ type DispatchProps = {
     openPopup: (popup: HeaderPopups) => void;
     closeMenus: () => void;
 }
-type ExtraToolsProps = {
-    extraTools: Tool[];
+type ExtraUtilitiesProps = {
+    extraUtilities: Utility[];
 }
 
-type Props = StateProps & DispatchProps & ExtraToolsProps & OwnProps;
-const _ToolsDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraTools }: Props) => (
+type Props = StateProps & DispatchProps & ExtraUtilitiesProps & OwnProps;
+const _UtilitiesDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraUtilities }: Props) => (
     <Dropdown open={(curMenu === "tools")}
               onClick={() => openMenu("tools")}
               onClose={() => closeMenus()}
-              btnInfo={{title: "Tools", src: "img/icons/tools.svg"}}>
-        {extraTools.map(tool => (
+              btnInfo={{title: "Utilities", src: "img/icons/tools.svg"}}>
+        {extraUtilities.map(tool => (
             <div key={tool.popupName} onClick={() => { closeMenus(); openPopup(tool.popupName); }}>
                 <img src={tool.img} height="100%" alt="" />
                 <span>{tool.text}</span>
@@ -50,7 +49,7 @@ const MapDispatch = {
     openPopup: OpenHeaderPopup,
     closeMenus: CloseHeaderMenus
 };
-export const ToolsDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+export const UtilitiesDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,
     MapDispatch
-)(_ToolsDropdown);
+)(_UtilitiesDropdown);

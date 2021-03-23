@@ -4,13 +4,13 @@ import {Dropdown} from "shared/containers/Header/Right/Dropdown";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-type Tool = {
+type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
 }
 
-function getExtraTools(): Tool[] {
+function getExtraUtilities(): Utility[] {
     return [
         { 
             popupName: "expr_to_circuit",
@@ -26,5 +26,5 @@ type Props = {
 }
 
 export const DigitalHeader = ({ img, helpers }: Props) => (
-    <Header img={img} helpers={helpers} extraTools={getExtraTools()} />
+    <Header img={img} helpers={helpers} extraUtilities={getExtraUtilities()} />
 );

@@ -6,7 +6,7 @@ import {HeaderRight} from "./Right";
 
 import "./index.scss";
 
-type Tool = {
+type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
@@ -15,9 +15,9 @@ type Tool = {
 type Props = {
     img: string;
     helpers: CircuitInfoHelpers;
-    extraTools: Tool[];
+    extraUtilities: Utility[];
 }
-export const Header = ({ img, helpers, extraTools }: Props) => (
+export const Header = ({ img, helpers, extraUtilities }: Props) => (
     <header id="header">
         <HeaderLeft helpers={helpers} />
 
@@ -30,6 +30,6 @@ export const Header = ({ img, helpers, extraTools }: Props) => (
             </a>
         </div>
 
-        <HeaderRight helpers={helpers} extraTools={extraTools} />
+        <HeaderRight helpers={helpers} extraUtilities={extraUtilities} />
     </header>
 );
