@@ -25,6 +25,7 @@ const _AddLabelButtonModule = (props: UseModuleProps) => (
             console.log(props.designer);
             const L = new Label();
             L.getTransform().setParent((selections[0] as Component).getTransform());
+            //L.getCullBox().setParent((selections[0] as Component).getCullBox());
             L.setPos(V(0,50));
             return new PlaceAction(props.designer, L).execute();
         }}
@@ -33,6 +34,7 @@ const _AddLabelButtonModule = (props: UseModuleProps) => (
 );
 
 
+// remove this
 export const AddLabelButtonModule = connect<UseModuleProps>(
     undefined,
     { },
