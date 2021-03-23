@@ -26,6 +26,7 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
         url: `/examples/${data.getId()}`,
         headers: {}
     })
+    // We want to run example circuits through the VersionConflictResolver to make sure they're up to date.
     .then(
         (circuitJson) => VersionConflictResolver(circuitJson)
     );
