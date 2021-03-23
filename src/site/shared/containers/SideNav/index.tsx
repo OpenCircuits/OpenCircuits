@@ -2,6 +2,8 @@ import {connect} from "react-redux";
 
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
+import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
+
 import {Request} from "shared/utils/Request";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
@@ -23,7 +25,10 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
         method: "GET",
         url: `/examples/${data.getId()}`,
         headers: {}
-    });
+    })
+    .then(
+        (circuitJson) => VersionConflictResolver(circuitJson)
+    );
 }
 
 
