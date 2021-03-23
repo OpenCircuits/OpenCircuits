@@ -10,6 +10,7 @@ import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import { Label } from "digital/models/ioobjects";
 
 
 describe("Rotate Tool", () => {
@@ -121,4 +122,21 @@ describe("Rotate Tool", () => {
             expect(obj2.getAngle()).toBeCloseTo(0);
         });
     });
+
+    describe("Parented Objects", () => {
+        const obj = new Label();
+        const par = new ANDGate();
+        obj.getTransform().setParent(par.getTransform());
+        designer.reset();
+        designer.addObjects([obj, par]);
+
+        // 100 units to the right of parent
+        // rotate parent 90 degrees, label is 100 units above
+
+        // rotate label 90 degrees, rotate parent -90 degrees
+        // label should be 0 degrees
+
+        // label 200 units above parent, move parent up 1000 units, move parent down 1000 units
+        // store cullbox before moving, make sure it is the same after the parent moves back down
+    })
 });
