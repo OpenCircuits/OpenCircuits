@@ -117,17 +117,17 @@ export class Transform {
      * @param {number} c The axis to rotate about
      */
     public rotateAbout(a: number, c: Vector): void {
-        this.setAngle(this.getAngle() + a);
-        this.setPos(this.pos.sub(c));
+        this.setAngle(this.angle + a);
+        this.setPos(this.getPos().sub(c));
         const cos = Math.cos(a), sin = Math.sin(a);
-        const xx = this.pos.x * cos - this.pos.y * sin;
-        const yy = this.pos.y * cos + this.pos.x * sin;
+        const xx = this.getPos().x * cos - this.getPos().y * sin;
+        const yy = this.getPos().y * cos + this.getPos().x * sin;
         this.setPos(V(xx, yy).add(c));
         this.dirty = true;
         this.dirtyCorners = true;
     }
     public setRotationAbout(a: number, c: Vector): void {
-        this.rotateAbout(-this.getAngle(), c);
+        this.rotateAbout(-this.angle, c);
         this.rotateAbout(a, c);
     }
 
@@ -137,12 +137,16 @@ export class Transform {
         this.dirtyCorners = true;
     }
     public setPos(p: Vector): void {
+        if (this.parent)
+            p = this.parent.toLocalSpace(p);
         this.pos.x = p.x;
         this.pos.y = p.y;
         this.dirty = true;
         this.dirtyCorners = true;
     }
     public setAngle(a: number): void {
+        if (this.parent)
+            a = a - this.parent.angle;
         this.angle = a;
         this.dirty = true;
         this.dirtyCorners = true;
@@ -199,9 +203,13 @@ export class Transform {
         return this.parent;
     }
     public getPos(): Vector {
+        if (this.parent)
+            return this.parent.toWorldSpace(this.pos);
         return this.pos.copy();
     }
     public getAngle(): number {
+        if (this.parent)
+            return this.parent.getAngle() + this.angle;
         return this.angle;
     }
     public getScale(): Vector {
