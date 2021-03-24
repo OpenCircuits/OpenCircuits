@@ -123,7 +123,7 @@ export const App = ((store: AppStore) => {
                     <QuickStartPopup />
                     <KeyboardShortcutsPopup />
 
-                    <ExprToCircuitPopup />
+                    <ExprToCircuitPopup info={info} />
 
                     <LoginPopup />
                 </main>
