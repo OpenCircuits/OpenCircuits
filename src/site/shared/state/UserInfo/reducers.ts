@@ -31,7 +31,7 @@ export function userInfoReducer(state = initialState, action: AllSharedActions):
                 return {...state, circuits: [], loading: false, error: "Not logged in!"};
             return {...state, circuits: (action.circuits ?? []), error: action.err, loading: false};
         case SET_AUTOSAVE_ACTION_ID:
-            return {...state, autoSave: !state.autoSave};
+            return {...state, autoSave: (state.autoSave ? false : true)};
         default:
             return state;
     }

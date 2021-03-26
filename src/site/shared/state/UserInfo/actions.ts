@@ -35,7 +35,7 @@ export type SetAutoSaveAction = {
 
 export const SetAutoSave = () => ({ 
     type: SET_AUTOSAVE_ACTION_ID 
-}) as SetAutoSaveAction;
+})
 
 export function Login(auth: AuthState): ThunkResult<Promise<void>> {
     return async (dispatch) => {

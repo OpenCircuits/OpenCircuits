@@ -70,10 +70,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
         AutoSaveCircuit: async() => {
             const {circuit, user} = store.getState();
-            if (user.autoSave && !circuit.isSaved) {
-                setInterval(() => helpers.SaveCircuitRemote(), SAVE_TIME);
-            }
-
+            if (user.autoSave && !circuit.isSaved) helpers.SaveCircuitRemote();
         },
 
         SaveCircuitToFile: async (type) => {
