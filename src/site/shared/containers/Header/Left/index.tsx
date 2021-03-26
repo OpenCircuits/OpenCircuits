@@ -18,6 +18,9 @@ type StateProps = {
     isLocked: boolean;
     isLoggedIn: boolean;
     isLoading: boolean;
+    saveStatus: string;
+    error: string;
+
 }
 type DispatchProps = {
     toggleLock: () => void;
@@ -26,7 +29,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName }: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, saveStatus, error, toggleLock, toggleSideNav, setCircuitName }: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -52,10 +55,18 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     title="Save the circuit remotely"
                     disabled={isLoading}
                    
-                    onClick={() => helpers.SaveCircuitRemote()}><b>{isLoading ? 'saving' 
-                                                                              : 'save'}</b></button>
+                    onClick={() => helpers.SaveCircuitRemote() }><b>{'save'}</b></button>
+                    
         </div>
-        
+        <div>
+            <input title="saving indicator" type="text"
+                  
+                    value={isLoading ? "saving" : isSaved ? "saved" : "not saved"}
+                    placeholder=""
+                    alt="Name of project" 
+                    disabled={isLoading}
+                    />
+        </div>
 
     </div>
 );
@@ -69,7 +80,8 @@ const MapState = (state: SharedAppState) => ({
     isSaved:     state.circuit.isSaved,
     isLocked:    state.circuit.isLocked,
     isLoggedIn:  state.user.isLoggedIn,
-    isLoading:   state.user.loading
+    isLoading:   state.user.loading,
+    error:       state.circuit.error
 });
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
