@@ -27,9 +27,7 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
         headers: {}
     })
     // We want to run example circuits through the VersionConflictResolver to make sure they're up to date.
-    .then(
-        (circuitJson) => VersionConflictResolver(circuitJson)
-    );
+   .then(VersionConflictResolver);
 }
 
 
