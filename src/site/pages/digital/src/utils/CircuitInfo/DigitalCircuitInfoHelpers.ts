@@ -20,8 +20,6 @@ import {SaveFile} from "shared/utils/Exporter";
 import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 import {DeleteUserCircuit} from "shared/api/Circuits";
 
-import {SAVE_TIME} from "shared/utils/Constants";
-
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
         LoadCircuit: async (getData) => {

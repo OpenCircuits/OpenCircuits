@@ -4,8 +4,7 @@ import {SharedAppState} from "shared/state";
 import {SetAutoSave} from "shared/state/UserInfo/actions";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import { GetCookie } from "shared/utils/Cookies";
-import { SetCookie} from "shared/utils/Cookies";
+
 import {SAVE_TIME} from "shared/utils/Constants";
 
 import "./index.scss";
