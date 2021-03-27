@@ -34,7 +34,7 @@ interface ReturnValue {
     recentPort: OutputPort;
 }
 
-function GenerateTokens(input: string): Array<string> | null {
+export function GenerateTokens(input: string): Array<string> | null {
     const tokenList = new Array<string>();
     let buffer = "";
     let c: string;

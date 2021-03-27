@@ -1,3 +1,4 @@
+import {useState} from "react";
 import {connect} from "react-redux";
 
 import {CreateAddGroupAction}    from "core/actions/addition/AddGroupActionFactory";
@@ -11,9 +12,10 @@ import {HeaderPopups}      from "shared/state/Header/state";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
+import {DigitalComponent} from "digital/models/DigitalComponent";
 import {LED} from "digital/models/ioobjects/outputs/LED";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {GenerateTokens, ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 
 type OwnProps = {
@@ -26,30 +28,54 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner) {
-    const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-    const inputMap = new Map([
-        ["a", a],
-        ["b", b],
-        ["c", c]
-    ]);
-    CreateAddGroupAction(designer, ExpressionToCircuit(inputMap, "a|b&c", o)).execute();
+function generate(designer: DigitalCircuitDesigner, expression: string) {
+    const tokenList = GenerateTokens(expression);
+    const inputMap = new Map<string, DigitalComponent>();
+    let token: string;
+    for(let i = 0; i < tokenList.length; i++) {
+        token = tokenList[i];
+        switch(token) {
+        case "(":
+        case ")":
+        case "&":
+        case "^":
+        case "|":
+        case "!":
+            break;
+        default:
+            if(!inputMap.has(token))
+                inputMap.set(token, new Switch());
+            break;
+        }
+    }
+    const o = new LED();
+    CreateAddGroupAction(designer, ExpressionToCircuit(inputMap, expression, o)).execute();
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _ExprToCircuitPopup = ({curPopup, CloseHeaderPopups, info}: Props) => (
-    <Popup title="Boolean Expression to Circuit"
-           isOpen={(curPopup === "expr_to_circuit")}
-           close={CloseHeaderPopups}>
-        <h2>Test</h2>
-        <div title="Generate Circuit">
-            <button type="button" onClick={() => generate(info.designer) } >Generate</button>
-            <span>Test</span>
-        </div>
-    </Popup>
-);
 
-export const ExprToCircuitPopup = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ curPopup: state.header.curPopup }),
-    { CloseHeaderPopups },
-)(_ExprToCircuitPopup);
+export const ExprToCircuitPopup = (() => {
+
+    return connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
+        (state) => ({ curPopup: state.header.curPopup }),
+        { CloseHeaderPopups },
+    )(
+        ({curPopup, CloseHeaderPopups, info}: Props) => {
+            const [{expression}, setExpression] = useState({ expression: "" });
+
+            return (
+                <Popup title="Boolean Expression to Circuit"
+                       isOpen={(curPopup === "expr_to_circuit")}
+                       close={CloseHeaderPopups}>
+                    <input title="Enter Circuit Expression" type="text"
+                               value={expression}
+                               placeholder=""
+                               onChange={e => setExpression({expression: e.target.value})} />
+                    <div title="Generate Circuit">
+                        <button type="button" onClick={() => {generate(info.designer, expression); CloseHeaderPopups();} } >Generate</button>
+                    </div>
+                </Popup>
+            );
+        }
+    );
+})();
