@@ -10,6 +10,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
+import { info } from "node:console";
 
 
 export const TranslateTool: Tool = (() => {
@@ -54,7 +55,8 @@ export const TranslateTool: Tool = (() => {
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
-            history.add(new TranslateAction(components, initalPositions, finalPositions));
+            //Not sure about the what last arguement should be?
+            history.add(new TranslateAction(components, initalPositions, finalPositions, this));
         },
 
 
@@ -78,7 +80,7 @@ export const TranslateTool: Tool = (() => {
 
                     // Execute translate but don't save to group
                     //  action since we do that onDeactivate
-                    new TranslateAction(components, initalPositions, newPositions).execute();
+                    new TranslateAction(components, initalPositions, newPositions, info.designer).execute();
 
                     return true;
 

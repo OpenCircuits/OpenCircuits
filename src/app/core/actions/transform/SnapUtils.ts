@@ -1,4 +1,4 @@
-import {WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
+import {MID_SNAP_CONST, WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
 import {Component} from "core/models";
 
 export function SnapPos(obj: Component): void {
@@ -32,9 +32,17 @@ export function SnapMidpoint(obj: Component, objs: Component[]): void {
             continue
         }
         const pos = obj2.getPos();
-        const scale = WIRE_SNAP_THRESHOLD/(Math.abs(v.x-pos.x))
-        v.x = DoSnap(v.x, pos.x, scale);
-        v.y = DoSnap(v.y, pos.y, scale);
+        //calculate scaling constants for x and y direction
+        const scale = MID_SNAP_CONST * WIRE_SNAP_THRESHOLD/(Math.abs(v.x-pos.x))
+        const scale2 = MID_SNAP_CONST * WIRE_SNAP_THRESHOLD/(Math.abs(v.y-pos.y))
+        //if statements prevent snapping when difference in v and pos approach 0
+        //in that case, snapping constant approaches infinity due to the math
+        if (scale < MID_SNAP_CONST * WIRE_SNAP_THRESHOLD) {
+            v.x = DoSnap(v.x, pos.x, scale);
+        }
+        if (scale2 < MID_SNAP_CONST * WIRE_SNAP_THRESHOLD) {
+            v.y = DoSnap(v.y, pos.y, scale2);
+        }
     }
 
     obj.setPos(v);

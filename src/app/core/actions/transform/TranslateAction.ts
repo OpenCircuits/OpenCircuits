@@ -5,6 +5,7 @@ import {Action} from "core/actions/Action";
 import {Component} from "core/models/Component";
 
 import {SnapPos, SnapMidpoint} from "./SnapUtils";
+import { CircuitDesigner } from "core/models";
 
 // Translate can be applied to single components,
 //  but if you need to translate multiple components at
@@ -14,11 +15,13 @@ export class TranslateAction implements Action {
     protected objs: Component[];
     protected initialPositions: Vector[];
     protected targetPositions: Vector[];
+    protected circuit: CircuitDesigner;
 
-    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[]) {
+    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], circuit: CircuitDesigner) {
         this.objs = objs;
         this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
+        this.circuit = circuit;
     }
 
     public execute(): Action {
@@ -28,9 +31,7 @@ export class TranslateAction implements Action {
         this.objs.forEach(o => SnapPos(o));
 
         //Midpoint snap
-        //Need list of all components
-        
-        this.objs.forEach(o => SnapMidpoint(o, this.objs))
+        this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
 
         return this;
     }
@@ -42,7 +43,7 @@ export class TranslateAction implements Action {
         this.objs.forEach(o => SnapPos(o));
 
         //Midpoint snap
-        this.objs.forEach(o => SnapMidpoint(o, this.objs))
+        this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
         return this;
     }
 }
