@@ -5,25 +5,23 @@ import {connect} from "react-redux";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
-import {Camera} from "math/Camera";
 
-import {SelectionsWrapper}  from "core/utils/SelectionsWrapper";
-import {RenderQueue}        from "core/utils/RenderQueue";
-import {Input}              from "core/utils/Input";
-
-import {HistoryManager} from "core/actions/HistoryManager";
-import {PlaceAction}    from "core/actions/addition/PlaceAction";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {Input} from "core/utils/Input";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
+
+import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+
+import {DigitalComponent} from "digital/models";
+
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {AppState} from "site/digital/state";
 
 import "./index.scss";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 type OwnProps = {
@@ -83,24 +81,20 @@ const _MainDesigner = ({info, isLocked}: Props) => {
 
 
     return (<>
-        <canvas className="main__canvas"
-                width={w}
-                height={h-HEADER_HEIGHT}
-                ref={canvas}
-                onDragOver={(ev) => {
-                        ev.preventDefault();
-                }}
-                onDrop={(ev) => {
-                        const uuid = ev.dataTransfer.getData("custom/component");
-                    if (!uuid)
-                        return;
-                    const rect = canvas.current.getBoundingClientRect();
-                    const pos = V(ev.pageX, ev.clientY-rect.top);
-                    const component = Create<DigitalComponent>(uuid);
-                    component.setPos(camera.getWorldPos(pos));
-                    history.add(new PlaceAction(designer, component).execute());
-                    renderer.render();
-                }} />
+        <Droppable ref={canvas}
+                   onDrop={(data, pos) => {
+                       if (!data)
+                           return;
+                       pos = pos.sub(V(0, canvas.current.getBoundingClientRect().top));
+                       const component = Create<DigitalComponent>(data);
+                       component.setPos(camera.getWorldPos(pos));
+                       history.add(new PlaceAction(designer, component).execute());
+                       renderer.render();
+                   }}>
+            <canvas className="main__canvas"
+                    width={w}
+                    height={h-HEADER_HEIGHT} />
+        </Droppable>
     </>);
 }
 
