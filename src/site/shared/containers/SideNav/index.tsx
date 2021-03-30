@@ -16,6 +16,7 @@ import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
 
 import "./index.scss";
+import { CircuitInfo } from "core/utils/CircuitInfo";
 
 
 function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
@@ -28,6 +29,7 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 
 
 type OwnProps = {
+    info: CircuitInfo;
     helpers: CircuitInfoHelpers;
     exampleCircuits: CircuitMetadata[];
 }
@@ -46,7 +48,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, isHistoryBoxOpen, userCircuits, exampleCircuits, 
+const _SideNav = ({ info, helpers, auth, isOpen, isLoggedIn, isHistoryBoxOpen, userCircuits, exampleCircuits, 
                     ToggleSideNav, OpenHistoryBox, CloseHistoryBox }: Props) => (
     <>
         <Overlay isOpen={isOpen} close={() => {
@@ -101,7 +103,11 @@ const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, isHistoryBoxOpen, userCir
             </div>
         </div>
 
-        <div className="historybox" style={{display: (isHistoryBoxOpen ? "initial" : "none")}}></div>
+        <div className="historybox" style={{display: (isHistoryBoxOpen ? "initial" : "none")}}>
+            {info.history.getActions().reverse().map((a, i) => {
+                return <div key={`history-box-entry-${i}`} className="historybox__entry">{a.getName()}</div>
+            })}
+        </div>
     </>
 );
 
@@ -116,3 +122,4 @@ export const SideNav = connect<StateProps, DispatchProps, OwnProps, SharedAppSta
     }),
     { LoadUserCircuits, ToggleSideNav, OpenHistoryBox, CloseHistoryBox } as any
 )(_SideNav);
+
