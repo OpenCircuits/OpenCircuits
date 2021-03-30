@@ -41,6 +41,9 @@ export class GroupAction implements Action {
     }
 
     public getName(): string {
-        return "Group";
+        if (this.actions.length === 1) {
+            return this.actions[0].getName();
+        }
+        return `Grouped ${this.actions.length} actions` ;
     }
 }
