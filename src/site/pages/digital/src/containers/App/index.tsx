@@ -88,7 +88,8 @@ export const App = ((store: AppStore) => {
 
         return (
             <div className="App">
-                <SideNav helpers={helpers}
+                <SideNav info={info}
+                         helpers={helpers}
                          exampleCircuits={exampleCircuits} />
 
                 <main>
