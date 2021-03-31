@@ -11,7 +11,7 @@ import { PlaceAction } from "core/actions/addition/PlaceAction";
 import { V } from "Vector";
 
 
-const _AddLabelButtonModule = (props: UseModuleProps) => (
+export const AddLabelButtonModule = (props: UseModuleProps) => (
     <ButtonPopupModule
         text="Add Label"
         alt="Add a label that will stick to the component"
@@ -26,18 +26,9 @@ const _AddLabelButtonModule = (props: UseModuleProps) => (
             const L = new Label();
             L.getTransform().setParent((selections[0] as Component).getTransform());
             //L.getCullBox().setParent((selections[0] as Component).getCullBox());
-            L.setPos(V(0,50));
+            L.setPos(V((selections[0] as Component).getPos().x,(selections[0] as Component).getPos().y.valueOf()-50));
             return new PlaceAction(props.designer, L).execute();
         }}
         {...props} 
         />
 );
-
-
-// remove this
-export const AddLabelButtonModule = connect<UseModuleProps>(
-    undefined,
-    { },
-    undefined,
-    { pure: false }
-)(_AddLabelButtonModule);
