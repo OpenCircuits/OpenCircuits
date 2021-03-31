@@ -126,17 +126,125 @@ describe("Rotate Tool", () => {
     describe("Parented Objects", () => {
         const obj = new Label();
         const par = new ANDGate();
-        obj.getTransform().setParent(par.getTransform());
-        designer.reset();
-        designer.addObjects([obj, par]);
+
+        beforeAll(() => {
+            // Clear previous circuit
+            designer.reset();
+
+            // set par as parent to obj
+            obj.getTransform().setParent(par.getTransform());
+
+            // Add objects
+            designer.addObjects([obj, par]);
+        });
+        
+
+        beforeEach(() => {
+            // Reset objects
+            obj.setPos(V(0, -50));
+            obj.setAngle(0);
+            par.setPos(V(0, 0));
+            par.setAngle(0);
+        });
 
         // 100 units to the right of parent
         // rotate parent 90 degrees, label is 100 units above
+        test("Rotate Parent 90°", () => {
+            obj.setPos(V(par.getPos().x.valueOf()+100, par.getPos().y));
+
+            input.click(par.getPos());
+            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toContain(par);
+
+            
+            input.moveTo(par.getPos()) // Move to midpoint of parent
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(+ROTATION_CIRCLE_RADIUS, +ROTATION_CIRCLE_RADIUS))
+                    .release();
+            expect(par.getAngle()).toBeCloseTo(-Math.PI/2);
+            expect(obj.getAngle()).toBeCloseTo(-Math.PI/2);
+            expect(obj.getPos().x).toBeCloseTo(0);
+            expect(obj.getPos().y).toBeCloseTo(-100);
+        });
 
         // rotate label 90 degrees, rotate parent -90 degrees
         // label should be 0 degrees
+        test("Rotate Label 90°, Parent -90°", () => {
+            obj.setPos(V(par.getPos().x.valueOf()+100, par.getPos().y));
+            // for some reason, setAngle must be called again, even though
+            // its in the BeforeEach section
+            obj.setAngle(0);
+            par.setAngle(0);
+            input.click(obj.getPos()); // Select child
+            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toContain(obj);
+    
+            expect(obj.getAngle()).toBeCloseTo(0);
+            const midpoint = obj.getPos();
+            input.moveTo(midpoint) // Move to midpoint of objects
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(+ROTATION_CIRCLE_RADIUS, +ROTATION_CIRCLE_RADIUS))
+                    .release();
+            expect(obj.getAngle()).toBeCloseTo(-Math.PI/2);
+
+            input.click(par.getPos()); // Select parent
+            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toContain(par);
+               
+            expect(par.getAngle()).toBeCloseTo(0);
+            input.moveTo(par.getPos()) // Move to midpoint of objects
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(+ROTATION_CIRCLE_RADIUS, -ROTATION_CIRCLE_RADIUS))
+                    .release();
+            // expected 90 degrees and 0 degrees
+            // got -270 degrees and -360 degrees... is this right?
+            expect(par.getAngle()).toBeCloseTo(Math.PI/2 - 2*Math.PI);
+            expect(obj.getAngle()).toBeCloseTo(-2*Math.PI);
+        });
 
         // label 200 units above parent, move parent up 1000 units, move parent down 1000 units
         // store cullbox before moving, make sure it is the same after the parent moves back down
+        test("Cullbox test", () => {
+            obj.setPos(V(par.getPos().x, par.getPos().y.valueOf() - 200));
+
+            const cull = obj.getCullBox();
+            
+            input.moveTo(par.getPos()) // Move to midpoint of parent
+                    .press()
+                    .move(V(0, -2000))
+                    .release()
+                    .press()
+                    .move(V(0, 2000));
+            expect(par.getPos().y).toBeCloseTo(0);
+            const cullAfter = obj.getCullBox();
+            expect(cull).toBe(cullAfter);
+        });
+
+        // midpoint test
+        // move labe1 100 units up, 50 units down
+        // move parent, make sure position of the label is correct
+        test("Midpoint test", () => {
+            par.setPos(V(0,0));
+            obj.setPos(V(par.getPos().x, par.getPos().y.valueOf() - 200));
+            
+            expect(par.getPos().x).toBeCloseTo(0);
+            expect(par.getPos().y).toBeCloseTo(0);
+            expect(obj.getPos().x).toBeCloseTo(0);
+            expect(obj.getPos().y).toBeCloseTo(-200);
+
+            input.moveTo(obj.getPos()) // Move to midpoint of parent
+                    .press()
+                    .move(V(0, -100))
+                    .release()
+                    .press()
+                    .move(V(0, 50));
+            expect(obj.getPos().y).toBeCloseTo(-250);
+        });
+
+        // BUG: rotating a label child that has a child rotates par.getAngle() degrees right away
+        // BUG: moving a label off screen by moving the parent object makes label invisible until scroll
     })
 });
