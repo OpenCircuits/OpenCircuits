@@ -97,4 +97,17 @@ export class Graph<V, E> {
         return nodes;
     }
 
+    /**
+    * Used to get the max "depth" of each node where the source nodes have a depth of 0
+    *  and each additional layer adds +1 to the depth. If a node has parents at multiple
+    *  depths such as 1 and 3, then it inherits from the "deeper" one, so the node would
+    *  have a depth of 4. This should only be called if the isConnected() is true and the
+    *  graph is acyclic.
+    *
+    * @return a map where each key is each node and the value is the max depth of that node
+    */
+    public getMaxNodeDepths(): Map<V, number> {
+        return null;
+    }
+
 }
