@@ -18,9 +18,7 @@ type StateProps = {
     isLocked: boolean;
     isLoggedIn: boolean;
     isLoading: boolean;
-    saveStatus: string;
     error: string;
-
 }
 type DispatchProps = {
     toggleLock: () => void;
@@ -29,7 +27,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, saveStatus, error, toggleLock, toggleSideNav, setCircuitName }: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, error, toggleLock, toggleSideNav, setCircuitName }: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -59,18 +57,9 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     
         </div>
         <div>
-            <input className="header__left__indicator"
-                  
-                  value={isLoading ?  'saving' : error ? "error saving" : "saved"}
-                  readOnly = {true}
-                  placeholder=""
-                  alt="Tells you the saving status" 
-                  />
-        </div>
-        <div>
-            <img  src="img/icons/saveError.svg" className={error ? "hide" : "hide"} alt="Icon when save failed" />
-            <img  src="img/icons/loading.svg" className={isLoading ? "hide" : ""} alt="Icon for saving" />
-            <img  src="img/icons/saved.svg" className={isSaved ? "hide" : "hide"} alt="Icon when saved" />
+            <img  src="img/icons/error.svg" className={error ? "" : "hide"} alt="Icon when save failed" />
+            <img  src="img/icons/loading.svg" className={isLoading ? "" : "hide"} alt="Icon for saving" />
+            <img  src="img/icons/check.svg" className={isLoading ? "hide" : error ? "hide" : "saved"} alt="Icon when saved" />
         </div>
     </div>
 );
