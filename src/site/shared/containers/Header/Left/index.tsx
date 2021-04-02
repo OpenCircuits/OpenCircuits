@@ -59,15 +59,14 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                     
         </div>
         <div>
-            <input title="saving indicator" type="text"
+            <input className="header__left__indicator"
                   
-                    value={isLoading ? "saving" : isSaved ? "saved" : "not saved"}
-                    placeholder=""
-                    alt="Name of project" 
-                    disabled={isLoading}
-                    />
+                  value={isLoading ?  'saving' : error ? "error saving" : "saved"}
+                  readOnly = {true}
+                  placeholder=""
+                  alt="Tells you the saving status" 
+                  />
         </div>
-
     </div>
 );
 

@@ -61,4 +61,14 @@
 
         color: $secondary-color;
     }
+    &__indicator {
+        font-size: 50px;
+
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        height: $header-height - 2*$header-padding;
+        margin-right: 10px;
+
+        color: $primary-color;
+    }
+    
 }
