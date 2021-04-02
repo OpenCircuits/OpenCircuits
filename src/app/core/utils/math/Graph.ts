@@ -107,7 +107,29 @@ export class Graph<V, E> {
     * @return a map where each key is each node and the value is the max depth of that node
     */
     public getMaxNodeDepths(): Map<V, number> {
-        return null;
+        const sources = this.getSources();
+        const ret = new Map<V, number>();
+
+        let currentLayer = this.getSources();
+        let nextLayer: V[] = [];
+
+        for (const node of currentLayer) {
+            ret.set(node, 0);
+        }
+
+        while (currentLayer.length != 0) {
+            for (const node of currentLayer) {
+                const nextDepth = ret.get(node) + 1;
+                for (const next of this.list.get(node))  {
+                    ret.set(next.getTarget(), nextDepth);
+                    nextLayer.push(next.getTarget());
+                }
+            }
+            currentLayer = nextLayer;
+            nextLayer = [];
+        }
+
+        return ret;
     }
 
 }

@@ -122,6 +122,7 @@ describe("Graph", () => {
             graph.createNode("G");
 
             graph.createEdge("A", "C", "edge");
+            graph.createEdge("A", "F", "edge");
             graph.createEdge("C", "F", "edge");
             graph.createEdge("C", "D", "edge");
             graph.createEdge("F", "G", "edge");
