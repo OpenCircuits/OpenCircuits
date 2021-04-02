@@ -67,6 +67,11 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                   alt="Tells you the saving status" 
                   />
         </div>
+        <div>
+            <img  src="img/icons/saveError.svg" className={error ? "hide" : "hide"} alt="Icon when save failed" />
+            <img  src="img/icons/loading.svg" className={isLoading ? "hide" : ""} alt="Icon for saving" />
+            <img  src="img/icons/saved.svg" className={isSaved ? "hide" : "hide"} alt="Icon when saved" />
+        </div>
     </div>
 );
 
