@@ -71,17 +71,29 @@ export const ExprToCircuitPopup = (() => {
     )(
         ({curPopup, CloseHeaderPopups, info}: Props) => {
             const [{expression}, setExpression] = useState({ expression: "" });
+            const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
 
             return (
                 <Popup title="Boolean Expression to Circuit"
                        isOpen={(curPopup === "expr_to_circuit")}
                        close={CloseHeaderPopups}>
+                    { errorMessage && <p>{errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
                                placeholder=""
                                onChange={e => setExpression({expression: e.target.value})} />
                     <div title="Generate Circuit">
-                        <button type="button" onClick={() => {generate(info.designer, info.camera, expression); CloseHeaderPopups();} } >Generate</button>
+                        <button type="button" onClick={() => {
+                            try {
+                                generate(info.designer, info.camera, expression);
+                                setExpression({ expression: "" });
+                                setErrorMessage({ errorMessage: "" });
+                                CloseHeaderPopups();
+                            }
+                            catch (err) {
+                                setErrorMessage({ errorMessage: err.message });
+                            }
+                        }}>Generate</button>
                     </div>
                 </Popup>
             );
