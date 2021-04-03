@@ -10,6 +10,8 @@ import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
 import {HeaderPopups}      from "shared/state/Header/state";
 
+import {Camera} from "math/Camera";
+
 import {OrganizeComponents} from "core/utils/ComponentUtils";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
@@ -30,7 +32,7 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner, expression: string) {
+function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: string) {
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -53,7 +55,10 @@ function generate(designer: DigitalCircuitDesigner, expression: string) {
     const o = new LED();
     const circuit = ExpressionToCircuit(inputMap, expression, o)
     CreateAddGroupAction(designer, circuit).execute();
-    OrganizeComponents(circuit);
+    // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
+    //  so that the components are not literally in the uppermost leftmost corner
+    const startPos = camera.getPos().sub(camera.getCenter().scale(camera.getZoom()/1.5));
+    OrganizeComponents(circuit, startPos);
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -76,7 +81,7 @@ export const ExprToCircuitPopup = (() => {
                                placeholder=""
                                onChange={e => setExpression({expression: e.target.value})} />
                     <div title="Generate Circuit">
-                        <button type="button" onClick={() => {generate(info.designer, expression); CloseHeaderPopups();} } >Generate</button>
+                        <button type="button" onClick={() => {generate(info.designer, info.camera, expression); CloseHeaderPopups();} } >Generate</button>
                     </div>
                 </Popup>
             );

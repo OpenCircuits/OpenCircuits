@@ -223,7 +223,7 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
 /**
  * Organizes the components so that components at greater depth are further to the right
  */
-export function OrganizeComponents(groups: IOObjectSet): void {
+export function OrganizeComponents(groups: IOObjectSet, start: Vector): void {
     const graph = CreateGraph(groups);
     const depthMap = graph.getMaxNodeDepths();
     const depthArray: Component[][] = [];
@@ -236,15 +236,13 @@ export function OrganizeComponents(groups: IOObjectSet): void {
         depthArray[depth].push(components[index]);
     }
 
-    const xStart: number = 0;
-    const yStart: number = 0;
     const xOffset: number = 250;
     const yOffset: number = 150;
 
     for (let i = 0; i < depthArray.length; i++) {
         for (let j = 0; j < depthArray[i].length; j++) {
             const component = depthArray[i][j];
-            const newLocation = new Vector(xStart + xOffset * i, yStart + yOffset * j);
+            const newLocation = new Vector(start.x + xOffset * i, start.y + yOffset * j);
             component.setPos(newLocation);
         }
     }
