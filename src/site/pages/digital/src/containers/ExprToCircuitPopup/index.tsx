@@ -10,9 +10,7 @@ import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
 import {HeaderPopups}      from "shared/state/Header/state";
 
-import {CreateGraph} from "core/utils/ComponentUtils";
-import {Graph} from "math/Graph";
-import {Vector} from "Vector";
+import {OrganizeComponents} from "core/utils/ComponentUtils";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
@@ -55,30 +53,7 @@ function generate(designer: DigitalCircuitDesigner, expression: string) {
     const o = new LED();
     const circuit = ExpressionToCircuit(inputMap, expression, o)
     CreateAddGroupAction(designer, circuit).execute();
-    const graph = CreateGraph(circuit);
-    const depthMap = graph.getMaxNodeDepths();
-    const depthArray: DigitalComponent[][] = [];
-    const components = circuit.getComponents();
-
-    // Convert the map to a 2d array where index of first array is the depth
-    for (const [index, depth] of depthMap.entries()) {
-        while (depthArray.length <= depth)
-            depthArray.push([]);
-        depthArray[depth].push(components[index]);
-    }
-
-    const xStart: number = 0;
-    const yStart: number = 0;
-    const xOffset: number = 250;
-    const yOffset: number = 150;
-
-    for (let i = 0; i < depthArray.length; i++) {
-        for (let j = 0; j < depthArray[i].length; j++) {
-            const component = depthArray[i][j];
-            const newLocation = new Vector(xStart + xOffset * i, yStart + yOffset * j);
-            component.setPos(newLocation);
-        }
-    }
+    OrganizeComponents(circuit);
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
