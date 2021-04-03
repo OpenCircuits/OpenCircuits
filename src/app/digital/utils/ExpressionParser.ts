@@ -73,122 +73,142 @@ export function GenerateTokens(input: string): Array<string> | null {
     return tokenList;
 }
 
-function Parse(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
-               currentOperator: string): ReturnValue | null {
+function parseOperator(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
+               currentOperator: string): ReturnValue {
+    let nextOperator: string;
 
-    if(currentOperator == "|" || currentOperator == "^" || currentOperator == "&") {
-        let nextOperator: string;
-
-        switch(currentOperator) {
-        case "|":
-            nextOperator = "^";
-            break;
-        case "^":
-            nextOperator = "&";
-            break;
-        case "&":
-            nextOperator = "!";
-            break;
-        }
-
-        const leftRet = Parse(tokens, index, inputs, nextOperator);
-        index = leftRet.retIndex;
-        if(index >= tokens.length || tokens[index] != currentOperator) {
-            return leftRet;
-        }
-        index += 1;
-        if(index >= tokens.length) {
-            throw new Error("Missing Right Operand: " + currentOperator);
-        }
-
-        const leftCircuit = leftRet.circuit;
-        const leftPort = leftRet.recentPort;
-        const rightRet = Parse(tokens, index, inputs, currentOperator);
-        const rightCircuit = rightRet.circuit;
-        index = rightRet.retIndex;
-        const rightPort = rightRet.recentPort;
-
-        let newGate: DigitalComponent;
-        switch(currentOperator) {
-        case "&":
-            newGate = new ANDGate();
-            break;
-        case "^":
-            newGate = new XORGate();
-            break;
-        case "|":
-            newGate = new ORGate();
-            break;
-        }
-        const w1 = new DigitalWire(leftPort, newGate.getInputPort(0));
-        const w2 = new DigitalWire(rightPort, newGate.getInputPort(1));
-        leftPort.connect(w1);
-        newGate.getInputPort(0).connect(w1);
-        rightPort.connect(w2);
-        newGate.getInputPort(1).connect(w2);
-        const newOutput = newGate.getOutputPort(0);
-        const newComponents: IOObject[] = [newGate, w1, w2];
-        const newCircuit = newComponents.concat(leftCircuit).concat(rightCircuit);
-
-        return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    switch(currentOperator) {
+    case "|":
+        nextOperator = "^";
+        break;
+    case "^":
+        nextOperator = "&";
+        break;
+    case "&":
+        nextOperator = "!";
+        break;
     }
-    else if(currentOperator == "!") {
-        if(tokens[index] != "!") {
-            return Parse(tokens, index, inputs, "(");
-        }
-        index += 1;
-        if(index >= tokens.length) {
-            throw new Error("Missing Operand: !");
-        }
 
-        let ret: ReturnValue;
-        if(tokens[index] == "!") {
-            ret = Parse(tokens, index, inputs, "!");
-        }
-        else {
-            ret = Parse(tokens, index, inputs, "(");
-        }
-        const circuit = ret.circuit;
-        index = ret.retIndex;
-        const port = ret.recentPort;
-        const gate = new NOTGate();
-        const wire = new DigitalWire(port, gate.getInputPort(0));
-        gate.getInputPort(0).connect(wire);
-        port.connect(wire);
-        const newOutput = gate.getOutputPort(0);
-        const newComponents: IOObject[] = [gate, wire];
-        const newCircuit = circuit.concat(newComponents);
-
-        return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    const leftRet = Parse(tokens, index, inputs, nextOperator);
+    index = leftRet.retIndex;
+    if(index >= tokens.length || tokens[index] != currentOperator) {
+        return leftRet;
     }
-    else if(tokens[index] == "(") {
-        index += 1;
-        if(index >= tokens.length)
-            throw new Error("Encountered Unmatched (");
-        const ret = Parse(tokens, index, inputs, "|");
-        index = ret.retIndex;
-        if(index >= tokens.length)
-            throw new Error("Encountered Unmatched (");
-        ret.retIndex += 1;
-        return ret;
+    index += 1;
+    if(index >= tokens.length) {
+        throw new Error("Missing Right Operand: " + currentOperator);
+    }
+
+    const leftCircuit = leftRet.circuit;
+    const leftPort = leftRet.recentPort;
+    const rightRet = Parse(tokens, index, inputs, currentOperator);
+    const rightCircuit = rightRet.circuit;
+    index = rightRet.retIndex;
+    const rightPort = rightRet.recentPort;
+
+    let newGate: DigitalComponent;
+    switch(currentOperator) {
+    case "&":
+        newGate = new ANDGate();
+        break;
+    case "^":
+        newGate = new XORGate();
+        break;
+    case "|":
+        newGate = new ORGate();
+        break;
+    }
+    const w1 = new DigitalWire(leftPort, newGate.getInputPort(0));
+    const w2 = new DigitalWire(rightPort, newGate.getInputPort(1));
+    leftPort.connect(w1);
+    newGate.getInputPort(0).connect(w1);
+    rightPort.connect(w2);
+    newGate.getInputPort(1).connect(w2);
+    const newOutput = newGate.getOutputPort(0);
+    const newComponents: IOObject[] = [newGate, w1, w2];
+    const newCircuit = newComponents.concat(leftCircuit).concat(rightCircuit);
+
+    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+}
+
+function parseNot(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
+               currentOperator: string): ReturnValue {
+    if(tokens[index] != "!") {
+        return Parse(tokens, index, inputs, "(");
+    }
+    index += 1;
+    if(index >= tokens.length) {
+        throw new Error("Missing Operand: !");
+    }
+
+    let ret: ReturnValue;
+    if(tokens[index] == "!") {
+        ret = Parse(tokens, index, inputs, "!");
     }
     else {
-        const inputName = tokens[index];
-        if(!inputs.has(inputName)) {
-            switch (inputName) {
-            case "&":
-            case "|":
-            case "^":
-                throw new Error("Missing Left Operand: " + inputName);
-            case ")":
-                throw new Error("Encountered Unmatched )");
-            }
+        ret = Parse(tokens, index, inputs, "(");
+    }
+    const circuit = ret.circuit;
+    index = ret.retIndex;
+    const port = ret.recentPort;
+    const gate = new NOTGate();
+    const wire = new DigitalWire(port, gate.getInputPort(0));
+    gate.getInputPort(0).connect(wire);
+    port.connect(wire);
+    const newOutput = gate.getOutputPort(0);
+    const newComponents: IOObject[] = [gate, wire];
+    const newCircuit = circuit.concat(newComponents);
+
+    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+}
+
+function parseParen(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
+               currentOperator: string): ReturnValue {
+    index += 1;
+    if(index >= tokens.length)
+        throw new Error("Encountered Unmatched (");
+    const ret = Parse(tokens, index, inputs, "|");
+    index = ret.retIndex;
+    if(index >= tokens.length)
+        throw new Error("Encountered Unmatched (");
+    ret.retIndex += 1;
+    return ret;
+}
+
+function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
+               currentOperator: string): ReturnValue {
+    const inputName = tokens[index];
+    if(!inputs.has(inputName)) {
+        switch (inputName) {
+        case "&":
+        case "|":
+        case "^":
+            throw new Error("Missing Left Operand: " + inputName);
+        case ")":
+            throw new Error("Encountered Unmatched )");
         }
-        const inputComponent = inputs.get(inputName);
-        const newOutput = inputComponent.getOutputPort(0);
-        const newCircuit: IOObject[] = [];
-        index += 1;
-        return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    }
+    const inputComponent = inputs.get(inputName);
+    const newOutput = inputComponent.getOutputPort(0);
+    const newCircuit: IOObject[] = [];
+    index += 1;
+    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+}
+
+function Parse(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>,
+               currentOperator: string): ReturnValue {
+
+    if(currentOperator == "|" || currentOperator == "^" || currentOperator == "&") {
+        return parseOperator(tokens, index, inputs, currentOperator);
+    }
+    else if(currentOperator == "!") {
+        return parseNot(tokens, index, inputs, currentOperator);
+    }
+    else if(tokens[index] == "(") {
+        return parseParen(tokens, index, inputs, currentOperator);
+    }
+    else {
+        return parseOther(tokens, index, inputs, currentOperator);
     }
 }
 
