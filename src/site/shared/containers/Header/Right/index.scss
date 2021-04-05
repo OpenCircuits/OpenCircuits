@@ -38,7 +38,7 @@
 @media (max-width: 500px) { 
     .header__right__alt {
         margin-right: 14px;
-        top: 18px;
+        top: 10px;
         right: 10px;
         position: fixed;
 
@@ -47,8 +47,9 @@
         }
 
         & img {
-            width: 30px;
-            height:30px;
+            width: 40px;
+            height:40px;
+            border-radius:10px;
         }
 
         & .expand {
@@ -58,7 +59,12 @@
         
         & #notHidden {
             list-style-type: none;
+            background-color: white;
+            border-radius: 6px 6px 6px;
+            background-color: #fff;
+            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
         }
+
     }
 
     .header__right {
