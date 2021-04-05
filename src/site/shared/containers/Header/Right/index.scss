@@ -30,13 +30,13 @@
     }
 
     .header__right__alt {
-        display:none;
+        display: none;
     }
 }
 
 
-@media (max-width: 500px) { 
-    .header__right__alt {
+@media (max-width: 500px) {
+    .header__right__alt{
         margin-right: 14px;
         top: 10px;
         right: 10px;
@@ -48,23 +48,21 @@
 
         & img {
             width: 40px;
-            height:40px;
-            border-radius:10px;
+            height: 40px;
+            border-radius: 10px;
         }
 
         & .expand {
             transform: scale(1.75);
             margin-bottom: 15px;
         }
-        
+
         & #notHidden {
             list-style-type: none;
             background-color: white;
             border-radius: 6px 6px 6px;
-            background-color: #fff;
             box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
         }
-
     }
 
     .header__right {
@@ -72,7 +70,7 @@
     }
 }
 
-.header__right, .header__right__alt  {
+.header__right, .header__right__alt {
     &__dropdown {
         position: relative;
 
