@@ -6,7 +6,7 @@ import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
 
 import "./index.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 type Props = {
@@ -14,10 +14,29 @@ type Props = {
 }
 export const HeaderRight = ({ helpers }: Props) => {
 
-    const [isHidden, setHidden] = useState(true)
+    const [isHidden, setHidden] = useState(true) 
+    const [isDesktop, setDesktop] = useState({
+        height: window.innerHeight,
+        width: window.innerWidth
+    })
+
+    //Rerender on Browsing Resize
+    useEffect(() => {
+        function handleResize() {
+            setDesktop({
+                height: window.innerHeight,
+                width: window.innerWidth
+            })
+        }
+        window.addEventListener('resize', handleResize)
+
+        return function clean() {
+            window.removeEventListener('resize', handleResize)
+        }
+    })
 
     //Desktop
-    if(!window.matchMedia("(max-width: 500px)").matches) {
+    if(isDesktop.width >= 500) {
         return (
             <div className="header__right">
                 <TutorialDropdown />
@@ -42,5 +61,4 @@ export const HeaderRight = ({ helpers }: Props) => {
             </div>
         );
     }
-
 }
