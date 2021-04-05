@@ -41,6 +41,7 @@
             position: absolute;
             top: 100%;
             right: 0;
+            z-index: 1;
 
             padding: 10px;
             padding-top: 15px;
@@ -144,4 +145,30 @@
             }
         }
     }
+}
+
+.header__right__alt {
+    margin-right: 14px;
+    top: 18px;
+    right: 10px;
+    position: fixed;
+
+    & #hidden {
+        display: none;
+    }
+
+    & img {
+        width: 30px;
+        height:30px;
+    }
+
+    & .expand {
+        transform: scale(1.75);
+        margin-bottom: 15px;
+    }
+    
+    & #notHidden {
+        list-style-type: none;
+    }
+    
 }
