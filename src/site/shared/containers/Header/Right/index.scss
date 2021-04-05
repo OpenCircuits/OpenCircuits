@@ -1,32 +1,72 @@
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
-.header__right {
-    margin-right: 14px;
+@media (min-width: 500px) {
+    .header__right {
+        margin-right: 14px;
 
-    & div {
-        float: right;
+        & div {
+            float: right;
 
-        height: $header-height - 2*$header-padding;
-        margin-top: $header-padding;
+            height: $header-height - 2*$header-padding;
+            margin-top: $header-padding;
 
-        cursor: pointer;
+            cursor: pointer;
+        }
+        & button {
+            height: $header-height - 2*$header-padding;
+            margin-left: $header-padding;
+
+            cursor: pointer;
+        }
+        & img {
+            display: block;
+
+            height: 85%;
+            margin: auto;
+        }
+        #header-help-img {
+            height: 75%;
+        }
     }
-    & button {
-        height: $header-height - 2*$header-padding;
-        margin-left: $header-padding;
 
-        cursor: pointer;
+    .header__right__alt {
+        display:none;
     }
-    & img {
-        display: block;
+}
 
-        height: 85%;
-        margin: auto;
-    }
-    #header-help-img {
-        height: 75%;
+
+@media (max-width: 500px) { 
+    .header__right__alt {
+        margin-right: 14px;
+        top: 18px;
+        right: 10px;
+        position: fixed;
+
+        & #hidden {
+            display: none;
+        }
+
+        & img {
+            width: 30px;
+            height:30px;
+        }
+
+        & .expand {
+            transform: scale(1.75);
+            margin-bottom: 15px;
+        }
+        
+        & #notHidden {
+            list-style-type: none;
+        }
     }
 
+    .header__right {
+        display: none;
+    }
+}
+
+.header__right, .header__right__alt  {
     &__dropdown {
         position: relative;
 
@@ -147,28 +187,3 @@
     }
 }
 
-.header__right__alt {
-    margin-right: 14px;
-    top: 18px;
-    right: 10px;
-    position: fixed;
-
-    & #hidden {
-        display: none;
-    }
-
-    & img {
-        width: 30px;
-        height:30px;
-    }
-
-    & .expand {
-        transform: scale(1.75);
-        margin-bottom: 15px;
-    }
-    
-    & #notHidden {
-        list-style-type: none;
-    }
-    
-}
