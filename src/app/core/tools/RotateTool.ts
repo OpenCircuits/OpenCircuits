@@ -74,7 +74,7 @@ export const RotateTool = (() => {
                 return false;
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
-            const components = selections.get() as Component[];
+            const components = selections.get().filter(s => s instanceof Component && s.getTransform().getParent() == undefined) as Component[];
 
             const midpoint = selections.midpoint();
             const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
