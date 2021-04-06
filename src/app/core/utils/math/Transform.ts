@@ -145,8 +145,8 @@ export class Transform {
         this.dirtyCorners = true;
     }
     public setAngle(a: number): void {
-        if (this.parent)
-            a = a - this.parent.angle;
+        //if (this.parent)
+            //a = a - this.parent.angle;
         this.angle = a;
         this.dirty = true;
         this.dirtyCorners = true;
@@ -208,8 +208,8 @@ export class Transform {
         return this.pos.copy();
     }
     public getAngle(): number {
-        if (this.parent)
-            return this.parent.getAngle() + this.angle;
+        //if (this.parent)
+            //return this.parent.getAngle() + this.angle;
         return this.angle;
     }
     public getScale(): Vector {
