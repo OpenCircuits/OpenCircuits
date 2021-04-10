@@ -18,7 +18,7 @@ export const Draggable = ({ children, data }: Props) => {
     function onDragEnd(pos: Vector) {
         if (!isDragging)
             return;
-        DragDropHandlers.drop(data, pos);
+        DragDropHandlers.drop(pos, data);
         setState({ isDragging: false });
     }
 
