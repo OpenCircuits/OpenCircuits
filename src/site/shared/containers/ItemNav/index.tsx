@@ -4,6 +4,8 @@ import {connect} from "react-redux";
 import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
 
+import {Draggable} from "shared/components/DragDroppable/Draggable";
+
 import "./index.scss";
 
 
@@ -36,7 +38,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ isOpen, isEnabled, isLocked, config, toggle }: Props) {
+function _ItemNav({ config, isOpen, isEnabled, isLocked, toggle }: Props) {
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
@@ -49,15 +51,14 @@ function _ItemNav({ isOpen, isEnabled, isLocked, config, toggle }: Props) {
                 <React.Fragment key={`itemnav-section-${i}`}>
                     <h4>{section.label}</h4>
                     {section.items.map((item, j) =>
-                        <button key={`itemnav-section-${i}-item-${j}`}
-                                onDragStart={(ev) => {
-                                    ev.dataTransfer.setData("custom/component", item.id);
-                                    ev.dataTransfer.dropEffect = "copy";
-                                }}>
-                            <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                            <br />
-                            {item.label}
-                        </button>
+                        <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                   data={item.id}>
+                            <button>
+                                <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                <br />
+                                {item.label}
+                            </button>
+                        </Draggable>
                     )}
                 </React.Fragment>
             )}
