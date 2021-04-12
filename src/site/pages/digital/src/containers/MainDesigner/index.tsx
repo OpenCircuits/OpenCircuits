@@ -5,25 +5,24 @@ import {connect} from "react-redux";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
-import {Camera} from "math/Camera";
 
-import {SelectionsWrapper}  from "core/utils/SelectionsWrapper";
-import {RenderQueue}        from "core/utils/RenderQueue";
-import {Input}              from "core/utils/Input";
+import {Input} from "core/utils/Input";
 
-import {HistoryManager} from "core/actions/HistoryManager";
-import {PlaceAction}    from "core/actions/addition/PlaceAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {PlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
+
+import {DigitalComponent} from "digital/models";
+
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {AppState} from "site/digital/state";
 
 import "./index.scss";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 type OwnProps = {
@@ -83,24 +82,32 @@ const _MainDesigner = ({info, isLocked}: Props) => {
 
 
     return (<>
-        <canvas className="main__canvas"
-                width={w}
-                height={h-HEADER_HEIGHT}
-                ref={canvas}
-                onDragOver={(ev) => {
-                        ev.preventDefault();
-                }}
-                onDrop={(ev) => {
-                        const uuid = ev.dataTransfer.getData("custom/component");
-                    if (!uuid)
-                        return;
-                    const rect = canvas.current.getBoundingClientRect();
-                    const pos = V(ev.pageX, ev.clientY-rect.top);
-                    const component = Create<DigitalComponent>(uuid);
-                    component.setPos(camera.getWorldPos(pos));
-                    history.add(new PlaceAction(designer, component).execute());
-                    renderer.render();
-                }} />
+        <Droppable ref={canvas}
+                   onDrop={(pos, itemId, num) => {
+                       num = num ?? 1;
+                       console.log(itemId, num);
+                       if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
+                           return;
+                       pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
+
+                       const action = new GroupAction();
+                       for (let i = 0; i < num; i++) {
+                           const component = Create<DigitalComponent>(itemId);
+                           if (!component) { // Invalid itemId, return
+                               console.error("Failed to create item with id", itemId);
+                               return;
+                           }
+                           component.setPos(pos);
+                           action.add(new PlaceAction(designer, component));
+                           pos = pos.add(0, component.getCullBox().getSize().y);
+                       }
+                       history.add(action.execute());
+                       renderer.render();
+                   }}>
+            <canvas className="main__canvas"
+                    width={w}
+                    height={h-HEADER_HEIGHT} />
+        </Droppable>
     </>);
 }
 
