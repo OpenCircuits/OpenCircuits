@@ -26,6 +26,7 @@ export class ToolManager {
                 // Deactivate the tool
                 this.currentTool.onDeactivate(event, info);
                 this.currentTool = undefined;
+                this.defaultTool.onActivate(event, info);
                 return true;
             }
         } else {
