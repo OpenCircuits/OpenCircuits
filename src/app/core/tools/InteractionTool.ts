@@ -40,6 +40,10 @@ export class InteractionTool extends DefaultTool {
                                                              o.isWithinSelectBounds(pos)));
     }
 
+    public onActivate(event: Event, info: CircuitInfo): boolean {
+        return this.onEvent(event, info);
+    }
+
     public onEvent(event: Event, info: CircuitInfo): boolean {
         const {locked, input, camera, currentlyPressedObject} = info;
 
@@ -61,7 +65,7 @@ export class InteractionTool extends DefaultTool {
             case "mouseup":
                 // Release currently pressed object
                 if (isPressable(currentlyPressedObject)) {
-                    currentlyPressedObject.press();
+                    currentlyPressedObject.release();
                     info.currentlyPressedObject = undefined;
                     return true;
                 }
