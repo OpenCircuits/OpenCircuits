@@ -4,7 +4,7 @@ import {TutorialDropdown} from "./TutorialDropdown";
 import {OpenFileButton} from "./OpenFileButton";
 import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
-import {AutoSaveButton} from "./AutoSaveButton"
+import {SettingsMenu} from "./SettingsMenu";
 
 import "./index.scss";
 
@@ -16,10 +16,10 @@ export const HeaderRight = ({ helpers }: Props) => {
     return (
         <div className="header__right">
             <TutorialDropdown />
+            <SettingsMenu helpers={helpers} />
             <OpenFileButton helpers={helpers} />
             <DownloadMenuDropdown helpers={helpers} />
             <SignInOutButtons />
-            <AutoSaveButton helpers={helpers} />
         </div>
     );
 }
