@@ -77,12 +77,14 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public reset(): void {
-        for (const ic of this.ics)
-            this.removeICData(ic);
-        for (const obj of this.objects)
-            this.removeObject(obj);
-        for (const wire of this.wires)
-            this.removeWire(wire);
+        // Remove ics, objects, and wires 1-by-1
+        //  (so that the proper callbacks get called)
+        for (let i = this.ics.length-1; i >= 0; i--)
+            this.removeICData(this.ics[i]);
+        for (let i = this.objects.length-1; i >= 0; i--)
+            this.removeObject(this.objects[i]);
+        for (let i = this.wires.length-1; i >= 0; i--)
+            this.removeWire(this.wires[i]);
 
         this.propagationQueue = [];
         this.updateRequests = 0;
