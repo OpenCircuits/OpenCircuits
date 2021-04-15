@@ -1,6 +1,5 @@
 import {Circuit} from "core/models/Circuit";
 import {connect} from "react-redux";
-
 import {SharedAppState} from "shared/state";
 import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
 import {ToggleSideNav} from "shared/state/SideNav/actions";
@@ -12,6 +11,7 @@ import "./index.scss";
 type OwnProps = {
     helpers: CircuitInfoHelpers;
 }
+
 type StateProps = {
     circuitName: string;
     isSaved: boolean;
@@ -20,6 +20,7 @@ type StateProps = {
     isLoading: boolean;
     error: string;
 }
+
 type DispatchProps = {
     toggleLock: () => void;
     toggleSideNav: () => void;
@@ -52,9 +53,9 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
             <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                     title="Save the circuit remotely"
                     disabled={isLoading}
-                   
+
                     onClick={() => helpers.SaveCircuitRemote() }><b>{'save'}</b></button>
-                    
+
         </div>
         <div>
             <img  src="img/icons/error.svg" className={error ? "" : "hide"} alt="Icon when save failed" />
@@ -76,12 +77,14 @@ const MapState = (state: SharedAppState) => ({
     isLoading:   state.user.loading,
     error:       state.circuit.error
 });
+
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
     toggleSideNav:  ToggleSideNav,
-    setCircuitName: SetCircuitName,
+    setCircuitName: SetCircuitName
 };
 export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,
     MapDispatch
 )(_HeaderLeft);
+

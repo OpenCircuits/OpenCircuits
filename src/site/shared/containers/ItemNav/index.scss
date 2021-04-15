@@ -37,6 +37,10 @@ $tab-padding: 8px;
 
         color: #fff;
         text-shadow: -1px 1px 3px darken(#fff, 40%);
+
+        &:first-of-type {
+            margin-top: 5px;
+        }
     }
     & button {
         font-size: 1em;
@@ -54,6 +58,31 @@ $tab-padding: 8px;
     }
     & img {
         width: 100%;
+    }
+
+    &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        margin-top: 4px;
+
+        width: 100%;
+        height: 40px;
+
+        &__history__buttons {
+            align-self: center;
+
+            & > button {
+                width: 30px;
+                padding: 0;
+                margin-bottom: -3px;
+
+                &:disabled {
+                    opacity: 0.5;
+                }
+            }
+        }
     }
 }
 
@@ -94,3 +123,73 @@ $tab-padding: 8px;
         }
     }
 }
+
+
+// .undo {
+//     position: fixed;
+//     z-index: 4;
+//     top: $header-total-height - $header-border-width + $tab-total-h + 5;
+//     left: 0;
+//     width: $tab-total-w + 2*$tab-padding;
+//     height: $tab-total-w + 2*$tab-padding;
+
+//     cursor: pointer;
+//     transition: 0.5s;
+
+//     color: #000;
+//     border: $header-border;
+//     border-width: $header-border-width;
+//     // border-bottom-right-radius: 15px;
+//     background-color: rgba($background-color, 0.7);
+// }
+// .redo {
+//     position: fixed;
+//     z-index: 4;
+//     top: $header-total-height - $header-border-width + $tab-total-h + 5 + 24 + 5 + 2;
+//     left: 0;
+//     width: $tab-total-w;
+//     height: $tab-total-w;
+
+//     cursor: pointer;
+//     transition: 0.5s;
+
+//     color: #000;
+//     border: $header-border;
+//     border-width: $header-border-width;
+//     border-bottom-right-radius: 15px;
+//     background-color: rgba($background-color, 0.7);
+// }
+
+// .undoredo__buttons {
+//     position: absolute;
+//     bottom: 5px;
+//     right: 5px;
+
+//     border-width: 5px;
+
+//     & > button {
+//         padding: 7px;
+//         background-color: rgb(245, 245, 245);
+
+//         &:first-child {
+//             border-top-left-radius: 5px;
+//             border-bottom-left-radius: 5px;
+
+//             border-right: 1px solid #000;
+//         }
+//         &:last-child {
+//             border-top-right-radius: 5px;
+//             border-bottom-right-radius: 5px;
+//         }
+
+//         & > img {
+//             width: 40px;
+//             margin-bottom: -3px;
+//         }
+
+//         &:hover {
+//             cursor: pointer;
+//             background-color: rgba(139,139,139,0.7);
+//         }
+//     }
+// }

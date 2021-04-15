@@ -1,0 +1,45 @@
+@import "~shared/utils/theme";
+
+
+.undoredo__buttons {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+
+    border-width: 5px;
+
+    @media (min-width: 450px) {
+        display: none;
+    }
+
+    & > button {
+        padding: 7px;
+        margin: 0;
+        background-color: rgb(245, 245, 245);
+
+        &:first-child {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+            border-right: 1px solid #000;
+        }
+        &:last-child {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+
+        & > img {
+            width: 40px;
+            margin-bottom: -3px;
+        }
+
+        &:enabled &:hover {
+            cursor: pointer;
+            background-color: rgba(139,139,139,0.7);
+        }
+    }
+}

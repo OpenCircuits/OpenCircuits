@@ -36,7 +36,7 @@ export const DigitalItemNav = ({info}: Props) => {
     }, [designer]);
 
     // Append regular ItemNav items with ICs
-    return <ItemNav config={{
+    return <ItemNav info={info} config={{
         imgRoot: itemNavConfig.imgRoot,
         sections: [
             ...itemNavConfig.sections,
