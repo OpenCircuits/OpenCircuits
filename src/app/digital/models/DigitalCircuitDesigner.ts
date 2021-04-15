@@ -68,13 +68,22 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.propagationTime = propagationTime;
         this.updateCallbacks = [];
 
-        this.reset();
+        this.ics = [];
+        this.objects = [];
+        this.wires = [];
+
+        this.propagationQueue = [];
+        this.updateRequests = 0;
     }
 
     public reset(): void {
-        this.ics     = [];
-        this.objects = [];
-        this.wires   = [];
+        for (const ic of this.ics)
+            this.removeICData(ic);
+        for (const obj of this.objects)
+            this.removeObject(obj);
+        for (const wire of this.wires)
+            this.removeWire(wire);
+
         this.propagationQueue = [];
         this.updateRequests = 0;
     }
@@ -241,7 +250,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     public replace(designer: DigitalCircuitDesigner): void {
         super.replace(designer);
 
-        this.ics = designer.ics;
+        for (const ic of designer.getICData())
+            this.addICData(ic);
+
         this.propagationTime = designer.propagationTime;
 
         // Copy propagations so that circuit will continue
