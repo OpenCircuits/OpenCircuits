@@ -23,6 +23,7 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {AppState} from "site/digital/state";
 
 import "./index.scss";
+import {IC} from "digital/models/ioobjects";
 
 
 type OwnProps = {
@@ -85,14 +86,22 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         <Droppable ref={canvas}
                    onDrop={(pos, itemId, num) => {
                        num = num ?? 1;
-                       console.log(itemId, num);
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;
                        pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                        const action = new GroupAction();
                        for (let i = 0; i < num; i++) {
-                           const component = Create<DigitalComponent>(itemId);
+                           let component: DigitalComponent;
+
+                           // Check if the item is an IC or normal object
+                           if (itemId.startsWith("ic")) { // IC
+                               const [_, id] = itemId.split("/");
+                               component = new IC(info.designer.getICData()[parseInt(id)]);
+                           } else {
+                               component = Create<DigitalComponent>(itemId);
+                           }
+
                            if (!component) { // Invalid itemId, return
                                console.error("Failed to create item with id", itemId);
                                return;
