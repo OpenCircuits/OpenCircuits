@@ -1,43 +1,31 @@
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {useEffect, useLayoutEffect, useRef} from "react";
 import {connect} from "react-redux";
 
 import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
-import {Camera} from "math/Camera";
-
-import {Input} from "core/utils/Input";
-import {RenderQueue} from "core/utils/RenderQueue";
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Input}        from "core/utils/Input";
 import {GetCameraFit} from "core/utils/ComponentUtils";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {CullableObject} from "core/models";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
-import {InteractionTool} from "core/tools/InteractionTool";
-import {ToolManager} from "core/tools/ToolManager";
-import {PanTool} from "core/tools/PanTool";
+import {InteractionTool}  from "core/tools/InteractionTool";
+import {PanTool}          from "core/tools/PanTool";
 
-import {Renderer} from "core/rendering/Renderer";
-import {CreateRenderers} from "core/rendering/CreateRenderers";
-import {Grid} from "core/rendering/Grid";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DigitalCircuitDesigner} from "digital/models";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
-import {WireRenderer} from "digital/rendering/ioobjects/WireRenderer";
-import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
-import {ToolRenderer} from "digital/rendering/ToolRenderer";
-
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-import {CloseICViewer} from "site/digital/state/ICViewer/actions";
+
+import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+
 import {AppState} from "site/digital/state";
+import {CloseICViewer} from "site/digital/state/ICViewer/actions";
 
 import "./index.scss";
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 
 type OwnProps = {
