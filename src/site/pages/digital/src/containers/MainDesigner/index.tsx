@@ -85,7 +85,6 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         <Droppable ref={canvas}
                    onDrop={(pos, itemId, num) => {
                        num = num ?? 1;
-                       console.log(itemId, num);
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;
                        pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
