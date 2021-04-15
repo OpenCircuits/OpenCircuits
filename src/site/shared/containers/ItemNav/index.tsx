@@ -1,4 +1,5 @@
-import React from "react";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 
 import {SharedAppState} from "shared/state";
@@ -24,6 +25,7 @@ export type ItemNavConfig = {
 
 
 type OwnProps = {
+    info: CircuitInfo;
     config: ItemNavConfig;
 }
 type StateProps = {
@@ -36,15 +38,38 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ isOpen, isEnabled, isLocked, config, toggle }: Props) {
+function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
+    const [{canUndo, canRedo}, setState] = useState({ canUndo: false, canRedo: false });
+
+    useEffect(() => {
+        const onHistoryChange = () => {
+            setState({
+                canUndo: info.history.getActions().length > 0,
+                canRedo: info.history.getRedoActions().length > 0
+            });
+        }
+
+        info.history.addCallback(onHistoryChange);
+
+        return () => info.history.removeCallback(onHistoryChange);
+    }, [info, setState]);
+
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
-            <div className={`tab ${isOpen ? "tab__closed" : ""}`}
-                 title="Circuit Components"
-                 onClick={() => toggle()}></div>
+            <>
+                <div className={`tab ${isOpen ? "tab__closed" : ""}`}
+                     title="Circuit Components"
+                     onClick={() => toggle()}></div>
+            </>
         }
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
+            <div className="itemnav__top">
+                <div className="itemnav__top__history__buttons">
+                    <button title="Undo" disabled={!canUndo} onClick={() => info.history.undo() }><img src="img/icons/undo.svg" alt="" /></button>
+                    <button title="Redo" disabled={!canRedo} onClick={() => info.history.redo() }><img src="img/icons/redo.svg" alt="" /></button>
+                </div>
+            </div>
             {config.sections.map((section, i) =>
                 <React.Fragment key={`itemnav-section-${i}`}>
                     <h4>{section.label}</h4>
