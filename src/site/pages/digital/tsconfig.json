@@ -10,5 +10,6 @@
     {
       "path": "../../../app"
     }
-  ]
+  ],
+  "compilerOptions": {}
 }
