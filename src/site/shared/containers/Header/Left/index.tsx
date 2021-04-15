@@ -18,7 +18,6 @@ type StateProps = {
     isLocked: boolean;
     isLoggedIn: boolean;
     isLoading: boolean;
-    isAutoSave: boolean;
 }
 
 type DispatchProps = {
@@ -28,7 +27,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName, isAutoSave}: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName}: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -50,13 +49,14 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                    alt="Name of project" />
         </div>
         <div>
-            <button className={`header__left__save ${isSaved || isAutoSave || !isLoggedIn ? "invisible" : ""}`}
+            <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                     title="Save the circuit remotely"
                     disabled={isLoading}
                     onClick={() => helpers.SaveCircuitRemote()}>Save</button>
         </div>
     </div>
 );
+
 
 /*
  * Redux state connection
@@ -66,8 +66,7 @@ const MapState = (state: SharedAppState) => ({
     isSaved:     state.circuit.isSaved,
     isLocked:    state.circuit.isLocked,
     isLoggedIn:  state.user.isLoggedIn,
-    isLoading:   state.user.loading,
-    isAutoSave:  state.user.autoSave
+    isLoading:   state.user.loading
 });
 
 const MapDispatch = {
