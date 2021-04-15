@@ -1,28 +1,40 @@
 @import "~shared/utils/theme";
 
-.UndoRedo {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}
 
-.UndoRedo button {
-    padding: 15px 15px;
-    color: #000;
-    border: 0 solid #888;
+.undoredo__buttons {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+
     border-width: 5px;
-    border-radius: 15px;
-    background-color: rgba(204, 204, 204, 0.7);
-}
 
-//Hover only on Desktop
-@media (min-width: 1281px) {
-    .UndoRedo button:hover {
-        background-color: rgba(139,139,139,0.7);
+    @media (min-width: 450px) {
+        display: none;
+    }
+
+    & > button {
+        padding: 7px;
+        background-color: rgb(245, 245, 245);
+
+        &:first-child {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+            border-right: 1px solid #000;
+        }
+        &:last-child {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        & > img {
+            width: 40px;
+            margin-bottom: -3px;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(139,139,139,0.7);
+        }
     }
 }
-
-#rightmost {
-    margin-left: 10px;
-}
-
