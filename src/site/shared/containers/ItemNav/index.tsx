@@ -1,10 +1,12 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {connect} from "react-redux";
+
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
 
+import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 
 import "./index.scss";
@@ -41,20 +43,7 @@ type DispatchProps = {
 
 type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
-    const [{canUndo, canRedo}, setState] = useState({ canUndo: false, canRedo: false });
-
-    useEffect(() => {
-        const onHistoryChange = () => {
-            setState({
-                canUndo: info.history.getActions().length > 0,
-                canRedo: info.history.getRedoActions().length > 0
-            });
-        }
-
-        info.history.addCallback(onHistoryChange);
-
-        return () => info.history.removeCallback(onHistoryChange);
-    }, [info, setState]);
+    const {undoHistory, redoHistory} = useHistory(info);
 
     return (<>
         { // Hide tab if the circuit is locked
@@ -68,8 +57,16 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
                 <div className="itemnav__top__history__buttons">
-                    <button title="Undo" disabled={!canUndo} onClick={() => info.history.undo() }><img src="img/icons/undo.svg" alt="" /></button>
-                    <button title="Redo" disabled={!canRedo} onClick={() => info.history.redo() }><img src="img/icons/redo.svg" alt="" /></button>
+                    <button title="Undo"
+                            disabled={undoHistory.length === 0}
+                            onClick={() => info.history.undo() }>
+                        <img src="img/icons/undo.svg" alt="" />
+                    </button>
+                    <button title="Redo"
+                            disabled={redoHistory.length === 0}
+                            onClick={() => info.history.redo() }>
+                        <img src="img/icons/redo.svg" alt="" />
+                    </button>
                 </div>
             </div>
             {config.sections.map((section, i) =>
