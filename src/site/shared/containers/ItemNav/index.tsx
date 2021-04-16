@@ -50,11 +50,14 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function handleClick(ev: MouseEvent) {
-            console.log(currItemID)
-            DragDropHandlers.drop(V(ev.clientX, ev.clientY), currItemID);
+            DragDropHandlers.drop(V(ev.clientX, ev.clientY), currItemID)      
         }
         document.addEventListener("click", handleClick);
-    }, []);
+        //setState({currItemID: "", numClicks: 0});
+        return () => {
+            document.removeEventListener("click", handleClick);
+        }
+    }, [currItemID]);
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
@@ -89,7 +92,6 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                                 onClick={() => {currItemID === item.id ? 
                                     setState({currItemID: currItemID, numClicks: numClicks + 1}) :
                                     setState({currItemID: item.id, numClicks: 1}); 
-                                    console.log(currItemID)
                                 }}>
                                 <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                 <br />
