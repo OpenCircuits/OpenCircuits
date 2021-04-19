@@ -47,17 +47,23 @@ type Props = StateProps & DispatchProps & OwnProps;
 
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
+    
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function handleClick(ev: MouseEvent) {
-            DragDropHandlers.drop(V(ev.clientX, ev.clientY), currItemID)      
+            if (currItemID !== "" && (ev.target as Element).tagName !== "IMG") {
+                for (var i = 0; i < numClicks; i++) {
+                    DragDropHandlers.drop(V(ev.clientX, ev.clientY + (i * 100)), currItemID);
+                }
+                setState({currItemID: "", numClicks: 0});
+            }
         }
         document.addEventListener("click", handleClick);
-        //setState({currItemID: "", numClicks: 0});
         return () => {
             document.removeEventListener("click", handleClick);
         }
-    }, [currItemID]);
+    }, [currItemID, numClicks, setState]);
+
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
