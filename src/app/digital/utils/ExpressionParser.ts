@@ -269,6 +269,22 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
+function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
+    switch(token) {
+    case "(":
+    case ")":
+    case "&":
+    case "^":
+    case "|":
+    case "!":
+        break;
+    default:
+        if(!inputs.has(token))
+            throw new Error("Input Not Found: " + token);
+        break;
+    }
+}
+
 function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
                        output: DigitalComponent): string[] {
     if(output.getInputPortCount().getValue() == 0
@@ -279,20 +295,7 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
     const tokenList = GenerateTokens(expression);
     let token: string;
     for(let i = 0; i < tokenList.length; i++) {
-        token = tokenList[i];
-        switch(token) {
-        case "(":
-        case ")":
-        case "&":
-        case "^":
-        case "|":
-        case "!":
-            break;
-        default:
-            if(!inputs.has(token))
-                throw new Error("Input Not Found: " + token);
-            break;
-        }
+        validateToken(inputs, tokenList[i]);
     }
 
     return tokenList;
