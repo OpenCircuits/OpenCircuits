@@ -75,16 +75,13 @@ export function GenerateTokens(input: string): Array<string> | null {
 }
 
 function parseOr(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
-
     const leftRet = parseXor(tokens, index, inputs);
     index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != "|") {
+    if(index >= tokens.length || tokens[index] != "|")
         return leftRet;
-    }
     index += 1;
-    if(index >= tokens.length) {
+    if(index >= tokens.length)
         throw new Error("Missing Right Operand: |");
-    }
 
     const leftCircuit = leftRet.circuit;
     const leftPort = leftRet.recentPort;
@@ -100,24 +97,19 @@ function parseOr(tokens: Array<string>, index: number, inputs: Map<string, Digit
     newGate.getInputPort(0).connect(w1);
     rightPort.connect(w2);
     newGate.getInputPort(1).connect(w2);
-    const newOutput = newGate.getOutputPort(0);
     const newComponents: IOObject[] = [newGate, w1, w2];
-    const newCircuit = newComponents.concat(leftCircuit).concat(rightCircuit);
 
-    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
 function parseXor(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
-
     const leftRet = parseAnd(tokens, index, inputs);
     index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != "^") {
+    if(index >= tokens.length || tokens[index] != "^")
         return leftRet;
-    }
     index += 1;
-    if(index >= tokens.length) {
+    if(index >= tokens.length)
         throw new Error("Missing Right Operand: ^");
-    }
 
     const leftCircuit = leftRet.circuit;
     const leftPort = leftRet.recentPort;
@@ -133,23 +125,19 @@ function parseXor(tokens: Array<string>, index: number, inputs: Map<string, Digi
     newGate.getInputPort(0).connect(w1);
     rightPort.connect(w2);
     newGate.getInputPort(1).connect(w2);
-    const newOutput = newGate.getOutputPort(0);
     const newComponents: IOObject[] = [newGate, w1, w2];
-    const newCircuit = newComponents.concat(leftCircuit).concat(rightCircuit);
 
-    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
 function parseAnd(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
     const leftRet = parseNot(tokens, index, inputs);
     index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != "&") {
+    if(index >= tokens.length || tokens[index] != "&")
         return leftRet;
-    }
     index += 1;
-    if(index >= tokens.length) {
+    if(index >= tokens.length)
         throw new Error("Missing Right Operand: &");
-    }
 
     const leftCircuit = leftRet.circuit;
     const leftPort = leftRet.recentPort;
@@ -165,14 +153,22 @@ function parseAnd(tokens: Array<string>, index: number, inputs: Map<string, Digi
     newGate.getInputPort(0).connect(w1);
     rightPort.connect(w2);
     newGate.getInputPort(1).connect(w2);
-    const newOutput = newGate.getOutputPort(0);
     const newComponents: IOObject[] = [newGate, w1, w2];
-    const newCircuit = newComponents.concat(leftCircuit).concat(rightCircuit);
 
-    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
-function replaceGate(oldGate: Gate, newGate: Gate, circuit: IOObject[]): IOObject[] {
+function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
+    let newGate: Gate;
+    if(parent instanceof ANDGate)
+        newGate = new NANDGate();
+    else if(parent instanceof ORGate)
+        newGate = new NORGate();
+    else if(parent instanceof XORGate)
+        newGate = new XNORGate();
+    else
+        return null;
+
     const wire1 = oldGate.getInputPort(0).getInput();
     const parent1 = wire1.getInput();
     parent1.disconnect(wire1);
@@ -188,13 +184,9 @@ function replaceGate(oldGate: Gate, newGate: Gate, circuit: IOObject[]): IOObjec
     newGate.getInputPort(1).connect(newWire2);
     parent2.connect(newWire2);
 
-    // console.log(circuit.length);
-    // console.log(circuit.indexOf(oldGate));
-    // console.log(circuit.indexOf(wire1));
-    // console.log(circuit.indexOf(wire2));
     circuit.splice(circuit.indexOf(oldGate), 3, newGate, newWire1, newWire2);
 
-    return circuit;
+    return {circuit: circuit, retIndex: -1, recentPort: newGate.getOutputPort(0)};
 }
 
 function parseNot(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
@@ -205,48 +197,32 @@ function parseNot(tokens: Array<string>, index: number, inputs: Map<string, Digi
             return parseOther(tokens, index, inputs);
     }
     index += 1;
-    if(index >= tokens.length) {
+    if(index >= tokens.length)
         throw new Error("Missing Operand: !");
-    }
 
     let ret: ReturnValue;
-    if(tokens[index] == "!") {
+    if(tokens[index] == "!")
         ret = parseNot(tokens, index, inputs);
-    }
-    else {
-        if(tokens[index] == "(")
-            ret = parseParen(tokens, index, inputs);
-        else
-            ret = parseOther(tokens, index, inputs);
-    }
+    else if(tokens[index] == "(")
+        ret = parseParen(tokens, index, inputs);
+    else
+        ret = parseOther(tokens, index, inputs);
     const circuit = ret.circuit;
     index = ret.retIndex;
     const port = ret.recentPort;
     const parent = port.getParent();
     if(parent instanceof Gate && !(parent as Gate).isNot()) {
-        let newGate: Gate = null;
-        if(parent instanceof ANDGate)
-            newGate = new NANDGate();
-        else if(parent instanceof ORGate)
-            newGate = new NORGate();
-        else if(parent instanceof XORGate)
-            newGate = new XNORGate();
-
-        if(newGate != null) {
-            const newCircuit = replaceGate(parent as Gate, newGate, circuit);
-            return {circuit: newCircuit, retIndex: index, recentPort: newGate.getOutputPort(0)};
-        }
-
+        const retInner = replaceGate(parent as Gate, circuit);
+        if(retInner != null)
+            return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
     }
     const gate = new NOTGate();
     const wire = new DigitalWire(port, gate.getInputPort(0));
     gate.getInputPort(0).connect(wire);
     port.connect(wire);
-    const newOutput = gate.getOutputPort(0);
     const newComponents: IOObject[] = [gate, wire];
-    const newCircuit = circuit.concat(newComponents);
 
-    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    return {circuit: circuit.concat(newComponents), retIndex: index, recentPort: gate.getOutputPort(0)};
 }
 
 function parseParen(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
