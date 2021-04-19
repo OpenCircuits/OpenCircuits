@@ -327,15 +327,12 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     const components: IOObject[] = getComponentsValidate(inputs);
     const tokenList = getTokenListValidate(inputs, expression, output);
 
-    if(inputs.size == 0) {
-        return new DigitalObjectSet();
-    }
+    if(inputs.size == 0) return new DigitalObjectSet();
 
     const parseRet = parseOr(tokenList, 0, inputs);
     const index = parseRet.retIndex;
-    if(index < tokenList.length && tokenList[index] == ")") {
+    if(index < tokenList.length && tokenList[index] == ")")
         throw new Error("Encountered Unmatched )");
-    }
     const circuit = parseRet.circuit;
     const outPort = parseRet.recentPort;
     const wire = new DigitalWire(outPort, output.getInputPort(0));
