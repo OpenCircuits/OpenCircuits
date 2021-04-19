@@ -1,7 +1,11 @@
-import {AllSharedActions} from "../actions";
-import {LOAD_CIRCUITS_FINISH_ID, LOAD_CIRCUITS_START_ID,
-        LOGIN_ACTION_ID, LOGOUT_ACTION_ID} from "./actionTypes";
+import {AUTO_SAVE_COOKIE_KEY} from "shared/utils/Constants";
 
+import {LOAD_CIRCUITS_FINISH_ID, LOAD_CIRCUITS_START_ID,
+        LOGIN_ACTION_ID, LOGOUT_ACTION_ID, SET_AUTOSAVE_ACTION_ID} from "./actionTypes";
+
+import {GetCookie, SetCookie} from "shared/utils/Cookies";
+
+import {AllSharedActions} from "../actions";
 import {UserInfoState} from "./state";
 
 
@@ -10,7 +14,8 @@ const initialState = {
     isLoggedIn: false,
     circuits: [],
     loading: false,
-    error: undefined
+    error: undefined,
+    autoSave: JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")
 } as UserInfoState;
 
 export function userInfoReducer(state = initialState, action: AllSharedActions): UserInfoState {
@@ -29,6 +34,9 @@ export function userInfoReducer(state = initialState, action: AllSharedActions):
             if (!state.auth)
                 return {...state, circuits: [], loading: false, error: "Not logged in!"};
             return {...state, circuits: (action.circuits ?? []), error: action.err, loading: false};
+        case SET_AUTOSAVE_ACTION_ID:
+            SetCookie(AUTO_SAVE_COOKIE_KEY, JSON.stringify(!state.autoSave));
+            return {...state, autoSave: (!state.autoSave)};
         default:
             return state;
     }

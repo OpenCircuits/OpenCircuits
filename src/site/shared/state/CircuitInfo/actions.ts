@@ -33,7 +33,7 @@ export type ToggleCircuitLockedAction = {
 }
 
 
-export function SaveCircuit(data: string): ThunkResult<Promise<void>> {
+export function SaveCircuit(data: string): ThunkResult<Promise<boolean>> {
     return async (dispatch, getState) => {
         const state = getState();
         const auth = state.user.auth;
@@ -50,8 +50,12 @@ export function SaveCircuit(data: string): ThunkResult<Promise<void>> {
 
             dispatch(SetCircuitId(newData.getId()));
             dispatch({ type: SET_CIRCUIT_SAVING_FINISH_ID });
+
+            return true; // Success
         } catch (e) {
             dispatch({ type: SET_CIRCUIT_SAVING_FINISH_ID, err: e });
+
+            return false; // Failure
         }
     }
 }

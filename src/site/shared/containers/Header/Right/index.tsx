@@ -6,6 +6,7 @@ import {OpenFileButton} from "./OpenFileButton";
 import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
 import {UtilitiesDropdown} from "./UtilitiesDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
+import {SettingsMenu} from "./SettingsMenu";
 
 import "./index.scss";
 
@@ -23,6 +24,7 @@ export const HeaderRight = ({ helpers, extraUtilities }: Props) => {
     return (
         <div className="header__right">
             <TutorialDropdown />
+            <SettingsMenu helpers={helpers} />
             <OpenFileButton helpers={helpers} />
             <DownloadMenuDropdown helpers={helpers} />
             {extraUtilities.length > 0 && // Render only if there are tools
