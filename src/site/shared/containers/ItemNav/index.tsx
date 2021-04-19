@@ -51,12 +51,15 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function handleClick(ev: MouseEvent) {
-            if (currItemID !== "" && (ev.target as Element).tagName !== "IMG") {
+            // dont do anything if icons are clicked
+            if ((ev.target as Element).tagName === "IMG") return;
+            if (currItemID !== "" && (ev.target as Element).tagName === "CANVAS") {
                 for (var i = 0; i < numClicks; i++) {
-                    DragDropHandlers.drop(V(ev.clientX, ev.clientY + (i * 100)), currItemID);
+                    DragDropHandlers.drop(V(ev.clientX, ev.clientY + (i )), currItemID);
                 }
-                setState({currItemID: "", numClicks: 0});
             }
+            // revert back to original state
+            setState({currItemID: "", numClicks: 0});
         }
         document.addEventListener("click", handleClick);
         return () => {
