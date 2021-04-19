@@ -74,7 +74,23 @@ export const RotateTool = (() => {
                 return false;
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
-            const components = selections.get().filter(s => s instanceof Component && s.getTransform().getParent() == undefined) as Component[];
+            let finalComponents = [] as Component[];
+            const components = selections.get() as Component[];
+            components.forEach(function(item){
+                if (item.getTransform().getParent() != undefined)
+                {
+                    let add = true;
+                    components.forEach(function(item2){
+                        if (item.getTransform().getParent() == item2.getTransform())
+                            add = false;                      
+                    });
+                    if (add)
+                        finalComponents.push(item);
+                }
+                else
+                    finalComponents.push(item);
+            });
+
 
             const midpoint = selections.midpoint();
             const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
@@ -88,7 +104,7 @@ export const RotateTool = (() => {
                 currentAngles;
 
             // Set the rotations
-            components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
+            finalComponents.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
 
             prevAngle += dAngle;
 
