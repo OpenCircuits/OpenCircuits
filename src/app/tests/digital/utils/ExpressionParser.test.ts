@@ -749,6 +749,43 @@ describe("Expression Parser", () => {
             });
         });
 
+        describe("Parse: '!(!a|b)'", () => {
+            const designer = new DigitalCircuitDesigner(0);
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+
+            const objectSet = ExpressionToCircuit(inputMap, "!(!a|b)", o);
+            designer.addGroup(objectSet);
+
+            test("Initial State", () => {
+                //*****************************
+                // expect(o.isOn()).toBe(false);
+            });
+            test("Input a on", () => {
+                a.activate(true);
+
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a,b on", () => {
+                b.activate(true);
+
+                expect(o.isOn()).toBe(false);
+            });
+            test("Input b on", () => {
+                a.activate(false);
+
+                expect(o.isOn()).toBe(false);
+            });
+            test("Inputs off", () => {
+                b.activate(false);
+
+                expect(o.isOn()).toBe(false);
+            });
+        });
+
         describe("Parse: '!a&b'", () => {
             const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), b = new Switch(), o = new LED();

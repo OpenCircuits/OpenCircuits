@@ -2,10 +2,11 @@ import {IOObject} from "core/models/IOObject";
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate} from "digital/models/ioobjects/gates/ORGate";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {ANDGate, NANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate, NORGate} from "digital/models/ioobjects/gates/ORGate";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {XORGate} from "digital/models/ioobjects/gates/XORGate";
+import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
 
 
@@ -171,6 +172,31 @@ function parseAnd(tokens: Array<string>, index: number, inputs: Map<string, Digi
     return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
 }
 
+function replaceGate(oldGate: Gate, newGate: Gate, circuit: IOObject[]): IOObject[] {
+    const wire1 = oldGate.getInputPort(0).getInput();
+    const parent1 = wire1.getInput();
+    parent1.disconnect(wire1);
+    const wire2 = oldGate.getInputPort(1).getInput();
+    const parent2 = wire2.getInput();
+    parent2.disconnect(wire2);
+
+    const newWire1 = new DigitalWire(parent1, newGate.getInputPort(0));
+    newGate.getInputPort(0).connect(newWire1);
+    parent1.connect(newWire1);
+
+    const newWire2 = new DigitalWire(parent2, newGate.getInputPort(1));
+    newGate.getInputPort(1).connect(newWire2);
+    parent2.connect(newWire2);
+
+    // console.log(circuit.length);
+    // console.log(circuit.indexOf(oldGate));
+    // console.log(circuit.indexOf(wire1));
+    // console.log(circuit.indexOf(wire2));
+    circuit.splice(circuit.indexOf(oldGate), 3, newGate, newWire1, newWire2);
+
+    return circuit;
+}
+
 function parseNot(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
     if(tokens[index] != "!") {
         if(tokens[index] == "(")
@@ -196,6 +222,22 @@ function parseNot(tokens: Array<string>, index: number, inputs: Map<string, Digi
     const circuit = ret.circuit;
     index = ret.retIndex;
     const port = ret.recentPort;
+    const parent = port.getParent();
+    if(parent instanceof Gate && !(parent as Gate).isNot()) {
+        let newGate: Gate = null;
+        if(parent instanceof ANDGate)
+            newGate = new NANDGate();
+        else if(parent instanceof ORGate)
+            newGate = new NORGate();
+        else if(parent instanceof XORGate)
+            newGate = new XNORGate();
+
+        if(newGate != null) {
+            const newCircuit = replaceGate(parent as Gate, newGate, circuit);
+            return {circuit: newCircuit, retIndex: index, recentPort: newGate.getOutputPort(0)};
+        }
+
+    }
     const gate = new NOTGate();
     const wire = new DigitalWire(port, gate.getInputPort(0));
     gate.getInputPort(0).connect(wire);
