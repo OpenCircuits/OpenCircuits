@@ -1,56 +1,124 @@
 const os = require("os");
-const prompts = require("prompts");
+const {renameSync, existsSync, rmSync} = require("fs");
 const {spawn} = require("child_process");
 
+const ora = require("ora");
+const chalk = require("chalk");
+const prompts = require("prompts");
+const yargs = require("yargs/yargs");
 
-function build_server() {
-    // Create directory and copy files
-    execSync("mkdir -p build/sql/sqlite");
-    execSync("cp src/server/data/sql/sqlite/* build/sql/sqlite");
+const copy_dir = require("./utils/copyDir");
 
-    if (os.platform() === "win32") {
-        spawn("cd src/server && go build -o ../../build/server.exe", {
+
+const DIRS = [
+    { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
+    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital" },
+    { title: "Analog",  description: "The anlog version of OpenCircuits",   value: "analog", disabled: true },
+    { title: "Landing", description: "The landing page for OpenCircuits",   value: "landing", disabled: true }
+];
+const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
+
+
+function build_server(prod) {
+    return new Promise((resolve, reject) => {
+        // Copy go files to build folder
+        if (prod) {
+            copy_dir("src/server", "build")
+            resolve();
+            return;
+        }
+
+        copy_dir("src/server/data/sql/sqlite", "build/sql/sqlite");
+
+        const cmd = (os.platform() === "win32" ?
+                        "cd src/server && go build -o ../../build/server.exe" :
+                        "cd src/server && go build -o ../../build/server");
+
+        spawn(cmd, {
             shell: true,
             stdio: "inherit"
+        }).on("exit", () => {
+            resolve();
         });
-    } else {
-        spawn("cd src/server && go build -o ../../build/server", {
+    });
+}
+function build_dir(dir) {
+    return new Promise((resolve, reject) => {
+        spawn(`cd ${dir} && npm run build`, {
             shell: true,
             stdio: "inherit"
+        }).on("exit", () => {
+            if (existsSync(`${dir}/build`)) {
+                // Remove build/site folder
+                if (existsSync("build/site"))
+                    rmdirSync("build/site", { recursive: true });
+
+                // Successful build, move folder to <rootDir>/build/site
+                renameSync(`${dir}/build`, "build/site");
+            }
+            resolve();
         });
-    }
+    });
 }
 
 
 // CLI
 (async () => {
-    // Prompt for project type
-    const type = await prompts({
-        type: "select",
-        name: "value",
-        message: "Pick a project to build",
-        choices: [
-            { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
-            { title: "Digital", description: "The digital version of OpenCircuits", value: "digital", disabled: true },
-            { title: "Analog",  description: "The anlog version of OpenCircuits", value: "analog", disabled: true },
-            { title: "Landing", description: "The landing page for OpenCircuits", value: "landing", disabled: true }
-        ],
-        initial: 0
-    });
+    const argv = yargs(process.argv.slice(2))
+        .boolean("ci")
+        .boolean("prod")
+        .argv;
 
-    if (!type.value)
-        return;
+    const ci = argv.ci;
+    const prod = argv.prod;
 
-    // Build server
-    if (type.value === "server") {
-        build_server();
-        return;
+    let dirs = argv._;
+    if (ci && dirs.length === 0) {
+        // Run tests on all directories
+        dirs = Object.keys(DIR_MAP);
+    } else if (dirs.length === 0) {
+        // Prompt user for directory
+        dirs = [(await prompts({
+            type: "select",
+            name: "value",
+            message: "Pick a project to build",
+            choices: DIRS,
+            initial: 0
+        })).value];
+        if (!dirs[0])
+            return;
     }
 
-    // Build digital/analog/landing page
-    const dir = `src/site/pages/${type.value}`;
-    spawn(`cd ${dir} && npm run build`, {
-        shell: true,
-        stdio: "inherit"
-    });
+    // If prod, clear build directory first
+    if (prod)
+        rmSync("build", { recursive: true, force: true });
+
+    // If manual production build, copy secrets
+    if (prod && !ci)
+        copy_dir("src/secrets", "build");
+
+    // Launch test in each directory
+    for (const dir of dirs) {
+        const info = DIR_MAP[dir];
+        console.log();
+        if (!info) {
+            console.log(chalk.red("Could not find directory,", chalk.underline(dir) + "!"));
+            continue;
+        }
+        if (info.disabled) {
+            console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
+            continue;
+        }
+
+
+        if (dir === "server") {
+            const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
+            await build_server(prod);
+            spinner.stop();
+        } else {
+            await build_dir(`src/site/pages/${dir}`);
+        }
+
+        console.log(`${chalk.greenBright("Done!")}`);
+    }
 })();

@@ -2,6 +2,8 @@ import {connect} from "react-redux";
 
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
+import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
+
 import {Request} from "shared/utils/Request";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
@@ -24,7 +26,9 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
         method: "GET",
         url: `/examples/${data.getId()}`,
         headers: {}
-    });
+    })
+    // We want to run example circuits through the VersionConflictResolver to make sure they're up to date.
+   .then(VersionConflictResolver);
 }
 
 
@@ -58,7 +62,7 @@ const _SideNav = ({ info, helpers, auth, isOpen, isLoggedIn, isHistoryBoxOpen, u
 
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
-                {auth ? `Hello, ${auth.getId()}!` : null}
+                {auth ? `Hello, ${auth.getName()}!` : null}
             </div>
             <div className="sidenav__wrapper">
                 <div className="sidenav__content">

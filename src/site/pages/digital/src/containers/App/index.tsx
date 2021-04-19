@@ -1,11 +1,5 @@
-import React from "react";
-import {createStore, applyMiddleware, Store} from "redux";
-import {Provider} from "react-redux";
-import thunk from "redux-thunk";
+import {createRef} from "react";
 
-import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
-
-import {ToolManager}        from "core/tools/ToolManager";
 import {InteractionTool}    from "core/tools/InteractionTool";
 import {PanTool}            from "core/tools/PanTool";
 import {RotateTool}         from "core/tools/RotateTool";
@@ -14,9 +8,31 @@ import {WiringTool}         from "core/tools/WiringTool";
 import {SplitWireTool}      from "core/tools/SplitWireTool";
 import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
 
+import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+
+import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+
+import {ContextMenu}     from "shared/containers/ContextMenu";
+import {Header}          from "shared/containers/Header";
+import {SideNav}         from "shared/containers/SideNav";
+import {UndoRedoButtons} from "shared/containers/UndoRedoButtons";
+
 import {LoginPopup}           from "shared/containers/LoginPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
+
+import {DigitalPaste} from "site/digital/utils/DigitalPaste";
+import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
+
+import {AppStore} from "site/digital/state";
+
+import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
+import {ICDesigner}             from "site/digital/containers/ICDesigner";
+import {ICViewer}               from "site/digital/containers/ICViewer";
+import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
+import {MainDesigner}           from "site/digital/containers/MainDesigner";
+import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+
 import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}     from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {ColorModule}          from "site/digital/containers/SelectionPopup/modules/ColorModule";
@@ -27,33 +43,9 @@ import {TextColorModule}      from "site/digital/containers/SelectionPopup/modul
 import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 
-
 import exampleConfig from "site/digital/data/examples.json";
 
-
-import {MainDesigner} from "../MainDesigner";
-import {KeyboardShortcutsPopup} from "../KeyboardShortcutsPopup";
-import {QuickStartPopup} from "../QuickStartPopup";
-
-import {ICDesigner} from "site/digital/containers/ICDesigner";
-import {ICViewer} from "../ICViewer";
-import {DigitalItemNav} from "../DigitalItemNav";
-import {DigitalPaste} from "site/digital/utils/DigitalPaste";
-import {ContextMenu} from "shared/containers/ContextMenu";
-
-
-import {SideNav} from "shared/containers/SideNav";
-import {reducers} from "../../state/reducers";
-import {GetCookie} from "shared/utils/Cookies";
-import {Login} from "shared/state/UserInfo/actions";
-import {NoAuthState} from "shared/api/auth/NoAuthState";
-
 import "./index.css";
-import {AppStore} from "site/digital/state";
-import {Setup} from "site/digital/utils/CircuitInfo/Setup";
-import {Header} from "shared/containers/Header";
-import {createRef} from "react";
-import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -84,8 +76,6 @@ export const App = ((store: AppStore) => {
 
 
     return function AppView() {
-
-
         return (
             <div className="App">
                 <SideNav info={info}
@@ -100,6 +90,10 @@ export const App = ((store: AppStore) => {
 
                     <DigitalItemNav info={info} />
 
+                    <UndoRedoButtons info={info}
+                                     undoImg = "img/icons/undo.svg"
+                                     redoImg = "img/icons/redo.svg" />
+
                     <SelectionPopup info={info}
                                     modules={[PositionModule, InputCountModule,
                                             OutputCountModule, SegmentCountModule,
@@ -111,8 +105,7 @@ export const App = ((store: AppStore) => {
 
                     <ICDesigner mainInfo={info} />
 
-                    <ICViewer onActivate={() => info.input.block()}
-                            onClose   ={() => info.input.unblock()} />
+                    <ICViewer mainInfo={info} />
 
 
                     <ContextMenu info={info}

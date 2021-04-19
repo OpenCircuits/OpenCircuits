@@ -105,4 +105,7 @@ export class HistoryManager {
         return this.undoStack.slice();
     }
 
+    public getRedoActions(): Action[] {
+        return this.redoStack.slice();
+    }
 }

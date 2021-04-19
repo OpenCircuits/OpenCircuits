@@ -1,8 +1,13 @@
 import React from "react";
 import {connect} from "react-redux";
 
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
+
+import {useHistory} from "shared/utils/hooks/useHistory";
+import {Draggable} from "shared/components/DragDroppable/Draggable";
 
 import "./index.scss";
 
@@ -24,6 +29,7 @@ export type ItemNavConfig = {
 
 
 type OwnProps = {
+    info: CircuitInfo;
     config: ItemNavConfig;
 }
 type StateProps = {
@@ -36,28 +42,45 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ isOpen, isEnabled, isLocked, config, toggle }: Props) {
+function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
+    const {undoHistory, redoHistory} = useHistory(info);
+
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
-            <div className={`tab ${isOpen ? "tab__closed" : ""}`}
-                 title="Circuit Components"
-                 onClick={() => toggle()}></div>
+            <>
+                <div className={`tab ${isOpen ? "tab__closed" : ""}`}
+                     title="Circuit Components"
+                     onClick={() => toggle()}></div>
+            </>
         }
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
+            <div className="itemnav__top">
+                <div className="itemnav__top__history__buttons">
+                    <button title="Undo"
+                            disabled={undoHistory.length === 0}
+                            onClick={() => info.history.undo() }>
+                        <img src="img/icons/undo.svg" alt="" />
+                    </button>
+                    <button title="Redo"
+                            disabled={redoHistory.length === 0}
+                            onClick={() => info.history.redo() }>
+                        <img src="img/icons/redo.svg" alt="" />
+                    </button>
+                </div>
+            </div>
             {config.sections.map((section, i) =>
                 <React.Fragment key={`itemnav-section-${i}`}>
                     <h4>{section.label}</h4>
                     {section.items.map((item, j) =>
-                        <button key={`itemnav-section-${i}-item-${j}`}
-                                onDragStart={(ev) => {
-                                    ev.dataTransfer.setData("custom/component", item.id);
-                                    ev.dataTransfer.dropEffect = "copy";
-                                }}>
-                            <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                            <br />
-                            {item.label}
-                        </button>
+                        <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                   data={item.id}>
+                            <button>
+                                <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                <br />
+                                {item.label}
+                            </button>
+                        </Draggable>
                     )}
                 </React.Fragment>
             )}

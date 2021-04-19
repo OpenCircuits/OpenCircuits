@@ -24,8 +24,6 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "start:server": "node ./scripts/start-server.js",
-    "build:server": "node ./scripts/build-server.js",
     "test": "react-app-rewired test"
   },
   "babel": {
