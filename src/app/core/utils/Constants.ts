@@ -36,6 +36,7 @@ export const IO_PORT_LINE_WIDTH   = 2;
 export const WIRE_THICKNESS = 7.0;
 export const WIRE_SNAP_THRESHOLD    = 10;
 export const MID_SNAP_CONST = 5 //Scaling for midpoint snapping
+export const EDGE_SNAP_CONST = 75 //Scaling for edge snapping
 //Mid snap constant can be changed - higher number makes snapping more sensitive
 
 export const GATE_NOT_CIRCLE_RADIUS = 5;

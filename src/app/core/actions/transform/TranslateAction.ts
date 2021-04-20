@@ -4,7 +4,7 @@ import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
 
-import {SnapPos, SnapMidpoint} from "./SnapUtils";
+import {SnapPos, SnapMidpoint, SnapEdges} from "./SnapUtils";
 import { CircuitDesigner } from "core/models";
 
 // Translate can be applied to single components,
@@ -33,6 +33,9 @@ export class TranslateAction implements Action {
         //Midpoint snap
         this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
 
+        //Edge snap
+        this.objs.forEach(o => SnapEdges(o, this.circuit.getObjects()))
+
         return this;
     }
 
@@ -44,6 +47,10 @@ export class TranslateAction implements Action {
 
         //Midpoint snap
         this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
+
+        //Edge snap
+        this.objs.forEach(o => SnapEdges(o, this.circuit.getObjects()))
+
         return this;
     }
 }
