@@ -1,10 +1,10 @@
 import {useState} from "react";
-import {connect} from "react-redux";
+import {connect}  from "react-redux";
 
-import {CreateAddGroupAction}    from "core/actions/addition/AddGroupActionFactory";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 
 import {Overlay} from "shared/components/Overlay";
-import {Popup} from "shared/components/Popup";
+import {Popup}   from "shared/components/Popup";
 
 import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
@@ -14,14 +14,21 @@ import {Camera} from "math/Camera";
 
 import {OrganizeComponents} from "core/utils/ComponentUtils";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {GroupAction}             from "core/actions/GroupAction";
+import {CreateDeselectAllAction,
+        SelectAction}            from "core/actions/selection/SelectAction";
+import {PlaceAction}             from "core/actions/addition/PlaceAction";
+import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
+
+import {DigitalCircuitInfo}     from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {ICData} from "digital/models/ioobjects/other/ICData";
-import {IC} from "digital/models/ioobjects/other/IC";
-import {LED} from "digital/models/ioobjects/outputs/LED";
-import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {GenerateTokens, ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {ICData}                 from "digital/models/ioobjects/other/ICData";
+import {IC}                     from "digital/models/ioobjects/other/IC";
+import {LED}                    from "digital/models/ioobjects/outputs/LED";
+import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+import {GenerateTokens,
+        ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
 
 type OwnProps = {
@@ -34,7 +41,7 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: string, isIC: boolean) {
+function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo, expression: string, isIC: boolean) {
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -61,11 +68,22 @@ function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: 
     const circuit = ExpressionToCircuit(inputMap, expression, o);
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
-    const startPos = camera.getPos().sub(camera.getCenter().scale(camera.getZoom()/1.5));
+    const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     OrganizeComponents(circuit, startPos);
     if (isIC) {
-        const ic = new IC(new ICData(circuit));
-        designer.addObject(ic);
+        const data = new ICData(circuit);
+        data.setName(expression);
+        const ic = new IC(data);
+        ic.setName(expression);
+        ic.setPos(info.camera.getPos());
+        const action = new GroupAction([
+            CreateDeselectAllAction(info.selections),
+            new CreateICDataAction(data, info.designer),
+            new PlaceAction(info.designer, ic),
+            new SelectAction(info.selections, ic)
+        ]);
+        info.history.add(action.execute());
+        info.renderer.render();
     }
     else {
         CreateAddGroupAction(designer, circuit).execute();
@@ -98,7 +116,7 @@ export const ExprToCircuitPopup = (() => {
                     <div title="Generate Circuit">
                         <button type="button" onClick={() => {
                             try {
-                                generate(info.designer, info.camera, expression, isIC);
+                                generate(info.designer, info, expression, isIC);
                                 setExpression({ expression: "" });
                                 setErrorMessage({ errorMessage: "" });
                                 CloseHeaderPopups();
