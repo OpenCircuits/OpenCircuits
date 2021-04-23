@@ -47,12 +47,15 @@ function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: 
         case "!":
             break;
         default:
-            if(!inputMap.has(token))
+            if(!inputMap.has(token)) {
                 inputMap.set(token, new Switch());
+                inputMap.get(token).setName(token);
+            }
             break;
         }
     }
     const o = new LED();
+    o.setName("Output");
     const circuit = ExpressionToCircuit(inputMap, expression, o)
     CreateAddGroupAction(designer, circuit).execute();
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
