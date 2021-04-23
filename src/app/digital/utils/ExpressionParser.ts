@@ -269,6 +269,8 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
+// Checks that token is a key in inputs, if so then set the corresponding component's name
+// to be token
 function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
     switch(token) {
     case "(":
@@ -281,6 +283,8 @@ function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
     default:
         if(!inputs.has(token))
             throw new Error("Input Not Found: " + token);
+        else
+            inputs.get(token).setName(token);
         break;
     }
 }
@@ -324,6 +328,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
 
+    output.setName("Output");
     const components: IOObject[] = getComponentsValidate(inputs);
     const tokenList = getTokenListValidate(inputs, expression, output);
 
