@@ -9,7 +9,7 @@ import {CreateModule, ModuleConfig, PopupModule} from "./Module";
 const XConfig: ModuleConfig<[Component], number> = {
     types: [Component],
     valType: "float",
-    getProps: (o) => o.getPos().x,
+    getProps: (o) =>  parseFloat(o.getPos().x.toFixed(2)),
     getAction: (s, newX) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
                                                 s.map(s => V(newX, s.getPos().y)))
@@ -17,7 +17,7 @@ const XConfig: ModuleConfig<[Component], number> = {
 const YConfig: ModuleConfig<[Component], number> = {
     types: [Component],
     valType: "float",
-    getProps: (o) => o.getPos().y,
+    getProps: (o) => parseFloat(o.getPos().y.toFixed(2)),
     getAction: (s, newY) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
                                                 s.map(s => V(s.getPos().x, newY)))
