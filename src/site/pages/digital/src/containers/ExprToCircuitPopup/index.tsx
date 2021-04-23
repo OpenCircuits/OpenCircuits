@@ -17,6 +17,8 @@ import {OrganizeComponents} from "core/utils/ComponentUtils";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {ICData} from "digital/models/ioobjects/other/ICData";
+import {IC} from "digital/models/ioobjects/other/IC";
 import {LED} from "digital/models/ioobjects/outputs/LED";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {GenerateTokens, ExpressionToCircuit} from "digital/utils/ExpressionParser";
@@ -32,7 +34,7 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: string) {
+function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: string, isIC: boolean) {
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -56,12 +58,18 @@ function generate(designer: DigitalCircuitDesigner, camera: Camera, expression: 
     }
     const o = new LED();
     o.setName("Output");
-    const circuit = ExpressionToCircuit(inputMap, expression, o)
-    CreateAddGroupAction(designer, circuit).execute();
+    const circuit = ExpressionToCircuit(inputMap, expression, o);
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = camera.getPos().sub(camera.getCenter().scale(camera.getZoom()/1.5));
     OrganizeComponents(circuit, startPos);
+    if (isIC) {
+        const ic = new IC(new ICData(circuit));
+        designer.addObject(ic);
+    }
+    else {
+        CreateAddGroupAction(designer, circuit).execute();
+    }
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -75,6 +83,7 @@ export const ExprToCircuitPopup = (() => {
         ({curPopup, CloseHeaderPopups, info}: Props) => {
             const [{expression}, setExpression] = useState({ expression: "" });
             const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
+            const [isIC, setIsIC] = useState(false);
 
             return (
                 <Popup title="Boolean Expression to Circuit"
@@ -85,10 +94,11 @@ export const ExprToCircuitPopup = (() => {
                                value={expression}
                                placeholder=""
                                onChange={e => setExpression({expression: e.target.value})} />
+                    <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" />
                     <div title="Generate Circuit">
                         <button type="button" onClick={() => {
                             try {
-                                generate(info.designer, info.camera, expression);
+                                generate(info.designer, info.camera, expression, isIC);
                                 setExpression({ expression: "" });
                                 setErrorMessage({ errorMessage: "" });
                                 CloseHeaderPopups();
