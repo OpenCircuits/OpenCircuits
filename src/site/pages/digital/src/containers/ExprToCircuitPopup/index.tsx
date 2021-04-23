@@ -16,7 +16,8 @@ import {OrganizeComponents} from "core/utils/ComponentUtils";
 
 import {GroupAction}             from "core/actions/GroupAction";
 import {CreateDeselectAllAction,
-        SelectAction}            from "core/actions/selection/SelectAction";
+        CreateGroupSelectAction,
+        SelectAction,}            from "core/actions/selection/SelectAction";
 import {PlaceAction}             from "core/actions/addition/PlaceAction";
 import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
 
@@ -86,7 +87,13 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo, ex
         info.renderer.render();
     }
     else {
-        CreateAddGroupAction(designer, circuit).execute();
+        const action = new GroupAction([
+            CreateDeselectAllAction(info.selections),
+            CreateAddGroupAction(designer, circuit),
+            CreateGroupSelectAction(info.selections, circuit.getComponents())
+        ]);
+        info.history.add(action.execute());
+        info.renderer.render();
     }
 }
 
