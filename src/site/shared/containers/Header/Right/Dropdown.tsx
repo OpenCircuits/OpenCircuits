@@ -40,10 +40,14 @@ export function Dropdown(props: Props) {
         }
 
         // Add listener on start
+        window.addEventListener("touchend", onWindowClick);
         window.addEventListener("click", onWindowClick);
 
         // Remove listener for cleanup
-        return () => window.removeEventListener("click", onWindowClick);
+        return () => {
+            window.addEventListener("touchend", onWindowClick);
+            window.removeEventListener("click", onWindowClick);
+        }
     });
 
     return (
