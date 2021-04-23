@@ -26,7 +26,7 @@ export const AddLabelButtonModule = (props: UseModuleProps) => (
             const L = new Label();
             L.getTransform().setParent((selections[0] as Component).getTransform());
             //L.getCullBox().setParent((selections[0] as Component).getCullBox());
-            L.setPos(V((selections[0] as Component).getPos().x,(selections[0] as Component).getPos().y.valueOf()-50));
+            L.setPos(V((selections[0] as Component).getPos().x,(selections[0] as Component).getPos().y.valueOf()-(selections[0] as Component).getSize().y));
             return new PlaceAction(props.designer, L).execute();
         }}
         {...props} 
