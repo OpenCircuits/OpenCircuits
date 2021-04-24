@@ -39,15 +39,14 @@ export function Dropdown(props: Props) {
                 onClose();
         }
 
+        //listener for mobile and desktop (see Issue #597)
+        const events = ["click", "touchend"];
+
         // Add listener on start
-        window.addEventListener("touchend", onWindowClick);
-        window.addEventListener("click", onWindowClick);
+        events.forEach((e) => window.addEventListener(e, onWindowClick))
 
         // Remove listener for cleanup
-        return () => {
-            window.removeEventListener("touchend", onWindowClick);
-            window.removeEventListener("click", onWindowClick);
-        }
+        return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))}
     });
 
     return (
