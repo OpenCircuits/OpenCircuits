@@ -8,8 +8,11 @@ import {ToggleItemNav} from "shared/state/ItemNav/actions";
 
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
+
 import {V} from "Vector";
 import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
+import {Component} from "core/models";
+import {Create} from "serialeazy";
 
 import "./index.scss";
 
@@ -50,20 +53,23 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
-        function handleClick(ev: MouseEvent) {
-            // dont do anything if icons are clicked
+        function createNComponents(ev: MouseEvent) {
+            // dont do anything if icons are clicked (handled with buttons)
             if ((ev.target as Element).tagName === "IMG") return;
+            // might be extraneous, not clicking on canvas will do nothing regardless
             if (currItemID !== "" && (ev.target as Element).tagName === "CANVAS") {
-                for (var i = 0; i < numClicks; i++) {
-                    DragDropHandlers.drop(V(ev.clientX, ev.clientY + (i )), currItemID);
+                let comp: Component;
+                comp = Create<Component>(currItemID);
+                for (let i = 0; i < numClicks; i++) {
+                    DragDropHandlers.drop(V(ev.clientX, ev.clientY + (i * comp.getSize().y)), currItemID);
                 }
             }
             // revert back to original state
             setState({currItemID: "", numClicks: 0});
         }
-        document.addEventListener("click", handleClick);
+        document.addEventListener("click", createNComponents);
         return () => {
-            document.removeEventListener("click", handleClick);
+            document.removeEventListener("click", createNComponents);
         }
     }, [currItemID, numClicks, setState]);
 
