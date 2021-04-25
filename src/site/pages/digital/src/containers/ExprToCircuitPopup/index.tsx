@@ -140,7 +140,7 @@ export const ExprToCircuitPopup = (() => {
                     { errorMessage && <p>{errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
-                               placeholder=""
+                               placeholder="!a | (B^third)"
                                onChange={e => setExpression({expression: e.target.value})} />
                     <select id="input"
                             value={input}
