@@ -64,9 +64,9 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
             // revert back to original state
             setState({currItemID: "", numClicks: 0});
         }
-        document.addEventListener("click", createNComponents, false);
+        document.addEventListener("click", createNComponents);
         return () => {
-            document.removeEventListener("click", createNComponents, false);
+            document.removeEventListener("click", createNComponents);
         }
     }, [currItemID, numClicks, setState]);
 
@@ -100,7 +100,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                     {section.items.map((item, j) =>
                         <Draggable key={`itemnav-section-${i}-item-${j}`}
                                    data={item.id}>
-                            <button id="hello" onClick={(ev) => {currItemID === item.id ? 
+                            <button onClick={(ev) => {currItemID === item.id ? 
                                         setState({currItemID: currItemID, numClicks: numClicks + 1}) :
                                         setState({currItemID: item.id, numClicks: 1}); 
                                         ev.stopPropagation();
