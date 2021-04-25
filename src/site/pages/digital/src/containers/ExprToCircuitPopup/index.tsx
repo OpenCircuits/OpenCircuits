@@ -27,7 +27,11 @@ import {DigitalComponent}       from "digital/models/DigitalComponent";
 import {ICData}                 from "digital/models/ioobjects/other/ICData";
 import {IC}                     from "digital/models/ioobjects/other/IC";
 import {LED}                    from "digital/models/ioobjects/outputs/LED";
+import {ConstantLow}            from "digital/models/ioobjects/inputs/ConstantLow";
+import {ConstantHigh}           from "digital/models/ioobjects/inputs/ConstantHigh";
+import {Button}                 from "digital/models/ioobjects/inputs/Button";
 import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
@@ -42,7 +46,8 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo, expression: string, isIC: boolean) {
+function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
+                  expression: string, isIC: boolean, input: string) {
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -58,7 +63,24 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo, ex
             break;
         default:
             if(!inputMap.has(token)) {
-                inputMap.set(token, new Switch());
+                switch(input) {
+                case "Constant Low":
+                    inputMap.set(token, new ConstantLow());
+                    break;
+                case "Constant High":
+                    inputMap.set(token, new ConstantHigh());
+                    break;
+                case "Button":
+                    inputMap.set(token, new Button());
+                    break;
+                case "Clock":
+                    inputMap.set(token, new Clock());
+                    break;
+                case "Switch":
+                default:
+                    inputMap.set(token, new Switch());
+                    break;
+                }
                 inputMap.get(token).setName(token);
             }
             break;
@@ -109,6 +131,7 @@ export const ExprToCircuitPopup = (() => {
             const [{expression}, setExpression] = useState({ expression: "" });
             const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
             const [isIC, setIsIC] = useState(false);
+            const [input, setInput] = useState("Switch");
 
             return (
                 <Popup title="Boolean Expression to Circuit"
@@ -119,11 +142,21 @@ export const ExprToCircuitPopup = (() => {
                                value={expression}
                                placeholder=""
                                onChange={e => setExpression({expression: e.target.value})} />
+                    <select id="input"
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onBlur={e => setInput(e.target.value)}>
+                        <option key="Constant Low" value="Constant Low">Constant Low</option>
+                        <option key="Constant High" value="Constant High">Constant High</option>
+                        <option key="Button" value="Button">Button</option>
+                        <option key="Switch" value="Switch">Switch</option>
+                        <option key="Clock" value="Clock">Clock</option>
+                    </select>
                     <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" />
                     <div title="Generate Circuit">
                         <button type="button" onClick={() => {
                             try {
-                                generate(info.designer, info, expression, isIC);
+                                generate(info.designer, info, expression, isIC, input);
                                 setExpression({ expression: "" });
                                 setErrorMessage({ errorMessage: "" });
                                 CloseHeaderPopups();
