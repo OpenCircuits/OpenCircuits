@@ -54,10 +54,9 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function createNComponents(ev: MouseEvent) {
-            // dont do anything if icons are clicked (handled with buttons)
-            if ((ev.target as Element).tagName === "IMG") return;
-            // might be extraneous, not clicking on canvas will do nothing regardless
-            if (currItemID !== "" && (ev.target as Element).tagName === "CANVAS") {
+            const target = ev.target as Element
+            // ensures clicking on header won't drop components on canvas
+            if (currItemID !== "" && target.tagName === "CANVAS") {
                 let comp: Component;
                 comp = Create<Component>(currItemID);
                 for (let i = 0; i < numClicks; i++) {
@@ -67,9 +66,9 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
             // revert back to original state
             setState({currItemID: "", numClicks: 0});
         }
-        document.addEventListener("click", createNComponents);
+        document.addEventListener("click", createNComponents, false);
         return () => {
-            document.removeEventListener("click", createNComponents);
+            document.removeEventListener("click", createNComponents, false);
         }
     }, [currItemID, numClicks, setState]);
 
@@ -103,15 +102,15 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                     {section.items.map((item, j) =>
                         <Draggable key={`itemnav-section-${i}-item-${j}`}
                                    data={item.id}>
-                            <button 
-                                onClick={() => {currItemID === item.id ? 
-                                    setState({currItemID: currItemID, numClicks: numClicks + 1}) :
-                                    setState({currItemID: item.id, numClicks: 1}); 
-                                }}>
+                            <button id="hello" onClick={(ev) => {currItemID === item.id ? 
+                                        setState({currItemID: currItemID, numClicks: numClicks + 1}) :
+                                        setState({currItemID: item.id, numClicks: 1}); 
+                                        ev.stopPropagation();
+                                    }}>
                                 <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                 <br />
                                 {item.label}
-                            </button>
+                            </button>    
                         </Draggable>
                     )}
                 </React.Fragment>
