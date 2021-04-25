@@ -13,7 +13,6 @@ import {V} from "Vector";
 import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
 import {Component} from "core/models";
 import {Create} from "serialeazy";
-
 import "./index.scss";
 
 
@@ -47,7 +46,6 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
     
