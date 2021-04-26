@@ -1,6 +1,6 @@
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
-@media (min-width: 500px) {
+@media (min-width: 450px) {
     .header__right {
         margin-right: 14px;
 
@@ -35,7 +35,7 @@
 }
 
 
-@media (max-width: 500px) {
+@media (max-width: 450px) {
     .header__right__alt {
         margin-right: 14px;
         top: 10px;
