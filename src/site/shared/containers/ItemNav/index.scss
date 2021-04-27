@@ -7,6 +7,7 @@ $tab-padding: 8px;
 
 @media (min-width: 450px) {
     .itemnav {
+
         position: fixed;
         z-index: 2;
         bottom: 0;
@@ -127,12 +128,15 @@ $tab-padding: 8px;
 }
 @media (max-width: 450px) {
     .itemnav {
+        display:  inline-flex;
+        flex-wrap: wrap;
+
+        overflow-x: hidden;
+
         position: fixed;
         z-index: 2;
         bottom: 0;
         right: 0;
-    
-        overflow-x: hidden;
     
         height: calc(50% - #{$header-total-height});
     
@@ -205,6 +209,7 @@ $tab-padding: 8px;
             }
         }
     }
+
 
     .tab {
 
