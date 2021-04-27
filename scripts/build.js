@@ -1,5 +1,5 @@
 const os = require("os");
-const {renameSync, existsSync, rmSync} = require("fs");
+const {renameSync, existsSync, rmSync, rmdirSync} = require("fs");
 const {spawn} = require("child_process");
 
 const ora = require("ora");
