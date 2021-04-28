@@ -219,7 +219,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         return (
             <input type={props.inputType}
                    value={focused ? textVal : (same ? val as (string | number) : "")}
-                   placeholder={same ? "" : "-"}
+                   //placeholder={/*same ? "" :*/ "-"}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
                    max ={"max"  in props ? props.max  : ""}
