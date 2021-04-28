@@ -128,9 +128,6 @@ $tab-padding: 8px;
 }
 @media (max-width: 450px) {
     .itemnav {
-        display:  inline-flex;
-        flex-wrap: wrap;
-
         overflow-x: hidden;
 
         position: fixed;
@@ -138,7 +135,7 @@ $tab-padding: 8px;
         bottom: 0;
         right: 0;
     
-        height: calc(50% - #{$header-total-height});
+        height: calc(60% - #{$header-total-height});
     
         transition: all 0.5s;
     
@@ -240,7 +237,7 @@ $tab-padding: 8px;
             font-size: 2.5em;
 
             right: 0;
-            bottom: calc(50% - #{$header-total-height} - 50px);
+            bottom: calc(60% - #{$header-total-height} - 50px);
 
             border-color: transparent;
             background-color: transparent;
