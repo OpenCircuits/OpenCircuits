@@ -142,13 +142,12 @@ $tab-padding: 8px;
         bottom: 0;
         right: 0;
         height: calc(70% - #{$header-total-height});
-    
         transition: all 0.5s;
-    
+
         border: $header-border;
         border-top-width: $header-border-width;
         background-color: rgba($background-color, 0.7);
-    
+
         &__move {
             bottom: -$itemnav-width - (350px);
         }
