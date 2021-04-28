@@ -70,19 +70,23 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                 </div>
             </div>
             {config.sections.map((section, i) =>
-                <React.Fragment key={`itemnav-section-${i}`}>
-                    <h4>{section.label}</h4>
-                    {section.items.map((item, j) =>
-                        <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                   data={item.id}>
-                            <button>
-                                <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                <br />
-                                {item.label}
-                            </button>
-                        </Draggable>
-                    )}
-                </React.Fragment>
+                <div className ="itemnav__section">
+                    <React.Fragment key={`itemnav-section-${i}`}>
+                        <h4>{section.label}</h4>
+                        <div className="itemnav__item">
+                            {section.items.map((item, j) =>
+                                    <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                            data={item.id}>
+                                        <button>
+                                            <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                            <br />
+                                            {item.label}
+                                        </button>
+                                    </Draggable>
+                            )}
+                        </div>
+                    </React.Fragment>
+                </div>
             )}
         </nav>
     </>);

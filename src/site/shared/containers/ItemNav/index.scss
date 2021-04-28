@@ -128,7 +128,14 @@ $tab-padding: 8px;
 }
 @media (max-width: 450px) {
     .itemnav {
-        overflow-x: hidden;
+        display:  inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+
+        scroll-snap-type: x mandatory;
+
+        overflow-y: hidden;
+        overflow-x: auto;
 
         position: fixed;
         z-index: 2;
@@ -184,8 +191,11 @@ $tab-padding: 8px;
         &__top {
             display: flex;
             flex-direction: row;
-            justify-content: center;
-    
+            justify-content: flex-start;
+            flex-basis: 100%;
+
+            position: fixed;
+
             margin-top: 4px;
     
             width: 100%;
@@ -204,6 +214,17 @@ $tab-padding: 8px;
                     }
                 }
             }
+        }
+
+        &__section {
+            scroll-snap-align: center;
+        }
+
+        &__item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
         }
     }
 
