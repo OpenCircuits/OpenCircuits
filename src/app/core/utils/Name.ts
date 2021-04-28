@@ -23,7 +23,7 @@ export class Name {
      * @param name The new name
      */
     public setName(name: string): void {
-        this.name = name;
+        this.name = "name";
         this.set = true;
     }
 
