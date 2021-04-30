@@ -151,6 +151,8 @@ describe("Rotate Tool", () => {
         // rotate parent 90 degrees, label is 100 units above
         test("Rotate Parent 90°", () => {
             obj.setPos(V(par.getPos().x.valueOf()+100, par.getPos().y));
+            expect(obj.getAngle()).toBeCloseTo(0);
+            expect(par.getAngle()).toBeCloseTo(0);
 
             input.click(par.getPos());
             expect(selections.get().length).toBe(1);
@@ -212,12 +214,13 @@ describe("Rotate Tool", () => {
 
             const cull = obj.getCullBox();
             
-            input.moveTo(par.getPos()) // Move to midpoint of parent
+            input.moveTo(par.getPos()) 
                     .press()
                     .move(V(0, -2000))
                     .release()
                     .press()
-                    .move(V(0, 2000));
+                    .move(V(0, 2000))
+                    .release();
             expect(par.getPos().y).toBeCloseTo(0);
             const cullAfter = obj.getCullBox();
             expect(cull).toBe(cullAfter);
@@ -234,17 +237,39 @@ describe("Rotate Tool", () => {
             expect(par.getPos().y).toBeCloseTo(0);
             expect(obj.getPos().x).toBeCloseTo(0);
             expect(obj.getPos().y).toBeCloseTo(-200);
-
-            input.moveTo(obj.getPos()) // Move to midpoint of parent
+            input.click(obj.getPos());
+            input.moveTo(obj.getPos()) 
                     .press()
                     .move(V(0, -100))
                     .release()
                     .press()
-                    .move(V(0, 50));
-            expect(obj.getPos().y).toBeCloseTo(-250);
+                    .move(V(0, 50))
+                    .release();
+            expect(obj.getPos().y - par.getPos().y).toBeCloseTo(-250);
         });
 
-        // BUG: rotating a label child that has a child rotates par.getAngle() degrees right away
-        // BUG: moving a label off screen by moving the parent object makes label invisible until scroll
+        test("Parent and child selected", () => {
+            obj.setPos(V(par.getPos().x.valueOf()+100, par.getPos().y));
+            expect(obj.getAngle()).toBeCloseTo(0);
+            expect(par.getAngle()).toBeCloseTo(0);
+
+            input.click(par.getPos());
+            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toContain(par);
+
+            
+            input.moveTo(par.getPos()) // Move to midpoint of parent
+                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                    .press()
+                    .move(V(+ROTATION_CIRCLE_RADIUS, +ROTATION_CIRCLE_RADIUS))
+                    .release();
+            expect(par.getAngle()).toBeCloseTo(-Math.PI/2);
+            expect(obj.getAngle()).toBeCloseTo(-Math.PI/2);
+            expect(obj.getPos().x).toBeCloseTo(0);
+            expect(obj.getPos().y).toBeCloseTo(-100);
+        });
+        // BUG: moving a label off screen by moving the parent object makes label invisible until scrolling out
+        // BUG: Selecting a parent and child + a separate component causes the other component to change position when first rotating
+        // BUG: Undoing a rotation with children and parents selected changes positions and angles incorrectly
     })
 });
