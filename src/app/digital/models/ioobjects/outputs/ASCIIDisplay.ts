@@ -1,18 +1,18 @@
 import {serializable} from "serialeazy";
 
-import {BCDFont} from "./BCDFont";
+import {ASCIIFont} from "./ASCIIFont";
 
 import {ClampedValue} from "math/ClampedValue";
 import {PortsToDecimal} from "digital/utils/ComponentUtils";
 import {SegmentDisplay} from "./SegmentDisplay";
 
-// Index for BCDFont can be found at https://en.wikipedia.org/wiki/ASCII
+// Index for ASCIIFont can be found at https://en.wikipedia.org/wiki/ASCII
 
-@serializable("BCDDisplay")
-export class BCDDisplay extends SegmentDisplay {
+@serializable("ASCIIDisplay")
+export class ASCIIDisplay extends SegmentDisplay {
     public constructor() {
-        // Always 4 inputs since number of segments is independent of number of inputs
-        super(new ClampedValue(4));
+        // Always 7 inputs since number of segments is independent of number of inputs
+        super(new ClampedValue(7));
     }
 
     public setInputPortCount(val: number): void {
@@ -25,7 +25,7 @@ export class BCDDisplay extends SegmentDisplay {
     public isSegmentOn(segment: number): boolean {
         const dec = PortsToDecimal(this.getInputPorts());
 
-        const font = BCDFont[`${this.segmentCount}`];
+        const font = ASCIIFont[`${this.segmentCount}`];
         if (!font)
             return false;
 
@@ -37,6 +37,6 @@ export class BCDDisplay extends SegmentDisplay {
     }
 
     public getDisplayName(): string {
-        return `${this.segmentCount} BCD Display`;
+        return `${this.segmentCount} ASCII Display`;
     }
 }
