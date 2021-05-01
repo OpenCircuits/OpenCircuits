@@ -140,7 +140,13 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             const counts = comps.map(s => config.getProps(s));
 
             same = counts.every(c => (c === counts[0]));
-            val = counts[0];
+            if(counts.length > 1 && !same){
+                val = "<Multiple>" as P;
+            }
+            else{
+                val = counts[0];
+            }
+            
 
             setState({
                 active: true,
@@ -218,8 +224,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
         return (
             <input type={props.inputType}
-                   value={`${textVal}`}
-                   //value={focused ? textVal : (same ? val as (string | number) : "")}
+                   value={focused ? textVal : (same ? val as (string | number) : "<Multiple>")}
                    placeholder={/*same ? "" :*/ "-"}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
