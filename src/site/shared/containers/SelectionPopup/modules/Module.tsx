@@ -145,7 +145,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             setState({
                 active: true,
                 focused: false,
-                textVal: (same ? val.toString() : "")
+                textVal: (same ? val.toString() : "<Multiple>")
             });
         }, [selections, numSelections, dependencyStr]);
 
@@ -218,8 +218,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
         return (
             <input type={props.inputType}
-                   value={focused ? textVal : (same ? val as (string | number) : "")}
-                   //placeholder={/*same ? "" :*/ "-"}
+                   value={`${textVal}`}
+                   //value={focused ? textVal : (same ? val as (string | number) : "")}
+                   placeholder={/*same ? "" :*/ "-"}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
                    max ={"max"  in props ? props.max  : ""}

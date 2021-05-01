@@ -12,12 +12,6 @@ export abstract class IOObject implements Selectable {
 
     protected constructor() {
         this.name = new Name(this.getDisplayName());
-        if(this.getDisplayName() == ""){
-            this.name = new Name("HIK");
-        }
-        else{
-            this.name = new Name("KIB");
-        }
     }
 
     public abstract isWithinSelectBounds(v: Vector): boolean;
