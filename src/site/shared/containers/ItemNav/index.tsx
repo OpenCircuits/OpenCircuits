@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {connect} from "react-redux";
 import {V} from "Vector";
 
@@ -58,7 +58,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
             document.removeEventListener("click", createNComponents);
         }
     }, [currItemID, numClicks, setState]);
-    
+
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
