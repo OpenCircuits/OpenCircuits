@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {connect} from "react-redux";
 import {V} from "Vector";
 
@@ -10,9 +10,7 @@ import {ToggleItemNav} from "shared/state/ItemNav/actions";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
-import {Component} from "core/models";
-import {IC, ICData} from "digital/models/ioobjects";
-import {Create} from "serialeazy";
+
 import "./index.scss";
 
 
@@ -52,21 +50,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function createNComponents(ev: MouseEvent) {
-            const target = ev.target as Element
-            // ensures clicking on header won't drop components on canvas
-            if (currItemID === "" || target.tagName !== "CANVAS") 
-                return;
-            let component: Component;
-            if (currItemID.startsWith("ic")) { // IC
-                const icdata = ICData.Create(info.designer.getAll() as (IC[]))
-                component = new IC(icdata);
-            } else {
-                component = Create<Component>(currItemID);
-            }
-            for (let i = 0; i < numClicks; i++) {
-                DragDropHandlers.drop(V(ev.clientX, ev.clientY + (component.getSize().y * i)), currItemID);
-            }
-            // revert back to original state
+            DragDropHandlers.drop(V(ev.x, ev.y), currItemID, numClicks);
             setState({currItemID: "", numClicks: 0});
         }
         document.addEventListener("click", createNComponents);
@@ -74,7 +58,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
             document.removeEventListener("click", createNComponents);
         }
     }, [currItemID, numClicks, setState]);
-
+    
     return (<>
         { // Hide tab if the circuit is locked
         (isEnabled && !isLocked) &&
