@@ -1,6 +1,7 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON,
+    SPACEBAR_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -9,9 +10,10 @@ import {Camera} from "math/Camera";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}      from "digital/models/ioobjects/inputs/Switch";
 import {Button}      from "digital/models/ioobjects/inputs/Button";
-import {ANDGate}     from "digital/models/ioobjects/gates/ANDGate";
+import {ANDGate}     from "digital/models/ioobjects/gates/ANDGate"
 import {LED}         from "digital/models/ioobjects/outputs/LED";
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {SRFlipFlop} from "digital/models/ioobjects/SRFlipFlop";
 
 import {FakeInput} from "../FakeInput";
 import {InitializeInput, CreateDefaultToolManager} from "test/helpers/ToolHelpers";
@@ -192,6 +194,147 @@ describe("Translate Tool", () => {
             expect(port2.getOutputs()[0].isStraight()).toBe(true);
         });
 
+        describe("Snapping", () => {
+            afterEach(() => {
+                // Clear previous circuit
+                designer.reset();
+            });
+    
+            test("Midpoint Snap in x direction", () => {
+                const sw   = new Switch();
+                const led  = new LED();
+    
+                // Set switch and LED initial positions
+                sw.setPos(V(0, 0));
+                led.setPos(V(100, 100));
+    
+                Place(designer, [sw, led]);
+                
+                //Move LED to where it should snap
+                input.press(V(100, 100))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(4.99, 50))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect LED to have snapped to 0, 50
+                expect(sw.getPos()).toEqual(V(0, 0));
+                expect(led.getPos()).toEqual(V(0, 50));
+            });
+            
+            test("Midpoint Snap in x direction v2", () => {
+                const sw   = new Switch();
+                const led  = new LED();
+    
+                // Set switch and LED initial positions
+                sw.setPos(V(0, 0));
+                led.setPos(V(100, 100));
+    
+                Place(designer, [sw, led]);
+                
+                //Move LED to where it shouldn't snap
+                input.press(V(100, 100))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(5.01, 50))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect LED to not snap
+                expect(sw.getPos()).toEqual(V(0, 0));
+                expect(led.getPos()).toEqual(V(5.01, 50));
+            });
+
+            test("Midpoint Snap in y direction", () => {
+                const sw   = new Switch();
+                const led  = new LED();
+    
+                // Set switch and LED initial positions
+                sw.setPos(V(0, 0));
+                led.setPos(V(100, 100));
+    
+                Place(designer, [sw, led]);
+                
+                //Move LED to where it should snap
+                input.press(V(100, 100))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(50, 4.99))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect LED to have snapped to 50, 0
+                expect(sw.getPos()).toEqual(V(0, 0));
+                expect(led.getPos()).toEqual(V(50, 0));
+            });
+
+            test("Midpoint Snap in x direction", () => {
+                const sw   = new Switch();
+                const led  = new LED();
+    
+                // Set switch and LED initial positions
+                sw.setPos(V(0, 0));
+                led.setPos(V(100, 100));
+    
+                Place(designer, [sw, led]);
+                
+                //Move LED to where it shouldn't snap
+                input.press(V(100, 100))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(50, 5.01))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect LED to not snap
+                expect(sw.getPos()).toEqual(V(0, 0));
+                expect(led.getPos()).toEqual(V(50, 5.01));
+            });
+
+            test("Edge snap 1", () => {
+                const SR1 = new SRFlipFlop();
+                const SR2 = new SRFlipFlop();
+    
+                // Set SR flip flop initial positions
+                SR1.setPos(V(0, 0));
+                SR2.setPos(V(1000, 1000));
+    
+                Place(designer, [SR1, SR2]);
+                
+                //Move SR2 to where it should snap
+                input.press(V(1000, 1000))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(102, 200))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect SR2 to have snapped to 100, 200
+                expect(SR1.getPos()).toEqual(V(0, 0));
+                expect(SR2.getPos()).toEqual(V(100, 200));
+            });
+
+            test("Edge snap 2", () => {
+                const SR1 = new SRFlipFlop();
+                const SR2 = new SRFlipFlop();
+    
+                // Set SR flip flop initial positions
+                SR1.setPos(V(0, 0));
+                SR2.setPos(V(1000, 1000));
+    
+                Place(designer, [SR1, SR2]);
+                
+                //Move SR2 to where it shouldn't snap
+                input.press(V(1000, 1000))
+                        .pressKey(LEFT_MOUSE_BUTTON)
+                        .moveTo(V(105, 200))
+                        .releaseKey(LEFT_MOUSE_BUTTON)
+                        .release();
+    
+                // Expect SR2 to not snap
+                expect(SR1.getPos()).toEqual(V(0, 0));
+                expect(SR2.getPos()).toEqual(V(105, 200));
+            });
+
+            // TODO: More cloning tests
+        });
+    
         // TODO: More cloning tests
     });
 });
