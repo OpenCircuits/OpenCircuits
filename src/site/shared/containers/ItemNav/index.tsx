@@ -5,6 +5,9 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
+import {Overlay} from "shared/components/Overlay";
+
+import {CloseHistoryBox, OpenHistoryBox, ToggleSideNav} from "shared/state/SideNav/actions";
 
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
@@ -36,13 +39,16 @@ type StateProps = {
     isOpen: boolean;
     isEnabled: boolean;
     isLocked: boolean;
+    isHistoryBoxOpen: boolean;
 }
 type DispatchProps = {
-    toggle: () => void;
+    ToggleItemNav: typeof ToggleItemNav;
+    OpenHistoryBox: typeof OpenHistoryBox;
+    CloseHistoryBox: typeof CloseHistoryBox;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
+function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen, ToggleItemNav, OpenHistoryBox, CloseHistoryBox }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
 
     return (<>
@@ -51,7 +57,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
             <>
                 <div className={`tab ${isOpen ? "tab__closed" : ""}`}
                      title="Circuit Components"
-                     onClick={() => toggle()}></div>
+                     onClick={() => ToggleItemNav()}></div>
             </>
         }
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
@@ -66,6 +72,12 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                             disabled={redoHistory.length === 0}
                             onClick={() => info.history.redo() }>
                         <img src="img/icons/redo.svg" alt="" />
+                    </button>
+                    <button  title="History" onClick={() => {
+                        if (isHistoryBoxOpen) CloseHistoryBox();
+                        else OpenHistoryBox();
+                    }}>
+                        <img src="img/icons/history.svg"></img>
                     </button>
                 </div>
             </div>
@@ -82,9 +94,16 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                             </button>
                         </Draggable>
                     )}
+                    <div className="sidenav__footer">
+                </div>
                 </React.Fragment>
             )}
         </nav>
+        <div className="historybox" style={{display: (isHistoryBoxOpen ? "initial" : "none")}}>
+            {info.history.getActions().reverse().map((a, i) => {
+                return <div key={`history-box-entry-${i}`} className="historybox__entry">{a.getName()}</div>
+            })}
+        </div>
     </>);
 }
 
@@ -92,11 +111,10 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
 const MapState = (state: SharedAppState) => ({
     isLocked: state.circuit.isLocked,
     isEnabled: state.itemNav.isEnabled,
-    isOpen: state.itemNav.isOpen
+    isOpen: state.itemNav.isOpen,
+    isHistoryBoxOpen: state.sideNav.isHistoryBoxOpen,
 });
-const MapDispatch = {
-    toggle: ToggleItemNav
-};
+const MapDispatch = { ToggleItemNav, OpenHistoryBox, CloseHistoryBox };
 
 export const ItemNav = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,

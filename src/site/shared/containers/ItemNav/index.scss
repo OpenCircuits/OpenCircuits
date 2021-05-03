@@ -2,6 +2,9 @@
 
 $itemnav-width: 215px;
 
+$historybox-height: 60vh;
+$historybox-width: 250px;
+
 $tab-width: 18px;
 $tab-padding: 8px;
 
@@ -84,6 +87,36 @@ $tab-padding: 8px;
             }
         }
     }
+}
+
+.historybox {
+    width: $historybox-width;
+    height: $historybox-height;
+
+    border: 5px solid $secondary-color;
+    background-color: $primary-color;
+
+    position: absolute;
+    left: $itemnav-width;
+    bottom: 0px;
+    z-index: 6;
+
+    overflow-y: auto;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    &__entry {
+        height: 50px;
+        line-height: 50px;
+
+        margin: 5px;
+        text-align: center;
+
+        border: 1px solid $secondary-color;
+        border-radius: 7px;
+    }
+
 }
 
 .tab {
