@@ -35,8 +35,12 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 *   Keyboard and mouse gates to make an interactive circuit
 *   Runs on any device with ES6 support
 *   Can be used by professors, students, and hobbyists alike
-*   Open-source and completely free to use
+*   Open-source and completely free and easy to use
 
+## Potential Future Features
+
+*   Colored circuits capability
+*   Sound
 ## Screenshots
 
 <img src="https://imgur.com/xBc75jL.png" width="80%" />
