@@ -134,6 +134,27 @@ describe("Expression Parser", () => {
                 ExpressionToCircuit(inputMap,"a|",o);
             }).toThrow("Missing Right Operand: |");
         });
+
+        test("No Operator", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+
+            expect(() => {
+                ExpressionToCircuit(inputMap,"a b",o);
+            }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"a (b)",o);
+            }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(a) b",o);
+            }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"a !b",o);
+            }).toThrow("No valid operator between a and b");
+        });
     });
 
     describe("0 Inputs", () => {

@@ -269,7 +269,7 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
-function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
+function isInput(token: string) {
     switch(token) {
     case "(":
     case ")":
@@ -277,12 +277,24 @@ function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
     case "^":
     case "|":
     case "!":
-        break;
-    default:
-        if(!inputs.has(token))
-            throw new Error("Input Not Found: " + token);
-        break;
+        return false;
     }
+    return true;
+}
+
+function isOperator(token: string) {
+    switch(token) {
+    case "&":
+    case "^":
+    case "|":
+        return true;
+    }
+    return false;
+}
+
+function validateToken(inputs: Map<string, DigitalComponent>, token: string) {
+    if (isInput(token) && !inputs.has(token))
+        throw new Error("Input Not Found: " + token);
 }
 
 function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
@@ -294,8 +306,20 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
 
     const tokenList = GenerateTokens(expression);
     let token: string;
+    let waitForOperator: boolean = false;
+    let prevToken: string;
     for(let i = 0; i < tokenList.length; i++) {
-        validateToken(inputs, tokenList[i]);
+        const token = tokenList[i];
+        validateToken(inputs, token);
+        if (isInput(token)) {
+            if (waitForOperator)
+                throw new Error("No valid operator between " + prevToken + " and " + token);
+            waitForOperator = true;
+            prevToken = token;
+        }
+        else if(isOperator(token)) {
+            waitForOperator = false;
+        }
     }
 
     return tokenList;
