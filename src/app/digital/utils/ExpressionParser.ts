@@ -325,6 +325,20 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
     return tokenList;
 }
 
+function formatExpression(expression: string, format: string): string {
+    switch(format) {
+    case "||":
+        expression = expression.replace(/\|\|/g, "|");
+        expression = expression.replace(/\&\&/g, "&");
+        break;
+    case "+":
+        expression = expression.replace(/\+/g, "|");
+        expression = expression.replace(/\*/g, "&");
+        break;
+    }
+    return expression;
+}
+
 /**
  * Main driver function for parsing an expression into a circuit
  *
@@ -343,10 +357,13 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
  */
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
-                                    output: DigitalComponent): DigitalObjectSet | null {
+                                    output: DigitalComponent,
+                                    format: string = "|"): DigitalObjectSet | null {
     if(inputs == null)  throw new Error("Null Parameter: inputs");
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
+
+    expression = formatExpression(expression, format);
 
     const components: IOObject[] = getComponentsValidate(inputs);
     const tokenList = getTokenListValidate(inputs, expression, output);

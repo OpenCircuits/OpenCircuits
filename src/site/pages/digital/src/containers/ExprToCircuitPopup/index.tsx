@@ -47,7 +47,7 @@ type DispatchProps = {
 }
 
 function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
-                  expression: string, isIC: boolean, input: string) {
+                  expression: string, isIC: boolean, input: string, format: string) {
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -59,6 +59,8 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
         case "&":
         case "^":
         case "|":
+        case "*":
+        case "+":
         case "!":
             break;
         default:
@@ -88,7 +90,7 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
     }
     const o = new LED();
     o.setName("Output");
-    const circuit = ExpressionToCircuit(inputMap, expression, o);
+    const circuit = ExpressionToCircuit(inputMap, expression, o, format);
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
@@ -132,6 +134,7 @@ export const ExprToCircuitPopup = (() => {
             const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
             const [isIC, setIsIC] = useState(false);
             const [input, setInput] = useState("Switch");
+            const [format, setFormat] = useState("|");
 
             return (
                 <Popup title="Boolean Expression to Circuit"
@@ -152,11 +155,19 @@ export const ExprToCircuitPopup = (() => {
                         <option key="Switch" value="Switch">Switch</option>
                         <option key="Clock" value="Clock">Clock</option>
                     </select>
+                    <select id="format"
+                            value={format}
+                            onChange={e => setFormat(e.target.value)}
+                            onBlur={e => setFormat(e.target.value)}>
+                        <option key="|" value="|">&amp;, |, ^</option>
+                        <option key="||" value="||">&amp;&amp;, ||, ^</option>
+                        <option key="+" value="+">*, +, ^</option>
+                    </select>
                     <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" />
                     <div title="Generate Circuit">
                         <button type="button" onClick={() => {
                             try {
-                                generate(info.designer, info, expression, isIC, input);
+                                generate(info.designer, info, expression, isIC, input, format);
                                 setExpression({ expression: "" });
                                 setErrorMessage({ errorMessage: "" });
                                 CloseHeaderPopups();
