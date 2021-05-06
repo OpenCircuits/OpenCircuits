@@ -35,6 +35,8 @@ import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
+import "./index.css";
+
 
 type OwnProps = {
     info: DigitalCircuitInfo;
