@@ -325,7 +325,7 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
     return tokenList;
 }
 
-function formatExpression(expression: string, format: string): string {
+export function FormatExpression(expression: string, format: string): string {
     switch(format) {
     case "||":
         expression = expression.replace(/\|\|/g, "|");
@@ -357,13 +357,10 @@ function formatExpression(expression: string, format: string): string {
  */
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
-                                    output: DigitalComponent,
-                                    format: string = "|"): DigitalObjectSet | null {
+                                    output: DigitalComponent): DigitalObjectSet | null {
     if(inputs == null)  throw new Error("Null Parameter: inputs");
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
-
-    expression = formatExpression(expression, format);
 
     const components: IOObject[] = getComponentsValidate(inputs);
     const tokenList = getTokenListValidate(inputs, expression, output);

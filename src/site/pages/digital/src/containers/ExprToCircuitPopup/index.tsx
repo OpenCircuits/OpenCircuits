@@ -33,6 +33,7 @@ import {Button}                 from "digital/models/ioobjects/inputs/Button";
 import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
+        FormatExpression,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
 import "./index.css";
@@ -50,6 +51,7 @@ type DispatchProps = {
 
 function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
                   expression: string, isIC: boolean, input: string, format: string) {
+    expression = FormatExpression(expression, format);
     const tokenList = GenerateTokens(expression);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
@@ -61,8 +63,6 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
         case "&":
         case "^":
         case "|":
-        case "*":
-        case "+":
         case "!":
             break;
         default:
@@ -92,7 +92,7 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
     }
     const o = new LED();
     o.setName("Output");
-    const circuit = ExpressionToCircuit(inputMap, expression, o, format);
+    const circuit = ExpressionToCircuit(inputMap, expression, o);
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
@@ -154,14 +154,14 @@ export const ExprToCircuitPopup = (() => {
                         <option key="Constant Low" value="Constant Low">Constant Low</option>
                         <option key="Constant High" value="Constant High">Constant High</option>
                         <option key="Button" value="Button">Button</option>
-                        <option key="Switch" value="Switch">Switch</option>
+                        <option key="Switch" value="Switch" selected>Switch</option>
                         <option key="Clock" value="Clock">Clock</option>
                     </select>
                     <select id="format"
                             value={format}
                             onChange={e => setFormat(e.target.value)}
                             onBlur={e => setFormat(e.target.value)}>
-                        <option key="|" value="|">&amp;, |, ^</option>
+                        <option key="|" value="|" selected>&amp;, |, ^</option>
                         <option key="||" value="||">&amp;&amp;, ||, ^</option>
                         <option key="+" value="+">*, +, ^</option>
                     </select>

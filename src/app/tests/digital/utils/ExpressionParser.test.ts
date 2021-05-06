@@ -14,7 +14,7 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {FormatExpression, ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
@@ -1332,7 +1332,9 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const objectSet = ExpressionToCircuit(inputMap, "a&&b&&c", o, "||");
+            const expression = FormatExpression("a&&b&&c", "||");
+
+            const objectSet = ExpressionToCircuit(inputMap, expression, o);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1391,7 +1393,9 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const objectSet = ExpressionToCircuit(inputMap, "a*b*c", o, "+");
+            const expression = FormatExpression("a*b*c", "+");
+
+            const objectSet = ExpressionToCircuit(inputMap, expression, o);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1450,7 +1454,9 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const objectSet = ExpressionToCircuit(inputMap, "a||b||c", o, "||");
+            const expression = FormatExpression("a||b||c", "||");
+
+            const objectSet = ExpressionToCircuit(inputMap, expression, o);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1509,7 +1515,9 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const objectSet = ExpressionToCircuit(inputMap, "a+b+c", o, "+");
+            const expression = FormatExpression("a+b+c", "+");
+
+            const objectSet = ExpressionToCircuit(inputMap, expression, o);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
