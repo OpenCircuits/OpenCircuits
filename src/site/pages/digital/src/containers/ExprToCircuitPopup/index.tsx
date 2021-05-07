@@ -36,7 +36,7 @@ import {GenerateTokens,
         FormatExpression,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
-import "./index.css";
+import "./index.scss";
 
 
 type OwnProps = {
@@ -139,15 +139,17 @@ export const ExprToCircuitPopup = (() => {
             const [format, setFormat] = useState("|");
 
             return (
-                <Popup title="Boolean Expression to Circuit"
+                <Popup title="Digital Expression To Circuit Generator"
                        isOpen={(curPopup === "expr_to_circuit")}
                        close={CloseHeaderPopups}>
+                <div className={"exprToCircuitPopup"}>
                     { errorMessage && <p>{errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
                                placeholder="!a | (B^third)"
                                onChange={e => setExpression({expression: e.target.value})} />
                     <br/>
+
 
                     <input type="radio" name="input" checked={input === "Constant Low"} onClick={() => setInput("Constant Low")} value="Constant Low" />Constant Low <br/>
                     <input type="radio" name="input" checked={input === "Constant High"} onClick={() => setInput("Constant High")} value="Constant High" />Constant High <br/>
@@ -173,6 +175,8 @@ export const ExprToCircuitPopup = (() => {
                             }
                         }}>Generate</button>
                     </div>
+
+                </div>
                 </Popup>
             );
         }
