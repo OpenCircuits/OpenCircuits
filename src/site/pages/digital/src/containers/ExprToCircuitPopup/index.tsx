@@ -151,11 +151,16 @@ export const ExprToCircuitPopup = (() => {
                     <br/>
 
 
-                    <input type="radio" name="input" checked={input === "Constant Low"} onClick={() => setInput("Constant Low")} value="Constant Low" />Constant Low <br/>
-                    <input type="radio" name="input" checked={input === "Constant High"} onClick={() => setInput("Constant High")} value="Constant High" />Constant High <br/>
-                    <input type="radio" name="input" checked={input === "Button"} onClick={() => setInput("Button")} value="Button" />Button <br/>
-                    <input type="radio" name="input" checked={input === "Switch"} onClick={() => setInput("Switch")} value="Switch" />Switch <br/>
-                    <input type="radio" name="input" checked={input === "Clock"} onClick={() => setInput("Clock")} value="Clock" />Clock <br/>
+                    <select id="input"
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onBlur={e => setInput(e.target.value)}>
+                        <option key="Constant Low" value="Constant Low">Constant Low</option>
+                        <option key="Constant High" value="Constant High">Constant High</option>
+                        <option key="Button" value="Button">Button</option>
+                        <option key="Switch" value="Switch" selected>Switch</option>
+                        <option key="Clock" value="Clock">Clock</option>
+                    </select>
 
                     <input type="radio" name="format" checked={format === "|"} onClick={() => setFormat("|")} value="|" />&amp;, |, ^ <br/>
                     <input type="radio" name="format" checked={format === "||"} onClick={() => setFormat("||")} value="||" />&amp;&amp;, ||, ^ <br/>
