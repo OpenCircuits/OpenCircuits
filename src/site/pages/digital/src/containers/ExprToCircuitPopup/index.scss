@@ -101,4 +101,9 @@
             flex-grow: 1;
         }
     }
+
+    .errorMessage {
+        color: $danger-color;
+        font-weight: bold;
+    }
 }

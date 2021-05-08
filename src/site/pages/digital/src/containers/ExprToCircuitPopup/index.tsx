@@ -142,8 +142,8 @@ export const ExprToCircuitPopup = (() => {
                 <Popup title="Digital Expression To Circuit Generator"
                        isOpen={(curPopup === "expr_to_circuit")}
                        close={CloseHeaderPopups}>
-                <div className={"exprToCircuitPopup"}>
-                    { errorMessage && <p>{errorMessage}</p> }
+                <div className="exprToCircuitPopup">
+                    { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
                                placeholder="!a | (B^third)"
