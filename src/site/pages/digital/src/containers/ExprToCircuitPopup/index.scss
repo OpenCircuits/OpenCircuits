@@ -22,15 +22,28 @@
         color: #fff;
         border-radius: 4px;
         float: right;
+
+        &:enabled:hover {
+            color: #ccc;
+            border-color: #aaa;
+        }
     }
 
     .generate {
         background-color: $success-color;
+
+        &:enabled:hover {
+            background-color: darken($success-color, 10%);
+        }
     }
 
     .cancel {
         background-color: $danger-color;
         margin-right: 10px;
+
+        &:enabled:hover {
+            background-color: darken($danger-color, 20%);
+        }
     }
 
     input[type=text] {
@@ -54,21 +67,21 @@
         display: inline-block;
         position: relative;
         vertical-align: middle;
-    }
 
-    input[type=checkbox]:active, input[type=radio]:active {
-        background-color: $background-color;
-        border-color: $background-color;
-    }
+        &:active {
+            background-color: $background-color;
+            border-color: $background-color;
+        }
 
-    input[type=checkbox]:checked:active, input[type=radio]:checked:active {
-        background-color: #4ba9bd;
-        border-color: #4ba9bd;
-    }
+        &:checked {
+            background-color: #5ccee7;
+            border-color: #5ccee7;
 
-    input[type=checkbox]:checked, input[type=radio]:checked {
-        background-color: #5ccee7;
-        border-color: #5ccee7;
+            &:active {
+                background-color: #4ba9bd;
+                border-color: #4ba9bd;
+            }
+        }
     }
 
     .exprToCircuitPopupSettings {
