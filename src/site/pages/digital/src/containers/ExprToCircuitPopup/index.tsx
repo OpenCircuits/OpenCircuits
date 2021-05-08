@@ -169,6 +169,7 @@ export const ExprToCircuitPopup = (() => {
                             <br/>
                             <br/>
 
+                            <label>Input Component Type:  </label>
                             <select id="input"
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
@@ -183,19 +184,23 @@ export const ExprToCircuitPopup = (() => {
 
                     </div>
 
-                    <div title="Generate Circuit">
-                        <button type="button" onClick={() => {
-                            try {
-                                generate(info.designer, info, expression, isIC, input, format);
-                                setExpression({ expression: "" });
-                                setErrorMessage({ errorMessage: "" });
-                                CloseHeaderPopups();
-                            }
-                            catch (err) {
-                                setErrorMessage({ errorMessage: err.message });
-                            }
-                        }}>Generate</button>
-                    </div>
+                    <button className="generate" type="button" onClick={() => {
+                        try {
+                            generate(info.designer, info, expression, isIC, input, format);
+                            setExpression({ expression: "" });
+                            setErrorMessage({ errorMessage: "" });
+                            CloseHeaderPopups();
+                        }
+                        catch (err) {
+                            setErrorMessage({ errorMessage: err.message });
+                        }
+                    }}>Generate</button>
+
+                    <button className="cancel" type="button" onClick={() => {
+                        setExpression({ expression: "" });
+                        setErrorMessage({ errorMessage: "" });
+                        CloseHeaderPopups();
+                    }}>Cancel</button>
 
                 </div>
                 </Popup>

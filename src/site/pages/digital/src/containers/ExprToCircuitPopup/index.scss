@@ -1,3 +1,5 @@
+@import "~shared/utils/theme";
+
 .exprToCircuitPopup {
     padding: 0px;
     margin: 0px 50px;
@@ -6,6 +8,29 @@
 
     label {
         vertical-align: middle;
+        color: $secondary-color;
+    }
+
+    button {
+        line-height: 30px;
+        height: 30px;
+        margin-top: 5px;
+        padding-right: 7px;
+        padding-left: 7px;
+        cursor: pointer;
+        transition: 0.5s;
+        color: #fff;
+        border-radius: 4px;
+        float: right;
+    }
+
+    .generate {
+        background-color: $success-color;
+    }
+
+    .cancel {
+        background-color: $danger-color;
+        margin-right: 10px;
     }
 
     input[type=text] {
@@ -13,7 +38,7 @@
         width: 100%;
         padding: 12px 20px;
         margin: 8px 0px;
-        border: 2px solid #ccc;
+        border: 2px solid $background-color;
         border-radius: 10px;
         font-size: 1.35em;
     }
@@ -23,7 +48,7 @@
         background-color: #fff;
         border-width: 0px 2px 0px;
         border-style: solid;
-        border-color: #ccc;
+        border-color: $background-color;
         padding: 9px 6.5px;
         border-radius: 3px;
         display: inline-block;
@@ -32,8 +57,8 @@
     }
 
     input[type=checkbox]:active, input[type=radio]:active {
-        background-color: #ccc;
-        border-color: #ccc;
+        background-color: $background-color;
+        border-color: $background-color;
     }
 
     input[type=checkbox]:checked:active, input[type=radio]:checked:active {
