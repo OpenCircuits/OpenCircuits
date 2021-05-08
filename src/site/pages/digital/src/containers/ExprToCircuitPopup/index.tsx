@@ -150,23 +150,39 @@ export const ExprToCircuitPopup = (() => {
                                onChange={e => setExpression({expression: e.target.value})} />
                     <br/>
 
+                    <div className={"exprToCircuitPopupSettings"}>
+                        <div className={"exprToCircuitPopupNotation"}>
+                            <h3>Notation</h3>
+                            <input type="radio" id="|" name="format" checked={format === "|"} onClick={() => setFormat("|")} value="|" />
+                            <label htmlFor="|">&amp;, |, ^</label><br/>
+                            <input type="radio" id="||" name="format" checked={format === "||"} onClick={() => setFormat("||")} value="||" />
+                            <label htmlFor="||">&amp;&amp;, ||, ^</label><br/>
+                            <input type="radio" id="+" name="format" checked={format === "+"} onClick={() => setFormat("+")} value="+" />
+                            <label htmlFor="+">*, +, ^</label><br/>
+                        </div>
+        
+                        <div className={"exprToCircuitPopupOptions"}>
+                            <h3>Options</h3>
+                            <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
+                            <label htmlFor="isIC">Generate into IC</label>
 
-                    <select id="input"
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            onBlur={e => setInput(e.target.value)}>
-                        <option key="Constant Low" value="Constant Low">Constant Low</option>
-                        <option key="Constant High" value="Constant High">Constant High</option>
-                        <option key="Button" value="Button">Button</option>
-                        <option key="Switch" value="Switch" selected>Switch</option>
-                        <option key="Clock" value="Clock">Clock</option>
-                    </select>
+                            <br/>
+                            <br/>
 
-                    <input type="radio" name="format" checked={format === "|"} onClick={() => setFormat("|")} value="|" />&amp;, |, ^ <br/>
-                    <input type="radio" name="format" checked={format === "||"} onClick={() => setFormat("||")} value="||" />&amp;&amp;, ||, ^ <br/>
-                    <input type="radio" name="format" checked={format === "+"} onClick={() => setFormat("+")} value="+" />*, +, ^ <br/>
+                            <select id="input"
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    onBlur={e => setInput(e.target.value)}>
+                                <option key="Constant Low" value="Constant Low">Constant Low</option>
+                                <option key="Constant High" value="Constant High">Constant High</option>
+                                <option key="Button" value="Button">Button</option>
+                                <option key="Switch" value="Switch" selected>Switch</option>
+                                <option key="Clock" value="Clock">Clock</option>
+                            </select>
+                        </div>
 
-                    <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" />
+                    </div>
+
                     <div title="Generate Circuit">
                         <button type="button" onClick={() => {
                             try {

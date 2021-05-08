@@ -4,12 +4,63 @@
     top: 0px;
     left: 0px;
 
+    label {
+        vertical-align: middle;
+    }
+
     input[type=text] {
         box-sizing: border-box;
         width: 100%;
         padding: 12px 20px;
-        margin: 8px 0;
-        border: 2px solid #cccccc;
+        margin: 8px 0px;
+        border: 2px solid #ccc;
         border-radius: 10px;
+        font-size: 1.35em;
+    }
+
+    input[type=checkbox], input[type=radio] {
+        -webkit-appearance: none;
+        background-color: #fff;
+        border-width: 0px 2px 0px;
+        border-style: solid;
+        border-color: #ccc;
+        padding: 9px 6.5px;
+        border-radius: 3px;
+        display: inline-block;
+        position: relative;
+        vertical-align: middle;
+    }
+
+    input[type=checkbox]:active, input[type=radio]:active {
+        background-color: #ccc;
+        border-color: #ccc;
+    }
+
+    input[type=checkbox]:checked:active, input[type=radio]:checked:active {
+        background-color: #4ba9bd;
+        border-color: #4ba9bd;
+    }
+
+    input[type=checkbox]:checked, input[type=radio]:checked {
+        background-color: #5ccee7;
+        border-color: #5ccee7;
+    }
+
+    .exprToCircuitPopupSettings {
+        display: flex;
+
+        h3 {
+            margin: 15px 0px 2px;
+            font-size: 1.25em;
+            color: #666;
+        }
+
+        .exprToCircuitPopupNotation {
+            flex-grow: 1;
+        }
+
+        .exprToCircuitPopupOptions {
+            flex-grow: 1;
+        }
     }
 }
