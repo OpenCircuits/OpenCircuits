@@ -331,9 +331,26 @@ export function FormatExpression(expression: string, format: string): string {
         expression = expression.replace(/\|\|/g, "|");
         expression = expression.replace(/\&\&/g, "&");
         break;
+    case "+_":
+        expression = expression.replace(/\_/g, "!");
+        expression = expression.replace(/\+/g, "|");
+        expression = expression.replace(/\*/g, "&");
+        break;
     case "+":
         expression = expression.replace(/\+/g, "|");
         expression = expression.replace(/\*/g, "&");
+        break;
+    case "OR":
+        expression = expression.replace(/OR/g, "|");
+        expression = expression.replace(/AND/g, "&");
+        expression = expression.replace(/XOR/g, "^");
+        expression = expression.replace(/NOT/g, "!");
+        break;
+    case "or":
+        expression = expression.replace(/or/g, "|");
+        expression = expression.replace(/and/g, "&");
+        expression = expression.replace(/xor/g, "^");
+        expression = expression.replace(/not/g, "!");
         break;
     }
     return expression;

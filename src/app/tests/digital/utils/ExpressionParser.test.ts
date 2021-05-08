@@ -1566,5 +1566,32 @@ describe("Expression Parser", () => {
                 expect(o.isOn()).toBe(false);
             });
         });
+
+        describe("Parse: '_a'", () => {
+            const designer = new DigitalCircuitDesigner(0);
+            const a = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+            ]);
+
+            const expression = FormatExpression("_a", "+_");
+
+            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            designer.addGroup(objectSet);
+
+            test("Initial State", () => {
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a on", () => {
+                a.activate(true);
+
+                expect(o.isOn()).toBe(false);
+            });
+            test("Inputs off", () => {
+                a.activate(false);
+
+                expect(o.isOn()).toBe(true);
+            });
+        });
     });
 });

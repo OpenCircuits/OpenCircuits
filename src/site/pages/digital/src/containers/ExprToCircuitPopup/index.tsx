@@ -153,12 +153,18 @@ export const ExprToCircuitPopup = (() => {
                     <div className={"exprToCircuitPopupSettings"}>
                         <div className={"exprToCircuitPopupNotation"}>
                             <h3>Notation</h3>
-                            <input type="radio" id="|" name="format" checked={format === "|"} onClick={() => setFormat("|")} value="|" />
-                            <label htmlFor="|">&amp;, |, ^</label><br/>
-                            <input type="radio" id="||" name="format" checked={format === "||"} onClick={() => setFormat("||")} value="||" />
-                            <label htmlFor="||">&amp;&amp;, ||, ^</label><br/>
-                            <input type="radio" id="+" name="format" checked={format === "+"} onClick={() => setFormat("+")} value="+" />
-                            <label htmlFor="+">*, +, ^</label><br/>
+                            <input type="radio" id="|" name="format" checked={format === "|"} onChange={() => setFormat("|")} value="|" />
+                            <label htmlFor="|">Programming 1 (&amp;, |, ^, !)</label><br/>
+                            <input type="radio" id="||" name="format" onChange={() => setFormat("||")} value="||" />
+                            <label htmlFor="||">Programming 2 (&amp;&amp;, ||, ^, !)</label><br/>
+                            <input type="radio" id="+" name="format" onChange={() => setFormat("+")} value="+" />
+                            <label htmlFor="+">Algebraic 1 (*, +, ^, !)</label><br/>
+                            <input type="radio" id="+_" name="format" onChange={() => setFormat("+_")} value="+_" />
+                            <label htmlFor="+_">Algebraic 2 (*, +, ^, _)</label><br/>
+                            <input type="radio" id="OR" name="format" onChange={() => setFormat("OR")} value="OR" />
+                            <label htmlFor="OR">Literal 1 (AND, OR, XOR, NOT)</label><br/>
+                            <input type="radio" id="or" name="format" onChange={() => setFormat("or")} value="or" />
+                            <label htmlFor="or">Literal 2 (and, or, xor, not)</label><br/>
                         </div>
         
                         <div className={"exprToCircuitPopupOptions"}>
@@ -177,7 +183,7 @@ export const ExprToCircuitPopup = (() => {
                                 <option key="Constant Low" value="Constant Low">Constant Low</option>
                                 <option key="Constant High" value="Constant High">Constant High</option>
                                 <option key="Button" value="Button">Button</option>
-                                <option key="Switch" value="Switch" selected>Switch</option>
+                                <option key="Switch" value="Switch">Switch</option>
                                 <option key="Clock" value="Clock">Clock</option>
                             </select>
                         </div>
