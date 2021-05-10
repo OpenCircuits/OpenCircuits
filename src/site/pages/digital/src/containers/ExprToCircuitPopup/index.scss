@@ -2,9 +2,14 @@
 
 .exprToCircuitPopup {
     padding: 0px;
-    margin: 0px 50px;
+    margin: 0px;
     top: 0px;
     left: 0px;
+
+
+    @media (min-width: 576px) {
+        margin: 0px 50px;
+    }
 
     label {
         vertical-align: middle;
@@ -86,6 +91,7 @@
 
     .exprToCircuitPopupSettings {
         display: flex;
+        flex-wrap: wrap;
 
         h3 {
             margin: 15px 0px 2px;
