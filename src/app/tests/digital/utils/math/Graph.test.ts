@@ -140,4 +140,86 @@ describe("Graph", () => {
             expect(nodeDepths.get("G")).toBe(4);
         });
     });
+    describe("getMinNodeDepths", () => {
+        test("Single Node graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+
+            const nodeDepths = graph.getMinNodeDepths();
+
+            expect(nodeDepths.get("A")).toBe(0);
+        });
+        test("Simple graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+
+            graph.createEdge("A", "B", "edge");
+            graph.createEdge("A", "D", "edge");
+            graph.createEdge("B", "C", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+            expect(nodeDepths.get("A")).toBe(0);
+            expect(nodeDepths.get("B")).toBe(1);
+            expect(nodeDepths.get("C")).toBe(2);
+            expect(nodeDepths.get("D")).toBe(1);
+        });
+        test("Multisource graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("B", "C", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("A", "E", "edge");
+            graph.createEdge("B", "F", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+            expect(nodeDepths.get("A")).toBe(0);
+            expect(nodeDepths.get("B")).toBe(0);
+            expect(nodeDepths.get("C")).toBe(1);
+            expect(nodeDepths.get("D")).toBe(2);
+            expect(nodeDepths.get("E")).toBe(1);
+            expect(nodeDepths.get("F")).toBe(1);
+        });
+        test("Advanced graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+            graph.createNode("G");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("A", "F", "edge");
+            graph.createEdge("C", "F", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("F", "G", "edge");
+            graph.createEdge("D", "E", "edge");
+            graph.createEdge("B", "E", "edge");
+            graph.createEdge("E", "G", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+            expect(nodeDepths.get("A")).toBe(0);
+            expect(nodeDepths.get("B")).toBe(0);
+            expect(nodeDepths.get("C")).toBe(1);
+            expect(nodeDepths.get("D")).toBe(2);
+            expect(nodeDepths.get("E")).toBe(1);
+            expect(nodeDepths.get("F")).toBe(1);
+            expect(nodeDepths.get("G")).toBe(2);
+        });
+    });
 });
