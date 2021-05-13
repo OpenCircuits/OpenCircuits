@@ -220,34 +220,6 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     return graph;
 }
 
-/**
- * Organizes the components so that components at greater depth are further to the right
- */
-export function OrganizeComponents(groups: IOObjectSet, start: Vector): void {
-    const graph = CreateGraph(groups);
-    const depthMap = graph.getMaxNodeDepths();
-    const depthArray: Component[][] = [];
-    const components = groups.getComponents();
-
-    // Convert the map to a 2d array where index of first array is the depth
-    for (const [index, depth] of depthMap.entries()) {
-        while (depthArray.length <= depth)
-            depthArray.push([]);
-        depthArray[depth].push(components[index]);
-    }
-
-    const xOffset: number = 250;
-    const yOffset: number = 150;
-
-    for (let i = 0; i < depthArray.length; i++) {
-        for (let j = 0; j < depthArray[i].length; j++) {
-            const component = depthArray[i][j];
-            const newLocation = new Vector(start.x + xOffset * i, start.y + yOffset * j);
-            component.setPos(newLocation);
-        }
-    }
-}
-
 export function SerializeForCopy(objects: IOObject[]): string {
     // Make sure to get all immediate connections
     const group = CreateGroup(objects);

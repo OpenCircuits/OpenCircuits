@@ -12,7 +12,7 @@ import {HeaderPopups}      from "shared/state/Header/state";
 
 import {Camera} from "math/Camera";
 
-import {OrganizeComponents} from "core/utils/ComponentUtils";
+import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
 import {GroupAction}             from "core/actions/GroupAction";
 import {CreateDeselectAllAction,
@@ -96,7 +96,7 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
-    OrganizeComponents(circuit, startPos);
+    OrganizeMinDepth(circuit, startPos);
     if (isIC) {
         const data = new ICData(circuit);
         data.setName(expression);
