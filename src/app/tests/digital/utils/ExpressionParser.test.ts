@@ -14,7 +14,7 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {FormatExpression, ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
@@ -1332,9 +1332,17 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const expression = FormatExpression("a&&b&&c", "||");
+            const ops = {
+                or: "||",
+                xor: "^",
+                and: "&&",
+                not: "!",
+                parenOpen: "(",
+                parenClose: ")",
+                separator: " "
+            };
 
-            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            const objectSet = ExpressionToCircuit(inputMap, "a&&b&&c", o, ops);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1393,9 +1401,17 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const expression = FormatExpression("a*b*c", "+");
+            const ops = {
+                or: "+",
+                xor: "^",
+                and: "*",
+                not: "!",
+                parenOpen: "(",
+                parenClose: ")",
+                separator: " "
+            };
 
-            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            const objectSet = ExpressionToCircuit(inputMap, "a*b*c", o, ops);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1454,9 +1470,17 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const expression = FormatExpression("a||b||c", "||");
+            const ops = {
+                or: "||",
+                xor: "^",
+                and: "&&",
+                not: "!",
+                parenOpen: "(",
+                parenClose: ")",
+                separator: " "
+            };
 
-            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            const objectSet = ExpressionToCircuit(inputMap, "a||b||c", o, ops);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1515,9 +1539,17 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const expression = FormatExpression("a+b+c", "+");
+            const ops = {
+                or: "+",
+                xor: "^",
+                and: "*",
+                not: "!",
+                parenOpen: "(",
+                parenClose: ")",
+                separator: " "
+            };
 
-            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            const objectSet = ExpressionToCircuit(inputMap, "a+b+c", o, ops);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
@@ -1574,9 +1606,17 @@ describe("Expression Parser", () => {
                 ["a", a],
             ]);
 
-            const expression = FormatExpression("_a", "+_");
+            const ops = {
+                or: "+",
+                xor: "^",
+                and: "*",
+                not: "_",
+                parenOpen: "(",
+                parenClose: ")",
+                separator: " "
+            };
 
-            const objectSet = ExpressionToCircuit(inputMap, expression, o);
+            const objectSet = ExpressionToCircuit(inputMap, "_a", o, ops);
             designer.addGroup(objectSet);
 
             test("Initial State", () => {
