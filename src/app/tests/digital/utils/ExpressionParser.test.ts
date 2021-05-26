@@ -14,7 +14,7 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {GetOps, OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
@@ -1332,15 +1332,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = {
-                or: "||",
-                xor: "^",
-                and: "&&",
-                not: "!",
-                parenOpen: "(",
-                parenClose: ")",
-                separator: " "
-            };
+            const ops = GetOps("||");
 
             const objectSet = ExpressionToCircuit(inputMap, "a&&b&&c", o, ops);
             designer.addGroup(objectSet);
@@ -1401,15 +1393,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = {
-                or: "+",
-                xor: "^",
-                and: "*",
-                not: "!",
-                parenOpen: "(",
-                parenClose: ")",
-                separator: " "
-            };
+            const ops = GetOps("+");
 
             const objectSet = ExpressionToCircuit(inputMap, "a*b*c", o, ops);
             designer.addGroup(objectSet);
@@ -1470,15 +1454,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = {
-                or: "||",
-                xor: "^",
-                and: "&&",
-                not: "!",
-                parenOpen: "(",
-                parenClose: ")",
-                separator: " "
-            };
+            const ops = GetOps("||");
 
             const objectSet = ExpressionToCircuit(inputMap, "a||b||c", o, ops);
             designer.addGroup(objectSet);
@@ -1539,15 +1515,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = {
-                or: "+",
-                xor: "^",
-                and: "*",
-                not: "!",
-                parenOpen: "(",
-                parenClose: ")",
-                separator: " "
-            };
+            const ops = GetOps("+");
 
             const objectSet = ExpressionToCircuit(inputMap, "a+b+c", o, ops);
             designer.addGroup(objectSet);
@@ -1606,15 +1574,7 @@ describe("Expression Parser", () => {
                 ["a", a],
             ]);
 
-            const ops = {
-                or: "+",
-                xor: "^",
-                and: "*",
-                not: "_",
-                parenOpen: "(",
-                parenClose: ")",
-                separator: " "
-            };
+            const ops = GetOps("+_");
 
             const objectSet = ExpressionToCircuit(inputMap, "_a", o, ops);
             designer.addGroup(objectSet);

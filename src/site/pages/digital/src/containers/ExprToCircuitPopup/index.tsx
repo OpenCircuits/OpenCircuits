@@ -33,7 +33,7 @@ import {Button}                 from "digital/models/ioobjects/inputs/Button";
 import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
-        FormatExpression,
+        GetOps,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
 import "./index.scss";
@@ -51,19 +51,20 @@ type DispatchProps = {
 
 function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
                   expression: string, isIC: boolean, input: string, format: string) {
-    expression = FormatExpression(expression, format);
-    const tokenList = GenerateTokens(expression);
+    const ops = GetOps(format);
+    
+    const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
     for(let i = 0; i < tokenList.length; i++) {
         token = tokenList[i];
         switch(token) {
-        case "(":
-        case ")":
-        case "&":
-        case "^":
-        case "|":
-        case "!":
+        case ops.parenOpen:
+        case ops.parenClose:
+        case ops.and:
+        case ops.xor:
+        case ops.or:
+        case ops.not:
             break;
         default:
             if(!inputMap.has(token)) {
@@ -92,7 +93,7 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
     }
     const o = new LED();
     o.setName("Output");
-    const circuit = ExpressionToCircuit(inputMap, expression, o);
+    const circuit = ExpressionToCircuit(inputMap, expression, o, ops);
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));

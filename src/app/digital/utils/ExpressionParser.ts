@@ -45,6 +45,71 @@ export interface OperatorFormats {
     separator: string;
 }
 
+export function GetOps(format: string) {
+    switch(format) {
+    case "||":
+        return {
+            or: "||",
+            xor: "^",
+            and: "&&",
+            not: "!",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    case "+":
+        return {
+            or: "+",
+            xor: "^",
+            and: "*",
+            not: "!",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    case "+_":
+        return {
+            or: "+",
+            xor: "^",
+            and: "*",
+            not: "_",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    case "OR":
+        return {
+            or: "OR",
+            xor: "XOR",
+            and: "AND",
+            not: "NOT",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    case "or":
+        return {
+            or: "or",
+            xor: "xor",
+            and: "and",
+            not: "not",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    default:
+        return {
+            or: "|",
+            xor: "^",
+            and: "&",
+            not: "!",
+            parenOpen: "(",
+            parenClose: ")",
+            separator: " "
+        };
+    }
+}
+
 /**
  * Checks if the substring of input starting at index is equal to sequence
  */
@@ -397,15 +462,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
     if(ops == null) {
-        ops = {
-            or: "|",
-            xor: "^",
-            and: "&",
-            not: "!",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
+        ops = GetOps("|");
     }
 
     const components: IOObject[] = getComponentsValidate(inputs);
