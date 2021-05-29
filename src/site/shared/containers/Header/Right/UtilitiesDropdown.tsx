@@ -6,7 +6,8 @@ import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/He
 
 import {Dropdown} from "./Dropdown";
 
-type Utility = {
+
+export type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
@@ -27,14 +28,14 @@ type ExtraUtilitiesProps = {
 
 type Props = StateProps & DispatchProps & ExtraUtilitiesProps & OwnProps;
 const _UtilitiesDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraUtilities }: Props) => (
-    <Dropdown open={(curMenu === "tools")}
-              onClick={() => openMenu("tools")}
+    <Dropdown open={(curMenu === "utilities")}
+              onClick={() => openMenu("utilities")}
               onClose={() => closeMenus()}
-              btnInfo={{title: "Utilities", src: "img/icons/tools.svg"}}>
-        {extraUtilities.map(tool => (
-            <div key={tool.popupName} onClick={() => { closeMenus(); openPopup(tool.popupName); }}>
-                <img src={tool.img} height="100%" alt="" />
-                <span>{tool.text}</span>
+              btnInfo={{title: "Utilities", src: "img/icons/es.svg"}}>
+        {extraUtilities.map(utility => (
+            <div onClick={() => { closeMenus(); openPopup(utility.popupName); }}>
+                <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />
+                <span>{utility.text}</span>
             </div>
         ))}
     </Dropdown>

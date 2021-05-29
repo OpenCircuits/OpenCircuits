@@ -7,14 +7,10 @@ import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
 import {UtilitiesDropdown} from "./UtilitiesDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
 import {SettingsMenu} from "./SettingsMenu";
+import {Utility} from "./UtilitiesDropdown";
 
 import "./index.scss";
 
-type Utility = {
-    popupName: HeaderPopups;
-    img: string;
-    text: string;
-}
 
 type Props = {
     helpers: CircuitInfoHelpers;
