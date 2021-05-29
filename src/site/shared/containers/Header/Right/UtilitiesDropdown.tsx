@@ -31,7 +31,7 @@ const _UtilitiesDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraUti
     <Dropdown open={(curMenu === "utilities")}
               onClick={() => openMenu("utilities")}
               onClose={() => closeMenus()}
-              btnInfo={{title: "Utilities", src: "img/icons/es.svg"}}>
+              btnInfo={{title: "Utilities", src: "img/icons/utilities.svg"}}>
         {extraUtilities.map(utility => (
             <div onClick={() => { closeMenus(); openPopup(utility.popupName); }}>
                 <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />

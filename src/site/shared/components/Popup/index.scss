@@ -1,3 +1,5 @@
+@import "~shared/utils/theme";
+
 .popup {
     $width: 80%;
     $h-padding: 40px;
@@ -44,5 +46,14 @@
 
             list-style-type: none;
         }
+    }
+}
+
+.cancel {
+    background-color: $danger-color;
+    margin-right: 10px;
+
+    &:enabled:hover {
+        background-color: darken($danger-color, 20%);
     }
 }

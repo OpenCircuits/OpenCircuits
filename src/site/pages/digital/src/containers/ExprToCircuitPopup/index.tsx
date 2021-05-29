@@ -49,8 +49,8 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
-                  expression: string, isIC: boolean, input: string, format: string) {
+function generate(info: DigitalCircuitInfo, expression: string,
+                  isIC: boolean, input: string, format: string) {
     const ops = GetOps(format);
     
     const tokenList = GenerateTokens(expression, ops);
@@ -116,7 +116,7 @@ function generate(designer: DigitalCircuitDesigner, info: DigitalCircuitInfo,
     else {
         const action = new GroupAction([
             CreateDeselectAllAction(info.selections),
-            CreateAddGroupAction(designer, circuit),
+            CreateAddGroupAction(info.designer, circuit),
             CreateGroupSelectAction(info.selections, circuit.getComponents())
         ]);
         info.history.add(action.execute());
@@ -143,7 +143,7 @@ export const ExprToCircuitPopup = (() => {
                 <Popup title="Digital Expression To Circuit Generator"
                        isOpen={(curPopup === "expr_to_circuit")}
                        close={CloseHeaderPopups}>
-                <div className="exprToCircuitPopup">
+                <div className="exprtocircuit__popup">
                     { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
@@ -151,8 +151,8 @@ export const ExprToCircuitPopup = (() => {
                                onChange={e => setExpression({expression: e.target.value})} />
                     <br/>
 
-                    <div className={"exprToCircuitPopupSettings"}>
-                        <div className={"exprToCircuitPopupNotation"}>
+                    <div className="exprtocircuit__popup__settings">
+                        <div>
                             <h3>Notation</h3>
                             <input type="radio" id="|" name="format" checked={format === "|"} onChange={() => setFormat("|")} value="|" />
                             <label htmlFor="|">Programming 1 (&amp;, |, ^, !)</label><br/>
@@ -168,7 +168,7 @@ export const ExprToCircuitPopup = (() => {
                             <label htmlFor="or">Literal 2 (and, or, xor, not)</label><br/>
                         </div>
         
-                        <div className={"exprToCircuitPopupOptions"}>
+                        <div>
                             <h3>Options</h3>
                             <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
                             <label htmlFor="isIC">Generate into IC</label>
@@ -191,9 +191,9 @@ export const ExprToCircuitPopup = (() => {
 
                     </div>
 
-                    <button className="generate" type="button" onClick={() => {
+                    <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
                         try {
-                            generate(info.designer, info, expression, isIC, input, format);
+                            generate(info, expression, isIC, input, format);
                             setExpression({ expression: "" });
                             setErrorMessage({ errorMessage: "" });
                             CloseHeaderPopups();

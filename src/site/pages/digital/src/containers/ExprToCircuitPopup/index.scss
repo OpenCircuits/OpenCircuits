@@ -1,10 +1,10 @@
 @import "~shared/utils/theme";
 
-.exprToCircuitPopup {
-    padding: 0px;
-    margin: 0px;
-    top: 0px;
-    left: 0px;
+.exprtocircuit__popup {
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
 
     /* Using 576px since that is the smallest cutoff for Bootstrap */
     @media (min-width: 576px) {
@@ -34,20 +34,11 @@
         }
     }
 
-    .generate {
+    &__generate {
         background-color: $success-color;
 
         &:enabled:hover {
             background-color: darken($success-color, 10%);
-        }
-    }
-
-    .cancel {
-        background-color: $danger-color;
-        margin-right: 10px;
-
-        &:enabled:hover {
-            background-color: darken($danger-color, 20%);
         }
     }
 
@@ -89,7 +80,7 @@
         }
     }
 
-    .exprToCircuitPopupSettings {
+    &__settings {
         display: flex;
         flex-wrap: wrap;
 
@@ -99,16 +90,12 @@
             color: #666;
         }
 
-        .exprToCircuitPopupNotation {
-            flex-grow: 1;
-        }
-
-        .exprToCircuitPopupOptions {
+        div {
             flex-grow: 1;
         }
     }
 
-    .errorMessage {
+    &__errormessage {
         color: $danger-color;
         font-weight: bold;
     }
