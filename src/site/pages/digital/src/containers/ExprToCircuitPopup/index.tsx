@@ -49,47 +49,29 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
+const Inputs: Map<string, ()=>DigitalComponent> = new Map<string, ()=>DigitalComponent>([
+    ["Constant Low", () => new ConstantLow()],
+    ["Constant High", () => new ConstantHigh()],
+    ["Button", () => new Button()],
+    ["Clock", () => new Clock()],
+    ["Switch", () => new Switch()],
+]);
+
+
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string) {
     const ops = GetOps(format);
+    const opsSet = new Set(Object.values(ops));
     
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
     for(let i = 0; i < tokenList.length; i++) {
         token = tokenList[i];
-        switch(token) {
-        case ops.parenOpen:
-        case ops.parenClose:
-        case ops.and:
-        case ops.xor:
-        case ops.or:
-        case ops.not:
-            break;
-        default:
-            if(!inputMap.has(token)) {
-                switch(input) {
-                case "Constant Low":
-                    inputMap.set(token, new ConstantLow());
-                    break;
-                case "Constant High":
-                    inputMap.set(token, new ConstantHigh());
-                    break;
-                case "Button":
-                    inputMap.set(token, new Button());
-                    break;
-                case "Clock":
-                    inputMap.set(token, new Clock());
-                    break;
-                case "Switch":
-                default:
-                    inputMap.set(token, new Switch());
-                    break;
-                }
-                inputMap.get(token).setName(token);
-            }
-            break;
-        }
+        if (opsSet.has(token))
+            continue;
+        inputMap.set(token, Inputs.get(input).call(null));
+        inputMap.get(token).setName(token);
     }
     const o = new LED();
     o.setName("Output");
@@ -98,30 +80,23 @@ function generate(info: DigitalCircuitInfo, expression: string,
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     OrganizeMinDepth(circuit, startPos);
+    const action = new GroupAction([CreateDeselectAllAction(info.selections)]);
     if (isIC) {
         const data = new ICData(circuit);
         data.setName(expression);
         const ic = new IC(data);
         ic.setName(expression);
         ic.setPos(info.camera.getPos());
-        const action = new GroupAction([
-            CreateDeselectAllAction(info.selections),
-            new CreateICDataAction(data, info.designer),
-            new PlaceAction(info.designer, ic),
-            new SelectAction(info.selections, ic)
-        ]);
-        info.history.add(action.execute());
-        info.renderer.render();
+        action.add(new CreateICDataAction(data, info.designer));
+        action.add(new PlaceAction(info.designer, ic));
+        action.add(new SelectAction(info.selections, ic));
     }
     else {
-        const action = new GroupAction([
-            CreateDeselectAllAction(info.selections),
-            CreateAddGroupAction(info.designer, circuit),
-            CreateGroupSelectAction(info.selections, circuit.getComponents())
-        ]);
-        info.history.add(action.execute());
-        info.renderer.render();
+        action.add(CreateAddGroupAction(info.designer, circuit));
+        action.add(CreateGroupSelectAction(info.selections, circuit.getComponents()));
     }
+    info.history.add(action.execute());
+    info.renderer.render();
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -139,77 +114,77 @@ export const ExprToCircuitPopup = (() => {
             const [input, setInput] = useState("Switch");
             const [format, setFormat] = useState("|");
 
+            const inputTypes = Array.from(Inputs.keys()).map((input) =>
+                <option key={input} value={input}>{input}</option>
+            );
+
             return (
                 <Popup title="Digital Expression To Circuit Generator"
                        isOpen={(curPopup === "expr_to_circuit")}
                        close={CloseHeaderPopups}>
-                <div className="exprtocircuit__popup">
-                    { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
-                    <input title="Enter Circuit Expression" type="text"
-                               value={expression}
-                               placeholder="!a | (B^third)"
-                               onChange={e => setExpression({expression: e.target.value})} />
-                    <br/>
+                    <div className="exprtocircuit__popup">
+                        { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
+                        <input title="Enter Circuit Expression" type="text"
+                                   value={expression}
+                                   placeholder="!a | (B^third)"
+                                   onChange={e => setExpression({expression: e.target.value})} />
+                        <br/>
 
-                    <div className="exprtocircuit__popup__settings">
-                        <div>
-                            <h3>Notation</h3>
-                            <input type="radio" id="|" name="format" checked={format === "|"} onChange={() => setFormat("|")} value="|" />
-                            <label htmlFor="|">Programming 1 (&amp;, |, ^, !)</label><br/>
-                            <input type="radio" id="||" name="format" onChange={() => setFormat("||")} value="||" />
-                            <label htmlFor="||">Programming 2 (&amp;&amp;, ||, ^, !)</label><br/>
-                            <input type="radio" id="+" name="format" onChange={() => setFormat("+")} value="+" />
-                            <label htmlFor="+">Algebraic 1 (*, +, ^, !)</label><br/>
-                            <input type="radio" id="+_" name="format" onChange={() => setFormat("+_")} value="+_" />
-                            <label htmlFor="+_">Algebraic 2 (*, +, ^, _)</label><br/>
-                            <input type="radio" id="OR" name="format" onChange={() => setFormat("OR")} value="OR" />
-                            <label htmlFor="OR">Literal 1 (AND, OR, XOR, NOT)</label><br/>
-                            <input type="radio" id="or" name="format" onChange={() => setFormat("or")} value="or" />
-                            <label htmlFor="or">Literal 2 (and, or, xor, not)</label><br/>
-                        </div>
-        
-                        <div>
-                            <h3>Options</h3>
-                            <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
-                            <label htmlFor="isIC">Generate into IC</label>
+                        <div className="exprtocircuit__popup__settings">
+                            <div>
+                                <h3>Notation</h3>
+                                <input type="radio" id="|" name="format" checked={format === "|"} onChange={() => setFormat("|")} value="|" />
+                                <label htmlFor="|">Programming 1 (&amp;, |, ^, !)</label><br/>
+                                <input type="radio" id="||" name="format" onChange={() => setFormat("||")} value="||" />
+                                <label htmlFor="||">Programming 2 (&amp;&amp;, ||, ^, !)</label><br/>
+                                <input type="radio" id="+" name="format" onChange={() => setFormat("+")} value="+" />
+                                <label htmlFor="+">Algebraic 1 (*, +, ^, !)</label><br/>
+                                <input type="radio" id="+_" name="format" onChange={() => setFormat("+_")} value="+_" />
+                                <label htmlFor="+_">Algebraic 2 (*, +, ^, _)</label><br/>
+                                <input type="radio" id="OR" name="format" onChange={() => setFormat("OR")} value="OR" />
+                                <label htmlFor="OR">Literal 1 (AND, OR, XOR, NOT)</label><br/>
+                                <input type="radio" id="or" name="format" onChange={() => setFormat("or")} value="or" />
+                                <label htmlFor="or">Literal 2 (and, or, xor, not)</label><br/>
+                            </div>
+                
+                            <div>
+                                <h3>Options</h3>
+                                <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
+                                <label htmlFor="isIC">Generate into IC</label>
 
-                            <br/>
-                            <br/>
+                                <br/>
+                                <br/>
 
-                            <label>Input Component Type:  </label>
-                            <select id="input"
-                                    value={input}
-                                    onChange={e => setInput(e.target.value)}
-                                    onBlur={e => setInput(e.target.value)}>
-                                <option key="Constant Low" value="Constant Low">Constant Low</option>
-                                <option key="Constant High" value="Constant High">Constant High</option>
-                                <option key="Button" value="Button">Button</option>
-                                <option key="Switch" value="Switch">Switch</option>
-                                <option key="Clock" value="Clock">Clock</option>
-                            </select>
+                                <label>Input Component Type:  </label>
+                                <select id="input"
+                                        value={input}
+                                        onChange={e => setInput(e.target.value)}
+                                        onBlur={e => setInput(e.target.value)}>
+                                    {inputTypes}
+                                </select>
+                            </div>
+
                         </div>
 
-                    </div>
+                        <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
+                            try {
+                                generate(info, expression, isIC, input, format);
+                                setExpression({ expression: "" });
+                                setErrorMessage({ errorMessage: "" });
+                                CloseHeaderPopups();
+                            }
+                            catch (err) {
+                                setErrorMessage({ errorMessage: err.message });
+                            }
+                        }}>Generate</button>
 
-                    <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
-                        try {
-                            generate(info, expression, isIC, input, format);
+                        <button className="cancel" type="button" onClick={() => {
                             setExpression({ expression: "" });
                             setErrorMessage({ errorMessage: "" });
                             CloseHeaderPopups();
-                        }
-                        catch (err) {
-                            setErrorMessage({ errorMessage: err.message });
-                        }
-                    }}>Generate</button>
+                        }}>Cancel</button>
 
-                    <button className="cancel" type="button" onClick={() => {
-                        setExpression({ expression: "" });
-                        setErrorMessage({ errorMessage: "" });
-                        CloseHeaderPopups();
-                    }}>Cancel</button>
-
-                </div>
+                    </div>
                 </Popup>
             );
         }
