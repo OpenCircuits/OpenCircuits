@@ -14,7 +14,7 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {GetOps, OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {FormatMap, OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
@@ -1332,7 +1332,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = GetOps("||");
+            const ops = FormatMap.get("||");
 
             const objectSet = ExpressionToCircuit(inputMap, "a&&b&&c", o, ops);
             designer.addGroup(objectSet);
@@ -1393,7 +1393,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = GetOps("+");
+            const ops = FormatMap.get("+");
 
             const objectSet = ExpressionToCircuit(inputMap, "a*b*c", o, ops);
             designer.addGroup(objectSet);
@@ -1454,7 +1454,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = GetOps("||");
+            const ops = FormatMap.get("||");
 
             const objectSet = ExpressionToCircuit(inputMap, "a||b||c", o, ops);
             designer.addGroup(objectSet);
@@ -1515,7 +1515,7 @@ describe("Expression Parser", () => {
                 ["c", c]
             ]);
 
-            const ops = GetOps("+");
+            const ops = FormatMap.get("+");
 
             const objectSet = ExpressionToCircuit(inputMap, "a+b+c", o, ops);
             designer.addGroup(objectSet);
@@ -1574,7 +1574,7 @@ describe("Expression Parser", () => {
                 ["a", a],
             ]);
 
-            const ops = GetOps("+_");
+            const ops = FormatMap.get("+_");
 
             const objectSet = ExpressionToCircuit(inputMap, "_a", o, ops);
             designer.addGroup(objectSet);

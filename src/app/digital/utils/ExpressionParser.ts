@@ -36,6 +36,7 @@ interface ReturnValue {
 }
 
 export interface OperatorFormats {
+    label: string;
     or: string;
     and: string;
     xor: string;
@@ -45,70 +46,75 @@ export interface OperatorFormats {
     separator: string;
 }
 
-export function GetOps(format: string) {
-    switch(format) {
-    case "||":
-        return {
-            or: "||",
-            xor: "^",
-            and: "&&",
-            not: "!",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    case "+":
-        return {
-            or: "+",
-            xor: "^",
-            and: "*",
-            not: "!",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    case "+_":
-        return {
-            or: "+",
-            xor: "^",
-            and: "*",
-            not: "_",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    case "OR":
-        return {
-            or: "OR",
-            xor: "XOR",
-            and: "AND",
-            not: "NOT",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    case "or":
-        return {
-            or: "or",
-            xor: "xor",
-            and: "and",
-            not: "not",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    default:
-        return {
-            or: "|",
-            xor: "^",
-            and: "&",
-            not: "!",
-            parenOpen: "(",
-            parenClose: ")",
-            separator: " "
-        };
-    }
-}
+const programming1 = {
+    label: "Programming 1 (&, |, ^, !)",
+    or: "|",
+    xor: "^",
+    and: "&",
+    not: "!",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+const programming2 = {
+    label: "Programming 2 (&&, ||, ^, !)",
+    or: "||",
+    xor: "^",
+    and: "&&",
+    not: "!",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+const algebraic1 = {
+    label: "Algebraic 1 (*, +, ^, !)",
+    or: "+",
+    xor: "^",
+    and: "*",
+    not: "!",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+const algebraic2 = {
+    label: "Algebraic 2 (*, +, ^, _)",
+    or: "+",
+    xor: "^",
+    and: "*",
+    not: "_",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+const literal1 = {
+    label: "Literal 1 (AND, OR, XOR, NOT)",
+    or: "OR",
+    xor: "XOR",
+    and: "AND",
+    not: "NOT",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+const literal2 = {
+    label: "Literal 2 (and, or, xor, not)",
+    or: "or",
+    xor: "xor",
+    and: "and",
+    not: "not",
+    parenOpen: "(",
+    parenClose: ")",
+    separator: " "
+};
+
+export const FormatMap = new Map<string, OperatorFormats>([
+    ["|", programming1],
+    ["||", programming2],
+    ["+", algebraic1],
+    ["+_", algebraic2],
+    ["OR", literal1],
+    ["or", literal2],
+]);
 
 /**
  * Checks if the substring of input starting at index is equal to sequence
@@ -462,7 +468,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
     if(ops == null) {
-        ops = GetOps("|");
+        ops = FormatMap.get("|");
     }
 
     const components: IOObject[] = getComponentsValidate(inputs);

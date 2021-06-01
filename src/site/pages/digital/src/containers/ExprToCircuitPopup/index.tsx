@@ -33,7 +33,7 @@ import {Button}                 from "digital/models/ioobjects/inputs/Button";
 import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
-        GetOps,
+        FormatMap,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
 
 import "./index.scss";
@@ -60,7 +60,7 @@ const Inputs: Map<string, ()=>DigitalComponent> = new Map<string, ()=>DigitalCom
 
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string) {
-    const ops = GetOps(format);
+    const ops = FormatMap.get(format);
     const opsSet = new Set(Object.values(ops));
     
     const tokenList = GenerateTokens(expression, ops);
@@ -118,6 +118,13 @@ export const ExprToCircuitPopup = (() => {
                 <option key={input} value={input}>{input}</option>
             );
 
+            const formats = Array.from(FormatMap.entries()).map((formatEntry) =>
+                <>
+                    <input type="radio" id={formatEntry[0]} name="format" checked={format === formatEntry[0]} onChange={() => setFormat(formatEntry[0])} value={formatEntry[0]} />
+                    <label htmlFor={formatEntry[0]}>{formatEntry[1].label}</label><br/>
+                </>
+            );
+
             return (
                 <Popup title="Digital Expression To Circuit Generator"
                        isOpen={(curPopup === "expr_to_circuit")}
@@ -133,18 +140,7 @@ export const ExprToCircuitPopup = (() => {
                         <div className="exprtocircuit__popup__settings">
                             <div>
                                 <h3>Notation</h3>
-                                <input type="radio" id="|" name="format" checked={format === "|"} onChange={() => setFormat("|")} value="|" />
-                                <label htmlFor="|">Programming 1 (&amp;, |, ^, !)</label><br/>
-                                <input type="radio" id="||" name="format" onChange={() => setFormat("||")} value="||" />
-                                <label htmlFor="||">Programming 2 (&amp;&amp;, ||, ^, !)</label><br/>
-                                <input type="radio" id="+" name="format" onChange={() => setFormat("+")} value="+" />
-                                <label htmlFor="+">Algebraic 1 (*, +, ^, !)</label><br/>
-                                <input type="radio" id="+_" name="format" onChange={() => setFormat("+_")} value="+_" />
-                                <label htmlFor="+_">Algebraic 2 (*, +, ^, _)</label><br/>
-                                <input type="radio" id="OR" name="format" onChange={() => setFormat("OR")} value="OR" />
-                                <label htmlFor="OR">Literal 1 (AND, OR, XOR, NOT)</label><br/>
-                                <input type="radio" id="or" name="format" onChange={() => setFormat("or")} value="or" />
-                                <label htmlFor="or">Literal 2 (and, or, xor, not)</label><br/>
+                                {formats}
                             </div>
                 
                             <div>
