@@ -1,9 +1,10 @@
-import {Vector} from "Vector";
+import {V, Vector} from "Vector";
 import {Graph} from "math/Graph";
 
 import {CreateGraph, IOObjectSet} from "./ComponentUtils";
 
 import {Component} from "core/models/Component";
+
 
 function OrganizeCore(groups: IOObjectSet, start: Vector, depthMap: Map<number, number>): void {
     const depthArray: Component[][] = [];
@@ -16,14 +17,15 @@ function OrganizeCore(groups: IOObjectSet, start: Vector, depthMap: Map<number, 
         depthArray[depth].push(components[index]);
     }
 
+    // Used to set the spacing between components
     const xOffset: number = 250;
     const yOffset: number = 150;
+    const offset = V(xOffset, yOffset);
 
     for (let i = 0; i < depthArray.length; i++) {
         for (let j = 0; j < depthArray[i].length; j++) {
             const component = depthArray[i][j];
-            const newLocation = new Vector(start.x + xOffset * i, start.y + yOffset * j);
-            component.setPos(newLocation);
+            component.setPos(start.add(offset.scale(V(i, j))));
         }
     }
 }

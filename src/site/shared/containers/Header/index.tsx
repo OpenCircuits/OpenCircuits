@@ -1,16 +1,12 @@
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {HeaderPopups} from "shared/state/Header/state";
+import {Utility} from "shared/containers/Header/Right/UtilitiesDropdown";
 
 import {HeaderLeft} from "./Left";
 import {HeaderRight} from "./Right";
 
 import "./index.scss";
 
-type Utility = {
-    popupName: HeaderPopups;
-    img: string;
-    text: string;
-}
 
 type Props = {
     img: string;
