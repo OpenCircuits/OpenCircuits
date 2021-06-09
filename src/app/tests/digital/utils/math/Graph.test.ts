@@ -2,6 +2,11 @@ import "jest";
 
 import {Graph} from "math/Graph";
 
+function compareDepths(expected: string[][], actual: string[][]) {
+    expect(actual.length).toEqual(expected.length);
+        for (var i = 0; i < actual.length; i++)
+            expect(actual[i].sort()).toEqual(expected[i].sort());
+}
 
 describe("Graph", () => {
     describe("isConnected", () => {
@@ -66,7 +71,8 @@ describe("Graph", () => {
 
             const nodeDepths = graph.getMaxNodeDepths();
 
-            expect(nodeDepths.get("A")).toBe(0);
+            const expected = [["A"]];
+            compareDepths(expected, nodeDepths);
         });
         test("Simple graph", () => {
             const graph = new Graph<string, string>();
@@ -81,10 +87,13 @@ describe("Graph", () => {
             graph.createEdge("B", "C", "edge");
 
             const nodeDepths = graph.getMaxNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(1);
-            expect(nodeDepths.get("C")).toBe(2);
-            expect(nodeDepths.get("D")).toBe(1);
+
+            const expected = [
+                ["A"],
+                ["B", "D"],
+                ["C"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
         test("Multisource graph", () => {
             const graph = new Graph<string, string>();
@@ -103,12 +112,13 @@ describe("Graph", () => {
             graph.createEdge("B", "F", "edge");
 
             const nodeDepths = graph.getMaxNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(0);
-            expect(nodeDepths.get("C")).toBe(1);
-            expect(nodeDepths.get("D")).toBe(2);
-            expect(nodeDepths.get("E")).toBe(1);
-            expect(nodeDepths.get("F")).toBe(1);
+
+            const expected = [
+                ["A", "B"],
+                ["C", "E", "F"],
+                ["D"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
         test("Advanced graph", () => {
             const graph = new Graph<string, string>();
@@ -131,13 +141,15 @@ describe("Graph", () => {
             graph.createEdge("E", "G", "edge");
 
             const nodeDepths = graph.getMaxNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(0);
-            expect(nodeDepths.get("C")).toBe(1);
-            expect(nodeDepths.get("D")).toBe(2);
-            expect(nodeDepths.get("E")).toBe(3);
-            expect(nodeDepths.get("F")).toBe(2);
-            expect(nodeDepths.get("G")).toBe(4);
+
+            const expected = [
+                ["A", "B"],
+                ["C"],
+                ["D", "F"],
+                ["E"],
+                ["G"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
     });
     describe("getMinNodeDepths", () => {
@@ -148,7 +160,8 @@ describe("Graph", () => {
 
             const nodeDepths = graph.getMinNodeDepths();
 
-            expect(nodeDepths.get("A")).toBe(0);
+            const expected = [["A"]];
+            compareDepths(expected, nodeDepths);
         });
         test("Simple graph", () => {
             const graph = new Graph<string, string>();
@@ -163,10 +176,13 @@ describe("Graph", () => {
             graph.createEdge("B", "C", "edge");
 
             const nodeDepths = graph.getMinNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(1);
-            expect(nodeDepths.get("C")).toBe(2);
-            expect(nodeDepths.get("D")).toBe(1);
+
+            const expected = [
+                ["A"],
+                ["B", "D"],
+                ["C"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
         test("Multisource graph", () => {
             const graph = new Graph<string, string>();
@@ -185,12 +201,13 @@ describe("Graph", () => {
             graph.createEdge("B", "F", "edge");
 
             const nodeDepths = graph.getMinNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(0);
-            expect(nodeDepths.get("C")).toBe(1);
-            expect(nodeDepths.get("D")).toBe(2);
-            expect(nodeDepths.get("E")).toBe(1);
-            expect(nodeDepths.get("F")).toBe(1);
+
+            const expected = [
+                ["A", "B"],
+                ["C", "E", "F"],
+                ["D"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
         test("Advanced graph", () => {
             const graph = new Graph<string, string>();
@@ -213,13 +230,13 @@ describe("Graph", () => {
             graph.createEdge("E", "G", "edge");
 
             const nodeDepths = graph.getMinNodeDepths();
-            expect(nodeDepths.get("A")).toBe(0);
-            expect(nodeDepths.get("B")).toBe(0);
-            expect(nodeDepths.get("C")).toBe(1);
-            expect(nodeDepths.get("D")).toBe(2);
-            expect(nodeDepths.get("E")).toBe(1);
-            expect(nodeDepths.get("F")).toBe(1);
-            expect(nodeDepths.get("G")).toBe(2);
+
+            const expected = [
+                ["A", "B"],
+                ["C", "F", "E"],
+                ["D", "G"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
     });
 });

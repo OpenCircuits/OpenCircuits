@@ -97,22 +97,26 @@ export class Graph<V, E> {
         return nodes;
     }
 
-    private getNodeDepths(max: boolean): Map<V, number> {
-        const ret = new Map<V, number>();
+    private getNodeDepths(max: boolean): V[][] {
+        // Still internally using a map then converting to a list afterwards since it could
+        // take a long time to see if the node has already been assigned a depth when max=true
+        const nodeToNumber = new Map<V, number>();
 
         let currentLayer = this.getSources();
         let nextLayer: V[] = [];
+        let deepest = 0;
 
         for (const node of currentLayer) {
-            ret.set(node, 0);
+            nodeToNumber.set(node, 0);
         }
 
         while (currentLayer.length != 0) {
             for (const node of currentLayer) {
-                const nextDepth = ret.get(node) + 1;
+                const nextDepth = nodeToNumber.get(node) + 1;
                 for (const next of this.list.get(node))  {
-                    if (!ret.has(next.getTarget()) || max) {
-                        ret.set(next.getTarget(), nextDepth);
+                    if (!nodeToNumber.has(next.getTarget()) || max) {
+                        deepest = Math.max(deepest, nextDepth);
+                        nodeToNumber.set(next.getTarget(), nextDepth);
                         nextLayer.push(next.getTarget());
                     }
                 }
@@ -120,6 +124,15 @@ export class Graph<V, E> {
             currentLayer = nextLayer;
             nextLayer = [];
         }
+
+        // Convert to an array of arrays where each index indicates the depth of that 
+        let ret: V[][] = [[]];
+        for (var i = 0; i < deepest; i++)
+            ret.push([]);
+
+        Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
+            ret[depth].push(node)
+        );
 
         return ret;
     }
@@ -133,7 +146,7 @@ export class Graph<V, E> {
      *
      * @return a map where each key is each node and the value is the max depth of that node
      */
-    public getMaxNodeDepths(): Map<V, number> {
+    public getMaxNodeDepths(): V[][] {
         return this.getNodeDepths(true);
     }
 
@@ -146,7 +159,7 @@ export class Graph<V, E> {
      *
      * @return a map where each key is each node and the value is the max depth of that node
      */
-    public getMinNodeDepths(): Map<V, number> {
+    public getMinNodeDepths(): V[][] {
         return this.getNodeDepths(false);
     }
 
