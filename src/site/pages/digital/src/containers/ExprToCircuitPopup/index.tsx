@@ -162,17 +162,19 @@ export const ExprToCircuitPopup = (() => {
 
                         </div>
 
-                        <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
-                            try {
-                                generate(info, expression, isIC, input, format);
-                                setExpression({ expression: "" });
-                                setErrorMessage({ errorMessage: "" });
-                                CloseHeaderPopups();
-                            }
-                            catch (err) {
-                                setErrorMessage({ errorMessage: err.message });
-                            }
-                        }}>Generate</button>
+                        { expression !== "" &&
+                            <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
+                                try {
+                                    generate(info, expression, isIC, input, format);
+                                    setExpression({ expression: "" });
+                                    setErrorMessage({ errorMessage: "" });
+                                    CloseHeaderPopups();
+                                }
+                                catch (err) {
+                                    setErrorMessage({ errorMessage: err.message });
+                                }
+                            }}>Generate</button>
+                        }
 
                         <button className="cancel" type="button" onClick={() => {
                             setExpression({ expression: "" });
