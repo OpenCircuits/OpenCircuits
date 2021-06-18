@@ -60,6 +60,13 @@ module.exports = async (dir, mode) => {
             contentBase: path.resolve(dirPath, "public"),
             hot: true,
             quiet: true,
+            proxy: {
+                "/api/**": {
+                    target: "http://localhost:8080",
+                    secure: false,
+                    changeOrigin: true,
+                },
+            },
         });
         server.listen(port, "localhost", (err) => { if (err) throw err; });
     }
