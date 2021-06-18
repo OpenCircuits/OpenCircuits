@@ -1,7 +1,15 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true
-  },
-  "include": ["."]
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "Vector":         ["./core/utils/math/Vector"],
+            "math/*":         ["./core/utils/math/*"],
+            "core/*":         ["./core/*"],
+            "digital/*":      ["./digital/*"],
+            "test/helpers/*": ["./tests/helpers/*"],
+        },
+    },
+    "include": ["."],
+    "exclude": ["./jest.config.js"],
 }
