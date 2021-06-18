@@ -32,8 +32,8 @@ jobs:
 
     - name: Build
       run: |
-        export REACT_APP_AUTH_TYPES=google
-        export REACT_APP_OAUTH2_ID=${{ secrets.OAUTH_ID }}
+        export AUTH_TYPES=google
+        export OAUTH2_ID=${{ secrets.OAUTH_ID }}
         npm run build -- --ci --prod server digital
 
     - name: Create OAuth credentials and app.yaml

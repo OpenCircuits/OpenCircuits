@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {connect} from "react-redux";
 
-import {Overlay} from "shared/components/Overlay";
+import {GetOS} from "shared/utils/GetOS";
+
 import {Popup} from "shared/components/Popup";
 
 import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
 import {HeaderPopups}      from "shared/state/Header/state";
-import {GetOS} from "shared/utils/GetOS";
 
 import "./index.scss";
 
@@ -39,8 +39,6 @@ const _KeyboardShortcutsPopup = ({curPopup, CloseHeaderPopups}: Props) => {
             </td>
         </tr>
     );
-
-    console.log(curPopup);
 
     return (
         <Popup title="Keyboard Shortcuts"
@@ -79,17 +77,7 @@ const _KeyboardShortcutsPopup = ({curPopup, CloseHeaderPopups}: Props) => {
                 </tbody>
             </table>
         </Popup>
-    )
-
-    return (<>
-        <Overlay isOpen={curPopup === "keyboard_shortcuts"} close={CloseHeaderPopups} />
-
-        <div className="keyboardshortcuts__popup"
-             style={{ display: (curPopup === "keyboard_shortcuts" ? "initial" : "none") }}>
-            <h1>Keyboard Shortcuts</h1>
-
-        </div>
-    </>);
+    );
 };
 
 export const KeyboardShortcutsPopup = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
