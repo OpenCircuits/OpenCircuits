@@ -32,7 +32,7 @@ jobs:
 
     - name: Build
       run: |
-        export AUTH_TYPES=google
+        export OC_AUTH_TYPES=google
         export OAUTH2_ID=${{ secrets.OAUTH_ID }}
         npm run build -- --ci --prod server digital
 

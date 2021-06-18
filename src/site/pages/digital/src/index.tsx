@@ -32,7 +32,6 @@ async function Init(): Promise<void> {
     const AuthMethods: Record<string, () => Promise<void>> = {
         "no_auth": async () => {
             const username = GetCookie("no_auth_username");
-            console.log("?????", username);
             if (username)
                 await store.dispatch<any>(Login(new NoAuthState(username)));
         },
@@ -44,9 +43,8 @@ async function Init(): Promise<void> {
         }
     };
     try {
-        console.log(process.env.AUTH_TYPES);
-        if ((process.env.AUTH_TYPES ?? "").trim().length > 0)
-            await Promise.all(process.env.AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
+        if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
+            await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
     } catch (e) {
         console.error(e);
     }
