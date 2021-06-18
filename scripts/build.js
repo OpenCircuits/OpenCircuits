@@ -1,5 +1,5 @@
 const os = require("os");
-const {renameSync, existsSync, rmSync, rmdirSync} = require("fs");
+const {existsSync, rmSync} = require("fs");
 const {spawn} = require("child_process");
 
 const ora = require("ora");
@@ -8,6 +8,12 @@ const prompts = require("prompts");
 const yargs = require("yargs/yargs");
 
 const copy_dir = require("./utils/copyDir");
+const startWebpack = require("./webpack");
+
+
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = "production";
+process.env.NODE_ENV = "production";
 
 
 const DIRS = [
@@ -42,23 +48,28 @@ function build_server(prod) {
         });
     });
 }
-function build_dir(dir) {
-    return new Promise((resolve, reject) => {
-        spawn(`cd ${dir} && npm run build`, {
-            shell: true,
-            stdio: "inherit"
-        }).on("exit", () => {
-            if (existsSync(`${dir}/build`)) {
-                // Remove build/site folder
-                if (existsSync("build/site"))
-                    rmdirSync("build/site", { recursive: true });
+async function build_dir(dir) {
+    return await startWebpack(dir, "production");
+    // const result = await startWebpack(dir, "production");
 
-                // Successful build, move folder to <rootDir>/build/site
-                renameSync(`${dir}/build`, "build/site");
-            }
-            resolve();
-        });
-    });
+    // return new Promise((resolve, reject) => {
+
+    //     startWebpack(dir, "production");
+    //     // spawn(`cd ${dir} && npm run build`, {
+    //     //     shell: true,
+    //     //     stdio: "inherit"
+    //     // }).on("exit", () => {
+    //     //     if (existsSync(`${dir}/build`)) {
+    //     //         // Remove build/site folder
+    //     //         if (existsSync("build/site"))
+    //     //             rmdirSync("build/site", { recursive: true });
+
+    //     //         // Successful build, move folder to <rootDir>/build/site
+    //     //         renameSync(`${dir}/build`, "build/site");
+    //     //     }
+    //     //     resolve();
+    //     // });
+    // });
 }
 
 
@@ -94,10 +105,10 @@ function build_dir(dir) {
         rmSync("build", { recursive: true, force: true });
 
     // If manual production build, copy secrets
-    if (prod && !ci)
+    if (prod && !ci && existsSync("src/secrets"))
         copy_dir("src/secrets", "build");
 
-    // Launch test in each directory
+    // Launch build in each directory
     for (const dir of dirs) {
         const info = DIR_MAP[dir];
         console.log();

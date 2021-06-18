@@ -1,6 +1,12 @@
 const os = require("os");
 const prompts = require("prompts");
 const {spawn} = require("child_process");
+const startWebpack = require("./webpack");
+
+
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = "development";
+process.env.NODE_ENV = "development";
 
 
 function start_server() {
@@ -17,6 +23,10 @@ function start_server() {
     }
 }
 
+function start_client(dir) {
+    startWebpack(dir, "development");
+}
+
 
 // CLI
 (async () => {
@@ -28,8 +38,8 @@ function start_server() {
         choices: [
             { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
             { title: "Digital", description: "The digital version of OpenCircuits", value: "digital" },
-            { title: "Analog",  description: "The anlog version of OpenCircuits", value: "analog", disabled: true },
-            { title: "Landing", description: "The landing page for OpenCircuits", value: "landing", disabled: true }
+            { title: "Analog",  description: "The analog version of OpenCircuits",  value: "analog",  disabled: true },
+            { title: "Landing", description: "The landing page for OpenCircuits",   value: "landing", disabled: true }
         ],
         initial: 1
     });
@@ -44,9 +54,5 @@ function start_server() {
     }
 
     // Start digital/analog/landing page
-    const dir = `src/site/pages/${type.value}`;
-    spawn(`cd ${dir} && npm run start`, {
-        shell: true,
-        stdio: "inherit"
-    });
+    start_client(`src/site/pages/${type.value}`);
 })();

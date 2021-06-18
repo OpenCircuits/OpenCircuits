@@ -1,25 +1,16 @@
 {
   "name": "app",
-  "description": "OpenCircuits",
-  "author": "Leon Montealegre",
   "version": "0.0.2",
-  "license": "GPL-3.0",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/OpenCircuits/OpenCircuits.git"
+  "scripts": {
+    "test": "jest --watch"
   },
   "dependencies": {
     "hammerjs": "^2.0.8",
     "serialeazy": "^2.0.3",
     "svg2canvas": "^0.0.10"
   },
-  "scripts": {
-    "test": "jest --watch"
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
+  "devDependencies": {
+    "@types/hammerjs": "^2.0.39"
   }
 }
