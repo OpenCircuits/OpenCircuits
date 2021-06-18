@@ -37,12 +37,12 @@ module.exports = async (dir, mode) => {
         stats: "none",
 
         env: Object.keys(process.env)
+                   .filter(k => k.startsWith("OC"))
                    .reduce(
                        (env, key) => ({...env, [key]: process.env[key]}),
                        {
                            NODE_ENV: process.env.NODE_ENV || "development",
                            PUBLIC_URL: publicRoot.slice(0, -1),
-                           AUTH_TYPES: "",
                        }
                    )
     }));
