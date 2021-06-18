@@ -4,7 +4,7 @@ const WebpackDevServer = require("webpack-dev-server");
 
 const choosePort = require("../utils/choosePort");
 const copyDir = require("../utils/copyDir");
-const getAliases = require("../utils/getAliases");
+const getEnv = require("../utils/env");
 const config = require("./config");
 
 
@@ -36,15 +36,7 @@ module.exports = async (dir, mode) => {
 
         stats: "none",
 
-        env: Object.keys(process.env)
-                   .filter(k => k.startsWith("OC"))
-                   .reduce(
-                       (env, key) => ({...env, [key]: process.env[key]}),
-                       {
-                           NODE_ENV: process.env.NODE_ENV || "development",
-                           PUBLIC_URL: publicRoot.slice(0, -1),
-                       }
-                   )
+        env: getEnv(dirPath, publicRoot),
     }));
 
     if (mode === "development") {
