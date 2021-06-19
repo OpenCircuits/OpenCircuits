@@ -1,8 +1,14 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true
+      "baseUrl": ".",
+      "paths": {
+          "Vector":    ["../../app/core/utils/math/Vector"],
+          "math/*":    ["../../app/core/utils/math/*"],
+          "core/*":    ["../../app/core/*"],
+          "digital/*": ["../../app/digital/*"],
+          "shared/*":  ["./*"],
+      }
   },
   "include": ["."],
-  "references": [{ "path": "../../app" }]
 }

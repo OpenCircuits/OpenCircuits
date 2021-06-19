@@ -1,6 +1,6 @@
-import {DigitalComponent} from "./DigitalComponent";
-import {DigitalWire} from "./DigitalWire";
 import {serializable} from "serialeazy";
+import {DigitalComponent, DigitalWire} from "./index";
+
 
 @serializable("Propagation")
 export class Propagation {

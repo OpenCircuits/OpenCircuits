@@ -1,15 +1,15 @@
 {
-  "extends": "../../../../tsconfig.base.json",
-  "include": [
-    "src"
-  ],
-  "references": [
-    {
-      "path": "../../shared"
+    "extends": "../../../../tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "Vector":         ["../../../app/core/utils/math/Vector"],
+            "math/*":         ["../../../app/core/utils/math/*"],
+            "core/*":         ["../../../app/core/*"],
+            "digital/*":      ["../../../app/digital/*"],
+            "shared/*":       ["../../shared/*"],
+            "site/digital/*": ["./src/*"],
+        }
     },
-    {
-      "path": "../../../app"
-    }
-  ],
-  "compilerOptions": {}
+    "include": ["src"],
 }

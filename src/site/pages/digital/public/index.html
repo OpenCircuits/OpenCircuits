@@ -34,7 +34,7 @@
         <link rel="stylesheet" href="%PUBLIC_URL%/assets/index.css">
 
         <!-- Google Auth script -->
-        <% if (process.env.REACT_APP_AUTH_TYPES.includes("google")) { %>
+        <% if ((process.env.OC_AUTH_TYPES ?? "").includes("google")) { %>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <% } %>
     </head>

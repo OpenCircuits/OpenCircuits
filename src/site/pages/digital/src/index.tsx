@@ -37,13 +37,14 @@ async function Init(): Promise<void> {
         },
         "google": async () => {
             // Load auth2 from GAPI and initialize w/ metadata
-            const clientId = process.env.REACT_APP_OAUTH2_ID;
+            const clientId = process.env.OAUTH2_ID;
             await new Promise((resolve) => gapi.load("auth2", resolve));
             await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
         }
     };
     try {
-        await Promise.all((process.env.REACT_APP_AUTH_TYPES ?? "").split(" ").map(a => AuthMethods[a]()));
+        if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
+            await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
     } catch (e) {
         console.error(e);
     }
