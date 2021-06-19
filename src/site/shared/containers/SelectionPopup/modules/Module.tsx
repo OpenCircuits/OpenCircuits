@@ -13,6 +13,7 @@ export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     valType: "float" | "int" | "string";
     getProps: (o: T[number]) => P;
     getAction: (s: (T[number])[], newVal: P) => Action;
+    getDisplayVal?: (val: P) => string | number;
 }
 
 // export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
@@ -68,6 +69,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
     let prevDependencyStr: string;
 
     const {config} = props;
+    const displayVal = config.getDisplayVal ?? ((v) => (v as number | string));
 
 
     const parseVal = (s: string) => {
@@ -218,7 +220,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
         return (
             <input type={props.inputType}
-                   value={focused ? textVal : (same ? val as (string | number) : "")}
+                   value={focused ? textVal : ((same ? displayVal(val) : ""))}
                    placeholder={same ? "" : "-"}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
