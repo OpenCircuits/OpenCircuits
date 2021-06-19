@@ -43,10 +43,10 @@ export function Dropdown(props: Props) {
         const events = ["click", "touchend"];
 
         // Add listener on start
-        events.forEach((e) => window.addEventListener(e, onWindowClick))
+        events.forEach((e) => window.addEventListener(e, onWindowClick));
 
         // Remove listener for cleanup
-        return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))}
+        return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))};
     });
 
     return (
