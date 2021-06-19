@@ -10,6 +10,5 @@
             "test/helpers/*": ["./tests/helpers/*"],
         },
     },
-    "include": ["."],
-    "exclude": ["./jest.config.js"],
+    "include": ["."]
 }

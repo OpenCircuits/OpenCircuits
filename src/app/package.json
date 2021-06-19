@@ -2,9 +2,6 @@
   "name": "app",
   "version": "0.0.2",
   "private": true,
-  "scripts": {
-    "test": "jest --watch"
-  },
   "dependencies": {
     "hammerjs": "^2.0.8",
     "serialeazy": "^2.0.3",
