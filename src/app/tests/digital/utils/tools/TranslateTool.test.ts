@@ -4,11 +4,8 @@ import {SPACEBAR_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {Switch}      from "digital/models/ioobjects/inputs/Switch";
-import {Button}      from "digital/models/ioobjects/inputs/Button";
-import {ANDGate}     from "digital/models/ioobjects/gates/ANDGate";
-import {LED}         from "digital/models/ioobjects/outputs/LED";
-import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {Switch, Button,
+        ANDGate, LED, DigitalNode} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
