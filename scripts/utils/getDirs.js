@@ -2,7 +2,12 @@ const path = require("path");
 const {readdirSync, readFileSync, existsSync} = require("fs");
 
 
-module.exports = function getDirs() {
+/**
+ * @param {boolean} includeServer
+ * @param {boolean} includeApp
+ * @returns {Array<{ title: string, description: string, value: string }}>}
+ */
+module.exports = function getDirs(includeServer, includeApp) {
     const pagesDir = "src/site/pages";
     const dirs = readdirSync(pagesDir, { withFileTypes: true });
 
@@ -28,9 +33,12 @@ module.exports = function getDirs() {
 
 
     return [
-        { // Add in server directory
+        includeServer && { // Add in server directory
             title: "Server", description: "The backend server for OpenCircuits", value: "server",
         },
+        includeApp && { // Add in app directory
+            title: "App", description: "The application logic for OpenCircuits", value: "app",
+        },
         ...pageDirs,
-    ];
+    ].filter(Boolean);
 }
