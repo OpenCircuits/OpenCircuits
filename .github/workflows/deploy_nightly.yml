@@ -28,13 +28,13 @@ jobs:
         node-version: 15.x
 
     - name: Install
-      run: npm install --loglevel=error
+      run: yarn
 
     - name: Build
       run: |
         export OC_AUTH_TYPES=google
         export OAUTH2_ID=${{ secrets.OAUTH_ID }}
-        npm run build -- --ci --prod server digital
+        yarn build --ci --prod server digital
 
     - name: Create OAuth credentials and app.yaml
       run: |
