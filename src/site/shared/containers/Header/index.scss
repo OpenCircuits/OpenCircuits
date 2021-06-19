@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "./constants";
 
 header {
@@ -27,7 +28,7 @@ header {
         top: 2px;
 
         width: $logo-width;
-        margin-left: -$logo-width/2;
+        margin-left: math.div(-$logo-width,2);
 
         @extend .header__center;
     }
@@ -37,7 +38,7 @@ header {
 
         width: $header-height - 2*$header-padding;
         height: $header-height - 2*$header-padding;
-        margin-left: $logo-width/2 + $github-margin;
+        margin-left: math.div($logo-width,2) + $github-margin;
 
         @extend .header__center;
     }

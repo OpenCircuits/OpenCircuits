@@ -1,20 +1,34 @@
 const os = require("os");
 const prompts = require("prompts");
 const {spawn} = require("child_process");
+const startWebpack = require("./webpack");
+const getDirs = require("./utils/getDirs");
+const {existsSync} = require("fs");
+const path = require("path");
+const chalk = require("chalk");
+
+
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = "development";
+process.env.NODE_ENV = "development";
 
 
 function start_server() {
-    if (os.platform() === "win32") {
-        spawn("cd build && server.exe -no_auth", {
-            shell: true,
-            stdio: "inherit"
-        });
-    } else {
-        spawn("cd build && ./server -no_auth", {
-            shell: true,
-            stdio: "inherit"
-        });
+    const isWin = (os.platform() === "win32");
+
+    // Check if server is built
+    if (!existsSync(path.resolve(process.cwd(), "build", (isWin ? "server.exe" : "server")))) {
+        console.log(`\n${chalk.red("Failed to start server!")}\nYou must first build the server with ${chalk.bold(chalk.cyan("yarn build"))}\n`);
+        return;
     }
+
+    spawn(`cd build && ${isWin ? "server.exe" : "./server"} -no_auth`, {
+        shell: true, stdio: "inherit",
+    });
+}
+
+function start_client(dir) {
+    startWebpack(dir, "development");
 }
 
 
@@ -25,12 +39,7 @@ function start_server() {
         type: "select",
         name: "value",
         message: "Pick a project",
-        choices: [
-            { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
-            { title: "Digital", description: "The digital version of OpenCircuits", value: "digital" },
-            { title: "Analog",  description: "The anlog version of OpenCircuits", value: "analog", disabled: true },
-            { title: "Landing", description: "The landing page for OpenCircuits", value: "landing", disabled: true }
-        ],
+        choices: getDirs(true, false),
         initial: 1
     });
 
@@ -44,9 +53,5 @@ function start_server() {
     }
 
     // Start digital/analog/landing page
-    const dir = `src/site/pages/${type.value}`;
-    spawn(`cd ${dir} && npm run start`, {
-        shell: true,
-        stdio: "inherit"
-    });
+    start_client(`src/site/pages/${type.value}`);
 })();
