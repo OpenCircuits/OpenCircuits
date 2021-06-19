@@ -34,7 +34,8 @@ const _LoginPopup = ({curPopup, Login, CloseHeaderPopups}: Props) => {
                className="login__popup"
                isOpen={(curPopup === "login")}
                close={CloseHeaderPopups}>
-            {(process.env.REACT_APP_AUTH_TYPES ?? "").split(" ").map((s, i) => (
+            {(process.env.OC_AUTH_TYPES ?? "").trim().length > 0 &&
+              process.env.OC_AUTH_TYPES.split(" ").map((s) => (
                 <Fragment key={`login-popup-auth-${s}`}>
                     {s === "google" ? (
                         <GoogleAuthButton onLogin={(success) => {

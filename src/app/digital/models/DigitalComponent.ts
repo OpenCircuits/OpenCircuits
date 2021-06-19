@@ -9,10 +9,8 @@ import {Port} from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalWire, DigitalCircuitDesigner} from "./index";
+import {DigitalWire, DigitalCircuitDesigner, InputPort, OutputPort} from "./index";
 
-import {InputPort} from "./ports/InputPort";
-import {OutputPort} from "./ports/OutputPort";
 
 export abstract class DigitalComponent extends Component {
     @serialize

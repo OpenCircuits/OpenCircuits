@@ -3,7 +3,7 @@ import "test/helpers/Extensions";
 
 import {Deserialize} from "serialeazy";
 
-import "digital/models/ioobjects/index";
+import "digital/models/ioobjects";
 import "core/models/Circuit";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
@@ -27,7 +27,7 @@ expect.extend({
     toMatchCircuit(received: any, expected: CircuitDesigner) {
         if (!(received instanceof CircuitDesigner)) {
             return {
-                message: "expected type of CircuitDesigner",
+                message: () => "expected type of CircuitDesigner",
                 pass: false
             };
         }
@@ -59,7 +59,7 @@ expect.extend({
         });
 
         return {
-            message: `expected ${received} to not be the same as ${expected}`,
+            message: () => `expected ${received} to not be the same as ${expected}`,
             pass: true
         };
     }

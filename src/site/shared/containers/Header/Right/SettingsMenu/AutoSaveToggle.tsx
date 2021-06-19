@@ -35,17 +35,17 @@ const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}
             return;
 
         let attempts = 1; // Track attempted saves
-        let timeout: NodeJS.Timeout;
+        let timeout: number;
 
         async function Save() {
             const success = await helpers.SaveCircuitRemote();
             attempts++;
             if (!success)
                 // Wait longer each successsive, failed save
-                timeout = setTimeout(Save, SAVE_TIME * attempts);
+                timeout = window.setTimeout(Save, SAVE_TIME * attempts);
         }
 
-        timeout = setTimeout(Save, SAVE_TIME);
+        timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
      }, [isSaved, isAutoSave, helpers]);
