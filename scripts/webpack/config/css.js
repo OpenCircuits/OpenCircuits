@@ -45,6 +45,10 @@ module.exports = ({ publicPath }) => ({
     },
 
     plugins: [
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            // Extract the css to /static/css/
+            filename: "static/css/[name].[contenthash:8].css",
+            chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+        }),
     ],
 });
