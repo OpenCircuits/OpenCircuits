@@ -29,7 +29,7 @@ function start_client(dir) {
         type: "select",
         name: "value",
         message: "Pick a project",
-        choices: getDirs(),
+        choices: getDirs(true, false),
         initial: 1
     });
 

@@ -33,6 +33,7 @@
     "jest": "^27.0.4",
     "jest-watch-typeahead": "^0.6.4",
     "mini-css-extract-plugin": "^1.6.0",
+    "opener": "^1.5.2",
     "ora": "^5.4.1",
     "postcss": "^8.3.4",
     "postcss-loader": "^6.1.0",
