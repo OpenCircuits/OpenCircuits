@@ -45,6 +45,16 @@
             "id": "SegmentDisplay",
             "label": "Segment Display",
             "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "id": "BCDDisplay",
+            "label": "BCD Display",
+            "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "id": "ASCIIDisplay",
+            "label": "ASCII Display",
+            "icon": "sevensegmentdisplay.svg"
           }
         ]
       },
