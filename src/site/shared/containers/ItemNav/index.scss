@@ -45,7 +45,12 @@ $tab-padding: 8px;
     }
 
     &__move {
-        left: -$itemnav-width - $header-border-width;
+        @media (min-width: 768px) {
+            left: -$itemnav-width - $header-border-width;
+        }
+        @media (max-width: 768px) {
+            bottom: -$itemnav-height - $header-border-width;
+        }
     }
     & img {
         width: 100%;
@@ -123,6 +128,12 @@ $tab-padding: 8px;
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
 
+            @media (max-width: 768px) {
+                transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
+                border-bottom-right-radius: 0;
+                border-top-left-radius: 15px;
+            }
+
             &:after {
                 width: $tab-width;
                 padding: 0 $tab-padding;
@@ -198,151 +209,3 @@ $tab-padding: 8px;
         }
     }
 }
-
-.tab {
-    font-size: 2em;
-
-    position: fixed;
-    z-index: 4;
-
-    cursor: pointer;
-    transition: 0.5s;
-
-    left: 100px;
-
-    color: #000;
-    border: $header-border;
-    border-width: $header-border-width;
-    background-color: rgba($background-color, 0.7);
-
-    &:after {
-        width: $tab-width;
-        padding: 0 $tab-padding;
-        content: '+';
-    }
-
-    &__closed {
-        font-size: 2.5em;
-
-        border-color: transparent;
-        background-color: transparent;
-
-        &:after {
-            content: '×';
-        }
-    }
-}
-
-
-
-
-// @media (min-width: 450px) {
-//     .itemnav {
-//         left: 0;
-
-//         overflow-x: hidden;
-
-//         width: $itemnav-width;
-//         height: calc(100% - #{$header-total-height});
-
-//         border-right-width: $header-border-width;
-
-//         &__move {
-//             left: -$itemnav-width - $header-border-width;
-//         }
-
-//         &__item > button {
-//             width: calc(49% - 5px);
-//         }
-//         &__top {
-//             justify-content: center;
-
-//             &__history__buttons {
-//                 & > button {
-//                     margin-bottom: -3px;
-//                 }
-//             }
-//         }
-//     }
-
-//     .tab {
-//         top: $header-total-height - $header-border-width;
-//         left: 0;
-
-//         border-bottom-right-radius: 15px;
-
-//         &:after {
-//             width: $tab-width;
-//         }
-
-//         &__closed {
-//             left: $itemnav-width - ($tab-width + 2*$tab-padding + 2*$header-border-width) - 15px;
-//         }
-//     }
-// }
-// @media (max-width: 450px) {
-//     .itemnav {
-//         display: inline-flex;
-//         flex-wrap: wrap;
-//         flex-direction: column;
-
-//         scroll-snap-type: x mandatory;
-
-//         overflow-y: hidden;
-//         overflow-x: auto;
-
-//         right: 0;
-//         height: calc(70% - #{$header-total-height});
-
-//         border-top-width: $header-border-width;
-
-//         &__move {
-//             bottom: -$itemnav-width - (350px);
-//         }
-
-//         &__item > button {
-//             width: calc(25% - 5px);
-//         }
-
-//         &__top {
-//             justify-content: flex-start;
-//             flex-basis: 100%;
-
-//             position: fixed;
-
-//             &__history__buttons {
-//                 & > button {
-//                     margin-bottom: -10px;
-//                 }
-//             }
-//         }
-
-//         &__section {
-//             margin-top: 50px;
-//             scroll-snap-align: center;
-//         }
-
-//         &__item {
-//             display: flex;
-//             flex-wrap: wrap;
-//             align-items: flex-start;
-//             justify-content: center;
-//         }
-//     }
-
-//     .tab {
-//         right: 0;
-//         bottom: 0;
-
-//         border-top-left-radius: 15px;
-
-//         &:after {
-//             width: 0px;
-//         }
-
-//         &__closed {
-//             right: 0;
-//             bottom: calc(70% - #{$header-total-height} - 55px);
-//         }
-//     }
-// }
