@@ -16,6 +16,7 @@ export const TitleModule = PopupModule({
     modules: [CreateModule({
         inputType: "text",
         config: Config,
-        alt: "Name of object(s)"
+        placeholder: "<Multiple>",
+        alt: "Name of object(s)",
     })]
 });

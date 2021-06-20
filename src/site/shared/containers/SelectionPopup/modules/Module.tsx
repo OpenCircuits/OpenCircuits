@@ -51,11 +51,13 @@ type NumberModuleProps<T extends any[], P extends ModuleTypes> = {
     step?: number;
     min?: number;
     max?: number;
+    placeholder?: string;
     alt: string;
 }
 type OtherModuleProps<T extends any[], P extends ModuleTypes> = {
     inputType: "text" | "color";
     config: ModuleConfig<T, P>;
+    placeholder?: string;
     alt: string;
 }
 
@@ -140,13 +142,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             const counts = comps.map(s => config.getProps(s));
 
             same = counts.every(c => (c === counts[0]));
-            if(counts.length > 1 && !same){
-                val = "<Multiple>" as P;
-            }
-            else{
-                val = counts[0];
-            }
-            
+            val = counts[0];
 
             setState({
                 active: true,
@@ -224,13 +220,13 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
         return (
             <input type={props.inputType}
-                   value={focused ? textVal : (same ? val as (string | number) : "<Multiple>")}
-                   placeholder={same ? "" : "-"}
+                   value={focused ? textVal : (same ? val as (string | number) : "")}
+                   placeholder={same ? "" : (props.placeholder ?? "-")}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
                    max ={"max"  in props ? props.max  : ""}
                    onChange={(ev) => onChange(ev.target.value)}
-                   onFocus={() => setState({...state, focused: true, textVal: val.toString()})}
+                   onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
                    onBlur={() => onSubmit()}
                    onKeyPress={({target, key}) => (props.inputType !== "color" &&
                                                    key === "Enter" &&
