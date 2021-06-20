@@ -6,9 +6,10 @@ const chalk = require("chalk");
 /**
  * @param {string} host
  * @param {number} defaultPort
+ * @param {boolean} prompt
  * @returns {Promise<string>}
  */
-module.exports = async function choosePort(host, defaultPort) {
+module.exports = async function choosePort(host, defaultPort, prompt) {
     try {
         const port = await detect(defaultPort, host);
 
@@ -17,7 +18,7 @@ module.exports = async function choosePort(host, defaultPort) {
             return port;
 
         // Prompt to see if they want to change the port
-        const {changePort} = await prompts({
+        const {changePort} = prompt ? await prompts({
             type: "confirm",
             name: "changePort",
             message: chalk.yellow(
@@ -25,7 +26,7 @@ module.exports = async function choosePort(host, defaultPort) {
                 `Would you like to run the app on another port instead?`
             ),
             initial: true,
-        });
+        }) : {changePort: true};
 
         return (changePort ? port : null);
     } catch (err) {

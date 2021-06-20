@@ -15,9 +15,10 @@ const config = require("./config");
 /**
  * @param {string} dir
  * @param {webpack.Configuration["mode"]} mode
+ * @param {boolean} promptPort
  * @returns {Promise<void>}
  */
-module.exports = async (dir, mode) => {
+module.exports = async (dir, mode, promptPort) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -50,7 +51,7 @@ module.exports = async (dir, mode) => {
         const pathname = publicRoot.slice(0, -1);
 
         // Start dev server
-        const port = await choosePort(hostname, 3000);
+        const port = await choosePort(hostname, 3000, promptPort);
         if (!port)
             return; // No port found
 
@@ -78,11 +79,11 @@ module.exports = async (dir, mode) => {
                 firstDone = true;
             }
 
-            console.log(`\nYou can now view ${chalk.bold("OpenCircuits")} in the browser!\n`);
+            console.log((`\nYou can now view ${chalk.bold("OpenCircuits")}\x1b[0m in the browser!\n`));
 
             if (lanUrl) {
-                console.log(`  ${chalk.bold("Local:")}            ${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
-                console.log(`  ${chalk.bold("On Your Network:")}  ${lanUrl}`);
+                console.log(`  ${chalk.bold("Local:")}\x1b[0m            ${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
+                console.log(`  ${chalk.bold("On Your Network:")}\x1b[0m  ${lanUrl}`);
             }
 
             console.log(`\nNote that the development buld is not optimized!`);
@@ -107,8 +108,10 @@ module.exports = async (dir, mode) => {
         server.listen(port, hostname, (err) => {
             if (err) throw err;
 
-            console.log(chalk.cyan('Starting the development server...\n'));
+            console.log(chalk.cyan.bgAnsi256(244)('Starting the development server...\n'));
         });
+
+        return lanUrl;
     }
 
     if (mode === "production") {
