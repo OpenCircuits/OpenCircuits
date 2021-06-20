@@ -52,7 +52,7 @@ $tab-padding: 8px;
         cursor: pointer;
         transition: 0.3s;
         vertical-align: top;
-        word-break: break-all;
+        word-break: break-word;
 
         color: darken($secondary-color, 5%);
     }
