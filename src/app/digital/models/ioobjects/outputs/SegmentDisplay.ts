@@ -9,8 +9,11 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {Name} from "core/utils/Name";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
+import {Positioner} from "core/models/ports/positioners/Positioner";
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {InputPort} from "digital/models/ports/InputPort";
 
 
 @serializable("SegmentDisplay")
@@ -18,11 +21,11 @@ export class SegmentDisplay extends DigitalComponent {
     @serialize
     protected segmentCount: number;
 
-    public constructor(numInputs?: ClampedValue) {
-        super(numInputs || new ClampedValue(7, 7, 16),
+    public constructor(numInputs?: ClampedValue, positioner?: Positioner<InputPort>) {
+        super(numInputs ?? new ClampedValue(7, 7, 16),
               new ClampedValue(0),
               V(70, 100),
-              new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false));
+              positioner ?? new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false));
 
         this.segmentCount = 7;
         this.setInputPortCount(7);

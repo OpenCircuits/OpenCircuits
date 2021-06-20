@@ -7,7 +7,7 @@ const {Config} = require("./types");
  * @param {Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = ({ publicPath }) => ({
+module.exports = ({ isProd, publicPath }) => ({
     module: {
         rules: [
             {
@@ -45,6 +45,10 @@ module.exports = ({ publicPath }) => ({
     },
 
     plugins: [
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin(isProd ? {
+            // Extract the css to /static/css/
+            filename: "static/css/[name].[contenthash:8].css",
+            chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+        } : undefined),
     ],
 });
