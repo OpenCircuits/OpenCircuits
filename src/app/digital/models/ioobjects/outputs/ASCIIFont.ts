@@ -441,4 +441,4 @@ export const ASCIIFont: Record<string, number[][]> = {
         [8, 14, 9, 12],
         []
     ]
-}
+};
