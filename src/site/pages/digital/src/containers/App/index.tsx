@@ -15,7 +15,6 @@ import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
 import {ContextMenu}     from "shared/containers/ContextMenu";
 import {Header}          from "shared/containers/Header";
 import {SideNav}         from "shared/containers/SideNav";
-import {UndoRedoButtons} from "shared/containers/UndoRedoButtons";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
@@ -45,7 +44,7 @@ import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modul
 
 import exampleConfig from "site/digital/data/examples.json";
 
-import "./index.css";
+import "./index.scss";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -81,40 +80,35 @@ export const App = ((store: AppStore) => {
                 <SideNav helpers={helpers}
                          exampleCircuits={exampleCircuits} />
 
-                <main>
-                    <MainDesigner info={info} />
-
+                <div className="App__container">
                     <Header img="img/icons/logo.svg"
                             helpers={helpers} />
 
-                    <DigitalItemNav info={info} />
+                    <main>
+                        <MainDesigner info={info} />
 
-                    <UndoRedoButtons info={info}
-                                     undoImg = "img/icons/undo.svg"
-                                     redoImg = "img/icons/redo.svg" />
+                        <DigitalItemNav info={info} />
 
-                    <SelectionPopup info={info}
-                                    modules={[PositionModule, InputCountModule,
-                                            OutputCountModule, SegmentCountModule,
-                                            ClockFrequencyModule,
-                                            ColorModule, TextColorModule,
-                                            BusButtonModule, CreateICButtonModule,
-                                            ViewICButtonModule]} />
+                        <SelectionPopup info={info}
+                                        modules={[PositionModule, InputCountModule,
+                                                  OutputCountModule, SegmentCountModule,
+                                                  ClockFrequencyModule,
+                                                  ColorModule, TextColorModule,
+                                                  BusButtonModule, CreateICButtonModule,
+                                                  ViewICButtonModule]} />
 
+                        <ContextMenu info={info}
+                                     paste={(data) => DigitalPaste(data, info)} />
+                    </main>
+                </div>
 
-                    <ICDesigner mainInfo={info} />
+                <ICDesigner mainInfo={info} />
+                <ICViewer mainInfo={info} />
 
-                    <ICViewer mainInfo={info} />
+                <QuickStartPopup />
+                <KeyboardShortcutsPopup />
 
-
-                    <ContextMenu info={info}
-                                paste={(data) => DigitalPaste(data, info)} />
-
-                    <QuickStartPopup />
-                    <KeyboardShortcutsPopup />
-
-                    <LoginPopup />
-                </main>
+                <LoginPopup />
             </div>
         );
     }
