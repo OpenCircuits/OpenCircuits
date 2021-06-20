@@ -20,7 +20,6 @@ import {SaveFile} from "shared/utils/Exporter";
 import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 import {DeleteUserCircuit} from "shared/api/Circuits";
 
-
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
         LoadCircuit: async (getData) => {
@@ -63,8 +62,10 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             if (circuit.saving || user.loading)
                 return;
 
-            await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
-            await store.dispatch(LoadUserCircuits());
+            let success = await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
+            success = await store.dispatch(LoadUserCircuits()) && success;
+
+            return success;
         },
 
         SaveCircuitToFile: async (type) => {

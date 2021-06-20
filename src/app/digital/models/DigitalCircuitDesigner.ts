@@ -1,18 +1,15 @@
 import {serializable, serialize} from "serialeazy";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-
-import {Propagation} from "./Propagation";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
-import {ICData}    from "./ioobjects/other/ICData";
 
-import {DigitalWire, DigitalComponent} from "./index";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
-import {InputPort}  from "./ports/InputPort";
-import {OutputPort} from "./ports/OutputPort";
+import {DigitalWire, DigitalComponent, InputPort, OutputPort, Propagation} from "./index";
+
+import {ICData} from "./ioobjects/other/ICData";
 
 
 export type PropagationEvent = {
@@ -68,13 +65,24 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.propagationTime = propagationTime;
         this.updateCallbacks = [];
 
-        this.reset();
+        this.ics = [];
+        this.objects = [];
+        this.wires = [];
+
+        this.propagationQueue = [];
+        this.updateRequests = 0;
     }
 
     public reset(): void {
-        this.ics     = [];
-        this.objects = [];
-        this.wires   = [];
+        // Remove ics, objects, and wires 1-by-1
+        //  (so that the proper callbacks get called)
+        for (let i = this.ics.length-1; i >= 0; i--)
+            this.removeICData(this.ics[i]);
+        for (let i = this.objects.length-1; i >= 0; i--)
+            this.removeObject(this.objects[i]);
+        for (let i = this.wires.length-1; i >= 0; i--)
+            this.removeWire(this.wires[i]);
+
         this.propagationQueue = [];
         this.updateRequests = 0;
     }
@@ -241,7 +249,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     public replace(designer: DigitalCircuitDesigner): void {
         super.replace(designer);
 
-        this.ics = designer.ics;
+        for (const ic of designer.getICData())
+            this.addICData(ic);
+
         this.propagationTime = designer.propagationTime;
 
         // Copy propagations so that circuit will continue

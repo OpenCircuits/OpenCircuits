@@ -1,10 +1,11 @@
-import {Circuit} from "core/models/Circuit";
 import {connect} from "react-redux";
 
-import {SharedAppState} from "shared/state";
-import {ToggleCircuitLocked, SetCircuitName, SetCircuitSaved, SaveCircuit} from "shared/state/CircuitInfo/actions";
-import {ToggleSideNav} from "shared/state/SideNav/actions";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
+import {SharedAppState} from "shared/state";
+import {ToggleCircuitLocked,
+        SetCircuitName} from "shared/state/CircuitInfo/actions";
+import {ToggleSideNav} from "shared/state/SideNav/actions";
 
 import "./index.scss";
 
@@ -12,13 +13,16 @@ import "./index.scss";
 type OwnProps = {
     helpers: CircuitInfoHelpers;
 }
+
 type StateProps = {
     circuitName: string;
     isSaved: boolean;
     isLocked: boolean;
     isLoggedIn: boolean;
     isLoading: boolean;
+    error: string;
 }
+
 type DispatchProps = {
     toggleLock: () => void;
     toggleSideNav: () => void;
@@ -26,7 +30,7 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, toggleLock, toggleSideNav, setCircuitName }: Props) => (
+const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, error, toggleLock, toggleSideNav, setCircuitName }: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -51,7 +55,11 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
             <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                     title="Save the circuit remotely"
                     disabled={isLoading}
-                    onClick={() => helpers.SaveCircuitRemote()}>Save</button>
+                    onClick={() => helpers.SaveCircuitRemote() }>Save</button>
+        </div>
+        <div className="header__left__saving__icons">
+            <img src="img/icons/error.svg" className={error ? "" : "hide"} title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
+            <span className={isLoading ? "" : "hide"} title="Saving..."></span>
         </div>
     </div>
 );
@@ -65,12 +73,14 @@ const MapState = (state: SharedAppState) => ({
     isSaved:     state.circuit.isSaved,
     isLocked:    state.circuit.isLocked,
     isLoggedIn:  state.user.isLoggedIn,
-    isLoading:   state.user.loading
+    isLoading:   state.circuit.saving,
+    error:       state.circuit.error
 });
+
 const MapDispatch = {
     toggleLock:     ToggleCircuitLocked,
     toggleSideNav:  ToggleSideNav,
-    setCircuitName: SetCircuitName,
+    setCircuitName: SetCircuitName
 };
 export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
     MapState,

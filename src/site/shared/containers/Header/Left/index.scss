@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
 .header__left {
@@ -23,14 +24,50 @@
         color: #ddd;
         border-radius: 4px;
         background-color: $success-color;
-        &:hover {
+
+        &:disabled {
+            color: #666;
+            background-color: transparent;
+            border: 1px solid black;
+        }
+
+        &:enabled:hover {
             color: #ccc;
             border-color: #aaa;
             background-color: darken($success-color, 10%);
         }
     }
+    &__saving__icons {
+        & > img {
+            margin-left: 7px;
+            margin-top: 7px;
+        }
+        & > span {
+            &::after, &::before {
+                content: "";
+                position: absolute;
+                margin-left: 7.5px + 4px;
+                margin-top: 7.5px + 4px;
+                width: 15px;
+                height: 15px;
+                border-radius: 7.5px;
+                background-color: #888;
+                opacity: 0.5;
+                animation: loadpulse 2s infinite linear;
+            }
+            &::before {
+                animation-delay: 1s;
+            }
+
+            @keyframes loadpulse {
+                0%   { transform: scale(0.3, 0.3); }
+                50%  { transform: scale(1.5, 1.5); }
+                100% { transform: scale(0.3, 0.3); }
+            }
+        }
+    }
     &__lock {
-        margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
+        margin-top: math.div($header-height - $header-lock-height, 2) - $header-border-width;
         margin-right: 5px;
 
         cursor: pointer;

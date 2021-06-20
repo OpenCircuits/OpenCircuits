@@ -4,54 +4,44 @@ import {connect} from "react-redux";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
-import {Camera} from "math/Camera";
 
 import {Input} from "core/utils/Input";
-import {RenderQueue} from "core/utils/RenderQueue";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
-import {HistoryManager} from "core/actions/HistoryManager";
+import {GroupAction}             from "core/actions/GroupAction";
+import {CreateDeselectAllAction,
+        SelectAction}            from "core/actions/selection/SelectAction";
+import {PlaceAction}             from "core/actions/addition/PlaceAction";
+import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
+
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
-import {UndoHandler} from "core/tools/handlers/UndoHandler";
-import {RedoHandler} from "core/tools/handlers/RedoHandler";
-import {DefaultTool} from "core/tools/DefaultTool";
-import {ToolManager} from "core/tools/ToolManager";
-import {PanTool} from "core/tools/PanTool";
+import {UndoHandler}        from "core/tools/handlers/UndoHandler";
+import {RedoHandler}        from "core/tools/handlers/RedoHandler";
+import {DefaultTool}        from "core/tools/DefaultTool";
+import {PanTool}            from "core/tools/PanTool";
 
-import {Renderer} from "core/rendering/Renderer";
-import {CreateRenderers} from "core/rendering/CreateRenderers";
-import {Grid} from "core/rendering/Grid";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
-
-import {DigitalCircuitDesigner} from "digital/models";
-import {IC} from "digital/models/ioobjects";
+import {IC}     from "digital/models/ioobjects";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
-import {ICPortTool} from "digital/tools/ICPortTool";
-import {ICEdge, ICResizeTool} from "digital/tools/ICResizeTool";
-
-import {WireRenderer} from "digital/rendering/ioobjects/WireRenderer";
-import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
-import {ToolRenderer} from "digital/rendering/ToolRenderer";
+import {ICPortTool}   from "digital/tools/ICPortTool";
+import {ICEdge,
+        ICResizeTool} from "digital/tools/ICResizeTool";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+
+import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+
 import {CloseICDesigner} from "site/digital/state/ICDesigner/actions";
-import {AppState} from "site/digital/state";
+import {AppState}        from "site/digital/state";
 
 import "./index.scss";
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GroupAction} from "core/actions/GroupAction";
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
-import {PlaceAction} from "core/actions/addition/PlaceAction";
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
-import {Setup} from "site/digital/utils/CircuitInfo/Setup";
-import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 
 type OwnProps = {
-    mainInfo: CircuitInfo;
+    mainInfo: DigitalCircuitInfo;
 }
 type StateProps = {
     active: boolean;
@@ -180,7 +170,7 @@ export const ICDesigner = (() => {
                     // Deselect other things, create IC and select it
                     const action = new GroupAction([
                         CreateDeselectAllAction(mainInfo.selections),
-                        new CreateICDataAction(data, mainInfo.designer as DigitalCircuitDesigner),
+                        new CreateICDataAction(data, mainInfo.designer),
                         new PlaceAction(mainInfo.designer, ic),
                         new SelectAction(mainInfo.selections, ic)
                     ]);
