@@ -52,11 +52,13 @@ type NumberModuleProps<T extends any[], P extends ModuleTypes> = {
     step?: number;
     min?: number;
     max?: number;
+    placeholder?: string;
     alt: string;
 }
 type OtherModuleProps<T extends any[], P extends ModuleTypes> = {
     inputType: "text" | "color";
     config: ModuleConfig<T, P>;
+    placeholder?: string;
     alt: string;
 }
 
@@ -221,12 +223,12 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         return (
             <input type={props.inputType}
                    value={focused ? textVal : ((same ? displayVal(val) : ""))}
-                   placeholder={same ? "" : "-"}
+                   placeholder={same ? "" : (props.placeholder ?? "-")}
                    step={"step" in props ? props.step : ""}
                    min ={"min"  in props ? props.min  : ""}
                    max ={"max"  in props ? props.max  : ""}
                    onChange={(ev) => onChange(ev.target.value)}
-                   onFocus={() => setState({...state, focused: true, textVal: val.toString()})}
+                   onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
                    onBlur={() => onSubmit()}
                    onKeyPress={({target, key}) => (props.inputType !== "color" &&
                                                    key === "Enter" &&
