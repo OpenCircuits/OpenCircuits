@@ -1,18 +1,15 @@
 import {serializable, serialize} from "serialeazy";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-
-import {Propagation} from "./Propagation";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
-import {ICData}    from "./ioobjects/other/ICData";
 
-import {DigitalWire, DigitalComponent} from "./index";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
-import {InputPort}  from "./ports/InputPort";
-import {OutputPort} from "./ports/OutputPort";
+import {DigitalWire, DigitalComponent, InputPort, OutputPort, Propagation} from "./index";
+
+import {ICData} from "./ioobjects/other/ICData";
 
 
 export type PropagationEvent = {

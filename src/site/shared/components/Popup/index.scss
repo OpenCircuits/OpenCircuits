@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/theme";
 
 .popup {
@@ -13,7 +14,7 @@
 
     width: $width;
     max-height: 85vh;
-    margin-left: calc(-#{$width/2} - #{$h-padding});
+    margin-left: calc(-#{math.div($width,2)} - #{$h-padding});
     padding: 15px $h-padding 25px;
 
     border-radius: 10px;

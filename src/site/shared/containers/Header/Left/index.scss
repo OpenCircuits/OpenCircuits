@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
 .header__left {
@@ -66,7 +67,7 @@
         }
     }
     &__lock {
-        margin-top: $header-height/2 - $header-lock-height/2 - $header-border-width;
+        margin-top: math.div($header-height - $header-lock-height, 2) - $header-border-width;
         margin-right: 5px;
 
         cursor: pointer;

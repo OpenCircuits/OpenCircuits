@@ -17,7 +17,7 @@ export const Header = ({ img, helpers, extraUtilities }: Props) => (
     <header id="header">
         <HeaderLeft helpers={helpers} />
 
-        <div>
+        <div className="header__center">
             <a href="/home" target="_blank">
                 <img className="header__center__logo" src={img} height="100%" alt="OpenCircuits logo" />
             </a>

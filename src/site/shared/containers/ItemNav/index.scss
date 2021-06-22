@@ -1,20 +1,29 @@
 @import "~shared/utils/constants";
 
-$itemnav-width: 215px;
+$itemnav-width: 235px; // On wide screens, ItemNav is on the left
+$itemnav-height: 500px; // On small screens, ItemNav is on the bottom
 
 $tab-width: 18px;
 $tab-padding: 8px;
 
+
 .itemnav {
-    position: fixed;
+    $top-margin: 10px;
+
+    position: absolute;
     z-index: 2;
-    bottom: 0;
+
     left: 0;
+    top: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
 
     overflow-x: hidden;
+    overflow-y: auto;
 
     width: $itemnav-width;
-    height: calc(100% - #{$header-total-height});
 
     transition: all 0.5s;
 
@@ -22,39 +31,26 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
+    @media (max-width: 768px) {
+        top: unset;
+        right: 0;
+        width: unset;
+        height: $itemnav-height;
+
+        overflow-x: hidden;
+        overflow-y: hidden;
+
+        border-right-width: 0;
+        border-top-width: $header-border-width;
+    }
+
     &__move {
-        left: -$itemnav-width - $header-border-width;
-    }
-
-    & h4 {
-        font-size: 24px;
-
-        margin-bottom: 15px;
-
-        cursor: default;
-        transition: 0.5s;
-        text-align: center;
-
-        color: #fff;
-        text-shadow: -1px 1px 3px darken(#fff, 40%);
-
-        &:first-of-type {
-            margin-top: 5px;
+        @media (min-width: 768px) {
+            left: -$itemnav-width - $header-border-width;
         }
-    }
-    & button {
-        font-size: 1em;
-        font-weight: bold;
-
-        width: calc(49% - 5px);
-        padding: 10px;
-
-        cursor: pointer;
-        transition: 0.3s;
-        vertical-align: top;
-        word-break: break-all;
-
-        color: darken($secondary-color, 5%);
+        @media (max-width: 768px) {
+            bottom: -$itemnav-height - $header-border-width;
+        }
     }
     & img {
         width: 100%;
@@ -63,20 +59,30 @@ $tab-padding: 8px;
     &__top {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: space-between;
 
-        margin-top: 4px;
-
-        width: 100%;
+        width: calc(100% - 10px);
         height: 40px;
 
-        &__history__buttons {
-            align-self: center;
+        margin: $top-margin 5px 5px 5px;
 
+        & > div {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+
+            &:first-child > div {
+                margin-right: auto;
+            }
+            &:last-child > div {
+                margin-left: auto;
+            }
+        }
+
+        &__history__buttons {
             & > button {
                 width: 30px;
                 padding: 0;
-                margin-bottom: -3px;
 
                 &:disabled {
                     opacity: 0.5;
@@ -84,112 +90,122 @@ $tab-padding: 8px;
             }
         }
     }
-}
 
-.tab {
-    font-size: 2em;
+    &__tab {
+        position: relative;
 
-    position: fixed;
-    z-index: 4;
-    top: $header-total-height - $header-border-width;
-    left: 0;
+        & > div {
+            position: fixed;
 
-    cursor: pointer;
-    transition: 0.5s;
+            transform: translate(-100%, -25%);
 
-    color: #000;
-    border: $header-border;
-    border-width: $header-border-width;
-    border-bottom-right-radius: 15px;
-    background-color: rgba($background-color, 0.7);
+            font-size: 2.5em;
 
-    &:after {
-        width: $tab-width;
-        margin: 0 $tab-padding 0 $tab-padding;
+            border: $header-border;
+            border-width: $header-border-width;
+            border-color: transparent;
+            border-bottom-right-radius: 15px;
+            background-color: transparent;
 
-        content: '+';
+            cursor: pointer;
+            transition: 0.5s;
+
+            color: #000;
+
+            &:after {
+                transition: 0.5s;
+
+                display: inline-block;
+                content: '×';
+            }
+        }
+
+        &__closed > div {
+            transform: translate(20px, -$header-border-width - $top-margin);
+
+            font-size: 2em;
+
+            border-color: $secondary-color;
+            background-color: rgba($background-color, 0.7);
+
+            @media (max-width: 768px) {
+                transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
+                border-bottom-right-radius: 0;
+                border-top-left-radius: 15px;
+            }
+
+            &:after {
+                width: $tab-width;
+                padding: 0 $tab-padding;
+                transform: rotate(-45deg);
+            }
+        }
     }
 
-    &__closed {
-        font-size: 2.5em;
+    &__sections {
+        display: flex;
+        flex-direction: column;
 
-        left: $itemnav-width - ($tab-width + 2*$tab-padding + 2*$header-border-width) - 15px;
+        // overflow-x: hidden;
+        // overflow-y: hidden;
 
-        border-color: transparent;
-        background-color: transparent;
+        @media (max-width: 768px) {
+            overflow-x: auto;
 
-        &:after {
-            content: '×';
+            scroll-snap-type: x mandatory;
+
+            flex-wrap: wrap;
+        }
+
+        & > div {
+            scroll-snap-align: center;
+
+            @media (max-width: 768px) {
+                width: 100%;
+            }
+
+            &:nth-child(2) > h4 {
+                margin-top: 10px;
+            }
+
+            & > h4 {
+                font-size: 24px;
+
+                margin-bottom: 15px;
+
+                cursor: default;
+                transition: 0.5s;
+                text-align: center;
+
+                color: #fff;
+                text-shadow: -1px 1px 3px darken(#fff, 40%);
+            }
+
+            & > div {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+
+                @media (max-width: 768px) {
+                    width: calc(100% - 120px);
+                    margin: 0px 60px;
+                }
+
+                & > button {
+                    font-size: 1em;
+                    font-weight: bold;
+
+                    width: 100px;
+                    padding: 10px;
+
+                    transition: 0.3s;
+                    word-break: break-word;
+
+                    color: darken($secondary-color, 5%);
+                }
+            }
         }
     }
 }
-
-
-// .undo {
-//     position: fixed;
-//     z-index: 4;
-//     top: $header-total-height - $header-border-width + $tab-total-h + 5;
-//     left: 0;
-//     width: $tab-total-w + 2*$tab-padding;
-//     height: $tab-total-w + 2*$tab-padding;
-
-//     cursor: pointer;
-//     transition: 0.5s;
-
-//     color: #000;
-//     border: $header-border;
-//     border-width: $header-border-width;
-//     // border-bottom-right-radius: 15px;
-//     background-color: rgba($background-color, 0.7);
-// }
-// .redo {
-//     position: fixed;
-//     z-index: 4;
-//     top: $header-total-height - $header-border-width + $tab-total-h + 5 + 24 + 5 + 2;
-//     left: 0;
-//     width: $tab-total-w;
-//     height: $tab-total-w;
-
-//     cursor: pointer;
-//     transition: 0.5s;
-
-//     color: #000;
-//     border: $header-border;
-//     border-width: $header-border-width;
-//     border-bottom-right-radius: 15px;
-//     background-color: rgba($background-color, 0.7);
-// }
-
-// .undoredo__buttons {
-//     position: absolute;
-//     bottom: 5px;
-//     right: 5px;
-
-//     border-width: 5px;
-
-//     & > button {
-//         padding: 7px;
-//         background-color: rgb(245, 245, 245);
-
-//         &:first-child {
-//             border-top-left-radius: 5px;
-//             border-bottom-left-radius: 5px;
-
-//             border-right: 1px solid #000;
-//         }
-//         &:last-child {
-//             border-top-right-radius: 5px;
-//             border-bottom-right-radius: 5px;
-//         }
-
-//         & > img {
-//             width: 40px;
-//             margin-bottom: -3px;
-//         }
-
-//         &:hover {
-//             cursor: pointer;
-//             background-color: rgba(139,139,139,0.7);
-//         }
-//     }
-// }

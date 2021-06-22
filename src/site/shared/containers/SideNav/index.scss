@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/theme";
 
 $sidenav-width: 250px;
@@ -86,7 +87,7 @@ $sidenav-border-width: 5px;
 
         cursor: pointer;
 
-        border-bottom: solid $sidenav-border-width/3 $secondary-color;
+        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
         background-color: lighten($primary-color, 5%);
 
         &__icon {

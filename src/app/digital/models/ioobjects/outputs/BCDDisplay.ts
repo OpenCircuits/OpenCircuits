@@ -5,14 +5,15 @@ import {BCDFont} from "./BCDFont";
 import {ClampedValue} from "math/ClampedValue";
 import {PortsToDecimal} from "digital/utils/ComponentUtils";
 import {SegmentDisplay} from "./SegmentDisplay";
+import {Positioner} from "core/models/ports/positioners/Positioner";
+import {InputPort} from "digital/models/ports/InputPort";
 
-// Index for BCDFont can be found at https://en.wikipedia.org/wiki/ASCII
 
 @serializable("BCDDisplay")
 export class BCDDisplay extends SegmentDisplay {
     public constructor() {
-        // Always 7 inputs since number of segments is independent of number of inputs
-        super(new ClampedValue(7));
+        // Always 4 inputs since number of segments is independent of number of inputs
+        super(new ClampedValue(4), new Positioner<InputPort>("left", 0.6));
     }
 
     public setInputPortCount(val: number): void {
