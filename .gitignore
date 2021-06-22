@@ -14,8 +14,9 @@ site/public/js/combined-min.js
 tests/index.js
 app.yaml
 
-# IntelliJ
+# IDEConfig
 .idea/
+.vscode/
 
 # Secrets (to prevent devs from pushing api keys to the repo)
 src/secrets/
