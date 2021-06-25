@@ -51,14 +51,12 @@ const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}
      }, [isSaved, isAutoSave, helpers]);
 
     return (
-        <div className="header__right__settings__autosave" style={{ color: (isLoggedIn ? "": "grey") }}>
-            <img src="img/items/switchDown.svg" style={{display: (isAutoSave ? "" : "none")}} height="100%" alt="Auto save on" onClick={ (isLoggedIn ? () => SetAutoSave() : () => {})}/>
-            <img src="img/items/switchUp.svg"   style={{display: (isAutoSave ? "none" : "")}} height="100%" alt="Auto save off" onClick={ (isLoggedIn ? () => SetAutoSave() : () => {})}/>
+        <div className="header__right__settings__autosave">
+            <img src="img/items/switchDown.svg" style={{display: (isAutoSave ? "" : "none")}} height="100%" alt="Auto save on" />
+            <img src="img/items/switchUp.svg"   style={{display: (isAutoSave ? "none" : "")}} height="100%" alt="Auto save off" />
             <span title="Auto-Save"
-                  style={{
-                      display: (isLoggedIn ? "initial": "disabled")
-                  }}
-                  onClick={ (isLoggedIn ? () => SetAutoSave() : () => {})}>
+                  style={{ display: (isLoggedIn ? "initial" : "none") }}
+                  onClick={ () => SetAutoSave() }>
                 Auto Save: {isAutoSave ? "On" : "Off"}
             </span>
         </div>

@@ -52,14 +52,14 @@ const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, he
                    alt="Name of project" />
         </div>
         <div>
-            <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
+            <button className={`header__left__save ${isSaved? "invisible" : ""}`}
                     title="Save the circuit remotely"
-                    disabled={isLoading}
-                    onClick={() => helpers.SaveCircuitRemote() }>Save</button>
+                    disabled={isLoading || !isLoggedIn}
+                    onClick={isLoggedIn? () => helpers.SaveCircuitRemote() : ()=>{} }>Save</button>
         </div>
         <div className="header__left__saving__icons">
             <img src="img/icons/error.svg" className={error ? "" : "hide"} title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
-            <span className={isLoading ? "" : "hide"} title="Saving..."></span>
+            <span className={isLoading ? "" : "hide"} title="Saving..."/>
         </div>
     </div>
 );
