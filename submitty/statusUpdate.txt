@@ -1,5 +1,0 @@
-Jeff Gao (https://github.com/Demopans)
-STATUS UPDATE 2: Open Circuits
-This Week: Obtained VSCode, can actually explore the project with all the IDE bells and whistles now
-Next Week: Learn Angular. Try to fix https://github.com/OpenCircuits/OpenCircuits/issues/641 without hardcoding anything
-Blockers: Can't figure out how to attach VSCode to a running instance of the site. 
