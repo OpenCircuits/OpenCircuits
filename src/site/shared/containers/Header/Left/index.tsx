@@ -32,18 +32,8 @@ type DispatchProps = {
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({
-                         isLocked,
-                         isSaved,
-                         isLoggedIn,
-                         isLoading,
-                         circuitName,
-                         helpers,
-                         error,
-                         toggleLock,
-                         toggleSideNav,
-                         setCircuitName
-                     }: Props) => (
+const _HeaderLeft = ({isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, error, toggleLock, toggleSideNav,
+                         setCircuitName}: Props) => (
     <div className="header__left">
         <div>
             <span title="Side Bar" role="button" tabIndex={0}
@@ -66,9 +56,9 @@ const _HeaderLeft = ({
         </div>
         <div>
             <button className={`header__left__save ${isSaved ? "invisible" : ""}`}
-                    title="Save the circuit remotely"
+                    title={isLoggedIn?"Save the circuit remotely":"Log In to save the circuit"}
                     disabled={isLoading || !isLoggedIn}
-                    onClick={isLoggedIn ? () => helpers.SaveCircuitRemote() : () => {}}>Save
+                    onClick={isLoggedIn ? () => helpers.SaveCircuitRemote() : null}>Save
             </button>
         </div>
         <div className="header__left__saving__icons">
