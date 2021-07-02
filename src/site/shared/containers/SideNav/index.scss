@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/theme";
 
 $sidenav-width: 250px;
@@ -113,7 +114,9 @@ $sidenav-footer-margin-y: 10px;
         height: $height;
         padding: $padding-v $padding-h $padding-v $padding-h;
 
-        border-bottom: solid $sidenav-border-width/3 $secondary-color;
+        cursor: pointer;
+
+        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
         background-color: lighten($primary-color, 5%);
 
         cursor: pointer;

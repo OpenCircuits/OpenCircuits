@@ -10,6 +10,7 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.Static("/assets", "./site/assets")
 	router.Static("/img", "./site/img")
 	router.Static("/static", "./site/static")
+	router.Static("/examples", "./site/examples")
 
 	router.StaticFile("/", "./site/index.html")
 	router.StaticFile("/robots.txt", "./site/robots.txt")

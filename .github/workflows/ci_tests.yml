@@ -25,10 +25,13 @@ jobs:
       with:
         node-version: 15.x
 
-    - run: npm install
+    - run: yarn
 
     - name: Build backend [Golang]
-      run: npm run build -- server --ci
+      run: yarn build --ci server
+
+    - name: Build frontend [TypeScript]
+      run: yarn build --ci --prod digital
 
     - name: Run tests (App) [TypeScript]
-      run: npm test -- app --ci
+      run: yarn test  --ci app

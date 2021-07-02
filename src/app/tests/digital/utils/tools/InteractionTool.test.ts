@@ -8,10 +8,8 @@ import {SHIFT_KEY,
 
 import {V} from "Vector";
 
-import {ANDGate}     from "digital/models/ioobjects/gates/ANDGate";
-import {BUFGate}     from "digital/models/ioobjects/gates/BUFGate";
-import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
-import {Switch}      from "digital/models/ioobjects/inputs/Switch";
+import {ANDGate, BUFGate,
+        Multiplexer, Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";

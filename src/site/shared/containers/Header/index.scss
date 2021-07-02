@@ -1,8 +1,11 @@
+@use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "./constants";
 
 header {
-    position: fixed;
     z-index: 3;
+
+    display: flex;
+    flex-direction: row;
 
     width: 100%;
     height: $header-height;
@@ -11,12 +14,23 @@ header {
     border: $header-border;
     border-bottom-width: $header-border-width;
     background-color: $primary-color;
+
+    & > div {
+        flex: 1;
+
+        &:first-child {
+            margin-right: auto;
+        }
+        &:last-child {
+            margin-left: auto;
+        }
+    }
 }
 
 .header__center {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
     color: $secondary-color;
 
@@ -24,22 +38,19 @@ header {
     $github-margin: 10px;
 
     &__logo {
+        position: relative;
         top: 2px;
 
         width: $logo-width;
-        margin-left: -$logo-width/2;
-
-        @extend .header__center;
     }
 
     &__github {
-        top: 8px;
+        position: relative;
+        top: 2px;
 
         width: $header-height - 2*$header-padding;
         height: $header-height - 2*$header-padding;
-        margin-left: $logo-width/2 + $github-margin;
-
-        @extend .header__center;
+        margin-left: $github-margin;
     }
 
     @media (max-width: 900px) {

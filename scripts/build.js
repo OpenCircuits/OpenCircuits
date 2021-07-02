@@ -1,5 +1,5 @@
 const os = require("os");
-const {renameSync, existsSync, rmSync} = require("fs");
+const {existsSync, rmSync} = require("fs");
 const {spawn} = require("child_process");
 
 const ora = require("ora");
@@ -7,21 +7,23 @@ const chalk = require("chalk");
 const prompts = require("prompts");
 const yargs = require("yargs/yargs");
 
+const getDirs = require("./utils/getDirs");
 const copy_dir = require("./utils/copyDir");
+const startWebpack = require("./webpack");
 
 
-const DIRS = [
-    { title: "Server",  description: "The backend server for OpenCircuits", value: "server" },
-    { title: "Digital", description: "The digital version of OpenCircuits", value: "digital" },
-    { title: "Analog",  description: "The anlog version of OpenCircuits",   value: "analog", disabled: true },
-    { title: "Landing", description: "The landing page for OpenCircuits",   value: "landing", disabled: true }
-];
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = "production";
+process.env.NODE_ENV = "production";
+
+
+const DIRS = getDirs(true, false);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
 function build_server(prod) {
     return new Promise((resolve, reject) => {
-        // Copy go files to build folder
+        // GCP requires raw go files, so no need to build server
         if (prod) {
             copy_dir("src/server", "build")
             resolve();
@@ -30,35 +32,16 @@ function build_server(prod) {
 
         copy_dir("src/server/data/sql/sqlite", "build/sql/sqlite");
 
-        const cmd = (os.platform() === "win32" ?
-                        "cd src/server && go build -o ../../build/server.exe" :
-                        "cd src/server && go build -o ../../build/server");
-
-        spawn(cmd, {
-            shell: true,
-            stdio: "inherit"
+        const isWin = (os.platform() === "win32");
+        spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
+            shell: true, stdio: "inherit"
         }).on("exit", () => {
             resolve();
         });
     });
 }
-function build_dir(dir) {
-    return new Promise((resolve, reject) => {
-        spawn(`cd ${dir} && npm run build`, {
-            shell: true,
-            stdio: "inherit"
-        }).on("exit", () => {
-            if (existsSync(`${dir}/build`)) {
-                // Remove build/site folder
-                if (existsSync("build/site"))
-                    rmdirSync("build/site", { recursive: true });
-
-                // Successful build, move folder to <rootDir>/build/site
-                renameSync(`${dir}/build`, "build/site");
-            }
-            resolve();
-        });
-    });
+async function build_dir(dir) {
+    return await startWebpack(dir, "production");
 }
 
 
@@ -94,10 +77,10 @@ function build_dir(dir) {
         rmSync("build", { recursive: true, force: true });
 
     // If manual production build, copy secrets
-    if (prod && !ci)
+    if (prod && !ci && existsSync("src/secrets"))
         copy_dir("src/secrets", "build");
 
-    // Launch test in each directory
+    // Launch build in each directory
     for (const dir of dirs) {
         const info = DIR_MAP[dir];
         console.log();
@@ -109,7 +92,6 @@ function build_dir(dir) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
-
 
         if (dir === "server") {
             const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
