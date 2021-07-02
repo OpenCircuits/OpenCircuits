@@ -82,7 +82,7 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen,
                         (isEnabled && !isLocked) &&
                             <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
                                 title="Circuit Components"
-                                onClick={() => toggle()}>
+                                onClick={() => ToggleItemNav()}>
                                 <div></div>
                             </div>
                         }

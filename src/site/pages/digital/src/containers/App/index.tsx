@@ -77,8 +77,7 @@ export const App = ((store: AppStore) => {
     return function AppView() {
         return (
             <div className="App">
-                <SideNav info={info}
-                         helpers={helpers}
+                <SideNav helpers={helpers}
                          exampleCircuits={exampleCircuits} />
 
                 <div className="App__container">
