@@ -121,7 +121,7 @@ const precedences = new Map<FormatProps, FormatProps>([
     ["(", "|"],
 ]);
 
-const gateConstructors = new Map<string, () => DigitalComponent>([
+const GateConstructors = new Map<string, () => DigitalComponent>([
     ["|", () => new ORGate()],
     ["^", () => new XORGate()],
     ["&", () => new ANDGate()],
@@ -130,11 +130,11 @@ const gateConstructors = new Map<string, () => DigitalComponent>([
 
 function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     let newGate: Gate;
-    if(parent instanceof ANDGate)
+    if(oldGate instanceof ANDGate)
         newGate = new NANDGate();
-    else if(parent instanceof ORGate)
+    else if(oldGate instanceof ORGate)
         newGate = new NORGate();
-    else if(parent instanceof XORGate)
+    else if(oldGate instanceof XORGate)
         newGate = new XNORGate();
     else
         return null;
@@ -199,13 +199,13 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
     const rightCircuit = rightRet.circuit;
     const rightPort = rightRet.recentPort;
 
-    const newGate: DigitalComponent = gateConstructors.get(currentOp).call(null);
+    const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
     let newComponents: IOObject[] = rightCircuit.concat([newGate]);
     if(currentOp === "!") {
         const parent = rightPort.getParent();
         if(parent instanceof Gate && !(parent as Gate).isNot()) {
             const retInner = replaceGate(parent as Gate, rightCircuit);
-            if(retInner != null)
+            if(retInner !== null)
                 return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
         }
     }

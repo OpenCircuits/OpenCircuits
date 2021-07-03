@@ -50,7 +50,7 @@ type DispatchProps = {
     CloseHeaderPopups: typeof CloseHeaderPopups;
 }
 
-const Inputs: Map<string, ()=>DigitalComponent> = new Map<string, ()=>DigitalComponent>([
+const Inputs = new Map<string, () => DigitalComponent>([
     ["Constant Low", () => new ConstantLow()],
     ["Constant High", () => new ConstantHigh()],
     ["Button", () => new Button()],

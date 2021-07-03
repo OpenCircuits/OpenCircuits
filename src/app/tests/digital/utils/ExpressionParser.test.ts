@@ -840,4 +840,126 @@ describe("Expression Parser", () => {
             });
         });
     });
+
+    describe("Simplification", () => {
+        describe("Parse and Condense: '!(a|b)'", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+            const designer = new DigitalCircuitDesigner(0);
+        
+            const objectSet = ExpressionToCircuit(inputMap, "!(a|b)", o);
+            test("Condense to NOR", () => {
+                expect(objectSet.getComponents().length).toBe(4);
+            });
+            designer.addGroup(objectSet);
+        
+        
+            test("Initial State", () => {
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a on", () => {
+                a.activate(true);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Input a,b on", () => {
+                b.activate(true);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Input b on", () => {
+                a.activate(false);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Inputs off", () => {
+                b.activate(false);
+            
+                expect(o.isOn()).toBe(true);
+            });
+        });
+        
+        describe("Parse and Condense: '!(a^b)'", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+            const designer = new DigitalCircuitDesigner(0);
+        
+            const objectSet = ExpressionToCircuit(inputMap, "!(a^b)", o);
+            test("Condense to NOR", () => {
+                expect(objectSet.getComponents().length).toBe(4);
+            });
+            designer.addGroup(objectSet);
+        
+        
+            test("Initial State", () => {
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a on", () => {
+                a.activate(true);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Input a,b on", () => {
+                b.activate(true);
+            
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input b on", () => {
+                a.activate(false);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Inputs off", () => {
+                b.activate(false);
+            
+                expect(o.isOn()).toBe(true);
+            });
+        });
+        
+        describe("Parse and Condense: '!(a&b)'", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+            const designer = new DigitalCircuitDesigner(0);
+        
+            const objectSet = ExpressionToCircuit(inputMap, "!(a&b)", o);
+            test("Condense to NOR", () => {
+                expect(objectSet.getComponents().length).toBe(4);
+            });
+            designer.addGroup(objectSet);
+        
+        
+            test("Initial State", () => {
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a on", () => {
+                a.activate(true);
+            
+                expect(o.isOn()).toBe(true);
+            });
+            test("Input a,b on", () => {
+                b.activate(true);
+            
+                expect(o.isOn()).toBe(false);
+            });
+            test("Input b on", () => {
+                a.activate(false);
+            
+                expect(o.isOn()).toBe(true);
+            });
+            test("Inputs off", () => {
+                b.activate(false);
+            
+                expect(o.isOn()).toBe(true);
+            });
+        });
+    });
 });
