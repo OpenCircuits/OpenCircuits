@@ -9,6 +9,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, FormatProps} from "./ExpressionParserConstants";
+import { Console } from "console";
 
 
 /* Notes for connecting components
@@ -161,7 +162,7 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
 function parseOp(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, currentOp: FormatProps, ops: Map<FormatProps, string>, precedence: Map<FormatProps, FormatProps>): ReturnValue {
     const nextOp = precedence.get(currentOp);
 
-    if(nextOp === "(" && tokens[index] !== currentOp) {
+    if(nextOp === "(" && tokens[index] !== ops.get(currentOp)) {
         if(tokens[index] == ops.get("("))
             return parseOp(tokens, index, inputs, nextOp, ops, precedence);
         else {
@@ -342,7 +343,8 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     if(ops == null) {
         ops = FormatMap.get("|");
     }
-
+    // console.log(ops);
+    
     const components: IOObject[] = getComponentsValidate(inputs);
     const tokenList = getTokenListValidate(inputs, expression, output, ops);
 
