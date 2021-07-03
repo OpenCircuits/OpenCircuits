@@ -14,7 +14,8 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {FormatMap, OperatorFormats, ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {FormatMap, FormatProps}    from "digital/utils/ExpressionParserConstants";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();

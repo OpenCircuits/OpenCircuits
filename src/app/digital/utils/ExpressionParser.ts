@@ -8,6 +8,7 @@ import {ORGate, NORGate} from "digital/models/ioobjects/gates/ORGate";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {FormatMap, FormatProps} from "./ExpressionParserConstants";
 
 
 /* Notes for connecting components
@@ -35,87 +36,6 @@ interface ReturnValue {
     recentPort: OutputPort;
 }
 
-export interface OperatorFormats {
-    label: string;
-    or: string;
-    and: string;
-    xor: string;
-    not: string;
-    parenOpen: string;
-    parenClose: string;
-    separator: string;
-}
-
-const programming1 = {
-    label: "Programming 1 (&, |, ^, !)",
-    or: "|",
-    xor: "^",
-    and: "&",
-    not: "!",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-const programming2 = {
-    label: "Programming 2 (&&, ||, ^, !)",
-    or: "||",
-    xor: "^",
-    and: "&&",
-    not: "!",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-const algebraic1 = {
-    label: "Algebraic 1 (*, +, ^, !)",
-    or: "+",
-    xor: "^",
-    and: "*",
-    not: "!",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-const algebraic2 = {
-    label: "Algebraic 2 (*, +, ^, _)",
-    or: "+",
-    xor: "^",
-    and: "*",
-    not: "_",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-const literal1 = {
-    label: "Literal 1 (AND, OR, XOR, NOT)",
-    or: "OR",
-    xor: "XOR",
-    and: "AND",
-    not: "NOT",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-const literal2 = {
-    label: "Literal 2 (and, or, xor, not)",
-    or: "or",
-    xor: "xor",
-    and: "and",
-    not: "not",
-    parenOpen: "(",
-    parenClose: ")",
-    separator: " "
-};
-
-export const FormatMap = new Map<string, OperatorFormats>([
-    ["|", programming1],
-    ["||", programming2],
-    ["+", algebraic1],
-    ["+_", algebraic2],
-    ["OR", literal1],
-    ["or", literal2],
-]);
-
 /**
  * Checks if the substring of input starting at index is equal to sequence
  */
@@ -123,7 +43,7 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
-export function GenerateTokens(input: string, ops: OperatorFormats): Array<string> | null {
+export function GenerateTokens(input: string, ops: Map<FormatProps, string>): Array<string> | null {
     const tokenList = new Array<string>();
     let buffer = "";
     let addToBuffer = false;
@@ -135,39 +55,39 @@ export function GenerateTokens(input: string, ops: OperatorFormats): Array<strin
         extraSkip = 0;
         operandToAdd = ""
 
-        if(subEquals(input, i, ops.separator)) {
+        if(subEquals(input, i, ops.get("separator"))) {
             addToBuffer = true;
-            extraSkip = ops.separator.length - 1;
+            extraSkip = ops.get("separator").length - 1;
         }
-        else if(subEquals(input, i, ops.parenOpen)) {
+        else if(subEquals(input, i, ops.get("("))) {
             addToBuffer = true;
-            extraSkip = ops.parenOpen.length - 1;
-            operandToAdd = ops.parenOpen;
+            extraSkip = ops.get("(").length - 1;
+            operandToAdd = ops.get("(");
         }
-        else if(subEquals(input, i, ops.parenClose)) {
+        else if(subEquals(input, i, ops.get(")"))) {
             addToBuffer = true;
-            extraSkip = ops.parenClose.length - 1;
-            operandToAdd = ops.parenClose;
+            extraSkip = ops.get(")").length - 1;
+            operandToAdd = ops.get(")");
         }
-        else if(subEquals(input, i, ops.and)) {
+        else if(subEquals(input, i, ops.get("&"))) {
             addToBuffer = true;
-            extraSkip = ops.and.length - 1;
-            operandToAdd = ops.and;
+            extraSkip = ops.get("&").length - 1;
+            operandToAdd = ops.get("&");
         }
-        else if(subEquals(input, i, ops.xor)) {
+        else if(subEquals(input, i, ops.get("^"))) {
             addToBuffer = true;
-            extraSkip = ops.xor.length - 1;
-            operandToAdd = ops.xor;
+            extraSkip = ops.get("^").length - 1;
+            operandToAdd = ops.get("^");
         }
-        else if(subEquals(input, i, ops.or)) {
+        else if(subEquals(input, i, ops.get("|"))) {
             addToBuffer = true;
-            extraSkip = ops.or.length - 1;
-            operandToAdd = ops.or;
+            extraSkip = ops.get("|").length - 1;
+            operandToAdd = ops.get("|");
         }
-        else if(subEquals(input, i, ops.not)) {
+        else if(subEquals(input, i, ops.get("!"))) {
             addToBuffer = true;
-            extraSkip = ops.not.length - 1;
-            operandToAdd = ops.not;
+            extraSkip = ops.get("!").length - 1;
+            operandToAdd = ops.get("!");
         }
 
         if (addToBuffer) {
@@ -192,89 +112,20 @@ export function GenerateTokens(input: string, ops: OperatorFormats): Array<strin
     return tokenList;
 }
 
-function parseOr(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
-    const leftRet = parseXor(tokens, index, inputs, ops);
-    index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != ops.or)
-        return leftRet;
-    index += 1;
-    if(index >= tokens.length)
-        throw new Error("Missing Right Operand: " + ops.or);
+const precedences = new Map<FormatProps, FormatProps>([
+    ["|", "^"],
+    ["^", "&"],
+    ["&", "!"],
+    ["!", "("],
+    ["(", "|"],
+]);
 
-    const leftCircuit = leftRet.circuit;
-    const leftPort = leftRet.recentPort;
-    const rightRet = parseOr(tokens, index, inputs, ops);
-    const rightCircuit = rightRet.circuit;
-    index = rightRet.retIndex;
-    const rightPort = rightRet.recentPort;
-
-    const newGate = new ORGate();
-    const w1 = new DigitalWire(leftPort, newGate.getInputPort(0));
-    const w2 = new DigitalWire(rightPort, newGate.getInputPort(1));
-    leftPort.connect(w1);
-    newGate.getInputPort(0).connect(w1);
-    rightPort.connect(w2);
-    newGate.getInputPort(1).connect(w2);
-    const newComponents: IOObject[] = [newGate, w1, w2];
-
-    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
-}
-
-function parseXor(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
-    const leftRet = parseAnd(tokens, index, inputs, ops);
-    index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != ops.xor)
-        return leftRet;
-    index += 1;
-    if(index >= tokens.length)
-        throw new Error("Missing Right Operand: " + ops.xor);
-
-    const leftCircuit = leftRet.circuit;
-    const leftPort = leftRet.recentPort;
-    const rightRet = parseXor(tokens, index, inputs, ops);
-    const rightCircuit = rightRet.circuit;
-    index = rightRet.retIndex;
-    const rightPort = rightRet.recentPort;
-
-    const newGate = new XORGate();
-    const w1 = new DigitalWire(leftPort, newGate.getInputPort(0));
-    const w2 = new DigitalWire(rightPort, newGate.getInputPort(1));
-    leftPort.connect(w1);
-    newGate.getInputPort(0).connect(w1);
-    rightPort.connect(w2);
-    newGate.getInputPort(1).connect(w2);
-    const newComponents: IOObject[] = [newGate, w1, w2];
-
-    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
-}
-
-function parseAnd(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
-    const leftRet = parseNot(tokens, index, inputs, ops);
-    index = leftRet.retIndex;
-    if(index >= tokens.length || tokens[index] != ops.and)
-        return leftRet;
-    index += 1;
-    if(index >= tokens.length)
-        throw new Error("Missing Right Operand: " + ops.and);
-
-    const leftCircuit = leftRet.circuit;
-    const leftPort = leftRet.recentPort;
-    const rightRet = parseAnd(tokens, index, inputs, ops);
-    const rightCircuit = rightRet.circuit;
-    index = rightRet.retIndex;
-    const rightPort = rightRet.recentPort;
-
-    const newGate = new ANDGate();
-    const w1 = new DigitalWire(leftPort, newGate.getInputPort(0));
-    const w2 = new DigitalWire(rightPort, newGate.getInputPort(1));
-    leftPort.connect(w1);
-    newGate.getInputPort(0).connect(w1);
-    rightPort.connect(w2);
-    newGate.getInputPort(1).connect(w2);
-    const newComponents: IOObject[] = [newGate, w1, w2];
-
-    return {circuit: newComponents.concat(leftCircuit).concat(rightCircuit), retIndex: index, recentPort: newGate.getOutputPort(0)};
-}
+const gates = new Map([
+    ["|", () => new ORGate()],
+    ["^", () => new XORGate()],
+    ["&", () => new ANDGate()],
+    ["!", () => new ORGate()],
+])
 
 function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     let newGate: Gate;
@@ -307,64 +158,85 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     return {circuit: circuit, retIndex: -1, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseNot(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
-    if(tokens[index] != ops.not) {
-        if(tokens[index] == ops.parenOpen)
-            return parseParen(tokens, index, inputs, ops);
-        else
+function parseOp(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, currentOp: FormatProps, ops: Map<FormatProps, string>, precedence: Map<FormatProps, FormatProps>): ReturnValue {
+    const nextOp = precedence.get(currentOp);
+
+    if(nextOp === "(" && tokens[index] !== currentOp) {
+        if(tokens[index] == ops.get("("))
+            return parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        else {
             return parseOther(tokens, index, inputs, ops);
+        }
+    }
+
+    let leftRet: ReturnValue = null;
+    if(currentOp !== "!" && currentOp !== "(") {
+        const leftRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        if(index >= tokens.length || tokens[index] !== ops.get(currentOp))
+            return leftRet;
     }
     index += 1;
-    if(index >= tokens.length)
-        throw new Error("Missing Operand: " + ops.not);
-
-    let ret: ReturnValue;
-    if(tokens[index] == ops.not)
-        ret = parseNot(tokens, index, inputs, ops);
-    else if(tokens[index] == ops.parenOpen)
-        ret = parseParen(tokens, index, inputs, ops);
+    if(index >= tokens.length) {
+        if(currentOp == "(")
+            throw new Error("Encountered Unmatched " + ops.get("("));
+        throw new Error("Missing Right Operand: " + ops.get(currentOp));
+    }
+    
+    let rightRet: ReturnValue = null;
+    if(currentOp === "!" && tokens[index] === ops.get("!"))
+        rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
+    else if(nextOp === "(" && tokens[index] !== ops.get("("))
+        rightRet = parseOther(tokens, index, inputs, ops);
     else
-        ret = parseOther(tokens, index, inputs, ops);
-    const circuit = ret.circuit;
-    index = ret.retIndex;
-    const port = ret.recentPort;
-    const parent = port.getParent();
-    if(parent instanceof Gate && !(parent as Gate).isNot()) {
-        const retInner = replaceGate(parent as Gate, circuit);
-        if(retInner != null)
-            return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
+        rightRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+    index = rightRet.retIndex;
+    if(currentOp === "(") {
+        if(rightRet.retIndex >= tokens.length)
+            throw new Error("Encountered Unmatched " + ops.get("("));
+        rightRet.retIndex += 1;
+        return rightRet;
     }
-    const gate = new NOTGate();
-    const wire = new DigitalWire(port, gate.getInputPort(0));
-    gate.getInputPort(0).connect(wire);
-    port.connect(wire);
-    const newComponents: IOObject[] = [gate, wire];
+    const rightCircuit = rightRet.circuit;
+    const rightPort = rightRet.recentPort;
 
-    return {circuit: circuit.concat(newComponents), retIndex: index, recentPort: gate.getOutputPort(0)};
+    const newGate = gates.get(currentOp).call(null);
+    let newComponents: IOObject[] = rightCircuit.concat([newGate]);
+    if(currentOp === "!") {
+        const parent = rightPort.getParent();
+        if(parent instanceof Gate && !(parent as Gate).isNot()) {
+            const retInner = replaceGate(parent as Gate, rightCircuit);
+            if(retInner != null)
+                return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
+        }
+    }
+    else {
+        newComponents = newComponents.concat(leftRet.circuit);
+        const leftPort = leftRet.recentPort;
+        const w1 = new DigitalWire(leftPort, newGate.getInputPort(1));
+        leftPort.connect(w1);
+        newGate.getInputPort(1).connect(w1);
+        newComponents = newComponents.concat(w1);
+    }
+    const w2 = new DigitalWire(rightPort, newGate.getInputPort(0));
+    rightPort.connect(w2);
+    newGate.getInputPort(0).connect(w2);
+    newComponents = newComponents.concat(w2);
+
+    return {circuit: newComponents, retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseParen(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
-    index += 1;
-    if(index >= tokens.length)
-        throw new Error("Encountered Unmatched " + ops.parenOpen);
-    const ret = parseOr(tokens, index, inputs, ops);
-    index = ret.retIndex;
-    if(index >= tokens.length)
-        throw new Error("Encountered Unmatched " + ops.parenOpen);
-    ret.retIndex += 1;
-    return ret;
-}
-
-function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: OperatorFormats): ReturnValue {
+function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: Map<FormatProps, string>): ReturnValue {
     const inputName = tokens[index];
     if(!inputs.has(inputName)) {
         switch (inputName) {
-        case ops.and:
-        case ops.or:
-        case ops.xor:
+        case ops.get("&"):
+        case ops.get("|"):
+        case ops.get("^"):
             throw new Error("Missing Left Operand: " + inputName);
-        case ops.parenClose:
-            throw new Error("Encountered Unmatched " + ops.parenClose);
+        case ops.get(")"):
+            throw new Error("Encountered Unmatched " + ops.get(")"));
+        default:
+            throw new Error("Input Not Found: " + inputName);
         }
     }
     const inputComponent = inputs.get(inputName);
@@ -387,36 +259,36 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
-function isInput(token: string, ops: OperatorFormats) {
+function isInput(token: string, ops: Map<FormatProps, string>) {
     switch(token) {
-    case ops.parenOpen:
-    case ops.parenClose:
-    case ops.and:
-    case ops.xor:
-    case ops.or:
-    case ops.not:
+    case ops.get("("):
+    case ops.get(")"):
+    case ops.get("&"):
+    case ops.get("^"):
+    case ops.get("|"):
+    case ops.get("!"):
         return false;
     }
     return true;
 }
 
-function isOperator(token: string, ops: OperatorFormats) {
+function isOperator(token: string, ops: Map<FormatProps, string>) {
     switch(token) {
-    case ops.and:
-    case ops.xor:
-    case ops.or:
+    case ops.get("&"):
+    case ops.get("^"):
+    case ops.get("|"):
         return true;
     }
     return false;
 }
 
-function validateToken(inputs: Map<string, DigitalComponent>, token: string, ops: OperatorFormats) {
+function validateToken(inputs: Map<string, DigitalComponent>, token: string, ops: Map<FormatProps, string>) {
     if (isInput(token, ops) && !inputs.has(token))
         throw new Error("Input Not Found: " + token);
 }
 
 function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
-                       output: DigitalComponent, ops: OperatorFormats): string[] {
+                       output: DigitalComponent, ops: Map<FormatProps, string>): string[] {
     if(output.getInputPortCount().getValue() == 0
       || output.getOutputPortCount().getValue() != 0) {
         throw new Error("Supplied Output Is Not An Output");
@@ -463,7 +335,7 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: OperatorFormats = null): DigitalObjectSet | null {
+                                    ops: Map<FormatProps, string> = null): DigitalObjectSet | null {
     if(inputs == null)  throw new Error("Null Parameter: inputs");
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
@@ -476,10 +348,10 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     if(inputs.size == 0) return new DigitalObjectSet();
 
-    const parseRet = parseOr(tokenList, 0, inputs, ops);
+    const parseRet = parseOp(tokenList, 0, inputs, "|", ops, precedences);
     const index = parseRet.retIndex;
-    if(index < tokenList.length && tokenList[index] == ops.parenClose)
-        throw new Error("Encountered Unmatched " + ops.parenClose);
+    if(index < tokenList.length && tokenList[index] == ops.get(")"))
+        throw new Error("Encountered Unmatched " + ops.get(")"));
     const circuit = parseRet.circuit;
     const outPort = parseRet.recentPort;
     const wire = new DigitalWire(outPort, output.getInputPort(0));

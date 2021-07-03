@@ -33,8 +33,9 @@ import {Button}                 from "digital/models/ioobjects/inputs/Button";
 import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
-        FormatMap,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
+import {FormatMap,
+        FormatProps}    from "digital/utils/ExpressionParserConstants";
 
 import "./index.scss";
 
@@ -121,7 +122,7 @@ export const ExprToCircuitPopup = (() => {
             const formats = Array.from(FormatMap.entries()).map((formatEntry) =>
                 <>
                     <input type="radio" id={formatEntry[0]} name="format" checked={format === formatEntry[0]} onChange={() => setFormat(formatEntry[0])} value={formatEntry[0]} />
-                    <label htmlFor={formatEntry[0]}>{formatEntry[1].label}</label><br/>
+                    <label htmlFor={formatEntry[0]}>{formatEntry[1].get("label")}</label><br/>
                 </>
             );
 
