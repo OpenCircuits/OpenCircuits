@@ -121,11 +121,11 @@ const precedences = new Map<FormatProps, FormatProps>([
     ["(", "|"],
 ]);
 
-const gates = new Map([
+const gateConstructors = new Map<string, () => DigitalComponent>([
     ["|", () => new ORGate()],
     ["^", () => new XORGate()],
     ["&", () => new ANDGate()],
-    ["!", () => new ORGate()],
+    ["!", () => new NOTGate()],
 ])
 
 function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
@@ -165,24 +165,23 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
     if(nextOp === "(" && tokens[index] !== ops.get(currentOp)) {
         if(tokens[index] == ops.get("("))
             return parseOp(tokens, index, inputs, nextOp, ops, precedence);
-        else {
+        else
             return parseOther(tokens, index, inputs, ops);
-        }
     }
 
     let leftRet: ReturnValue = null;
     if(currentOp !== "!" && currentOp !== "(") {
-        const leftRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        leftRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        index = leftRet.retIndex;
         if(index >= tokens.length || tokens[index] !== ops.get(currentOp))
             return leftRet;
     }
     index += 1;
     if(index >= tokens.length) {
-        if(currentOp == "(")
+        if(currentOp === "(")
             throw new Error("Encountered Unmatched " + ops.get("("));
         throw new Error("Missing Right Operand: " + ops.get(currentOp));
     }
-    
     let rightRet: ReturnValue = null;
     if(currentOp === "!" && tokens[index] === ops.get("!"))
         rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
@@ -200,7 +199,7 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
     const rightCircuit = rightRet.circuit;
     const rightPort = rightRet.recentPort;
 
-    const newGate = gates.get(currentOp).call(null);
+    const newGate: DigitalComponent = gateConstructors.get(currentOp).call(null);
     let newComponents: IOObject[] = rightCircuit.concat([newGate]);
     if(currentOp === "!") {
         const parent = rightPort.getParent();
@@ -240,11 +239,8 @@ function parseOther(tokens: Array<string>, index: number, inputs: Map<string, Di
             throw new Error("Input Not Found: " + inputName);
         }
     }
-    const inputComponent = inputs.get(inputName);
-    const newOutput = inputComponent.getOutputPort(0);
-    const newCircuit: IOObject[] = [];
     index += 1;
-    return {circuit: newCircuit, retIndex: index, recentPort: newOutput};
+    return {circuit: [], retIndex: index, recentPort: inputs.get(inputName).getOutputPort(0)};
 }
 
 function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[] {

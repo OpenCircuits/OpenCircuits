@@ -258,7 +258,7 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"!",o);
-            }).toThrow("Missing Operand: !");
+            }).toThrow("Missing Right Operand: !");
             expect(() => {
                 ExpressionToCircuit(inputMap,"&a",o);
             }).toThrow("Missing Left Operand: &");
