@@ -62,8 +62,7 @@ const Inputs: Map<string, ()=>DigitalComponent> = new Map<string, ()=>DigitalCom
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string) {
     const ops = FormatMap.get(format);
-    const opsSet = new Set(Object.values(ops));
-    
+    const opsSet = new Set([ops.get("|"), ops.get("^"), ops.get("&"), ops.get("!"), ops.get("("), ops.get(")")]);
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     let token: string;
