@@ -7,7 +7,7 @@ import {SharedAppState} from "shared/state";
 import {ToggleItemNav} from "shared/state/ItemNav/actions";
 import {Overlay} from "shared/components/Overlay";
 
-import {CloseHistoryBox, OpenHistoryBox, ToggleSideNav} from "shared/state/SideNav/actions";
+import {CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav/actions";
 
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
@@ -122,7 +122,7 @@ const MapState = (state: SharedAppState) => ({
     isLocked: state.circuit.isLocked,
     isEnabled: state.itemNav.isEnabled,
     isOpen: state.itemNav.isOpen,
-    isHistoryBoxOpen: state.sideNav.isHistoryBoxOpen,
+    isHistoryBoxOpen: state.itemNav.isHistoryBoxOpen,
 });
 const MapDispatch = { ToggleItemNav, OpenHistoryBox, CloseHistoryBox };
 
