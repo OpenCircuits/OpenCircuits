@@ -187,8 +187,10 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
         rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
     else if(nextOp === "(" && tokens[index] !== ops.get("("))
         rightRet = parseOther(tokens, index, inputs, ops);
-    else
+    else if(currentOp === "!" || currentOp === "(")
         rightRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+    else
+        rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
     index = rightRet.retIndex;
     if(currentOp === "(") {
         if(rightRet.retIndex >= tokens.length)
@@ -357,6 +359,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     output.getInputPort(0).connect(wire);
     components.push(wire);
     components.push(output);
-
+    if(index < tokenList.length)
+        console.log("DONE: " + index + " " + tokenList.length);
     return new DigitalObjectSet(circuit.concat(components));
 }
