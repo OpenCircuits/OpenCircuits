@@ -19,3 +19,4 @@ app.yaml
 
 # Secrets (to prevent devs from pushing api keys to the repo)
 src/secrets/
+/submitty/
