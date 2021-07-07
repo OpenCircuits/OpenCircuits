@@ -45,8 +45,9 @@ const _MainDesigner = ({info, isLocked}: Props) => {
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes
+        camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes. called every time alt tab is don
         renderer.render(); // Re-render
+        renderer.render(); // hacky hack to re render in case of a full screen messing with how some objects get de rendered while in bounds
     }, [w, h]);
 
 
