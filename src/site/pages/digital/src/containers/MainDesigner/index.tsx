@@ -48,6 +48,7 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes. called every time alt tab is don
         renderer.render(); // Re-render
         renderer.render(); // hacky hack to re render in case of a full screen messing with how some objects get de rendered while in bounds
+                           // find actual fix
     }, [w, h]);
 
 
