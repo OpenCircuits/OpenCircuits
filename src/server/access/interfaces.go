@@ -6,12 +6,15 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-type AccessLevel = uint32
+// Use signed int so negative overflow bugs cant't elevate perms
+type AccessLevel = int32
 
 const (
-	AccessNone = 0
-	AccessView = 10
-	AccessEdit = 100
+	AccessNone    = 0
+	AccessView    = 10
+	AccessEdit    = 20
+	AccessOwner   = 30
+	AccessCreater = 40
 )
 
 // Permission data for a single circuit / user

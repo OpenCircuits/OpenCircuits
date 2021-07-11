@@ -1,6 +1,7 @@
 package access
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/access"
@@ -8,7 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Wrapper(m access.DataDriver, f func(_ access.DataDriver, _ *gin.Context, _ access.UserPermission)) func(_ *gin.Context, _ model.UserId) {
+type AccessHandler = func(_ access.DataDriver, _ *gin.Context, _ access.UserPermission) (int, interface{})
+
+func Wrapper(m access.DataDriver, f AccessHandler) func(_ *gin.Context, _ model.UserId) {
 	return func(c *gin.Context, userId model.UserId) {
 		// Get the requester's permission level
 		requesterPerms, err := m.GetCircuitUser(c.Param("cid"), userId)
@@ -20,119 +23,118 @@ func Wrapper(m access.DataDriver, f func(_ access.DataDriver, _ *gin.Context, _ 
 			c.JSON(http.StatusNotFound, nil)
 			return
 		}
-		f(m, c, *requesterPerms)
+		code, obj := f(m, c, *requesterPerms)
+
+		// Cast errors specially, and omit them in release mode
+		if err, ok := obj.(error); ok {
+			debug := true
+			if code/100 == 5 && debug {
+				obj = gin.H{"error": err.Error()}
+			} else {
+				obj = nil
+			}
+		}
+		c.JSON(code, obj)
 	}
 }
 
-func GetCircuit(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) {
-	// TODO User must have edit permissions to view all
-	if requesterPerms.AccessLevel >= access.AccessEdit {
-		c.JSON(http.StatusForbidden, nil)
-		return
+func GetCircuit(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) (int, interface{}) {
+	if requesterPerms.CanEnumeratePerms() {
+		return http.StatusForbidden, nil
 	}
 
 	perms, err := m.GetCircuit(requesterPerms.CircuitId)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, nil)
-		return
+		return http.StatusInternalServerError, nil
 	}
 
-	c.JSON(http.StatusAccepted, perms)
+	return http.StatusAccepted, perms
 }
 
-func UpsertCircuitUser(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) {
+func UpsertCircuitUser(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) (int, interface{}) {
 	// Get the proposed user permission addition
 	var proposedPerms access.UserPermission
 	err := c.ShouldBindJSON(&proposedPerms)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return http.StatusInternalServerError, err
 	}
 
-	// TODO Check that the requesting user can extend the requested permissions
-	if requesterPerms.AccessLevel < proposedPerms.AccessLevel {
-		c.JSON(http.StatusForbidden, nil)
-		return
+	if !requesterPerms.CanExtendUser(proposedPerms) {
+		return http.StatusForbidden, nil
 	}
 
 	// Add / update the permission in the database
 	proposedPerms.CircuitId = requesterPerms.CircuitId
 	err = m.UpsertCircuitUser(proposedPerms)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return http.StatusInternalServerError, err
 	}
 
-	c.JSON(http.StatusAccepted, nil)
+	return http.StatusAccepted, nil
 }
 
-func UpsertCircuitLink(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) {
+func UpsertCircuitLink(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) (int, interface{}) {
 	// Get the proposed user permission addition
 	var proposedPerms access.LinkPermission
 	err := c.ShouldBindJSON(&proposedPerms)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return http.StatusBadRequest, err
 	}
 
-	// TODO Check that the requesting user can extend the requested permissions
-	if requesterPerms.AccessLevel < proposedPerms.AccessLevel {
-		c.JSON(http.StatusForbidden, nil)
-		return
+	if !requesterPerms.CanExtendLink(proposedPerms) {
+		return http.StatusForbidden, nil
 	}
 
 	// Add / update the permission in the database
 	proposedPerms.CircuitId = requesterPerms.CircuitId
 	resultPerms, err := m.UpsertCircuitLink(proposedPerms)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return http.StatusInternalServerError, err
 	}
 
-	c.JSON(http.StatusAccepted, resultPerms)
+	return http.StatusAccepted, resultPerms
 }
 
-func DeleteCircuitUser(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) {
+func DeleteCircuitUser(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) (int, interface{}) {
 	uid := c.Param("uid")
-
-	// TODO Check that the requesting user can delete the requested permissions
-	if requesterPerms.AccessLevel < access.AccessEdit {
-		c.JSON(http.StatusForbidden, nil)
-		return
-	}
-
-	err := m.DeleteCircuitUser(requesterPerms.CircuitId, uid)
+	revokedPerm, err := m.GetCircuitUser(requesterPerms.CircuitId, uid)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return http.StatusInternalServerError, err
+	}
+	if revokedPerm == nil {
+		return http.StatusNotFound, nil
 	}
 
-	c.JSON(http.StatusAccepted, nil)
+	if !requesterPerms.CanRevokeUser(*revokedPerm) {
+		return http.StatusForbidden, nil
+	}
+
+	err = m.DeleteCircuitUser(requesterPerms.CircuitId, revokedPerm.UserId)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusAccepted, nil
 }
 
-func DeleteCircuitLink(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) {
+func DeleteCircuitLink(m access.DataDriver, c *gin.Context, requesterPerms access.UserPermission) (int, interface{}) {
 	lid := c.Param("lid")
 	linkPerms, err := m.GetLink(lid)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return http.StatusBadRequest, err
 	}
 	if linkPerms.CircuitId != requesterPerms.CircuitId {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "link id does not match circuit id"})
-		return
+		return http.StatusBadRequest, errors.New("link id does not match circuit id")
 	}
 
-	// TODO Check that the requesting user can delte the requested permissions
-	if requesterPerms.AccessLevel < access.AccessEdit {
-		c.JSON(http.StatusForbidden, nil)
-		return
+	if requesterPerms.CanRevokeLink(*linkPerms) {
+		return http.StatusForbidden, nil
 	}
 
 	err = m.DeleteLink(lid)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return http.StatusInternalServerError, err
 	}
 
-	c.JSON(http.StatusAccepted, nil)
+	return http.StatusAccepted, nil
 }
