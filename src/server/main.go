@@ -60,6 +60,7 @@ func main() {
 	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
+	authManager.RegisterAuthenticationMethod(auth.AnonAuthMethod{})
 
 	// Set up the storage interface
 	var userCsif interfaces.CircuitStorageInterfaceFactory

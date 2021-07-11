@@ -9,6 +9,19 @@ type AuthenticationManager struct {
 	AuthMethods []AuthenticationMethod
 }
 
+type AnonAuthMethod struct {
+}
+
+const AnonUserID = "ANON"
+
+func (AnonAuthMethod) RegisterHandlers(*gin.Engine) {}
+func (AnonAuthMethod) ExtractIdentity(string) (string, error) {
+	return AnonUserID, nil
+}
+func (AnonAuthMethod) AuthHeaderPrefix() string {
+	return "anon"
+}
+
 // RegisterAuthenticationMethod Registers an authentication method with the manager
 func (am *AuthenticationManager) RegisterAuthenticationMethod(method AuthenticationMethod) {
 	am.AuthMethods = append(am.AuthMethods, method)
