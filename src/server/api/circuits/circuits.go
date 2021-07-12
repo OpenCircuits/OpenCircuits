@@ -1,4 +1,4 @@
-package api
+package circuits
 
 import (
 	"encoding/json"
@@ -6,16 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/access"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
-	"github.com/gin-gonic/gin"
 )
-
-func circuitHandler(m interfaces.CircuitStorageInterfaceFactory, f func(_ interfaces.CircuitStorageInterfaceFactory, _ *gin.Context, _ model.UserId)) func(_ *gin.Context, _ model.UserId) {
-	return func(c *gin.Context, userId model.UserId) {
-		f(m, c, userId)
-	}
-}
 
 func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 	x, err := ioutil.ReadAll(r)
@@ -31,17 +25,32 @@ func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 	return newCircuit, nil
 }
 
-func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	circuitId := c.Param("id")
+func accessCheck(c *api.Context, circuitId model.CircuitId, m func(_ access.UserPermission) bool) bool {
+	userId := c.Identity()
 
-	storageInterface := m.CreateCircuitStorageInterface()
+	// Access check
+	requesterPerms, err := c.Access.GetCircuitUser(circuitId, userId)
+	if err != nil || requesterPerms == nil {
+		c.JSON(http.StatusBadRequest, nil)
+		return false
+	}
+	if !m(*requesterPerms) {
+		c.JSON(http.StatusForbidden, nil)
+		return false
+	}
+	return true
+}
+
+func Store(c *api.Context) {
+	circuitId := c.Param("id")
+	if !accessCheck(c, circuitId, access.UserPermission.CanEdit) {
+		return
+	}
+
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
 		c.JSON(http.StatusNotFound, nil)
-		return
-	}
-	if circuit.Metadata.Owner != userId {
-		c.JSON(http.StatusForbidden, nil)
 		return
 	}
 
@@ -58,8 +67,9 @@ func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	c.JSON(http.StatusAccepted, circuit.Metadata)
 }
 
-func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	storageInterface := m.CreateCircuitStorageInterface()
+func Create(c *api.Context) {
+	userId := c.Identity()
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
@@ -72,31 +82,35 @@ func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(circuit)
 
+	// Add user as owner in access db
+	c.Access.UpsertCircuitUser(access.UserPermission{
+		UserId:      userId,
+		CircuitId:   circuit.Metadata.ID,
+		AccessLevel: access.AccessCreater,
+	})
+
 	// Returned the updated metadata so the client can get any changes the server made to it
 	c.JSON(http.StatusAccepted, circuit.Metadata)
 }
 
-func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
+func Load(c *api.Context) {
 	circuitId := c.Param("id")
+	if !accessCheck(c, circuitId, access.UserPermission.CanView) {
+		return
+	}
 
-	storageInterface := m.CreateCircuitStorageInterface()
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
 		c.JSON(http.StatusNotFound, nil)
 		return
 	}
-
-	// Only owner can access... for now
-	if circuit.Metadata.Owner != userId {
-		c.JSON(http.StatusNotFound, nil)
-		return
-	}
-
 	c.JSON(http.StatusOK, circuit)
 }
 
-func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	storageInterface := m.CreateCircuitStorageInterface()
+func Query(c *api.Context) {
+	userId := c.Identity()
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuits := storageInterface.EnumerateCircuits(userId)
 	if circuits == nil {
 		circuits = []model.CircuitMetadata{}
@@ -104,17 +118,16 @@ func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Con
 	c.JSON(http.StatusOK, circuits)
 }
 
-func circuitDeleteHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
+func Delete(c *api.Context) {
 	circuitId := c.Param("id")
-	storageInterface := m.CreateCircuitStorageInterface()
-
-	// The initial "Can Delete" logic is the same as "Is Owner"
-	circuit := storageInterface.LoadCircuit(circuitId)
-	if circuit == nil || circuit.Metadata.Owner != userId {
-		c.JSON(http.StatusForbidden, nil)
+	if !accessCheck(c, circuitId, access.UserPermission.CanDelete) {
 		return
 	}
 
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	storageInterface.DeleteCircuit(circuitId)
+
+	c.Access.DeleteCircuit(circuitId)
+
 	c.JSON(http.StatusOK, nil)
 }

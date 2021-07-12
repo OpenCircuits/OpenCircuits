@@ -22,7 +22,7 @@ type DataDriver interface {
 	UpsertCircuitLink(perm LinkPermission) (LinkPermission, error)
 
 	// Deletes all permissions for a circuit
-	// DeleteCircuit(circuitId model.CircuitId) error
+	DeleteCircuit(circuitId model.CircuitId) error
 	// Deletes permissions for a given user and circuit
 	DeleteCircuitUser(circuitId model.CircuitId, userId model.UserId) error
 	// Deletes permissions for a given link

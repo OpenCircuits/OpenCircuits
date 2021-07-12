@@ -19,10 +19,11 @@ const (
 
 // Permission data for a single circuit / user
 type UserPermission struct {
-	CircuitId   model.CircuitId `json:"circuit_id"`
-	UserId      model.UserId    `json:"user_id"`
-	AccessLevel AccessLevel     `json:"access_level"`
-	Expiration  time.Time       `json:"expiration"`
+	CircuitId   model.CircuitId `json:"circuit_id" binding:"required"`
+	UserId      model.UserId    `json:"user_id" binding:"required"`
+	AccessLevel AccessLevel     `json:"access_level" binding:"required"`
+	// TODO: Make required
+	Expiration time.Time `json:"expiration"`
 }
 type UserPermissions = map[model.UserId]UserPermission
 
@@ -30,18 +31,18 @@ type LinkId = model.CircuitId
 
 // Permission data for link-based sharing
 type LinkPermission struct {
-	CircuitId   model.CircuitId `json:"circuit_id"`
+	CircuitId   model.CircuitId `json:"circuit_id" binding:"required"`
 	LinkId      LinkId          `json:"link_id"`
-	AccessLevel AccessLevel     `json:"access_level"`
-	Expiration  time.Time       `json:"expiration"`
+	AccessLevel AccessLevel     `json:"access_level" binding:"required"`
+	Expiration  time.Time       `json:"expiration" binding:"required"`
 }
 type LinkPermissions = map[LinkId]LinkPermission
 
 // All permission data for a circuit
 type CircuitPermissions struct {
-	CircuitId model.CircuitId `json:"circuit_id"`
-	UserPerms UserPermissions `json:"user_perms"`
-	LinkPerms LinkPermissions `json:"link_perms"`
+	CircuitId model.CircuitId `json:"circuit_id" binding:"required"`
+	UserPerms UserPermissions `json:"user_perms" binding:"required"`
+	LinkPerms LinkPermissions `json:"link_perms" binding:"required"`
 	// Public    bool
 }
 

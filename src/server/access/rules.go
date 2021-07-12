@@ -8,7 +8,8 @@ func (user UserPermission) IsAnonymous() bool {
 
 func (user UserPermission) CanExtendUser(target UserPermission) bool {
 	// TODO: Use date
-	return target.AccessLevel <= user.AccessLevel
+	return target.AccessLevel <= user.AccessLevel &&
+		target.AccessLevel < AccessCreater
 }
 
 // The maximum permission level that can be extended via links
@@ -24,12 +25,17 @@ func (user UserPermission) CanExtendLink(target LinkPermission) bool {
 	return user.AccessLevel >= AccessOwner
 }
 
+func (user UserPermission) CanView() bool {
+	// TODO: Use date
+	return user.AccessLevel >= AccessView
+}
+
 func (user UserPermission) CanEdit() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessEdit
 }
 
-func (user UserPermission) CanDeleteCircuit() bool {
+func (user UserPermission) CanDelete() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessCreater
 }

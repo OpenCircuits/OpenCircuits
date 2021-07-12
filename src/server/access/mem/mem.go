@@ -69,6 +69,11 @@ func (m *memDriver) UpsertCircuitLink(perm access.LinkPermission) (access.LinkPe
 	return perm, nil
 }
 
+func (m memDriver) DeleteCircuit(circuitId model.CircuitId) error {
+	delete(m.circuits, circuitId)
+	return nil
+}
+
 func (m memDriver) DeleteCircuitUser(circuitId model.CircuitId, userId model.UserId) error {
 	if c, ok := m.circuits[circuitId]; ok {
 		delete(c.UserPerms, userId)
