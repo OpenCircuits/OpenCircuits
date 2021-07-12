@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/access/mem"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
@@ -92,7 +93,7 @@ func main() {
 	// Register pages
 	web.RegisterPages(router, authManager)
 	authManager.RegisterHandlers(router)
-	api.RegisterRoutes(router, authManager, userCsif)
+	api.RegisterRoutes(router, authManager, userCsif, mem.New())
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
