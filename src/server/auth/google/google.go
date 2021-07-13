@@ -20,8 +20,8 @@ type authenticationMethod struct {
 
 // Credentials which stores google ids.
 type oauth2Config struct {
-	ClientId  string `json:"client_id"`
-	ProjectId string `json:"project_id"`
+	ClientID  string `json:"client_id"`
+	ProjectID string `json:"project_id"`
 }
 type oauth2ConfigWrapper struct {
 	Web oauth2Config `json:"web"`
@@ -66,7 +66,7 @@ func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if tokenInfo.IssuedTo != g.config.Web.ClientId {
+	if tokenInfo.IssuedTo != g.config.Web.ClientID {
 		return "", errors.New("invalid audience")
 	}
 	return "google_" + tokenInfo.UserId, nil
