@@ -1,8 +1,11 @@
 package api
 
 import (
+	"fmt"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +16,7 @@ type Context struct {
 	*gin.Context
 }
 
-func (c Context) Identity() string {
+func (c Context) Identity() model.UserId {
 	ident := c.Request.Header.Get(Identity)
 	if len(ident) == 0 {
 		panic("Empty identity")
@@ -37,6 +40,7 @@ func Wrap(access access.DataDriver, circuits interfaces.CircuitStorageInterfaceF
 			if code/100 == 5 && !debug {
 				obj = nil
 			} else {
+				fmt.Printf("Error: %#v\n", err)
 				obj = gin.H{"error": err.Error()}
 			}
 		}

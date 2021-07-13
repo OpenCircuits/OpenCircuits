@@ -56,6 +56,9 @@ func Store(c *api.Context) (int, interface{}) {
 		return http.StatusBadRequest, err.Error()
 	}
 
+	// Preserve the owner, which may be different
+	newCircuit.Metadata.Owner = circuit.Metadata.Owner
+
 	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(*circuit)
 
@@ -104,11 +107,20 @@ func Load(c *api.Context) (int, interface{}) {
 
 func Query(c *api.Context) (int, interface{}) {
 	userId := c.Identity()
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-	circuits := storageInterface.EnumerateCircuits(userId)
-	if circuits == nil {
-		circuits = []model.CircuitMetadata{}
+
+	perms, err := c.Access.GetUser(userId)
+	if err != nil {
+		return http.StatusInternalServerError, err
 	}
+
+	circuits := []model.CircuitMetadata{}
+	storageInterface := c.Circuits.CreateCircuitStorageInterface()
+	for k, v := range perms {
+		if v.CanView() {
+			circuits = append(circuits, storageInterface.LoadCircuit(k).Metadata)
+		}
+	}
+
 	return http.StatusOK, circuits
 }
 

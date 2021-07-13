@@ -25,7 +25,12 @@ type UserPermission struct {
 	// TODO: Make required
 	Expiration time.Time `json:"expiration"`
 }
+
+// Permissions for all users of a circuit
 type UserPermissions = map[model.UserId]UserPermission
+
+// Permissions for all circuits of a user
+type AllUserPermissions = map[model.CircuitId]UserPermission
 
 type LinkId = model.CircuitId
 

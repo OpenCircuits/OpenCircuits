@@ -13,6 +13,7 @@ type DataDriver interface {
 	GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (*UserPermission, error)
 	// Gets the permissions for the link id
 	GetLink(linkId LinkId) (*LinkPermission, error)
+	GetUser(userId model.UserId) (AllUserPermissions, error)
 
 	// Upserts all the circuit permissions
 	// UpsertCircuit(perms CircuitPermissions) error

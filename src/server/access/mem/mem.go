@@ -48,6 +48,17 @@ func (m memDriver) GetLink(linkId access.LinkId) (*access.LinkPermission, error)
 	return nil, nil
 }
 
+func (m memDriver) GetUser(userId model.UserId) (access.AllUserPermissions, error) {
+	// Yes, this is slow
+	perms := make(access.AllUserPermissions)
+	for k, v := range m.circuits {
+		if p, ok := v.UserPerms[userId]; ok {
+			perms[k] = p
+		}
+	}
+	return perms, nil
+}
+
 func (m memDriver) UpsertCircuitUser(perm access.UserPermission) error {
 	if _, ok := m.circuits[perm.CircuitId]; !ok {
 		m.circuits[perm.CircuitId] = access.NewCircuitPerm(perm.CircuitId)
