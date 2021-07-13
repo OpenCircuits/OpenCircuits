@@ -25,56 +25,51 @@ func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 	return newCircuit, nil
 }
 
-func accessCheck(c *api.Context, circuitId model.CircuitId, m func(_ access.UserPermission) bool) bool {
+func accessCheck(c *api.Context, circuitId model.CircuitId, m func(_ access.UserPermission) bool) int {
 	userId := c.Identity()
 
 	// Access check
 	requesterPerms, err := c.Access.GetCircuitUser(circuitId, userId)
 	if err != nil || requesterPerms == nil {
-		c.JSON(http.StatusBadRequest, nil)
-		return false
+		return http.StatusBadRequest
 	}
 	if !m(*requesterPerms) {
-		c.JSON(http.StatusForbidden, nil)
-		return false
+		return http.StatusForbidden
 	}
-	return true
+	return 0
 }
 
-func Store(c *api.Context) {
+func Store(c *api.Context) (int, interface{}) {
 	circuitId := c.Param("id")
-	if !accessCheck(c, circuitId, access.UserPermission.CanEdit) {
-		return
+	if code := accessCheck(c, circuitId, access.UserPermission.CanEdit); code != 0 {
+		return code, nil
 	}
 
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.JSON(http.StatusNotFound, nil)
-		return
+		return http.StatusNotFound, nil
 	}
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
+		return http.StatusBadRequest, err.Error()
 	}
 
 	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(*circuit)
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	c.JSON(http.StatusAccepted, circuit.Metadata)
+	return http.StatusAccepted, circuit.Metadata
 }
 
-func Create(c *api.Context) {
+func Create(c *api.Context) (int, interface{}) {
 	userId := c.Identity()
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
+		return http.StatusBadRequest, err.Error()
 	}
 
 	circuit := storageInterface.NewCircuit()
@@ -90,38 +85,37 @@ func Create(c *api.Context) {
 	})
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	c.JSON(http.StatusAccepted, circuit.Metadata)
+	return http.StatusAccepted, circuit.Metadata
 }
 
-func Load(c *api.Context) {
+func Load(c *api.Context) (int, interface{}) {
 	circuitId := c.Param("id")
-	if !accessCheck(c, circuitId, access.UserPermission.CanView) {
-		return
+	if code := accessCheck(c, circuitId, access.UserPermission.CanView); code != 0 {
+		return code, nil
 	}
 
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
-		c.JSON(http.StatusNotFound, nil)
-		return
+		return http.StatusNotFound, nil
 	}
-	c.JSON(http.StatusOK, circuit)
+	return http.StatusOK, circuit
 }
 
-func Query(c *api.Context) {
+func Query(c *api.Context) (int, interface{}) {
 	userId := c.Identity()
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 	circuits := storageInterface.EnumerateCircuits(userId)
 	if circuits == nil {
 		circuits = []model.CircuitMetadata{}
 	}
-	c.JSON(http.StatusOK, circuits)
+	return http.StatusOK, circuits
 }
 
-func Delete(c *api.Context) {
+func Delete(c *api.Context) (int, interface{}) {
 	circuitId := c.Param("id")
-	if !accessCheck(c, circuitId, access.UserPermission.CanDelete) {
-		return
+	if code := accessCheck(c, circuitId, access.UserPermission.CanDelete); code != 0 {
+		return code, nil
 	}
 
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
@@ -129,5 +123,5 @@ func Delete(c *api.Context) {
 
 	c.Access.DeleteCircuit(circuitId)
 
-	c.JSON(http.StatusOK, nil)
+	return http.StatusOK, nil
 }

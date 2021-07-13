@@ -21,14 +21,25 @@ func (c Context) Identity() string {
 	return ident
 }
 
-type HandlerFunc = func(c *Context)
+type HandlerFunc = func(c *Context) (int, interface{})
 
 func Wrap(access access.DataDriver, circuits interfaces.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		handler(&Context{
+		code, obj := handler(&Context{
 			access,
 			circuits,
 			c,
 		})
+
+		// Cast errors specially, and omit them in release mode
+		if err, ok := obj.(error); ok {
+			debug := true
+			if code/100 == 5 && !debug {
+				obj = nil
+			} else {
+				obj = gin.H{"error": err.Error()}
+			}
+		}
+		c.JSON(code, obj)
 	}
 }

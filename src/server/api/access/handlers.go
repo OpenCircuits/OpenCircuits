@@ -6,37 +6,23 @@ import (
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/gin-gonic/gin"
 )
 
 type AccessHandler = func(_ *api.Context, _ access.UserPermission) (int, interface{})
 
 func Wrapper(f AccessHandler) api.HandlerFunc {
-	return func(c *api.Context) {
+	return func(c *api.Context) (int, interface{}) {
 		userId := c.Identity()
 
 		// Get the requester's permission level
 		requesterPerms, err := c.Access.GetCircuitUser(c.Param("cid"), userId)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, nil)
-			return
+			return http.StatusInternalServerError, nil
 		}
 		if requesterPerms == nil {
-			c.JSON(http.StatusNotFound, nil)
-			return
+			return http.StatusNotFound, nil
 		}
-		code, obj := f(c, *requesterPerms)
-
-		// Cast errors specially, and omit them in release mode
-		if err, ok := obj.(error); ok {
-			debug := true
-			if code/100 == 5 && !debug {
-				obj = nil
-			} else {
-				obj = gin.H{"error": err.Error()}
-			}
-		}
-		c.JSON(code, obj)
+		return f(c, *requesterPerms)
 	}
 }
 
