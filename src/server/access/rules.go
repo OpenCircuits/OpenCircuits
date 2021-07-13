@@ -25,6 +25,10 @@ func (user UserPermission) CanExtendLink(target LinkPermission) bool {
 	return user.AccessLevel >= AccessOwner
 }
 
+func (user UserPermission) CanCreate() bool {
+	return user.UserId != auth.AnonUserID && user.UserId != ""
+}
+
 func (user UserPermission) CanView() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessView

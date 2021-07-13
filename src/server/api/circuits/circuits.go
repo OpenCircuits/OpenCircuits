@@ -68,6 +68,10 @@ func Store(c *api.Context) (int, interface{}) {
 
 func Create(c *api.Context) (int, interface{}) {
 	userId := c.Identity()
+	if !(access.UserPermission{UserId: userId}).CanCreate() {
+		return http.StatusForbidden, nil
+	}
+
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	newCircuit, err := parseCircuitRequestData(c.Request.Body)

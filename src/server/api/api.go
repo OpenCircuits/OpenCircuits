@@ -11,7 +11,6 @@ import (
 const Identity = "identity"
 
 func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
-	println("TEST!!!!!")
 	return func(c *gin.Context) {
 		// Only use auth in API routes
 		if !strings.HasPrefix(c.Request.URL.Path, "/api/") {
@@ -21,7 +20,7 @@ func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 
 		am := manager.MatchToken(c.GetHeader("authType"))
 		if am == nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error": "authenticated route called without valid header",
 			})
 			return
