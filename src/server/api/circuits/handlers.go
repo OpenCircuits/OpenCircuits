@@ -1,48 +1,30 @@
 package circuits
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
-	x, err := ioutil.ReadAll(r)
-	if err != nil {
-		return model.Circuit{}, err
-	}
-
-	var newCircuit model.Circuit
-	err = json.Unmarshal(x, &newCircuit)
-	if err != nil {
-		return model.Circuit{}, err
-	}
-	return newCircuit, nil
-}
-
 func Store(c *api.Context) (int, interface{}) {
 	circuitId := c.Param("id")
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
+
+	var newCircuit model.Circuit
+	if err := c.ShouldBindJSON(&newCircuit); err != nil {
+		return http.StatusBadRequest, err
+	}
 
 	circuit := storageInterface.LoadCircuit(circuitId)
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
+
+	// TODO: Replace with access check
 	if circuit.Metadata.Owner != c.Identity() {
 		return http.StatusForbidden, nil
 	}
-
-	newCircuit, err := parseCircuitRequestData(c.Request.Body)
-	if err != nil {
-		return http.StatusBadRequest, err.Error()
-	}
-
-	// Preserve the owner, which may be different
-	newCircuit.Metadata.Owner = circuit.Metadata.Owner
 
 	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(*circuit)
@@ -52,16 +34,15 @@ func Store(c *api.Context) (int, interface{}) {
 }
 
 func Create(c *api.Context) (int, interface{}) {
-	userId := c.Identity()
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	newCircuit, err := parseCircuitRequestData(c.Request.Body)
-	if err != nil {
-		return http.StatusBadRequest, err.Error()
+	var newCircuit model.Circuit
+	if err := c.ShouldBindJSON(&newCircuit); err != nil {
+		return http.StatusBadRequest, err
 	}
 
 	circuit := storageInterface.NewCircuit()
-	circuit.Metadata.Owner = userId
+	circuit.Metadata.Owner = c.Identity()
 	circuit.Update(newCircuit)
 	storageInterface.UpdateCircuit(circuit)
 
@@ -77,6 +58,8 @@ func Load(c *api.Context) (int, interface{}) {
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
+
+	// TODO: Replace with access check
 	if circuit.Metadata.Owner != c.Identity() {
 		return http.StatusForbidden, nil
 	}
@@ -93,8 +76,9 @@ func Delete(c *api.Context) (int, interface{}) {
 	circuitId := c.Param("id")
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	// The initial "Can Delete" logic is the same as "Is Owner"
 	circuit := storageInterface.LoadCircuit(circuitId)
+
+	// TODO: Replace with access check
 	if circuit == nil || circuit.Metadata.Owner != c.Identity() {
 		return http.StatusForbidden, nil
 	}
