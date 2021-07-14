@@ -33,13 +33,13 @@ func Wrap(circuits interfaces.CircuitStorageInterfaceFactory, handler HandlerFun
 			c,
 		})
 
-		// Cast errors specially, and omit them in release mode
+		// Cast errors specially
 		if err, ok := obj.(error); ok {
-			debug := true
-			if code/100 == 5 && !debug {
+			if code/100 == 5 {
+				// Any 500-type errors that make it this far are logged instead
+				fmt.Printf("Error: %s\n", err.Error())
 				obj = nil
 			} else {
-				fmt.Printf("Error: %#v\n", err)
 				obj = gin.H{"error": err.Error()}
 			}
 		}

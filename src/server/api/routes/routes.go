@@ -16,7 +16,6 @@ func pingHandler(c *gin.Context) {
 }
 
 func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory) {
-	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
 	w := func(h api.HandlerFunc) gin.HandlerFunc {
