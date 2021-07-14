@@ -1,7 +1,8 @@
-package storage
+package circuit
 
 import (
 	"errors"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -21,7 +22,7 @@ type memCircuitStorage struct {
 
 func newMemCircuitStorage() *memCircuitStorage {
 	return &memCircuitStorage{
-		m: nil,
+		m:      nil,
 		idxMap: make(map[string]int),
 	}
 }

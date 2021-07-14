@@ -6,8 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/gin-gonic/gin"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
 	"google.golang.org/api/oauth2/v2"
 )
 
@@ -21,9 +20,6 @@ type oauth2Config struct {
 	ID          string `json:"id"`
 	Secret      string `json:"secret"`
 	RedirectURL string `json:"redirectURL"`
-}
-
-func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 }
 
 // New Creates a new instance of the google authentication method with the provided config path

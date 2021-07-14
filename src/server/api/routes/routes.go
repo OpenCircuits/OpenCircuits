@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	accessApi "github.com/OpenCircuits/OpenCircuits/site/go/api/access"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/circuits"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/gin-gonic/gin"
@@ -17,7 +16,7 @@ func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
 }
 
-func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver access.DataDriver) {
+func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
@@ -33,10 +32,10 @@ func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterf
 	router.POST("/api/circuits/:id/delete", w(circuits.Delete))
 
 	// Circuit permission control
-	wa := accessApi.Wrapper
-	router.GET("/api/access/circuit/:cid", w(wa(accessApi.GetCircuit)))
-	router.PUT("/api/access/circuit/:cid/user", w(wa(accessApi.UpsertCircuitUser)))
-	router.PUT("/api/access/circuit/:cid/link", w(wa(accessApi.UpsertCircuitLink)))
-	router.POST("/api/access/circuit/:cid/user/:uid", w(wa(accessApi.UpsertCircuitUser)))
-	router.POST("/api/access/circuit/:cid/link/:lid", w(wa(accessApi.UpsertCircuitLink)))
+	wa := access.Wrapper
+	router.GET("/api/access/circuit/:cid", w(wa(access.GetCircuit)))
+	router.PUT("/api/access/circuit/:cid/user", w(wa(access.UpsertCircuitUser)))
+	router.PUT("/api/access/circuit/:cid/link", w(wa(access.UpsertCircuitLink)))
+	router.POST("/api/access/circuit/:cid/user/:uid", w(wa(access.UpsertCircuitUser)))
+	router.POST("/api/access/circuit/:cid/link/:lid", w(wa(access.UpsertCircuitLink)))
 }

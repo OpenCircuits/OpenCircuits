@@ -4,11 +4,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-type AccessHandler = func(_ *api.Context, _ access.UserPermission) (int, interface{})
+type AccessHandler = func(_ *api.Context, _ model.UserPermission) (int, interface{})
 
 func Wrapper(f AccessHandler) api.HandlerFunc {
 	return func(c *api.Context) (int, interface{}) {
@@ -26,7 +26,7 @@ func Wrapper(f AccessHandler) api.HandlerFunc {
 	}
 }
 
-func GetCircuit(c *api.Context, requesterPerms access.UserPermission) (int, interface{}) {
+func GetCircuit(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
 	if !requesterPerms.CanEnumeratePerms() {
 		return http.StatusForbidden, nil
 	}
@@ -39,8 +39,8 @@ func GetCircuit(c *api.Context, requesterPerms access.UserPermission) (int, inte
 	return http.StatusOK, perms
 }
 
-func UpsertCircuitUser(c *api.Context, requesterPerms access.UserPermission) (int, interface{}) {
-	var proposedPerms access.UserPermission
+func UpsertCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
+	var proposedPerms model.UserPermission
 	err := c.ShouldBindJSON(&proposedPerms)
 	if err != nil {
 		return http.StatusBadRequest, err
@@ -59,8 +59,8 @@ func UpsertCircuitUser(c *api.Context, requesterPerms access.UserPermission) (in
 	return http.StatusAccepted, nil
 }
 
-func UpsertCircuitLink(c *api.Context, requesterPerms access.UserPermission) (int, interface{}) {
-	var proposedPerms access.LinkPermission
+func UpsertCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
+	var proposedPerms model.LinkPermission
 	err := c.ShouldBindJSON(&proposedPerms)
 	if err != nil {
 		return http.StatusBadRequest, err
@@ -79,7 +79,7 @@ func UpsertCircuitLink(c *api.Context, requesterPerms access.UserPermission) (in
 	return http.StatusAccepted, resultPerms
 }
 
-func DeleteCircuitUser(c *api.Context, requesterPerms access.UserPermission) (int, interface{}) {
+func DeleteCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
 	uid := c.Param("uid")
 	revokedPerm, err := c.Access.GetCircuitUser(requesterPerms.CircuitId, uid)
 	if err != nil {
@@ -101,7 +101,7 @@ func DeleteCircuitUser(c *api.Context, requesterPerms access.UserPermission) (in
 	return http.StatusAccepted, nil
 }
 
-func DeleteCircuitLink(c *api.Context, requesterPerms access.UserPermission) (int, interface{}) {
+func DeleteCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
 	lid := c.Param("lid")
 	linkPerms, err := c.Access.GetLink(lid)
 	if err != nil {

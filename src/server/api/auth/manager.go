@@ -1,37 +1,21 @@
 package auth
 
-import (
-	"github.com/gin-gonic/gin"
-)
+// AuthenticationMethod An interface for authentication methods to plug into the router and the web page
+type AuthenticationMethod interface {
+	// Takes an authorization token and extracts the user's identity from it (a simple string user id for now)
+	ExtractIdentity(string) (string, error)
+	// The prefix used to the actual token in the authorization header
+	AuthHeaderPrefix() string
+}
 
 // AuthenticationManager A simple type for managing abstract authentication methods
 type AuthenticationManager struct {
 	AuthMethods []AuthenticationMethod
 }
 
-type AnonAuthMethod struct {
-}
-
-const AnonUserID = "ANON"
-
-func (AnonAuthMethod) RegisterHandlers(*gin.Engine) {}
-func (AnonAuthMethod) ExtractIdentity(string) (string, error) {
-	return AnonUserID, nil
-}
-func (AnonAuthMethod) AuthHeaderPrefix() string {
-	return "anon"
-}
-
 // RegisterAuthenticationMethod Registers an authentication method with the manager
 func (am *AuthenticationManager) RegisterAuthenticationMethod(method AuthenticationMethod) {
 	am.AuthMethods = append(am.AuthMethods, method)
-}
-
-// RegisterHandlers Registers the http handlers for each of the authentication methods with a gin Engine
-func (am *AuthenticationManager) RegisterHandlers(e *gin.Engine) {
-	for _, ap := range am.AuthMethods {
-		ap.RegisterHandlers(e)
-	}
 }
 
 // MatchToken matches a provided string with the token format of an AuthenticationMethod
