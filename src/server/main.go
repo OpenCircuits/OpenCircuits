@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
@@ -88,10 +89,13 @@ func main() {
 	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
-	// Register pages
-	web.RegisterPages(router, authManager)
+	// Setup authorization middleware
 	authManager.RegisterHandlers(router)
-	api.RegisterRoutes(router, authManager, userCsif)
+	router.Use(api.AuthMiddleware(authManager))
+
+	// Register routes
+	web.RegisterPages(router, authManager)
+	routes.RegisterRoutes(router, userCsif)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
