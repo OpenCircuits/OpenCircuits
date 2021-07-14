@@ -91,10 +91,12 @@ func main() {
 	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
-	// Register pages
-	web.RegisterPages(router, authManager)
+	// Setup authorization middleware
 	authManager.RegisterHandlers(router)
 	router.Use(api.AuthMiddleware(authManager))
+
+	// Register routes
+	web.RegisterPages(router, authManager)
 	routes.RegisterRoutes(router, userCsif, mem.New())
 
 	// Check if portConfig is set to auto, if so find available port

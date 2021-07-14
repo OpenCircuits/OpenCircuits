@@ -10,6 +10,7 @@ import (
 
 const Identity = "identity"
 
+// Middleware that injects user identity into authenticated requests
 func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Only use auth in API routes
@@ -20,7 +21,7 @@ func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 
 		am := manager.MatchToken(c.GetHeader("authType"))
 		if am == nil {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": "authenticated route called without valid header",
 			})
 			return

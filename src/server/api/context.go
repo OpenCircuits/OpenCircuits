@@ -16,6 +16,7 @@ type Context struct {
 	*gin.Context
 }
 
+// Extract the requesting user's identity
 func (c Context) Identity() model.UserId {
 	ident := c.Request.Header.Get(Identity)
 	if len(ident) == 0 {
@@ -26,6 +27,7 @@ func (c Context) Identity() model.UserId {
 
 type HandlerFunc = func(c *Context) (int, interface{})
 
+// Wrapper for routes using extended context
 func Wrap(access access.DataDriver, circuits interfaces.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code, obj := handler(&Context{
@@ -34,13 +36,13 @@ func Wrap(access access.DataDriver, circuits interfaces.CircuitStorageInterfaceF
 			c,
 		})
 
-		// Cast errors specially, and omit them in release mode
+		// Cast errors specially
 		if err, ok := obj.(error); ok {
-			debug := true
-			if code/100 == 5 && !debug {
+			if code/100 == 5 {
+				// Any 500-type errors that make it this far are logged instead
+				fmt.Printf("Error: %s\n", err.Error())
 				obj = nil
 			} else {
-				fmt.Printf("Error: %#v\n", err)
 				obj = gin.H{"error": err.Error()}
 			}
 		}
