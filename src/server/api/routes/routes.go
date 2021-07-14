@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/access"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/circuits"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/access"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/circuits"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/gin-gonic/gin"
 )
