@@ -40,7 +40,5 @@ export const SelectionHandler: EventHandler = ({
             action.add(new SelectAction(selections, obj, deselect).execute());
             action.add(new ShiftAction(designer, obj).execute());
         }
-
-        history.add(action);
     }
 });
