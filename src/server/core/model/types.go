@@ -1,4 +1,6 @@
 package model
 
-type CircuitId = string
-type UserId = string
+type (
+	CircuitId = string
+	UserId    = string
+)

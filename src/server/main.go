@@ -8,15 +8,15 @@ import (
 	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage/gcp_datastore"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage/sqlite"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/gcp_datastore"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/sqlite"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -65,7 +65,7 @@ func main() {
 	// Set up the storage interface
 	var userCsif interfaces.CircuitStorageInterfaceFactory
 	if *userCsifConfig == "mem" {
-		userCsif = storage.NewMemStorageInterfaceFactory()
+		userCsif = circuit.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
 		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
 		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
@@ -90,11 +90,10 @@ func main() {
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
 	// Setup authorization middleware
-	authManager.RegisterHandlers(router)
 	router.Use(api.AuthMiddleware(authManager))
 
 	// Register routes
-	web.RegisterPages(router, authManager)
+	web.RegisterPages(router)
 	routes.RegisterRoutes(router, userCsif)
 
 	// Check if portConfig is set to auto, if so find available port
