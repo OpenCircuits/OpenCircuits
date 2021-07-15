@@ -39,6 +39,7 @@ export const SelectionHandler: EventHandler = ({
             const deselect = (input.isShiftKeyDown() && selections.has(obj));
             action.add(new SelectAction(selections, obj, deselect).execute());
             action.add(new ShiftAction(designer, obj).execute());
+            history.add(action);
         }
     }
 });
