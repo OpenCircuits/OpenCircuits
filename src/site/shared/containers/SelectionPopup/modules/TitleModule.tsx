@@ -1,11 +1,12 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {SetNameAction} from "core/actions/SetNameAction";
-import {IOObject} from "core/models";
+import {IOObject, Port} from "core/models";
+import { Selectable } from "core/utils/Selectable";
 import {CreateModule, ModuleConfig, PopupModule} from "./Module";
 
 
-const Config: ModuleConfig<[IOObject], string> = {
-    types: [IOObject],
+const Config: ModuleConfig<[Selectable], string> = {
+    types: [IOObject, Port],
     valType: "string",
     getProps: (o) => o.getName(),
     getAction: (s, newName) => new GroupAction(s.map(o => new SetNameAction(o, newName)))
