@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/circuits"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
@@ -16,7 +17,7 @@ func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
 }
 
-func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver) {
+func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver, sessionManager session.SessionManager) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
@@ -38,4 +39,7 @@ func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterf
 	router.PUT("/api/access/circuit/:cid/link", w(wa(access.UpsertCircuitLink)))
 	router.POST("/api/access/circuit/:cid/user/:uid", w(wa(access.UpsertCircuitUser)))
 	router.POST("/api/access/circuit/:cid/link/:lid", w(wa(access.UpsertCircuitLink)))
+
+	// OT
+	router.POST("/api/ot/:cid", sessionManager.Establish)
 }
