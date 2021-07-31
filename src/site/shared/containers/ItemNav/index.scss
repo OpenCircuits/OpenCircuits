@@ -127,7 +127,9 @@ $tab-padding: 8px;
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
 
-            left: -20px;
+            @media (min-width: 768px) {
+                left: -20px;
+            }
 
             @media (max-width: 768px) {
                 transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
