@@ -6,6 +6,7 @@
 # Thumbnails
 ._*
 .env*.local
+.docusaurus
 node_modules
 coverage
 build
