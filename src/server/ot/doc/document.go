@@ -18,6 +18,13 @@ func (d Document) Send(mw MessageWrapper) {
 }
 
 func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Document {
+	d, ds := newDocument(circuitID, done)
+	go ds.messageLoop()
+	return d
+}
+
+// newDocument is used internally and testing to create a document without starting it
+func newDocument(circuitID model.CircuitId, done chan<- model.CircuitId) (Document, docState) {
 	ch := make(chan MessageWrapper)
 	d := docState{
 		CircuitID: circuitID,
@@ -29,12 +36,11 @@ func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Documen
 		recv: ch,
 		done: done,
 	}
-	go d.messageLoop()
 
 	return Document{
 		CircuitID: circuitID,
 		send:      ch,
-	}
+	}, d
 }
 
 type docState struct {
