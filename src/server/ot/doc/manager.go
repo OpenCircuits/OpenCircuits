@@ -13,14 +13,19 @@ type DocumentManager struct {
 	doneListener  chan model.CircuitId
 }
 
-func NewDocumentManager() *DocumentManager {
+func newDocumentManager() *DocumentManager {
 	dm := &DocumentManager{
 		liveDocuments: make(map[model.CircuitId]Document),
 		documentLock:  &sync.RWMutex{},
+		doneListener:  make(chan model.CircuitId, 10),
 	}
 
-	go dm.closer()
+	return dm
+}
 
+func NewDocumentManager() *DocumentManager {
+	dm := newDocumentManager()
+	go dm.closer()
 	return dm
 }
 
@@ -36,7 +41,7 @@ func (dm *DocumentManager) closer() {
 func (dm *DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
 	dm.documentLock.RLock()
 	d, ok := dm.liveDocuments[circuitID]
-	dm.documentLock.Unlock()
+	dm.documentLock.RUnlock()
 	if ok {
 		// document is already live
 		return d, nil
