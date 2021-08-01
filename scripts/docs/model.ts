@@ -38,10 +38,21 @@ export type Constructor = {
 
 export type Class = {
     docs?: string;
-    fileName: string;
+    generics?: {
+        docs?: string;
+        constraint?: Types,
+        name: string;
+    }[];
     name: string;
     constructor: Constructor,
     properties: Property[]
     methods: Method[],
     staticMethods: Method[]
+}
+
+export type TSDoc = {
+    file: string;
+    fileName: string;
+    classes: Class[];
+    functions: Method[]; // ik methods are functions for classes and i should rename `Method` to `Func` but whatever
 }

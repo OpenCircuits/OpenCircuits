@@ -3,6 +3,17 @@ import path from "path";
 import {ts} from "ts-morph";
 
 
+const EscapeCodes = {
+    '<': 'lt',
+    '>': 'gt'
+} as Record<string, string>;
+const EscapeRegex = new RegExp(`[${Object.keys(EscapeCodes).join("")}]`, "g");
+export function escapeStr(str: string): string {
+    return str.replace(EscapeRegex, (m) => {
+        return `&${EscapeCodes[m]};`;
+    });
+}
+
 /** True if this is visible outside this file, false otherwise */
 export function isNodeExported(node: ts.Node): boolean {
     return (

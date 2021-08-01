@@ -1,9 +1,9 @@
 import path from "path";
-import {ClassDeclaration, ConstructorDeclaration, JSDocParameterTag, JSDocReturnTag, MethodDeclaration, ParameterDeclaration, PropertyDeclaration, SyntaxKind, ts, Type} from "ts-morph";
+import {ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, JSDocParameterTag, JSDocReturnTag, MethodDeclaration, ParameterDeclaration, PropertyDeclaration, SyntaxKind, ts, Type} from "ts-morph";
 import {AccessModifier, Types, Parameter, Property, Method, Constructor, Class} from "./model";
 
 
-export function getAccessModifier(d: ConstructorDeclaration | PropertyDeclaration | MethodDeclaration): AccessModifier {
+export function getAccessModifier(d: ConstructorDeclaration | PropertyDeclaration | MethodDeclaration | FunctionDeclaration): AccessModifier {
     const modifiers = d?.getModifiers() ?? [];
     if (modifiers.find(m => m.getKind() === SyntaxKind.PublicKeyword))
         return "public";
@@ -55,17 +55,19 @@ export function getParameter(p: ParameterDeclaration): Parameter {
 export function getConstructors(c: ClassDeclaration): Constructor {
     if (c.getConstructors().length > 1)
         throw new Error(`Multiple constructors not supported for ${c.getName()}!`);
-    const constructor = c.getConstructors()[0];
-    const jsDocs = constructor.getJsDocs();
+    const cc = c.getConstructors()[0];
+    const jsDocs = cc.getJsDocs();
     if (jsDocs.length > 1)
         console.trace(`Found JSDoc with length > 1 !!: ${c.getName()}`);
     return {
         docs: jsDocs[0]?.getDescription(),
-        access: getAccessModifier(constructor),
-        overloads: constructor.getOverloads().map(c => ({
-            docs: c.getJsDocs()[0]?.getDescription(),
-            parameters: c.getParameters().map(getParameter),
-        })),
+        access: getAccessModifier(cc),
+        // If no overloads, then just use the single constructor declaration `cc`
+        overloads: (cc.getOverloads().length > 0 ? cc.getOverloads() : [cc])
+            .map(c => ({
+                docs: c.getJsDocs()[0]?.getDescription(),
+                parameters: c.getParameters().map(getParameter),
+            })),
     };
 }
 
@@ -80,12 +82,12 @@ export function getProperties(c: ClassDeclaration): Property[] {
 }
 
 
-export function parseMethods(methods: MethodDeclaration[]): Method[] {
+export function parseMethods(methods: (MethodDeclaration | FunctionDeclaration)[]): Method[] {
     return methods
         .map(m => ({
             docs: m.getJsDocs()[0]?.getDescription(),
             access: getAccessModifier(m),
-            name: m.getName(),
+            name: m.getName() ?? "(undefined)",
             // If no overloads, then just use the single method declaration `m`
             overloads: (m.getOverloads().length > 0 ? m.getOverloads() : [m])
                 .map(m2 => ({
@@ -114,7 +116,15 @@ export function parseClass(c: ClassDeclaration): Class {
         console.trace(`Found JSDoc with length > 1 !!: ${c.getName()}`);
     return {
         docs: jsDocs[0]?.getDescription(),
-        fileName: c.getSourceFile().getBaseName(),
+        generics: c.getTypeParameters()?.map(t => ({
+            docs: c.getJsDocs()[0]
+                ?.getTags()
+                ?.filter(p => p instanceof JSDocParameterTag)
+                ?.find(p => (p as JSDocParameterTag).getName() === t.getName())
+                ?.getCommentText(),
+            constraint: t.getConstraint() ? getType(t.getConstraint()!.getType()) : undefined,
+            name: t.getName(),
+        })),
         name: c.getName()!,
         constructor: getConstructors(c),
         properties: getProperties(c),

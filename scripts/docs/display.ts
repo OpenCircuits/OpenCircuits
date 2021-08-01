@@ -1,10 +1,11 @@
-import {AccessModifier, Types, Method, Class} from "./model";
+import {AccessModifier, Types, Method, Class, TSDoc} from "./model";
+import {escapeStr} from "./utils";
 
 
 export function displayType(type: Types): string {
     return type.map(i =>
         i.map(({name, link}) =>
-            link ? `<a href="${link}">${name}</a>` : name
+            link ? `<a href="${link}">${escapeStr(name)}</a>` : escapeStr(name)
         ).join(" & ")
     ).join(" | ");
 }
@@ -16,6 +17,14 @@ export function displayModifier(mod: AccessModifier): string {
 
 export function displayKeyword(word: string): string {
     return `<span style={{color: "#5295cc", paddingLeft: "0px", backgroundColor: "transparent"}}>${word}</span>`;
+}
+
+export function displayGenerics(generics: Class["generics"]): string {
+    if (!generics)
+        return "";
+    return `&lt;` +
+        generics.map(g => `${g.name}${g.constraint ? ` extends ${displayType(g.constraint)}` : ``}`).join(", ") +
+    `&gt;`;
 }
 
 
@@ -42,18 +51,21 @@ export function displayConstructor(c: Class): string {
 }
 
 
-export function displayFunc(f: Method): string {
+export function displayFunc(f: Method, global: boolean = false): string {
     return `` +
         `\n<div className="wrapper func">\n` +
             // Display header and then each overload for the function
-            `\n#### <code>${displayModifier(f.access)} ${f.name}</code>\n` +
+            `\n${global ?
+                `## ${f.name}` :
+                `#### <code>${displayModifier(f.access)} ${f.name}</code>`}\n` +
+            `\n\n${f.docs || ""}\n\n` +
             f.overloads.map(fo =>
                 `<div>` +
                     // Display type/docs for overload
                     `<h4><code>` +
                         `${f.name}(${fo.parameters.map(p => p.name).join(", ")})` +
                     `</code></h4>` +
-                    `\n${fo.docs || "<p>*Description needed*</p>"}\n` +
+                    `\n${fo.docs || "\n*Description needed*\n"}\n` +
 
                     // Display parameters of overload
                     (fo.parameters.length === 0 ? `` : `\n<h4>Parameters</h4>\n`) +
@@ -76,9 +88,19 @@ export function displayFunc(f: Method): string {
 
 export function displayClass(c: Class): string {
     return `` +
-        // Overview
-        `## ${c.name}\n` +
+        // Overview, display name + generics
+        `## ${c.name}${c.generics ? `&lt;${c.generics.map(g => g.name).join(", ")}&gt;` : ""}\n` +
         (c.docs || "*Overview needed*") +
+        `\n\n` +
+        // Display generics
+        ((c.generics ?? []).length === 0 ? `` : `\n<h4>Template Parameters</h4>\n`) +
+        (c.generics ?? []).map(g =>
+            `\n* <code> ${g.name}${
+                // Display generic name w/ constraint type if it has any
+                g.constraint ?
+                    ` ${displayKeyword("extends")} ${displayType(g.constraint)}` : ``
+            }</code> – ${g.docs || "*Description needed*"}`
+        ).join("") +
         `\n\n---` +
 
         // Display constructor
@@ -101,24 +123,29 @@ export function displayClass(c: Class): string {
 
         // Display methods
         `\n\n### Methods\n\n` +
-        (c.methods.length === 0 ? `*No methods for ${c.name}\n` : ``) +
-        c.methods.map(displayFunc).join("") +
+        (c.methods.length === 0 ? `*No methods for ${c.name}*\n` : ``) +
+        c.methods.map(f => displayFunc(f, false)).join("") +
         `\n---` +
 
         // Display static methods
         `\n\n### Static Methods\n\n` +
-        (c.staticMethods.length === 0 ? `*No static methods for ${c.name}\n` : ``) +
-        c.staticMethods.map(displayFunc).join("") +
+        (c.staticMethods.length === 0 ? `*No static methods for ${c.name}*\n` : ``) +
+        c.staticMethods.map(f => displayFunc(f, false)).join("") +
         `\n---`;
 }
 
 
-export function generateMD(c: Class): string {
+export function generateMD(doc: TSDoc): string {
+    const name = doc.fileName.split(".")[0];
+
     return `` +
         `---\n` +
-        `title: ${c.name}\n` +
-        `description: ${c.name}\n` +
+        `title: ${name}\n` +
+        `description: ${name}\n` +
         `---\n\n` +
 
-        displayClass(c);
+        doc.classes.map(displayClass).join("\n\n") +
+        `\n\n` +
+        `# Functions\n\n` +
+        doc.functions.map(f => displayFunc(f, true)).join("\n\n");
 }
