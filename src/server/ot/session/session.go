@@ -30,7 +30,7 @@ func NewSession(doc doc.Document, conn conn.Connection, done chan<- string) Sess
 		sessionID:  utils.RandToken(128),
 		conn:       conn,
 		done:       done,
-		docUpdates: make(chan interface{}),
+		docUpdates: make(chan interface{}, 4),
 		docAck:     make(chan interface{}),
 		doc:        doc,
 	}
