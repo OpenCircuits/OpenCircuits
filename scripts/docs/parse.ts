@@ -18,6 +18,8 @@ export function getAccessModifier(d: ConstructorDeclaration | PropertyDeclaratio
 export function getType(t: Type<ts.Type>): Types {
     const parseUrl = (url: string) =>
         path.resolve("/ts", path.relative(path.resolve(process.cwd(), "src"), url));
+    if (t.getText() === "void")
+        return [];
     return t.getText()
         .split("|")
         .map(t =>
@@ -95,8 +97,13 @@ export function parseMethods(methods: (MethodDeclaration | FunctionDeclaration)[
                     docs: (t as JSDocReturnTag).getCommentText(),
                     type: getType(m.getReturnType()),
                 })) ?? [];
+            if (returns.length > 0)
+                return returns;
             // If no JSDoc return statements found, just use the default return
-            return returns.length === 0 ? [{ type: getType(m.getReturnType()) }] : returns;
+            const type = getType(m.getReturnType());
+            if (type.length === 0) // No return
+                return [];
+            return [{ type: getType(m.getReturnType()) }];
         })(),
     });
 

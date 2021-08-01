@@ -1,4 +1,5 @@
 import {Types, Method, Class, TSDoc, MethodSignature} from "./model";
+import {getType} from "./parse";
 import {escapeStr} from "./utils";
 
 
@@ -61,6 +62,9 @@ export function displayFunc(f: Method, global: boolean = false): string {
         // Display type/docs for overload
         `<h4><code>` +
             `${f.name}(${fo.parameters.map(p => p.name).join(", ")})` +
+            ` => ${fo.returns.length > 0 ?
+                fo.returns.map(r => displayType(r.type)).join(" | ") :
+                displaySpecial(escapeStr("void"), Colors.primitive)}` +
         `</code></h4>` +
         `\n${fo.docs || "\n*Description needed*\n"}\n` +
 
