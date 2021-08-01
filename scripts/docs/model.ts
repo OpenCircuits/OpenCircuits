@@ -14,18 +14,20 @@ export type Property = Parameter & {
     access: AccessModifier;
 }
 
+export type MethodSignature = {
+    docs?: string;
+    parameters: Parameter[];
+    returns: {
+        docs?: string;
+        type: Types;
+    }[];
+};
 export type Method = {
     docs?: string;
     access: AccessModifier;
     name: string;
-    overloads: {
-        docs?: string;
-        parameters: Parameter[];
-        returns: {
-            docs?: string;
-            type: Types;
-        }[];
-    }[];
+    implementation: MethodSignature;
+    overloads: MethodSignature[];
 }
 export type Constructor = {
     docs?: string;
@@ -38,7 +40,7 @@ export type Constructor = {
 
 export type Class = {
     docs?: string;
-    generics?: {
+    generics: {
         docs?: string;
         constraint?: Types,
         name: string;

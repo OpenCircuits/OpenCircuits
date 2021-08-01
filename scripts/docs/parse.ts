@@ -83,29 +83,30 @@ export function getProperties(c: ClassDeclaration): Property[] {
 
 
 export function parseMethods(methods: (MethodDeclaration | FunctionDeclaration)[]): Method[] {
+    const parseMethod = (m: MethodDeclaration | FunctionDeclaration) => ({
+        docs: m.getJsDocs()[0]?.getDescription(),
+        parameters: m.getParameters().map(getParameter),
+        returns: (() => {
+            // Filter JSDocs for return tags and use those for return statements
+            const returns = m.getJsDocs()[0]
+                ?.getTags()
+                ?.filter(t => t instanceof JSDocReturnTag)
+                ?.map(t => ({
+                    docs: (t as JSDocReturnTag).getCommentText(),
+                    type: getType(m.getReturnType()),
+                })) ?? [];
+            // If no JSDoc return statements found, just use the default return
+            return returns.length === 0 ? [{ type: getType(m.getReturnType()) }] : returns;
+        })(),
+    });
+
     return methods
         .map(m => ({
             docs: m.getJsDocs()[0]?.getDescription(),
             access: getAccessModifier(m),
             name: m.getName() ?? "(undefined)",
-            // If no overloads, then just use the single method declaration `m`
-            overloads: (m.getOverloads().length > 0 ? m.getOverloads() : [m])
-                .map(m2 => ({
-                    docs: m2.getJsDocs()[0]?.getDescription(),
-                    parameters: m2.getParameters().map(getParameter),
-                    returns: (() => {
-                        // Filter JSDocs for return tags and use those for return statements
-                        const returns = m2.getJsDocs()[0]
-                            ?.getTags()
-                            ?.filter(t => t instanceof JSDocReturnTag)
-                            ?.map(t => ({
-                                docs: (t as JSDocReturnTag).getCommentText(),
-                                type: getType(m2.getReturnType()),
-                            })) ?? [];
-                        // If no JSDoc return statements found, just use the default return
-                        return returns.length === 0 ? [{ type: getType(m2.getReturnType()) }] : returns;
-                    })(),
-                }))
+            implementation: parseMethod(m),
+            overloads: (m.getOverloads() ?? []).map(parseMethod)
         }));
 }
 

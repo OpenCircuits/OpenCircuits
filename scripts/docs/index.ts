@@ -70,7 +70,9 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
 }
 
 
-generateDocumentation(["src/app/core/utils/math/Graph.ts"], "docs/ts/app/core/utils/tmp", {
+generateDocumentation([
+    "src/app/core/utils/math/MathUtils.ts", "src/app/core/utils/math/Graph.ts",
+    "src/app/core/utils/math/Matrix.ts", "src/app/core/utils/math/Vector.ts"], "docs/ts/app/core/utils/tmp", {
     target: ScriptTarget.ES5,
     module: ModuleKind.ESNext,
     lib: [

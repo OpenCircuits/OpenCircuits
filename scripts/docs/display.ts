@@ -1,4 +1,4 @@
-import {AccessModifier, Types, Method, Class, TSDoc} from "./model";
+import {AccessModifier, Types, Method, Class, TSDoc, MethodSignature} from "./model";
 import {escapeStr} from "./utils";
 
 
@@ -52,36 +52,39 @@ export function displayConstructor(c: Class): string {
 
 
 export function displayFunc(f: Method, global: boolean = false): string {
+    const displaySignature = (fo: MethodSignature) => `` +
+        // Display type/docs for overload
+        `<h4><code>` +
+            `${f.name}(${fo.parameters.map(p => p.name).join(", ")})` +
+        `</code></h4>` +
+        `\n${fo.docs || "\n*Description needed*\n"}\n` +
+
+        // Display parameters of overload
+        (fo.parameters.length === 0 ? `` : `\n<h4>Parameters</h4>\n`) +
+        fo.parameters.map(p =>
+            `\n* <code>${p.name}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
+        ).join("") +
+
+        // Display returns for overload
+        (fo.returns.length === 0 ? `` : `\n<h4>Returns</h4>\n`) +
+        fo.returns.map(r =>
+            // The space after the <code> tag is necessary (for some reason)
+            //  and activates the `code` tag background w/o actually showing the space
+            `\n* <code> ${displayType(r.type)}</code> – ${r.docs || "*Description needed*"}\n`
+        ).join("");
+
     return `` +
         `\n<div className="wrapper func">\n` +
             // Display header and then each overload for the function
             `\n${global ?
                 `## ${f.name}` :
                 `#### <code>${displayModifier(f.access)} ${f.name}</code>`}\n` +
-            `\n\n${f.docs || ""}\n\n` +
+            `\n\n${f.overloads.length > 0 ? (f.docs || ``) : ``}\n\n` +
             f.overloads.map(fo =>
-                `<div>` +
-                    // Display type/docs for overload
-                    `<h4><code>` +
-                        `${f.name}(${fo.parameters.map(p => p.name).join(", ")})` +
-                    `</code></h4>` +
-                    `\n${fo.docs || "\n*Description needed*\n"}\n` +
-
-                    // Display parameters of overload
-                    (fo.parameters.length === 0 ? `` : `\n<h4>Parameters</h4>\n`) +
-                    fo.parameters.map(p =>
-                        `\n* <code>${p.name}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
-                    ).join("") +
-
-                    // Display returns for overload
-                    (fo.returns.length === 0 ? `` : `\n<h4>Returns</h4>\n`) +
-                    fo.returns.map(r =>
-                        // The space after the <code> tag is necessary (for some reason)
-                        //  and activates the `code` tag background w/o actually showing the space
-                        `\n* <code> ${displayType(r.type)}</code> – ${r.docs || "*Description needed*"}\n`
-                    ).join("") +
-                `\n</div>\n\n`
+                `<div>${displaySignature(fo)}\n</div>\n\n`
             ).join("") +
+            // If no overloads, then just display signature
+            (f.overloads.length === 0 ? displaySignature(f.implementation) : ``) +
         `\n</div>\n`;
 }
 
@@ -89,12 +92,12 @@ export function displayFunc(f: Method, global: boolean = false): string {
 export function displayClass(c: Class): string {
     return `` +
         // Overview, display name + generics
-        `## ${c.name}${c.generics ? `&lt;${c.generics.map(g => g.name).join(", ")}&gt;` : ""}\n` +
+        `## ${c.name}${c.generics.length > 0 ? `&lt;${c.generics.map(g => g.name).join(", ")}&gt;` : ""}\n` +
         (c.docs || "*Overview needed*") +
         `\n\n` +
         // Display generics
-        ((c.generics ?? []).length === 0 ? `` : `\n<h4>Template Parameters</h4>\n`) +
-        (c.generics ?? []).map(g =>
+        (c.generics.length === 0 ? `` : `\n<h4>Template Parameters</h4>\n`) +
+        c.generics.map(g =>
             `\n* <code> ${g.name}${
                 // Display generic name w/ constraint type if it has any
                 g.constraint ?
@@ -146,6 +149,10 @@ export function generateMD(doc: TSDoc): string {
 
         doc.classes.map(displayClass).join("\n\n") +
         `\n\n` +
-        `# Functions\n\n` +
+        // Only display 'Functions' header
+        //  if we have functions to display in this file
+        //  and there is another class in the file, otherwise showing
+        //   the header is pointless since it's all functions
+        (doc.functions.length > 0 && doc.classes.length > 0 ? `# Functions\n\n` : ``) +
         doc.functions.map(f => displayFunc(f, true)).join("\n\n");
 }
