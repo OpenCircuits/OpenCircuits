@@ -4,8 +4,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/conn"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
 // SessionManager keeps track of live sessions

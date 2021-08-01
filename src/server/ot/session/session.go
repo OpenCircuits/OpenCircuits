@@ -5,9 +5,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/conn"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
 type sessionState struct {

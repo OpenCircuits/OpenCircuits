@@ -10,8 +10,6 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth/google"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
@@ -20,6 +18,9 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/gcp_datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/sqlite"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -84,6 +85,7 @@ func main() {
 	// TODO:
 	docManager := doc.NewDocumentManager()
 	sessManager := session.NewSessionManager(docManager)
+	accessManager := access.NewMem()
 
 	// Route through Gin
 	router := gin.Default()
@@ -102,7 +104,8 @@ func main() {
 
 	// Register routes
 	web.RegisterPages(router)
-	routes.RegisterRoutes(router, userCsif, access.NewMem(), sessManager)
+	routes.RegisterRoutes(router, userCsif, accessManager)
+	ot.RegisterRoutes(router, accessManager, sessManager)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
