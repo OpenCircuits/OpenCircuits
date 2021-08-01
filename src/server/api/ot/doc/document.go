@@ -47,48 +47,31 @@ func (d docState) close() {
 	d.done <- d.CircuitID
 }
 
-func (d docState) timeout() <-chan time.Time {
-	return time.After(d.liveTime)
-}
-
 func (d docState) messageLoop() {
 	defer d.close()
 
-	// Timeout so that documents can close after a specified inactivity period
-	to := d.timeout()
-	renew := false
-
+	// TODO: _may_ want some sort of time-out if sessions can live forever
 	for {
-		select {
-		case mw := <-d.recv:
-			if m, ok := mw.Data.(JoinDocument); ok {
-				d.clients[mw.SessionID] = mw.Resp
-				mw.Resp <- WelcomeMessage{
-					MissedEntries: d.log.Slice(m.LogClock),
-				}
-			} else if _, ok := mw.Data.(LeaveDocument); ok {
-				delete(d.clients, mw.SessionID)
-
-				if len(d.clients) == 0 {
-					log.Printf("Last client left, closing %s...\n", d.CircuitID)
-					return
-				}
-			} else if m, ok := mw.Data.(Propose); ok {
-				if _, ok := d.clients[mw.SessionID]; !ok {
-					log.Println("Message sent from un-joined client")
-					continue
-				}
-
-				mw.Resp <- d.serverRecv(m)
+		mw := <-d.recv
+		if m, ok := mw.Data.(JoinDocument); ok {
+			d.clients[mw.SessionID] = mw.Resp
+			mw.Resp <- WelcomeMessage{
+				MissedEntries: d.log.Slice(m.LogClock),
 			}
-			renew = true
+		} else if _, ok := mw.Data.(LeaveDocument); ok {
+			delete(d.clients, mw.SessionID)
 
-		case <-to:
-			if !renew {
-				log.Printf("All clients timed out, closing %s...\n", d.CircuitID)
+			if len(d.clients) == 0 {
+				log.Printf("Last client left, closing %s...\n", d.CircuitID)
 				return
 			}
-			to = d.timeout()
+		} else if m, ok := mw.Data.(Propose); ok {
+			if _, ok := d.clients[mw.SessionID]; !ok {
+				log.Println("Message sent from un-joined client")
+				continue
+			}
+
+			mw.Resp <- d.serverRecv(m)
 		}
 	}
 }

@@ -99,9 +99,6 @@ func (s sessionState) handleMsg(data []byte) (interface{}, error) {
 func (s sessionState) networkListener() {
 	defer s.close()
 
-	ch := make(chan interface{})
-	defer close(ch)
-
 	// This can be synchronous because it is per-client
 	for {
 		mt, message, err := s.conn.ReadMessage()
