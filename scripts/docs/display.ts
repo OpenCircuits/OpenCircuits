@@ -1,22 +1,25 @@
-import {AccessModifier, Types, Method, Class, TSDoc, MethodSignature} from "./model";
+import {Types, Method, Class, TSDoc, MethodSignature} from "./model";
 import {escapeStr} from "./utils";
 
+
+const Colors = {
+    modifier: "purple",
+    keyword: "#5295cc",
+    primitive: "#18598f",
+};
+
+export function displaySpecial(text: string, color: string): string {
+    return `<span style={{color: "${color}", paddingLeft: "0px", backgroundColor: "transparent"}}>${text}</span>`;
+}
 
 export function displayType(type: Types): string {
     return type.map(i =>
         i.map(({name, link}) =>
-            link ? `<a href="${link}">${escapeStr(name)}</a>` : escapeStr(name)
+            link ?
+                `<a href="${link}">${escapeStr(name)}</a>` :
+                displaySpecial(escapeStr(name), Colors.primitive)
         ).join(" & ")
     ).join(" | ");
-}
-
-export function displayModifier(mod: AccessModifier): string {
-    return `<span style={{color: "purple", paddingLeft: "0px", backgroundColor: "transparent"}}>${mod}</span>`;
-}
-
-
-export function displayKeyword(word: string): string {
-    return `<span style={{color: "#5295cc", paddingLeft: "0px", backgroundColor: "transparent"}}>${word}</span>`;
 }
 
 export function displayGenerics(generics: Class["generics"]): string {
@@ -31,12 +34,14 @@ export function displayGenerics(generics: Class["generics"]): string {
 export function displayConstructor(c: Class): string {
     return `` +
         `\n<div className="wrapper">\n` +
-            `\n#### <code>${displayModifier(c.constructor.access)} ${c.name}</code>\n` +
+            `\n#### <code>${displaySpecial(c.constructor.access, Colors.modifier)} ${c.name}</code>\n` +
             c.constructor.overloads.map(cc =>
                 `<div>` +
                     // Display type/docs for overload
                     `<h4><code>` +
-                        `${displayKeyword("new")} ${c.name}(${cc.parameters.map(p => p.name).join(", ")})` +
+                        `${displaySpecial("new", Colors.keyword)} ${c.name}(${
+                            cc.parameters.map(p => p.name).join(", ")
+                        })` +
                     `</code></h4>` +
                     `\n${cc.docs || "*Description needed*"}\n` +
 
@@ -78,7 +83,7 @@ export function displayFunc(f: Method, global: boolean = false): string {
             // Display header and then each overload for the function
             `\n${global ?
                 `## ${f.name}` :
-                `#### <code>${displayModifier(f.access)} ${f.name}</code>`}\n` +
+                `#### <code>${displaySpecial(f.access, Colors.modifier)} ${f.name}</code>`}\n` +
             `\n\n${f.overloads.length > 0 ? (f.docs || ``) : ``}\n\n` +
             f.overloads.map(fo =>
                 `<div>${displaySignature(fo)}\n</div>\n\n`
@@ -101,7 +106,7 @@ export function displayClass(c: Class): string {
             `\n* <code> ${g.name}${
                 // Display generic name w/ constraint type if it has any
                 g.constraint ?
-                    ` ${displayKeyword("extends")} ${displayType(g.constraint)}` : ``
+                    ` ${displaySpecial("extends", Colors.keyword)} ${displayType(g.constraint)}` : ``
             }</code> – ${g.docs || "*Description needed*"}`
         ).join("") +
         `\n\n---` +
@@ -118,7 +123,7 @@ export function displayClass(c: Class): string {
         `\n` +
         c.properties.map(p => `` +
             `<div className="wrapper">\n\n` +
-                `#### <code>${displayModifier(p.access)} ${p.name}: ${displayType(p.type)}</code>\n` +
+                `#### <code>${displaySpecial(p.access, Colors.modifier)} ${p.name}: ${displayType(p.type)}</code>\n` +
                 (p.docs || "*Description needed*") +
             `\n</div>\n`
         ).join("") +
