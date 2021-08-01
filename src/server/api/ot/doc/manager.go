@@ -2,25 +2,20 @@ package doc
 
 import (
 	"sync"
-	"time"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
 // DocumentManager keeps track of live documents
 type DocumentManager struct {
-	liveDocuments map[model.CircuitId]*Document
+	liveDocuments map[model.CircuitId]Document
 	documentLock  *sync.RWMutex
 	doneListener  chan model.CircuitId
 }
 
-func (dm *DocumentManager) livenessListener() {
-
-}
-
 func NewDocumentManager() *DocumentManager {
 	dm := &DocumentManager{
-		liveDocuments: make(map[string]*Document),
+		liveDocuments: make(map[model.CircuitId]Document),
 		documentLock:  &sync.RWMutex{},
 	}
 
@@ -38,29 +33,22 @@ func (dm *DocumentManager) closer() {
 }
 
 // Get gets the channel to send messages to for a particular document
-func (dm *DocumentManager) Get(circuitID model.CircuitId) (chan<- MessageWrapper, error) {
+func (dm *DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
 	dm.documentLock.RLock()
 	d, ok := dm.liveDocuments[circuitID]
 	dm.documentLock.Unlock()
 	if ok {
 		// document is already live
-		return d.recv, nil
+		return d, nil
 	}
 
 	// Document is not live, must bootstrap it first
-	d = &Document{
-		CircuitID: circuitID,
-		log:       Log{}, // TODO: This needs to be loaded
-		recv:      make(chan MessageWrapper),
-		liveTime:  5 * time.Minute,
-		done:      dm.doneListener,
-	}
-	go d.messageLoop()
+	d = NewDocument(circuitID, dm.doneListener)
 
 	// Add the new document to the map
 	dm.documentLock.Lock()
 	dm.liveDocuments[circuitID] = d
 	dm.documentLock.Unlock()
 
-	return d.recv, nil
+	return d, nil
 }

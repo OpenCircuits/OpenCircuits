@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -13,64 +12,38 @@ import (
 // SessionManager keeps track of live sessions
 type SessionManager struct {
 	dm          *doc.DocumentManager
-	sessions    map[SessionID]*Session
+	sessions    map[string]Session
 	sessionLock *sync.RWMutex
-	addSession  chan *Session
-	sessionDone chan SessionID
+	sessionDone chan string
 }
 
 func NewSessionManager(dm *doc.DocumentManager) *SessionManager {
 	sm := &SessionManager{
 		dm:          dm,
-		sessions:    make(map[SessionID]*Session),
-		addSession:  make(chan *Session),
+		sessions:    make(map[string]Session),
 		sessionLock: &sync.RWMutex{},
-		sessionDone: make(chan SessionID, 20),
+		sessionDone: make(chan string, 20),
 	}
 
-	go sm.manager()
+	go sm.closer()
 
 	return sm
 }
 
-func (sm *SessionManager) updatePerms(sessionID SessionID) {
-	sm.sessionLock.RLock()
-	_, ok := sm.sessions[sessionID]
-	sm.sessionLock.RUnlock()
-	if ok {
-		// Do something to update permissions
-	}
-}
+//func (sm *SessionManager) updatePerms(sessionID string) {
+//	sm.sessionLock.RLock()
+//	defer sm.sessionLock.RUnlock()
+//	_, ok := sm.sessions[sessionID]
+//	if ok {
+//		// Do something to update permissions
+//	}
+//}
 
-func (sm *SessionManager) manager() {
-	// Add sessions in a single thread because session IDs need to be unique
-	for {
-		select {
-		case s := <-sm.addSession:
-
-			// Generate a unique ID for the session
-			var sid SessionID
-			for {
-				// Session IDs should be long enough where someone won't randomly guess one
-				sid = SessionID{utils.RandToken(64)}
-				if _, ok := sm.sessions[sid]; !ok {
-					break
-				}
-			}
-
-			// start the session
-			s.start()
-
-			// Add the session to the map
-			sm.sessionLock.Lock()
-			sm.sessions[s.SessionID] = s
-			sm.sessionLock.Unlock()
-
-		case sid := <-sm.sessionDone:
-			sm.sessionLock.Lock()
-			delete(sm.sessions, sid)
-			sm.sessionLock.Unlock()
-		}
+func (sm *SessionManager) closer() {
+	for sid := range sm.sessionDone {
+		sm.sessionLock.Lock()
+		delete(sm.sessions, sid)
+		sm.sessionLock.Unlock()
 	}
 }
 
@@ -87,19 +60,18 @@ func (sm *SessionManager) Establish(c *gin.Context) {
 	}
 
 	// Get the document
-	ch, err := sm.dm.Get(circuitID)
+	doc, err := sm.dm.Get(circuitID)
 	if err != nil {
 		log.Printf("%e\n", err)
 		_ = conn.Close()
 		return
 	}
 
-	// Add the session
-	sm.addSession <- &Session{
-		CircuitID:  circuitID,
-		conn:       conn,
-		done:       sm.sessionDone,
-		docUpdates: make(chan interface{}, 20),
-		doc:        ch,
-	}
+	// Spawn the session
+	s := NewSession(doc, conn, sm.sessionDone)
+
+	// Add the session to the map
+	sm.sessionLock.Lock()
+	sm.sessions[s.SessionID] = s
+	sm.sessionLock.Unlock()
 }

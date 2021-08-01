@@ -1,5 +1,0 @@
-package ot
-
-func OTMain() {
-
-}

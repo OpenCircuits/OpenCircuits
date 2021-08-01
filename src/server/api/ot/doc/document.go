@@ -7,25 +7,52 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-// Document contains the core OT logic
-type Document struct {
+type docState struct {
 	CircuitID model.CircuitId
 	liveTime  time.Duration
-	log       Log
-	recv      chan MessageWrapper
-	done      chan<- model.CircuitId
-	clients   map[chan<- interface{}]bool
+
+	log     *Changelog
+	clients map[string]chan<- interface{}
+
+	recv <-chan MessageWrapper
+	done chan<- model.CircuitId
 }
 
-func (d *Document) cleanup() {}
+type Document struct {
+	CircuitID  model.CircuitId
+	SendUpdate chan<- MessageWrapper
+}
 
-func (d Document) timeout() <-chan time.Time {
+func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Document {
+	ch := make(chan MessageWrapper)
+	d := docState{
+		CircuitID: circuitID,
+		liveTime:  5 * time.Minute,
+
+		log:     &Changelog{}, // TODO: This needs to be loaded
+		clients: make(map[string]chan<- interface{}),
+
+		recv: ch,
+		done: done,
+	}
+	go d.messageLoop()
+
+	return Document{
+		CircuitID:  circuitID,
+		SendUpdate: ch,
+	}
+}
+
+func (d docState) close() {
+	d.done <- d.CircuitID
+}
+
+func (d docState) timeout() <-chan time.Time {
 	return time.After(d.liveTime)
 }
 
-func (d *Document) messageLoop() {
-	defer d.cleanup()
-	defer func() { d.done <- d.CircuitID }()
+func (d docState) messageLoop() {
+	defer d.close()
 
 	// Timeout so that documents can close after a specified inactivity period
 	to := d.timeout()
@@ -35,27 +62,30 @@ func (d *Document) messageLoop() {
 		select {
 		case mw := <-d.recv:
 			if m, ok := mw.Data.(JoinDocument); ok {
-				d.clients[mw.Resp] = true
-				mw.Resp <- d.log.Range(m.LogClock, -1)
+				d.clients[mw.SessionID] = mw.Resp
+				mw.Resp <- WelcomeMessage{
+					MissedEntries: d.log.Slice(m.LogClock),
+				}
 			} else if _, ok := mw.Data.(LeaveDocument); ok {
-				delete(d.clients, mw.Resp)
+				delete(d.clients, mw.SessionID)
 
 				if len(d.clients) == 0 {
 					log.Printf("Last client left, closing %s...\n", d.CircuitID)
 					return
 				}
-			} else {
-				if _, ok := d.clients[mw.Resp]; !ok {
+			} else if m, ok := mw.Data.(Propose); ok {
+				if _, ok := d.clients[mw.SessionID]; !ok {
 					log.Println("Message sent from un-joined client")
 					continue
 				}
-				if m, ok := mw.Data.(ProposeAction); ok {
-					mw.Resp <- d.serverRecv(m)
-				}
+
+				mw.Resp <- d.serverRecv(m)
 			}
 			renew = true
+
 		case <-to:
 			if !renew {
+				log.Printf("All clients timed out, closing %s...\n", d.CircuitID)
 				return
 			}
 			to = d.timeout()
@@ -63,6 +93,27 @@ func (d *Document) messageLoop() {
 	}
 }
 
-func (d *Document) serverRecv(msg ProposeAction) interface{} {
-	return nil
+func (d docState) serverRecv(msg Propose) interface{} {
+	if msg.ProposedClock > d.log.LogClock {
+		// Didn't follow protocol (Byzantine)
+		// Let the client know so it can crash & report it.
+		return ProposeNack{d.log.LogClock}
+	}
+
+	// TODO: This is also where entries that are "too old" are excluded
+	// TODO: Check for schema mismatch
+
+	// In a concurrent request, acceptedClock != proposedClock
+	accepted := d.log.AddEntry(msg)
+
+	// Send to other clients
+	for sid, ch := range d.clients {
+		if sid == msg.SessionID {
+			continue
+		}
+		ch <- accepted
+	}
+
+	// Acknowledge the request
+	return ProposeAck{AcceptedClock: accepted.AcceptedClock}
 }

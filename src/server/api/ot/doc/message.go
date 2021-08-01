@@ -1,23 +1,21 @@
 package doc
 
 type MessageWrapper struct {
-	Resp chan<- interface{}
-	Data interface{}
+	SessionID string
+	Resp      chan<- interface{}
+	Data      interface{}
 }
 
 //
 // Messages for managing document changes
 //
 
-type ProposeAction struct {
-	Action        []byte
-	ProposedClock uint64
-	SessionID     string
-	UserId        string
-}
+type Propose = ProposedEntry
+
 type ProposeAck struct {
 	AcceptedClock uint64
 }
+
 type ProposeNack struct {
 	LogClock uint64
 }
@@ -29,7 +27,8 @@ type ProposeNack struct {
 type JoinDocument struct {
 	LogClock uint64
 }
+
 type WelcomeMessage struct {
-	MissedEntries []LogEntry
+	MissedEntries []AcceptedEntry
 }
 type LeaveDocument struct{}

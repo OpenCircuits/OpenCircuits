@@ -10,6 +10,8 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth/google"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
@@ -79,6 +81,10 @@ func main() {
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}
 
+	// TODO:
+	docManager := doc.NewDocumentManager()
+	sessManager := session.NewSessionManager(docManager)
+
 	// Route through Gin
 	router := gin.Default()
 	router.Use(gin.Recovery())
@@ -96,7 +102,7 @@ func main() {
 
 	// Register routes
 	web.RegisterPages(router)
-	routes.RegisterRoutes(router, userCsif, access.NewMem())
+	routes.RegisterRoutes(router, userCsif, access.NewMem(), sessManager)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {

@@ -17,7 +17,7 @@ func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
 }
 
-func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver, sessionManager session.SessionManager) {
+func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver, sessionManager *session.SessionManager) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
