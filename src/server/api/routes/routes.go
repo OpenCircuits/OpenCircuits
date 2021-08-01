@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/circuits"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 func pingHandler(c *gin.Context) {
@@ -40,6 +42,16 @@ func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterf
 	router.POST("/api/access/circuit/:cid/user/:uid", w(wa(access.UpsertCircuitUser)))
 	router.POST("/api/access/circuit/:cid/link/:lid", w(wa(access.UpsertCircuitLink)))
 
+	wsFactory := &conn.WebSocketConnectionFactory{
+		Upgrader:    websocket.Upgrader{},
+		MessageType: websocket.TextMessage,
+	}
+	establish := func(c *gin.Context) {
+		circuitID := c.Param("cid")
+		conn := wsFactory.Establish(c)
+		sessionManager.Start(circuitID, conn)
+	}
+
 	// OT
-	router.POST("/api/ot/:cid", sessionManager.Establish)
+	router.POST("/api/ot/:cid", establish)
 }

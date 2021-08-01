@@ -7,20 +7,14 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
-type docState struct {
+// Document is the interface between sessions and the document state
+type Document struct {
 	CircuitID model.CircuitId
-	liveTime  time.Duration
-
-	log     *Changelog
-	clients map[string]chan<- interface{}
-
-	recv <-chan MessageWrapper
-	done chan<- model.CircuitId
+	send      chan<- MessageWrapper
 }
 
-type Document struct {
-	CircuitID  model.CircuitId
-	SendUpdate chan<- MessageWrapper
+func (d Document) Send(mw MessageWrapper) {
+	d.send <- mw
 }
 
 func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Document {
@@ -38,9 +32,20 @@ func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Documen
 	go d.messageLoop()
 
 	return Document{
-		CircuitID:  circuitID,
-		SendUpdate: ch,
+		CircuitID: circuitID,
+		send:      ch,
 	}
+}
+
+type docState struct {
+	CircuitID model.CircuitId
+	liveTime  time.Duration
+
+	log     *Changelog
+	clients map[string]chan<- interface{}
+
+	recv <-chan MessageWrapper
+	done chan<- model.CircuitId
 }
 
 func (d docState) close() {
@@ -77,17 +82,11 @@ func (d docState) messageLoop() {
 }
 
 func (d docState) serverRecv(msg Propose) interface{} {
-	if msg.ProposedClock > d.log.LogClock {
-		// Didn't follow protocol (Byzantine)
-		// Let the client know so it can crash & report it.
-		return ProposeNack{d.log.LogClock}
-	}
-
-	// TODO: This is also where entries that are "too old" are excluded
-	// TODO: Check for schema mismatch
-
 	// In a concurrent request, acceptedClock != proposedClock
-	accepted := d.log.AddEntry(msg)
+	accepted, err := d.log.AddEntry(msg)
+	if err != nil {
+		return ProposeNack{d.log.LogClock(), err.Error()}
+	}
 
 	// Send to other clients
 	for sid, ch := range d.clients {

@@ -1,6 +1,10 @@
 package doc
 
-import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+import (
+	"errors"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+)
 
 type ChangelogEntry struct {
 	// Action is raw representation of the action used by clients
@@ -59,25 +63,34 @@ func (e ChangelogEntry) Strip() AcceptedEntry {
 
 // TODO: This will need an offset when trimmed
 type Changelog struct {
-	Entries  []ChangelogEntry
-	LogClock uint64
+	entries  []ChangelogEntry
+	logClock uint64
 }
 
-func (l *Changelog) AddEntry(p ProposedEntry) AcceptedEntry {
-	e := p.Accept(l.LogClock)
-	l.LogClock++
-	l.Entries = append(l.Entries, e)
-	return e.Strip()
+func (l *Changelog) AddEntry(p ProposedEntry) (AcceptedEntry, error) {
+	if p.ProposedClock > l.logClock {
+		return AcceptedEntry{}, errors.New("proposed clock too high")
+	}
+	// TODO: This is also where entries that are "too old" are excluded
+	// TODO: Check for schema mismatch
+	e := p.Accept(l.logClock)
+	l.logClock++
+	l.entries = append(l.entries, e)
+	return e.Strip(), nil
 }
 
 func (l *Changelog) Slice(begin uint64) []AcceptedEntry {
-	return l.Range(begin, uint64(len(l.Entries)))
+	return l.Range(begin, uint64(len(l.entries)))
 }
 
 func (l *Changelog) Range(begin uint64, end uint64) []AcceptedEntry {
 	res := make([]AcceptedEntry, end-begin)
-	for i, v := range l.Entries[begin:end] {
+	for i, v := range l.entries[begin:end] {
 		res[i] = v.Strip()
 	}
 	return res
+}
+
+func (l *Changelog) LogClock() uint64 {
+	return l.logClock
 }

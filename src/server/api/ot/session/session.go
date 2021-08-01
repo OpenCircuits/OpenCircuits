@@ -5,14 +5,14 @@ import (
 	"errors"
 	"log"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
-	"github.com/gorilla/websocket"
 )
 
 type sessionState struct {
 	sessionID  string
-	conn       *websocket.Conn
+	conn       conn.Connection
 	done       chan<- string
 	docUpdates chan interface{}
 	doc        doc.Document
@@ -25,7 +25,7 @@ type Session struct {
 	SessionID string
 }
 
-func NewSession(doc doc.Document, conn *websocket.Conn, done chan<- string) Session {
+func NewSession(doc doc.Document, conn conn.Connection, done chan<- string) Session {
 	s := sessionState{
 		sessionID:  utils.RandToken(128),
 		conn:       conn,
@@ -48,8 +48,8 @@ type sessMsg struct {
 }
 
 type sessResp struct {
-	Result string `json:"result"`
-	Data   interface{}
+	Result string      `json:"result"`
+	Data   interface{} `json:"data"`
 }
 
 func parseMessage(data []byte) (interface{}, error) {
@@ -74,10 +74,10 @@ func parseMessage(data []byte) (interface{}, error) {
 func (s sessionState) close() {
 	s.done <- s.sessionID
 	s.conn.Close()
-	s.doc.SendUpdate <- doc.MessageWrapper{
+	s.doc.Send(doc.MessageWrapper{
 		Resp: s.docUpdates,
 		Data: doc.LeaveDocument{},
-	}
+	})
 	close(s.docUpdates)
 }
 
@@ -87,11 +87,11 @@ func (s sessionState) handleMsg(data []byte) (interface{}, error) {
 		return nil, err
 	}
 
-	s.doc.SendUpdate <- doc.MessageWrapper{
+	s.doc.Send(doc.MessageWrapper{
 		SessionID: s.sessionID,
 		Resp:      s.docAck,
 		Data:      msg,
-	}
+	})
 	return <-s.docAck, nil
 }
 
@@ -101,26 +101,27 @@ func (s sessionState) networkListener() {
 
 	// This can be synchronous because it is per-client
 	for {
-		mt, message, err := s.conn.ReadMessage()
+		message, err := s.conn.Recv()
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
 
-		var response []byte
+		var response sessResp
 		if resp, err := s.handleMsg(message); err == nil {
-			response, _ = json.Marshal(sessResp{
+			response = sessResp{
 				Result: "ok",
 				Data:   resp,
-			})
+			}
 		} else {
-			response, _ = json.Marshal(sessResp{
+			response = sessResp{
 				Result: "error",
 				Data:   err,
-			})
+			}
 		}
 
-		err = s.conn.WriteMessage(mt, response)
+		bytes, _ := json.Marshal(response)
+		err = s.conn.Send(bytes)
 		if err != nil {
 			log.Println("write:", err)
 			break
@@ -130,6 +131,7 @@ func (s sessionState) networkListener() {
 
 func (s sessionState) documentListener() {
 	for u := range s.docUpdates {
-		go s.conn.WriteJSON(u)
+		m, _ := json.Marshal(u)
+		go s.conn.Send(m)
 	}
 }

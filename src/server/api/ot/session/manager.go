@@ -4,9 +4,8 @@ import (
 	"log"
 	"sync"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/ot/doc"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
 // SessionManager keeps track of live sessions
@@ -47,24 +46,12 @@ func (sm *SessionManager) closer() {
 	}
 }
 
-// TODO: Add CSRF (CSWSH) token to handshake
-var upgrader = websocket.Upgrader{}
-
-func (sm *SessionManager) Establish(c *gin.Context) {
-	circuitID := c.Param("cid")
-
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Print("Failed to upgrade connection:", err)
-		return
-	}
-
+func (sm *SessionManager) Start(circuitID string, conn conn.Connection) error {
 	// Get the document
 	doc, err := sm.dm.Get(circuitID)
 	if err != nil {
 		log.Printf("%e\n", err)
-		_ = conn.Close()
-		return
+		return err
 	}
 
 	// Spawn the session
@@ -74,4 +61,6 @@ func (sm *SessionManager) Establish(c *gin.Context) {
 	sm.sessionLock.Lock()
 	sm.sessions[s.SessionID] = s
 	sm.sessionLock.Unlock()
+
+	return nil
 }

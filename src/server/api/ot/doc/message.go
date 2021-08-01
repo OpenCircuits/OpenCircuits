@@ -18,6 +18,7 @@ type ProposeAck struct {
 
 type ProposeNack struct {
 	LogClock uint64
+	ErrorMsg string
 }
 
 //
