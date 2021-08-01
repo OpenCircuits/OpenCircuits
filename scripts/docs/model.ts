@@ -46,7 +46,7 @@ export type Class = {
         name: string;
     }[];
     name: string;
-    constructor: Constructor,
+    constructor?: Constructor,
     properties: Property[]
     methods: Method[],
     staticMethods: Method[]

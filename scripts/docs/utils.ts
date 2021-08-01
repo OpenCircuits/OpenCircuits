@@ -1,48 +1,18 @@
 import fs from "fs";
 import path from "path";
-import {ts} from "ts-morph";
 
 
 const EscapeCodes = {
     '<': 'lt',
-    '>': 'gt'
+    '>': 'gt',
+    '{': '#123',
+    '}': '#125',
 } as Record<string, string>;
 const EscapeRegex = new RegExp(`[${Object.keys(EscapeCodes).join("")}]`, "g");
 export function escapeStr(str: string): string {
     return str.replace(EscapeRegex, (m) => {
         return `&${EscapeCodes[m]};`;
     });
-}
-
-/** True if this is visible outside this file, false otherwise */
-export function isNodeExported(node: ts.Node): boolean {
-    return (
-        (ts.getCombinedModifierFlags(node as ts.Declaration) & ts.ModifierFlags.Export) !== 0 ||
-        (!!node.parent && node.parent.kind === ts.SyntaxKind.SourceFile)
-    );
-}
-export function ArrayFrom<A>(it: ts.Iterator<A>): A[] {
-    let arr = [] as A[];
-    let cur: ReturnType<ts.Iterator<A>["next"]>;
-    while (!(cur = it.next()).done)
-        arr.push(cur.value as A);
-    return arr;
-}
-
-export function findCommonPath(files: string[]): string {
-    const splitFiles = files.map(f => f.split("/"));
-    for (let i = 0; i < splitFiles[0].length; i++) {
-        for (const splits of splitFiles) {
-            if (splits[i] !== splitFiles[0][i]) // If not match the 1st one, then not common, return
-                return splits.slice(0, i).join("/");
-        }
-    }
-    return files[0]; // All files are the same
-}
-
-export function getUniquePaths(files: string[]): string[] {
-    const common = findCommonPath(files);
-    return files.map(f => f.split(common)[1]);
 }
 
 export function getAllFiles(p: string): string[] {

@@ -35,8 +35,8 @@ export function displayGenerics(generics: Class["generics"]): string {
 export function displayConstructor(c: Class): string {
     return `` +
         `\n<div className="wrapper">\n` +
-            `\n#### <code>${displaySpecial(c.constructor.access, Colors.modifier)} ${c.name}</code>\n` +
-            c.constructor.overloads.map(cc =>
+            `\n#### <code>${displaySpecial(c.constructor!.access, Colors.modifier)} ${c.name}</code>\n` +
+            c.constructor!.overloads.map(cc =>
                 `<div>` +
                     // Display type/docs for overload
                     `<h4><code>` +
@@ -116,9 +116,11 @@ export function displayClass(c: Class): string {
         `\n\n---` +
 
         // Display constructor
-        `\n\n### Constructor\n\n` +
-        displayConstructor(c) +
-        `\n---` +
+        (c.constructor ?
+            `\n\n### Constructor\n\n` +
+            displayConstructor(c) +
+            `\n---`
+        : ``) +
 
         // Display properties
         `\n\n### Properties\n\n` +

@@ -54,7 +54,9 @@ export function getParameter(p: ParameterDeclaration): Parameter {
 }
 
 
-export function getConstructors(c: ClassDeclaration): Constructor {
+export function getConstructors(c: ClassDeclaration): Constructor | undefined {
+    if (c.getConstructors().length === 0)
+        return undefined;
     if (c.getConstructors().length > 1)
         throw new Error(`Multiple constructors not supported for ${c.getName()}!`);
     const cc = c.getConstructors()[0];
