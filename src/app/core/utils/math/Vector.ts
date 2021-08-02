@@ -1,17 +1,52 @@
 import {serializable, serialize} from "serialeazy";
 
+/**
+ * A representation of a vector in 2D space. Commonly used to represent points,
+ *  but also sizes, rays, and any other collection of 2-numbers.
+ *
+ * It should be noted that although the Vector itself is *not* immutable
+ *  (since its `x` and `y` properties are settable), all methods on the Vector
+ *  will return new Vectors with the performed operation.
+ */
 @serializable("Vector")
 export class Vector {
+
+    /**
+     * The x-component of this Vector
+     */
     @serialize
     public x: number;
 
+    /**
+     * The y-component of this Vector
+     */
     @serialize
     public y: number;
 
+    /**
+     * Initializes a blank Vector with default x, y values of 0, 0
+     */
     public constructor();
-    public constructor(v: Vector);
-    public constructor(x: number);
+
+    /**
+     * Creates a Vector with the x and y values of the `other` Vector
+     * @param other The vector to copy
+     */
+    public constructor(other: Vector);
+
+    /**
+     * Initialize a Vector with the same x and y values as `val`
+     * @param val The value to initialize the vector with
+     */
+    public constructor(val: number);
+
+    /**
+     * Initialize a Vector with x values `x` and y value `y`
+     * @param x The x-component
+     * @param y The y-component
+     */
     public constructor(x: number, y: number);
+
     public constructor(x: Vector | number = 0, y?: number) {
         if (x instanceof Vector) {
             this.x = x.x;
@@ -22,9 +57,29 @@ export class Vector {
         }
     }
 
-    public add(v: Vector): Vector;
-    public add(x: number): Vector;
+    /**
+     * Returns a new Vector with `this` Vector's x and y
+     *  components added to `other`'s components.
+     * @param other The vector to add to `this`
+     */
+    public add(other: Vector): Vector;
+
+    /**
+     * Returns a new Vector with `this` Vector's x and y
+     *  components added by `val` to each component.
+     * @param val The value to add to `this`
+     */
+    public add(val: number): Vector;
+
+    /**
+     * Return a new Vector with `this` Vector's x and y
+     *  components added by `x` and `y` respectively.
+     * @param x The x-component to add to `this`
+     * @param y The y-component to add to `this`
+     * @returns A vector with `this` added to `x` and `y`
+     */
     public add(x: number, y: number): Vector;
+
     public add(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
         const dy = (x instanceof Vector ? x.y : (y == null ? x : y));
