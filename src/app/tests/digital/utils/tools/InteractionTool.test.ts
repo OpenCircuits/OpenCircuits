@@ -16,13 +16,22 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Selection Tool", () => {
-    const {designer, input, selections} = Setup();
+    const {designer, input, selections, history} = Setup();
     const {Place, Connect} = GetHelpers({designer});
 
     describe("Single Object", () => {
         afterEach(() => {
             // Clear previous circuit
             designer.reset();
+            history.reset();
+        });
+
+        test("Clicking on nothing should NOT create an action", () => {
+            input.click(V(0, 0));
+            input.click(V(50, 0));
+            input.click(V(0, 50));
+
+            expect(history.getActions()).toHaveLength(0);
         });
 
         test("Click to Select then Deselect ANDGate", () => {
@@ -36,6 +45,8 @@ describe("Selection Tool", () => {
             input.move(V(100, 0), 10)
                     .click();
             expect(selections.get().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
 
         test("Drag to Select then Click to Deselect ANDGate", () => {
@@ -50,6 +61,8 @@ describe("Selection Tool", () => {
             input.move(V(0, 100), 10)
                     .click();
             expect(selections.get().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
 
         test("Tap to Select then Deselect ANDGate", () => {
@@ -62,6 +75,8 @@ describe("Selection Tool", () => {
 
             input.tap(V(0, -100));
             expect(selections.get().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
         test("Tap to Toggle Switch", () => {
             const obj = new Switch();
@@ -74,6 +89,8 @@ describe("Selection Tool", () => {
             input.tap(V(0, 0));
             expect(selections.get().length).toBe(0);
             expect(obj.isOn()).toBe(false);
+
+            expect(history.getActions()).toHaveLength(0);
         });
 
         test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
@@ -88,6 +105,8 @@ describe("Selection Tool", () => {
 
             input.tap(V(-100, 0));
             expect(selections.get().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
 
         test("Click to Toggle Switch", () => {
@@ -101,6 +120,8 @@ describe("Selection Tool", () => {
             input.click(V(0, 0));
             expect(selections.get().length).toBe(0);
             expect(obj.isOn()).toBe(false);
+
+            expect(history.getActions()).toHaveLength(0);
         });
 
         test("Click to Select Wire", () => {
@@ -114,6 +135,8 @@ describe("Selection Tool", () => {
             input.click(V(100, 0));
             expect(selections.get().length).toBe(1);
             expect(selections.get()).toContain(wire);
+
+            expect(history.getActions()).toHaveLength(1);
         });
 
         test("Click to Select Straight Horizontal Wire", () => {
@@ -131,6 +154,8 @@ describe("Selection Tool", () => {
 
             input.click(V(20, 0));
             expect(selections.get().length).toBe(1);
+
+            expect(history.getActions()).toHaveLength(1);
         });
 
         test("Click to Select Straight Vertical Wire", () => {
@@ -150,6 +175,8 @@ describe("Selection Tool", () => {
 
             input.click(V(0, 20));
             expect(selections.get().length).toBe(1);
+
+            expect(history.getActions()).toHaveLength(1);
         });
 
         test("Select then Delete ANDGate", () => {
@@ -161,6 +188,8 @@ describe("Selection Tool", () => {
                     .pressKey(DELETE_KEY);
             expect(selections.get().length).toBe(0);
             expect(designer.getObjects().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
 
         test("Select then Delete ANDGate w/ Backspace", () => {
@@ -172,6 +201,8 @@ describe("Selection Tool", () => {
                     .pressKey(BACKSPACE_KEY);
             expect(selections.get().length).toBe(0);
             expect(designer.getObjects().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(2);
         });
 
         // TODO: Add test for deleting wire
@@ -201,6 +232,8 @@ describe("Selection Tool", () => {
             input.move(V(0, -100), 10)
                     .click();
             expect(selections.get().length).toBe(0);
+
+            expect(history.getActions()).toHaveLength(3);
         });
 
         // TODO: Add test for deleting multiple objects/wires
