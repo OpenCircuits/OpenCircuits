@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {V} from "Vector";
 
@@ -47,17 +47,23 @@ type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
 
-    const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
+    const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
     useEffect( () => {
-        function createNComponents(ev: MouseEvent) {
-            DragDropHandlers.drop(V(ev.x, ev.y), currItemID, numClicks);
-            setState({currItemID: "", numClicks: 0});
+        function reset() {
+            setState({curItemID: "", numClicks: 1});
         }
+        function createNComponents(ev: MouseEvent) {
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
+            reset();
+        }
+
+        DragDropHandlers.addListener(reset)
         document.addEventListener("click", createNComponents);
         return () => {
             document.removeEventListener("click", createNComponents);
+            DragDropHandlers.removeListener(reset);
         }
-    }, [currItemID, numClicks, setState]);
+    }, [curItemID, numClicks, setState]);
 
     return (
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
@@ -97,37 +103,24 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                         <div>
                             {section.items.map((item, j) =>
                                 <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                        data={item.id}>
-                                    <button>
-                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                        <br />
-                                        {item.label}
-                                    </button>
+                                           data={[item.id, numClicks]}
+                                           onClick={(ev) => {
+                                               setState({
+                                                   curItemID: item.id,
+                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1)
+                                               });
+                                               // Prevents `onClick` listener of placing the component to fire
+                                               ev.stopPropagation();
+                                           }}>
+                                    <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                    <br />
+                                    {item.label}
                                 </Draggable>
                             )}
                         </div>
                     </div>
                 )}
             </div>
-            {config.sections.map((section, i) =>
-                <React.Fragment key={`itemnav-section-${i}`}>
-                    <h4>{section.label}</h4>
-                    {section.items.map((item, j) =>
-                        <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                   data={item.id}>
-                            <button onClick={(ev) => {currItemID === item.id ?
-                                        setState({currItemID: currItemID, numClicks: numClicks + 1}) :
-                                        setState({currItemID: item.id, numClicks: 1});
-                                        ev.stopPropagation();
-                                    }}>
-                                <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                <br />
-                                {item.label}
-                            </button>
-                        </Draggable>
-                    )}
-                </React.Fragment>
-            )}
         </nav>
     );
 }

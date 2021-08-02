@@ -4,22 +4,18 @@ import {V, Vector} from "Vector";
 import {DragDropHandlers} from "./DragDropHandlers";
 
 
-type Props = {
-    children: React.ReactElement<{
-        onDragStart?: React.DragEventHandler<HTMLElement>;
-        onMouseDown?: React.MouseEventHandler<HTMLElement>;
-        onTouchStart?: React.TouchEventHandler<HTMLElement>;
-    }>;
-    data: string;
+type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+    children: React.ReactNode;
+    data: any[];
 };
-export const Draggable = ({ children, data }: Props) => {
-    const [{isDragging}, setState] = useState({ isDragging: false });
+export const Draggable = ({ children, data, ...other }: Props) => {
+    const [isDragging, setIsDragging] = useState(false);
 
     function onDragEnd(pos: Vector) {
         if (!isDragging)
             return;
-        DragDropHandlers.drop(pos, data);
-        setState({ isDragging: false });
+        DragDropHandlers.drop(pos, ...data);
+        setIsDragging(false);
     }
 
     useEffect(() => {
@@ -37,19 +33,12 @@ export const Draggable = ({ children, data }: Props) => {
             document.removeEventListener("mouseup", onMouseUp);
             document.removeEventListener("touchend", onTouchUp);
         }
-    }, [isDragging, setState]);
+    }, [isDragging, setIsDragging]);
 
-    return <>
-        {React.cloneElement(children, {
-            onDragStart: (ev: React.DragEvent<HTMLElement>) => {
-                ev.preventDefault();
-            },
-            onMouseDown: () => {
-                setState({ isDragging: true });
-            },
-            onTouchStart: () => {
-                setState({ isDragging: true });
-            },
-        })}
-    </>
+    return <button {...other}
+                   onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
+                   onMouseDown={() => setIsDragging(true) }
+                   onTouchStart={() => setIsDragging(true) }>
+        {children}
+    </button>
 }
