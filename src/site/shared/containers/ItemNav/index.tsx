@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
+import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -8,8 +9,10 @@ import {ToggleItemNav} from "shared/state/ItemNav/actions";
 
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
+import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
 
 export type ItemNavItem = {
@@ -44,6 +47,27 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
+
+    // State to keep track of the number of times an item is clicked
+    //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
+    const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
+
+    // Resets the curItemID and numClicks
+    function reset() {
+        setState({curItemID: "", numClicks: 1});
+    }
+
+    // Drop the current item on click
+    useDocEvent("click", (ev) => {
+        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
+        reset();
+    }, [curItemID, numClicks, setState]);
+
+    // Reset `numClicks` and `curItemID` when something is dropped
+    useEffect(() => {
+        DragDropHandlers.addListener(reset);
+        return () => DragDropHandlers.removeListener(reset);
+    }, [setState]);
 
     return (
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
@@ -83,12 +107,24 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                         <div>
                             {section.items.map((item, j) =>
                                 <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                        data={item.id}>
-                                    <button>
-                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                        <br />
-                                        {item.label}
-                                    </button>
+                                           data={[item.id, numClicks]}
+                                           onClick={(ev) => {
+                                               setState({
+                                                   curItemID: item.id,
+                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1)
+                                               });
+                                               // Prevents `onClick` listener of placing the component to fire
+                                               ev.stopPropagation();
+                                           }}
+                                           onDragChange={(d) => {
+                                               // For instance, if user clicked on Button 4 times then dragged the
+                                               //  Switch, we want to reset the numClicks to 1
+                                               if (curItemID && item.id !== curItemID)
+                                                   reset();
+                                           }}>
+                                    <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                    <br />
+                                    {item.label}
                                 </Draggable>
                             )}
                         </div>
