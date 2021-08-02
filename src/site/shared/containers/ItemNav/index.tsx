@@ -46,7 +46,7 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
-    
+
     const [{currItemID, numClicks}, setState] = useState({currItemID: "", numClicks: 0});
     useEffect( () => {
         function createNComponents(ev: MouseEvent) {
@@ -59,29 +59,55 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
         }
     }, [currItemID, numClicks, setState]);
 
-    return (<>
-        { // Hide tab if the circuit is locked
-        (isEnabled && !isLocked) &&
-            <>
-                <div className={`tab ${isOpen ? "tab__closed" : ""}`}
-                     title="Circuit Components"
-                     onClick={() => toggle()}></div>
-            </>
-        }
+    return (
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
-                <div className="itemnav__top__history__buttons">
-                    <button title="Undo"
-                            disabled={undoHistory.length === 0}
-                            onClick={() => info.history.undo() }>
-                        <img src="img/icons/undo.svg" alt="" />
-                    </button>
-                    <button title="Redo"
-                            disabled={redoHistory.length === 0}
-                            onClick={() => info.history.redo() }>
-                        <img src="img/icons/redo.svg" alt="" />
-                    </button>
+                <div>
+                    {/* History box button goes here */}
                 </div>
+                <div>
+                    <div className="itemnav__top__history__buttons">
+                        <button title="Undo"
+                                disabled={undoHistory.length === 0}
+                                onClick={() => info.history.undo() }>
+                            <img src="img/icons/undo.svg" alt="" />
+                        </button>
+                        <button title="Redo"
+                                disabled={redoHistory.length === 0}
+                                onClick={() => info.history.redo() }>
+                            <img src="img/icons/redo.svg" alt="" />
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    { // Hide tab if the circuit is locked
+                    (isEnabled && !isLocked) &&
+                        <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
+                             title="Circuit Components"
+                             onClick={() => toggle()}>
+                            <div></div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div className="itemnav__sections">
+                {config.sections.map((section, i) =>
+                    <div key={`itemnav-section-${i}`}>
+                        <h4>{section.label}</h4>
+                        <div>
+                            {section.items.map((item, j) =>
+                                <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                        data={item.id}>
+                                    <button>
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                        <br />
+                                        {item.label}
+                                    </button>
+                                </Draggable>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
             {config.sections.map((section, i) =>
                 <React.Fragment key={`itemnav-section-${i}`}>
@@ -89,21 +115,21 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                     {section.items.map((item, j) =>
                         <Draggable key={`itemnav-section-${i}-item-${j}`}
                                    data={item.id}>
-                            <button onClick={(ev) => {currItemID === item.id ? 
+                            <button onClick={(ev) => {currItemID === item.id ?
                                         setState({currItemID: currItemID, numClicks: numClicks + 1}) :
-                                        setState({currItemID: item.id, numClicks: 1}); 
+                                        setState({currItemID: item.id, numClicks: 1});
                                         ev.stopPropagation();
                                     }}>
                                 <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                 <br />
                                 {item.label}
-                            </button>    
+                            </button>
                         </Draggable>
                     )}
                 </React.Fragment>
             )}
         </nav>
-    </>);
+    );
 }
 
 

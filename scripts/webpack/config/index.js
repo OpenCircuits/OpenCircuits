@@ -12,7 +12,7 @@ const {Config} = require("./types");
  * @returns {webpack.Configuration}
  */
 module.exports = (config) => {
-    const { entry, isDev, mode, target, buildDir, stats, env } = config;
+    const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
 
     return mergeDeep(
         {
@@ -21,6 +21,10 @@ module.exports = (config) => {
             output: {
                 path: buildDir,
                 publicPath: "/",
+
+                // Extract the JS to /static/js/
+                filename: (isProd ? "static/js/[name].[contenthash:8].js" : undefined),
+                chunkFilename: (isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined),
             },
 
             plugins: [

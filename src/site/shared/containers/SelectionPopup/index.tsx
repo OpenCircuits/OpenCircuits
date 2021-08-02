@@ -1,6 +1,6 @@
 import {useLayoutEffect, useState} from "react";
 
-import {HEADER_HEIGHT, DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
+import {DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
 
 import {V} from "Vector";
 import {Camera} from "math/Camera";
@@ -66,8 +66,8 @@ export function SelectionPopup({info, modules}: Props) {
             // Set up a callback that will make the box clickable if it's currently not clickable
             if (clickThrough) {
                 clickThrough = false;
-                setTimeout(() => 
-                    setState((prevState) => ({ ...prevState, clickThrough })), 
+                setTimeout(() =>
+                    setState((prevState) => ({ ...prevState, clickThrough })),
                     DOUBLE_CLICK_DURATION
                 );
             }
@@ -88,7 +88,7 @@ export function SelectionPopup({info, modules}: Props) {
         <div className="selection-popup"
              style={{
                 left: `${state.pos.x}px`,
-                top:  `${state.pos.y + HEADER_HEIGHT}px`,
+                top:  `${state.pos.y}px`,
                 visibility: (state.visible ? "visible": "hidden"),
                 pointerEvents: (state.clickThrough ? "none" : "auto")
              }}

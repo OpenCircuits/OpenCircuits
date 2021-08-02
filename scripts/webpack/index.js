@@ -2,10 +2,10 @@ const path = require("path");
 const url = require("url");
 const address = require("address");
 const chalk = require("chalk");
-const opener = require("opener");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 
+const openBrowser = require("../utils/browser/openBrowser");
 const choosePort = require("../utils/choosePort");
 const copyDir = require("../utils/copyDir");
 const getEnv = require("../utils/env");
@@ -21,6 +21,7 @@ module.exports = async (dir, mode) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
+    const buildDir = path.resolve(rootPath, "build/site");
 
     const compiler = webpack(config({
         mode,
@@ -36,7 +37,7 @@ module.exports = async (dir, mode) => {
         publicPath: `./${dir}/public`,
 
         // Needs to be absolute path
-        buildDir: path.resolve(rootPath, "build"),
+        buildDir,
 
         stats: "none",
 
@@ -70,8 +71,12 @@ module.exports = async (dir, mode) => {
             lanUrl = undefined;
         }
 
+        let firstDone = false;
         compiler.hooks.done.tap("done", async stats => {
-            opener(url.format({ protocol, hostname, port, pathname }));
+            if (!firstDone) {
+                openBrowser(url.format({ protocol, hostname, port, pathname }));
+                firstDone = true;
+            }
 
             console.log(`\nYou can now view ${chalk.bold("OpenCircuits")} in the browser!\n`);
 
@@ -107,7 +112,7 @@ module.exports = async (dir, mode) => {
     }
 
     if (mode === "production") {
-        copyDir(path.resolve(dirPath, "public"), path.resolve(rootPath, "build"));
+        copyDir(path.resolve(dirPath, "public"), buildDir);
 
         return new Promise((resolve, reject) => {
             compiler.run((err, result) => {
