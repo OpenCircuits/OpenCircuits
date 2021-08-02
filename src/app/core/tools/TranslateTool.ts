@@ -10,7 +10,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import { ShiftAction } from "core/actions/ShiftAction";
+import {ShiftAction} from "core/actions/ShiftAction";
 
 
 export const TranslateTool: Tool = (() => {
@@ -39,9 +39,8 @@ export const TranslateTool: Tool = (() => {
         onActivate(event: Event, info: CircuitInfo): void {
             const {selections, currentlyPressedObject, history, designer} = info;
 
-            if (currentlyPressedObject instanceof Component) {
+            if (currentlyPressedObject instanceof Component)
                 history.add(new ShiftAction(designer, currentlyPressedObject).execute());
-            }
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
