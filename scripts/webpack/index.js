@@ -2,10 +2,10 @@ const path = require("path");
 const url = require("url");
 const address = require("address");
 const chalk = require("chalk");
-const opener = require("opener");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 
+const openBrowser = require("../utils/browser/openBrowser");
 const choosePort = require("../utils/choosePort");
 const copyDir = require("../utils/copyDir");
 const getEnv = require("../utils/env");
@@ -74,7 +74,7 @@ module.exports = async (dir, mode) => {
         let firstDone = false;
         compiler.hooks.done.tap("done", async stats => {
             if (!firstDone) {
-                opener(url.format({ protocol, hostname, port, pathname }));
+                openBrowser(url.format({ protocol, hostname, port, pathname }));
                 firstDone = true;
             }
 
