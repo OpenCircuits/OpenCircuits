@@ -18,13 +18,18 @@ export const HeaderRight = ({ helpers }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
     return (
-        <div>
-            <div className="header__right">
-                <TutorialDropdown />
-                <SettingsMenu helpers={helpers} />
-                <OpenFileButton helpers={helpers} />
-                <DownloadMenuDropdown helpers={helpers} />
+        <div className="header__right">
+            <button type="button" onClick={() => setHidden(!isHidden)}>
+                <img className="expand" src={isHidden ? "img/icons/expand.svg" : "img/icons/collapse.svg"} alt="" />
+            </button>
+            <div className={`header__right__btns ${isHidden ? "header__right__collapsed" : ""}`}>
                 <SignInOutButtons />
+                <DownloadMenuDropdown helpers={helpers} />
+                <OpenFileButton helpers={helpers} />
+                <SettingsMenu helpers={helpers} />
+                <TutorialDropdown />
+            </div>
+            {/* <div className="header__right">
             </div>
             <div className="header__right__alt">
                 <button type="button" onClick = {() => setHidden(!isHidden)}><img className ="expand"
@@ -36,7 +41,7 @@ export const HeaderRight = ({ helpers }: Props) => {
                     <li><TutorialDropdown /></li>
                     <li><SignInOutButtons /></li>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

@@ -1,11 +1,65 @@
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
-@media (min-width: 450px) {
-    .header__right {
-        margin-right: 14px;
+
+.header__right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    @media (max-width: 600px) {
+        flex: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    margin-right: 14px;
+
+    & > button {
+        display: none;
+
+        padding: 0 10px;
+
+        height: $header-height - 2*$header-padding;
+        margin-top: $header-padding;
+
+        & > img {
+            width: 40px;
+        }
+
+        @media (max-width: 600px) {
+            display: inherit;
+            margin-bottom: 2*$header-padding;
+        }
+    }
+
+    &__btns {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+
+        @media (max-width: 600px) {
+            padding: 0 10px 10px 10px;
+            border-radius: 0 0 5px 5px;
+            background-color: $primary-color;
+
+            flex-direction: column;
+            justify-content: flex-start;
+
+            & > div:first-child {
+                display: none;
+            }
+        }
+
+        // @media (max-width: 600px) {
+        //     flex-direction: column;
+        //     justify-content: flex-start;
+        // }
 
         & div {
-            float: right;
+            // float: right;
 
             height: $header-height - 2*$header-padding;
             margin-top: $header-padding;
@@ -15,6 +69,10 @@
         & button {
             height: $header-height - 2*$header-padding;
             margin-left: $header-padding;
+
+            @media (max-width: 600px) {
+                margin-left: 0;
+            }
 
             cursor: pointer;
         }
@@ -29,48 +87,14 @@
         }
     }
 
-    .header__right__alt {
-        display: none;
-    }
-}
-
-
-@media (max-width: 450px) {
-    .header__right__alt {
-        margin-right: 14px;
-        top: 10px;
-        right: 10px;
-        position: fixed;
-
-        & #hidden {
+    &__collapsed {
+        // Collapsing the header only matters for small-screens
+        //  when the dropdown shows up
+        @media (max-width: 600px) {
             display: none;
         }
-
-        & img {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-        }
-
-        & .expand {
-            transform: scale(1.75);
-            margin-bottom: 15px;
-        }
-
-        & #notHidden {
-            list-style-type: none;
-            background-color: white;
-            border-radius: 6px 6px 6px;
-            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
-        }
     }
 
-    .header__right {
-        display: none;
-    }
-}
-
-.header__right, .header__right__alt {
     &__dropdown {
         position: relative;
 
@@ -191,3 +215,43 @@
     }
 }
 
+// .header__right__alt {
+//     display: none;
+// }
+// }
+
+
+// @media (max-width: 450px) {
+//     .header__right__alt {
+//         margin-right: 14px;
+//         top: 10px;
+//         right: 10px;
+//         position: fixed;
+
+//         & #hidden {
+//             display: none;
+//         }
+
+//         & img {
+//             width: 40px;
+//             height: 40px;
+//             border-radius: 10px;
+//         }
+
+//         & .expand {
+//             transform: scale(1.75);
+//             margin-bottom: 15px;
+//         }
+
+//         & #notHidden {
+//             list-style-type: none;
+//             background-color: white;
+//             border-radius: 6px 6px 6px;
+//             box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+//         }
+//     }
+
+//     .header__right {
+//         display: none;
+//     }
+// }
