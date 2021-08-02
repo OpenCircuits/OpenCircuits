@@ -1,55 +1,46 @@
 import React, {useEffect, useState} from "react"
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {V, Vector} from "Vector";
 
 import {DragDropHandlers} from "./DragDropHandlers";
 
 
-type Props = {
-    children: React.ReactElement<{
-        onDragStart?: React.DragEventHandler<HTMLElement>;
-        onMouseDown?: React.MouseEventHandler<HTMLElement>;
-        onTouchStart?: React.TouchEventHandler<HTMLElement>;
-    }>;
-    data: string;
+type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+    children: React.ReactNode;
+    data: any[];
+    onDragChange?: (type: "start" | "end") => void;
 };
-export const Draggable = ({ children, data }: Props) => {
-    const [{isDragging}, setState] = useState({ isDragging: false });
+export const Draggable = ({ children, data, onDragChange, ...other }: Props) => {
+    const [isDragging, setIsDragging] = useState(false);
 
+    // console.log(`i has data: ${data}`);
     function onDragEnd(pos: Vector) {
         if (!isDragging)
             return;
-        DragDropHandlers.drop(pos, data);
-        setState({ isDragging: false });
+        DragDropHandlers.drop(pos, ...data);
+        setIsDragging(false);
     }
 
     useEffect(() => {
-        function onMouseUp(ev: MouseEvent) {
-            onDragEnd(V(ev.clientX, ev.clientY));
-        }
-        function onTouchUp(ev: TouchEvent) {
-            onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY));
-        }
+        if (onDragChange)
+            onDragChange(isDragging ? "start" : "end");
+    }, [isDragging]);
 
-        document.addEventListener("mouseup", onMouseUp);
-        document.addEventListener("touchend", onTouchUp);
+    useDocEvent(
+        "mouseup",
+        (ev) => onDragEnd(V(ev.clientX, ev.clientY)),
+        [isDragging, setIsDragging, ...data]
+    );
+    useDocEvent(
+        "touchend",
+        (ev) => onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY)),
+        [isDragging, setIsDragging, ...data]
+    );
 
-        return () => {
-            document.removeEventListener("mouseup", onMouseUp);
-            document.removeEventListener("touchend", onTouchUp);
-        }
-    }, [isDragging, setState]);
-
-    return <>
-        {React.cloneElement(children, {
-            onDragStart: (ev: React.DragEvent<HTMLElement>) => {
-                ev.preventDefault();
-            },
-            onMouseDown: () => {
-                setState({ isDragging: true });
-            },
-            onTouchStart: () => {
-                setState({ isDragging: true });
-            },
-        })}
-    </>
+    return <button {...other}
+                   onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
+                   onMouseDown={() => setIsDragging(true) }
+                   onTouchStart={() => setIsDragging(true) }>
+        {children}
+    </button>
 }
