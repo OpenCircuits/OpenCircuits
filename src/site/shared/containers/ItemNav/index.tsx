@@ -48,16 +48,18 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
     const {undoHistory, redoHistory} = useHistory(info);
 
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
+
+    function reset() {
+        setState({curItemID: "", numClicks: 1});
+    }
+
     useEffect( () => {
-        function reset() {
-            setState({curItemID: "", numClicks: 1});
-        }
         function createNComponents(ev: MouseEvent) {
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
             reset();
         }
 
-        DragDropHandlers.addListener(reset)
+        DragDropHandlers.addListener(reset);
         document.addEventListener("click", createNComponents);
         return () => {
             document.removeEventListener("click", createNComponents);
@@ -111,6 +113,12 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                                                });
                                                // Prevents `onClick` listener of placing the component to fire
                                                ev.stopPropagation();
+                                           }}
+                                           onDragChange={(d) => {
+                                               // For instance, if user clicked on Button 4 times then dragged the
+                                               //  Switch, we want to reset the numClicks to 1
+                                               if (curItemID && item.id !== curItemID)
+                                                   reset();
                                            }}>
                                     <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     <br />

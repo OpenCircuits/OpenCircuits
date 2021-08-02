@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react"
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {V, Vector} from "Vector";
 
 import {DragDropHandlers} from "./DragDropHandlers";
@@ -7,10 +8,12 @@ import {DragDropHandlers} from "./DragDropHandlers";
 type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
     children: React.ReactNode;
     data: any[];
+    onDragChange?: (type: "start" | "end") => void;
 };
-export const Draggable = ({ children, data, ...other }: Props) => {
+export const Draggable = ({ children, data, onDragChange, ...other }: Props) => {
     const [isDragging, setIsDragging] = useState(false);
 
+    // console.log(`i has data: ${data}`);
     function onDragEnd(pos: Vector) {
         if (!isDragging)
             return;
@@ -19,21 +22,20 @@ export const Draggable = ({ children, data, ...other }: Props) => {
     }
 
     useEffect(() => {
-        function onMouseUp(ev: MouseEvent) {
-            onDragEnd(V(ev.clientX, ev.clientY));
-        }
-        function onTouchUp(ev: TouchEvent) {
-            onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY));
-        }
+        if (onDragChange)
+            onDragChange(isDragging ? "start" : "end");
+    }, [isDragging]);
 
-        document.addEventListener("mouseup", onMouseUp);
-        document.addEventListener("touchend", onTouchUp);
-
-        return () => {
-            document.removeEventListener("mouseup", onMouseUp);
-            document.removeEventListener("touchend", onTouchUp);
-        }
-    }, [isDragging, setIsDragging]);
+    useDocEvent(
+        "mouseup",
+        (ev) => onDragEnd(V(ev.clientX, ev.clientY)),
+        [isDragging, setIsDragging, ...data]
+    );
+    useDocEvent(
+        "touchend",
+        (ev) => onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY)),
+        [isDragging, setIsDragging, ...data]
+    );
 
     return <button {...other}
                    onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
