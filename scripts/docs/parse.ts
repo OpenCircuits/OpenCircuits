@@ -20,18 +20,27 @@ export function getType(t: Type<ts.Type>): Types {
         path.resolve("/ts", path.relative(path.resolve(process.cwd(), "src"), url));
     if (t.getText() === "void")
         return [];
-    return t.getText()
-        .split("|")
-        .map(t =>
-            t.split("&")
-            .map(t2 => {
-                const matches = Array.from(t2.matchAll(/import\(\"([a-zA-Z0-9\/]+)\"\).([a-zA-Z0-9]+)/g));
+    // t.getUnionTypes()
+    return (t.isUnion() ? t.getUnionTypes() : [t])
+        .map(t => (t.isIntersection() ? t.getIntersectionTypes() : [t])
+            .map(t => {
+                // Recursively get array types
+                if (t.isArray())
+                    return {type: getType(t.getArrayElementTypeOrThrow())};
+
+                const t2 = t.getText();
+
+                // Extract base type (w/o generics) and get the generics separately
+                const baseType = t2.replace(/<.+>/g, "");
+                const args = t.getTypeArguments().map(getType);
+
+                const matches = Array.from(baseType.matchAll(/import\(\"([a-zA-Z0-9\/]+)\"\).([a-zA-Z0-9]+)/g));
                 if (matches.length === 0)
-                    return {name: t2};
+                    return {type: baseType, args};
                 if (matches.length !== 1)
-                    throw new Error(`Received multiple type matches for: ${t2}!`);
-                const [_, link, name] = matches[0];
-                return { name, link: parseUrl(link) };
+                    throw new Error(`Received multiple type matches for: ${baseType}!`);
+                const [_, link, type] = matches[0];
+                return { type, args, link: parseUrl(link) };
             })
         );
 }

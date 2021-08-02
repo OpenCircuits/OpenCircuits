@@ -14,13 +14,26 @@ export function displaySpecial(text: string, color: string): string {
 }
 
 export function displayType(type: Types): string {
-    return type.map(i =>
-        i.map(({name, link}) =>
-            link ?
-                `<a href="${link}">${escapeStr(name)}</a>` :
-                displaySpecial(escapeStr(name), Colors.primitive)
-        ).join(" & ")
-    ).join(" | ");
+    const isArray = (type.length > 0 && type[0].length > 0 && type[0][0].type instanceof Array);
+
+    // If the type is a single array whose type is a union/intersection, then wrap with parenthesis
+    const shouldWrap = (isArray &&
+                            // Array's element has a union of >1 elements
+                            type[0][0].type.length > 1 ||
+                            // Or Array's element has a intersection of >1 elements
+                            (type[0][0].type.length === 1 && type[0][0].type[0].length > 1));
+
+    return `${shouldWrap ? `(` : ``}${
+        type.map(i =>
+            i.map(({type, args, link}) =>
+                type instanceof Array ?
+                    displayType(type) :
+                    link ?
+                        `<a href="${link}">${escapeStr(type)}</a>` :
+                        displaySpecial(escapeStr(type), Colors.primitive)
+            ).join(" & ")
+        ).join(" | ")
+    }${shouldWrap ? `)` : ``}${isArray ? `[]` : ``}`;
 }
 
 export function displayGenerics(generics: Class["generics"]): string {

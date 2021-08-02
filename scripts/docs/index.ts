@@ -64,7 +64,11 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
 }
 
 
-generateDocumentation(getAllFiles(path.resolve("src/app/core")), "docs/ts/", {
+const files = [
+    ...getAllFiles(path.resolve("src/app/core")),
+    ...getAllFiles(path.resolve("src/app/digital"))
+];
+generateDocumentation(files, "docs/ts/", {
     target: ScriptTarget.ES5,
     module: ModuleKind.ESNext,
     lib: [

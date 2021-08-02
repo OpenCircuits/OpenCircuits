@@ -1,7 +1,19 @@
 export type AccessModifier = "private" | "protected" | "public";
 
+
+// export type Types = {
+//     isArray: boolean;
+//     unions: {
+//         intersections: {
+//             name: string;
+//             args?: Types[]; // For generics
+//             link?: string;
+//         }[];
+//     }[];
+// }
 export type Types = {
-    name: string;
+    type: string | Types;
+    args?: Types[]; // For generics
     link?: string;
 }[][]; // Union of intersections of types
 
