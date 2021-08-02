@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {DFlipFlop}              from "digital/models/ioobjects/flipflops/DFlipFlop";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
+import {DFlipFlop} from "digital/models/ioobjects/flipflops/DFlipFlop";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -12,17 +10,9 @@ describe("DFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const C = new Switch(), D = new Switch(), PRE = new Switch(), CLR = new Switch();
-    const f = new DFlipFlop(), Q = new LED(), Q2 = new LED();
+    const {AutoPlace} = GetHelpers({designer});
 
-    Place(C, D, PRE, CLR, f, Q, Q2);
-    Connect(C,  0, f, DFlipFlop.CLK_PORT);
-    Connect(D, 0, f, DFlipFlop.DATA_PORT);
-    Connect(PRE, 0, f, DFlipFlop.PRE_PORT);
-    Connect(CLR, 0, f, DFlipFlop.CLR_PORT);
-    Connect(f, DFlipFlop.Q_PORT,  Q, 0);
-    Connect(f, DFlipFlop.Q2_PORT, Q2, 0);
+    const [f, [PRE, CLR, D, C], [Q, Q2]] = AutoPlace(new DFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

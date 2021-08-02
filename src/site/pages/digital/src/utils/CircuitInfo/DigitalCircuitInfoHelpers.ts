@@ -49,9 +49,9 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             renderer.render();
 
-            // Set name, reset id, and set unsaved
+            // Set name, id, and set unsaved
             store.dispatch(SetCircuitName(metadata.name));
-            store.dispatch(SetCircuitId(""));
+            store.dispatch(SetCircuitId(metadata.id));
             store.dispatch(SetCircuitSaved(false));
         },
 
