@@ -58,7 +58,7 @@ export function displayConstructor(c: Class): string {
                     // Display type/docs for overload
                     `<h4><code>` +
                         `${displaySpecial("new", Colors.keyword)} ${c.name}(${
-                            cc.parameters.map(p => p.name).join(", ")
+                            cc.parameters.map(p => escapeStr(p.name)).join(", ")
                         })` +
                     `</code></h4>` +
                     `\n${cc.docs || "*Description needed*"}\n` +
@@ -66,7 +66,9 @@ export function displayConstructor(c: Class): string {
                     // Display parameters of overload
                     (cc.parameters.length === 0 ? `` : `<h4>Parameters</h4>\n`) +
                     cc.parameters.map(p =>
-                        `\n* <code>${p.name}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
+                        `\n* <code>${escapeStr(p.name)}: ${
+                            displayType(p.type)}</code> – ${p.docs || "*Description needed*"
+                        }\n`
                     ).join("") +
                 `\n</div>\n\n`
             ).join("") +
@@ -78,7 +80,7 @@ export function displayFunc(f: Method, global: boolean = false): string {
     const displaySignature = (fo: MethodSignature) => `` +
         // Display type/docs for overload
         `<h4><code>` +
-            `${f.name}(${fo.parameters.map(p => p.name).join(", ")})` +
+            `${f.name}(${fo.parameters.map(p => escapeStr(p.name)).join(", ")})` +
             ` => ${fo.returns.length > 0 ?
                 fo.returns.map(r => displayType(r.type)).join(" | ") :
                 displaySpecial(escapeStr("void"), Colors.primitive)}` +
@@ -88,7 +90,7 @@ export function displayFunc(f: Method, global: boolean = false): string {
         // Display parameters of overload
         (fo.parameters.length === 0 ? `` : `\n<h4>Parameters</h4>\n`) +
         fo.parameters.map(p =>
-            `\n* <code>${p.name}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
+            `\n* <code>${escapeStr(p.name)}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
         ).join("") +
 
         // Display returns for overload

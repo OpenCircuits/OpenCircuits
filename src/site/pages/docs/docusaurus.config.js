@@ -4,7 +4,7 @@ const katex = require("rehype-katex");
 module.exports = {
   title: "OpenCircuits",
   tagline: "The free, online, circuit designer",
-  url: "https://your-docusaurus-test-site.com",
+  url: "https://docs.opencircuits.io",
   baseUrl: "/",
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
@@ -64,11 +64,11 @@ module.exports = {
           items: [
             {
               label: "Style Guide",
-              to: "docs/",
+              to: "/introduction",
             },
             {
-              label: "Second Doc",
-              to: "docs/doc2/",
+              label: "JSDocs",
+              to: "/ts/app/Overview",
             },
           ],
         },
@@ -106,7 +106,7 @@ module.exports = {
             if (docPath.startsWith("ts/")) { // JSDoc so edit page will be the TS file not doc file
               return `https://github.com/OpenCircuits/OpenCircuits/edit/master/src/${docPath.slice(3, -3)}.ts`;
             }
-            return `https://github.com/OpenCircuits/OpenCircuits/edit/master/docs/${docPath}`
+            return `https://github.com/OpenCircuits/OpenCircuits/edit/master/docs/${docPath}`;
           },
           remarkPlugins: [math],
           rehypePlugins: [katex]
@@ -119,41 +119,5 @@ module.exports = {
       },
     ],
   ],
-  plugins: [
-    // [
-    //   require.resolve("./plugins/test"),
-    //   {
-    //     routes: [
-    //       {
-    //         path: "/testthing",
-    //         exact: false,
-    //         component: "../App.jsx"
-    //       }
-    //     ]
-    //   }
-    // ],
-    // [
-    //   'docusaurus-plugin-react-docgen-typescript',
-    //   {
-    //       // pass in a single string or an array of strings
-    //       src: ['../../../app/core/**/*.ts'],
-    //       global: true,
-    //       route: {
-    //         path: "/ASDASD"
-    //       }
-    //       // parserOptions: {
-    //       //     // pass parserOptions to react-docgen-typescript
-    //       //     // here is a good starting point which filters out all
-    //       //     // types from react
-    //       //     propFilter: (prop, component) => {
-    //       //         if (prop.parent) {
-    //       //             return !prop.parent.fileName.includes('@types/react');
-    //       //         }
-
-    //       //         return true;
-    //       //     },
-    //       // },
-    //   },
-    // ]
-  ],
+  plugins: [],
 };

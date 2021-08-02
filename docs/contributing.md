@@ -8,25 +8,21 @@ This page explains how to contribute to OpenCircuits.
 
 ## Setup
 
-### Dependencies
-
-See [dependencies](/main/intro)
-
 ### Installing
 
-See [installation](https://github.com/OpenCircuits/OpenCircuits/wiki/Installation)
+See [installation](/installation)
 
 ### Building
 
-See [building](https://github.com/OpenCircuits/OpenCircuits/wiki/Building)
+See [building](/running#backend)
 
 ### Running
 
-See [running](https://github.com/OpenCircuits/OpenCircuits/wiki/Running)
+See [running](/running#frontend)
 
 ### Unit Tests
 
-See [testing](https://github.com/OpenCircuits/OpenCircuits/wiki/Testing)
+See [testing](/running#testing)
 
 
 ## Submitting your code

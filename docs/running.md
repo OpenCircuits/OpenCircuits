@@ -7,7 +7,7 @@ title: Running
 
 ## Frontend
 
-To run OpenCircuits locally (after [installing](/main/gettingstarted/installation)), simply run
+To run OpenCircuits locally (after [installing](/installation)), simply run
 ```bash
 yarn start
 ```
