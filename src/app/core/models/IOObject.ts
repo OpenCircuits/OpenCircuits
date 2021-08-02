@@ -4,13 +4,15 @@ import {Vector} from "Vector";
 
 import {Name}       from "core/utils/Name";
 import {Selectable} from "core/utils/Selectable";
+import {Distinguishable} from "core/utils/Distinguishable";
 
 
-export abstract class IOObject implements Selectable {
+export abstract class IOObject extends Distinguishable implements Selectable {
     @serialize
     protected name: Name;
 
     protected constructor() {
+        super()
         this.name = new Name(this.getDisplayName());
     }
 
