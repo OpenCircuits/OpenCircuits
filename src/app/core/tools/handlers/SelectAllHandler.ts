@@ -14,8 +14,8 @@ export const SelectAllHandler: EventHandler = ({
          event.key === A_KEY &&
          input.isModifierKeyDown() &&
          // Don't want to select all if nothing to select or everything is already selected
-         selections.amount() > 0 &&
-         selections.amount() !== designer.getObjects().length),
+         designer.getObjects().length > 0 &&
+         designer.getObjects().length !== selections.amount()),
 
     getResponse: ({history, designer, selections}: CircuitInfo) =>
         history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute())
