@@ -25,13 +25,17 @@ export function displayType(type: Types): string {
 
     return `${shouldWrap ? `(` : ``}${
         type.map(i =>
-            i.map(({type, args, link}) =>
-                type instanceof Array ?
-                    displayType(type) :
-                    link ?
-                        `<a href="${link}">${escapeStr(type)}</a>` :
-                        displaySpecial(escapeStr(type), Colors.primitive)
-            ).join(" & ")
+            i.map(({type, args, link}) => {
+                if (type instanceof Array)
+                    return displayType(type);
+                const str = `${escapeStr(type)}${
+                    // Show generic arguments
+                    args && args.length > 0 ?
+                        `&lt;${args.map(displayType).join(", ")}&gt;` :
+                        ``
+                }`;
+                return link ? `<a href="${link}">${str}</a>` : displaySpecial(str, Colors.primitive);
+            }).join(" & ")
         ).join(" | ")
     }${shouldWrap ? `)` : ``}${isArray ? `[]` : ``}`;
 }
