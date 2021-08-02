@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node ./scripts/start.js",
     "docs": "cd ./src/site/pages/docs && yarn start",
+    "build:docs": "ts-node ./scripts/docs/index.ts",
     "build": "node ./scripts/build.js",
     "build:prod": "node ./scripts/build.js --prod server digital",
     "test": "node ./scripts/test.js"
