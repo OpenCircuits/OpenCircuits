@@ -38,8 +38,7 @@ describe("Selection Tool", () => {
         });
 
         test("Click to Select then Deselect ANDGate", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.click(V(0, 0));
             expect(selections.get().length).toBe(1);
@@ -53,8 +52,7 @@ describe("Selection Tool", () => {
         });
 
         test("Drag to Select then Click to Deselect ANDGate", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100));
@@ -69,8 +67,7 @@ describe("Selection Tool", () => {
         });
 
         test("Tap to Select then Deselect ANDGate", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.tap(V(0, 0));
             expect(selections.get().length).toBe(1);
@@ -82,8 +79,7 @@ describe("Selection Tool", () => {
             expect(history.getActions()).toHaveLength(2);
         });
         test("Tap to Toggle Switch", () => {
-            const obj = new Switch();
-            Place(obj);
+            const [obj] = Place(new Switch());
 
             input.tap(V(0, 0));
             expect(selections.get().length).toBe(0);
@@ -97,8 +93,7 @@ describe("Selection Tool", () => {
         });
 
         test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.touch(V(-100, -100))
                     .moveTouches(V(200, 200), 5)
@@ -113,8 +108,7 @@ describe("Selection Tool", () => {
         });
 
         test("Click to Toggle Switch", () => {
-            const obj = new Switch();
-            Place(obj);
+            const [obj] = Place(new Switch());
 
             input.click(V(0, 0));
             expect(selections.get().length).toBe(0);
@@ -128,11 +122,9 @@ describe("Selection Tool", () => {
         });
 
         test("Click to Select Wire", () => {
-            const obj1 = new Switch();
-            const obj2 = new BUFGate();
+            const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            Place(obj1, obj2);
             const wire = Connect(obj1, 0, obj2, 0).getWire();
 
             input.click(V(100, 0));
@@ -143,8 +135,7 @@ describe("Selection Tool", () => {
         });
 
         test("Click to Select Straight Horizontal Wire", () => {
-            const obj1 = new Switch();
-            const obj2 = new BUFGate();
+            const [obj1, obj2] = Place(new Switch(), new BUFGate());
 
             // Move obj1 s.t. the Port is on the origin
             obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
@@ -152,7 +143,6 @@ describe("Selection Tool", () => {
 
             obj2.setPos(V(200, 0));
 
-            Place(obj1, obj2);
             Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
 
             input.click(V(20, 0));
@@ -162,8 +152,7 @@ describe("Selection Tool", () => {
         });
 
         test("Click to Select Straight Vertical Wire", () => {
-            const obj1 = new Switch();
-            const obj2 = new BUFGate();
+            const [obj1, obj2] = Place(new Switch(), new BUFGate());
 
             // Move obj1 s.t. the Port is on the origin
             obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
@@ -173,7 +162,6 @@ describe("Selection Tool", () => {
             obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
             expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
 
-            Place(obj1, obj2);
             Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
 
             input.click(V(0, 20));
@@ -183,8 +171,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -196,8 +183,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate w/ Backspace", () => {
-            const gate = new ANDGate();
-            Place(gate);
+            const [gate] = Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -219,10 +205,8 @@ describe("Selection Tool", () => {
         });
 
         test("Click with Shift to Select Objects then Deselect", () => {
-            const obj1 = new ANDGate();
-            const obj2 = new Multiplexer();
+            const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
             obj1.setPos(V(100, 0));
-            Place(obj1, obj2);
 
             input.click(V(0, 0));
             input.pressKey(SHIFT_KEY);
@@ -250,9 +234,7 @@ describe("Selection Tool", () => {
             expect(history.getActions()).toHaveLength(0);
 
             // Create objects and select all
-            const obj1 = new ANDGate();
-            const obj2 = new Multiplexer();
-            Place(obj1, obj2);
+            const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
 
             input.pressKey(COMMAND_KEY)
                 .pressKey(A_KEY)
