@@ -1,11 +1,10 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {SetNameAction} from "core/actions/SetNameAction";
 import {IOObject, Port} from "core/models";
-import { Selectable } from "core/utils/Selectable";
 import {CreateModule, ModuleConfig, PopupModule} from "./Module";
 
 
-const Config: ModuleConfig<[Selectable], string> = {
+const Config: ModuleConfig<[IOObject, Port], string> = {
     types: [IOObject, Port],
     valType: "string",
     getProps: (o) => o.getName(),
