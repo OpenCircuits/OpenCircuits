@@ -4,7 +4,9 @@ import "test/helpers/Extensions";
 import {SHIFT_KEY,
         DELETE_KEY,
         BACKSPACE_KEY,
-        IO_PORT_LENGTH} from "core/utils/Constants";
+        IO_PORT_LENGTH,
+        COMMAND_KEY,
+        A_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -13,6 +15,7 @@ import {ANDGate, BUFGate,
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalComponent} from "digital/models";
 
 
 describe("Selection Tool", () => {
@@ -212,6 +215,7 @@ describe("Selection Tool", () => {
         afterEach(() => {
             // Clear previous circuit
             designer.reset();
+            history.reset();
         });
 
         test("Click with Shift to Select Objects then Deselect", () => {
@@ -234,6 +238,40 @@ describe("Selection Tool", () => {
             expect(selections.get().length).toBe(0);
 
             expect(history.getActions()).toHaveLength(3);
+        });
+
+        test("Select All Test", () => {
+            input.pressKey(COMMAND_KEY)
+                .pressKey(A_KEY)
+                .releaseKey(A_KEY)
+                .releaseKey(COMMAND_KEY);
+
+            // When no objects, there should be no action made
+            expect(history.getActions()).toHaveLength(0);
+
+            // Create objects and select all
+            const obj1 = new ANDGate();
+            const obj2 = new Multiplexer();
+            Place(obj1, obj2);
+
+            input.pressKey(COMMAND_KEY)
+                .pressKey(A_KEY)
+                .releaseKey(A_KEY)
+                .releaseKey(COMMAND_KEY);
+
+            expect(selections.get()).toHaveLength(2);
+            expect(selections.get()).toContain(obj1);
+            expect(selections.get()).toContain(obj2);
+
+            expect(history.getActions()).toHaveLength(1);
+
+            // When everything is already selected, selecting-all again shouldn't create another action
+            input.pressKey(COMMAND_KEY)
+                .pressKey(A_KEY)
+                .releaseKey(A_KEY)
+                .releaseKey(COMMAND_KEY);
+
+            expect(history.getActions()).toHaveLength(1);
         });
 
         // TODO: Add test for deleting multiple objects/wires
