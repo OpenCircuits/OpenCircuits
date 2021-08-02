@@ -12,6 +12,7 @@ import {Draggable} from "shared/components/DragDroppable/Draggable";
 import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
 
 export type ItemNavItem = {
@@ -47,25 +48,26 @@ type Props = StateProps & DispatchProps & OwnProps;
 function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
 
+    // State to keep track of the number of times an item is clicked
+    //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
 
+    // Resets the curItemID and numClicks
     function reset() {
         setState({curItemID: "", numClicks: 1});
     }
 
-    useEffect( () => {
-        function createNComponents(ev: MouseEvent) {
-            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
-            reset();
-        }
-
-        DragDropHandlers.addListener(reset);
-        document.addEventListener("click", createNComponents);
-        return () => {
-            document.removeEventListener("click", createNComponents);
-            DragDropHandlers.removeListener(reset);
-        }
+    // Drop the current item on click
+    useDocEvent("click", (ev) => {
+        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
+        reset();
     }, [curItemID, numClicks, setState]);
+
+    // Reset `numClicks` and `curItemID` when something is dropped
+    useEffect(() => {
+        DragDropHandlers.addListener(reset);
+        return () => DragDropHandlers.removeListener(reset);
+    }, [setState]);
 
     return (
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
