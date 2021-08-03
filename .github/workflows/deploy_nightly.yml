@@ -1,4 +1,4 @@
-name: Build and Deploy to GAE for update-to-date builds
+name: Build and Deploy the nightly and documentation sites for the up-to-date code
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
 
@@ -16,11 +16,12 @@ jobs:
       uses: actions/checkout@master
 
     - name: Setup GCloud
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@master
       with:
         version: '274.0.0'
         service_account_email: ${{ secrets.GCP_SA_EMAIL }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
 
     - name: Set Node.js 15.x
       uses: actions/setup-node@master
@@ -30,6 +31,7 @@ jobs:
     - name: Install
       run: yarn
 
+    # Build nightly site
     - name: Build
       run: |
         export OC_AUTH_TYPES=google
@@ -45,3 +47,15 @@ jobs:
       working-directory: ./build
       run: gcloud app deploy --quiet
 
+    # Build docs site
+    - name: Build Docs
+      run: |
+        yarn build:jsdocs
+        yarn build:docs
+
+    - name: Upload Docs to GCS
+      uses: google-github-actions/upload-cloud-storage@main
+      with:
+        path: src/site/pages/docs/build
+        destination: docs.opencircuits.io
+        parent: false

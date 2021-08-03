@@ -35,3 +35,8 @@ jobs:
 
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
+
+    - name: Build docs
+      run: |
+        yarn build:jsdocs
+        yarn build:docs

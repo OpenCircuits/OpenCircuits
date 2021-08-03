@@ -16,9 +16,8 @@ describe("Select Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place} = GetHelpers({designer});
-        const mux = new Multiplexer();
 
-        Place(mux);
+        const [mux] = Place(new Multiplexer());
 
         // before connection
         expect(mux.getSelectPortCount().getValue()).toBe(2);
@@ -48,11 +47,8 @@ describe("Select Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const sw = new Switch();
-        const n = new DigitalNode();
-        const mux = new Multiplexer();
 
-        Place(mux, sw, n);
+        const [sw, n, mux] = Place(new Switch(), new DigitalNode(), new Multiplexer());
 
         // Connect switch to node and then then to input and select ports of Mux
         Connect(sw, 0, n, 0);

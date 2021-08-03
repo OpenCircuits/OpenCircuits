@@ -49,6 +49,7 @@ export class Camera {
         this.transform.setSize(p2.sub(p1));
     }
     public resize(width: number, height: number): void {
+        this.dirty = true;
         this.width = width;
         this.height = height;
     }
