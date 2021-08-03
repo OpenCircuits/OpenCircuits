@@ -1,6 +1,7 @@
 ---
 id: introduction
 title: Introduction
+slug: /
 ---
 
 <img src="/img/logo.svg" width="800" style={{margin: "80px 0px"}} />
