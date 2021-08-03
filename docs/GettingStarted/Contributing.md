@@ -1,5 +1,4 @@
 ---
-id: contributing
 title: Contributing
 ---
 
@@ -10,19 +9,19 @@ This page explains how to contribute to OpenCircuits.
 
 ### Installing
 
-See [installation](/installation)
+See [installation](./Installation)
 
 ### Building
 
-See [building](/running#backend)
+See [building](./Running#backend)
 
 ### Running
 
-See [running](/running#frontend)
+See [running](./Running#frontend)
 
 ### Unit Tests
 
-See [testing](/running#testing)
+See [testing](./Running#testing)
 
 
 ## Submitting your code
