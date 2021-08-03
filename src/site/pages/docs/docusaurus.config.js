@@ -46,7 +46,7 @@ module.exports = {
         {
           label: "Other",
           type: "doc",
-          docId: "other/references/References",
+          docId: "Other/References/References",
           position: "left"
         },
         {
