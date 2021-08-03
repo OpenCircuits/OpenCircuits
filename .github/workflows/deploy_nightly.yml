@@ -30,6 +30,7 @@ jobs:
     - name: Install
       run: yarn
 
+    # Build nightly site
     - name: Build
       run: |
         export OC_AUTH_TYPES=google
@@ -45,3 +46,15 @@ jobs:
       working-directory: ./build
       run: gcloud app deploy --quiet
 
+    # Build docs site
+    - name: Build Docs
+      run: |
+        yarn build:jsdocs
+        yarn build:docs
+
+    - name: Setup GCS
+      uses: google-github-actions/upload-cloud-storage@main
+      with:
+        path: src/site/pages/docs/build
+        destination: docs.opencircuits.io
+        parent: false

@@ -34,8 +34,7 @@ export abstract class DigitalComponent extends Component {
      * Activates this component with the given signal
      *  through the output port at index i
      * @param signal The signal (on or off)
-     * @param i      The index of the output port
-     *               Must be 0 <= i < outputs.length
+     * @param i      The index of the output port, must be $\in [0, outputs.length)$
      */
     public activate(signal: boolean, i: number = 0): void {
         // Don't try to activate an Output component since it has no outputs
