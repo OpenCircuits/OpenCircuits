@@ -93,6 +93,10 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} OpenCircuits`,
     },
+    prism: {
+      theme: require("prism-react-renderer/themes/vsLight"),
+      darkTheme: require("prism-react-renderer/themes/vsDark"),
+    },
   },
   presets: [
     [
