@@ -1,3 +1,4 @@
+import {DigitalComponent} from "digital/models";
 import "jest";
 
 declare global {
@@ -5,6 +6,7 @@ declare global {
         interface Matchers<R> {
             toApproximatelyEqual(expected: any, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
+            toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
 }
@@ -68,5 +70,42 @@ expect.extend({
             message: () => `expected ${received} and ${otherAngle} to be numbers (angles)`,
             pass: false
         };
-    }
+    },
+
+    toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
+        if (!(source instanceof DigitalComponent))
+            throw new Error(`toBeConnectedTo can only be used with DigitalComponents!`);
+
+        let {depth} = options;
+
+        let pass = false;
+
+        const visited = new Set<DigitalComponent>();
+        const queue = [source];
+        while (queue.length > 0 && depth > 0) {
+            const [cur] = queue.splice(0, 1);
+            visited.add(cur);
+
+            const connections = [
+                ...cur.getOutputs().map(w => w.getOutputComponent()),
+                ...cur.getInputs().map(w => w.getInputComponent())
+            ];
+            for (const c of connections) {
+                if (c === target) {
+                    pass = true;
+                    depth = -1;
+                    break;
+                }
+                if (!visited.has(c))
+                    queue.push(c);
+            }
+
+            depth--;
+        }
+
+        return {
+            message: () => `expected ${source.getName()} to ${pass ? `` : `not `}be connected to ${target.getName()} within ${options.depth} connections`,
+            pass
+        };
+    },
 });
