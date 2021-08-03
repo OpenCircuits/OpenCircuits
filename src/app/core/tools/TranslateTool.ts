@@ -11,11 +11,14 @@ import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
+import { Action } from "core/actions/Action";
+import { GroupAction } from "core/actions/GroupAction";
 
 
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
+    let actions = [] as Action[];
 
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
@@ -39,8 +42,10 @@ export const TranslateTool: Tool = (() => {
         onActivate(event: Event, info: CircuitInfo): void {
             const {selections, currentlyPressedObject, history, designer} = info;
 
+            actions = [];
+
             if (currentlyPressedObject instanceof Component)
-                history.add(new ShiftAction(designer, currentlyPressedObject).execute());
+                actions.push(new ShiftAction(designer, currentlyPressedObject).execute());
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
@@ -58,7 +63,8 @@ export const TranslateTool: Tool = (() => {
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
-            history.add(new TranslateAction(components, initalPositions, finalPositions));
+            actions.push(new TranslateAction(components, initalPositions, finalPositions));
+            history.add(new GroupAction(actions));
         },
 
 
