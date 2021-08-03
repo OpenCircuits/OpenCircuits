@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Action} from "core/actions/Action";
 
 
 export const useHistory = (info: CircuitInfo) => {
-    const [state, setState] = useState({ undoHistory: [], redoHistory: [] });
+    const [state, setState] = useState({
+        undoHistory: [] as Action[],
+        redoHistory: [] as Action[]
+    });
 
     useEffect(() => {
         const onHistoryChange = () => {

@@ -14,10 +14,8 @@ describe("Split Wire Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), b = new LED();
 
-        Place(a);
-        Place(b);
+        const [a, b] = Place(new Switch(), new LED());
 
         const w = Connect(a, 0, b, 0).getWire();
 

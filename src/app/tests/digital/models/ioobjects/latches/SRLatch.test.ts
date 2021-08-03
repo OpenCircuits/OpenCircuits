@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {SRLatch}         from "digital/models/ioobjects/latches/SRLatch";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {SRLatch} from "digital/models/ioobjects/latches/SRLatch";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -12,16 +10,9 @@ describe("SRLatch", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const E = new Switch(), S = new Switch(), R = new Switch();
-    const l = new SRLatch(), Q = new LED(), Q2 = new LED();
+    const {AutoPlace} = GetHelpers({designer});
 
-    Place(E, S, R, l, Q, Q2);
-    Connect(E, 0, l, SRLatch.E_PORT);
-    Connect(S, 0, l, SRLatch.SET_PORT);
-    Connect(R, 0, l, SRLatch.RST_PORT);
-    Connect(l, SRLatch.Q_PORT, Q, 0);
-    Connect(l, SRLatch.Q2_PORT, Q2, 0);
+    const [f, [S, E, R], [Q, Q2]] = AutoPlace(new SRLatch());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);
