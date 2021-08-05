@@ -119,10 +119,10 @@ export const ExprToCircuitPopup = (() => {
             );
 
             const formats = Array.from(FormatMap.entries()).map((formatEntry) =>
-                <>
+                <div key={formatEntry[0]}>
                     <input type="radio" id={formatEntry[0]} name="format" checked={format === formatEntry[0]} onChange={() => setFormat(formatEntry[0])} value={formatEntry[0]} />
                     <label htmlFor={formatEntry[0]}>{formatEntry[1].get("label")}</label><br/>
-                </>
+                </div>
             );
 
             return (
@@ -162,19 +162,17 @@ export const ExprToCircuitPopup = (() => {
 
                         </div>
 
-                        { expression !== "" &&
-                            <button className="exprtocircuit__popup__generate" type="button" onClick={() => {
-                                try {
-                                    generate(info, expression, isIC, input, format);
-                                    setExpression({ expression: "" });
-                                    setErrorMessage({ errorMessage: "" });
-                                    CloseHeaderPopups();
-                                }
-                                catch (err) {
-                                    setErrorMessage({ errorMessage: err.message });
-                                }
-                            }}>Generate</button>
-                        }
+                        <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
+                            try {
+                                generate(info, expression, isIC, input, format);
+                                setExpression({ expression: "" });
+                                setErrorMessage({ errorMessage: "" });
+                                CloseHeaderPopups();
+                            }
+                            catch (err) {
+                                setErrorMessage({ errorMessage: err.message });
+                            }
+                        }}>Generate</button>
 
                         <button className="cancel" type="button" onClick={() => {
                             setExpression({ expression: "" });

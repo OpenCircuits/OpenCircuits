@@ -26,13 +26,13 @@ export class Graph<V, E> {
         this.reverseList = new Map<V, Edge<V, E>[]>();
     }
 
-    private bfs(visited: Map<V, boolean>, v: V): void {
+    private dfs(visited: Map<V, boolean>, v: V): void {
         if (visited.get(v))
             return;
 
         visited.set(v, true);
-        this.list.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
-        this.reverseList.get(v).forEach((e) => this.bfs(visited, e.getTarget()));
+        this.list.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
+        this.reverseList.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
     }
 
     public createNode(value: V): void {
@@ -60,7 +60,7 @@ export class Graph<V, E> {
         const v = this.list.keys().next().value;
 
         const visited = new Map<V, boolean>();
-        this.bfs(visited, v);
+        this.dfs(visited, v);
 
         return (visited.size === this.size());
     }
