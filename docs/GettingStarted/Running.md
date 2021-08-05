@@ -1,5 +1,4 @@
 ---
-id: running
 title: Running
 ---
 
@@ -7,7 +6,7 @@ title: Running
 
 ## Frontend
 
-To run OpenCircuits locally (after [installing](/installation)), simply run
+To run OpenCircuits locally (after [installing](./Installation)), simply run
 ```bash
 yarn start
 ```

@@ -28,7 +28,7 @@ module.exports = {
         {
           label: "Docs",
           type: "doc",
-          docId: "introduction",
+          docId: "Introduction",
           position: "left"
         },
         {
@@ -46,7 +46,7 @@ module.exports = {
         {
           label: "Other",
           type: "doc",
-          docId: "test",
+          docId: "Other/References/References",
           position: "left"
         },
         {
@@ -64,7 +64,7 @@ module.exports = {
           items: [
             {
               label: "Style Guide",
-              to: "/introduction",
+              to: "Introduction",
             },
             {
               label: "JSDocs",
@@ -92,6 +92,10 @@ module.exports = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} OpenCircuits`,
+    },
+    prism: {
+      theme: require("prism-react-renderer/themes/vsLight"),
+      darkTheme: require("prism-react-renderer/themes/vsDark"),
     },
   },
   presets: [
