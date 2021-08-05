@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {TFlipFlop}              from "digital/models/ioobjects/flipflops/TFlipFlop";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
+import {TFlipFlop} from "digital/models/ioobjects/flipflops/TFlipFlop";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -12,17 +10,9 @@ describe("TFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const C = new Switch(), T = new Switch(), PRE = new Switch(), CLR = new Switch();
-    const f = new TFlipFlop(), Q = new LED(), Q2 = new LED();
+    const {AutoPlace} = GetHelpers({designer});
 
-    Place(C, T, PRE, CLR, f, Q, Q2);
-    Connect(C,  0, f, TFlipFlop.CLK_PORT);
-    Connect(T, 0, f, TFlipFlop.TGL_PORT);
-    Connect(PRE, 0, f, TFlipFlop.PRE_PORT);
-    Connect(CLR, 0, f, TFlipFlop.CLR_PORT);
-    Connect(f, TFlipFlop.Q_PORT,  Q, 0);
-    Connect(f, TFlipFlop.Q2_PORT, Q2, 0);
+    const [f, [PRE, CLR, T, C], [Q, Q2]] = AutoPlace(new TFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

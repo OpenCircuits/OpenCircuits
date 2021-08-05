@@ -22,8 +22,7 @@ describe("Translate Tool", () => {
         });
 
         test("Move mouse without dragging", () => {
-            const obj = new Switch();
-            Place(obj);
+            const [obj] = Place(new Switch());
 
             input.moveTo(V(0, 0))
                     .move(V(20, 0));
@@ -32,8 +31,7 @@ describe("Translate Tool", () => {
         });
 
         test("Click and Move mouse not on Switch", () => {
-            const obj = new Switch();
-            Place(obj);
+            const [obj] = Place(new Switch());
 
             input.moveTo(V(0, 50))
                     .press()
@@ -44,8 +42,7 @@ describe("Translate Tool", () => {
         });
 
         test("Move Switch", () => {
-            const obj = new Switch();
-            Place(obj);
+            const [obj] = Place(new Switch());
 
             input.drag(V(0, 0), V(100, 0));
 
@@ -53,8 +50,7 @@ describe("Translate Tool", () => {
         });
 
         test("Move Button", () => {
-            const obj = new Button();
-            Place(obj);
+            const [obj] = Place(new Button());
 
             input.moveTo(V(0, 0))
                     .press()
@@ -65,8 +61,7 @@ describe("Translate Tool", () => {
         });
 
         test("Move ANDGate", () => {
-            const obj = new ANDGate();
-            Place(obj);
+            const [obj] = Place(new ANDGate());
 
             input.moveTo(V(0, 0))
                     .press()
@@ -86,10 +81,8 @@ describe("Translate Tool", () => {
         });
 
         test("Move Switch + ANDGate", () => {
-            const obj1 = new Switch();
-            const obj2 = new ANDGate();
+            const [obj1, obj2] = Place(new Switch(), new ANDGate());
             obj1.setPos(V(100, 0));
-            Place(obj1, obj2);
 
             // Select objects
             input.drag(V(-200, -200), V(200, 200));
@@ -102,10 +95,8 @@ describe("Translate Tool", () => {
         });
 
         test("Move Switch while ANDGate is Selected", () => {
-            const sw = new Switch();
-            const gate = new ANDGate();
+            const [sw, gate] = Place(new Switch(), new ANDGate());
             gate.setPos(V(100, 0));
-            Place(sw, gate);
 
             // Select ANDGate
             input.click(gate.getPos());
@@ -127,16 +118,12 @@ describe("Translate Tool", () => {
         });
 
         test("Clone Switch -> LED with Snapped WirePort", () => {
-            const sw   = new Switch();
-            const led  = new LED();
-            const port = new DigitalNode();
+            const [sw, led, port] = Place(new Switch(), new LED(), new DigitalNode());
 
             // Set port to vertically align with Switch and horizontally with LED
             port.setPos(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
             sw.setPos(V(0, 0));
             led.setPos(V(100, 0));
-
-            Place(sw, led, port);
 
             // Connect to Port and set as straight
             Connect(sw,   0, port, 0).getWire().setIsStraight(true);

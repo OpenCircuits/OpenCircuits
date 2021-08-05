@@ -1,0 +1,200 @@
+---
+id: installation
+title: Installation
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+## Requirements
+
+* **Make sure you have [`Git`](https://git-scm.com/downloads) installed**
+
+* **Note: before installing new packages, make sure your current packages are up-to-date to avoid conflicts.**
+___
+
+
+OpenCircuits uses **yarn** to manage building and testing with dependencies.
+Yarn is a superset of NPM and is the recommended manager.
+
+Additionally, we use **Golang** as our backend language.
+Choose your system below for instructions on installing these.
+
+
+<Tabs groupId="system"
+      defaultValue="win"
+      values={[
+          {label: "Windows", value: "win"},
+          {label: "macOS", value: "mac"},
+          {label: "Linux", value: "linux"},
+          {label: "Docker", value: "docker"},
+      ]}>
+
+{/*         */}
+{/* WINDOWS */}
+{/*         */}
+<TabItem value="win">
+
+:::note
+It's highly recommended to use (the admittedly terrible) built-in Command Prompt.
+We have yet to find a working solution with WSL, but please feel free to let us know if you figure it out!
+:::
+
+#### NPM
+
+[Install the latest version of npm here](https://nodejs.org/en/) and make sure it works by typing `npm --version` in the command prompt.
+
+(Note: after installing it make sure to restart command prompt so that the command gets recognized)
+
+Then, to install Yarn, run
+```bash
+npm install -g yarn
+```
+
+And again, make sure it works by typing `yarn --version`.
+
+:::warning
+*If you run into* `ERR: cb.apply is not a function:` [*click here*](https://github.com/nodejs/help/issues/2874#issuecomment-663661148)
+:::
+
+#### Go
+
+Download and run the MSI installer [here](https://golang.org/dl/)
+
+Restart command prompt and verify that it worked by typing `go version`.
+
+</TabItem>
+
+
+{/*       */}
+{/* macOS */}
+{/*       */}
+<TabItem value="mac">
+
+#### Homebrew
+
+:::note
+
+We highly recommend installing [homebrew](https://brew.sh/) as it makes life much easier.
+And we will assume you have it installed for the rest of these instructions.
+
+:::
+
+#### NPM / Yarn
+
+To install NPM, simply run
+```bash
+brew install npm
+```
+
+Make sure it works by typing `npm --version` in the terminal.
+
+Then, to install Yarn, run
+```bash
+npm install -g yarn
+```
+
+And again, make sure it works by typing `yarn --version`.
+
+#### Go
+
+To install type the following line:
+
+`brew install go`
+
+Verify that it works by typing `go version`
+
+</TabItem>
+
+
+{/*       */}
+{/* LINUX */}
+{/*       */}
+<TabItem value="linux">
+
+#### NPM
+
+:::note
+If you're using Ubuntu you may need to uninstall the built-in "yarn" from `cmdtest`, by doing
+```bash
+sudo apt-get remove cmdtest
+```
+:::
+
+* For Ubuntu, type `sudo apt-get install nodejs`
+
+* For Arch-based distributions, install the `npm` package from the `community` repository.
+
+* For gLinux, you must first install NVM (Node Version Manager) via `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
+    Make sure this works by doing `nvm --version`
+    Then do `nvm install node` and you should be all set up!
+
+After installing, verify that it works by typing `npm --version`
+
+Then, to install Yarn, run
+```bash
+npm install -g yarn
+```
+
+And again, make sure it works by typing `yarn --version`.
+
+
+#### Go
+
+To install, follow the instructions [here](https://golang.org/doc/install#tarball)
+
+After installing, verify that it works by typing `go version`
+
+</TabItem>
+
+
+{/*        */}
+{/* DOCKER */}
+{/*        */}
+<TabItem value="docker">
+
+[![Docker Image Stats](http://dockeri.co/image/opencircuits/opencircuits)](https://hub.docker.com/r/opencircuits/opencircuits/)
+
+For information on installing Docker on your machine, see the Docker docs [here](https://docs.docker.com/install/).
+
+#### To build Docker image, simply run:
+
+`npm run docker:build`
+
+#### To start the Docker container, simply run:
+
+`npm run docker:stop`
+
+#### To stop and remover the Docker container, simply run:
+
+`npm run docker:stop`
+
+Builds of Docker images are available on the [Docker Hub](https://hub.docker.com/r/opencircuits/opencircuits/) and are built and [tagged for each branch](https://hub.docker.com/r/opencircuits/opencircuits/tags/) of the repository.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+
+
+## Installation
+
+After sucessfully installing the required dependencies for the project, you can now install OpenCircuits locally!
+
+First, you have to clone the repository to your system
+```bash
+git clone https://github.com/OpenCircuits/OpenCircuits
+```
+
+Then, you can navigate to it
+```bash
+cd ./OpenCircuits
+```
+
+And finally, run the following to install the project dependencies!
+```bash
+yarn
+```
