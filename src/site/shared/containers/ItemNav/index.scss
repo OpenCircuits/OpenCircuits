@@ -122,6 +122,10 @@ $tab-padding: 8px;
         &__closed > div {
             transform: translate(25px, -$header-border-width - $top-margin);
 
+            @media only screen {
+                transform: translate(10px, -$header-border-width - $top-margin);
+            }
+
             font-size: 2em;
 
             border-color: $secondary-color;
