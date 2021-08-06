@@ -120,9 +120,12 @@ $tab-padding: 8px;
         }
 
         &__closed > div {
-            transform: translate(25px, -$header-border-width - $top-margin);
 
-            @media only screen {
+            @media screen and (pointer: fine) {
+                transform: translate(25px, -$header-border-width - $top-margin);
+            }
+
+            @media screen and (pointer: coarse) {
                 transform: translate(10px, -$header-border-width - $top-margin);
             }
 
