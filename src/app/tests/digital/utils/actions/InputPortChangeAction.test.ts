@@ -13,9 +13,8 @@ describe("Input Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place} = GetHelpers({designer});
-        const gate = new ANDGate();
 
-        Place(gate);
+        const [gate] = Place(new ANDGate());
 
         // before connection
         expect(gate.getInputPortCount().getValue()).toBe(2);
@@ -41,13 +40,9 @@ describe("Input Port Change Action", () => {
     test("Undo/Redo 2", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const gate = new ANDGate();
-        const buf1 = new BUFGate();
-        const buf2 = new BUFGate();
-        const buf3 = new BUFGate();
-        const buf4 = new BUFGate();
 
-        Place(gate, buf1, buf2, buf3, buf4);
+        const [gate, buf1, buf2, buf3, buf4] = Place(new ANDGate(), new BUFGate(), new BUFGate(),
+                                                     new BUFGate(), new BUFGate());
         Connect(buf1, 0, gate, 0);
         Connect(buf2, 0, gate, 1);
 
@@ -122,10 +117,8 @@ describe("Input Port Change Action", () => {
     test("Undo/Redo 3", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const gate = new ANDGate();
-        const buf1 = new BUFGate();
 
-        Place(gate, buf1);
+        const [gate, buf1] = Place(new ANDGate(), new BUFGate());
         Connect(buf1, 0, gate, 0);
         Connect(buf1, 0, gate, 1);
 
