@@ -1,20 +1,26 @@
 package doc
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
+// Set action type to json raw message to avoid deserializing the
+//	actual action and avoid complex parsing logic.  This is just
+//	a byte array anyway
+type Action json.RawMessage
+
 type ChangelogEntry struct {
 	// Action is raw representation of the action used by clients
-	Action []byte
+	Action Action
 	// ProposedClock is the clock submitted by the client
 	ProposedClock uint64
 	// AcceptedClock is the clock in the log
 	AcceptedClock uint64
 	// SchemaVersion is the version of the client Action schema
-	SchemaVersion uint32
+	SchemaVersion string
 	// SessionID is the unique ID for the session; MAYBE NOT REQUIRED HERE
 	SessionID string
 	// UserID is the unique ID of the user (injected by the authorization system)
@@ -23,19 +29,19 @@ type ChangelogEntry struct {
 
 // Sent by messaging layer of proposer
 type ProposedEntry struct {
-	Action        []byte
+	Action        Action
 	ProposedClock uint64
-	SchemaVersion uint32
-	SessionID     string
+	SchemaVersion string
+	SessionID     string `json:"-"`
 	UserID        string
 }
 
 // Sent to connected clients who weren't the proposer
 type AcceptedEntry struct {
-	Action        []byte
+	Action        Action
 	ProposedClock uint64
 	AcceptedClock uint64
-	SchemaVersion uint32
+	SchemaVersion string
 	UserID        string
 }
 
