@@ -66,9 +66,9 @@ func (d docState) messageLoop() {
 		mw := <-d.recv
 		if m, ok := mw.Data.(JoinDocument); ok {
 			d.clients[mw.SessionID] = mw.Resp
-			mw.Resp <- WelcomeMessage{
+			SafeSendWelcome(mw.Resp, WelcomeMessage{
 				MissedEntries: d.log.Slice(m.LogClock),
-			}
+			})
 		} else if _, ok := mw.Data.(LeaveDocument); ok {
 			delete(d.clients, mw.SessionID)
 
@@ -82,16 +82,17 @@ func (d docState) messageLoop() {
 				continue
 			}
 
-			mw.Resp <- d.serverRecv(m)
+			d.serverRecv(m, mw.Resp)
 		}
 	}
 }
 
-func (d docState) serverRecv(msg Propose) interface{} {
+func (d docState) serverRecv(msg Propose, resp chan<- interface{}) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.log.AddEntry(msg)
 	if err != nil {
-		return ProposeNack{d.log.LogClock(), err.Error()}
+		SafeSendNack(resp, ProposeNack{d.log.LogClock(), err.Error()})
+		return
 	}
 
 	// Send to other clients
@@ -99,9 +100,9 @@ func (d docState) serverRecv(msg Propose) interface{} {
 		if sid == msg.SessionID {
 			continue
 		}
-		ch <- accepted
+		SafeSendNewEntry(ch, accepted)
 	}
 
 	// Acknowledge the request
-	return ProposeAck{AcceptedClock: accepted.AcceptedClock}
+	SafeSendAck(resp, ProposeAck{AcceptedClock: accepted.AcceptedClock})
 }

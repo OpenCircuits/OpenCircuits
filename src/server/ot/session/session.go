@@ -1,8 +1,6 @@
 package session
 
 import (
-	"encoding/json"
-	"errors"
 	"log"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -16,7 +14,6 @@ type sessionState struct {
 	done       chan<- string
 	docUpdates chan interface{}
 	doc        doc.Document
-	docAck     chan interface{}
 	// TODO Add cached permissions, which can be updated
 	// perms   chan UserPermissions
 }
@@ -30,69 +27,31 @@ func NewSession(doc doc.Document, conn conn.Connection, done chan<- string) Sess
 		sessionID:  utils.RandToken(128),
 		conn:       conn,
 		done:       done,
-		docUpdates: make(chan interface{}, 4),
-		docAck:     make(chan interface{}),
+		docUpdates: make(chan interface{}, 64),
 		doc:        doc,
 	}
 
 	go s.networkListener()
-	go s.documentListener()
+	go s.networkSender()
 
 	return Session{
 		SessionID: s.sessionID,
 	}
 }
 
-type sessMsg struct {
-	Type string `json:"type"`
-}
-
-type sessResp struct {
-	Result string      `json:"result"`
-	Data   interface{} `json:"data"`
-}
-
-func parseMessage(data []byte) (interface{}, error) {
-	var msg sessMsg
-	err := json.Unmarshal(data, &msg)
-	if err != nil {
-		return nil, err
-	}
-
-	if msg.Type == "propose" {
-		var propMsg doc.Propose
-		err = json.Unmarshal(data, &propMsg)
-		return propMsg, err
-	} else if msg.Type == "join" {
-		var joinDoc doc.JoinDocument
-		err = json.Unmarshal(data, &joinDoc)
-		return joinDoc, err
-	}
-	return nil, errors.New("unrecognized message type")
+func (s sessionState) sendDoc(v interface{}) {
+	s.doc.Send(doc.MessageWrapper{
+		SessionID: s.sessionID,
+		Resp:      s.docUpdates,
+		Data:      v,
+	})
 }
 
 func (s sessionState) close() {
 	s.done <- s.sessionID
 	s.conn.Close()
-	s.doc.Send(doc.MessageWrapper{
-		Resp: s.docUpdates,
-		Data: doc.LeaveDocument{},
-	})
+	s.sendDoc(doc.LeaveDocument{})
 	close(s.docUpdates)
-}
-
-func (s sessionState) handleMsg(data []byte) (interface{}, error) {
-	msg, err := parseMessage(data)
-	if err != nil {
-		return nil, err
-	}
-
-	s.doc.Send(doc.MessageWrapper{
-		SessionID: s.sessionID,
-		Resp:      s.docAck,
-		Data:      msg,
-	})
-	return <-s.docAck, nil
 }
 
 // networkListener is the main loop of the session
@@ -100,38 +59,31 @@ func (s sessionState) networkListener() {
 	defer s.close()
 
 	// This can be synchronous because it is per-client
-	for {
-		message, err := s.conn.Recv()
+	for rawMsg := range s.conn.Recv() {
+		msg, err := Deserialize(rawMsg)
 		if err != nil {
-			log.Println("read:", err)
+			// Client sent a bad message, so close the session
+			log.Println("client sent a bad message: ", err)
 			break
 		}
 
-		var response sessResp
-		if resp, err := s.handleMsg(message); err == nil {
-			response = sessResp{
-				Result: "ok",
-				Data:   resp,
-			}
-		} else {
-			response = sessResp{
-				Result: "error",
-				Data:   err,
-			}
-		}
-
-		bytes, _ := json.Marshal(response)
-		err = s.conn.Send(bytes)
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
+		s.sendDoc(msg)
 	}
 }
 
-func (s sessionState) documentListener() {
+// networkSender guarantees messages are sent to the client in the correct
+//	order by sending from a single thread.
+func (s sessionState) networkSender() {
 	for u := range s.docUpdates {
-		m, _ := json.Marshal(u)
-		go s.conn.Send(m)
+		// TODO: Send one-at-a-time until the session takes rapid accepted entries
+		//	and bundle them into a single message
+		if a, ok := u.(doc.AcceptedEntry); ok {
+			u = NewEntries{
+				Entries: []doc.AcceptedEntry{a},
+			}
+		}
+
+		m := Serialize(u)
+		s.conn.Send(m)
 	}
 }
