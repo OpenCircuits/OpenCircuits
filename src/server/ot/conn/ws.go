@@ -1,6 +1,7 @@
 package conn
 
 import (
+	"errors"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -14,62 +15,40 @@ type WebSocketConnectionFactory struct {
 	MessageType int
 }
 
-func (wf *WebSocketConnectionFactory) Establish(c *gin.Context) Connection {
+func (wf *WebSocketConnectionFactory) Establish(c *gin.Context) RawConnection {
 	conn, err := wf.Upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Print("Failed to upgrade connection:", err)
 		return nil
 	}
 
-	ws := &webSocketConnection{
-		done: make(chan bool),
-		recv: make(chan []byte),
+	return webSocketConnection{
 		conn: conn,
 		mt:   websocket.TextMessage,
 	}
-
-	go ws.listener()
-
-	return ws
 }
 
 type webSocketConnection struct {
-	done chan bool
-	recv chan []byte
 	conn *websocket.Conn
 	mt   int
 }
 
-func (ws webSocketConnection) listener() {
-	defer ws.Close()
-	for {
-		mt, message, err := ws.conn.ReadMessage()
-		if err != nil {
-			// Assume this means ws.conn is closed
-			return
-		}
-		if mt != ws.mt {
-			log.Println("mismatched ws message type")
-			return
-		}
-		ws.recv <- message
+func (ws webSocketConnection) Recv() ([]byte, error) {
+	mt, message, err := ws.conn.ReadMessage()
+	if err != nil {
+		// Assume this means ws.conn is closed
+		return nil, err
 	}
+	if mt != ws.mt {
+		return nil, errors.New("mismatched ws message type")
+	}
+	return message, nil
 }
 
-func (ws webSocketConnection) Recv() <-chan []byte {
-	return ws.recv
+func (ws webSocketConnection) Send(response []byte) error {
+	return ws.conn.WriteMessage(ws.mt, response)
 }
 
-func (ws webSocketConnection) Send(response []byte) {
-	if err := ws.conn.WriteMessage(ws.mt, response); err != nil {
-		log.Println("failed to send to ws: ", err)
-		ws.Close()
-	}
-}
-
-func (ws webSocketConnection) Close() {
-	close(ws.recv)
-	if err := ws.conn.Close(); err != nil {
-		log.Println("failed to close ws: ", err)
-	}
+func (ws webSocketConnection) Close() error {
+	return ws.conn.Close()
 }

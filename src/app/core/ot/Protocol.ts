@@ -27,10 +27,16 @@ export class NewEntries<T> {
 	public Entries: AcceptedEntry<T>[];
 }
 
+export class CloseMessage {
+	public kind: "close";
+	public Reason: string;
+}
+
 export type Response<T> =
 	| ProposeAck
+	| WelcomeMessage<T>
 	| NewEntries<T>
-	| WelcomeMessage<T>;
+	| CloseMessage;
 
 // TODO: Make this less dumb
 export function Deserialize<T>(s: string): Response<T> {

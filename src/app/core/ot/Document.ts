@@ -64,6 +64,9 @@ export class Document<M extends OTModel> {
 					this.recv(e, false);
 				});
 				break;
+			case "close":
+				console.log("Unexpected close message: " + m.Reason);
+				break;
 			default:
 				const _exhaustiveCheck: never = m;
 		}

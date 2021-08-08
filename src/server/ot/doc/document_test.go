@@ -58,6 +58,34 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	}
 }
 
+func TestDocumentLifecycleFailure(t *testing.T) {
+	ch := make(chan model.CircuitId)
+	d, ds := newDocument("AAAA", ch)
+	go ds.messageLoop()
+	*ds.log = smallChangelog()
+
+	respCh := make(chan interface{})
+
+	// Send propose message without a join message
+	d.Send(MessageWrapper{
+		SessionID: "BBBB",
+		Resp:      respCh,
+		Data: Propose{
+			ProposedClock: 1,
+		},
+	})
+
+	select {
+	case cl := <-respCh:
+		if _, ok := cl.(CloseMessage); !ok {
+			t.Error("did not receive close message after bad propose")
+		}
+
+	case <-time.After(time.Second):
+		t.Error("Timed out: did not receive close message")
+	}
+}
+
 func mkDocState() docState {
 	ch := make(chan model.CircuitId)
 	_, ds := newDocument("AAAA", ch)
@@ -78,8 +106,8 @@ func TestDocumentProposeSuccess(t *testing.T) {
 		if r.AcceptedClock != 4 {
 			t.Error("Received wrong log clock")
 		}
-	} else if r, ok := res.(ProposeNack); ok {
-		t.Error("Document NACK'd when it shouldn't have: ", r.ErrorMsg)
+	} else if r, ok := res.(CloseMessage); ok {
+		t.Error("Document NACK'd when it shouldn't have: ", r.Reason)
 	} else {
 		t.Error("Bad return type: ", res)
 	}
@@ -96,7 +124,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 
 	if r, ok := res.(ProposeAck); ok {
 		t.Error("Document ACK'd when it shouldn't have: ", r.AcceptedClock)
-	} else if _, ok := res.(ProposeNack); ok {
+	} else if _, ok := res.(CloseMessage); ok {
 	} else {
 		t.Error("Bad return type: ", res)
 	}
@@ -123,8 +151,8 @@ func TestDocumentProposePropagate(t *testing.T) {
 		if r.AcceptedClock != 4 {
 			t.Error("Received wrong log clock")
 		}
-	} else if r, ok := res.(ProposeNack); ok {
-		t.Error("Document NACK'd when it shouldn't have: ", r.ErrorMsg)
+	} else if r, ok := res.(CloseMessage); ok {
+		t.Error("Document NACK'd when it shouldn't have: ", r.Reason)
 	} else {
 		t.Error("Bad return type: ", res)
 	}

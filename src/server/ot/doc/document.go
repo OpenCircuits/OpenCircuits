@@ -1,6 +1,7 @@
 package doc
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -78,7 +79,9 @@ func (d docState) messageLoop() {
 			}
 		} else if m, ok := mw.Data.(Propose); ok {
 			if _, ok := d.clients[mw.SessionID]; !ok {
-				log.Println("Message sent from un-joined client")
+				SafeSendClose(mw.Resp, CloseMessage{
+					Reason: "proposal from unjoined client",
+				})
 				continue
 			}
 
@@ -91,7 +94,13 @@ func (d docState) serverRecv(msg Propose, resp chan<- interface{}) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.log.AddEntry(msg)
 	if err != nil {
-		SafeSendNack(resp, ProposeNack{d.log.LogClock(), err.Error()})
+		SafeSendClose(resp, CloseMessage{
+			Reason: fmt.Sprintf(
+				"proposal number (%d) too high for log clock (%d)",
+				msg.ProposedClock,
+				d.log.LogClock(),
+			),
+		})
 		return
 	}
 

@@ -15,8 +15,8 @@ func RegisterRoutes(router *gin.Engine, accessDriver interfaces.AccessDriver, se
 	}
 	establish := func(c *gin.Context) {
 		circuitID := c.Param("cid")
-		conn := wsFactory.Establish(c)
-		sessionManager.Start(circuitID, conn)
+		cn := wsFactory.Establish(c)
+		sessionManager.Start(circuitID, conn.NewDefaultConnection(cn))
 	}
 
 	// OT

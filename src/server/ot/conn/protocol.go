@@ -1,4 +1,4 @@
-package session
+package conn
 
 import (
 	"encoding/json"
@@ -19,8 +19,8 @@ import (
 
 type (
 	ProposeAck     = doc.ProposeAck
-	ProposeNack    = doc.ProposeNack
 	WelcomeMessage = doc.WelcomeMessage
+	CloseMessage   = doc.CloseMessage
 )
 
 type NewEntries struct {
@@ -29,21 +29,21 @@ type NewEntries struct {
 
 const (
 	ProposeAckKind     = "propose_ack"
-	ProposeNackKind    = "propose_nack"
 	WelcomeMessageKind = "welcome_entry"
 	NewEntriesKind     = "new_entries"
+	CloseMessageKind   = "close"
 )
 
 func Serialize(s interface{}) []byte {
 	var kind string
 	if _, ok := s.(ProposeAck); ok {
 		kind = ProposeAckKind
-	} else if _, ok := s.(ProposeNack); ok {
-		kind = ProposeNackKind
 	} else if _, ok := s.(WelcomeMessage); ok {
 		kind = WelcomeMessageKind
-	} else if _, ok := s.(doc.AcceptedEntry); ok {
+	} else if _, ok := s.(NewEntries); ok {
 		kind = NewEntriesKind
+	} else if _, ok := s.(CloseMessage); ok {
+		kind = CloseMessageKind
 	} else {
 		kind = "server_error_invalid_type"
 		log.Println("INTERNAL PROTOCOL VIOLATION: serialized invalid type")
@@ -81,21 +81,18 @@ func Deserialize(data []byte) (interface{}, error) {
 	}
 
 	var message interface{}
+	var err error
 	if kind == ProposeEntryKind {
 		var m ProposeAck
-		if err := json.Unmarshal(data, &m); err != nil {
-			return nil, err
-		}
+		err = json.Unmarshal(data, &m)
 		message = m
 	} else if kind == JoinDocumentKind {
 		var m JoinDocument
-		if err := json.Unmarshal(data, &m); err != nil {
-			return nil, err
-		}
+		err = json.Unmarshal(data, &m)
 		message = m
 	} else {
-		return nil, errors.New("received invalid message kind: " + kind)
+		err = errors.New("received invalid message kind: " + kind)
 	}
 
-	return message, nil
+	return message, err
 }

@@ -1,8 +1,6 @@
 package session
 
 import (
-	"log"
-
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
@@ -59,14 +57,10 @@ func (s sessionState) networkListener() {
 	defer s.close()
 
 	// This can be synchronous because it is per-client
-	for rawMsg := range s.conn.Recv() {
-		msg, err := Deserialize(rawMsg)
-		if err != nil {
-			// Client sent a bad message, so close the session
-			log.Println("client sent a bad message: ", err)
-			break
-		}
-
+	for msg := range s.conn.Recv() {
+		// NOTE: This is a pass-through for now because the client/server protocol
+		//			is the same as the session/document protocol.  This may change.
+		// Access check would be done here
 		s.sendDoc(msg)
 	}
 }
@@ -78,12 +72,17 @@ func (s sessionState) networkSender() {
 		// TODO: Send one-at-a-time until the session takes rapid accepted entries
 		//	and bundle them into a single message
 		if a, ok := u.(doc.AcceptedEntry); ok {
-			u = NewEntries{
+			u = conn.NewEntries{
 				Entries: []doc.AcceptedEntry{a},
 			}
 		}
 
-		m := Serialize(u)
-		s.conn.Send(m)
+		s.conn.Send(u)
+
+		// Sometimes a close message will be spawned by the document
+		if _, ok := u.(doc.CloseMessage); ok {
+			s.close()
+			break
+		}
 	}
 }

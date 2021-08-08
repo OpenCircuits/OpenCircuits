@@ -28,16 +28,16 @@ type ProposeAck struct {
 	AcceptedClock uint64
 }
 
-type ProposeNack struct {
-	LogClock uint64
-	ErrorMsg string
-}
-
 type WelcomeMessage struct {
 	MissedEntries []AcceptedEntry
 }
 
 type NewEntry = AcceptedEntry
+
+// Close messages are fatal errors
+type CloseMessage struct {
+	Reason string
+}
 
 //
 // Helper functions used by the Document to avoid accidently sending types over
@@ -48,14 +48,14 @@ func SafeSendAck(ch chan<- interface{}, m ProposeAck) {
 	ch <- m
 }
 
-func SafeSendNack(ch chan<- interface{}, m ProposeNack) {
-	ch <- m
-}
-
 func SafeSendWelcome(ch chan<- interface{}, m WelcomeMessage) {
 	ch <- m
 }
 
 func SafeSendNewEntry(ch chan<- interface{}, m NewEntry) {
+	ch <- m
+}
+
+func SafeSendClose(ch chan<- interface{}, m CloseMessage) {
 	ch <- m
 }
