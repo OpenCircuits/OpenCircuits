@@ -43,7 +43,7 @@ export class Document<M extends OTModel> {
 			UserID: this.clientInfo.UserID()
 		};
 		this.pending.push(e);
-		this.doc.Apply(action);
+		action.Apply(this.doc);
 
 		// Send the next pending entry (if the new action is the only one)
 		this.sendNext();
@@ -89,23 +89,23 @@ export class Document<M extends OTModel> {
 
 		// Revert document back to log-state
 		for (let i = this.pending.length - 1; i >= 0; --i) {
-			this.doc.Apply(this.pending[i].Action.Inverse());
+			this.pending[i].Action.Inverse().Apply(this.doc);
 		}
 		for (let i = this.sent.length - 1; i >= 0; --i) {
-			this.doc.Apply(this.sent[i].Action.Inverse());
+			this.sent[i].Action.Inverse().Apply(this.doc);
 		}
 
 		// Apply new log entry
-		this.doc.Apply(entry.Action)
+		entry.Action.Apply(this.doc)
 
 		// Apply local changes again, transformed this time
 		this.sent.forEach(e => {
 			e.Action.Transform(entry.Action);
-			this.doc.Apply(e.Action);
+			e.Action.Apply(this.doc);
 		});
 		this.pending.forEach(e => {
 			e.Action.Transform(entry.Action);
-			this.doc.Apply(e.Action);
+			e.Action.Apply(this.doc);
 		});
 	}
 
