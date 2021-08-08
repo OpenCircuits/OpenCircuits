@@ -67,9 +67,13 @@ func mkDocState() docState {
 
 func TestDocumentProposeSuccess(t *testing.T) {
 	ds := mkDocState()
-	res := ds.serverRecv(Propose{
+
+	ch := make(chan interface{}, 1)
+	ds.serverRecv(Propose{
 		ProposedClock: 1,
-	})
+	}, ch)
+	res := <-ch
+
 	if r, ok := res.(ProposeAck); ok {
 		if r.AcceptedClock != 4 {
 			t.Error("Received wrong log clock")
@@ -83,9 +87,13 @@ func TestDocumentProposeSuccess(t *testing.T) {
 
 func TestDocumentProposeFailure(t *testing.T) {
 	ds := mkDocState()
-	res := ds.serverRecv(Propose{
+
+	ch := make(chan interface{}, 1)
+	ds.serverRecv(Propose{
 		ProposedClock: 10,
-	})
+	}, ch)
+	res := <-ch
+
 	if r, ok := res.(ProposeAck); ok {
 		t.Error("Document ACK'd when it shouldn't have: ", r.AcceptedClock)
 	} else if _, ok := res.(ProposeNack); ok {
@@ -104,10 +112,12 @@ func TestDocumentProposePropagate(t *testing.T) {
 		ds.clients[x] = ch
 	}
 
-	res := ds.serverRecv(Propose{
+	ch := make(chan interface{}, 1)
+	ds.serverRecv(Propose{
 		ProposedClock: 2,
 		SessionID:     "B",
-	})
+	}, ch)
+	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
 		if r.AcceptedClock != 4 {
