@@ -52,15 +52,15 @@ export class Document<M extends OTModel> {
 	private handler(m: Response<Action>): void {
 		switch (m.kind) {
 			case "propose_ack":
-				this.ackHandler((m as ProposeAck).AcceptedClock);
+				this.ackHandler(m.AcceptedClock);
 				break;
 			case "new_entries":
-				(m as NewEntries<Action>).Entries.forEach(e => {
+				m.Entries.forEach(e => {
 					this.recv(e, false);
 				});
 				break;
 			case "welcome_message":
-				(m as WelcomeMessage<Action>).MissedEntries.forEach(e => {
+				m.MissedEntries.forEach(e => {
 					this.recv(e, false);
 				});
 				break;
