@@ -17,6 +17,8 @@ import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
 
+import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons";
+
 import "./index.scss";
 
 
@@ -54,6 +56,7 @@ const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, userCircuits, exampleCirc
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
                 {auth ? `Hello, ${auth.getName()}!` : null}
+                <SignInOutButtons />
             </div>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
