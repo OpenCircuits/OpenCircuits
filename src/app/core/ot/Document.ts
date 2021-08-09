@@ -1,10 +1,10 @@
 import { Changelog } from "./Changelog";
 import { Action, OTModel } from "./Interfaces";
-import { AcceptedEntry, ProposedEntry, Response } from "./Protocol";
+import { AcceptedEntry, JoinDocument, ProposedEntry, Response } from "./Protocol";
 
 export interface Connection<M extends OTModel> {
 	Propose(e: ProposedEntry<M>): void;
-	Join(e: ProposedEntry<M>): void;
+	Join(e: JoinDocument): void;
 	Handler: (m: Response<M>) => void;
 }
 
