@@ -10,6 +10,12 @@ export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
 	public acceptedClock: number;
 }
 
+export interface Connection<M extends OTModel> {
+	Propose(e: ProposedEntry<M>): void;
+	Join(e: JoinDocument): void;
+	Handler: (m: Response<M>) => void;
+}
+
 //
 // Message sent TO the client
 //

@@ -1,5 +1,4 @@
 import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
-import { InsertAction } from "./MockModel";
 
 // The TextModel is a text-based OT model
 export class TextModel implements OTModel {

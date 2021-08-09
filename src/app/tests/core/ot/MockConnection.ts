@@ -1,6 +1,5 @@
-import { Connection } from "core/ot/Document";
 import { OTModel } from "core/ot/Interfaces";
-import { JoinDocument, ProposedEntry, Response } from "core/ot/Protocol";
+import { Connection, JoinDocument, ProposedEntry, Response } from "core/ot/Protocol";
 
 export class MockConnection<M extends OTModel> implements Connection<M> {
 	public Proposed: ProposedEntry<M>;

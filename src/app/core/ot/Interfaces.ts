@@ -1,6 +1,10 @@
 
 
 // This will be... somewhere else
+export interface OTModel {
+}
+
+// This will be... somewhere else
 export interface Action<Model extends OTModel> {
 	Inverse(): Action<Model>;
 	// Apply needs to return whether the action is applied successfully so
@@ -15,8 +19,4 @@ export interface ActionTransformer<M extends OTModel> {
 	// Transform t by f so the log would go from 
 	//		[..., x, t, ...] to [..., x, f, t, ...]
 	Transform(t: Action<M>, f: Action<M>): void;
-}
-
-// This will be... somewhere else
-export interface OTModel {
 }
