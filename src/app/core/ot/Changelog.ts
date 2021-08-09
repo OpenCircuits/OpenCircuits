@@ -1,5 +1,5 @@
 import { assert } from "console";
-import { Action, OTModel } from "./Interfaces";
+import { OTModel } from "./Interfaces";
 import { AcceptedEntry } from "./Protocol";
 
 // See ChangelogEntry in changelog.go
@@ -20,13 +20,12 @@ export class Changelog<M extends OTModel> {
 		entry.inner = accepted;
 		entry.local = local;
 
-		// Transform the entry against everything it hasn't seen
-		for (let i: number = accepted.ProposedClock; i < this.logClock; ++i) {
-			entry.inner.Action.Transform(this.entries[i].inner.Action);
-		}
-
 		this.entries.push(entry);
 		this.logClock++;
+	}
+
+	public Index(i: number): ChangelogEntry<M> {
+		return this.entries[i];
 	}
 
 	public Clock(): number {

@@ -1,16 +1,16 @@
 import { Connection } from "core/ot/Document";
+import { OTModel } from "core/ot/Interfaces";
 import { JoinDocument, ProposedEntry, Response } from "core/ot/Protocol";
-import { MockModel } from "./MockModel";
 
-export class MockConnection implements Connection<MockModel> {
-	public Proposed: ProposedEntry<MockModel>;
+export class MockConnection<M extends OTModel> implements Connection<M> {
+	public Proposed: ProposedEntry<M>;
 	public JoinDoc: JoinDocument
-	Propose(e: ProposedEntry<MockModel>): void {
+	Propose(e: ProposedEntry<M>): void {
 		this.Proposed = e;
 	}
 	Join(e: JoinDocument): void {
 		this.JoinDoc = e;
 
 	}
-	Handler: (m: Response<MockModel>) => void;
+	Handler: (m: Response<M>) => void;
 }

@@ -1,59 +1,70 @@
-import { Action, OTModel } from "core/ot/Interfaces";
+import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
 
-export class MockModel implements OTModel {
-	public Elements: Map<string, number> = new Map<string, number>();
+export class ArrayModel implements OTModel {
+	public Elements: number[] = new Array<number>();
 }
 
-export type MockAction = Action<MockModel>;
+export type ArrayAction = Action<ArrayModel>;
 
-export class InsertAction implements MockAction {
-	public key: string;
+export class InsertAction implements ArrayAction {
+	public pos: number;
 	public value: number;
 
-	public constructor(key: string, value: number) {
-		this.key = key;
+	public constructor(pos: number, value: number) {
+		this.pos = pos;
 		this.value = value;
 	}
 
-	Inverse(): Action<MockModel> {
-		return new DeleteAction(this.key, this.value);
+	Inverse(): Action<ArrayModel> {
+		return new DeleteAction(this.pos, this.value);
 	}
-	Transform(a: Action<OTModel>): void {
-		// Some non-no-op transform behavior so it can be tested
-		if (a instanceof InsertAction) {
-			if (a.key == this.key) {
-				this.key += "+";
-			}
+	Apply(m: ArrayModel): boolean {
+		if (m.Elements.length < this.pos) {
+			return false;
 		}
+		m.Elements[this.pos] = this.value;
+		return true;
 	}
-	Apply(m: MockModel): void {
-		m.Elements.set(this.key, this.value);
-	}
-
 }
 
-export class DeleteAction implements MockAction {
-	public key: string;
+export class DeleteAction implements ArrayAction {
+	public pos: number;
 	public tombstone?: number;
 
-	public constructor(key: string, tombstone?: number) {
-		this.key = key;
+	public constructor(pos: number, tombstone?: number) {
+		this.pos = pos;
 		this.tombstone = tombstone;
 	}
 
-	Inverse(): Action<MockModel> {
+	Inverse(): Action<ArrayModel> {
 		if (this.tombstone == undefined) {
 			throw new Error("Cannot invert delete without tombstone");
 		}
-		return new InsertAction(this.key, this.tombstone);
-	}
-	Transform(a: Action<OTModel>): void { }
-
-	// TODO: "Apply" needs to indicate if the action _did_ anything, because if
-	//	it didn't, then it can't be inverted.
-	Apply(m: MockModel): void {
-		this.tombstone = m.Elements.get(this.key);
-		m.Elements.delete(this.key);
+		return new InsertAction(this.pos, this.tombstone);
 	}
 
+	Apply(m: ArrayModel): boolean {
+		// Check preconditions before applying
+		if (m.Elements.length <= this.pos) {
+			return false;
+		}
+		this.tombstone = m.Elements.splice(this.pos, 1)[0];
+		return true;
+	}
+}
+
+export class ArrayActionTransformer implements ActionTransformer<ArrayModel> {
+	Transform(t: ArrayAction, f: ArrayAction): void {
+		if (t instanceof InsertAction || t instanceof DeleteAction) {
+			if (f instanceof InsertAction) {
+				if (f.pos < t.pos) {
+					t.pos++;
+				}
+			} else if (f instanceof DeleteAction) {
+				if (f.pos < t.pos) {
+					t.pos--;
+				}
+			}
+		}
+	}
 }

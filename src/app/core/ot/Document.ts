@@ -1,5 +1,5 @@
 import { Changelog } from "./Changelog";
-import { Action, OTModel } from "./Interfaces";
+import { Action, ActionTransformer, OTModel } from "./Interfaces";
 import { AcceptedEntry, JoinDocument, ProposedEntry, Response } from "./Protocol";
 
 export interface Connection<M extends OTModel> {
@@ -15,6 +15,7 @@ export interface ClientInfoProvider {
 
 export class Document<M extends OTModel> {
 	private doc: M;
+	private xf: ActionTransformer<M>;
 	private comm: Connection<M>;
 	private clientInfo: ClientInfoProvider;
 
@@ -22,8 +23,9 @@ export class Document<M extends OTModel> {
 	private sent: ProposedEntry<M>[];
 	private pending: ProposedEntry<M>[];
 
-	public constructor(doc: M, comm: Connection<M>, clientInfo: ClientInfoProvider) {
+	public constructor(doc: M, xf: ActionTransformer<M>, comm: Connection<M>, clientInfo: ClientInfoProvider) {
 		this.doc = doc;
+		this.xf = xf;
 		this.comm = comm;
 		this.comm.Handler = this.handler;
 		this.clientInfo = clientInfo;
@@ -35,17 +37,18 @@ export class Document<M extends OTModel> {
 	}
 
 	public Propose(action: Action<M>): void {
-		const e: ProposedEntry<M> = {
-			Action: action,
-			ProposedClock: 0,
-			SchemaVersion: this.clientInfo.SchemaVersion(),
-			UserID: this.clientInfo.UserID()
-		};
-		this.pending.push(e);
-		action.Apply(this.doc);
+		if (action.Apply(this.doc)) {
+			const e: ProposedEntry<M> = {
+				Action: action,
+				ProposedClock: 0,
+				SchemaVersion: this.clientInfo.SchemaVersion(),
+				UserID: this.clientInfo.UserID()
+			};
+			this.pending.push(e);
 
-		// Send the next pending entry (if the new action is the only one)
-		this.sendNext();
+			// Send the next pending entry (if the new action is the only one)
+			this.sendNext();
+		}
 	}
 
 	private handler(m: Response<M>): void {
@@ -87,8 +90,6 @@ export class Document<M extends OTModel> {
 	}
 
 	private recv(entry: AcceptedEntry<M>, local: boolean): void {
-		this.log.Accept(entry, local);
-
 		// Revert document back to log-state
 		for (let i = this.pending.length - 1; i >= 0; --i) {
 			this.pending[i].Action.Inverse().Apply(this.doc);
@@ -97,17 +98,26 @@ export class Document<M extends OTModel> {
 			this.sent[i].Action.Inverse().Apply(this.doc);
 		}
 
-		// Apply new log entry
-		entry.Action.Apply(this.doc)
+		// Transform the entry against everything it hasn't seen...
+		for (let i: number = entry.ProposedClock; i < this.log.Clock(); ++i) {
+			this.xf.Transform(entry.Action, this.log.Index(i).inner.Action);
+		}
+		// ... before adding to the log
+		this.log.Accept(entry, local);
+
+		// Apply new log entry.  This shouldn't fail, but it won't break if it does
+		entry.Action.Apply(this.doc);
 
 		// Apply local changes again, transformed this time
-		this.sent.forEach(e => {
-			e.Action.Transform(entry.Action);
-			e.Action.Apply(this.doc);
+		//	Filter based on application success so the client doesn't waste time
+		//	sending failed actions to the server
+		this.sent = this.sent.filter(e => {
+			this.xf.Transform(e.Action, entry.Action);
+			return e.Action.Apply(this.doc);
 		});
-		this.pending.forEach(e => {
-			e.Action.Transform(entry.Action);
-			e.Action.Apply(this.doc);
+		this.pending = this.pending.filter(e => {
+			this.xf.Transform(e.Action, entry.Action);
+			return e.Action.Apply(this.doc);
 		});
 	}
 

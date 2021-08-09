@@ -1,4 +1,5 @@
-import { Action, OTModel } from "core/ot/Interfaces";
+import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
+import { InsertAction } from "./MockModel";
 
 // The TextModel is a text-based OT model
 export class TextModel implements OTModel {
@@ -19,26 +20,9 @@ export class InsertTextAction implements TextAction {
 	Inverse(): Action<TextModel> {
 		return new DeleteTextAction(this.position, this.position + this.text.length, this.text);
 	}
-	Transform(a: Action<OTModel>): void {
-		if (a instanceof InsertTextAction) {
-			if (a.position <= this.position) {
-				// other action is _before_ us, so offset by their length
-				this.position += a.text.length;
-			}
-		} else if (a instanceof DeleteTextAction) {
-			if (a.end < this.position) {
-				// other action is fully before us, so offset by length
-				this.position -= a.end - a.start;
-			} else if (a.start < this.position) {
-				// other action range contains insert position, so position where deletion does
-				this.position = a.start;
-			}
-		} else {
-			throw new Error("Unexpected action type");
-		}
-	}
-	Apply(m: TextModel): void {
+	Apply(m: TextModel): boolean {
 		m.Text = m.Text.slice(0, this.position) + this.text + m.Text.slice(this.position);
+		return true;
 	}
 }
 
@@ -62,40 +46,70 @@ export class DeleteTextAction implements TextAction {
 		}
 		return new InsertTextAction(this.tombstone, this.start);
 	}
-	Transform(a: Action<OTModel>): void {
-		if (a instanceof InsertTextAction) {
-			if (a.position <= this.start) {
-				// other action is before us, so offset by their length
-				this.start += a.text.length;
-			}
-		} else if (a instanceof DeleteTextAction) {
-			if (a.end < this.start) {
-				// other action is fully before us, so offset by length
-				this.start -= a.end - a.start;
-				this.end -= a.end - a.start;
-			} else if (a.start < this.end) {
-				// delete ranges intersect, so trim ours by theirs
-				if (a.start <= this.start && a.end <= this.end) {
-					// this is the right side of the range
-					this.start = a.end;
-				} else if (a.start > this.start && a.end > this.end) {
-					// this is the left side of the range
-					this.end = a.start;
-				} else if (a.start <= this.start && a.end > this.end) {
-					// this is fully consumed by the other range
-					this.end = this.start = a.start;
-				} else {
-					// this fully consumes the other range (so do nothing)
-				}
-			}
-		} else {
-			throw new Error("Unexpected action type");
+	Apply(m: TextModel): boolean {
+		if (this.start == this.end) {
+			return false;
 		}
-	}
-	Apply(m: TextModel): void {
 		this.tombstone = m.Text.slice(this.start, this.end);
 		m.Text =
 			m.Text.slice(0, this.start) +
 			m.Text.slice(this.end);
+		return true;
+	}
+}
+
+export class TextActionTransformer implements ActionTransformer<TextModel> {
+	Transform(t: TextAction, f: TextAction): void {
+		if (t instanceof InsertTextAction) {
+			if (f instanceof InsertTextAction) {
+				if (f.position <= t.position) {
+					// other action is _before_ us, so offset by their length
+					t.position += f.text.length;
+				}
+			} else if (f instanceof DeleteTextAction) {
+				if (f.end < t.position) {
+					// other action is fully before us, so offset by length
+					t.position -= f.end - f.start;
+				} else if (f.start < t.position) {
+					// other action range contains insert position, so position where deletion does
+					t.position = f.start;
+				}
+			} else {
+				throw new Error("Unexpected action type");
+			}
+		}
+		else if (t instanceof DeleteTextAction) {
+			if (f instanceof InsertTextAction) {
+				if (f.position <= t.start) {
+					// other action is before us, so offset by their length
+					t.start += f.text.length;
+				}
+			} else if (f instanceof DeleteTextAction) {
+				if (f.end < t.start) {
+					// other action is fully before us, so offset by length
+					t.start -= f.end - f.start;
+					t.end -= f.end - f.start;
+				} else if (f.start < t.end) {
+					// delete ranges intersect, so trim ours by theirs
+					if (f.start <= t.start && f.end <= t.end) {
+						// this is the right side of the range
+						t.start = f.end;
+					} else if (f.start > t.start && f.end > t.end) {
+						// this is the left side of the range
+						t.end = f.start;
+					} else if (f.start <= t.start && f.end > t.end) {
+						// this is fully consumed by the other range
+						t.end = t.start = f.start;
+					} else {
+						// this fully consumes the other range
+						t.end -= f.end - f.start;
+					}
+				}
+			} else {
+				throw new Error("Unexpected action type");
+			}
+		} else {
+			throw new Error("Unexpected action type");
+		}
 	}
 }
