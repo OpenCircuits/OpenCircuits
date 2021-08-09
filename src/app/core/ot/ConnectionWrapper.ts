@@ -1,7 +1,6 @@
-import { Connection, RawConnectionFactory } from "./Connection";
 import { OTModel } from "./Interfaces";
 import { OTDocument } from "./OTDocument";
-import { AcceptedEntry, JoinDocument, Response } from "./Protocol";
+import { AcceptedEntry, Connection, JoinDocument, Response } from "./Protocol";
 
 // The helper class for handling protocol messages
 export class ConnectionWrapper<M extends OTModel> {
@@ -10,9 +9,10 @@ export class ConnectionWrapper<M extends OTModel> {
 
 	private joined: boolean;
 
-	public constructor(doc: OTDocument<M>, cf: RawConnectionFactory) {
+	public constructor(doc: OTDocument<M>, conn: Connection<M>) {
 		this.doc = doc;
-		this.conn = new Connection<M>(cf, this.doc, this.handler);
+		this.conn = conn;
+		this.conn.OnMessage(this.handler);
 	}
 
 	private handler(m: Response<M>): void {

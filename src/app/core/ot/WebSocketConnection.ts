@@ -1,27 +1,44 @@
-import { RawConnection, RawConnectionFactory } from "./Connection";
+import { OTModel } from "./Interfaces";
+import { Connection, Deserialize, ProposeEntry, ResponseHandler, Serialize } from "./Protocol";
 
-class WebSocketConnection implements RawConnection {
+export type ClockProvider = { Clock(): number };
+
+// Manages an unreliable connection with the server while providing a
+//	consistent interface
+export class WebSocketConnection<M extends OTModel> implements Connection<M> {
+	private url: string;
 	private ws: WebSocket;
-	public constructor(ws: WebSocket) {
-		this.ws = ws;
+	private clock: ClockProvider;
+
+	public constructor(clock: ClockProvider, url: string) {
+		this.clock = clock;
+		this.connect();
 	}
 
-	Send(s: string): void {
-		this.ws.send(s);
-	}
-	OnMessage(h: (s: string) => void): void {
-		this.ws.onmessage = ev => {
-			h(ev.data);
+	OnMessage(h: ResponseHandler<M>): void {
+		this.ws.onmessage = rawMsg => {
+			h(Deserialize(rawMsg.data));
 		};
 	}
-}
 
-export class WebSocketConnectionFactory implements RawConnectionFactory {
-	public url: string;
-	Connect(onOpen: () => void, onClose: () => void): RawConnection {
-		const ws = new WebSocket(this.url);
-		ws.onclose = onClose;
-		ws.onopen = onOpen;
-		return new WebSocketConnection(ws)
+	Propose(e: ProposeEntry<M>): void {
+		this.ws.send(Serialize(e));
+	}
+
+	private connect(): void {
+		this.ws = new WebSocket(this.url, []);
+		this.ws.onclose = this.closeHandler;
+		this.ws.onopen = this.openHandler;
+	}
+
+	private openHandler(): void {
+		this.ws.send(Serialize({
+			kind: "join_document",
+			LogClock: this.clock.Clock()
+		}));
+	}
+	private closeHandler(): void {
+		// This is where exponential back-off would happen... I think
+		this.connect();
 	}
 }

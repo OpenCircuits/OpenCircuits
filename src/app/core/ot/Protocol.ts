@@ -10,6 +10,12 @@ export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
 	public acceptedClock: number;
 }
 
+export type ResponseHandler<M> = (m: Response<M>) => void;
+export interface Connection<M extends OTModel> {
+	Propose(p: ProposeEntry<M>): void;
+	OnMessage(h: ResponseHandler<M>): void;
+}
+
 //
 // Message sent TO the client
 //
