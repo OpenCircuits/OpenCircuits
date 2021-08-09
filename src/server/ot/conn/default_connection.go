@@ -40,7 +40,14 @@ func (dc defaultConnection) Recv() <-chan interface{} {
 }
 
 func (dc defaultConnection) Send(s interface{}) {
-	if err := dc.raw.Send(Serialize(s)); err != nil {
+	rawMsg, err := Serialize(s)
+	if err != nil {
+		log.Print("default connection failed to serialize message:", err)
+		dc.Close()
+		return
+	}
+	if err := dc.raw.Send(rawMsg); err != nil {
+		log.Print("default connection failed to send message:", err)
 		dc.Close()
 	}
 }

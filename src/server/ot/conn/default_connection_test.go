@@ -68,13 +68,35 @@ func TestDefaultConnectionClosedRecv(t *testing.T) {
 	}
 }
 
-func TestDefaultConnectionBadFormat(t *testing.T) {
+func TestDefaultConnectionBadRecvFormat(t *testing.T) {
 	rc := &mockRawConn{}
 	d := NewDefaultConnection(rc)
 
 	rc.failRecv = false
 	rc.recv = []byte(`{ }`)
 
+	if _, ok := <-d.Recv(); ok {
+		t.Error("expected closed channel")
+	}
+}
+
+func TestDefaultConnectionClosedSend(t *testing.T) {
+	rc := &mockRawConn{}
+	d := NewDefaultConnection(rc)
+
+	rc.failSend = true
+	d.Send(ProposeEntry{})
+	if _, ok := <-d.Recv(); ok {
+		t.Error("expected closed channel")
+	}
+}
+
+func TestDefaultConnectionBadSendFormat(t *testing.T) {
+	rc := &mockRawConn{}
+	d := NewDefaultConnection(rc)
+
+	rc.failSend = false
+	d.Send(ProposeEntry{})
 	if _, ok := <-d.Recv(); ok {
 		t.Error("expected closed channel")
 	}

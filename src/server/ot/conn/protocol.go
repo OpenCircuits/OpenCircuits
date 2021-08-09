@@ -3,7 +3,6 @@ package conn
 import (
 	"encoding/json"
 	"errors"
-	"log"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 	"github.com/fatih/structs"
@@ -34,7 +33,7 @@ const (
 	CloseMessageKind   = "close"
 )
 
-func Serialize(s interface{}) []byte {
+func Serialize(s interface{}) ([]byte, error) {
 	var kind string
 	if _, ok := s.(ProposeAck); ok {
 		kind = ProposeAckKind
@@ -45,14 +44,13 @@ func Serialize(s interface{}) []byte {
 	} else if _, ok := s.(CloseMessage); ok {
 		kind = CloseMessageKind
 	} else {
-		kind = "server_error_invalid_type"
-		log.Println("INTERNAL PROTOCOL VIOLATION: serialized invalid type")
+		return nil, errors.New("serialized invalid type (INTERNAL PROTOCOL VIOLATION)")
 	}
 
 	m := structs.Map(s)
 	m["kind"] = kind
 	r, _ := json.Marshal(m)
-	return r
+	return r, nil
 }
 
 //
