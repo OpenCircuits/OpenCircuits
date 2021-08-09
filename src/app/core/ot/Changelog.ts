@@ -7,6 +7,7 @@ export class ChangelogEntry<M extends OTModel> {
     public inner: AcceptedEntry<M>;
 
     public local: boolean;
+    public success: boolean
 }
 
 
@@ -14,13 +15,15 @@ export class Changelog<M extends OTModel> {
     private entries: ChangelogEntry<M>[];
     private logClock: number;
 
-    public Accept(accepted: AcceptedEntry<M>, local: boolean): void {
-        assert(accepted.acceptedClock == this.logClock);
-        const entry = new ChangelogEntry();
-        entry.inner = accepted;
-        entry.local = local;
-
-        this.entries.push(entry);
+    public Accept(accepted: AcceptedEntry<M>, local: boolean, success: boolean): boolean {
+        if (accepted.acceptedClock != this.logClock) {
+            return false;
+        }
+        this.entries.push({
+            inner: accepted,
+            local: local,
+            success: success
+        });
         this.logClock++;
     }
 

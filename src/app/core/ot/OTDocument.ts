@@ -69,13 +69,14 @@ export class OTDocument<M extends OTModel> {
         // ... and transform the entry ...
         this.log.TransformReceived(this.xf, entry);
 
-        // ... before adding to the log
-        this.log.Accept(entry, local);
+        // ... before applying it, ...
+        //  (this shouldn't fail, but it won't break if it does)
+        const success = entry.Action.Apply(this.model);
 
-        // Apply new log entry (this shouldn't fail, but it won't break if it does)
-        entry.Action.Apply(this.model);
+        // ... adding to the log, ...
+        this.log.Accept(entry, local, success);
 
-        // Apply local changes again, transformed this by the new action
+        // ... and re-applying the transformed pending entries.
         this.propCache.TransformApply(this.xf, this.model, entry.Action);
     }
 
