@@ -83,7 +83,7 @@ func Deserialize(data []byte) (interface{}, error) {
 	var message interface{}
 	var err error
 	if kind == ProposeEntryKind {
-		var m ProposeAck
+		var m ProposeEntry
 		err = json.Unmarshal(data, &m)
 		message = m
 	} else if kind == JoinDocumentKind {

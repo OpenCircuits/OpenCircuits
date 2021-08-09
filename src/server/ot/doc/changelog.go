@@ -10,11 +10,10 @@ import (
 // Set action type to json raw message to avoid deserializing the
 //	actual action and avoid complex parsing logic.  This is just
 //	a byte array anyway
-type Action json.RawMessage
 
 type ChangelogEntry struct {
 	// Action is raw representation of the action used by clients
-	Action Action
+	Action json.RawMessage
 	// ProposedClock is the clock submitted by the client
 	ProposedClock uint64
 	// AcceptedClock is the clock in the log
@@ -29,7 +28,7 @@ type ChangelogEntry struct {
 
 // Sent by messaging layer of proposer
 type ProposedEntry struct {
-	Action        Action
+	Action        json.RawMessage
 	ProposedClock uint64
 	SchemaVersion string
 	SessionID     string `json:"-"`
@@ -38,7 +37,7 @@ type ProposedEntry struct {
 
 // Sent to connected clients who weren't the proposer
 type AcceptedEntry struct {
-	Action        Action
+	Action        json.RawMessage
 	ProposedClock uint64
 	AcceptedClock uint64
 	SchemaVersion string
