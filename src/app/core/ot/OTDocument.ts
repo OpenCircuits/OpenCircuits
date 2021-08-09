@@ -29,6 +29,10 @@ export class OTDocument<M extends OTModel> {
 		this.clientInfo = clientInfo;
 	}
 
+	public Clock(): number {
+		return this.log.Clock();
+	}
+
 	public Propose(action: Action<M>): boolean {
 		// The action must be applied before being added
 		if (action.Apply(this.model)) {

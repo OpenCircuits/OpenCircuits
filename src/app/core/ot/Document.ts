@@ -1,13 +1,13 @@
-import { DocConnWrapper } from "./ConnectionWrapper";
-import { Action, ActionTransformer, OTModel } from "./Interfaces";
+import { ConnectionWrapper } from "./ConnectionWrapper";
+import { Action, OTModel } from "./Interfaces";
 import { OTDocument } from "./OTDocument";
 
 // The interface used by external code to interact with the OT model
 export class Document<M extends OTModel> {
 	private doc: OTDocument<M>;
-	private cw: DocConnWrapper<M>;
+	private cw: ConnectionWrapper<M>;
 
-	public constructor(doc: OTDocument<M>, cw: DocConnWrapper<M>) {
+	public constructor(doc: OTDocument<M>, cw: ConnectionWrapper<M>) {
 		this.doc = doc;
 		this.cw = cw;
 	}
