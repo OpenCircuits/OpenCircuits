@@ -1,4 +1,4 @@
-import { ClientInfoProvider } from "core/ot/Document";
+import { ClientInfoProvider } from "core/ot/OTDocument";
 
 export class MockClientInfoProvider implements ClientInfoProvider {
 	UserID(): string {
