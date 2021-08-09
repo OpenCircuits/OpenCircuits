@@ -1,11 +1,12 @@
+import { Action, OTModel } from "./Interfaces";
 
-export class ProposedEntry<T> {
-	public Action: T;
+export class ProposedEntry<M extends OTModel> {
+	public Action: Action<M>;
 	public ProposedClock: number;
 	public SchemaVersion: string;
 	public UserID: string;
 }
-export class AcceptedEntry<T> extends ProposedEntry<T> {
+export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
 	public acceptedClock: number;
 }
 
@@ -17,14 +18,14 @@ export class ProposeAck {
 	public AcceptedClock: number;
 }
 
-export class WelcomeMessage<T> {
+export class WelcomeMessage<M extends OTModel> {
 	public kind: "welcome_message";
-	public MissedEntries: AcceptedEntry<T>[];
+	public MissedEntries: AcceptedEntry<M>[];
 }
 
-export class NewEntries<T> {
+export class NewEntries<M extends OTModel> {
 	public kind: "new_entries";
-	public Entries: AcceptedEntry<T>[];
+	public Entries: AcceptedEntry<M>[];
 }
 
 export class CloseMessage {
@@ -32,27 +33,27 @@ export class CloseMessage {
 	public Reason: string;
 }
 
-export type Response<T> =
+export type Response<M extends OTModel> =
 	| ProposeAck
-	| WelcomeMessage<T>
-	| NewEntries<T>
+	| WelcomeMessage<M>
+	| NewEntries<M>
 	| CloseMessage;
 
 // TODO: Make this less dumb
-export function Deserialize<T>(s: string): Response<T> {
+export function Deserialize<M extends OTModel>(s: string): Response<M> {
 	const o: any = JSON.parse(s);
-	switch(o["kind"]){
-	case "propose_ack":
-		const a: ProposeAck = JSON.parse(s);
-		return a;
-	case "welcome_message":
-		const b: WelcomeMessage<T> = JSON.parse(s);
-		return b;
-	case "new_entries":
-		const c: NewEntries<T> = JSON.parse(s);
-		return c;
-	default:
-		return undefined;
+	switch (o["kind"]) {
+		case "propose_ack":
+			const a: ProposeAck = JSON.parse(s);
+			return a;
+		case "welcome_message":
+			const b: WelcomeMessage<M> = JSON.parse(s);
+			return b;
+		case "new_entries":
+			const c: NewEntries<M> = JSON.parse(s);
+			return c;
+		default:
+			return undefined;
 	}
 }
 
@@ -60,7 +61,7 @@ export function Deserialize<T>(s: string): Response<T> {
 // Message sent FROM the client
 //
 
-export class ProposeEntry<T> extends ProposedEntry<T> {
+export class ProposeEntry<M extends OTModel> extends ProposedEntry<M> {
 	kind: "propose";
 }
 
@@ -69,10 +70,10 @@ export class JoinDocument {
 	LogClock: number;
 }
 
-export type Message<T> = 
-	| ProposeEntry<T>
+export type Message<M extends OTModel> =
+	| ProposeEntry<M>
 	| JoinDocument;
 
-export function Serialize<T>(m: Message<T>): string {
+export function Serialize<M extends OTModel>(m: Message<M>): string {
 	return JSON.stringify(m);
 }

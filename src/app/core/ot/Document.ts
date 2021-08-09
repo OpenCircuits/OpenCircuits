@@ -1,12 +1,11 @@
-import assert from "assert";
 import { Changelog } from "./Changelog";
 import { Action, OTModel } from "./Interfaces";
-import { AcceptedEntry, ProposeAck, ProposedEntry, WelcomeMessage, Response, NewEntries } from "./Protocol";
+import { AcceptedEntry, ProposedEntry, Response } from "./Protocol";
 
-export interface Connection {
-	Propose(e: ProposedEntry<Action>): void;
-	Join(e: ProposedEntry<Action>): void;
-	Handler: (m: Response<Action>) => void;
+export interface Connection<M extends OTModel> {
+	Propose(e: ProposedEntry<M>): void;
+	Join(e: ProposedEntry<M>): void;
+	Handler: (m: Response<M>) => void;
 }
 
 export interface ClientInfoProvider {
@@ -16,14 +15,14 @@ export interface ClientInfoProvider {
 
 export class Document<M extends OTModel> {
 	private doc: M;
-	private comm: Connection;
+	private comm: Connection<M>;
 	private clientInfo: ClientInfoProvider;
 
 	private log: Changelog;
-	private sent: ProposedEntry<Action>[];
-	private pending: ProposedEntry<Action>[];
+	private sent: ProposedEntry<M>[];
+	private pending: ProposedEntry<M>[];
 
-	public constructor(doc: M, comm: Connection, clientInfo: ClientInfoProvider) {
+	public constructor(doc: M, comm: Connection<M>, clientInfo: ClientInfoProvider) {
 		this.doc = doc;
 		this.comm = comm;
 		this.comm.Handler = this.handler;
@@ -35,8 +34,8 @@ export class Document<M extends OTModel> {
 		this.pending = [];
 	}
 
-	public Propose(action: Action): void {
-		const e: ProposedEntry<Action> = {
+	public Propose(action: Action<M>): void {
+		const e: ProposedEntry<M> = {
 			Action: action,
 			ProposedClock: 0,
 			SchemaVersion: this.clientInfo.SchemaVersion(),
@@ -49,7 +48,7 @@ export class Document<M extends OTModel> {
 		this.sendNext();
 	}
 
-	private handler(m: Response<Action>): void {
+	private handler(m: Response<M>): void {
 		switch (m.kind) {
 			case "propose_ack":
 				this.ackHandler(m.AcceptedClock);
@@ -77,7 +76,7 @@ export class Document<M extends OTModel> {
 		const entry = this.sent.shift();
 
 		// Apply entry to the document and log
-		let accEntry: AcceptedEntry<Action> = {
+		let accEntry: AcceptedEntry<M> = {
 			acceptedClock: acceptedClock,
 			...entry
 		};
@@ -87,7 +86,7 @@ export class Document<M extends OTModel> {
 		this.sendNext();
 	}
 
-	private recv(entry: AcceptedEntry<Action>, local: boolean): void {
+	private recv(entry: AcceptedEntry<M>, local: boolean): void {
 		this.log.Accept(entry, local);
 
 		// Revert document back to log-state

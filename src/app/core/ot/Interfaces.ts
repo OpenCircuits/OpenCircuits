@@ -1,10 +1,10 @@
 
 
 // This will be... somewhere else
-export interface Action {
-	Inverse(): Action;
-	Transform(a: Action): void;
-	Apply(m: OTModel): void;
+export interface Action<Model extends OTModel> {
+	Inverse(): Action<Model>;
+	Transform(a: Action<Model>): void;
+	Apply(m: Model): void;
 }
 
 // This will be... somewhere else
