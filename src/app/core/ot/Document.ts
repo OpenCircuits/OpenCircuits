@@ -18,7 +18,7 @@ export class Document<M extends OTModel> {
 	private comm: Connection<M>;
 	private clientInfo: ClientInfoProvider;
 
-	private log: Changelog;
+	private log: Changelog<M>;
 	private sent: ProposedEntry<M>[];
 	private pending: ProposedEntry<M>[];
 
@@ -29,7 +29,7 @@ export class Document<M extends OTModel> {
 		this.clientInfo = clientInfo;
 
 		// TODO: Load these from localstorage... or something?
-		this.log = new Changelog();
+		this.log = new Changelog<M>();
 		this.sent = [];
 		this.pending = [];
 	}

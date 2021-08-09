@@ -1,20 +1,20 @@
 import { assert } from "console";
-import { Action } from "./Interfaces";
+import { Action, OTModel } from "./Interfaces";
 import { AcceptedEntry } from "./Protocol";
 
 // See ChangelogEntry in changelog.go
-export class ChangelogEntry {
-	public inner: AcceptedEntry<Action>;
+export class ChangelogEntry<M extends OTModel> {
+	public inner: AcceptedEntry<M>;
 
 	public local: boolean;
 }
 
 
-export class Changelog {
-	private entries: ChangelogEntry[];
+export class Changelog<M extends OTModel> {
+	private entries: ChangelogEntry<M>[];
 	private logClock: number;
 
-	public Accept(accepted: AcceptedEntry<Action>, local: boolean): void {
+	public Accept(accepted: AcceptedEntry<M>, local: boolean): void {
 		assert(accepted.acceptedClock == this.logClock);
 		const entry = new ChangelogEntry();
 		entry.inner = accepted;
