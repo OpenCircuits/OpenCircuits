@@ -10,8 +10,6 @@ export class ConnectionWrapper<M extends OTModel> {
 
     private proposed?: ProposedEntry<M>;
 
-    private joined: boolean;
-
     public constructor(doc: OTDocument<M>, conn: Connection<M>) {
         this.doc = doc;
         this.conn = conn;
@@ -49,10 +47,6 @@ export class ConnectionWrapper<M extends OTModel> {
     }
 
     public SendNext(): boolean {
-        if (!this.joined) {
-            return false;
-        }
-
         const send = this.doc.SendNext();
         if (send == undefined) {
             return false;
