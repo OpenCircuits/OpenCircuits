@@ -1,66 +1,49 @@
 import "jest"
 
-import { ProposedCache } from "core/ot/ProposedCache";
-import { ArrayActionTransformer, ArrayModel, InsertAction } from "./ArrayModel";
-import { ProposedEntry } from "core/ot/Protocol";
-import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
+import { PendingCache } from "core/ot/PendingCache";
+import { MockAction, MockActionTransformer, mockEntry, MockModel } from "./MockModel";
 
-class MockModel implements OTModel {
-    public sum: number = 0;
-}
-class MockActionTransformer implements ActionTransformer<MockModel> {
-    Transform(t: Action<MockModel>, f: Action<MockModel>): void { 
-        if (t instanceof MockAction && f instanceof MockAction) {
-            t.data += f.data;
-        }
-    }
-}
-class MockAction implements Action<MockModel> {
-    public data: number;
-    public fail: boolean;
-    public constructor(data: number, fail: boolean = false) {
-        this.data = data;
-        this.fail = fail;
-    }
-    Inverse(): Action<MockModel> {
-        return new MockAction(-this.data);
-    }
-    Apply(m: MockModel): boolean {
-        if (this.fail) {
-            return false;
-        }
-        m.sum += this.data;
-        return true;
-    }
-}
 
-function mockEntry(n: number, fail: boolean = false): ProposedEntry<MockModel> {
-    const e = new ProposedEntry<MockModel>();
-    e.Action = new MockAction(n, fail);
-    return e;
-}
-
-class PC extends ProposedCache<MockModel> {}
+class PC extends PendingCache<MockModel> { }
 describe("ProposedCache", () => {
-    const e = mockEntry;
+    const a = MockAction;
+    describe("Push", () => {
+        test("Success", () => {
+            const m = new MockModel();
+            const pc = new PC();
+            const exp = new a(100);
+            pc.Push(m, exp);
+            expect(m.sum).toBe(100);
+        });
+        test("Failure", () => {
+            const m = new MockModel();
+            const pc = new PC();
+            const exp = new a(100, true);
+            pc.Push(m, exp);
+            expect(m.sum).toBe(0);
+        });
+    });
+
     describe("SendNext", () => {
         test("One", () => {
+            const m = new MockModel();
             const pc = new PC();
-            const exp = e(100);
-            pc.Push(exp);
+            const exp = new a(100);
+            pc.Push(m, exp);
             expect(pc.SendNext()).toBe(exp);
         });
         test("Multiple", () => {
+            const m = new MockModel();
             const pc = new PC();
-            const exp = e(103);
-            pc.Push(exp);
-            pc.Push(e(100));
-            pc.Push(e(101));
-            pc.Push(e(102));
+            const exp = new a(103);
+            pc.Push(m, exp);
+            pc.Push(m, new a(100));
+            pc.Push(m, new a(101));
+            pc.Push(m, new a(102));
             expect(pc.SendNext()).toBe(exp);
         });
         test("Empty", () => {
-            const pc = new ProposedCache<ArrayModel>();
+            const pc = new PC();
             expect(pc.SendNext()).toBeUndefined();
         });
     });
@@ -71,10 +54,11 @@ describe("ProposedCache", () => {
             expect(pc.PopSent()).toBeUndefined();
         });
         test("One", () => {
-            const exp = e(100);
-            pc.Push(exp);
+            const m = new MockModel();
+            const exp = new a(100);
+            pc.Push(m, exp);
             expect(pc.SendNext()).toBe(exp);
-            expect(pc.PopSent()).toBe(exp);
+            expect(pc.PopSent()).toBeTruthy();
         });
     });
 
@@ -82,19 +66,19 @@ describe("ProposedCache", () => {
         test("all pending", () => {
             const m = new MockModel();
             const pc = new PC();
-            pc.Push(e(100));
-            pc.Push(e(100));
+            pc.Push(m, new a(100));
+            pc.Push(m, new a(100));
             pc.Revert(m)
-            expect(m.sum).toBe(-200);
+            expect(m.sum).toBe(0);
         });
         test("sent and pending", () => {
             const m = new MockModel();
             const pc = new PC();
-            pc.Push(e(100));
-            pc.Push(e(100));
+            pc.Push(m, new a(100));
+            pc.Push(m, new a(100));
             expect(pc.SendNext()).toBeDefined();
             pc.Revert(m)
-            expect(m.sum).toBe(-200);
+            expect(m.sum).toBe(0);
         });
     });
     describe("TransformApply", () => {
@@ -102,20 +86,24 @@ describe("ProposedCache", () => {
         test("sent and pending", () => {
             const m = new MockModel();
             const pc = new PC();
-            pc.Push(e(100));
-            pc.Push(e(100));
+            pc.Push(m, new a(100));
+            pc.Push(m, new a(100));
             expect(pc.SendNext()).toBeDefined();
-            pc.TransformApply(xf, m, new MockAction(20));
-            expect(m.sum).toBe(240);
+            pc.TransformApply(xf, m, [new MockAction(20)]);
+            expect(m.sum).toBe(440);
         });
         test("sent and pending with failure", () => {
             const m = new MockModel();
             const pc = new PC();
-            pc.Push(e(100));
-            pc.Push(e(100, true));
+            const bad = new a(100);
+            pc.Push(m, new a(100));
+            pc.Push(m, bad);
             expect(pc.SendNext()).toBeDefined();
-            pc.TransformApply(xf, m, new MockAction(20));
-            expect(m.sum).toBe(120);
+
+            // Invoke a failure after initial application, so its in the pending list
+            bad.fail = true;
+            pc.TransformApply(xf, m, [new MockAction(20)]);
+            expect(m.sum).toBe(320);
             expect(pc.PopSent()).toBeDefined();
             expect(pc.SendNext()).toBeUndefined();
         })

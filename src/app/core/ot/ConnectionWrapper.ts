@@ -1,11 +1,14 @@
+import assert from "assert";
 import { OTModel } from "./Interfaces";
 import { OTDocument } from "./OTDocument";
-import { AcceptedEntry, Connection, JoinDocument, Response } from "./Protocol";
+import { AcceptedEntry, Connection, JoinDocument, ProposedEntry, Response } from "./Protocol";
 
 // The helper class for handling protocol messages
 export class ConnectionWrapper<M extends OTModel> {
     private doc: OTDocument<M>;
     private conn: Connection<M>;
+
+    private proposed?: ProposedEntry<M>;
 
     private joined: boolean;
 
@@ -21,10 +24,10 @@ export class ConnectionWrapper<M extends OTModel> {
                 this.AckHandler(m.AcceptedClock);
                 break;
             case "new_entries":
-                this.NewEntriesHandler(m.Entries, false);
+                this.doc.RecvRemote(m.Entries);
                 break;
             case "welcome_message":
-                this.NewEntriesHandler(m.MissedEntries, false);
+                this.doc.RecvRemote(m.MissedEntries);
                 break;
             case "close":
                 console.log("Unexpected close message: " + m.Reason);
@@ -35,26 +38,27 @@ export class ConnectionWrapper<M extends OTModel> {
     }
 
     public AckHandler(acceptedClock: number): void {
-        this.doc.RecvLocal(acceptedClock);
+        assert(this.proposed, "received unexpected ack message");
+        this.doc.RecvLocal({
+            acceptedClock: acceptedClock,
+            ...this.proposed
+        });
 
         // Send the next pending entry
         this.SendNext();
-    }
-
-    public NewEntriesHandler(entries: AcceptedEntry<M>[], local: boolean): void {
-        entries.forEach(e => {
-            this.doc.Recv(e, local);
-        });
     }
 
     public SendNext(): boolean {
         if (!this.joined) {
             return false;
         }
+
         const send = this.doc.SendNext();
         if (send == undefined) {
             return false;
         }
+        this.proposed = send;
+
         this.conn.Propose({
             kind: "propose",
             ...send
