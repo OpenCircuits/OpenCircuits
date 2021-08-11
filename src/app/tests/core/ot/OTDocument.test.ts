@@ -5,6 +5,7 @@ import { OTDocument } from "core/ot/OTDocument";
 import { mockAccEntry, MockAction, MockActionTransformer, mockEntry, MockModel } from "./MockModel";
 import { Changelog } from "core/ot/Changelog";
 import { MockClientInfoProvider } from "./MockClientInfoProvider";
+import { AcceptedEntry } from "core/ot/Protocol";
 
 function newDoc() {
     const m = new MockModel();
@@ -80,4 +81,22 @@ describe("OTDocument", () => {
             expect(doc.Clock()).toBe(1);
         });
     });
+
+    describe("SendNext", () => {
+        test("no next", () => {
+            const { doc } = newDoc();
+            expect(doc.SendNext()).toBeUndefined();
+        });
+        test("valid next", () => {
+            const { doc, log } = newDoc();
+            log.Accept(new AcceptedEntry<MockModel>(), true, true);
+
+            const x = new a(100);
+            expect(doc.Propose(x)).toBe(true);
+            const next = doc.SendNext();
+            expect(next).toBeDefined();
+            expect(next?.Action).toBe(x);
+            expect(next?.ProposedClock).toBe(1);
+        });
+    })
 });
