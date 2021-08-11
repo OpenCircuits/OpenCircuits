@@ -56,7 +56,7 @@ const _SideNav = ({ helpers, auth, isOpen, isLoggedIn, userCircuits, exampleCirc
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
                 {auth ? `Hello, ${auth.getName()}!` : null}
-                <SignInOutButtons />
+                <div className ="sidenav__accountinfo__sign"> <SignInOutButtons/> </div>
             </div>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
