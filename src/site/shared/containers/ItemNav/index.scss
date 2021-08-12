@@ -9,6 +9,7 @@ $tab-padding: 8px;
 
 .itemnav {
 
+    /*
     &::-webkit-scrollbar {
         width: 7px;  // vertical scrollbars
         height: 7px; // horizontal scrollbar
@@ -24,6 +25,10 @@ $tab-padding: 8px;
     }
 
 
+    overflow-x: hidden;
+    overflow-y: auto;
+    */
+
     $top-margin: 10px;
 
     position: absolute;
@@ -36,8 +41,8 @@ $tab-padding: 8px;
     display: flex;
     flex-direction: column;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    //overflow-x: hidden;
+    //overflow-y: auto;
 
     width: $itemnav-width;
 
@@ -80,7 +85,7 @@ $tab-padding: 8px;
         width: calc(100% - 10px);
         height: 40px;
 
-        margin: $top-margin 5px 5px 5px;
+        padding: $top-margin 5px 5px 5px;
 
         & > div {
             flex: 1;
@@ -137,7 +142,8 @@ $tab-padding: 8px;
 
         &__closed > div {
 
-            transform: translate(17px, -$header-border-width - $top-margin);
+            transform: translate(10px, -$header-border-width - $top-margin);
+            //transform: translate(17px, -$header-border-width - $top-margin);
 
             font-size: 2em;
 
@@ -162,8 +168,24 @@ $tab-padding: 8px;
         display: flex;
         flex-direction: column;
 
-        // overflow-x: hidden;
-        // overflow-y: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-track {
+            background: hsl(0, 0%, 65%);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        border-top: 5px solid #888;
 
         @media (max-width: 768px) {
             overflow-x: auto;
