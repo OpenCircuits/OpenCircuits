@@ -10,8 +10,8 @@ $tab-padding: 8px;
 .itemnav {
 
     &::-webkit-scrollbar {
-        width: 7.5px;  // vertical scrollbars
-        height: 7.5px; // horizontal scrollbar
+        width: 7px;  // vertical scrollbars
+        height: 7px; // horizontal scrollbar
     }
 
     &::-webkit-scrollbar-track {
@@ -137,13 +137,7 @@ $tab-padding: 8px;
 
         &__closed > div {
 
-            @media screen and (pointer: fine) {
-                transform: translate(25px, -$header-border-width - $top-margin);
-            }
-
-            @media screen and (pointer: coarse) {
-                transform: translate(10px, -$header-border-width - $top-margin);
-            }
+            transform: translate(17px, -$header-border-width - $top-margin);
 
             font-size: 2em;
 
