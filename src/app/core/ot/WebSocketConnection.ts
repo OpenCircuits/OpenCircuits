@@ -39,6 +39,7 @@ export class WebSocketConnection<M extends OTModel> implements Connection<M> {
             LogClock: this.clock.Clock()
         }));
     }
+
     private closeHandler(): void {
         // This is where exponential back-off would happen... I think
         this.connect();

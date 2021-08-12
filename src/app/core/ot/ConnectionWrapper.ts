@@ -1,4 +1,4 @@
-import assert from "assert";
+import {strict} from "assert";
 import {OTModel} from "./Interfaces";
 import {OTDocument} from "./OTDocument";
 import {Connection, ProposedEntry, Response} from "./Protocol";
@@ -36,9 +36,9 @@ export class ConnectionWrapper<M extends OTModel> {
     }
 
     public AckHandler(acceptedClock: number): void {
-        assert(this.proposed, "received unexpected ack message");
+        strict.ok(this.proposed, "received unexpected ack message");
         this.doc.RecvLocal({
-            acceptedClock: acceptedClock,
+            AcceptedClock: acceptedClock,
             ...this.proposed
         });
 

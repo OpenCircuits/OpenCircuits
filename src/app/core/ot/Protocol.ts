@@ -2,12 +2,12 @@ import {Action, OTModel} from "./Interfaces";
 
 export class ProposedEntry<M extends OTModel> {
     public Action: Action<M>;
-    public ProposedClock: number;
-    public SchemaVersion: string;
-    public UserID: string;
+    public ProposedClock: number = 0;
+    public SchemaVersion: string = "UNDEFINED_SCHEMA_VERSION";
+    public UserID: string = "UNDEFINED_USER_ID";
 }
 export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
-    public acceptedClock: number;
+    public AcceptedClock: number = 0;
 }
 
 export type ResponseHandler<M> = (m: Response<M>) => void;

@@ -1,7 +1,7 @@
-import "jest"
+import "jest";
 
-import { PendingCache } from "core/ot/PendingCache";
-import { MockAction, MockActionTransformer, mockEntry, MockModel } from "./MockModel";
+import {PendingCache} from "core/ot/PendingCache";
+import {MockAction, MockActionTransformer, MockModel} from "./MockModel";
 
 
 class PC extends PendingCache<MockModel> { }

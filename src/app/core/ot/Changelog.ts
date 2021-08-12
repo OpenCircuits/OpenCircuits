@@ -1,4 +1,4 @@
-import assert from "assert";
+import {strict} from "assert";
 import {ActionTransformer, OTModel} from "./Interfaces";
 import {AcceptedEntry} from "./Protocol";
 
@@ -21,7 +21,7 @@ export class Changelog<M extends OTModel> {
     }
 
     public Accept(accepted: AcceptedEntry<M>, local: boolean, success: boolean): void {
-        assert(accepted.acceptedClock == this.logClock);
+        strict.strictEqual(accepted.AcceptedClock, this.logClock);
         this.entries.push({
             inner: accepted,
             local: local,

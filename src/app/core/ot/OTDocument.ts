@@ -1,4 +1,4 @@
-import assert from "assert";
+import {strict} from "assert";
 import {Changelog} from "./Changelog";
 import {Action, ActionTransformer, OTModel} from "./Interfaces";
 import {PendingCache} from "./PendingCache";
@@ -42,7 +42,7 @@ export class OTDocument<M extends OTModel> {
     public RecvLocal(entry: AcceptedEntry<M>): void {
         // Remove from the "sent" list
         const succ = this.propCache.PopSent()
-        assert(succ != undefined, "received unexpected ack entry");
+        strict.ok(succ, "received unexpected ack entry");
 
         // Action is already applied and transformed, just add it to the log
         this.log.Accept(entry, true, succ);

@@ -36,8 +36,9 @@ export function mockEntry(n: number, fail: boolean = false): ProposedEntry<MockM
     e.Action = new MockAction(n, fail);
     return e;
 }
-export function mockAccEntry(n: number, fail: boolean = false): AcceptedEntry<MockModel> {
+export function mockAccEntry(n: number, clock: number, fail: boolean = false): AcceptedEntry<MockModel> {
     const e = new AcceptedEntry<MockModel>();
+    e.AcceptedClock = e.ProposedClock = clock;
     e.Action = new MockAction(n, fail);
     return e;
 }
