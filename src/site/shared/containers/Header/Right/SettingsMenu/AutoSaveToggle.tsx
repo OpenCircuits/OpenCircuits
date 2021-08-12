@@ -60,7 +60,7 @@ const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}
                 Auto Save: {isAutoSave ? "On" : "Off"}
             </span>
         </div>
-    );//, textDecorationStyle: (isLoggedIn ? "" :'solid'
+    );
 }
 
 
