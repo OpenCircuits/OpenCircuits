@@ -8,6 +8,22 @@ $tab-padding: 8px;
 
 
 .itemnav {
+
+    &::-webkit-scrollbar {
+        width: 7.5px;  // vertical scrollbars
+        height: 7.5px; // horizontal scrollbar
+    }
+
+    &::-webkit-scrollbar-track {
+        background: hsl(0, 0%, 65%);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: hsl(0, 0%, 30%);
+        border-radius: 15px;
+    }
+
+
     $top-margin: 10px;
 
     position: absolute;
