@@ -1,7 +1,7 @@
 import assert from "assert";
-import { OTModel } from "./Interfaces";
-import { OTDocument } from "./OTDocument";
-import { AcceptedEntry, Connection, JoinDocument, ProposedEntry, Response } from "./Protocol";
+import {OTModel} from "./Interfaces";
+import {OTDocument} from "./OTDocument";
+import {Connection, ProposedEntry, Response} from "./Protocol";
 
 // The helper class for handling protocol messages
 export class ConnectionWrapper<M extends OTModel> {

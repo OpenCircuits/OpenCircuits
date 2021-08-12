@@ -1,7 +1,9 @@
-import { OTModel } from "./Interfaces";
-import { Connection, Deserialize, ProposeEntry, ResponseHandler, Serialize } from "./Protocol";
+import {OTModel} from "./Interfaces";
+import {Connection, Deserialize, ProposeEntry, ResponseHandler, Serialize} from "./Protocol";
 
-export type ClockProvider = { Clock(): number };
+export type ClockProvider = {
+    Clock(): number
+};
 
 // Manages an unreliable connection with the server while providing a
 //	consistent interface

@@ -1,8 +1,8 @@
 import assert from "assert";
-import { Changelog } from "./Changelog";
-import { Action, ActionTransformer, OTModel } from "./Interfaces";
-import { PendingCache } from "./PendingCache";
-import { AcceptedEntry, ProposedEntry } from "./Protocol";
+import {Changelog} from "./Changelog";
+import {Action, ActionTransformer, OTModel} from "./Interfaces";
+import {PendingCache} from "./PendingCache";
+import {AcceptedEntry, ProposedEntry} from "./Protocol";
 
 // This is still kind of a hack
 export interface ClientInfoProvider {

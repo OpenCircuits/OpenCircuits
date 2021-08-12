@@ -1,4 +1,4 @@
-import { Action, OTModel } from "./Interfaces";
+import {Action, OTModel} from "./Interfaces";
 
 export class ProposedEntry<M extends OTModel> {
     public Action: Action<M>;

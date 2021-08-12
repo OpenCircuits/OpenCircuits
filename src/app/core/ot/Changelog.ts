@@ -1,6 +1,6 @@
-import { assert } from "console";
-import { ActionTransformer, OTModel } from "./Interfaces";
-import { AcceptedEntry } from "./Protocol";
+import assert from "assert";
+import {ActionTransformer, OTModel} from "./Interfaces";
+import {AcceptedEntry} from "./Protocol";
 
 // See ChangelogEntry in changelog.go
 export class ChangelogEntry<M extends OTModel> {

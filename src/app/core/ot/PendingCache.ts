@@ -1,4 +1,4 @@
-import { Action, ActionTransformer, OTModel } from "./Interfaces";
+import {Action, ActionTransformer, OTModel} from "./Interfaces";
 
 export class AppliedAction<M extends OTModel>{
     public action: Action<M>;

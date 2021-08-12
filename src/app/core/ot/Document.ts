@@ -1,6 +1,6 @@
-import { ConnectionWrapper } from "./ConnectionWrapper";
-import { Action, OTModel } from "./Interfaces";
-import { OTDocument } from "./OTDocument";
+import {ConnectionWrapper} from "./ConnectionWrapper";
+import {Action, OTModel} from "./Interfaces";
+import {OTDocument} from "./OTDocument";
 
 // The interface used by external code to interact with the OT model
 export class Document<M extends OTModel> {
