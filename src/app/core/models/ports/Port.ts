@@ -6,9 +6,8 @@ import {Selectable} from "core/utils/Selectable";
 import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
 import {CircleContains} from "math/MathUtils";
-import {Distinguishable} from "core/utils/Distinguishable";
 
-export abstract class Port extends Distinguishable implements Selectable {
+export abstract class Port implements Selectable {
     protected parent: Component;
     protected isOn: boolean;
 
@@ -22,7 +21,6 @@ export abstract class Port extends Distinguishable implements Selectable {
     protected connections: Wire[];
 
     protected constructor(parent: Component, dir?: Vector) {
-        super()
         this.parent = parent;
         this.isOn = false;
 

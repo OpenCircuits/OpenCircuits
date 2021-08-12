@@ -207,7 +207,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         obj.setDesigner(this);
         this.objects.push(obj);
-        this.addRef(obj);
 
         this.callback({ type: "obj", op: "added", obj });
     }
@@ -217,7 +216,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             throw new Error("Attempted to add a wire that already existed!");
 
         this.wires.push(wire);
-        this.addRef(wire);
 
         this.callback({ type: "wire", op: "added", wire });
     }
@@ -233,7 +231,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (!this.objects.includes(obj))
             throw new Error("Attempted to remove object that doesn't exist!");
 
-        this.removeRef(obj);
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
 
@@ -244,7 +241,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (!this.wires.includes(wire))
             throw new Error("Attempted to remove wire that doesn't exist!");
 
-        this.removeRef(wire);
         this.wires.splice(this.wires.indexOf(wire), 1);
 
         this.callback({ type: "wire", op: "removed", wire });
