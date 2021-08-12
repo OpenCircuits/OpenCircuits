@@ -38,6 +38,14 @@ $sidenav-border-width: 5px;
         border-bottom-width: 3px;
         background-color: lighten($primary-color, 20%);
 
+        &__name {
+            width: 150px;
+            height: 60px;
+            text-overflow: clip;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
         &__sign {
             position: absolute;
             top: 10px;
