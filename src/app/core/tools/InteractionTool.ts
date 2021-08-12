@@ -19,13 +19,16 @@ import {SelectionHandler}     from "./handlers/SelectionHandler";
 import {SelectPathHandler}    from "./handlers/SelectPathHandler";
 import {UndoHandler}          from "./handlers/UndoHandler";
 import {RedoHandler}          from "./handlers/RedoHandler";
+import { CopyHandler } from "./handlers/CopyHandler";
+import { PasteHandler } from "./handlers/PasteHandler";
 
 
 export class InteractionTool extends DefaultTool {
     public constructor(handlers: EventHandler[] =
             [SelectAllHandler, FitToScreenHandler, DuplicateHandler,
              DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler]) {
+             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+             CopyHandler, PasteHandler]) {
         super(...handlers);
     }
 

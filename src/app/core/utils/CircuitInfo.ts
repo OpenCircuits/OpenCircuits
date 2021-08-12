@@ -1,6 +1,6 @@
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "core/models";
+import {CircuitDesigner, IOObject} from "core/models";
 import {HistoryManager} from "core/actions/HistoryManager";
 import {ToolManager} from "core/tools/ToolManager";
 
@@ -22,6 +22,8 @@ export type CircuitInfo = {
 
     selections: SelectionsWrapper;
     currentlyPressedObject?: Selectable;
+
+    clipboard: Array<IOObject>;
 
     toolManager: ToolManager;
 

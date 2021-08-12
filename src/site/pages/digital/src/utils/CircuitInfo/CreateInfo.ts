@@ -11,6 +11,7 @@ import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
+import { IOObject } from "core/models";
 
 
 export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalCircuitInfo {
@@ -18,6 +19,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
     const history = new HistoryManager();
     const designer = new DigitalCircuitDesigner(1);
     const selections = new SelectionsWrapper();
+    const clipboard = new Array<IOObject>();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
 
@@ -28,6 +30,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
         designer,
         input: undefined,
         selections,
+        clipboard,
         toolManager,
         renderer
     } as DigitalCircuitInfo;
