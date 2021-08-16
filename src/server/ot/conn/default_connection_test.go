@@ -38,7 +38,7 @@ func TestDefaultConnectionNormal(t *testing.T) {
 	rc.failRecv = false
 	rc.recv = []byte(`
 	{
-		"kind": "propose",
+		"_type_": "ProposeEntry",
 		"Action": {
 			"some_value": 1234
 		},

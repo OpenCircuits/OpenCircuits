@@ -18,7 +18,7 @@ type defaultConnection struct {
 }
 
 func (dc defaultConnection) listener() {
-	defer dc.Close()
+	defer close(dc.recv)
 	for {
 		rawMsg, err := dc.raw.Recv()
 		if err != nil {
@@ -53,6 +53,5 @@ func (dc defaultConnection) Send(s interface{}) {
 }
 
 func (dc defaultConnection) Close() {
-	close(dc.recv)
 	_ = dc.raw.Close()
 }
