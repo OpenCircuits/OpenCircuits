@@ -99,7 +99,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.serverRecv(Propose{
 		ProposedClock: 1,
-	}, ch)
+	}, "", ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -119,7 +119,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.serverRecv(Propose{
 		ProposedClock: 10,
-	}, ch)
+	}, "", ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -143,8 +143,7 @@ func TestDocumentProposePropagate(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.serverRecv(Propose{
 		ProposedClock: 2,
-		SessionID:     "B",
-	}, ch)
+	}, "B", ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {

@@ -20,8 +20,6 @@ type ChangelogEntry struct {
 	AcceptedClock uint64
 	// SchemaVersion is the version of the client Action schema
 	SchemaVersion string
-	// SessionID is the unique ID for the session; MAYBE NOT REQUIRED HERE
-	SessionID string
 	// UserID is the unique ID of the user (injected by the authorization system)
 	UserID model.UserId
 }
@@ -31,7 +29,6 @@ type ProposedEntry struct {
 	Action        json.RawMessage
 	ProposedClock uint64
 	SchemaVersion string
-	SessionID     string `json:"-"`
 	UserID        string
 }
 
@@ -50,7 +47,6 @@ func (p ProposedEntry) Accept(AcceptedClock uint64) ChangelogEntry {
 		ProposedClock: p.ProposedClock,
 		AcceptedClock: AcceptedClock,
 		SchemaVersion: p.SchemaVersion,
-		SessionID:     p.SessionID,
 		UserID:        p.UserID,
 	}
 }

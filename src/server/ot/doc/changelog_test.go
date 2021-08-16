@@ -16,10 +16,10 @@ func TestChangelogAddMultiple(t *testing.T) {
 		p    ProposedEntry
 		want Want
 	}{
-		{ProposedEntry{[]byte{}, 0, "", "TEST0", "ASDF"}, Want{0, nil}},
-		{ProposedEntry{[]byte{}, 1, "", "TEST0", "ASDF"}, Want{1, nil}},
-		{ProposedEntry{[]byte{}, 3, "", "TEST0", "ASDF"}, Want{0, errors.New("")}},
-		{ProposedEntry{[]byte{}, 0, "", "TEST0", "ASDF"}, Want{2, nil}},
+		{ProposedEntry{[]byte{}, 0, "", "ASDF"}, Want{0, nil}},
+		{ProposedEntry{[]byte{}, 1, "", "ASDF"}, Want{1, nil}},
+		{ProposedEntry{[]byte{}, 3, "", "ASDF"}, Want{0, errors.New("")}},
+		{ProposedEntry{[]byte{}, 0, "", "ASDF"}, Want{2, nil}},
 	}
 
 	for _, tt := range tests {
@@ -37,10 +37,10 @@ func TestChangelogAddMultiple(t *testing.T) {
 
 func smallChangelog() Changelog {
 	l := Changelog{}
-	l.AddEntry(ProposedEntry{[]byte{}, 0, "", "", ""})
-	l.AddEntry(ProposedEntry{[]byte{}, 1, "", "", ""})
-	l.AddEntry(ProposedEntry{[]byte{}, 2, "", "", ""})
-	l.AddEntry(ProposedEntry{[]byte{}, 3, "", "", ""})
+	l.AddEntry(ProposedEntry{[]byte{}, 0, "", ""})
+	l.AddEntry(ProposedEntry{[]byte{}, 1, "", ""})
+	l.AddEntry(ProposedEntry{[]byte{}, 2, "", ""})
+	l.AddEntry(ProposedEntry{[]byte{}, 3, "", ""})
 
 	return l
 }

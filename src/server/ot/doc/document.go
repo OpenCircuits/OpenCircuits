@@ -85,12 +85,12 @@ func (d docState) messageLoop() {
 				continue
 			}
 
-			d.serverRecv(m, mw.Resp)
+			d.serverRecv(m, mw.SessionID, mw.Resp)
 		}
 	}
 }
 
-func (d docState) serverRecv(msg Propose, resp chan<- interface{}) {
+func (d docState) serverRecv(msg Propose, sessionID string, resp chan<- interface{}) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.log.AddEntry(msg)
 	if err != nil {
@@ -106,7 +106,7 @@ func (d docState) serverRecv(msg Propose, resp chan<- interface{}) {
 
 	// Send to other clients
 	for sid, ch := range d.clients {
-		if sid == msg.SessionID {
+		if sid == sessionID {
 			continue
 		}
 		SafeSendNewEntry(ch, accepted)
