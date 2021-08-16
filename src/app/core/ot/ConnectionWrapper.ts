@@ -1,7 +1,7 @@
 import {strict} from "assert";
 import {OTModel} from "./Interfaces";
 import {OTDocument} from "./OTDocument";
-import {Connection, ProposedEntry, Response} from "./Protocol";
+import {CloseMessage, Connection, NewEntries, ProposeAck, ProposedEntry, ProposeEntry, Response, WelcomeMessage} from "./Protocol";
 
 // The helper class for handling protocol messages
 export class ConnectionWrapper<M extends OTModel> {
@@ -13,25 +13,21 @@ export class ConnectionWrapper<M extends OTModel> {
     public constructor(doc: OTDocument<M>, conn: Connection<M>) {
         this.doc = doc;
         this.conn = conn;
-        this.conn.OnMessage(this.handler);
+        this.conn.OnMessage(m => this.handler(m));
     }
 
-    private handler(m: Response<M>): void {
-        switch (m.kind) {
-            case "propose_ack":
-                this.AckHandler(m.AcceptedClock);
-                break;
-            case "new_entries":
-                this.doc.RecvRemote(m.Entries);
-                break;
-            case "welcome_message":
-                this.doc.RecvRemote(m.MissedEntries);
-                break;
-            case "close":
-                console.log("Unexpected close message: " + m.Reason);
-                break;
-            default:
-                const _exhaustiveCheck: never = m;
+    private handler(m: Response): void {
+        if (m instanceof ProposeAck) {
+            // console.log("received ack message: " + JSON.stringify(m.AcceptedClock));
+            this.AckHandler(m.AcceptedClock);
+        } else if (m instanceof NewEntries) {
+            // console.log("received new entries: " + JSON.stringify(m.Entries));
+            this.doc.RecvRemote(m.Entries);
+        } else if (m instanceof WelcomeMessage) {
+            // console.log("received welcome message: " + JSON.stringify(m.MissedEntries));
+            this.doc.RecvRemote(m.MissedEntries);
+        } else if (m instanceof CloseMessage) {
+            console.log("Unexpected close message: " + JSON.stringify(m.Reason));
         }
     }
 
@@ -53,10 +49,12 @@ export class ConnectionWrapper<M extends OTModel> {
         }
         this.proposed = send;
 
-        this.conn.Propose({
-            kind: "propose",
-            ...send
-        });
+        const p = new ProposeEntry<M>();
+        p.Action = send.Action;
+        p.ProposedClock = send.ProposedClock;
+        p.SchemaVersion = send.SchemaVersion;
+        p.UserID = send.UserID;
+        this.conn.Propose(p);
         return true;
     }
 }

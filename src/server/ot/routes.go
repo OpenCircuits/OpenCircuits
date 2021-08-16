@@ -1,6 +1,8 @@
 package ot
 
 import (
+	"net/http"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
@@ -9,8 +11,9 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine, accessDriver interfaces.AccessDriver, sessionManager *session.SessionManager) {
+	// TODO: This should ONLY use the always-allow feature in test mode...
 	wsFactory := &conn.WebSocketConnectionFactory{
-		Upgrader:    websocket.Upgrader{},
+		Upgrader:    websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }},
 		MessageType: websocket.TextMessage,
 	}
 	establish := func(c *gin.Context) {
@@ -20,5 +23,5 @@ func RegisterRoutes(router *gin.Engine, accessDriver interfaces.AccessDriver, se
 	}
 
 	// OT
-	router.POST("/api/ot/:cid", establish)
+	router.GET("/ot/:cid", establish)
 }

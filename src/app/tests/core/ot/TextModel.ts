@@ -1,17 +1,19 @@
 import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
+import {message} from "core/ot/Serializing";
 
 // The TextModel is a text-based OT model
 export class TextModel implements OTModel {
-    public Text: string;
+    public Text: string = "";
 }
 
 export type TextAction = Action<TextModel>;
 
+@message("InsertTextAction")
 export class InsertTextAction implements TextAction {
     public text: string;
     public position: number;
 
-    public constructor(text: string, position: number) {
+    public constructor(text: string = "", position: number = 0) {
         this.text = text;
         this.position = position;
     }
@@ -28,12 +30,13 @@ export class InsertTextAction implements TextAction {
 // NOTE: This is a _little_ weird, because two overlapping concurrent deletes
 //	will have overlapping tombstones, even if their ranges are corrected, so
 //	undoing both actions will insert duplicate text of the overlap.
+@message("DeleteTextAction")
 export class DeleteTextAction implements TextAction {
     public start: number;
     public end: number;
     public tombstone?: string;
 
-    public constructor(start: number, end: number, tombstone?: string) {
+    public constructor(start: number = 0, end: number = 0, tombstone?: string) {
         this.start = start;
         this.end = end;
         this.tombstone = tombstone;

@@ -27,28 +27,28 @@ type NewEntries struct {
 }
 
 const (
-	ProposeAckKind     = "propose_ack"
-	WelcomeMessageKind = "welcome_entry"
-	NewEntriesKind     = "new_entries"
-	CloseMessageKind   = "close"
+	ProposeAckType     = "ProposeAck"
+	WelcomeMessageType = "WelcomeMessage"
+	NewEntriesType     = "NewEntries"
+	CloseMessageType   = "CloseMessage"
 )
 
 func Serialize(s interface{}) ([]byte, error) {
-	var kind string
+	var t string
 	if _, ok := s.(ProposeAck); ok {
-		kind = ProposeAckKind
+		t = ProposeAckType
 	} else if _, ok := s.(WelcomeMessage); ok {
-		kind = WelcomeMessageKind
+		t = WelcomeMessageType
 	} else if _, ok := s.(NewEntries); ok {
-		kind = NewEntriesKind
+		t = NewEntriesType
 	} else if _, ok := s.(CloseMessage); ok {
-		kind = CloseMessageKind
+		t = CloseMessageType
 	} else {
 		return nil, errors.New("serialized invalid type (INTERNAL PROTOCOL VIOLATION)")
 	}
 
 	m := structs.Map(s)
-	m["kind"] = kind
+	m["_type_"] = t
 	r, _ := json.Marshal(m)
 	return r, nil
 }
@@ -63,8 +63,8 @@ type (
 )
 
 const (
-	ProposeEntryKind = "propose"
-	JoinDocumentKind = "join_document"
+	ProposeEntryType = "ProposeEntry"
+	JoinDocumentType = "JoinDocument"
 )
 
 func Deserialize(data []byte) (interface{}, error) {
@@ -73,23 +73,23 @@ func Deserialize(data []byte) (interface{}, error) {
 		return nil, err
 	}
 
-	var kind string
-	if err := json.Unmarshal(objmap["kind"], &kind); err != nil {
+	var t string
+	if err := json.Unmarshal(objmap["_type_"], &t); err != nil {
 		return nil, err
 	}
 
 	var message interface{}
 	var err error
-	if kind == ProposeEntryKind {
+	if t == ProposeEntryType {
 		var m ProposeEntry
 		err = json.Unmarshal(data, &m)
 		message = m
-	} else if kind == JoinDocumentKind {
+	} else if t == JoinDocumentType {
 		var m JoinDocument
 		err = json.Unmarshal(data, &m)
 		message = m
 	} else {
-		err = errors.New("received invalid message kind: " + kind)
+		err = errors.New("received invalid message kind: " + t)
 	}
 
 	return message, err

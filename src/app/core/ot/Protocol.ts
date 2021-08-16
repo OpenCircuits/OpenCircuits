@@ -1,4 +1,6 @@
+import {strict} from "assert";
 import {Action, OTModel} from "./Interfaces";
+import {deserialize_poly, message, serialize} from "./Serializing";
 
 export class ProposedEntry<M extends OTModel> {
     public Action: Action<M>;
@@ -10,76 +12,65 @@ export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
     public AcceptedClock: number = 0;
 }
 
-export type ResponseHandler<M> = (m: Response<M>) => void;
+export type ResponseHandler = (m: Response) => void;
 export interface Connection<M extends OTModel> {
     Propose(p: ProposeEntry<M>): void;
-    OnMessage(h: ResponseHandler<M>): void;
+    OnMessage(h: ResponseHandler): void;
 }
 
 //
 // Message sent TO the client
 //
-export class ProposeAck {
-    public kind: "propose_ack";
-    public AcceptedClock: number;
+@message("ProposeAck")
+export class ProposeAck implements Response {
+    public AcceptedClock: number = 0;
 }
 
-export class WelcomeMessage<M extends OTModel> {
-    public kind: "welcome_message";
-    public MissedEntries: AcceptedEntry<M>[];
+@message("WelcomeMessage")
+export class WelcomeMessage<M extends OTModel> implements Response {
+    public MissedEntries: AcceptedEntry<M>[] = new Array<AcceptedEntry<M>>();
 }
 
-export class NewEntries<M extends OTModel> {
-    public kind: "new_entries";
-    public Entries: AcceptedEntry<M>[];
+@message("NewEntries")
+export class NewEntries<M extends OTModel> implements Response {
+    public Entries: AcceptedEntry<M>[] = new Array<AcceptedEntry<M>>();
 }
 
-export class CloseMessage {
-    public kind: "close";
-    public Reason: string;
+@message("CloseMessage")
+export class CloseMessage implements Response {
+    public Reason: string = "";
 }
 
-export type Response<M extends OTModel> =
-    | ProposeAck
-    | WelcomeMessage<M>
-    | NewEntries<M>
-    | CloseMessage;
+export interface Response { };
 
-// TODO: Make this less dumb
-export function Deserialize<M extends OTModel>(s: string): Response<M> {
-    const o: any = JSON.parse(s);
-    switch (o["kind"]) {
-        case "propose_ack":
-            const a: ProposeAck = JSON.parse(s);
-            return a;
-        case "welcome_message":
-            const b: WelcomeMessage<M> = JSON.parse(s);
-            return b;
-        case "new_entries":
-            const c: NewEntries<M> = JSON.parse(s);
-            return c;
-        default:
-            return undefined;
-    }
+export function Deserialize(s: string): Response {
+    // TODO: We need 2 different kinds of serialization.  One can assume the protocol
+    //  is followed, because parts of the data comes from the server, which is trusted.
+    //  The other parses data coming from other clients, so it needs to be safe or else
+    //  the document can effectively be broken by overwriting "Apply" or "Invert".
+    const res = deserialize_poly<Response>(s);
+    // console.log(s);
+    strict.ok(res != undefined);
+    return res;
 }
 
 //
 // Message sent FROM the client
 //
 
-export class ProposeEntry<M extends OTModel> extends ProposedEntry<M> {
-    kind: "propose";
+@message("ProposeEntry")
+export class ProposeEntry<M extends OTModel> extends ProposedEntry<M> implements Message { } {
 }
 
-export class JoinDocument {
-    kind: "join_document";
+@message("JoinDocument")
+export class JoinDocument implements Message {
     LogClock: number;
 }
 
-export type Message<M extends OTModel> =
-    | ProposeEntry<M>
-    | JoinDocument;
+export interface Message { }
 
-export function Serialize<M extends OTModel>(m: Message<M>): string {
-    return JSON.stringify(m);
+export function Serialize(m: Message): string {
+    const str = serialize(m);
+    strict.ok(str != undefined);
+    return str;
 }
