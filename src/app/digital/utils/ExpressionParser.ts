@@ -10,6 +10,7 @@ import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, FormatProps} from "./ExpressionParserConstants";
 import { Console } from "console";
+import { Graph } from "math/Graph";
 
 
 /* Notes for connecting components
@@ -44,6 +45,46 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
+type TokenType = "|" | "&" | "^" | "nor" | "nand" | "xnor" | "!" | "(" | ")" | "Input";
+
+interface Token {
+    type: TokenType;
+}
+
+interface InputToken extends Token {
+    name: string;
+}
+
+interface NewRetValue {
+    graph: Graph<Token, boolean>;
+    index: number;
+}
+
+function getOp(input: string, index: number, ops: Map<FormatProps, string>): TokenType | null {
+    if(subEquals(input, index, ops.get("separator"))) {
+        return null;
+    }
+    else if(subEquals(input, index, ops.get("("))) {
+        return "(";
+    }
+    else if(subEquals(input, index, ops.get(")"))) {
+        return ")";
+    }
+    else if(subEquals(input, index, ops.get("&"))) {
+        return "&";
+    }
+    else if(subEquals(input, index, ops.get("^"))) {
+        return "^";
+    }
+    else if(subEquals(input, index, ops.get("|"))) {
+        return "|";
+    }
+    else if(subEquals(input, index, ops.get("!"))) {
+        return "!";
+    }
+    return "Input";
+}
+
 export function GenerateTokens(input: string, ops: Map<FormatProps, string>): Array<string> | null {
     const tokenList = new Array<string>();
     let buffer = "";
@@ -51,10 +92,12 @@ export function GenerateTokens(input: string, ops: Map<FormatProps, string>): Ar
     let extraSkip = 0;
     let operandToAdd = "";
 
+    let index = 0;
+
     for(let i = 0; i < input.length; i++) {
         addToBuffer = false;
         extraSkip = 0;
-        operandToAdd = ""
+        operandToAdd = "";
 
         if(subEquals(input, i, ops.get("separator"))) {
             addToBuffer = true;
@@ -126,7 +169,7 @@ const GateConstructors = new Map<string, () => DigitalComponent>([
     ["^", () => new XORGate()],
     ["&", () => new ANDGate()],
     ["!", () => new NOTGate()],
-])
+]);
 
 function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     let newGate: Gate;
