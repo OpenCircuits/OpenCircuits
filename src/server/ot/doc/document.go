@@ -65,19 +65,8 @@ func (d docState) messageLoop() {
 	// TODO: _may_ want some sort of time-out if sessions can live forever
 	for {
 		mw := <-d.recv
-		if m, ok := mw.Data.(JoinDocument); ok {
-			d.clients[mw.Resp] = true
-			SafeSendWelcome(mw.Resp, WelcomeMessage{
-				MissedEntries: d.log.Slice(m.LogClock),
-			})
-		} else if _, ok := mw.Data.(LeaveDocument); ok {
-			delete(d.clients, mw.Resp)
-
-			if len(d.clients) == 0 {
-				log.Printf("Last client left, closing %s...\n", d.CircuitID)
-				return
-			}
-		} else if m, ok := mw.Data.(ProposeEntry); ok {
+		switch m := mw.Data.(type) {
+		case ProposeEntry:
 			if _, ok := d.clients[mw.Resp]; !ok {
 				SafeSendClose(mw.Resp, CloseMessage{
 					Reason: "proposal from unjoined client",
@@ -86,6 +75,18 @@ func (d docState) messageLoop() {
 			}
 
 			d.serverRecv(m, mw.Resp)
+		case JoinDocument:
+			d.clients[mw.Resp] = true
+			SafeSendWelcome(mw.Resp, WelcomeMessage{
+				MissedEntries: d.log.Slice(m.LogClock),
+			})
+		case LeaveDocument:
+			delete(d.clients, mw.Resp)
+
+			if len(d.clients) == 0 {
+				log.Printf("Last client left, closing %s...\n", d.CircuitID)
+				return
+			}
 		}
 	}
 }
