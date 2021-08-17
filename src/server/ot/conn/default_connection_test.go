@@ -38,13 +38,15 @@ func TestDefaultConnectionNormal(t *testing.T) {
 	rc.failRecv = false
 	rc.recv = []byte(`
 	{
-		"_type_": "ProposeEntry",
-		"Action": {
-			"some_value": 1234
-		},
-		"ProposedClock": 1,
-		"SchemaVersion": "3.0",
-		"UserID": "TEST_USER"
+		"Type": "ProposeEntry",
+		"Msg": {
+			"Action": {
+				"some_value": 1234
+			},
+			"ProposedClock": 1,
+			"SchemaVersion": "3.0",
+			"UserID": "TEST_USER"
+		}
 	}
 	`)
 

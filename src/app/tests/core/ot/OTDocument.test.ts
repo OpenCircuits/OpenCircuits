@@ -12,14 +12,12 @@ function newDoc() {
     const l = new Changelog<MockModel>();
     const pc = new PendingCache<MockModel>();
     const xf = new MockActionTransformer();
-    const cl = new MockClientInfoProvider();
-    const doc = new OTDocument<MockModel>(m, l, pc, xf, cl);
+    const doc = new OTDocument<MockModel>(m, l, pc, xf);
     return {
         model: m,
         log: l,
         cache: pc,
         xf: xf,
-        cl: cl,
         doc: doc
     };
 }
@@ -95,8 +93,8 @@ describe("OTDocument", () => {
             expect(doc.Propose(x)).toBe(true);
             const next = doc.SendNext();
             expect(next).toBeDefined();
-            expect(next?.Action).toBe(x);
-            expect(next?.ProposedClock).toBe(1);
+            expect(next).toBe(x);
+            expect(doc.Clock()).toBe(1);
         });
     })
 });

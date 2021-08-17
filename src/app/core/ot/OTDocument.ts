@@ -1,8 +1,7 @@
 import {strict} from "assert";
-import {Changelog} from "./Changelog";
+import {AcceptedEntry, Changelog} from "./Changelog";
 import {Action, ActionTransformer, OTModel} from "./Interfaces";
 import {PendingCache} from "./PendingCache";
-import {AcceptedEntry, ProposedEntry} from "./Protocol";
 
 // This is still kind of a hack
 export interface ClientInfoProvider {
@@ -18,15 +17,13 @@ export class OTDocument<M extends OTModel> {
     private propCache: PendingCache<M>;
 
     private xf: ActionTransformer<M>;
-    private clientInfo: ClientInfoProvider;
 
-    public constructor(model: M, log: Changelog<M>, propCache: PendingCache<M>, xf: ActionTransformer<M>, clientInfo: ClientInfoProvider) {
+    public constructor(model: M, log: Changelog<M>, propCache: PendingCache<M>, xf: ActionTransformer<M>) {
         this.model = model;
         this.log = log;
         this.propCache = propCache;
 
         this.xf = xf;
-        this.clientInfo = clientInfo;
     }
 
     public Clock(): number {
@@ -72,16 +69,7 @@ export class OTDocument<M extends OTModel> {
         this.propCache.TransformApply(this.xf, this.model, es.map(e => e.Action));
     }
 
-    public SendNext(): ProposedEntry<M> | undefined {
-        const action = this.propCache.SendNext();
-        if (action == undefined) {
-            return undefined;
-        }
-        return {
-            Action: action,
-            ProposedClock: this.log.Clock(),
-            SchemaVersion: this.clientInfo.SchemaVersion(),
-            UserID: this.clientInfo.UserID()
-        };
+    public SendNext(): Action<M> | undefined {
+        return this.propCache.SendNext();
     }
 }

@@ -11,6 +11,7 @@ import {Document} from "core/ot/Document";
 import {ConnectionWrapper} from "core/ot/ConnectionWrapper";
 import {WebSocketConnection} from "core/ot/WebSocketConnection";
 import {spawn} from "child_process";
+import {JSONConnection} from "core/ot/JSONConnection";
 
 
 type M = TextModel;
@@ -21,10 +22,11 @@ async function newClient(port: string, circuitID: string) {
     const pc = new PendingCache<M>();
     const xf = new TextActionTransformer();
     const cl = new MockClientInfoProvider();
-    const doc = new OTDocument<M>(m, l, pc, xf, cl);
-    const conn = new WebSocketConnection(doc, `ws://localhost:${port}/ot/${circuitID}`);
-    await conn.Connect();
-    const cw = new ConnectionWrapper<M>(doc, conn);
+    const doc = new OTDocument<M>(m, l, pc, xf);
+    const rawConn = new WebSocketConnection(doc, `ws://localhost:${port}/ot/${circuitID}`);
+    await rawConn.Connect();
+    const conn = new JSONConnection(rawConn);
+    const cw = new ConnectionWrapper<M>(doc, conn, cl);
     const iface = new Document<M>(doc, cw);
     return {
         model: m,

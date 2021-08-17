@@ -3,14 +3,19 @@ package conn
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
-	"github.com/fatih/structs"
 )
 
 //
 // Types in this file are mirrored in ot/Protocol.ts
 //
+
+type RawMessageWrapper struct {
+	Type string
+	Msg  json.RawMessage
+}
 
 //
 // Message sent TO the client
@@ -26,31 +31,26 @@ type NewEntries struct {
 	Entries []doc.AcceptedEntry
 }
 
-const (
-	ProposeAckType     = "ProposeAck"
-	WelcomeMessageType = "WelcomeMessage"
-	NewEntriesType     = "NewEntries"
-	CloseMessageType   = "CloseMessage"
-)
-
 func Serialize(s interface{}) ([]byte, error) {
 	var t string
-	if _, ok := s.(ProposeAck); ok {
-		t = ProposeAckType
-	} else if _, ok := s.(WelcomeMessage); ok {
-		t = WelcomeMessageType
-	} else if _, ok := s.(NewEntries); ok {
-		t = NewEntriesType
-	} else if _, ok := s.(CloseMessage); ok {
-		t = CloseMessageType
-	} else {
+	switch s.(type) {
+	case ProposeAck:
+		t = "ProposeAck"
+	case WelcomeMessage:
+		t = "WelcomeMessage"
+	case NewEntries:
+		t = "NewEntries"
+	case CloseMessage:
+		t = "CloseMessage"
+	default:
 		return nil, errors.New("serialized invalid type (INTERNAL PROTOCOL VIOLATION)")
 	}
 
-	m := structs.Map(s)
-	m["_type_"] = t
-	r, _ := json.Marshal(m)
-	return r, nil
+	rawMsg, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(RawMessageWrapper{t, rawMsg})
 }
 
 //
@@ -59,38 +59,28 @@ func Serialize(s interface{}) ([]byte, error) {
 
 type (
 	ProposeEntry = doc.ProposedEntry
+	// TODO: JoinDocument needs to have auth information
 	JoinDocument = doc.JoinDocument
 )
 
-const (
-	ProposeEntryType = "ProposeEntry"
-	JoinDocumentType = "JoinDocument"
-)
-
 func Deserialize(data []byte) (interface{}, error) {
-	var objmap map[string]json.RawMessage
-	if err := json.Unmarshal(data, &objmap); err != nil {
+	var rawMsg RawMessageWrapper
+	err := json.Unmarshal(data, &rawMsg)
+	if err != nil {
 		return nil, err
 	}
 
-	var t string
-	if err := json.Unmarshal(objmap["_type_"], &t); err != nil {
-		return nil, err
-	}
-
-	var message interface{}
-	var err error
-	if t == ProposeEntryType {
+	t := rawMsg.Type
+	switch {
+	case t == "ProposeEntry":
 		var m ProposeEntry
-		err = json.Unmarshal(data, &m)
-		message = m
-	} else if t == JoinDocumentType {
+		err := json.Unmarshal(rawMsg.Msg, &m)
+		return m, err
+	case t == "JoinDocument":
 		var m JoinDocument
-		err = json.Unmarshal(data, &m)
-		message = m
-	} else {
-		err = errors.New("received invalid message kind: " + t)
+		err := json.Unmarshal(rawMsg.Msg, &m)
+		return m, err
+	default:
+		return nil, errors.New(fmt.Sprint("received invalid message kind: ", rawMsg))
 	}
-
-	return message, err
 }

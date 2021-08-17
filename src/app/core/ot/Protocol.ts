@@ -1,76 +1,87 @@
-import {strict} from "assert";
-import {Action, OTModel} from "./Interfaces";
-import {deserialize_poly, message, serialize} from "./Serializing";
 
-export class ProposedEntry<M extends OTModel> {
-    public Action: Action<M>;
-    public ProposedClock: number = 0;
-    public SchemaVersion: string = "UNDEFINED_SCHEMA_VERSION";
-    public UserID: string = "UNDEFINED_USER_ID";
-}
-export class AcceptedEntry<M extends OTModel> extends ProposedEntry<M> {
-    public AcceptedClock: number = 0;
-}
-
-export type ResponseHandler = (m: Response) => void;
-export interface Connection<M extends OTModel> {
-    Propose(p: ProposeEntry<M>): void;
-    OnMessage(h: ResponseHandler): void;
+export type ResponseHandler<A> = (m: Response<A>) => void;
+export interface Connection<A> {
+    Propose(p: ProposeEntry<A>): void;
+    OnMessage(h: ResponseHandler<A>): void;
 }
 
 //
 // Message sent TO the client
 //
-@message("ProposeAck")
-export class ProposeAck implements Response {
-    public AcceptedClock: number = 0;
+
+export class AcceptedEntry<A> {
+    Action: A;
+    ProposedClock: number = 0;
+    AcceptedClock: number = 0;
+    SchemaVersion: string = "UNDEFINED_SCHEMA_VERSION";
+    UserID: string = "UNDEFINED_USER_ID";
+
+    static Map<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<B> {
+        return {
+            Action: f(a.Action),
+            ProposedClock: a.ProposedClock,
+            AcceptedClock: a.AcceptedClock,
+            SchemaVersion: a.SchemaVersion,
+            UserID: a.UserID,
+        };
+    }
 }
 
-@message("WelcomeMessage")
-export class WelcomeMessage<M extends OTModel> implements Response {
-    public MissedEntries: AcceptedEntry<M>[] = new Array<AcceptedEntry<M>>();
+
+export interface ProposeAck {
+    kind: "ProposeAck";
+    AcceptedClock: number;
 }
 
-@message("NewEntries")
-export class NewEntries<M extends OTModel> implements Response {
-    public Entries: AcceptedEntry<M>[] = new Array<AcceptedEntry<M>>();
+export interface WelcomeMessage<A> {
+    kind: "WelcomeMessage";
+    MissedEntries: AcceptedEntry<A>[];
 }
 
-@message("CloseMessage")
-export class CloseMessage implements Response {
-    public Reason: string = "";
+export interface NewEntries<A> {
+    kind: "NewEntries";
+    Entries: AcceptedEntry<A>[];
 }
 
-export interface Response { };
-
-export function Deserialize(s: string): Response {
-    // TODO: We need 2 different kinds of serialization.  One can assume the protocol
-    //  is followed, because parts of the data comes from the server, which is trusted.
-    //  The other parses data coming from other clients, so it needs to be safe or else
-    //  the document can effectively be broken by overwriting "Apply" or "Invert".
-    const res = deserialize_poly<Response>(s);
-    // console.log(s);
-    strict.ok(res != undefined);
-    return res;
+export interface CloseMessage {
+    kind: "CloseMessage";
+    Reason: string;
 }
+
+export type Response<A> =
+    | ProposeAck
+    | WelcomeMessage<A>
+    | NewEntries<A>
+    | CloseMessage;
+
 
 //
 // Message sent FROM the client
 //
 
-@message("ProposeEntry")
-export class ProposeEntry<M extends OTModel> extends ProposedEntry<M> implements Message { } {
+export interface ProposeEntry<A> {
+    kind: "ProposeEntry"
+    Action: A;
+    ProposedClock: number;
+    SchemaVersion: string;
+    UserID: string;
 }
 
-@message("JoinDocument")
-export class JoinDocument implements Message {
+export function MapPE<A, B>(a: ProposeEntry<A>, f: (_: A) => B): ProposeEntry<B> {
+    return {
+        kind: "ProposeEntry",
+        Action: f(a.Action),
+        ProposedClock: a.ProposedClock,
+        SchemaVersion: a.SchemaVersion,
+        UserID: a.UserID,
+    }
+}
+
+export interface JoinDocument {
+    kind: "JoinDocument"
     LogClock: number;
 }
 
-export interface Message { }
-
-export function Serialize(m: Message): string {
-    const str = serialize(m);
-    strict.ok(str != undefined);
-    return str;
-}
+export type Message<A> =
+    | ProposeEntry<A>
+    | JoinDocument;

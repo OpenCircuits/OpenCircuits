@@ -1,19 +1,50 @@
 import {strict} from "assert";
-import {OTModel} from "./Interfaces";
-import {Connection, Deserialize, JoinDocument, ProposeEntry, ResponseHandler, Serialize} from "./Protocol";
+import {RawAction, RawConnection} from "./JSONConnection";
+import {JoinDocument, Message, ProposeEntry, ResponseHandler, Response} from "./Protocol";
 
 export type ClockProvider = {
     Clock(): number
 };
 
+class MessageWrapper<T> {
+    Type: string;
+    Msg: T;
+}
+
+
+function deserializeJSON(s: string): Response<RawAction> {
+    console.log(s);
+    const res: MessageWrapper<Response<RawAction>> = JSON.parse(s);
+    switch (res.Type) {
+        case "ProposeAck":
+        case "NewEntries":
+        case "WelcomeMessage":
+        case "CloseMessage":
+            res.Msg.kind = res.Type;
+            break;
+        default:
+            strict.ok(false, "Received unexpected message type from server");
+    }
+    return res.Msg;
+}
+function serializeJSON(m: Message<RawAction>): string {
+    let msg: MessageWrapper<Message<RawAction>> = {
+        Type: m.kind.toString(),
+        Msg: m,
+    };
+    const s = JSON.stringify(msg);
+    console.log(s);
+    return s;
+}
+
 // Manages an unreliable connection with the server while providing a
 //	consistent interface
-export class WebSocketConnection<M extends OTModel> implements Connection<M> {
+export class WebSocketConnection implements RawConnection {
     private url: string;
     private ws: WebSocket;
     private clock: ClockProvider;
     private ready: boolean;
-    private pending?: ProposeEntry<M>;
+    private pending?: ProposeEntry<RawAction>;
 
     public constructor(clock: ClockProvider, url: string) {
         this.url = url;
@@ -34,32 +65,32 @@ export class WebSocketConnection<M extends OTModel> implements Connection<M> {
         });
     }
 
-    OnMessage(h: ResponseHandler): void {
+    OnMessage(h: ResponseHandler<RawAction>): void {
         this.ws.onmessage = rawMsg => {
             if (rawMsg.data == undefined) {
                 return;
             }
-            h(Deserialize(rawMsg.data));
+            h(deserializeJSON(rawMsg.data));
         };
     }
 
-    async Propose(e: ProposeEntry<M>): Promise<void> {
+    async Propose(e: ProposeEntry<RawAction>): Promise<void> {
         if (!this.ready) {
             strict.strictEqual(this.pending, undefined, "proposed twice before getting ack");
             this.pending = e;
         } else {
-            this.ws.send(Serialize(e));
+            this.ws.send(serializeJSON(e));
         }
     }
 
     private openHandler(): void {
-        const j = new JoinDocument();
-        j.LogClock = this.clock.Clock();
-
-        this.ws.send(Serialize(j));
+        this.ws.send(serializeJSON({
+            kind: "JoinDocument",
+            LogClock: this.clock.Clock(),
+        }));
         this.ready = true;
         if (this.pending) {
-            this.ws.send(Serialize(this.pending));
+            this.ws.send(serializeJSON(this.pending));
             this.pending = undefined;
         }
     }

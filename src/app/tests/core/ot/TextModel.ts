@@ -1,5 +1,5 @@
-import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
-import {message} from "core/ot/Serializing";
+import {Action, ActionTransformer, OTModel} from "core/ot/Interfaces";
+import {serializable} from "serialeazy";
 
 // The TextModel is a text-based OT model
 export class TextModel implements OTModel {
@@ -8,7 +8,7 @@ export class TextModel implements OTModel {
 
 export type TextAction = Action<TextModel>;
 
-@message("InsertTextAction")
+@serializable("InsertTextAction")
 export class InsertTextAction implements TextAction {
     public text: string;
     public position: number;
@@ -30,7 +30,7 @@ export class InsertTextAction implements TextAction {
 // NOTE: This is a _little_ weird, because two overlapping concurrent deletes
 //	will have overlapping tombstones, even if their ranges are corrected, so
 //	undoing both actions will insert duplicate text of the overlap.
-@message("DeleteTextAction")
+@serializable("DeleteTextAction")
 export class DeleteTextAction implements TextAction {
     public start: number;
     public end: number;

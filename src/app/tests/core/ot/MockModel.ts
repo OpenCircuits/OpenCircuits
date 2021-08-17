@@ -1,5 +1,6 @@
-import { Action, ActionTransformer, OTModel } from "core/ot/Interfaces";
-import { AcceptedEntry, ProposedEntry } from "core/ot/Protocol";
+import {AcceptedEntry} from "core/ot/Changelog";
+import {Action, ActionTransformer, OTModel} from "core/ot/Interfaces";
+import {ProposeEntry} from "core/ot/Protocol";
 
 
 export class MockModel implements OTModel {
@@ -31,10 +32,14 @@ export class MockAction implements Action<MockModel> {
     }
 }
 
-export function mockEntry(n: number, fail: boolean = false): ProposedEntry<MockModel> {
-    const e = new ProposedEntry<MockModel>();
-    e.Action = new MockAction(n, fail);
-    return e;
+export function mockEntry(n: number, fail: boolean = false): ProposeEntry<Action<MockModel>> {
+    return {
+        kind: "ProposeEntry",
+        Action: new MockAction(n, fail),
+        ProposedClock: 0,
+        SchemaVersion: "UNDEFINED_SCHEMA_VERSION",
+        UserID: "UNDEFINED_USER_ID"
+    };
 }
 export function mockAccEntry(n: number, clock: number, fail: boolean = false): AcceptedEntry<MockModel> {
     const e = new AcceptedEntry<MockModel>();
