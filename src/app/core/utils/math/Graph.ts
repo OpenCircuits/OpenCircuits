@@ -106,14 +106,25 @@ export class Graph<V, E> {
         return nodes;
     }
 
+    // Convert to an array of arrays where each index indicates the depth of that 
+    private nodeDepthMapToArray(depthMap: Map<V, number>, deepestLevel: number): V[][] {
+        let ret: V[][] = [[]];
+        for (var i = 0; i < deepestLevel; i++)
+            ret.push([]);
+
+        Array.from(depthMap.entries()).forEach(([node, depth]) =>
+            ret[depth].push(node)
+        );
+
+        return ret;
+    }
+
     private getNodeDepths(max: boolean): V[][] {
-        // Still internally using a map then converting to a list afterwards since it could
-        // take a long time to see if the node has already been assigned a depth when max=true
         const nodeToNumber = new Map<V, number>();
 
         let currentLayer = this.getSources();
         let nextLayer: V[] = [];
-        let deepest = 0;
+        let deepestLevel = 0;
 
         for (const node of currentLayer) {
             nodeToNumber.set(node, 0);
@@ -124,7 +135,7 @@ export class Graph<V, E> {
                 const nextDepth = nodeToNumber.get(node) + 1;
                 for (const next of this.list.get(node))  {
                     if (!nodeToNumber.has(next.getTarget()) || max) {
-                        deepest = Math.max(deepest, nextDepth);
+                        deepestLevel = Math.max(deepestLevel, nextDepth);
                         nodeToNumber.set(next.getTarget(), nextDepth);
                         nextLayer.push(next.getTarget());
                     }
@@ -134,16 +145,7 @@ export class Graph<V, E> {
             nextLayer = [];
         }
 
-        // Convert to an array of arrays where each index indicates the depth of that 
-        let ret: V[][] = [[]];
-        for (var i = 0; i < deepest; i++)
-            ret.push([]);
-
-        Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
-            ret[depth].push(node)
-        );
-
-        return ret;
+        return this.nodeDepthMapToArray(nodeToNumber, deepestLevel);
     }
 
     /**
