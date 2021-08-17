@@ -31,11 +31,6 @@ type JoinDocument struct {
 
 type LeaveDocument struct{}
 
-type BroadcastState struct {
-	SessionID model.SessionID
-	State     json.RawMessage
-}
-
 //
 // Messages sent to the Session
 //
