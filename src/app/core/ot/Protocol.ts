@@ -1,3 +1,4 @@
+import {string} from "yargs";
 
 export type ResponseHandler<A> = (m: Response<A>) => void;
 export interface Connection<A> {
@@ -29,37 +30,61 @@ export function MapAE<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<
     };
 }
 
+export interface SessionJoined {
+    UserID: string;
+    SessionID: string;
+}
+export interface SessionLeft {
+    SessionID: string;
+}
 
-export interface ProposeAck {
+export interface Updates<A> {
+    kind: "Updates";
+    NewEntries: AcceptedEntry<A>[]
+    SessionsJoined: SessionJoined[]
+    SessionsLeft: SessionLeft[]
+}
+
+export function MapU<A, B>(a: Updates<A>, f: (_: A) => B): Updates<B> {
+    return {
+        kind: "Updates",
+        NewEntries: a.NewEntries?.map(v => MapAE(v, f)),
+        SessionsJoined: a.SessionsJoined,
+        SessionsLeft: a.SessionsLeft,
+    };
+}
+
+
+export interface ProposeAck<A> {
     kind: "ProposeAck";
     AcceptedClock: number;
+    Updates: Updates<A>;
+}
+
+export function MapPA<A, B>(a: ProposeAck<A>, f: (_: A) => B): ProposeAck<B> {
+    return {
+        kind: "ProposeAck",
+        AcceptedClock: a.AcceptedClock,
+        Updates: MapU(a.Updates, f)
+    };
 }
 
 export interface WelcomeMessage<A> {
     kind: "WelcomeMessage";
-    SessionID: string;
+    Session: SessionJoined;
     MissedEntries: AcceptedEntry<A>[];
+    Sessions: SessionJoined[];
 }
 
 export function MapWM<A, B>(a: WelcomeMessage<A>, f: (_: A) => B): WelcomeMessage<B> {
     return {
         kind: a.kind,
-        SessionID: a.SessionID,
+        Session: a.Session,
         MissedEntries: a.MissedEntries.map(v => MapAE(v, f)),
+        Sessions: a.Sessions,
     };
 }
 
-export interface NewEntries<A> {
-    kind: "NewEntries";
-    Entries: AcceptedEntry<A>[];
-}
-
-export function MapNE<A, B>(a: NewEntries<A>, f: (_: A) => B): NewEntries<B> {
-    return {
-        kind: a.kind,
-        Entries: a.Entries.map(v => MapAE(v, f)),
-    };
-}
 
 export interface CloseMessage {
     kind: "CloseMessage";
@@ -67,9 +92,9 @@ export interface CloseMessage {
 }
 
 export type Response<A> =
-    | ProposeAck
+    | ProposeAck<A>
     | WelcomeMessage<A>
-    | NewEntries<A>
+    | Updates<A>
     | CloseMessage;
 
 

@@ -31,8 +31,8 @@ func newDocument(circuitID model.CircuitId, done chan<- model.CircuitId) (Docume
 		CircuitID: circuitID,
 		liveTime:  5 * time.Minute,
 
-		log:     &Changelog{}, // TODO: This needs to be loaded
-		clients: make(map[chan<- interface{}]bool),
+		log:      &Changelog{}, // TODO: This needs to be loaded
+		sessions: make(map[chan<- interface{}]SessionJoined),
 
 		recv: ch,
 		done: done,
@@ -48,8 +48,8 @@ type docState struct {
 	CircuitID model.CircuitId
 	liveTime  time.Duration
 
-	log     *Changelog
-	clients map[chan<- interface{}]bool
+	log      *Changelog
+	sessions map[chan<- interface{}]SessionJoined
 
 	recv <-chan MessageWrapper
 	done chan<- model.CircuitId
@@ -67,31 +67,35 @@ func (d docState) messageLoop() {
 		mw := <-d.recv
 		switch m := mw.Data.(type) {
 		case ProposeEntry:
-			if _, ok := d.clients[mw.Resp]; !ok {
+			if _, ok := d.sessions[mw.Resp]; !ok {
 				SafeSendClose(mw.Resp, CloseMessage{
-					Reason: "proposal from unjoined client",
+					Reason: "proposal from unjoined session",
 				})
 				continue
 			}
-
-			d.serverRecv(m, mw.Resp)
+			d.proposeEntry(m, mw.Resp)
 		case JoinDocument:
-			d.clients[mw.Resp] = true
-			SafeSendWelcome(mw.Resp, WelcomeMessage{
-				MissedEntries: d.log.Slice(m.LogClock),
-			})
+			if _, ok := d.sessions[mw.Resp]; ok {
+				SafeSendClose(mw.Resp, CloseMessage{
+					Reason: "join from joined session",
+				})
+				continue
+			}
+			d.joinDocument(m, mw.Resp)
 		case LeaveDocument:
-			delete(d.clients, mw.Resp)
-
-			if len(d.clients) == 0 {
-				log.Printf("Last client left, closing %s...\n", d.CircuitID)
+			// Double-leave
+			if _, ok := d.sessions[mw.Resp]; !ok {
+				log.Printf("session %s already left\n", m.SessionID)
+				continue
+			}
+			if d.leaveDocument(m, mw.Resp) {
 				return
 			}
 		}
 	}
 }
 
-func (d docState) serverRecv(msg ProposeEntry, resp chan<- interface{}) {
+func (d docState) proposeEntry(msg ProposeEntry, resp chan<- interface{}) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.log.AddEntry(msg)
 	if err != nil {
@@ -106,7 +110,7 @@ func (d docState) serverRecv(msg ProposeEntry, resp chan<- interface{}) {
 	}
 
 	// Send to other clients
-	for ch := range d.clients {
+	for ch := range d.sessions {
 		if ch == resp {
 			continue
 		}
@@ -115,4 +119,54 @@ func (d docState) serverRecv(msg ProposeEntry, resp chan<- interface{}) {
 
 	// Acknowledge the request
 	SafeSendAck(resp, ProposeAck{AcceptedClock: accepted.AcceptedClock})
+}
+
+func (d docState) joinDocument(m JoinDocument, resp chan<- interface{}) {
+	// Collect existing sessions
+	existingSessions := make([]SessionJoined, 0, len(d.sessions))
+	for _, s := range d.sessions {
+		existingSessions = append(existingSessions, s)
+	}
+
+	// Create the new one
+	newSession := SessionJoined{
+		UserID:    m.UserID,
+		SessionID: m.SessionID,
+	}
+	d.sessions[resp] = newSession
+
+	// Give the new session all the information it needs
+	SafeSendWelcome(resp, WelcomeMessage{
+		Session:       newSession,
+		MissedEntries: d.log.Slice(m.LogClock),
+		Sessions:      existingSessions,
+	})
+
+	// Tell all other sessions another one joined
+	for ch := range d.sessions {
+		if ch == resp {
+			continue
+		}
+		SafeSendJoined(ch, SessionJoined{
+			UserID:    m.UserID,
+			SessionID: m.SessionID,
+		})
+	}
+}
+
+func (d docState) leaveDocument(m LeaveDocument, resp chan<- interface{}) bool {
+	// Remove this session from out list
+	delete(d.sessions, resp)
+
+	// Tell all other sessions one left
+	for ch := range d.sessions {
+		SafeSendLeft(ch, m)
+	}
+
+	// The last session to leave closes the document
+	if len(d.sessions) == 0 {
+		log.Printf("Last client left, closing %s...\n", d.CircuitID)
+		return true
+	}
+	return false
 }

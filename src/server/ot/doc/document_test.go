@@ -94,7 +94,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 	ds := mkDocState()
 
 	ch := make(chan interface{}, 1)
-	ds.serverRecv(ProposeEntry{
+	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 1,
 	}, ch)
 	res := <-ch
@@ -114,7 +114,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 	ds := mkDocState()
 
 	ch := make(chan interface{}, 1)
-	ds.serverRecv(ProposeEntry{
+	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 10,
 	}, ch)
 	res := <-ch
@@ -134,11 +134,11 @@ func TestDocumentProposePropagate(t *testing.T) {
 	for _, x := range []string{"A", "B", "C", "D"} {
 		ch := make(chan interface{}, 1)
 		chans[x] = ch
-		ds.clients[ch] = true
+		ds.sessions[ch] = SessionJoined{}
 	}
 
 	ch := chans["B"]
-	ds.serverRecv(ProposeEntry{
+	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 2,
 	}, ch)
 	res := <-ch

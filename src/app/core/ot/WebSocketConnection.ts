@@ -21,7 +21,7 @@ function deserializeJSON(s: string): Response<RawAction> {
     const res: MessageWrapper<Response<RawAction>> = JSON.parse(s);
     switch (res.Type) {
         case "ProposeAck":
-        case "NewEntries":
+        case "Updates":
         case "WelcomeMessage":
         case "CloseMessage":
             res.Msg.kind = res.Type;

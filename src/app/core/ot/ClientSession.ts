@@ -2,7 +2,7 @@ import {strict} from "assert";
 import {useImperativeHandle} from "react";
 import {Action, OTModel} from "./Interfaces";
 import {ClientInfoProvider, OTDocument} from "./OTDocument";
-import {Connection, ProposeEntry, Response} from "./Protocol";
+import {Connection, ProposeEntry, Response, SessionJoined} from "./Protocol";
 
 // The helper class for handling protocol messages
 export class ClientSession<M extends OTModel> {
@@ -11,7 +11,7 @@ export class ClientSession<M extends OTModel> {
     private clientInfo: ClientInfoProvider
 
     private proposed?: ProposeEntry<Action<M>>;
-    private sessionID?: string;
+    private session?: SessionJoined
 
     public constructor(doc: OTDocument<M>, conn: Connection<Action<M>>, clientInfo: ClientInfoProvider) {
         this.doc = doc;
@@ -26,13 +26,13 @@ export class ClientSession<M extends OTModel> {
                 // console.log("received ack message: " + JSON.stringify(m.AcceptedClock));
                 this.AckHandler(m.AcceptedClock);
                 break;
-            case "NewEntries":
+            case "Updates":
                 // console.log("received new entries: " + JSON.stringify(m.Entries));
-                this.doc.RecvRemote(m.Entries);
+                this.doc.RecvRemote(m.NewEntries);
                 break;
             case "WelcomeMessage":
                 // console.log("received welcome message: " + JSON.stringify(m.MissedEntries));
-                this.sessionID = m.SessionID;
+                this.session = m.Session;
                 this.doc.RecvRemote(m.MissedEntries);
                 break;
             case "CloseMessage":
@@ -43,14 +43,14 @@ export class ClientSession<M extends OTModel> {
 
     public AckHandler(acceptedClock: number): void {
         strict.ok(this.proposed, "received unexpected ack message");
-        strict.ok(this.sessionID, "received unexpected ack message");
+        strict.ok(this.session, "received unexpected ack message");
         this.doc.RecvLocal({
             Action: this.proposed.Action,
             ProposedClock: this.proposed.ProposedClock,
             AcceptedClock: acceptedClock,
             SchemaVersion: this.proposed.SchemaVersion,
-            UserID: this.clientInfo.UserID(),
-            SessionID: this.sessionID,
+            UserID: this.session.UserID,
+            SessionID: this.session.SessionID,
         });
 
         // Send the next pending entry
@@ -73,7 +73,7 @@ export class ClientSession<M extends OTModel> {
         return true;
     }
 
-    public SessionID(): string | undefined {
-        return this.sessionID;
+    public Session(): SessionJoined | undefined {
+        return this.session;
     }
 }

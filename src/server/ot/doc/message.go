@@ -26,10 +26,14 @@ type ProposeEntry struct {
 }
 
 type JoinDocument struct {
-	LogClock uint64
+	LogClock  uint64
+	UserID    model.SessionID
+	SessionID model.SessionID
 }
 
-type LeaveDocument struct{}
+type LeaveDocument struct {
+	SessionID model.SessionID
+}
 
 //
 // Messages sent to the Session
@@ -42,7 +46,9 @@ type ProposeAck struct {
 }
 
 type WelcomeMessage struct {
+	Session       SessionJoined
 	MissedEntries []AcceptedEntry
+	Sessions      []SessionJoined
 }
 
 type NewEntry = AcceptedEntry
@@ -51,6 +57,13 @@ type NewEntry = AcceptedEntry
 type CloseMessage struct {
 	Reason string
 }
+
+type SessionJoined struct {
+	UserID    model.UserId
+	SessionID model.SessionID
+}
+
+type SessionLeft = LeaveDocument
 
 //
 // Helper functions used by the Document to avoid accidently sending types over
@@ -66,6 +79,14 @@ func SafeSendWelcome(ch chan<- interface{}, m WelcomeMessage) {
 }
 
 func SafeSendNewEntry(ch chan<- interface{}, m NewEntry) {
+	ch <- m
+}
+
+func SafeSendJoined(ch chan<- interface{}, m SessionJoined) {
+	ch <- m
+}
+
+func SafeSendLeft(ch chan<- interface{}, m SessionLeft) {
 	ch <- m
 }
 

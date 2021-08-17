@@ -2,6 +2,7 @@ package session
 
 import (
 	"log"
+	"reflect"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -52,7 +53,9 @@ func (s sessionState) sendDoc(v interface{}) {
 func (s sessionState) close() {
 	s.done(s.sessionID)
 	s.conn.Close()
-	s.sendDoc(doc.LeaveDocument{})
+	s.sendDoc(doc.LeaveDocument{
+		SessionID: s.sessionID,
+	})
 	close(s.docUpdates)
 }
 
@@ -86,7 +89,9 @@ func (s sessionState) networkListener() {
 			// TODO: Authentication check will be done here
 			userID = msg.AuthID
 			s.sendDoc(doc.JoinDocument{
-				LogClock: msg.LogClock,
+				LogClock:  msg.LogClock,
+				UserID:    userID,
+				SessionID: s.sessionID,
 			})
 		default:
 			log.Println("Session received unexpected message type from client")
@@ -98,19 +103,32 @@ func (s sessionState) networkListener() {
 //	order by sending from a single thread.
 func (s sessionState) networkSender() {
 	for u := range s.docUpdates {
+		// TODO: always send ACK messagfes immediately with currently cached updates, otherwise wait until time since last message is high enough
 		switch u := u.(type) {
 		case doc.NewEntry:
-			// TODO: Send one-at-a-time until the session takes rapid accepted entries
-			//	and bundle them into a single message
-			s.conn.Send(conn.NewEntries{
-				Entries: []doc.AcceptedEntry{u},
-			})
-		case doc.WelcomeMessage:
-			s.conn.Send(conn.WelcomeMessage{
-				SessionID:     s.sessionID,
-				MissedEntries: u.MissedEntries,
+			s.conn.Send(conn.Updates{
+				NewEntries:     []doc.AcceptedEntry{u},
+				SessionsJoined: []doc.SessionJoined{},
+				SessionsLeft:   []doc.SessionLeft{},
 			})
 		case doc.ProposeAck:
+			s.conn.Send(conn.ProposeAck{
+				AcceptedClock: u.AcceptedClock,
+				Updates:       conn.Updates{},
+			})
+		case doc.SessionJoined:
+			s.conn.Send(conn.Updates{
+				NewEntries:     []doc.AcceptedEntry{},
+				SessionsJoined: []doc.SessionJoined{u},
+				SessionsLeft:   []doc.LeaveDocument{},
+			})
+		case doc.SessionLeft:
+			s.conn.Send(conn.Updates{
+				NewEntries:     []doc.AcceptedEntry{},
+				SessionsJoined: []doc.SessionJoined{},
+				SessionsLeft:   []doc.LeaveDocument{u},
+			})
+		case doc.WelcomeMessage:
 			s.conn.Send(u)
 		case doc.CloseMessage:
 			// Sometimes a close message will be spawned by the document
@@ -118,7 +136,9 @@ func (s sessionState) networkSender() {
 			s.conn.Close()
 			return
 		default:
-			log.Println("Session received unexpected message type from doc")
+			log.Println(
+				"Session received unexpected message type from doc: ",
+				reflect.TypeOf(u).Name())
 		}
 	}
 }

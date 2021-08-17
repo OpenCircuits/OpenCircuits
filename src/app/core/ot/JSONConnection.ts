@@ -1,7 +1,7 @@
 import {strict} from "assert";
 import {Deserialize, Serialize} from "serialeazy";
 import {Action, OTModel} from "./Interfaces";
-import {Connection, MapNE, MapPE, MapWM, ProposeEntry, Response, ResponseHandler} from "./Protocol";
+import {Connection, MapPA, MapPE, MapU, MapWM, ProposeEntry, Response, ResponseHandler} from "./Protocol";
 
 // Transport format of the Action (NOT used by the server)
 // TODO: This should be an in-line object to avoid double-escaping
@@ -20,9 +20,9 @@ export interface RawConnection {
 export function DeserializeMessage<M extends OTModel>(res: Response<RawAction>): Response<Action<M>> {
     switch (res.kind) {
         case "ProposeAck":
-            return res;
-        case "NewEntries":
-            return MapNE(res, deAction);
+            return MapPA(res, deAction);
+        case "Updates":
+            return MapU(res, deAction);
         case "WelcomeMessage":
             return MapWM(res, deAction);
         case "CloseMessage":

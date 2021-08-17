@@ -23,17 +23,19 @@ type RawMessageWrapper struct {
 //
 
 type (
-	ProposeAck   = doc.ProposeAck
-	CloseMessage = doc.CloseMessage
+	CloseMessage   = doc.CloseMessage
+	WelcomeMessage = doc.WelcomeMessage
 )
 
-type WelcomeMessage struct {
-	SessionID     model.SessionID
-	MissedEntries []doc.AcceptedEntry
+type ProposeAck struct {
+	AcceptedClock uint64
+	Updates       Updates
 }
 
-type NewEntries struct {
-	Entries []doc.AcceptedEntry
+type Updates struct {
+	NewEntries     []doc.AcceptedEntry
+	SessionsJoined []doc.SessionJoined
+	SessionsLeft   []doc.SessionLeft
 }
 
 func Serialize(s interface{}) ([]byte, error) {
@@ -43,8 +45,8 @@ func Serialize(s interface{}) ([]byte, error) {
 		t = "ProposeAck"
 	case WelcomeMessage:
 		t = "WelcomeMessage"
-	case NewEntries:
-		t = "NewEntries"
+	case Updates:
+		t = "Updates"
 	case CloseMessage:
 		t = "CloseMessage"
 	default:
