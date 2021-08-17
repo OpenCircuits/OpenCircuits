@@ -2,7 +2,7 @@ import {strict} from "assert";
 import {Action, ActionTransformer, OTModel} from "./Interfaces";
 import {AcceptedEntry as AccEntry} from "./Protocol";
 
-export class AcceptedEntry<M extends OTModel> extends AccEntry<Action<M>> {}
+export interface AcceptedEntry<M extends OTModel> extends AccEntry<Action<M>> { }
 
 // See ChangelogEntry in changelog.go
 export class ChangelogEntry<M extends OTModel> {

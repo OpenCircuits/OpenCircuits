@@ -1,7 +1,7 @@
 import {strict} from "assert";
 import {Deserialize, Serialize} from "serialeazy";
 import {Action, OTModel} from "./Interfaces";
-import {AcceptedEntry, Connection, MapPE, ProposeEntry, Response, ResponseHandler} from "./Protocol";
+import {Connection, MapAE, MapPE, ProposeEntry, Response, ResponseHandler} from "./Protocol";
 
 // Transport format of the Action (NOT used by the server)
 // TODO: This should be an in-line object to avoid double-escaping
@@ -24,12 +24,12 @@ export function DeserializeMessage<M extends OTModel>(res: Response<RawAction>):
         case "NewEntries":
             return {
                 kind: res.kind,
-                Entries: res.Entries.map(v => AcceptedEntry.Map(v, deAction)),
+                Entries: res.Entries.map(v => MapAE(v, deAction)),
             };
         case "WelcomeMessage":
             return {
                 kind: res.kind,
-                MissedEntries: res.MissedEntries.map(v => AcceptedEntry.Map(v, deAction)),
+                MissedEntries: res.MissedEntries.map(v => MapAE(v, deAction)),
             };
         case "CloseMessage":
             return res;

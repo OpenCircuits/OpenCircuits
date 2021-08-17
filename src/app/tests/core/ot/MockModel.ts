@@ -42,8 +42,11 @@ export function mockEntry(n: number, fail: boolean = false): ProposeEntry<Action
     };
 }
 export function mockAccEntry(n: number, clock: number, fail: boolean = false): AcceptedEntry<MockModel> {
-    const e = new AcceptedEntry<MockModel>();
-    e.AcceptedClock = e.ProposedClock = clock;
-    e.Action = new MockAction(n, fail);
-    return e;
+    return {
+        Action: new MockAction(n, fail),
+        AcceptedClock: clock,
+        ProposedClock: clock,
+        SchemaVersion: "UNDEFINED_SCHEMA_VERSION",
+        UserID: "UNDEFINED_USER_ID"
+    };
 }

@@ -1,6 +1,6 @@
 import {strict} from "assert";
 import {RawAction, RawConnection} from "./JSONConnection";
-import {JoinDocument, Message, ProposeEntry, ResponseHandler, Response} from "./Protocol";
+import {Message, ProposeEntry, Response, ResponseHandler} from "./Protocol";
 
 export type ClockProvider = {
     Clock(): number
@@ -13,7 +13,6 @@ class MessageWrapper<T> {
 
 
 function deserializeJSON(s: string): Response<RawAction> {
-    console.log(s);
     const res: MessageWrapper<Response<RawAction>> = JSON.parse(s);
     switch (res.Type) {
         case "ProposeAck":
@@ -33,7 +32,6 @@ function serializeJSON(m: Message<RawAction>): string {
         Msg: m,
     };
     const s = JSON.stringify(msg);
-    console.log(s);
     return s;
 }
 

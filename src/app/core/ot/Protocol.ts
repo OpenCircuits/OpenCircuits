@@ -9,22 +9,22 @@ export interface Connection<A> {
 // Message sent TO the client
 //
 
-export class AcceptedEntry<A> {
+export interface AcceptedEntry<A> {
     Action: A;
-    ProposedClock: number = 0;
-    AcceptedClock: number = 0;
-    SchemaVersion: string = "UNDEFINED_SCHEMA_VERSION";
-    UserID: string = "UNDEFINED_USER_ID";
+    ProposedClock: number;
+    AcceptedClock: number;
+    SchemaVersion: string;
+    UserID: string;
+}
 
-    static Map<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<B> {
-        return {
-            Action: f(a.Action),
-            ProposedClock: a.ProposedClock,
-            AcceptedClock: a.AcceptedClock,
-            SchemaVersion: a.SchemaVersion,
-            UserID: a.UserID,
-        };
-    }
+export function MapAE<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<B> {
+    return {
+        Action: f(a.Action),
+        ProposedClock: a.ProposedClock,
+        AcceptedClock: a.AcceptedClock,
+        SchemaVersion: a.SchemaVersion,
+        UserID: a.UserID,
+    };
 }
 
 
