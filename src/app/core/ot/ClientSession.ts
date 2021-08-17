@@ -1,5 +1,4 @@
 import {strict} from "assert";
-import {useImperativeHandle} from "react";
 import {Action, OTModel} from "./Interfaces";
 import {ClientInfoProvider, OTDocument} from "./OTDocument";
 import {Connection, ProposeEntry, Response, SessionJoined} from "./Protocol";

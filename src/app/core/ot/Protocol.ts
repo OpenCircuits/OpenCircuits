@@ -1,4 +1,3 @@
-import {string} from "yargs";
 
 export type ResponseHandler<A> = (m: Response<A>) => void;
 export interface Connection<A> {
