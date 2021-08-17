@@ -97,7 +97,6 @@ func (s sessionState) networkListener() {
 // networkSender guarantees messages are sent to the client in the correct
 //	order by sending from a single thread.
 func (s sessionState) networkSender() {
-Loop:
 	for u := range s.docUpdates {
 		switch u := u.(type) {
 		case doc.NewEntry:
@@ -117,7 +116,7 @@ Loop:
 			// Sometimes a close message will be spawned by the document
 			s.conn.Send(u)
 			s.conn.Close()
-			break Loop
+			return
 		default:
 			log.Println("Session received unexpected message type from doc")
 		}
