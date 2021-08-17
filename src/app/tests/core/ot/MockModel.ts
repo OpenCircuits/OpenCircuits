@@ -38,7 +38,6 @@ export function mockEntry(n: number, fail: boolean = false): ProposeEntry<Action
         Action: new MockAction(n, fail),
         ProposedClock: 0,
         SchemaVersion: "UNDEFINED_SCHEMA_VERSION",
-        UserID: "UNDEFINED_USER_ID"
     };
 }
 export function mockAccEntry(n: number, clock: number, fail: boolean = false): AcceptedEntry<MockModel> {
@@ -47,6 +46,7 @@ export function mockAccEntry(n: number, clock: number, fail: boolean = false): A
         AcceptedClock: clock,
         ProposedClock: clock,
         SchemaVersion: "UNDEFINED_SCHEMA_VERSION",
-        UserID: "UNDEFINED_USER_ID"
+        UserID: "UNDEFINED_USER_ID",
+        SessionID: "UNDEFINED_SESSION_ID",
     };
 }

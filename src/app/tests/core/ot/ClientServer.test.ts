@@ -5,10 +5,10 @@ const os = require("os");
 import {Changelog} from "core/ot/Changelog";
 import {OTDocument} from "core/ot/OTDocument";
 import {PendingCache} from "core/ot/PendingCache";
-import {MockClientInfoProvider} from "./MockClientInfoProvider";
+import {MockAuthProvider, MockClientInfoProvider} from "./MockClientInfoProvider";
 import {InsertTextAction, TextActionTransformer, TextModel} from "./TextModel";
 import {Document} from "core/ot/Document";
-import {ConnectionWrapper} from "core/ot/ConnectionWrapper";
+import {ClientSession} from "core/ot/ClientSession";
 import {WebSocketConnection} from "core/ot/WebSocketConnection";
 import {spawn} from "child_process";
 import {JSONConnection} from "core/ot/JSONConnection";
@@ -22,11 +22,12 @@ async function newClient(port: string, circuitID: string) {
     const pc = new PendingCache<M>();
     const xf = new TextActionTransformer();
     const cl = new MockClientInfoProvider();
+    const auth = new MockAuthProvider();
     const doc = new OTDocument<M>(m, l, pc, xf);
-    const rawConn = new WebSocketConnection(doc, `ws://localhost:${port}/ot/${circuitID}`);
+    const rawConn = new WebSocketConnection(doc, auth, `ws://localhost:${port}/ot/${circuitID}`);
     await rawConn.Connect();
     const conn = new JSONConnection(rawConn);
-    const cw = new ConnectionWrapper<M>(doc, conn, cl);
+    const cw = new ClientSession<M>(doc, conn, cl);
     const iface = new Document<M>(doc, cw);
     return {
         model: m,

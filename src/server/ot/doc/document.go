@@ -32,7 +32,7 @@ func newDocument(circuitID model.CircuitId, done chan<- model.CircuitId) (Docume
 		liveTime:  5 * time.Minute,
 
 		log:     &Changelog{}, // TODO: This needs to be loaded
-		clients: make(map[string]chan<- interface{}),
+		clients: make(map[chan<- interface{}]bool),
 
 		recv: ch,
 		done: done,
@@ -49,7 +49,7 @@ type docState struct {
 	liveTime  time.Duration
 
 	log     *Changelog
-	clients map[string]chan<- interface{}
+	clients map[chan<- interface{}]bool
 
 	recv <-chan MessageWrapper
 	done chan<- model.CircuitId
@@ -66,31 +66,31 @@ func (d docState) messageLoop() {
 	for {
 		mw := <-d.recv
 		if m, ok := mw.Data.(JoinDocument); ok {
-			d.clients[mw.SessionID] = mw.Resp
+			d.clients[mw.Resp] = true
 			SafeSendWelcome(mw.Resp, WelcomeMessage{
 				MissedEntries: d.log.Slice(m.LogClock),
 			})
 		} else if _, ok := mw.Data.(LeaveDocument); ok {
-			delete(d.clients, mw.SessionID)
+			delete(d.clients, mw.Resp)
 
 			if len(d.clients) == 0 {
 				log.Printf("Last client left, closing %s...\n", d.CircuitID)
 				return
 			}
-		} else if m, ok := mw.Data.(Propose); ok {
-			if _, ok := d.clients[mw.SessionID]; !ok {
+		} else if m, ok := mw.Data.(ProposeEntry); ok {
+			if _, ok := d.clients[mw.Resp]; !ok {
 				SafeSendClose(mw.Resp, CloseMessage{
 					Reason: "proposal from unjoined client",
 				})
 				continue
 			}
 
-			d.serverRecv(m, mw.SessionID, mw.Resp)
+			d.serverRecv(m, mw.Resp)
 		}
 	}
 }
 
-func (d docState) serverRecv(msg Propose, sessionID string, resp chan<- interface{}) {
+func (d docState) serverRecv(msg ProposeEntry, resp chan<- interface{}) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.log.AddEntry(msg)
 	if err != nil {
@@ -105,8 +105,8 @@ func (d docState) serverRecv(msg Propose, sessionID string, resp chan<- interfac
 	}
 
 	// Send to other clients
-	for sid, ch := range d.clients {
-		if sid == sessionID {
+	for ch := range d.clients {
+		if ch == resp {
 			continue
 		}
 		SafeSendNewEntry(ch, accepted)

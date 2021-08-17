@@ -1,7 +1,7 @@
 import {strict} from "assert";
 import {Deserialize, Serialize} from "serialeazy";
 import {Action, OTModel} from "./Interfaces";
-import {Connection, MapAE, MapPE, ProposeEntry, Response, ResponseHandler} from "./Protocol";
+import {Connection, MapNE, MapPE, MapWM, ProposeEntry, Response, ResponseHandler} from "./Protocol";
 
 // Transport format of the Action (NOT used by the server)
 // TODO: This should be an in-line object to avoid double-escaping
@@ -22,15 +22,9 @@ export function DeserializeMessage<M extends OTModel>(res: Response<RawAction>):
         case "ProposeAck":
             return res;
         case "NewEntries":
-            return {
-                kind: res.kind,
-                Entries: res.Entries.map(v => MapAE(v, deAction)),
-            };
+            return MapNE(res, deAction);
         case "WelcomeMessage":
-            return {
-                kind: res.kind,
-                MissedEntries: res.MissedEntries.map(v => MapAE(v, deAction)),
-            };
+            return MapWM(res, deAction);
         case "CloseMessage":
             return res;
         default:
@@ -38,16 +32,13 @@ export function DeserializeMessage<M extends OTModel>(res: Response<RawAction>):
     }
 }
 
-export function SerializePropose<M extends OTModel>(m: ProposeEntry<Action<M>>): ProposeEntry<RawAction> {
-    return MapPE(m, seAction);
-}
 
 export class JSONConnection<M extends OTModel> implements Connection<Action<M>> {
     public constructor(
         private conn: RawConnection
     ) { };
     Propose(p: ProposeEntry<Action<M>>): void {
-        this.conn.Propose(SerializePropose(p));
+        this.conn.Propose(MapPE(p, seAction));
     }
     OnMessage(h: ResponseHandler<Action<M>>): void {
         this.conn.OnMessage(s => {

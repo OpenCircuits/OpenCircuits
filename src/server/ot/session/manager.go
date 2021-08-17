@@ -4,6 +4,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
@@ -38,6 +39,10 @@ func NewSessionManager(dm *doc.DocumentManager) *SessionManager {
 //	}
 //}
 
+func (sm *SessionManager) doneSender(sessionID model.SessionID) {
+	sm.sessionDone <- sessionID
+}
+
 func (sm *SessionManager) closer() {
 	for sid := range sm.sessionDone {
 		sm.sessionLock.Lock()
@@ -55,7 +60,7 @@ func (sm *SessionManager) Start(circuitID string, conn conn.Connection) error {
 	}
 
 	// Spawn the session
-	s := NewSession(doc, conn, sm.sessionDone)
+	s := NewSession(doc, conn, sm.doneSender)
 
 	// Add the session to the map
 	sm.sessionLock.Lock()

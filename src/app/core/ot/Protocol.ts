@@ -15,6 +15,7 @@ export interface AcceptedEntry<A> {
     AcceptedClock: number;
     SchemaVersion: string;
     UserID: string;
+    SessionID: string;
 }
 
 export function MapAE<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<B> {
@@ -24,6 +25,7 @@ export function MapAE<A, B>(a: AcceptedEntry<A>, f: (_: A) => B): AcceptedEntry<
         AcceptedClock: a.AcceptedClock,
         SchemaVersion: a.SchemaVersion,
         UserID: a.UserID,
+        SessionID: a.SessionID,
     };
 }
 
@@ -35,12 +37,28 @@ export interface ProposeAck {
 
 export interface WelcomeMessage<A> {
     kind: "WelcomeMessage";
+    SessionID: string;
     MissedEntries: AcceptedEntry<A>[];
+}
+
+export function MapWM<A, B>(a: WelcomeMessage<A>, f: (_: A) => B): WelcomeMessage<B> {
+    return {
+        kind: a.kind,
+        SessionID: a.SessionID,
+        MissedEntries: a.MissedEntries.map(v => MapAE(v, f)),
+    };
 }
 
 export interface NewEntries<A> {
     kind: "NewEntries";
     Entries: AcceptedEntry<A>[];
+}
+
+export function MapNE<A, B>(a: NewEntries<A>, f: (_: A) => B): NewEntries<B> {
+    return {
+        kind: a.kind,
+        Entries: a.Entries.map(v => MapAE(v, f)),
+    };
 }
 
 export interface CloseMessage {
@@ -64,7 +82,6 @@ export interface ProposeEntry<A> {
     Action: A;
     ProposedClock: number;
     SchemaVersion: string;
-    UserID: string;
 }
 
 export function MapPE<A, B>(a: ProposeEntry<A>, f: (_: A) => B): ProposeEntry<B> {
@@ -73,13 +90,14 @@ export function MapPE<A, B>(a: ProposeEntry<A>, f: (_: A) => B): ProposeEntry<B>
         Action: f(a.Action),
         ProposedClock: a.ProposedClock,
         SchemaVersion: a.SchemaVersion,
-        UserID: a.UserID,
     }
 }
 
 export interface JoinDocument {
     kind: "JoinDocument"
     LogClock: number;
+    AuthType: string;
+    AuthID: string;
 }
 
 export type Message<A> =

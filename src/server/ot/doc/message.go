@@ -1,18 +1,29 @@
 package doc
 
+import (
+	"encoding/json"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+)
+
 // MessageWrapper is used to send messages to the Document thread.
 //	Resp should be buffered to avoid blocking the Document thread
 type MessageWrapper struct {
-	SessionID string
-	Resp      chan<- interface{}
-	Data      interface{}
+	Resp chan<- interface{}
+	Data interface{}
 }
 
 //
 // Messages sent to the Document
 //
 
-type Propose = ProposedEntry
+type ProposeEntry struct {
+	Action        json.RawMessage
+	ProposedClock uint64
+	SchemaVersion model.SchemaVersion
+	UserID        model.UserId
+	SessionID     model.SessionID
+}
 
 type JoinDocument struct {
 	LogClock uint64
@@ -20,9 +31,16 @@ type JoinDocument struct {
 
 type LeaveDocument struct{}
 
+type BroadcastState struct {
+	SessionID model.SessionID
+	State     json.RawMessage
+}
+
 //
 // Messages sent to the Session
 //
+
+type AcceptedEntry = ChangelogEntry
 
 type ProposeAck struct {
 	AcceptedClock uint64

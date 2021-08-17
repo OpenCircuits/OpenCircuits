@@ -6,6 +6,11 @@ export type ClockProvider = {
     Clock(): number
 };
 
+export type AuthProvider = {
+    AuthType(): string;
+    AuthID(): string;
+}
+
 class MessageWrapper<T> {
     Type: string;
     Msg: T;
@@ -41,12 +46,14 @@ export class WebSocketConnection implements RawConnection {
     private url: string;
     private ws: WebSocket;
     private clock: ClockProvider;
+    private auth: AuthProvider;
     private ready: boolean;
     private pending?: ProposeEntry<RawAction>;
 
-    public constructor(clock: ClockProvider, url: string) {
+    public constructor(clock: ClockProvider, auth: AuthProvider, url: string) {
         this.url = url;
         this.clock = clock;
+        this.auth = auth;
     }
 
     public async Connect(): Promise<void> {
@@ -85,6 +92,8 @@ export class WebSocketConnection implements RawConnection {
         this.ws.send(serializeJSON({
             kind: "JoinDocument",
             LogClock: this.clock.Clock(),
+            AuthType: this.auth.AuthType(),
+            AuthID: this.auth.AuthID(),
         }));
         this.ready = true;
         if (this.pending) {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
@@ -22,10 +23,14 @@ type RawMessageWrapper struct {
 //
 
 type (
-	ProposeAck     = doc.ProposeAck
-	WelcomeMessage = doc.WelcomeMessage
-	CloseMessage   = doc.CloseMessage
+	ProposeAck   = doc.ProposeAck
+	CloseMessage = doc.CloseMessage
 )
+
+type WelcomeMessage struct {
+	SessionID     model.SessionID
+	MissedEntries []doc.AcceptedEntry
+}
 
 type NewEntries struct {
 	Entries []doc.AcceptedEntry
@@ -57,11 +62,17 @@ func Serialize(s interface{}) ([]byte, error) {
 // Messages sent FROM the client
 //
 
-type (
-	ProposeEntry = doc.ProposedEntry
-	// TODO: JoinDocument needs to have auth information
-	JoinDocument = doc.JoinDocument
-)
+type ProposeEntry struct {
+	Action        json.RawMessage
+	ProposedClock uint64
+	SchemaVersion model.SchemaVersion
+}
+
+type JoinDocument struct {
+	LogClock uint64
+	AuthType string
+	AuthID   string
+}
 
 func Deserialize(data []byte) (interface{}, error) {
 	var rawMsg RawMessageWrapper

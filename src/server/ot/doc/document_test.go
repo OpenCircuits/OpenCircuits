@@ -16,8 +16,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	// Send join message
 	respCh := make(chan interface{})
 	d.Send(MessageWrapper{
-		SessionID: "BBBB",
-		Resp:      respCh,
+		Resp: respCh,
 		Data: JoinDocument{
 			LogClock: 0,
 		},
@@ -39,9 +38,8 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 
 	// Send leave message
 	d.Send(MessageWrapper{
-		SessionID: "BBBB",
-		Resp:      respCh,
-		Data:      LeaveDocument{},
+		Resp: respCh,
+		Data: LeaveDocument{},
 	})
 
 	select {
@@ -68,9 +66,8 @@ func TestDocumentLifecycleFailure(t *testing.T) {
 
 	// Send propose message without a join message
 	d.Send(MessageWrapper{
-		SessionID: "BBBB",
-		Resp:      respCh,
-		Data: Propose{
+		Resp: respCh,
+		Data: ProposeEntry{
 			ProposedClock: 1,
 		},
 	})
@@ -97,9 +94,9 @@ func TestDocumentProposeSuccess(t *testing.T) {
 	ds := mkDocState()
 
 	ch := make(chan interface{}, 1)
-	ds.serverRecv(Propose{
+	ds.serverRecv(ProposeEntry{
 		ProposedClock: 1,
-	}, "", ch)
+	}, ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -117,9 +114,9 @@ func TestDocumentProposeFailure(t *testing.T) {
 	ds := mkDocState()
 
 	ch := make(chan interface{}, 1)
-	ds.serverRecv(Propose{
+	ds.serverRecv(ProposeEntry{
 		ProposedClock: 10,
-	}, "", ch)
+	}, ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -133,17 +130,17 @@ func TestDocumentProposeFailure(t *testing.T) {
 func TestDocumentProposePropagate(t *testing.T) {
 	ds := mkDocState()
 
-	chans := make(map[string]<-chan interface{})
+	chans := make(map[string]chan interface{})
 	for _, x := range []string{"A", "B", "C", "D"} {
 		ch := make(chan interface{}, 1)
 		chans[x] = ch
-		ds.clients[x] = ch
+		ds.clients[ch] = true
 	}
 
-	ch := make(chan interface{}, 1)
-	ds.serverRecv(Propose{
+	ch := chans["B"]
+	ds.serverRecv(ProposeEntry{
 		ProposedClock: 2,
-	}, "B", ch)
+	}, ch)
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {

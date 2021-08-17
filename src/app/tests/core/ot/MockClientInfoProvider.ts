@@ -8,3 +8,12 @@ export class MockClientInfoProvider implements ClientInfoProvider {
         return "3.0";
     }
 }
+
+export class MockAuthProvider {
+    AuthType(): string {
+        return "no_auth";
+    }
+    AuthID(): string {
+        return "FAKE_ID";
+    }
+}

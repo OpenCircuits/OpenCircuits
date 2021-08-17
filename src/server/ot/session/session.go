@@ -1,15 +1,20 @@
 package session
 
 import (
+	"log"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
+type SessionDone = func(model.SessionID)
+
 type sessionState struct {
-	sessionID  string
+	sessionID  model.SessionID
 	conn       conn.Connection
-	done       chan<- string
+	done       SessionDone
 	docUpdates chan interface{}
 	doc        doc.Document
 	// TODO Add cached permissions, which can be updated
@@ -17,12 +22,12 @@ type sessionState struct {
 }
 
 type Session struct {
-	SessionID string
+	SessionID model.SessionID
 }
 
-func NewSession(doc doc.Document, conn conn.Connection, done chan<- string) Session {
+func NewSession(doc doc.Document, conn conn.Connection, done SessionDone) Session {
 	s := sessionState{
-		sessionID:  utils.RandToken(128),
+		sessionID:  utils.RandToken(32),
 		conn:       conn,
 		done:       done,
 		docUpdates: make(chan interface{}, 64),
@@ -39,14 +44,13 @@ func NewSession(doc doc.Document, conn conn.Connection, done chan<- string) Sess
 
 func (s sessionState) sendDoc(v interface{}) {
 	s.doc.Send(doc.MessageWrapper{
-		SessionID: s.sessionID,
-		Resp:      s.docUpdates,
-		Data:      v,
+		Resp: s.docUpdates,
+		Data: v,
 	})
 }
 
 func (s sessionState) close() {
-	s.done <- s.sessionID
+	s.done(s.sessionID)
 	s.conn.Close()
 	s.sendDoc(doc.LeaveDocument{})
 	close(s.docUpdates)
@@ -56,33 +60,66 @@ func (s sessionState) close() {
 func (s sessionState) networkListener() {
 	defer s.close()
 
+	userID := ""
+
 	// This can be synchronous because it is per-client
 	for msg := range s.conn.Recv() {
-		// NOTE: This is a pass-through for now because the client/server protocol
-		//			is the same as the session/document protocol.  This may change.
-		// Access check would be done here
-		s.sendDoc(msg)
+		switch msg := msg.(type) {
+		case conn.ProposeEntry:
+			// User cannot propose until they have joined
+			if len(userID) == 0 {
+				break
+			}
+			// TODO: Access check will be done here
+			s.sendDoc(doc.ProposeEntry{
+				Action:        msg.Action,
+				ProposedClock: msg.ProposedClock,
+				SchemaVersion: msg.SchemaVersion,
+				UserID:        userID,
+				SessionID:     s.sessionID,
+			})
+		case conn.JoinDocument:
+			// User must create a new session to re-join
+			if len(userID) != 0 {
+				break
+			}
+			// TODO: Authentication check will be done here
+			userID = msg.AuthID
+			s.sendDoc(doc.JoinDocument{
+				LogClock: msg.LogClock,
+			})
+		default:
+			log.Println("Session received unexpected message type from client")
+		}
 	}
 }
 
 // networkSender guarantees messages are sent to the client in the correct
 //	order by sending from a single thread.
 func (s sessionState) networkSender() {
+Loop:
 	for u := range s.docUpdates {
-		// TODO: Send one-at-a-time until the session takes rapid accepted entries
-		//	and bundle them into a single message
-		if a, ok := u.(doc.AcceptedEntry); ok {
-			u = conn.NewEntries{
-				Entries: []doc.AcceptedEntry{a},
-			}
-		}
-
-		s.conn.Send(u)
-
-		// Sometimes a close message will be spawned by the document
-		if _, ok := u.(doc.CloseMessage); ok {
-			s.close()
-			break
+		switch u := u.(type) {
+		case doc.NewEntry:
+			// TODO: Send one-at-a-time until the session takes rapid accepted entries
+			//	and bundle them into a single message
+			s.conn.Send(conn.NewEntries{
+				Entries: []doc.AcceptedEntry{u},
+			})
+		case doc.WelcomeMessage:
+			s.conn.Send(conn.WelcomeMessage{
+				SessionID:     s.sessionID,
+				MissedEntries: u.MissedEntries,
+			})
+		case doc.ProposeAck:
+			s.conn.Send(u)
+		case doc.CloseMessage:
+			// Sometimes a close message will be spawned by the document
+			s.conn.Send(u)
+			s.conn.Close()
+			break Loop
+		default:
+			log.Println("Session received unexpected message type from doc")
 		}
 	}
 }
