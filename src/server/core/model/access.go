@@ -15,13 +15,17 @@ const (
 	AccessCreater = 40
 )
 
-// Permission data for a single circuit / user
-type UserPermission struct {
-	CircuitId   CircuitId   `json:"circuit_id" binding:"required"`
-	UserId      UserId      `json:"user_id" binding:"required"`
+type BasePermission struct {
 	AccessLevel AccessLevel `json:"access_level" binding:"required"`
 	// TODO: Make required
 	Expiration time.Time `json:"expiration"`
+}
+
+// Permission data for a single circuit / user
+type UserPermission struct {
+	CircuitId CircuitId `json:"circuit_id" binding:"required"`
+	UserId    UserId    `json:"user_id" binding:"required"`
+	BasePermission
 }
 
 // Permissions for all users of a circuit
@@ -34,10 +38,9 @@ type LinkId = CircuitId
 
 // Permission data for link-based sharing
 type LinkPermission struct {
-	CircuitId   CircuitId   `json:"circuit_id" binding:"required"`
-	LinkId      LinkId      `json:"link_id"`
-	AccessLevel AccessLevel `json:"access_level" binding:"required"`
-	Expiration  time.Time   `json:"expiration" binding:"required"`
+	CircuitId CircuitId `json:"circuit_id" binding:"required"`
+	LinkId    LinkId    `json:"link_id"`
+	BasePermission
 }
 type LinkPermissions = map[LinkId]LinkPermission
 
@@ -72,7 +75,7 @@ func MaxLinkPerm() AccessLevel {
 	return AccessEdit
 }
 
-func (user UserPermission) CanExtendLink(target LinkPermission) bool {
+func (user BasePermission) CanExtendLink(target LinkPermission) bool {
 	if target.AccessLevel > MaxLinkPerm() {
 		return false
 	}
@@ -84,12 +87,12 @@ func (user UserPermission) CanCreate() bool {
 	return !user.IsAnonymous() && user.UserId != ""
 }
 
-func (user UserPermission) CanView() bool {
+func (user BasePermission) CanView() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessView
 }
 
-func (user UserPermission) CanEdit() bool {
+func (user BasePermission) CanEdit() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessEdit
 }
