@@ -7,6 +7,8 @@ import (
 
 func TestManagerGetDocument(t *testing.T) {
 	dm, st := newDocumentManager()
+	go st.manage()
+
 	doc, err := dm.Get("AAAA")
 	if err != nil {
 		t.Error("unexpected error getting document by ID")
