@@ -9,7 +9,7 @@ import (
 // MessageWrapper is used to send messages to the Document thread.
 //	Resp should be buffered to avoid blocking the Document thread
 type MessageWrapper struct {
-	Resp chan<- interface{}
+	Resp MessageChan
 	Data interface{}
 }
 
@@ -70,26 +70,34 @@ type SessionLeft = LeaveDocument
 //	the channel that aren't expected
 //
 
-func SafeSendAck(ch chan<- interface{}, m ProposeAck) {
-	ch <- m
+func NewMsgChan(ch chan<- interface{}) MessageChan {
+	return MessageChan{ch}
 }
 
-func SafeSendWelcome(ch chan<- interface{}, m WelcomeMessage) {
-	ch <- m
+type MessageChan struct {
+	ch chan<- interface{}
 }
 
-func SafeSendNewEntry(ch chan<- interface{}, m NewEntry) {
-	ch <- m
+func (ch MessageChan) Ack(m ProposeAck) {
+	ch.ch <- m
 }
 
-func SafeSendJoined(ch chan<- interface{}, m SessionJoined) {
-	ch <- m
+func (ch MessageChan) Welcome(m WelcomeMessage) {
+	ch.ch <- m
 }
 
-func SafeSendLeft(ch chan<- interface{}, m SessionLeft) {
-	ch <- m
+func (ch MessageChan) Entry(m NewEntry) {
+	ch.ch <- m
 }
 
-func SafeSendClose(ch chan<- interface{}, m CloseMessage) {
-	ch <- m
+func (ch MessageChan) Joined(m SessionJoined) {
+	ch.ch <- m
+}
+
+func (ch MessageChan) Left(m SessionLeft) {
+	ch.ch <- m
+}
+
+func (ch MessageChan) Close(m CloseMessage) {
+	ch.ch <- m
 }

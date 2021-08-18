@@ -16,7 +16,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	// Send join message
 	respCh := make(chan interface{})
 	d.Send(MessageWrapper{
-		Resp: respCh,
+		Resp: MessageChan{respCh},
 		Data: JoinDocument{
 			LogClock: 0,
 		},
@@ -38,7 +38,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 
 	// Send leave message
 	d.Send(MessageWrapper{
-		Resp: respCh,
+		Resp: MessageChan{respCh},
 		Data: LeaveDocument{},
 	})
 
@@ -66,7 +66,7 @@ func TestDocumentLifecycleFailure(t *testing.T) {
 
 	// Send propose message without a join message
 	d.Send(MessageWrapper{
-		Resp: respCh,
+		Resp: MessageChan{respCh},
 		Data: ProposeEntry{
 			ProposedClock: 1,
 		},
@@ -96,7 +96,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 1,
-	}, ch)
+	}, MessageChan{ch})
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -116,7 +116,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 10,
-	}, ch)
+	}, MessageChan{ch})
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -134,13 +134,13 @@ func TestDocumentProposePropagate(t *testing.T) {
 	for _, x := range []string{"A", "B", "C", "D"} {
 		ch := make(chan interface{}, 1)
 		chans[x] = ch
-		ds.sessions[ch] = SessionJoined{}
+		ds.sessions[MessageChan{ch}] = SessionJoined{}
 	}
 
 	ch := chans["B"]
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 2,
-	}, ch)
+	}, MessageChan{ch})
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {

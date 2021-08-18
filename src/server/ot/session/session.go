@@ -45,7 +45,7 @@ func NewSession(doc doc.Document, conn conn.Connection, done SessionDone) Sessio
 
 func (s sessionState) sendDoc(v interface{}) {
 	s.doc.Send(doc.MessageWrapper{
-		Resp: s.docUpdates,
+		Resp: doc.NewMsgChan(s.docUpdates),
 		Data: v,
 	})
 }
