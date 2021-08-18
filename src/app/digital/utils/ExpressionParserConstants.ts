@@ -1,6 +1,6 @@
-export type FormatProps = "label" | "|" | "^" | "&" | "!" | "(" | ")" | "separator";
+export type TokenType = "label" | "|" | "^" | "&" | "!" | "(" | ")" | "separator";
 
-const programming1 = new Map<FormatProps, string>([
+const programming1 = new Map<TokenType, string>([
     ["label", "Programming 1 (&, |, ^, !)"],
     ["|", "|"],
     ["^", "^"],
@@ -10,7 +10,7 @@ const programming1 = new Map<FormatProps, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const programming2 = new Map<FormatProps, string>([
+const programming2 = new Map<TokenType, string>([
     ["label", "Programming 2 (&&, ||, ^, !)"],
     ["|", "||"],
     ["^", "^"],
@@ -20,7 +20,7 @@ const programming2 = new Map<FormatProps, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const algebraic1 = new Map<FormatProps, string>([
+const algebraic1 = new Map<TokenType, string>([
     ["label", "Algebraic 1 (*, +, ^, !)"],
     ["|", "+"],
     ["^", "^"],
@@ -30,7 +30,7 @@ const algebraic1 = new Map<FormatProps, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const algebraic2 = new Map<FormatProps, string>([
+const algebraic2 = new Map<TokenType, string>([
     ["label", "Algebraic 2 (*, +, ^, _)"],
     ["|", "+"],
     ["^", "^"],
@@ -40,7 +40,7 @@ const algebraic2 = new Map<FormatProps, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const literal1 = new Map<FormatProps, string>([
+const literal1 = new Map<TokenType, string>([
     ["label", "Literal 1 (AND, OR, XOR, NOT)"],
     ["|", "OR"],
     ["^", "XOR"],
@@ -50,7 +50,7 @@ const literal1 = new Map<FormatProps, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const literal2 = new Map<FormatProps, string>([
+const literal2 = new Map<TokenType, string>([
     ["label", "Literal 2 (and, or, xor, not)"],
     ["|", "or"],
     ["^", "xor"],
@@ -61,7 +61,7 @@ const literal2 = new Map<FormatProps, string>([
     ["separator", " "]
 ]);
 
-export const FormatMap = new Map<string, Map<FormatProps, string>>([
+export const FormatMap = new Map<string, Map<TokenType, string>>([
     ["|", programming1],
     ["||", programming2],
     ["+", algebraic1],

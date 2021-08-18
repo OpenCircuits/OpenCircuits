@@ -15,7 +15,7 @@ import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
-import {FormatMap, FormatProps}    from "digital/utils/ExpressionParserConstants";
+import {FormatMap, TokenType}    from "digital/utils/ExpressionParserConstants";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();
@@ -219,7 +219,7 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"a|b",o);
-            }).toThrow("Input Not Found: b");
+            }).toThrow("Input Not Found: \"b\"");
         });
 
         test("Unmatched '(' and ')'", () => {

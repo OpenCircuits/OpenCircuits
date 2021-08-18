@@ -8,9 +8,10 @@ import {ORGate, NORGate} from "digital/models/ioobjects/gates/ORGate";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
-import {FormatMap, FormatProps} from "./ExpressionParserConstants";
+import {FormatMap, TokenType} from "./ExpressionParserConstants";
 import { Console } from "console";
 import { Graph } from "math/Graph";
+import { Input } from "core/utils/Input";
 
 
 /* Notes for connecting components
@@ -45,7 +46,9 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
-type TokenType = "|" | "&" | "^" | "nor" | "nand" | "xnor" | "!" | "(" | ")" | "Input";
+// type TokenType = "|" | "&" | "^" | "!" | "(" | ")" | "Input";
+
+const opsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
 interface Token {
     type: TokenType;
@@ -60,103 +63,57 @@ interface NewRetValue {
     index: number;
 }
 
-function getOp(input: string, index: number, ops: Map<FormatProps, string>): TokenType | null {
-    if(subEquals(input, index, ops.get("separator"))) {
-        return null;
+function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
+    for(const i in opsArray) {
+        if(subEquals(input, index, ops.get(opsArray[i])))
+            return {type: opsArray[i]};
     }
-    else if(subEquals(input, index, ops.get("("))) {
-        return "(";
+    let endIndex = index + 1;
+    while(endIndex < input.length) {
+        for(const i in opsArray) {
+            if(subEquals(input, endIndex, ops.get(opsArray[i])))
+                return {type: "label", name: input.substring(index, endIndex)};
+        }
+        endIndex++;
     }
-    else if(subEquals(input, index, ops.get(")"))) {
-        return ")";
-    }
-    else if(subEquals(input, index, ops.get("&"))) {
-        return "&";
-    }
-    else if(subEquals(input, index, ops.get("^"))) {
-        return "^";
-    }
-    else if(subEquals(input, index, ops.get("|"))) {
-        return "|";
-    }
-    else if(subEquals(input, index, ops.get("!"))) {
-        return "!";
-    }
-    return "Input";
+    return {type: "label", name: input.substring(index, endIndex)};
 }
 
-export function GenerateTokens(input: string, ops: Map<FormatProps, string>): Array<string> | null {
+export function GenerateTokens(input: string, ops: Map<TokenType, string>): Array<string> | null {
     const tokenList = new Array<string>();
     let buffer = "";
     let addToBuffer = false;
     let extraSkip = 0;
     let operandToAdd = "";
+    let token: Token;
 
     let index = 0;
 
-    for(let i = 0; i < input.length; i++) {
+    while(index < input.length) {
         addToBuffer = false;
         extraSkip = 0;
         operandToAdd = "";
 
-        if(subEquals(input, i, ops.get("separator"))) {
-            addToBuffer = true;
-            extraSkip = ops.get("separator").length - 1;
+        token = getToken(input, index, ops);
+        if(token.type === "label") {
+            tokenList.push(((token as InputToken).name));
+            extraSkip = (token as InputToken).name.length;
         }
-        else if(subEquals(input, i, ops.get("("))) {
-            addToBuffer = true;
-            extraSkip = ops.get("(").length - 1;
-            operandToAdd = ops.get("(");
-        }
-        else if(subEquals(input, i, ops.get(")"))) {
-            addToBuffer = true;
-            extraSkip = ops.get(")").length - 1;
-            operandToAdd = ops.get(")");
-        }
-        else if(subEquals(input, i, ops.get("&"))) {
-            addToBuffer = true;
-            extraSkip = ops.get("&").length - 1;
-            operandToAdd = ops.get("&");
-        }
-        else if(subEquals(input, i, ops.get("^"))) {
-            addToBuffer = true;
-            extraSkip = ops.get("^").length - 1;
-            operandToAdd = ops.get("^");
-        }
-        else if(subEquals(input, i, ops.get("|"))) {
-            addToBuffer = true;
-            extraSkip = ops.get("|").length - 1;
-            operandToAdd = ops.get("|");
-        }
-        else if(subEquals(input, i, ops.get("!"))) {
-            addToBuffer = true;
-            extraSkip = ops.get("!").length - 1;
-            operandToAdd = ops.get("!");
-        }
-
-        if (addToBuffer) {
-            if(buffer.length > 0) {
-                tokenList.push(buffer);
-                buffer = "";
-            }
-            if(operandToAdd != "") {
-                tokenList.push(operandToAdd);
-            }
-            i += extraSkip;
+        else if(token.type === "separator") {
+            extraSkip = ops.get(token.type).length;
         }
         else {
-            buffer += input[i];
+            tokenList.push(ops.get(token.type));
+            extraSkip = ops.get(token.type).length;
         }
-    }
 
-    if(buffer.length > 0) {
-        tokenList.push(buffer);
+        index += extraSkip;
     }
 
     return tokenList;
 }
 
-const precedences = new Map<FormatProps, FormatProps>([
+const precedences = new Map<TokenType, TokenType>([
     ["|", "^"],
     ["^", "&"],
     ["&", "!"],
@@ -202,7 +159,7 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     return {circuit: circuit, retIndex: -1, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseOp(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, currentOp: FormatProps, ops: Map<FormatProps, string>, precedence: Map<FormatProps, FormatProps>): ReturnValue {
+function parseOp(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, currentOp: TokenType, ops: Map<TokenType, string>, precedence: Map<TokenType, TokenType>): ReturnValue {
     const nextOp = precedence.get(currentOp);
 
     if(nextOp === "(" && tokens[index] !== ops.get(currentOp)) {
@@ -270,7 +227,7 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
     return {circuit: newComponents, retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: Map<FormatProps, string>): ReturnValue {
+function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: Map<TokenType, string>): ReturnValue {
     const inputName = tokens[index];
     if(!inputs.has(inputName)) {
         switch (inputName) {
@@ -281,7 +238,7 @@ function parseOther(tokens: Array<string>, index: number, inputs: Map<string, Di
         case ops.get(")"):
             throw new Error("Encountered Unmatched " + ops.get(")"));
         default:
-            throw new Error("Input Not Found: " + inputName);
+            throw new Error("Input Not Found: \"" + inputName + "\"");
         }
     }
     index += 1;
@@ -301,7 +258,7 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
-function isInput(token: string, ops: Map<FormatProps, string>) {
+function isInput(token: string, ops: Map<TokenType, string>) {
     switch(token) {
     case ops.get("("):
     case ops.get(")"):
@@ -314,7 +271,7 @@ function isInput(token: string, ops: Map<FormatProps, string>) {
     return true;
 }
 
-function isOperator(token: string, ops: Map<FormatProps, string>) {
+function isOperator(token: string, ops: Map<TokenType, string>) {
     switch(token) {
     case ops.get("&"):
     case ops.get("^"):
@@ -324,13 +281,13 @@ function isOperator(token: string, ops: Map<FormatProps, string>) {
     return false;
 }
 
-function validateToken(inputs: Map<string, DigitalComponent>, token: string, ops: Map<FormatProps, string>) {
+function validateToken(inputs: Map<string, DigitalComponent>, token: string, ops: Map<TokenType, string>) {
     if (isInput(token, ops) && !inputs.has(token))
-        throw new Error("Input Not Found: " + token);
+        throw new Error("Input Not Found: \"" + token + "\"");
 }
 
 function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
-                       output: DigitalComponent, ops: Map<FormatProps, string>): string[] {
+                       output: DigitalComponent, ops: Map<TokenType, string>): string[] {
     if(output.getInputPortCount().getValue() == 0
       || output.getOutputPortCount().getValue() != 0) {
         throw new Error("Supplied Output Is Not An Output");
@@ -377,7 +334,7 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: Map<FormatProps, string> = null): DigitalObjectSet | null {
+                                    ops: Map<TokenType, string> = null): DigitalObjectSet | null {
     if(inputs == null)  throw new Error("Null Parameter: inputs");
     if(expression == null) throw new Error("Null Parameter: expression");
     if(output == null) throw new Error("Null Parameter: output");
