@@ -8,9 +8,9 @@ import (
 	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"

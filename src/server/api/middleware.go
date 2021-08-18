@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
 )
 

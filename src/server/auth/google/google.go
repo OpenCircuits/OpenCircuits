@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"google.golang.org/api/oauth2/v2"
 )
 
