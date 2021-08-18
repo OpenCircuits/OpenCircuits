@@ -12,6 +12,7 @@ import {FormatMap, TokenType} from "./ExpressionParserConstants";
 import { Console } from "console";
 import { Graph } from "math/Graph";
 import { Input } from "core/utils/Input";
+import { InputType } from "zlib";
 
 
 /* Notes for connecting components
@@ -79,32 +80,27 @@ function getToken(input: string, index: number, ops: Map<TokenType, string>): To
     return {type: "label", name: input.substring(index, endIndex)};
 }
 
-export function GenerateTokens(input: string, ops: Map<TokenType, string>): Array<string> | null {
-    const tokenList = new Array<string>();
-    let buffer = "";
-    let addToBuffer = false;
+export function GenerateTokens(input: string, ops: Map<TokenType, string>): Token[] {
+    const tokenList = new Array<Token>();
     let extraSkip = 0;
-    let operandToAdd = "";
     let token: Token;
 
     let index = 0;
 
     while(index < input.length) {
-        addToBuffer = false;
         extraSkip = 0;
-        operandToAdd = "";
 
         token = getToken(input, index, ops);
         if(token.type === "label") {
-            tokenList.push(((token as InputToken).name));
-            extraSkip = (token as InputToken).name.length;
+            tokenList.push(token as InputToken);
+            index += (token as InputToken).name.length;
         }
         else if(token.type === "separator") {
-            extraSkip = ops.get(token.type).length;
+            index += ops.get(token.type).length;
         }
         else {
-            tokenList.push(ops.get(token.type));
-            extraSkip = ops.get(token.type).length;
+            tokenList.push(token);
+            index += ops.get(token.type).length;
         }
 
         index += extraSkip;
@@ -159,42 +155,42 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     return {circuit: circuit, retIndex: -1, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseOp(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, currentOp: TokenType, ops: Map<TokenType, string>, precedence: Map<TokenType, TokenType>): ReturnValue {
+function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, DigitalComponent>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): ReturnValue {
     const nextOp = precedence.get(currentOp);
 
-    if(nextOp === "(" && tokens[index] !== ops.get(currentOp)) {
-        if(tokens[index] == ops.get("("))
-            return parseOp(tokens, index, inputs, nextOp, ops, precedence);
+    if(nextOp === "(" && tokens[index].type !== currentOp) {
+        if(tokens[index].type == "(")
+            return parseOp(tokens, index, inputs, nextOp, precedence);
         else
-            return parseOther(tokens, index, inputs, ops);
+            return parseOther(tokens, index, inputs);
     }
 
     let leftRet: ReturnValue = null;
     if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        leftRet = parseOp(tokens, index, inputs, nextOp, precedence);
         index = leftRet.retIndex;
-        if(index >= tokens.length || tokens[index] !== ops.get(currentOp))
+        if(index >= tokens.length || tokens[index].type !== currentOp)
             return leftRet;
     }
     index += 1;
     if(index >= tokens.length) {
         if(currentOp === "(")
-            throw new Error("Encountered Unmatched " + ops.get("("));
-        throw new Error("Missing Right Operand: " + ops.get(currentOp));
+            throw new Error("Encountered Unmatched " + "(");
+        throw new Error("Missing Right Operand: " + currentOp);
     }
     let rightRet: ReturnValue = null;
-    if(currentOp === "!" && tokens[index] === ops.get("!"))
-        rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
-    else if(nextOp === "(" && tokens[index] !== ops.get("("))
-        rightRet = parseOther(tokens, index, inputs, ops);
+    if(currentOp === "!" && tokens[index].type === "!")
+        rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
+    else if(nextOp === "(" && tokens[index].type !== "(")
+        rightRet = parseOther(tokens, index, inputs);
     else if(currentOp === "!" || currentOp === "(")
-        rightRet = parseOp(tokens, index, inputs, nextOp, ops, precedence);
+        rightRet = parseOp(tokens, index, inputs, nextOp, precedence);
     else
-        rightRet = parseOp(tokens, index, inputs, currentOp, ops, precedence);
+        rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
     index = rightRet.retIndex;
     if(currentOp === "(") {
         if(rightRet.retIndex >= tokens.length)
-            throw new Error("Encountered Unmatched " + ops.get("("));
+            throw new Error("Encountered Unmatched " + "(");
         rightRet.retIndex += 1;
         return rightRet;
     }
@@ -227,16 +223,20 @@ function parseOp(tokens: Array<string>, index: number, inputs: Map<string, Digit
     return {circuit: newComponents, retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseOther(tokens: Array<string>, index: number, inputs: Map<string, DigitalComponent>, ops: Map<TokenType, string>): ReturnValue {
-    const inputName = tokens[index];
+function parseOther(tokens: Array<Token>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
+    let inputName: string;
+    if(tokens[index].type === "label")
+        inputName = (tokens[index] as InputToken).name;
+    else
+        inputName = tokens[index].type;
     if(!inputs.has(inputName)) {
         switch (inputName) {
-        case ops.get("&"):
-        case ops.get("|"):
-        case ops.get("^"):
+        case "&":
+        case "|":
+        case "^":
             throw new Error("Missing Left Operand: " + inputName);
-        case ops.get(")"):
-            throw new Error("Encountered Unmatched " + ops.get(")"));
+        case ")":
+            throw new Error("Encountered Unmatched " + ")");
         default:
             throw new Error("Input Not Found: \"" + inputName + "\"");
         }
@@ -258,55 +258,41 @@ function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[
     return components;
 }
 
-function isInput(token: string, ops: Map<TokenType, string>) {
-    switch(token) {
-    case ops.get("("):
-    case ops.get(")"):
-    case ops.get("&"):
-    case ops.get("^"):
-    case ops.get("|"):
-    case ops.get("!"):
-        return false;
-    }
-    return true;
-}
-
-function isOperator(token: string, ops: Map<TokenType, string>) {
-    switch(token) {
-    case ops.get("&"):
-    case ops.get("^"):
-    case ops.get("|"):
+function isOperator(token: Token) {
+    switch(token.type) {
+    case "&":
+    case "^":
+    case "|":
         return true;
     }
     return false;
 }
 
-function validateToken(inputs: Map<string, DigitalComponent>, token: string, ops: Map<TokenType, string>) {
-    if (isInput(token, ops) && !inputs.has(token))
-        throw new Error("Input Not Found: \"" + token + "\"");
+function validateToken(inputs: Map<string, DigitalComponent>, token: Token) {
+    if (token.type === "label" && !inputs.has((token as InputToken).name))
+        throw new Error("Input Not Found: \"" + (token as InputToken).name + "\"");
 }
 
 function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
-                       output: DigitalComponent, ops: Map<TokenType, string>): string[] {
+                       output: DigitalComponent, ops: Map<TokenType, string>): Token[] {
     if(output.getInputPortCount().getValue() == 0
       || output.getOutputPortCount().getValue() != 0) {
         throw new Error("Supplied Output Is Not An Output");
     }
 
     const tokenList = GenerateTokens(expression, ops);
-    let token: string;
     let waitForOperator: boolean = false;
-    let prevToken: string;
+    let prevToken: Token;
     for(let i = 0; i < tokenList.length; i++) {
         const token = tokenList[i];
-        validateToken(inputs, token, ops);
-        if (isInput(token, ops)) {
+        validateToken(inputs, token);
+        if (token.type === "label") {
             if (waitForOperator)
-                throw new Error("No valid operator between " + prevToken + " and " + token);
+                throw new Error("No valid operator between " + (prevToken as InputToken).name + " and " + (token as InputToken).name);
             waitForOperator = true;
             prevToken = token;
         }
-        else if(isOperator(token, ops)) {
+        else if(isOperator(token)) {
             waitForOperator = false;
         }
     }
@@ -344,13 +330,13 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     // console.log(ops);
     
     const components: IOObject[] = getComponentsValidate(inputs);
-    const tokenList = getTokenListValidate(inputs, expression, output, ops);
+    const tokenList: Token[] = getTokenListValidate(inputs, expression, output, ops);
 
     if(inputs.size == 0) return new DigitalObjectSet();
 
-    const parseRet = parseOp(tokenList, 0, inputs, "|", ops, precedences);
+    const parseRet = parseOp(tokenList, 0, inputs, "|", precedences);
     const index = parseRet.retIndex;
-    if(index < tokenList.length && tokenList[index] == ops.get(")"))
+    if(index < tokenList.length && tokenList[index].type === ")")
         throw new Error("Encountered Unmatched " + ops.get(")"));
     const circuit = parseRet.circuit;
     const outPort = parseRet.recentPort;
