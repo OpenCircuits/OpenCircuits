@@ -1,59 +1,72 @@
 package doc
 
 import (
-	"sync"
-
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
 // DocumentManager keeps track of live documents
 type DocumentManager struct {
+	openSender chan<- openRequest
+}
+
+func NewDocumentManager() DocumentManager {
+	dm, st := newDocumentManager()
+	go st.manage()
+	return dm
+}
+
+// Get fetches the document handle for the given CircuitID and opens it if not
+func (dm DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
+	r := make(chan Document)
+	dm.openSender <- openRequest{
+		CircuitID: circuitID,
+		Resp:      r,
+	}
+	return <-r, nil
+}
+
+type openRequest struct {
+	CircuitID model.CircuitId
+	// Resp must be non-null
+	Resp chan<- Document
+}
+
+type dmState struct {
 	liveDocuments map[model.CircuitId]Document
-	documentLock  *sync.RWMutex
 	doneListener  chan model.CircuitId
+	openListener  <-chan openRequest
 }
 
-func newDocumentManager() *DocumentManager {
-	dm := &DocumentManager{
+func newDocumentManager() (DocumentManager, dmState) {
+	done := make(chan model.CircuitId, 10)
+	open := make(chan openRequest, 10)
+
+	dm := DocumentManager{
+		openSender: open,
+	}
+	state := dmState{
 		liveDocuments: make(map[model.CircuitId]Document),
-		documentLock:  &sync.RWMutex{},
-		doneListener:  make(chan model.CircuitId, 10),
+		doneListener:  done,
+		openListener:  open,
 	}
 
-	return dm
+	return dm, state
 }
 
-func NewDocumentManager() *DocumentManager {
-	dm := newDocumentManager()
-	go dm.closer()
-	return dm
-}
-
-func (dm *DocumentManager) closer() {
-	for cid := range dm.doneListener {
-		dm.documentLock.Lock()
-		delete(dm.liveDocuments, cid)
-		dm.documentLock.Unlock()
+func (st dmState) manage() {
+	// If single-threaded is too slow, the CircuitID-space could be partitioned
+	//	into multiple sub-spaces and identical logic run on each
+	for {
+		select {
+		case req := <-st.openListener:
+			d, ok := st.liveDocuments[req.CircuitID]
+			if !ok {
+				d = NewDocument(req.CircuitID, st.doneListener)
+				st.liveDocuments[req.CircuitID] = d
+			}
+			req.Resp <- d
+		case cid := <-st.doneListener:
+			delete(st.liveDocuments, cid)
+		}
 	}
-}
-
-// Get gets the channel to send messages to for a particular document
-func (dm *DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
-	dm.documentLock.RLock()
-	d, ok := dm.liveDocuments[circuitID]
-	dm.documentLock.RUnlock()
-	if ok {
-		// document is already live
-		return d, nil
-	}
-
-	// Document is not live, must bootstrap it first
-	d = NewDocument(circuitID, dm.doneListener)
-
-	// Add the new document to the map
-	dm.documentLock.Lock()
-	dm.liveDocuments[circuitID] = d
-	dm.documentLock.Unlock()
-
-	return d, nil
 }
