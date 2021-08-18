@@ -19,17 +19,10 @@ func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 			return
 		}
 
-		am := manager.MatchToken(c.GetHeader("authType"))
-		if am == nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "authenticated route called without valid header",
-			})
-			return
-		}
-		id, err := (*am).ExtractIdentity(c.GetHeader("authId"))
+		id, err := manager.ExtractIdentity(c.GetHeader("authType"), c.GetHeader("authId"))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error": "failed to extract identity",
+				"error": err.Error(),
 			})
 			return
 		}

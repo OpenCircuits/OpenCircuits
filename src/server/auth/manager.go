@@ -1,5 +1,7 @@
 package auth
 
+import "errors"
+
 // AuthenticationMethod An interface for authentication methods to plug into the router and the web page
 type AuthenticationMethod interface {
 	// Takes an authorization token and extracts the user's identity from it (a simple string user id for now)
@@ -26,4 +28,13 @@ func (am *AuthenticationManager) MatchToken(prefix string) *AuthenticationMethod
 		}
 	}
 	return nil
+}
+
+// ExtractIdentity checks if the user is who they say they are and returns their identity
+func (am *AuthenticationManager) ExtractIdentity(prefix, id string) (string, error) {
+	method := am.MatchToken(prefix)
+	if method == nil {
+		return "", errors.New("unsupported or invalid authentication type")
+	}
+	return (*method).ExtractIdentity(id)
 }
