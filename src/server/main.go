@@ -84,8 +84,13 @@ func main() {
 
 	// TODO:
 	docManager := doc.NewDocumentManager()
-	sessManager := session.NewSessionManager(docManager)
 	accessManager := access.NewMem()
+
+	launcher := session.Launcher{
+		DocumentManager: docManager,
+		AccessDriver:    accessManager,
+		AuthManager:     authManager,
+	}
 
 	// Route through Gin
 	router := gin.Default()
@@ -105,7 +110,7 @@ func main() {
 	// Register routes
 	web.RegisterPages(router)
 	routes.RegisterRoutes(router, userCsif, accessManager)
-	ot.RegisterRoutes(router, accessManager, sessManager)
+	ot.RegisterRoutes(router, launcher)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {
