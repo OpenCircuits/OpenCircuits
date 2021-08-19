@@ -122,7 +122,7 @@ const GateConstructors = new Map<string, () => DigitalComponent>([
     ["!", () => new NOTGate()],
 ]);
 
-function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
+function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
     let newGate: Gate;
     if(oldGate instanceof ANDGate)
         newGate = new NANDGate();
@@ -139,6 +139,11 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     const wire2 = oldGate.getInputPort(1).getInput();
     const parent2 = wire2.getInput();
     parent2.disconnect(wire2);
+    const outWire = oldGate.getOutputPort(0).getConnections()[0];
+    const oldNotGate = outWire.getOutputComponent();
+    const outWires = oldNotGate.getOutputPort(0).getConnections();
+    const children = outWires.map(wire => wire.getOutput());
+    children.forEach(child => child.disconnect());
 
     const newWire1 = new DigitalWire(parent1, newGate.getInputPort(0));
     newGate.getInputPort(0).connect(newWire1);
@@ -148,9 +153,24 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): ReturnValue {
     newGate.getInputPort(1).connect(newWire2);
     parent2.connect(newWire2);
 
-    circuit.splice(circuit.indexOf(oldGate), 3, newGate, newWire1, newWire2);
+    const newWires: DigitalWire[] = [];
+    for(const child of children) {
+        const newWireTemp = new DigitalWire(newGate.getOutputPort(0), child);
+        newWires.push(newWireTemp);
+        newGate.getOutputPort(0).connect(newWireTemp);
+        child.connect(newWireTemp);
+    }
 
-    return {circuit: circuit, retIndex: -1, recentPort: newGate.getOutputPort(0)};
+    // Using separate splices because I don't want to rely on everything being ordered in a certain way
+    for(const i in outWires)
+        circuit.splice(circuit.indexOf(outWires[i]), 1, newWires[i]);
+    circuit.splice(circuit.indexOf(wire1), 1, newWire1);
+    circuit.splice(circuit.indexOf(wire2), 1, newWire2);
+    circuit.splice(circuit.indexOf(oldGate), 1, newGate);
+    circuit.splice(circuit.indexOf(outWire), 1);
+    circuit.splice(circuit.indexOf(oldNotGate), 1);
+
+    return circuit;
 }
 
 function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, DigitalComponent>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): ReturnValue {
@@ -190,15 +210,7 @@ function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, Digita
 
     const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
     let newComponents: IOObject[] = rightCircuit.concat([newGate]);
-    if(currentOp === "!") {
-        const parent = rightPort.getParent();
-        if(parent instanceof Gate && !(parent as Gate).isNot()) {
-            const retInner = replaceGate(parent as Gate, rightCircuit);
-            if(retInner !== null)
-                return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
-        }
-    }
-    else {
+    if(currentOp !== "!") {
         newComponents = newComponents.concat(leftRet.circuit);
         const leftPort = leftRet.recentPort;
         const w1 = new DigitalWire(leftPort, newGate.getInputPort(1));
@@ -299,6 +311,25 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
         throw new Error("Supplied Output Is Not An Output");
 }
 
+
+// const parent = rightPort.getParent();
+// if(parent instanceof Gate && !(parent as Gate).isNot()) {
+//     const retInner = replaceGate(parent as Gate, rightCircuit);
+//     if(retInner !== null)
+//         return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
+// }
+
+function createNegationGates(circuit: IOObject[]): IOObject[] {
+    let newCircuit = [...circuit]
+    for(const object of circuit) {
+        if(!(object instanceof Gate))
+            continue;
+        if(!object.isNot() && object.getOutputPort(0).getWires()[0].getOutputComponent() instanceof NOTGate)
+            newCircuit = replaceGate(object, newCircuit);
+    }
+    return newCircuit;
+}
+
 /**
  * Main driver function for parsing an expression into a circuit
  *
@@ -320,10 +351,10 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
                                     ops: Map<TokenType, string> = null): DigitalObjectSet | null {
-    if(inputs == null)  throw new Error("Null Parameter: inputs");
-    if(expression == null) throw new Error("Null Parameter: expression");
-    if(output == null) throw new Error("Null Parameter: output");
-    if(ops == null) {
+    if(inputs === null)  throw new Error("Null Parameter: inputs");
+    if(expression === null) throw new Error("Null Parameter: expression");
+    if(output === null) throw new Error("Null Parameter: output");
+    if(ops === null) {
         ops = FormatMap.get("|");
     }
     validateInputOutputTypes(inputs, output);
@@ -343,5 +374,9 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     circuit.push(wire);
     circuit.push(output);
 
-    return new DigitalObjectSet(circuit.concat(Array.from(inputs.values())));
+    const fullCircuit = circuit.concat(Array.from(inputs.values()));
+
+    const condensedCircuit = createNegationGates(fullCircuit);
+
+    return new DigitalObjectSet(condensedCircuit);
 }
