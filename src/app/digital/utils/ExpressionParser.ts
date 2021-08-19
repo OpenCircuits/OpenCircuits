@@ -314,6 +314,39 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
         throw new Error("Supplied Output Is Not An Output");
 }
 
+function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
+    const wire = new DigitalWire(source.getOutputPort(0), destination.getInputPort(0));
+    source.getOutputPort(0).connect(wire);
+    destination.getInputPort(0).connect(wire);
+    return wire;
+}
+
+function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, DigitalComponent>): IOObject[] {
+    const ret: IOObject[] = Array.from(inputs.values());
+    const tokenToReal = new Map<Token, DigitalComponent>();
+
+    // Create Gates
+    for(const token of tree.getNodes()) {
+        if(token.type === "label") {
+            tokenToReal.set(token, inputs.get((token as InputToken).name));
+            continue;
+        }
+        const newGate: DigitalComponent = GateConstructors.get(token.type).call(null);
+        ret.push(newGate);
+        tokenToReal.set(token, newGate);
+    }
+
+    // Connect Gates
+    for(const token of tree.getNodes()) {
+        for(const connection of tree.getConnections(token)) {
+            const wire = connectGate(tokenToReal.get(token), tokenToReal.get(connection.getTarget()));
+            ret.push(wire);
+        }
+    }
+
+    return ret;
+}
+
 function createNegationGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
     for(const object of circuit) {
