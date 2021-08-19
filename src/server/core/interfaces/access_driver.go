@@ -5,12 +5,11 @@ import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 // All errors indicate internal errors
 type AccessDriver interface {
 	// Gets the permissions for the given circuit id
-	GetCircuit(circuitId model.CircuitId) (*model.CircuitPermissions, error)
-	// Gets the permissions for the given circuit id and user id.  Returns nil
-	//	if the circuit Id is not found
-	GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (*model.UserPermission, error)
+	GetCircuit(circuitId model.CircuitId) (model.CircuitPermissions, error)
+	// Gets the permissions for the given circuit id and user id
+	GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (model.UserPermission, error)
 	// Gets the permissions for the link id
-	GetLink(linkId model.LinkId) (*model.LinkPermission, error)
+	GetLink(linkId model.LinkId) (model.LinkPermission, error)
 	GetUser(userId model.UserId) (model.AllUserPermissions, error)
 
 	// Upserts all the circuit permissions

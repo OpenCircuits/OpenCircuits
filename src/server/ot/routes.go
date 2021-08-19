@@ -29,13 +29,13 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		if link == nil {
+		if !link.IsValid() {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}
 
 		cn := wsFactory.Establish(c)
-		launcher.LaunchLinkID(conn.NewDefaultConnection(cn), *link)
+		launcher.LaunchLinkID(conn.NewDefaultConnection(cn), link)
 	}
 
 	// OT

@@ -23,31 +23,31 @@ func NewMem() interfaces.AccessDriver {
 	return &memDriver{circuits: make(cT), links: make(lT), linkIdx: 0}
 }
 
-func (m memDriver) GetCircuit(circuitId model.CircuitId) (*model.CircuitPermissions, error) {
+func (m memDriver) GetCircuit(circuitId model.CircuitId) (model.CircuitPermissions, error) {
 	if c, ok := m.circuits[circuitId]; ok {
-		return &c, nil
+		return c, nil
 	}
-	return nil, nil
+	return model.CircuitPermissions{}, nil
 }
 
-func (m memDriver) GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (*model.UserPermission, error) {
+func (m memDriver) GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (model.UserPermission, error) {
 	if c, ok := m.circuits[circuitId]; ok {
 		if cu, ok := c.UserPerms[userId]; ok {
-			return &cu, nil
+			return cu, nil
 		}
 	}
-	return nil, nil
+	return model.UserPermission{}, nil
 }
 
-func (m memDriver) GetLink(linkId model.LinkId) (*model.LinkPermission, error) {
+func (m memDriver) GetLink(linkId model.LinkId) (model.LinkPermission, error) {
 	if cID, ok := m.links[linkId]; ok {
 		if c, ok := m.circuits[cID]; ok {
 			if cl, ok := c.LinkPerms[linkId]; ok {
-				return &cl, nil
+				return cl, nil
 			}
 		}
 	}
-	return nil, nil
+	return model.LinkPermission{}, nil
 }
 
 func (m memDriver) GetUser(userId model.UserId) (model.AllUserPermissions, error) {

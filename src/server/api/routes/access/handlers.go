@@ -19,10 +19,10 @@ func Wrapper(f AccessHandler) api.HandlerFunc {
 		if err != nil {
 			return http.StatusInternalServerError, nil
 		}
-		if requesterPerms == nil {
+		if !requesterPerms.IsValid() {
 			return http.StatusNotFound, nil
 		}
-		return f(c, *requesterPerms)
+		return f(c, requesterPerms)
 	}
 }
 
@@ -46,7 +46,13 @@ func UpsertCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusBadRequest, err
 	}
 
-	if !requesterPerms.CanExtendUser(proposedPerms) {
+	currentPerms, err := c.Access.GetCircuitUser(requesterPerms.CircuitId, proposedPerms.UserId)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// TODO: Missing check for low priviledge user demoting higher one
+	if !requesterPerms.CanUpdateUser(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}
 
@@ -66,7 +72,12 @@ func UpsertCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusBadRequest, err
 	}
 
-	if !requesterPerms.CanExtendLink(proposedPerms) {
+	currentPerms, err := c.Access.GetLink(proposedPerms.LinkId)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	if !requesterPerms.CanUpdateLink(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}
 
@@ -85,11 +96,11 @@ func DeleteCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-	if revokedPerm == nil {
+	if !revokedPerm.IsValid() {
 		return http.StatusNotFound, nil
 	}
 
-	if !requesterPerms.CanRevokeUser(*revokedPerm) {
+	if !requesterPerms.CanRevokeUser(revokedPerm) {
 		return http.StatusForbidden, nil
 	}
 
@@ -107,11 +118,14 @@ func DeleteCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
+	if !linkPerms.IsValid() {
+		return http.StatusNotFound, nil
+	}
 	if linkPerms.CircuitId != requesterPerms.CircuitId {
 		return http.StatusBadRequest, errors.New("link id does not match circuit id")
 	}
 
-	if !requesterPerms.CanRevokeLink(*linkPerms) {
+	if !requesterPerms.CanRevokeLink(linkPerms) {
 		return http.StatusForbidden, nil
 	}
 

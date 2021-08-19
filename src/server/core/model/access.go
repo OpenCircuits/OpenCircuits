@@ -15,13 +15,14 @@ const (
 	AccessCreater = 40
 )
 
+// BasePermission describes permission level independent of type
 type BasePermission struct {
 	AccessLevel AccessLevel `json:"access_level" binding:"required"`
 	// TODO: Make required
 	Expiration time.Time `json:"expiration"`
 }
 
-// Permission data for a single circuit / user
+// UserPermission describes the permission for a single user / circuit
 type UserPermission struct {
 	CircuitId CircuitId `json:"circuit_id" binding:"required"`
 	UserId    UserId    `json:"user_id" binding:"required"`
@@ -36,7 +37,7 @@ type AllUserPermissions = map[CircuitId]UserPermission
 
 type LinkId = CircuitId
 
-// Permission data for link-based sharing
+// LinkPermission describes the permission level and circuit binding for a share link
 type LinkPermission struct {
 	CircuitId CircuitId `json:"circuit_id" binding:"required"`
 	LinkId    LinkId    `json:"link_id"`
@@ -44,7 +45,7 @@ type LinkPermission struct {
 }
 type LinkPermissions = map[LinkId]LinkPermission
 
-// All permission data for a circuit
+// CircuitPermissions describes all sharing permissions of a circuit
 type CircuitPermissions struct {
 	CircuitId CircuitId       `json:"circuit_id" binding:"required"`
 	UserPerms UserPermissions `json:"user_perms" binding:"required"`
@@ -60,14 +61,24 @@ func NewCircuitPerm(circuitId CircuitId) CircuitPermissions {
 	}
 }
 
+func (link LinkPermission) IsValid() bool {
+	return link.CircuitId != ""
+}
+
+func (user UserPermission) IsValid() bool {
+	return user.CircuitId != ""
+}
+
 func (user UserPermission) IsAnonymous() bool {
 	return user.UserId == AnonUserID
 }
 
-func (user UserPermission) CanExtendUser(target UserPermission) bool {
+func (user UserPermission) CanUpdateUser(oldTarget, newTarget UserPermission) bool {
 	// TODO: Use date
-	return target.AccessLevel <= user.AccessLevel &&
-		target.AccessLevel < AccessCreater
+	canPromote := newTarget.AccessLevel <= user.AccessLevel &&
+		newTarget.AccessLevel < AccessCreater
+	canDemote := oldTarget.AccessLevel < user.AccessLevel
+	return canPromote && canDemote
 }
 
 // The maximum permission level that can be extended via links
@@ -75,8 +86,8 @@ func MaxLinkPerm() AccessLevel {
 	return AccessEdit
 }
 
-func (user BasePermission) CanExtendLink(target LinkPermission) bool {
-	if target.AccessLevel > MaxLinkPerm() {
+func (user BasePermission) CanUpdateLink(oldTarget, newTarget LinkPermission) bool {
+	if newTarget.AccessLevel > MaxLinkPerm() {
 		return false
 	}
 	// TODO: Use date

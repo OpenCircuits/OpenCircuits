@@ -18,7 +18,7 @@ type LinkAccessProvider struct {
 
 func (ap LinkAccessProvider) Permissions() model.BasePermission {
 	perm, err := ap.AccessDriver.GetLink(ap.LinkID)
-	return permHelper(&perm.BasePermission, err)
+	return permHelper(perm.BasePermission, err)
 }
 
 type UserAccessProvider struct {
@@ -29,16 +29,13 @@ type UserAccessProvider struct {
 
 func (ap UserAccessProvider) Permissions() model.BasePermission {
 	perm, err := ap.AccessDriver.GetCircuitUser(ap.CircuitID, ap.UserID)
-	return permHelper(&perm.BasePermission, err)
+	return permHelper(perm.BasePermission, err)
 }
 
-func permHelper(perm *model.BasePermission, err error) model.BasePermission {
+func permHelper(perm model.BasePermission, err error) model.BasePermission {
 	if err != nil {
 		log.Printf("error fetching permissions for session: %v\n", err)
 		return model.BasePermission{}
-	} else if perm == nil {
-		log.Println("link was revoked")
-		return model.BasePermission{}
 	}
-	return *perm
+	return perm
 }
