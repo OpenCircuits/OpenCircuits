@@ -122,16 +122,19 @@ const GateConstructors = new Map<string, () => DigitalComponent>([
     ["!", () => new NOTGate()],
 ]);
 
-function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
-    let newGate: Gate;
+function getNottedGate(oldGate: Gate): Gate | null {
     if(oldGate instanceof ANDGate)
-        newGate = new NANDGate();
+        return new NANDGate();
     else if(oldGate instanceof ORGate)
-        newGate = new NORGate();
+        return new NORGate();
     else if(oldGate instanceof XORGate)
-        newGate = new XNORGate();
+        return new XNORGate();
     else
         return null;
+}
+
+function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
+    const newGate = getNottedGate(oldGate);
 
     const wire1 = oldGate.getInputPort(0).getInput();
     const parent1 = wire1.getInput();
@@ -162,7 +165,7 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
     }
 
     // Using separate splices because I don't want to rely on everything being ordered in a certain way
-    for(const i in outWires)
+    for(let i = 0; i < outWires.length; i++)
         circuit.splice(circuit.indexOf(outWires[i]), 1, newWires[i]);
     circuit.splice(circuit.indexOf(wire1), 1, newWire1);
     circuit.splice(circuit.indexOf(wire2), 1, newWire2);
@@ -320,7 +323,7 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
 // }
 
 function createNegationGates(circuit: IOObject[]): IOObject[] {
-    let newCircuit = [...circuit]
+    let newCircuit = [...circuit];
     for(const object of circuit) {
         if(!(object instanceof Gate))
             continue;
@@ -350,13 +353,8 @@ function createNegationGates(circuit: IOObject[]): IOObject[] {
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: Map<TokenType, string> = null): DigitalObjectSet | null {
-    if(inputs === null)  throw new Error("Null Parameter: inputs");
-    if(expression === null) throw new Error("Null Parameter: expression");
-    if(output === null) throw new Error("Null Parameter: output");
-    if(ops === null) {
-        ops = FormatMap.get("|");
-    }
+                                    ops: Map<TokenType, string> = FormatMap.get("|")): DigitalObjectSet | null {
+
     validateInputOutputTypes(inputs, output);
 
     const tokenList = GenerateTokens(expression, ops);

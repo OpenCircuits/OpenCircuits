@@ -162,20 +162,6 @@ function runTests(numInputs: number, expression: string, expected: boolean[], ig
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
-        test("Null Parameters", () => {
-            const o = new LED();
-            const inputMap = new Map<string, DigitalComponent>();
-
-            expect(() => {
-                ExpressionToCircuit(null,"",o);
-            }).toThrow("Null Parameter: inputs");
-            expect(() => {
-                ExpressionToCircuit(inputMap,null,o);
-            }).toThrow("Null Parameter: expression");
-            expect(() => {
-                ExpressionToCircuit(inputMap,"",null);
-            }).toThrow("Null Parameter: output");
-        });
 
         test("Not An Input", () => {
             const a = new LED(), b = new ORGate(), o1 = new LED(), o2 = new LED();
