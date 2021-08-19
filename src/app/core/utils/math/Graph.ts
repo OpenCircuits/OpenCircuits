@@ -118,16 +118,16 @@ export class Graph<V, E> {
         currentLayer.forEach(node => nodeToNumber.set(node, 0));
 
         while (currentLayer.length != 0) {
-            currentLayer.forEach(node => {
+            for (const node of currentLayer) {
                 const nextDepth = nodeToNumber.get(node) + 1;
-                this.list.get(node).forEach(next => {
+                for (const next of this.list.get(node))  {
                     if (!nodeToNumber.has(next.getTarget()) || max) {
                         deepest = Math.max(deepest, nextDepth);
                         nodeToNumber.set(next.getTarget(), nextDepth);
                         nextLayer.push(next.getTarget());
                     }
-                });
-            });
+                }
+            }
             currentLayer = nextLayer;
             nextLayer = [];
         }

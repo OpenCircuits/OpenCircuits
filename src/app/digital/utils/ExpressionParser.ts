@@ -62,11 +62,7 @@ interface NewRetValue {
     index: number;
 }
 
-function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
-    for(const op of opsArray) {
-        if(subEquals(input, index, ops.get(op)))
-            return {type: op};
-    }
+function getInput(input: string, index: number, ops: Map<TokenType, string>): InputToken {
     let endIndex = index + 1;
     while(endIndex < input.length) {
         for(const op of opsArray) {
@@ -76,6 +72,14 @@ function getToken(input: string, index: number, ops: Map<TokenType, string>): To
         endIndex++;
     }
     return {type: "label", name: input.substring(index, endIndex)};
+}
+
+function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
+    for(const op of opsArray) {
+        if(subEquals(input, index, ops.get(op)))
+            return {type: op};
+    }
+    return getInput(input, index, ops);
 }
 
 export function GenerateTokens(input: string, ops: Map<TokenType, string>): Token[] {
@@ -309,14 +313,6 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
     if(output.getInputPortCount().getValue() == 0 || output.getOutputPortCount().getValue() != 0)
         throw new Error("Supplied Output Is Not An Output");
 }
-
-
-// const parent = rightPort.getParent();
-// if(parent instanceof Gate && !(parent as Gate).isNot()) {
-//     const retInner = replaceGate(parent as Gate, rightCircuit);
-//     if(retInner !== null)
-//         return {circuit: retInner.circuit, retIndex: index, recentPort: retInner.recentPort};
-// }
 
 function createNegationGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
