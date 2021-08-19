@@ -115,29 +115,25 @@ export class Graph<V, E> {
         let nextLayer: V[] = [];
         let deepest = 0;
 
-        for (const node of currentLayer) {
-            nodeToNumber.set(node, 0);
-        }
+        currentLayer.forEach(node => nodeToNumber.set(node, 0));
 
         while (currentLayer.length != 0) {
-            for (const node of currentLayer) {
+            currentLayer.forEach(node => {
                 const nextDepth = nodeToNumber.get(node) + 1;
-                for (const next of this.list.get(node))  {
+                this.list.get(node).forEach(next => {
                     if (!nodeToNumber.has(next.getTarget()) || max) {
                         deepest = Math.max(deepest, nextDepth);
                         nodeToNumber.set(next.getTarget(), nextDepth);
                         nextLayer.push(next.getTarget());
                     }
-                }
-            }
+                });
+            });
             currentLayer = nextLayer;
             nextLayer = [];
         }
 
-        // Convert to an array of arrays where each index indicates the depth of that 
-        let ret: V[][] = [[]];
-        for (var i = 0; i < deepest; i++)
-            ret.push([]);
+        // Convert to an array of arrays where each index indicates the depth of that node
+        let ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
 
         Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
             ret[depth].push(node)
