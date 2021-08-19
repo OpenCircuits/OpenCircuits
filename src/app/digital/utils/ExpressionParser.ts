@@ -47,8 +47,6 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
-// type TokenType = "|" | "&" | "^" | "!" | "(" | ")" | "Input";
-
 const opsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
 interface Token {
@@ -65,14 +63,14 @@ interface NewRetValue {
 }
 
 function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
-    for(const i in opsArray) {
-        if(subEquals(input, index, ops.get(opsArray[i])))
-            return {type: opsArray[i]};
+    for(const op of opsArray) {
+        if(subEquals(input, index, ops.get(op)))
+            return {type: op};
     }
     let endIndex = index + 1;
     while(endIndex < input.length) {
-        for(const i in opsArray) {
-            if(subEquals(input, endIndex, ops.get(opsArray[i])))
+        for(const op of opsArray) {
+            if(subEquals(input, endIndex, ops.get(op)))
                 return {type: "label", name: input.substring(index, endIndex)};
         }
         endIndex++;
@@ -162,7 +160,7 @@ function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, Digita
         if(tokens[index].type == "(")
             return parseOp(tokens, index, inputs, nextOp, precedence);
         else
-            return parseOther(tokens, index, inputs);
+            return {circuit: [], retIndex: index+1, recentPort: inputs.get((tokens[index] as InputToken).name).getOutputPort(0)};
     }
 
     let leftRet: ReturnValue = null;
@@ -173,24 +171,17 @@ function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, Digita
             return leftRet;
     }
     index += 1;
-    if(index >= tokens.length) {
-        if(currentOp === "(")
-            throw new Error("Encountered Unmatched " + "(");
-        throw new Error("Missing Right Operand: " + currentOp);
-    }
     let rightRet: ReturnValue = null;
     if(currentOp === "!" && tokens[index].type === "!")
         rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
     else if(nextOp === "(" && tokens[index].type !== "(")
-        rightRet = parseOther(tokens, index, inputs);
+        rightRet = {circuit: [], retIndex: index+1, recentPort: inputs.get((tokens[index] as InputToken).name).getOutputPort(0)};
     else if(currentOp === "!" || currentOp === "(")
         rightRet = parseOp(tokens, index, inputs, nextOp, precedence);
     else
         rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
     index = rightRet.retIndex;
     if(currentOp === "(") {
-        if(rightRet.retIndex >= tokens.length)
-            throw new Error("Encountered Unmatched " + "(");
         rightRet.retIndex += 1;
         return rightRet;
     }
@@ -223,71 +214,51 @@ function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, Digita
     return {circuit: newComponents, retIndex: index, recentPort: newGate.getOutputPort(0)};
 }
 
-function parseOther(tokens: Array<Token>, index: number, inputs: Map<string, DigitalComponent>): ReturnValue {
-    let inputName: string;
-    if(tokens[index].type === "label")
-        inputName = (tokens[index] as InputToken).name;
-    else
-        inputName = tokens[index].type;
-    if(!inputs.has(inputName)) {
-        switch (inputName) {
-        case "&":
-        case "|":
-        case "^":
-            throw new Error("Missing Left Operand: " + inputName);
-        case ")":
-            throw new Error("Encountered Unmatched " + ")");
-        default:
-            throw new Error("Input Not Found: \"" + inputName + "\"");
-        }
-    }
-    index += 1;
-    return {circuit: [], retIndex: index, recentPort: inputs.get(inputName).getOutputPort(0)};
-}
-
-function getComponentsValidate(inputs: Map<string, DigitalComponent>): IOObject[] {
-    const components: IOObject[] = [];
-    for(const [name, component] of inputs) {
-        if(component.getInputPortCount().getValue() != 0
-          || component.getOutputPortCount().getValue() == 0) {
-            throw new Error("Not An Input: " + name);
-        }
-        components.push(component);
-    }
-
-    return components;
-}
-
-function isOperator(token: Token) {
+function isOperator(token: Token, leftOperator: boolean = false) {
+    if(token === null)
+        return false;
     switch(token.type) {
     case "&":
     case "^":
     case "|":
         return true;
+    case "!":
+        return leftOperator;
     }
     return false;
 }
 
-function validateToken(inputs: Map<string, DigitalComponent>, token: Token) {
-    if (token.type === "label" && !inputs.has((token as InputToken).name))
-        throw new Error("Input Not Found: \"" + (token as InputToken).name + "\"");
+function verifyInputsExist(tokens: Token[], inputs: Map<string, DigitalComponent>) {
+    for(const token of tokens) {
+        if(token.type !== "label")
+            continue;
+        const name = (token as InputToken).name;
+        if(!inputs.has(name))
+            throw new Error("Input Not Found: \"" + name + "\"");
+    }
 }
 
-function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression: string,
-                       output: DigitalComponent, ops: Map<TokenType, string>): Token[] {
-    if(output.getInputPortCount().getValue() == 0
-      || output.getOutputPortCount().getValue() != 0) {
-        throw new Error("Supplied Output Is Not An Output");
+function verifyMatchingParenthesis(tokens: Token[]) {
+    let open = 0;
+    let close = 0;
+    for(const token of tokens) {
+        if(token.type == "(")
+            open++;
+        else if(token.type == ")")
+            close++;
     }
+    if(open > close)
+        throw new Error("Encountered Unmatched (");
+    else if(open < close)
+        throw new Error("Encountered Unmatched )");
+}
 
-    const tokenList = GenerateTokens(expression, ops);
-    let waitForOperator: boolean = false;
+function verifyExistingOperators(tokens: Token[]) {
+    let waitForOperator = false;
     let prevToken: Token;
-    for(let i = 0; i < tokenList.length; i++) {
-        const token = tokenList[i];
-        validateToken(inputs, token);
-        if (token.type === "label") {
-            if (waitForOperator)
+    for(const token of tokens) {
+        if(token.type === "label") {
+            if(waitForOperator)
                 throw new Error("No valid operator between " + (prevToken as InputToken).name + " and " + (token as InputToken).name);
             waitForOperator = true;
             prevToken = token;
@@ -296,8 +267,36 @@ function getTokenListValidate(inputs: Map<string, DigitalComponent>, expression:
             waitForOperator = false;
         }
     }
+}
 
-    return tokenList;
+function verifyExistingOperands(tokens: Token[]) {
+    let prevToken: Token = null;
+    for(const token of tokens) {
+        if((prevToken === null || !(prevToken.type === "label" || prevToken.type === ")")) && isOperator(token))
+            throw new Error("Missing Left Operand: " + token.type);
+        if(isOperator(prevToken, true) && !(token.type === "label" || token.type === "!" || token.type === "("))
+            throw new Error("Missing Right Operand: " + prevToken.type);
+        prevToken = token;
+    }
+    if(isOperator(prevToken, true))
+        throw new Error("Missing Right Operand: " + prevToken.type);
+}
+
+function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) {
+    // Calls separate functions to validate tokens because that is way easier
+    verifyInputsExist(tokens, inputs);
+    verifyMatchingParenthesis(tokens);
+    verifyExistingOperators(tokens);
+    verifyExistingOperands(tokens);
+}
+
+function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
+    for(const [name, component] of inputs) {
+        if(component.getInputPortCount().getValue() != 0 || component.getOutputPortCount().getValue() == 0)
+            throw new Error("Not An Input: " + name);
+    }
+    if(output.getInputPortCount().getValue() == 0 || output.getOutputPortCount().getValue() != 0)
+        throw new Error("Supplied Output Is Not An Output");
 }
 
 /**
@@ -327,25 +326,22 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     if(ops == null) {
         ops = FormatMap.get("|");
     }
-    // console.log(ops);
-    
-    const components: IOObject[] = getComponentsValidate(inputs);
-    const tokenList: Token[] = getTokenListValidate(inputs, expression, output, ops);
+    validateInputOutputTypes(inputs, output);
 
+    const tokenList = GenerateTokens(expression, ops);
+    validateTokens(tokenList, inputs);
+
+    // Put this after validating tokens because an input like "(" should produce an error message
     if(inputs.size == 0) return new DigitalObjectSet();
 
     const parseRet = parseOp(tokenList, 0, inputs, "|", precedences);
-    const index = parseRet.retIndex;
-    if(index < tokenList.length && tokenList[index].type === ")")
-        throw new Error("Encountered Unmatched " + ops.get(")"));
     const circuit = parseRet.circuit;
     const outPort = parseRet.recentPort;
     const wire = new DigitalWire(outPort, output.getInputPort(0));
     outPort.connect(wire);
     output.getInputPort(0).connect(wire);
-    components.push(wire);
-    components.push(output);
-    if(index < tokenList.length)
-        console.log("DONE: " + index + " " + tokenList.length);
-    return new DigitalObjectSet(circuit.concat(components));
+    circuit.push(wire);
+    circuit.push(output);
+
+    return new DigitalObjectSet(circuit.concat(Array.from(inputs.values())));
 }
