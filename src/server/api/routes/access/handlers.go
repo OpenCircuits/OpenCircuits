@@ -19,7 +19,7 @@ func Wrapper(f AccessHandler) api.HandlerFunc {
 		if err != nil {
 			return http.StatusInternalServerError, nil
 		}
-		if !requesterPerms.IsValid() {
+		if requesterPerms.Invalid() {
 			return http.StatusNotFound, nil
 		}
 		return f(c, requesterPerms)
@@ -96,7 +96,7 @@ func DeleteCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-	if !revokedPerm.IsValid() {
+	if revokedPerm.Invalid() {
 		return http.StatusNotFound, nil
 	}
 
@@ -118,7 +118,7 @@ func DeleteCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	if !linkPerms.IsValid() {
+	if linkPerms.Invalid() {
 		return http.StatusNotFound, nil
 	}
 	if linkPerms.CircuitId != requesterPerms.CircuitId {

@@ -29,7 +29,7 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		if !link.IsValid() {
+		if link.Invalid() {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}

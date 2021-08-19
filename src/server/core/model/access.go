@@ -1,9 +1,5 @@
 package model
 
-import (
-	"time"
-)
-
 // Use signed int so negative overflow bugs cant't elevate perms
 type AccessLevel = int32
 
@@ -18,8 +14,8 @@ const (
 // BasePermission describes permission level independent of type
 type BasePermission struct {
 	AccessLevel AccessLevel `json:"access_level" binding:"required"`
-	// TODO: Make required
-	Expiration time.Time `json:"expiration"`
+	// Expiration is the unix time that the permissions should expire
+	Expiration int64 `json:"expiration" binding:"required"`
 }
 
 // UserPermission describes the permission for a single user / circuit
@@ -61,12 +57,8 @@ func NewCircuitPerm(circuitId CircuitId) CircuitPermissions {
 	}
 }
 
-func (link LinkPermission) IsValid() bool {
-	return link.CircuitId != ""
-}
-
-func (user UserPermission) IsValid() bool {
-	return user.CircuitId != ""
+func (b BasePermission) Invalid() bool {
+	return b.Expiration == 0
 }
 
 func (user UserPermission) IsAnonymous() bool {
