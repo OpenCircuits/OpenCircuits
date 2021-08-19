@@ -84,6 +84,12 @@ func (s sessionState) sendConn(v interface{}) {
 //	It can be single-threaded because proposals come one-at-a-time
 func (s sessionState) networkListener() {
 	defer s.close()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered in Session listener loop: ", r)
+			s.Conn.Send(doc.CloseMessage{"internal session error"})
+		}
+	}()
 
 	for msg := range s.Conn.Recv() {
 		switch msg := msg.(type) {
@@ -109,6 +115,14 @@ func (s sessionState) networkListener() {
 // networkSender guarantees messages are sent to the client in the correct
 //	order by sending from a single thread.
 func (s sessionState) networkSender() {
+	defer s.Conn.Close()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered in Session sender loop: ", r)
+			s.Conn.Send(doc.CloseMessage{"internal session error"})
+		}
+	}()
+
 	for u := range s.docUpdates {
 		// TODO: always send ACK messages immediately with currently cached updates,
 		//	otherwise wait until time since last message is high enough
@@ -140,7 +154,6 @@ func (s sessionState) networkSender() {
 			s.sendConn(u)
 		case doc.CloseMessage:
 			s.Conn.Send(u)
-			s.Conn.Close()
 			return
 		default:
 			log.Println(

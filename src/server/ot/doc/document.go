@@ -61,6 +61,14 @@ func (d docState) close() {
 
 func (d docState) messageLoop() {
 	defer d.close()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered in Document message loop: ", r)
+			for ch := range d.sessions {
+				ch.Close(CloseMessage{"internal document error"})
+			}
+		}
+	}()
 
 	// TODO: _may_ want some sort of time-out if sessions can live forever
 	for {
