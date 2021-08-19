@@ -10,7 +10,7 @@ import (
 
 // Document is the interface between sessions and the document state
 type Document struct {
-	CircuitID model.CircuitId
+	CircuitID model.CircuitID
 	send      chan<- MessageWrapper
 }
 
@@ -18,14 +18,14 @@ func (d Document) Send(mw MessageWrapper) {
 	d.send <- mw
 }
 
-func NewDocument(circuitID model.CircuitId, done chan<- model.CircuitId) Document {
+func NewDocument(circuitID model.CircuitID, done chan<- model.CircuitID) Document {
 	d, ds := newDocument(circuitID, done)
 	go ds.messageLoop()
 	return d
 }
 
 // newDocument is used internally and testing to create a document without starting it
-func newDocument(circuitID model.CircuitId, done chan<- model.CircuitId) (Document, docState) {
+func newDocument(circuitID model.CircuitID, done chan<- model.CircuitID) (Document, docState) {
 	ch := make(chan MessageWrapper)
 	d := docState{
 		CircuitID: circuitID,
@@ -45,14 +45,14 @@ func newDocument(circuitID model.CircuitId, done chan<- model.CircuitId) (Docume
 }
 
 type docState struct {
-	CircuitID model.CircuitId
+	CircuitID model.CircuitID
 	liveTime  time.Duration
 
 	log      *Changelog
 	sessions map[MessageChan]SessionJoined
 
 	recv <-chan MessageWrapper
-	done chan<- model.CircuitId
+	done chan<- model.CircuitID
 }
 
 func (d docState) close() {

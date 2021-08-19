@@ -3,6 +3,7 @@ package ot
 import (
 	"net/http"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
 	"github.com/gin-gonic/gin"
@@ -16,12 +17,22 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 		MessageType: websocket.TextMessage,
 	}
 	establishCircuitID := func(c *gin.Context) {
-		circuitID := c.Param("cid")
+		var circuitID model.CircuitID
+		err := circuitID.Base64Decode(c.Param("cid"))
+		if err != nil {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
 		cn := wsFactory.Establish(c)
 		launcher.LaunchCircuitID(conn.NewDefaultConnection(cn), circuitID)
 	}
 	establishLinkID := func(c *gin.Context) {
-		linkID := c.Param("lid")
+		var linkID model.LinkID
+		err := linkID.Base64Decode(c.Param("lid"))
+		if err != nil {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
 
 		// Translate the link ID
 		link, err := launcher.AccessDriver.GetLink(linkID)

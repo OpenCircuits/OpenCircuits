@@ -1,11 +1,15 @@
 package auth
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+)
 
 // AuthenticationMethod An interface for authentication methods to plug into the router and the web page
 type AuthenticationMethod interface {
 	// Takes an authorization token and extracts the user's identity from it (a simple string user id for now)
-	ExtractIdentity(string) (string, error)
+	ExtractIdentity(string) (model.UserID, error)
 	// The prefix used to the actual token in the authorization header
 	AuthHeaderPrefix() string
 }
@@ -31,7 +35,7 @@ func (am *AuthenticationManager) MatchToken(prefix string) *AuthenticationMethod
 }
 
 // ExtractIdentity checks if the user is who they say they are and returns their identity
-func (am *AuthenticationManager) ExtractIdentity(prefix, id string) (string, error) {
+func (am *AuthenticationManager) ExtractIdentity(prefix, id string) (model.UserID, error) {
 	method := am.MatchToken(prefix)
 	if method == nil {
 		return "", errors.New("unsupported or invalid authentication type")

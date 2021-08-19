@@ -21,13 +21,13 @@ type ProposeEntry struct {
 	Action        json.RawMessage
 	ProposedClock uint64
 	SchemaVersion model.SchemaVersion
-	UserID        model.UserId
+	UserID        model.UserID
 	SessionID     model.SessionID
 }
 
 type JoinDocument struct {
 	LogClock  uint64
-	UserID    model.SessionID
+	UserID    model.UserID
 	SessionID model.SessionID
 }
 
@@ -59,7 +59,7 @@ type CloseMessage struct {
 }
 
 type SessionJoined struct {
-	UserID    model.UserId
+	UserID    model.UserID
 	SessionID model.SessionID
 }
 

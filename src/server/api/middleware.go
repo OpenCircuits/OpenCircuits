@@ -27,7 +27,7 @@ func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 			return
 		}
 
-		c.Request.Header.Add(Identity, id)
+		c.Request.Header.Add(Identity, string(id))
 		c.Next()
 	}
 }

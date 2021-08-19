@@ -7,17 +7,17 @@ import (
 
 func userPerm(level int32) UserPermission {
 	return UserPermission{
-		"FakeUser",
-		"FakeCircuit",
-		BasePermission{level, time.Now().Unix() + 100},
+		CircuitID:      NewCircuitID(),
+		UserID:         "FakeUser",
+		BasePermission: BasePermission{level, time.Now().Unix() + 100},
 	}
 }
 
 func linkPerm(level int32) LinkPermission {
 	return LinkPermission{
-		"FakeLink",
-		"FakeCircuit",
-		BasePermission{level, time.Now().Unix() + 100},
+		CircuitID:      NewCircuitID(),
+		LinkID:         NewLinkID(),
+		BasePermission: BasePermission{level, time.Now().Unix() + 100},
 	}
 }
 

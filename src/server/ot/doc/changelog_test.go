@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 )
 
 func prop(clk uint64) ProposeEntry {
-	return ProposeEntry{[]byte{}, clk, "SCHEMA", "USER", "SESSION"}
+	return ProposeEntry{[]byte{}, clk, "SCHEMA", "USER", model.NewSessionID()}
 }
 
 func TestChangelogAddMultiple(t *testing.T) {

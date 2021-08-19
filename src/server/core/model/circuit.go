@@ -2,9 +2,9 @@ package model
 
 // CircuitMetadata contains the non-content parts of the circuit
 type CircuitMetadata struct {
-	ID        CircuitId `json:"id"`
+	ID        CircuitID `json:"id"`
 	Name      string    `json:"name"`
-	Owner     UserId    `json:"owner"`
+	Owner     UserID    `json:"owner"`
 	Desc      string    `json:"desc"`
 	Thumbnail string    `json:"thumbnail"`
 	Version   string    `json:"version"`

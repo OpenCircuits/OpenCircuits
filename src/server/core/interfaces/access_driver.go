@@ -5,12 +5,12 @@ import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 // All errors indicate internal errors
 type AccessDriver interface {
 	// Gets the permissions for the given circuit id
-	GetCircuit(circuitId model.CircuitId) (model.CircuitPermissions, error)
+	GetCircuit(circuitID model.CircuitID) (model.CircuitPermissions, error)
 	// Gets the permissions for the given circuit id and user id
-	GetCircuitUser(circuitId model.CircuitId, userId model.UserId) (model.UserPermission, error)
+	GetCircuitUser(circuitID model.CircuitID, userID model.UserID) (model.UserPermission, error)
 	// Gets the permissions for the link id
-	GetLink(linkId model.LinkId) (model.LinkPermission, error)
-	GetUser(userId model.UserId) (model.AllUserPermissions, error)
+	GetLink(linkID model.LinkID) (model.LinkPermission, error)
+	GetUser(userID model.UserID) (model.AllUserPermissions, error)
 
 	// Upserts all the circuit permissions
 	// UpsertCircuit(perms CircuitPermissions) error
@@ -20,9 +20,9 @@ type AccessDriver interface {
 	UpsertCircuitLink(perm model.LinkPermission) (model.LinkPermission, error)
 
 	// Deletes all permissions for a circuit
-	DeleteCircuit(circuitId model.CircuitId) error
+	DeleteCircuit(circuitID model.CircuitID) error
 	// Deletes permissions for a given user and circuit
-	DeleteCircuitUser(circuitId model.CircuitId, userId model.UserId) error
+	DeleteCircuitUser(circuitID model.CircuitID, userID model.UserID) error
 	// Deletes permissions for a given link
-	DeleteLink(linkId model.LinkId) error
+	DeleteLink(linkID model.LinkID) error
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"google.golang.org/api/oauth2/v2"
 )
 
@@ -49,14 +50,14 @@ func New(configPath string) auth.AuthenticationMethod {
 	}
 }
 
-func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
+func (g authenticationMethod) ExtractIdentity(token string) (model.UserID, error) {
 	// This is poorly documented, so the code for verifying a token is credit to
 	// https://stackoverflow.com/a/36717411/2972004
 	tokenInfo, err := g.service.Tokeninfo().IdToken(token).Do()
 	if err != nil {
 		return "", err
 	}
-	return "google_" + tokenInfo.UserId, nil
+	return model.UserID("google_" + tokenInfo.UserId), nil
 }
 
 func (g authenticationMethod) AuthHeaderPrefix() string {

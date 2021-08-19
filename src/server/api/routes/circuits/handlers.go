@@ -8,7 +8,12 @@ import (
 )
 
 func Store(c *api.Context) (int, interface{}) {
-	circuitId := c.Param("id")
+	var circuitID model.CircuitID
+	err := circuitID.Base64Decode(c.Param("id"))
+	if err != nil {
+		return http.StatusNotFound, nil
+	}
+
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	var newCircuit model.Circuit
@@ -16,7 +21,7 @@ func Store(c *api.Context) (int, interface{}) {
 		return http.StatusBadRequest, err
 	}
 
-	circuit := storageInterface.LoadCircuit(circuitId)
+	circuit := storageInterface.LoadCircuit(circuitID)
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
@@ -51,10 +56,15 @@ func Create(c *api.Context) (int, interface{}) {
 }
 
 func Load(c *api.Context) (int, interface{}) {
-	circuitId := c.Param("id")
+	var circuitID model.CircuitID
+	err := circuitID.Base64Decode(c.Param("id"))
+	if err != nil {
+		return http.StatusNotFound, nil
+	}
+
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	circuit := storageInterface.LoadCircuit(circuitId)
+	circuit := storageInterface.LoadCircuit(circuitID)
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
@@ -73,16 +83,21 @@ func Query(c *api.Context) (int, interface{}) {
 }
 
 func Delete(c *api.Context) (int, interface{}) {
-	circuitId := c.Param("id")
+	var circuitID model.CircuitID
+	err := circuitID.Base64Decode(c.Param("id"))
+	if err != nil {
+		return http.StatusNotFound, nil
+	}
+
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	circuit := storageInterface.LoadCircuit(circuitId)
+	circuit := storageInterface.LoadCircuit(circuitID)
 
 	// TODO: Replace with access check
 	if circuit == nil || circuit.Metadata.Owner != c.Identity() {
 		return http.StatusForbidden, nil
 	}
 
-	storageInterface.DeleteCircuit(circuitId)
+	storageInterface.DeleteCircuit(circuitID)
 	return http.StatusOK, nil
 }

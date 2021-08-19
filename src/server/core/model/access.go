@@ -20,38 +20,36 @@ type BasePermission struct {
 
 // UserPermission describes the permission for a single user / circuit
 type UserPermission struct {
-	CircuitId CircuitId `json:"circuit_id" binding:"required"`
-	UserId    UserId    `json:"user_id" binding:"required"`
+	CircuitID CircuitID `json:"circuit_id" binding:"required"`
+	UserID    UserID    `json:"user_id" binding:"required"`
 	BasePermission
 }
 
 // Permissions for all users of a circuit
-type UserPermissions = map[UserId]UserPermission
+type UserPermissions = map[UserID]UserPermission
 
 // Permissions for all circuits of a user
-type AllUserPermissions = map[CircuitId]UserPermission
-
-type LinkId = CircuitId
+type AllUserPermissions = map[CircuitID]UserPermission
 
 // LinkPermission describes the permission level and circuit binding for a share link
 type LinkPermission struct {
-	CircuitId CircuitId `json:"circuit_id" binding:"required"`
-	LinkId    LinkId    `json:"link_id"`
+	CircuitID CircuitID `json:"circuit_id" binding:"required"`
+	LinkID    LinkID    `json:"link_id"`
 	BasePermission
 }
-type LinkPermissions = map[LinkId]LinkPermission
+type LinkPermissions = map[LinkID]LinkPermission
 
 // CircuitPermissions describes all sharing permissions of a circuit
 type CircuitPermissions struct {
-	CircuitId CircuitId       `json:"circuit_id" binding:"required"`
+	CircuitID CircuitID       `json:"circuit_id" binding:"required"`
 	UserPerms UserPermissions `json:"user_perms" binding:"required"`
 	LinkPerms LinkPermissions `json:"link_perms" binding:"required"`
 	// Public    bool
 }
 
-func NewCircuitPerm(circuitId CircuitId) CircuitPermissions {
+func NewCircuitPerm(circuitID CircuitID) CircuitPermissions {
 	return CircuitPermissions{
-		CircuitId: circuitId,
+		CircuitID: circuitID,
 		UserPerms: make(UserPermissions),
 		LinkPerms: make(LinkPermissions),
 	}
@@ -62,7 +60,7 @@ func (b BasePermission) Invalid() bool {
 }
 
 func (user UserPermission) IsAnonymous() bool {
-	return user.UserId == AnonUserID
+	return user.UserID == AnonUserID
 }
 
 func (user UserPermission) CanUpdateUser(oldTarget, newTarget UserPermission) bool {
@@ -87,7 +85,7 @@ func (user BasePermission) CanUpdateLink(oldTarget, newTarget LinkPermission) bo
 }
 
 func (user UserPermission) CanCreate() bool {
-	return !user.IsAnonymous() && user.UserId != ""
+	return !user.IsAnonymous() && user.UserID != ""
 }
 
 func (user BasePermission) CanView() bool {

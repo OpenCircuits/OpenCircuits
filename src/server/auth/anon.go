@@ -13,7 +13,7 @@ func NewAnonAuth() AuthenticationMethod {
 }
 
 func (anonAuthMethod) RegisterHandlers(*gin.Engine) {}
-func (anonAuthMethod) ExtractIdentity(string) (string, error) {
+func (anonAuthMethod) ExtractIdentity(string) (model.UserID, error) {
 	return model.AnonUserID, nil
 }
 

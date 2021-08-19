@@ -12,8 +12,8 @@ import (
 )
 
 func pingHandler(c *gin.Context) {
-	userId := c.Request.Header.Get(api.Identity)
-	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
+	userID := c.Request.Header.Get(api.Identity)
+	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userID))
 }
 
 func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver) {

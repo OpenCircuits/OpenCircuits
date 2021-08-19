@@ -13,7 +13,7 @@ type AccessProvider interface {
 
 type LinkAccessProvider struct {
 	AccessDriver interfaces.AccessDriver
-	LinkID       model.LinkId
+	LinkID       model.LinkID
 }
 
 func (ap LinkAccessProvider) Permissions() model.BasePermission {
@@ -23,8 +23,8 @@ func (ap LinkAccessProvider) Permissions() model.BasePermission {
 
 type UserAccessProvider struct {
 	AccessDriver interfaces.AccessDriver
-	UserID       model.UserId
-	CircuitID    model.CircuitId
+	UserID       model.UserID
+	CircuitID    model.CircuitID
 }
 
 func (ap UserAccessProvider) Permissions() model.BasePermission {

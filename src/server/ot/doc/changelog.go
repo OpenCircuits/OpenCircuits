@@ -17,7 +17,7 @@ type ChangelogEntry struct {
 	// SchemaVersion is the version of the client Action schema
 	SchemaVersion model.SchemaVersion
 	// UserID is the unique ID of the user (injected by the authorization system)
-	UserID model.UserId
+	UserID model.UserID
 	// SessionID is the unique ID of a connected client
 	SessionID model.SessionID
 }

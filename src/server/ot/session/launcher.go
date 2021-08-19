@@ -7,7 +7,6 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
@@ -21,7 +20,7 @@ type Launcher struct {
 
 // prelimSession is a session that has not joined the document yet.
 //	It is waiting on the client to send the JoinDocument message.
-func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserId, LogClock uint64, err error) {
+func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserID, LogClock uint64, err error) {
 	for msg := range c.Recv() {
 		switch msg := msg.(type) {
 		case conn.JoinDocument:
@@ -42,7 +41,7 @@ func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserId, LogClo
 	return
 }
 
-func (l *Launcher) Launch(circuitID model.CircuitId, logClock uint64, userID model.UserId, c conn.Connection, access AccessProvider) {
+func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID model.UserID, c conn.Connection, access AccessProvider) {
 	// Get the document
 	doc, err := l.DocumentManager.Get(circuitID)
 	if err != nil {
@@ -65,14 +64,14 @@ func (l *Launcher) Launch(circuitID model.CircuitId, logClock uint64, userID mod
 	// Spawn the session
 	_ = NewSession(SessionParam{
 		UserID:    userID,
-		SessionID: utils.RandToken(32),
+		SessionID: model.NewSessionID(),
 		Conn:      c,
 		Doc:       doc,
 		Access:    access,
 	}, logClock)
 }
 
-func (l *Launcher) LaunchCircuitID(c conn.Connection, circuitID model.CircuitId) {
+func (l *Launcher) LaunchCircuitID(c conn.Connection, circuitID model.CircuitID) {
 	// Process the join message
 	userID, logClock, err := l.prelimSession(c)
 	if err != nil {
@@ -99,8 +98,8 @@ func (l *Launcher) LaunchLinkID(c conn.Connection, link model.LinkPermission) {
 	// Setup the permissions
 	access := LinkAccessProvider{
 		AccessDriver: l.AccessDriver,
-		LinkID:       link.LinkId,
+		LinkID:       link.LinkID,
 	}
 
-	l.Launch(link.CircuitId, logClock, userID, c, access)
+	l.Launch(link.CircuitID, logClock, userID, c, access)
 }

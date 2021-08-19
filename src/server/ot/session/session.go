@@ -10,7 +10,7 @@ import (
 )
 
 type SessionParam struct {
-	UserID    model.UserId
+	UserID    model.UserID
 	SessionID model.SessionID
 	Conn      conn.Connection
 	Doc       doc.Document

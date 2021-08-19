@@ -8,8 +8,9 @@ import (
 )
 
 func TestDocumentLifecycleSuccess(t *testing.T) {
-	ch := make(chan model.CircuitId)
-	d, ds := newDocument("AAAA", ch)
+	ch := make(chan model.CircuitID)
+	circuitID := model.NewCircuitID()
+	d, ds := newDocument(circuitID, ch)
 	go ds.messageLoop()
 	*ds.log = smallChangelog()
 
@@ -47,7 +48,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 		t.Error("Received unexpected message after Leave")
 
 	case id := <-ch:
-		if id != "AAAA" {
+		if id != circuitID {
 			t.Error("Received wrong circuit ID when closing")
 		}
 
@@ -57,8 +58,9 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 }
 
 func TestDocumentLifecycleFailure(t *testing.T) {
-	ch := make(chan model.CircuitId)
-	d, ds := newDocument("AAAA", ch)
+	ch := make(chan model.CircuitID)
+	circuitID := model.NewCircuitID()
+	d, ds := newDocument(circuitID, ch)
 	go ds.messageLoop()
 	*ds.log = smallChangelog()
 
@@ -84,8 +86,8 @@ func TestDocumentLifecycleFailure(t *testing.T) {
 }
 
 func mkDocState() docState {
-	ch := make(chan model.CircuitId)
-	_, ds := newDocument("AAAA", ch)
+	ch := make(chan model.CircuitID)
+	_, ds := newDocument(model.NewCircuitID(), ch)
 	*ds.log = smallChangelog()
 	return ds
 }

@@ -16,12 +16,12 @@ type Context struct {
 }
 
 // Extract the requesting user's identity
-func (c Context) Identity() model.UserId {
+func (c Context) Identity() model.UserID {
 	ident := c.Request.Header.Get(Identity)
 	if len(ident) == 0 {
 		panic("Empty identity")
 	}
-	return ident
+	return model.UserID(ident)
 }
 
 type HandlerFunc = func(c *Context) (int, interface{})

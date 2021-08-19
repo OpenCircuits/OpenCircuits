@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"math/rand"
 	"net"
 	"os"
 	"strconv"
@@ -13,7 +14,6 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/gcp_datastore"
@@ -97,7 +97,12 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// Generate CSRF Token...
-	store := sessions.NewCookieStore([]byte(utils.RandToken(64)))
+	key := make([]byte, 64)
+	n, err := rand.Read(key)
+	if n != 64 || err != nil {
+		panic(err)
+	}
+	store := sessions.NewCookieStore(key)
 	store.Options(sessions.Options{
 		Path:   "/",
 		MaxAge: 60 * 60 * 24 * 7,

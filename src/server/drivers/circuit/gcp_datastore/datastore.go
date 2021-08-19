@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"os"
-	"strconv"
 
 	"cloud.google.com/go/datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
@@ -15,21 +14,21 @@ import (
 
 // A flat data structure to load data to/from
 type datastoreCircuit struct {
-	ID              model.CircuitId
+	ID              string
 	Name            string
-	Owner           model.UserId
+	Owner           string
 	Desc            string
 	Thumbnail       string `datastore:",noindex"`
 	Version         string
 	CircuitDesigner string `datastore:",noindex"`
 }
 
-func (dCircuit datastoreCircuit) toCircuit(id model.CircuitId) model.Circuit {
+func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
 	return model.Circuit{
 		Metadata: model.CircuitMetadata{
 			ID:        id,
 			Name:      dCircuit.Name,
-			Owner:     dCircuit.Owner,
+			Owner:     model.UserID(dCircuit.Owner),
 			Desc:      dCircuit.Desc,
 			Thumbnail: dCircuit.Thumbnail,
 			Version:   dCircuit.Version,
@@ -39,11 +38,12 @@ func (dCircuit datastoreCircuit) toCircuit(id model.CircuitId) model.Circuit {
 }
 
 func fromCircuit(c model.Circuit) (*datastore.Key, datastoreCircuit) {
-	return datastore.NameKey("Circuit", c.Metadata.ID, nil),
+	circuitID := c.Metadata.ID.Base64Encode()
+	return datastore.NameKey("Circuit", circuitID, nil),
 		datastoreCircuit{
-			ID:              c.Metadata.ID,
+			ID:              circuitID,
 			Name:            c.Metadata.Name,
-			Owner:           c.Metadata.Owner,
+			Owner:           string(c.Metadata.Owner),
 			Desc:            c.Metadata.Desc,
 			Thumbnail:       c.Metadata.Thumbnail,
 			Version:         c.Metadata.Version,
@@ -84,19 +84,19 @@ func (d *datastoreStorageInterface) CreateCircuitStorageInterface() interfaces.C
 	return d
 }
 
-func (d *datastoreStorageInterface) LoadCircuit(id model.CircuitId) *model.Circuit {
-	key := datastore.NameKey("Circuit", id, nil)
+func (d *datastoreStorageInterface) LoadCircuit(circuitID model.CircuitID) *model.Circuit {
+	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
 	dCircuit := &datastoreCircuit{}
 	if err := d.dsClient.Get(d.ctx, key, dCircuit); err != nil {
 		return nil
 	}
-	c := dCircuit.toCircuit(id)
+	c := dCircuit.toCircuit(circuitID)
 	return &c
 }
 
-func (d *datastoreStorageInterface) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
+func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
 	query := datastore.NewQuery("Circuit").
-		Filter("Owner =", userId)
+		Filter("Owner =", string(userID))
 	it := d.dsClient.Run(d.ctx, query)
 	var metadatas []model.CircuitMetadata
 	for {
@@ -109,7 +109,12 @@ func (d *datastoreStorageInterface) EnumerateCircuits(userId model.UserId) []mod
 			panic(err)
 		}
 
-		metadatas = append(metadatas, x.toCircuit(key.Name).Metadata)
+		var circuitID model.CircuitID
+		err = circuitID.Base64Decode(key.Name)
+		if err != nil {
+			panic(err)
+		}
+		metadatas = append(metadatas, x.toCircuit(circuitID).Metadata)
 	}
 	return metadatas
 }
@@ -127,7 +132,8 @@ func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
 	//		 the `UpdateCircuit` call, they will see an empty listing.  In practice
 	//		 this should not happen very often, but could be avoided by merging
 	//		 the `Update` and `Create` actions into one and perform a transaction.
-	key := datastore.IncompleteKey("Circuit", nil)
+	circuitID := model.NewCircuitID()
+	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
 	dCircuit := datastoreCircuit{}
 	nk, err := d.dsClient.Put(d.ctx, key, &dCircuit)
 	if err != nil {
@@ -136,12 +142,12 @@ func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
 	print(nk)
 
 	circuit := model.Circuit{}
-	circuit.Metadata.ID = strconv.FormatInt(nk.ID, 16)
+	circuit.Metadata.ID = circuitID
 	return circuit
 }
 
-func (d datastoreStorageInterface) DeleteCircuit(id model.CircuitId) {
-	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", id, nil))
+func (d datastoreStorageInterface) DeleteCircuit(circuitID model.CircuitID) {
+	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID.Base64Encode(), nil))
 	if err != nil {
 		panic(err)
 	}

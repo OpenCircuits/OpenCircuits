@@ -8,15 +8,15 @@ import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 // do not modify the provided circuits.
 type CircuitStorageInterface interface {
 	// Tries to load a circuit with a given id
-	LoadCircuit(id model.CircuitId) *model.Circuit
+	LoadCircuit(id model.CircuitID) *model.Circuit
 	// gets all circuits accessible to a user
-	EnumerateCircuits(userId model.UserId) []model.CircuitMetadata
+	EnumerateCircuits(userID model.UserID) []model.CircuitMetadata
 	// Updates an existing circuit
 	UpdateCircuit(c model.Circuit)
 	// Makes a new blank circuit
 	NewCircuit() model.Circuit
 	// Deletes a circuit by ID
-	DeleteCircuit(id model.CircuitId)
+	DeleteCircuit(id model.CircuitID)
 	// Releases the resources the interface holds.  No guarantees are made about the state of this object beyond this
 	// point.  Call this when done using the interface.
 	Close()

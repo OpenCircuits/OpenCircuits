@@ -16,7 +16,7 @@ func NewDocumentManager() DocumentManager {
 }
 
 // Get fetches the document handle for the given CircuitID and opens it if not
-func (dm DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
+func (dm DocumentManager) Get(circuitID model.CircuitID) (Document, error) {
 	r := make(chan Document)
 	dm.openSender <- openRequest{
 		CircuitID: circuitID,
@@ -26,26 +26,26 @@ func (dm DocumentManager) Get(circuitID model.CircuitId) (Document, error) {
 }
 
 type openRequest struct {
-	CircuitID model.CircuitId
+	CircuitID model.CircuitID
 	// Resp must be non-null
 	Resp chan<- Document
 }
 
 type dmState struct {
-	liveDocuments map[model.CircuitId]Document
-	doneListener  chan model.CircuitId
+	liveDocuments map[model.CircuitID]Document
+	doneListener  chan model.CircuitID
 	openListener  <-chan openRequest
 }
 
 func newDocumentManager() (DocumentManager, dmState) {
-	done := make(chan model.CircuitId, 10)
+	done := make(chan model.CircuitID, 10)
 	open := make(chan openRequest, 10)
 
 	dm := DocumentManager{
 		openSender: open,
 	}
 	state := dmState{
-		liveDocuments: make(map[model.CircuitId]Document),
+		liveDocuments: make(map[model.CircuitID]Document),
 		doneListener:  done,
 		openListener:  open,
 	}
