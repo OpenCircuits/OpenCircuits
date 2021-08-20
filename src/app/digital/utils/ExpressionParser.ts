@@ -49,17 +49,18 @@ function subEquals(input: string, index: number, sequence: string): boolean {
 
 const opsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
-interface Token {
+export interface Token {
     type: TokenType;
 }
 
-interface InputToken extends Token {
+export interface InputToken extends Token {
     name: string;
 }
 
 interface NewRetValue {
     graph: Graph<Token, boolean>;
     index: number;
+    recent: Token;
 }
 
 function getInput(input: string, index: number, ops: Map<TokenType, string>): InputToken {
@@ -314,14 +315,18 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
         throw new Error("Supplied Output Is Not An Output");
 }
 
-function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
-    const wire = new DigitalWire(source.getOutputPort(0), destination.getInputPort(0));
-    source.getOutputPort(0).connect(wire);
-    destination.getInputPort(0).connect(wire);
+export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
+    const outPort = source.getOutputPort(0);
+    let inPort = destination.getInputPort(0);
+    if(inPort.getWires().length > 0)
+        inPort = destination.getInputPort(1);
+    const wire = new DigitalWire(outPort, inPort);
+    inPort.connect(wire);
+    outPort.connect(wire);
     return wire;
 }
 
-function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, DigitalComponent>): IOObject[] {
+export function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
     const ret: IOObject[] = Array.from(inputs.values());
     const tokenToReal = new Map<Token, DigitalComponent>();
 
@@ -329,6 +334,11 @@ function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, Dig
     for(const token of tree.getNodes()) {
         if(token.type === "label") {
             tokenToReal.set(token, inputs.get((token as InputToken).name));
+            continue;
+        }
+        else if(token.type === "separator") {
+            ret.push(output);
+            tokenToReal.set(token, output);
             continue;
         }
         const newGate: DigitalComponent = GateConstructors.get(token.type).call(null);
@@ -347,7 +357,7 @@ function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, Dig
     return ret;
 }
 
-function createNegationGates(circuit: IOObject[]): IOObject[] {
+export function createNegationGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
     for(const object of circuit) {
         if(!(object instanceof Gate))
@@ -356,6 +366,76 @@ function createNegationGates(circuit: IOObject[]): IOObject[] {
             newCircuit = replaceGate(object, newCircuit);
     }
     return newCircuit;
+}
+
+function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<Token, boolean> {
+    const tree = new Graph<Token, boolean>();
+
+    tree.createNode(outputToken);
+
+    for(const token of tokenList) {
+        if(token.type === "(" || token.type === ")")
+            continue;
+        tree.createNode(token);
+    }
+
+    return tree;
+}
+
+function parseOpNew(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewRetValue {
+    const nextOp = precedence.get(currentOp);
+    const currentToken = tokens[index];
+    // if(index >= tokens.length)
+    //     return {graph: tree, index: index, recent: tokens[index]};
+    // if(currentToken.type === "&")
+    //     console.log("Hiluhaklghsadklghaslkjghaslkjhgaslkdjgh");
+
+    if(nextOp === "(" && currentToken.type !== currentOp) {
+        if(currentToken.type === "(")
+            return parseOpNew(tokens, index, tree, nextOp, precedence);
+        else
+            return {graph: tree, index: index+1, recent: currentToken};
+    }
+
+    let leftRet: NewRetValue = null;
+    if(currentOp !== "!" && currentOp !== "(") {
+        leftRet = parseOpNew(tokens, index, tree, nextOp, precedence);
+        index = leftRet.index;
+        if(index >= tokens.length || currentToken.type !== currentOp)
+            return leftRet;
+    }
+    index += 1;
+    let rightRet: NewRetValue = null;
+    if(currentOp === "!" && tokens[index].type === "!")
+        rightRet = parseOpNew(tokens, index, tree, currentOp, precedence);
+    else if(nextOp === "(" && tokens[index].type !== "(")
+        rightRet = {graph: tree, index: index+1, recent: tokens[index]};
+    else if(currentOp === "!" || currentOp === "(")
+        rightRet = parseOpNew(tokens, index, tree, nextOp, precedence);
+    else
+        rightRet = parseOpNew(tokens, index, tree, currentOp, precedence);
+    index = rightRet.index;
+    if(currentOp === "(") {
+        rightRet.index += 1;
+        return rightRet;
+    }
+
+
+    // if(index >= tokens.length)
+    //     return {graph: tree, index: index, recent: tokens[index]};
+
+
+    // const rightCircuit = rightRet.circuit;
+    // const rightPort = rightRet.recentPort;
+
+    // const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
+    // let newComponents: IOObject[] = rightCircuit.concat([newGate]);
+    if(currentOp !== "!") {
+        tree.createEdge(leftRet.recent, currentToken, true);
+    }
+    tree.createEdge(rightRet.recent, currentToken, true);
+
+    return {graph: tree, index: index, recent: currentToken};
 }
 
 /**
@@ -387,18 +467,31 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     // Put this after validating tokens because an input like "(" should produce an error message
     if(inputs.size == 0) return new DigitalObjectSet();
 
-    const parseRet = parseOp(tokenList, 0, inputs, "|", precedences);
-    const circuit = parseRet.circuit;
-    const outPort = parseRet.recentPort;
-    const wire = new DigitalWire(outPort, output.getInputPort(0));
-    outPort.connect(wire);
-    output.getInputPort(0).connect(wire);
-    circuit.push(wire);
-    circuit.push(output);
+    const outputToken: Token = {type: "separator"};
+    const basicTree = getPopulatedTree(tokenList, outputToken);
+    // console.log(basicTree.getNodes());
+    const ret = parseOpNew(tokenList, 0, basicTree, "|", precedences);
+    const connectedTree = ret.graph;
+    const recent = ret.recent;
+    connectedTree.createEdge(recent, outputToken, true);
 
-    const fullCircuit = circuit.concat(Array.from(inputs.values()));
+    const fullCircuit = tokenTreeToCircuit(connectedTree, inputs, output);
 
+
+
+    // const parseRet = parseOp(tokenList, 0, inputs, "|", precedences);
+    // const circuit = parseRet.circuit;
+    // const outPort = parseRet.recentPort;
+    // const wire = new DigitalWire(outPort, output.getInputPort(0));
+    // outPort.connect(wire);
+    // output.getInputPort(0).connect(wire);
+    // circuit.push(wire);
+    // circuit.push(output);
+
+    // const fullCircuit = circuit.concat(Array.from(inputs.values()));
+    // console.log(basicTree.getNodes(), fullCircuit);
     const condensedCircuit = createNegationGates(fullCircuit);
+    // const condensedCircuit = fullCircuit;
 
     return new DigitalObjectSet(condensedCircuit);
 }

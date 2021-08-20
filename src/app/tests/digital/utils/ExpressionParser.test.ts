@@ -13,9 +13,12 @@ import {DigitalWire} from "digital/models/DigitalWire";
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
+import { Graph } from "math/Graph";
 
-import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {ExpressionToCircuit, Token, InputToken, tokenTreeToCircuit, createNegationGates, connectGate} from "digital/utils/ExpressionParser";
 import {FormatMap, TokenType}    from "digital/utils/ExpressionParserConstants";
+import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
+import { connect } from "react-redux";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();
@@ -945,6 +948,261 @@ describe("Expression Parser", () => {
                 b.activate(false);
             
                 expect(o.isOn()).toBe(true);
+            });
+        });
+    });
+
+    describe("Token Tree To Circuit", () => {
+        describe("a&b", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+            const input1: InputToken = {type: "label", name: "a"};
+            const input2: InputToken = {type: "label", name: "b"};
+            const andToken: Token = {type: "&"};
+            const outToken: Token = {type: "separator"};
+            const tree = new Graph<Token, boolean>();
+            tree.createNode(input1);
+            tree.createNode(input2);
+            tree.createNode(andToken);
+            tree.createNode(outToken);
+            tree.createEdge(input1, andToken, true);
+            tree.createEdge(input2, andToken, true);
+            tree.createEdge(andToken, outToken, true);
+
+            const circuit = tokenTreeToCircuit(tree, inputMap, o);
+
+            test("Correct number of things", () => {
+                expect(circuit.length).toBe(7);
+            });
+
+            const designer = new DigitalCircuitDesigner(0);
+            designer.addGroup(new DigitalObjectSet(circuit));
+            describe("Correct Circuit", () => {
+                test("Initial State", () => {
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input a on", () => {
+                    a.activate(true);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input a,b on", () => {
+                    b.activate(true);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input b on", () => {
+                    a.activate(false);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Inputs off", () => {
+                    b.activate(false);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+            });
+        });
+        describe("a&a", () => {
+            const a = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a]
+            ]);
+            const input1: InputToken = {type: "label", name: "a"};
+            const input2: InputToken = {type: "label", name: "a"};
+            const andToken: Token = {type: "&"};
+            const outToken: Token = {type: "separator"};
+            const tree = new Graph<Token, boolean>();
+            tree.createNode(input1);
+            tree.createNode(input2);
+            tree.createNode(andToken);
+            tree.createNode(outToken);
+            tree.createEdge(input1, andToken, true);
+            tree.createEdge(input2, andToken, true);
+            tree.createEdge(andToken, outToken, true);
+
+            const circuit = tokenTreeToCircuit(tree, inputMap, o);
+
+            test("Correct number of things", () => {
+                expect(circuit.length).toBe(6);
+            });
+
+            const designer = new DigitalCircuitDesigner(0);
+            designer.addGroup(new DigitalObjectSet(circuit));
+            describe("Correct Circuit", () => {
+                test("Initial State", () => {
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input a on", () => {
+                    a.activate(true);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Inputs off", () => {
+                    a.activate(false);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+            });
+        });
+        describe("a&b", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b]
+            ]);
+            const input1: InputToken = {type: "label", name: "a"};
+            const input2: InputToken = {type: "label", name: "b"};
+            const andToken: Token = {type: "&"};
+            const notToken: Token = {type: "!"};
+            const outToken: Token = {type: "separator"};
+            const tree = new Graph<Token, boolean>();
+            tree.createNode(input1);
+            tree.createNode(input2);
+            tree.createNode(andToken);
+            tree.createNode(notToken);
+            tree.createNode(outToken);
+            tree.createEdge(input1, andToken, true);
+            tree.createEdge(input2, andToken, true);
+            tree.createEdge(andToken, notToken, true);
+            tree.createEdge(notToken, outToken, true);
+
+            const circuit = tokenTreeToCircuit(tree, inputMap, o);
+
+            test("Correct number of things", () => {
+                expect(circuit.length).toBe(9);
+            });
+
+            const designer = new DigitalCircuitDesigner(0);
+            designer.addGroup(new DigitalObjectSet(circuit));
+            describe("Correct Circuit", () => {
+                test("Initial State", () => {
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a on", () => {
+                    a.activate(true);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a,b on", () => {
+                    b.activate(true);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input b on", () => {
+                    a.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Inputs off", () => {
+                    b.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+            });
+        });
+    });
+
+    describe("Connect Gate", () => {
+        describe("!(a&b)", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const and = new ANDGate(), not = new NOTGate();
+            const objects: IOObject[] = [
+                a,
+                b,
+                o,
+                and,
+                not
+            ];
+            objects.push(connectGate(a, and));
+            objects.push(connectGate(b, and));
+            objects.push(connectGate(and, not));
+            objects.push(connectGate(not, o));
+
+            test("Correct number of things", () => {
+                expect(objects.length).toBe(9);
+            });
+
+            const designer = new DigitalCircuitDesigner(0);
+            designer.addGroup(new DigitalObjectSet(objects));
+            describe("Correct Circuit", () => {
+                test("Initial State", () => {
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a on", () => {
+                    a.activate(true);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a,b on", () => {
+                    b.activate(true);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input b on", () => {
+                    a.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Inputs off", () => {
+                    b.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+            });
+        });
+    });
+
+    describe("Create Negation Gates", () => {
+        describe("!(a&b)", () => {
+            const a = new Switch(), b = new Switch(), o = new LED();
+            const and = new ANDGate(), not = new NOTGate();
+            const objects: IOObject[] = [
+                a,
+                b,
+                o,
+                and,
+                not
+            ];
+            objects.push(connectGate(a, and));
+            objects.push(connectGate(b, and));
+            objects.push(connectGate(and, not));
+            objects.push(connectGate(not, o));
+            const condensed = createNegationGates(objects);
+
+            test("Correct number of things", () => {
+                expect(condensed.length).toBe(7);
+            });
+
+            const designer = new DigitalCircuitDesigner(0);
+            designer.addGroup(new DigitalObjectSet(condensed));
+            describe("Correct Circuit", () => {
+                test("Initial State", () => {
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a on", () => {
+                    a.activate(true);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Input a,b on", () => {
+                    b.activate(true);
+            
+                    expect(o.isOn()).toBe(false);
+                });
+                test("Input b on", () => {
+                    a.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
+                test("Inputs off", () => {
+                    b.activate(false);
+            
+                    expect(o.isOn()).toBe(true);
+                });
             });
         });
     });
