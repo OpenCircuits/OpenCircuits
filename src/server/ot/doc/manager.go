@@ -1,7 +1,7 @@
 package doc
 
 import (
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 // DocumentManager keeps track of live documents
@@ -9,35 +9,57 @@ type DocumentManager struct {
 	openSender chan<- openRequest
 }
 
-func NewDocumentManager() DocumentManager {
-	dm, st := newDocumentManager()
+type DriverFactories struct {
+	ChangelogDriverFactory model.ChangelogDriverFactory
+}
+
+// New creates instances of each of the drivers, returning an error if any fails
+func (df DriverFactories) New(circuitID model.CircuitID) (DocumentDrivers, error) {
+	var d DocumentDrivers
+	var err error
+
+	d.ChangelogDriver, err = df.ChangelogDriverFactory.NewChangelogDriver(circuitID)
+	return d, err
+}
+
+// NewDocumentManager launches the document manager
+func NewDocumentManager(factories DriverFactories) DocumentManager {
+	dm, st := newDocumentManager(factories)
 	go st.manage()
 	return dm
 }
 
 // Get fetches the document handle for the given CircuitID and opens it if not
 func (dm DocumentManager) Get(circuitID model.CircuitID) (Document, error) {
-	r := make(chan Document)
+	ch := make(chan openResponse)
 	dm.openSender <- openRequest{
 		CircuitID: circuitID,
-		Resp:      r,
+		Resp:      ch,
 	}
-	return <-r, nil
+	resp := <-ch
+	return resp.Document, resp.Error
+}
+
+type openResponse struct {
+	Document Document
+	Error    error
 }
 
 type openRequest struct {
 	CircuitID model.CircuitID
 	// Resp must be non-null
-	Resp chan<- Document
+	Resp chan<- openResponse
 }
 
 type dmState struct {
+	factories DriverFactories
+
 	liveDocuments map[model.CircuitID]Document
 	doneListener  chan model.CircuitID
 	openListener  <-chan openRequest
 }
 
-func newDocumentManager() (DocumentManager, dmState) {
+func newDocumentManager(factories DriverFactories) (DocumentManager, dmState) {
 	done := make(chan model.CircuitID, 10)
 	open := make(chan openRequest, 10)
 
@@ -45,6 +67,8 @@ func newDocumentManager() (DocumentManager, dmState) {
 		openSender: open,
 	}
 	state := dmState{
+		factories: factories,
+
 		liveDocuments: make(map[model.CircuitID]Document),
 		doneListener:  done,
 		openListener:  open,
@@ -60,11 +84,27 @@ func (st dmState) manage() {
 		select {
 		case req := <-st.openListener:
 			d, ok := st.liveDocuments[req.CircuitID]
-			if !ok {
-				d = NewDocument(req.CircuitID, st.doneListener)
-				st.liveDocuments[req.CircuitID] = d
+			if ok {
+				req.Resp <- openResponse{d, nil}
+				break
 			}
-			req.Resp <- d
+
+			drivers, err := st.factories.New(req.CircuitID)
+			if err != nil {
+				req.Resp <- openResponse{d, err}
+				break
+			}
+
+			d = NewDocument(DocumentParam{
+				CircuitID: req.CircuitID,
+				Drivers:   drivers,
+				OnClose: func() {
+					st.doneListener <- req.CircuitID
+				},
+			})
+			st.liveDocuments[req.CircuitID] = d
+
+			req.Resp <- openResponse{d, nil}
 		case cid := <-st.doneListener:
 			delete(st.liveDocuments, cid)
 		}

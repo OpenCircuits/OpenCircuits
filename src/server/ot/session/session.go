@@ -4,7 +4,7 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
@@ -14,11 +14,12 @@ type SessionParam struct {
 	SessionID model.SessionID
 	Conn      conn.Connection
 	Doc       doc.Document
-	Access    AccessProvider
+	Access    model.AccessProvider
 }
 
 type sessionState struct {
 	SessionParam
+
 	docUpdates chan interface{}
 }
 
@@ -29,7 +30,8 @@ type Session struct {
 func NewSession(p SessionParam, logClock uint64) Session {
 	s := sessionState{
 		SessionParam: p,
-		docUpdates:   make(chan interface{}, 64),
+
+		docUpdates: make(chan interface{}, 64),
 	}
 
 	// Join the document before starting the threads
@@ -71,7 +73,7 @@ func (s sessionState) die(reason string) {
 }
 
 // sendConn wraps the connection's Send function to make sure the user is still
-//	alowed to see new updates and closes the session if revoked
+//	allowed to see new updates and closes the session if revoked
 func (s sessionState) sendConn(v interface{}) {
 	if !s.Access.Permissions().CanView() {
 		s.die("insufficient permissions (view)")

@@ -4,15 +4,36 @@ import (
 	"testing"
 	"time"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
+func memDrivers() DocumentDrivers {
+	return DocumentDrivers{
+		ChangelogDriver: mem.NewChangelogDriver(),
+	}
+}
+
+func mockDoc() (Document, documentState, <-chan bool) {
+	ch := make(chan bool, 10)
+	a, b := newDocument(DocumentParam{model.NewCircuitID(), memDrivers(), func() { ch <- true }})
+	smallChangelog(b)
+	return a, b, ch
+}
+
+func smallChangelog(d documentState) {
+	for i := range []int{0, 1, 2, 3} {
+		acc, err := d.changelog.Accept(prop(uint64(i)))
+		if err != nil {
+			panic(err)
+		}
+		d.Drivers.ChangelogDriver.AppendChangelog(acc)
+	}
+}
+
 func TestDocumentLifecycleSuccess(t *testing.T) {
-	ch := make(chan model.CircuitID)
-	circuitID := model.NewCircuitID()
-	d, ds := newDocument(circuitID, ch)
+	d, ds, ch := mockDoc()
 	go ds.messageLoop()
-	*ds.log = smallChangelog()
 
 	// Send join message
 	respCh := make(chan interface{})
@@ -27,7 +48,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	case resp := <-respCh:
 		if m, ok := resp.(WelcomeMessage); ok {
 			if len(m.MissedEntries) != 4 {
-				t.Error("Expected welcome message of size 4")
+				t.Errorf("Expected welcome message of size 4 (received %d)\n", len(m.MissedEntries))
 			}
 		} else {
 			t.Error("Received wrong message type")
@@ -44,13 +65,9 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	})
 
 	select {
+	case <-ch:
 	case <-respCh:
 		t.Error("Received unexpected message after Leave")
-
-	case id := <-ch:
-		if id != circuitID {
-			t.Error("Received wrong circuit ID when closing")
-		}
 
 	case <-time.After(time.Second):
 		t.Error("Timed out: did not receive circuit closing message")
@@ -58,11 +75,8 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 }
 
 func TestDocumentLifecycleFailure(t *testing.T) {
-	ch := make(chan model.CircuitID)
-	circuitID := model.NewCircuitID()
-	d, ds := newDocument(circuitID, ch)
+	d, ds, ch := mockDoc()
 	go ds.messageLoop()
-	*ds.log = smallChangelog()
 
 	respCh := make(chan interface{})
 
@@ -75,6 +89,7 @@ func TestDocumentLifecycleFailure(t *testing.T) {
 	})
 
 	select {
+	case <-ch:
 	case cl := <-respCh:
 		if _, ok := cl.(CloseMessage); !ok {
 			t.Error("did not receive close message after bad propose")
@@ -85,15 +100,8 @@ func TestDocumentLifecycleFailure(t *testing.T) {
 	}
 }
 
-func mkDocState() docState {
-	ch := make(chan model.CircuitID)
-	_, ds := newDocument(model.NewCircuitID(), ch)
-	*ds.log = smallChangelog()
-	return ds
-}
-
 func TestDocumentProposeSuccess(t *testing.T) {
-	ds := mkDocState()
+	_, ds, _ := mockDoc()
 
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
@@ -113,7 +121,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 }
 
 func TestDocumentProposeFailure(t *testing.T) {
-	ds := mkDocState()
+	_, ds, _ := mockDoc()
 
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
@@ -130,7 +138,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 }
 
 func TestDocumentProposePropagate(t *testing.T) {
-	ds := mkDocState()
+	_, ds, _ := mockDoc()
 
 	chans := make(map[string]chan interface{})
 	for _, x := range []string{"A", "B", "C", "D"} {

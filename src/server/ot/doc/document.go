@@ -1,12 +1,32 @@
 package doc
 
 import (
-	"fmt"
 	"log"
-	"time"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
+
+type DocumentParam struct {
+	CircuitID model.CircuitID
+	Drivers   DocumentDrivers
+	OnClose   DocumentClose
+}
+
+// DocumentDrivers are the drivers used by the document for saving state
+type DocumentDrivers struct {
+	ChangelogDriver model.ChangelogDriver
+}
+
+// DocumentClose is the callback for when the document closes
+type DocumentClose func()
+
+type documentState struct {
+	DocumentParam
+
+	sessions  map[MessageChan]SessionJoined
+	recv      <-chan MessageWrapper
+	changelog *Changelog
+}
 
 // Document is the interface between sessions and the document state
 type Document struct {
@@ -14,53 +34,36 @@ type Document struct {
 	send      chan<- MessageWrapper
 }
 
+// NewDocument launches a new document instance
+func NewDocument(p DocumentParam) Document {
+	d, st := newDocument(p)
+	go st.messageLoop()
+	return d
+}
+
+func newDocument(p DocumentParam) (Document, documentState) {
+	ch := make(chan MessageWrapper)
+	st := documentState{
+		DocumentParam: p,
+
+		sessions:  map[MessageChan]SessionJoined{},
+		recv:      ch,
+		changelog: &Changelog{},
+	}
+	doc := Document{
+		CircuitID: p.CircuitID,
+		send:      ch,
+	}
+	return doc, st
+}
+
+// Send sends a message (see messages.go) to the document
 func (d Document) Send(mw MessageWrapper) {
 	d.send <- mw
 }
 
-func NewDocument(circuitID model.CircuitID, done chan<- model.CircuitID) Document {
-	d, ds := newDocument(circuitID, done)
-	go ds.messageLoop()
-	return d
-}
-
-// newDocument is used internally and testing to create a document without starting it
-func newDocument(circuitID model.CircuitID, done chan<- model.CircuitID) (Document, docState) {
-	ch := make(chan MessageWrapper)
-	d := docState{
-		CircuitID: circuitID,
-		liveTime:  5 * time.Minute,
-
-		log:      &Changelog{}, // TODO: This needs to be loaded
-		sessions: make(map[MessageChan]SessionJoined),
-
-		recv: ch,
-		done: done,
-	}
-
-	return Document{
-		CircuitID: circuitID,
-		send:      ch,
-	}, d
-}
-
-type docState struct {
-	CircuitID model.CircuitID
-	liveTime  time.Duration
-
-	log      *Changelog
-	sessions map[MessageChan]SessionJoined
-
-	recv <-chan MessageWrapper
-	done chan<- model.CircuitID
-}
-
-func (d docState) close() {
-	d.done <- d.CircuitID
-}
-
-func (d docState) messageLoop() {
-	defer d.close()
+func (d documentState) messageLoop() {
+	defer d.OnClose()
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in Document message loop: ", r)
@@ -69,6 +72,9 @@ func (d docState) messageLoop() {
 			}
 		}
 	}()
+
+	// bootstrap the log clock
+	d.changelog.LogClock = d.Drivers.ChangelogDriver.ChangelogClock()
 
 	// TODO: _may_ want some sort of time-out if sessions can live forever
 	for {
@@ -103,21 +109,27 @@ func (d docState) messageLoop() {
 	}
 }
 
-func (d docState) proposeEntry(msg ProposeEntry, resp MessageChan) {
+func (d documentState) proposeEntry(msg ProposeEntry, resp MessageChan) {
+	accepted := model.ChangelogEntry{
+		Action:        msg.Action,
+		ProposedClock: msg.ProposedClock,
+		SchemaVersion: msg.SchemaVersion,
+		UserID:        msg.UserID,
+		SessionID:     msg.SessionID,
+	}
+
 	// In a concurrent request, acceptedClock != proposedClock
-	accepted, err := d.log.AddEntry(msg)
+	accepted, err := d.changelog.Accept(accepted)
 	if err != nil {
-		resp.Close(CloseMessage{
-			Reason: fmt.Sprintf(
-				"proposal number (%d) too high for log clock (%d)",
-				msg.ProposedClock,
-				d.log.LogClock(),
-			),
-		})
+		resp.Close(CloseMessage{err.Error()})
 		return
 	}
 
+	// Save to persistent storage _before_ telling other sessions
+	d.Drivers.ChangelogDriver.AppendChangelog(accepted)
+
 	// Send to other clients
+	accepted.Strip()
 	for ch := range d.sessions {
 		if ch == resp {
 			continue
@@ -129,7 +141,7 @@ func (d docState) proposeEntry(msg ProposeEntry, resp MessageChan) {
 	resp.Ack(ProposeAck{AcceptedClock: accepted.AcceptedClock})
 }
 
-func (d docState) joinDocument(m JoinDocument, resp MessageChan) {
+func (d documentState) joinDocument(m JoinDocument, resp MessageChan) {
 	// Collect existing sessions
 	existingSessions := make([]SessionJoined, 0, len(d.sessions))
 	for _, s := range d.sessions {
@@ -146,7 +158,7 @@ func (d docState) joinDocument(m JoinDocument, resp MessageChan) {
 	// Give the new session all the information it needs
 	resp.Welcome(WelcomeMessage{
 		Session:       newSession,
-		MissedEntries: d.log.Slice(m.LogClock),
+		MissedEntries: d.Drivers.ChangelogDriver.ChangelogRange(m.LogClock, d.changelog.LogClock),
 		Sessions:      existingSessions,
 	})
 
@@ -162,7 +174,7 @@ func (d docState) joinDocument(m JoinDocument, resp MessageChan) {
 	}
 }
 
-func (d docState) leaveDocument(m LeaveDocument, resp MessageChan) bool {
+func (d documentState) leaveDocument(m LeaveDocument, resp MessageChan) bool {
 	// Remove this session from out list
 	delete(d.sessions, resp)
 

@@ -1,5 +1,36 @@
 package model
 
+import "log"
+
+// All errors indicate internal errors
+type AccessDriver interface {
+	// Gets the permissions for the given circuit id
+	GetCircuit(circuitID CircuitID) (CircuitPermissions, error)
+	// Gets the permissions for the given circuit id and user id
+	GetCircuitUser(circuitID CircuitID, userID UserID) (UserPermission, error)
+	// Gets the permissions for the link id
+	GetLink(linkID LinkID) (LinkPermission, error)
+	GetUser(userID UserID) (AllUserPermissions, error)
+
+	// Upserts all the circuit permissions
+	// UpsertCircuit(perms CircuitPermissions) error
+	// Upserts permissions for a single user/circuit
+	UpsertCircuitUser(perm UserPermission) error
+	// Upserts permissions for a link Id.  Link Id is created and returned if not provided
+	UpsertCircuitLink(perm LinkPermission) (LinkPermission, error)
+
+	// Deletes all permissions for a circuit
+	DeleteCircuit(circuitID CircuitID) error
+	// Deletes permissions for a given user and circuit
+	DeleteCircuitUser(circuitID CircuitID, userID UserID) error
+	// Deletes permissions for a given link
+	DeleteLink(linkID LinkID) error
+}
+
+type AccessProvider interface {
+	Permissions() BasePermission
+}
+
 // Use signed int so negative overflow bugs cant't elevate perms
 type AccessLevel = int32
 
@@ -117,4 +148,33 @@ func (user UserPermission) CanRevokeLink(_ LinkPermission) bool {
 func (user UserPermission) CanEnumeratePerms() bool {
 	// TODO: Use date
 	return user.AccessLevel >= AccessOwner
+}
+
+type LinkAccessProvider struct {
+	AccessDriver AccessDriver
+	LinkID       LinkID
+}
+
+func (ap LinkAccessProvider) Permissions() BasePermission {
+	perm, err := ap.AccessDriver.GetLink(ap.LinkID)
+	return permHelper(perm.BasePermission, err)
+}
+
+type UserAccessProvider struct {
+	AccessDriver AccessDriver
+	UserID       UserID
+	CircuitID    CircuitID
+}
+
+func (ap UserAccessProvider) Permissions() BasePermission {
+	perm, err := ap.AccessDriver.GetCircuitUser(ap.CircuitID, ap.UserID)
+	return permHelper(perm.BasePermission, err)
+}
+
+func permHelper(perm BasePermission, err error) BasePermission {
+	if err != nil {
+		log.Printf("error fetching permissions for session: %v\n", err)
+		return BasePermission{}
+	}
+	return perm
 }

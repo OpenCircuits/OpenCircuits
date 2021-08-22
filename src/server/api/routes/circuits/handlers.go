@@ -1,19 +1,15 @@
+// circuits package is DEPRECATED in favor of the new OT back-end
 package circuits
 
 import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 func Store(c *api.Context) (int, interface{}) {
-	var circuitID model.CircuitID
-	err := circuitID.Base64Decode(c.Param("id"))
-	if err != nil {
-		return http.StatusNotFound, nil
-	}
-
+	circuitID := c.Param("id")
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	var newCircuit model.Circuit
@@ -56,12 +52,7 @@ func Create(c *api.Context) (int, interface{}) {
 }
 
 func Load(c *api.Context) (int, interface{}) {
-	var circuitID model.CircuitID
-	err := circuitID.Base64Decode(c.Param("id"))
-	if err != nil {
-		return http.StatusNotFound, nil
-	}
-
+	circuitID := c.Param("id")
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	circuit := storageInterface.LoadCircuit(circuitID)
@@ -83,12 +74,7 @@ func Query(c *api.Context) (int, interface{}) {
 }
 
 func Delete(c *api.Context) (int, interface{}) {
-	var circuitID model.CircuitID
-	err := circuitID.Base64Decode(c.Param("id"))
-	if err != nil {
-		return http.StatusNotFound, nil
-	}
-
+	circuitID := c.Param("id")
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
 	circuit := storageInterface.LoadCircuit(circuitID)

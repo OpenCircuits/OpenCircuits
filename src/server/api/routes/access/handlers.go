@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 type AccessHandler = func(_ *api.Context, _ model.UserPermission) (int, interface{})
@@ -57,7 +57,6 @@ func UpsertCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusInternalServerError, err
 	}
 
-	// TODO: Missing check for low priviledge user demoting higher one
 	if !requesterPerms.CanUpdateUser(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}

@@ -6,8 +6,9 @@ import (
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/access"
+	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/circuit"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes/circuits"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +17,7 @@ func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userID))
 }
 
-func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterfaceFactory, accessDriver interfaces.AccessDriver) {
+func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFactory, accessDriver model.AccessDriver) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
@@ -24,12 +25,18 @@ func RegisterRoutes(router *gin.Engine, userCsif interfaces.CircuitStorageInterf
 		return api.Wrap(accessDriver, userCsif, h)
 	}
 
-	// User-saveable circuits
+	// Deprecated user-saveable circuits
 	router.GET("/api/circuits/:id", w(circuits.Load))
 	router.GET("/api/circuits", w(circuits.Query))
 	router.POST("/api/circuits", w(circuits.Create))
 	router.PUT("/api/circuits/:id", w(circuits.Store))
 	router.POST("/api/circuits/:id/delete", w(circuits.Delete))
+
+	// New circuit API
+	router.POST("/api/c/query", w(circuit.Query))
+	router.POST("/api/c/new", w(circuit.Create))
+	router.POST("/api/c/update/:cid", w(circuit.Update))
+	router.POST("/api/c/delete/:cid", w(circuit.Delete))
 
 	// Circuit permission control
 	wa := access.Wrapper

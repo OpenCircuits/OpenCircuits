@@ -5,8 +5,7 @@ import (
 	"log"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
@@ -14,7 +13,7 @@ import (
 // Launcher launches sessions
 type Launcher struct {
 	DocumentManager doc.DocumentManager
-	AccessDriver    interfaces.AccessDriver
+	AccessDriver    model.AccessDriver
 	AuthManager     auth.AuthenticationManager
 }
 
@@ -41,7 +40,7 @@ func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserID, LogClo
 	return
 }
 
-func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID model.UserID, c conn.Connection, access AccessProvider) {
+func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID model.UserID, c conn.Connection, access model.AccessProvider) {
 	// Get the document
 	doc, err := l.DocumentManager.Get(circuitID)
 	if err != nil {
@@ -79,7 +78,7 @@ func (l *Launcher) LaunchCircuitID(c conn.Connection, circuitID model.CircuitID)
 	}
 
 	// Setup the permissions
-	access := UserAccessProvider{
+	access := model.UserAccessProvider{
 		AccessDriver: l.AccessDriver,
 		UserID:       userID,
 		CircuitID:    circuitID,
@@ -96,7 +95,7 @@ func (l *Launcher) LaunchLinkID(c conn.Connection, link model.LinkPermission) {
 	}
 
 	// Setup the permissions
-	access := LinkAccessProvider{
+	access := model.LinkAccessProvider{
 		AccessDriver: l.AccessDriver,
 		LinkID:       link.LinkID,
 	}

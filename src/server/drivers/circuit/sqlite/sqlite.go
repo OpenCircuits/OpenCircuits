@@ -3,8 +3,7 @@ package sqlite
 import (
 	"database/sql"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/gchaincl/dotsql"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -20,11 +19,11 @@ type sqliteCircuitStorageInterface struct {
 	deleteEntryStmt  *sql.Stmt
 }
 
-func NewInterfaceFactory(sqliteDir string) (interfaces.CircuitStorageInterfaceFactory, error) {
+func NewInterfaceFactory(sqliteDir string) (model.CircuitStorageInterfaceFactory, error) {
 	return genSqliteInterface(sqliteDir)
 }
 
-func (d *sqliteCircuitStorageInterface) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
+func (d *sqliteCircuitStorageInterface) CreateCircuitStorageInterface() model.CircuitStorageInterface {
 	// Since the sqlite storage interface only needs one instance, it can be its own factory
 	return d
 }
@@ -95,10 +94,10 @@ func genSqliteInterface(workingDir string) (*sqliteCircuitStorageInterface, erro
 	return &store, nil
 }
 
-func (d sqliteCircuitStorageInterface) LoadCircuit(circuitID model.CircuitID) *model.Circuit {
+func (d sqliteCircuitStorageInterface) LoadCircuit(circuitID model.OldCircuitID) *model.Circuit {
 	var c model.Circuit
 	var tmp string
-	err := d.loadEntryStmt.QueryRow(circuitID.Base64Encode()).Scan(&tmp, &c.Designer, &c.Metadata.Name, &c.Metadata.Owner, &c.Metadata.Version, &c.Metadata.Thumbnail)
+	err := d.loadEntryStmt.QueryRow(circuitID).Scan(&tmp, &c.Designer, &c.Metadata.Name, &c.Metadata.Owner, &c.Metadata.Version, &c.Metadata.Thumbnail)
 	c.Metadata.ID = circuitID
 	if err == sql.ErrNoRows || err != nil {
 		return nil
@@ -106,24 +105,19 @@ func (d sqliteCircuitStorageInterface) LoadCircuit(circuitID model.CircuitID) *m
 	return &c
 }
 
-func (d sqliteCircuitStorageInterface) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
+func (d sqliteCircuitStorageInterface) EnumerateCircuits(userID model.UserID) []model.OldCircuitMetadata {
 	rows, err := d.enumCircuitsStmt.Query(userID)
 	defer rows.Close()
 
 	if err != nil {
 		return nil
 	}
-	var c model.CircuitMetadata
-	var cs []model.CircuitMetadata
+	var c model.OldCircuitMetadata
+	var cs []model.OldCircuitMetadata
 	for rows.Next() {
-		var id string
-		err := rows.Scan(&id, &c.Name, &c.Owner, &c.Version, &c.Thumbnail)
+		err := rows.Scan(&c.ID, &c.Name, &c.Owner, &c.Version, &c.Thumbnail)
 		if err != nil {
 			return nil
-		}
-		err = c.ID.Base64Decode(id)
-		if err != nil {
-			panic(err)
 		}
 		cs = append(cs, c)
 	}
@@ -131,8 +125,8 @@ func (d sqliteCircuitStorageInterface) EnumerateCircuits(userID model.UserID) []
 }
 
 func (d sqliteCircuitStorageInterface) NewCircuit() model.Circuit {
-	id := model.NewCircuitID()
-	_, err := d.createEntryStmt.Exec(id.Base64Encode(), "", "", "", "", "")
+	id := model.NewUUID().Base64Encode()
+	_, err := d.createEntryStmt.Exec(id, "", "", "", "", "")
 	if err != nil {
 		panic(err)
 	}
@@ -148,7 +142,7 @@ func (d sqliteCircuitStorageInterface) UpdateCircuit(circuit model.Circuit) {
 	}
 }
 
-func (d sqliteCircuitStorageInterface) DeleteCircuit(id model.CircuitID) {
+func (d sqliteCircuitStorageInterface) DeleteCircuit(id model.OldCircuitID) {
 	_, err := d.deleteEntryStmt.Exec(id)
 	if err != nil {
 		panic(err)

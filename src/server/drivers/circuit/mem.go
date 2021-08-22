@@ -3,8 +3,7 @@ package circuit
 import (
 	"errors"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 type memCircuitStorageInterfaceFactory struct {
@@ -16,21 +15,21 @@ type memCircuitStorageInterfaceFactory struct {
 // A simple, array-based circuit storage for testing and example circuits
 type memCircuitStorage struct {
 	m      []model.Circuit
-	idxMap map[model.CircuitID]int
+	idxMap map[model.OldCircuitID]int
 }
 
 func newMemCircuitStorage() *memCircuitStorage {
 	return &memCircuitStorage{
 		m:      nil,
-		idxMap: make(map[model.CircuitID]int),
+		idxMap: make(map[model.OldCircuitID]int),
 	}
 }
 
-func NewMemStorageInterfaceFactory() interfaces.CircuitStorageInterfaceFactory {
+func NewMemStorageInterfaceFactory() model.CircuitStorageInterfaceFactory {
 	return &memCircuitStorageInterfaceFactory{newMemCircuitStorage()}
 }
 
-func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
+func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() model.CircuitStorageInterface {
 	return m.memInterface
 }
 
@@ -42,8 +41,8 @@ func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
 	mem.m[val] = c
 }
 
-func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
-	var ret []model.CircuitMetadata
+func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.OldCircuitMetadata {
+	var ret []model.OldCircuitMetadata
 	for _, v := range mem.m {
 		if v.Metadata.Owner == userID {
 			ret = append(ret, v.Metadata)
@@ -52,7 +51,7 @@ func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.Cir
 	return ret
 }
 
-func (mem *memCircuitStorage) LoadCircuit(id model.CircuitID) *model.Circuit {
+func (mem *memCircuitStorage) LoadCircuit(id model.OldCircuitID) *model.Circuit {
 	val, ok := mem.idxMap[id]
 	if !ok {
 		return nil
@@ -62,13 +61,13 @@ func (mem *memCircuitStorage) LoadCircuit(id model.CircuitID) *model.Circuit {
 
 func (mem *memCircuitStorage) NewCircuit() model.Circuit {
 	var c model.Circuit
-	c.Metadata.ID = model.NewCircuitID()
+	c.Metadata.ID = model.NewUUID().Base64Encode()
 	mem.idxMap[c.Metadata.ID] = len(mem.m)
 	mem.m = append(mem.m, c)
 	return c
 }
 
-func (mem *memCircuitStorage) DeleteCircuit(id model.CircuitID) {
+func (mem *memCircuitStorage) DeleteCircuit(id model.OldCircuitID) {
 	v, ok := mem.idxMap[id]
 	if !ok {
 		return

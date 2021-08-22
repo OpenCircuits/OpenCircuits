@@ -1,9 +1,6 @@
-package access
+package mem
 
-import (
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
-)
+import "github.com/OpenCircuits/OpenCircuits/site/go/model"
 
 type (
 	cT = map[model.CircuitID]model.CircuitPermissions
@@ -11,23 +8,24 @@ type (
 )
 
 // Simple in-memory model system for testing
-type memDriver struct {
+type memAccess struct {
 	circuits cT
 	links    lT
 }
 
-func NewMem() interfaces.AccessDriver {
-	return &memDriver{circuits: make(cT), links: make(lT)}
+// NewAccess creates a new AccessDriver for use in testing
+func NewAccess() model.AccessDriver {
+	return &memAccess{circuits: make(cT), links: make(lT)}
 }
 
-func (m memDriver) GetCircuit(circuitID model.CircuitID) (model.CircuitPermissions, error) {
+func (m memAccess) GetCircuit(circuitID model.CircuitID) (model.CircuitPermissions, error) {
 	if c, ok := m.circuits[circuitID]; ok {
 		return c, nil
 	}
 	return model.CircuitPermissions{}, nil
 }
 
-func (m memDriver) GetCircuitUser(circuitID model.CircuitID, userID model.UserID) (model.UserPermission, error) {
+func (m memAccess) GetCircuitUser(circuitID model.CircuitID, userID model.UserID) (model.UserPermission, error) {
 	if c, ok := m.circuits[circuitID]; ok {
 		if cu, ok := c.UserPerms[userID]; ok {
 			return cu, nil
@@ -36,7 +34,7 @@ func (m memDriver) GetCircuitUser(circuitID model.CircuitID, userID model.UserID
 	return model.UserPermission{}, nil
 }
 
-func (m memDriver) GetLink(linkID model.LinkID) (model.LinkPermission, error) {
+func (m memAccess) GetLink(linkID model.LinkID) (model.LinkPermission, error) {
 	if cID, ok := m.links[linkID]; ok {
 		if c, ok := m.circuits[cID]; ok {
 			if cl, ok := c.LinkPerms[linkID]; ok {
@@ -47,7 +45,7 @@ func (m memDriver) GetLink(linkID model.LinkID) (model.LinkPermission, error) {
 	return model.LinkPermission{}, nil
 }
 
-func (m memDriver) GetUser(userID model.UserID) (model.AllUserPermissions, error) {
+func (m memAccess) GetUser(userID model.UserID) (model.AllUserPermissions, error) {
 	// Yes, this is slow
 	perms := make(model.AllUserPermissions)
 	for k, v := range m.circuits {
@@ -58,7 +56,7 @@ func (m memDriver) GetUser(userID model.UserID) (model.AllUserPermissions, error
 	return perms, nil
 }
 
-func (m memDriver) UpsertCircuitUser(perm model.UserPermission) error {
+func (m memAccess) UpsertCircuitUser(perm model.UserPermission) error {
 	if _, ok := m.circuits[perm.CircuitID]; !ok {
 		m.circuits[perm.CircuitID] = model.NewCircuitPerm(perm.CircuitID)
 	}
@@ -66,7 +64,7 @@ func (m memDriver) UpsertCircuitUser(perm model.UserPermission) error {
 	return nil
 }
 
-func (m *memDriver) UpsertCircuitLink(perm model.LinkPermission) (model.LinkPermission, error) {
+func (m *memAccess) UpsertCircuitLink(perm model.LinkPermission) (model.LinkPermission, error) {
 	if _, ok := m.circuits[perm.CircuitID]; !ok {
 		m.circuits[perm.CircuitID] = model.NewCircuitPerm(perm.CircuitID)
 	}
@@ -78,19 +76,19 @@ func (m *memDriver) UpsertCircuitLink(perm model.LinkPermission) (model.LinkPerm
 	return perm, nil
 }
 
-func (m memDriver) DeleteCircuit(circuitID model.CircuitID) error {
+func (m memAccess) DeleteCircuit(circuitID model.CircuitID) error {
 	delete(m.circuits, circuitID)
 	return nil
 }
 
-func (m memDriver) DeleteCircuitUser(circuitID model.CircuitID, userID model.UserID) error {
+func (m memAccess) DeleteCircuitUser(circuitID model.CircuitID, userID model.UserID) error {
 	if c, ok := m.circuits[circuitID]; ok {
 		delete(c.UserPerms, userID)
 	}
 	return nil
 }
 
-func (m memDriver) DeleteLink(linkID model.LinkID) error {
+func (m memAccess) DeleteLink(linkID model.LinkID) error {
 	if circuitID, ok := m.links[linkID]; ok {
 		if c, ok := m.circuits[circuitID]; ok {
 			delete(c.LinkPerms, linkID)

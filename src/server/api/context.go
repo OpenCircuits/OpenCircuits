@@ -3,15 +3,14 @@ package api
 import (
 	"fmt"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/gin-gonic/gin"
 )
 
 // Extended context with drivers for access and circuit
 type Context struct {
-	Access   interfaces.AccessDriver
-	Circuits interfaces.CircuitStorageInterfaceFactory
+	Access   model.AccessDriver
+	Circuits model.CircuitStorageInterfaceFactory
 	*gin.Context
 }
 
@@ -27,7 +26,7 @@ func (c Context) Identity() model.UserID {
 type HandlerFunc = func(c *Context) (int, interface{})
 
 // Wrapper for routes using extended context
-func Wrap(access interfaces.AccessDriver, circuits interfaces.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
+func Wrap(access model.AccessDriver, circuits model.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code, obj := handler(&Context{
 			access,

@@ -3,7 +3,7 @@ package doc
 import (
 	"encoding/json"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 // MessageWrapper is used to send messages to the Document thread.
@@ -39,7 +39,7 @@ type LeaveDocument struct {
 // Messages sent to the Session
 //
 
-type AcceptedEntry = ChangelogEntry
+type AcceptedEntry = model.ChangelogEntry
 
 type ProposeAck struct {
 	AcceptedClock uint64
@@ -66,7 +66,7 @@ type SessionJoined struct {
 type SessionLeft = LeaveDocument
 
 //
-// Helper functions used by the Document to avoid accidently sending types over
+// Helper functions used by the Document to avoid accidentally sending types over
 //	the channel that aren't expected
 //
 

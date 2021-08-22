@@ -3,7 +3,7 @@ package ot
 import (
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
 	"github.com/gin-gonic/gin"

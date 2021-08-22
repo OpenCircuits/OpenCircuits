@@ -13,11 +13,11 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/access"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/gcp_datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/sqlite"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
@@ -68,7 +68,7 @@ func main() {
 	authManager.RegisterAuthenticationMethod(auth.NewAnonAuth())
 
 	// Set up the storage interface
-	var userCsif interfaces.CircuitStorageInterfaceFactory
+	var userCsif model.CircuitStorageInterfaceFactory
 	if *userCsifConfig == "mem" {
 		userCsif = circuit.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
@@ -83,8 +83,11 @@ func main() {
 	}
 
 	// TODO:
-	docManager := doc.NewDocumentManager()
-	accessManager := access.NewMem()
+	factories := doc.DriverFactories{
+		ChangelogDriverFactory: mem.NewChangelogFactory(),
+	}
+	docManager := doc.NewDocumentManager(factories)
+	accessManager := mem.NewAccess()
 
 	launcher := session.Launcher{
 		DocumentManager: docManager,

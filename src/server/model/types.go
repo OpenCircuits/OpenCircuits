@@ -7,24 +7,32 @@ import (
 )
 
 type (
-	UserID        string
+	// UserID is the unique identifier of a user
+	UserID string
+	// SchemaVersion is the client's model schema version
 	SchemaVersion string
 )
 
+// AnonUserID is the user ID given to all anonymous users.
+//	This may change
 const AnonUserID = "ANON"
 
+// UUID is a wrapper around the default UUID class
 type UUID struct {
 	uuid.UUID
 }
 
+// CircuitID is a UUID that refers to an entire circuit
 type CircuitID struct {
 	UUID
 }
 
+// SessionID is a UUID that identifies a client session
 type SessionID struct {
 	UUID
 }
 
+// LinkID is a UUID that identifies a share link with specific permissions
 type LinkID struct {
 	UUID
 }

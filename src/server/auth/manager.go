@@ -3,7 +3,7 @@ package auth
 import (
 	"errors"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
 // AuthenticationMethod An interface for authentication methods to plug into the router and the web page

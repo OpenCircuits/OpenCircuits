@@ -6,8 +6,7 @@ import (
 	"os"
 
 	"cloud.google.com/go/datastore"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
@@ -23,9 +22,9 @@ type datastoreCircuit struct {
 	CircuitDesigner string `datastore:",noindex"`
 }
 
-func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
+func (dCircuit datastoreCircuit) toCircuit(id model.OldCircuitID) model.Circuit {
 	return model.Circuit{
-		Metadata: model.CircuitMetadata{
+		Metadata: model.OldCircuitMetadata{
 			ID:        id,
 			Name:      dCircuit.Name,
 			Owner:     model.UserID(dCircuit.Owner),
@@ -38,7 +37,7 @@ func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
 }
 
 func fromCircuit(c model.Circuit) (*datastore.Key, datastoreCircuit) {
-	circuitID := c.Metadata.ID.Base64Encode()
+	circuitID := c.Metadata.ID
 	return datastore.NameKey("Circuit", circuitID, nil),
 		datastoreCircuit{
 			ID:              circuitID,
@@ -58,7 +57,7 @@ type datastoreStorageInterface struct {
 	ctx      context.Context
 }
 
-func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (interfaces.CircuitStorageInterfaceFactory, error) {
+func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (model.CircuitStorageInterfaceFactory, error) {
 	projectId := os.Getenv("DATASTORE_PROJECT_ID")
 	if projectId == "" {
 		return nil, errors.New("DATASTORE_PROJECT_ID environment variable must be set")
@@ -71,7 +70,7 @@ func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (inter
 }
 
 // Creates a new GCP datastore instance for use with the local datastore emulator
-func NewEmuInterfaceFactory(ctx context.Context, projectId string, emuHost string, ops ...option.ClientOption) (interfaces.CircuitStorageInterfaceFactory, error) {
+func NewEmuInterfaceFactory(ctx context.Context, projectId string, emuHost string, ops ...option.ClientOption) (model.CircuitStorageInterfaceFactory, error) {
 	_ = os.Setenv("DATASTORE_EMULATOR_HOST", emuHost)
 	ds, err := datastore.NewClient(ctx, projectId, ops...)
 	if err != nil {
@@ -80,12 +79,12 @@ func NewEmuInterfaceFactory(ctx context.Context, projectId string, emuHost strin
 	return &datastoreStorageInterface{dsClient: ds, ctx: ctx}, nil
 }
 
-func (d *datastoreStorageInterface) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
+func (d *datastoreStorageInterface) CreateCircuitStorageInterface() model.CircuitStorageInterface {
 	return d
 }
 
-func (d *datastoreStorageInterface) LoadCircuit(circuitID model.CircuitID) *model.Circuit {
-	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
+func (d *datastoreStorageInterface) LoadCircuit(circuitID model.OldCircuitID) *model.Circuit {
+	key := datastore.NameKey("Circuit", circuitID, nil)
 	dCircuit := &datastoreCircuit{}
 	if err := d.dsClient.Get(d.ctx, key, dCircuit); err != nil {
 		return nil
@@ -94,11 +93,11 @@ func (d *datastoreStorageInterface) LoadCircuit(circuitID model.CircuitID) *mode
 	return &c
 }
 
-func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
+func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.OldCircuitMetadata {
 	query := datastore.NewQuery("Circuit").
 		Filter("Owner =", string(userID))
 	it := d.dsClient.Run(d.ctx, query)
-	var metadatas []model.CircuitMetadata
+	var metadatas []model.OldCircuitMetadata
 	for {
 		var x datastoreCircuit
 		key, err := it.Next(&x)
@@ -109,12 +108,7 @@ func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []mod
 			panic(err)
 		}
 
-		var circuitID model.CircuitID
-		err = circuitID.Base64Decode(key.Name)
-		if err != nil {
-			panic(err)
-		}
-		metadatas = append(metadatas, x.toCircuit(circuitID).Metadata)
+		metadatas = append(metadatas, x.toCircuit(key.Name).Metadata)
 	}
 	return metadatas
 }
@@ -132,8 +126,8 @@ func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
 	//		 the `UpdateCircuit` call, they will see an empty listing.  In practice
 	//		 this should not happen very often, but could be avoided by merging
 	//		 the `Update` and `Create` actions into one and perform a transaction.
-	circuitID := model.NewCircuitID()
-	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
+	circuitID := model.NewUUID().Base64Encode()
+	key := datastore.NameKey("Circuit", circuitID, nil)
 	dCircuit := datastoreCircuit{}
 	nk, err := d.dsClient.Put(d.ctx, key, &dCircuit)
 	if err != nil {
@@ -146,8 +140,8 @@ func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
 	return circuit
 }
 
-func (d datastoreStorageInterface) DeleteCircuit(circuitID model.CircuitID) {
-	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID.Base64Encode(), nil))
+func (d datastoreStorageInterface) DeleteCircuit(circuitID model.OldCircuitID) {
+	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID, nil))
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/gin-gonic/gin"
 )
 

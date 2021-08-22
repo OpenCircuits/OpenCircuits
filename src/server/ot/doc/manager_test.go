@@ -4,11 +4,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
+type mockFactory struct{}
+
+func (mockFactory) NewChangelogDriver(model.CircuitID) (model.ChangelogDriver, error) {
+	return nil, nil
+}
+
+var mockFactories DriverFactories = DriverFactories{
+	ChangelogDriverFactory: mockFactory{},
+}
+
 func TestManagerGetDocument(t *testing.T) {
-	dm, st := newDocumentManager()
+	dm, st := newDocumentManager(mockFactories)
 	go st.manage()
 
 	circuitID := model.NewCircuitID()
@@ -23,7 +33,7 @@ func TestManagerGetDocument(t *testing.T) {
 }
 
 func TestManagerCloseDocument(t *testing.T) {
-	dm, st := newDocumentManager()
+	dm, st := newDocumentManager(mockFactories)
 	go st.manage()
 
 	circuitID := model.NewCircuitID()

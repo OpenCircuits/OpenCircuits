@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
