@@ -8,9 +8,9 @@ type CircuitDriver interface {
 	// Metadata fetches metadata for the provided circuit IDs
 	LookupCircuits(circuitIDs []CircuitID) []CircuitMetadata
 	// UpdateMetadata updates a circuit metadata
-	UpdateMetadata(metadata ExplicitMetadata)
+	UpdateMetadata(circuitID CircuitID, metadata ExplicitMetadata)
 	// New makes a new circuit entry so that OT can be started
-	NewCircuit(circuitID CircuitID)
+	NewCircuit(circuitID CircuitID, creator UserID)
 }
 
 // MilestoneDriver abstracts storage of milestone circuits
@@ -20,9 +20,9 @@ type MilestoneDriver interface {
 	// DeleteMilestone deletes the milestone circuit with the given clock number if it exists
 	DeleteMilestone(clock uint64)
 	// Milestone returns the milestone circuit with the given clock number
-	Milestone(clock uint64) MilestoneCircuit
+	Milestone(clock uint64) (MilestoneCircuit, bool)
 	// LatestMilestone returns the milestone circuit with the highest clock number
-	LatestMilestone()
+	LatestMilestone() (MilestoneCircuit, bool)
 	// EnumerateMilestones returns metadata of all milestones
 	EnumerateMilestones() []MilestoneCircuitMetadata
 }
@@ -32,7 +32,7 @@ type MilestoneDriverFactory interface {
 	NewMilestoneDriver(circuitID CircuitID) (MilestoneDriver, error)
 }
 
-// ExplicitMetadata is updated by the clint, so fields are all optional
+// ExplicitMetadata is updated by the client, so fields are all optional
 type ExplicitMetadata struct {
 	Name      *string `json:"name,omitempty"`
 	Desc      *string `json:"desc,omitempty"`
