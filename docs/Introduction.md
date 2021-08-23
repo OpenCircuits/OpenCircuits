@@ -1,6 +1,7 @@
 ---
-id: introduction
 title: Introduction
+slug: /
+sidebar_position: 0
 ---
 
 <img src="/img/logo.svg" width="800" style={{margin: "80px 0px"}} />

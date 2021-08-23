@@ -1,0 +1,25 @@
+---
+title: Cheat Sheets
+---
+
+
+export function EmbedPDF({title, path}) {
+    return (
+        <details style={{marginBottom: "40px"}}>
+            <summary>{title}</summary>
+            <object data={path} type="application/pdf" width="100%" height="850px">
+                <embed src={path} />
+            </object>
+        </details>
+    );
+}
+
+
+## Git
+
+<EmbedPDF title="Git Branches Cheat Sheet" path="/cheatsheets/GitBranches.pdf" />
+
+
+
+More to come...
+
