@@ -1,4 +1,42 @@
+import {DigitalComponent} from "digital/models/index";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate} from "digital/models/ioobjects/gates/ORGate";
+import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {XORGate} from "digital/models/ioobjects/gates/XORGate";
+import {Graph} from "math/Graph";
+
 export type TokenType = "label" | "|" | "^" | "&" | "!" | "(" | ")" | "separator";
+
+export interface Token {
+    type: TokenType;
+}
+
+export interface InputToken extends Token {
+    name: string;
+}
+
+export interface TreeRetValue {
+    graph: Graph<Token, boolean>;
+    index: number;
+    recent: Token;
+}
+
+export const OpsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
+
+export const GateConstructors = new Map<string, () => DigitalComponent>([
+    ["|", () => new ORGate()],
+    ["^", () => new XORGate()],
+    ["&", () => new ANDGate()],
+    ["!", () => new NOTGate()],
+]);
+
+export const DefaultPrecedences = new Map<TokenType, TokenType>([
+    ["|", "^"],
+    ["^", "&"],
+    ["&", "!"],
+    ["!", "("],
+    ["(", "|"],
+]);
 
 const programming1 = new Map<TokenType, string>([
     ["label", "Programming 1 (&, |, ^, !)"],

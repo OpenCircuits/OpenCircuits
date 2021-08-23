@@ -1,18 +1,16 @@
 import {IOObject} from "core/models/IOObject";
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-import {OutputPort} from "digital/models/ports/OutputPort";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {ANDGate, NANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate, NORGate} from "digital/models/ioobjects/gates/ORGate";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
-import {FormatMap, TokenType} from "./ExpressionParserConstants";
-import { Console } from "console";
-import { Graph } from "math/Graph";
-import { Input } from "core/utils/Input";
-import { InputType } from "zlib";
+import {FormatMap, TokenType, Token,
+        TreeRetValue, OpsArray, GateConstructors,
+        InputToken, DefaultPrecedences} from "./ExpressionParserConstants";
+import {Graph} from "math/Graph";
 
 
 /* Notes for connecting components
@@ -34,12 +32,6 @@ import { InputType } from "zlib";
     let objectSet = new DigitalObjectSet([a, b, o, and_gate, w1, w2, w3]);
 */
 
-interface ReturnValue {
-    circuit: IOObject[];
-    retIndex: number;
-    recentPort: OutputPort;
-}
-
 /**
  * Checks if the substring of input starting at index is equal to sequence
  */
@@ -47,26 +39,31 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
-const opsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
-
-export interface Token {
-    type: TokenType;
+function isOperator(token: Token, leftOperator: boolean = false) {
+    switch(token.type) {
+    case "&":
+    case "^":
+    case "|":
+        return true;
+    case "!":
+        return leftOperator;
+    }
+    return false;
 }
 
-export interface InputToken extends Token {
-    name: string;
-}
-
-interface NewRetValue {
-    graph: Graph<Token, boolean>;
-    index: number;
-    recent: Token;
+function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
+    for(const [name, component] of inputs) {
+        if(component.getInputPortCount().getValue() != 0 || component.getOutputPortCount().getValue() == 0)
+            throw new Error("Not An Input: " + name);
+    }
+    if(output.getInputPortCount().getValue() == 0 || output.getOutputPortCount().getValue() != 0)
+        throw new Error("Supplied Output Is Not An Output");
 }
 
 function getInput(input: string, index: number, ops: Map<TokenType, string>): InputToken {
     let endIndex = index + 1;
     while(endIndex < input.length) {
-        for(const op of opsArray) {
+        for(const op of OpsArray) {
             if(subEquals(input, endIndex, ops.get(op)))
                 return {type: "label", name: input.substring(index, endIndex)};
         }
@@ -76,7 +73,7 @@ function getInput(input: string, index: number, ops: Map<TokenType, string>): In
 }
 
 function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
-    for(const op of opsArray) {
+    for(const op of OpsArray) {
         if(subEquals(input, index, ops.get(op)))
             return {type: op};
     }
@@ -110,140 +107,6 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
     }
 
     return tokenList;
-}
-
-export const precedences = new Map<TokenType, TokenType>([
-    ["|", "^"],
-    ["^", "&"],
-    ["&", "!"],
-    ["!", "("],
-    ["(", "|"],
-]);
-
-const GateConstructors = new Map<string, () => DigitalComponent>([
-    ["|", () => new ORGate()],
-    ["^", () => new XORGate()],
-    ["&", () => new ANDGate()],
-    ["!", () => new NOTGate()],
-]);
-
-function getNottedGate(oldGate: Gate): Gate | null {
-    if(oldGate instanceof ANDGate)
-        return new NANDGate();
-    else if(oldGate instanceof ORGate)
-        return new NORGate();
-    else if(oldGate instanceof XORGate)
-        return new XNORGate();
-    else
-        return null;
-}
-
-function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
-    const newGate = getNottedGate(oldGate);
-
-    const wire1 = oldGate.getInputPort(0).getInput();
-    const parent1 = wire1.getInput();
-    parent1.disconnect(wire1);
-    const wire2 = oldGate.getInputPort(1).getInput();
-    const parent2 = wire2.getInput();
-    parent2.disconnect(wire2);
-    const outWire = oldGate.getOutputPort(0).getConnections()[0];
-    const oldNotGate = outWire.getOutputComponent();
-    const outWires = oldNotGate.getOutputPort(0).getConnections();
-    const children = outWires.map(wire => wire.getOutput());
-    children.forEach(child => child.disconnect());
-
-    const newWire1 = new DigitalWire(parent1, newGate.getInputPort(0));
-    newGate.getInputPort(0).connect(newWire1);
-    parent1.connect(newWire1);
-
-    const newWire2 = new DigitalWire(parent2, newGate.getInputPort(1));
-    newGate.getInputPort(1).connect(newWire2);
-    parent2.connect(newWire2);
-
-    const newWires: DigitalWire[] = [];
-    for(const child of children) {
-        const newWireTemp = new DigitalWire(newGate.getOutputPort(0), child);
-        newWires.push(newWireTemp);
-        newGate.getOutputPort(0).connect(newWireTemp);
-        child.connect(newWireTemp);
-    }
-
-    // Using separate splices because I don't want to rely on everything being ordered in a certain way
-    for(let i = 0; i < outWires.length; i++)
-        circuit.splice(circuit.indexOf(outWires[i]), 1, newWires[i]);
-    circuit.splice(circuit.indexOf(wire1), 1, newWire1);
-    circuit.splice(circuit.indexOf(wire2), 1, newWire2);
-    circuit.splice(circuit.indexOf(oldGate), 1, newGate);
-    circuit.splice(circuit.indexOf(outWire), 1);
-    circuit.splice(circuit.indexOf(oldNotGate), 1);
-
-    return circuit;
-}
-
-function parseOp(tokens: Array<Token>, index: number, inputs: Map<string, DigitalComponent>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): ReturnValue {
-    const nextOp = precedence.get(currentOp);
-
-    if(nextOp === "(" && tokens[index].type !== currentOp) {
-        if(tokens[index].type == "(")
-            return parseOp(tokens, index, inputs, nextOp, precedence);
-        else
-            return {circuit: [], retIndex: index+1, recentPort: inputs.get((tokens[index] as InputToken).name).getOutputPort(0)};
-    }
-
-    let leftRet: ReturnValue = null;
-    if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = parseOp(tokens, index, inputs, nextOp, precedence);
-        index = leftRet.retIndex;
-        if(index >= tokens.length || tokens[index].type !== currentOp)
-            return leftRet;
-    }
-    index += 1;
-    let rightRet: ReturnValue = null;
-    if(currentOp === "!" && tokens[index].type === "!")
-        rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
-    else if(nextOp === "(" && tokens[index].type !== "(")
-        rightRet = {circuit: [], retIndex: index+1, recentPort: inputs.get((tokens[index] as InputToken).name).getOutputPort(0)};
-    else if(currentOp === "!" || currentOp === "(")
-        rightRet = parseOp(tokens, index, inputs, nextOp, precedence);
-    else
-        rightRet = parseOp(tokens, index, inputs, currentOp, precedence);
-    index = rightRet.retIndex;
-    if(currentOp === "(") {
-        rightRet.retIndex += 1;
-        return rightRet;
-    }
-    const rightCircuit = rightRet.circuit;
-    const rightPort = rightRet.recentPort;
-
-    const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
-    let newComponents: IOObject[] = rightCircuit.concat([newGate]);
-    if(currentOp !== "!") {
-        newComponents = newComponents.concat(leftRet.circuit);
-        const leftPort = leftRet.recentPort;
-        const w1 = new DigitalWire(leftPort, newGate.getInputPort(1));
-        leftPort.connect(w1);
-        newGate.getInputPort(1).connect(w1);
-        newComponents = newComponents.concat(w1);
-    }
-    const w2 = new DigitalWire(rightPort, newGate.getInputPort(0));
-    rightPort.connect(w2);
-    newGate.getInputPort(0).connect(w2);
-    newComponents = newComponents.concat(w2);
-
-    return {circuit: newComponents, retIndex: index, recentPort: newGate.getOutputPort(0)};
-}
-
-function isOperator(token: Token, leftOperator: boolean = false) {
-    switch(token.type) {
-    case "&":
-    case "^":
-    case "|":
-        return true;
-    case "!":
-        return leftOperator;
-    }
-    return false;
 }
 
 function verifyInputsExist(tokens: Token[], inputs: Map<string, DigitalComponent>) {
@@ -306,13 +169,82 @@ function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) 
     verifyExistingOperands(tokens);
 }
 
-function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
-    for(const [name, component] of inputs) {
-        if(component.getInputPortCount().getValue() != 0 || component.getOutputPortCount().getValue() == 0)
-            throw new Error("Not An Input: " + name);
+function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<Token, boolean> {
+    const tree = new Graph<Token, boolean>();
+
+    tree.createNode(outputToken);
+
+    for(const token of tokenList) {
+        if(token.type === "(" || token.type === ")")
+            continue;
+        tree.createNode(token);
     }
-    if(output.getInputPortCount().getValue() == 0 || output.getOutputPortCount().getValue() != 0)
-        throw new Error("Supplied Output Is Not An Output");
+
+    return tree;
+}
+
+function generateTreeCore(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): TreeRetValue {
+    const nextOp = precedence.get(currentOp);
+    // if(index >= tokens.length)
+    //     return {graph: tree, index: index, recent: tokens[index]};
+    // if(currentToken.type === "&")
+    //     console.log("Hiluhaklghsadklghaslkjghaslkjhgaslkdjgh");
+
+    if(nextOp === "(" && tokens[index].type !== currentOp) {
+        if(tokens[index].type === "(")
+            return generateTreeCore(tokens, index, tree, nextOp, precedence);
+        else
+            return {graph: tree, index: index+1, recent: tokens[index]};
+    }
+
+    let leftRet: TreeRetValue = null;
+    if(currentOp !== "!" && currentOp !== "(") {
+        leftRet = generateTreeCore(tokens, index, tree, nextOp, precedence);
+        index = leftRet.index;
+        if(index >= tokens.length || tokens[index].type !== currentOp)
+            return leftRet;
+    }
+    const currentToken = tokens[index];
+    index += 1;
+    let rightRet: TreeRetValue = null;
+    if(currentOp === "!" && tokens[index].type === "!")
+        rightRet = generateTreeCore(tokens, index, tree, currentOp, precedence);
+    else if(nextOp === "(" && tokens[index].type !== "(")
+        rightRet = {graph: tree, index: index+1, recent: tokens[index]};
+    else if(currentOp === "!" || currentOp === "(")
+        rightRet = generateTreeCore(tokens, index, tree, nextOp, precedence);
+    else
+        rightRet = generateTreeCore(tokens, index, tree, currentOp, precedence);
+    index = rightRet.index;
+    if(currentOp === "(") {
+        rightRet.index += 1;
+        return rightRet;
+    }
+
+
+    // if(index >= tokens.length)
+    //     return {graph: tree, index: index, recent: tokens[index]};
+
+
+    // const rightCircuit = rightRet.circuit;
+    // const rightPort = rightRet.recentPort;
+
+    // const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
+    // let newComponents: IOObject[] = rightCircuit.concat([newGate]);
+    if(currentOp !== "!") {
+        tree.createEdge(leftRet.recent, currentToken, true);
+    }
+    tree.createEdge(rightRet.recent, currentToken, true);
+
+    return {graph: tree, index: index, recent: currentToken};
+}
+
+export function generateTree(tokens: Array<Token>, tree: Graph<Token, boolean>, firstOp: TokenType, precedence: Map<TokenType, TokenType>, outputToken: Token): Graph<Token, boolean> {
+    const ret = generateTreeCore(tokens, 0, tree, firstOp, precedence);
+    const connectedTree = ret.graph;
+    const recent = ret.recent;
+    connectedTree.createEdge(recent, outputToken, true);
+    return connectedTree;
 }
 
 export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
@@ -357,6 +289,60 @@ export function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<stri
     return ret;
 }
 
+function getNottedGate(oldGate: Gate): Gate | null {
+    if(oldGate instanceof ANDGate)
+        return new NANDGate();
+    else if(oldGate instanceof ORGate)
+        return new NORGate();
+    else if(oldGate instanceof XORGate)
+        return new XNORGate();
+    else
+        return null;
+}
+
+function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
+    const newGate = getNottedGate(oldGate);
+
+    const wire1 = oldGate.getInputPort(0).getInput();
+    const parent1 = wire1.getInput();
+    parent1.disconnect(wire1);
+    const wire2 = oldGate.getInputPort(1).getInput();
+    const parent2 = wire2.getInput();
+    parent2.disconnect(wire2);
+    const outWire = oldGate.getOutputPort(0).getConnections()[0];
+    const oldNotGate = outWire.getOutputComponent();
+    const outWires = oldNotGate.getOutputPort(0).getConnections();
+    const children = outWires.map(wire => wire.getOutput());
+    children.forEach(child => child.disconnect());
+
+    const newWire1 = new DigitalWire(parent1, newGate.getInputPort(0));
+    newGate.getInputPort(0).connect(newWire1);
+    parent1.connect(newWire1);
+
+    const newWire2 = new DigitalWire(parent2, newGate.getInputPort(1));
+    newGate.getInputPort(1).connect(newWire2);
+    parent2.connect(newWire2);
+
+    const newWires: DigitalWire[] = [];
+    for(const child of children) {
+        const newWireTemp = new DigitalWire(newGate.getOutputPort(0), child);
+        newWires.push(newWireTemp);
+        newGate.getOutputPort(0).connect(newWireTemp);
+        child.connect(newWireTemp);
+    }
+
+    // Using separate splices because I don't want to rely on everything being ordered in a certain way
+    for(let i = 0; i < outWires.length; i++)
+        circuit.splice(circuit.indexOf(outWires[i]), 1, newWires[i]);
+    circuit.splice(circuit.indexOf(wire1), 1, newWire1);
+    circuit.splice(circuit.indexOf(wire2), 1, newWire2);
+    circuit.splice(circuit.indexOf(oldGate), 1, newGate);
+    circuit.splice(circuit.indexOf(outWire), 1);
+    circuit.splice(circuit.indexOf(oldNotGate), 1);
+
+    return circuit;
+}
+
 export function createNegationGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
     for(const object of circuit) {
@@ -366,76 +352,6 @@ export function createNegationGates(circuit: IOObject[]): IOObject[] {
             newCircuit = replaceGate(object, newCircuit);
     }
     return newCircuit;
-}
-
-function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<Token, boolean> {
-    const tree = new Graph<Token, boolean>();
-
-    tree.createNode(outputToken);
-
-    for(const token of tokenList) {
-        if(token.type === "(" || token.type === ")")
-            continue;
-        tree.createNode(token);
-    }
-
-    return tree;
-}
-
-export function generateTree(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewRetValue {
-    const nextOp = precedence.get(currentOp);
-    // if(index >= tokens.length)
-    //     return {graph: tree, index: index, recent: tokens[index]};
-    // if(currentToken.type === "&")
-    //     console.log("Hiluhaklghsadklghaslkjghaslkjhgaslkdjgh");
-
-    if(nextOp === "(" && tokens[index].type !== currentOp) {
-        if(tokens[index].type === "(")
-            return generateTree(tokens, index, tree, nextOp, precedence);
-        else
-            return {graph: tree, index: index+1, recent: tokens[index]};
-    }
-
-    let leftRet: NewRetValue = null;
-    if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateTree(tokens, index, tree, nextOp, precedence);
-        index = leftRet.index;
-        if(index >= tokens.length || tokens[index].type !== currentOp)
-            return leftRet;
-    }
-    const currentToken = tokens[index];
-    index += 1;
-    let rightRet: NewRetValue = null;
-    if(currentOp === "!" && tokens[index].type === "!")
-        rightRet = generateTree(tokens, index, tree, currentOp, precedence);
-    else if(nextOp === "(" && tokens[index].type !== "(")
-        rightRet = {graph: tree, index: index+1, recent: tokens[index]};
-    else if(currentOp === "!" || currentOp === "(")
-        rightRet = generateTree(tokens, index, tree, nextOp, precedence);
-    else
-        rightRet = generateTree(tokens, index, tree, currentOp, precedence);
-    index = rightRet.index;
-    if(currentOp === "(") {
-        rightRet.index += 1;
-        return rightRet;
-    }
-
-
-    // if(index >= tokens.length)
-    //     return {graph: tree, index: index, recent: tokens[index]};
-
-
-    // const rightCircuit = rightRet.circuit;
-    // const rightPort = rightRet.recentPort;
-
-    // const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
-    // let newComponents: IOObject[] = rightCircuit.concat([newGate]);
-    if(currentOp !== "!") {
-        tree.createEdge(leftRet.recent, currentToken, true);
-    }
-    tree.createEdge(rightRet.recent, currentToken, true);
-
-    return {graph: tree, index: index, recent: currentToken};
 }
 
 /**
@@ -469,29 +385,11 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const outputToken: Token = {type: "separator"};
     const basicTree = getPopulatedTree(tokenList, outputToken);
-    // console.log(basicTree.getNodes());
-    const ret = generateTree(tokenList, 0, basicTree, "|", precedences);
-    const connectedTree = ret.graph;
-    const recent = ret.recent;
-    connectedTree.createEdge(recent, outputToken, true);
+    const connectedTree = generateTree(tokenList, basicTree, "|", DefaultPrecedences, outputToken);
 
     const fullCircuit = tokenTreeToCircuit(connectedTree, inputs, output);
 
-
-
-    // const parseRet = parseOp(tokenList, 0, inputs, "|", precedences);
-    // const circuit = parseRet.circuit;
-    // const outPort = parseRet.recentPort;
-    // const wire = new DigitalWire(outPort, output.getInputPort(0));
-    // outPort.connect(wire);
-    // output.getInputPort(0).connect(wire);
-    // circuit.push(wire);
-    // circuit.push(output);
-
-    // const fullCircuit = circuit.concat(Array.from(inputs.values()));
-    // console.log(basicTree.getNodes(), fullCircuit);
     const condensedCircuit = createNegationGates(fullCircuit);
-    // const condensedCircuit = fullCircuit;
 
     return new DigitalObjectSet(condensedCircuit);
 }

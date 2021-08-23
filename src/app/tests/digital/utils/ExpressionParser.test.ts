@@ -2,24 +2,20 @@ import "jest";
 
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
 import {ConstantLow}    from "digital/models/ioobjects/inputs/ConstantLow";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}            from "digital/models/ioobjects/gates/ORGate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {DigitalWire} from "digital/models/DigitalWire";
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 import { Graph } from "math/Graph";
 
-import {ExpressionToCircuit, Token, InputToken, tokenTreeToCircuit, createNegationGates, connectGate, generateTree, precedences} from "digital/utils/ExpressionParser";
-import {FormatMap, TokenType}    from "digital/utils/ExpressionParserConstants";
+import {ExpressionToCircuit, tokenTreeToCircuit, createNegationGates, connectGate, generateTree} from "digital/utils/ExpressionParser";
+import {FormatMap, Token, InputToken, DefaultPrecedences}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
-import { connect } from "react-redux";
-import { AssertionError } from "assert/strict";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();
@@ -1213,21 +1209,14 @@ describe("Expression Parser", () => {
             const token1: InputToken = {type: "label", name: "a"}
             const token2: InputToken = {type: "label", name: "a"}
             const andToken: Token = {type: "&"}
+            const outputToken: Token = {type: "separator"};
             const tokenList = [token1, andToken, token2];
             const basicTree = new Graph<Token, false>();
             basicTree.createNode(token1);
             basicTree.createNode(token2);
             basicTree.createNode(andToken);
-            const ret = generateTree(tokenList, 0, basicTree, "|", precedences);
-            const connectedTree = ret.graph;
-            const recent = ret.recent;
-            const index = ret.index;
-            test("Index Correct", () => {
-                expect(index).toBe(tokenList.length);
-            });
-            test("Recent Correct", () => {
-                expect(recent).toBe(andToken);
-            });
+            basicTree.createNode(outputToken);
+            const connectedTree = generateTree(tokenList, basicTree, "|", DefaultPrecedences, outputToken);
             test("Graph Connected", () => {
                 expect(connectedTree.isConnected()).toBe(true);
             });
@@ -1241,7 +1230,11 @@ describe("Expression Parser", () => {
                     expect(connectedTree.getConnections(token2)[0].getTarget()).toBe(andToken);
                 });
                 test("and", () => {
-                    expect(connectedTree.getConnections(andToken).length).toBe(0);
+                    expect(connectedTree.getConnections(andToken).length).toBe(1);
+                    expect(connectedTree.getConnections(andToken)[0].getTarget()).toBe(outputToken);
+                });
+                test("output", () => {
+                    expect(connectedTree.getConnections(outputToken).length).toBe(0);
                 });
             });
         });

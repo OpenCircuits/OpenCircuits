@@ -3,14 +3,11 @@ import {connect}  from "react-redux";
 
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 
-import {Overlay} from "shared/components/Overlay";
 import {Popup}   from "shared/components/Popup";
 
 import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header/actions";
 import {HeaderPopups}      from "shared/state/Header/state";
-
-import {Camera} from "math/Camera";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -22,7 +19,6 @@ import {PlaceAction}             from "core/actions/addition/PlaceAction";
 import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
 
 import {DigitalCircuitInfo}     from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner} from "digital/models";
 import {DigitalComponent}       from "digital/models/DigitalComponent";
 import {ICData}                 from "digital/models/ioobjects/other/ICData";
 import {IC}                     from "digital/models/ioobjects/other/IC";
@@ -34,8 +30,7 @@ import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
-import {FormatMap,
-        FormatProps}    from "digital/utils/ExpressionParserConstants";
+import {FormatMap, InputToken}    from "digital/utils/ExpressionParserConstants";
 
 import "./index.scss";
 
@@ -62,16 +57,16 @@ const Inputs = new Map<string, () => DigitalComponent>([
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string) {
     const ops = FormatMap.get(format);
-    const opsSet = new Set([ops.get("|"), ops.get("^"), ops.get("&"), ops.get("!"), ops.get("("), ops.get(")")]);
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
-    let token: string;
-    for(let i = 0; i < tokenList.length; i++) {
-        token = tokenList[i];
-        if (opsSet.has(token))
+    for(const token of tokenList) {
+        if (token.type != "label")
             continue;
-        inputMap.set(token, Inputs.get(input).call(null));
-        inputMap.get(token).setName(token);
+        const inputToken = token as InputToken;
+        if (inputMap.has(inputToken.name))
+            continue;
+        inputMap.set(inputToken.name, Inputs.get(input).call(null));
+        inputMap.get(inputToken.name).setName(inputToken.name);
     }
     const o = new LED();
     o.setName("Output");
