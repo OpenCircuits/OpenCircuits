@@ -112,7 +112,7 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
     return tokenList;
 }
 
-const precedences = new Map<TokenType, TokenType>([
+export const precedences = new Map<TokenType, TokenType>([
     ["|", "^"],
     ["^", "&"],
     ["&", "!"],
@@ -382,38 +382,38 @@ function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<To
     return tree;
 }
 
-function parseOpNew(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewRetValue {
+export function generateTree(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewRetValue {
     const nextOp = precedence.get(currentOp);
-    const currentToken = tokens[index];
     // if(index >= tokens.length)
     //     return {graph: tree, index: index, recent: tokens[index]};
     // if(currentToken.type === "&")
     //     console.log("Hiluhaklghsadklghaslkjghaslkjhgaslkdjgh");
 
-    if(nextOp === "(" && currentToken.type !== currentOp) {
-        if(currentToken.type === "(")
-            return parseOpNew(tokens, index, tree, nextOp, precedence);
+    if(nextOp === "(" && tokens[index].type !== currentOp) {
+        if(tokens[index].type === "(")
+            return generateTree(tokens, index, tree, nextOp, precedence);
         else
-            return {graph: tree, index: index+1, recent: currentToken};
+            return {graph: tree, index: index+1, recent: tokens[index]};
     }
 
     let leftRet: NewRetValue = null;
     if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = parseOpNew(tokens, index, tree, nextOp, precedence);
+        leftRet = generateTree(tokens, index, tree, nextOp, precedence);
         index = leftRet.index;
-        if(index >= tokens.length || currentToken.type !== currentOp)
+        if(index >= tokens.length || tokens[index].type !== currentOp)
             return leftRet;
     }
+    const currentToken = tokens[index];
     index += 1;
     let rightRet: NewRetValue = null;
     if(currentOp === "!" && tokens[index].type === "!")
-        rightRet = parseOpNew(tokens, index, tree, currentOp, precedence);
+        rightRet = generateTree(tokens, index, tree, currentOp, precedence);
     else if(nextOp === "(" && tokens[index].type !== "(")
         rightRet = {graph: tree, index: index+1, recent: tokens[index]};
     else if(currentOp === "!" || currentOp === "(")
-        rightRet = parseOpNew(tokens, index, tree, nextOp, precedence);
+        rightRet = generateTree(tokens, index, tree, nextOp, precedence);
     else
-        rightRet = parseOpNew(tokens, index, tree, currentOp, precedence);
+        rightRet = generateTree(tokens, index, tree, currentOp, precedence);
     index = rightRet.index;
     if(currentOp === "(") {
         rightRet.index += 1;
@@ -470,7 +470,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     const outputToken: Token = {type: "separator"};
     const basicTree = getPopulatedTree(tokenList, outputToken);
     // console.log(basicTree.getNodes());
-    const ret = parseOpNew(tokenList, 0, basicTree, "|", precedences);
+    const ret = generateTree(tokenList, 0, basicTree, "|", precedences);
     const connectedTree = ret.graph;
     const recent = ret.recent;
     connectedTree.createEdge(recent, outputToken, true);

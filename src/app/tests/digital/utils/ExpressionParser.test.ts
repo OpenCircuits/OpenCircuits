@@ -15,10 +15,11 @@ import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 import { Graph } from "math/Graph";
 
-import {ExpressionToCircuit, Token, InputToken, tokenTreeToCircuit, createNegationGates, connectGate} from "digital/utils/ExpressionParser";
+import {ExpressionToCircuit, Token, InputToken, tokenTreeToCircuit, createNegationGates, connectGate, generateTree, precedences} from "digital/utils/ExpressionParser";
 import {FormatMap, TokenType}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 import { connect } from "react-redux";
+import { AssertionError } from "assert/strict";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();
@@ -1202,6 +1203,45 @@ describe("Expression Parser", () => {
                     b.activate(false);
             
                     expect(o.isOn()).toBe(true);
+                });
+            });
+        });
+    });
+
+    describe("Generate Tree", () => {
+        describe("a&a", () => {
+            const token1: InputToken = {type: "label", name: "a"}
+            const token2: InputToken = {type: "label", name: "a"}
+            const andToken: Token = {type: "&"}
+            const tokenList = [token1, andToken, token2];
+            const basicTree = new Graph<Token, false>();
+            basicTree.createNode(token1);
+            basicTree.createNode(token2);
+            basicTree.createNode(andToken);
+            const ret = generateTree(tokenList, 0, basicTree, "|", precedences);
+            const connectedTree = ret.graph;
+            const recent = ret.recent;
+            const index = ret.index;
+            test("Index Correct", () => {
+                expect(index).toBe(tokenList.length);
+            });
+            test("Recent Correct", () => {
+                expect(recent).toBe(andToken);
+            });
+            test("Graph Connected", () => {
+                expect(connectedTree.isConnected()).toBe(true);
+            });
+            describe("Correct Connections", () => {
+                test("a (first)", () => {
+                    expect(connectedTree.getConnections(token1).length).toBe(1);
+                    expect(connectedTree.getConnections(token1)[0].getTarget()).toBe(andToken);
+                });
+                test("a (second)", () => {
+                    expect(connectedTree.getConnections(token2).length).toBe(1);
+                    expect(connectedTree.getConnections(token2)[0].getTarget()).toBe(andToken);
+                });
+                test("and", () => {
+                    expect(connectedTree.getConnections(andToken).length).toBe(0);
                 });
             });
         });
