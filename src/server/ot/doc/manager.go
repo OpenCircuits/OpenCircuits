@@ -10,16 +10,26 @@ type DocumentManager struct {
 }
 
 type DriverFactories struct {
-	ChangelogDriverFactory model.ChangelogDriverFactory
+	model.ChangelogDriverFactory
+	model.MilestoneDriverFactory
+	model.CircuitDriver
 }
 
 // New creates instances of each of the drivers, returning an error if any fails
 func (df DriverFactories) New(circuitID model.CircuitID) (DocumentDrivers, error) {
-	var d DocumentDrivers
-	var err error
-
-	d.ChangelogDriver, err = df.ChangelogDriverFactory.NewChangelogDriver(circuitID)
-	return d, err
+	cl, err := df.NewChangelogDriver(circuitID)
+	if err != nil {
+		return DocumentDrivers{}, err
+	}
+	ms, err := df.NewMilestoneDriver(circuitID)
+	if err != nil {
+		return DocumentDrivers{}, err
+	}
+	return DocumentDrivers{
+		ChangelogDriver: cl,
+		MilestoneDriver: ms,
+		CircuitDriver:   df.CircuitDriver,
+	}, err
 }
 
 // NewDocumentManager launches the document manager

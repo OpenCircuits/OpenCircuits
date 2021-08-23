@@ -14,7 +14,9 @@ type DocumentParam struct {
 
 // DocumentDrivers are the drivers used by the document for saving state
 type DocumentDrivers struct {
-	ChangelogDriver model.ChangelogDriver
+	model.ChangelogDriver
+	model.MilestoneDriver
+	model.CircuitDriver
 }
 
 // DocumentClose is the callback for when the document closes
@@ -74,7 +76,7 @@ func (d documentState) messageLoop() {
 	}()
 
 	// bootstrap the log clock
-	d.changelog.LogClock = d.Drivers.ChangelogDriver.ChangelogClock()
+	d.changelog.LogClock = d.Drivers.ChangelogClock()
 
 	// TODO: _may_ want some sort of time-out if sessions can live forever
 	for {
@@ -126,7 +128,7 @@ func (d documentState) proposeEntry(msg ProposeEntry, resp MessageChan) {
 	}
 
 	// Save to persistent storage _before_ telling other sessions
-	d.Drivers.ChangelogDriver.AppendChangelog(accepted)
+	d.Drivers.AppendChangelog(accepted)
 
 	// Send to other clients
 	accepted.Strip()
@@ -158,7 +160,7 @@ func (d documentState) joinDocument(m JoinDocument, resp MessageChan) {
 	// Give the new session all the information it needs
 	resp.Welcome(WelcomeMessage{
 		Session:       newSession,
-		MissedEntries: d.Drivers.ChangelogDriver.ChangelogRange(m.LogClock, d.changelog.LogClock),
+		MissedEntries: d.Drivers.ChangelogRange(m.LogClock, d.changelog.LogClock),
 		Sessions:      existingSessions,
 	})
 
