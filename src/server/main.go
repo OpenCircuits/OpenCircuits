@@ -82,9 +82,11 @@ func main() {
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}
 
-	// TODO:
+	// TODO: real drivers, and global schema version
 	factories := doc.DriverFactories{
 		ChangelogDriverFactory: mem.NewChangelogFactory(),
+		MilestoneDriverFactory: mem.NewMilestoneFactory(),
+		CircuitDriver:          mem.NewCircuitDriver("3.0"),
 	}
 	docManager := doc.NewDocumentManager(factories)
 	accessManager := mem.NewAccess()
