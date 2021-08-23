@@ -29,7 +29,7 @@ type MilestoneDriver interface {
 
 // MilestoneDriverFactory constructs MilestoneDrivers for circuit IDs
 type MilestoneDriverFactory interface {
-	NewMilestoneDriver(circuitID CircuitID) (MilestoneDriver, error)
+	NewMilestoneDriver(circuitID CircuitID) MilestoneDriver
 }
 
 // ExplicitMetadata is updated by the client, so fields are all optional

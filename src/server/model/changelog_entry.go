@@ -19,7 +19,7 @@ type ChangelogDriver interface {
 
 // ChangelogDriverFactory constructs ChangelogDrivers for circuit IDs
 type ChangelogDriverFactory interface {
-	NewChangelogDriver(circuitID CircuitID) (ChangelogDriver, error)
+	NewChangelogDriver(circuitID CircuitID) ChangelogDriver
 }
 
 // ChangelogEntry contains all information used directly in the OT algorithm

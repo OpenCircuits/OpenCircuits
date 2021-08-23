@@ -15,21 +15,13 @@ type DriverFactories struct {
 	model.CircuitDriver
 }
 
-// New creates instances of each of the drivers, returning an error if any fails
-func (df DriverFactories) New(circuitID model.CircuitID) (DocumentDrivers, error) {
-	cl, err := df.NewChangelogDriver(circuitID)
-	if err != nil {
-		return DocumentDrivers{}, err
-	}
-	ms, err := df.NewMilestoneDriver(circuitID)
-	if err != nil {
-		return DocumentDrivers{}, err
-	}
+// New creates instances of each of the drivers
+func (df DriverFactories) New(circuitID model.CircuitID) DocumentDrivers {
 	return DocumentDrivers{
-		ChangelogDriver: cl,
-		MilestoneDriver: ms,
+		ChangelogDriver: df.NewChangelogDriver(circuitID),
+		MilestoneDriver: df.NewMilestoneDriver(circuitID),
 		CircuitDriver:   df.CircuitDriver,
-	}, err
+	}
 }
 
 // NewDocumentManager launches the document manager
@@ -99,15 +91,9 @@ func (st dmState) manage() {
 				break
 			}
 
-			drivers, err := st.factories.New(req.CircuitID)
-			if err != nil {
-				req.Resp <- openResponse{d, err}
-				break
-			}
-
 			d = NewDocument(DocumentParam{
 				CircuitID: req.CircuitID,
-				Drivers:   drivers,
+				Drivers:   st.factories.New(req.CircuitID),
 				OnClose: func() {
 					st.doneListener <- req.CircuitID
 				},
