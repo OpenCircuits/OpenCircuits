@@ -1206,9 +1206,9 @@ describe("Expression Parser", () => {
 
     describe("Generate Tree", () => {
         describe("a&a", () => {
-            const token1: InputToken = {type: "label", name: "a"}
-            const token2: InputToken = {type: "label", name: "a"}
-            const andToken: Token = {type: "&"}
+            const token1: InputToken = {type: "label", name: "a"};
+            const token2: InputToken = {type: "label", name: "a"};
+            const andToken: Token = {type: "&"};
             const outputToken: Token = {type: "separator"};
             const tokenList = [token1, andToken, token2];
             const basicTree = new Graph<Token, false>();
