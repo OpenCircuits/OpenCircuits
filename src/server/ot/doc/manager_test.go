@@ -4,17 +4,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
 
-type mockFactory struct{}
-
-func (mockFactory) NewChangelogDriver(model.CircuitID) (model.ChangelogDriver, error) {
-	return nil, nil
-}
-
 var mockFactories DriverFactories = DriverFactories{
-	ChangelogDriverFactory: mockFactory{},
+	ChangelogDriverFactory: mem.NewChangelogFactory(),
+	MilestoneDriverFactory: mem.NewMilestoneFactory(),
+	CircuitDriver:          mem.NewCircuitDriver("INVALID"),
 }
 
 func TestManagerGetDocument(t *testing.T) {
