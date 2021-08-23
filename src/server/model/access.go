@@ -39,7 +39,7 @@ const (
 	AccessView    = 10
 	AccessEdit    = 20
 	AccessOwner   = 30
-	AccessCreater = 40
+	AccessCreator = 40
 )
 
 // BasePermission describes permission level independent of type
@@ -97,7 +97,7 @@ func (user UserPermission) IsAnonymous() bool {
 func (user UserPermission) CanUpdateUser(oldTarget, newTarget UserPermission) bool {
 	// TODO: Use date
 	canPromote := newTarget.AccessLevel <= user.AccessLevel &&
-		newTarget.AccessLevel < AccessCreater
+		newTarget.AccessLevel < AccessCreator
 	canDemote := oldTarget.AccessLevel < user.AccessLevel
 	return canPromote && canDemote
 }
@@ -131,7 +131,7 @@ func (user BasePermission) CanEdit() bool {
 
 func (user UserPermission) CanDelete() bool {
 	// TODO: Use date
-	return user.AccessLevel >= AccessCreater
+	return user.AccessLevel >= AccessCreator
 }
 
 func (user UserPermission) CanRevokeUser(target UserPermission) bool {
