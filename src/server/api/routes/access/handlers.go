@@ -21,11 +21,8 @@ func Wrapper(f AccessHandler) api.HandlerFunc {
 		}
 
 		// Get the requester's permission level
-		requesterPerms, err := c.Access.GetCircuitUser(circuitID, userID)
-		if err != nil {
-			return http.StatusInternalServerError, nil
-		}
-		if requesterPerms.Invalid() {
+		requesterPerms, ok := c.Access.GetCircuitUser(circuitID, userID)
+		if !ok {
 			return http.StatusNotFound, nil
 		}
 		return f(c, requesterPerms)
@@ -37,11 +34,7 @@ func GetCircuit(c *api.Context, requesterPerms model.UserPermission) (int, inter
 		return http.StatusForbidden, nil
 	}
 
-	perms, err := c.Access.GetCircuit(requesterPerms.CircuitID)
-	if err != nil {
-		return http.StatusInternalServerError, nil
-	}
-
+	perms, _ := c.Access.GetCircuit(requesterPerms.CircuitID)
 	return http.StatusOK, perms
 }
 
@@ -52,20 +45,14 @@ func UpsertCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusBadRequest, err
 	}
 
-	currentPerms, err := c.Access.GetCircuitUser(requesterPerms.CircuitID, proposedPerms.UserID)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	currentPerms, _ := c.Access.GetCircuitUser(requesterPerms.CircuitID, proposedPerms.UserID)
 
 	if !requesterPerms.CanUpdateUser(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}
 
 	proposedPerms.CircuitID = requesterPerms.CircuitID
-	err = c.Access.UpsertCircuitUser(proposedPerms)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	c.Access.UpsertCircuitUser(proposedPerms)
 
 	return http.StatusAccepted, nil
 }
@@ -77,31 +64,21 @@ func UpsertCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusBadRequest, err
 	}
 
-	currentPerms, err := c.Access.GetLink(proposedPerms.LinkID)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
+	currentPerms, _ := c.Access.GetLink(proposedPerms.LinkID)
 	if !requesterPerms.CanUpdateLink(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}
 
 	proposedPerms.CircuitID = requesterPerms.CircuitID
-	resultPerms, err := c.Access.UpsertCircuitLink(proposedPerms)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	resultPerms := c.Access.UpsertCircuitLink(proposedPerms)
 
 	return http.StatusAccepted, resultPerms
 }
 
 func DeleteCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
 	userID := c.Param("uid")
-	revokedPerm, err := c.Access.GetCircuitUser(requesterPerms.CircuitID, model.UserID(userID))
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-	if revokedPerm.Invalid() {
+	revokedPerm, ok := c.Access.GetCircuitUser(requesterPerms.CircuitID, model.UserID(userID))
+	if !ok {
 		return http.StatusNotFound, nil
 	}
 
@@ -109,10 +86,7 @@ func DeleteCircuitUser(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusForbidden, nil
 	}
 
-	err = c.Access.DeleteCircuitUser(requesterPerms.CircuitID, revokedPerm.UserID)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	c.Access.DeleteCircuitUser(requesterPerms.CircuitID, revokedPerm.UserID)
 
 	return http.StatusAccepted, nil
 }
@@ -123,11 +97,8 @@ func DeleteCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 	if err != nil {
 		return http.StatusNotFound, nil
 	}
-	linkPerms, err := c.Access.GetLink(linkID)
-	if err != nil {
-		return http.StatusBadRequest, err
-	}
-	if linkPerms.Invalid() {
+	linkPerms, ok := c.Access.GetLink(linkID)
+	if !ok {
 		return http.StatusNotFound, nil
 	}
 	if linkPerms.CircuitID != requesterPerms.CircuitID {
@@ -138,10 +109,7 @@ func DeleteCircuitLink(c *api.Context, requesterPerms model.UserPermission) (int
 		return http.StatusForbidden, nil
 	}
 
-	err = c.Access.DeleteLink(linkID)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
+	c.Access.DeleteLink(linkID)
 
 	return http.StatusAccepted, nil
 }

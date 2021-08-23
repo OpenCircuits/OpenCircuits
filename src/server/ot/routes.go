@@ -35,12 +35,8 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 		}
 
 		// Translate the link ID
-		link, err := launcher.AccessDriver.GetLink(linkID)
-		if err != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-		if link.Invalid() {
+		link, ok := launcher.AccessDriver.GetLink(linkID)
+		if !ok {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}

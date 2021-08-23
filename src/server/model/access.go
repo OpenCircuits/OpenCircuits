@@ -1,30 +1,28 @@
 package model
 
-import "log"
-
-// All errors indicate internal errors
 type AccessDriver interface {
-	// Gets the permissions for the given circuit id
-	GetCircuit(circuitID CircuitID) (CircuitPermissions, error)
-	// Gets the permissions for the given circuit id and user id
-	GetCircuitUser(circuitID CircuitID, userID UserID) (UserPermission, error)
-	// Gets the permissions for the link id
-	GetLink(linkID LinkID) (LinkPermission, error)
-	GetUser(userID UserID) (AllUserPermissions, error)
+	// GetCircuit gets the permissions for the given circuit id
+	GetCircuit(circuitID CircuitID) (CircuitPermissions, bool)
+	// GetCircuitUser gets the permissions for the given circuit id and user id
+	GetCircuitUser(circuitID CircuitID, userID UserID) (UserPermission, bool)
+	// GetLink gets the permissions for the link id
+	GetLink(linkID LinkID) (LinkPermission, bool)
+	// GetUser gets all permissions for a user
+	GetUser(userID UserID) AllUserPermissions
 
 	// Upserts all the circuit permissions
 	// UpsertCircuit(perms CircuitPermissions) error
-	// Upserts permissions for a single user/circuit
-	UpsertCircuitUser(perm UserPermission) error
-	// Upserts permissions for a link Id.  Link Id is created and returned if not provided
-	UpsertCircuitLink(perm LinkPermission) (LinkPermission, error)
+	// UpsertCircuitUser upserts permissions for a single user/circuit
+	UpsertCircuitUser(perm UserPermission)
+	// UpsertCircuitLink upserts permissions for a link Id.  Link Id is created and returned if not provided
+	UpsertCircuitLink(perm LinkPermission) LinkPermission
 
-	// Deletes all permissions for a circuit
-	DeleteCircuit(circuitID CircuitID) error
-	// Deletes permissions for a given user and circuit
-	DeleteCircuitUser(circuitID CircuitID, userID UserID) error
-	// Deletes permissions for a given link
-	DeleteLink(linkID LinkID) error
+	// DeleteCircuit deletes all permissions for a circuit
+	DeleteCircuit(circuitID CircuitID)
+	// DeleteCircuitUser deletes permissions for a given user and circuit
+	DeleteCircuitUser(circuitID CircuitID, userID UserID)
+	// DeleteLink deletes permissions for a given link
+	DeleteLink(linkID LinkID)
 }
 
 type AccessProvider interface {
@@ -84,10 +82,6 @@ func NewCircuitPerm(circuitID CircuitID) CircuitPermissions {
 		UserPerms: make(UserPermissions),
 		LinkPerms: make(LinkPermissions),
 	}
-}
-
-func (b BasePermission) Invalid() bool {
-	return b.Expiration == 0
 }
 
 func (user UserPermission) IsAnonymous() bool {
@@ -156,8 +150,8 @@ type LinkAccessProvider struct {
 }
 
 func (ap LinkAccessProvider) Permissions() BasePermission {
-	perm, err := ap.AccessDriver.GetLink(ap.LinkID)
-	return permHelper(perm.BasePermission, err)
+	perm, _ := ap.AccessDriver.GetLink(ap.LinkID)
+	return perm.BasePermission
 }
 
 type UserAccessProvider struct {
@@ -167,14 +161,6 @@ type UserAccessProvider struct {
 }
 
 func (ap UserAccessProvider) Permissions() BasePermission {
-	perm, err := ap.AccessDriver.GetCircuitUser(ap.CircuitID, ap.UserID)
-	return permHelper(perm.BasePermission, err)
-}
-
-func permHelper(perm BasePermission, err error) BasePermission {
-	if err != nil {
-		log.Printf("error fetching permissions for session: %v\n", err)
-		return BasePermission{}
-	}
-	return perm
+	perm, _ := ap.AccessDriver.GetCircuitUser(ap.CircuitID, ap.UserID)
+	return perm.BasePermission
 }
