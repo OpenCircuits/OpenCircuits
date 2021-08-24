@@ -22,10 +22,15 @@ type DocumentDrivers struct {
 // DocumentClose is the callback for when the document closes
 type DocumentClose func()
 
+type sessionInfo struct {
+	JoinInfo SessionJoined
+	Chan     MessageChan
+}
+
 type documentState struct {
 	DocumentParam
 
-	sessions  map[MessageChan]SessionJoined
+	sessions  map[model.SessionID]sessionInfo
 	recv      <-chan MessageWrapper
 	changelog *Changelog
 }
@@ -48,7 +53,7 @@ func newDocument(p DocumentParam) (Document, documentState) {
 	st := documentState{
 		DocumentParam: p,
 
-		sessions:  map[MessageChan]SessionJoined{},
+		sessions:  map[model.SessionID]sessionInfo{},
 		recv:      ch,
 		changelog: &Changelog{},
 	}
@@ -69,8 +74,8 @@ func (d documentState) messageLoop() {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in Document message loop: ", r)
-			for ch := range d.sessions {
-				ch.Close(CloseMessage{"internal document error"})
+			for _, s := range d.sessions {
+				s.Chan.Close(CloseMessage{"internal document error"})
 			}
 		}
 	}()
@@ -83,41 +88,40 @@ func (d documentState) messageLoop() {
 		mw := <-d.recv
 		switch m := mw.Data.(type) {
 		case ProposeEntry:
-			if _, ok := d.sessions[mw.Resp]; !ok {
-				mw.Resp.Close(CloseMessage{
-					Reason: "proposal from unjoined session",
-				})
+			if resp, ok := d.sessions[mw.Sender]; ok {
+				d.proposeEntry(m, mw.Sender, resp.Chan)
+			} else {
+				log.Println("proposal from unjoined session", mw.Sender)
 				continue
 			}
-			d.proposeEntry(m, mw.Resp)
 		case JoinDocument:
-			if _, ok := d.sessions[mw.Resp]; ok {
-				mw.Resp.Close(CloseMessage{
+			if s, ok := d.sessions[mw.Sender]; ok {
+				s.Chan.Close(CloseMessage{
 					Reason: "join from joined session",
 				})
 				continue
 			}
-			d.joinDocument(m, mw.Resp)
+			d.joinDocument(m, mw.Sender)
 		case LeaveDocument:
 			// Double-leave
-			if _, ok := d.sessions[mw.Resp]; !ok {
-				log.Printf("session %s already left\n", m.SessionID)
+			if _, ok := d.sessions[mw.Sender]; !ok {
+				log.Printf("session %s already left\n", mw.Sender)
 				continue
 			}
-			if d.leaveDocument(m, mw.Resp) {
+			if d.leaveDocument(mw.Sender) {
 				return
 			}
 		}
 	}
 }
 
-func (d documentState) proposeEntry(msg ProposeEntry, resp MessageChan) {
+func (d documentState) proposeEntry(msg ProposeEntry, senderID model.SessionID, resp MessageChan) {
 	accepted := model.ChangelogEntry{
 		Action:        msg.Action,
 		ProposedClock: msg.ProposedClock,
 		SchemaVersion: msg.SchemaVersion,
 		UserID:        msg.UserID,
-		SessionID:     msg.SessionID,
+		SessionID:     senderID,
 	}
 
 	// In a concurrent request, acceptedClock != proposedClock
@@ -132,57 +136,60 @@ func (d documentState) proposeEntry(msg ProposeEntry, resp MessageChan) {
 
 	// Send to other clients
 	accepted.Strip()
-	for ch := range d.sessions {
-		if ch == resp {
+	for sid, s := range d.sessions {
+		if sid == senderID {
 			continue
 		}
-		ch.Entry(accepted)
+		s.Chan.Entry(accepted)
 	}
 
 	// Acknowledge the request
 	resp.Ack(ProposeAck{AcceptedClock: accepted.AcceptedClock})
 }
 
-func (d documentState) joinDocument(m JoinDocument, resp MessageChan) {
+func (d documentState) joinDocument(m JoinDocument, sessionID model.SessionID) {
 	// Collect existing sessions
 	existingSessions := make([]SessionJoined, 0, len(d.sessions))
 	for _, s := range d.sessions {
-		existingSessions = append(existingSessions, s)
+		existingSessions = append(existingSessions, s.JoinInfo)
 	}
 
-	// Create the new one
 	newSession := SessionJoined{
 		UserID:    m.UserID,
-		SessionID: m.SessionID,
+		SessionID: sessionID,
 	}
-	d.sessions[resp] = newSession
+
+	// Create the new session
+	d.sessions[sessionID] = sessionInfo{
+		JoinInfo: newSession,
+		Chan:     m.Chan,
+	}
 
 	// Give the new session all the information it needs
-	resp.Welcome(WelcomeMessage{
+	m.Chan.Welcome(WelcomeMessage{
 		Session:       newSession,
 		MissedEntries: d.Drivers.ChangelogRange(m.LogClock, d.changelog.LogClock),
 		Sessions:      existingSessions,
 	})
 
 	// Tell all other sessions another one joined
-	for ch := range d.sessions {
-		if ch == resp {
+	for sid, s := range d.sessions {
+		if sid == sessionID {
 			continue
 		}
-		ch.Joined(SessionJoined{
-			UserID:    m.UserID,
-			SessionID: m.SessionID,
-		})
+		s.Chan.Joined(newSession)
 	}
 }
 
-func (d documentState) leaveDocument(m LeaveDocument, resp MessageChan) bool {
+func (d documentState) leaveDocument(sessionID model.SessionID) bool {
 	// Remove this session from out list
-	delete(d.sessions, resp)
+	delete(d.sessions, sessionID)
 
 	// Tell all other sessions one left
-	for ch := range d.sessions {
-		ch.Left(m)
+	for _, s := range d.sessions {
+		s.Chan.Left(SessionLeft{
+			SessionID: sessionID,
+		})
 	}
 
 	// The last session to leave closes the document

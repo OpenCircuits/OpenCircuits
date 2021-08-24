@@ -17,74 +17,57 @@ type SessionParam struct {
 	Access    model.AccessProvider
 }
 
-type sessionState struct {
-	SessionParam
-
-	docUpdates chan interface{}
-}
-
 type Session struct {
 	SessionID model.SessionID
 }
 
 func NewSession(p SessionParam, logClock uint64) Session {
-	s := sessionState{
-		SessionParam: p,
+	// TODO: The 64 here is so the document does not stall if one
+	//	session has a minor hold-up sending updates to the client
+	docUpdates := make(chan interface{}, 64)
 
-		docUpdates: make(chan interface{}, 64),
+	sender := networkSender{
+		SessionParam: p,
+		DocUpdates:   docUpdates,
+	}
+	listener := networkListener{
+		SessionParam: p,
 	}
 
 	// Join the document before starting the threads
-	s.sendDoc(doc.JoinDocument{
-		LogClock:  logClock,
-		UserID:    s.UserID,
-		SessionID: s.SessionID,
+	listener.sendDoc(doc.JoinDocument{
+		LogClock: logClock,
+		UserID:   p.UserID,
+		Chan:     doc.NewMsgChan(docUpdates),
 	})
 
-	go s.networkListener()
-	go s.networkSender()
+	go listener.run()
+	go sender.run()
 
 	return Session{
-		SessionID: s.SessionID,
+		SessionID: p.SessionID,
 	}
-}
-
-func (s sessionState) sendDoc(v interface{}) {
-	s.Doc.Send(doc.MessageWrapper{
-		Resp: doc.NewMsgChan(s.docUpdates),
-		Data: v,
-	})
-}
-
-func (s sessionState) close() {
-	// _ = s.Conn.Close()
-	s.sendDoc(doc.LeaveDocument{
-		SessionID: s.SessionID,
-	})
-	close(s.docUpdates)
-}
-
-// die sends a close message to the doc listener thread, which indirectly
-//	closes the session
-func (s sessionState) die(reason string) {
-	doc.NewMsgChan(s.docUpdates).Close(doc.CloseMessage{
-		Reason: reason,
-	})
-}
-
-// sendConn wraps the connection's Send function to make sure the user is still
-//	allowed to see new updates and closes the session if revoked
-func (s sessionState) sendConn(v interface{}) {
-	if !s.Access.Permissions().CanView() {
-		s.die("insufficient permissions (view)")
-		return
-	}
-	s.Conn.Send(v)
 }
 
 // networkListener listens to messages coming from the client.
 //	It can be single-threaded because proposals come one-at-a-time
-func (s sessionState) networkListener() {
+type networkListener struct {
+	SessionParam
+}
+
+func (s networkListener) sendDoc(v interface{}) {
+	s.Doc.Send(doc.MessageWrapper{
+		Sender: s.SessionID,
+		Data:   v,
+	})
+}
+
+func (s networkListener) close() {
+	_ = s.Conn.Close()
+	s.sendDoc(doc.LeaveDocument{})
+}
+
+func (s networkListener) run() {
 	defer s.close()
 	defer func() {
 		if r := recover(); r != nil {
@@ -103,7 +86,9 @@ func (s sessionState) networkListener() {
 		switch msg := msg.(type) {
 		case conn.ProposeEntry:
 			if !s.Access.Permissions().CanEdit() {
-				s.die("insufficient permissions (edit)")
+				s.Conn.Send(conn.CloseMessage{
+					Reason: "insufficient permissions (view)",
+				})
 				return
 			}
 
@@ -112,7 +97,6 @@ func (s sessionState) networkListener() {
 				ProposedClock: msg.ProposedClock,
 				SchemaVersion: msg.SchemaVersion,
 				UserID:        s.UserID,
-				SessionID:     s.SessionID,
 			})
 		default:
 			log.Println(
@@ -125,7 +109,15 @@ func (s sessionState) networkListener() {
 
 // networkSender guarantees messages are sent to the client in the correct
 //	order by sending from a single thread.
-func (s sessionState) networkSender() {
+type networkSender struct {
+	SessionParam
+
+	DocUpdates <-chan interface{}
+}
+
+func (s networkSender) run() {
+	// Only defer closing the connection, because that will cause "networkListener" to close
+	//	if it hasn't already, which will call the sessionState close function
 	defer s.Conn.Close()
 	defer func() {
 		if r := recover(); r != nil {
@@ -134,38 +126,48 @@ func (s sessionState) networkSender() {
 		}
 	}()
 
-	for u := range s.docUpdates {
+	for u := range s.DocUpdates {
+		switch u := u.(type) {
+		case doc.CloseMessage:
+			s.Conn.Send(u)
+			return
+		}
+
+		if !s.Access.Permissions().CanView() {
+			s.Conn.Send(conn.CloseMessage{
+				Reason: "insufficient permissions (view)",
+			})
+			return
+		}
+
 		// TODO: always send ACK messages immediately with currently cached updates,
 		//	otherwise wait until time since last message is high enough
 		switch u := u.(type) {
 		case doc.NewEntry:
-			s.sendConn(conn.Updates{
+			s.Conn.Send(conn.Updates{
 				NewEntries:     []doc.AcceptedEntry{u},
 				SessionsJoined: []doc.SessionJoined{},
 				SessionsLeft:   []doc.SessionLeft{},
 			})
 		case doc.ProposeAck:
-			s.sendConn(conn.ProposeAck{
+			s.Conn.Send(conn.ProposeAck{
 				AcceptedClock: u.AcceptedClock,
 				Updates:       conn.Updates{},
 			})
 		case doc.SessionJoined:
-			s.sendConn(conn.Updates{
+			s.Conn.Send(conn.Updates{
 				NewEntries:     []doc.AcceptedEntry{},
 				SessionsJoined: []doc.SessionJoined{u},
-				SessionsLeft:   []doc.LeaveDocument{},
+				SessionsLeft:   []doc.SessionLeft{},
 			})
 		case doc.SessionLeft:
-			s.sendConn(conn.Updates{
+			s.Conn.Send(conn.Updates{
 				NewEntries:     []doc.AcceptedEntry{},
 				SessionsJoined: []doc.SessionJoined{},
-				SessionsLeft:   []doc.LeaveDocument{u},
+				SessionsLeft:   []doc.SessionLeft{u},
 			})
 		case doc.WelcomeMessage:
-			s.sendConn(u)
-		case doc.CloseMessage:
 			s.Conn.Send(u)
-			return
 		default:
 			log.Println(
 				"Session received unexpected message type from doc: ",

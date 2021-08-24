@@ -9,8 +9,8 @@ import (
 // MessageWrapper is used to send messages to the Document thread.
 //	Resp should be buffered to avoid blocking the Document thread
 type MessageWrapper struct {
-	Resp MessageChan
-	Data interface{}
+	Sender model.SessionID
+	Data   interface{}
 }
 
 //
@@ -22,18 +22,15 @@ type ProposeEntry struct {
 	ProposedClock uint64
 	SchemaVersion model.SchemaVersion
 	UserID        model.UserID
-	SessionID     model.SessionID
 }
 
 type JoinDocument struct {
-	LogClock  uint64
-	UserID    model.UserID
-	SessionID model.SessionID
+	LogClock uint64
+	UserID   model.UserID
+	Chan     MessageChan
 }
 
-type LeaveDocument struct {
-	SessionID model.SessionID
-}
+type LeaveDocument struct{}
 
 //
 // Messages sent to the Session
@@ -63,7 +60,9 @@ type SessionJoined struct {
 	SessionID model.SessionID
 }
 
-type SessionLeft = LeaveDocument
+type SessionLeft struct {
+	SessionID model.SessionID
+}
 
 //
 // Helper functions used by the Document to avoid accidentally sending types over

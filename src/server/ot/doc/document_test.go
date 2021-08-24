@@ -35,12 +35,15 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	d, ds, ch := mockDoc()
 	go ds.messageLoop()
 
-	// Send join message
 	respCh := make(chan interface{})
+	sid := model.NewSessionID()
+
+	// Send join message
 	d.Send(MessageWrapper{
-		Resp: MessageChan{respCh},
+		Sender: sid,
 		Data: JoinDocument{
 			LogClock: 0,
+			Chan:     MessageChan{respCh},
 		},
 	})
 
@@ -60,8 +63,8 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 
 	// Send leave message
 	d.Send(MessageWrapper{
-		Resp: MessageChan{respCh},
-		Data: LeaveDocument{},
+		Sender: sid,
+		Data:   LeaveDocument{},
 	})
 
 	select {
@@ -74,39 +77,13 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	}
 }
 
-func TestDocumentLifecycleFailure(t *testing.T) {
-	d, ds, ch := mockDoc()
-	go ds.messageLoop()
-
-	respCh := make(chan interface{})
-
-	// Send propose message without a join message
-	d.Send(MessageWrapper{
-		Resp: MessageChan{respCh},
-		Data: ProposeEntry{
-			ProposedClock: 1,
-		},
-	})
-
-	select {
-	case <-ch:
-	case cl := <-respCh:
-		if _, ok := cl.(CloseMessage); !ok {
-			t.Error("did not receive close message after bad propose")
-		}
-
-	case <-time.After(time.Second):
-		t.Error("Timed out: did not receive close message")
-	}
-}
-
 func TestDocumentProposeSuccess(t *testing.T) {
 	_, ds, _ := mockDoc()
 
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 1,
-	}, MessageChan{ch})
+	}, model.NewSessionID(), MessageChan{ch})
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -126,7 +103,7 @@ func TestDocumentProposeFailure(t *testing.T) {
 	ch := make(chan interface{}, 1)
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 10,
-	}, MessageChan{ch})
+	}, model.NewSessionID(), MessageChan{ch})
 	res := <-ch
 
 	if r, ok := res.(ProposeAck); ok {
@@ -140,18 +117,26 @@ func TestDocumentProposeFailure(t *testing.T) {
 func TestDocumentProposePropagate(t *testing.T) {
 	_, ds, _ := mockDoc()
 
-	chans := make(map[string]chan interface{})
+	type A struct {
+		ch  chan interface{}
+		sid model.SessionID
+	}
+	chans := make(map[string]A)
 	for _, x := range []string{"A", "B", "C", "D"} {
 		ch := make(chan interface{}, 1)
-		chans[x] = ch
-		ds.sessions[MessageChan{ch}] = SessionJoined{}
+		sid := model.NewSessionID()
+		chans[x] = A{ch: ch, sid: sid}
+		ds.sessions[sid] = sessionInfo{
+			JoinInfo: SessionJoined{},
+			Chan:     MessageChan{ch},
+		}
 	}
 
 	ch := chans["B"]
 	ds.proposeEntry(ProposeEntry{
 		ProposedClock: 2,
-	}, MessageChan{ch})
-	res := <-ch
+	}, ch.sid, MessageChan{ch.ch})
+	res := <-ch.ch
 
 	if r, ok := res.(ProposeAck); ok {
 		if r.AcceptedClock != 4 {
@@ -165,7 +150,7 @@ func TestDocumentProposePropagate(t *testing.T) {
 
 	for s, ch := range chans {
 		if s != "B" {
-			a := <-ch
+			a := <-ch.ch
 			if b, ok := a.(AcceptedEntry); ok {
 				if b.AcceptedClock != 4 {
 					t.Error("Received wrong log clock")
@@ -175,7 +160,7 @@ func TestDocumentProposePropagate(t *testing.T) {
 			}
 		} else {
 			select {
-			case <-ch:
+			case <-ch.ch:
 				t.Error("Expected no update on sender channel")
 			default:
 				break
