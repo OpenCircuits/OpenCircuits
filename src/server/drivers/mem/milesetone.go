@@ -26,19 +26,19 @@ func NewMilestoneFactory() model.MilestoneDriverFactory {
 	}
 }
 
-func (f *memMilestoneFactory) NewMilestoneDriver(circuitID model.CircuitID) (model.MilestoneDriver, error) {
+func (f *memMilestoneFactory) NewMilestoneDriver(circuitID model.CircuitID) model.MilestoneDriver {
 	f.m.Lock()
 	defer f.m.Unlock()
 
 	if d, ok := f.drivers[circuitID]; ok {
-		return d, nil
+		return d
 	}
 
 	d := &memMilestoneDriver{
 		ms: make(map[uint64]model.MilestoneCircuit),
 	}
 	f.drivers[circuitID] = d
-	return d, nil
+	return d
 }
 
 func (m *memMilestoneDriver) AddMilestone(milestone model.MilestoneCircuit) {

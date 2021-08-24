@@ -19,8 +19,8 @@ type memChangelog struct {
 	startClock uint64
 }
 
-func (l *memChangelog) NewChangelogDriver(circuitID model.CircuitID) (model.ChangelogDriver, error) {
-	return l, nil
+func (l *memChangelog) NewChangelogDriver(circuitID model.CircuitID) model.ChangelogDriver {
+	return l
 }
 
 func (l *memChangelog) AppendChangelog(es model.ChangelogEntry) {
