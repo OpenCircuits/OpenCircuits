@@ -33,7 +33,7 @@ func (rc *mockRawConn) Close() error {
 
 func TestDefaultConnectionNormal(t *testing.T) {
 	rc := &mockRawConn{}
-	d := NewDefaultConnection(rc)
+	d := RawConnectionWrapper{Raw: rc}
 
 	rc.failRecv = false
 	rc.recv = []byte(`
@@ -50,56 +50,23 @@ func TestDefaultConnectionNormal(t *testing.T) {
 	}
 	`)
 
-	ret, ok := <-d.Recv()
-	if !ok {
+	ret, err := d.Recv()
+	if err != nil {
 		t.Error("failed to recv entry")
 	}
 	if _, ok := ret.(ProposeEntry); !ok {
-		t.Error("recv'd wrong type")
-	}
-}
-
-func TestDefaultConnectionClosedRecv(t *testing.T) {
-	rc := &mockRawConn{}
-	d := NewDefaultConnection(rc)
-
-	rc.failRecv = true
-
-	if _, ok := <-d.Recv(); ok {
-		t.Error("expected closed channel")
+		t.Error("received wrong type")
 	}
 }
 
 func TestDefaultConnectionBadRecvFormat(t *testing.T) {
 	rc := &mockRawConn{}
-	d := NewDefaultConnection(rc)
+	d := RawConnectionWrapper{Raw: rc}
 
 	rc.failRecv = false
 	rc.recv = []byte(`{ }`)
 
-	if _, ok := <-d.Recv(); ok {
-		t.Error("expected closed channel")
-	}
-}
-
-func TestDefaultConnectionClosedSend(t *testing.T) {
-	rc := &mockRawConn{}
-	d := NewDefaultConnection(rc)
-
-	rc.failSend = true
-	d.Send(ProposeEntry{})
-	if _, ok := <-d.Recv(); ok {
-		t.Error("expected closed channel")
-	}
-}
-
-func TestDefaultConnectionBadSendFormat(t *testing.T) {
-	rc := &mockRawConn{}
-	d := NewDefaultConnection(rc)
-
-	rc.failSend = false
-	d.Send(ProposeEntry{})
-	if _, ok := <-d.Recv(); ok {
-		t.Error("expected closed channel")
+	if _, err := d.Recv(); err == nil {
+		t.Error("expected error")
 	}
 }

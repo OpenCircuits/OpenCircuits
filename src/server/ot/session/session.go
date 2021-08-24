@@ -57,7 +57,7 @@ func (s sessionState) sendDoc(v interface{}) {
 }
 
 func (s sessionState) close() {
-	s.Conn.Close()
+	// _ = s.Conn.Close()
 	s.sendDoc(doc.LeaveDocument{
 		SessionID: s.SessionID,
 	})
@@ -89,11 +89,17 @@ func (s sessionState) networkListener() {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in Session listener loop: ", r)
-			s.Conn.Send(doc.CloseMessage{"internal session error"})
+			s.Conn.Send(conn.CloseMessage{"internal session error"})
 		}
 	}()
 
-	for msg := range s.Conn.Recv() {
+	for {
+		msg, err := s.Conn.Recv()
+		if err != nil {
+			log.Println("Connection failed: ", err)
+			return
+		}
+
 		switch msg := msg.(type) {
 		case conn.ProposeEntry:
 			if !s.Access.Permissions().CanEdit() {
@@ -109,7 +115,10 @@ func (s sessionState) networkListener() {
 				SessionID:     s.SessionID,
 			})
 		default:
-			log.Println("Session received unexpected message type from client")
+			log.Println(
+				"Session received unexpected message type from client: ",
+				reflect.TypeOf(msg).Name())
+			return
 		}
 	}
 }
@@ -121,7 +130,7 @@ func (s sessionState) networkSender() {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in Session sender loop: ", r)
-			s.Conn.Send(doc.CloseMessage{"internal session error"})
+			s.Conn.Send(conn.CloseMessage{"internal session error"})
 		}
 	}()
 

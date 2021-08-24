@@ -24,7 +24,7 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 			return
 		}
 		cn := wsFactory.Establish(c)
-		launcher.LaunchCircuitID(conn.NewDefaultConnection(cn), circuitID)
+		launcher.LaunchCircuitID(conn.RawConnectionWrapper{Raw: cn}, circuitID)
 	}
 	establishLinkID := func(c *gin.Context) {
 		var linkID model.LinkID
@@ -42,7 +42,7 @@ func RegisterRoutes(router *gin.Engine, launcher session.Launcher) {
 		}
 
 		cn := wsFactory.Establish(c)
-		launcher.LaunchLinkID(conn.NewDefaultConnection(cn), link)
+		launcher.LaunchLinkID(conn.RawConnectionWrapper{Raw: cn}, link)
 	}
 
 	// OT

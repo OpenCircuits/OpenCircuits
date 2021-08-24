@@ -20,23 +20,27 @@ type Launcher struct {
 // prelimSession is a session that has not joined the document yet.
 //	It is waiting on the client to send the JoinDocument message.
 func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserID, LogClock uint64, err error) {
-	for msg := range c.Recv() {
-		switch msg := msg.(type) {
-		case conn.JoinDocument:
-			LogClock = msg.LogClock
-			UserID, err = l.AuthManager.ExtractIdentity(msg.AuthType, msg.AuthID)
-			if err != nil {
-				c.Send(conn.CloseMessage{
-					Reason: err.Error(),
-				})
-				c.Close()
-			}
-			return
-		default:
-			log.Println("prelimSession received unexpected message type from client")
-		}
+	var msg interface{}
+	msg, err = c.Recv()
+	if err != nil {
+		log.Println("Connection error: ", err)
+		return
 	}
-	err = errors.New("connection closed")
+
+	switch msg := msg.(type) {
+	case conn.JoinDocument:
+		LogClock = msg.LogClock
+		UserID, err = l.AuthManager.ExtractIdentity(msg.AuthType, msg.AuthID)
+		if err != nil {
+			c.Send(conn.CloseMessage{
+				Reason: err.Error(),
+			})
+			c.Close()
+		}
+	default:
+		log.Println("prelimSession received unexpected message type from client")
+		err = errors.New("unexpected message type in un-joined session")
+	}
 	return
 }
 

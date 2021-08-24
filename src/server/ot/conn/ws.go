@@ -9,7 +9,7 @@ import (
 )
 
 type WebSocketConnectionFactory struct {
-	// TODO: Add CSRF (CSWSH) token to handshake
+	// TODO: websocketd CSRF (CSWSH) token to handshake
 	Upgrader websocket.Upgrader
 	// Either websocket.TextMessage or websocket.BinaryMessage
 	MessageType int
@@ -24,7 +24,7 @@ func (wf *WebSocketConnectionFactory) Establish(c *gin.Context) RawConnection {
 
 	return webSocketConnection{
 		conn: conn,
-		mt:   websocket.TextMessage,
+		mt:   wf.MessageType,
 	}
 }
 
