@@ -2,7 +2,6 @@ package doc
 
 import (
 	"testing"
-	"time"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
@@ -15,38 +14,32 @@ var mockFactories DriverFactories = DriverFactories{
 }
 
 func TestManagerGetDocument(t *testing.T) {
-	dm, st := newDocumentManager(mockFactories)
-	go st.manage()
+	dm := NewDocumentManager(mockFactories)
 
 	circuitID := model.NewCircuitID()
-	doc, err := dm.Get(circuitID)
-	if err != nil {
-		t.Error("unexpected error getting document by ID")
+	doc := dm.Get(circuitID)
+
+	if dm.liveDocuments[doc.CircuitID].CircuitID != circuitID {
+		t.Error("Added document had wrong circuit ID")
 	}
 
-	if st.liveDocuments[doc.CircuitID].CircuitID != circuitID {
-		t.Error("Added document had wrong circuit ID")
+	_ = dm.Get(circuitID)
+	if len(dm.liveDocuments) > 1 {
+		t.Error("Duplicate document for same circuit ID")
 	}
 }
 
 func TestManagerCloseDocument(t *testing.T) {
-	dm, st := newDocumentManager(mockFactories)
-	go st.manage()
+	dm := NewDocumentManager(mockFactories)
 
 	circuitID := model.NewCircuitID()
-	doc, err := dm.Get(circuitID)
-	if err != nil {
-		t.Error("unexpected error getting document by ID")
-	}
+	doc := dm.Get(circuitID)
 
 	// Manually close the created document
-	st.doneListener <- doc.CircuitID
-
-	// Give the closer some time to do its job
-	<-time.After(5 * time.Microsecond)
+	dm.delete(doc.CircuitID)
 
 	// Make sure it was closed
-	if _, ok := st.liveDocuments[doc.CircuitID]; ok {
+	if len(dm.liveDocuments) != 0 {
 		t.Error("Expected document to be closed")
 	}
 }

@@ -12,7 +12,7 @@ import (
 
 // Launcher launches sessions
 type Launcher struct {
-	DocumentManager doc.DocumentManager
+	DocumentManager *doc.DocumentManager
 	AccessDriver    model.AccessDriver
 	AuthManager     auth.AuthenticationManager
 }
@@ -45,16 +45,6 @@ func (l *Launcher) prelimSession(c conn.Connection) (UserID model.UserID, LogClo
 }
 
 func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID model.UserID, c conn.Connection, access model.AccessProvider) {
-	// Get the document
-	doc, err := l.DocumentManager.Get(circuitID)
-	if err != nil {
-		c.Send(conn.CloseMessage{
-			Reason: "failed to connect to document",
-		})
-		c.Close()
-		return
-	}
-
 	// Check the permissions
 	if !access.Permissions().CanView() {
 		c.Send(conn.CloseMessage{
@@ -63,6 +53,9 @@ func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID mod
 		c.Close()
 		return
 	}
+
+	// Get the document
+	doc := l.DocumentManager.Get(circuitID)
 
 	// Spawn the session
 	_ = NewSession(SessionParam{

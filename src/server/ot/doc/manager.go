@@ -1,13 +1,10 @@
 package doc
 
 import (
+	"sync"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
-
-// DocumentManager keeps track of live documents
-type DocumentManager struct {
-	openSender chan<- openRequest
-}
 
 type DriverFactories struct {
 	model.ChangelogDriverFactory
@@ -24,85 +21,45 @@ func (df DriverFactories) New(circuitID model.CircuitID) DocumentDrivers {
 	}
 }
 
+// DocumentManager keeps track of live documents
+//	NOTE: Contention can be reduced at zero-cost if the circuit ID space is partitioned
+type DocumentManager struct {
+	factories     DriverFactories
+	liveDocuments map[model.CircuitID]Document
+	mut           sync.Mutex
+}
+
 // NewDocumentManager launches the document manager
-func NewDocumentManager(factories DriverFactories) DocumentManager {
-	dm, st := newDocumentManager(factories)
-	go st.manage()
-	return dm
+func NewDocumentManager(factories DriverFactories) *DocumentManager {
+	return &DocumentManager{
+		factories:     factories,
+		liveDocuments: make(map[model.CircuitID]Document),
+	}
 }
 
 // Get fetches the document handle for the given CircuitID and opens it if not
-func (dm DocumentManager) Get(circuitID model.CircuitID) (Document, error) {
-	ch := make(chan openResponse)
-	dm.openSender <- openRequest{
+func (dm *DocumentManager) Get(circuitID model.CircuitID) Document {
+	dm.mut.Lock()
+	defer dm.mut.Unlock()
+
+	// Document already live
+	if d, ok := dm.liveDocuments[circuitID]; ok {
+		return d
+	}
+
+	// Document not live yet
+	d := NewDocument(DocumentParam{
 		CircuitID: circuitID,
-		Resp:      ch,
-	}
-	resp := <-ch
-	return resp.Document, resp.Error
+		Drivers:   dm.factories.New(circuitID),
+		OnClose:   func() { dm.delete(circuitID) },
+	})
+	dm.liveDocuments[circuitID] = d
+	return d
 }
 
-type openResponse struct {
-	Document Document
-	Error    error
-}
+func (dm *DocumentManager) delete(circuitID model.CircuitID) {
+	dm.mut.Lock()
+	defer dm.mut.Unlock()
 
-type openRequest struct {
-	CircuitID model.CircuitID
-	// Resp must be non-null
-	Resp chan<- openResponse
-}
-
-type dmState struct {
-	factories DriverFactories
-
-	liveDocuments map[model.CircuitID]Document
-	doneListener  chan model.CircuitID
-	openListener  <-chan openRequest
-}
-
-func newDocumentManager(factories DriverFactories) (DocumentManager, dmState) {
-	done := make(chan model.CircuitID, 10)
-	open := make(chan openRequest, 10)
-
-	dm := DocumentManager{
-		openSender: open,
-	}
-	state := dmState{
-		factories: factories,
-
-		liveDocuments: make(map[model.CircuitID]Document),
-		doneListener:  done,
-		openListener:  open,
-	}
-
-	return dm, state
-}
-
-func (st dmState) manage() {
-	// If single-threaded is too slow, the CircuitID-space could be partitioned
-	//	into multiple sub-spaces and identical logic run on each
-	for {
-		select {
-		case req := <-st.openListener:
-			d, ok := st.liveDocuments[req.CircuitID]
-			if ok {
-				req.Resp <- openResponse{d, nil}
-				break
-			}
-
-			d = NewDocument(DocumentParam{
-				CircuitID: req.CircuitID,
-				Drivers:   st.factories.New(req.CircuitID),
-				OnClose: func() {
-					st.doneListener <- req.CircuitID
-				},
-			})
-			st.liveDocuments[req.CircuitID] = d
-
-			req.Resp <- openResponse{d, nil}
-		case cid := <-st.doneListener:
-			delete(st.liveDocuments, cid)
-		}
-	}
+	delete(dm.liveDocuments, circuitID)
 }
