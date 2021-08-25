@@ -27,7 +27,7 @@ type ProposeEntry struct {
 type JoinDocument struct {
 	LogClock uint64
 	UserID   model.UserID
-	Chan     MessageChan
+	Updates  MessageChan
 }
 
 type LeaveDocument struct{}

@@ -38,7 +38,7 @@ func NewSession(p SessionParam, logClock uint64) Session {
 	listener.sendDoc(doc.JoinDocument{
 		LogClock: logClock,
 		UserID:   p.UserID,
-		Chan:     doc.NewMsgChan(docUpdates),
+		Updates:  doc.NewMsgChan(docUpdates),
 	})
 
 	go listener.run()

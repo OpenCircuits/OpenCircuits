@@ -43,7 +43,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 		Sender: sid,
 		Data: JoinDocument{
 			LogClock: 0,
-			Chan:     MessageChan{respCh},
+			Updates:  MessageChan{respCh},
 		},
 	})
 
@@ -128,7 +128,7 @@ func TestDocumentProposePropagate(t *testing.T) {
 		chans[x] = A{ch: ch, sid: sid}
 		ds.sessions[sid] = sessionInfo{
 			JoinInfo: SessionJoined{},
-			Chan:     MessageChan{ch},
+			Updates:  MessageChan{ch},
 		}
 	}
 
