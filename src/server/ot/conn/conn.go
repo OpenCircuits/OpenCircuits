@@ -1,5 +1,12 @@
 package conn
 
+import (
+	"errors"
+	"fmt"
+	"log"
+	"reflect"
+)
+
 // RawConnection is an abstract raw data communication layer between sessions and clients
 type RawConnection interface {
 	// Recv is a blocking read call
@@ -45,4 +52,40 @@ func (cw RawConnectionWrapper) Send(s interface{}) error {
 
 func (cw RawConnectionWrapper) Close() error {
 	return cw.Raw.Close()
+}
+
+// Listener is a wrapper around a Connection that implements the protocol
+//	it provides a listener loop and uses provided callback functions for
+//	event-driver behavior
+type Listener struct {
+	Conn      Connection
+	OnPropose func(ProposeEntry)
+	OnClose   func(err error)
+}
+
+func (l Listener) Listen() {
+	defer func() {
+		if r := recover(); r != nil {
+			l.OnClose(errors.New(
+				fmt.Sprint("listener goroutine panic'd: ", r),
+			))
+		}
+	}()
+
+	for {
+		// This call can block (1)
+		msg, err := l.Conn.Recv()
+		if err != nil {
+			l.OnClose(err)
+			return
+		}
+		switch msg := msg.(type) {
+		case ProposeEntry:
+			l.OnPropose(msg)
+		default:
+			log.Println(
+				"Listener received unexpected message type from client: ",
+				reflect.TypeOf(msg).Name())
+		}
+	}
 }

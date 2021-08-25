@@ -23,16 +23,15 @@ type RawMessageWrapper struct {
 //
 
 type (
-	CloseMessage   = doc.CloseMessage
 	WelcomeMessage = doc.WelcomeMessage
 )
 
-type ProposeAck struct {
-	AcceptedClock uint64
-	Updates       Updates
+type CloseMessage struct {
+	Reason string
 }
 
 type Updates struct {
+	AcceptedClock  uint64
 	NewEntries     []doc.AcceptedEntry
 	SessionsJoined []doc.SessionJoined
 	SessionsLeft   []doc.SessionLeft
@@ -41,8 +40,6 @@ type Updates struct {
 func Serialize(s interface{}) ([]byte, error) {
 	var t string
 	switch s.(type) {
-	case ProposeAck:
-		t = "ProposeAck"
 	case WelcomeMessage:
 		t = "WelcomeMessage"
 	case Updates:

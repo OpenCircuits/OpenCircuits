@@ -58,13 +58,14 @@ func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID mod
 	doc := l.DocumentManager.Get(circuitID)
 
 	// Spawn the session
-	_ = NewSession(SessionParam{
+	s := NewSession(SessionParam{
 		UserID:    userID,
 		SessionID: model.NewSessionID(),
 		Conn:      c,
 		Doc:       doc,
 		Access:    access,
-	}, logClock)
+	})
+	s.Run(logClock)
 }
 
 func (l *Launcher) LaunchCircuitID(c conn.Connection, circuitID model.CircuitID) {

@@ -1,7 +1,10 @@
 package doc
 
 import (
+	"errors"
+	"fmt"
 	"log"
+	"sync"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
@@ -9,7 +12,7 @@ import (
 type DocumentParam struct {
 	CircuitID model.CircuitID
 	Drivers   DocumentDrivers
-	OnClose   DocumentClose
+	OnClose   func()
 }
 
 // DocumentDrivers are the drivers used by the document for saving state
@@ -19,116 +22,86 @@ type DocumentDrivers struct {
 	model.CircuitDriver
 }
 
-// DocumentClose is the callback for when the document closes
-type DocumentClose func()
-
-// Document is the interface between sessions and the document state
+// Document is a live document held by an arbitrary number of sessions.
+//	It uses a reference-counting mechanism to keep liveness via the
+//	Join and Leave functions.
 type Document struct {
-	CircuitID model.CircuitID
-	send      chan<- MessageWrapper
-}
-
-// NewDocument launches a new document instance
-func NewDocument(p DocumentParam) Document {
-	d, st := newDocument(p)
-	go st.messageLoop()
-	return d
-}
-
-type documentState struct {
 	DocumentParam
 
-	sessions  map[model.SessionID]sessionInfo
-	recv      <-chan MessageWrapper
-	changelog *Changelog
+	sessions  map[model.SessionID]SessionHandle
+	changelog Changelog
+	mut       sync.Mutex
+	panic     interface{}
 }
 
-type sessionInfo struct {
-	JoinInfo SessionJoined
-	Updates  MessageChan
-}
-
-func newDocument(p DocumentParam) (Document, documentState) {
-	ch := make(chan MessageWrapper)
-	st := documentState{
+// NewDocument creates and boot-straps a new document instance
+func NewDocument(p DocumentParam) *Document {
+	return &Document{
 		DocumentParam: p,
 
-		sessions:  map[model.SessionID]sessionInfo{},
-		recv:      ch,
-		changelog: &Changelog{},
-	}
-	doc := Document{
-		CircuitID: p.CircuitID,
-		send:      ch,
-	}
-	return doc, st
-}
-
-// Send sends a message (see messages.go) to the document
-func (d Document) Send(mw MessageWrapper) {
-	d.send <- mw
-}
-
-func (d documentState) messageLoop() {
-	defer d.OnClose()
-	defer func() {
-		if r := recover(); r != nil {
-			log.Println("Recovered in Document message loop: ", r)
-			for _, s := range d.sessions {
-				s.Updates.Close(CloseMessage{"internal document error"})
-			}
-		}
-	}()
-
-	// bootstrap the log clock
-	d.changelog.LogClock = d.Drivers.ChangelogClock()
-
-	// TODO: _may_ want some sort of time-out if sessions can live forever
-	for {
-		mw := <-d.recv
-		switch m := mw.Data.(type) {
-		case ProposeEntry:
-			if resp, ok := d.sessions[mw.Sender]; ok {
-				d.proposeEntry(m, mw.Sender, resp.Updates)
-			} else {
-				log.Println("proposal from unjoined session", mw.Sender)
-				continue
-			}
-		case JoinDocument:
-			if s, ok := d.sessions[mw.Sender]; ok {
-				s.Updates.Close(CloseMessage{
-					Reason: "join from joined session",
-				})
-				continue
-			}
-			d.joinDocument(m, mw.Sender)
-		case LeaveDocument:
-			// Double-leave
-			if _, ok := d.sessions[mw.Sender]; !ok {
-				log.Printf("session %s already left\n", mw.Sender)
-				continue
-			}
-			if d.leaveDocument(mw.Sender) {
-				return
-			}
-		}
+		sessions: map[model.SessionID]SessionHandle{},
+		changelog: Changelog{
+			LogClock: p.Drivers.ChangelogClock(),
+		},
 	}
 }
 
-func (d documentState) proposeEntry(msg ProposeEntry, senderID model.SessionID, resp MessageChan) {
+// die sends close messages to all sessions and calls OnClose
+func (d *Document) die() {
+	// Remove it from the document manager so no more sessions join
+	d.OnClose()
+
+	// Close all connected clients
+	for sid, s := range d.sessions {
+		s.Close()
+		delete(d.sessions, sid)
+	}
+}
+
+// check makes sure than a panic'd document is never used again
+func (d *Document) check() {
+	if d.panic != nil {
+		panic(d.panic)
+	}
+}
+
+// recover makes sure a panic'd document notifies all connected sessions
+func (d *Document) recover() {
+	if r := recover(); r != nil {
+		d.panic = fmt.Sprintf("document panic'd: %v", r)
+		d.die()
+		panic(d.panic)
+	}
+}
+
+// ProposeNackError indicates the proposed entry was invalid
+type ProposeNackError struct {
+	Inner error
+}
+
+func (e ProposeNackError) Error() string {
+	return fmt.Sprint("proposed entry invalid: ", e.Inner.Error())
+}
+
+// Propose submits a propose entry to the document
+func (d *Document) Propose(e ProposeEntry) (ProposeAck, error) {
+	d.mut.Lock()
+	defer d.mut.Unlock()
+	d.check()
+	defer d.recover()
+
 	accepted := model.ChangelogEntry{
-		Action:        msg.Action,
-		ProposedClock: msg.ProposedClock,
-		SchemaVersion: msg.SchemaVersion,
-		UserID:        msg.UserID,
-		SessionID:     senderID,
+		Action:        e.Action,
+		ProposedClock: e.ProposedClock,
+		SchemaVersion: e.SchemaVersion,
+		UserID:        e.UserID,
+		SessionID:     e.SessionID,
 	}
 
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.changelog.Accept(accepted)
 	if err != nil {
-		resp.Close(CloseMessage{err.Error()})
-		return
+		return ProposeAck{}, ProposeNackError{Inner: err}
 	}
 
 	// Save to persistent storage _before_ telling other sessions
@@ -137,57 +110,72 @@ func (d documentState) proposeEntry(msg ProposeEntry, senderID model.SessionID, 
 	// Send to other clients
 	accepted.Strip()
 	for sid, s := range d.sessions {
-		if sid == senderID {
+		if sid == e.SessionID {
 			continue
 		}
-		s.Updates.Entry(accepted)
+		s.NewEntry(accepted)
 	}
 
 	// Acknowledge the request
-	resp.Ack(ProposeAck{AcceptedClock: accepted.AcceptedClock})
+	return ProposeAck{AcceptedClock: accepted.AcceptedClock}, nil
 }
 
-func (d documentState) joinDocument(m JoinDocument, sessionID model.SessionID) {
+// Join adds a session to receive updates and notifies all other sessions
+func (d *Document) Join(m JoinDocument) (WelcomeMessage, error) {
+	d.mut.Lock()
+	defer d.mut.Unlock()
+	d.check()
+	defer d.recover()
+
+	info := m.Session.Info
+	if _, ok := d.sessions[info.SessionID]; ok {
+		return WelcomeMessage{}, errors.New("join from joined session")
+	}
+
 	// Collect existing sessions
 	existingSessions := make([]SessionJoined, 0, len(d.sessions))
 	for _, s := range d.sessions {
-		existingSessions = append(existingSessions, s.JoinInfo)
-	}
-
-	newSession := SessionJoined{
-		UserID:    m.UserID,
-		SessionID: sessionID,
+		existingSessions = append(existingSessions, s.Info.SessionJoined)
 	}
 
 	// Create the new session
-	d.sessions[sessionID] = sessionInfo{
-		JoinInfo: newSession,
-		Updates:  m.Updates,
-	}
-
-	// Give the new session all the information it needs
-	m.Updates.Welcome(WelcomeMessage{
-		Session:       newSession,
-		MissedEntries: d.Drivers.ChangelogRange(m.LogClock, d.changelog.LogClock),
-		Sessions:      existingSessions,
-	})
+	d.sessions[info.SessionID] = m.Session
 
 	// Tell all other sessions another one joined
 	for sid, s := range d.sessions {
-		if sid == sessionID {
+		if sid == info.SessionID {
 			continue
 		}
-		s.Updates.Joined(newSession)
+		s.SessionJoined(info.SessionJoined)
 	}
+
+	// Give the new session all the information it needs
+	return WelcomeMessage{
+		Session:       info.SessionJoined,
+		MissedEntries: d.Drivers.ChangelogRange(m.LogClock, d.changelog.LogClock),
+		Sessions:      existingSessions,
+	}, nil
 }
 
-func (d documentState) leaveDocument(sessionID model.SessionID) bool {
+// Leave removes a session from receiving updates and notifies all other sessions
+//	Leave is idempotent
+func (d *Document) Leave(sessionID model.SessionID) {
+	d.mut.Lock()
+	defer d.mut.Unlock()
+	d.check()
+	defer d.recover()
+
+	// Already left, but leave is idempotent
+	if _, ok := d.sessions[sessionID]; !ok {
+		return
+	}
+
 	// Remove this session from out list
 	delete(d.sessions, sessionID)
 
 	// Tell all other sessions one left
 	for _, s := range d.sessions {
-		s.Updates.Left(SessionLeft{
+		s.SessionLeft(SessionLeft{
 			SessionID: sessionID,
 		})
 	}
@@ -195,7 +183,6 @@ func (d documentState) leaveDocument(sessionID model.SessionID) bool {
 	// The last session to leave closes the document
 	if len(d.sessions) == 0 {
 		log.Printf("Last client left, closing %s...\n", d.CircuitID)
-		return true
+		d.OnClose()
 	}
-	return false
 }

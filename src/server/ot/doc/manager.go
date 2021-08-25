@@ -25,7 +25,7 @@ func (df DriverFactories) New(circuitID model.CircuitID) DocumentDrivers {
 //	NOTE: Contention can be reduced at zero-cost if the circuit ID space is partitioned
 type DocumentManager struct {
 	factories     DriverFactories
-	liveDocuments map[model.CircuitID]Document
+	liveDocuments map[model.CircuitID]*Document
 	mut           sync.Mutex
 }
 
@@ -33,12 +33,12 @@ type DocumentManager struct {
 func NewDocumentManager(factories DriverFactories) *DocumentManager {
 	return &DocumentManager{
 		factories:     factories,
-		liveDocuments: make(map[model.CircuitID]Document),
+		liveDocuments: make(map[model.CircuitID]*Document),
 	}
 }
 
 // Get fetches the document handle for the given CircuitID and opens it if not
-func (dm *DocumentManager) Get(circuitID model.CircuitID) Document {
+func (dm *DocumentManager) Get(circuitID model.CircuitID) *Document {
 	dm.mut.Lock()
 	defer dm.mut.Unlock()
 

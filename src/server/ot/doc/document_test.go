@@ -14,14 +14,14 @@ func memDrivers() DocumentDrivers {
 	}
 }
 
-func mockDoc() (Document, documentState, <-chan bool) {
+func mockDoc() (*Document, <-chan bool) {
 	ch := make(chan bool, 10)
-	a, b := newDocument(DocumentParam{model.NewCircuitID(), memDrivers(), func() { ch <- true }})
-	smallChangelog(b)
-	return a, b, ch
+	d := NewDocument(DocumentParam{model.NewCircuitID(), memDrivers(), func() { ch <- true }})
+	smallChangelog(d)
+	return d, ch
 }
 
-func smallChangelog(d documentState) {
+func smallChangelog(d *Document) {
 	for i := range []int{0, 1, 2, 3} {
 		acc, err := d.changelog.Accept(prop(uint64(i)))
 		if err != nil {
@@ -31,137 +31,158 @@ func smallChangelog(d documentState) {
 	}
 }
 
-func TestDocumentLifecycleSuccess(t *testing.T) {
-	d, ds, ch := mockDoc()
-	go ds.messageLoop()
+type sessionHandle struct {
+	h SessionHandle
 
-	respCh := make(chan interface{})
+	newEntry      <-chan NewEntry
+	sessionJoined <-chan SessionJoined
+	sessionLeft   <-chan SessionLeft
+	closed        <-chan bool
+}
+
+func mockSessionHandle(sid model.SessionID, userID model.UserID) sessionHandle {
+	a := make(chan NewEntry, 10)
+	b := make(chan SessionJoined, 10)
+	c := make(chan SessionLeft, 10)
+	d := make(chan bool, 10)
+	return sessionHandle{
+		h: SessionHandle{
+			NewEntry: func(ne NewEntry) {
+				a <- ne
+			},
+			SessionJoined: func(sj SessionJoined) {
+				b <- sj
+			},
+			SessionLeft: func(sl SessionLeft) {
+				c <- sl
+			},
+			Close: func() {
+				d <- true
+			},
+			Info: SessionInfo{
+				SessionJoined: SessionJoined{
+					SessionID: sid,
+					UserID:    userID,
+				},
+			},
+		},
+		newEntry:      a,
+		sessionJoined: b,
+		sessionLeft:   c,
+		closed:        d,
+	}
+}
+
+func TestDocumentLifecycleSuccess(t *testing.T) {
+	d, ch := mockDoc()
+
 	sid := model.NewSessionID()
 
 	// Send join message
-	d.Send(MessageWrapper{
-		Sender: sid,
-		Data: JoinDocument{
-			LogClock: 0,
-			Updates:  MessageChan{respCh},
-		},
+	w, err := d.Join(JoinDocument{
+		LogClock: 0,
+		Session:  mockSessionHandle(sid, "").h,
 	})
-
-	select {
-	case resp := <-respCh:
-		if m, ok := resp.(WelcomeMessage); ok {
-			if len(m.MissedEntries) != 4 {
-				t.Errorf("Expected welcome message of size 4 (received %d)\n", len(m.MissedEntries))
-			}
-		} else {
-			t.Error("Received wrong message type")
-		}
-
-	case <-time.After(time.Second):
-		t.Error("Timed out: did not receive welcome message")
+	if err != nil {
+		t.Error("unexpected error: ", err)
+	}
+	if len(w.MissedEntries) != 4 {
+		t.Errorf("Expected welcome message of size 4 (received %d)\n", len(w.MissedEntries))
 	}
 
 	// Send leave message
-	d.Send(MessageWrapper{
-		Sender: sid,
-		Data:   LeaveDocument{},
-	})
+	d.Leave(sid)
 
 	select {
 	case <-ch:
-	case <-respCh:
-		t.Error("Received unexpected message after Leave")
-
 	case <-time.After(time.Second):
 		t.Error("Timed out: did not receive circuit closing message")
 	}
 }
 
-func TestDocumentProposeSuccess(t *testing.T) {
-	_, ds, _ := mockDoc()
-
-	ch := make(chan interface{}, 1)
-	ds.proposeEntry(ProposeEntry{
-		ProposedClock: 1,
-	}, model.NewSessionID(), MessageChan{ch})
-	res := <-ch
-
-	if r, ok := res.(ProposeAck); ok {
-		if r.AcceptedClock != 4 {
-			t.Error("Received wrong log clock")
+func checkPropose(t *testing.T, err error) {
+	if err != nil {
+		switch err := err.(type) {
+		case ProposeNackError:
+			t.Error("Document NACK'd when it shouldn't have: ", err)
+		default:
+			t.Error("unexpected error: ", err)
 		}
-	} else if r, ok := res.(CloseMessage); ok {
-		t.Error("Document NACK'd when it shouldn't have: ", r.Reason)
-	} else {
-		t.Error("Bad return type: ", res)
+	}
+}
+
+func TestDocumentProposeSuccess(t *testing.T) {
+	d, _ := mockDoc()
+
+	sid := model.NewSessionID()
+
+	ack, err := d.Propose(ProposeEntry{
+		ProposedClock: 1,
+		SessionID:     sid,
+	})
+	checkPropose(t, err)
+	if ack.AcceptedClock != 4 {
+		t.Error("Received wrong log clock")
 	}
 }
 
 func TestDocumentProposeFailure(t *testing.T) {
-	_, ds, _ := mockDoc()
+	d, _ := mockDoc()
 
-	ch := make(chan interface{}, 1)
-	ds.proposeEntry(ProposeEntry{
+	ack, err := d.Propose(ProposeEntry{
 		ProposedClock: 10,
-	}, model.NewSessionID(), MessageChan{ch})
-	res := <-ch
-
-	if r, ok := res.(ProposeAck); ok {
-		t.Error("Document ACK'd when it shouldn't have: ", r.AcceptedClock)
-	} else if _, ok := res.(CloseMessage); ok {
-	} else {
-		t.Error("Bad return type: ", res)
+	})
+	if err == nil {
+		t.Error("Document ACK'd when it shouldn't have: ", ack.AcceptedClock)
+	}
+	switch err := err.(type) {
+	case ProposeNackError:
+	default:
+		t.Error("unexpected error: ", err)
 	}
 }
 
 func TestDocumentProposePropagate(t *testing.T) {
-	_, ds, _ := mockDoc()
+	d, _ := mockDoc()
 
-	type A struct {
-		ch  chan interface{}
-		sid model.SessionID
-	}
-	chans := make(map[string]A)
+	sessions := make(map[string]sessionHandle)
 	for _, x := range []string{"A", "B", "C", "D"} {
-		ch := make(chan interface{}, 1)
 		sid := model.NewSessionID()
-		chans[x] = A{ch: ch, sid: sid}
-		ds.sessions[sid] = sessionInfo{
-			JoinInfo: SessionJoined{},
-			Updates:  MessageChan{ch},
-		}
+		sh := mockSessionHandle(sid, model.UserID(x))
+		d.sessions[sid] = sh.h
+		sessions[x] = sh
 	}
 
-	ch := chans["B"]
-	ds.proposeEntry(ProposeEntry{
+	_, err := d.Propose(ProposeEntry{
 		ProposedClock: 2,
-	}, ch.sid, MessageChan{ch.ch})
-	res := <-ch.ch
+		SessionID:     sessions["B"].h.Info.SessionID,
+	})
+	checkPropose(t, err)
 
-	if r, ok := res.(ProposeAck); ok {
-		if r.AcceptedClock != 4 {
-			t.Error("Received wrong log clock")
-		}
-	} else if r, ok := res.(CloseMessage); ok {
-		t.Error("Document NACK'd when it shouldn't have: ", r.Reason)
-	} else {
-		t.Error("Bad return type: ", res)
-	}
-
-	for s, ch := range chans {
-		if s != "B" {
-			a := <-ch.ch
-			if b, ok := a.(AcceptedEntry); ok {
-				if b.AcceptedClock != 4 {
+	for n, s := range sessions {
+		if n != "B" {
+			select {
+			case a := <-s.newEntry:
+				if a.AcceptedClock != 4 {
 					t.Error("Received wrong log clock")
 				}
-			} else {
-				t.Error("Received wrong update type")
+			case <-s.sessionJoined:
+				t.Error("unexpected join")
+			case <-s.sessionLeft:
+				t.Error("unexpected leave")
+			case <-s.closed:
+				t.Error("unexpected close")
 			}
 		} else {
 			select {
-			case <-ch.ch:
-				t.Error("Expected no update on sender channel")
+			case <-s.newEntry:
+				t.Error("unexpected new entry")
+			case <-s.sessionJoined:
+				t.Error("unexpected join")
+			case <-s.sessionLeft:
+				t.Error("unexpected leave")
+			case <-s.closed:
+				t.Error("unexpected close")
 			default:
 				break
 			}
