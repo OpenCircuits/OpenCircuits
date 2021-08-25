@@ -3,8 +3,8 @@ package session
 import (
 	"sync"
 
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
-	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
 // UpdatesCache is a SessionHandle instance that uses a set of mutex-locked
@@ -13,29 +13,29 @@ import (
 type UpdatesCache struct {
 	updateMut     sync.Mutex
 	hasUpdates    bool
-	newEntry      []doc.NewEntry
-	sessionJoined []doc.SessionJoined
-	sessionLeft   []doc.SessionLeft
+	newEntry      []ot.NewEntry
+	sessionJoined []ot.SessionJoined
+	sessionLeft   []ot.SessionLeft
 
 	OnUpdate func()
 }
 
 // PartialHandle creates a partial SessionHandle instance that handles updates
-func (s *UpdatesCache) PartialHandle() doc.SessionHandle {
-	return doc.SessionHandle{
-		NewEntry: func(e doc.NewEntry) {
+func (s *UpdatesCache) PartialHandle() ot.SessionHandle {
+	return ot.SessionHandle{
+		NewEntry: func(e ot.NewEntry) {
 			s.updateMut.Lock()
 			defer s.updateMut.Unlock()
 			s.newEntry = append(s.newEntry, e)
 			s.updateUpdateState()
 		},
-		SessionJoined: func(e doc.SessionJoined) {
+		SessionJoined: func(e ot.SessionJoined) {
 			s.updateMut.Lock()
 			defer s.updateMut.Unlock()
 			s.sessionJoined = append(s.sessionJoined, e)
 			s.updateUpdateState()
 		},
-		SessionLeft: func(e doc.SessionLeft) {
+		SessionLeft: func(e ot.SessionLeft) {
 			s.updateMut.Lock()
 			defer s.updateMut.Unlock()
 			s.sessionLeft = append(s.sessionLeft, e)

@@ -1,4 +1,4 @@
-package doc
+package ot
 
 import (
 	"encoding/json"
@@ -61,4 +61,10 @@ type WelcomeMessage struct {
 	Session       SessionJoined
 	MissedEntries []AcceptedEntry
 	Sessions      []SessionJoined
+}
+
+type Document interface {
+	Propose(ProposeEntry) (ProposeAck, error)
+	Join(JoinDocument) (WelcomeMessage, error)
+	Leave(sessionID model.SessionID)
 }

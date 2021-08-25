@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 )
 
 type DocumentParam struct {
@@ -28,7 +29,7 @@ type DocumentDrivers struct {
 type Document struct {
 	DocumentParam
 
-	sessions  map[model.SessionID]SessionHandle
+	sessions  map[model.SessionID]ot.SessionHandle
 	changelog Changelog
 	mut       sync.Mutex
 	panic     interface{}
@@ -39,7 +40,7 @@ func NewDocument(p DocumentParam) *Document {
 	return &Document{
 		DocumentParam: p,
 
-		sessions: map[model.SessionID]SessionHandle{},
+		sessions: map[model.SessionID]ot.SessionHandle{},
 		changelog: Changelog{
 			LogClock: p.Drivers.ChangelogClock(),
 		},
@@ -84,7 +85,7 @@ func (e ProposeNackError) Error() string {
 }
 
 // Propose submits a propose entry to the document
-func (d *Document) Propose(e ProposeEntry) (ProposeAck, error) {
+func (d *Document) Propose(e ot.ProposeEntry) (ot.ProposeAck, error) {
 	d.mut.Lock()
 	defer d.mut.Unlock()
 	d.check()
@@ -101,7 +102,7 @@ func (d *Document) Propose(e ProposeEntry) (ProposeAck, error) {
 	// In a concurrent request, acceptedClock != proposedClock
 	accepted, err := d.changelog.Accept(accepted)
 	if err != nil {
-		return ProposeAck{}, ProposeNackError{Inner: err}
+		return ot.ProposeAck{}, ProposeNackError{Inner: err}
 	}
 
 	// Save to persistent storage _before_ telling other sessions
@@ -117,11 +118,11 @@ func (d *Document) Propose(e ProposeEntry) (ProposeAck, error) {
 	}
 
 	// Acknowledge the request
-	return ProposeAck{AcceptedClock: accepted.AcceptedClock}, nil
+	return ot.ProposeAck{AcceptedClock: accepted.AcceptedClock}, nil
 }
 
 // Join adds a session to receive updates and notifies all other sessions
-func (d *Document) Join(m JoinDocument) (WelcomeMessage, error) {
+func (d *Document) Join(m ot.JoinDocument) (ot.WelcomeMessage, error) {
 	d.mut.Lock()
 	defer d.mut.Unlock()
 	d.check()
@@ -129,11 +130,11 @@ func (d *Document) Join(m JoinDocument) (WelcomeMessage, error) {
 
 	info := m.Session.Info
 	if _, ok := d.sessions[info.SessionID]; ok {
-		return WelcomeMessage{}, errors.New("join from joined session")
+		return ot.WelcomeMessage{}, errors.New("join from joined session")
 	}
 
 	// Collect existing sessions
-	existingSessions := make([]SessionJoined, 0, len(d.sessions))
+	existingSessions := make([]ot.SessionJoined, 0, len(d.sessions))
 	for _, s := range d.sessions {
 		existingSessions = append(existingSessions, s.Info.SessionJoined)
 	}
@@ -150,7 +151,7 @@ func (d *Document) Join(m JoinDocument) (WelcomeMessage, error) {
 	}
 
 	// Give the new session all the information it needs
-	return WelcomeMessage{
+	return ot.WelcomeMessage{
 		Session:       info.SessionJoined,
 		MissedEntries: d.Drivers.ChangelogRange(m.LogClock, d.changelog.LogClock),
 		Sessions:      existingSessions,
@@ -175,7 +176,7 @@ func (d *Document) Leave(sessionID model.SessionID) {
 
 	// Tell all other sessions one left
 	for _, s := range d.sessions {
-		s.SessionLeft(SessionLeft{
+		s.SessionLeft(ot.SessionLeft{
 			SessionID: sessionID,
 		})
 	}

@@ -5,15 +5,15 @@ import (
 	"fmt"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
-	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
 type SessionParam struct {
 	UserID    model.UserID
 	SessionID model.SessionID
 	Conn      conn.Connection
-	Doc       *doc.Document
+	Doc       ot.Document
 	Access    model.AccessProvider
 }
 
@@ -115,7 +115,7 @@ func (s *Session) Run(logClock uint64) {
 func (s *Session) handleJoin(logClock uint64) error {
 	// Create the handle used to process updates
 	handle := s.cache.PartialHandle()
-	handle.Info = doc.SessionInfo{SessionJoined: doc.SessionJoined{
+	handle.Info = ot.SessionInfo{SessionJoined: ot.SessionJoined{
 		UserID:    s.UserID,
 		SessionID: s.SessionID,
 	}}
@@ -123,7 +123,7 @@ func (s *Session) handleJoin(logClock uint64) error {
 		s.closeChan <- true
 	}
 
-	welcome, err := s.Doc.Join(doc.JoinDocument{
+	welcome, err := s.Doc.Join(ot.JoinDocument{
 		LogClock: logClock,
 		Session:  handle,
 	})
@@ -138,7 +138,7 @@ func (s *Session) handlePropose(p conn.ProposeEntry) error {
 		return errors.New("insufficient permissions (edit)")
 	}
 
-	ack, err := s.Doc.Propose(doc.ProposeEntry{
+	ack, err := s.Doc.Propose(ot.ProposeEntry{
 		Action:        p.Action,
 		ProposedClock: p.ProposedClock,
 		SchemaVersion: p.SchemaVersion,

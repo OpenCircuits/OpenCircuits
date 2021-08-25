@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
-	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 )
 
 //
@@ -23,7 +23,7 @@ type RawMessageWrapper struct {
 //
 
 type (
-	WelcomeMessage = doc.WelcomeMessage
+	WelcomeMessage = ot.WelcomeMessage
 )
 
 type CloseMessage struct {
@@ -32,9 +32,9 @@ type CloseMessage struct {
 
 type Updates struct {
 	AcceptedClock  uint64
-	NewEntries     []doc.AcceptedEntry
-	SessionsJoined []doc.SessionJoined
-	SessionsLeft   []doc.SessionLeft
+	NewEntries     []ot.AcceptedEntry
+	SessionsJoined []ot.SessionJoined
+	SessionsLeft   []ot.SessionLeft
 }
 
 func Serialize(s interface{}) ([]byte, error) {

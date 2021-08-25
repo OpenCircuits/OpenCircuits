@@ -18,8 +18,8 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/circuit/sqlite"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
-	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
+	ot_routes "github.com/OpenCircuits/OpenCircuits/site/go/ot/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/session"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
@@ -120,7 +120,7 @@ func main() {
 	// Register routes
 	web.RegisterPages(router)
 	routes.RegisterRoutes(router, userCsif, accessManager)
-	ot.RegisterRoutes(router, launcher)
+	ot_routes.RegisterRoutes(router, launcher)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {

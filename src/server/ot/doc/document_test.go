@@ -6,6 +6,7 @@ import (
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 )
 
 func memDrivers() DocumentDrivers {
@@ -32,35 +33,35 @@ func smallChangelog(d *Document) {
 }
 
 type sessionHandle struct {
-	h SessionHandle
+	h ot.SessionHandle
 
-	newEntry      <-chan NewEntry
-	sessionJoined <-chan SessionJoined
-	sessionLeft   <-chan SessionLeft
+	newEntry      <-chan ot.NewEntry
+	sessionJoined <-chan ot.SessionJoined
+	sessionLeft   <-chan ot.SessionLeft
 	closed        <-chan bool
 }
 
 func mockSessionHandle(sid model.SessionID, userID model.UserID) sessionHandle {
-	a := make(chan NewEntry, 10)
-	b := make(chan SessionJoined, 10)
-	c := make(chan SessionLeft, 10)
+	a := make(chan ot.NewEntry, 10)
+	b := make(chan ot.SessionJoined, 10)
+	c := make(chan ot.SessionLeft, 10)
 	d := make(chan bool, 10)
 	return sessionHandle{
-		h: SessionHandle{
-			NewEntry: func(ne NewEntry) {
+		h: ot.SessionHandle{
+			NewEntry: func(ne ot.NewEntry) {
 				a <- ne
 			},
-			SessionJoined: func(sj SessionJoined) {
+			SessionJoined: func(sj ot.SessionJoined) {
 				b <- sj
 			},
-			SessionLeft: func(sl SessionLeft) {
+			SessionLeft: func(sl ot.SessionLeft) {
 				c <- sl
 			},
 			Close: func() {
 				d <- true
 			},
-			Info: SessionInfo{
-				SessionJoined: SessionJoined{
+			Info: ot.SessionInfo{
+				SessionJoined: ot.SessionJoined{
 					SessionID: sid,
 					UserID:    userID,
 				},
@@ -79,7 +80,7 @@ func TestDocumentLifecycleSuccess(t *testing.T) {
 	sid := model.NewSessionID()
 
 	// Send join message
-	w, err := d.Join(JoinDocument{
+	w, err := d.Join(ot.JoinDocument{
 		LogClock: 0,
 		Session:  mockSessionHandle(sid, "").h,
 	})
@@ -116,7 +117,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 
 	sid := model.NewSessionID()
 
-	ack, err := d.Propose(ProposeEntry{
+	ack, err := d.Propose(ot.ProposeEntry{
 		ProposedClock: 1,
 		SessionID:     sid,
 	})
@@ -129,7 +130,7 @@ func TestDocumentProposeSuccess(t *testing.T) {
 func TestDocumentProposeFailure(t *testing.T) {
 	d, _ := mockDoc()
 
-	ack, err := d.Propose(ProposeEntry{
+	ack, err := d.Propose(ot.ProposeEntry{
 		ProposedClock: 10,
 	})
 	if err == nil {
@@ -153,7 +154,7 @@ func TestDocumentProposePropagate(t *testing.T) {
 		sessions[x] = sh
 	}
 
-	_, err := d.Propose(ProposeEntry{
+	_, err := d.Propose(ot.ProposeEntry{
 		ProposedClock: 2,
 		SessionID:     sessions["B"].h.Info.SessionID,
 	})
