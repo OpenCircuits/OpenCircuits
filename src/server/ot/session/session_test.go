@@ -2,7 +2,6 @@ package session
 
 import (
 	"errors"
-	"math"
 	"testing"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
@@ -63,7 +62,6 @@ func mockSession(accessLevel model.AccessLevel) (*Session, *conn.MockConn, *mock
 	d := &mockDocument{}
 	p := model.BasePermission{
 		AccessLevel: accessLevel,
-		Expiration:  math.MaxInt64,
 	}
 	s := NewSession(SessionParam{
 		UserID:    "TEST",

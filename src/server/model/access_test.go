@@ -2,14 +2,13 @@ package model
 
 import (
 	"testing"
-	"time"
 )
 
 func userPerm(level int32) UserPermission {
 	return UserPermission{
 		CircuitID:      NewCircuitID(),
 		UserID:         "FakeUser",
-		BasePermission: BasePermission{level, time.Now().Unix() + 100},
+		BasePermission: BasePermission{level, nil},
 	}
 }
 
@@ -17,7 +16,7 @@ func linkPerm(level int32) LinkPermission {
 	return LinkPermission{
 		CircuitID:      NewCircuitID(),
 		LinkID:         NewLinkID(),
-		BasePermission: BasePermission{level, time.Now().Unix() + 100},
+		BasePermission: BasePermission{level, nil},
 	}
 }
 

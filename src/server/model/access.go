@@ -44,7 +44,7 @@ const (
 type BasePermission struct {
 	AccessLevel AccessLevel `json:"access_level" binding:"required"`
 	// Expiration is the unix time that the permissions should expire
-	Expiration int64 `json:"expiration" binding:"required"`
+	Expiration *int64 `json:"expiration,omitempty"`
 }
 
 // UserPermission describes the permission for a single user / circuit
