@@ -7,14 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Extended context with drivers for access and circuit
+// Context is an extended context with drivers for access and circuit
 type Context struct {
-	Access   model.AccessDriver
-	Circuits model.CircuitStorageInterfaceFactory
+	Access      model.AccessDriver
+	Circuits    model.CircuitStorageInterfaceFactory
+	NewCircuits model.CircuitDriver
 	*gin.Context
 }
 
-// Extract the requesting user's identity
+// Identity extracts the requesting user's identity
 func (c Context) Identity() model.UserID {
 	ident := c.Request.Header.Get(Identity)
 	if len(ident) == 0 {
@@ -23,14 +24,16 @@ func (c Context) Identity() model.UserID {
 	return model.UserID(ident)
 }
 
+// HandlerFunc is a request handler function that takes the extended context
 type HandlerFunc = func(c *Context) (int, interface{})
 
-// Wrapper for routes using extended context
-func Wrap(access model.AccessDriver, circuits model.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
+// Wrap wraps handlers for routes using extended context
+func Wrap(access model.AccessDriver, circuits model.CircuitStorageInterfaceFactory, newCircuits model.CircuitDriver, handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code, obj := handler(&Context{
 			access,
 			circuits,
+			newCircuits,
 			c,
 		})
 

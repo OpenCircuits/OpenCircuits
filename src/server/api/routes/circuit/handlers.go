@@ -27,11 +27,25 @@ func Update(c *api.Context) (int, interface{}) {
 // Create initializes a new circuit for the provided user with a fresh circuit ID
 //	NOTE: the returned circuit ID is used in the ot algorithm
 func Create(c *api.Context) (int, interface{}) {
-	return http.StatusNotImplemented, nil
-}
+	userID := c.Identity()
+	if !model.CanCreate(userID) {
+		return http.StatusForbidden, nil
+	}
 
-// Delete removes a circuit and all of its data from the server
-//	Circuits must already be marked trashed to delete them
-func Delete(c *api.Context) (int, interface{}) {
-	return http.StatusNotImplemented, nil
+	// Create the circuit in the metadata table
+	circuitID := model.NewCircuitID()
+	c.NewCircuits.NewCircuit(circuitID, userID)
+
+	// Add the creator to the access permissions
+	c.Access.UpsertCircuitUser(model.UserPermission{
+		CircuitID: circuitID,
+		UserID:    userID,
+		BasePermission: model.BasePermission{
+			AccessLevel: model.AccessCreator,
+		},
+	})
+
+	return http.StatusAccepted, struct {
+		ID string `json:"circuit_id"`
+	}{circuitID.Base64Encode()}
 }

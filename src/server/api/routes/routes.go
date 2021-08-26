@@ -17,12 +17,13 @@ func pingHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userID))
 }
 
-func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFactory, accessDriver model.AccessDriver) {
+// RegisterRoutes adds API routes to the provided engine
+func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFactory, accessDriver model.AccessDriver, newCircuits model.CircuitDriver) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
 	w := func(h api.HandlerFunc) gin.HandlerFunc {
-		return api.Wrap(accessDriver, userCsif, h)
+		return api.Wrap(accessDriver, userCsif, newCircuits, h)
 	}
 
 	// Deprecated user-saveable circuits
@@ -36,7 +37,6 @@ func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFa
 	router.POST("/api/c/query", w(circuit.Query))
 	router.POST("/api/c/new", w(circuit.Create))
 	router.POST("/api/c/update/:cid", w(circuit.Update))
-	router.POST("/api/c/delete/:cid", w(circuit.Delete))
 
 	// Circuit permission control
 	wa := access.Wrapper

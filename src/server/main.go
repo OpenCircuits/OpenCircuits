@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
-	"github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
+	api_routes "github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
@@ -119,7 +119,7 @@ func main() {
 
 	// Register routes
 	web.RegisterPages(router)
-	routes.RegisterRoutes(router, userCsif, accessManager)
+	api_routes.RegisterRoutes(router, userCsif, accessManager, factories.CircuitDriver)
 	ot_routes.RegisterRoutes(router, launcher)
 
 	// Check if portConfig is set to auto, if so find available port
