@@ -6,13 +6,13 @@ import (
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 	"github.com/OpenCircuits/OpenCircuits/site/go/ot/conn"
-	"github.com/OpenCircuits/OpenCircuits/site/go/ot/doc"
 )
 
 // Launcher launches sessions
 type Launcher struct {
-	DocumentManager *doc.DocumentManager
+	DocumentManager ot.DocumentManager
 	AccessDriver    model.AccessDriver
 	AuthManager     auth.AuthenticationManager
 }
@@ -54,16 +54,15 @@ func (l *Launcher) Launch(circuitID model.CircuitID, logClock uint64, userID mod
 		return
 	}
 
-	// Get the document
-	doc := l.DocumentManager.Get(circuitID)
-
 	// Spawn the session
 	s := NewSession(SessionParam{
 		UserID:    userID,
 		SessionID: model.NewSessionID(),
 		Conn:      c,
-		Doc:       doc,
 		Access:    access,
+
+		// Get the document as late as possible to avoid leaking it
+		Doc: l.DocumentManager.Get(circuitID),
 	})
 	s.Run(logClock)
 }

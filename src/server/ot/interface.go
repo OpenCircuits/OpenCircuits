@@ -68,3 +68,7 @@ type Document interface {
 	Join(JoinDocument) (WelcomeMessage, error)
 	Leave(sessionID model.SessionID)
 }
+
+type DocumentManager interface {
+	Get(circuitID model.CircuitID) Document
+}

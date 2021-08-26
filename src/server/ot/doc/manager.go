@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
+	"github.com/OpenCircuits/OpenCircuits/site/go/ot"
 )
 
 type DriverFactories struct {
@@ -38,7 +39,7 @@ func NewDocumentManager(factories DriverFactories) *DocumentManager {
 }
 
 // Get fetches the document handle for the given CircuitID and opens it if not
-func (dm *DocumentManager) Get(circuitID model.CircuitID) *Document {
+func (dm *DocumentManager) Get(circuitID model.CircuitID) ot.Document {
 	dm.mut.Lock()
 	defer dm.mut.Unlock()
 

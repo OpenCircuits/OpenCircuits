@@ -19,8 +19,7 @@ func TestManagerGetDocument(t *testing.T) {
 	circuitID := model.NewCircuitID()
 	doc := dm.Get(circuitID)
 
-	if dm.liveDocuments[doc.CircuitID].CircuitID != circuitID {
-		t.Error("Added document had wrong circuit ID")
+	if dm.liveDocuments[doc.(*Document).CircuitID].CircuitID != circuitID {
 	}
 
 	_ = dm.Get(circuitID)
@@ -36,7 +35,7 @@ func TestManagerCloseDocument(t *testing.T) {
 	doc := dm.Get(circuitID)
 
 	// Manually close the created document
-	dm.delete(doc.CircuitID)
+	dm.delete(doc.(*Document).CircuitID)
 
 	// Make sure it was closed
 	if len(dm.liveDocuments) != 0 {
