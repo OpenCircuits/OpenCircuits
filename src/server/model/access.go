@@ -84,8 +84,16 @@ func NewCircuitPerm(circuitID CircuitID) CircuitPermissions {
 	}
 }
 
+// AnonUserID is the user ID given to all anonymous users.
+//	This may change
+const AnonUserID = "ANON"
+
+func IsAnonymous(userID UserID) bool {
+	return userID == AnonUserID
+}
+
 func (user UserPermission) IsAnonymous() bool {
-	return user.UserID == AnonUserID
+	return IsAnonymous(user.UserID)
 }
 
 func (user UserPermission) CanUpdateUser(oldTarget, newTarget UserPermission) bool {
@@ -109,8 +117,8 @@ func (user BasePermission) CanUpdateLink(oldTarget, newTarget LinkPermission) bo
 	return user.AccessLevel >= AccessOwner
 }
 
-func (user UserPermission) CanCreate() bool {
-	return !user.IsAnonymous() && user.UserID != ""
+func CanCreate(userID UserID) bool {
+	return !IsAnonymous(userID) && userID != ""
 }
 
 func (user BasePermission) CanView() bool {

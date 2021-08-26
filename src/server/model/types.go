@@ -13,10 +13,6 @@ type (
 	SchemaVersion string
 )
 
-// AnonUserID is the user ID given to all anonymous users.
-//	This may change
-const AnonUserID = "ANON"
-
 // UUID is a wrapper around the default UUID class
 type UUID struct {
 	uuid.UUID
