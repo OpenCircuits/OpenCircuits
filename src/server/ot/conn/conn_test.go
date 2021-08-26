@@ -1,44 +1,16 @@
 package conn
 
 import (
-	"errors"
 	"testing"
 	"time"
 )
 
-type mockRawConn struct {
-	recv []byte
-	send []byte
-
-	failRecv bool
-	failSend bool
-}
-
-func (rc *mockRawConn) Send(b []byte) error {
-	if rc.failSend {
-		return errors.New("failed to send")
-	}
-	rc.send = b
-	return nil
-}
-
-func (rc *mockRawConn) Recv() ([]byte, error) {
-	if rc.failRecv {
-		return nil, errors.New("failed to recv")
-	}
-	return rc.recv, nil
-}
-
-func (rc *mockRawConn) Close() error {
-	return nil
-}
-
 func TestDefaultConnectionNormal(t *testing.T) {
-	rc := &mockRawConn{}
+	rc := &MockRawConn{}
 	d := RawConnectionWrapper{Raw: rc}
 
-	rc.failRecv = false
-	rc.recv = []byte(`
+	rc.FailRecv = false
+	rc.RecvData = []byte(`
 	{
 		"Type": "ProposeEntry",
 		"Msg": {
@@ -62,46 +34,19 @@ func TestDefaultConnectionNormal(t *testing.T) {
 }
 
 func TestDefaultConnectionBadRecvFormat(t *testing.T) {
-	rc := &mockRawConn{}
+	rc := &MockRawConn{}
 	d := RawConnectionWrapper{Raw: rc}
 
-	rc.failRecv = false
-	rc.recv = []byte(`{ }`)
+	rc.FailRecv = false
+	rc.RecvData = []byte(`{ }`)
 
 	if _, err := d.Recv(); err == nil {
 		t.Error("expected error")
 	}
 }
 
-type mockConn struct {
-	recv interface{}
-	send interface{}
-
-	failRecv bool
-	failSend bool
-}
-
-func (rc *mockConn) Send(v interface{}) error {
-	if rc.failSend {
-		return errors.New("failed to send")
-	}
-	rc.send = v
-	return nil
-}
-
-func (rc *mockConn) Recv() (interface{}, error) {
-	if rc.failRecv {
-		return nil, errors.New("failed to recv")
-	}
-	return rc.recv, nil
-}
-
-func (rc *mockConn) Close() error {
-	return nil
-}
-
-func mockupListener() (c *mockConn, p chan ProposeEntry, cl chan error, l Listener) {
-	c = &mockConn{}
+func mockupListener() (c *MockConn, p chan ProposeEntry, cl chan error, l Listener) {
+	c = NewMockConn()
 	p = make(chan ProposeEntry)
 	cl = make(chan error, 10)
 	l = Listener{
@@ -119,10 +64,9 @@ func mockupListener() (c *mockConn, p chan ProposeEntry, cl chan error, l Listen
 func TestListenerNormalLifecycle(t *testing.T) {
 	c, p, cl, l := mockupListener()
 
-	c.recv = ProposeEntry{}
+	c.RecvData <- ProposeEntry{}
 	go l.Listen()
-	<-time.After(time.Millisecond)
-	c.failRecv = true
+	close(c.RecvData)
 
 	select {
 	case <-p:
@@ -140,10 +84,9 @@ func TestListenerNormalLifecycle(t *testing.T) {
 func TestListenerBadClient(t *testing.T) {
 	c, p, cl, l := mockupListener()
 
-	c.recv = "AAAA"
+	c.RecvData <- "AAAA"
 	go l.Listen()
-	<-time.After(time.Millisecond)
-	c.failRecv = true
+	close(c.RecvData)
 
 	select {
 	case <-p:
@@ -163,9 +106,8 @@ func TestListenerBadPropose(t *testing.T) {
 
 	l.OnPropose = func(ProposeEntry) { panic("BAD PROPOSE") }
 
-	c.recv = ProposeEntry{}
+	c.RecvData <- ProposeEntry{}
 	go l.Listen()
-	<-time.After(time.Millisecond)
 
 	select {
 	case e := <-cl:
