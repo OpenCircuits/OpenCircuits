@@ -20,9 +20,9 @@ type UpdatesCache struct {
 	OnUpdate func()
 }
 
-// PartialHandle creates a partial SessionHandle instance that handles updates
-func (s *UpdatesCache) PartialHandle() ot.SessionHandle {
-	return ot.SessionHandle{
+// PartialCallback creates a partial SessionCallback instance that handles updates
+func (s *UpdatesCache) PartialCallback() ot.SessionCallback {
+	return ot.SessionCallback{
 		NewEntry: func(e ot.NewEntry) {
 			s.updateMut.Lock()
 			defer s.updateMut.Unlock()

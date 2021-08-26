@@ -33,7 +33,7 @@ func smallChangelog(d *Document) {
 }
 
 type sessionHandle struct {
-	h ot.SessionHandle
+	h ot.SessionCallback
 
 	newEntry      <-chan ot.NewEntry
 	sessionJoined <-chan ot.SessionJoined
@@ -47,7 +47,7 @@ func mockSessionHandle(sid model.SessionID, userID model.UserID) sessionHandle {
 	c := make(chan ot.SessionLeft, 10)
 	d := make(chan bool, 10)
 	return sessionHandle{
-		h: ot.SessionHandle{
+		h: ot.SessionCallback{
 			NewEntry: func(ne ot.NewEntry) {
 				a <- ne
 			},

@@ -29,7 +29,7 @@ type DocumentDrivers struct {
 type Document struct {
 	DocumentParam
 
-	sessions  map[model.SessionID]ot.SessionHandle
+	sessions  map[model.SessionID]ot.SessionCallback
 	changelog Changelog
 	mut       sync.Mutex
 	panic     interface{}
@@ -40,7 +40,7 @@ func NewDocument(p DocumentParam) *Document {
 	return &Document{
 		DocumentParam: p,
 
-		sessions: map[model.SessionID]ot.SessionHandle{},
+		sessions: map[model.SessionID]ot.SessionCallback{},
 		changelog: Changelog{
 			LogClock: p.Drivers.ChangelogClock(),
 		},

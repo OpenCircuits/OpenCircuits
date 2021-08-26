@@ -23,9 +23,9 @@ type SessionInfo struct {
 	SessionJoined
 }
 
-// SessionHandle is the interface between the document and session
+// SessionCallback is the interface between the document and session
 //	NOTE: All call-backs will be called from the same goroutine
-type SessionHandle struct {
+type SessionCallback struct {
 	// NewEntry is called when an entry from another session is accepted
 	NewEntry func(NewEntry)
 	// SessionJoined is called when another session joins the document
@@ -54,7 +54,7 @@ type ProposeAck struct {
 
 type JoinDocument struct {
 	LogClock uint64
-	Session  SessionHandle
+	Session  SessionCallback
 }
 
 type WelcomeMessage struct {

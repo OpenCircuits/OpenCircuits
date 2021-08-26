@@ -113,8 +113,12 @@ func (s *Session) Run(logClock uint64) {
 }
 
 func (s *Session) handleJoin(logClock uint64) error {
-	// Create the handle used to process updates
-	handle := s.cache.PartialHandle()
+	if !s.Access.Permissions().CanEdit() {
+		return errors.New("insufficient permissions (view)")
+	}
+
+	// Create the callback used to process updates
+	handle := s.cache.PartialCallback()
 	handle.Info = ot.SessionInfo{SessionJoined: ot.SessionJoined{
 		UserID:    s.UserID,
 		SessionID: s.SessionID,
