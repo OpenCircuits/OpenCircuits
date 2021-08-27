@@ -17,11 +17,15 @@ type Context struct {
 
 // Identity extracts the requesting user's identity
 func (c Context) Identity() model.UserID {
-	ident := c.Request.Header.Get(Identity)
-	if len(ident) == 0 {
+	ident, ok := c.Keys[Identity]
+	if !ok {
 		panic("Empty identity")
 	}
-	return model.UserID(ident)
+	userID, ok := ident.(model.UserID)
+	if !ok {
+		panic("bad identity type")
+	}
+	return userID
 }
 
 // HandlerFunc is a request handler function that takes the extended context

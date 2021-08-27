@@ -10,7 +10,7 @@ import (
 
 const Identity = "identity"
 
-// Middleware that injects user identity into authenticated requests
+// AuthMiddleware injects user identity into authenticated requests
 func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Only use auth in API routes
@@ -27,7 +27,7 @@ func AuthMiddleware(manager auth.AuthenticationManager) gin.HandlerFunc {
 			return
 		}
 
-		c.Request.Header.Add(Identity, string(id))
+		c.Keys[Identity] = id
 		c.Next()
 	}
 }
