@@ -18,12 +18,6 @@ func Query(c *api.Context) (int, interface{}) {
 	return http.StatusNotImplemented, nil
 }
 
-// Update updates the provided metadata entries and
-//	creates a new milestone circuit if the content is provided
-func Update(c *api.Context) (int, interface{}) {
-	return http.StatusNotImplemented, nil
-}
-
 // Create initializes a new circuit for the provided user with a fresh circuit ID
 //	NOTE: the returned circuit ID is used in the ot algorithm
 func Create(c *api.Context) (int, interface{}) {
@@ -45,7 +39,11 @@ func Create(c *api.Context) (int, interface{}) {
 		},
 	})
 
-	return http.StatusAccepted, struct {
-		ID string `json:"circuit_id"`
-	}{circuitID.Base64Encode()}
+	res := model.ImplicitMetadata{
+		ID:      circuitID,
+		Creator: userID,
+		Version: "TODO",
+	}
+
+	return http.StatusAccepted, res
 }

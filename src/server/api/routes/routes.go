@@ -36,7 +36,6 @@ func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFa
 	// New circuit API
 	router.POST("/api/c/query", w(circuit.Query))
 	router.POST("/api/c/new", w(circuit.Create))
-	router.POST("/api/c/update/:cid", w(circuit.Update))
 
 	// Circuit permission control
 	wa := access.Wrapper
