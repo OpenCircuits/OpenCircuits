@@ -6,6 +6,7 @@ const getEnv = require("./utils/env");
 const getDirs = require("./utils/getDirs");
 const getAliases = require("./utils/getAliases");
 const path = require("path");
+const { spawnSync } = require("child_process");
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -27,6 +28,11 @@ async function launch_test(dir, flags) {
     }, [dir]);
 }
 
+async function launch_server_tests(flags) {
+    spawnSync("cd ./src/server && go test ./... --cover", {
+        shell: true, stdio: "inherit",
+    });
+}
 
 // CLI
 (async () => {
@@ -73,6 +79,12 @@ async function launch_test(dir, flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
+
+        if (dir === "server") {
+            await launch_server_tests();
+            continue;
+        }
+
         await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags);
     }
 })();
