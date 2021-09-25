@@ -1,2 +1,0 @@
-
-export const TOGGLE_SIDENAV_ID = "TOGGLE_SIDENAV_ID";

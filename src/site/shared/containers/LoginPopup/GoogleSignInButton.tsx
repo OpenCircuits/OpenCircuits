@@ -1,7 +1,5 @@
 import {useEffect} from "react";
 
-import {Login} from "shared/state/UserInfo/actions";
-
 
 type Props = {
     onLogin: (success: boolean) => void;
@@ -17,7 +15,7 @@ export const GoogleAuthButton = ({ onLogin }: Props) => {
             "onsuccess": (_) => onLogin(true),
             "onfailure": (e) => { if (e.error !== "popup_closed_by_user") throw new Error(e.error); onLogin(false); }
         });
-    }, [Login]);
+    }, [onLogin]);
 
     return (<div id="login-popup-google-signin"></div>);
 }
