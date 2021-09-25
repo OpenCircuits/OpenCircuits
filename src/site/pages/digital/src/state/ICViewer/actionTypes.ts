@@ -1,3 +1,0 @@
-
-export const OPEN_IC_VIEWER_ID = "OPEN_IC_VIEWER_ID";
-export const CLOSE_IC_VIEWER_ID = "CLOSE_IC_VIEWER_ID";
