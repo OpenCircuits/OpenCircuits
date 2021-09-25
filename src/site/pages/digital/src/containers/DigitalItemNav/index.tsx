@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalEvent} from "digital/models";
 
-import {ItemNavItem, ItemNav} from "shared/containers/ItemNav";
+import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 

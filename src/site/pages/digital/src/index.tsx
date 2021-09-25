@@ -10,16 +10,16 @@ import {Images} from "digital/utils/Images";
 import "digital/models/ioobjects";
 
 import {GetCookie} from "shared/utils/Cookies";
-import {NoAuthState} from "shared/api/auth/NoAuthState";
-import {GoogleAuthState} from "shared/api/auth/GoogleAuthState";
-import {Login} from "shared/state/UserInfo/actions";
 
+import {NoAuthState} from "shared/api/auth/NoAuthState";
+
+import {Login} from "shared/state/thunks/User";
+
+import {AppState, AppStore} from "./state";
+import {AllActions} from "./state/actions";
 import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
-import {AppState, AppStore} from "./state";
-import {AllActions} from "./state/actions";
-import {QuickStartPopup} from "./containers/QuickStartPopup";
 
 
 async function Init(): Promise<void> {
@@ -33,7 +33,7 @@ async function Init(): Promise<void> {
         "no_auth": async () => {
             const username = GetCookie("no_auth_username");
             if (username)
-                await store.dispatch<any>(Login(new NoAuthState(username)));
+                await store.dispatch(Login(new NoAuthState(username)));
         },
         "google": async () => {
             // Load auth2 from GAPI and initialize w/ metadata
