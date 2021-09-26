@@ -46,10 +46,14 @@ func main() {
 	portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
 
-	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
-	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
-		*googleAuthConfig = "credentials.json"
-		*userCsifConfig = "gcp_datastore"
+	if os.Getenv("BUILD_MODE") == "nightly" {
+		noAuthConfig := true
+	} else {
+		// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
+		if os.Getenv("DATASTORE_PROJECT_ID") != "" {
+			*googleAuthConfig = "credentials.json"
+			*userCsifConfig = "gcp_datastore"
+		}
 	}
 
 	// Register authentication method
