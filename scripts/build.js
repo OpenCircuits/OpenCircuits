@@ -30,7 +30,7 @@ function build_server(prod) {
             return;
         }
 
-        copy_dir("src/server/data/sql/sqlite", "build/sql/sqlite");
+        copy_dir("src/server/data/sql/sqlite", "build/data/sql/sqlite");
 
         const isWin = (os.platform() === "win32");
         spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {

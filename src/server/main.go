@@ -39,7 +39,7 @@ func main() {
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
+	sqlitePathConfig := flag.String("sqlitePath", "data/sql/sqlite", "The path to the sqlite working directory")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
