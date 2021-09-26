@@ -31,12 +31,7 @@ export const LoginPopup = () => {
               process.env.OC_AUTH_TYPES.split(" ").map((s) => (
                 <Fragment key={`login-popup-auth-${s}`}>
                     {s === "google" ? (
-                        <GoogleAuthButton onLogin={(success) => {
-                            if (success) {
-                                dispatch(Login(new GoogleAuthState()));
-                                dispatch(CloseHeaderPopups());
-                            } // Else don't login or close
-                        }} />
+                        <GoogleAuthButton />
                     ) : (
                         <div>
                             <div className="login__popup__label">NoAuth Login</div>
@@ -49,6 +44,7 @@ export const LoginPopup = () => {
                                     alert("User name must not be blank!")
                                     return;
                                 }
+                                console.log("tesststst");
                                 dispatch(Login(new NoAuthState(username)));
                                 dispatch(CloseHeaderPopups());
                             }}>
