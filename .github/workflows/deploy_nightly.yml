@@ -33,9 +33,10 @@ jobs:
 
     # Build nightly site
     - name: Build
+      env:
+        OAUTH2_ID: ${{ secrets.OAUTH_ID }}
+        OC_AUTH_TYPES: google
       run: |
-        export OC_AUTH_TYPES=google
-        export OAUTH2_ID=${{ secrets.OAUTH_ID }}
         yarn build --ci --prod server digital
 
     - name: Create OAuth credentials and app.yaml
