@@ -15,7 +15,7 @@ const [initialState, actions, reducer] = CreateState()(
         circuits: [] as CircuitMetadata[],
         loading: false,
         error: undefined as string,
-        autoSave: (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY)) || false) as boolean,
+        autoSave: (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
     },
     {
         SetAutoSave:        (autoSave: boolean) => ({ type: "SET_AUTOSAVE_ID",       autoSave }) as const,
