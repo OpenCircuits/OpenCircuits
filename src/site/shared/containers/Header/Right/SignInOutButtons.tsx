@@ -1,34 +1,26 @@
-import {connect} from "react-redux";
-import {SharedAppState} from "shared/state";
-import {OpenHeaderPopup} from "shared/state/Header/actions";
-import {Logout} from "shared/state/UserInfo/actions";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
+import {OpenHeaderPopup} from "shared/state/Header";
+import {Logout} from "shared/state/UserInfo";
 
 import "./index.scss";
 
 
-type OwnProps = {}
-type StateProps = {
-    isLoggedIn: boolean;
+export const SignInOutButtons = () => {
+    const {isLoggedIn} = useSharedSelector(
+        state => ({ isLoggedIn: state.user.isLoggedIn })
+    );
+    const dispatch = useSharedDispatch();
+
+    return (
+        <div className="header__right__account">
+            <button title="Sign in"
+                    style={{ display: (isLoggedIn ? "none" : "initial") }}
+                    onClick={() => dispatch(OpenHeaderPopup("login"))}>Sign In</button>
+
+            <button title="Sign out"
+                    style={{ display: (isLoggedIn ? "initial" : "none") }}
+                    onClick={() => dispatch(Logout())}>Sign Out</button>
+        </div>
+    );
 }
-type DispatchProps = {
-    Logout: typeof Logout;
-    OpenHeaderPopup: typeof OpenHeaderPopup;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _SignInOutButtons = ({isLoggedIn, Logout, OpenHeaderPopup}: Props) => (
-    <div className="header__right__account">
-        <button title="Sign in"
-                style={{ display: (isLoggedIn ? "none" : "initial") }}
-                onClick={() => OpenHeaderPopup("login")}>Sign In</button>
-
-        <button title="Sign out"
-                style={{ display: (isLoggedIn ? "initial" : "none") }}
-                onClick={() => Logout()}>Sign Out</button>
-    </div>
-);
-
-export const SignInOutButtons = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ isLoggedIn: state.user.isLoggedIn }),
-    { Logout, OpenHeaderPopup }
-)(_SignInOutButtons);
