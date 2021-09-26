@@ -39,21 +39,17 @@ func main() {
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	sqlitePathConfig := flag.String("sqlitePath", "data/sql/sqlite", "The path to the sqlite working directory")
+	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
 	portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
 
-	if os.Getenv("BUILD_MODE") == "nightly" {
-		*noAuthConfig = true
-	} else {
-		// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
-		if os.Getenv("DATASTORE_PROJECT_ID") != "" {
-			*googleAuthConfig = "credentials.json"
-			*userCsifConfig = "gcp_datastore"
-		}
+	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
+	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
+		*googleAuthConfig = "credentials.json"
+		*userCsifConfig = "gcp_datastore"
 	}
 
 	// Register authentication method
