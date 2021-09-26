@@ -34,7 +34,7 @@ jobs:
     # Build nightly site
     - name: Build
       env:
-        OAUTH2_ID: ${{ secrets.OAUTH_ID }}
+        OC_OAUTH2_ID: ${{ secrets.OAUTH_ID }}
         OC_AUTH_TYPES: google
       run: |
         yarn build --ci --prod server digital

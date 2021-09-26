@@ -37,7 +37,9 @@ async function Init(): Promise<void> {
         },
         "google": async () => {
             // Load auth2 from GAPI and initialize w/ metadata
-            const clientId = process.env.OAUTH2_ID;
+            const clientId = process.env.OC_OAUTH2_ID;
+            if (!clientId)
+                throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
             await new Promise((resolve) => gapi.load("auth2", resolve));
             await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
         }
