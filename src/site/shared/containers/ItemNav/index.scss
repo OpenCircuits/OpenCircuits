@@ -35,8 +35,8 @@ $tab-padding: 8px;
         width: unset;
         height: $itemnav-height;
 
-        overflow-x: hidden;
-        overflow-y: hidden;
+        // overflow-x: hidden;
+        // overflow-y: hidden;
 
         border-right-width: 0;
         border-top-width: $header-border-width;
@@ -103,18 +103,31 @@ $tab-padding: 8px;
         position: relative;
 
         & > div {
+            $size: $top-height + $top-margin + $header-padding;
+
             position: absolute;
 
             top: -$top-margin - $header-border-width;
             left: $header-padding + $header-border-width;
 
-            width: $top-height + $top-margin + $header-padding;
-            height: $top-height + $top-margin + $header-padding;
+            width: $size;
+            height: $size;
+
+            @media (max-width: 768px) {
+                left: -$size - $header-border-width;
+                top: -$size - 2*$header-border-width - $top-margin;
+            }
 
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
-            border-bottom-right-radius: 15px;
+
+            @media (min-width: 768px) {
+                border-bottom-right-radius: 15px;
+            }
+            @media (max-width: 768px) {
+                border-top-left-radius: 15px;
+            }
 
             cursor: pointer;
 
@@ -126,6 +139,11 @@ $tab-padding: 8px;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
+
+                @media (max-width: 768px) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding});
+                }
 
                 color: black;
                 font-size: 2.5em;
@@ -172,7 +190,9 @@ $tab-padding: 8px;
             border-radius: 15px;
         }
 
-        border-top: 5px solid #888;
+        @media (min-width: 768px) {
+            border-top: 3px solid #888;
+        }
 
         @media (max-width: 768px) {
             overflow-x: auto;
