@@ -18,7 +18,7 @@ import { GroupAction } from "core/actions/GroupAction";
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
-    let actions = [] as Action[];
+    let action: GroupAction;
 
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
@@ -40,12 +40,7 @@ export const TranslateTool: Tool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {selections, currentlyPressedObject, history, designer} = info;
-
-            actions = [];
-
-            if (currentlyPressedObject instanceof Component)
-                actions.push(new ShiftAction(designer, currentlyPressedObject).execute());
+            const {selections, currentlyPressedObject, designer} = info;
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
@@ -56,6 +51,10 @@ export const TranslateTool: Tool = (() => {
                         [currentlyPressedObject]
             ) as Component[];
 
+            action = new GroupAction([
+                new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
+            ]);
+
             initalPositions = components.map(o => o.getPos());
 
             // explicitly start a drag
@@ -63,8 +62,10 @@ export const TranslateTool: Tool = (() => {
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
-            actions.push(new TranslateAction(components, initalPositions, finalPositions));
-            history.add(new GroupAction(actions));
+
+            history.add(
+                action.add(new TranslateAction(components, initalPositions, finalPositions))
+            );
         },
 
 
