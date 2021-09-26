@@ -1,9 +1,13 @@
 import {AllSharedActions} from "shared/state/actions";
-import {ICDesignerActions} from "./ICDesigner/actions";
-import {ICViewerActions} from "./ICViewer/actions";
+import {ActionCreatorType} from "shared/utils/CreateState";
 
 
-export type AllActions =
-    AllSharedActions  |
-    ICDesignerActions |
-    ICViewerActions;
+type ActionCreators =
+    typeof import("./ICDesigner") &
+    typeof import("./ICViewer");
+
+export type AllActions = AllSharedActions | {
+    [Name in keyof ActionCreators]: ActionCreators[Name] extends ActionCreatorType
+        ? ReturnType<ActionCreators[Name]>
+        : never
+}[keyof ActionCreators];

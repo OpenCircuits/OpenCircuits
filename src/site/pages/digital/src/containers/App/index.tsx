@@ -10,7 +10,7 @@ import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {ContextMenu}     from "shared/containers/ContextMenu";
 import {Header}          from "shared/containers/Header";
