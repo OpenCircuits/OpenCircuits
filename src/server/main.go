@@ -47,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	if os.Getenv("BUILD_MODE") == "nightly" {
-		noAuthConfig := true
+		*noAuthConfig = true
 	} else {
 		// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 		if os.Getenv("DATASTORE_PROJECT_ID") != "" {
