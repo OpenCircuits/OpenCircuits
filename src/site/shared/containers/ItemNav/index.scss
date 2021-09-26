@@ -8,28 +8,8 @@ $tab-padding: 8px;
 
 
 .itemnav {
-
-    /*
-    &::-webkit-scrollbar {
-        width: 7px;  // vertical scrollbars
-        height: 7px; // horizontal scrollbar
-    }
-
-    &::-webkit-scrollbar-track {
-        background: hsl(0, 0%, 65%);
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: hsl(0, 0%, 30%);
-        border-radius: 15px;
-    }
-
-
-    overflow-x: hidden;
-    overflow-y: auto;
-    */
-
     $top-margin: 10px;
+    $top-height: 35px;
 
     position: absolute;
     z-index: 2;
@@ -40,9 +20,6 @@ $tab-padding: 8px;
 
     display: flex;
     flex-direction: column;
-
-    //overflow-x: hidden;
-    //overflow-y: auto;
 
     width: $itemnav-width;
 
@@ -83,7 +60,7 @@ $tab-padding: 8px;
         justify-content: space-between;
 
         width: calc(100% - 10px);
-        height: 40px;
+        flex: 0 0 $top-height;
 
         padding: $top-margin 5px 5px 5px;
 
@@ -101,9 +78,15 @@ $tab-padding: 8px;
         }
 
         &__history__buttons {
+            display: flex;
+
             & > button {
                 width: 30px;
                 padding: 0;
+
+                & > img {
+                    vertical-align: middle;
+                }
 
                 &:disabled {
                     opacity: 0.5;
@@ -113,53 +96,54 @@ $tab-padding: 8px;
     }
 
     &__tab {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
         position: relative;
 
         & > div {
-            position: fixed;
+            position: absolute;
 
-            transform: translate(-100%, -25%);
+            top: -$top-margin - $header-border-width;
+            left: $header-padding + $header-border-width;
 
-            font-size: 2.5em;
+            width: $top-height + $top-margin + $header-padding;
+            height: $top-height + $top-margin + $header-padding;
 
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
             border-bottom-right-radius: 15px;
-            background-color: transparent;
 
             cursor: pointer;
 
-            color: #000;
+            transition: 0.5s;
 
             &:after {
+                content: '×';
+
+                position: absolute;
+                left: calc(-50% - #{$header-border-width + $header-padding});
+                top: 50%;
+
+                color: black;
+                font-size: 2.5em;
+
                 transition: 0.5s;
 
-                display: inline-block;
-                content: '×';
+                transform: translate(-50%, -50%);
             }
         }
 
         &__closed > div {
-
-            transform: translate(10px, -$header-border-width - $top-margin);
-            //transform: translate(17px, -$header-border-width - $top-margin);
-
-            font-size: 2em;
-
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
 
-            @media (max-width: 768px) {
-                transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
-                border-bottom-right-radius: 0;
-                border-top-left-radius: 15px;
-            }
-
             &:after {
-                width: $tab-width;
-                padding: 0 $tab-padding;
-                transform: rotate(-45deg);
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
             }
         }
     }
