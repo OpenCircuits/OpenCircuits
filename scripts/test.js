@@ -17,7 +17,7 @@ const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 async function launch_test(dir, flags) {
-    await jest.runCLI({
+    return await jest.runCLI({
         ...flags,
         config: JSON.stringify({
             "preset": "ts-jest",
@@ -57,6 +57,8 @@ async function launch_test(dir, flags) {
         ci, watch: (dirs.length === 1 && !ci)
     };
 
+    const results = [];
+
     // Launch test in each directory
     for (const dir of dirs) {
         const info = DIR_MAP[dir];
@@ -73,6 +75,12 @@ async function launch_test(dir, flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
-        await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags);
+        results.push(
+            (await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags)).results
+        );
     }
+
+    const pass = results.every(r => r.success);
+    if (!pass && ci) // Exit with failure
+        process.exit(1);
 })();
