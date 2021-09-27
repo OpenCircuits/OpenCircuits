@@ -5,6 +5,29 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 import {Graph} from "math/Graph";
 
+export type InputTreeBinOpType = "|" | "^" | "&"
+export type InputTreeUnOpType = "!"
+
+export interface InputTreeIdent {
+    kind: "leaf"
+    ident: string
+}
+export interface InputTreeUnOpNode {
+    kind: "unop"
+    type: InputTreeUnOpType
+    child: InputTree
+}
+export interface InputTreeBinOpNode {
+    kind: "binop"
+    type: InputTreeBinOpType
+    lChild: InputTree
+    rChild: InputTree
+}
+export type InputTree =
+    | InputTreeIdent
+    | InputTreeUnOpNode
+    | InputTreeBinOpNode
+
 export type TokenType = "label" | "|" | "^" | "&" | "!" | "(" | ")" | "separator";
 
 export interface Token {
@@ -13,6 +36,11 @@ export interface Token {
 
 export interface InputToken extends Token {
     name: string;
+}
+
+export interface NewTreeRetValue {
+    index: number;
+    tree: InputTree;
 }
 
 export interface TreeRetValue {

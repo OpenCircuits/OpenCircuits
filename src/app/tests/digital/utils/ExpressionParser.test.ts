@@ -13,8 +13,8 @@ import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 import { Graph } from "math/Graph";
 
-import {ExpressionToCircuit, tokenTreeToCircuit, createNegationGates, connectGate, generateTree} from "digital/utils/ExpressionParser";
-import {FormatMap, Token, InputToken, DefaultPrecedences}    from "digital/utils/ExpressionParserConstants";
+import {ExpressionToCircuit, tokenTreeToCircuit, createNegationGates, connectGate, generateTree, generateInputTree} from "digital/utils/ExpressionParser";
+import {FormatMap, Token, InputToken, DefaultPrecedences, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
@@ -1236,6 +1236,39 @@ describe("Expression Parser", () => {
                 test("output", () => {
                     expect(connectedTree.getConnections(outputToken).length).toBe(0);
                 });
+            });
+        });
+    });
+
+    describe("Generate Input Tree", () => {
+        describe("!(a&b)", () => {
+            const tokenA: InputToken = {type: "label", name: "a"};
+            const tokenB: InputToken = {type: "label", name: "b"};
+            const parenOpen: Token = {type: "("};
+            const parenClose: Token = {type: ")"};
+            const andToken: Token = {type: "&"};
+            const notToken: Token = {type: "!"};
+            const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
+            const tree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
+            const treeNot = tree as InputTreeUnOpNode;
+            test("!", () => {
+                expect(treeNot.kind).toBe("unop");
+                expect(treeNot.type).toBe("!");
+                expect(treeNot.child.kind).toBe("binop");
+            });
+            const treeAnd = treeNot.child as InputTreeBinOpNode;
+            test("&", () => {
+                expect(treeAnd.type).toBe("&");
+                expect(treeAnd.lChild.kind).toBe("leaf");
+                expect(treeAnd.rChild.kind).toBe("leaf");
+            });
+            const treeLeft = treeAnd.lChild as InputTreeIdent;
+            test("a", () => {
+                expect(treeLeft.ident).toBe("a");
+            });
+            const treeRight = treeAnd.rChild as InputTreeIdent;
+            test("a", () => {
+                expect(treeRight.ident).toBe("b");
             });
         });
     });

@@ -9,7 +9,9 @@ import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, TokenType, Token,
         TreeRetValue, OpsArray, GateConstructors,
-        InputToken, DefaultPrecedences} from "./ExpressionParserConstants";
+        InputToken, DefaultPrecedences,
+        InputTree, InputTreeBinOpNode, InputTreeIdent, InputTreeUnOpNode, 
+        InputTreeUnOpType, InputTreeBinOpType, NewTreeRetValue} from "./ExpressionParserConstants";
 import {Graph} from "math/Graph";
 
 
@@ -181,6 +183,49 @@ function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<To
     }
 
     return tree;
+}
+
+export function generateInputTree(tokens: Array<Token>, index: number, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewTreeRetValue {
+    const nextOp = precedence.get(currentOp);
+
+    if(nextOp === "(" && tokens[index].type !== currentOp) {
+        if(tokens[index].type === "(")
+            return generateInputTree(tokens, index, nextOp, precedence);
+        else
+            return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+    }
+
+    let leftRet: NewTreeRetValue = null;
+    if(currentOp !== "!" && currentOp !== "(") {
+        leftRet = generateInputTree(tokens, index, nextOp, precedence);
+        index = leftRet.index;
+        if(index >= tokens.length || tokens[index].type !== currentOp)
+            return leftRet;
+    }
+    const currentToken = tokens[index];
+    index += 1;
+    let rightRet: NewTreeRetValue = null;
+    if(currentOp === "!" && tokens[index].type === "!")
+        rightRet = generateInputTree(tokens, index, currentOp, precedence);
+    else if(nextOp === "(" && tokens[index].type !== "(")
+        return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+    else if(currentOp === "!" || currentOp === "(")
+        rightRet = generateInputTree(tokens, index, nextOp, precedence);
+    else
+        rightRet = generateInputTree(tokens, index, currentOp, precedence);
+    index = rightRet.index;
+    if(currentOp === "(") {
+        rightRet.index += 1;
+        return rightRet;
+    }
+
+    let tree: InputTree;
+    if(currentOp === "!")
+        tree = {kind: "unop", type: "!", child: rightRet.tree};
+    else if(currentOp === "|" || currentOp === "^" || currentOp === "&")
+        tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
+    return {index: index, tree: tree};
+
 }
 
 function generateTreeCore(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): TreeRetValue {
