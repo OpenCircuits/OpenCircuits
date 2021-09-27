@@ -13,6 +13,8 @@ import {ToggleSideNav} from "shared/state/SideNav";
 import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
 
+import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons";
+
 import "./index.scss";
 
 
@@ -41,7 +43,12 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
 
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
-                {auth ? `Hello, ${auth.getName()}!` : null}
+                <div className="sidenav__accountinfo__name">
+                    {auth ? `Hello, ${auth.getName()}!` : null}
+                </div>
+                <div className="sidenav__accountinfo__sign">
+                    <SignInOutButtons/>
+                </div>
             </div>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
