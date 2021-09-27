@@ -12,8 +12,6 @@ export const GoogleAuthButton = () => {
     const dispatch = useSharedDispatch();
 
     function onLogin(success: boolean) {
-        console.log("I am happening");
-        console.trace();
         if (success) {
             dispatch(Login(new GoogleAuthState()));
             dispatch(CloseHeaderPopups());
