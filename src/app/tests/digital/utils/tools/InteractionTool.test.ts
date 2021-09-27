@@ -6,11 +6,14 @@ import {SHIFT_KEY,
         BACKSPACE_KEY,
         IO_PORT_LENGTH,
         COMMAND_KEY,
-        A_KEY} from "core/utils/Constants";
+        A_KEY,
+        X_KEY} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {ANDGate, BUFGate,
+        DigitalNode,
+        LED,
         Multiplexer, Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
@@ -259,4 +262,122 @@ describe("Selection Tool", () => {
         // TODO: Add test for deleting multiple objects/wires
     });
 
+    describe("Snip WirePorts Handler", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
+            history.reset();
+        });
+
+        test("Snip Single Port", () => {
+            const [sw, led] = Place(new Switch(), new LED());
+            sw.setPos(V(-60, 0));
+            led.setPos(V(400, -100));
+
+            // Connect Switch -> LED
+            input.drag(sw.getOutputPort(0).getWorldTargetPos(),
+                       led.getInputPort(0).getWorldTargetPos());
+
+            const wire = sw.getOutputs()[0];
+            input.press(wire.getShape().getPos(0.5))
+                    .move(V(20, 0))
+                    .release();
+
+            expect(designer.getObjects()).toHaveLength(3);
+
+            expect(selections.amount()).toEqual(1);
+            expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
+            expect(sw).not.toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, {depth: 2});
+
+            input.pressKey(X_KEY)
+                .releaseKey(X_KEY);
+
+            expect(designer.getObjects()).toHaveLength(2);
+            expect(selections.amount()).toEqual(0);
+            expect(sw).toBeConnectedTo(led, {depth: 1});
+        });
+
+        test("Snip 2 Single Ports", () => {
+            const [sw, led] = Place(new Switch(), new LED());
+            sw.setPos(V(-60, 0));
+            led.setPos(V(400, -100));
+
+            // Connect Switch -> LED
+            input.drag(sw.getOutputPort(0).getWorldTargetPos(),
+                       led.getInputPort(0).getWorldTargetPos());
+
+            const wire = sw.getOutputs()[0];
+            input.press(wire.getShape().getPos(0.25))
+                    .move(V(20, 0))
+                    .release()
+                    .press(wire.getShape().getPos(0.75))
+                    .move(V(-20, 0))
+                    .release();
+
+            expect(designer.getObjects()).toHaveLength(4);
+
+            expect(selections.amount()).toEqual(1);
+            expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
+            expect(sw).not.toBeConnectedTo(led, {depth: 2});
+            expect(sw).toBeConnectedTo(led, {depth: 3});
+
+            input.pressKey(X_KEY)
+                .releaseKey(X_KEY);
+
+            expect(designer.getObjects()).toHaveLength(3);
+            expect(selections.amount()).toEqual(0);
+            expect(sw).not.toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, {depth: 2});
+
+            input.click(designer.getObjects()[2].getPos());
+
+            expect(selections.amount()).toEqual(1);
+            expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
+
+            input.pressKey(X_KEY)
+                .releaseKey(X_KEY);
+
+            expect(designer.getObjects()).toHaveLength(2);
+            expect(selections.amount()).toEqual(0);
+            expect(sw).toBeConnectedTo(led, {depth: 1});
+        });
+
+        test("Snip Multiple Ports (x2)", () => {
+            const [sw, led] = Place(new Switch(), new LED());
+            sw.setPos(V(-60, 0));
+            led.setPos(V(400, -100));
+
+            // Connect Switch -> LED
+            input.drag(sw.getOutputPort(0).getWorldTargetPos(),
+                       led.getInputPort(0).getWorldTargetPos());
+
+            const wire = sw.getOutputs()[0];
+            input.press(wire.getShape().getPos(0.25))
+                    .move(V(20, 0))
+                    .release()
+                    .press(wire.getShape().getPos(0.75))
+                    .move(V(-20, 0))
+                    .release()
+                    .pressKey(SHIFT_KEY)
+                    .click(designer.getObjects()[2].getPos())
+                    .releaseKey(SHIFT_KEY);
+
+            expect(designer.getObjects()).toHaveLength(4);
+            expect(selections.amount()).toEqual(2);
+            expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
+            expect(selections.get()[1]).toBeInstanceOf(DigitalNode);
+
+            input.pressKey(X_KEY)
+                .releaseKey(X_KEY);
+
+            expect(designer.getObjects()).toHaveLength(2);
+            expect(selections.amount()).toEqual(0);
+            expect(sw).toBeConnectedTo(led, {depth: 1});
+
+            expect(designer.getObjects()).toHaveLength(2);
+            expect(selections.amount()).toEqual(0);
+            expect(sw).toBeConnectedTo(led, {depth: 1});
+        });
+    });
 });
