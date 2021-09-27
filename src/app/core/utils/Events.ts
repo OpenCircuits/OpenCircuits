@@ -15,6 +15,10 @@ export type EventType =
 
     "contextmenu" |
 
+    "paste"       |
+    "copy"        |
+    "cut"         |
+
     "keydown"     |
     "keyup";
 
@@ -32,8 +36,12 @@ export type ZoomEvent = {
     factor: number;
     pos: Vector;
 }
+export type CopyPasteEvent = {
+    type: "paste" | "copy" | "cut";
+    ev: ClipboardEvent;
+}
 export type OtherEvent = {
     type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
 }
 
-export type Event = MouseEvent | KeyboardEvent | ZoomEvent | OtherEvent;
+export type Event = MouseEvent | KeyboardEvent | ZoomEvent | CopyPasteEvent | OtherEvent;

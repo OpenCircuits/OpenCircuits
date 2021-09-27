@@ -1,18 +1,20 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
+import {useEffect, useState} from "react";
+import {Dispatch} from "redux";
 import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {SharedAppState} from "shared/state";
-import {ToggleItemNav} from "shared/state/ItemNav/actions";
+import {AllSharedActions} from "shared/state/actions";
+import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
 
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
-import { DragDropHandlers } from "shared/components/DragDroppable/DragDropHandlers";
+import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
 
 export type ItemNavItem = {
@@ -30,22 +32,16 @@ export type ItemNavConfig = {
     sections: ItemNavSection[];
 }
 
-
-type OwnProps = {
+type Props = {
     info: CircuitInfo;
     config: ItemNavConfig;
 }
-type StateProps = {
-    isOpen: boolean;
-    isEnabled: boolean;
-    isLocked: boolean;
-}
-type DispatchProps = {
-    toggle: () => void;
-}
+export const ItemNav = ({ info, config }: Props) => {
+    const {isOpen, isEnabled} = useSharedSelector(
+        state => ({ ...state.itemNav })
+    );
+    const dispatch = useSharedDispatch();
 
-type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
 
     // State to keep track of the number of times an item is clicked
@@ -91,10 +87,10 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
                 </div>
                 <div>
                     { // Hide tab if the circuit is locked
-                    (isEnabled && !isLocked) &&
+                    isEnabled &&
                         <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
                              title="Circuit Components"
-                             onClick={() => toggle()}>
+                             onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
                             <div></div>
                         </div>
                     }
@@ -134,18 +130,3 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, toggle }: Props) 
         </nav>
     );
 }
-
-
-const MapState = (state: SharedAppState) => ({
-    isLocked: state.circuit.isLocked,
-    isEnabled: state.itemNav.isEnabled,
-    isOpen: state.itemNav.isOpen
-});
-const MapDispatch = {
-    toggle: ToggleItemNav
-};
-
-export const ItemNav = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    MapState,
-    MapDispatch
-)(_ItemNav);
