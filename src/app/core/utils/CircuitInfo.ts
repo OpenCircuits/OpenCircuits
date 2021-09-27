@@ -1,6 +1,6 @@
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner, IOObject} from "core/models";
+import {CircuitDesigner} from "core/models";
 import {HistoryManager} from "core/actions/HistoryManager";
 import {ToolManager} from "core/tools/ToolManager";
 
