@@ -9,26 +9,10 @@ import {IOObject} from "core/models";
 import {DefaultTool} from "./DefaultTool";
 
 import {EventHandler} from "./EventHandler";
-import {SelectAllHandler}     from "./handlers/SelectAllHandler";
-import {FitToScreenHandler}   from "./handlers/FitToScreenHandler";
-import {DuplicateHandler}     from "./handlers/DuplicateHandler";
-import {DeleteHandler}        from "./handlers/DeleteHandler";
-import {SnipWirePortsHandler} from "./handlers/SnipWirePortsHandler";
-import {DeselectAllHandler}   from "./handlers/DeselectAllHandler";
-import {SelectionHandler}     from "./handlers/SelectionHandler";
-import {SelectPathHandler}    from "./handlers/SelectPathHandler";
-import {UndoHandler}          from "./handlers/UndoHandler";
-import {RedoHandler}          from "./handlers/RedoHandler";
-import { CopyHandler } from "./handlers/CopyHandler";
-import { PasteHandler } from "./handlers/PasteHandler";
 
 
 export class InteractionTool extends DefaultTool {
-    public constructor(handlers: EventHandler[] =
-            [SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-             CopyHandler, PasteHandler]) {
+    public constructor(handlers: EventHandler[]) {
         super(...handlers);
     }
 
