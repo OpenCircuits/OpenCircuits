@@ -26,18 +26,13 @@ export class ConnectionAction extends ReversableAction {
             this.p1 = this.wire.getP1();
             this.p2 = this.wire.getP2();
         } else {
+            this.wire = this.designer.createWire(p1, p2);
             this.p1 = p1;
             this.p2 = p2;
         }
     }
 
     public normalExecute(): Action {
-        // It might not be possible to create this wire when the action is created
-        //   (Issue #685)
-        if (this.wire === undefined) {
-            this.wire = this.designer.createWire(this.p1, this.p2);
-        }
-
         this.designer.addWire(this.wire);
 
         this.p1.connect(this.wire);
