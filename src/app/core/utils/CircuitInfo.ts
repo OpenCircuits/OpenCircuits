@@ -23,8 +23,6 @@ export type CircuitInfo = {
     selections: SelectionsWrapper;
     currentlyPressedObject?: Selectable;
 
-    clipboard: Array<IOObject>;
-
     toolManager: ToolManager;
 
     renderer: RenderQueue;
