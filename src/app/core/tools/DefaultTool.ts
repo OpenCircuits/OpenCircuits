@@ -23,7 +23,7 @@ export class DefaultTool {
 
         for (const handler of this.handlers) {
             if (handler.conditions(event, info)) {
-                handler.getResponse(info);
+                handler.getResponse(info, event);
                 return true;
             }
         }

@@ -4,5 +4,5 @@ import {Event} from "core/utils/Events";
 
 export type EventHandler = {
     conditions: (event: Event, info: CircuitInfo) => boolean;
-    getResponse: (info: CircuitInfo) => void;
+    getResponse: (info: CircuitInfo, ev?: Event) => void;
 }
