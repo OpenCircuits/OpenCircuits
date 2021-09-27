@@ -1,15 +1,15 @@
-import {UserInfoActions} from "./UserInfo/actions";
-import {CircuitInfoActions} from "./CircuitInfo/actions";
-import {HeaderActions} from "./Header/actions";
-import {SideNavActions} from "./SideNav/actions";
-import {ItemNavActions} from "./ItemNav/actions";
-import {ContextMenuActions} from "./ContextMenu/actions";
+import {ActionCreatorType} from "shared/utils/CreateState";
 
+type ActionCreators =
+    typeof import("./Header")      &
+    typeof import("./ContextMenu") &
+    typeof import("./SideNav")     &
+    typeof import("./ItemNav")     &
+    typeof import("./CircuitInfo") &
+    typeof import("./UserInfo");
 
-export type AllSharedActions =
-    UserInfoActions    |
-    CircuitInfoActions |
-    HeaderActions      |
-    SideNavActions     |
-    ItemNavActions     |
-    ContextMenuActions;
+export type AllSharedActions = {
+    [Name in keyof ActionCreators]: ActionCreators[Name] extends ActionCreatorType
+        ? ReturnType<ActionCreators[Name]>
+        : never
+}[keyof ActionCreators];

@@ -9,6 +9,7 @@ $tab-padding: 8px;
 
 .itemnav {
     $top-margin: 10px;
+    $top-height: 35px;
 
     position: absolute;
     z-index: 2;
@@ -19,9 +20,6 @@ $tab-padding: 8px;
 
     display: flex;
     flex-direction: column;
-
-    overflow-x: hidden;
-    overflow-y: auto;
 
     width: $itemnav-width;
 
@@ -36,9 +34,6 @@ $tab-padding: 8px;
         right: 0;
         width: unset;
         height: $itemnav-height;
-
-        overflow-x: hidden;
-        overflow-y: hidden;
 
         border-right-width: 0;
         border-top-width: $header-border-width;
@@ -62,9 +57,9 @@ $tab-padding: 8px;
         justify-content: space-between;
 
         width: calc(100% - 10px);
-        height: 40px;
+        flex: 0 0 $top-height;
 
-        margin: $top-margin 5px 5px 5px;
+        padding: $top-margin 5px 5px 5px;
 
         & > div {
             flex: 1;
@@ -80,9 +75,15 @@ $tab-padding: 8px;
         }
 
         &__history__buttons {
+            display: flex;
+
             & > button {
                 width: 30px;
                 padding: 0;
+
+                & > img {
+                    vertical-align: middle;
+                }
 
                 &:disabled {
                     opacity: 0.5;
@@ -92,52 +93,72 @@ $tab-padding: 8px;
     }
 
     &__tab {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
         position: relative;
 
         & > div {
-            position: fixed;
+            $size: $top-height + $top-margin + $header-padding;
 
-            transform: translate(-100%, -25%);
+            position: absolute;
 
-            font-size: 2.5em;
+            top: -$top-margin - $header-border-width;
+            left: $header-padding + $header-border-width;
+
+            width: $size;
+            height: $size;
+
+            @media (max-width: 768px) {
+                left: -$size - $header-border-width;
+                top: -$size - 2*$header-border-width - $top-margin;
+            }
 
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
-            border-bottom-right-radius: 15px;
-            background-color: transparent;
+
+            @media (min-width: 768px) {
+                border-bottom-right-radius: 15px;
+            }
+            @media (max-width: 768px) {
+                border-top-left-radius: 15px;
+            }
 
             cursor: pointer;
+
             transition: 0.5s;
 
-            color: #000;
-
             &:after {
+                content: '×';
+
+                position: absolute;
+                left: calc(-50% - #{$header-border-width + $header-padding});
+                top: 50%;
+
+                @media (max-width: 768px) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding});
+                }
+
+                color: black;
+                font-size: 2.5em;
+
                 transition: 0.5s;
 
-                display: inline-block;
-                content: '×';
+                transform: translate(-50%, -50%);
             }
         }
 
         &__closed > div {
-            transform: translate(20px, -$header-border-width - $top-margin);
-
-            font-size: 2em;
-
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
 
-            @media (max-width: 768px) {
-                transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
-                border-bottom-right-radius: 0;
-                border-top-left-radius: 15px;
-            }
-
             &:after {
-                width: $tab-width;
-                padding: 0 $tab-padding;
-                transform: rotate(-45deg);
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
             }
         }
     }
@@ -146,8 +167,29 @@ $tab-padding: 8px;
         display: flex;
         flex-direction: column;
 
-        // overflow-x: hidden;
-        // overflow-y: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-track {
+            background: hsl(0, 0%, 65%);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        @media (min-width: 768px) {
+            border-top: 3px solid #888;
+        }
 
         @media (max-width: 768px) {
             overflow-x: auto;

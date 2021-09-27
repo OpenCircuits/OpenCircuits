@@ -49,3 +49,17 @@ h3 + h4, div + h4 {
   border-top: 1px solid rgba(121, 121, 121, 0.1);
   border-bottom: 1px solid rgba(121, 121, 121, 0.1);
 }
+
+
+.tabs-container {
+  border-radius: 5px;
+  padding: 10px 20px;
+  background-color: rgba(121, 121, 121, 0.1);
+}
+.tabs-container > ul {
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgb(153, 153, 153);
+}
+.tabs-container > div {
+  margin-left: 10px;
+}
