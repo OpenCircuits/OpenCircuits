@@ -329,6 +329,10 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  * @return Tuple of desired camera position and zoom
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
+    // If no objects return to default zoom
+    if(objs.length == 0) {
+        return [V(0), 1];
+    }
     const bbox = objs.length === 0
         ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
         : CircuitBoundingBox(objs);
