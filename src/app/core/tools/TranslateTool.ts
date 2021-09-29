@@ -15,7 +15,9 @@ import {Component} from "core/models";
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
-
+    let worldMouseDownPos = V() as Vector;
+    let initialMouseButton = 0;
+    
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
                  Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
@@ -31,12 +33,18 @@ export const TranslateTool: Tool = (() => {
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse
-            return (event.type === "mouseup");
+            return (event.type === "mouseup" && event.button === initialMouseButton);
         },
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {selections, currentlyPressedObject} = info;
+            const {camera, input, selections, currentlyPressedObject} = info;
+
+            worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
+            if(event.type === "mousedrag"){
+                initialMouseButton = event.button;
+                console.log("button: " + event.button)
+            }
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
@@ -62,8 +70,7 @@ export const TranslateTool: Tool = (() => {
             const {input, camera, history, designer} = info;
 
             switch (event.type) {
-                case "mousedrag":
-                    const worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
+                case "mousemove":
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);
