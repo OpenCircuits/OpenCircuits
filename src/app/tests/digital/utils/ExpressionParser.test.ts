@@ -1058,7 +1058,7 @@ describe("Expression Parser", () => {
             const andToken: Token = {type: "&"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
-            const tree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
+            const tree = generateInputTree(tokenList).tree;
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");
@@ -1085,7 +1085,7 @@ describe("Expression Parser", () => {
             const tokenA: InputToken = {type: "label", name: "a"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, tokenA];
-            const tree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
+            const tree = generateInputTree(tokenList).tree;
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");

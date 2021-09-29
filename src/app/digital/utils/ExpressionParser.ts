@@ -169,46 +169,53 @@ function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) 
     verifyExistingOperands(tokens);
 }
 
-export function generateInputTree(tokens: Array<Token>, index: number, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewTreeRetValue {
-    const nextOp = precedence.get(currentOp);
-    console.log(currentOp + " " + index);
-    if(nextOp === "(" && tokens[index].type !== currentOp) {
+export function generateInputTree(tokens: Array<Token>, index: number = 0, currentOp: TokenType = "|"): NewTreeRetValue {
+    const nextOp = DefaultPrecedences.get(currentOp);
+
+    // When this function has recursed through to "!" and the token still isn't that, then
+    //  the only possibilites left are an input or open parenthesis token
+    if(currentOp === "!" && tokens[index].type !== "!") {
         if(tokens[index].type === "(")
-            return generateInputTree(tokens, index, nextOp, precedence);
+            return generateInputTree(tokens, index, nextOp);
         else
             return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
     }
 
-    let leftRet: NewTreeRetValue = null;
+    // This section gets the part of the tree from the left side of the operator.
+    //  "!" and "(" only have operands on their right side, so this section is skipped for them
+    let leftRet: NewTreeRetValue;
     if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateInputTree(tokens, index, nextOp, precedence);
+        leftRet = generateInputTree(tokens, index, nextOp);
         index = leftRet.index;
+        // If this isn't the right operation to apply, return
         if(index >= tokens.length || tokens[index].type !== currentOp)
             return leftRet;
     }
-    const currentToken = tokens[index];
+
+    // This section gets the part of the tree from the right side of the operand. index is incremented by 1
+    //  so it now points to the token on the right side of the operator.
     index += 1;
     let rightRet: NewTreeRetValue = null;
-    if(currentOp === "!" && tokens[index].type === "!")
-        rightRet = generateInputTree(tokens, index, currentOp, precedence);
-    else if(nextOp === "(" && tokens[index].type !== "(")
+    if(currentOp === "!" && tokens[index].type === "!") // This case applies when there are two !'s in a row
+        rightRet = generateInputTree(tokens, index, currentOp);
+    else if(currentOp === "!" && tokens[index].type === "label") // This case would apply when an input follows a "!"
         rightRet = {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
-    else if(currentOp === "!" || currentOp === "(")
-        rightRet = generateInputTree(tokens, index, nextOp, precedence);
+    else if(currentOp === "(")
+        rightRet = generateInputTree(tokens, index, nextOp);
     else
-        rightRet = generateInputTree(tokens, index, currentOp, precedence);
+        rightRet = generateInputTree(tokens, index, currentOp);
     index = rightRet.index;
     if(currentOp === "(") {
-        rightRet.index += 1;
+        rightRet.index += 1; // Incremented to skip the ")"
         return rightRet;
     }
+
+    // The tree tree is created with the new node as the root and returned
     let tree: InputTree;
     if(currentOp === "!")
         tree = {kind: "unop", type: "!", child: rightRet.tree};
     else if(currentOp === "|" || currentOp === "^" || currentOp === "&")
         tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
-    if(currentOp !== currentToken.type)
-        console.log("HJGIUYIUTWIOYQOIUYHJGBXNBHKYIOU");
     return {index: index, tree: tree};
 
 }
@@ -369,7 +376,7 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     // Put this after validating tokens because an input like "(" should produce an error message
     if(inputs.size == 0) return new DigitalObjectSet();
 
-    const connectedTree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
+    const connectedTree = generateInputTree(tokenList).tree;
 
     const fullCircuit = treeToCircuit(connectedTree, inputs, output);
 
