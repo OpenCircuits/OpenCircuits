@@ -8,11 +8,9 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate, XNORGate} from "digital/models/ioobjects/gates/XORGate";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, TokenType, Token,
-        TreeRetValue, OpsArray, GateConstructors,
+        OpsArray, GateConstructors,
         InputToken, DefaultPrecedences,
-        InputTree, InputTreeBinOpNode, InputTreeIdent, InputTreeUnOpNode, 
-        InputTreeUnOpType, InputTreeBinOpType, NewTreeRetValue} from "./ExpressionParserConstants";
-import {Graph} from "math/Graph";
+        InputTree, NewTreeRetValue} from "./ExpressionParserConstants";
 
 
 /* Notes for connecting components
@@ -171,23 +169,9 @@ function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) 
     verifyExistingOperands(tokens);
 }
 
-function getPopulatedTree(tokenList: Array<Token>, outputToken: Token): Graph<Token, boolean> {
-    const tree = new Graph<Token, boolean>();
-
-    tree.createNode(outputToken);
-
-    for(const token of tokenList) {
-        if(token.type === "(" || token.type === ")")
-            continue;
-        tree.createNode(token);
-    }
-
-    return tree;
-}
-
 export function generateInputTree(tokens: Array<Token>, index: number, currentOp: TokenType, precedence: Map<TokenType, TokenType>): NewTreeRetValue {
     const nextOp = precedence.get(currentOp);
-
+    console.log(currentOp + " " + index);
     if(nextOp === "(" && tokens[index].type !== currentOp) {
         if(tokens[index].type === "(")
             return generateInputTree(tokens, index, nextOp, precedence);
@@ -208,7 +192,7 @@ export function generateInputTree(tokens: Array<Token>, index: number, currentOp
     if(currentOp === "!" && tokens[index].type === "!")
         rightRet = generateInputTree(tokens, index, currentOp, precedence);
     else if(nextOp === "(" && tokens[index].type !== "(")
-        return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+        rightRet = {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
     else if(currentOp === "!" || currentOp === "(")
         rightRet = generateInputTree(tokens, index, nextOp, precedence);
     else
@@ -218,78 +202,15 @@ export function generateInputTree(tokens: Array<Token>, index: number, currentOp
         rightRet.index += 1;
         return rightRet;
     }
-
     let tree: InputTree;
     if(currentOp === "!")
         tree = {kind: "unop", type: "!", child: rightRet.tree};
     else if(currentOp === "|" || currentOp === "^" || currentOp === "&")
         tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
+    if(currentOp !== currentToken.type)
+        console.log("HJGIUYIUTWIOYQOIUYHJGBXNBHKYIOU");
     return {index: index, tree: tree};
 
-}
-
-function generateTreeCore(tokens: Array<Token>, index: number, tree: Graph<Token, boolean>, currentOp: TokenType, precedence: Map<TokenType, TokenType>): TreeRetValue {
-    const nextOp = precedence.get(currentOp);
-    // if(index >= tokens.length)
-    //     return {graph: tree, index: index, recent: tokens[index]};
-    // if(currentToken.type === "&")
-    //     console.log("Hiluhaklghsadklghaslkjghaslkjhgaslkdjgh");
-
-    if(nextOp === "(" && tokens[index].type !== currentOp) {
-        if(tokens[index].type === "(")
-            return generateTreeCore(tokens, index, tree, nextOp, precedence);
-        else
-            return {graph: tree, index: index+1, recent: tokens[index]};
-    }
-
-    let leftRet: TreeRetValue = null;
-    if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateTreeCore(tokens, index, tree, nextOp, precedence);
-        index = leftRet.index;
-        if(index >= tokens.length || tokens[index].type !== currentOp)
-            return leftRet;
-    }
-    const currentToken = tokens[index];
-    index += 1;
-    let rightRet: TreeRetValue = null;
-    if(currentOp === "!" && tokens[index].type === "!")
-        rightRet = generateTreeCore(tokens, index, tree, currentOp, precedence);
-    else if(nextOp === "(" && tokens[index].type !== "(")
-        rightRet = {graph: tree, index: index+1, recent: tokens[index]};
-    else if(currentOp === "!" || currentOp === "(")
-        rightRet = generateTreeCore(tokens, index, tree, nextOp, precedence);
-    else
-        rightRet = generateTreeCore(tokens, index, tree, currentOp, precedence);
-    index = rightRet.index;
-    if(currentOp === "(") {
-        rightRet.index += 1;
-        return rightRet;
-    }
-
-
-    // if(index >= tokens.length)
-    //     return {graph: tree, index: index, recent: tokens[index]};
-
-
-    // const rightCircuit = rightRet.circuit;
-    // const rightPort = rightRet.recentPort;
-
-    // const newGate: DigitalComponent = GateConstructors.get(currentOp).call(null);
-    // let newComponents: IOObject[] = rightCircuit.concat([newGate]);
-    if(currentOp !== "!") {
-        tree.createEdge(leftRet.recent, currentToken, true);
-    }
-    tree.createEdge(rightRet.recent, currentToken, true);
-
-    return {graph: tree, index: index, recent: currentToken};
-}
-
-export function generateTree(tokens: Array<Token>, tree: Graph<Token, boolean>, firstOp: TokenType, precedence: Map<TokenType, TokenType>, outputToken: Token): Graph<Token, boolean> {
-    const ret = generateTreeCore(tokens, 0, tree, firstOp, precedence);
-    const connectedTree = ret.graph;
-    const recent = ret.recent;
-    connectedTree.createEdge(recent, outputToken, true);
-    return connectedTree;
 }
 
 export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
@@ -303,35 +224,55 @@ export function connectGate(source: DigitalComponent, destination: DigitalCompon
     return wire;
 }
 
-export function tokenTreeToCircuit(tree: Graph<Token, boolean>, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
-    const ret: IOObject[] = Array.from(inputs.values());
-    const tokenToReal = new Map<Token, DigitalComponent>();
+function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
+    if(node.kind === "leaf")
+        return null;
 
-    // Create Gates
-    for(const token of tree.getNodes()) {
-        if(token.type === "label") {
-            tokenToReal.set(token, inputs.get((token as InputToken).name));
-            continue;
-        }
-        else if(token.type === "separator") {
-            ret.push(output);
-            tokenToReal.set(token, output);
-            continue;
-        }
-        const newGate: DigitalComponent = GateConstructors.get(token.type).call(null);
-        ret.push(newGate);
-        tokenToReal.set(token, newGate);
+    const ret = circuit;
+    const newGate = GateConstructors.get(node.type).call(null);
+    if(node.kind === "unop") {
+        let prevNode: DigitalComponent;
+        if(node.child.kind === "leaf")
+            prevNode = inputs.get(node.child.ident);
+        else
+            prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const wire = connectGate(prevNode, newGate);
+        ret.push(wire);
     }
-
-    // Connect Gates
-    for(const token of tree.getNodes()) {
-        for(const connection of tree.getConnections(token)) {
-            const wire = connectGate(tokenToReal.get(token), tokenToReal.get(connection.getTarget()));
-            ret.push(wire);
-        }
+    else if(node.kind === "binop") {
+        let prevNodeL: DigitalComponent;
+        if(node.lChild.kind === "leaf")
+            prevNodeL = inputs.get(node.lChild.ident);
+        else
+            prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const wireL = connectGate(prevNodeL, newGate);
+        ret.push(wireL);
+        let prevNodeR: DigitalComponent;
+        if(node.rChild.kind === "leaf")
+            prevNodeR = inputs.get(node.rChild.ident);
+        else
+            prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const wireR = connectGate(prevNodeR, newGate);
+        ret.push(wireR);
     }
-
+    ret.push(newGate);
     return ret;
+}
+
+export function treeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+    let ret: IOObject[] = Array.from(inputs.values());
+    ret.push(output);
+
+    if(tree.kind === "leaf") {
+        const wire = connectGate(inputs.get(tree.ident), output);
+        ret.push(wire);
+        return ret;
+    }
+    ret = treeToCircuitCore(tree, inputs, ret);
+    const wire = connectGate(ret.slice(-1)[0] as DigitalComponent, output);
+    ret.push(wire);
+    return ret;
+
 }
 
 function getNottedGate(oldGate: Gate): Gate | null {
@@ -428,11 +369,9 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     // Put this after validating tokens because an input like "(" should produce an error message
     if(inputs.size == 0) return new DigitalObjectSet();
 
-    const outputToken: Token = {type: "separator"};
-    const basicTree = getPopulatedTree(tokenList, outputToken);
-    const connectedTree = generateTree(tokenList, basicTree, "|", DefaultPrecedences, outputToken);
+    const connectedTree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
 
-    const fullCircuit = tokenTreeToCircuit(connectedTree, inputs, output);
+    const fullCircuit = treeToCircuit(connectedTree, inputs, output);
 
     const condensedCircuit = createNegationGates(fullCircuit);
 

@@ -11,9 +11,8 @@ import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
-import { Graph } from "math/Graph";
 
-import {ExpressionToCircuit, tokenTreeToCircuit, createNegationGates, connectGate, generateTree, generateInputTree} from "digital/utils/ExpressionParser";
+import {ExpressionToCircuit, createNegationGates, connectGate, generateInputTree} from "digital/utils/ExpressionParser";
 import {FormatMap, Token, InputToken, DefaultPrecedences, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
@@ -949,160 +948,6 @@ describe("Expression Parser", () => {
         });
     });
 
-    describe("Token Tree To Circuit", () => {
-        describe("a&b", () => {
-            const a = new Switch(), b = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b]
-            ]);
-            const input1: InputToken = {type: "label", name: "a"};
-            const input2: InputToken = {type: "label", name: "b"};
-            const andToken: Token = {type: "&"};
-            const outToken: Token = {type: "separator"};
-            const tree = new Graph<Token, boolean>();
-            tree.createNode(input1);
-            tree.createNode(input2);
-            tree.createNode(andToken);
-            tree.createNode(outToken);
-            tree.createEdge(input1, andToken, true);
-            tree.createEdge(input2, andToken, true);
-            tree.createEdge(andToken, outToken, true);
-
-            const circuit = tokenTreeToCircuit(tree, inputMap, o);
-
-            test("Correct number of things", () => {
-                expect(circuit.length).toBe(7);
-            });
-
-            const designer = new DigitalCircuitDesigner(0);
-            designer.addGroup(new DigitalObjectSet(circuit));
-            describe("Correct Circuit", () => {
-                test("Initial State", () => {
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Input a on", () => {
-                    a.activate(true);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Input a,b on", () => {
-                    b.activate(true);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Input b on", () => {
-                    a.activate(false);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Inputs off", () => {
-                    b.activate(false);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-            });
-        });
-        describe("a&a", () => {
-            const a = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a]
-            ]);
-            const input1: InputToken = {type: "label", name: "a"};
-            const input2: InputToken = {type: "label", name: "a"};
-            const andToken: Token = {type: "&"};
-            const outToken: Token = {type: "separator"};
-            const tree = new Graph<Token, boolean>();
-            tree.createNode(input1);
-            tree.createNode(input2);
-            tree.createNode(andToken);
-            tree.createNode(outToken);
-            tree.createEdge(input1, andToken, true);
-            tree.createEdge(input2, andToken, true);
-            tree.createEdge(andToken, outToken, true);
-
-            const circuit = tokenTreeToCircuit(tree, inputMap, o);
-
-            test("Correct number of things", () => {
-                expect(circuit.length).toBe(6);
-            });
-
-            const designer = new DigitalCircuitDesigner(0);
-            designer.addGroup(new DigitalObjectSet(circuit));
-            describe("Correct Circuit", () => {
-                test("Initial State", () => {
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Input a on", () => {
-                    a.activate(true);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Inputs off", () => {
-                    a.activate(false);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-            });
-        });
-        describe("a&b", () => {
-            const a = new Switch(), b = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b]
-            ]);
-            const input1: InputToken = {type: "label", name: "a"};
-            const input2: InputToken = {type: "label", name: "b"};
-            const andToken: Token = {type: "&"};
-            const notToken: Token = {type: "!"};
-            const outToken: Token = {type: "separator"};
-            const tree = new Graph<Token, boolean>();
-            tree.createNode(input1);
-            tree.createNode(input2);
-            tree.createNode(andToken);
-            tree.createNode(notToken);
-            tree.createNode(outToken);
-            tree.createEdge(input1, andToken, true);
-            tree.createEdge(input2, andToken, true);
-            tree.createEdge(andToken, notToken, true);
-            tree.createEdge(notToken, outToken, true);
-
-            const circuit = tokenTreeToCircuit(tree, inputMap, o);
-
-            test("Correct number of things", () => {
-                expect(circuit.length).toBe(9);
-            });
-
-            const designer = new DigitalCircuitDesigner(0);
-            designer.addGroup(new DigitalObjectSet(circuit));
-            describe("Correct Circuit", () => {
-                test("Initial State", () => {
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Input a on", () => {
-                    a.activate(true);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Input a,b on", () => {
-                    b.activate(true);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Input b on", () => {
-                    a.activate(false);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Inputs off", () => {
-                    b.activate(false);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-            });
-        });
-    });
-
     describe("Connect Gate", () => {
         describe("!(a&b)", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
@@ -1204,42 +1049,6 @@ describe("Expression Parser", () => {
         });
     });
 
-    describe("Generate Tree", () => {
-        describe("a&a", () => {
-            const token1: InputToken = {type: "label", name: "a"};
-            const token2: InputToken = {type: "label", name: "a"};
-            const andToken: Token = {type: "&"};
-            const outputToken: Token = {type: "separator"};
-            const tokenList = [token1, andToken, token2];
-            const basicTree = new Graph<Token, false>();
-            basicTree.createNode(token1);
-            basicTree.createNode(token2);
-            basicTree.createNode(andToken);
-            basicTree.createNode(outputToken);
-            const connectedTree = generateTree(tokenList, basicTree, "|", DefaultPrecedences, outputToken);
-            test("Graph Connected", () => {
-                expect(connectedTree.isConnected()).toBe(true);
-            });
-            describe("Correct Connections", () => {
-                test("a (first)", () => {
-                    expect(connectedTree.getConnections(token1).length).toBe(1);
-                    expect(connectedTree.getConnections(token1)[0].getTarget()).toBe(andToken);
-                });
-                test("a (second)", () => {
-                    expect(connectedTree.getConnections(token2).length).toBe(1);
-                    expect(connectedTree.getConnections(token2)[0].getTarget()).toBe(andToken);
-                });
-                test("and", () => {
-                    expect(connectedTree.getConnections(andToken).length).toBe(1);
-                    expect(connectedTree.getConnections(andToken)[0].getTarget()).toBe(outputToken);
-                });
-                test("output", () => {
-                    expect(connectedTree.getConnections(outputToken).length).toBe(0);
-                });
-            });
-        });
-    });
-
     describe("Generate Input Tree", () => {
         describe("!(a&b)", () => {
             const tokenA: InputToken = {type: "label", name: "a"};
@@ -1269,6 +1078,23 @@ describe("Expression Parser", () => {
             const treeRight = treeAnd.rChild as InputTreeIdent;
             test("a", () => {
                 expect(treeRight.ident).toBe("b");
+            });
+        });
+        
+        describe("!a", () => {
+            const tokenA: InputToken = {type: "label", name: "a"};
+            const notToken: Token = {type: "!"};
+            const tokenList = [notToken, tokenA];
+            const tree = generateInputTree(tokenList, 0, "|", DefaultPrecedences).tree;
+            const treeNot = tree as InputTreeUnOpNode;
+            test("!", () => {
+                expect(treeNot.kind).toBe("unop");
+                expect(treeNot.type).toBe("!");
+                expect(treeNot.child.kind).toBe("leaf");
+            });
+            const treeLeft = treeNot.child as InputTreeIdent;
+            test("a", () => {
+                expect(treeLeft.ident).toBe("a");
             });
         });
     });

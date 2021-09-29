@@ -3,7 +3,6 @@ import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {XORGate} from "digital/models/ioobjects/gates/XORGate";
-import {Graph} from "math/Graph";
 
 export type InputTreeBinOpType = "|" | "^" | "&"
 export type InputTreeUnOpType = "!"
@@ -41,12 +40,6 @@ export interface InputToken extends Token {
 export interface NewTreeRetValue {
     index: number;
     tree: InputTree;
-}
-
-export interface TreeRetValue {
-    graph: Graph<Token, boolean>;
-    index: number;
-    recent: Token;
 }
 
 export const OpsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
