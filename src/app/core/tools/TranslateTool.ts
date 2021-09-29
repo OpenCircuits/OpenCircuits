@@ -43,7 +43,6 @@ export const TranslateTool: Tool = (() => {
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
             if(event.type === "mousedrag"){
                 initialMouseButton = event.button;
-                console.log("button: " + event.button)
             }
 
             // If the pressed objecet is part of the selected objects,
