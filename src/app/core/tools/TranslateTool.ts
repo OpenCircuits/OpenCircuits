@@ -10,6 +10,9 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
+import {ShiftAction} from "core/actions/ShiftAction";
+import { Action } from "core/actions/Action";
+import { GroupAction } from "core/actions/GroupAction";
 
 
 export const TranslateTool: Tool = (() => {
@@ -17,7 +20,8 @@ export const TranslateTool: Tool = (() => {
     let components = [] as Component[];
     let worldMouseDownPos = V() as Vector;
     let initialMouseButton = 0;
-    
+    let action: GroupAction;
+  
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
                  Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
@@ -38,12 +42,13 @@ export const TranslateTool: Tool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {camera, input, selections, currentlyPressedObject} = info;
+            const {camera, input, selections, currentlyPressedObject, designer} = info;
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
             if(event.type === "mousedrag"){
                 initialMouseButton = event.button;
             }
+
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
@@ -54,6 +59,10 @@ export const TranslateTool: Tool = (() => {
                         [currentlyPressedObject]
             ) as Component[];
 
+            action = new GroupAction([
+                new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
+            ]);
+
             initalPositions = components.map(o => o.getPos());
 
             // explicitly start a drag
@@ -61,7 +70,10 @@ export const TranslateTool: Tool = (() => {
         },
         onDeactivate({}: Event, {history}: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
-            history.add(new TranslateAction(components, initalPositions, finalPositions));
+
+            history.add(
+                action.add(new TranslateAction(components, initalPositions, finalPositions))
+            );
         },
 
 

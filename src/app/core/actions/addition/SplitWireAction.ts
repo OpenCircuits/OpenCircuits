@@ -30,10 +30,10 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
 
     const action = new GroupAction();
 
-    action.add(new DisconnectAction(designer, wires[0]));
-    action.add(new DisconnectAction(designer, wires[1]));
-    action.add(new DeleteAction(designer, port));
-    action.add(new ConnectionAction(designer, ports[0], ports[1]));
+    action.add(new DisconnectAction(designer, wires[0]).execute());
+    action.add(new DisconnectAction(designer, wires[1]).execute());
+    action.add(new DeleteAction(designer, port).execute());
+    action.add(new ConnectionAction(designer, ports[0], ports[1]).execute());
 
     return action;
 }

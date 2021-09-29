@@ -1,13 +1,12 @@
-import {Fragment, useRef} from "react";
-import {connect} from "react-redux";
+import {Fragment, useState} from "react";
+
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 import {GoogleAuthState} from "shared/api/auth/GoogleAuthState";
 
-import {SharedAppState} from "shared/state";
-import {CloseHeaderPopups} from "shared/state/Header/actions";
-import {HeaderPopups} from "shared/state/Header/state";
-import {Login} from "shared/state/UserInfo/actions";
+import {CloseHeaderPopups} from "shared/state/Header";
+import {Login} from "shared/state/thunks/User";
 
 import {Popup} from "shared/components/Popup";
 
@@ -16,46 +15,38 @@ import {GoogleAuthButton} from "./GoogleSignInButton";
 import "./index.scss";
 
 
-type OwnProps = {}
-type StateProps = {
-    curPopup: HeaderPopups;
-}
-type DispatchProps = {
-    Login: typeof Login;
-    CloseHeaderPopups: typeof CloseHeaderPopups;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _LoginPopup = ({curPopup, Login, CloseHeaderPopups}: Props) => {
-    const input = useRef<HTMLInputElement>();
+export const LoginPopup = () => {
+    const {curPopup} = useSharedSelector(
+        state => ({ curPopup: state.header.curPopup })
+    );
+    const dispatch = useSharedDispatch();
+    const [username, setUsername] = useState("");
 
     return (
         <Popup title="Login"
                className="login__popup"
                isOpen={(curPopup === "login")}
-               close={CloseHeaderPopups}>
+               close={() => dispatch(CloseHeaderPopups())}>
             {(process.env.OC_AUTH_TYPES ?? "").trim().length > 0 &&
               process.env.OC_AUTH_TYPES.split(" ").map((s) => (
                 <Fragment key={`login-popup-auth-${s}`}>
                     {s === "google" ? (
-                        <GoogleAuthButton onLogin={(success) => {
-                            if (success) {
-                                Login(new GoogleAuthState());
-                                CloseHeaderPopups();
-                            } // Else don't login or close
-                        }} />
+                        <GoogleAuthButton />
                     ) : (
                         <div>
                             <div className="login__popup__label">NoAuth Login</div>
-                            <div><input ref={input} type="text" placeholder="username" /></div>
+                            <div>
+                                <input type="text" placeholder="username"
+                                       value={username} onChange={e => setUsername(e.target.value.trim())} />
+                            </div>
                             <button onClick={() => {
-                                const val = input.current.value.trim();
-                                if (val === "") {
+                                if (username === "") {
                                     alert("User name must not be blank!")
                                     return;
                                 }
-                                Login(new NoAuthState(val));
-                                CloseHeaderPopups();
+                                console.log("tesststst");
+                                dispatch(Login(new NoAuthState(username)));
+                                dispatch(CloseHeaderPopups());
                             }}>
                                 Submit
                             </button>
@@ -67,8 +58,3 @@ const _LoginPopup = ({curPopup, Login, CloseHeaderPopups}: Props) => {
         </Popup>
     );
 }
-
-export const LoginPopup = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ curPopup: state.header.curPopup }),
-    { Login, CloseHeaderPopups } as any
-)(_LoginPopup);
