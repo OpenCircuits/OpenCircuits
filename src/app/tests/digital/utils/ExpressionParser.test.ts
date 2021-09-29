@@ -1,6 +1,5 @@
 import "jest";
 
-
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
@@ -15,6 +14,7 @@ import {IOObject} from "core/models/IOObject";
 import {ExpressionToCircuit, createNegationGates, connectGate, generateInputTree} from "digital/utils/ExpressionParser";
 import {FormatMap, Token, InputToken, DefaultPrecedences, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
+
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
     const a = new Switch(), o = new LED();
@@ -231,6 +231,9 @@ describe("Expression Parser", () => {
             }).toThrow("Encountered Unmatched )");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a|b))",o);
+            }).toThrow("Encountered Unmatched )");
+            expect(() => {
+                ExpressionToCircuit(inputMap,")a|b(",o);
             }).toThrow("Encountered Unmatched )");
         });
 

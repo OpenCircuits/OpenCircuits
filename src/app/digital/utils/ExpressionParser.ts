@@ -120,16 +120,15 @@ function verifyInputsExist(tokens: Token[], inputs: Map<string, DigitalComponent
 }
 
 function verifyMatchingParenthesis(tokens: Token[]) {
-    let open = 0;
-    let close = 0;
+    let count = 0;
     for(const token of tokens) {
-        open += +(token.type === "(");
-        close += +(token.type === ")");
+        count += +(token.type === "(");
+        count -= +(token.type === ")");
+        if(count < 0)
+            throw new Error("Encountered Unmatched )");
     }
-    if(open > close)
+    if(count > 0)
         throw new Error("Encountered Unmatched (");
-    else if(open < close)
-        throw new Error("Encountered Unmatched )");
 }
 
 function verifyExistingOperators(tokens: Token[]) {
