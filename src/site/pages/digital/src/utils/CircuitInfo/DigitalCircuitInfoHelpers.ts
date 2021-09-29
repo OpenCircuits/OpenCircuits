@@ -20,6 +20,7 @@ import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {GenerateThumbnail} from "../GenerateThumbnail";
+import {LoadLogiclyCircuit} from "../LoadLogiclyCircuit";
 import {AppStore} from "../../state";
 
 
@@ -33,6 +34,12 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             if (!open) return;
 
             const circuitData = await getData();
+
+            // Check if circuit is a logicly b64 circuit
+            if (circuitData.startsWith("data:http://ns.logic.ly/")) {
+                LoadLogiclyCircuit(circuitData, info);
+                return;
+            }
 
             const {camera, history, designer, selections, renderer} = info;
 

@@ -11,7 +11,7 @@ export const OpenFileButton = ({ helpers }: Props) => {
 
     return (
         <div>
-            <input type="file" ref={fileInput} multiple={false} accept=".circuit,.json"
+            <input type="file" ref={fileInput} multiple={false} accept=".circuit,.json,.logicly"
                    style={{display: "none"}}
                    onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0)
