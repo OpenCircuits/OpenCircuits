@@ -24,7 +24,7 @@ type BaseLogiclyObject<type extends string, id extends string = type> = BaseLogi
     id: id;
 }
 
-type LogiclyGateTypes = "not" | "and" | "or" | "xor";
+type LogiclyGateTypes = "not" | "and" | "or" | "xor" | "nor";
 type GateLogiclyObject = BaseLogiclyObject<LogiclyGateTypes, "gate"> & {
     type: `${LogiclyGateTypes}@logic.ly`;
     inputs: number;
@@ -95,6 +95,7 @@ function fixObj(obj: Record<string, string>): LogiclyObject | undefined {
             case "and":
             case "or":
             case "xor":
+            case "nor":
             case "not":
                 id = "gate";
                 break;
@@ -235,6 +236,7 @@ export function LoadLogiclyCircuit(data: string, {camera, designer, selections, 
         ["and@logic.ly", "ANDGate"],
         ["xor@logic.ly", "XORGate"],
         ["or@logic.ly", "ORGate"],
+        ["nor@logic.ly", "NORGate"],
         ["label@logic.ly", "Label"],
         ["clock@logic.ly", "Clock"],
         ["switch@logic.ly", "Switch"],
