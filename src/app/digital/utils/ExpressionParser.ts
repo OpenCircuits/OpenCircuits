@@ -109,18 +109,6 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
     return tokenList;
 }
 
-function verifyMatchingParenthesis(tokens: Token[]) {
-    let count = 0;
-    for(const token of tokens) {
-        count += +(token.type === "(");
-        count -= +(token.type === ")");
-        if(count < 0)
-            throw new Error("Encountered Unmatched )");
-    }
-    if(count > 0)
-        throw new Error("Encountered Unmatched (");
-}
-
 function verifyExistingOperators(tokens: Token[]) {
     let waitForOperator = false;
     let prevToken: Token;
@@ -152,19 +140,20 @@ function verifyExistingOperands(tokens: Token[]) {
 
 function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) {
     // Calls separate functions to validate tokens because that is way easier
-    verifyMatchingParenthesis(tokens);
     verifyExistingOperators(tokens);
     verifyExistingOperands(tokens);
 }
 
-export function generateInputTree(tokens: Array<Token>, index: number = 0, currentOp: TokenType = "|"): NewTreeRetValue {
+function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentOp: TokenType = "|"): NewTreeRetValue {
     const nextOp = DefaultPrecedences.get(currentOp);
+    if(tokens[index].type === ")")
+        throw new Error("Encountered Unmatched )");
 
     // When this function has recursed through to "!" and the token still isn't that, then
     //  the only possibilites left are an input or open parenthesis token
     if(currentOp === "!" && tokens[index].type !== "!") {
         if(tokens[index].type === "(")
-            return generateInputTree(tokens, index, nextOp);
+            return generateInputTreeCore(tokens, index, nextOp);
         else
             return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
     }
@@ -173,7 +162,7 @@ export function generateInputTree(tokens: Array<Token>, index: number = 0, curre
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
     let leftRet: NewTreeRetValue;
     if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateInputTree(tokens, index, nextOp);
+        leftRet = generateInputTreeCore(tokens, index, nextOp);
         index = leftRet.index;
         // If this isn't the right operation to apply, return
         if(index >= tokens.length || tokens[index].type !== currentOp)
@@ -185,15 +174,22 @@ export function generateInputTree(tokens: Array<Token>, index: number = 0, curre
     index += 1;
     let rightRet: NewTreeRetValue = null;
     if(currentOp === "!" && tokens[index].type === "!") // This case applies when there are two !'s in a row
-        rightRet = generateInputTree(tokens, index, currentOp);
+        rightRet = generateInputTreeCore(tokens, index, currentOp);
     else if(currentOp === "!" && tokens[index].type === "label") // This case would apply when an input follows a "!"
         rightRet = {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
-    else if(currentOp === "(")
-        rightRet = generateInputTree(tokens, index, nextOp);
+    else if(currentOp === "(") {
+        if(index >= tokens.length)
+            throw new Error("Encountered Unmatched (");
+        rightRet = generateInputTreeCore(tokens, index, nextOp);
+    }
     else
-        rightRet = generateInputTree(tokens, index, currentOp);
+        rightRet = generateInputTreeCore(tokens, index, currentOp);
     index = rightRet.index;
     if(currentOp === "(") {
+        if(index >= tokens.length)
+            throw new Error("Encountered Unmatched (");
+        if(tokens[index].type !== ")")
+            throw new Error("Encountered Unmatched (");
         rightRet.index += 1; // Incremented to skip the ")"
         return rightRet;
     }
@@ -206,6 +202,13 @@ export function generateInputTree(tokens: Array<Token>, index: number = 0, curre
         tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
     return {index: index, tree: tree};
 
+}
+
+export function generateInputTree(tokens: Array<Token>): NewTreeRetValue {
+    const ret = generateInputTreeCore(tokens);
+    if(ret.index < tokens.length && tokens[ret.index].type === ")")
+        throw new Error("Encountered Unmatched )");
+    return ret;
 }
 
 export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {

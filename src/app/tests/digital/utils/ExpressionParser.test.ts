@@ -247,9 +247,6 @@ describe("Expression Parser", () => {
             expect(() => {
                 ExpressionToCircuit(inputMap,")(",o);
             }).toThrow("Encountered Unmatched )");
-            expect(() => {
-                ExpressionToCircuit(inputMap,"!)(",o);
-            }).toThrow("Encountered Unmatched )");
         });
 
         test("Missing Operands", () => {
