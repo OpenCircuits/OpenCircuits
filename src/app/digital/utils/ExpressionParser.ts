@@ -109,16 +109,6 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
     return tokenList;
 }
 
-function verifyInputsExist(tokens: Token[], inputs: Map<string, DigitalComponent>) {
-    for(const token of tokens) {
-        if(token.type !== "label")
-            continue;
-        const name = (token as InputToken).name;
-        if(!inputs.has(name))
-            throw new Error("Input Not Found: \"" + name + "\"");
-    }
-}
-
 function verifyMatchingParenthesis(tokens: Token[]) {
     let count = 0;
     for(const token of tokens) {
@@ -162,7 +152,6 @@ function verifyExistingOperands(tokens: Token[]) {
 
 function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) {
     // Calls separate functions to validate tokens because that is way easier
-    verifyInputsExist(tokens, inputs);
     verifyMatchingParenthesis(tokens);
     verifyExistingOperators(tokens);
     verifyExistingOperands(tokens);
@@ -231,33 +220,27 @@ export function connectGate(source: DigitalComponent, destination: DigitalCompon
 }
 
 function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
-    if(node.kind === "leaf")
-        return null;
+    if(node.kind === "leaf") { //Rearranges array so thge relevant input is at the end
+        if(!inputs.has(node.ident))
+            throw new Error("Input Not Found: \"" + node.ident + "\"");
+        const index = circuit.indexOf(inputs.get(node.ident));
+        circuit.splice(index, 1);
+        circuit.push(inputs.get(node.ident));
+        return circuit;
+    }
 
     const ret = circuit;
     const newGate = GateConstructors.get(node.type).call(null);
     if(node.kind === "unop") {
-        let prevNode: DigitalComponent;
-        if(node.child.kind === "leaf")
-            prevNode = inputs.get(node.child.ident);
-        else
-            prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = connectGate(prevNode, newGate);
         ret.push(wire);
     }
     else if(node.kind === "binop") {
-        let prevNodeL: DigitalComponent;
-        if(node.lChild.kind === "leaf")
-            prevNodeL = inputs.get(node.lChild.ident);
-        else
-            prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wireL = connectGate(prevNodeL, newGate);
         ret.push(wireL);
-        let prevNodeR: DigitalComponent;
-        if(node.rChild.kind === "leaf")
-            prevNodeR = inputs.get(node.rChild.ident);
-        else
-            prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wireR = connectGate(prevNodeR, newGate);
         ret.push(wireR);
     }
@@ -267,16 +250,11 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
 
 export function treeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
     let ret: IOObject[] = Array.from(inputs.values());
-    ret.push(output);
 
-    if(tree.kind === "leaf") {
-        const wire = connectGate(inputs.get(tree.ident), output);
-        ret.push(wire);
-        return ret;
-    }
     ret = treeToCircuitCore(tree, inputs, ret);
     const wire = connectGate(ret.slice(-1)[0] as DigitalComponent, output);
     ret.push(wire);
+    ret.push(output);
     return ret;
 
 }
