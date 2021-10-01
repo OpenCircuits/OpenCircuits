@@ -60,13 +60,12 @@ function generate(info: DigitalCircuitInfo, expression: string,
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     for(const token of tokenList) {
-        if (token.type != "label")
+        if (token.type != "input")
             continue;
-        const inputToken = token as InputToken;
-        if (inputMap.has(inputToken.name))
+        if (inputMap.has(token.name))
             continue;
-        inputMap.set(inputToken.name, Inputs.get(input).call(null));
-        inputMap.get(inputToken.name).setName(inputToken.name);
+        inputMap.set(token.name, Inputs.get(input).call(null));
+        inputMap.get(token.name).setName(token.name);
     }
     const o = new LED();
     o.setName("Output");

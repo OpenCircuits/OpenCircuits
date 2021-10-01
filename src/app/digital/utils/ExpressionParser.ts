@@ -10,7 +10,7 @@ import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, TokenType, Token,
         OpsArray, GateConstructors,
         InputToken, DefaultPrecedences,
-        InputTree, NewTreeRetValue} from "./ExpressionParserConstants";
+        InputTree, NewTreeRetValue, FormatLabels} from "./ExpressionParserConstants";
 
 
 /* Notes for connecting components
@@ -59,27 +59,31 @@ function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output:
         throw new Error("Supplied Output Is Not An Output");
 }
 
-function getInput(input: string, index: number, ops: Map<TokenType, string>): InputToken {
+function getInput(input: string, index: number, ops: Map<FormatLabels, string>): InputToken {
     let endIndex = index + 1;
     while(endIndex < input.length) {
         for(const op of OpsArray) {
             if(subEquals(input, endIndex, ops.get(op)))
-                return {type: "label", name: input.substring(index, endIndex)};
+                return {type: "input", name: input.substring(index, endIndex)};
         }
+        if(subEquals(input, endIndex, ops.get("separator")))
+            return {type: "input", name: input.substring(index, endIndex)};
         endIndex++;
     }
-    return {type: "label", name: input.substring(index, endIndex)};
+    return {type: "input", name: input.substring(index, endIndex)};
 }
 
-function getToken(input: string, index: number, ops: Map<TokenType, string>): Token | InputToken {
+function getToken(input: string, index: number, ops: Map<FormatLabels, string>): Token | null {
     for(const op of OpsArray) {
         if(subEquals(input, index, ops.get(op)))
             return {type: op};
     }
+    if(subEquals(input, index, ops.get("separator")))
+        return null;
     return getInput(input, index, ops);
 }
 
-export function GenerateTokens(input: string, ops: Map<TokenType, string>): Token[] {
+export function GenerateTokens(input: string, ops: Map<FormatLabels, string>): Token[] {
     const tokenList = new Array<Token>();
     let extraSkip = 0;
     let token: Token;
@@ -90,12 +94,11 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
         extraSkip = 0;
 
         token = getToken(input, index, ops);
-        if(token.type === "label") {
-            tokenList.push(token as InputToken);
-            index += (token as InputToken).name.length;
-        }
-        else if(token.type === "separator") {
-            index += ops.get(token.type).length;
+        if(token === null)
+            index += ops.get("separator").length;
+        else if(token.type === "input") {
+            tokenList.push(token);
+            index += token.name.length;
         }
         else {
             tokenList.push(token);
@@ -123,12 +126,13 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
     // When this function has recursed through to "!" and the token still isn't that, then
     //  the only possibilites left are an input or open parenthesis token
     if(currentOp === "!" && tokens[index].type !== "!") {
-        if(tokens[index].type === "(")
+        const token = tokens[index];
+        if(token.type === "(")
             return generateInputTreeCore(tokens, index, nextOp);
-        else if(tokens[index].type === "label")
-            return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+        else if(token.type === "input")
+            return {index: index+1, tree: {kind: "leaf", ident: token.name}};
         else
-            throw new Error("Missing Left Operand: " + tokens[index].type);
+            throw new Error("Missing Left Operand: " + token.type);
     }
 
     // This section gets the part of the tree from the left side of the operator.
@@ -149,10 +153,11 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
         throw new Error("Missing Right Operand: " + currentOp);
     }
     let rightRet: NewTreeRetValue = null;
-    if(currentOp === "!" && tokens[index].type === "!") // This case applies when there are two !'s in a row
+    const rightToken = tokens[index];
+    if(currentOp === "!" && rightToken.type === "!") // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, index, currentOp);
-    else if(currentOp === "!" && tokens[index].type === "label") // This case would apply when an input follows a "!"
-        rightRet = {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+    else if(currentOp === "!" && rightToken.type === "input") // This case would apply when an input follows a "!"
+        rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
     else if(currentOp === "(") {
         if(index >= tokens.length)
             throw new Error("Encountered Unmatched (");
@@ -192,15 +197,17 @@ export function generateInputTree(tokens: Array<Token>): InputTree | null {
 
         let prev: string = null;
         for(let prevIndex = index-1; prevIndex >= 0; prevIndex--) {
-            if(tokens[prevIndex].type === "label") {
-                prev = (tokens[prevIndex] as InputToken).name;
+            const prevToken = tokens[prevIndex];
+            if(prevToken.type === "input") {
+                prev = prevToken.name;
                 break;
             }
         }
         let next: string = null;
         for(let nextIndex = index; nextIndex < tokens.length; nextIndex++) {
-            if(tokens[nextIndex].type === "label") {
-                next = (tokens[nextIndex] as InputToken).name;
+            const nextToken = tokens[nextIndex];
+            if(nextToken.type === "input") {
+                next = nextToken.name;
                 break;
             }
         }
@@ -352,7 +359,7 @@ export function createNegationGates(circuit: IOObject[]): IOObject[] {
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: Map<TokenType, string> = FormatMap.get("|")): DigitalObjectSet | null {
+                                    ops: Map<FormatLabels, string> = FormatMap.get("|")): DigitalObjectSet | null {
 
     validateInputOutputTypes(inputs, output);
 

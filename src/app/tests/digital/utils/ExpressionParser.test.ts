@@ -1093,8 +1093,8 @@ describe("Expression Parser", () => {
 
     describe("Generate Input Tree", () => {
         describe("!(a&b)", () => {
-            const tokenA: InputToken = {type: "label", name: "a"};
-            const tokenB: InputToken = {type: "label", name: "b"};
+            const tokenA: InputToken = {type: "input", name: "a"};
+            const tokenB: InputToken = {type: "input", name: "b"};
             const parenOpen: Token = {type: "("};
             const parenClose: Token = {type: ")"};
             const andToken: Token = {type: "&"};
@@ -1124,7 +1124,7 @@ describe("Expression Parser", () => {
         });
         
         describe("!a", () => {
-            const tokenA: InputToken = {type: "label", name: "a"};
+            const tokenA: InputToken = {type: "input", name: "a"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, tokenA];
             const tree = generateInputTree(tokenList);

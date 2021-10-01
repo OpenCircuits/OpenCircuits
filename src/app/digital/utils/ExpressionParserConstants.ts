@@ -6,6 +6,11 @@ import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
 export type InputTreeBinOpType = "|" | "^" | "&"
 export type InputTreeUnOpType = "!"
+export type ParenType = "(" | ")";
+export type TokenType = 
+    | InputTreeBinOpType
+    | InputTreeUnOpType
+    | ParenType;
 
 export interface InputTreeIdent {
     kind: "leaf"
@@ -27,22 +32,25 @@ export type InputTree =
     | InputTreeUnOpNode
     | InputTreeBinOpNode
 
-export type TokenType = "label" | "|" | "^" | "&" | "!" | "(" | ")" | "separator";
-
-export interface Token {
+export interface OpToken {
     type: TokenType;
 }
-
-export interface InputToken extends Token {
+export interface InputToken {
+    type: "input"
     name: string;
 }
+export type Token = 
+    | OpToken
+    | InputToken;
 
 export interface NewTreeRetValue {
     index: number;
     tree: InputTree;
 }
 
-export const OpsArray: Array<TokenType> = ["separator", "(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
+export type FormatLabels = "label" | "separator" | TokenType;
+
+export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
 export const GateConstructors = new Map<string, () => DigitalComponent>([
     ["|", () => new ORGate()],
@@ -59,7 +67,7 @@ export const DefaultPrecedences = new Map<TokenType, TokenType>([
     ["(", "|"],
 ]);
 
-const programming1 = new Map<TokenType, string>([
+const programming1 = new Map<FormatLabels, string>([
     ["label", "Programming 1 (&, |, ^, !)"],
     ["|", "|"],
     ["^", "^"],
@@ -69,7 +77,7 @@ const programming1 = new Map<TokenType, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const programming2 = new Map<TokenType, string>([
+const programming2 = new Map<FormatLabels, string>([
     ["label", "Programming 2 (&&, ||, ^, !)"],
     ["|", "||"],
     ["^", "^"],
@@ -79,7 +87,7 @@ const programming2 = new Map<TokenType, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const algebraic1 = new Map<TokenType, string>([
+const algebraic1 = new Map<FormatLabels, string>([
     ["label", "Algebraic 1 (*, +, ^, !)"],
     ["|", "+"],
     ["^", "^"],
@@ -89,7 +97,7 @@ const algebraic1 = new Map<TokenType, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const algebraic2 = new Map<TokenType, string>([
+const algebraic2 = new Map<FormatLabels, string>([
     ["label", "Algebraic 2 (*, +, ^, _)"],
     ["|", "+"],
     ["^", "^"],
@@ -99,7 +107,7 @@ const algebraic2 = new Map<TokenType, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const literal1 = new Map<TokenType, string>([
+const literal1 = new Map<FormatLabels, string>([
     ["label", "Literal 1 (AND, OR, XOR, NOT)"],
     ["|", "OR"],
     ["^", "XOR"],
@@ -109,7 +117,7 @@ const literal1 = new Map<TokenType, string>([
     [")", ")"],
     ["separator", " "]
 ]);
-const literal2 = new Map<TokenType, string>([
+const literal2 = new Map<FormatLabels, string>([
     ["label", "Literal 2 (and, or, xor, not)"],
     ["|", "or"],
     ["^", "xor"],
@@ -120,7 +128,7 @@ const literal2 = new Map<TokenType, string>([
     ["separator", " "]
 ]);
 
-export const FormatMap = new Map<string, Map<TokenType, string>>([
+export const FormatMap = new Map<string, Map<FormatLabels, string>>([
     ["|", programming1],
     ["||", programming2],
     ["+", algebraic1],
