@@ -183,9 +183,9 @@ export class ICData {
         return true;
     }
 
-    public static Create(objects: IOObject[]): ICData {
+    public static Create(objects: IOObject[], skipValidation = false): ICData {
         const copies = new DigitalObjectSet(CopyGroup(objects).toList());
-        if (!this.IsValid(copies))
+        if (!skipValidation && !this.IsValid(copies))
             return undefined;
 
         // // Set designer of copies to null

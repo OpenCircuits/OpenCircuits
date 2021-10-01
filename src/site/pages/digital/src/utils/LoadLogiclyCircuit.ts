@@ -1,5 +1,8 @@
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {IOObject} from "core/models";
+import {GetCameraFit} from "core/utils/ComponentUtils";
+import {FIT_PADDING_RATIO} from "core/utils/Constants";
 import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
 import {Clock, IC, ICData} from "digital/models/ioobjects";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
@@ -21,7 +24,7 @@ type BaseLogiclyObject<type extends string, id extends string = type> = BaseLogi
     id: id;
 }
 
-type LogiclyGateTypes = "not" | "and" | "or";
+type LogiclyGateTypes = "not" | "and" | "or" | "xor";
 type GateLogiclyObject = BaseLogiclyObject<LogiclyGateTypes, "gate"> & {
     type: `${LogiclyGateTypes}@logic.ly`;
     inputs: number;
@@ -49,7 +52,7 @@ type LogiclyObject =
     | GateLogiclyObject
     | LabelLogiclyObject
     | ClockLogiclyObject
-    | BaseLogiclyObject<"switch" | "light_bulb", "other">
+    | BaseLogiclyObject<"switch" | "light_bulb" | "digit" | "constant_low" | "constant_high", "other">
     | CustomLogiclyObject;
 
 function fixConnection(con: Record<string, string>): LogiclyConnection | undefined {
@@ -86,17 +89,50 @@ function fixObj(obj: Record<string, string>): LogiclyObject | undefined {
     });
 
     // fixedObj["id"] = // TODO
+    if (fixedObj["type"].endsWith("@logic.ly")) {
+        let id = "other";
+        switch (fixedObj["type"].split("@logic.ly")[0]) {
+            case "and":
+            case "or":
+            case "xor":
+            case "not":
+                id = "gate";
+                break;
+            case "label":
+                id = "label";
+                break;
+            case "clock":
+                id = "clock";
+                break;
+        }
+        fixedObj["id"] = id;
+    } else {
+        // IC
+        fixedObj["id"] = "ic";
+    }
+
+    fixedObj["x"] *= 2.5;
+    fixedObj["y"] *= 1.5;
 
     return fixedObj as LogiclyObject;
 }
 
-function getObj(lObj: LogiclyObject, objsMap: Map<LogiclyObject["type"], string>, icsMap: Map<string, ICData>): DigitalComponent {
-    const uuid = objsMap.get(lObj.type);
-    if (!uuid)
-        throw new Error(`Failed to find Object of type: ${uuid}!`);
-    const obj = Create<DigitalComponent>(uuid);
-    if (!obj)
-        throw new Error(`Failed to create digital component with ID: ${uuid}!`);
+function getObj(lObj: LogiclyObject, xml: XMLDocument, objsMap: Map<LogiclyObject["type"], string>, icsMap: Map<string, ICData>): DigitalComponent {
+    let obj: DigitalComponent;
+    if (objsMap.has(lObj.type)) {
+        const uuid = objsMap.get(lObj.type);
+        obj = Create<DigitalComponent>(uuid);
+        if (!obj)
+            throw new Error(`Failed to create digital component with ID: ${uuid}!`);
+    } else {
+        // IC
+        const data = LoadCustomIC(lObj.type, xml, objsMap, icsMap);
+        if (!data) {
+            console.error(`Failed to find Object of type: ${lObj.type}!`);
+            return undefined;
+        }
+        obj = new IC(data);
+    }
 
     // Set base properties
     obj.setPos(V(lObj.x, lObj.y));
@@ -115,16 +151,12 @@ function getObj(lObj: LogiclyObject, objsMap: Map<LogiclyObject["type"], string>
         case "clock":
             (obj as Clock).setFrequency(lObj.frequency);
             break;
-        case "ic":
-            (obj as IC)["data"] = icsMap.get(lObj.type);
-            (obj as IC)["redirectOutputs"]();
-            break;
     }
 
     return obj;
 }
 
-function LoadRawLogiclyCircuit(xml: Element|XMLDocument, ObjMap: Map<LogiclyObject["type"], string>, icsMap: Map<string, ICData>) {
+function LoadRawLogiclyCircuit(xml: Element|XMLDocument, doc: XMLDocument, ObjMap: Map<LogiclyObject["type"], string>, icsMap: Map<string, ICData>) {
     const circuit = new DigitalCircuitDesigner();
 
     const objs = new Map<string, DigitalComponent>();
@@ -134,7 +166,9 @@ function LoadRawLogiclyCircuit(xml: Element|XMLDocument, ObjMap: Map<LogiclyObje
         if (!lObj)
             throw new Error("Invalid object for Logicly parser! " + obj);
 
-        const ocObj = getObj(lObj, ObjMap, icsMap);
+        const ocObj = getObj(lObj, doc, ObjMap, icsMap);
+        if (!ocObj)
+            continue;
         objs.set(lObj.uid, ocObj);
         circuit.addObject(ocObj);
     }
@@ -146,12 +180,20 @@ function LoadRawLogiclyCircuit(xml: Element|XMLDocument, ObjMap: Map<LogiclyObje
             throw new Error("Invalid connection for Logicly parser! " + con);
 
         const inputObj = objs.get(lConnection.inputUID);
-        if (!inputObj)
-            throw new Error(`Failed to find connection input w/ UID: ${lConnection.inputUID}, from list: ${objs}`);
+        if (!inputObj) {
+            console.error(`Failed to find connection input w/ UID: ${lConnection.inputUID}, from list: ${objs}`);
+            continue;
+        }
         const outputObj = objs.get(lConnection.outputUID);
-        if (!outputObj)
-            throw new Error(`Failed to find connection output w/ UID: ${lConnection.outputUID}, from list: ${objs}`);
+        if (!outputObj) {
+            console.error(`Failed to find connection output w/ UID: ${lConnection.outputUID}, from list: ${objs}`);
+            continue;
+        }
 
+        if (inputObj.getInputPort(lConnection.inputIndex).getInput()) {
+            console.error("Attempted to connect to port that already had an input!", lConnection);
+            continue;
+        }
         new ConnectionAction(circuit,
             inputObj.getInputPort(lConnection.inputIndex),
             outputObj.getOutputPort(lConnection.outputIndex)
@@ -161,16 +203,45 @@ function LoadRawLogiclyCircuit(xml: Element|XMLDocument, ObjMap: Map<LogiclyObje
     return circuit;
 }
 
-export function LoadLogiclyCircuit(data: string, {designer, selections, history, renderer}: DigitalCircuitInfo) {
+function LoadCustomIC(type: string, xml: XMLDocument, ObjMap: Map<LogiclyObject["type"], string>, icsMap: Map<string, ICData>): ICData {
+    if (icsMap.has(type))
+        return icsMap.get(type);
+
+    const customTags = Array.from(xml.getElementsByTagName("custom"));
+    const custom = customTags.find(custom => custom.getAttribute("type") === type);
+    if (!custom) {
+        console.error(`Failed to find IC with type: ${type}`);
+        return undefined;
+    }
+
+    const customLogicly = Array.from(custom.getElementsByTagName("logicly"))[0];
+    const icName = custom.getAttribute("name");
+    const icUID = custom.getAttribute("type") as UID;
+
+    // Parse IC sub-circuit
+    const subCircuit = LoadRawLogiclyCircuit(customLogicly, xml, ObjMap, icsMap);
+    const data = ICData.Create(subCircuit.getAll(), true);
+    data.setName(icName);
+
+    icsMap.set(icUID, data);
+
+    return data;
+}
+
+export function LoadLogiclyCircuit(data: string, {camera, designer, selections, history, renderer}: DigitalCircuitInfo) {
     // Initial object map, ICs get added to it later
     const ObjMap: Map<LogiclyObject["type"], string> = new Map([
         ["not@logic.ly", "NOTGate"],
         ["and@logic.ly", "ANDGate"],
+        ["xor@logic.ly", "XORGate"],
         ["or@logic.ly", "ORGate"],
         ["label@logic.ly", "Label"],
         ["clock@logic.ly", "Clock"],
         ["switch@logic.ly", "Switch"],
+        ["constant_low@logic.ly", "ConstantLow"],
+        ["constant_high@logic.ly", "ConstantHigh"],
         ["light_bulb@logic.ly", "LED"],
+        ["digit@logic.ly", "BCDDisplay"],
     ]);
 
     // It is necessary to remove the `;base64,` prefix before using atob
@@ -180,33 +251,18 @@ export function LoadLogiclyCircuit(data: string, {designer, selections, history,
 
     console.log(xml);
 
-
-
     // Find and create all the ICs
     const icMap = new Map<string, ICData>();
-    for (const custom of xml.getElementsByName("custom")) {
-        const customLogicly = Array.from(custom.getElementsByTagName("logicly"))[0];
-        const icName = customLogicly.getAttribute("name");
-        const icUID = customLogicly.getAttribute("type") as UID;
 
-        // Parse IC sub-circuit
-        const subCircuit = LoadRawLogiclyCircuit(customLogicly, ObjMap, icMap);
-        const data = ICData.Create(subCircuit.getAll());
-        data.setName(icName);
+    // Load rest of circuit
+    const circuit = LoadRawLogiclyCircuit(xml, xml, ObjMap, icMap);
 
-        // // Get port locations
-        // const locations = Array.from(customLogicly.getElementsByTagName("location"));
-        // const rightLocs = locations.find(loc => loc.getAttribute("id") === "right");
-        // const leftLocs  = locations.find(loc => loc.getAttribute("id") === "left");
+    // Add ICData to circuit
+    icMap.forEach((ic) => circuit.addICData(ic));
 
-        icMap.set(icUID, data);
-        ObjMap.set(icUID, "IC");
-    }
-
-
-
-    const circuit = LoadRawLogiclyCircuit(xml, ObjMap, icMap);
-
+    // Get final camera position and zoom
+    const [pos, zoom] = GetCameraFit(camera, circuit.getObjects(), FIT_PADDING_RATIO);
+    new MoveCameraAction(camera, pos, zoom).execute();
 
     // Reset selections, clear history, and replace circuit
     selections.get().forEach(s => selections.deselect(s));
