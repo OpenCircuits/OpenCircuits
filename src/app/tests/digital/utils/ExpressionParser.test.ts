@@ -12,7 +12,7 @@ import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
 import {ExpressionToCircuit, createNegationGates, connectGate, generateInputTree} from "digital/utils/ExpressionParser";
-import {FormatMap, Token, InputToken, DefaultPrecedences, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
+import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
 
@@ -197,7 +197,7 @@ describe("Expression Parser", () => {
         });
 
         test("Input Not Found", () => {
-            const a = new Switch(), b = new Switch(), o = new LED();
+            const a = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a]
             ]);
@@ -219,6 +219,7 @@ describe("Expression Parser", () => {
                 ["a", a],
                 ["b", b]
             ]);
+            const inputMap2 = new Map();
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"(",o);
@@ -247,6 +248,9 @@ describe("Expression Parser", () => {
             expect(() => {
                 ExpressionToCircuit(inputMap,")(",o);
             }).toThrow("Encountered Unmatched )");
+            expect(() => {
+                ExpressionToCircuit(inputMap2,"(",o);
+            }).toThrow("Encountered Unmatched (");
         });
 
         test("Missing Operands", () => {
@@ -260,10 +264,25 @@ describe("Expression Parser", () => {
                 ExpressionToCircuit(inputMap,"!",o);
             }).toThrow("Missing Right Operand: !");
             expect(() => {
+                ExpressionToCircuit(inputMap,"!!",o);
+            }).toThrow("Missing Right Operand: !");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(!)",o);
+            }).toThrow("Missing Right Operand: !");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(!)a",o);
+            }).toThrow("Missing Right Operand: !");
+            expect(() => {
                 ExpressionToCircuit(inputMap,"&a",o);
             }).toThrow("Missing Left Operand: &");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a&",o);
+            }).toThrow("Missing Right Operand: &");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(&a)",o);
+            }).toThrow("Missing Left Operand: &");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(a&)",o);
             }).toThrow("Missing Right Operand: &");
             expect(() => {
                 ExpressionToCircuit(inputMap,"^a",o);
@@ -298,6 +317,30 @@ describe("Expression Parser", () => {
             expect(() => {
                 ExpressionToCircuit(inputMap,"a !b",o);
             }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"a()b",o);
+            }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(a)(b)",o);
+            }).toThrow("No valid operator between a and b");
+        });
+
+        test("Empty Parenthesis", () => {
+            const o = new LED();
+            const inputMap = new Map();
+
+            expect(() => {
+                ExpressionToCircuit(inputMap,"()",o);
+            }).toThrow("Empty Parenthesis");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"( )",o);
+            }).toThrow("Empty Parenthesis");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(())",o);
+            }).toThrow("Empty Parenthesis");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"()a|b",o);
+            }).toThrow("Empty Parenthesis");
         });
     });
 
@@ -315,22 +358,6 @@ describe("Expression Parser", () => {
             const inputMap = new Map<string, DigitalComponent>();
 
             const objectSet = ExpressionToCircuit(inputMap, " ", o);
-            
-            expect(objectSet.toList().length).toBe(0);
-        });
-        test("Parse: '()'", () => {
-            const o = new LED();
-            const inputMap = new Map<string, DigitalComponent>();
-
-            const objectSet = ExpressionToCircuit(inputMap, "()", o);
-            
-            expect(objectSet.toList().length).toBe(0);
-        });
-        test("Parse: ' ( ) '", () => {
-            const o = new LED();
-            const inputMap = new Map<string, DigitalComponent>();
-
-            const objectSet = ExpressionToCircuit(inputMap, " ( ) ", o);
             
             expect(objectSet.toList().length).toBe(0);
         });
@@ -1073,7 +1100,7 @@ describe("Expression Parser", () => {
             const andToken: Token = {type: "&"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
-            const tree = generateInputTree(tokenList).tree;
+            const tree = generateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");
@@ -1100,7 +1127,7 @@ describe("Expression Parser", () => {
             const tokenA: InputToken = {type: "label", name: "a"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, tokenA];
-            const tree = generateInputTree(tokenList).tree;
+            const tree = generateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");

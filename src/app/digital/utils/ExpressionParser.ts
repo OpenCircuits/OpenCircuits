@@ -39,14 +39,13 @@ function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
-function isOperator(token: Token, leftOperator: boolean = false) {
+function isOperator(token: Token) {
     switch(token.type) {
     case "&":
     case "^":
     case "|":
-        return true;
     case "!":
-        return leftOperator;
+        return true;
     }
     return false;
 }
@@ -109,53 +108,27 @@ export function GenerateTokens(input: string, ops: Map<TokenType, string>): Toke
     return tokenList;
 }
 
-function verifyExistingOperators(tokens: Token[]) {
-    let waitForOperator = false;
-    let prevToken: Token;
-    for(const token of tokens) {
-        if(token.type === "label") {
-            if(waitForOperator)
-                throw new Error("No valid operator between " + (prevToken as InputToken).name + " and " + (token as InputToken).name);
-            waitForOperator = true;
-            prevToken = token;
-        }
-        else if(isOperator(token)) {
-            waitForOperator = false;
-        }
-    }
-}
-
-function verifyExistingOperands(tokens: Token[]) {
-    let prevToken: Token = null;
-    for(const token of tokens) {
-        if((prevToken === null || !(prevToken.type === "label" || prevToken.type === ")")) && token !== null && isOperator(token))
-            throw new Error("Missing Left Operand: " + token.type);
-        if(prevToken !== null && isOperator(prevToken, true) && !(token.type === "label" || token.type === "!" || token.type === "("))
-            throw new Error("Missing Right Operand: " + prevToken.type);
-        prevToken = token;
-    }
-    if(prevToken !== null && isOperator(prevToken, true))
-        throw new Error("Missing Right Operand: " + prevToken.type);
-}
-
-function validateTokens(tokens: Token[], inputs: Map<string, DigitalComponent>) {
-    // Calls separate functions to validate tokens because that is way easier
-    verifyExistingOperators(tokens);
-    verifyExistingOperands(tokens);
-}
-
 function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentOp: TokenType = "|"): NewTreeRetValue {
     const nextOp = DefaultPrecedences.get(currentOp);
-    if(tokens[index].type === ")")
+    if(tokens[index].type === ")") {
+        if(index > 0) {
+            if(tokens[index-1].type === "(")
+                throw new Error("Empty Parenthesis");
+            else if(isOperator(tokens[index-1]))
+                throw new Error("Missing Right Operand: " + tokens[index-1].type);
+        }
         throw new Error("Encountered Unmatched )");
+    }
 
     // When this function has recursed through to "!" and the token still isn't that, then
     //  the only possibilites left are an input or open parenthesis token
     if(currentOp === "!" && tokens[index].type !== "!") {
         if(tokens[index].type === "(")
             return generateInputTreeCore(tokens, index, nextOp);
-        else
+        else if(tokens[index].type === "label")
             return {index: index+1, tree: {kind: "leaf", ident: (tokens[index] as InputToken).name}};
+        else
+            throw new Error("Missing Left Operand: " + tokens[index].type);
     }
 
     // This section gets the part of the tree from the left side of the operator.
@@ -172,6 +145,9 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
     // This section gets the part of the tree from the right side of the operand. index is incremented by 1
     //  so it now points to the token on the right side of the operator.
     index += 1;
+    if(index >= tokens.length && currentOp !== "(") {
+        throw new Error("Missing Right Operand: " + currentOp);
+    }
     let rightRet: NewTreeRetValue = null;
     if(currentOp === "!" && tokens[index].type === "!") // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, index, currentOp);
@@ -204,11 +180,38 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
 
 }
 
-export function generateInputTree(tokens: Array<Token>): NewTreeRetValue {
+export function generateInputTree(tokens: Array<Token>): InputTree | null {
+    if(tokens.length === 0)
+        return null;
     const ret = generateInputTreeCore(tokens);
-    if(ret.index < tokens.length && tokens[ret.index].type === ")")
-        throw new Error("Encountered Unmatched )");
-    return ret;
+
+    const index = ret.index;
+    if(index < tokens.length) {
+        if(tokens[index].type === ")")
+            throw new Error("Encountered Unmatched )");
+
+        let prev: string = null;
+        for(let prevIndex = index-1; prevIndex >= 0; prevIndex--) {
+            if(tokens[prevIndex].type === "label") {
+                prev = (tokens[prevIndex] as InputToken).name;
+                break;
+            }
+        }
+        let next: string = null;
+        for(let nextIndex = index; nextIndex < tokens.length; nextIndex++) {
+            if(tokens[nextIndex].type === "label") {
+                next = (tokens[nextIndex] as InputToken).name;
+                break;
+            }
+        }
+        if(prev !== null && next !== null)
+            throw new Error("No valid operator between " + prev + " and " + next);
+        
+        console.log(ret.tree);
+        throw new Error("Parsing ended prematurely");
+    }
+
+    return ret.tree;
 }
 
 export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
@@ -252,6 +255,9 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
 }
 
 export function treeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+    if(tree === null)
+        return [];
+
     let ret: IOObject[] = Array.from(inputs.values());
 
     ret = treeToCircuitCore(tree, inputs, ret);
@@ -351,12 +357,8 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
     validateInputOutputTypes(inputs, output);
 
     const tokenList = GenerateTokens(expression, ops);
-    validateTokens(tokenList, inputs);
 
-    // Put this after validating tokens because an input like "(" should produce an error message
-    if(inputs.size == 0) return new DigitalObjectSet();
-
-    const connectedTree = generateInputTree(tokenList).tree;
+    const connectedTree = generateInputTree(tokenList);
 
     const fullCircuit = treeToCircuit(connectedTree, inputs, output);
 
