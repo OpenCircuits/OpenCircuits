@@ -203,7 +203,13 @@ describe("Expression Parser", () => {
             ]);
 
             expect(() => {
+                ExpressionToCircuit(inputMap,"b",o);
+            }).toThrow("Input Not Found: \"b\"");
+            expect(() => {
                 ExpressionToCircuit(inputMap,"a|b",o);
+            }).toThrow("Input Not Found: \"b\"");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"!b",o);
             }).toThrow("Input Not Found: \"b\"");
         });
 
@@ -216,6 +222,9 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"(",o);
+            }).toThrow("Encountered Unmatched (");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"!(",o);
             }).toThrow("Encountered Unmatched (");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a|b",o);
@@ -234,6 +243,12 @@ describe("Expression Parser", () => {
             }).toThrow("Encountered Unmatched )");
             expect(() => {
                 ExpressionToCircuit(inputMap,")a|b(",o);
+            }).toThrow("Encountered Unmatched )");
+            expect(() => {
+                ExpressionToCircuit(inputMap,")(",o);
+            }).toThrow("Encountered Unmatched )");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"!)(",o);
             }).toThrow("Encountered Unmatched )");
         });
 
