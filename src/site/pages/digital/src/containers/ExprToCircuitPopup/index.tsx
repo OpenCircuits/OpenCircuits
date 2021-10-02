@@ -60,7 +60,7 @@ function generate(info: DigitalCircuitInfo, expression: string,
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     for(const token of tokenList) {
-        if (token.type != "input")
+        if (token.type !== "input")
             continue;
         if (inputMap.has(token.name))
             continue;

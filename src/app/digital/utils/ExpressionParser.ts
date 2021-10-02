@@ -33,12 +33,23 @@ import {FormatMap, TokenType, Token,
 */
 
 /**
- * Checks if the substring of input starting at index is equal to sequence
+ * Checks if the substring of a given input starting at a given index is equal to a given sequence
+ * 
+ * @param input the input string that a substring of will be examined
+ * @param index the starting index of input to compare at
+ * @param sequence the sequence to check equality with
+ * @return true if input has a substring starting at index that matches sequence, false otherwise
  */
 function subEquals(input: string, index: number, sequence: string): boolean {
     return input.substr(index, sequence.length) === sequence;
 }
 
+/**
+ * Used to check if the given token represents an operator (&, ^, |, or !)
+ * 
+ * @param token the token to check
+ * @returns true if token's type is &, ^, |, or !, false otherwise
+ */
 function isOperator(token: Token) {
     switch(token.type) {
     case "&":
@@ -50,50 +61,83 @@ function isOperator(token: Token) {
     return false;
 }
 
+/**
+ * Validates that the given inputs are inputs (thus have 0 input ports and at least 1 output ports)
+ *  and the output is an outputs (thus have at least one input port and 0 output ports)
+ * 
+ * @param inputs a map containing the input components to verify
+ * @param output the output component to verify
+ * @throws {Error} if one of the inputs has an input port or has no output ports
+ * @throws {Error} if the output has no input ports or an output port
+ */
 function validateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
     for(const [name, component] of inputs) {
-        if(component.getInputPortCount().getValue() != 0 || component.getOutputPortCount().getValue() == 0)
+        if(component.getInputPortCount().getValue() !== 0 || component.getOutputPortCount().getValue() === 0)
             throw new Error("Not An Input: " + name);
     }
-    if(output.getInputPortCount().getValue() == 0 || output.getOutputPortCount().getValue() != 0)
+    if(output.getInputPortCount().getValue() === 0 || output.getOutputPortCount().getValue() !== 0)
         throw new Error("Supplied Output Is Not An Output");
 }
 
-function getInput(input: string, index: number, ops: Map<FormatLabels, string>): InputToken {
+/**
+ * Extracts the input name from an expression starting at a certain location
+ * 
+ * @param expression the expression to extract the input name from
+ * @param index the index at which the input starts
+ * @param ops the representation format for the operations used in this expression
+ * @returns an InputToken with the input name in it
+ */
+function getInput(expression: string, index: number, ops: Map<FormatLabels, string>): InputToken {
     let endIndex = index + 1;
-    while(endIndex < input.length) {
+    while(endIndex < expression.length) {
         for(const op of OpsArray) {
-            if(subEquals(input, endIndex, ops.get(op)))
-                return {type: "input", name: input.substring(index, endIndex)};
+            if(subEquals(expression, endIndex, ops.get(op)))
+                return {type: "input", name: expression.substring(index, endIndex)};
         }
-        if(subEquals(input, endIndex, ops.get("separator")))
-            return {type: "input", name: input.substring(index, endIndex)};
+        if(subEquals(expression, endIndex, ops.get("separator")))
+            return {type: "input", name: expression.substring(index, endIndex)};
         endIndex++;
     }
-    return {type: "input", name: input.substring(index, endIndex)};
+    return {type: "input", name: expression.substring(index, endIndex)};
 }
 
-function getToken(input: string, index: number, ops: Map<FormatLabels, string>): Token | null {
+/**
+ * Gets a token from a given expression starting at a certain index
+ * 
+ * @param expression the expression to extract the token from
+ * @param index the index where the token starts
+ * @param ops the representation format for the operations used in this expression
+ * @returns the token extracted from the expression or null if the index points to the starting location of
+ *              a separator (like " ")
+ */
+function getToken(expression: string, index: number, ops: Map<FormatLabels, string>): Token | null {
     for(const op of OpsArray) {
-        if(subEquals(input, index, ops.get(op)))
+        if(subEquals(expression, index, ops.get(op)))
             return {type: op};
     }
-    if(subEquals(input, index, ops.get("separator")))
+    if(subEquals(expression, index, ops.get("separator")))
         return null;
-    return getInput(input, index, ops);
+    return getInput(expression, index, ops);
 }
 
-export function GenerateTokens(input: string, ops: Map<FormatLabels, string>): Token[] {
+/**
+ * Converts the given expression to an array of tokens
+ * 
+ * @param expression the expression to convert
+ * @param ops the representation format for the operations used in this expression
+ * @returns a list of tokens that represent the given expression
+ */
+export function GenerateTokens(expression: string, ops: Map<FormatLabels, string>): Token[] {
     const tokenList = new Array<Token>();
     let extraSkip = 0;
     let token: Token;
 
     let index = 0;
 
-    while(index < input.length) {
+    while(index < expression.length) {
         extraSkip = 0;
 
-        token = getToken(input, index, ops);
+        token = getToken(expression, index, ops);
         if(token === null)
             index += ops.get("separator").length;
         else if(token.type === "input") {
@@ -111,7 +155,22 @@ export function GenerateTokens(input: string, ops: Map<FormatLabels, string>): T
     return tokenList;
 }
 
-function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentOp: TokenType = "|"): NewTreeRetValue {
+/**
+ * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
+ *  It is recommended to not call this function directly and instead call GenerateInputTree
+ * 
+ * @param tokens the array of tokens representing the expression to parse
+ * @param currentOp the current operation to evaluate, should default to operation with lowest precedence to start
+ * @param index the index of the parsing process in the tokens Array
+ * @returns the current input tree and the current parsing index
+ * @throws {Error} parenthesis do not include anything (such as "()")
+ * @throws {Error} an opening parenthesis is missing a corresponding closing parenthesis (such as "(a")
+ * @throws {Error} a closing parenthesis is missing a corresponding opening parenthesis (such as ")a")
+ * @throws {Error} |, &, or ^ are missing an operand on their left (such as "a|")
+ * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
+ * @see GenerateInputTree
+ */
+function generateInputTreeCore(tokens: Array<Token>, currentOp: TokenType = "|", index: number = 0): NewTreeRetValue {
     const nextOp = DefaultPrecedences.get(currentOp);
     if(tokens[index].type === ")") {
         if(index > 0) {
@@ -128,7 +187,7 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
     if(currentOp === "!" && tokens[index].type !== "!") {
         const token = tokens[index];
         if(token.type === "(")
-            return generateInputTreeCore(tokens, index, nextOp);
+            return generateInputTreeCore(tokens, nextOp, index);
         else if(token.type === "input")
             return {index: index+1, tree: {kind: "leaf", ident: token.name}};
         else
@@ -139,7 +198,7 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
     let leftRet: NewTreeRetValue;
     if(currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateInputTreeCore(tokens, index, nextOp);
+        leftRet = generateInputTreeCore(tokens, nextOp, index);
         index = leftRet.index;
         // If this isn't the right operation to apply, return
         if(index >= tokens.length || tokens[index].type !== currentOp)
@@ -155,16 +214,16 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
     let rightRet: NewTreeRetValue = null;
     const rightToken = tokens[index];
     if(currentOp === "!" && rightToken.type === "!") // This case applies when there are two !'s in a row
-        rightRet = generateInputTreeCore(tokens, index, currentOp);
+        rightRet = generateInputTreeCore(tokens, currentOp, index);
     else if(currentOp === "!" && rightToken.type === "input") // This case would apply when an input follows a "!"
         rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
     else if(currentOp === "(") {
         if(index >= tokens.length)
             throw new Error("Encountered Unmatched (");
-        rightRet = generateInputTreeCore(tokens, index, nextOp);
+        rightRet = generateInputTreeCore(tokens, nextOp, index);
     }
     else
-        rightRet = generateInputTreeCore(tokens, index, currentOp);
+        rightRet = generateInputTreeCore(tokens, currentOp, index);
     index = rightRet.index;
     if(currentOp === "(") {
         if(index >= tokens.length)
@@ -185,7 +244,21 @@ function generateInputTreeCore(tokens: Array<Token>, index: number = 0, currentO
 
 }
 
-export function generateInputTree(tokens: Array<Token>): InputTree | null {
+/**
+ * The core of the function to generate the input tree. Various errors are returned for invalid inputs
+ * 
+ * @param tokens the array of tokens representing the expression to parse
+ * @returns null if tokens.length is 0, the relevant input tree otherwise
+ * @throws {Error} parenthesis do not include anything (such as "()")
+ * @throws {Error} an opening parenthesis is missing a corresponding closing parenthesis (such as "(")
+ * @throws {Error} a closing parenthesis is missing a corresponding opening parenthesis (such as ")")
+ * @throws {Error} |, &, or ^ are missing an operand on their left (such as "a|")
+ * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
+ * @throws {Error} there is no operator between two inputs (such as "a b")
+ * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
+ *                  for any other reason
+ */
+export function GenerateInputTree(tokens: Array<Token>): InputTree | null {
     if(tokens.length === 0)
         return null;
     const ret = generateInputTreeCore(tokens);
@@ -221,7 +294,14 @@ export function generateInputTree(tokens: Array<Token>): InputTree | null {
     return ret.tree;
 }
 
-export function connectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
+/**
+ * Connects two components together. Source must have an output and destination must have an available input.
+ * 
+ * @param source the source component to connect
+ * @param destination the destination component to connect
+ * @returns the wire used to connect the components together
+ */
+export function ConnectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
     const outPort = source.getOutputPort(0);
     let inPort = destination.getInputPort(0);
     if(inPort.getWires().length > 0)
@@ -232,6 +312,19 @@ export function connectGate(source: DigitalComponent, destination: DigitalCompon
     return wire;
 }
 
+/**
+ * Converts a given InputTree to an array of connected components (and the wires used to connect them).
+ *  Note that the circuit parameter is edited in place by this function.
+ *  Avoid calling this function directly, use TreeToCircuit instead. 
+ * 
+ * @param node the root node of the InputTree to convert
+ * @param inputs the input components used by this expression
+ * @param circuit used to store the circuit while recursing, on the intial call it should contain the DigitalComponents found in inputs
+ * @returns the current part of the tree that has been converted to a circuit, the most recently used component
+ *              should always be last in the array
+ * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
+ * @see TreeToCircuit
+ */
 function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
     if(node.kind === "leaf") { //Rearranges array so thge relevant input is at the end
         if(!inputs.has(node.ident))
@@ -246,35 +339,51 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
     const newGate = GateConstructors.get(node.type).call(null);
     if(node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wire = connectGate(prevNode, newGate);
+        const wire = ConnectGate(prevNode, newGate);
         ret.push(wire);
     }
     else if(node.kind === "binop") {
         const prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireL = connectGate(prevNodeL, newGate);
+        const wireL = ConnectGate(prevNodeL, newGate);
         ret.push(wireL);
         const prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireR = connectGate(prevNodeR, newGate);
+        const wireR = ConnectGate(prevNodeR, newGate);
         ret.push(wireR);
     }
     ret.push(newGate);
     return ret;
 }
 
-export function treeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+/**
+ * Converts a given InputTree to an array of connected components (and the wires used to connect them).
+ * 
+ * @param node the root node of the InputTree to convert
+ * @param inputs the input components used by this expression
+ * @param output the component that the circuit outputs to
+ * @returns the components and wires converted from the tree
+ * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
+ */
+export function TreeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
     if(tree === null)
         return [];
 
     let ret: IOObject[] = Array.from(inputs.values());
 
     ret = treeToCircuitCore(tree, inputs, ret);
-    const wire = connectGate(ret.slice(-1)[0] as DigitalComponent, output);
+    const wire = ConnectGate(ret.slice(-1)[0] as DigitalComponent, output);
     ret.push(wire);
     ret.push(output);
     return ret;
 
 }
 
+/**
+ * Gets a new instance of the inverted version of the supplied gate
+ * 
+ * @param oldGate the gate to get the inverted version of
+ * @returns NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate,
+ *              XNORGate when supplied with a XORGate, null otherwise
+ */
 function getNottedGate(oldGate: Gate): Gate | null {
     if(oldGate instanceof ANDGate)
         return new NANDGate();
@@ -286,6 +395,14 @@ function getNottedGate(oldGate: Gate): Gate | null {
         return null;
 }
 
+/**
+ * Replaces oldGate with the inverted version of itself. oldGate must be in circuit.
+ * 
+ * @param oldGate the gate to replaced
+ * @param circuit the circuit containing oldGate, this variable is edited in place
+ * @returns the circuit with oldGate replaced by an inverted version
+ * @see getNottedGate
+ */
 function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
     const newGate = getNottedGate(oldGate);
 
@@ -329,7 +446,13 @@ function replaceGate(oldGate: Gate,  circuit: IOObject[]): IOObject[] {
     return circuit;
 }
 
-export function createNegationGates(circuit: IOObject[]): IOObject[] {
+/**
+ * Replaces AND/OR/XOR gates followed by NOT gates with NAND/NOR/XNOR gates.
+ * 
+ * @param circuit the circuit to process
+ * @returns a copy of the circuit with the negation simplifications made
+ */
+export function CreateNegationGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
     for(const object of circuit) {
         if(!(object instanceof Gate))
@@ -348,13 +471,13 @@ export function createNegationGates(circuit: IOObject[]): IOObject[] {
  * @param  output The DigitalComponent to use as an output, port 0 will be used
  * @param  ops The strings used to represent the different operators
  * @return The circuit generated by the given expression, null on error (see above)
- * @throws {Error} if an input in inputs is has an input port or does not have an output port
- *                   (thus is not a "real" Input)
- * @throws {Error} if output has an output port or does not have an input port
- *                   (thus is not a "real" Output)
- * @throws {Error} if expression requests an input not found in inputs
- * @throws {Error} if there is an unmatched '(' or ')'
- * @throws {Error} if there is a '!', '&', '^', or '|' that is missing an operand
+ * @throws {Error} parenthesis do not include anything (such as "()")
+ * @throws {Error} an opening parenthesis is missing a corresponding closing parenthesis (such as "(")
+ * @throws {Error} a closing parenthesis is missing a corresponding opening parenthesis (such as ")")
+ * @throws {Error} |, &, or ^ are missing an operand on their left (such as "a|")
+ * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
+ * @throws {Error} there is no operator between two inputs (such as "a b")
+ * @throws {Error} the expression references an input not found in inputs
  */
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
@@ -365,11 +488,11 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const tokenList = GenerateTokens(expression, ops);
 
-    const connectedTree = generateInputTree(tokenList);
+    const connectedTree = GenerateInputTree(tokenList);
 
-    const fullCircuit = treeToCircuit(connectedTree, inputs, output);
+    const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
 
-    const condensedCircuit = createNegationGates(fullCircuit);
+    const condensedCircuit = CreateNegationGates(fullCircuit);
 
     return new DigitalObjectSet(condensedCircuit);
 }

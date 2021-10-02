@@ -11,7 +11,7 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {ExpressionToCircuit, createNegationGates, connectGate, generateInputTree} from "digital/utils/ExpressionParser";
+import {ExpressionToCircuit, CreateNegationGates, ConnectGate, GenerateInputTree} from "digital/utils/ExpressionParser";
 import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
@@ -323,6 +323,9 @@ describe("Expression Parser", () => {
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a)(b)",o);
             }).toThrow("No valid operator between a and b");
+            expect(() => {
+                ExpressionToCircuit(inputMap,"(a|b)a",o);
+            }).toThrow("No valid operator between b and a");
         });
 
         test("Empty Parenthesis", () => {
@@ -1001,10 +1004,10 @@ describe("Expression Parser", () => {
                 and,
                 not
             ];
-            objects.push(connectGate(a, and));
-            objects.push(connectGate(b, and));
-            objects.push(connectGate(and, not));
-            objects.push(connectGate(not, o));
+            objects.push(ConnectGate(a, and));
+            objects.push(ConnectGate(b, and));
+            objects.push(ConnectGate(and, not));
+            objects.push(ConnectGate(not, o));
 
             test("Correct number of things", () => {
                 expect(objects.length).toBe(9);
@@ -1051,11 +1054,11 @@ describe("Expression Parser", () => {
                 and,
                 not
             ];
-            objects.push(connectGate(a, and));
-            objects.push(connectGate(b, and));
-            objects.push(connectGate(and, not));
-            objects.push(connectGate(not, o));
-            const condensed = createNegationGates(objects);
+            objects.push(ConnectGate(a, and));
+            objects.push(ConnectGate(b, and));
+            objects.push(ConnectGate(and, not));
+            objects.push(ConnectGate(not, o));
+            const condensed = CreateNegationGates(objects);
 
             test("Correct number of things", () => {
                 expect(condensed.length).toBe(7);
@@ -1100,7 +1103,7 @@ describe("Expression Parser", () => {
             const andToken: Token = {type: "&"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
-            const tree = generateInputTree(tokenList);
+            const tree = GenerateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");
@@ -1127,7 +1130,7 @@ describe("Expression Parser", () => {
             const tokenA: InputToken = {type: "input", name: "a"};
             const notToken: Token = {type: "!"};
             const tokenList = [notToken, tokenA];
-            const tree = generateInputTree(tokenList);
+            const tree = GenerateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");
