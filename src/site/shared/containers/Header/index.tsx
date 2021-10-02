@@ -1,5 +1,4 @@
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {HeaderPopups} from "shared/state/Header/state";
 import {Utility} from "shared/containers/Header/Right/UtilitiesDropdown";
 
 import {HeaderLeft} from "./Left";

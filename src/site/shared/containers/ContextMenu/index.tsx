@@ -1,5 +1,4 @@
 import {useEffect} from "react";
-import {connect} from "react-redux";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
@@ -10,8 +9,8 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
-import {SharedAppState} from "shared/state";
-import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/actions";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 
 import "./index.scss";
 
@@ -22,21 +21,18 @@ function isClipboardSupported(type: "read" | "write"): boolean {
                                navigator.clipboard.writeText !== undefined));
 }
 
-type OwnProps = {
+
+type Props = {
     info: CircuitInfo;
     paste: (text: string) => boolean;
 }
-type StateProps = {
-    isOpen: boolean;
-}
-type DispatchProps = {
-    OpenContextMenu: typeof OpenContextMenu;
-    CloseContextMenu: typeof CloseContextMenu;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: Props) => {
+export const ContextMenu = ({info, paste}: Props) => {
     const {locked, input, history, designer, selections, renderer} = info;
+
+    const {isOpen} = useSharedSelector(
+        state => ({ isOpen: state.contextMenu.isOpen })
+    );
+    const dispatch = useSharedDispatch();
 
 
     useEffect(() => {
@@ -45,9 +41,9 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
 
         input.addListener((ev) => {
             if (ev.type === "contextmenu")
-                OpenContextMenu();
+                dispatch(OpenContextMenu());
             else if (ev.type === "mousedown")
-                CloseContextMenu();
+                dispatch(CloseContextMenu());
         });
     }, [input])
 
@@ -109,7 +105,7 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
             return;
         func();
         renderer.render();
-        close();
+        dispatch(CloseContextMenu());
     }
 
 
@@ -132,8 +128,3 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
         </div>
     );
 }
-
-export const ContextMenu = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ isOpen: state.contextMenu.isOpen }),
-    { OpenContextMenu, CloseContextMenu }
-)(_ContextMenu);

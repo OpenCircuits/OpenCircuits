@@ -1,8 +1,8 @@
 import {connect} from "react-redux";
 
 import {SharedAppState} from "shared/state";
-import {HeaderMenus, HeaderPopups} from "shared/state/Header/state";
-import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header/actions";
+import {HeaderMenus, HeaderPopups} from "shared/state/Header";
+import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header";
 
 import {Dropdown} from "./Dropdown";
 

@@ -1,7 +1,6 @@
 import {useState} from "react";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {HeaderPopups} from "shared/state/Header/state";
 
 import {TutorialDropdown} from "./TutorialDropdown";
 import {OpenFileButton} from "./OpenFileButton";

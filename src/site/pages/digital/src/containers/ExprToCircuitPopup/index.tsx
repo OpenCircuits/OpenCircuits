@@ -6,8 +6,8 @@ import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory"
 import {Popup}   from "shared/components/Popup";
 
 import {SharedAppState}    from "shared/state";
-import {CloseHeaderPopups} from "shared/state/Header/actions";
-import {HeaderPopups}      from "shared/state/Header/state";
+import {CloseHeaderPopups} from "shared/state/Header";
+import {HeaderPopups}      from "shared/state/Header";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -30,7 +30,7 @@ import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
-import {FormatMap, InputToken}    from "digital/utils/ExpressionParserConstants";
+import {FormatMap}    from "digital/utils/ExpressionParserConstants";
 
 import "./index.scss";
 

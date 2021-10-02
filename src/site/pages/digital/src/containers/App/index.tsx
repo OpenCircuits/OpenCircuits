@@ -8,9 +8,22 @@ import {WiringTool}         from "core/tools/WiringTool";
 import {SplitWireTool}      from "core/tools/SplitWireTool";
 import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
 
+import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
+import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
+import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
+import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
+import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
+import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
+import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
+import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
+import {UndoHandler}          from "core/tools/handlers/UndoHandler";
+import {RedoHandler}          from "core/tools/handlers/RedoHandler";
+import {CopyHandler}          from "core/tools/handlers/CopyHandler";
+import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {ContextMenu}     from "shared/containers/ContextMenu";
 import {Header}          from "shared/containers/Header";
@@ -65,7 +78,12 @@ export const App = ((store: AppStore) => {
     // Setup circuit and get the CircuitInfo and helpers
     const [info, helpers] = Setup(
         store, canvas,
-        new InteractionTool(),
+        new InteractionTool([
+            SelectAllHandler, FitToScreenHandler, DuplicateHandler,
+            DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
+            SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+            CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
+        ]),
         PanTool, RotateTool,
         TranslateTool, WiringTool,
         SplitWireTool, SelectionBoxTool

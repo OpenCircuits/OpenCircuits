@@ -1,10 +1,7 @@
-import {connect} from "react-redux";
-
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-import {SharedAppState} from "shared/state";
-import {HeaderMenus} from "shared/state/Header/state";
-import {OpenHeaderMenu, CloseHeaderMenus} from "shared/state/Header/actions";
+import {OpenHeaderMenu, CloseHeaderMenus} from "shared/state/Header";
 
 import {Dropdown} from "../Dropdown";
 import {AutoSaveToggle} from "./AutoSaveToggle";
@@ -12,29 +9,21 @@ import {AutoSaveToggle} from "./AutoSaveToggle";
 import "./index.scss";
 
 
-type OwnProps = {
+type Props = {
     helpers: CircuitInfoHelpers;
 }
-type StateProps = {
-    curMenu: HeaderMenus;
+export const SettingsMenu = ({ helpers }: Props) => {
+    const {curMenu} = useSharedSelector(
+        state => ({ curMenu: state.header.curMenu })
+    );
+    const dispatch = useSharedDispatch();
+
+    return (
+        <Dropdown open={(curMenu === "settings")}
+                  onClick={() => dispatch(OpenHeaderMenu("settings"))}
+                  onClose={() => dispatch(CloseHeaderMenus())}
+                  btnInfo={{title: "User Settings", src: "img/icons/settings.svg"}}>
+            <AutoSaveToggle helpers={helpers} />
+        </Dropdown>
+    );
 }
-type DispatchProps = {
-    OpenHeaderMenu: typeof OpenHeaderMenu;
-    CloseHeaderMenus: typeof CloseHeaderMenus;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _SettingsMenu = ({ helpers, curMenu, OpenHeaderMenu, CloseHeaderMenus }: Props) => (
-    <Dropdown open={(curMenu === "settings")}
-              onClick={() => OpenHeaderMenu("settings")}
-              onClose={() => CloseHeaderMenus()}
-              btnInfo={{title: "User Settings", src: "img/icons/settings.svg"}}>
-        <AutoSaveToggle helpers={helpers} />
-    </Dropdown>
-);
-
-
-export const SettingsMenu = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state: SharedAppState) => ({ curMenu: state.header.curMenu }),
-    { OpenHeaderMenu, CloseHeaderMenus }
-)(_SettingsMenu);
