@@ -128,7 +128,7 @@ export const App = ((store: AppStore) => {
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
 
-                <ExprToCircuitPopup info={info} />
+                <ExprToCircuitPopup mainInfo={info} />
 
                 <LoginPopup />
             </div>

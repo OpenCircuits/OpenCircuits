@@ -1,13 +1,11 @@
 import {useState} from "react";
-import {connect}  from "react-redux";
 
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 
 import {Popup}   from "shared/components/Popup";
 
-import {SharedAppState}    from "shared/state";
 import {CloseHeaderPopups} from "shared/state/Header";
-import {HeaderPopups}      from "shared/state/Header";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -34,15 +32,8 @@ import {FormatMap}    from "digital/utils/ExpressionParserConstants";
 
 import "./index.scss";
 
-
-type OwnProps = {
-    info: DigitalCircuitInfo;
-}
-type StateProps = {
-    curPopup: HeaderPopups;
-}
-type DispatchProps = {
-    CloseHeaderPopups: typeof CloseHeaderPopups;
+type Props = {
+    mainInfo: DigitalCircuitInfo;
 }
 
 const Inputs = new Map<string, () => DigitalComponent>([
@@ -93,90 +84,86 @@ function generate(info: DigitalCircuitInfo, expression: string,
     info.renderer.render();
 }
 
-type Props = StateProps & DispatchProps & OwnProps;
-
 export const ExprToCircuitPopup = (() => {
+    return ({ mainInfo }: Props) => {
+        const {curPopup} = useSharedSelector(
+            state => ({ curPopup: state.header.curPopup })
+        );
+        const dispatch = useSharedDispatch();
 
-    return connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-        (state) => ({ curPopup: state.header.curPopup }),
-        { CloseHeaderPopups },
-    )(
-        ({curPopup, CloseHeaderPopups, info}: Props) => {
-            const [{expression}, setExpression] = useState({ expression: "" });
-            const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
-            const [isIC, setIsIC] = useState(false);
-            const [input, setInput] = useState("Switch");
-            const [format, setFormat] = useState("|");
+        const [{expression}, setExpression] = useState({ expression: "" });
+        const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
+        const [isIC, setIsIC] = useState(false);
+        const [input, setInput] = useState("Switch");
+        const [format, setFormat] = useState("|");
+    
+        const inputTypes = Array.from(Inputs.keys()).map((input) =>
+            <option key={input} value={input}>{input}</option>
+        );
+    
+        const formats = Array.from(FormatMap.entries()).map((formatEntry) =>
+            <div key={formatEntry[0]}>
+                <input type="radio" id={formatEntry[0]} name="format" checked={format === formatEntry[0]} onChange={() => setFormat(formatEntry[0])} value={formatEntry[0]} />
+                <label htmlFor={formatEntry[0]}>{formatEntry[1].get("label")}</label><br/>
+            </div>
+        );
 
-            const inputTypes = Array.from(Inputs.keys()).map((input) =>
-                <option key={input} value={input}>{input}</option>
-            );
+        return (
+            <Popup title="Digital Expression To Circuit Generator"
+                   isOpen={(curPopup === "expr_to_circuit")}
+                   close={() => dispatch(CloseHeaderPopups())}>
+                <div className="exprtocircuit__popup">
+                    { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
+                    <input title="Enter Circuit Expression" type="text"
+                               value={expression}
+                               placeholder="!a | (B^third)"
+                               onChange={e => setExpression({expression: e.target.value})} />
+                    <br/>
 
-            const formats = Array.from(FormatMap.entries()).map((formatEntry) =>
-                <div key={formatEntry[0]}>
-                    <input type="radio" id={formatEntry[0]} name="format" checked={format === formatEntry[0]} onChange={() => setFormat(formatEntry[0])} value={formatEntry[0]} />
-                    <label htmlFor={formatEntry[0]}>{formatEntry[1].get("label")}</label><br/>
-                </div>
-            );
-
-            return (
-                <Popup title="Digital Expression To Circuit Generator"
-                       isOpen={(curPopup === "expr_to_circuit")}
-                       close={CloseHeaderPopups}>
-                    <div className="exprtocircuit__popup">
-                        { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
-                        <input title="Enter Circuit Expression" type="text"
-                                   value={expression}
-                                   placeholder="!a | (B^third)"
-                                   onChange={e => setExpression({expression: e.target.value})} />
-                        <br/>
-
-                        <div className="exprtocircuit__popup__settings">
-                            <div>
-                                <h3>Notation</h3>
-                                {formats}
-                            </div>
-                
-                            <div>
-                                <h3>Options</h3>
-                                <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
-                                <label htmlFor="isIC">Generate into IC</label>
-
-                                <br/>
-                                <br/>
-
-                                <label>Input Component Type:  </label>
-                                <select id="input"
-                                        value={input}
-                                        onChange={e => setInput(e.target.value)}
-                                        onBlur={e => setInput(e.target.value)}>
-                                    {inputTypes}
-                                </select>
-                            </div>
-
+                    <div className="exprtocircuit__popup__settings">
+                        <div>
+                            <h3>Notation</h3>
+                            {formats}
                         </div>
 
-                        <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
-                            try {
-                                generate(info, expression, isIC, input, format);
-                                setExpression({ expression: "" });
-                                setErrorMessage({ errorMessage: "" });
-                                CloseHeaderPopups();
-                            }
-                            catch (err) {
-                                setErrorMessage({ errorMessage: err.message });
-                            }
-                        }}>Generate</button>
-
-                        <button className="cancel" type="button" onClick={() => {
-                            setExpression({ expression: "" });
-                            setErrorMessage({ errorMessage: "" });
-                            CloseHeaderPopups();
-                        }}>Cancel</button>
+                        <div>
+                            <h3>Options</h3>
+                            <input onChange={() => setIsIC(!isIC)} checked={isIC} type="checkbox" id="isIC" name="isIC" />
+                            <label htmlFor="isIC">Generate into IC</label>
+                            <br/>
+                            <br/>
+                            <label>Input Component Type:  </label>
+                            <select id="input"
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onBlur={e => setInput(e.target.value)}>
+                            {inputTypes}
+                            </select>
+                        </div>
 
                     </div>
-                </Popup>
-            );
-        }
-    );
+
+                    <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
+                        try {
+                            generate(mainInfo, expression, isIC, input, format);
+                            setExpression({ expression: "" });
+                            setErrorMessage({ errorMessage: "" });
+                            dispatch(CloseHeaderPopups());
+                        }
+                        catch (err) {
+                            setErrorMessage({ errorMessage: err.message });
+                        }
+                    }}>Generate</button>
+
+                    <button className="cancel" type="button" onClick={() => {
+                        setExpression({ expression: "" });
+                        setErrorMessage({ errorMessage: "" });
+                        dispatch(CloseHeaderPopups());
+                    }}>Cancel</button>
+
+                </div>
+
+            </Popup>
+        );
+    }
 })();

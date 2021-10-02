@@ -1,7 +1,5 @@
-import {connect} from "react-redux";
-
-import {SharedAppState} from "shared/state";
-import {HeaderMenus, HeaderPopups} from "shared/state/Header";
+import {HeaderPopups} from "shared/state/Header";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus} from "shared/state/Header";
 
 import {Dropdown} from "./Dropdown";
@@ -13,44 +11,27 @@ export type Utility = {
     text: string;
 }
 
-type OwnProps = {}
-type StateProps = {
-    curMenu: HeaderMenus;
-}
-type DispatchProps = {
-    openMenu: (menu: HeaderMenus) => void;
-    openPopup: (popup: HeaderPopups) => void;
-    closeMenus: () => void;
-}
-type ExtraUtilitiesProps = {
+type Props = {
     extraUtilities: Utility[];
 }
 
-type Props = StateProps & DispatchProps & ExtraUtilitiesProps & OwnProps;
-const _UtilitiesDropdown = ({ curMenu, openMenu, openPopup, closeMenus, extraUtilities }: Props) => (
+export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
+    const {curMenu} = useSharedSelector(
+        state => ({ curMenu: state.header.curMenu })
+    );
+    const dispatch = useSharedDispatch();
+
+    return (
     <Dropdown open={(curMenu === "utilities")}
-              onClick={() => openMenu("utilities")}
-              onClose={() => closeMenus()}
+              onClick={() => dispatch(OpenHeaderMenu("utilities"))}
+              onClose={() => dispatch(CloseHeaderMenus())}
               btnInfo={{title: "Utilities", src: "img/icons/utilities.svg"}}>
         {extraUtilities.map(utility => (
-            <div key={utility.popupName} onClick={() => { closeMenus(); openPopup(utility.popupName); }}>
+            <div key={utility.popupName} onClick={() => { dispatch(CloseHeaderMenus()); dispatch(OpenHeaderPopup(utility.popupName)); }}>
                 <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />
                 <span>{utility.text}</span>
             </div>
         ))}
     </Dropdown>
-);
-
-
-const MapState = (state: SharedAppState) => ({
-    curMenu: state.header.curMenu
-});
-const MapDispatch = {
-    openMenu: OpenHeaderMenu,
-    openPopup: OpenHeaderPopup,
-    closeMenus: CloseHeaderMenus
-};
-export const UtilitiesDropdown = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    MapState,
-    MapDispatch
-)(_UtilitiesDropdown);
+    );
+}
