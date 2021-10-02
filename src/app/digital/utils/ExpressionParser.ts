@@ -12,26 +12,6 @@ import {FormatMap, TokenType, Token,
         InputToken, DefaultPrecedences,
         InputTree, NewTreeRetValue, FormatLabels} from "./ExpressionParserConstants";
 
-
-/* Notes for connecting components
-    const designer = new DigitalCircuitDesigner(0);
-    const a = new Switch(), b = new Switch(), o = new LED(), and_gate = new ANDGate();
-    const w1 = new DigitalWire(a.getOutputPort(0), and_gate.getInputPort(0));
-    const w2 = new DigitalWire(b.getOutputPort(0), and_gate.getInputPort(1));
-    const w3 = new DigitalWire(and_gate.getOutputPort(0), o.getInputPort(0));
-
-    a.getOutputPort(0).connect(w1);
-    and_gate.getInputPort(0).connect(w1);
-
-    b.getOutputPort(0).connect(w2);
-    and_gate.getInputPort(1).connect(w2);
-
-    and_gate.getOutputPort(0).connect(w3);
-    o.getInputPort(0).connect(w3);
-
-    let objectSet = new DigitalObjectSet([a, b, o, and_gate, w1, w2, w3]);
-*/
-
 /**
  * Checks if the substring of a given input starting at a given index is equal to a given sequence
  * 
