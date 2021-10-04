@@ -16,8 +16,9 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {InputPort} from "digital/models/ports/InputPort";
 
 /** 
- * Here we have the code to create the different segmented displays 
- * and how to display their names in the history feature
+ * Here we have the code that applies to the different segment displays
+ * There is the initial state within the constructor
+ * and other functions that allow you to modify said segment display
  */
 
 
@@ -46,10 +47,8 @@ export class SegmentDisplay extends DigitalComponent {
     protected setSegmentCount(val: number): void {
         this.segmentCount = val;
 
-        /**
-         *  We do not want to reset the user typed name so we check
-         *  if it was set in the first place
-         */
+        //  We do not want to reset the user typed name so we check
+        // if it was set in the first place
         if (!this.name.isSet())
             this.name = new Name(this.getDisplayName());
     }
@@ -73,15 +72,14 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     /**
-     * ????
+     * Gets the positions of the segemnts from the json file
+     * depending on how many segments there are 
      * @returns an array of Vectors and SegmentTypes
      */
     public getSegments(): [Vector, SegmentType][] {
         const segments = Segments[`${this.segmentCount}`];
 
-    /** 
-     * Turns the array into an array of Vectors and SegmentTypes
-     */
+        // Turns the array into an array of Vectors and SegmentTypes
         return segments.map((value: [number[], SegmentType]) =>
             [V(value[0][0], value[0][1]), value[1]]
         );
