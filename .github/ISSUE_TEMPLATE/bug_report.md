@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
+labels: 'Area: Frontend, D2, P2, S2, Status: Open, Type: Bug'
 assignees: ''
 
 ---
@@ -36,3 +36,6 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
+
+*PLEASE MAKE SURE TO APPROPRIATELY LABEL YOUR ISSUE, YOUR ISSUE IS REQUIRED TO SPECIFY AT LEAST A GENERAL IDEA OF: Area, Difficulty, Priority, and Scope! If the issue is specific to digital/analog, please also specify that with the appropriate label!

@@ -1,16 +1,18 @@
-import React from "react";
-import {connect} from "react-redux";
+import {useEffect, useState} from "react";
+import {Dispatch} from "redux";
+import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {SharedAppState} from "shared/state";
-import {ToggleItemNav} from "shared/state/ItemNav/actions";
-import {Overlay} from "shared/components/Overlay";
+import {AllSharedActions} from "shared/state/actions";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
 
-import {CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav/actions";
-
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
+import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
 
@@ -30,26 +32,38 @@ export type ItemNavConfig = {
     sections: ItemNavSection[];
 }
 
-
-type OwnProps = {
+type Props = {
     info: CircuitInfo;
     config: ItemNavConfig;
 }
-type StateProps = {
-    isOpen: boolean;
-    isEnabled: boolean;
-    isLocked: boolean;
-    isHistoryBoxOpen: boolean;
-}
-type DispatchProps = {
-    ToggleItemNav: typeof ToggleItemNav;
-    OpenHistoryBox: typeof OpenHistoryBox;
-    CloseHistoryBox: typeof CloseHistoryBox;
-}
+export const ItemNav = ({ info, config }: Props) => {
+    const {isOpen, isEnabled, isHistoryBoxOpen} = useSharedSelector(
+        state => ({ ...state.itemNav })
+    );
+    const dispatch = useSharedDispatch();
 
-type Props = StateProps & DispatchProps & OwnProps;
-function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen, ToggleItemNav, OpenHistoryBox, CloseHistoryBox }: Props) {
     const {undoHistory, redoHistory} = useHistory(info);
+
+    // State to keep track of the number of times an item is clicked
+    //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
+    const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
+
+    // Resets the curItemID and numClicks
+    function reset() {
+        setState({curItemID: "", numClicks: 1});
+    }
+
+    // Drop the current item on click
+    useDocEvent("click", (ev) => {
+        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
+        reset();
+    }, [curItemID, numClicks, setState]);
+
+    // Reset `numClicks` and `curItemID` when something is dropped
+    useEffect(() => {
+        DragDropHandlers.addListener(reset);
+        return () => DragDropHandlers.removeListener(reset);
+    }, [setState]);
 
     return (
         <>
@@ -57,8 +71,8 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen,
                 <div className="itemnav__top">
                     <div>
                         <button  title="History" onClick={() => {
-                            if (isHistoryBoxOpen) CloseHistoryBox();
-                            else OpenHistoryBox();
+                            if (isHistoryBoxOpen) dispatch(CloseHistoryBox());
+                            else dispatch(OpenHistoryBox());
                         }}>
                             <img src="img/icons/history.svg"></img>
                         </button>
@@ -79,10 +93,10 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen,
                     </div>
                     <div>
                         { // Hide tab if the circuit is locked
-                        (isEnabled && !isLocked) &&
+                        isEnabled &&
                             <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
                                 title="Circuit Components"
-                                onClick={() => ToggleItemNav()}>
+                                onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
                                 <div></div>
                             </div>
                         }
@@ -95,12 +109,24 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen,
                             <div>
                                 {section.items.map((item, j) =>
                                     <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                            data={item.id}>
-                                        <button>
-                                            <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                            <br />
-                                            {item.label}
-                                        </button>
+                                            data={[item.id, numClicks]}
+                                            onClick={(ev) => {
+                                                setState({
+                                                    curItemID: item.id,
+                                                    numClicks: (item.id === curItemID ? numClicks+1 : 1)
+                                                });
+                                                // Prevents `onClick` listener of placing the component to fire
+                                                ev.stopPropagation();
+                                            }}
+                                            onDragChange={(d) => {
+                                                // For instance, if user clicked on Button 4 times then dragged the
+                                                //  Switch, we want to reset the numClicks to 1
+                                                if (curItemID && item.id !== curItemID)
+                                                    reset();
+                                            }}>
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                        <br />
+                                        {item.label}
                                     </Draggable>
                                 )}
                             </div>
@@ -116,17 +142,3 @@ function _ItemNav({ info, config, isOpen, isEnabled, isLocked, isHistoryBoxOpen,
         </>
     );
 }
-
-
-const MapState = (state: SharedAppState) => ({
-    isLocked: state.circuit.isLocked,
-    isEnabled: state.itemNav.isEnabled,
-    isOpen: state.itemNav.isOpen,
-    isHistoryBoxOpen: state.itemNav.isHistoryBoxOpen,
-});
-const MapDispatch = { ToggleItemNav, OpenHistoryBox, CloseHistoryBox };
-
-export const ItemNav = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    MapState,
-    MapDispatch
-)(_ItemNav);

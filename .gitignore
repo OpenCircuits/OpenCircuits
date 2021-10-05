@@ -6,6 +6,12 @@
 # Thumbnails
 ._*
 .env*.local
+
+.docusaurus
+
+docs/ts/app/core
+docs/ts/app/digital
+
 node_modules
 coverage
 build

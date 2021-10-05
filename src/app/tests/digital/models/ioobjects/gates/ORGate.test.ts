@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {ORGate}          from "digital/models/ioobjects/gates/ORGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -11,13 +9,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("ORGate", () => {
     describe("ORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), b = new Switch(), g = new ORGate(), o = new LED();
+        const {AutoPlace} = GetHelpers({designer});
 
-        Place(a, b, g, o);
-        Connect(a, 0,  g, 0);
-        Connect(b, 0,  g, 1);
-        Connect(g, 0,  o, 0);
+        const [g, [a, b], [o]] = AutoPlace(new ORGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -50,13 +44,9 @@ describe("ORGate", () => {
 
     describe("NORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), b = new Switch(), g = new ORGate(true), o = new LED();
+        const {AutoPlace} = GetHelpers({designer});
 
-        Place(a, b, g, o);
-        Connect(a, 0,  g, 0);
-        Connect(b, 0,  g, 1);
-        Connect(g, 0,  o, 0);
+        const [g, [a, b], [o]] = AutoPlace(new ORGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

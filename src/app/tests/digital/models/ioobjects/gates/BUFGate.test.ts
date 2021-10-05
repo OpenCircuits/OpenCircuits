@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -11,12 +9,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("BUFGate", () => {
     describe("BUFGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch, o = new LED(), buf_gate = new BUFGate();
+        const {AutoPlace} = GetHelpers({designer});
 
-        Place(a, o, buf_gate);
-        Connect(a, 0, buf_gate, 0);
-        Connect(buf_gate, 0, o, 0);
+        const [g, [a], [o]] = AutoPlace(new BUFGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -35,12 +30,9 @@ describe("BUFGate", () => {
 
     describe("NOTGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), o = new LED(), not_gate = new BUFGate(true);
+        const {AutoPlace} = GetHelpers({designer});
 
-        Place(a, o, not_gate);
-        Connect(a, 0, not_gate, 0);
-        Connect(not_gate, 0, o, 0);
+        const [g, [a], [o]] = AutoPlace(new BUFGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

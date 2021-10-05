@@ -1,24 +1,27 @@
 import {Deserialize} from "serialeazy";
-import {Store} from "redux";
+import {RefObject} from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
-
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner} from "digital/models";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {SaveCircuit, SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models";
 
-import {AppStore} from "../../state";
-import {GenerateThumbnail} from "../GenerateThumbnail";
-import {RefObject} from "react";
-import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
-import {SaveFile} from "shared/utils/Exporter";
-import {LoadUserCircuits} from "shared/state/UserInfo/actions";
 import {DeleteUserCircuit} from "shared/api/Circuits";
+
+import {LoadUserCircuits} from "shared/state/thunks/User";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
+import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
+
+import {SaveFile} from "shared/utils/Exporter";
+import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
+import {GenerateThumbnail} from "../GenerateThumbnail";
+import {AppStore} from "../../state";
+
 
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
@@ -49,9 +52,9 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             renderer.render();
 
-            // Set name, reset id, and set unsaved
+            // Set name, id, and set unsaved
             store.dispatch(SetCircuitName(metadata.name));
-            store.dispatch(SetCircuitId(""));
+            store.dispatch(SetCircuitId(metadata.id));
             store.dispatch(SetCircuitSaved(false));
         },
 
