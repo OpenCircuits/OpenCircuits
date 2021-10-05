@@ -21,6 +21,7 @@ export type ItemNavItem = {
     id: string;
     label: string;
     icon: string;
+    removable?: boolean;
 }
 export type ItemNavSection = {
     id: string;
