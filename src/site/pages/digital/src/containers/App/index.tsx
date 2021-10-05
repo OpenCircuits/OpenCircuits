@@ -32,6 +32,7 @@ import {SideNav}         from "shared/containers/SideNav";
 import {LoginPopup}           from "shared/containers/LoginPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
+import {HistoryBox}           from "shared/containers/HistoryBox";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
@@ -106,6 +107,7 @@ export const App = ((store: AppStore) => {
                         <MainDesigner info={info} />
 
                         <DigitalItemNav info={info} />
+                        <HistoryBox info={info} />
 
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
