@@ -48,7 +48,7 @@ export const ItemNav = ({ info, config }: Props) => {
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
-
+    const [hovering, setHover] = useState(false)
     // Resets the curItemID and numClicks
     function reset() {
         setState({curItemID: "", numClicks: 1});
@@ -102,8 +102,8 @@ export const ItemNav = ({ info, config }: Props) => {
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
-                            {section.items.map((item, j) =>
-                                <Draggable key={`itemnav-section-${i}-item-${j}`}
+                            {section.items.map((item, j) => {
+                                return <Draggable key={`itemnav-section-${i}-item-${j}`}
                                            data={[item.id, numClicks]}
                                            onClick={(ev) => {
                                                setState({
@@ -118,11 +118,21 @@ export const ItemNav = ({ info, config }: Props) => {
                                                //  Switch, we want to reset the numClicks to 1
                                                if (curItemID && item.id !== curItemID)
                                                    reset();
-                                           }}>
+                                           }}
+                                            onMouseEnter={() => { 
+                                                if (item.removable) {setHover(true)}
+                                            }}
+                                            onMouseLeave={() => {
+                                                if (item.removable) {setHover(false)}
+                                            }}>
                                     <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     <br />
+                                    <div >
+                                        {(item.removable && hovering) && <div>x</div>}
+                                    </div>
                                     {item.label}
                                 </Draggable>
+                            }
                             )}
                         </div>
                     </div>

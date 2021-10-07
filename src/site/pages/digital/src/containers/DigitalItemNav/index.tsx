@@ -26,7 +26,8 @@ export const DigitalItemNav = ({info}: Props) => {
                 ics: designer.getICData().map((d, i) => ({
                     id: `ic/${i}`,
                     label: d.getName(),
-                    icon: "multiplexer.svg"
+                    icon: "multiplexer.svg",
+                    removable: true
                 }))
             });
         }
