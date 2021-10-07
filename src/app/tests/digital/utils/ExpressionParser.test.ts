@@ -11,8 +11,8 @@ import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
-import {ExpressionToCircuit, CreateNegationGates, ConnectGate, GenerateInputTree} from "digital/utils/ExpressionParser";
-import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode}    from "digital/utils/ExpressionParserConstants";
+import {ExpressionToCircuit, CreateNegationGates, ConnectGate, GenerateInputTree, GenerateTokens} from "digital/utils/ExpressionParser";
+import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels}    from "digital/utils/ExpressionParserConstants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
 
@@ -344,6 +344,225 @@ describe("Expression Parser", () => {
             expect(() => {
                 ExpressionToCircuit(inputMap,"()a|b",o);
             }).toThrow("Empty Parenthesis");
+        });
+
+        describe("Invalid ops", () => {
+            // export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
+            // const programming1 = new Map<FormatLabels, string>([
+            //     ["label", "Programming 1 (&, |, ^, !)"],
+            //     ["|", "|"],
+            //     ["^", "^"],
+            //     ["&", "&"],
+            //     ["!", "!"],
+            //     ["(", "("],
+            //     [")", ")"],
+            //     ["separator", " "]
+            // ]);
+            const expression = "a | b ^ c & d | !(e & f)";
+            test("No |", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No | in supplied operation symbols");
+            });
+            test("No ^", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No ^ in supplied operation symbols");
+            });
+            test("No &", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No & in supplied operation symbols");
+            });
+            test("No !", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No ! in supplied operation symbols");
+            });
+            test("No (", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No ( in supplied operation symbols");
+            });
+            test("No )", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No ) in supplied operation symbols");
+            });
+            test("No separator", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("No separator in supplied operation symbols");
+            });
+            
+            test("Invalid |", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", ""],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero | in supplied operation symbols");
+            });
+            test("Invalid ^", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", ""],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero ^ in supplied operation symbols");
+            });
+            test("Invalid &", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", ""],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero & in supplied operation symbols");
+            });
+            test("Invalid !", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", ""],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero ! in supplied operation symbols");
+            });
+            test("Invalid (", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", ""],
+                        [")", ")"],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero ( in supplied operation symbols");
+            });
+            test("Invalid )", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ""],
+                        ["separator", " "]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero ) in supplied operation symbols");
+            });
+            test("Invalid separator", () => {
+                const testOps = new Map<FormatLabels, string>([
+                        ["label", "Programming 1 (&, |, ^, !)"],
+                        ["|", "|"],
+                        ["^", "^"],
+                        ["&", "&"],
+                        ["!", "!"],
+                        ["(", "("],
+                        [")", ")"],
+                        ["separator", ""]
+                ]);
+                expect(() => {
+                    GenerateTokens(expression, testOps);
+                }).toThrow("Length zero separator in supplied operation symbols");
+            });
         });
     });
 

@@ -106,8 +106,21 @@ function getToken(expression: string, index: number, ops: Map<FormatLabels, stri
  * @param expression the expression to convert
  * @param ops the representation format for the operations used in this expression
  * @returns a list of tokens that represent the given expression
+ * @throws {Error} if ops is missing the keys "|", "^", "&", "(", ")", or "separator"
+ * @throws {Error} if the value in ops for keys "|", "^", "&", "(", ")", or "separator" is ""
  */
 export function GenerateTokens(expression: string, ops: Map<FormatLabels, string>): Token[] {
+    for(const op of OpsArray) {
+        if(!ops.has(op))
+            throw new Error("No " + op + " in supplied operation symbols");
+        if(ops.get(op) === "")
+            throw new Error("Length zero " + op + " in supplied operation symbols");
+    }
+    if(!ops.has("separator"))
+        throw new Error("No separator in supplied operation symbols");
+    if(ops.get("separator") === "")
+        throw new Error("Length zero separator in supplied operation symbols");
+
     const tokenList = new Array<Token>();
     let extraSkip = 0;
     let token: Token;
@@ -458,6 +471,8 @@ export function CreateNegationGates(circuit: IOObject[]): IOObject[] {
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @throws {Error} there is no operator between two inputs (such as "a b")
  * @throws {Error} the expression references an input not found in inputs
+ * @throws {Error} if ops is missing the keys "|", "^", "&", "(", ")", or "separator"
+ * @throws {Error} if the value in ops for keys "|", "^", "&", "(", ")", or "separator" is ""
  */
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
