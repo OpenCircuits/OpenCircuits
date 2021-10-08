@@ -53,7 +53,6 @@ export const ItemNav = ({ info, config }: Props) => {
     function reset() {
         setState({curItemID: "", numClicks: 1});
     }
-
     // Drop the current item on click
     useDocEvent("click", (ev) => {
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
@@ -118,17 +117,21 @@ export const ItemNav = ({ info, config }: Props) => {
                                                //  Switch, we want to reset the numClicks to 1
                                                if (curItemID && item.id !== curItemID)
                                                    reset();
-                                           }}
-                                            onMouseEnter={() => { 
-                                                if (item.removable) {setHover(true)}
-                                            }}
-                                            onMouseLeave={() => {
-                                                if (item.removable) {setHover(false)}
-                                            }}>
-                                    <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                    <br />
-                                    <div >
-                                        {(item.removable && hovering) && <div>x</div>}
+                                           }}>
+
+                                    
+                                    <div className='holder'
+                                        onMouseEnter={() => { 
+                                            if (item.removable) {setHover(true)}
+                                        }}
+                                        onMouseLeave={() => {
+                                            if (item.removable) {setHover(false)}
+                                        }}>
+
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
+                                        {(item.removable && hovering) && <div className='delete_buton' onClick={() => console.log("click!")}>x</div>}
+                                        <br />
+
                                     </div>
                                     {item.label}
                                 </Draggable>
