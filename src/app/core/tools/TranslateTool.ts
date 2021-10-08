@@ -30,7 +30,7 @@ export const TranslateTool: Tool = (() => {
             if (locked)
                 return false;
             // Activate if the user is pressing down on an object
-            return (event.type === "mousedrag" &&
+            return (event.type === "mousedrag" && event.button === 0 && 
                     currentlyPressedObject instanceof Component);
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
