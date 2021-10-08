@@ -16,10 +16,10 @@ import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/Selecti
 
 const Config: ModuleConfig<[ANDGate, NANDGate, ORGate,
                             NORGate, XORGate, XNORGate,
-                            Mux, Decoder], number> = {
+                            Decoder], number> = {
     types: [ANDGate, NANDGate, ORGate,
             NORGate, XORGate, XNORGate,
-            Mux, Decoder],
+            Decoder],
     valType: "int",
     getProps: (o) => (o instanceof Mux ? o.getSelectPortCount() : o.getInputPortCount()).getValue(),
     getAction: (s, newCount) => (

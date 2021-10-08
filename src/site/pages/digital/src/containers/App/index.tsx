@@ -47,6 +47,7 @@ import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
 import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}     from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {SelectPortCountModule}from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
 import {ColorModule}          from "site/digital/containers/SelectionPopup/modules/ColorModule";
 import {ClockFrequencyModule} from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
 import {OutputCountModule}    from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
@@ -109,6 +110,7 @@ export const App = ((store: AppStore) => {
 
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
+                                                  SelectPortCountModule,
                                                   OutputCountModule, SegmentCountModule,
                                                   ClockFrequencyModule,
                                                   ColorModule, TextColorModule,
