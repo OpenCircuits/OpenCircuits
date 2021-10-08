@@ -108,14 +108,22 @@ export const ContextMenu = ({info, paste}: Props) => {
         dispatch(CloseContextMenu());
     }
 
-
-    const pos = input?.getMousePos();
+    var pos = input?.getMousePos();
+    if (isOpen) {
+        const contentMenuWidth = 133;
+        const contentMenuHeight = 218;
+        if(pos.x + contentMenuWidth > window.innerWidth) {
+            pos.x -= contentMenuWidth;
+        } else if (pos.y + contentMenuHeight + 61 > window.innerHeight) {
+            pos.y -= contentMenuHeight;
+        }
+    }
 
     return (
         <div className="contextmenu"
              style={{
                  left: `${pos?.x}px`,
-                 top: `${pos?.y + 65}px`,
+                 top: `${pos?.y + 61}px`,
                  display: (isOpen ? "initial" : "none")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
