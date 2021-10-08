@@ -101,8 +101,17 @@
         }
     }
 
-    &__errormessage {
+    &__errorMessage {
         color: $danger-color;
         font-weight: bold;
+    }
+
+    &__customOps {
+        input[type=text] {
+            width: 50%;
+            padding: 9px 6.5px;
+            margin: 3px;
+            font-size: 1em;
+        }
     }
 }

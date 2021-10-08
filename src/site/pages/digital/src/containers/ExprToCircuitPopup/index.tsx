@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 
@@ -28,7 +28,7 @@ import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
 import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
 import {GenerateTokens,
         ExpressionToCircuit}    from "digital/utils/ExpressionParser";
-import {FormatMap}    from "digital/utils/ExpressionParserConstants";
+import {FormatLabels, FormatMap}    from "digital/utils/ExpressionParserConstants";
 
 import "./index.scss";
 
@@ -44,10 +44,11 @@ const Inputs = new Map<string, () => DigitalComponent>([
     ["Switch", () => new Switch()],
 ]);
 
-
 function generate(info: DigitalCircuitInfo, expression: string,
-                  isIC: boolean, input: string, format: string) {
-    const ops = FormatMap.get(format);
+                  isIC: boolean, input: string, format: string,
+                  ops: Map<FormatLabels, string>=null) {
+    if(ops === null)
+        ops = FormatMap.get(format);
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     for(const token of tokenList) {
@@ -91,11 +92,18 @@ export const ExprToCircuitPopup = (() => {
         );
         const dispatch = useSharedDispatch();
 
-        const [{expression}, setExpression] = useState({ expression: "" });
-        const [{errorMessage}, setErrorMessage] = useState({ errorMessage: "" });
+        const [expression, setExpression] = useState("");
+        const [errorMessage, setErrorMessage] = useState("");
         const [isIC, setIsIC] = useState(false);
         const [input, setInput] = useState("Switch");
         const [format, setFormat] = useState("|");
+        const [customOr, setCustomOr] = useState("|");
+        const [customXor, setCustomXor] = useState("^");
+        const [customAnd, setCustomAnd] = useState("&");
+        const [customNot, setCustomNot] = useState("!");
+        const [customParenOpen, setCustomParenOpen] = useState("(");
+        const [customParenClose, setCustomParenClose] = useState(")");
+        const [customSeparator, setCustomSeparator] = useState(" ");
     
         const inputTypes = Array.from(Inputs.keys()).map((input) =>
             <option key={input} value={input}>{input}</option>
@@ -108,22 +116,49 @@ export const ExprToCircuitPopup = (() => {
             </div>
         );
 
+        const customOps: [string, string, React.Dispatch<React.SetStateAction<string>>][] = [
+            ["AND", customAnd, setCustomAnd],
+            ["OR", customOr, setCustomOr],
+            ["XOR", customXor, setCustomXor],
+            ["NOT", customNot, setCustomNot],
+            ["(", customParenOpen, setCustomParenOpen],
+            [")", customParenClose, setCustomParenClose],
+            ["Separator", customSeparator, setCustomSeparator],
+        ];
+        const customOpsInput = customOps.map((op) => 
+            <div className="exprtocircuit__popup__customOps" key={op[0]}>
+                <input title={"Enter symbol for " + op[0]} type="text" value={op[1]} onChange={e => op[2](e.target.value)}/>
+                <label htmlFor={op[1]}>Custom {op[0]}: "{op[1]}"</label>
+            </div>
+        );
+        
+
         return (
             <Popup title="Digital Expression To Circuit Generator"
                    isOpen={(curPopup === "expr_to_circuit")}
                    close={() => dispatch(CloseHeaderPopups())}>
                 <div className="exprtocircuit__popup">
-                    { errorMessage && <p className="errorMessage">{"ERROR: " + errorMessage}</p> }
+                    { errorMessage && <p className="exprtocircuit__popup__errorMessage">{"ERROR: " + errorMessage}</p> }
                     <input title="Enter Circuit Expression" type="text"
                                value={expression}
                                placeholder="!a | (B^third)"
-                               onChange={e => setExpression({expression: e.target.value})} />
+                               onChange={e => setExpression(e.target.value)} />
                     <br/>
 
                     <div className="exprtocircuit__popup__settings">
                         <div>
                             <h3>Notation</h3>
                             {formats}
+                            <div>
+                                <input type="radio" name="format" checked={format === "custom"} onChange={() => setFormat("custom")} value={"custom"} />
+                                <label htmlFor={"custom"}>Custom</label><br/>
+                            </div>
+                            {
+                                format === "custom" &&
+                                <div>
+                                    {customOpsInput}
+                                </div>
+                            }
                         </div>
 
                         <div>
@@ -145,19 +180,32 @@ export const ExprToCircuitPopup = (() => {
 
                     <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                         try {
-                            generate(mainInfo, expression, isIC, input, format);
-                            setExpression({ expression: "" });
-                            setErrorMessage({ errorMessage: "" });
+                            if(format === "custom") {
+                                const ops = new Map<FormatLabels, string>([
+                                    ["|", customOr],
+                                    ["^", customXor],
+                                    ["&", customAnd],
+                                    ["!", customNot],
+                                    ["(", customParenOpen],
+                                    [")", customParenClose],
+                                    ["separator", customSeparator]
+                                ]);
+                                generate(mainInfo, expression, isIC, input, format, ops);
+                            }
+                            else
+                                generate(mainInfo, expression, isIC, input, format);
+                            setExpression("");
+                            setErrorMessage("");
                             dispatch(CloseHeaderPopups());
                         }
                         catch (err) {
-                            setErrorMessage({ errorMessage: err.message });
+                            setErrorMessage(err.message);
                         }
                     }}>Generate</button>
 
                     <button className="cancel" type="button" onClick={() => {
-                        setExpression({ expression: "" });
-                        setErrorMessage({ errorMessage: "" });
+                        setExpression("");
+                        setErrorMessage("");
                         dispatch(CloseHeaderPopups());
                     }}>Cancel</button>
 
