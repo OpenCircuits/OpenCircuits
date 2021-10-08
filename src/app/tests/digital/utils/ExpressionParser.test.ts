@@ -173,11 +173,11 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap1,"a",o1);
-            }).toThrow("Not An Input: a");
+            }).toThrow("Not An Input: \"a\"");
 
             expect(() => {
                 ExpressionToCircuit(inputMap2,"b",o2);
-            }).toThrow("Not An Input: b");
+            }).toThrow("Not An Input: \"b\"");
         });
 
         test("Not An Output", () => {
@@ -223,34 +223,34 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"(",o);
-            }).toThrow("Encountered Unmatched (");
+            }).toThrow("Encountered Unmatched \"(\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"!(",o);
-            }).toThrow("Encountered Unmatched (");
+            }).toThrow("Encountered Unmatched \"(\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a|b",o);
-            }).toThrow("Encountered Unmatched (");
+            }).toThrow("Encountered Unmatched \"(\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"((a|b)",o);
-            }).toThrow("Encountered Unmatched (");
+            }).toThrow("Encountered Unmatched \"(\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,")",o);
-            }).toThrow("Encountered Unmatched )");
+            }).toThrow("Encountered Unmatched \")\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a|b)",o);
-            }).toThrow("Encountered Unmatched )");
+            }).toThrow("Encountered Unmatched \")\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a|b))",o);
-            }).toThrow("Encountered Unmatched )");
+            }).toThrow("Encountered Unmatched \")\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,")a|b(",o);
-            }).toThrow("Encountered Unmatched )");
+            }).toThrow("Encountered Unmatched \")\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,")(",o);
-            }).toThrow("Encountered Unmatched )");
+            }).toThrow("Encountered Unmatched \")\"");
             expect(() => {
                 ExpressionToCircuit(inputMap2,"(",o);
-            }).toThrow("Encountered Unmatched (");
+            }).toThrow("Encountered Unmatched \"(\"");
         });
 
         test("Missing Operands", () => {
@@ -262,40 +262,40 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"!",o);
-            }).toThrow("Missing Right Operand: !");
+            }).toThrow("Missing Right Operand: \"!\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"!!",o);
-            }).toThrow("Missing Right Operand: !");
+            }).toThrow("Missing Right Operand: \"!\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(!)",o);
-            }).toThrow("Missing Right Operand: !");
+            }).toThrow("Missing Right Operand: \"!\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(!)a",o);
-            }).toThrow("Missing Right Operand: !");
+            }).toThrow("Missing Right Operand: \"!\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"&a",o);
-            }).toThrow("Missing Left Operand: &");
+            }).toThrow("Missing Left Operand: \"&\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a&",o);
-            }).toThrow("Missing Right Operand: &");
+            }).toThrow("Missing Right Operand: \"&\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(&a)",o);
-            }).toThrow("Missing Left Operand: &");
+            }).toThrow("Missing Left Operand: \"&\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a&)",o);
-            }).toThrow("Missing Right Operand: &");
+            }).toThrow("Missing Right Operand: \"&\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"^a",o);
-            }).toThrow("Missing Left Operand: ^");
+            }).toThrow("Missing Left Operand: \"^\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a^",o);
-            }).toThrow("Missing Right Operand: ^");
+            }).toThrow("Missing Right Operand: \"^\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"|a",o);
-            }).toThrow("Missing Left Operand: |");
+            }).toThrow("Missing Left Operand: \"|\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a|",o);
-            }).toThrow("Missing Right Operand: |");
+            }).toThrow("Missing Right Operand: \"|\"");
         });
 
         test("No Operator", () => {
@@ -307,25 +307,25 @@ describe("Expression Parser", () => {
 
             expect(() => {
                 ExpressionToCircuit(inputMap,"a b",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a (b)",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a) b",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a !b",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"a()b",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a)(b)",o);
-            }).toThrow("No valid operator between a and b");
+            }).toThrow("No valid operator between \"a\" and \"b\"");
             expect(() => {
                 ExpressionToCircuit(inputMap,"(a|b)a",o);
-            }).toThrow("No valid operator between b and a");
+            }).toThrow("No valid operator between \"b\" and \"a\"");
         });
 
         test("Empty Parenthesis", () => {
@@ -347,17 +347,6 @@ describe("Expression Parser", () => {
         });
 
         describe("Invalid ops", () => {
-            // export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
-            // const programming1 = new Map<FormatLabels, string>([
-            //     ["label", "Programming 1 (&, |, ^, !)"],
-            //     ["|", "|"],
-            //     ["^", "^"],
-            //     ["&", "&"],
-            //     ["!", "!"],
-            //     ["(", "("],
-            //     [")", ")"],
-            //     ["separator", " "]
-            // ]);
             const expression = "a | b ^ c & d | !(e & f)";
             test("No |", () => {
                 const testOps = new Map<FormatLabels, string>([
