@@ -48,10 +48,13 @@ export const ItemNav = ({ info, config }: Props) => {
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
-    const [hovering, setHover] = useState(false)
+    const [hovering, setHover] = useState("")
     // Resets the curItemID and numClicks
     function reset() {
         setState({curItemID: "", numClicks: 1});
+    }
+    function deleteIC(ic: ItemNavItem) {
+        console.log(ic);
     }
     // Drop the current item on click
     useDocEvent("click", (ev) => {
@@ -119,17 +122,17 @@ export const ItemNav = ({ info, config }: Props) => {
                                                    reset();
                                            }}>
 
-                                    
+
                                     <div className='holder'
                                         onMouseEnter={() => { 
-                                            if (item.removable) {setHover(true)}
+                                            if (item.removable) {setHover(item.id)}
                                         }}
                                         onMouseLeave={() => {
-                                            if (item.removable) {setHover(false)}
+                                            if (item.removable) {setHover("")}
                                         }}>
 
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
-                                        {(item.removable && hovering) && <div className='delete_buton' onClick={() => console.log("click!")}>x</div>}
+                                        {(item.removable && hovering === item.id) && <div className='delete_buton' onClick={() => deleteIC(item)}>x</div>}
                                         <br />
 
                                     </div>
