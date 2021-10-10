@@ -276,7 +276,10 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
 
     return (
         <button title={alt}
-                onClick={() => click()}>{text}</button>
+                onClick={(ev) => {
+                    click();
+                    ev.currentTarget.blur();
+                }}>{text}</button>
     )
 }
 
