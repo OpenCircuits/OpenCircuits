@@ -306,8 +306,8 @@ export class Input {
         this.callListeners({type: "keydown", key});
     }
     /**
-     * 
-     * @param key 
+     * Sets the given key as up, and calls each listener on event "keyup", key
+     * @param key represents the key being released
      */
     protected onKeyUp(key: number): void {
         this.keysDown.set(key, false);
