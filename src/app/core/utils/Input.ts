@@ -471,9 +471,8 @@ export class Input {
     }
 
     /**
-     * 
-     * @param event 
-     * @returns 
+     * Calls the listeners in 'listeners' for Event 'event'
+     * @param event Event being given to the listeners
      */
     private callListeners(event: Event): void {
         if (this.blocked)
