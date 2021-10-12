@@ -317,10 +317,9 @@ export class Input {
     }
 
     /**
-     * 
+     * Calls each listener on event "click", button
      * @param _ 
-     * @param button 
-     * @returns 
+     * @param button represents the mouse button being clicked (left mouse button by default)
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
@@ -334,7 +333,7 @@ export class Input {
     }
     /**
      * Calls each listener on event "dbclick", button
-     * @param button represents the button being double clicked
+     * @param button represents the mouse button being double clicked
      */
     protected onDoubleClick(button: number): void {
 
