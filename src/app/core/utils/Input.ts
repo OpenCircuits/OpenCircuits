@@ -206,13 +206,13 @@ export class Input {
     }
 
     /**
-     * 
+     * Sets blocked to true
      */
     public block(): void {
         this.blocked = true;
     }
     /**
-     * 
+     * Sets blocked to false
      */
     public unblock(): void {
         this.blocked = false;
