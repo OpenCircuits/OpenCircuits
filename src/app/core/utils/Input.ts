@@ -219,8 +219,8 @@ export class Input {
     }
 
     /**
-     * 
-     * @param listener 
+     * Adds a Listener to the list of Listeners events are checked against
+     * @param listener is the Listener being added
      */
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
@@ -228,15 +228,15 @@ export class Input {
 
     /**
      * 
-     * @returns 
+     * @returns true if the mouse is down, false otherwise
      */
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
     /**
-     * 
-     * @param key 
-     * @returns 
+     * Checks if the given key is held down
+     * @param key represents the key being checked
+     * @returns true if key is down, false otherwise
      */
     public isKeyDown(key: number): boolean {
         return (this.keysDown.has(key) &&
@@ -244,21 +244,21 @@ export class Input {
     }
 
     /**
-     * 
+     * Checks if the shift key is held down
      * @returns true if the shift key is down, false otherwise
      */
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
     /**
-     * 
+     * Checks if the modifier key is held down
      * @returns true if the modifier key (control, command, or meta) is down, false otherwise
      */
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
     /**
-     * 
+     * Checks if the option key is held down
      * @returns true if the option key is down, false otherwise
      */
     public isOptionKeyDown(): boolean {
@@ -469,7 +469,7 @@ export class Input {
     }
 
     /**
-     * Calls the listeners in 'listeners' for Event 'event'
+     * Calls the Listeners in 'listeners' for Event 'event'
      * @param event Event being given to the listeners
      */
     private callListeners(event: Event): void {
