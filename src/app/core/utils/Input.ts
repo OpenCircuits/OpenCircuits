@@ -452,7 +452,7 @@ export class Input {
         this.onMouseMove(CalculateMidpoint(touches));
     }
     /**
-     * 
+     * Calls onMouseUp
      */
     protected onTouchEnd(): void {
         this.onMouseUp();
