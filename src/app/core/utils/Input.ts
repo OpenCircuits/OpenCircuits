@@ -19,6 +19,9 @@ import {Event} from "./Events";
 
 export type Listener = (event: Event) => void;
 
+/**
+ * 
+ */
 export class Input {
     private canvas: HTMLCanvasElement;
     private prevMousePos: Vector;
@@ -40,6 +43,11 @@ export class Input {
 
     private blocked: boolean;
 
+    /**
+     * 
+     * @param canvas 
+     * @param dragTime 
+     */
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         this.canvas = canvas;
         this.dragTime = dragTime;
@@ -53,6 +61,11 @@ export class Input {
         this.setupHammer();
     }
 
+    /**
+     * 
+     * @param newKey 
+     * @returns 
+     */
     private isPreventedCombination(newKey: number): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
@@ -71,6 +84,9 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     */
     private hookupKeyboardEvents(): void {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -93,6 +109,9 @@ export class Input {
         window.addEventListener("cut",   (ev: ClipboardEvent) => this.callListeners({ type: "cut",   ev }));
     }
 
+    /**
+     * 
+     */
     private hookupMouseEvents(): void {
         // Mouse events
         this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
@@ -110,6 +129,9 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     */
     private hookupTouchEvents(): void {
         const getTouchPositions = (touches: TouchList): Vector[] => {
             return Array.from(touches).map((t) => V(t.clientX, t.clientY));
@@ -132,6 +154,9 @@ export class Input {
         }, false);
     }
 
+    /**
+     * 
+     */
     private setupHammer(): void {
         // Pinch to zoom
         const touchManager = new Hammer.Manager(this.canvas, {recognizers: []});
@@ -159,6 +184,9 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     */
     public reset(): void {
         this.prevMousePos = V();
         this.mousePos = V();
@@ -177,55 +205,110 @@ export class Input {
         this.keysDown  = new Map();
     }
 
+    /**
+     * 
+     */
     public block(): void {
         this.blocked = true;
     }
+    /**
+     * 
+     */
     public unblock(): void {
         this.blocked = false;
     }
 
+    /**
+     * 
+     * @param listener 
+     */
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
 
+    /**
+     * 
+     * @returns 
+     */
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
+    /**
+     * 
+     * @param key 
+     * @returns 
+     */
     public isKeyDown(key: number): boolean {
         return (this.keysDown.has(key) &&
                 this.keysDown.get(key) == true);
     }
 
+    /**
+     * 
+     * @returns 
+     */
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
+    /**
+     * 
+     * @returns 
+     */
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
+    /**
+     * 
+     * @returns 
+     */
     public isOptionKeyDown(): boolean {
         return this.isKeyDown(OPTION_KEY);
     }
 
+    /**
+     * 
+     * @returns 
+     */
     public getMousePos(): Vector {
         return V(this.mousePos);
     }
+    /**
+     * 
+     * @returns 
+     */
     public getMouseDownPos(): Vector {
         return V(this.mouseDownPos);
     }
+    /**
+     * 
+     * @returns 
+     */
     public getDeltaMousePos(): Vector {
         return this.mousePos.sub(this.prevMousePos);
     }
 
+    /**
+     * 
+     * @returns 
+     */
     public getTouchCount(): number {
         return this.touchCount;
     }
 
+    /**
+     * 
+     * @param key 
+     */
     protected onKeyDown(key: number): void {
         this.keysDown.set(key, true);
 
         // call each listener
         this.callListeners({type: "keydown", key});
     }
+    /**
+     * 
+     * @param key 
+     */
     protected onKeyUp(key: number): void {
         this.keysDown.set(key, false);
 
@@ -233,6 +316,12 @@ export class Input {
         this.callListeners({type: "keyup", key});
     }
 
+    /**
+     * 
+     * @param _ 
+     * @param button 
+     * @returns 
+     */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
         if (this.isDragging) {
@@ -243,12 +332,20 @@ export class Input {
         // call each listener
         this.callListeners({type: "click", button});
     }
+    /**
+     * 
+     * @param button 
+     */
     protected onDoubleClick(button: number): void {
 
         // call each listener
         this.callListeners({type: "dblclick", button});
     }
 
+    /**
+     * 
+     * @param delta 
+     */
     protected onScroll(delta: number): void {
         // calculate zoom factor
         let zoomFactor = 0.95;
@@ -262,6 +359,11 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     * @param pos 
+     * @param button 
+     */
     protected onMouseDown(pos: Vector, button: number = 0): void {
         const rect = this.canvas.getBoundingClientRect();
 
@@ -277,6 +379,10 @@ export class Input {
 
         this.callListeners({type: "mousedown", button});
     }
+    /**
+     * 
+     * @param pos 
+     */
     protected onMouseMove(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
 
@@ -296,6 +402,10 @@ export class Input {
         }
         this.callListeners({type: "mousemove"});
     }
+    /**
+     * 
+     * @param button 
+     */
     protected onMouseUp(button: number = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
         this.mouseDown = false;
@@ -304,9 +414,15 @@ export class Input {
         this.callListeners({type: "mouseup", button});
     }
 
+    /**
+     * 
+     */
     protected onMouseEnter(): void {
         this.callListeners({type: "mouseenter"});
     }
+    /**
+     * 
+     */
     protected onMouseLeave(): void {
         this.touchCount = 0;
         this.mouseDown = false;
@@ -322,16 +438,30 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     * @param touches 
+     */
     protected onTouchStart(touches: Vector[]): void {
         this.onMouseDown(CalculateMidpoint(touches));
     }
+    /**
+     * 
+     * @param touches 
+     */
     protected onTouchMove(touches: Vector[]): void {
         this.onMouseMove(CalculateMidpoint(touches));
     }
+    /**
+     * 
+     */
     protected onTouchEnd(): void {
         this.onMouseUp();
     }
 
+    /**
+     * 
+     */
     protected onBlur(): void {
         // Release each key that is down
         this.keysDown.forEach((down, key) => {
@@ -340,6 +470,11 @@ export class Input {
         });
     }
 
+    /**
+     * 
+     * @param event 
+     * @returns 
+     */
     private callListeners(event: Event): void {
         if (this.blocked)
             return;
