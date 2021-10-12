@@ -62,9 +62,9 @@ export class Input {
     }
 
     /**
-     * 
-     * @param newKey 
-     * @returns 
+     * Checks if newKey is a prevented combination of keys
+     * @param newKey represents the key combination being pressed
+     * @returns true if newKey is a prevented combination, false otherwise
      */
     private isPreventedCombination(newKey: number): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
