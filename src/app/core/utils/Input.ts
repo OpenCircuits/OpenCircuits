@@ -296,8 +296,8 @@ export class Input {
     }
 
     /**
-     * 
-     * @param key 
+     * Sets the given key as down, and calls each listener on event "keydown", key
+     * @param key represents the key being pressed
      */
     protected onKeyDown(key: number): void {
         this.keysDown.set(key, true);
