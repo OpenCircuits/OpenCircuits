@@ -252,7 +252,7 @@ export class Input {
     }
     /**
      * 
-     * @returns 
+     * @returns true if the modifier key (control, command, or meta) is down, false otherwise
      */
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
