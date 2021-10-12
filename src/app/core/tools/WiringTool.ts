@@ -7,7 +7,9 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 import {Tool}             from "core/tools/Tool";
 
-import {Port, Wire} from "core/models";
+import {IOObject, Port, Wire} from "core/models";
+import { isPressable, Pressable } from "core/utils/Pressable";
+import { Component } from "react";
 
 
 export const WiringTool = (() => {
@@ -23,6 +25,28 @@ export const WiringTool = (() => {
     function findPorts({input, camera, designer}: Partial<CircuitInfo>): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
+
+        // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
+        // need to change implementation
+        /**
+         * loop through all objects in circuit
+         * reverse list for top to bottom order
+         *  is mouse in bounds of object?
+         *  return empty array if yes
+         * else you'll go to the next object and stuff, this will be unhelpful to me in a few days
+         */
+        for (let i = 0; i < objects.length; ++i) {
+            
+            console.log("FIND PORTS: " + objects[i]);
+
+            if (objects[i].isWithinSelectBounds(worldMousePos) ||
+                (isPressable(objects[i]) &&
+                (objects[i] as Pressable).isWithinPressBounds(worldMousePos))) {
+                
+                console.log("object: " + i + "::" + objects[i] + " is covering any ports");
+                return [];
+            }
+        }
 
         // Look through all ports in all objects
         //  and find one where the mouse is over
@@ -46,7 +70,19 @@ export const WiringTool = (() => {
 
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
-            const {locked, input, designer} = info;
+            const {locked, input, camera, designer} = info;
+            // // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
+            // // if there is a component above a port
+            // // prioritize the component and skip the port click action
+            // const worldMousePos = camera.getWorldPos(input.getMousePos());
+            // const objs = designer.getObjects();
+            // const obj: IOObject = objs.find(o => (o.isWithinSelectBounds(worldMousePos)));
+            // let pressables: Pressable[] = objs.filter((c) => isPressable(c) && c.isWithinPressBounds(worldMousePos)) as Pressable[];
+            // console.log("WIRING TOOL OBJ: " + obj);
+            // console.log("WIRING TOOL PRESBLES: " + pressables);
+            // console.log("WIRING TOOL LEN: " + pressables.length);
+            // if (locked || obj != undefined || pressables.length != 0)
+            // if (locked || obj != undefined)
             if (locked)
                 return false;
             const ports = findPorts(info);
