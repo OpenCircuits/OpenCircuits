@@ -219,7 +219,7 @@ export class Input {
     }
 
     /**
-     * Adds a Listener to the list of Listeners events are checked against
+     * Adds a Listener to the list of Listeners Events are checked against
      * @param listener is the Listener being added
      */
     public addListener(listener: Listener): void {
@@ -296,7 +296,7 @@ export class Input {
     }
 
     /**
-     * Sets the given key as down, and calls each listener on event "keydown", key
+     * Sets the given key as down, and calls each Listener on Event "keydown", key
      * @param key represents the key being pressed
      */
     protected onKeyDown(key: number): void {
@@ -306,7 +306,7 @@ export class Input {
         this.callListeners({type: "keydown", key});
     }
     /**
-     * Sets the given key as up, and calls each listener on event "keyup", key
+     * Sets the given key as up, and calls each Listener on Event "keyup", key
      * @param key represents the key being released
      */
     protected onKeyUp(key: number): void {
@@ -317,7 +317,7 @@ export class Input {
     }
 
     /**
-     * Calls each listener on event "click", button
+     * Calls each Listener on Event "click", button
      * @param _ 
      * @param button represents the mouse button being clicked (left mouse button by default)
      */
@@ -332,7 +332,7 @@ export class Input {
         this.callListeners({type: "click", button});
     }
     /**
-     * Calls each listener on event "dbclick", button
+     * Calls each Listener on Event "dbclick", button
      * @param button represents the mouse button being double clicked
      */
     protected onDoubleClick(button: number): void {
@@ -402,8 +402,8 @@ export class Input {
         this.callListeners({type: "mousemove"});
     }
     /**
-     * Calls each listener on Event "mouseup", button and adjusts
-     * variables tracking mouse buttons
+     * Calls each Listener on Event "mouseup", button
+     * and adjusts variables tracking mouse buttons
      * @param button represents the mouse button being released
      */
     protected onMouseUp(button: number = 0): void {
@@ -415,7 +415,7 @@ export class Input {
     }
 
     /**
-     * Calls each listener on Event "mouseenter"
+     * Calls each Listener on Event "mouseenter"
      */
     protected onMouseEnter(): void {
         this.callListeners({type: "mouseenter"});
@@ -471,7 +471,7 @@ export class Input {
 
     /**
      * Calls the Listeners in 'listeners' for Event 'event'
-     * @param event Event being given to the listeners
+     * @param event Event being given to the Listeners
      */
     private callListeners(event: Event): void {
         if (this.blocked)
