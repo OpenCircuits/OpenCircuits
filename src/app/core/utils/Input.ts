@@ -402,8 +402,9 @@ export class Input {
         this.callListeners({type: "mousemove"});
     }
     /**
-     * 
-     * @param button 
+     * Calls each listener on Event "mouseup", button and adjusts
+     * variables tracking mouse buttons
+     * @param button represents the mouse button being released
      */
     protected onMouseUp(button: number = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
@@ -414,7 +415,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Calls each listener on Event "mouseenter"
      */
     protected onMouseEnter(): void {
         this.callListeners({type: "mouseenter"});
