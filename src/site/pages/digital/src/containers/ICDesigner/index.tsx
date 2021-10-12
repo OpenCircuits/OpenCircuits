@@ -188,7 +188,10 @@ export const ICDesigner = (() => {
 
                 <input type="text"
                         placeholder="IC Name"
-                        onChange={(ev) => setName({name: ev.target.value})} />
+                        onChange={(ev) => setName({name: ev.target.value})}
+                        onKeyUp={(ev) => {
+                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur()
+                        }} />
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>
