@@ -259,7 +259,7 @@ export class Input {
     }
     /**
      * 
-     * @returns 
+     * @returns true if the option key is down, false otherwise
      */
     public isOptionKeyDown(): boolean {
         return this.isKeyDown(OPTION_KEY);
@@ -281,7 +281,7 @@ export class Input {
     }
     /**
      * 
-     * @returns 
+     * @returns difference between current and previous mouse position
      */
     public getDeltaMousePos(): Vector {
         return this.mousePos.sub(this.prevMousePos);
@@ -289,7 +289,7 @@ export class Input {
 
     /**
      * 
-     * @returns 
+     * @returns touchCount
      */
     public getTouchCount(): number {
         return this.touchCount;
