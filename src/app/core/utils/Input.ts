@@ -460,10 +460,9 @@ export class Input {
     }
 
     /**
-     * 
+     * Releases each key that is down
      */
     protected onBlur(): void {
-        // Release each key that is down
         this.keysDown.forEach((down, key) => {
             if (down)
                 this.onKeyUp(key);
