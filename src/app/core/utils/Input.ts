@@ -245,7 +245,7 @@ export class Input {
 
     /**
      * 
-     * @returns 
+     * @returns true if the shift key is down, false otherwise
      */
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
