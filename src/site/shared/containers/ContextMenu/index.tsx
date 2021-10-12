@@ -114,7 +114,8 @@ export const ContextMenu = ({info, paste}: Props) => {
         const contentMenuHeight = 218;
         if(pos.x + contentMenuWidth > window.innerWidth) {
             pos.x -= contentMenuWidth;
-        } else if (pos.y + contentMenuHeight + 61 > window.innerHeight) {
+        }
+        if (pos.y + contentMenuHeight + 61 > window.innerHeight) {
             pos.y -= contentMenuHeight;
         }
     }
