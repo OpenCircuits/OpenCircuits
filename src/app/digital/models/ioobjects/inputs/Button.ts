@@ -1,9 +1,9 @@
-import { Vector, V } from "Vector";
-import { CircleContains } from "math/MathUtils";
-import { ClampedValue } from "math/ClampedValue";
+import {Vector, V} from "Vector";
+import {CircleContains} from "math/MathUtils";
+import {ClampedValue} from "math/ClampedValue";
 
-import { PressableComponent } from "../PressableComponent";
-import { serializable } from "serialeazy";
+import {PressableComponent} from "../PressableComponent";
+import {serializable} from "serialeazy";
 
 /**
  * An input that acts as a button. While pressed down by the mouse button, it outputs a signal. When you 
@@ -18,9 +18,9 @@ export class Button extends PressableComponent {
      */
     public constructor() {
         super(new ClampedValue(0),
-            new ClampedValue(1),
-            V(50, 50),
-            V(50, 50));
+              new ClampedValue(1),
+              V(50, 50),
+              V(50, 50));
     }
 
     /**
@@ -31,7 +31,7 @@ export class Button extends PressableComponent {
      *           false otherwise
      */
     public isWithinPressBounds(v: Vector): boolean {
-        return CircleContains(this.getPos(), this.getSize().x / 2, v);
+        return CircleContains(this.getPos(), this.getSize().x/2, v);
     }
 
     /**
