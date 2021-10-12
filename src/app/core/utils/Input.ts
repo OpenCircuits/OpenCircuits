@@ -333,8 +333,8 @@ export class Input {
         this.callListeners({type: "click", button});
     }
     /**
-     * 
-     * @param button 
+     * Calls each listener on event "dbclick", button
+     * @param button represents the button being double clicked
      */
     protected onDoubleClick(button: number): void {
 
