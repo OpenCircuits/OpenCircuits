@@ -276,6 +276,9 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
 
     return (
         <button title={alt}
+                // When the create IC button is clicked, it must be blurred so that when enter is pressed to
+                // to confirm creation of the IC, the create button in the selection popup does not also register
+                // an enter press (Resulted in immediately opening a new IC creator with the newly made IC as the only target).
                 onClick={(ev) => {
                     click();
                     ev.currentTarget.blur();

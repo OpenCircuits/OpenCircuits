@@ -190,7 +190,7 @@ export const ICDesigner = (() => {
                         placeholder="IC Name"
                         onChange={(ev) => setName({name: ev.target.value})}
                         onKeyUp={(ev) => {
-                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur()
+                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
                         }} />
 
                 <div className="icdesigner__buttons">

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 
-import { Input } from "core/utils/Input";
-import { Event } from "core/utils/Events";
+import {Input} from "core/utils/Input";
+import {Event} from "core/utils/Events";
 
 
 export const useKeyDownEvent = (input: Input, key: number, f: () => void) => {
