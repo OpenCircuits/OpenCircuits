@@ -37,7 +37,8 @@ function updateProgressImages(numImages: number): () => void {
 }
 
 function progressError(error: any, text: string) {
-    document.getElementById("loading-screen-progress-bar").style.width = "0%";
+    document.getElementById("loading-screen-progress-bar").style.width = "100%";
+    document.getElementById("loading-screen-progress-bar").style.backgroundColor = "#f44336";
     const message = "<a href=\"https://github.com/OpenCircuits/OpenCircuits/issues/new/choose\">" + text + " Please refresh the page. If this error continues to occur, please click this text to submit a bug report.</a>";
     document.getElementById("loading-screen-text").innerHTML = message;
     console.error(error);
