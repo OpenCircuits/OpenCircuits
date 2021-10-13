@@ -79,10 +79,9 @@ export function SelectionPopup({info, modules}: Props) {
         if (!input)
             return;
         input.addListener(update);
-        /**
-         * Fixes issue #753. This is necessary because when a bus is made, no change is recorded in the system, so it does not
-         * update to remove the bus button as intended. The function below ensures that when a bus is made, an upate is called.
-         */
+
+        // Fixes issue #753. This is necessary because when a bus is made, no change is recorded in the system, so it does not
+        // update to remove the bus button as intended. The function below ensures that when a bus is made, an upate is called.
         designer.addCallback(() => update({type:"unknown"}, true));
 
         return () => {console.log("I SHOULD NOT BE HERE")}
