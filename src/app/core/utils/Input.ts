@@ -7,8 +7,6 @@ import {DRAG_TIME,
         COMMAND_KEY,
         D_KEY,
         S_KEY,
-        Z_KEY,
-        Y_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
         META_KEY} from "core/utils/Constants";
@@ -61,8 +59,6 @@ export class Input {
         const PREVENTED_COMBINATIONS = [
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[Z_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[Y_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
         ];
 
