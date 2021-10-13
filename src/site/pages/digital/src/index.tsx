@@ -36,31 +36,56 @@ function updateProgressImages(numImages: number): () => void {
     return onprogress;
 }
 
+function progressError(error: any, text: string) {
+    document.getElementById("loading-screen-progress-bar").style.width = "0%";
+    const message = "<a href=\"https://github.com/OpenCircuits/OpenCircuits/issues/new/choose\">" + text + " Please refresh the page. If this error continues to occur, please click this text to submit a bug report.</a>";
+    document.getElementById("loading-screen-text").innerHTML = message;
+    console.error(error);
+}
+
 async function Init(): Promise<void> {
     // Load images
     updateProgress(20, "Loading Images...");
-    await Images.Load(updateProgressImages);
+    try {
+        await Images.Load(updateProgressImages);
+    } catch (e) {
+        progressError(e, "Error occurred while loading images.");
+        return;
+    }
 
     updateProgress(40, "Creating Store...");
-    const store: AppStore = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+    let store: AppStore;
+    try {
+        store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+    } catch (e) {
+        progressError(e, "Error occurred while creating store.");
+        return;
+    }
 
     // Initialize auth
     updateProgress(60, "Loading Authentication...");
-    const AuthMethods: Record<string, () => Promise<void>> = {
-        "no_auth": async () => {
-            const username = GetCookie("no_auth_username");
-            if (username)
-                await store.dispatch(Login(new NoAuthState(username)));
-        },
-        "google": async () => {
-            // Load auth2 from GAPI and initialize w/ metadata
-            const clientId = process.env.OC_OAUTH2_ID;
-            if (!clientId)
-                throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
-            await new Promise((resolve) => gapi.load("auth2", resolve));
-            await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
-        }
-    };
+
+    let AuthMethods: Record<string, () => Promise<void>>
+    try {
+        AuthMethods = {
+            "no_auth": async () => {
+                const username = GetCookie("no_auth_username");
+                if (username)
+                    await store.dispatch(Login(new NoAuthState(username)));
+            },
+            "google": async () => {
+                // Load auth2 from GAPI and initialize w/ metadata
+                const clientId = process.env.OC_OAUTH2_ID;
+                if (!clientId)
+                    throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
+                await new Promise((resolve) => gapi.load("auth2", resolve));
+                await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
+            }
+        };
+    } catch (e) {
+        progressError(e, "Error occurred while loading authentication.");
+        return;
+    }
     try {
         if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
             await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
@@ -69,15 +94,20 @@ async function Init(): Promise<void> {
     }
 
     updateProgress(80, "Rendering...");
-    const AppView = App(store);
-    ReactDOM.render(
-        <React.StrictMode>
-            <Provider store={store}>
-                {AppView()}
-            </Provider>
-        </React.StrictMode>,
-        document.getElementById("root")
-    );
+    try {
+        const AppView = App(store);
+        ReactDOM.render(
+            <React.StrictMode>
+                <Provider store={store}>
+                    {AppView()}
+                </Provider>
+            </React.StrictMode>,
+            document.getElementById("root")
+        );
+    } catch (e) {
+        progressError(e, "Error occurred while rendering.");
+        return;
+    }
 
     updateProgress(100, "Done!");
 
