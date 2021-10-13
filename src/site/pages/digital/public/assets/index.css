@@ -72,6 +72,30 @@ button {
     width: 30%;
     margin-left: -15%;
 }
+.loading__screen__progress {
+    position: absolute;
+    bottom: 4em;
+    width: 100%;
+}
+.loading__screen__progress__bar {
+    width: 50%;
+    height: 1em;
+    margin: auto;
+    border-radius: .33em;
+    background-color: #999;
+}
+.loading__screen__progress__bar > div {
+    height: 20px;
+    width: 50%;
+    border-radius: 3px;
+    background-color: #4caf50;;
+    display: block;
+}
+.loading__screen__text {
+    text-align: center;
+
+    color: #888;
+}
 
 @keyframes pulse {
     0%   { opacity: 0; }
