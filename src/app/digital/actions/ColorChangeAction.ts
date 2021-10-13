@@ -5,7 +5,6 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 import {Label} from "digital/models/ioobjects/other/Label";
 
 
-
 export class ColorChangeAction implements Action {
     private component: LED | Label | Wire;
 
