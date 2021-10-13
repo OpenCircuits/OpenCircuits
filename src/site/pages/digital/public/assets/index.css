@@ -85,8 +85,8 @@ button {
     background-color: #999;
 }
 .loading__screen__progress__bar > div {
-    height: 20px;
-    width: 50%;
+    width: 0%;
+    height: 1em;
     border-radius: 3px;
     background-color: #4caf50;;
     display: block;

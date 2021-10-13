@@ -21,20 +21,21 @@ import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
 
+function updateProgress(amount: number, text: string) {
+    document.getElementById("loading-screen-progress-bar").style.width = amount + "%";
+    document.getElementById("loading-screen-text").innerHTML = text;
+}
 
 async function Init(): Promise<void> {
     // Load images
-    document.getElementById("loading-screen-progress-bar").style.width = "20%";
-    document.getElementById("loading-screen-text").innerHTML = "Loading Images...";
+    updateProgress(20, "Loading Images...");
     await Images.Load();
 
-    document.getElementById("loading-screen-progress-bar").style.width = "40%";
-    document.getElementById("loading-screen-text").innerHTML = "Creating Store...";
+    updateProgress(40, "Creating Store...");
     const store: AppStore = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
 
     // Initialize auth
-    document.getElementById("loading-screen-progress-bar").style.width = "60%";
-    document.getElementById("loading-screen-text").innerHTML = "Loading Authentication...";
+    updateProgress(60, "Loading Authentication...");
     const AuthMethods: Record<string, () => Promise<void>> = {
         "no_auth": async () => {
             const username = GetCookie("no_auth_username");
@@ -57,9 +58,7 @@ async function Init(): Promise<void> {
         console.error(e);
     }
 
-
-    document.getElementById("loading-screen-progress-bar").style.width = "80%";
-    document.getElementById("loading-screen-text").innerHTML = "Rendering...";
+    updateProgress(80, "Rendering...");
     const AppView = App(store);
     ReactDOM.render(
         <React.StrictMode>
@@ -70,8 +69,7 @@ async function Init(): Promise<void> {
         document.getElementById("root")
     );
 
-    document.getElementById("loading-screen-progress-bar").style.width = "100%";
-    document.getElementById("loading-screen-text").innerHTML = "Done!";
+    updateProgress(100, "Done!");
 
     // Hide loading screen
     document.getElementById("loading-screen").style.display = "none";
