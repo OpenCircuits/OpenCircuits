@@ -26,10 +26,20 @@ function updateProgress(amount: number, text: string) {
     document.getElementById("loading-screen-text").innerHTML = text;
 }
 
+function updateProgressImages(numImages: number): () => void {
+    let numLoaded = -1;
+    function onprogress() {
+        numLoaded++;
+        updateProgress(20+20*numLoaded/numImages, "Loading Images [" + numLoaded + "/" + numImages + "]...");
+    }
+    onprogress();
+    return onprogress;
+}
+
 async function Init(): Promise<void> {
     // Load images
     updateProgress(20, "Loading Images...");
-    await Images.Load();
+    await Images.Load(updateProgressImages);
 
     updateProgress(40, "Creating Store...");
     const store: AppStore = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
