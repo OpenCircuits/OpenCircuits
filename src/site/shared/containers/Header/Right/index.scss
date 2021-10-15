@@ -162,6 +162,9 @@
             .disabled {
                 background-color: darken(white, 10%);
             }
+            .hide-link {
+                text-decoration: none;
+            }
         }
         &:hover &__button {
             background-color: lighten($primary-color, 10%);
