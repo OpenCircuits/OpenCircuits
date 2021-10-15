@@ -75,12 +75,18 @@ export const ItemNav = ({ info, config }: Props) => {
                     <div className="itemnav__top__history__buttons">
                         <button title="Undo"
                                 disabled={undoHistory.length === 0}
-                                onClick={() => info.history.undo() }>
+                                onClick={() => {
+                                    info.history.undo();
+                                    info.renderer.render(); // Re-render
+                                }}>
                             <img src="img/icons/undo.svg" alt="" />
                         </button>
                         <button title="Redo"
                                 disabled={redoHistory.length === 0}
-                                onClick={() => info.history.redo() }>
+                                onClick={() => {
+                                    info.history.redo();
+                                    info.renderer.render(); // Re-render
+                                 }}>
                             <img src="img/icons/redo.svg" alt="" />
                         </button>
                     </div>
