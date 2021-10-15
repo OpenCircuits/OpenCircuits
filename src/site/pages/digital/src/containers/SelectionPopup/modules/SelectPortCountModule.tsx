@@ -14,7 +14,7 @@ const Config: ModuleConfig<[Mux], number> = {
     getAction: (s, newCount) => (
         new GroupAction(
             s.map(o => {
-                return new MuxPortChangeAction  (o, o.getSelectPortCount().getValue(), newCount);
+                return new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCount);
             })
         )
     )
