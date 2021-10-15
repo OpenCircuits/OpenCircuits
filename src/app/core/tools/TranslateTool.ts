@@ -11,17 +11,17 @@ import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
-import { Action } from "core/actions/Action";
-import { GroupAction } from "core/actions/GroupAction";
+import {Action} from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
 
 
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
-    let worldMouseDownPos = V() as Vector;
+    let worldMouseDownPos = V();
     let initialMouseButton = 0;
     let action: GroupAction;
-  
+
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
                  Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
