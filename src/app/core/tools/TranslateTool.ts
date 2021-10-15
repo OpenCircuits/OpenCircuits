@@ -1,5 +1,6 @@
 import {GRID_SIZE,
-        SPACEBAR_KEY}  from "core/utils/Constants";
+        SPACEBAR_KEY,
+        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
