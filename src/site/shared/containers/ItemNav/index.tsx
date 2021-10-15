@@ -14,6 +14,12 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
+import {IC} from "digital/models/ioobjects";
+import {ICData} from "digital/models/ioobjects";
+import {DigitalCircuitDesigner} from '../../../../app/digital/models/DigitalCircuitDesigner';
+import {DeleteICDataAction} from '../../../../app/digital/actions/DeleteICDataAction';
+
+
 import "./index.scss";
 
 
@@ -22,6 +28,7 @@ export type ItemNavItem = {
     label: string;
     icon: string;
     removable?: boolean;
+    data?: ICData;
 }
 export type ItemNavSection = {
     id: string;
@@ -53,8 +60,20 @@ export const ItemNav = ({ info, config }: Props) => {
     function reset() {
         setState({curItemID: "", numClicks: 1});
     }
-    function deleteIC(ic: ItemNavItem) {
-        console.log(ic);
+    function deleteIC(sec: ItemNavSection, ic: ItemNavItem) {
+        var designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
+        var shouldDelete: boolean = true;
+        info.designer.getAll().forEach(function (o) {
+            if (o instanceof IC && o.getData() === ic.data){
+                console.log("Instances of this IC remain");
+                shouldDelete = false;
+            }
+        })
+        if(shouldDelete){
+            sec.items.splice(sec.items.indexOf(ic));
+            info.history.add(new DeleteICDataAction(ic.data, designer).execute());
+            setHover("");
+        }
     }
     // Drop the current item on click
     useDocEvent("click", (ev) => {
@@ -123,7 +142,7 @@ export const ItemNav = ({ info, config }: Props) => {
                                            }}>
 
 
-                                    <div className='holder'
+                                    <div
                                         onMouseEnter={() => { 
                                             if (item.removable) {setHover(item.id)}
                                         }}
@@ -132,7 +151,20 @@ export const ItemNav = ({ info, config }: Props) => {
                                         }}>
 
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
-                                        {(item.removable && hovering === item.id) && <div className='delete_buton' onClick={() => deleteIC(item)}>x</div>}
+
+                                        {
+                                            (item.removable && hovering === item.id) &&
+                                            <div onClick={(ev) => {
+                                                deleteIC(section, item);
+
+                                                // Resets click tracking and stops propgation so that an
+                                                //  IC is not clicked onto the canvas after being deleted.
+                                                setState({curItemID: "",
+                                                          numClicks: 1});
+
+                                                ev.stopPropagation();
+                                            }}>x</div>
+                                        }
                                         <br />
 
                                     </div>
