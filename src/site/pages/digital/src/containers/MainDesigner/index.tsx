@@ -27,7 +27,7 @@ import "./index.scss";
 
 type Props = {
     info: DigitalCircuitInfo;
-    canvas: React.MutableRefObject<HTMLCanvasElement>
+    canvas: React.MutableRefObject<HTMLCanvasElement>;
 }
 export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
