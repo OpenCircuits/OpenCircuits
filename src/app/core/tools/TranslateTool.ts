@@ -77,6 +77,10 @@ export const TranslateTool: Tool = (() => {
             const {input, camera, history, designer} = info;
 
             switch (event.type) {
+                //Using mousemove instead of mousedrag here because when a button besides
+                //  mouse left is released, mousedrag events are no longer created, only mousemove.
+                //  So instead mousemove is used and whether or not left mouse is still pressed is
+                //  handled within the activation and deactivation of this tool.
                 case "mousemove":
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
