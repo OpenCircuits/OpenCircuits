@@ -1,5 +1,6 @@
 import {GRID_SIZE,
-        SPACEBAR_KEY}  from "core/utils/Constants";
+        SPACEBAR_KEY,
+        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -10,10 +11,9 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {ShiftAction} from "core/actions/ShiftAction";
 import {Action} from "core/actions/Action";
+import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
-import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 
 export const TranslateTool: Tool = (() => {
@@ -77,7 +77,7 @@ export const TranslateTool: Tool = (() => {
             const {input, camera, history, designer} = info;
 
             switch (event.type) {
-                //Using mousemove instead of mousedrag here because when a button besides
+                // Using mousemove instead of mousedrag here because when a button besides
                 //  mouse left is released, mousedrag events are no longer created, only mousemove.
                 //  So instead mousemove is used and whether or not left mouse is still pressed is
                 //  handled within the activation and deactivation of this tool.
