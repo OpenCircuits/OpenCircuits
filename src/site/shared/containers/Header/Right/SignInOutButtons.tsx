@@ -20,7 +20,7 @@ export const SignInOutButtons = () => {
 
             <button title="Sign out"
                     style={{ display: (isLoggedIn ? "initial" : "none") }}
-                    onClick={() => { dispatch(Logout()); dispatch(SetAutoSave(false))}}>Sign Out</button>
+                    onClick={() => dispatch(Logout())}>Sign Out</button>
         </div>
     );
 }

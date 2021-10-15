@@ -23,7 +23,8 @@ export const AutoSaveToggle = ({helpers}: Props) => {
 
         // Don't start autosave if user doesn't have it enabled
         //  or if the circuit is already currently saved
-        if (!autoSave || isSaved)
+        // or if the user is not logged in
+        if (!autoSave || isSaved || !isLoggedIn)
             return;
 
         let attempts = 1; // Track attempted saves
@@ -40,11 +41,11 @@ export const AutoSaveToggle = ({helpers}: Props) => {
         timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
-     }, [isSaved, autoSave, helpers]);
+     }, [isSaved, autoSave, isLoggedIn, helpers]);
 
     return (
-        <div className="header__right__settings__autosave"  style={isLoggedIn ? {backgroundColor: ''} : {backgroundColor:'gainsboro'}}
-             onClick={() => isLoggedIn ? dispatch(SetAutoSave(!autoSave)) : dispatch(SetAutoSave(false))}>
+        <div className={`header_right_settings_autosave ${isLoggedIn ? "" : "disabled"}`}
+             onClick={() => dispatch(SetAutoSave(!autoSave))}>
             <img src="img/items/switchDown.svg" style={{display: (autoSave && isLoggedIn ? "" : "none")}}
                  height="100%" alt="Auto save on" />
             <img src="img/items/switchUp.svg" style={{display: (autoSave && isLoggedIn ? "none" : "")}}
@@ -52,6 +53,6 @@ export const AutoSaveToggle = ({helpers}: Props) => {
             <span title="Auto-Save" >
                 Auto Save: {autoSave && isLoggedIn ? "On" : "Off"}
             </span>
-        </div>  
+        </div>
     );
 }
