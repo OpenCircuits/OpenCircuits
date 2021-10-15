@@ -13,33 +13,26 @@ export class BoundingBox {
     public getMin(): Vector {
         return this.min.copy();
     }
-
     public getMax(): Vector {
         return this.max.copy();
     }
-
     public setMin(min: Vector): void {
         this.min.x = min.x;
         this.min.y = min.y;
     }
-
     public setMax(max: Vector): void {
         this.max.x = max.x;
         this.max.y = max.y;
     }
-
     public getWidth(): number {
         return this.max.x - this.min.x;
     }
-
     public getHeight(): number {
         return this.max.y - this.min.y;
     }
-
     public getArea(): number {
         return this.getWidth() * this.getHeight();
     }
-
     public getCenter(): Vector {
         return this.getMin().add(this.getMax()).scale(0.5);
     }
