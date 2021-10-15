@@ -15,19 +15,18 @@ export const PanTool: Tool = (() => {
             //  or if the user began dragging with either 2 fingers
             //                           or the middle mouse button
             //  or if the user pressed one of of the arrow keys
-            return (event.type === "keydown"   && (event.key === OPTION_KEY)) ||
+            return (event.type === "keydown"   && ((event.key === OPTION_KEY) ||  
+                                                  (event.key >= ARROW_LEFT && event.key <= ARROW_DOWN)) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
-                                                   input.getTouchCount() === 2)) ||
-                   (event.type === "keydown"   && (event.key >= ARROW_LEFT && 
-                                                   event.key <= ARROW_DOWN));
+                                                   input.getTouchCount() === 2)));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
             //  or if no dragging happened and OPTION_KEY was released
             //  or if one of the arrow keys were released
             return (event.type === "mouseup") ||
-                   (event.type === "keyup" && !isDragging && event.key === OPTION_KEY) ||
-                   (event.type === "keyup" && event.key >= ARROW_LEFT && event.key <= ARROW_DOWN);
+                   (event.type === "keyup" && ((!isDragging && event.key === OPTION_KEY) || 
+                                               (event.key >= ARROW_LEFT && event.key <= ARROW_DOWN)))
         },
 
 
@@ -60,16 +59,15 @@ export const PanTool: Tool = (() => {
                 if (input.isShiftKeyDown()) 
                     factor = 5;
 
-                //Currently doesn't work for holding down multiple keys
-                //event.key isn't being used since it only has one, but this
-                //seems to be acting in the same way?
+                //No else if because it introduces bugs when 
+                //multiple arrow keys are pressed
                 if (input.isKeyDown(ARROW_LEFT))
                     x -= 1;
-                else if (input.isKeyDown(ARROW_RIGHT))
+                if (input.isKeyDown(ARROW_RIGHT))
                     x += 1;
-                else if (input.isKeyDown(ARROW_UP))
+                if (input.isKeyDown(ARROW_UP))
                     y -= 1;
-                else if (input.isKeyDown(ARROW_DOWN))
+                if (input.isKeyDown(ARROW_DOWN))
                     y += 1;
                 
                 camera.translate(new Vector(x * zoom * factor, y * zoom * factor));
