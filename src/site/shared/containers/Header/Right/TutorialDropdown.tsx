@@ -31,6 +31,12 @@ export const TutorialDropdown = () => {
                 <img src="img/icons/quick_start.svg" height="100%" alt="Check out our Quick Start guide" />
                 <span>Quick Start</span>
             </div>
+            <div>
+                <a className="hide-link" target="_blank" href="http://docs.opencircuits.io" >
+                    <img src="img/icons/github.svg" height="100%" alt="Check out our Documentation" />
+                    <span>Documentation</span>
+                </a>
+            </div>
             <div className="disabled">
                 <img src="img/icons/video_tutorials.svg" height="100%" alt="Check out our Video Tutorials" />
                 <span>Video Tutorials</span>

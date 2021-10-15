@@ -103,7 +103,7 @@ export const App = ((store: AppStore) => {
                             helpers={helpers} />
 
                     <main>
-                        <MainDesigner info={info} />
+                        <MainDesigner info={info} canvas={canvas} />
 
                         <DigitalItemNav info={info} />
 
