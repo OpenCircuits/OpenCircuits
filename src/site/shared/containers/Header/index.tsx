@@ -3,14 +3,17 @@ import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {HeaderLeft} from "./Left";
 import {HeaderRight} from "./Right";
 
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import "./index.scss";
 
 
 type Props = {
     img: string;
     helpers: CircuitInfoHelpers;
+    info: CircuitInfo;
 }
-export const Header = ({ img, helpers }: Props) => (
+export const Header = ({ img, helpers, info }: Props) => (
     <header id="header">
         <HeaderLeft helpers={helpers} />
 
@@ -23,6 +26,6 @@ export const Header = ({ img, helpers }: Props) => (
             </a>
         </div>
 
-        <HeaderRight helpers={helpers} />
+        <HeaderRight helpers={helpers} info={info}/>
     </header>
 );

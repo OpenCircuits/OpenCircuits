@@ -100,7 +100,8 @@ export const App = ((store: AppStore) => {
 
                 <div className="App__container">
                     <Header img="img/icons/logo.svg"
-                            helpers={helpers} />
+                            helpers={helpers}
+                            info={info} />
 
                     <main>
                         <MainDesigner info={info} canvas={canvas} />
