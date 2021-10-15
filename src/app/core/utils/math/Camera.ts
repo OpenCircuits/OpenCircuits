@@ -49,7 +49,7 @@ export class Camera {
 
     /**
      * If dirty is true then it updates and recalculates the matrix to the new position, height, and width. 
-     * dirty is the variable the represents if the screen has been changed for example if the screen is zoomed in dirty is set to true.
+     * dirty represents whether the screen has been changed/moved or not.
      */
     private updateMatrix(): void {
         if (!this.dirty)
@@ -68,7 +68,7 @@ export class Camera {
     }
 
     /**
-     * This function resizes the height and width and sets dirty to true when screen moved.
+     * This function resizes the height and width and sets dirty to true when the screen is moved.
      * @param width new width of screen
      * @param height new height of screen
      */
@@ -106,7 +106,7 @@ export class Camera {
     }
 
     /**
-     * Zooms to a certain postition on the screen by a certain amount z.
+     * Zooms to a certain position on the screen by a certain amount z.
      * @param c is the position it's zooming to
      * @param z the amount it is zooming 
      */
@@ -128,35 +128,37 @@ export class Camera {
         this.zoom *= s;
     }
     /**
-     * This function return true or false if this.transform contains the transform passed through
+     * This function returns true or false if this.transform contains the transform passed through
      * @param transform comparing this with this.transform
-     * @returns 
+     * @returns true or false
      */
     public cull(transform: Transform): boolean {
         return TransformContains(transform, this.getTransform());
     }
     /**
-     * This returns the  coordinates of the center of the screen wherever it is.
+     * This returns the coordinates of the center of the screen wherever it is.
+     * @returns return vector with coordinates
      */
     public getCenter(): Vector {
         return V(this.width/2, this.height/2);
     }
     /**
-     * returns the position
-     * @returns makes a copy of pos
+     * makes a copy of pos to return
+     * @returns the position
      */
     public getPos(): Vector {
         return this.pos.copy();
     }
     /**
      * return how much the screen is zoomed in/out by.
-     * @returns returns number
+     * @returns the zoom, which is data type Number
      */
     public getZoom(): number {
         return this.zoom;
     }
     /**
-     * This return a copy of the transform of camera and updates the matrix 
+     * This returns a copy of the transform of camera and updates the matrix 
+     * @returns copy of this.transform
      */
     public getTransform(): Transform {
         this.updateMatrix();
@@ -164,7 +166,7 @@ export class Camera {
     }
     /**
      * Returns copy of current matrix and updates the matrix as needed.
-     * @returns resturns copy of mat.
+     * @returns returns copy of mat.
      */
     public getMatrix(): Matrix2x3 {
         this.updateMatrix();
@@ -181,13 +183,14 @@ export class Camera {
     /**
      * returns the current screen position with formula using the vector v and getCenter 
      * @param v  is the vector multiplied to inv
-     * @returns vector is screen position
+     * @returns a vector of the screen position
      */
     public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.getCenter());
     }
     /**
      * Returns the global position not the local screens position
+     * @returns global position
      */
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));
