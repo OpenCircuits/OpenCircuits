@@ -13,13 +13,13 @@ import {Component} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
     let worldMouseDownPos = V();
-    let initialMouseButton = 0;
     let action: GroupAction;
 
     function snap(p: Vector): Vector {
@@ -32,12 +32,12 @@ export const TranslateTool: Tool = (() => {
             if (locked)
                 return false;
             // Activate if the user is pressing down on an object
-            return (event.type === "mousedrag" &&
+            return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     currentlyPressedObject instanceof Component);
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse
-            return (event.type === "mouseup" && event.button === initialMouseButton);
+            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON);
         },
 
 
@@ -45,10 +45,6 @@ export const TranslateTool: Tool = (() => {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
-            if(event.type === "mousedrag"){
-                initialMouseButton = event.button;
-            }
-
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
