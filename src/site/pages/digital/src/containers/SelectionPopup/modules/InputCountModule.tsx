@@ -18,11 +18,7 @@ const Config: ModuleConfig<[ANDGate, NANDGate, ORGate,
     valType: "int",
     getProps: (o) => (o instanceof Mux ? o.getSelectPortCount() : o.getInputPortCount()).getValue(),
     getAction: (s, newCount) => (
-        new GroupAction(
-            s.map(o => {
-                    return new InputPortChangeAction(o, o.getInputPortCount().getValue(),  newCount);
-            })
-        )
+        new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(),  newCount)))
     )
 }
 

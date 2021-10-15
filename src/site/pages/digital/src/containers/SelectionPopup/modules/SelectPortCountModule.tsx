@@ -11,13 +11,8 @@ const Config: ModuleConfig<[Mux], number> = {
     types: [Mux],
     valType: "int",
     getProps: (o) => o.getSelectPortCount().getValue(),
-    getAction: (s, newCount) => (
-        new GroupAction(
-            s.map(o => {
-                return new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCount);
-            })
-        )
-    )
+    getAction: (s, newCount) =>
+        new GroupAction(s.map(o => new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCount)))
 }
 
 export const SelectPortCountModule = PopupModule({
