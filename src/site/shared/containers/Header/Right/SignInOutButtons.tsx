@@ -1,7 +1,7 @@
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {OpenHeaderPopup} from "shared/state/Header";
-import {Logout, SetAutoSave} from "shared/state/UserInfo";
+import {Logout} from "shared/state/UserInfo";
 
 import "./index.scss";
 
