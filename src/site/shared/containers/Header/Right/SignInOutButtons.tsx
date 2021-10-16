@@ -13,7 +13,7 @@ export const SignInOutButtons = () => {
     const dispatch = useSharedDispatch();
 
     return (
-        <div className="header__right__account" >
+        <div className="header__right__account">
             <button title="Sign in"
                     style={{ display: (isLoggedIn ? "none" : "initial") }}
                     onClick={() => dispatch(OpenHeaderPopup("login"))}>Sign In</button>
