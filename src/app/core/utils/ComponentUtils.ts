@@ -330,8 +330,9 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
     // If no objects return to default zoom
-    if(objs.length === 0)
+    if (objs.length === 0)
         return [V(), 1];
+
     const bbox = CircuitBoundingBox(objs);
     const finalPos = bbox.getCenter();
 
