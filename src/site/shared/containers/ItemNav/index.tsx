@@ -1,16 +1,15 @@
 import {useEffect, useState} from "react";
-import {Dispatch} from "redux";
 import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {SharedAppState} from "shared/state";
-import {AllSharedActions} from "shared/state/actions";
-import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
-
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
+
+import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
+
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
@@ -48,9 +47,14 @@ export const ItemNav = ({ info, config }: Props) => {
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
 
+    // State to keep track of drag'n'drop preview current image
+    const [curItemImg, setCurItemImg] = useState("");
+
+
     // Resets the curItemID and numClicks
     function reset() {
         setState({curItemID: "", numClicks: 1});
+        setCurItemImg("");
     }
 
     // Drop the current item on click
@@ -65,7 +69,22 @@ export const ItemNav = ({ info, config }: Props) => {
         return () => DragDropHandlers.removeListener(reset);
     }, [setState]);
 
-    return (
+    // Get mouse-position for drag-n-drop preview
+    const pos = useMousePos();
+
+    return (<>
+        <div style={{
+                display: (curItemImg ? "initial" : "none"),
+                position: "fixed",
+                zIndex: 100,
+                left: pos.x,
+                top: pos.y,
+                opacity: 0.5,
+                pointerEvents: "none",
+                transform: "translate(-50%, -50%)",
+            }}>
+            <img src={curItemImg} width="80px" />
+        </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
                 <div>
@@ -113,8 +132,10 @@ export const ItemNav = ({ info, config }: Props) => {
                                            onClick={(ev) => {
                                                setState({
                                                    curItemID: item.id,
-                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1)
+                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1),
                                                });
+                                               setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+
                                                // Prevents `onClick` listener of placing the component to fire
                                                ev.stopPropagation();
                                            }}
@@ -123,6 +144,10 @@ export const ItemNav = ({ info, config }: Props) => {
                                                //  Switch, we want to reset the numClicks to 1
                                                if (curItemID && item.id !== curItemID)
                                                    reset();
+
+                                               // Set image if user started dragging on this item
+                                               if (d === "start")
+                                                   setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                            }}>
                                     <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     <br />
@@ -134,5 +159,5 @@ export const ItemNav = ({ info, config }: Props) => {
                 )}
             </div>
         </nav>
-    );
+    </>);
 }
