@@ -73,17 +73,16 @@ export const ItemNav = ({ info, config }: Props) => {
     const pos = useMousePos();
 
     return (<>
-        <div style={{
+        <div className="itemnav__preview"
+             style={{
                 display: (curItemImg ? "initial" : "none"),
-                position: "fixed",
-                zIndex: 100,
                 left: pos.x,
                 top: pos.y,
-                opacity: 0.5,
-                pointerEvents: "none",
-                transform: "translate(-50%, -50%)",
-            }}>
+             }}>
             <img src={curItemImg} width="80px" />
+            <span style={{ display: (numClicks > 1 ? "initial" : "none") }}>
+                {numClicks}
+            </span>
         </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
