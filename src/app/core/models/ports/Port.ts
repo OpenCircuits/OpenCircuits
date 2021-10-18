@@ -58,7 +58,6 @@ export abstract class Port implements Selectable {
     public abstract disconnect(w: Wire): void;
 
     public isWithinSelectBounds(v: Vector): boolean {
-        console.log("port is within select: " + CircleContains(this.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, v));
         return CircleContains(this.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, v);
     }
 

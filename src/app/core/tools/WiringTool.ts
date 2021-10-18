@@ -36,7 +36,7 @@ export const WiringTool = (() => {
             //  and find one where the mouse is over
             return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
 
-        // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
+        // https://github.com/OpenCircuits/OpenCircuits/issues/624
         let output: Port[] = [];
         let notVisible: Port[] = [];
         for (let i = 0; i < objects.length; ++i) {
