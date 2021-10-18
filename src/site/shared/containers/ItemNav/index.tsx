@@ -63,9 +63,10 @@ export const ItemNav = ({ info, config }: Props) => {
     function deleteIC(sec: ItemNavSection, ic: ItemNavItem) {
         var designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
         var shouldDelete: boolean = true;
+
         info.designer.getAll().forEach(function (o) {
             if (o instanceof IC && o.getData() === ic.data){
-                console.log("Instances of this IC remain");
+                window.alert("Cannot delete this IC while instances remain in the circuit.");
                 shouldDelete = false;
             }
         })
