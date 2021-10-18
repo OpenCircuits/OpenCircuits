@@ -1,6 +1,8 @@
-import {useLayoutEffect, useRef} from "react";
+import {useLayoutEffect} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
+
+import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
 
@@ -79,6 +81,7 @@ export const MainDesigner = ({info, canvas}: Props) => {
                        num = num ?? 1;
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;
+                       pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                        if (smartPlace) {
                            history.add(SmartPlace(pos, itemId, designer, num).execute());
