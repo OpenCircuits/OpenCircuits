@@ -14,6 +14,7 @@ import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
+import {Clamp} from "math/MathUtils";
 
 
 export type ItemNavItem = {
@@ -31,11 +32,14 @@ export type ItemNavConfig = {
     sections: ItemNavSection[];
 }
 
-type Props = {
+type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
+    additionalData?: D;
+    additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
+    children?: React.ReactNode;
 }
-export const ItemNav = ({ info, config }: Props) => {
+export const ItemNav = <D,>({ info, config, additionalData, additionalPreview, children }: Props<D>) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -72,6 +76,10 @@ export const ItemNav = ({ info, config }: Props) => {
     // Get mouse-position for drag-n-drop preview
     const pos = useMousePos();
 
+    const MAX_STACK = 4;
+
+    const additionalPreviewComp = (additionalPreview && additionalPreview(additionalData, curItemID));
+
     return (<>
         <div className="itemnav__preview"
              style={{
@@ -80,9 +88,22 @@ export const ItemNav = ({ info, config }: Props) => {
                 top: pos.y,
              }}>
             <img src={curItemImg} width="80px" />
-            <span style={{ display: (numClicks > 1 ? "initial" : "none") }}>
-                {numClicks}
+            {additionalPreviewComp}
+            {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
+                <div style={{
+                    position: "absolute",
+                    left: (i+1)*5,
+                    top: (i+1)*5,
+                    zIndex: 100-(i+1),
+                }}>
+                    <img src={curItemImg} width="80px" />
+                    {additionalPreviewComp}
+                </div>
+            ))}
+            <span style={{ display: (numClicks > MAX_STACK ? "initial" : "none") }}>
+                x{numClicks}
             </span>
+            {/* {children} */}
         </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
