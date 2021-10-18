@@ -98,12 +98,18 @@ export const ItemNav = ({ info, config }: Props) => {
                     <div className="itemnav__top__history__buttons">
                         <button title="Undo"
                                 disabled={undoHistory.length === 0}
-                                onClick={() => info.history.undo() }>
+                                onClick={() => {
+                                    info.history.undo();
+                                    info.renderer.render(); // Re-render
+                                }}>
                             <img src="img/icons/undo.svg" alt="" />
                         </button>
                         <button title="Redo"
                                 disabled={redoHistory.length === 0}
-                                onClick={() => info.history.redo() }>
+                                onClick={() => {
+                                    info.history.redo();
+                                    info.renderer.render(); // Re-render
+                                }}>
                             <img src="img/icons/redo.svg" alt="" />
                         </button>
                     </div>
@@ -124,8 +130,8 @@ export const ItemNav = ({ info, config }: Props) => {
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
-                            {section.items.map((item, j) => {
-                                return <Draggable key={`itemnav-section-${i}-item-${j}`}
+                            {section.items.map((item, j) =>
+                                <Draggable key={`itemnav-section-${i}-item-${j}`}
                                            data={[item.id, numClicks]}
                                            onClick={(ev) => {
                                                setState({
@@ -144,7 +150,7 @@ export const ItemNav = ({ info, config }: Props) => {
 
 
                                     <div
-                                        onMouseEnter={() => { 
+                                        onMouseEnter={() => {
                                             if (item.removable) {setHover(item.id)}
                                         }}
                                         onMouseLeave={() => {
@@ -171,7 +177,6 @@ export const ItemNav = ({ info, config }: Props) => {
                                     </div>
                                     {item.label}
                                 </Draggable>
-                            }
                             )}
                         </div>
                     </div>
