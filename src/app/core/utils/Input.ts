@@ -85,7 +85,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Sets up Listeners for all keyboard Events
      */
     private hookupKeyboardEvents(): void {
         // Keyboard events
@@ -110,7 +110,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Sets up Listeners for mouse Events
      */
     private hookupMouseEvents(): void {
         // Mouse events
@@ -130,7 +130,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Sets up Listeners for touch events
      */
     private hookupTouchEvents(): void {
         const getTouchPositions = (touches: TouchList): Vector[] => {
@@ -155,7 +155,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Sets up Listeners for remaining Events (pinch, tap, etc.)
      */
     private setupHammer(): void {
         // Pinch to zoom
