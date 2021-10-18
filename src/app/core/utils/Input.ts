@@ -421,7 +421,8 @@ export class Input {
         this.callListeners({type: "mouseenter"});
     }
     /**
-     * 
+     * Calls each Listener on Event "mouseleave".
+     * Also calls on Event "mouseup", [current mouse button down]
      */
     protected onMouseLeave(): void {
         this.touchCount = 0;
