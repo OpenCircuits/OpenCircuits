@@ -185,7 +185,7 @@ export class Input {
     }
 
     /**
-     * 
+     * Resets most variables to default values
      */
     public reset(): void {
         this.prevMousePos = V();
