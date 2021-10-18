@@ -267,14 +267,14 @@ export class Input {
 
     /**
      * 
-     * @returns 
+     * @returns current position of the mouse
      */
     public getMousePos(): Vector {
         return V(this.mousePos);
     }
     /**
      * 
-     * @returns 
+     * @returns current position of the mouse down
      */
     public getMouseDownPos(): Vector {
         return V(this.mouseDownPos);
