@@ -359,9 +359,10 @@ export class Input {
     }
 
     /**
-     * 
-     * @param pos 
-     * @param button 
+     * Adjusts mouse variables (dragging, position, etc.),
+     * and triggers Listeners on Event "mousedown", button
+     * @param pos represents the position of the mouse being pressed
+     * @param button represents the mouse button being pressed (0 by default)
      */
     protected onMouseDown(pos: Vector, button: number = 0): void {
         const rect = this.canvas.getBoundingClientRect();
@@ -379,8 +380,10 @@ export class Input {
         this.callListeners({type: "mousedown", button});
     }
     /**
-     * 
-     * @param pos 
+     * Triggered on mouse movement, calculates new mouse position,
+     * and triggers Listeners on Event "mousemove", as well as Listeners
+     * on Event "mousedrag", [current mouse button down] if the user is clicking
+     * @param pos represents the new absolute position of the mouse
      */
     protected onMouseMove(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
@@ -404,7 +407,7 @@ export class Input {
     /**
      * Calls each Listener on Event "mouseup", button
      * and adjusts variables tracking mouse buttons
-     * @param button represents the mouse button being released
+     * @param button represents the mouse button being released (0 by default)
      */
     protected onMouseUp(button: number = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
