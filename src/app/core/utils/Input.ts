@@ -155,7 +155,7 @@ export class Input {
     }
 
     /**
-     * Sets up Listeners for remaining Events (pinch, tap, etc.)
+     * Sets up touchManagers for pinching and tapping
      */
     private setupHammer(): void {
         // Pinch to zoom
