@@ -9,6 +9,7 @@ import {IOObject} from "core/models";
 import {DefaultTool} from "./DefaultTool";
 
 import {EventHandler} from "./EventHandler";
+import {WiringTool} from "./WiringTool";
 
 
 export class InteractionTool extends DefaultTool {
@@ -36,36 +37,40 @@ export class InteractionTool extends DefaultTool {
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = this.findObject(worldMousePos, info);
-
-        switch (event.type) {
-            case "mousedown":
-                info.currentlyPressedObject = obj;
-
-                // Check if the object is "Pressable" and
-                //  if we should call their ".press" method
-                if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
-                    obj.press();
-                    return true;
-                }
-                break;
-
-            case "mouseup":
-                // Release currently pressed object
-                if (isPressable(currentlyPressedObject)) {
-                    currentlyPressedObject.release();
+        
+        // https://github.com/OpenCircuits/OpenCircuits/issues/624
+        // Check for ports over the object
+        if (!WiringTool.visiblePorts(info)) {
+            switch (event.type) {
+                case "mousedown":
+                    info.currentlyPressedObject = obj;
+    
+                    // Check if the object is "Pressable" and
+                    //  if we should call their ".press" method
+                    if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
+                        obj.press();
+                        return true;
+                    }
+                    break;
+    
+                case "mouseup":
+                    // Release currently pressed object
+                    if (isPressable(currentlyPressedObject)) {
+                        currentlyPressedObject.release();
+                        info.currentlyPressedObject = undefined;
+                        return true;
+                    }
                     info.currentlyPressedObject = undefined;
-                    return true;
-                }
-                info.currentlyPressedObject = undefined;
-                break;
-
-            case "click":
-                // Find and click object
-                if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
-                    obj.click();
-                    return true;
-                }
-                break;
+                    break;
+    
+                case "click":
+                    // Find and click object
+                    if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
+                        obj.click();
+                        return true;
+                    }
+                    break;
+            }
         }
 
         if (locked)

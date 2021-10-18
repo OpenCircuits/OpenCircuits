@@ -5,11 +5,9 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {Tool}             from "core/tools/Tool";
 
-import {IOObject, Port, Wire} from "core/models";
-import { isPressable, Pressable } from "core/utils/Pressable";
-import { Component } from "react";
+import {Port, Wire} from "core/models";
+import {isPressable, Pressable} from "core/utils/Pressable";
 
 
 export const WiringTool = (() => {
@@ -26,31 +24,38 @@ export const WiringTool = (() => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 
-        // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
-        // need to change implementation
-        /**
-         * loop through all objects in circuit
-         * reverse list for top to bottom order
-         *  is mouse in bounds of object?
-         *  return empty array if yes
-         * else you'll go to the next object and stuff, this will be unhelpful to me in a few days
-         */
+        const noSObj = objects.filter(o => o.isWithinSelectBounds(worldMousePos)).length == 0;
+        let pressables: Pressable[] = [];
         for (let i = 0; i < objects.length; ++i) {
-            
-            console.log("FIND PORTS: " + objects[i]);
+            if (isPressable(objects[i]))
+                pressables.push(objects[i] as Pressable);
+        }
+        const noPObj = pressables.filter(o => o.isWithinPressBounds(worldMousePos)).length == 0;
+        if (noSObj && noPObj)
+            // Look through all ports in all objects
+            //  and find one where the mouse is over
+            return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
 
-            if (objects[i].isWithinSelectBounds(worldMousePos) ||
-                (isPressable(objects[i]) &&
-                (objects[i] as Pressable).isWithinPressBounds(worldMousePos))) {
-                
-                console.log("object: " + i + "::" + objects[i] + " is covering any ports");
-                return [];
+        // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
+        let output: Port[] = [];
+        let notVisible: Port[] = [];
+        for (let i = 0; i < objects.length; ++i) {
+            const sObj = objects[i].isWithinSelectBounds(worldMousePos);
+            const pObj = (isPressable(objects[i]) && (objects[i] as Pressable).isWithinPressBounds(worldMousePos));
+            if (sObj || pObj) {
+                // selectable ports
+                let ports = GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+                for (let j = 0; j < ports.length; ++j) {
+                    let dadIndex = objects.findIndex(o => o === ports[j].getParent());
+                    if (dadIndex != -1 && dadIndex < i) output.push(ports[j]);
+                    else notVisible.push(ports[j]);
+                }
             }
         }
-
-        // Look through all ports in all objects
-        //  and find one where the mouse is over
-        return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+        // Ensure ports are not in middle of stacked objects
+        return output.filter(function(o) {
+            return notVisible.indexOf(o) == -1;
+        });
     }
     function setWirePoint(v: Vector): void {
         // The wiring tool always starts with 1 port connected
@@ -71,18 +76,6 @@ export const WiringTool = (() => {
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
             const {locked, input, camera, designer} = info;
-            // // https://github.com/OpenCircuits/OpenCircuits/issues/624 elephant
-            // // if there is a component above a port
-            // // prioritize the component and skip the port click action
-            // const worldMousePos = camera.getWorldPos(input.getMousePos());
-            // const objs = designer.getObjects();
-            // const obj: IOObject = objs.find(o => (o.isWithinSelectBounds(worldMousePos)));
-            // let pressables: Pressable[] = objs.filter((c) => isPressable(c) && c.isWithinPressBounds(worldMousePos)) as Pressable[];
-            // console.log("WIRING TOOL OBJ: " + obj);
-            // console.log("WIRING TOOL PRESBLES: " + pressables);
-            // console.log("WIRING TOOL LEN: " + pressables.length);
-            // if (locked || obj != undefined || pressables.length != 0)
-            // if (locked || obj != undefined)
             if (locked)
                 return false;
             const ports = findPorts(info);
@@ -132,6 +125,15 @@ export const WiringTool = (() => {
 
         getWire(): Wire {
             return wire;
+        },
+
+        /**
+         * Checks for ports over objects using findPorts
+         * @param info CircuitInfo to be used by findPorts
+         * @returns whether there are any visible ports
+         */
+        visiblePorts(info: CircuitInfo): boolean {
+            return findPorts(info).length > 0;
         }
     }
 })();
