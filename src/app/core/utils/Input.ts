@@ -44,9 +44,9 @@ export class Input {
     private blocked: boolean;
 
     /**
-     * 
-     * @param canvas 
-     * @param dragTime 
+     * Initializes Input with given canvas and dragTime
+     * @param canvas the canvas input is being applied to
+     * @param dragTime the minimum length of time a mousedown must last to be considered a drag rather than a click
      */
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         this.canvas = canvas;
