@@ -62,9 +62,9 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
 
     // Drop the current item on click
     useDocEvent("click", (ev) => {
-        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks);
+        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setState]);
+    }, [curItemID, numClicks, setState, additionalData]);
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
@@ -89,12 +89,13 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
             {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
-                <div style={{
-                    position: "absolute",
-                    left: (i+1)*5,
-                    top: (i+1)*5,
-                    zIndex: 100-(i+1),
-                }}>
+                <div key={`itemnav-preview-stack-${i}`}
+                     style={{
+                         position: "absolute",
+                         left: (i+1)*5,
+                         top: (i+1)*5,
+                         zIndex: 100-(i+1),
+                     }}>
                     <img src={curItemImg} width="80px" />
                     {additionalPreviewComp}
                 </div>
@@ -146,7 +147,7 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
                         <div>
                             {section.items.map((item, j) =>
                                 <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                           data={[item.id, numClicks]}
+                                           data={[item.id, Math.max(numClicks,1), additionalData]}
                                            onClick={(ev) => {
                                                setState({
                                                    curItemID: item.id,
@@ -158,14 +159,16 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
                                                ev.stopPropagation();
                                            }}
                                            onDragChange={(d) => {
-                                               // For instance, if user clicked on Button 4 times then dragged the
-                                               //  Switch, we want to reset the numClicks to 1
-                                               if (curItemID && item.id !== curItemID)
-                                                   reset();
-
                                                // Set image if user started dragging on this item
-                                               if (d === "start")
+                                               if (d === "start") {
+                                                    // For instance, if user clicked on Button 4 times then dragged the
+                                                    //  Switch, we want to reset the numClicks to 1
+                                                   setState({
+                                                       curItemID: item.id,
+                                                       numClicks: (item.id === curItemID ? numClicks : 0),
+                                                   });
                                                    setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                               }
                                            }}>
                                     <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     <br />
