@@ -164,7 +164,7 @@ export const ItemNav = ({ info, config }: Props) => {
                                                           numClicks: 1});
 
                                                 ev.stopPropagation();
-                                            }}>x</div>
+                                            }}>X</div>
                                         }
                                         <br />
 
