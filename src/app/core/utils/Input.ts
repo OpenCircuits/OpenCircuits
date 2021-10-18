@@ -20,7 +20,7 @@ import {Event} from "./Events";
 export type Listener = (event: Event) => void;
 
 /**
- * 
+ * Class to handle user input, and trigger appropriate event listeners
  */
 export class Input {
     private canvas: HTMLCanvasElement;
@@ -439,15 +439,15 @@ export class Input {
     }
 
     /**
-     * 
-     * @param touches 
+     * Calls onMouseDown for the midpoint of multiple touches
+     * @param touches represents the positions of the touches
      */
     protected onTouchStart(touches: Vector[]): void {
         this.onMouseDown(CalculateMidpoint(touches));
     }
     /**
-     * 
-     * @param touches 
+     * Calls onMouseMove for the midpoint of multiple movements (as when using a touchpad)
+     * @param touches represents the positions of the touches
      */
     protected onTouchMove(touches: Vector[]): void {
         this.onMouseMove(CalculateMidpoint(touches));
