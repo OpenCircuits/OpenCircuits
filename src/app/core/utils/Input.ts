@@ -342,8 +342,9 @@ export class Input {
     }
 
     /**
-     * 
-     * @param delta 
+     * Calls each Listener on Event "zoom", zoomFactor, mousePos
+     * where zoomFactor is calculated from delta
+     * @param delta represents whether the user is zooming in or out (negative and positive, respectively)
      */
     protected onScroll(delta: number): void {
         // calculate zoom factor
