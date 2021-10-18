@@ -37,9 +37,8 @@ type Props<D> = {
     config: ItemNavConfig;
     additionalData?: D;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
-    children?: React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, additionalPreview, children }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }: Props<D>) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -103,7 +102,6 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview, c
             <span style={{ display: (numClicks > MAX_STACK ? "initial" : "none") }}>
                 x{numClicks}
             </span>
-            {/* {children} */}
         </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
