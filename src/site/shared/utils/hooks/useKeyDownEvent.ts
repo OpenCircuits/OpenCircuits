@@ -4,7 +4,7 @@ import {Input} from "core/utils/Input";
 import {Event} from "core/utils/Events";
 
 
-export const useKeyDownEvent = (input: Input, key: number, f: () => void) => {
+export const useKeyDownEvent = (input: Input, key: string, f: () => void) => {
     useEffect(() => {
         if (!input)
             return;
