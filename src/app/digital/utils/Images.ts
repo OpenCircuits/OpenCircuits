@@ -15,7 +15,8 @@ export const Images = (() => {
                               "segment_diagonalbr.svg",
                               "segment_diagonalbl.svg",
                               "clock.svg", "clockOn.svg",
-                              "keyboard.svg", "base.svg"];
+                              "keyboard.svg", "base.svg",
+                              "constNumber.svg"];
 
     const images: Map<string, SVGDrawing> = new Map();
 
