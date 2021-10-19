@@ -17,7 +17,7 @@ export const OutputCountModule = PopupModule({
     modules: [CreateModule({
         inputType: "number",
         config: Config,
-        step: 1, min: 2, max: 8,
+        step: 1, min: 1, max: 8,
         alt: "Number of outputs object(s) have"
     })]
 });
