@@ -24,7 +24,8 @@ export const AutoSaveToggle = ({helpers}: Props) => {
 
         // Don't start autosave if user doesn't have it enabled
         //  or if the circuit is already currently saved
-        if (!autoSave || isSaved)
+        // or if the user is not logged in
+        if (!autoSave || isSaved || !isLoggedIn)
             return;
 
         let attempts = 1; // Track attempted saves
@@ -41,9 +42,13 @@ export const AutoSaveToggle = ({helpers}: Props) => {
         timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
-     }, [isSaved, autoSave, helpers]);
+     }, [isSaved, autoSave, isLoggedIn, helpers]);
 
     return (
-        <SwitchToggle isOn={autoSave} onChange={() => dispatch(SetAutoSave(!autoSave))} text="Auto Save" />
+        <SwitchToggle isOn={autoSave}
+                      onChange={() => dispatch(SetAutoSave(!autoSave))}
+                      text="Auto Save"
+                      className={`header_right_settings_autosave ${isLoggedIn ? "" : "disabled"}`}
+                      condition={autoSave && isLoggedIn} />
     );
 }
