@@ -37,6 +37,11 @@ export const HeaderLeft = ({helpers}: Props) => {
                        value={name}
                        placeholder="Untitled Circuit*"
                        onChange={(s) => dispatch(SetCircuitName(s.target.value))}
+                       onKeyUp={(ev) => {
+                       if (ev.key == "Enter") {
+                           ev.currentTarget.blur();
+                           helpers.SaveCircuitRemote()
+                       }}}
                        alt="Name of project" />
             </div>
             <div>
