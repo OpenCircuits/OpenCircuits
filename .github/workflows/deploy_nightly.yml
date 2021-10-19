@@ -1,6 +1,10 @@
 name: Build and Deploy the nightly and documentation sites for the up-to-date code
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
+  
+concurrency:
+  group: deploy-night-workflow
+  cancel-in-progress: true
 
 on:
   push:
