@@ -1,6 +1,6 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
-import {SegmentDisplay} from "digital/models/ioobjects";
+import {SegmentDisplay, BCDDisplay} from "digital/models/ioobjects";
 import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
@@ -8,7 +8,16 @@ const Config: ModuleConfig<[SegmentDisplay], number> = {
     types: [SegmentDisplay],
     valType: "int",
     getProps: (o) => o.getSegmentCount(),
-    getAction: (s, newCount) => new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount)))
+    getAction: (s, newCount) => (
+        new GroupAction(
+            s.map(o => {
+                if (o instanceof BCDDisplay)
+                    return new InputPortChangeAction(o, o.getSegmentCount(), newCount);
+                else
+                    return new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount);
+            })
+        )
+    )
 }
 
 export const SegmentCountModule = PopupModule({
