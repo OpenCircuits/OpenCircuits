@@ -55,4 +55,12 @@ export class ConstantNumber extends DigitalComponent {
     public getInput(): number {
         return this.inputNumber;
     }
+
+    /**
+     * Get the name of the image file used.
+     * @returns The name of the image file
+     */
+    public getImageName(): string {
+        return "constNumber.svg";
+    }
 }
