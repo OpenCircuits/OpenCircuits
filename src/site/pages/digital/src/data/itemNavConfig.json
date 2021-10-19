@@ -29,6 +29,11 @@
             "id": "Clock",
             "label": "Clock",
             "icon": "clock.svg"
+          },
+          {
+            "id": "ConstantNumber",
+            "label": "Constant Number",
+            "icon": "constantnumber.svg"
           }
         ]
       },
