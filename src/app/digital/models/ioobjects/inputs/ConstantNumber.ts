@@ -20,6 +20,7 @@ export class ConstantNumber extends DigitalComponent {
      */
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(4), V(50,50));
+        this.setInput(0);
     }
 
     /**
