@@ -49,8 +49,17 @@ export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
 }
 
 
-export function SaveJPG(canvas: HTMLCanvasElement, projectName: string): void {
-    const data = canvas.toDataURL("image/jpeg", 1.0);
+export function SaveJPG(canvas: HTMLCanvasElement, projectName: string): void { 
+    const context = canvas.getContext('2d'); // get the context to overwrite the background of the canvas 
+    const background_color = "#ccc"; // set the background color
+
+    context.save();// save the current state of the canvas
+    context.globalCompositeOperation = 'destination-over'; // set the composite operation to overwrite the background
+    context.fillStyle = background_color ;
+    
+    context.fillRect(0, 0, canvas.width, canvas.height);    
+    const data = canvas.toDataURL("image/jpeg", 1.0); // get the data from the canvas
+    context.restore() // restore the canvas to its previous state
 
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
