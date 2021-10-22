@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
@@ -10,9 +10,10 @@ import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/sel
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
+import {CloseContextMenu, ContextMenuState, OpenContextMenu} from "shared/state/ContextMenu";
 
 import "./index.scss";
+import { HEADER_HEIGHT } from "shared/utils/Constants";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -21,6 +22,8 @@ function isClipboardSupported(type: "read" | "write"): boolean {
                                navigator.clipboard.writeText !== undefined));
 }
 
+
+const CONTEXT_MENU_OFFSET = 4;
 
 type Props = {
     info: CircuitInfo;
@@ -108,14 +111,27 @@ export const ContextMenu = ({info, paste}: Props) => {
         dispatch(CloseContextMenu());
     }
 
+    const menu = useRef<HTMLDivElement>();
+    let pos = input?.getMousePos();
+    
+    if (isOpen) {
+        const offset = 1;
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
 
-    const pos = input?.getMousePos();
+        if (pos.x + contextMenuWidth > window.innerWidth)
+            pos.x -= contextMenuWidth - offset;
+                
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_OFFSET > window.innerHeight)
+            pos.y -= contextMenuHeight - offset;
+    }   
 
     return (
         <div className="contextmenu"
+             ref={menu}
              style={{
                  left: `${pos?.x}px`,
-                 top: `${pos?.y + 65}px`,
+                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_OFFSET}px`,
                  display: (isOpen ? "initial" : "none")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
