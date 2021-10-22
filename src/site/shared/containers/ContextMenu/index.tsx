@@ -10,7 +10,7 @@ import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/sel
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {CloseContextMenu, ContextMenuState, OpenContextMenu} from "shared/state/ContextMenu";
+import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 
 import "./index.scss";
 import { HEADER_HEIGHT } from "shared/utils/Constants";
@@ -113,7 +113,7 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     const menu = useRef<HTMLDivElement>();
     let pos = input?.getMousePos();
-    
+
     if (isOpen) {
         const offset = 1;
         const contextMenuWidth = menu.current.getBoundingClientRect().width;
