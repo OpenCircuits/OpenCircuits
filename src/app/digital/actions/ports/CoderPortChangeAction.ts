@@ -50,6 +50,7 @@ export class CoderPortChangeAction implements Action {
     public undo(): Action {
         // Change size back first
         this.changeSize(this.initialCount);
+        
         this.outputPortAction.undo();
         this.inputPortAction.undo();
         return this;
