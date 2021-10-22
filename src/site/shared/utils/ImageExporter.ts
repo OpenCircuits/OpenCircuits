@@ -47,3 +47,30 @@ export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
     pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save(projectName + ".pdf");
 }
+
+
+export function SaveJPG(canvas: HTMLCanvasElement, projectName: string): void {
+    const data = canvas.toDataURL("image/jpeg", 1.0);
+
+    if (projectName.replace(/\s+/g, "") === "")
+        projectName = "Untitled Circuit";
+    const filename = projectName + ".jpg";
+
+    if (window.navigator.msSaveOrOpenBlob) { // IE10+
+        const file = new Blob([data], {type: "image/jpeg"});
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    } else { // Others
+        const a = document.createElement("a");
+        const url = data;
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    
+}
