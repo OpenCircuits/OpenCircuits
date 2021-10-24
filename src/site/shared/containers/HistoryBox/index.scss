@@ -13,7 +13,7 @@ $historybox-width: 250px;
     position: absolute;
     left: $itemnav-width;
     bottom: 0px;
-    z-index: 6;
+    z-index: 4;
 
     overflow-y: auto;
 
@@ -31,6 +31,19 @@ $historybox-width: 250px;
 
         border: 1px solid $secondary-color;
         border-radius: 7px;
+    }
+
+    &__groupentry {
+        margin: 5px;
+
+        border: 1px solid $secondary-color;
+        border-radius: 7px;
+
+        padding: 5px;
+        
+        & > span {
+            font-size: 18px;
+        }
     }
 
 }
