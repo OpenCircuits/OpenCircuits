@@ -30,7 +30,7 @@ export class SelectAction extends ReversableAction {
     }
 
     public getName(): string {
-        return "Select Tool";
+        return `Selected ${this.obj.getName()}`;
     }
 
 }
