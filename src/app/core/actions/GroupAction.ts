@@ -46,4 +46,8 @@ export class GroupAction implements Action {
         }
         return `Grouped ${this.actions.length} actions` ;
     }
+
+    public getActions(): Action[] {
+        return this.actions;
+    }
 }
