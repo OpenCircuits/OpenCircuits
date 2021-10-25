@@ -56,6 +56,7 @@ import {SegmentCountModule}      from "site/digital/containers/SelectionPopup/mo
 import {TextColorModule}         from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {BusButtonModule}         from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule}    from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {ClockSyncButtonModule} from "../SelectionPopup/modules/ClockSyncButtonModule";
 
 import exampleConfig from "site/digital/data/examples.json";
 
@@ -117,7 +118,7 @@ export const App = ((store: AppStore) => {
                                                   ClockFrequencyModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule, CreateICButtonModule,
-                                                  ViewICButtonModule]} />
+                                                  ViewICButtonModule, ClockSyncButtonModule]} />
 
                         <ContextMenu info={info}
                                      paste={(data) => DigitalPaste(data, info)} />
