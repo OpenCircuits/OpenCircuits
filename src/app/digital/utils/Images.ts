@@ -19,7 +19,7 @@ export const Images = (() => {
 
     const images: Map<string, SVGDrawing> = new Map();
 
-    const loadImage = async function(imageName: string, onprogress: () => void): Promise<number> {
+    const loadImage = async function(imageName: string): Promise<number> {
         const svg = await fetch(`img/items/${imageName}`);
         const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
 
@@ -28,7 +28,6 @@ export const Images = (() => {
         } : {});
 
         images.set(imageName, drawing);
-        onprogress();
         
         return 1;
     };
@@ -37,13 +36,15 @@ export const Images = (() => {
         GetImage: function(img: string): SVGDrawing {
             return images.get(img);
         },
-        Load: async function(loadingUpdater: (numImages: number) => () => void): Promise<void> {
-            const onprogress = loadingUpdater(IMAGE_FILE_NAMES.length);
+        Load: async function(onprogress: (numDone: number, numTotal: number) => void): Promise<void> {
+            let numLoaded = 0;
             const promises =
-                IMAGE_FILE_NAMES.map(async (name) =>
-                    await loadImage(name, onprogress)
-                );
+                IMAGE_FILE_NAMES.map(async (name) => {
+                    await loadImage(name);
+                    onprogress(++numLoaded, IMAGE_FILE_NAMES.length);
+                });
 
+            onprogress(numLoaded, IMAGE_FILE_NAMES.length);
             await Promise.all(promises);
         }
     };

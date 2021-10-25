@@ -26,14 +26,8 @@ function updateProgress(amount: number, text: string) {
     document.getElementById("loading-screen-text").innerHTML = text;
 }
 
-function updateProgressImages(numImages: number): () => void {
-    let numLoaded = -1;
-    function onprogress() {
-        numLoaded++;
-        updateProgress(20+20*numLoaded/numImages, "Loading Images [" + numLoaded + "/" + numImages + "]...");
-    }
-    onprogress();
-    return onprogress;
+function onImageProgress(numDone: number, numTotal: number) {
+    updateProgress(20+20*numDone/numTotal, "Loading Images [" + numDone + "/" + numTotal + "]...");
 }
 
 function progressError(error: any, text: string) {
@@ -48,7 +42,7 @@ async function Init(): Promise<void> {
     // Load images
     updateProgress(20, "Loading Images...");
     try {
-        await Images.Load(updateProgressImages);
+        await Images.Load(onImageProgress);
     } catch (e) {
         progressError(e, "Error occurred while loading images.");
         return;

@@ -35,8 +35,9 @@
 
         <script>
             setTimeout(() => {  
-                if(document.getElementById("loading-screen-text").innerHTML === "Loading Scripts...")
-                    document.getElementById("loading-screen-text").innerHTML = "Loading Scripts (may take awhile on slow networks)...";
+                const loadingText = document.getElementById("loading-screen-text");
+                if (loadingText.innerHTML === "Loading Scripts...")
+                    loadingText.innerHTML = "Loading Scripts (may take awhile on slow networks)...";
             }, 10000);
         </script>
 
