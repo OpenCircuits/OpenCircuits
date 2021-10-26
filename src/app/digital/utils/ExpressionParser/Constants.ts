@@ -1,9 +1,3 @@
-import {DigitalComponent} from "digital/models/index";
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate} from "digital/models/ioobjects/gates/ORGate";
-import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {XORGate} from "digital/models/ioobjects/gates/XORGate";
-
 export type InputTreeBinOpType = "|" | "^" | "&"
 export type InputTreeUnOpType = "!"
 export type ParenType = "(" | ")";
@@ -52,19 +46,19 @@ export type FormatLabels = "label" | "separator" | TokenType;
 
 export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
-export const GateConstructors = new Map<string, () => DigitalComponent>([
-    ["|", () => new ORGate()],
-    ["^", () => new XORGate()],
-    ["&", () => new ANDGate()],
-    ["!", () => new NOTGate()],
-]);
-
 export const DefaultPrecedences = new Map<TokenType, TokenType>([
     ["|", "^"],
     ["^", "&"],
     ["&", "!"],
     ["!", "("],
     ["(", "|"],
+]);
+
+export const TypeToGate = new Map<string, string>([
+    ["&", "ANDGate"],
+    ["!", "NOTGate"],
+    ["|", "ORGate"],
+    ["^", "XORGate"],
 ]);
 
 const programming1 = new Map<FormatLabels, string>([

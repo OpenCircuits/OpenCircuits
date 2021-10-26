@@ -1,19 +1,23 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}              from "digital/models/ioobjects/inputs/Switch";
-import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow}    from "digital/models/ioobjects/inputs/ConstantLow";
-import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate}            from "digital/models/ioobjects/gates/ORGate";
-import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {DigitalComponent} from "digital/models/index";
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-import {IOObject} from "core/models/IOObject";
-
-import {ExpressionToCircuit, CreateNegationGates, ConnectGate, GenerateInputTree, GenerateTokens} from "digital/utils/ExpressionParser";
-import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels}    from "digital/utils/ExpressionParser/Constants";
+import { DigitalCircuitDesigner } from "digital/models/DigitalCircuitDesigner";
+import { Switch } from "digital/models/ioobjects/inputs/Switch";
+import { ConstantHigh } from "digital/models/ioobjects/inputs/ConstantHigh";
+import { ConstantLow } from "digital/models/ioobjects/inputs/ConstantLow";
+import { ANDGate } from "digital/models/ioobjects/gates/ANDGate";
+import { ORGate } from "digital/models/ioobjects/gates/ORGate";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
+import { LED } from "digital/models/ioobjects/outputs/LED";
+import { DigitalComponent } from "digital/models/index";
+import { DigitalObjectSet } from "digital/utils/ComponentUtils";
+import { IOObject } from "core/models/IOObject";
+
+import { ExpressionToCircuit } from "digital/utils/ExpressionParser";
+import { FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels } from "digital/utils/ExpressionParser/Constants";
+import { GenerateInputTree } from "digital/utils/ExpressionParser/GenerateInputTree";
+import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
+import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
+import { CreateNegatedGates } from "digital/utils/simplifications/CreateNegatedGates";
 
 
 function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
@@ -1266,7 +1270,7 @@ describe("Expression Parser", () => {
             objects.push(ConnectGate(b, and));
             objects.push(ConnectGate(and, not));
             objects.push(ConnectGate(not, o));
-            const condensed = CreateNegationGates(objects);
+            const condensed = CreateNegatedGates(objects);
 
             test("Correct number of things", () => {
                 expect(condensed.length).toBe(7);
