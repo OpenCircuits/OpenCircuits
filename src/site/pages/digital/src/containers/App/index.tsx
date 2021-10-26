@@ -18,6 +18,7 @@ import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
 import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
+import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
 
@@ -80,6 +81,7 @@ export const App = ((store: AppStore) => {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+            CleanUpHandler,
             CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
         ]),
         PanTool, RotateTool,

@@ -26,6 +26,7 @@ import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
 import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
+import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
@@ -38,6 +39,7 @@ export function GetDefaultTools() {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+            CleanUpHandler,
         ]),
         tools: [PanTool, RotateTool, TranslateTool,
                 WiringTool, SplitWireTool, SelectionBoxTool]
