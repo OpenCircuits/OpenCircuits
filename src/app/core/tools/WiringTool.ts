@@ -6,7 +6,7 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {Port, Wire} from "core/models";
+import {isNode, Port, Wire} from "core/models";
 import {isPressable, Pressable} from "core/utils/Pressable";
 
 
@@ -47,7 +47,7 @@ export const WiringTool = (() => {
                 let ports = GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
                 for (let j = 0; j < ports.length; ++j) {
                     let dadIndex = objects.findIndex(o => o === ports[j].getParent());
-                    if (dadIndex != -1 && dadIndex < i) output.push(ports[j]);
+                    if (dadIndex != -1 && dadIndex <= i) output.push(ports[j]);
                     else notVisible.push(ports[j]);
                 }
             }
@@ -134,6 +134,15 @@ export const WiringTool = (() => {
          */
         visiblePorts(info: CircuitInfo): boolean {
             return findPorts(info).length > 0;
+        },
+
+        /**
+         * To test for special case Node ports
+         * @param info CircuitInfo to be used by findPorts
+         * @returns whether there are visible ports belonging to a Node
+         */
+        nodePorts(info: CircuitInfo): boolean {
+            return findPorts(info).some(o => isNode(o.getParent()));
         }
     }
 })();

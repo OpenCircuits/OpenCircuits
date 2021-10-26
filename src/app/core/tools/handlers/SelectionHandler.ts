@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
 import {GroupAction} from "core/actions/GroupAction";
 import {GetAllPorts} from "core/utils/ComponentUtils";
-import {Component, Wire} from "core/models";
+import {Component, isNode, Wire} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {WiringTool} from "../WiringTool";
 
@@ -28,13 +28,24 @@ export const SelectionHandler: EventHandler = ({
         const objs = designer.getAll().reverse() as (Component | Wire)[];
 
         // Check if an object was clicked
-        const obj = objs.find(o => o.isWithinSelectBounds(worldMousePos));
+        let obj = objs.find(o => o.isWithinSelectBounds(worldMousePos));
+
+        // Conditional handling
+        let alsoWire = obj instanceof Wire && ports.some(p => p.isWithinSelectBounds(worldMousePos));
+        let visPorts = WiringTool.visiblePorts(info);
+        const obj2 = objs.find(o => o.isWithinSelectBounds(worldMousePos) && isNode(o));
+        // If node ports are visible, special handling
+        if (WiringTool.nodePorts(info) && obj2) {
+            obj = obj2;
+            alsoWire = false;
+            visPorts = false;
+        }
 
         // If we clicked a port and also hit a wire,
         //  we want to prioritize the port, so skip selecting
         // https://github.com/OpenCircuits/OpenCircuits/issues/624
         //  Also check for ports over the object
-        if (!(obj instanceof Wire && ports.some(p => p.isWithinSelectBounds(worldMousePos)) || WiringTool.visiblePorts(info))) {
+        if (!(alsoWire || visPorts)) {
             // Select object
             if (obj) {
                 const deselect = (input.isShiftKeyDown() && selections.has(obj));

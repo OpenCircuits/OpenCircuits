@@ -41,7 +41,7 @@ export class InteractionTool extends DefaultTool {
         
         // https://github.com/OpenCircuits/OpenCircuits/issues/624
         // Check for ports over the object
-        if (!WiringTool.visiblePorts(info)) {
+        if (!WiringTool.visiblePorts(info) || WiringTool.nodePorts(info)) {
             switch (event.type) {
                 case "mousedown":
                     info.currentlyPressedObject = obj;
