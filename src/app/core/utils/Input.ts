@@ -318,7 +318,7 @@ export class Input {
 
     /**
      * Calls each Listener on Event "click", button
-     * @param _ 
+     * @param _ unused position vector
      * @param button represents the mouse button being clicked (left mouse button by default)
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
@@ -451,7 +451,8 @@ export class Input {
         this.onMouseDown(CalculateMidpoint(touches));
     }
     /**
-     * Calls onMouseMove for the midpoint of multiple movements (as when using a touchpad)
+     * Called when a user moves a touch point (as when using a touchpad or mobile device)
+     * Calls onMouseMove for the midpoint of multiple movements
      * @param touches represents the positions of the touches
      */
     protected onTouchMove(touches: Vector[]): void {
