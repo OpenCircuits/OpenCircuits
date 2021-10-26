@@ -68,7 +68,7 @@ function generate(info: DigitalCircuitInfo, expression: string,
     OrganizeMinDepth(circuit, startPos);
     const action = new GroupAction([CreateDeselectAllAction(info.selections)]);
     if (isIC) {
-        const data = new ICData(circuit);
+        const data = ICData.Create(circuit);
         data.setName(expression);
         const ic = new IC(data);
         ic.setName(expression);
