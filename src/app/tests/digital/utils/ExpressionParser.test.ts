@@ -12,7 +12,7 @@ import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {IOObject} from "core/models/IOObject";
 
 import {ExpressionToCircuit, CreateNegationGates, ConnectGate, GenerateInputTree, GenerateTokens} from "digital/utils/ExpressionParser";
-import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels}    from "digital/utils/ExpressionParserConstants";
+import {FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels}    from "digital/utils/ExpressionParser/Constants";
 import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
 
 

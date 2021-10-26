@@ -10,7 +10,7 @@ import {DigitalWire} from "digital/models/DigitalWire";
 import {FormatMap, TokenType, Token,
         OpsArray, GateConstructors,
         InputToken, DefaultPrecedences,
-        InputTree, NewTreeRetValue, FormatLabels} from "./ExpressionParserConstants";
+        InputTree, NewTreeRetValue, FormatLabels} from "./Constants";
 
 /**
  * Checks if the substring of a given input starting at a given index is equal to a given sequence
@@ -457,6 +457,7 @@ export function CreateNegationGates(circuit: IOObject[]): IOObject[] {
     return newCircuit;
 }
 
+//TODO: only this in index.ts
 /**
  * Main driver function for parsing an expression into a circuit
  *
