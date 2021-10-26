@@ -11,6 +11,8 @@ import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFa
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
+import {useHistory} from "shared/utils/hooks/useHistory";
+
 
 import "./index.scss";
 
@@ -26,8 +28,11 @@ type Props = {
     info: CircuitInfo;
     paste: (text: string) => boolean;
 }
+
+
 export const ContextMenu = ({info, paste}: Props) => {
     const {locked, input, history, designer, selections, renderer} = info;
+    const {undoHistory, redoHistory} = useHistory(info);
 
     const {isOpen} = useSharedSelector(
         state => ({ isOpen: state.contextMenu.isOpen })
@@ -123,8 +128,8 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
             <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
             <hr/>
-            <button title="Undo" onClick={() => doFunc(onUndo)}>Undo</button>
-            <button title="Redo" onClick={() => doFunc(onRedo)}>Redo</button>
+            <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
+            <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
         </div>
     );
 }

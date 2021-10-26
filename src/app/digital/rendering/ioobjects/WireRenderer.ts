@@ -30,11 +30,15 @@ export const WireRenderer = (() => {
 
             const selected = selections.has(wire);
 
+            // Changes color of wires: when wire is selected it changes to the color 
+            //  selected blended with constant color SELECTED_FILL_COLOR
+            const selectedColor = ColorToHex(blend(
+                    parseColor(wire.getColor()), 
+                    parseColor(SELECTED_FILL_COLOR), 0.2
+            ));
+                
             // @TODO move to function for getting color based on being selection/on/off
-
-            //Changes color of wires: when wire is selected it changes to the color selected blended with constant color SELECTED_FILL_COLOR
-            const tmp = ColorToHex(blend(parseColor(wire.getColor()), parseColor(SELECTED_FILL_COLOR), 0.2));
-            const color = (wire.getIsOn() ? DEFAULT_ON_COLOR : (selected ? tmp : wire.getColor()));
+            const color = (wire.getIsOn() ? DEFAULT_ON_COLOR : (selected ? selectedColor : wire.getColor()));
             const style = new Style(undefined, color, WIRE_THICKNESS / camera.getZoom());
 
             // get curve and start/end positions

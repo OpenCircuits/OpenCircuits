@@ -26,7 +26,6 @@ export abstract class Wire extends CullableObject {
     private color: string;
 
     protected dirtyShape: boolean;
-    
 
     public constructor(p1: Port, p2: Port) {
         super();
