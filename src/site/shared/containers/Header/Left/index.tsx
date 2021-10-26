@@ -38,10 +38,12 @@ export const HeaderLeft = ({helpers}: Props) => {
                        placeholder="Untitled Circuit*"
                        onChange={(s) => dispatch(SetCircuitName(s.target.value))}
                        onKeyUp={(ev) => {
-                       if (ev.key == "Enter") {
-                           ev.currentTarget.blur();
-                           helpers.SaveCircuitRemote()
-                       }}}
+                           // Make it so that pressing enter saves and loses focus on the name
+                           if (ev.key === "Enter") {
+                               ev.currentTarget.blur();
+                               helpers.SaveCircuitRemote();
+                           }
+                       }}
                        alt="Name of project" />
             </div>
             <div>
