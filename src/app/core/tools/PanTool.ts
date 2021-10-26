@@ -66,7 +66,7 @@ export const PanTool: Tool = (() => {
                     moveVec = moveVec.add(0, 1);
 
                 // Screen gets moved different amounts depending on if the shift key is held
-                const factor = (input.isShiftKeyDown() ? 5 : 75); 
+                const factor = (input.isShiftKeyDown() ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL); 
 
                 camera.translate(moveVec.scale(factor * camera.getZoom()));
             }
