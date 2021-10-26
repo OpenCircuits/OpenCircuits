@@ -23,24 +23,37 @@ export type Listener = (event: Event) => void;
  * Class to handle user input, and trigger appropriate event listeners
  */
 export class Input {
+    /** The canvas the user is performing inputs on */
     private canvas: HTMLCanvasElement;
+    /** A vector representing the previous position of the mouse*/
     private prevMousePos: Vector;
+    /** A vector representing the current position of the mouse*/
     private mousePos: Vector;
 
+    /** True if a mousebutton is held down, false otherwise*/
     private mouseDown: boolean;
+    /** A vector representing the position the mouse was when the mousebutton first became pressed*/
     private mouseDownPos: Vector;
+    /** Represents the mousebutton being pressed (left, middle, right, etc.)*/
     private mouseDownButton: number;
 
+    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click")*/
     private isDragging: boolean;
+    /** Represents the time at which the mouse button became held down*/
     private startTapTime: number;
 
+    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device)*/
     private touchCount: number;
 
+    /** */
     private listeners: Listener[];
+    /** */
     private keysDown: Map<number, boolean>;
 
+    /** */
     private dragTime: number;
 
+    /** */
     private blocked: boolean;
 
     /**
