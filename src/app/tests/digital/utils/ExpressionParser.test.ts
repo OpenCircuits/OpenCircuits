@@ -20,23 +20,11 @@ import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
 
 
 function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
-    test("Correctly sized inputs/expected", () => {
-        if (2**inputs.length !== expected.length)
-            expect(true).toBe(false);
-    });
+    if (2**inputs.length !== expected.length)
+        throw new Error("The number of expected states does not match the expected amount");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
-
-    for (let num = 0; num < 2**inputs.length - 1; num++) {
-        for (let index = 0; index < inputs.length; index++) {
-            const input = inputs[index];
-            if(num & (2**index))
-                input[1].activate(true);
-            else
-                input[1].activate(false);
-        }
-    }
 
     // Decrements because there can be weird propagation issues when trying to read initial state
     // For more, see issues #468 and #613
@@ -45,6 +33,8 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
         for (let index = 0; index < inputs.length; index++)
             if(num & (2**index))
                 testTitle += " " + inputs[index][0];
+        if (testTitle === "Inputs on:")
+            testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
         test(testTitle, () => {
@@ -55,44 +45,21 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
     }
 }
 
-function testOneInput(expression: string, expected: boolean[]) {
-    const a = new Switch(), o = new LED();
-    const inputs: [string, Switch][] = [["a", a]];
+function runTests(numInputs: number, expression: string, expected: boolean[], ops?: Map<FormatLabels, string>) {
+    describe("Parse: '" + expression + "'", () => {
+        if (numInputs > 26)
+            throw new Error("Maximum supported number of inputs is 26, you tried to use " + numInputs);
 
-    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
+        const o = new LED();
+        const inputs: [string, Switch][] = [];
+        const charCodeStart = "a".charCodeAt(0);
+        for (let i = 0; i < numInputs; i++)
+            inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
 
-    testInputs(inputs, objectSet, o, expected);
+        const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
-}
-
-function testTwoInputs(expression: string, expected: boolean[]) {
-    const a = new Switch(), b = new Switch(), o = new LED();
-    const inputs: [string, Switch][] = [["a", a], ["b", b]];
-
-    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
-
-    testInputs(inputs, objectSet, o, expected);
-}
-
-function testThreeInputs(expression: string, expected: boolean[]) {
-    const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-    const inputs: [string, Switch][] = [["a", a], ["b", b], ["c", c]];
-
-    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
-
-    testInputs(inputs, objectSet, o, expected);
-}
-
-// Probably a better way to generalize this, just using separate functions for now
-function runTests(numInputs: number, expression: string, expected: boolean[]) {
-    if (numInputs === 1)
-        testOneInput(expression, expected);
-    else if (numInputs === 2)
-        testTwoInputs(expression, expected);
-    else if (numInputs === 3)
-        testThreeInputs(expression, expected);
-    else
-        expect(true).toBe(false);
+        testInputs(inputs, objectSet, o, expected);
+    });
 }
  
 describe("Expression Parser", () => {
@@ -511,25 +478,13 @@ describe("Expression Parser", () => {
     });
 
     describe("1 Input", () => {
-        describe("Parse: 'a'", () => {
-            const expected = [false, true];
-            runTests(1, "a", expected);
-        });
+        runTests(1, "a", [false, true]);
 
-        describe("Parse: ' a '", () => {
-            const expected = [false, true];
-            runTests(1, " a ", expected);
-        });
+        runTests(1, " a ", [false, true]);
 
-        describe("Parse: '(a)'", () => {
-            const expected = [false, true];
-            runTests(1, "(a)", expected);
-        });
+        runTests(1, "(a)", [false, true]);
 
-        describe("Parse: ' (  a ) '", () => {
-            const expected = [false, true];
-            runTests(1, " (  a ) ", expected);
-        });
+        runTests(1, " (  a ) ", [false, true]);
 
         describe("Parse: 'a' (ConstantHigh)", () => {
             const designer = new DigitalCircuitDesigner(0);
@@ -561,581 +516,118 @@ describe("Expression Parser", () => {
             });
         });
 
-        describe("Parse: '!a'", () => {
-            const expected = [true, false];
-            runTests(1, "!a", expected);
-        });
+        runTests(1, "!a", [true, false]);
 
-        describe("Parse: '!!a'", () => {
-            const expected = [false, true];
-            runTests(1, "!!a", expected);
-        });
+        runTests(1, "!!a", [false, true]);
 
-        describe("Parse: '!!!a'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a]
-            ]);
+        runTests(1, "!(!a)", [false, true]);
 
-            const objectSet = ExpressionToCircuit(inputMap, "!!!a", o);
-            designer.addGroup(objectSet);
+        runTests(1, "a&a", [false, true]);
 
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input on", () => {
-                a.activate(true);
+        runTests(1, "a|a", [false, true]);
 
-                //*****************************
-                // expect(o.isOn()).toBe(false);
-            });
-            test("Input off", () => {
-                a.activate(false);
+        runTests(1, "a^a", [false, false]);
 
-                expect(o.isOn()).toBe(true);
-            });
-        });
-
-        describe("Parse: '!(!a)'", () => {
-            const expected = [false, true];
-            runTests(1, "!(!a)", expected);
-        });
-
-        describe("Parse: 'a&a'", () => {
-            const expected = [false, true];
-            runTests(1, "a&a", expected);
-        });
-
-        describe("Parse: 'a|a'", () => {
-            const expected = [false, true];
-            runTests(1, "a|a", expected);
-        });
-
-        describe("Parse: 'a^a'", () => {
-            const expected = [false, false];
-            runTests(1, "a^a", expected);
-        });
-
-        describe("Parse: 'a^!a'", () => {
-            const expected = [true, true];
-            runTests(1, "a^!a", expected);
-        });
+        runTests(1, "a^!a", [true, true]);
 
         describe("Parse: 'longName'", () => {
-            const designer = new DigitalCircuitDesigner(0);
             const a = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["longName", a]
-            ]);
+            const inputs: [string, Switch][] = [["longName", a]];
+            const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
 
-            const objectSet = ExpressionToCircuit(inputMap, "longName", o);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input off", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
+            testInputs(inputs, objectSet, o, [false, true]);
         });
     });
 
     //0, a, b, (a, b)
     describe("2 Inputs", () => {
-        describe("Parse: 'a&b'", () => {
-            const expected = [false, false, false, true];
-            runTests(2, "a&b", expected);
-        });
+        runTests(2, "a&b", [false, false, false, true]);
 
-        describe("Parse: 'a & b'", () => {
-            const expected = [false, false, false, true];
-            runTests(2, "a & b", expected);
-        });
+        runTests(2, "a & b", [false, false, false, true]);
 
-        describe("Parse: 'a^b'", () => {
-            const expected = [false, true, true, false];
-            runTests(2, "a^b", expected);
-        });
+        runTests(2, "a^b", [false, true, true, false]);
 
-        describe("Parse: 'a|b'", () => {
-            const expected = [false, true, true, true];
-            runTests(2, "a|b", expected);
-        });
+        runTests(2, "a|b", [false, true, true, true]);
 
-        describe("Parse: '(a)|b'", () => {
-            const expected = [false, true, true, true];
-            runTests(2, "(a)|b", expected);
-        });
+        runTests(2, "(a)|b", [false, true, true, true]);
 
-        describe("Parse: '!(a&b)'", () => {
-            const expected = [true, true, true, false];
-            runTests(2, "!(a&b)", expected);
-        });
+        runTests(2, "!(a&b)", [true, true, true, false]);
 
-        describe("Parse: '!(!a|b)'", () => {
-            const expected = [false, true, false, false];
-            runTests(2, "!(!a|b)", expected);
-        });
+        runTests(2, "!(!a|b)", [false, true, false, false]);
 
-        describe("Parse: '!a&b'", () => {
-            const expected = [false, false, true, false];
-            runTests(2, "!a&b", expected);
-        });
+        runTests(2, "!a&b", [false, false, true, false]);
 
-        describe("Parse: 'a&!b'", () => {
-            const expected = [false, true, false, false];
-            runTests(2, "a&!b", expected);
-        });
+        runTests(2, "a&!b", [false, true, false, false]);
 
-        describe("Parse: '!a&!b'", () => {
-            const expected = [true, false, false, false];
-            runTests(2, "!a&!b", expected);
-        });
+        runTests(2, "!a&!b", [true, false, false, false]);
 
-        describe("Parse: '!(a^b)'", () => {
-            const expected = [true, false, false, true];
-            runTests(2, "!(a^b)", expected);
-        });
+        runTests(2, "!(a^b)", [true, false, false, true]);
 
-        describe("Parse: ' ! ( a ^ b ) '", () => {
-            const expected = [true, false, false, true];
-            runTests(2, " ! ( a ^ b ) ", expected);
-        });
+        runTests(2, " ! ( a ^ b ) ", [true, false, false, true]);
 
-        describe("Parse: '!(a|b)'", () => {
-            const expected = [true, false, false, false];
-            runTests(2, "!(a|b)", expected);
-        });
+        runTests(2, "!(a|b)", [true, false, false, false]);
     });
 
     //0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
     describe("3 Inputs", () => {
-        describe("Parse: 'a&b&c'", () => {
-            const expected = [false, false, false, false, false, false, false, true];
-            runTests(3, "a&b&c", expected);
-        });
+        runTests(3, "a&b&c", [false, false, false, false, false, false, false, true]);
 
-        describe("Parse: 'a&b|c'", () => {
-            const expected = [false, false, false, true, true, true, true, true];
-            runTests(3, "a&b|c", expected);
-        });
+        runTests(3, "a&b|c", [false, false, false, true, true, true, true, true]);
 
-        describe("Parse: 'c|a&b'", () => {
-            const expected = [false, false, false, true, true, true, true, true];
-            runTests(3, "c|a&b", expected);
-        });
+        runTests(3, "c|a&b", [false, false, false, true, true, true, true, true]);
 
-        describe("Parse: 'a&(b|c)'", () => {
-            const expected = [false, false, false, true, false, true, false, true];
-            runTests(3, "a&(b|c)", expected);
-        });
+        runTests(3, "a&(b|c)", [false, false, false, true, false, true, false, true]);
 
-        describe("Parse: '(a&((b)|c))'", () => {
-            const expected = [false, false, false, true, false, true, false, true];
-            runTests(3, "(a&((b)|c))", expected);
-        });
+        runTests(3, "(a&((b)|c))", [false, false, false, true, false, true, false, true]);
     });
 
     describe("Alternate Formats", () => {
-        describe("Parse: 'a&&b&&c'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b],
-                ["c", c]
-            ]);
+        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], FormatMap.get("||"));
+        
+        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], FormatMap.get("+"));
+        
+        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], FormatMap.get("||"));
+        
+        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], FormatMap.get("+"));
 
-            const ops = FormatMap.get("||");
-
-            const objectSet = ExpressionToCircuit(inputMap, "a&&b&&c", o, ops);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,c on", () => {
-                b.activate(false);
-                c.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b,c on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b,c on", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input c on", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input b on", () => {
-                b.activate(true);
-                c.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-        });
-
-        describe("Parse: 'a*b*c'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b],
-                ["c", c]
-            ]);
-
-            const ops = FormatMap.get("+");
-
-            const objectSet = ExpressionToCircuit(inputMap, "a*b*c", o, ops);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,c on", () => {
-                b.activate(false);
-                c.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b,c on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b,c on", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input c on", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input b on", () => {
-                b.activate(true);
-                c.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-        });
-
-        describe("Parse: 'a||b||c'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b],
-                ["c", c]
-            ]);
-
-            const ops = FormatMap.get("||");
-
-            const objectSet = ExpressionToCircuit(inputMap, "a||b||c", o, ops);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,c on", () => {
-                b.activate(false);
-                c.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,b,c on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b,c on", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input c on", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b on", () => {
-                b.activate(true);
-                c.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-        });
-
-        describe("Parse: 'a+b+c'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b],
-                ["c", c]
-            ]);
-
-            const ops = FormatMap.get("+");
-
-            const objectSet = ExpressionToCircuit(inputMap, "a+b+c", o, ops);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,c on", () => {
-                b.activate(false);
-                c.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,b,c on", () => {
-                b.activate(true);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b,c on", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input c on", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b on", () => {
-                b.activate(true);
-                c.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-
-                expect(o.isOn()).toBe(false);
-            });
-        });
-
-        describe("Parse: '_a'", () => {
-            const designer = new DigitalCircuitDesigner(0);
-            const a = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-            ]);
-
-            const ops = FormatMap.get("+_");
-
-            const objectSet = ExpressionToCircuit(inputMap, "_a", o, ops);
-            designer.addGroup(objectSet);
-
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-
-                expect(o.isOn()).toBe(false);
-            });
-            test("Inputs off", () => {
-                a.activate(false);
-
-                expect(o.isOn()).toBe(true);
-            });
-        });
+        runTests(1, "_a", [true, false], FormatMap.get("+_"));
     });
 
     describe("Simplification", () => {
         describe("Parse and Condense: '!(a|b)'", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b]
-            ]);
-            const designer = new DigitalCircuitDesigner(0);
-        
-            const objectSet = ExpressionToCircuit(inputMap, "!(a|b)", o);
+            const inputs: [string, Switch][] = [["a", a], ["b", b]];
+            const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b)", o);
+
             test("Condense to NOR", () => {
                 expect(objectSet.getComponents().length).toBe(4);
             });
-            designer.addGroup(objectSet);
-        
-        
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input b on", () => {
-                a.activate(false);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-            
-                expect(o.isOn()).toBe(true);
-            });
+
+            testInputs(inputs, objectSet, o, [true, false, false, false]);
         });
         
         describe("Parse and Condense: '!(a^b)'", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b]
-            ]);
-            const designer = new DigitalCircuitDesigner(0);
-        
-            const objectSet = ExpressionToCircuit(inputMap, "!(a^b)", o);
+            const inputs: [string, Switch][] = [["a", a], ["b", b]];
+            const objectSet = ExpressionToCircuit(new Map(inputs), "!(a^b)", o);
+
             test("Condense to NOR", () => {
                 expect(objectSet.getComponents().length).toBe(4);
             });
-            designer.addGroup(objectSet);
         
-        
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-            
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input b on", () => {
-                a.activate(false);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-            
-                expect(o.isOn()).toBe(true);
-            });
+            testInputs(inputs, objectSet, o, [true, false, false, true]);
         });
         
         describe("Parse and Condense: '!(a&b)'", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
-            const inputMap = new Map([
-                ["a", a],
-                ["b", b]
-            ]);
-            const designer = new DigitalCircuitDesigner(0);
-        
-            const objectSet = ExpressionToCircuit(inputMap, "!(a&b)", o);
+            const inputs: [string, Switch][] = [["a", a], ["b", b]];
+            const objectSet = ExpressionToCircuit(new Map(inputs), "!(a&b)", o);
+
             test("Condense to NOR", () => {
                 expect(objectSet.getComponents().length).toBe(4);
             });
-            designer.addGroup(objectSet);
-        
-        
-            test("Initial State", () => {
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a on", () => {
-                a.activate(true);
-            
-                expect(o.isOn()).toBe(true);
-            });
-            test("Input a,b on", () => {
-                b.activate(true);
-            
-                expect(o.isOn()).toBe(false);
-            });
-            test("Input b on", () => {
-                a.activate(false);
-            
-                expect(o.isOn()).toBe(true);
-            });
-            test("Inputs off", () => {
-                b.activate(false);
-            
-                expect(o.isOn()).toBe(true);
-            });
+
+            testInputs(inputs, objectSet, o, [true, true, true, false]);
         });
     });
 
@@ -1159,33 +651,7 @@ describe("Expression Parser", () => {
                 expect(objects.length).toBe(9);
             });
 
-            const designer = new DigitalCircuitDesigner(0);
-            designer.addGroup(new DigitalObjectSet(objects));
-            describe("Correct Circuit", () => {
-                test("Initial State", () => {
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Input a on", () => {
-                    a.activate(true);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Input a,b on", () => {
-                    b.activate(true);
-            
-                    expect(o.isOn()).toBe(false);
-                });
-                test("Input b on", () => {
-                    a.activate(false);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-                test("Inputs off", () => {
-                    b.activate(false);
-            
-                    expect(o.isOn()).toBe(true);
-                });
-            });
+            testInputs([["a", a], ["b", b]], new DigitalObjectSet(objects), o, [true, true, true, false]);
         });
     });
 
