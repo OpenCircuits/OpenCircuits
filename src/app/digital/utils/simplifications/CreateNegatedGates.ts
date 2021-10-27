@@ -14,11 +14,11 @@ import { Create } from "serialeazy";
  *              XNORGate when supplied with a XORGate, null otherwise
  */
  function getNottedGate(oldGate: Gate): Gate | null {
-    if(oldGate instanceof ANDGate)
+    if (oldGate instanceof ANDGate)
         return Create<Gate>("NANDGate");
-    else if(oldGate instanceof ORGate)
+    else if (oldGate instanceof ORGate)
         return Create<Gate>("NORGate");
-    else if(oldGate instanceof XORGate)
+    else if (oldGate instanceof XORGate)
         return Create<Gate>("XNORGate");
     else
         return null;
@@ -85,9 +85,9 @@ function replaceGate(oldGate: ANDGate | ORGate | XORGate,  circuit: IOObject[]):
 export function CreateNegatedGates(circuit: IOObject[]): IOObject[] {
     let newCircuit = [...circuit];
     for(const object of circuit) {
-        if(!(object instanceof ANDGate || object instanceof ORGate || object instanceof XORGate))
+        if (!(object instanceof ANDGate || object instanceof ORGate || object instanceof XORGate))
             continue;
-        if(!object.isNot() && object.getOutputPort(0).getWires()[0].getOutputComponent() instanceof NOTGate)
+        if (!object.isNot() && object.getOutputPort(0).getWires()[0].getOutputComponent() instanceof NOTGate)
             newCircuit = replaceGate(object, newCircuit);
     }
     return newCircuit;

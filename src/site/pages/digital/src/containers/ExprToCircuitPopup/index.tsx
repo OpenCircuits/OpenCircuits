@@ -48,7 +48,7 @@ const Inputs = new Map<string, () => DigitalComponent>([
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string,
                   ops: Map<FormatLabels, string>=null) {
-    if(ops === null)
+    if (ops === null)
         ops = FormatMap.get(format);
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
@@ -181,7 +181,7 @@ export const ExprToCircuitPopup = (() => {
 
                     <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                         try {
-                            if(format === "custom") {
+                            if (format === "custom") {
                                 const ops = new Map<FormatLabels, string>([
                                     ["|", customOr],
                                     ["^", customXor],

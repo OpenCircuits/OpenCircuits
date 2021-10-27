@@ -13,7 +13,7 @@ import { Token } from "./Constants"
  export function ConnectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
     const outPort = source.getOutputPort(0);
     let inPort = destination.getInputPort(0);
-    if(inPort.getWires().length > 0)
+    if (inPort.getWires().length > 0)
         inPort = destination.getInputPort(1);
     const wire = new DigitalWire(outPort, inPort);
     inPort.connect(wire);
@@ -49,9 +49,9 @@ export function IsOperator(token: Token) {
  */
 export function ValidateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
     for(const [name, component] of inputs) {
-        if(component.getInputPortCount().getValue() !== 0 || component.getOutputPortCount().getValue() === 0)
+        if (component.getInputPortCount().getValue() !== 0 || component.getOutputPortCount().getValue() === 0)
             throw new Error("Not An Input: \"" + name + "\"");
     }
-    if(output.getInputPortCount().getValue() === 0 || output.getOutputPortCount().getValue() !== 0)
+    if (output.getInputPortCount().getValue() === 0 || output.getOutputPortCount().getValue() !== 0)
         throw new Error("Supplied Output Is Not An Output");
 }

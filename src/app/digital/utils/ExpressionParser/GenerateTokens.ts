@@ -14,10 +14,10 @@ import { FormatLabels, InputToken, OpsArray, Token } from "./Constants";
     let endIndex = index + 1;
     while(endIndex < expression.length) {
         for(const op of OpsArray) {
-            if(SubEquals(expression, endIndex, ops.get(op)))
+            if (SubEquals(expression, endIndex, ops.get(op)))
                 return {type: "input", name: expression.substring(index, endIndex)};
         }
-        if(SubEquals(expression, endIndex, ops.get("separator")))
+        if (SubEquals(expression, endIndex, ops.get("separator")))
             return {type: "input", name: expression.substring(index, endIndex)};
         endIndex++;
     }
@@ -35,10 +35,10 @@ import { FormatLabels, InputToken, OpsArray, Token } from "./Constants";
  */
 function getToken(expression: string, index: number, ops: Map<FormatLabels, string>): Token | null {
     for(const op of OpsArray) {
-        if(SubEquals(expression, index, ops.get(op)))
+        if (SubEquals(expression, index, ops.get(op)))
             return {type: op};
     }
-    if(SubEquals(expression, index, ops.get("separator")))
+    if (SubEquals(expression, index, ops.get("separator")))
         return null;
     return getInput(expression, index, ops);
 }
@@ -54,14 +54,14 @@ function getToken(expression: string, index: number, ops: Map<FormatLabels, stri
  */
 export function GenerateTokens(expression: string, ops: Map<FormatLabels, string>): Token[] {
     for(const op of OpsArray) {
-        if(!ops.has(op))
+        if (!ops.has(op))
             throw new Error("No " + op + " in supplied operation symbols");
-        if(ops.get(op) === "")
+        if (ops.get(op) === "")
             throw new Error("Length zero " + op + " in supplied operation symbols");
     }
-    if(!ops.has("separator"))
+    if (!ops.has("separator"))
         throw new Error("No separator in supplied operation symbols");
-    if(ops.get("separator") === "")
+    if (ops.get("separator") === "")
         throw new Error("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
@@ -74,9 +74,9 @@ export function GenerateTokens(expression: string, ops: Map<FormatLabels, string
         extraSkip = 0;
 
         token = getToken(expression, index, ops);
-        if(token === null)
+        if (token === null)
             index += ops.get("separator").length;
-        else if(token.type === "input") {
+        else if (token.type === "input") {
             tokenList.push(token);
             index += token.name.length;
         }

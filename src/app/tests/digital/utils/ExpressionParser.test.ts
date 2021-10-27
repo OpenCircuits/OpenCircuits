@@ -56,7 +56,7 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
     for (let num = 2**inputs.length - 1; num >= 0; num--) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
-            if(num & (2**index))
+            if (num & (2**index))
                 testTitle += " " + inputs[index][0];
         if (testTitle === "Inputs on:")
             testTitle += " [none]";

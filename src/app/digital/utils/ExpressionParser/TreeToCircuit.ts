@@ -19,8 +19,8 @@ import { ConnectGate } from "./Utils";
  * @see TreeToCircuit
  */
  function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
-    if(node.kind === "leaf") { //Rearranges array so thge relevant input is at the end
-        if(!inputs.has(node.ident))
+    if (node.kind === "leaf") { //Rearranges array so thge relevant input is at the end
+        if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");
         const index = circuit.indexOf(inputs.get(node.ident));
         circuit.splice(index, 1);
@@ -30,12 +30,12 @@ import { ConnectGate } from "./Utils";
 
     const ret = circuit;
     const newGate = Create<DigitalComponent>(TypeToGate.get(node.type));
-    if(node.kind === "unop") {
+    if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = ConnectGate(prevNode, newGate);
         ret.push(wire);
     }
-    else if(node.kind === "binop") {
+    else if (node.kind === "binop") {
         const prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wireL = ConnectGate(prevNodeL, newGate);
         ret.push(wireL);
@@ -57,7 +57,7 @@ import { ConnectGate } from "./Utils";
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
  */
 export function TreeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
-    if(tree === null)
+    if (tree === null)
         return [];
 
     let ret: IOObject[] = Array.from(inputs.values());
