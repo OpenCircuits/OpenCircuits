@@ -19,149 +19,82 @@ import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
 import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
 
 
-function testOneInput(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
+function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+    test("Correctly sized inputs/expected", () => {
+        if (2**inputs.length !== expected.length)
+            expect(true).toBe(false);
+    });
+
+    const designer = new DigitalCircuitDesigner(0);
+    designer.addGroup(circuit);
+
+    for (let num = 0; num < 2**inputs.length - 1; num++) {
+        for (let index = 0; index < inputs.length; index++) {
+            const input = inputs[index];
+            if(num & (2**index))
+                input[1].activate(true);
+            else
+                input[1].activate(false);
+        }
+    }
+
+    // Decrements because there can be weird propagation issues when trying to read initial state
+    // For more, see issues #468 and #613
+    for (let num = 2**inputs.length - 1; num >= 0; num--) {
+        let testTitle = "Inputs on:";
+        for (let index = 0; index < inputs.length; index++)
+            if(num & (2**index))
+                testTitle += " " + inputs[index][0];
+
+        // The loop is repeated because the activation needs to happen within the test
+        test(testTitle, () => {
+            for (let index = 0; index < inputs.length; index++)
+                inputs[index][1].activate(!!(num & (2**index)));
+            expect(output.isOn()).toBe(expected[num]);
+        });
+    }
+}
+
+function testOneInput(expression: string, expected: boolean[]) {
     const a = new Switch(), o = new LED();
-    if (inputMap === null) {
-        inputMap = new Map([
-            ["a", a]
-        ]);
-    }
-    const designer = new DigitalCircuitDesigner(0);
+    const inputs: [string, Switch][] = [["a", a]];
 
-    const objectSet = ExpressionToCircuit(inputMap, expression, o);
-    designer.addGroup(objectSet);
+    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
 
-    test("Initial State", () => {
-        if (!ignoreFirst)
-            expect(o.isOn()).toBe(expected[0]);
-    });
-    test("Input on", () => {
-        a.activate(true);
-
-        expect(o.isOn()).toBe(expected[1]);
-    });
-    test("Input off", () => {
-        a.activate(false);
-
-        expect(o.isOn()).toBe(expected[2]);
-    });
+    testInputs(inputs, objectSet, o, expected);
 
 }
 
-function testTwoInputs(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
+function testTwoInputs(expression: string, expected: boolean[]) {
     const a = new Switch(), b = new Switch(), o = new LED();
-    if (inputMap === null) {
-        inputMap = new Map([
-            ["a", a],
-            ["b", b]
-        ]);
-    }
-    const designer = new DigitalCircuitDesigner(0);
+    const inputs: [string, Switch][] = [["a", a], ["b", b]];
 
-    const objectSet = ExpressionToCircuit(inputMap, expression, o);
-    designer.addGroup(objectSet);
+    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
 
-
-    test("Initial State", () => {
-        if (!ignoreFirst)
-            expect(o.isOn()).toBe(expected[0]);
-    });
-    test("Input a on", () => {
-        a.activate(true);
-
-        expect(o.isOn()).toBe(expected[1]);
-    });
-    test("Input a,b on", () => {
-        b.activate(true);
-
-        expect(o.isOn()).toBe(expected[2]);
-    });
-    test("Input b on", () => {
-        a.activate(false);
-
-        expect(o.isOn()).toBe(expected[3]);
-    });
-    test("Inputs off", () => {
-        b.activate(false);
-
-        expect(o.isOn()).toBe(expected[4]);
-    });
+    testInputs(inputs, objectSet, o, expected);
 }
 
-function testThreeInputs(expression: string, expected: boolean[], ignoreFirst: boolean, inputMap: Map<string, DigitalComponent>) {
+function testThreeInputs(expression: string, expected: boolean[]) {
     const a = new Switch(), b = new Switch(), c = new Switch(), o = new LED();
-    if (inputMap === null) {
-        inputMap = new Map([
-            ["a", a],
-            ["b", b],
-            ["c", c]
-        ]);
-    }
-    const designer = new DigitalCircuitDesigner(0);
+    const inputs: [string, Switch][] = [["a", a], ["b", b], ["c", c]];
 
-    const objectSet = ExpressionToCircuit(inputMap, expression, o);
-    designer.addGroup(objectSet);
+    const objectSet = ExpressionToCircuit(new Map(inputs), expression, o);
 
-    test("Initial State", () => {
-        if (!ignoreFirst)
-            expect(o.isOn()).toBe(expected[0]);
-    });
-    test("Input a on", () => {
-        a.activate(true);
-
-        expect(o.isOn()).toBe(expected[1]);
-    });
-    test("Input a,b on", () => {
-        b.activate(true);
-
-        expect(o.isOn()).toBe(expected[2]);
-    });
-    test("Input a,c on", () => {
-        b.activate(false);
-        c.activate(true);
-
-        expect(o.isOn()).toBe(expected[3]);
-    });
-    test("Input a,b,c on", () => {
-        b.activate(true);
-
-        expect(o.isOn()).toBe(expected[4]);
-    });
-    test("Input b,c on", () => {
-        a.activate(false);
-
-        expect(o.isOn()).toBe(expected[5]);
-    });
-    test("Input c on", () => {
-        b.activate(false);
-
-        expect(o.isOn()).toBe(expected[6]);
-    });
-    test("Input b on", () => {
-        b.activate(true);
-        c.activate(false);
-
-        expect(o.isOn()).toBe(expected[7]);
-    });
-    test("Inputs off", () => {
-        b.activate(false);
-
-        expect(o.isOn()).toBe(expected[8]);
-    });
+    testInputs(inputs, objectSet, o, expected);
 }
 
 // Probably a better way to generalize this, just using separate functions for now
-function runTests(numInputs: number, expression: string, expected: boolean[], ignoreFirst: boolean = false, inputMap: Map<string, DigitalComponent> = null) {
+function runTests(numInputs: number, expression: string, expected: boolean[]) {
     if (numInputs === 1)
-        testOneInput(expression, expected, ignoreFirst, inputMap);
+        testOneInput(expression, expected);
     else if (numInputs === 2)
-        testTwoInputs(expression, expected, ignoreFirst, inputMap);
+        testTwoInputs(expression, expected);
     else if (numInputs === 3)
-        testThreeInputs(expression, expected, ignoreFirst, inputMap);
+        testThreeInputs(expression, expected);
     else
         expect(true).toBe(false);
 }
-
+ 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
 
@@ -579,22 +512,22 @@ describe("Expression Parser", () => {
 
     describe("1 Input", () => {
         describe("Parse: 'a'", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, "a", expected);
         });
 
         describe("Parse: ' a '", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, " a ", expected);
         });
 
         describe("Parse: '(a)'", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, "(a)", expected);
         });
 
         describe("Parse: ' (  a ) '", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, " (  a ) ", expected);
         });
 
@@ -629,13 +562,13 @@ describe("Expression Parser", () => {
         });
 
         describe("Parse: '!a'", () => {
-            const expected = [true, false, true];
+            const expected = [true, false];
             runTests(1, "!a", expected);
         });
 
         describe("Parse: '!!a'", () => {
-            const expected = [false, true, false];
-            runTests(1, "!!a", expected, true);
+            const expected = [false, true];
+            runTests(1, "!!a", expected);
         });
 
         describe("Parse: '!!!a'", () => {
@@ -665,28 +598,28 @@ describe("Expression Parser", () => {
         });
 
         describe("Parse: '!(!a)'", () => {
-            const expected = [false, true, false];
-            runTests(1, "!(!a)", expected, true);
+            const expected = [false, true];
+            runTests(1, "!(!a)", expected);
         });
 
         describe("Parse: 'a&a'", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, "a&a", expected);
         });
 
         describe("Parse: 'a|a'", () => {
-            const expected = [false, true, false];
+            const expected = [false, true];
             runTests(1, "a|a", expected);
         });
 
         describe("Parse: 'a^a'", () => {
-            const expected = [false, false, false];
+            const expected = [false, false];
             runTests(1, "a^a", expected);
         });
 
         describe("Parse: 'a^!a'", () => {
-            const expected = [true, true, true];
-            runTests(1, "a^!a", expected, true);
+            const expected = [true, true];
+            runTests(1, "a^!a", expected);
         });
 
         describe("Parse: 'longName'", () => {
@@ -715,96 +648,98 @@ describe("Expression Parser", () => {
         });
     });
 
+    //0, a, b, (a, b)
     describe("2 Inputs", () => {
         describe("Parse: 'a&b'", () => {
-            const expected = [false, false, true, false, false];
+            const expected = [false, false, false, true];
             runTests(2, "a&b", expected);
         });
 
         describe("Parse: 'a & b'", () => {
-            const expected = [false, false, true, false, false];
+            const expected = [false, false, false, true];
             runTests(2, "a & b", expected);
         });
 
         describe("Parse: 'a^b'", () => {
-            const expected = [false, true, false, true, false];
+            const expected = [false, true, true, false];
             runTests(2, "a^b", expected);
         });
 
         describe("Parse: 'a|b'", () => {
-            const expected = [false, true, true, true, false];
+            const expected = [false, true, true, true];
             runTests(2, "a|b", expected);
         });
 
         describe("Parse: '(a)|b'", () => {
-            const expected = [false, true, true, true, false];
+            const expected = [false, true, true, true];
             runTests(2, "(a)|b", expected);
         });
 
         describe("Parse: '!(a&b)'", () => {
-            const expected = [true, true, false, true, true];
+            const expected = [true, true, true, false];
             runTests(2, "!(a&b)", expected);
         });
 
         describe("Parse: '!(!a|b)'", () => {
-            const expected = [false, true, false, false, false];
-            runTests(2, "!(!a|b)", expected, true);
+            const expected = [false, true, false, false];
+            runTests(2, "!(!a|b)", expected);
         });
 
         describe("Parse: '!a&b'", () => {
-            const expected = [false, false, false, true, false];
+            const expected = [false, false, true, false];
             runTests(2, "!a&b", expected);
         });
 
         describe("Parse: 'a&!b'", () => {
-            const expected = [false, true, false, false, false];
+            const expected = [false, true, false, false];
             runTests(2, "a&!b", expected);
         });
 
         describe("Parse: '!a&!b'", () => {
-            const expected = [true, false, false, false, true];
-            runTests(2, "!a&!b", expected, true);
+            const expected = [true, false, false, false];
+            runTests(2, "!a&!b", expected);
         });
 
         describe("Parse: '!(a^b)'", () => {
-            const expected = [true, false, true, false, true];
+            const expected = [true, false, false, true];
             runTests(2, "!(a^b)", expected);
         });
 
         describe("Parse: ' ! ( a ^ b ) '", () => {
-            const expected = [true, false, true, false, true];
+            const expected = [true, false, false, true];
             runTests(2, " ! ( a ^ b ) ", expected);
         });
 
         describe("Parse: '!(a|b)'", () => {
-            const expected = [true, false, false, false, true];
+            const expected = [true, false, false, false];
             runTests(2, "!(a|b)", expected);
         });
     });
 
+    //0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
     describe("3 Inputs", () => {
         describe("Parse: 'a&b&c'", () => {
-            const expected = [false, false, false, false, true, false, false, false, false];
+            const expected = [false, false, false, false, false, false, false, true];
             runTests(3, "a&b&c", expected);
         });
 
         describe("Parse: 'a&b|c'", () => {
-            const expected = [false, false, true, true, true, true, true, false, false];
+            const expected = [false, false, false, true, true, true, true, true];
             runTests(3, "a&b|c", expected);
         });
 
         describe("Parse: 'c|a&b'", () => {
-            const expected = [false, false, true, true, true, true, true, false, false];
+            const expected = [false, false, false, true, true, true, true, true];
             runTests(3, "c|a&b", expected);
         });
 
         describe("Parse: 'a&(b|c)'", () => {
-            const expected = [false, false, true, true, true, false, false, false, false];
+            const expected = [false, false, false, true, false, true, false, true];
             runTests(3, "a&(b|c)", expected);
         });
 
         describe("Parse: '(a&((b)|c))'", () => {
-            const expected = [false, false, true, true, true, false, false, false, false];
+            const expected = [false, false, false, true, false, true, false, true];
             runTests(3, "(a&((b)|c))", expected);
         });
     });
