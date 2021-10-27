@@ -19,6 +19,30 @@ import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
 import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
 
 
+/**
+ * This function is used to create and run a separate test for every combination of switch states.
+ * 
+ * For each test, switches are set to on or off based on a bitwise and operation of the index of that test
+ * in expected and 2 to the power of the index of the Switch in inputs. If the result is 0, then the switch
+ * will be off. If it is anything else, it will be on.
+ * For example, for a circuit with three Switches a, b, and c in inputs (in that order), expected[6] would
+ * have Switches enabled according to the following
+ * (2**0 & 6) => 0 so Switch a will be off
+ * (2**1 & 6) => 2 so Switch b will be on
+ * (2**2 & 6) => 4 so Switch c will be on
+ * 
+ * Currently, jest runs the test in the opposite order of how they are given in the expected array.
+ * This is done to avoid an issue where circuits initial state is incorrect. This is likely due to
+ * the same underlying issue as issues #468 and #613 and if those are fixed, this function should
+ * also be modified.
+ * 
+ * @param inputs an array of the names of the switches along with their corresponding Switch,
+ *  those same Switch objects must be present in circuit
+ * @param circuit the components and wires that make up the circuit being tested
+ * @param output the component whose state will be evaluated in the test, must be present in circuit
+ * @param expected the expected states of the output LED for all the different switch combinations
+ * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ */
 function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
         throw new Error("The number of expected states does not match the expected amount");
@@ -28,6 +52,7 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
 
     // Decrements because there can be weird propagation issues when trying to read initial state
     // For more, see issues #468 and #613
+    // TODO: Make this increment rather than decrement if/when #468 and #613 are fixed
     for (let num = 2**inputs.length - 1; num >= 0; num--) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
@@ -45,6 +70,21 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
     }
 }
 
+/**
+ * This is a function that autogenerates and tests all states of a circuit represented by a given expression.
+ * The names of these switches are procedurally generated from "a" through "z". Note that the expression should
+ * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
+ * as input names.
+ * 
+ * @param numInputs the number of switches that are used by this expression/test
+ * @param expression the logical boolean expression to test
+ * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
+ * @param ops the strings used to represent the different operators
+ * @throws {Error} if numInputs > 26
+ * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ * @see testInputs
+ * @see ExpressionToCircuit
+ */
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: Map<FormatLabels, string>) {
     describe("Parse: '" + expression + "'", () => {
         if (numInputs > 26)
