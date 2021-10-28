@@ -239,6 +239,10 @@ export class Input {
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
+    /**
+     * Removes a Listener from the list of Listeners Events are checked against
+     * @param listener is the Listener being removed
+     */
     public removeListener(listener: Listener): void {
         this.listeners.splice(this.listeners.indexOf(listener), 1);
     }
