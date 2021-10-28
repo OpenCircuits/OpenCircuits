@@ -6,6 +6,7 @@ import { Popup }   from "shared/components/Popup";
 
 import { CloseHeaderPopups } from "shared/state/Header";
 import { useSharedDispatch, useSharedSelector } from "shared/utils/hooks/useShared";
+import { useMap } from "shared/utils/hooks/useMap"
 
 import { OrganizeMinDepth } from "core/utils/ComponentOrganizers";
 
@@ -49,14 +50,12 @@ const Inputs = new Map<string, () => DigitalComponent>([
 function generate(info: DigitalCircuitInfo, expression: string,
                   isIC: boolean, input: string, format: string,
                   ops: Map<FormatLabels, string>=null) {
-    if (ops === null)
+    if (format !== "custom")
         ops = FormatMap.get(format);
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
     for(const token of tokenList) {
-        if (token.type !== "input")
-            continue;
-        if (inputMap.has(token.name))
+        if (token.type !== "input" || inputMap.has(token.name))
             continue;
         inputMap.set(token.name, Inputs.get(input).call(null));
         inputMap.get(token.name).setName(token.name);
@@ -99,13 +98,16 @@ export const ExprToCircuitPopup = (() => {
         const [isIC, setIsIC] = useState(false);
         const [input, setInput] = useState("Switch");
         const [format, setFormat] = useState("|");
-        const [customOr, setCustomOr] = useState("|");
-        const [customXor, setCustomXor] = useState("^");
-        const [customAnd, setCustomAnd] = useState("&");
-        const [customNot, setCustomNot] = useState("!");
-        const [customParenOpen, setCustomParenOpen] = useState("(");
-        const [customParenClose, setCustomParenClose] = useState(")");
-        const [customSeparator, setCustomSeparator] = useState(" ");
+        const [userOps, setUserOps] = useMap(new Map<FormatLabels, string>([
+            ["|", "|"],
+            ["^", "^"],
+            ["&", "&"],
+            ["!", "!"],
+            ["(", "("],
+            [")", ")"],
+            ["separator", " "],
+        ]));
+
     
         const inputTypes = Array.from(Inputs.keys()).map((input) =>
             <option key={input} value={input}>{input}</option>
@@ -118,22 +120,21 @@ export const ExprToCircuitPopup = (() => {
             </div>
         );
 
-        const customOps: [string, string, React.Dispatch<React.SetStateAction<string>>][] = [
-            ["AND", customAnd, setCustomAnd],
-            ["OR", customOr, setCustomOr],
-            ["XOR", customXor, setCustomXor],
-            ["NOT", customNot, setCustomNot],
-            ["(", customParenOpen, setCustomParenOpen],
-            [")", customParenClose, setCustomParenClose],
-            ["Separator", customSeparator, setCustomSeparator],
+        const customOps: [string, FormatLabels][] = [
+            ["AND", "&"],
+            ["OR", "|"],
+            ["XOR", "^"],
+            ["NOT", "!"],
+            ["(", "("],
+            [")", ")"],
+            ["Separator", "separator"],
         ];
         const customOpsInput = customOps.map((op) => 
             <div className="exprtocircuit__popup__customOps" key={op[0]}>
-                <input title={"Enter symbol for " + op[0]} type="text" value={op[1]} onChange={e => op[2](e.target.value)}/>
-                <label htmlFor={op[1]}>Custom {op[0]}: "{op[1]}"</label>
+                <input title={"Enter symbol for " + op[0]} type="text" value={userOps.get(op[1])} onChange={e => setUserOps(op[1], e.target.value)}/>
+                <label htmlFor={userOps.get(op[1])}>Custom {op[0]}: "{userOps.get(op[1])}"</label>
             </div>
         );
-        
 
         return (
             <Popup title="Digital Expression To Circuit Generator"
@@ -182,20 +183,7 @@ export const ExprToCircuitPopup = (() => {
 
                     <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                         try {
-                            if (format === "custom") {
-                                const ops = new Map<FormatLabels, string>([
-                                    ["|", customOr],
-                                    ["^", customXor],
-                                    ["&", customAnd],
-                                    ["!", customNot],
-                                    ["(", customParenOpen],
-                                    [")", customParenClose],
-                                    ["separator", customSeparator]
-                                ]);
-                                generate(mainInfo, expression, isIC, input, format, ops);
-                            }
-                            else
-                                generate(mainInfo, expression, isIC, input, format);
+                            generate(mainInfo, expression, isIC, input, format, userOps);
                             setExpression("");
                             setErrorMessage("");
                             dispatch(CloseHeaderPopups());
