@@ -31,7 +31,7 @@ export function DigitalPaste(data: string, {history, designer, selections, rende
 
         history.add(new GroupAction([
             new TransferICDataAction(icData, designer),
-            CreateAddGroupAction(designer, new IOObjectSet(comps)),
+            CreateAddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(V(5, 5))))
