@@ -45,15 +45,15 @@ export class Input {
     /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device)*/
     private touchCount: number;
 
-    /** */
+    /** Stores the Listeners for events that may be triggered by user input*/
     private listeners: Listener[];
-    /** */
+    /** Map with keycodes as keys and booleans representing whether that key is held as values*/
     private keysDown: Map<number, boolean>;
 
-    /** */
+    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click")*/
     private dragTime: number;
 
-    /** */
+    /** If true, "blocks" Input, stopping listeners from triggering events*/
     private blocked: boolean;
 
     /**
@@ -219,13 +219,13 @@ export class Input {
     }
 
     /**
-     * Sets blocked to true
+     * Sets blocked to true, prevents Listeners from triggering Events
      */
     public block(): void {
         this.blocked = true;
     }
     /**
-     * Sets blocked to false
+     * Sets blocked to false, allows Listeners to trigger Events again
      */
     public unblock(): void {
         this.blocked = false;
@@ -489,7 +489,7 @@ export class Input {
     }
 
     /**
-     * Calls the Listeners in 'listeners' for Event 'event'
+     * Calls the Listeners in 'listeners' for Event 'event', if Input not blocked
      * @param event Event being given to the Listeners
      */
     private callListeners(event: Event): void {
