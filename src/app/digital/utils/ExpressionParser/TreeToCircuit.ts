@@ -1,7 +1,8 @@
 import { IOObject } from "core/models";
 import { DigitalComponent } from "digital/models";
 import { Create } from "serialeazy";
-import { InputTree, TypeToGate } from "./Constants";
+import { InputTree } from "./Constants/DataStructures";
+import { TypeToGate } from "./Constants/Objects";
 import { ConnectGate } from "./Utils";
 
 

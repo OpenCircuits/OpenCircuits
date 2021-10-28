@@ -1,4 +1,5 @@
-import { DefaultPrecedences, FormatLabels, FormatMap, InputTree, NewTreeRetValue, Token, TokenType } from "./Constants";
+import { Token, FormatLabels, TokenType, NewTreeRetValue, InputTree } from "./Constants/DataStructures";
+import { DefaultPrecedences, FormatMap } from "./Constants/Objects";
 import { IsOperator } from "./Utils";
 
 

@@ -2,11 +2,11 @@ import { DigitalComponent } from "digital/models/index";
 import { DigitalObjectSet } from "digital/utils/ComponentUtils";
 import { CreateNegatedGates } from "digital/utils/simplifications/CreateNegatedGates";
 import { ValidateInputOutputTypes } from "./Utils";
-import { FormatMap,
-        FormatLabels } from "./Constants";
 import { GenerateInputTree } from "./GenerateInputTree";
 import { GenerateTokens } from "./GenerateTokens";
 import { TreeToCircuit } from "./TreeToCircuit";
+import { FormatMap } from "./Constants/Objects";
+import { FormatLabels } from "./Constants/DataStructures";
 
 
 /**

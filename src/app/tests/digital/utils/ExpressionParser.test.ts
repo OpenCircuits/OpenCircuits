@@ -13,10 +13,11 @@ import { DigitalObjectSet } from "digital/utils/ComponentUtils";
 import { IOObject } from "core/models/IOObject";
 
 import { ExpressionToCircuit } from "digital/utils/ExpressionParser";
-import { FormatMap, Token, InputToken, InputTreeIdent, InputTreeBinOpNode, InputTreeUnOpNode, FormatLabels } from "digital/utils/ExpressionParser/Constants";
 import { GenerateInputTree } from "digital/utils/ExpressionParser/GenerateInputTree";
 import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
 import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
+import { FormatLabels, InputToken, Token, InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent } from "digital/utils/ExpressionParser/Constants/DataStructures";
+import { FormatMap } from "digital/utils/ExpressionParser/Constants/Objects";
 
 
 /**

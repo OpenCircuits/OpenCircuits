@@ -28,7 +28,8 @@ import { Switch }                 from "digital/models/ioobjects/inputs/Switch";
 import { Clock }                  from "digital/models/ioobjects/inputs/Clock";
 import { ExpressionToCircuit }    from "digital/utils/ExpressionParser";
 import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
-import { FormatLabels, FormatMap }    from "digital/utils/ExpressionParser/Constants";
+import { FormatLabels } from "digital/utils/ExpressionParser/Constants/DataStructures";
+import { FormatMap } from "digital/utils/ExpressionParser/Constants/Objects";
 
 import "./index.scss";
 
