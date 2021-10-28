@@ -1,5 +1,6 @@
 import { TokenType, FormatLabels } from "./DataStructures";
 
+
 export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
 
 export const DefaultPrecedences = new Map<TokenType, TokenType>([
