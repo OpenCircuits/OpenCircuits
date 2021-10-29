@@ -329,9 +329,11 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  * @return Tuple of desired camera position and zoom
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
-    const bbox = objs.length === 0
-        ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
-        : CircuitBoundingBox(objs);
+    // If no objects return to default zoom
+    if (objs.length === 0)
+        return [V(), 1];
+
+    const bbox = CircuitBoundingBox(objs);
     const finalPos = bbox.getCenter();
 
     const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
