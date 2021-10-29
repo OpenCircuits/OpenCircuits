@@ -28,7 +28,6 @@ export const Images = (() => {
         } : {});
 
         images.set(imageName, drawing);
-        
         return 1;
     };
 
