@@ -2,9 +2,9 @@ import {Clamp} from "./MathUtils";
 import {serializable} from "serialeazy";
 
 /**
- * A storage contained for a number that allows the value to be changed, within the 
- * bounds set my minValue and maxValue. Commonly used to set the number of input ports
- * for a component.
+ * A class containing a number, functions to change the value of the number and
+ * variables and functions that restrict the range of values the number can hold (aka clamping).
+ * Commonly used to set the number of input ports for a component.
  */
 @serializable("ClampedValue")
 export class ClampedValue {
@@ -41,7 +41,7 @@ export class ClampedValue {
 
     /**
      * Set the initial value for a number with minimum and maximum values for clamping equal to the intial.
-     * @param initialValue The inital value of the number
+     * @param initialValue The initial value of the number
      * @param minValue The minimum value the number can hold
      * @param maxValue The maximum value the number can hold
      */
