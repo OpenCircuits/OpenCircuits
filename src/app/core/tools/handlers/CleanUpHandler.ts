@@ -22,7 +22,7 @@ export const CleanUpHandler: EventHandler=({
         // Reset the selected units' angle to 0.
         // If nothing is selected, select all units.
         const action = new GroupAction();
-        const components = (selections.amount() == 0) ? (designer.getObjects() as Component[]) : (null);
+        const components = (selections.amount() == 0) ? (designer.getObjects() as Component[]) : (selections.get() as Component[]);
         
         action.add(
             components.map(c => 
