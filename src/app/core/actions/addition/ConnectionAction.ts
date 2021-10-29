@@ -87,7 +87,7 @@ export class ConnectionAction extends ReversableAction {
 
 /**
  * DisconnectAction represents the action of disconnecting a Wire
- * from to Ports
+ * from two Ports
  */
 export class DisconnectAction extends ConnectionAction {
     /**
