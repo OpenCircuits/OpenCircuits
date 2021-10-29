@@ -7,7 +7,13 @@ import {Node} from "core/models/Node";
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
 
-
+/**
+ * Creates an action to represent a Wire being split.
+ * @param designer the CirctuitDesigner the action is being done on
+ * @param w the Wire being split
+ * @param port the new Port that is splitting the Wire
+ * @returns a GroupAction representing the Wire being split
+ */
 export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: Node): GroupAction {
     const action = new GroupAction();
 
@@ -19,6 +25,12 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
     return action;
 }
 
+/**
+ * Creates an action to represent a Wire being snipped.
+ * @param designer The CircuitDesigner the action is being done on
+ * @param port the Port being snipped from the Wire
+ * @returns a GroupAction representing the Wire being snipped
+ */
 export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): GroupAction {
     const wires = port.getP1().getWires().concat(port.getP2().getWires());
     if (wires.length != 2)
@@ -38,6 +50,12 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     return action;
 }
 
+/**
+ * Creates a GroupAction of snip actions
+ * @param designer the CircuitDesigner the actions are being done on
+ * @param ports the Ports being snipped
+ * @returns a GroupAction of the actions to snip the wires
+ */
 export function CreateGroupSnipAction(designer: CircuitDesigner, ports: Node[]): GroupAction {
     return new GroupAction(ports.map(p => CreateSnipWireAction(designer, p)));
 }
