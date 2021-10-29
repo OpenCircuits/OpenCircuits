@@ -19,7 +19,7 @@ I like to use [this editor/viewer from rapidtables](https://www.rapidtables.com/
 
 If you're making an analog component, put your itemnav SVG file into the site/public/img/analog/icons folder, where you will see additional subfolders for each category of component. For digital, site/public/img/icons.  
 
-Additionally, you'll need to add your component as an object in either the analognavconfig.json or the digitalnavconfig.json file. Remember what you put in the `"id"` field, this will be important later. The `"label"` field is what is shown underneath the component in the itemnav, and the `"icon"` field is where you put your itemnav SVG file name.  
+Additionally, you'll need to add your component as an object in either the analognavconfig.json or the digitalnavconfig.json file. The `"id"` field should be the same `"id"` used in the `@serializable` tag in `YourComponentName.ts`. The `"label"` field is what is shown underneath the component in the itemnav, and in the `"icon"` field you should put the path to your itemnav SVG file name.  
 
 
 ## Canvas SVG file(s)
@@ -37,7 +37,7 @@ Your path and dimensions may vary from the itemnav tool. When in doubt, take a l
 For analog components, make this SVG file in site/public/img/analog/items, if digital make it in site/public/img/items. Next, add your canvas SVG file name(s) to a variable called `IMAGE_FILE_NAMES` in app/analog/ts/utils/Images.ts (for digital, app/digital/ts/utils/Images.ts).  
 
 
-## TypeScript file
+## TypeScript files
 Make a new `YourComponentName.ts` file in the app/analog/ts/models/eeobjects folder (for digital, app/digital/ts/models/ioobjects). Implement the class in the TypeScript file. It's easiest to follow the example of an existing component, but here's what it should look like.
 
 ```typescript
@@ -59,11 +59,164 @@ export class YourComponent extends AnalogComponent {
 
     // other necessary methods ...
 ```
-
-Lastly, add this component to a list of `export`s in the app/analog/ts/models/eeobjects/index.ts (for digital, app/digital/ts/models/ioobjects/index.ts).
+Add this component to a list of `export`s in the app/analog/ts/models/eeobjects/index.ts (for digital, app/digital/ts/models/ioobjects/index.ts).
 
 ```typescript
 export {YourComponent} from "./YourComponent";
+```
+
+Create any actions yor component might need in app/digital/actions/. Here is an example from 
+`ClockFrequencyChangeAction.ts`
+
+```typescript
+export class ClockFrequencyChangeAction implements Action {
+    private clock: Clock;
+
+    private initialFreq: number;
+    private targetFreq: number;
+
+    public constructor(clock: Clock, targetFreq: number) {
+        this.clock = clock;
+
+        this.initialFreq = clock.getFrequency();
+        this.targetFreq = targetFreq;
+    }
+
+    public execute(): Action {
+        this.clock.setFrequency(this.targetFreq);
+
+        return this;
+    }
+
+    public undo(): Action {
+        this.clock.setFrequency(this.initialFreq);
+
+        return this;
+    }
+
+}
+```
+
+Create any SelectionPopupModules your component needs in site/pages/digital/src/containers/SelectionPopup/modules/. Here is 
+an example from `OutputCountModule.tsx`
+```typescript
+const Config: ModuleConfig<[Encoder], number> = {
+    types: [Encoder],
+    valType: "int",
+    getProps: (o) => o.getOutputPortCount().getValue(),
+    getAction: (s, newCount) => new GroupAction(s.map(o =>
+        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)))
+}
+
+export const OutputCountModule = PopupModule({
+    label: "Output Count",
+    modules: [CreateModule({
+        inputType: "number",
+        config: Config,
+        step: 1, min: 2, max: 8,
+        alt: "Number of outputs object(s) have"
+    })]
+});
+```
+Add your new PopupModules to src/site/shared/containers/SelectionPopup/index.tsx 
+
+```typescript
+
+
+```
+
+Create any custom renderers your component needs in app/digital/rendering/ioobjects/inputs/YOUR_REDNERER.ts . 
+Here is 
+an example from `GateRenderer.ts`
+```typescript
+export const GateRenderer = (() => {
+
+    const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
+        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
+        const amt = 2 * Math.floor(inputs / 4) + 1;
+        for (let i = 0; i < amt; i++) {
+            const d = (i - Math.floor(amt/2)) * size.y;
+            const h = DEFAULT_BORDER_WIDTH;
+            const l1 = -size.y/2;
+            const l2 = +size.y/2;
+
+            const s = size.x/2 - h;
+            const l = size.x/5 - h;
+
+            const p1 = V(-s + dx, l1 + d);
+            const p2 = V(-s + dx, l2 + d);
+            const c  = V(-l + dx, d);
+
+            renderer.draw(new QuadCurve(p1, p2, c), style);
+        }
+    }
+
+    const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
+        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+
+        // Draw line to visually match input ports
+        const l1 = -(size.y/2)*(0.5-inputs/2);
+        const l2 =  (size.y/2)*(0.5-inputs/2);
+
+        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
+        const p1 = V(-s, l1);
+        const p2 = V(-s, l2);
+
+        renderer.draw(new Line(p1, p2), style);
+    }
+
+    return {
+        render(renderer: Renderer, _: Camera, gate: Gate, selected: boolean): void {
+            const transform = gate.getTransform();
+
+            const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+            const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+
+            if (gate.isNot()) {
+                const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+                const l = transform.getSize().x/2 + 5;
+                renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), style);
+            }
+
+            if (gate instanceof ANDGate) {
+                // Draw AND gate line to match ports
+                drawANDLines(renderer, transform.getSize(), gate.numInputs(), borderCol);
+            }
+            else if (gate instanceof ORGate) {
+                // Draw curve to visually match input ports
+                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
+            }
+            else if (gate instanceof XORGate) {
+                // Draw curves to visually match input ports
+                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
+                drawQuadCurve(renderer, -12, transform.getSize(), gate.numInputs(), borderCol);
+            }
+
+
+        }
+    };
+})();
+```
+
+To add your custom render go to src/app/digital/rendering/ioobjects/ComponentRenderer.ts
+change the following code to add your custom render
+
+```typescript
+    if (object instanceof Gate)
+        GateRenderer.render(renderer, camera, object, selected);
+    else if (object instanceof Multiplexer || object instanceof Demultiplexer)
+        MultiplexerRenderer.render(renderer, camera, object, selected);
+    else if (object instanceof SegmentDisplay)
+        SegmentDisplayRenderer.render(renderer, camera, object, selected);
+    else if (object instanceof IC)
+        ICRenderer.render(renderer, camera, object, selected);
+    else if (object instanceof FlipFlop || object instanceof Latch)
+        drawBox(renderer, transform, selected);
+    else if (object instanceof Encoder || object instanceof Decoder)
+        drawBox(renderer, transform, selected);
+    else if (object instanceof Your_Component)
+        Your_ComponentRenderer.render(renderer, camera, object, selected);
 ```
 
 
@@ -74,3 +227,6 @@ export {YourComponent} from "./YourComponent";
 - [ ] Update `IMAGE_FILE_NAMES` in Images.ts
 - [ ] Make TypeScript file
 - [ ] Add export in index.ts
+- [ ] Create new actions
+- [ ] Create SelectionPopupModules
+- [ ] Create custom Renderers
