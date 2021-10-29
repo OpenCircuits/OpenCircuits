@@ -3,6 +3,8 @@ import {ClampedValue} from "math/ClampedValue";
 import {serializable, serialize} from "serialeazy";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import { WiringTool } from "core/tools/WiringTool";
+import { DigitalWire } from "digital/models/DigitalWire";
 
 @serializable("Clock")
 export class Clock extends DigitalComponent {
@@ -33,6 +35,13 @@ export class Clock extends DigitalComponent {
     public activate(bool: boolean): void {
         super.activate(bool);
         this.isOn = bool;
+
+        // If WiringTool is active (and its parent is a clock), activate its wire as well
+        if (WiringTool.getWire() !== undefined && WiringTool.getWire().getP1Component().getName() == "Clock") {
+            const w = WiringTool.getWire() as DigitalWire;
+            w.activate(bool);
+        }
+
         if (this.designer !== undefined)
             this.designer.forceUpdate();
     }
