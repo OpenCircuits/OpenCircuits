@@ -1,3 +1,4 @@
+import {IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -37,6 +38,9 @@ export const WiringTool = (() => {
             let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
             for (const port of ports) {
                 const test = worldMousePos.distanceTo(port.getWorldTargetPos());
+                if (test <= IO_PORT_RADIUS) {
+                    return port;
+                }
                 if (test < dist) {
                     nearestport = port;
                     dist = test;
