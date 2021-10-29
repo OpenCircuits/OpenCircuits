@@ -80,12 +80,13 @@
     }
     & input {
         font-size: 24px;
-
         width: 175px; // @TODO: Auto-adjust to fit within a min/max width
         height: $header-height - 2*$header-padding;
         margin-right: 10px;
 
         color: $secondary-color;
+
+        text-overflow: ellipsis;
     }
     & span {
         font-size: 24px;
