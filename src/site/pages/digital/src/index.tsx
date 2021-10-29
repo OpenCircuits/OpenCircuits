@@ -10,6 +10,7 @@ import {Images} from "digital/utils/Images";
 import "digital/models/ioobjects";
 
 import {GetCookie} from "shared/utils/Cookies";
+import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 
@@ -21,13 +22,9 @@ import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
 
-function updateProgress(amount: number, text: string) {
-    document.getElementById("loading-screen-progress-bar").style.width = amount + "%";
-    document.getElementById("loading-screen-text").innerHTML = text;
-}
 
-function onImageProgress(numDone: number, numTotal: number) {
-    updateProgress(20+20*numDone/numTotal, "Loading Images [" + numDone + "/" + numTotal + "]...");
+async function setPercent(percentDone: number) {
+    document.getElementById("loading-screen-progress-bar").style.width = percentDone + "%";
 }
 
 function progressError(error: any, text: string) {
@@ -39,75 +36,69 @@ function progressError(error: any, text: string) {
 }
 
 async function Init(): Promise<void> {
-    // Load images
-    updateProgress(20, "Loading Images...");
-    try {
-        await Images.Load(onImageProgress);
-    } catch (e) {
-        progressError(e, "Error occurred while loading images.");
-        return;
-    }
-
-    updateProgress(40, "Creating Store...");
+    const startPercent = 30;
+    const imageLoadPercent = 80;
     let store: AppStore;
-    try {
-        store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
-    } catch (e) {
-        progressError(e, "Error occurred while creating store.");
-        return;
-    }
 
-    // Initialize auth
-    updateProgress(60, "Loading Authentication...");
-
-    let AuthMethods: Record<string, () => Promise<void>>
-    try {
-        AuthMethods = {
-            "no_auth": async () => {
-                const username = GetCookie("no_auth_username");
-                if (username)
-                    await store.dispatch(Login(new NoAuthState(username)));
-            },
-            "google": async () => {
-                // Load auth2 from GAPI and initialize w/ metadata
-                const clientId = process.env.OC_OAUTH2_ID;
-                if (!clientId)
-                    throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
-                await new Promise((resolve) => gapi.load("auth2", resolve));
-                await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
+    await LoadingScreen("loading-screen", startPercent, [
+        [imageLoadPercent, "Loading Images", async () => {
+            try {
+                await Images.Load(setPercent, startPercent, imageLoadPercent);
+            } catch (e) {
+                progressError(e, "Error occurred while loading images.");
             }
-        };
-    } catch (e) {
-        progressError(e, "Error occurred while loading authentication.");
-        return;
-    }
-    try {
-        if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-            await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
-    } catch (e) {
-        console.error(e);
-    }
-
-    updateProgress(80, "Rendering...");
-    try {
-        const AppView = App(store);
-        ReactDOM.render(
-            <React.StrictMode>
-                <Provider store={store}>
-                    {AppView()}
-                </Provider>
-            </React.StrictMode>,
-            document.getElementById("root")
-        );
-    } catch (e) {
-        progressError(e, "Error occurred while rendering.");
-        return;
-    }
-
-    updateProgress(100, "Done!");
-
-    // Hide loading screen
-    document.getElementById("loading-screen").style.display = "none";
+        }],
+        [85, "Initializing redux", async () => {
+            try {
+                store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+            } catch (e) {
+                progressError(e, "Error occurred while initializing redux.");
+            }
+        }],
+        [95, "Initializing Authentication", async () => {
+            let AuthMethods: Record<string, () => Promise<void>>
+            try {
+                AuthMethods = {
+                    "no_auth": async () => {
+                        const username = GetCookie("no_auth_username");
+                        if (username)
+                            await store.dispatch(Login(new NoAuthState(username)));
+                    },
+                    "google": async () => {
+                        // Load auth2 from GAPI and initialize w/ metadata
+                        const clientId = process.env.OC_OAUTH2_ID;
+                        if (!clientId)
+                            throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
+                        await new Promise((resolve) => gapi.load("auth2", resolve));
+                        await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
+                    }
+                };
+            } catch (e) {
+                progressError(e, "Error occurred while initializing authentication.");
+            }
+            try {
+                if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
+                    await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
+            } catch (e) {
+                console.error(e);
+            }
+        }],
+        [100, "Rendering", async () => {
+            try {
+                const AppView = App(store);
+                ReactDOM.render(
+                    <React.StrictMode>
+                        <Provider store={store}>
+                            {AppView()}
+                        </Provider>
+                    </React.StrictMode>,
+                    document.getElementById("root")
+                );
+            } catch (e) {
+                progressError(e, "Error occurred while rendering.");
+            }
+        }]
+    ]);
 }
 
 Init();

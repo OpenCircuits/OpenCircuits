@@ -36,15 +36,14 @@ export const Images = (() => {
         GetImage: function(img: string): SVGDrawing {
             return images.get(img);
         },
-        Load: async function(onprogress: (numDone: number, numTotal: number) => void): Promise<void> {
+        Load: async function(onprogress: (percentDone: number) => Promise<void>, startPercent: number, endPercent: number): Promise<void> {
             let numLoaded = 0;
             const promises =
                 IMAGE_FILE_NAMES.map(async (name) => {
                     await loadImage(name);
-                    onprogress(++numLoaded, IMAGE_FILE_NAMES.length);
+                    await onprogress(startPercent + (endPercent-startPercent)*(++numLoaded/IMAGE_FILE_NAMES.length));
                 });
 
-            onprogress(numLoaded, IMAGE_FILE_NAMES.length);
             await Promise.all(promises);
         }
     };
