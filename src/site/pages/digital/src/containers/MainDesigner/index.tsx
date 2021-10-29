@@ -27,8 +27,9 @@ import "./index.scss";
 
 type Props = {
     info: DigitalCircuitInfo;
+    canvas: React.MutableRefObject<HTMLCanvasElement>;
 }
-export const MainDesigner = ({info}: Props) => {
+export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
 
     const {isLocked} = useDigitalSelector(
@@ -36,7 +37,6 @@ export const MainDesigner = ({info}: Props) => {
     );
 
     const {w, h} = useWindowSize();
-    const canvas = useRef<HTMLCanvasElement>();
 
 
     // On resize (useLayoutEffect happens sychronously so
