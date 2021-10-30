@@ -6,7 +6,6 @@ import {Popup}   from "shared/components/Popup";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {useMap} from "shared/utils/hooks/useMap"
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -92,23 +91,18 @@ export const ExprToCircuitPopup = (() => {
             state => ({ curPopup: state.header.curPopup })
         );
         const dispatch = useSharedDispatch();
+        let defaultUserOps = {} as Record<FormatLabels, string>;
+        for (let [key, value] of FormatMap.get("|")) {
+            defaultUserOps[key] = value;
+        }
 
         const [expression, setExpression] = useState("");
         const [errorMessage, setErrorMessage] = useState("");
         const [isIC, setIsIC] = useState(false);
         const [input, setInput] = useState("Switch");
         const [format, setFormat] = useState("|");
-        const [userOps, setUserOps] = useMap(new Map<FormatLabels, string>([
-            ["|", "|"],
-            ["^", "^"],
-            ["&", "&"],
-            ["!", "!"],
-            ["(", "("],
-            [")", ")"],
-            ["separator", " "],
-        ]));
+        const [userOps, setUserOps] = useState(defaultUserOps);
 
-    
         const inputTypes = Array.from(Inputs.keys()).map((input) =>
             <option key={input} value={input}>{input}</option>
         );
@@ -131,8 +125,8 @@ export const ExprToCircuitPopup = (() => {
         ];
         const customOpsInput = customOps.map((op) => 
             <div className="exprtocircuit__popup__customOps" key={op[0]}>
-                <input title={"Enter symbol for " + op[0]} type="text" value={userOps.get(op[1])} onChange={e => setUserOps(op[1], e.target.value)}/>
-                <label htmlFor={userOps.get(op[1])}>Custom {op[0]}: "{userOps.get(op[1])}"</label>
+                <input title={"Enter symbol for " + op[0]} type="text" value={userOps[op[1]]} onChange={e => setUserOps({...userOps, [op[1]]: e.target.value})}/>
+                <label htmlFor={userOps[op[1]]}>Custom {op[0]}: "{userOps[op[1]]}"</label>
             </div>
         );
 
@@ -183,7 +177,7 @@ export const ExprToCircuitPopup = (() => {
 
                     <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                         try {
-                            generate(mainInfo, expression, isIC, input, format, userOps);
+                            generate(mainInfo, expression, isIC, input, format, new Map(Object.entries(userOps) as [FormatLabels, string][]));
                             setExpression("");
                             setErrorMessage("");
                             dispatch(CloseHeaderPopups());
