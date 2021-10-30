@@ -9,7 +9,8 @@ import {DRAG_TIME,
         S_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
-        META_KEY} from "core/utils/Constants";
+        META_KEY,
+        ESC_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -187,6 +188,9 @@ export class Input {
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
+    public removeListener(listener: Listener): void {
+        this.listeners.splice(this.listeners.indexOf(listener), 1);
+    }
 
     public isMouseDown(): boolean {
         return this.mouseDown;
@@ -199,6 +203,11 @@ export class Input {
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
+
+    public isEscKeyDown(): boolean {
+        return this.isKeyDown(ESC_KEY);
+    }
+
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }

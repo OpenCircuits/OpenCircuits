@@ -42,7 +42,7 @@ export function SelectionPopup({info, modules}: Props) {
             return pos;
         };
 
-        const update = (ev: Event) => {
+        const update = (ev: Event, force = false) => {
             if (ev.type === "mousedrag")
                 dragging = true;
             if (ev.type === "mouseup")
@@ -58,7 +58,7 @@ export function SelectionPopup({info, modules}: Props) {
             const visible = (dragging ? false : (selections.amount() > 0));
 
             // Nothing changed so don't update the state
-            if (pos === lastPos && visible === lastVisible)
+            if (pos === lastPos && visible === lastVisible && !force)
                 return;
 
             setState({ pos, visible, clickThrough });
@@ -79,7 +79,10 @@ export function SelectionPopup({info, modules}: Props) {
         if (!input)
             return;
         input.addListener(update);
-        // designer.addCallback(update);
+
+        // Fixes issue #753. This is necessary because when a bus is made, no change is recorded in the system, so it does not
+        // update to remove the bus button as intended. The function below ensures that when a bus is made, an upate is called.
+        designer.addCallback(() => update({type:"unknown"}, true));
 
         return () => {console.log("I SHOULD NOT BE HERE")}
     }, [input, camera, selections, setState]);
