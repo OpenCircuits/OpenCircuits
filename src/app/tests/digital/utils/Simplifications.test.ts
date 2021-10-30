@@ -1,12 +1,12 @@
 import "jest";
 
-import { IOObject } from "core/models";
-import { DigitalCircuitDesigner } from "digital/models";
-import { Switch, LED, ANDGate, ORGate, XORGate } from "digital/models/ioobjects";
-import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
-import { DigitalObjectSet } from "digital/utils/ComponentUtils";
-import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
-import { CreateNegatedGates } from "digital/utils/simplifications/CreateNegatedGates";
+import {IOObject} from "core/models";
+import {DigitalCircuitDesigner} from "digital/models";
+import {Switch, LED, ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
+import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+import {ConnectGate} from "digital/utils/ExpressionParser/Utils";
+import {CreateNegatedGates} from "digital/utils/simplifications/CreateNegatedGates";
 
 
 describe("Simplifications", () => {

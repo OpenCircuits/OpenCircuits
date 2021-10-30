@@ -2,6 +2,7 @@ import "jest";
 
 import {Graph} from "math/Graph";
 
+
 function compareDepths(expected: string[][], actual: string[][]) {
     expect(actual.length).toEqual(expected.length);
         for (var i = 0; i < actual.length; i++)

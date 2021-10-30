@@ -1,5 +1,4 @@
 import {Header} from "shared/containers/Header";
-import {HeaderPopups} from "shared/state/Header";
 import {Utility} from "shared/containers/Header/Right/UtilitiesDropdown";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";

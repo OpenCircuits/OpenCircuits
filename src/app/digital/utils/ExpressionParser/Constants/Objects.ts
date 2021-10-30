@@ -1,4 +1,4 @@
-import { TokenType, FormatLabels } from "./DataStructures";
+import {TokenType, FormatLabels} from "./DataStructures";
 
 
 export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;

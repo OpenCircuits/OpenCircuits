@@ -1,6 +1,6 @@
-import { SubEquals } from "core/utils/StringUtils";
-import { FormatLabels, InputToken, Token } from "./Constants/DataStructures";
-import { OpsArray } from "./Constants/Objects";
+import {SubEquals} from "core/utils/StringUtils";
+import {FormatLabels, InputToken, Token} from "./Constants/DataStructures";
+import {OpsArray} from "./Constants/Objects";
 
 
 /**

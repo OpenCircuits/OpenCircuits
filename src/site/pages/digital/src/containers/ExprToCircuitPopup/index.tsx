@@ -1,36 +1,36 @@
-import React, { useState } from "react";
+import {useState} from "react";
 
-import { CreateAddGroupAction } from "core/actions/addition/AddGroupActionFactory";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 
-import { Popup }   from "shared/components/Popup";
+import {Popup}   from "shared/components/Popup";
 
-import { CloseHeaderPopups } from "shared/state/Header";
-import { useSharedDispatch, useSharedSelector } from "shared/utils/hooks/useShared";
-import { useMap } from "shared/utils/hooks/useMap"
+import {CloseHeaderPopups} from "shared/state/Header";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useMap} from "shared/utils/hooks/useMap"
 
-import { OrganizeMinDepth } from "core/utils/ComponentOrganizers";
+import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
-import { GroupAction }             from "core/actions/GroupAction";
-import { CreateDeselectAllAction,
+import {GroupAction}             from "core/actions/GroupAction";
+import {CreateDeselectAllAction,
         CreateGroupSelectAction,
-        SelectAction, }            from "core/actions/selection/SelectAction";
-import { PlaceAction }             from "core/actions/addition/PlaceAction";
-import { CreateICDataAction }      from "digital/actions/CreateICDataAction";
+        SelectAction,}            from "core/actions/selection/SelectAction";
+import {PlaceAction}             from "core/actions/addition/PlaceAction";
+import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
 
-import { DigitalCircuitInfo }     from "digital/utils/DigitalCircuitInfo";
-import { DigitalComponent }       from "digital/models/DigitalComponent";
-import { ICData }                 from "digital/models/ioobjects/other/ICData";
-import { IC }                     from "digital/models/ioobjects/other/IC";
-import { LED }                    from "digital/models/ioobjects/outputs/LED";
-import { ConstantLow }            from "digital/models/ioobjects/inputs/ConstantLow";
-import { ConstantHigh }           from "digital/models/ioobjects/inputs/ConstantHigh";
-import { Button }                 from "digital/models/ioobjects/inputs/Button";
-import { Switch }                 from "digital/models/ioobjects/inputs/Switch";
-import { Clock }                  from "digital/models/ioobjects/inputs/Clock";
-import { ExpressionToCircuit }    from "digital/utils/ExpressionParser";
-import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
-import { FormatLabels } from "digital/utils/ExpressionParser/Constants/DataStructures";
-import { FormatMap } from "digital/utils/ExpressionParser/Constants/Objects";
+import {DigitalCircuitInfo}     from "digital/utils/DigitalCircuitInfo";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {ICData}                 from "digital/models/ioobjects/other/ICData";
+import {IC}                     from "digital/models/ioobjects/other/IC";
+import {LED}                    from "digital/models/ioobjects/outputs/LED";
+import {ConstantLow}            from "digital/models/ioobjects/inputs/ConstantLow";
+import {ConstantHigh}           from "digital/models/ioobjects/inputs/ConstantHigh";
+import {Button}                 from "digital/models/ioobjects/inputs/Button";
+import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+import {Clock}                  from "digital/models/ioobjects/inputs/Clock";
+import {ExpressionToCircuit}    from "digital/utils/ExpressionParser";
+import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
+import {FormatLabels} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {FormatMap} from "digital/utils/ExpressionParser/Constants/Objects";
 
 import "./index.scss";
 

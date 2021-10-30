@@ -1,10 +1,7 @@
-import {V, Vector} from "Vector";
-import {Graph} from "math/Graph";
+import {Vector} from "Vector";
 
 import {CreateGraph, IOObjectSet} from "./ComponentUtils";
 import {ORGANIZE_SEP_X, ORGANIZE_SEP_Y} from "./Constants";
-
-import {Component} from "core/models/Component";
 
 
 function OrganizeCore(groups: IOObjectSet, start: Vector, depths: number[][]): void {

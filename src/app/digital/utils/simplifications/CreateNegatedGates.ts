@@ -1,9 +1,9 @@
-import { IOObject } from "core/models";
-import { DigitalWire } from "digital/models";
-import { ANDGate, ORGate, XORGate } from "digital/models/ioobjects";
-import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
-import { Gate } from "digital/models/ioobjects/gates/Gate";
-import { Create } from "serialeazy";
+import {IOObject} from "core/models";
+import {DigitalWire} from "digital/models";
+import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
+import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {Create} from "serialeazy";
 
 
 /**

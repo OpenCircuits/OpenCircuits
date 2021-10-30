@@ -1,23 +1,23 @@
 import "jest";
 
-import { DigitalCircuitDesigner } from "digital/models/DigitalCircuitDesigner";
-import { Switch } from "digital/models/ioobjects/inputs/Switch";
-import { ConstantHigh } from "digital/models/ioobjects/inputs/ConstantHigh";
-import { ConstantLow } from "digital/models/ioobjects/inputs/ConstantLow";
-import { ANDGate } from "digital/models/ioobjects/gates/ANDGate";
-import { ORGate } from "digital/models/ioobjects/gates/ORGate";
-import { NOTGate } from "digital/models/ioobjects/gates/BUFGate";
-import { LED } from "digital/models/ioobjects/outputs/LED";
-import { DigitalComponent } from "digital/models/index";
-import { DigitalObjectSet } from "digital/utils/ComponentUtils";
-import { IOObject } from "core/models/IOObject";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow} from "digital/models/ioobjects/inputs/ConstantLow";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate} from "digital/models/ioobjects/gates/ORGate";
+import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {LED} from "digital/models/ioobjects/outputs/LED";
+import {DigitalComponent} from "digital/models/index";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+import {IOObject} from "core/models/IOObject";
 
-import { ExpressionToCircuit } from "digital/utils/ExpressionParser";
-import { GenerateInputTree } from "digital/utils/ExpressionParser/GenerateInputTree";
-import { GenerateTokens } from "digital/utils/ExpressionParser/GenerateTokens";
-import { ConnectGate } from "digital/utils/ExpressionParser/Utils";
-import { FormatLabels, InputToken, Token, InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent } from "digital/utils/ExpressionParser/Constants/DataStructures";
-import { FormatMap } from "digital/utils/ExpressionParser/Constants/Objects";
+import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
+import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
+import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
+import {ConnectGate} from "digital/utils/ExpressionParser/Utils";
+import {FormatLabels, InputToken, Token, InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {FormatMap} from "digital/utils/ExpressionParser/Constants/Objects";
 
 
 /**

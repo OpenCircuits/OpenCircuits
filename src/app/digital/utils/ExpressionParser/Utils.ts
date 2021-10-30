@@ -1,6 +1,6 @@
-import { DigitalComponent } from "digital/models/DigitalComponent";
-import { DigitalWire } from "digital/models/DigitalWire";
-import { Token } from "./Constants/DataStructures";
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalWire} from "digital/models/DigitalWire";
+import {Token} from "./Constants/DataStructures";
 
 
 /**
