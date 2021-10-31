@@ -28,7 +28,6 @@ export const Images = (() => {
         } : {});
 
         images.set(imageName, drawing);
-
         return 1;
     };
 
@@ -36,11 +35,13 @@ export const Images = (() => {
         GetImage: function(img: string): SVGDrawing {
             return images.get(img);
         },
-        Load: async function(): Promise<void> {
+        Load: async function(onprogress: (percentDone: number) => void): Promise<void> {
+            let numLoaded = 0;
             const promises =
-                IMAGE_FILE_NAMES.map(async (name) =>
-                    await loadImage(name)
-                );
+                IMAGE_FILE_NAMES.map(async (name) => {
+                    await loadImage(name);
+                    onprogress((++numLoaded)/IMAGE_FILE_NAMES.length);
+                });
 
             await Promise.all(promises);
         }
