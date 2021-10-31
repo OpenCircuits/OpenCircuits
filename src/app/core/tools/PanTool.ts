@@ -1,7 +1,6 @@
-import {MIDDLE_MOUSE_BUTTON, 
-        OPTION_KEY,
+import {MIDDLE_MOUSE_BUTTON, OPTION_KEY,
         ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT,
-        ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL,}  from "core/utils/Constants";
+        ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL}  from "core/utils/Constants";
 import {Vector}      from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -45,39 +44,39 @@ export const PanTool: Tool = (() => {
 
         onEvent(event: Event, {input, camera}: CircuitInfo): boolean {
             if (event.type === "mousedrag") {
-
                 isDragging = true;
                 
                 const dPos = input.getDeltaMousePos();
                 camera.translate(dPos.scale(-1 * camera.getZoom()));
+                
+                return true;
             }
+            
             if (event.type === "keydown") {
-                let moveVec = new Vector();
+                let dPos = new Vector();
                 
                 // No else if because it introduces bugs when 
                 // multiple arrow keys are pressed
                 if (input.isKeyDown(ARROW_LEFT))
-                    moveVec = moveVec.add(-1, 0);
+                    dPos = dPos.add(-1, 0);
                 if (input.isKeyDown(ARROW_RIGHT))
-                    moveVec = moveVec.add(1, 0);
+                    dPos = dPos.add(1, 0);
                 if (input.isKeyDown(ARROW_UP))
-                    moveVec = moveVec.add(0, -1);
+                    dPos = dPos.add(0, -1);
                 if (input.isKeyDown(ARROW_DOWN))
-                    moveVec = moveVec.add(0, 1);
-
+                    dPos = dPos.add(0, 1);
+                
                 // Screen gets moved different amounts depending on if the shift key is held
                 const factor = (input.isShiftKeyDown() ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL); 
-
-                camera.translate(moveVec.scale(factor * camera.getZoom()));
+                
+                camera.translate(dPos.scale(factor * camera.getZoom()));
+                
+                return true;
             }
-            else {
-                // Since it wasn't one of the two event types we want we 
-                // don't need a re-render
-                return false;
-            }
-            // Return true since we did something
-            //  that requires a re-render
-            return true;
+            
+            // Since it wasn't one of the two event types we want we 
+            // don't need a re-render
+            return false;
         }
     }
 })();
