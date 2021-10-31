@@ -46,11 +46,11 @@ module.exports = async (dir, mode) => {
 
     if (mode === "development") {
         const protocol = "http";
-        const hostname = "localhost";
+        const hostname = "localhost"; // Allow any connections
         const pathname = publicRoot.slice(0, -1);
 
         // Start dev server
-        const port = await choosePort(hostname, 3000);
+        const port = await choosePort("0.0.0.0", 3000);
         if (!port)
             return; // No port found
 
@@ -89,13 +89,15 @@ module.exports = async (dir, mode) => {
             console.log(`To create a production build, use ${chalk.cyan("yarn build")}\n`);
         });
 
-        const server = new WebpackDevServer(compiler, {
+        const server = new WebpackDevServer({
             // Explanations: https://stackoverflow.com/a/62992178
-            publicPath: pathname,
-            contentBasePublicPath: publicRoot,
-            contentBase: path.resolve(dirPath, "public"),
+            static: {
+                directory: path.resolve(dirPath, "public"),
+                publicPath: [pathname],
+            },
             hot: true,
-            quiet: true,
+            host: "0.0.0.0",
+            port,
             proxy: {
                 "/api/**": {
                     target: `http://${hostname}:8080`,
@@ -103,12 +105,24 @@ module.exports = async (dir, mode) => {
                     changeOrigin: true,
                 },
             },
-        });
-        server.listen(port, hostname, (err) => {
-            if (err) throw err;
+            devMiddleware: {
+                publicPath: pathname,
+            },
+            client: {
+                overlay: true,
+            },
+        }, compiler);
 
-            console.log(chalk.cyan('Starting the development server...\n'));
+        ["SIGINT", "SIGTERM"].forEach(sig => {
+            process.on(sig, () => {
+                console.log("ADSADSADSADSASDASD");
+                server.stop();
+                process.exit();
+            });
         });
+
+        await server.start();
+        console.log(chalk.cyan("Starting the development server...\n"));
     }
 
     if (mode === "production") {

@@ -1,6 +1,6 @@
 import {useEffect, useLayoutEffect, useRef} from "react";
 
-import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
+import {ESC_KEY, IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
@@ -15,6 +15,7 @@ import {PanTool}          from "core/tools/PanTool";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
@@ -99,7 +100,6 @@ export const ICViewer = (() => {
             renderer.render();
         }, [isActive, data]);
 
-
         const close = () => {
             // Block input while closed
             info.input.block();
@@ -110,6 +110,7 @@ export const ICViewer = (() => {
             dispatch(CloseICViewer());
         }
 
+        useKeyDownEvent(info.input, ESC_KEY, close);
 
         return (
             <div className="icviewer" style={{ display: (isActive ? "initial" : "none") }}>

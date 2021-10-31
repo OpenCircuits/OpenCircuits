@@ -95,12 +95,23 @@ export abstract class Port implements Selectable {
         this.updateDir();
     }
 
+    /**
+     * Connects a wire to a port
+     * Left as abstract since we expect different behaviour for analog and digital ports
+     * @param w Wire to connect
+     */
     public abstract connect(w: Wire): void;
+    
+    /**
+     * Disconnects a wire from a port
+     * Left as abstract since we expect different behaviour for analog and digital ports
+     * @param w Wire to disconnect
+     */
     public abstract disconnect(w: Wire): void;
     /**
-     * Returns 
-     * @param v vector representing the 
-     * @returns true if the port is within the selection bound and false otherwise
+     * When clicking on a port returns true if the position clicked is within the selection bound and false otherwise
+     * @param v vector representing the position clicked
+     * @returns true if the vector v is within the selection bound of the port and false otherwise
      */
     public isWithinSelectBounds(v: Vector): boolean {
         return CircleContains(this.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, v);
@@ -136,6 +147,11 @@ export abstract class Port implements Selectable {
         return this.name;
     }
 
+    /**
+    * Returns the intial direction of a port represented as a Vector
+    * Left as abstract since ports will have a different intial direction depending on thier parent component and whether they
+    * serve as input or output ports
+    */
     public abstract getInitialDir(): Vector;
 
 
