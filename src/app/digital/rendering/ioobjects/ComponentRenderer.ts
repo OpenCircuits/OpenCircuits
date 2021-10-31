@@ -36,7 +36,18 @@ import {GateRenderer} from "./gates/GateRenderer";
 import {LEDRenderer} from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 
-
+/**
+ * Renders Components
+ * * Check if object to be rendered is on the screen, quit if not
+ * * Transform renderer to object transform
+ * * Draw all object ports first using IOPortRenderer
+ * * If object is PressableComponent or Label, handle special case to draw each
+ * * If object is FlipFlop, Latch, Encoder, or Decoder, use drawBox func to draw
+ * * Else if object is a Gate, Multiplexer/Demultiplexer, SegmentDisplay, IC, or LED call upon respective renderers to draw
+ * * LEDs are not tinted regardless of selection status, but for others, determine whether selected and tint appropriately
+ * * Render IOLabels if not blank
+ * * Restore
+ */
 export const ComponentRenderer = (() => {
 
     const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol: string = "#ffffff"): void {
