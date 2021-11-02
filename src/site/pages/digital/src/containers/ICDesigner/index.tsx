@@ -36,6 +36,7 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
 import "./index.scss";
+import { InputField } from "shared/components/InputField";
 
 
 type Props = {
@@ -181,7 +182,7 @@ export const ICDesigner = (() => {
                         height={h*IC_DESIGNER_VH}
                         style={{ cursor }} />
 
-                <input type="text"
+                <InputField type="text"
                         placeholder="IC Name"
                         onChange={(ev) => setName({name: ev.target.value})} />
 

@@ -13,6 +13,7 @@ import {Popup} from "shared/components/Popup";
 import {GoogleAuthButton} from "./GoogleSignInButton";
 
 import "./index.scss";
+import { InputField } from "shared/components/InputField";
 
 
 export const LoginPopup = () => {
@@ -36,8 +37,8 @@ export const LoginPopup = () => {
                         <div>
                             <div className="login__popup__label">NoAuth Login</div>
                             <div>
-                                <input type="text" placeholder="username"
-                                       value={username} onChange={e => setUsername(e.target.value.trim())} />
+                                <InputField type="text" placeholder="username"
+                                            value={username} onChange={e => setUsername(e.target.value.trim())} />
                             </div>
                             <button onClick={() => {
                                 if (username === "") {

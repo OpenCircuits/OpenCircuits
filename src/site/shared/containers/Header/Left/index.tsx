@@ -5,6 +5,7 @@ import {ToggleCircuitLocked, SetCircuitName} from "shared/state/CircuitInfo";
 import {ToggleSideNav} from "shared/state/SideNav";
 
 import "./index.scss";
+import { InputField } from "shared/components/InputField";
 
 
 type Props = {
@@ -33,7 +34,7 @@ export const HeaderLeft = ({helpers}: Props) => {
                 </button>
             </div>
             <div>
-                <input title="Circuit Name" type="text"
+                <InputField title="Circuit Name" type="text"
                        value={name}
                        placeholder="Untitled Circuit*"
                        onChange={(s) => dispatch(SetCircuitName(s.target.value))}
