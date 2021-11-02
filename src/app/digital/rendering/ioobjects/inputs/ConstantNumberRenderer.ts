@@ -1,13 +1,11 @@
-import { Component } from "core/models/Component";
 import { Renderer } from "core/rendering/Renderer";
 import { Line } from "core/rendering/shapes/Line";
+import { Rectangle } from "core/rendering/shapes/Rectangle";
 import { Style } from "core/rendering/Style";
+import { FONT_CONSTANT_NUMBER } from "core/rendering/Styles";
 import { DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR } from "core/utils/Constants";
 import { ConstantNumber } from "digital/models/ioobjects";
-import { Camera } from "math/Camera";
-import { Clamp, GetNearestPointOnRect } from "math/MathUtils";
 import { V, Vector } from "Vector";
-import { number } from "yargs";
 
 export const ConstantNumberRenderer = (() => {
 
@@ -26,28 +24,25 @@ export const ConstantNumberRenderer = (() => {
     }
 
     // Function to draw the input value on the component
-    const drawInputText = function(renderer: Renderer, pos0: Vector, value: number, size: Vector): void {
-        let text = value < 10 ? value.toString() : 'ABCDEF'.charAt(value - 10);
-        let pos = V(pos0.x,pos0.y+size.x/2);
-        renderer.text(text, V(0,-25), 'center');
-        // const align: CanvasTextAlign = "center";
-        // const padding = 50;
-        // const ww = renderer.getTextWidth(text)/2;
-        // let pos = GetNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos0);
-        // pos = pos.sub(pos0).normalize().scale(padding).add(pos);
-        // pos.x = Clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
-        // pos.y = Clamp(pos.y, -size.y/2+14, size.y/2-14);
-        // renderer.text(text, pos, align);
+    const drawInputText = function(renderer: Renderer, value: number): void {
+        let text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
+        renderer.text(text, V(0,2.5), "center", "black", FONT_CONSTANT_NUMBER);
     }
 
     return {
-        render(renderer: Renderer, camera: Camera, object: ConstantNumber, selected: boolean): void {
+        render(renderer: Renderer, object: ConstantNumber, selected: boolean): void {
             const transform = object.getTransform();
             const fillColor = selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR;
             const borderColor = selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR;
+            const style = new Style(fillColor, borderColor, DEFAULT_BORDER_WIDTH);
+            // Draw the rectangle first, subtracting border width for alignment
+            var rectSize = transform.getSize();
+            rectSize.x -= DEFAULT_BORDER_WIDTH;
+            rectSize.y -= DEFAULT_BORDER_WIDTH;
+            renderer.draw(new Rectangle(V(), rectSize), style);
+            // Connect the output lines together and draw the text
             drawOutputConnector(renderer, transform.getSize(), borderColor);
-            drawInputText(renderer, object.getPos(), object.getInput(), transform.getSize());
-            console.log('ConstantNumberRenderer.render()');
+            drawInputText(renderer, object.getInput());
         }
     };
 })();
