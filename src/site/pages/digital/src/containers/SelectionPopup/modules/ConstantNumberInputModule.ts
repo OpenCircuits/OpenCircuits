@@ -1,7 +1,7 @@
-import { GroupAction } from "core/actions/GroupAction";
-import { ConstantNumber } from "digital/models/ioobjects";
-import { CreateModule, ModuleConfig, PopupModule } from "shared/containers/SelectionPopup/modules/Module";
-import { ConstantNumberChangeAction } from "digital/actions/ConstantNumberChangeAction"
+import {GroupAction} from "core/actions/GroupAction";
+import {ConstantNumber} from "digital/models/ioobjects";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {ConstantNumberChangeAction} from "digital/actions/ConstantNumberChangeAction"
 
 const Config: ModuleConfig<[ConstantNumber], number> = {
     types: [ConstantNumber],

@@ -1,5 +1,5 @@
-import { Action } from "core/actions/Action";
-import { ConstantNumber } from "digital/models/ioobjects";
+import {Action} from "core/actions/Action";
+import {ConstantNumber} from "digital/models/ioobjects";
 
 /**
  * An action to change the input for a ConstantNumber

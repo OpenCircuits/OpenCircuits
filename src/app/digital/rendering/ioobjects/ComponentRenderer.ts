@@ -25,6 +25,7 @@ import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {IC}                  from "digital/models/ioobjects/other/IC";
+import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumber";
 
 import {Images} from "digital/utils/Images";
 
@@ -35,8 +36,7 @@ import {ICRenderer}  from "./other/ICRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {LEDRenderer} from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
-import { ConstantNumberRenderer } from "./inputs/ConstantNumberRenderer";
-import { ConstantNumber } from "digital/models/ioobjects/inputs/ConstantNumber";
+import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
 
 
 export const ComponentRenderer = (() => {

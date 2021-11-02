@@ -1,11 +1,11 @@
-import { Renderer } from "core/rendering/Renderer";
-import { Line } from "core/rendering/shapes/Line";
-import { Rectangle } from "core/rendering/shapes/Rectangle";
-import { Style } from "core/rendering/Style";
-import { FONT_CONSTANT_NUMBER } from "core/rendering/Styles";
-import { DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR } from "core/utils/Constants";
-import { ConstantNumber } from "digital/models/ioobjects";
-import { V, Vector } from "Vector";
+import {Renderer} from "core/rendering/Renderer";
+import {Line} from "core/rendering/shapes/Line";
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+import {Style} from "core/rendering/Style";
+import {FONT_CONSTANT_NUMBER} from "core/rendering/Styles";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, DEFAULT_ON_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {ConstantNumber} from "digital/models/ioobjects";
+import {V, Vector} from "Vector";
 
 export const ConstantNumberRenderer = (() => {
 
@@ -26,7 +26,7 @@ export const ConstantNumberRenderer = (() => {
     // Function to draw the input value on the component
     const drawInputText = function(renderer: Renderer, value: number): void {
         let text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
-        renderer.text(text, V(0,2.5), "center", "black", FONT_CONSTANT_NUMBER);
+        renderer.text(text, V(0,2.5), "center", DEFAULT_ON_COLOR, FONT_CONSTANT_NUMBER);
     }
 
     return {

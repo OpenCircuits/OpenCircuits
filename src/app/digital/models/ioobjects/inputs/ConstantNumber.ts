@@ -1,8 +1,8 @@
-import { DigitalComponent } from "digital/models/DigitalComponent";
-import { ClampedValue } from "math/ClampedValue";
-import { DecimalToBCD } from "math/MathUtils";
-import { serializable, serialize } from "serialeazy";
-import { V } from "Vector";
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {ClampedValue} from "math/ClampedValue";
+import {DecimalToBCD} from "math/MathUtils";
+import {serializable, serialize} from "serialeazy";
+import {V} from "Vector";
 
 /**
  * A constant number input. This allows the user to control a 4 bit constant
@@ -46,7 +46,7 @@ export class ConstantNumber extends DigitalComponent {
         while (outputs.length < 4) { // ensure length is 4
             outputs.push(false);
         }
-        outputs.forEach((value,i) => super.activate(value,i));
+        outputs.forEach((value, i) => super.activate(value, i));
     }
 
     /**
