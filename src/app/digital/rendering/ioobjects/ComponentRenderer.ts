@@ -35,6 +35,8 @@ import {ICRenderer}  from "./other/ICRenderer";
 import {GateRenderer} from "./gates/GateRenderer";
 import {LEDRenderer} from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
+import { ConstantNumberRenderer } from "./inputs/ConstantNumberRenderer";
+import { ConstantNumber } from "digital/models/ioobjects/inputs/ConstantNumber";
 
 
 export const ComponentRenderer = (() => {
@@ -105,6 +107,8 @@ export const ComponentRenderer = (() => {
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
                 drawBox(renderer, transform, selected);
+            else if (object instanceof ConstantNumber)
+                ConstantNumberRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
