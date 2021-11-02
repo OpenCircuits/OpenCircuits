@@ -82,9 +82,9 @@ export class Renderer {
         img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
 
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000", font?: string): void {
         this.save();
-        this.context.font = FONT;
+        this.context.font = font ?? FONT;
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
