@@ -17,9 +17,9 @@ stroke="black" stroke-width="1" stroke-linecap="round" fill="none"></path>
 
 I like to use [this editor/viewer from rapidtables](https://www.rapidtables.com/web/tools/svg-viewer-editor.html) because it is straightforward unlike a lot of other SVG editors out there. Copy the code above into there and modify `INPUT PATH HERE` to be the actual path ([read up on paths here](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths)). Some icons require more than just a path (i.e. circles and other neat shapes). You can edit these however you like, this is just some starter code.
 
-If you're making an analog component, put your itemnav SVG file into the site/public/img/analog/icons folder, where you will see additional subfolders for each category of component. For digital, site/public/img/icons.  
+Put your itemnav SVG file into the  site/public/img/icons folder, where you will see additional subfolders for each category of component.
 
-Additionally, you'll need to add your component as an object in either the analognavconfig.json or the digitalnavconfig.json file. The `"id"` field should be the same `"id"` used in the `@serializable` tag in `YourComponentName.ts`. The `"label"` field is what is shown underneath the component in the itemnav, and in the `"icon"` field you should put the path to your itemnav SVG file name.  
+Additionally, you'll need to add your component as an object in digitalnavconfig.json file. The `"id"` field should be the same `"id"` used in the `@serializable` tag in `YourComponentName.ts`. The `"label"` field is what is shown underneath the component in the itemnav, and in the `"icon"` field you should put the path to your itemnav SVG file name.  
 
 
 ## Canvas SVG file(s)
@@ -34,15 +34,15 @@ stroke="black" stroke-width="1" stroke-linecap="round" fill="none"></path>
 
 Your path and dimensions may vary from the itemnav tool. When in doubt, take a look at existing component SVGs as examples. The main difference here is the `viewBox` which defines the area of the icon which is to be visible. The height and width should be at least the same ratio as those defined in your component's TypeScript file, which we will get to later.  
 
-For analog components, make this SVG file in site/public/img/analog/items, if digital make it in site/public/img/items. Next, add your canvas SVG file name(s) to a variable called `IMAGE_FILE_NAMES` in app/analog/ts/utils/Images.ts (for digital, app/digital/ts/utils/Images.ts).  
+Make it in site/public/img/items. Next, add your canvas SVG file name(s) to a variable called `IMAGE_FILE_NAMES` in app/digital/ts/utils/Images.ts .  
 
 
 ## TypeScript files
-Make a new `YourComponentName.ts` file in the app/analog/ts/models/eeobjects folder (for digital, app/digital/ts/models/ioobjects). Implement the class in the TypeScript file. It's easiest to follow the example of an existing component, but here's what it should look like.
+First create a new `YourComponentName.ts` file in the app/digital/ts/models/ioobjects . Implement the class in the TypeScript file. It's easiest to follow the example of an existing component, but here's what it should look like.
 
 ```typescript
-@serializable("YourComponentID") // <- this must be the same "id" as in analog/digital navconfig.json
-export class YourComponent extends AnalogComponent {
+@serializable("YourComponentID") // <- this must be the same "id" as in digital navconfig.json
+export class YourComponent extends DigitalComponent {
     public constructor( /* arguments */ ) {
         super(new ClampedValue(NUMBER OF PORTS), V(WIDTH, HEIGHT));
          // more code ...
@@ -59,13 +59,13 @@ export class YourComponent extends AnalogComponent {
 
     // other necessary methods ...
 ```
-Add this component to a list of `export`s in the app/analog/ts/models/eeobjects/index.ts (for digital, app/digital/ts/models/ioobjects/index.ts).
+Add this component to a list of `export`s in the app/digital/ts/models/ioobjects/index.ts .
 
 ```typescript
 export {YourComponent} from "./YourComponent";
 ```
 
-Create any actions yor component might need in app/digital/actions/. Here is an example from 
+Second create any actions yor component might need in app/digital/actions/. Here is an example from 
 `ClockFrequencyChangeAction.ts`
 
 ```typescript
@@ -97,7 +97,7 @@ export class ClockFrequencyChangeAction implements Action {
 }
 ```
 
-Create any SelectionPopupModules your component needs in site/pages/digital/src/containers/SelectionPopup/modules/. Here is 
+Third create any SelectionPopupModules your component needs in site/pages/digital/src/containers/SelectionPopup/modules/. Here is 
 an example from `OutputCountModule.tsx`
 ```typescript
 const Config: ModuleConfig<[Encoder], number> = {
@@ -118,14 +118,22 @@ export const OutputCountModule = PopupModule({
     })]
 });
 ```
-Add your new PopupModules to src/site/shared/containers/SelectionPopup/index.tsx 
-
+Add your new PopupModules to src/site/pages/digital/src/containers/App/index.tsx 
+(around line 114)
 ```typescript
-
+modules={[PositionModule, InputCountModule,
+        SelectPortCountModule,
+        DecoderInputCountModule,
+        OutputCountModule, SegmentCountModule,
+        ClockFrequencyModule,
+        ColorModule, TextColorModule,
+        BusButtonModule, CreateICButtonModule,
+        ViewICButtonModule, ClockSyncButtonModule, 
+        YourModuleHere]} />
 
 ```
 
-Create any custom renderers your component needs in app/digital/rendering/ioobjects/inputs/YOUR_REDNERER.ts . 
+Laslty create any custom renderers your component needs in app/digital/rendering/ioobjects/inputs/YOUR_REDNERER.ts . 
 Here is 
 an example from `GateRenderer.ts`
 ```typescript
@@ -223,10 +231,12 @@ change the following code to add your custom render
 ## Checklist
 - [ ] Itemnav SVG in icons folder
 - [ ] Canvas SVG(s) in items folder
-- [ ] Add object to analognavconfig.json or digitalnavconfig.json
+- [ ] Add object to digitalnavconfig.json
 - [ ] Update `IMAGE_FILE_NAMES` in Images.ts
-- [ ] Make TypeScript file
+- [ ] Create TypeScript file
 - [ ] Add export in index.ts
 - [ ] Create new actions
 - [ ] Create SelectionPopupModules
-- [ ] Create custom Renderers
+- [ ] Add your SelectionPopupModules in index.tsx
+- [ ] Create custom renderers
+- [ ] Add your custom renderers in ComponentRenderer.ts
