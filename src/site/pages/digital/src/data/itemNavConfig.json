@@ -6,16 +6,6 @@
         "label": "Inputs",
         "items": [
           {
-            "id": "ConstantLow",
-            "label": "Constant Low",
-            "icon": "constantlow.svg"
-          },
-          {
-            "id": "ConstantHigh",
-            "label": "Constant High",
-            "icon": "constanthigh.svg"
-          },
-          {
             "id": "Button",
             "label": "Button",
             "icon": "button.svg"
@@ -26,14 +16,24 @@
             "icon": "switch.svg"
           },
           {
-            "id": "Clock",
-            "label": "Clock",
-            "icon": "clock.svg"
+            "id": "ConstantLow",
+            "label": "Constant Low",
+            "icon": "constantlow.svg"
+          },
+          {
+            "id": "ConstantHigh",
+            "label": "Constant High",
+            "icon": "constanthigh.svg"
           },
           {
             "id": "ConstantNumber",
             "label": "Constant Number",
             "icon": "constantnumber.svg"
+          },
+          {
+            "id": "Clock",
+            "label": "Clock",
+            "icon": "clock.svg"
           }
         ]
       },
