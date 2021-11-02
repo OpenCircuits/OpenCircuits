@@ -108,7 +108,7 @@ export const ComponentRenderer = (() => {
             else if (object instanceof Encoder || object instanceof Decoder)
                 drawBox(renderer, transform, selected);
             else if (object instanceof ConstantNumber)
-                ConstantNumberRenderer.render(renderer, camera, object, selected);
+                ConstantNumberRenderer.render(renderer, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
