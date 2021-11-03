@@ -37,6 +37,7 @@ export type UseModuleProps = {
     selections: SelectionsWrapper;
     addAction: (action: Action) => void;
     render: () => void;
+    forceUpdate: () => void;
 }
 
 
@@ -256,7 +257,7 @@ type ButtonModuleProps = UseModuleProps & {
     isActive: (selections: Selectable[]) => boolean;
     onClick: (selections: Selectable[]) => Action | void;
 }
-export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render}: ButtonModuleProps) => {
+export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render, forceUpdate}: ButtonModuleProps) => {
     const [state, setState] = useState({active: false});
 
     const dependencyStr = selections.get().reduce((c, s) => c + s.constructor.name + getDependencies(s), "");
@@ -277,6 +278,7 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
         if (a)
             addAction(a);
         render();
+        forceUpdate(); // Send an update back to the SelectionPopup
     }
 
     if (!state.active)
