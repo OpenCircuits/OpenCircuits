@@ -59,6 +59,7 @@ import {CreateICButtonModule}    from "site/digital/containers/SelectionPopup/mo
 import {ClockSyncButtonModule}   from "../SelectionPopup/modules/ClockSyncButtonModule";
 import {OscilloscopePauseButtonModule,
         OscilloscopeResumeButtonModule,
+        ClearOscilloscopeButtonModule,
         OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
@@ -121,6 +122,7 @@ export const App = ((store: AppStore) => {
                                                   FrequencyModule, OscilloscopeSamplesModule,
                                                   OscilloscopeResumeButtonModule,
                                                   OscilloscopePauseButtonModule,
+                                                  ClearOscilloscopeButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule, CreateICButtonModule,
                                                   ViewICButtonModule, ClockSyncButtonModule]} />

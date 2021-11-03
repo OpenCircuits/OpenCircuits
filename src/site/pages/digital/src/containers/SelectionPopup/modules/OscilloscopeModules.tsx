@@ -49,3 +49,16 @@ export const OscilloscopeResumeButtonModule = (props: UseModuleProps) => (
         }}
         {...props} />
 );
+
+
+export const ClearOscilloscopeButtonModule = (props: UseModuleProps) => (
+    <ButtonPopupModule
+        text="Clear"
+        alt="Clear the Oscilloscope readings"
+        getDependencies={(s) => (s instanceof Oscilloscope ? "1" : "0")}
+        isActive={(selections) => selections.every(s => s instanceof Oscilloscope)}
+        onClick={(selections) => {
+            (selections as Oscilloscope[]).forEach(c => c.reset());
+        }}
+        {...props} />
+);
