@@ -36,24 +36,26 @@ export const OscilloscopeRenderer = (() => {
             {
                 const signals = o.getSignals();
 
-                // Calculate offset to account for border/line widths
-                const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
+                if (signals.length > 1) {
+                    // Calculate offset to account for border/line widths
+                    const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
 
-                // Calculate the positions for each signal
-                const dx = (size.x - 2*offset)/(o.getNumSamples() - 1);
-                const positions = signals.map((s, i) => V(
-                    -transform.getSize().x/2 + offset + i*dx, // x-position: linear space
-                    (s ? -size.y*1/3 : size.y*1/3)            // y-position: based on signal value
-                ));
+                    // Calculate the positions for each signal
+                    const dx = (size.x - 2*offset)/(o.getNumSamples() - 1);
+                    const positions = signals.map((s, i) => V(
+                        -transform.getSize().x/2 + offset + i*dx, // x-position: linear space
+                        (s ? -size.y*1/3 : size.y*1/3)            // y-position: based on signal value
+                    ));
 
-                // Draw the graph
-                renderer.moveTo(positions[0]);
-                for (let s = 0; s < signals.length-1; s++) {
-                    // Draws a vertical line so that the jump looks better
-                    //  from 0 -> 1 or 1 -> 0
-                    if (s > 0 && signals[s-1] !== signals[s])
-                        renderer.lineWith(positions[s]);
-                    renderer.lineWith(positions[s].add(dx, 0));
+                    // Draw the graph
+                    renderer.moveTo(positions[0]);
+                    for (let s = 0; s < signals.length-1; s++) {
+                        // Draws a vertical line so that the jump looks better
+                        //  from 0 -> 1 or 1 -> 0
+                        if (s > 0 && signals[s-1] !== signals[s])
+                            renderer.lineWith(positions[s]);
+                        renderer.lineWith(positions[s].add(dx, 0));
+                    }
                 }
             }
             renderer.closePath();
