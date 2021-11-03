@@ -101,6 +101,12 @@ export class Renderer {
         this.context.textBaseline = "middle";
         return this.context.measureText(txt).width;
     }
+    public moveTo(p: Vector): void {
+        this.context.moveTo(p.x, p.y);
+    }
+    public lineTo(p: Vector): void {
+        this.context.lineTo(p.x, p.y);
+    }
     public pathLine(p1: Vector, p2: Vector): void {
         this.context.moveTo(p1.x, p1.y);
         this.context.lineTo(p2.x, p2.y);
