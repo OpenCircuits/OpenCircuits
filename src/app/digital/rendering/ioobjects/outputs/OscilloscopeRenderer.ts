@@ -1,9 +1,9 @@
-import {blend, parseColor} from "svg2canvas";
-
 import {SELECTED_BORDER_COLOR,
         DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR,
-        DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+        DEFAULT_BORDER_WIDTH,
+        DEFAULT_ON_COLOR,
+        GRAPH_LINE_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -15,42 +15,47 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Oscilloscope} from "digital/models/ioobjects";
 
-import {Images} from "digital/utils/Images";
-import {Circle} from "core/rendering/shapes/Circle";
-import {GRID_LINE_COLOR} from "core/rendering/Styles";
-
 
 export const OscilloscopeRenderer = (() => {
     return {
-        render(renderer: Renderer, camera: Camera, o: Oscilloscope, selected: boolean): void {
+        render(renderer: Renderer, _: Camera, o: Oscilloscope, selected: boolean): void {
             const transform = o.getTransform();
+            const size = transform.getSize();
 
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : "#ffffff");
             const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
-            renderer.draw(new Rectangle(V(), transform.getSize()), style);
+            renderer.draw(new Rectangle(V(), size), style);
 
-
-            // Draw the signal
+            // Draw signals graph
             renderer.save();
-            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 1.0 / camera.getZoom()));
+            renderer.setStyle(new Style(undefined, DEFAULT_ON_COLOR, GRAPH_LINE_WIDTH));
+            renderer.setPathStyle({ lineCap: "square" })
             renderer.beginPath();
+            {
+                const signals = o.getSignals();
 
-            let dx = transform.getSize().x/o.getNumSamples();
-            let x = -transform.getSize().x/2;
+                // Calculate offset to account for border/line widths
+                const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
 
-            for (let s = 0; s < o.getSignals().length; s++) {
-                let y = o.getSignals()[s] ? -transform.getSize().y*1/3 : transform.getSize().y*1/3;
+                // Calculate the positions for each signal
+                const dx = (size.x - 2*offset)/(o.getNumSamples() - 1);
+                const positions = signals.map((s, i) => V(
+                    -transform.getSize().x/2 + offset + i*dx, // x-position: linear space
+                    (s ? -size.y*1/3 : size.y*1/3)            // y-position: based on signal value
+                ));
 
-                if (s == 0)
-                    renderer.moveTo(V(x, y));
-                renderer.lineTo(V(x+dx, y));
-                renderer.moveTo(V(x+dx, y));
-
-                x += dx;
+                // Draw the graph
+                renderer.moveTo(positions[0]);
+                for (let s = 0; s < signals.length-1; s++) {
+                    // Draws a vertical line so that the jump looks better
+                    //  from 0 -> 1 or 1 -> 0
+                    if (s > 0 && signals[s-1] !== signals[s])
+                        renderer.lineWith(positions[s]);
+                    renderer.lineWith(positions[s].add(dx, 0));
+                }
             }
-
             renderer.closePath();
             renderer.stroke();
             renderer.restore();

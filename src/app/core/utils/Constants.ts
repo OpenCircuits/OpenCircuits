@@ -20,6 +20,8 @@ export const DEFAULT_ON_COLOR      = "#3cacf2";
 export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
+export const GRAPH_LINE_WIDTH = 4;
+
 export const DEFAULT_BORDER_WIDTH = 2;
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
