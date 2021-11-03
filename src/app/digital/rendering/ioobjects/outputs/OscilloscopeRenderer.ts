@@ -37,7 +37,7 @@ export const OscilloscopeRenderer = (() => {
             renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 1.0 / camera.getZoom()));
             renderer.beginPath();
 
-            let dx = transform.getSize().x/100;
+            let dx = transform.getSize().x/o.getNumSamples();
             let x = -transform.getSize().x/2;
 
             for (let s = 0; s < o.getSignals().length; s++) {
