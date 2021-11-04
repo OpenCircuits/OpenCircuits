@@ -50,6 +50,9 @@ h3 + h4, div + h4 {
   border-bottom: 1px solid rgba(121, 121, 121, 0.1);
 }
 
+.menu__link {
+  overflow-x: hidden;
+}
 
 .tabs-container {
   border-radius: 5px;

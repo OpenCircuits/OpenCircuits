@@ -12,6 +12,8 @@ export class Clock extends DigitalComponent {
     @serialize
     private isOn: boolean;
 
+    private timeout: number;
+
     public constructor() {
         super(new ClampedValue(0), new ClampedValue(1), V(60, 42));
         this.frequency = 1000;
@@ -21,8 +23,23 @@ export class Clock extends DigitalComponent {
 
     // Changing the clock
     public tick(): void {
+        if (this.timeout !== null) {
+            window.clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+
         this.activate(!this.isOn);
-        setTimeout(() => this.tick(), this.frequency);
+
+        this.timeout = window.setTimeout(() => {
+            this.timeout = null;
+            this.tick();
+        }, this.frequency);
+    }
+
+    // Reset to off and start ticking
+    public reset(): void {
+        this.isOn = false;
+        this.tick();
     }
 
     public setFrequency(freq: number): void {

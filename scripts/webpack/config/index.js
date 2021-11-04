@@ -40,14 +40,11 @@ module.exports = (config) => {
                 }),
             ],
 
-            devtool: (isDev ? "source-map" : undefined),
-
-            devServer: {
-                contentBase: buildDir,
-                publicPath: ".",
-                hot: true,
-                quiet: true,
+            infrastructureLogging: {
+                level: "error",
             },
+
+            devtool: (isDev ? "source-map" : undefined),
         },
         require("./img")(config),
         require("./css")(config),

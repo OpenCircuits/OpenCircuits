@@ -1,4 +1,4 @@
-import {useLayoutEffect, useState, cloneElement} from "react";
+import {useLayoutEffect, useState, cloneElement, useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 import {Selectable} from "core/utils/Selectable";
@@ -122,6 +122,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
 
+        const inputRef = useRef<HTMLInputElement>();
+
         useLayoutEffect(() => {
             // This means Selections changed, so we must check if
             //  we should should show this module or not
@@ -160,6 +162,11 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
         const onChange = (newVal: string) => {
             const val = parseVal(newVal);
+
+            // Due to Firefox not focusing when the arrow keys
+            //  are pressed on number inputs (issue #818)
+            if (inputRef?.current)
+                inputRef.current.focus();
 
             // Do action w/o saving it if the textVal is valid right now
             if (isValid(val)) {
@@ -221,7 +228,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
-            <input type={props.inputType}
+            <input ref={inputRef}
+                   type={props.inputType}
                    value={focused ? textVal : ((same ? displayVal(val) : ""))}
                    placeholder={same ? "" : (props.placeholder ?? "-")}
                    step={"step" in props ? props.step : ""}
@@ -276,7 +284,13 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
 
     return (
         <button title={alt}
-                onClick={() => click()}>{text}</button>
+                // When the create IC button is clicked, it must be blurred so that when enter is pressed to
+                // to confirm creation of the IC, the create button in the selection popup does not also register
+                // an enter press (Resulted in immediately opening a new IC creator with the newly made IC as the only target).
+                onClick={(ev) => {
+                    click();
+                    ev.currentTarget.blur();
+                }}>{text}</button>
     )
 }
 
