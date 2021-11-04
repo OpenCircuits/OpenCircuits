@@ -6,7 +6,7 @@ import {OPTION_KEY} from "core/utils/Constants";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 
-import {useKey} from "shared/utils/hooks/useKey";
+import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
@@ -39,6 +39,22 @@ function GetNumInputsAndOutputs(itemId: string, info: DigitalCircuitInfo): [numb
 }
 
 
+enum SmartPlaceOptions {
+    Off     = 0,
+    Inputs  = 1 << 0,
+    Outputs = 1 << 1,
+    Full    = Inputs | Outputs,
+}
+
+// List that represents the order of smart place options cycle
+const SmartPlaceOrder = [
+    SmartPlaceOptions.Off,
+    SmartPlaceOptions.Full,
+    SmartPlaceOptions.Outputs,
+    SmartPlaceOptions.Inputs,
+];
+
+
 type Props = {
     info: DigitalCircuitInfo;
 }
@@ -47,7 +63,15 @@ export const DigitalItemNav = ({info}: Props) => {
     const [{ics}, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
-    const smartPlace = useKey(OPTION_KEY);
+    const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
+
+    // Cycle through Smart Place options on Option key press
+    useWindowKeyDownEvent(OPTION_KEY, () => {
+        setSmartPlace(SmartPlaceOrder[
+            // Calculate index of current option and find next one in the list
+            (SmartPlaceOrder.indexOf(smartPlace) + 1) % SmartPlaceOrder.length]
+        );
+    });
 
     useEffect(() => {
         // Subscribe to CircuitDesigner
@@ -83,35 +107,41 @@ export const DigitalItemNav = ({info}: Props) => {
             ]
         }}
         additionalData={smartPlace}
+        onFinish={() => {
+            setSmartPlace(SmartPlaceOptions.Off);
+        }}
         additionalPreview={(smartPlace, curItemId) => {
-            if (!curItemId || !smartPlace)
+            if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
                 return undefined;
 
             // This function shows the display for 'Smart Place' (issue #689)
             const [numInputs, numOutputs] = GetNumInputsAndOutputs(curItemId, info);
             return <>
-                {Array(numInputs).fill(0).map((_, i) => (
-                    // Show the Switches
-                    <img key={`digital-itemnav-inputs-${i}`}
-                         src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
-                         width="80px" height="80px"
-                         style={{
-                             position: "absolute",
-                             left: -100,
-                             top: 80*(i - (numInputs-1)/2),
-                         }} />
-                ))}
-                {Array(numOutputs).fill(0).map((_, i) => (
-                    // Show the LEDs
-                    <img key={`digital-itemnav-outputs-${i}`}
-                         src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
-                         width="80px" height="80px"
-                         style={{
-                             position: "absolute",
-                             left: 100,
-                             top: 90*(i - (numOutputs-1)/2),
-                         }} />
-                ))}
+                {!!(smartPlace & SmartPlaceOptions.Inputs) &&
+                    Array(numInputs).fill(0).map((_, i) => (
+                        // Show the Switches
+                        <img key={`digital-itemnav-inputs-${i}`}
+                             src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
+                             width="80px" height="80px"
+                             style={{
+                                 position: "absolute",
+                                 left: -100,
+                                 top: 80*(i - (numInputs-1)/2),
+                             }} />
+                    ))
+                }
+                {!!(smartPlace & SmartPlaceOptions.Outputs) &&
+                    Array(numOutputs).fill(0).map((_, i) => (
+                        // Show the LEDs
+                        <img key={`digital-itemnav-outputs-${i}`}
+                             src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
+                             width="80px" height="80px"
+                             style={{
+                                 position: "absolute",
+                                 left: 100,
+                                 top: 90*(i - (numOutputs-1)/2),
+                             }} />
+                    ))}
             </>
         }}
     />;

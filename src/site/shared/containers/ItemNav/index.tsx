@@ -36,9 +36,10 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    onFinish?: (cancelled: boolean) => void;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, onFinish, additionalPreview }: Props<D>) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -55,9 +56,10 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
 
 
     // Resets the curItemID and numClicks
-    function reset() {
+    function reset(cancelled: boolean = false) {
         setState({curItemID: "", numClicks: 1});
         setCurItemImg("");
+        onFinish(cancelled);
     }
 
     // Drop the current item on click
@@ -68,8 +70,10 @@ export const ItemNav = <D,>({ info, config, additionalData, additionalPreview }:
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
-        DragDropHandlers.addListener(reset);
-        return () => DragDropHandlers.removeListener(reset);
+        const resetListener = () => reset(false);
+
+        DragDropHandlers.addListener(resetListener);
+        return () => DragDropHandlers.removeListener(resetListener);
     }, [setState]);
 
     // Get mouse-position for drag-n-drop preview
