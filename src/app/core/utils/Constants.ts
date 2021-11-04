@@ -50,6 +50,9 @@ export const ROTATION_CIRCLE_THRESHOLD = 8;
 export const ROTATION_CIRCLE_R1 = Math.pow(ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD, 2);
 export const ROTATION_CIRCLE_R2 = Math.pow(ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD, 2);
 
+export const ARROW_PAN_DISTANCE_NORMAL = 75;
+export const ARROW_PAN_DISTANCE_SMALL = 5;
+
 export const SIDENAV_WIDTH = 300;
 export const ITEMNAV_WIDTH = 200;
 
@@ -64,6 +67,10 @@ export const CONTROL_KEY = 17;
 export const OPTION_KEY = 18;
 export const ESC_KEY    = 27;
 export const SPACEBAR_KEY = 32;
+export const ARROW_LEFT = 37;
+export const ARROW_UP = 38;
+export const ARROW_RIGHT = 39;
+export const ARROW_DOWN = 40;
 export const DELETE_KEY = 46;
 export const A_KEY = 65;
 export const C_KEY = 67;
