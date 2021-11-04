@@ -18,3 +18,17 @@ export const useKeyDownEvent = (input: Input, key: number, f: () => void) => {
         return () => input.removeListener(LookForKey);
     }, [input, key, f]);
 }
+
+export const useWindowKeyDownEvent = (key: number, f: () => void) => {
+    useEffect(() => {
+        const LookForKey = (ev: KeyboardEvent) => {
+            if (!(document.activeElement instanceof HTMLInputElement) && ev.keyCode === key)
+                f();
+        }
+
+        window.addEventListener("keydown", LookForKey);
+
+        return () => window.removeEventListener("keydown", LookForKey);
+    }, [key, f]);
+}
+
