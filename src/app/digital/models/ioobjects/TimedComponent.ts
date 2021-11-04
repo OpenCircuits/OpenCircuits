@@ -38,6 +38,9 @@ export abstract class TimedComponent extends DigitalComponent {
     public tick(): void {
         this.stopTimeout();
 
+        if (this.paused)
+            return;
+
         this.onTick();
 
         // Send an update to the designer
