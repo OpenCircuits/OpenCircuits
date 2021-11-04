@@ -16,7 +16,7 @@ export const FrequencyModule = PopupModule({
     modules: [CreateModule({
         inputType: "number",
         config: Config,
-        step: 100,
+        step: 50,
         min: 50,
         max: 10000,
         alt: "Delay in milliseconds"
