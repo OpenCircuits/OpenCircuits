@@ -1,3 +1,6 @@
+:root {
+    --app-height: 100%;
+}
 
 .App {
     transition: 0.5s;
@@ -8,6 +11,7 @@
 
         width: 100vw;
         height: 100vh;
+        height: var(--app-height);
 
         & > main {
             position: relative;
