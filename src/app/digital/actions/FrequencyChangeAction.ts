@@ -1,16 +1,15 @@
 import {Action} from "core/actions/Action";
 
-import {Clock} from "digital/models/ioobjects/inputs/Clock";
-import {Oscilloscope} from "digital/models/ioobjects/outputs/Oscilloscope";
+import {TimedComponent} from "digital/models/ioobjects/TimedComponent";
 
 
 export class FrequencyChangeAction implements Action {
-    private component: Clock | Oscilloscope;
+    private component: TimedComponent;
 
     private initialFreq: number;
     private targetFreq: number;
 
-    public constructor(component: Clock | Oscilloscope, targetFreq: number) {
+    public constructor(component: TimedComponent, targetFreq: number) {
         this.component = component;
 
         this.initialFreq = component.getFrequency();

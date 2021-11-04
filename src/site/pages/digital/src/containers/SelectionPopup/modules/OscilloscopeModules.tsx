@@ -25,32 +25,6 @@ export const OscilloscopeSamplesModule = PopupModule({
     })]
 });
 
-
-export const OscilloscopePauseButtonModule = (props: UseModuleProps) => (
-    <ButtonPopupModule
-        text="Pause"
-        alt="Pause the Oscilloscope readings"
-        getDependencies={(s) => (s instanceof Oscilloscope ? `${s.isPaused()}` : "-")}
-        isActive={(selections) => selections.every(s => s instanceof Oscilloscope && !s.isPaused())}
-        onClick={(selections) => {
-            (selections as Oscilloscope[]).forEach(c => c.pause());
-        }}
-        {...props} />
-);
-
-export const OscilloscopeResumeButtonModule = (props: UseModuleProps) => (
-    <ButtonPopupModule
-        text="Resume"
-        alt="Resume the Oscilloscope readings"
-        getDependencies={(s) => (s instanceof Oscilloscope ? `${s.isPaused()}` : "-")}
-        isActive={(selections) => selections.every(s => s instanceof Oscilloscope && s.isPaused())}
-        onClick={(selections) => {
-            (selections as Oscilloscope[]).forEach(c => c.resume());
-        }}
-        {...props} />
-);
-
-
 export const ClearOscilloscopeButtonModule = (props: UseModuleProps) => (
     <ButtonPopupModule
         text="Clear"

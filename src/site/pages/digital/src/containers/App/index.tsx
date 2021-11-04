@@ -57,9 +57,9 @@ import {TextColorModule}         from "site/digital/containers/SelectionPopup/mo
 import {BusButtonModule}         from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule}    from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 import {ClockSyncButtonModule}   from "../SelectionPopup/modules/ClockSyncButtonModule";
-import {OscilloscopePauseButtonModule,
-        OscilloscopeResumeButtonModule,
-        ClearOscilloscopeButtonModule,
+import {ResumeButtonModule,
+        PauseButtonModule}       from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {ClearOscilloscopeButtonModule,
         OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
@@ -120,8 +120,7 @@ export const App = ((store: AppStore) => {
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
                                                   FrequencyModule, OscilloscopeSamplesModule,
-                                                  OscilloscopeResumeButtonModule,
-                                                  OscilloscopePauseButtonModule,
+                                                  ResumeButtonModule, PauseButtonModule,
                                                   ClearOscilloscopeButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule, CreateICButtonModule,
