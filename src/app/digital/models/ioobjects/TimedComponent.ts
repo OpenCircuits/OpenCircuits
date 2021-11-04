@@ -29,7 +29,9 @@ export abstract class TimedComponent extends DigitalComponent {
         }
     }
 
-    private tick(): void {
+    protected abstract onTick(): void;
+
+    public tick(): void {
         this.stopTimeout();
 
         this.onTick();
@@ -44,8 +46,6 @@ export abstract class TimedComponent extends DigitalComponent {
             this.tick();
         }, this.frequency);
     }
-
-    protected abstract onTick(): void;
 
     public setFrequency(freq: number): void {
         this.frequency = freq;
