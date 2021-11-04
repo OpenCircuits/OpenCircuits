@@ -24,13 +24,11 @@ export class Oscilloscope extends TimedComponent {
         // Add signal
         this.signals.push(this.inputs.first.getIsOn());
         if (this.signals.length > this.numSamples)
-            this.signals.splice(0, 1);
+            this.signals.splice(0, (this.signals.length-this.numSamples));
     }
 
     public setNumSamples(num: number): void {
         this.numSamples = num;
-        if (this.numSamples < this.signals.length)
-            this.signals.splice(0, (this.signals.length-this.numSamples));
     }
 
     public reset(): void {
@@ -43,7 +41,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     public getSignals(): boolean[] {
-        return this.signals.slice();
+        return this.signals.slice(0, this.numSamples);
     }
 
     public getDisplayName(): string {
