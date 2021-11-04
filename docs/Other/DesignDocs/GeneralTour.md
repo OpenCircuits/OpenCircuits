@@ -1,5 +1,5 @@
 ---
-title: Template
+title: General Tour
 ---
 
 
@@ -7,7 +7,6 @@ import TOCInline from '@theme/TOCInline';
 import Timeline from './_timeline';
 
 
-##### Copy the markdown below this line for your design docs!
 ---
 
 
@@ -16,8 +15,8 @@ import Timeline from './_timeline';
 </div>
 
 
-# *TITLE* Design Doc
-#### *[PERSON 1](https://github.com/Person1)*, *[PERSON 2](https://github.com/Person2)*, ... (Last updated *DATE*)
+# *General Tour* Design Doc
+#### *[Trevor Crystal](https://github.com/TGCrystal)* (Last updated *11/4/2021*)
 
 
 <details>
@@ -30,23 +29,25 @@ import Timeline from './_timeline';
 
 ## Overview
 
-(insert high-level summary of what you're trying to accomplish that anyone can understand)
+The goal of this feature is to create a tour that shows new users how to use OpenCircuits. This includes things like placing and connecting components.
 
 
 
 ## Context
 
-(a description of why this is necessary and the problem this aims to solve)
+New users may not immediately see the itemnav to open to place components. Also, some more useful yet advanced features like creating ICs may be hard to find for users. The implementation will allow these features and more (with extensibility for more new features implemented in the future as well).
 
 
 
 ## Goals & Non-Goals
 
 ### Goals:
-- (list out each goal/feature)
+- Define a json (or other format) that allows for easy specification of a tutorial
+- When the user loads the page for the first time, it should display a basic tutorial for creating/connecting Switches to ANDGate to LED
+- End of initial tutorial should show location in UI where other tutorials can be started (and the initial one can be redone)
 
 ### Non-Goals:
-- (list of things you DON'T plan on doing in this feature)
+- This is not creating any sort of separate page like issues #369, #370, or #371, it is all part of the circuit designer
 
 
 
@@ -55,14 +56,11 @@ import Timeline from './_timeline';
 <Timeline 
     start="Start Date" 
     milestones={[{
-        date: "Date 1",
-        explanation: "Brief explanation",
+        date: "11/8/21",
+        explanation: "Finalize json format",
     }, {
-        date: "Date 2",
-        explanation: "Brief explanation",
-    }, {
-        date: "Date 3",
-        explanation: "Brief explanation",
+        date: "12/31/21",
+        explanation: "Connect the json format to things actually happening in the tour",
     }]} 
     end="End Date" />
 
@@ -70,59 +68,50 @@ import Timeline from './_timeline';
 
 ## Existing Solution
 
-(describe if the issue/feature is already doable and how it's doable)
+Have someone already familiar with OpenCircuits teach you or figure it out on your own.
 
 
 
 ## Proposed Solution
 
-(write a specific "walk-through" of how the solution fixes the problem)
+First time users will be given a walkthrough of how to use OpenCircuits. The item nav would be highlighted, and then the components required to drag onto the campus would also be 
 
 
 
 ## Alternative Solutions
 
-- (describe other considered solutions and explain why they were not chosen)
+Video tutorials could work, but showing the user how to use the program in an interactive way is far more intuitive and useful.
 
 
 
 ## Testability
 
-(describe how the issue/feature will be tested)
+Currently, frontend testing does not exist so there is little that can be tested. There could possibly be some sort testing of a parser to help process the json file input, but the exact method of converting to json to actual tutorial has yet to be determined, so testability is not yet fully determined.
 
 
 
 ## Impact
 
-(does this impact other parts of the project? i.e. potentially exposes security vulnerabilities,
- causes lag? What are some of the negative consequences and side effects?)
+There should be a single button that can be used to exit the tutorial at any point. 
 
 
 
 ## Known Unknowns
 
-(describe open issues that you aren't sure about)
+Basically all implementation details are still unknown, this section and milestone details will be filled in later.
 
 
 
 ## Detailed Scoping
 
-(breakdown exactly HOW you plan on executing each part of the project,
-go in order of when you plan doing each part as well
-THIS IS THE PLACE TO VERY TECHNICAL ABOUT EXACT IMPLEMENTATION DETAILS
-AND WILL MOST LIKELY BE THE LONGEST PART OF THE DESIGN DOC)
+(To be determined)
 
 
 ### Milestone 1
 
-Detailed explanation
+Detailed explanation pending
 
 
 ### Milestone 2
 
-Detailed explanation
-
-
-### Milestone 3
-
-Detailed explanation
+Detailed explanation pending
