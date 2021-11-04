@@ -12,6 +12,7 @@ import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
@@ -27,6 +28,8 @@ type Props = {
 }
 export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
+
+    const isPageVisible = usePageVisibility();
 
     const {isLocked} = useDigitalSelector(
         state => ({ isLocked: state.circuit.isLocked })
@@ -73,6 +76,13 @@ export const MainDesigner = ({info, canvas}: Props) => {
         history.setDisabled(isLocked);
         selections.setDisabled(isLocked);
     }, [isLocked]);
+
+    useLayoutEffect(() => {
+        if (isPageVisible)
+            info.designer.resume();
+        else
+            info.designer.pause();
+    }, [isPageVisible]);
 
 
     return (<>
