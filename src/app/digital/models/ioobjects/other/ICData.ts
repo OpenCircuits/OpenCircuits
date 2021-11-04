@@ -23,6 +23,7 @@ import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
+import {Oscilloscope} from "../outputs/Oscilloscope";
 
 
 @serializable("ICData")
@@ -155,7 +156,7 @@ export class ICData {
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
-        const BLACKLIST = [SegmentDisplay];
+        const BLACKLIST = [SegmentDisplay, Oscilloscope];
 
         const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
 
