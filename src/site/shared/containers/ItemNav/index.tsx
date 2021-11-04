@@ -40,10 +40,11 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, onFinish, additionalPreview }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, additionalPreview }: Props<D>) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -63,7 +64,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onFinish, additional
     function reset(cancelled: boolean = false) {
         setState({curItemID: "", numClicks: 1});
         setCurItemImg("");
-        onFinish(cancelled);
+        onFinish && onFinish(cancelled);
     }
 
     // Drop the current item on click
@@ -179,6 +180,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onFinish, additional
                                                    numClicks: (item.id === curItemID ? numClicks+1 : 1),
                                                });
                                                setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                               onStart && onStart();
 
                                                // Prevents `onClick` listener of placing the component to fire
                                                ev.stopPropagation();
@@ -193,6 +195,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onFinish, additional
                                                        numClicks: (item.id === curItemID ? numClicks : 0),
                                                    });
                                                    setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                                   onStart && onStart();
                                                }
                                            }}>
                                     <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />

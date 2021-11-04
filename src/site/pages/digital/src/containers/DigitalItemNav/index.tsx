@@ -101,9 +101,8 @@ export const DigitalItemNav = ({info}: Props) => {
             ]
         }}
         additionalData={smartPlace}
-        onFinish={() => {
-            setSmartPlace(SmartPlaceOptions.Off);
-        }}
+        onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
+        onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
         additionalPreview={(smartPlace, curItemId) => {
             if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
                 return undefined;
