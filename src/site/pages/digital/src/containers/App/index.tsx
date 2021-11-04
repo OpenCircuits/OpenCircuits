@@ -60,6 +60,8 @@ import {ClockSyncButtonModule}   from "../SelectionPopup/modules/ClockSyncButton
 import {ResumeButtonModule,
         PauseButtonModule}       from "../SelectionPopup/modules/PauseResumeButtonModules";
 import {ClearOscilloscopeButtonModule,
+        OscilloscopeDisplaySizeModule,
+        OscilloscopeInputCountModule,
         OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
@@ -119,6 +121,8 @@ export const App = ((store: AppStore) => {
                                                   SelectPortCountModule,
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
+                                                  OscilloscopeDisplaySizeModule,
+                                                  OscilloscopeInputCountModule,
                                                   FrequencyModule, OscilloscopeSamplesModule,
                                                   ResumeButtonModule, PauseButtonModule,
                                                   ClearOscilloscopeButtonModule,
