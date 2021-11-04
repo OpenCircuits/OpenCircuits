@@ -46,7 +46,7 @@ import {FormatMap} from "digital/utils/ExpressionParser/Constants/Objects";
  */
 function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
-        throw new Error("The number of expected states does not match the expected amount");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -81,15 +81,15 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
  * @param expression the logical boolean expression to test
  * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
  * @param ops the strings used to represent the different operators
- * @throws {Error} if numInputs > 26
+ * @throws {Error} if numInputs > 8
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs
  * @see ExpressionToCircuit
  */
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: Map<FormatLabels, string>) {
     describe("Parse: '" + expression + "'", () => {
-        if (numInputs > 26)
-            throw new Error("Maximum supported number of inputs is 26, you tried to use " + numInputs);
+        if (numInputs > 16)
+            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
         const inputs: [string, Switch][] = [];
@@ -620,6 +620,10 @@ describe("Expression Parser", () => {
         runTests(3, "a&(b|c)", [false, false, false, true, false, true, false, true]);
 
         runTests(3, "(a&((b)|c))", [false, false, false, true, false, true, false, true]);
+    });
+
+    describe("8 Inputs", () => {
+        runTests(8, "a|b|c|d|e|f|g|h", [false, ...new Array(2**8 - 1).fill(true)]);
     });
 
     describe("Alternate Formats", () => {
