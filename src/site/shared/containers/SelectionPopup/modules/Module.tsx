@@ -173,7 +173,6 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                 if (tempAction)
                     tempAction.undo();
                 tempAction = config.getAction(selections.get() as T, val).execute();
-                tempAction.execute();
                 render();
             }
 
