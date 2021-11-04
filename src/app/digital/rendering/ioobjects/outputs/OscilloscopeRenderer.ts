@@ -41,7 +41,7 @@ export const OscilloscopeRenderer = (() => {
                 // Get y-offset for i'th graph
                 const dy = -size.y/2 + (i + 0.5)*o.getDisplaySize().y;
 
-                if (signals.length === 1)
+                if (signals.length <= 1)
                     continue;
 
                 // Calculate offset to account for border/line widths
