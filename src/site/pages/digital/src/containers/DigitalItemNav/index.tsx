@@ -9,6 +9,8 @@ import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/mod
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
+import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
@@ -38,14 +40,6 @@ function GetNumInputsAndOutputs(itemId: string, info: DigitalCircuitInfo): [numb
     ];
 }
 
-
-enum SmartPlaceOptions {
-    Off     = 0,
-    Inputs  = 1 << 0,
-    Outputs = 1 << 1,
-    Full    = Inputs | Outputs,
-}
-
 // List that represents the order of smart place options cycle
 const SmartPlaceOrder = [
     SmartPlaceOptions.Off,
@@ -67,7 +61,7 @@ export const DigitalItemNav = ({info}: Props) => {
 
     // Cycle through Smart Place options on Option key press
     useWindowKeyDownEvent(OPTION_KEY, () => {
-        setSmartPlace(SmartPlaceOrder[
+        setSmartPlace((smartPlace) => SmartPlaceOrder[
             // Calculate index of current option and find next one in the list
             (SmartPlaceOrder.indexOf(smartPlace) + 1) % SmartPlaceOrder.length]
         );

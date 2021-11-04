@@ -16,7 +16,7 @@ import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
-import {DigitalCreateN, SmartPlace} from "site/digital/utils/DigitalCreate";
+import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
 import "./index.scss";
 
@@ -77,14 +77,14 @@ export const MainDesigner = ({info, canvas}: Props) => {
 
     return (<>
         <Droppable ref={canvas}
-                   onDrop={(pos, itemId, num, smartPlace) => {
+                   onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
                        num = num ?? 1;
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;
                        pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-                       if (smartPlace) {
-                           history.add(SmartPlace(pos, itemId, designer, num).execute());
+                       if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                           history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
                        } else {
                            history.add(
                                CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()

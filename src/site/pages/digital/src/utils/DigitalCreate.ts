@@ -71,6 +71,14 @@ export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCir
 }
 
 
+export enum SmartPlaceOptions {
+    Off     = 0,
+    Inputs  = 1 << 0,
+    Outputs = 1 << 1,
+    Full    = Inputs | Outputs,
+}
+
+
 /**
  * Utility function that, given a DigitalComponent id, will create the component N times vertically
  *  (with behavior matches DigitalCreateN) but also create Switches for each input and LEDs for each
@@ -85,7 +93,8 @@ export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCir
  * @returns A GroupAction to place and connect all the components.
  * @throws If the itemId is an invalid item or IC
  */
-export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuitDesigner, N: number): GroupAction {
+export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuitDesigner,
+                           N: number, options: SmartPlaceOptions): GroupAction {
     const action = new GroupAction();
 
     for (let i = 0; i < N; i++) {
@@ -94,8 +103,11 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
 
         // Need to do it like this rather then comp.getInputPorts() since this can
         //  account for things like the Select ports on Multiplexers
-        const inputPorts  = comp.getPorts().filter(p => p instanceof InputPort);
-        const outputPorts = comp.getPorts().filter(p => p instanceof OutputPort);
+        const inputPorts  = (options & SmartPlaceOptions.Inputs) ?
+            comp.getPorts().filter(p => p instanceof InputPort)  : [];
+
+        const outputPorts = (options & SmartPlaceOptions.Outputs) ?
+            comp.getPorts().filter(p => p instanceof OutputPort) : [];
 
         const inputs  =  inputPorts.map(_ => new Switch());
         const outputs = outputPorts.map(_ => new LED());
