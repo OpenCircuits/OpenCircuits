@@ -4,6 +4,9 @@ import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {InputPort, OutputPort} from "..";
 
 
 export abstract class TimedComponent extends DigitalComponent {
@@ -14,8 +17,9 @@ export abstract class TimedComponent extends DigitalComponent {
 
     private timeout: number;
 
-    public constructor(initialFreq: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector) {
-        super(inputPortCount, outputPortCount, size);
+    public constructor(initialFreq: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
+                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+        super(inputPortCount, outputPortCount, size, inputPositioner, outputPositioner);
 
         this.frequency = initialFreq;
         this.paused = false;
