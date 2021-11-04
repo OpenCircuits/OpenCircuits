@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
 import {Input} from "core/utils/Input";
 import {Event} from "core/utils/Events";
 
 
-export const useKeyDownEvent = (input: Input, key: number, f: () => void) => {
+export const useKeyDownEvent = (input: Input, key: number, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;
@@ -16,10 +16,10 @@ export const useKeyDownEvent = (input: Input, key: number, f: () => void) => {
         input.addListener(LookForKey);
 
         return () => input.removeListener(LookForKey);
-    }, [input, key, f]);
+    }, [input, key, ...(deps ?? [])]);
 }
 
-export const useWindowKeyDownEvent = (key: number, f: () => void) => {
+export const useWindowKeyDownEvent = (key: number, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         const LookForKey = (ev: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement) && ev.keyCode === key)
@@ -29,6 +29,6 @@ export const useWindowKeyDownEvent = (key: number, f: () => void) => {
         window.addEventListener("keydown", LookForKey);
 
         return () => window.removeEventListener("keydown", LookForKey);
-    }, [key, f]);
+    }, [key, ...(deps ?? [])]);
 }
 

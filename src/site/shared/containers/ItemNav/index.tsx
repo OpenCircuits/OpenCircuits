@@ -1,9 +1,14 @@
 import {useEffect, useState} from "react";
+
+import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V} from "Vector";
+import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
@@ -14,7 +19,6 @@ import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
-import {Clamp} from "math/MathUtils";
 
 
 export type ItemNavItem = {
@@ -75,6 +79,23 @@ export const ItemNav = <D,>({ info, config, additionalData, onFinish, additional
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState]);
+
+
+    // Cancel placing when pressing escape
+    useWindowKeyDownEvent(ESC_KEY, () => {
+        reset(true);
+    });
+
+    // Also cancel on Right Click
+    useDocEvent("contextmenu", (ev) => {
+        if (curItemID && ev.button === RIGHT_MOUSE_BUTTON) {
+            reset(true);
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        // v-- Essentially increases priority for this event so we can cancel the context menu
+    }, [curItemID], true);
+
 
     // Get mouse-position for drag-n-drop preview
     const pos = useMousePos();
