@@ -34,14 +34,6 @@
         <link rel="stylesheet" href="%PUBLIC_URL%/assets/index.css">
 
         <script>
-            const appHeight = () => {
-                const doc = document.documentElement;
-                doc.style.setProperty('--app-height', `${window.innerHeight}px`);
-            }
-            window.addEventListener('resize', appHeight);
-            appHeight();
-        </script>
-        <script>
             setTimeout(() => {  
                 const loadingText = document.getElementById("loading-screen-text");
                 if (loadingText.innerHTML === "Loading Scripts...")

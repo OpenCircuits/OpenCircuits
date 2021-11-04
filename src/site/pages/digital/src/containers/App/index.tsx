@@ -37,6 +37,7 @@ import {ClockSyncButtonModule} from "../SelectionPopup/modules/ClockSyncButtonMo
 import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
+import { useWindowSize } from "shared/utils/hooks/useWindowSize";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -55,12 +56,13 @@ type Props = {
     canvas: React.RefObject<HTMLCanvasElement>;
 }
 export const App = ({info, helpers, canvas}: Props) => {
+    const {w, h} = useWindowSize();
     return (
         <div className="App">
             <SideNav helpers={helpers}
                         exampleCircuits={exampleCircuits} />
 
-            <div className="App__container">
+            <div className="App__container" style={{height: h+"px"}}>
                 <Header img="img/icons/logo.svg"
                         helpers={helpers} />
 
