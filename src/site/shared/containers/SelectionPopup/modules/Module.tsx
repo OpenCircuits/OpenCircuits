@@ -5,6 +5,8 @@ import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
 
+import { InputField } from "shared/components/InputField";
+
 
 export type ModuleTypes = number | string;
 
@@ -228,20 +230,20 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
-            <input ref={inputRef}
-                   type={props.inputType}
-                   value={focused ? textVal : ((same ? displayVal(val) : ""))}
-                   placeholder={same ? "" : (props.placeholder ?? "-")}
-                   step={"step" in props ? props.step : ""}
-                   min ={"min"  in props ? props.min  : ""}
-                   max ={"max"  in props ? props.max  : ""}
-                   onChange={(ev) => onChange(ev.target.value)}
-                   onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
-                   onBlur={() => onSubmit()}
-                   onKeyPress={({target, key}) => (props.inputType !== "color" &&
-                                                   key === "Enter" &&
-                                                   (target as HTMLInputElement).blur())}
-                   alt={props.alt} />
+            <InputField ref={inputRef}
+                        type={props.inputType}
+                        value={focused ? textVal : ((same ? displayVal(val) : ""))}
+                        placeholder={same ? "" : (props.placeholder ?? "-")}
+                        step={"step" in props ? props.step : ""}
+                        min ={"min"  in props ? props.min  : ""}
+                        max ={"max"  in props ? props.max  : ""}
+                        onChange={(ev) => onChange(ev.target.value)}
+                        onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                        onBlur={() => onSubmit()}
+                        onKeyPress={({target, key}) => (props.inputType !== "color" &&
+                                                        key === "Enter" &&
+                                                        (target as HTMLInputElement).blur())}
+                        alt={props.alt} />
         )
     }
 });

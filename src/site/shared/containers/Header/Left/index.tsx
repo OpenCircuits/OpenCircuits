@@ -4,6 +4,8 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 import {ToggleCircuitLocked, SetCircuitName} from "shared/state/CircuitInfo";
 import {ToggleSideNav} from "shared/state/SideNav";
 
+import { InputField } from "shared/components/InputField";
+
 import "./index.scss";
 
 
@@ -33,18 +35,18 @@ export const HeaderLeft = ({helpers}: Props) => {
                 </button>
             </div>
             <div>
-                <input title="Circuit Name" type="text"
-                       value={name}
-                       placeholder="Untitled Circuit*"
-                       onChange={(s) => dispatch(SetCircuitName(s.target.value))}
-                       onKeyUp={(ev) => {
-                           // Make it so that pressing enter saves and loses focus on the name
-                           if (ev.key === "Enter") {
-                               ev.currentTarget.blur();
-                               helpers.SaveCircuitRemote();
-                           }
-                       }}
-                       alt="Name of project" />
+                <InputField title="Circuit Name" type="text"
+                            value={name}
+                            placeholder="Untitled Circuit*"
+                            onChange={(s) => dispatch(SetCircuitName(s.target.value))}
+                            onKeyUp={(ev) => {
+                                // Make it so that pressing enter saves and loses focus on the name
+                                if (ev.key === "Enter") {
+                                    ev.currentTarget.blur();
+                                    helpers.SaveCircuitRemote();
+                                }
+                            }}
+                            alt="Name of project" />
             </div>
             <div>
                 <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}

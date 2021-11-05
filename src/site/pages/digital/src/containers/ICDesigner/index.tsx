@@ -38,6 +38,8 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
+import { InputField } from "shared/components/InputField";
+
 import "./index.scss";
 
 
@@ -186,12 +188,12 @@ export const ICDesigner = (() => {
                         height={h*IC_DESIGNER_VH}
                         style={{ cursor }} />
 
-                <input type="text"
-                        placeholder="IC Name"
-                        onChange={(ev) => setName({name: ev.target.value})}
-                        onKeyUp={(ev) => {
-                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
-                        }} />
+                <InputField type="text"
+                            placeholder="IC Name"
+                            onChange={(ev) => setName({name: ev.target.value})}
+                            onKeyUp={(ev) => {
+                                if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
+                            }} />
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>
