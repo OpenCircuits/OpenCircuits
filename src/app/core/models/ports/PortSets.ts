@@ -78,6 +78,10 @@ export class PortSet<T extends Port> {
         return this.currentPorts.slice();
     }
 
+    public getPositioner(): Positioner<T> {
+        return this.positioner;
+    }
+
     public getCount(): ClampedValue {
         return this.count.copy();
     }
