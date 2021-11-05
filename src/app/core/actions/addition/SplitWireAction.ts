@@ -8,19 +8,19 @@ import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
 
 
-
 export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: Node): GroupAction {
     const action = new GroupAction();
-    
     action.add(new DisconnectAction(designer, w).execute());
     action.add(new PlaceAction(designer, port).execute());
-    //creates and saves new ConnectionAction to a var and then executes the action.
+    
+    // Creates and saves new ConnectionAction to a var and then executes the action.
     const con1 = new ConnectionAction(designer, w.getP1(), port.getP1());
     action.add(con1.execute());
+ 
     //After execution the color of the first half of the new wire is set to the color of the old wire.
     con1.getWire().setColor(w.getColor());
 
-    //repeats same process for the other half of the split wire.
+    // Repeats same process for the other half of the split wire.
     const con2 = new ConnectionAction(designer, port.getP2(), w.getP2());
     action.add(con2.execute());
     con2.getWire().setColor(w.getColor());
