@@ -1,6 +1,6 @@
-import {GRID_SIZE,
-        SPACEBAR_KEY,
-        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {GRID_SIZE, ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL,
+        SPACEBAR_KEY, LEFT_MOUSE_BUTTON, 
+        ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -31,13 +31,17 @@ export const TranslateTool: Tool = (() => {
         shouldActivate(event: Event, {locked, currentlyPressedObject}: CircuitInfo): boolean {
             if (locked)
                 return false;
-            // Activate if the user is pressing down on an object
+            // Activate if the user is pressing down on an object or an arrow key
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
-                    currentlyPressedObject instanceof Component);
+                    currentlyPressedObject instanceof Component) ||
+                   (event.type === "keydown"  && (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
+                                                  event.key == ARROW_UP   || event.key == ARROW_DOWN));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
-            // Deactivate by releasing mouse
-            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON);
+            // Deactivate by releasing mouse or an arrow key
+            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
+            (event.type === "keyup" && (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
+                                        event.key == ARROW_UP   || event.key == ARROW_DOWN ));
         },
 
 
@@ -107,6 +111,8 @@ export const TranslateTool: Tool = (() => {
                         return true;
                     }
                     break;
+                
+                //Make a keydown case here
             }
             return false;
         }
