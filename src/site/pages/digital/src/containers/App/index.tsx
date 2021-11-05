@@ -50,13 +50,19 @@ import {InputCountModule}        from "site/digital/containers/SelectionPopup/mo
 import {DecoderInputCountModule} from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
 import {SelectPortCountModule}   from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
 import {ColorModule}             from "site/digital/containers/SelectionPopup/modules/ColorModule";
-import {ClockFrequencyModule}    from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
+import {FrequencyModule}         from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
 import {OutputCountModule}       from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 import {SegmentCountModule}      from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
 import {TextColorModule}         from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {BusButtonModule}         from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule}    from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {ClockSyncButtonModule} from "../SelectionPopup/modules/ClockSyncButtonModule";
+import {ClockSyncButtonModule}   from "../SelectionPopup/modules/ClockSyncButtonModule";
+import {ResumeButtonModule,
+        PauseButtonModule}       from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {ClearOscilloscopeButtonModule,
+        OscilloscopeDisplaySizeModule,
+        OscilloscopeInputCountModule,
+        OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
 
@@ -115,7 +121,11 @@ export const App = ((store: AppStore) => {
                                                   SelectPortCountModule,
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
-                                                  ClockFrequencyModule,
+                                                  OscilloscopeDisplaySizeModule,
+                                                  OscilloscopeInputCountModule,
+                                                  FrequencyModule, OscilloscopeSamplesModule,
+                                                  ResumeButtonModule, PauseButtonModule,
+                                                  ClearOscilloscopeButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule, CreateICButtonModule,
                                                   ViewICButtonModule, ClockSyncButtonModule]} />

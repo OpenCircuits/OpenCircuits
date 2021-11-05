@@ -1,4 +1,4 @@
-import {IO_PORT_RADIUS} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -72,7 +72,7 @@ export const WiringTool = (() => {
                 return false;
             const ports = findPorts(info);
             // Activate if the user drags or clicks on a port
-            return ((event.type === "mousedown" && input.getTouchCount() === 1) ||
+            return ((event.type === "mousedown" && event.button === LEFT_MOUSE_BUTTON && input.getTouchCount() === 1) ||
                     (event.type === "click")) &&
                     ports.length > 0 &&
                     designer.createWire(findNearestPort(info, ports), undefined) !== undefined;

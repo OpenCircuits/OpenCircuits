@@ -11,6 +11,8 @@ import {SHIFT_KEY,
 
 import {V} from "Vector";
 
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+
 import {ANDGate, BUFGate,
         DigitalNode,
         LED,
@@ -18,7 +20,6 @@ import {ANDGate, BUFGate,
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
-import {DigitalComponent} from "digital/models";
 
 
 describe("Selection Tool", () => {
@@ -30,6 +31,7 @@ describe("Selection Tool", () => {
             // Clear previous circuit
             designer.reset();
             history.reset();
+            CreateDeselectAllAction(selections).execute();
         });
 
         test("Clicking on nothing should NOT create an action", () => {
@@ -197,7 +199,26 @@ describe("Selection Tool", () => {
             expect(history.getActions()).toHaveLength(2);
         });
 
-        // TODO: Add test for deleting wire
+        test("Select then Delete Wire", () => {
+            const [obj1, obj2] = Place(new Switch(), new BUFGate());
+            obj2.setPos(V(200, 0));
+
+            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            expect(designer.getWires().length).toBe(1);
+
+            expect(selections.get().length).toBe(0);
+
+            input.click(V(100, 0));
+            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toContain(wire);
+            expect(history.getActions()).toHaveLength(1);
+
+            input.pressKey(BACKSPACE_KEY);
+            expect(history.getActions()).toHaveLength(2);
+
+            expect(selections.get().length).toBe(0);
+            expect(designer.getWires().length).toBe(0);
+        });
     });
 
     describe("Multiple Objects", () => {
@@ -205,6 +226,7 @@ describe("Selection Tool", () => {
             // Clear previous circuit
             designer.reset();
             history.reset();
+            CreateDeselectAllAction(selections).execute();
         });
 
         test("Click with Shift to Select Objects then Deselect", () => {
@@ -259,7 +281,58 @@ describe("Selection Tool", () => {
             expect(history.getActions()).toHaveLength(1);
         });
 
-        // TODO: Add test for deleting multiple objects/wires
+        test("Click with Shift to Select Objects then Delete", () => {
+            const [obj1, obj2] = Place(new ANDGate(), new BUFGate());
+            obj2.setPos(V(200, 0));
+            obj1.setPos(V(0, 0));
+
+            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            expect(designer.getWires().length).toBe(1);
+
+            expect(selections.get().length).toBe(0);
+            
+            // Select all objects with shift and click
+            input.pressKey(SHIFT_KEY);
+            input.click(obj1.getPos());
+            expect(selections.get().length).toBe(1);
+
+            input.click(obj2.getPos());
+            expect(selections.get().length).toBe(2);
+
+            input.click(V(100, 0));
+            input.releaseKey(SHIFT_KEY);
+            expect(selections.get().length).toBe(3);
+            expect(selections.get()).toContain(wire);
+
+            // When everything is deleted, no objects should be selected
+            input.pressKey(BACKSPACE_KEY);
+            expect(selections.get()).toHaveLength(0);
+            expect(designer.getWires().length).toBe(0);
+        });
+
+        test("Select All then Delete", () => {
+            const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
+            obj1.setPos(V(100, 0));
+
+            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            expect(designer.getWires().length).toBe(1);
+
+            expect(selections.get().length).toBe(0);
+
+            // Select all objects (wire does not get selected)
+            input.pressKey(COMMAND_KEY)
+                .pressKey(A_KEY)
+                .releaseKey(A_KEY)
+                .releaseKey(COMMAND_KEY);
+
+            expect(selections.get()).toHaveLength(2);
+            expect(selections.get()).not.toContain(wire);
+
+            // When everything is deleted, no objects should be selected
+            input.pressKey(BACKSPACE_KEY);
+            expect(selections.get()).toHaveLength(0);
+            expect(designer.getWires().length).toBe(0);
+        });
     });
 
     describe("Snip WirePorts Handler", () => {
