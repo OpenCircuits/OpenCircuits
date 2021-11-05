@@ -60,6 +60,11 @@
             "id": "ASCIIDisplay",
             "label": "ASCII Display",
             "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "id": "Oscilloscope",
+            "label": "Oscillo-scope",
+            "icon": "oscilloscope.svg"
           }
         ]
       },

@@ -24,19 +24,21 @@ import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {Oscilloscope}        from "digital/models/ioobjects/outputs/Oscilloscope";
 import {IC}                  from "digital/models/ioobjects/other/IC";
 import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumber";
 
 import {Images} from "digital/utils/Images";
 
-import {IOLabelRenderer} from "./IOLabelRenderer";
-import {IOPortRenderer} from "./IOPortRenderer";
-import {MultiplexerRenderer} from "./other/MultiplexerRenderer";
-import {ICRenderer}  from "./other/ICRenderer";
-import {GateRenderer} from "./gates/GateRenderer";
-import {LEDRenderer} from "./outputs/LEDRenderer";
+import {IOLabelRenderer}        from "./IOLabelRenderer";
+import {IOPortRenderer}         from "./IOPortRenderer";
+import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
+import {ICRenderer}             from "./other/ICRenderer";
+import {GateRenderer}           from "./gates/GateRenderer";
+import {LEDRenderer}            from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
+import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
 
 
 export const ComponentRenderer = (() => {
@@ -109,6 +111,8 @@ export const ComponentRenderer = (() => {
                 drawBox(renderer, transform, selected);
             else if (object instanceof ConstantNumber)
                 ConstantNumberRenderer.render(renderer, object, selected);
+            else if (object instanceof Oscilloscope)
+                OscilloscopeRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
