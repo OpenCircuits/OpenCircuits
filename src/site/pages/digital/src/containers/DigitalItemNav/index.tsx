@@ -53,9 +53,9 @@ export const DigitalItemNav = ({info}: Props) => {
             }])
         ]
         }} onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            var designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
-            var shouldDelete: boolean = true;
-            var icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
+            let designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
+            let shouldDelete: boolean = true;
+            let icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
 
             info.designer.getAll().forEach(function (o) {
                 if (o instanceof IC && o.getData() === designer.getICData()[icIndex]){
