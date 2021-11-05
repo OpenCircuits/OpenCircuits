@@ -1,4 +1,4 @@
-import {GRID_SIZE}  from "core/utils/Constants";
+import {GRID_SIZE, LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -29,7 +29,7 @@ export const SplitWireTool: Tool = (() => {
             if (locked)
                 return false;
             // Activate if the user dragged over a wire with 1 touch/finger
-            return (event.type === "mousedrag" &&
+            return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     input.getTouchCount() === 1 &&
                     currentlyPressedObject instanceof Wire);
         },

@@ -5,7 +5,7 @@ import {Positioner, Dir} from "core/models/ports/positioners/Positioner";
 
 @serializable("ConstantSpacePositioner")
 export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
-    private spacing: number;
+    public spacing: number;
 
     public constructor(dir?: Dir, spacing?: number, shortenEdges: boolean = true) {
         super(dir, undefined, undefined, shortenEdges);
