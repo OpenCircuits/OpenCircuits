@@ -1,5 +1,7 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
+import {ENTER_KEY, ESC_KEY} from "core/utils/Constants";
+
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
@@ -28,6 +30,7 @@ import {ICEdge,
         ICResizeTool} from "digital/tools/ICResizeTool";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
@@ -174,6 +177,8 @@ export const ICDesigner = (() => {
             dispatch(CloseICDesigner());
         }
 
+        useKeyDownEvent(icInfo.input, ESC_KEY, () => close(true));
+        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false));
 
         return (
             <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
@@ -182,9 +187,18 @@ export const ICDesigner = (() => {
                         height={h*IC_DESIGNER_VH}
                         style={{ cursor }} />
 
+<<<<<<< HEAD
                 <InputField type="text"
                             placeholder="IC Name"
                             onChange={(ev) => setName({name: ev.target.value})} />
+=======
+                <input type="text"
+                        placeholder="IC Name"
+                        onChange={(ev) => setName({name: ev.target.value})}
+                        onKeyUp={(ev) => {
+                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
+                        }} />
+>>>>>>> 78c4987dcce573288d51d8204d155001ea86f672
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>

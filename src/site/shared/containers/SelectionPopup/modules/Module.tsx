@@ -1,4 +1,4 @@
-import {useLayoutEffect, useState, cloneElement} from "react";
+import {useLayoutEffect, useState, cloneElement, useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 import {Selectable} from "core/utils/Selectable";
@@ -38,6 +38,7 @@ export type UseModuleProps = {
     selections: SelectionsWrapper;
     addAction: (action: Action) => void;
     render: () => void;
+    forceUpdate: () => void;
 }
 
 
@@ -123,6 +124,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
 
+        const inputRef = useRef<HTMLInputElement>();
+
         useLayoutEffect(() => {
             // This means Selections changed, so we must check if
             //  we should should show this module or not
@@ -162,12 +165,16 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const onChange = (newVal: string) => {
             const val = parseVal(newVal);
 
+            // Due to Firefox not focusing when the arrow keys
+            //  are pressed on number inputs (issue #818)
+            if (inputRef?.current)
+                inputRef.current.focus();
+
             // Do action w/o saving it if the textVal is valid right now
             if (isValid(val)) {
                 if (tempAction)
                     tempAction.undo();
                 tempAction = config.getAction(selections.get() as T, val).execute();
-                tempAction.execute();
                 render();
             }
 
@@ -222,6 +229,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
+<<<<<<< HEAD
             <InputField type={props.inputType}
                         value={focused ? textVal : ((same ? displayVal(val) : ""))}
                         placeholder={same ? "" : (props.placeholder ?? "-")}
@@ -235,6 +243,22 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                                                         key === "Enter" &&
                                                         (target as HTMLInputElement).blur())}
                         alt={props.alt} />
+=======
+            <input ref={inputRef}
+                   type={props.inputType}
+                   value={focused ? textVal : ((same ? displayVal(val) : ""))}
+                   placeholder={same ? "" : (props.placeholder ?? "-")}
+                   step={"step" in props ? props.step : ""}
+                   min ={"min"  in props ? props.min  : ""}
+                   max ={"max"  in props ? props.max  : ""}
+                   onChange={(ev) => onChange(ev.target.value)}
+                   onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                   onBlur={() => onSubmit()}
+                   onKeyPress={({target, key}) => (props.inputType !== "color" &&
+                                                   key === "Enter" &&
+                                                   (target as HTMLInputElement).blur())}
+                   alt={props.alt} />
+>>>>>>> 78c4987dcce573288d51d8204d155001ea86f672
         )
     }
 });
@@ -249,7 +273,7 @@ type ButtonModuleProps = UseModuleProps & {
     isActive: (selections: Selectable[]) => boolean;
     onClick: (selections: Selectable[]) => Action | void;
 }
-export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render}: ButtonModuleProps) => {
+export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render, forceUpdate}: ButtonModuleProps) => {
     const [state, setState] = useState({active: false});
 
     const dependencyStr = selections.get().reduce((c, s) => c + s.constructor.name + getDependencies(s), "");
@@ -270,6 +294,7 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
         if (a)
             addAction(a);
         render();
+        forceUpdate(); // Send an update back to the SelectionPopup
     }
 
     if (!state.active)
@@ -277,7 +302,13 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
 
     return (
         <button title={alt}
-                onClick={() => click()}>{text}</button>
+                // When the create IC button is clicked, it must be blurred so that when enter is pressed to
+                // to confirm creation of the IC, the create button in the selection popup does not also register
+                // an enter press (Resulted in immediately opening a new IC creator with the newly made IC as the only target).
+                onClick={(ev) => {
+                    click();
+                    ev.currentTarget.blur();
+                }}>{text}</button>
     )
 }
 

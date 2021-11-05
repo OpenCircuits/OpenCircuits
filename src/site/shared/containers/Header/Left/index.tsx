@@ -34,11 +34,26 @@ export const HeaderLeft = ({helpers}: Props) => {
                 </button>
             </div>
             <div>
+<<<<<<< HEAD
                 <InputField title="Circuit Name" type="text"
                             value={name}
                             placeholder="Untitled Circuit*"
                             onChange={(s) => dispatch(SetCircuitName(s.target.value))}
                             alt="Name of project" />
+=======
+                <input title="Circuit Name" type="text"
+                       value={name}
+                       placeholder="Untitled Circuit*"
+                       onChange={(s) => dispatch(SetCircuitName(s.target.value))}
+                       onKeyUp={(ev) => {
+                           // Make it so that pressing enter saves and loses focus on the name
+                           if (ev.key === "Enter") {
+                               ev.currentTarget.blur();
+                               helpers.SaveCircuitRemote();
+                           }
+                       }}
+                       alt="Name of project" />
+>>>>>>> 78c4987dcce573288d51d8204d155001ea86f672
             </div>
             <div>
                 <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}

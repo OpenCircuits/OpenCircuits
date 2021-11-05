@@ -3,6 +3,7 @@ import {Vector} from "Vector";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event} from "core/utils/Events";
 import {isPressable} from "core/utils/Pressable";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {IOObject} from "core/models";
 
@@ -41,9 +42,10 @@ export class InteractionTool extends DefaultTool {
             case "mousedown":
                 info.currentlyPressedObject = obj;
 
-                // Check if the object is "Pressable" and
+                // Check that mouse type is left mouse button and
+                //  if the object is "Pressable" and
                 //  if we should call their ".press" method
-                if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
+                if (event.button == LEFT_MOUSE_BUTTON && isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
                     obj.press();
                     return true;
                 }
