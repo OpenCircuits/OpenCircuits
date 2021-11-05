@@ -33,22 +33,21 @@ export const WiringTool = (() => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array
         //  and find closest one to the mouse
-        if (ports.length > 0) {
-            let nearestport= ports[0];
-            let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
-            for (const port of ports) {
-                const test = worldMousePos.distanceTo(port.getWorldTargetPos());
-                if (test <= IO_PORT_RADIUS) {
-                    return port;
-                }
-                if (test < dist) {
-                    nearestport = port;
-                    dist = test;
-                }
-            }
-            return nearestport;
+        if (ports.length < 1) {
+            return undefined;
         }
-        return undefined;
+        let nearestport= ports[0];
+        let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
+        for (const port of ports) {
+            const test = worldMousePos.distanceTo(port.getWorldTargetPos());
+            if (test <= IO_PORT_RADIUS)
+                return port;
+            if (test < dist) {
+                nearestport = port;
+                dist = test;
+            }
+        }
+        return nearestport;
     }
     function setWirePoint(v: Vector): void {
         // The wiring tool always starts with 1 port connected
