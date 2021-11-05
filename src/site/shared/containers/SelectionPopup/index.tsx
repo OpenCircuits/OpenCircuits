@@ -98,12 +98,14 @@ export function SelectionPopup({info, modules}: Props) {
              tabIndex={-1}>
             <TitleModule selections={selections}
                          addAction={(a) => history.add(a)}
-                         render={() => renderer.render()} />
+                         render={() => renderer.render()}
+                         forceUpdate={() => setState((s) => ({...s}))} />
             <hr />
             {modules.map((m,i) => m({
                 selections,
                 addAction: (a: Action) => history.add(a),
                 render: () => renderer.render(),
+                forceUpdate: () => setState((s) => ({...s})),
                 key: `selection-popup-module-${i}`
             } as any))}
         </div>
