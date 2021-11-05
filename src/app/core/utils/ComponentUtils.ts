@@ -19,7 +19,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import { DigitalComponent, InputPort, OutputPort } from "digital/models";
 
 
 /**
@@ -302,27 +301,6 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     // CAREFUL THIS MIGHT BE NECESSARY SOMEWHERE
     // // It's assumed that every object has the same designer
     // copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
-
-    // Unpresses button of newly placed copy
-    //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545
-    for (const object of copies) {
-        if (isPressable(object))
-            object.release();
-        
-        // all input ports in copy
-        for (let p of GetAllPorts(copies.filter(o => o instanceof Component) as Component[]).filter(p => p instanceof InputPort) as InputPort[]) {
-            let wires = p.getWires();
-            for (let w of wires) {
-                console.log(w.getDisplayName() + ": " + w.getP1Component().getDisplayName() + "->" + w.getP2Component().getDisplayName());
-                console.log(w.getIsOn());
-            }
-            if (wires.length == 0 || !wires.some(w => w.getIsOn()))
-                p.activate(false);
-                for (let o of p.getParent().getOutputPorts()) {
-                    o.activate(false); // TODO need to change this, can't just turn off output port based on one port output
-                }
-        }
-    }
 
     return new IOObjectSet(copies);
 }

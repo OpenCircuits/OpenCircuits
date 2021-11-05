@@ -7,12 +7,13 @@ import {Action} from "core/actions/Action";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject} from "core/models/IOObject";
+import {isPressable} from "core/utils/Pressable";
 
 // TODO: Change this terribleness
 export class CopyGroupAction implements Action {
     private designer: CircuitDesigner;
 
-    private copy: IOObjectSet;
+    protected copy: IOObjectSet;
 
     private transforms: Transform[];
 
@@ -24,6 +25,12 @@ export class CopyGroupAction implements Action {
     }
 
     public execute(): Action {
+        // Unpresses button of newly placed copy
+        //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545
+        for (const object of this.copy.toList()) {
+            if (isPressable(object))
+                object.release();
+        }
         this.designer.addGroup(this.copy);
 
         return this;
