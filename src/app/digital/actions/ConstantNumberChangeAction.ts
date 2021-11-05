@@ -11,8 +11,8 @@ export class ConstantNumberChangeAction implements Action {
     private constantNumber: ConstantNumber;
 
     // the input values
-    private inputNumber: number;
-    private inputNumberPrev: number;
+    private initialNum: number;
+    private targetNum: number;
 
     /**
      * Create an action to change the input for a ConstantNumber
@@ -21,17 +21,17 @@ export class ConstantNumberChangeAction implements Action {
      */
     public constructor(constNum: ConstantNumber, newInput: number) {
         this.constantNumber = constNum;
-        this.inputNumberPrev = constNum.getInputNum();
-        this.inputNumber = newInput;
+        this.initialNum = constNum.getInputNum();
+        this.targetNum = newInput;
     }
 
     public execute(): Action {
-        this.constantNumber.setInput(this.inputNumber);
+        this.constantNumber.setInput(this.targetNum);
         return this;
     }
 
     public undo(): Action {
-        this.constantNumber.setInput(this.inputNumberPrev);
+        this.constantNumber.setInput(this.initialNum);
         return this;
     }
 }
