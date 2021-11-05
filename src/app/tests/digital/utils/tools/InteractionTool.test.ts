@@ -11,6 +11,8 @@ import {SHIFT_KEY,
 
 import {V} from "Vector";
 
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+
 import {ANDGate, BUFGate,
         DigitalNode,
         LED,
@@ -18,7 +20,6 @@ import {ANDGate, BUFGate,
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
-import { CreateDeselectAllAction } from "core/actions/selection/SelectAction";
 
 
 describe("Selection Tool", () => {
