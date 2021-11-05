@@ -9,6 +9,7 @@ import {PlaceAction, DeleteAction} from "./PlaceAction";
 
 /**
  * Creates an action to represent a Wire being split.
+ * 
  * @param designer the CirctuitDesigner the action is being done on
  * @param w the Wire being split
  * @param port the new Port that is splitting the Wire
@@ -27,6 +28,7 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
 
 /**
  * Creates an action to represent a Wire being snipped.
+ * 
  * @param designer The CircuitDesigner the action is being done on
  * @param port the Port being snipped from the Wire
  * @returns a GroupAction representing the Wire being snipped
@@ -52,6 +54,7 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
 
 /**
  * Creates a GroupAction of snip actions
+ * 
  * @param designer the CircuitDesigner the actions are being done on
  * @param ports the Ports being snipped
  * @returns a GroupAction of the actions to snip the wires

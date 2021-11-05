@@ -14,6 +14,7 @@ export class PlaceAction extends ReversableAction {
 
     /**
      * Initializes a PlaceAction given the CircuitDesigner, Component, and a flip boolean
+     * 
      * @param designer the CircuitDesigner this action is done on
      * @param obj the Component being placed
      * @param flip the flip boolean, false for a PlaceAction, true for a DeleteAction
@@ -27,6 +28,7 @@ export class PlaceAction extends ReversableAction {
 
     /**
      * Executes a PlaceAction by adding the object to the designer
+     * 
      * @returns 'this' PlaceAction after execution
      */
     public normalExecute(): Action {
@@ -37,6 +39,7 @@ export class PlaceAction extends ReversableAction {
 
     /**
      * Undoes a PlaceAction by removing the object from the designer
+     * 
      * @returns 'this' PlaceAction after undoing
      */
     public normalUndo(): Action {
@@ -59,6 +62,7 @@ export class DeleteAction extends PlaceAction {
 
 /**
  * Creates a GroupAction for multiple PlaceActions.
+ * 
  * @param designer the CircuitDesigner the actions are being done on
  * @param objs the Components of each action
  * @returns a GroupAction representing the PlaceActions of every Component
