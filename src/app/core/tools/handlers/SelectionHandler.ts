@@ -6,10 +6,9 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {EventHandler} from "../EventHandler";
 import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
 import {GroupAction} from "core/actions/GroupAction";
-import {GetAllPorts} from "core/utils/ComponentUtils";
+import {FindPorts, GetAllPorts} from "core/utils/ComponentUtils";
 import {Component, isNode, Wire} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
-import {WiringTool} from "../WiringTool";
 
 export const SelectionHandler: EventHandler = ({
     conditions: (event: Event, {}: CircuitInfo) =>
@@ -32,10 +31,12 @@ export const SelectionHandler: EventHandler = ({
 
         // Conditional handling
         let alsoWire = obj instanceof Wire && ports.some(p => p.isWithinSelectBounds(worldMousePos));
-        let visPorts = WiringTool.visiblePorts(info);
+        const foundPorts = FindPorts(info);
+        let visPorts = foundPorts.length > 0;
+        let nodePorts = foundPorts.some(o => isNode(o.getParent()));
         const obj2 = objs.find(o => o.isWithinSelectBounds(worldMousePos) && isNode(o));
         // If node ports are visible, special handling
-        if (WiringTool.nodePorts(info) && obj2) {
+        if (nodePorts && obj2) {
             obj = obj2;
             alsoWire = false;
             visPorts = false;

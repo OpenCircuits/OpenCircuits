@@ -11,7 +11,7 @@ import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
 
-import {isPressable} from "core/utils/Pressable";
+import {isPressable, Pressable} from "core/utils/Pressable";
 
 import {IOObject} from "core/models/IOObject";
 import {CullableObject} from "core/models/CullableObject";
@@ -19,6 +19,7 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+import {CircuitInfo} from "./CircuitInfo";
 
 
 /**
@@ -83,6 +84,56 @@ export class IOObjectSet {
  */
 export function GetAllPorts(objs: Component[]): Port[] {
     return objs.flatMap((o) => o.getPorts());
+}
+
+/**
+ * Helper function to find all ports in circuit that are
+ *  topographically viewable
+ *
+ * Takes in parameter of `CircuitInfo` to retrieve input,
+ *   camera, and designer
+ *
+ * @param   {CircuitInfo} info uses only input, camera, and designer
+ * @returns all visible ports
+ */
+export function FindPorts({input, camera, designer}: Partial<CircuitInfo>): Port[] {
+    const worldMousePos = camera.getWorldPos(input.getMousePos());
+    const objects = designer.getObjects().reverse();
+
+    const noSObj = objects.filter(o => o.isWithinSelectBounds(worldMousePos)).length == 0;
+    let pressables: Pressable[] = [];
+    for (let i = 0; i < objects.length; ++i) {
+        if (isPressable(objects[i]))
+            pressables.push(objects[i] as Pressable);
+    }
+
+    const noPObj = pressables.filter(o => o.isWithinPressBounds(worldMousePos)).length == 0;
+    if (noSObj && noPObj)
+        // Look through all ports in all objects
+        //  and find one where the mouse is over
+        return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+
+    // https://github.com/OpenCircuits/OpenCircuits/issues/624
+    let output: Port[] = [];
+    let notVisible: Port[] = [];
+    for (let i = 0; i < objects.length; ++i) {
+        const sObj = objects[i].isWithinSelectBounds(worldMousePos);
+        const pObj = (isPressable(objects[i]) && (objects[i] as Pressable).isWithinPressBounds(worldMousePos));
+        if (sObj || pObj) {
+            // selectable ports
+            let ports = GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+            for (let j = 0; j < ports.length; ++j) {
+                let dadIndex = objects.findIndex(o => o === ports[j].getParent());
+                if (dadIndex != -1 && dadIndex <= i) output.push(ports[j]);
+                else notVisible.push(ports[j]);
+            }
+        }
+    }
+
+    // Ensure ports are not in middle of stacked objects
+    return output.filter(function(o) {
+        return notVisible.indexOf(o) == -1;
+    });
 }
 
 /**

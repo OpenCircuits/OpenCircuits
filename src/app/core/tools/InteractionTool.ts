@@ -5,12 +5,12 @@ import {Event} from "core/utils/Events";
 import {isPressable} from "core/utils/Pressable";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {IOObject} from "core/models";
+import {IOObject, isNode} from "core/models";
 
 import {DefaultTool} from "./DefaultTool";
 
 import {EventHandler} from "./EventHandler";
-import {WiringTool} from "./WiringTool";
+import {FindPorts} from "core/utils/ComponentUtils";
 
 
 export class InteractionTool extends DefaultTool {
@@ -38,14 +38,18 @@ export class InteractionTool extends DefaultTool {
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = this.findObject(worldMousePos, info);
-        
+
+        const foundPorts = FindPorts(info);
+        let visPorts = foundPorts.length > 0;
+        let nodePorts = foundPorts.some(o => isNode(o.getParent()));
+
         // https://github.com/OpenCircuits/OpenCircuits/issues/624
         // Check for ports over the object
-        if (!WiringTool.visiblePorts(info) || WiringTool.nodePorts(info)) {
+        if (!visPorts || nodePorts) {
             switch (event.type) {
                 case "mousedown":
                     info.currentlyPressedObject = obj;
-    
+
                     // Check that mouse type is left mouse button and
                     //  if the object is "Pressable" and
                     //  if we should call their ".press" method
@@ -54,7 +58,7 @@ export class InteractionTool extends DefaultTool {
                         return true;
                     }
                     break;
-    
+
                 case "mouseup":
                     // Release currently pressed object
                     if (isPressable(currentlyPressedObject)) {
@@ -64,7 +68,7 @@ export class InteractionTool extends DefaultTool {
                     }
                     info.currentlyPressedObject = undefined;
                     break;
-    
+
                 case "click":
                     // Find and click object
                     if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
