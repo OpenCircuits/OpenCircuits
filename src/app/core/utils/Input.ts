@@ -9,8 +9,7 @@ import {DRAG_TIME,
         S_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
-        META_KEY,
-        ESC_KEY} from "core/utils/Constants";
+        META_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -61,7 +60,6 @@ export class Input {
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
-            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
@@ -136,10 +134,13 @@ export class Input {
 
     private setupHammer(): void {
         // Pinch to zoom
-        const touchManager = new Hammer.Manager(this.canvas, {recognizers: []});
+        const touchManager = new Hammer.Manager(this.canvas, {recognizers: [], domEvents:true});
         let lastScale = 1;
 
+        this.canvas.ontouchmove = () => {return false;}
+
         touchManager.add(new Hammer.Pinch());
+
         touchManager.on("pinch", (e) => {
             this.callListeners({
                 type: "zoom",
@@ -148,6 +149,7 @@ export class Input {
             });
             lastScale = e.scale;
         });
+        
         touchManager.on("pinchend", (_) => {
             lastScale = 1;
         });
@@ -159,6 +161,16 @@ export class Input {
 
             this.onClick(V(e.center.x, e.center.y));
         });
+
+        // this fucntion is used to prevent default zoom in gesture for all browers
+        document.addEventListener('wheel', 
+        function touchHandler(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+          },
+          {passive: false }
+        )
     }
 
     public reset(): void {
@@ -189,9 +201,6 @@ export class Input {
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
-    public removeListener(listener: Listener): void {
-        this.listeners.splice(this.listeners.indexOf(listener), 1);
-    }
 
     public isMouseDown(): boolean {
         return this.mouseDown;
@@ -204,11 +213,6 @@ export class Input {
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
-
-    public isEscKeyDown(): boolean {
-        return this.isKeyDown(ESC_KEY);
-    }
-
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
