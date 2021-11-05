@@ -38,8 +38,8 @@ export const QuickStartPopup = () => {
                     and then press the 'Bus' button.</li>
                 <li><b>Quick Duplicate Group</b>: To quickly duplicate a group of selected objects, begin Translating
                     them and then press the Spacebar.</li>
-                <li><b>Quick change gate input count</b>: To quickly change the input count of alike gates, select
-                    them together and increase the input count for all.</li>
+                <li><b>Quick Change Gate Input Count</b>: To quickly change the input count of alike gates, select
+                    them together and change the input count for all.</li>
             </ul>
         </Popup>
     );
