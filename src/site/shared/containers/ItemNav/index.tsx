@@ -14,11 +14,6 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
-import {IC} from "digital/models/ioobjects";
-import {ICData} from "digital/models/ioobjects";
-import {DigitalCircuitDesigner} from '../../../../app/digital/models/DigitalCircuitDesigner';
-import {DeleteICDataAction} from '../../../../app/digital/actions/DeleteICDataAction';
-
 
 import "./index.scss";
 
@@ -28,7 +23,6 @@ export type ItemNavItem = {
     label: string;
     icon: string;
     removable?: boolean;
-    data?: ICData;
 }
 export type ItemNavSection = {
     id: string;
@@ -43,8 +37,9 @@ export type ItemNavConfig = {
 type Props = {
     info: CircuitInfo;
     config: ItemNavConfig;
+    onDelete: (section: ItemNavSection, item: ItemNavItem) => void;
 }
-export const ItemNav = ({ info, config }: Props) => {
+export const ItemNav = ({ info, config, onDelete }: Props) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -55,26 +50,10 @@ export const ItemNav = ({ info, config }: Props) => {
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
-    const [hovering, setHover] = useState("")
+    const [hovering, setHover] = useState("");
     // Resets the curItemID and numClicks
     function reset() {
         setState({curItemID: "", numClicks: 1});
-    }
-    function deleteIC(sec: ItemNavSection, ic: ItemNavItem) {
-        var designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
-        var shouldDelete: boolean = true;
-
-        info.designer.getAll().forEach(function (o) {
-            if (o instanceof IC && o.getData() === ic.data){
-                window.alert("Cannot delete this IC while instances remain in the circuit.");
-                shouldDelete = false;
-            }
-        })
-        if(shouldDelete){
-            sec.items.splice(sec.items.indexOf(ic));
-            info.history.add(new DeleteICDataAction(ic.data, designer).execute());
-            setHover("");
-        }
     }
     // Drop the current item on click
     useDocEvent("click", (ev) => {
@@ -149,21 +128,19 @@ export const ItemNav = ({ info, config }: Props) => {
                                            }}>
 
 
-                                    <div
-                                        onMouseEnter={() => {
-                                            if (item.removable) {setHover(item.id)}
-                                        }}
-                                        onMouseLeave={() => {
-                                            if (item.removable) {setHover("")}
-                                        }}>
+                                    <div onMouseEnter={() => {
+                                             if (item.removable) {setHover(item.id)}
+                                         }}
+                                         onMouseLeave={() => {
+                                             if (item.removable) {setHover("")}
+                                         }}>
 
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
-
                                         {
                                             (item.removable && hovering === item.id) &&
                                             <div onClick={(ev) => {
-                                                deleteIC(section, item);
-
+                                                onDelete(section, item);
+                                                setHover("");
                                                 // Resets click tracking and stops propgation so that an
                                                 //  IC is not clicked onto the canvas after being deleted.
                                                 setState({curItemID: "",
@@ -173,7 +150,6 @@ export const ItemNav = ({ info, config }: Props) => {
                                             }}>X</div>
                                         }
                                         <br />
-
                                     </div>
                                     {item.label}
                                 </Draggable>

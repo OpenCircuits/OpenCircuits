@@ -3,6 +3,7 @@ import {Action} from "core/actions/Action";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
+
 export class DeleteICDataAction implements Action {
     private data: ICData;
     private target: DigitalCircuitDesigner;

@@ -2,8 +2,13 @@ import {useEffect, useState} from "react";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalEvent} from "digital/models";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
-import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
+import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
+import {IC} from "digital/models/ioobjects";
+import {ICData} from "digital/models/ioobjects";
+
+import {ItemNav, ItemNavItem, ItemNavSection} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
@@ -28,7 +33,6 @@ export const DigitalItemNav = ({info}: Props) => {
                     label: d.getName(),
                     icon: "multiplexer.svg",
                     removable: true,
-                    data: d
                 }))
             });
         }
@@ -48,5 +52,20 @@ export const DigitalItemNav = ({info}: Props) => {
                 items: ics
             }])
         ]
-    }} />;
+        }} onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
+            var designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
+            var shouldDelete: boolean = true;
+            var icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
+
+            info.designer.getAll().forEach(function (o) {
+                if (o instanceof IC && o.getData() === designer.getICData()[icIndex]){
+                    window.alert("Cannot delete this IC while instances remain in the circuit.");
+                    shouldDelete = false;
+                }
+            })
+            if(shouldDelete){
+                sec.items.splice(sec.items.indexOf(ic));
+                info.history.add(new DeleteICDataAction(designer.getICData()[icIndex], designer).execute());
+            }
+        }}/>;
 }
