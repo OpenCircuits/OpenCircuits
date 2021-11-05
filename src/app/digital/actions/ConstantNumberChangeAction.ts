@@ -1,6 +1,7 @@
 import {Action} from "core/actions/Action";
 import {ConstantNumber} from "digital/models/ioobjects";
 
+
 /**
  * An action to change the input for a ConstantNumber
  */
@@ -20,7 +21,7 @@ export class ConstantNumberChangeAction implements Action {
      */
     public constructor(constNum: ConstantNumber, newInput: number) {
         this.constantNumber = constNum;
-        this.inputNumberPrev = constNum.getInput();
+        this.inputNumberPrev = constNum.getInputNum();
         this.inputNumber = newInput;
     }
 

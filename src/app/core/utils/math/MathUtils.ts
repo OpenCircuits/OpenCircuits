@@ -345,9 +345,8 @@ export function BCDtoDecimal(bcd: boolean[]): number {
  * @returns The BCD representation of the input
  */
 export function DecimalToBCD(decimal: number): boolean[] {
-    if (!Number.isInteger(decimal) || decimal < 0) {
+    if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    }
     let result : boolean[] = [];
     while (decimal) {
         result.push(decimal % 2 == 1);

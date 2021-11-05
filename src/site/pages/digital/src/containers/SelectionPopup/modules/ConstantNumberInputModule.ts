@@ -3,10 +3,11 @@ import {ConstantNumber} from "digital/models/ioobjects";
 import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 import {ConstantNumberChangeAction} from "digital/actions/ConstantNumberChangeAction"
 
+
 const Config: ModuleConfig<[ConstantNumber], number> = {
     types: [ConstantNumber],
     valType: "int",
-    getProps: (o) => o.getInput(),
+    getProps: (o) => o.getInputNum(),
     getAction: (s,newInput) => new GroupAction(s.map(o => new ConstantNumberChangeAction(o,newInput)))
 }
 
