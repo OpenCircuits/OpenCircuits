@@ -52,20 +52,19 @@ export const DigitalItemNav = ({info}: Props) => {
                 items: ics
             }])
         ]
-        }} onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            let designer: DigitalCircuitDesigner = info.designer as DigitalCircuitDesigner;
-            let shouldDelete: boolean = true;
-            let icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
-
-            info.designer.getAll().forEach(function (o) {
-                if (o instanceof IC && o.getData() === designer.getICData()[icIndex]){
-                    window.alert("Cannot delete this IC while instances remain in the circuit.");
-                    shouldDelete = false;
-                }
-            })
-            if(shouldDelete){
+        }}
+        onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
+            const designer: DigitalCircuitDesigner = info.designer;
+            const icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
+            const icData = designer.getICData()[icIndex];
+            const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
+            if (icInUse) {
+                window.alert("Cannot delete this IC while instances remain in the circuit.");
+                return;
+            }
+            else {
                 sec.items.splice(sec.items.indexOf(ic));
-                info.history.add(new DeleteICDataAction(designer.getICData()[icIndex], designer).execute());
+                info.history.add(new DeleteICDataAction(icData, designer).execute());
             }
         }}/>;
 }
