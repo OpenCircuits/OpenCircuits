@@ -11,6 +11,7 @@ export class DigitalCopyGroupAction extends CopyGroupAction {
 	}
 
 	public execute(): Action { // elephant paste part
+		// TODO: duplicate all core files that use CopyGroupAction so that this actually works
 		for (const object of this.copy.toList()) {
             // all input ports in copy
             for (let p of GetAllPorts(this.copy.toList().filter(o => o instanceof Component) as Component[]).filter(p => p instanceof InputPort) as InputPort[]) {
@@ -21,9 +22,6 @@ export class DigitalCopyGroupAction extends CopyGroupAction {
                 }
                 if (wires.length == 0 || !wires.some(w => w.getIsOn())) {
                     p.activate(false);
-                    p.getParent();
-                    // p.getParent().activate();
-                    // for (p.getParent().getOutputPorts())
                 }
             }
         }
