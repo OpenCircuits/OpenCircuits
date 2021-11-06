@@ -73,8 +73,6 @@ export function compatibility_check() : compatible {
 
 export function warn_compatibility() {
     var ans = compatibility_check();
-    console.log("ju",ans);
-    ans.react_v = false;
     if(!ans.react_v) {
         alert("Your browser is not compatible with React. Please update your browser to version " + COMPATIBILITY.CHROME.react_v + " or higher");
     }
