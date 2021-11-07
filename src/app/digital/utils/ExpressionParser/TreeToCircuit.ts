@@ -1,8 +1,10 @@
-import {IOObject} from "core/models";
-import {DigitalComponent} from "digital/models";
 import {Create} from "serialeazy";
+
 import {InputTree} from "./Constants/DataStructures";
 import {TypeToGate} from "./Constants/Objects";
+
+import {IOObject} from "core/models";
+import {DigitalComponent} from "digital/models";
 import {ConnectGate} from "./Utils";
 
 
@@ -20,7 +22,7 @@ import {ConnectGate} from "./Utils";
  * @see TreeToCircuit
  */
  function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
-    if (node.kind === "leaf") { //Rearranges array so thge relevant input is at the end
+    if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");
         const index = circuit.indexOf(inputs.get(node.ident));
@@ -30,7 +32,7 @@ import {ConnectGate} from "./Utils";
     }
 
     const ret = circuit;
-    const newGate = Create<DigitalComponent>(TypeToGate.get(node.type));
+    const newGate = Create<DigitalComponent>(TypeToGate[node.type]);
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = ConnectGate(prevNode, newGate);

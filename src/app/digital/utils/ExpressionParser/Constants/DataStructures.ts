@@ -1,20 +1,26 @@
+/** Represents the operand of a binary operation */
 export type InputTreeBinOpType = "|" | "^" | "&"
+/** Represents the operand of a unary operation */
 export type InputTreeUnOpType = "!"
+/** Represents operands of both unary and binary operations */
+export type InputTreeOpType = InputTreeBinOpType | InputTreeUnOpType;
 export type ParenType = "(" | ")";
 export type TokenType = 
-    | InputTreeBinOpType
-    | InputTreeUnOpType
+    | InputTreeOpType
     | ParenType;
 
+/** Represents a node on the parsed tree that itself represents an input component */
 export interface InputTreeIdent {
     kind: "leaf"
     ident: string
 }
+/** Represents a node on the parsed tree that itself represents a unary operation */
 export interface InputTreeUnOpNode {
     kind: "unop"
     type: InputTreeUnOpType
     child: InputTree
 }
+/** Represents a node on the parsed tree that itself represents a binary operation */
 export interface InputTreeBinOpNode {
     kind: "binop"
     type: InputTreeBinOpType
@@ -26,9 +32,11 @@ export type InputTree =
     | InputTreeUnOpNode
     | InputTreeBinOpNode
 
+/** Used to represent a unary operation, binary operation, or parenthesis when pasring the intial expression to a token list */
 export interface OpToken {
     type: TokenType;
 }
+/** Used to represent the token of an input component when parsing the initial expression to a token list */
 export interface InputToken {
     type: "input"
     name: string;
@@ -37,9 +45,9 @@ export type Token =
     | OpToken
     | InputToken;
 
-export interface NewTreeRetValue {
-    index: number;
-    tree: InputTree;
+export type OperatorFormat = {
+    label: string;
+    separator: string;
+    icon: string;
+    ops: Record<TokenType, string>;
 }
-
-export type FormatLabels = "label" | "separator" | TokenType;

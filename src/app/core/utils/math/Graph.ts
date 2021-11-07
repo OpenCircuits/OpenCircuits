@@ -106,9 +106,12 @@ export class Graph<V, E> {
         return nodes;
     }
 
+    // TODO: This is kind of a hacky way to sort of organize a circuit, it is only used for the funcitons
+    //  core/utils/ComponentOrganizers.ts
+    // Once a better placement algorithm is done, this should be removed or otherwise cleaned up
     private getNodeDepths(max: boolean): V[][] {
         // Still internally using a map then converting to a list afterwards since it could
-        // take a long time to see if the node has already been assigned a depth when max=true
+        //  take a long time to see if the node has already been assigned a depth when max=true
         const nodeToNumber = new Map<V, number>();
 
         let currentLayer = this.getSources();
@@ -117,6 +120,9 @@ export class Graph<V, E> {
 
         currentLayer.forEach(node => nodeToNumber.set(node, 0));
 
+        // Performs a bfs search to find the depth of each node
+        // If max is true then the depth is the furthest depth (and thus largest number)
+        //  that the node can be found at
         while (currentLayer.length != 0) {
             for (const node of currentLayer) {
                 const nextDepth = nodeToNumber.get(node) + 1;

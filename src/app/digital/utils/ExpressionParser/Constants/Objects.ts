@@ -1,89 +1,101 @@
-import {TokenType, FormatLabels} from "./DataStructures";
+import {InputTreeOpType, OperatorFormat, TokenType} from "./DataStructures";
 
 
-export const OpsArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"] as  Array<TokenType>;
+export const TokenTypesArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"];
 
-export const DefaultPrecedences = new Map<TokenType, TokenType>([
-    ["|", "^"],
-    ["^", "&"],
-    ["&", "!"],
-    ["!", "("],
-    ["(", "|"],
-]);
+export const DefaultPrecedences: Array<TokenType> = ["|", "^", "&", "!", "("];
 
-export const TypeToGate = new Map<string, string>([
-    ["&", "ANDGate"],
-    ["!", "NOTGate"],
-    ["|", "ORGate"],
-    ["^", "XORGate"],
-]);
+export const TypeToGate: Record<InputTreeOpType, string> = {
+    "&": "ANDGate",
+    "!": "NOTGate",
+    "|": "ORGate",
+    "^": "XORGate",
+}
 
-const programming1 = new Map<FormatLabels, string>([
-    ["label", "Programming 1 (&, |, ^, !)"],
-    ["|", "|"],
-    ["^", "^"],
-    ["&", "&"],
-    ["!", "!"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
-const programming2 = new Map<FormatLabels, string>([
-    ["label", "Programming 2 (&&, ||, ^, !)"],
-    ["|", "||"],
-    ["^", "^"],
-    ["&", "&&"],
-    ["!", "!"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
-const algebraic1 = new Map<FormatLabels, string>([
-    ["label", "Algebraic 1 (*, +, ^, !)"],
-    ["|", "+"],
-    ["^", "^"],
-    ["&", "*"],
-    ["!", "!"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
-const algebraic2 = new Map<FormatLabels, string>([
-    ["label", "Algebraic 2 (*, +, ^, _)"],
-    ["|", "+"],
-    ["^", "^"],
-    ["&", "*"],
-    ["!", "_"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
-const literal1 = new Map<FormatLabels, string>([
-    ["label", "Literal 1 (AND, OR, XOR, NOT)"],
-    ["|", "OR"],
-    ["^", "XOR"],
-    ["&", "AND"],
-    ["!", "NOT"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
-const literal2 = new Map<FormatLabels, string>([
-    ["label", "Literal 2 (and, or, xor, not)"],
-    ["|", "or"],
-    ["^", "xor"],
-    ["&", "and"],
-    ["!", "not"],
-    ["(", "("],
-    [")", ")"],
-    ["separator", " "]
-]);
+const programming1: OperatorFormat = {
+    label: "Programming 1 (&, |, ^, !)",
+    separator: " ",
+    icon: "|",
+    ops: {
+        "|": "|",
+        "^": "^",
+        "&": "&",
+        "!": "!",
+        "(": "(",
+        ")": ")",
+    }
+}
+const programming2: OperatorFormat = {
+    label: "Programming 2 (&&, ||, ^, !)",
+    separator: " ",
+    icon: "||",
+    ops: {
+        "|": "||",
+        "^": "^",
+        "&": "&&",
+        "!": "!",
+        "(": "(",
+        ")": ")",
+    }
+}
+const algebraic1: OperatorFormat = {
+    label: "Algebraic 1 (*, +, ^, !)",
+    separator: " ",
+    icon: "+",
+    ops: {
+        "|": "+",
+        "^": "^",
+        "&": "*",
+        "!": "!",
+        "(": "(",
+        ")": ")",
+    }
+}
+const algebraic2: OperatorFormat = {
+    label: "Algebraic 2 (*, +, ^, _)",
+    separator: " ",
+    icon: "+_",
+    ops: {
+        "|": "+",
+        "^": "^",
+        "&": "*",
+        "!": "_",
+        "(": "(",
+        ")": ")",
+    }
+}
+const literal1: OperatorFormat = {
+    label: "Literal 1 (AND, OR, XOR, NOT)",
+    separator: " ",
+    icon: "OR",
+    ops: {
+        "|": "OR",
+        "^": "XOR",
+        "&": "AND",
+        "!": "NOT",
+        "(": "(",
+        ")": ")",
+    }
+}
+const literal2: OperatorFormat = {
+    label: "Literal 2 (and, or, xor, not)",
+    separator: " ",
+    icon: "or",
+    ops: {
+        "|": "or",
+        "^": "xor",
+        "&": "and",
+        "!": "not",
+        "(": "(",
+        ")": ")",
+    }
+}
 
-export const FormatMap = new Map<string, Map<FormatLabels, string>>([
-    ["|", programming1],
-    ["||", programming2],
-    ["+", algebraic1],
-    ["+_", algebraic2],
-    ["OR", literal1],
-    ["or", literal2],
-]);
+export const Formats = [
+    programming1, // Must be at the first spot in this array
+    programming2,
+    algebraic1,
+    algebraic2,
+    literal1,
+    literal2,
+];

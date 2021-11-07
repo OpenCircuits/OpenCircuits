@@ -1,11 +1,12 @@
+import {ORGANIZE_SEP_X, ORGANIZE_SEP_Y} from "./Constants";
+
 import {Vector} from "Vector";
 
 import {CreateGraph, IOObjectSet} from "./ComponentUtils";
-import {ORGANIZE_SEP_X, ORGANIZE_SEP_Y} from "./Constants";
 
 
 function OrganizeCore(groups: IOObjectSet, start: Vector, depths: number[][]): void {
-    // depths is a 2d array where the index of the inner array indicates the depth of all of the nodes inside that array
+    // Depths is a 2d array where the index of the inner array indicates the depth of all of the nodes inside that array
     const components = groups.getComponents();
 
     depths.forEach((nodes, depth) =>

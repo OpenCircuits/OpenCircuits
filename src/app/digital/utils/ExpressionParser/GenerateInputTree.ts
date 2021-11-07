@@ -1,14 +1,20 @@
-import {Token, FormatLabels, TokenType, NewTreeRetValue, InputTree} from "./Constants/DataStructures";
-import {DefaultPrecedences, FormatMap} from "./Constants/Objects";
-import {IsOperator} from "./Utils";
+import {Token, TokenType, InputTree, OperatorFormat, InputToken} from "./Constants/DataStructures";
+import {DefaultPrecedences, Formats} from "./Constants/Objects";
 
+
+/** Used to return current index and currently built tree in core tree generation function */
+interface NewTreeRetValue {
+    index: number;
+    tree: InputTree;
+}
 
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
  *  It is recommended to not call this function directly and instead call GenerateInputTree
  * 
  * @param tokens the array of tokens representing the expression to parse
- * @param currentOp the current operation to evaluate, should default to operation with lowest precedence to start
+ * @param ops the represenation of the operands in the original expression, only used for error text formatting
+ * @param currentOpNum the index of the current operation to evaluate
  * @param index the index of the parsing process in the tokens Array
  * @returns the current input tree and the current parsing index
  * @throws {Error} parenthesis do not include anything (such as "()")
@@ -18,16 +24,18 @@ import {IsOperator} from "./Utils";
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
- function generateInputTreeCore(tokens: Array<Token>, ops: Map<FormatLabels, string>, currentOp: TokenType = "|", index: number = 0): NewTreeRetValue {
-    const nextOp = DefaultPrecedences.get(currentOp);
+ function generateInputTreeCore(tokens: Array<Token>, ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
+    const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
+    const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
         if (index > 0) {
-            if (tokens[index-1].type === "(")
+            const prevTokenType = tokens[index-1].type;
+            if (prevTokenType === "(")
                 throw new Error("Empty Parenthesis");
-            else if (IsOperator(tokens[index-1]))
-                throw new Error("Missing Right Operand: \"" + ops.get(tokens[index-1].type as FormatLabels) + "\"");
+            if (prevTokenType !== ")" && prevTokenType !== "input")
+                throw new Error("Missing Right Operand: \"" + ops[prevTokenType] + "\"");
         }
-        throw new Error("Encountered Unmatched \"" + ops.get(")") + "\"");
+        throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
     }
 
     // When this function has recursed through to "!" and the token still isn't that, then
@@ -35,18 +43,17 @@ import {IsOperator} from "./Utils";
     if (currentOp === "!" && tokens[index].type !== "!") {
         const token = tokens[index];
         if (token.type === "(")
-            return generateInputTreeCore(tokens, ops, nextOp, index);
-        else if (token.type === "input")
+            return generateInputTreeCore(tokens, ops, nextOpNum, index);
+        if (token.type === "input")
             return {index: index+1, tree: {kind: "leaf", ident: token.name}};
-        else
-            throw new Error("Missing Left Operand: \"" + ops.get(token.type) + "\"");
+        throw new Error("Missing Left Operand: \"" + ops[token.type] + "\"");
     }
 
     // This section gets the part of the tree from the left side of the operator.
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
     let leftRet: NewTreeRetValue;
     if (currentOp !== "!" && currentOp !== "(") {
-        leftRet = generateInputTreeCore(tokens, ops, nextOp, index);
+        leftRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
         index = leftRet.index;
         // If this isn't the right operation to apply, return
         if (index >= tokens.length || tokens[index].type !== currentOp)
@@ -57,27 +64,27 @@ import {IsOperator} from "./Utils";
     //  so it now points to the token on the right side of the operator.
     index += 1;
     if (index >= tokens.length && currentOp !== "(") {
-        throw new Error("Missing Right Operand: \"" + ops.get(currentOp) + "\"");
+        throw new Error("Missing Right Operand: \"" + ops[currentOp] + "\"");
     }
     let rightRet: NewTreeRetValue = null;
     const rightToken = tokens[index];
-    if (currentOp === "!" && rightToken.type === "!") // This case applies when there are two !'s in a row
-        rightRet = generateInputTreeCore(tokens, ops, currentOp, index);
-    else if (currentOp === "!" && rightToken.type === "input") // This case would apply when an input follows a "!"
+    if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
+        rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
+    } else if (currentOp === "!" && rightToken.type === "input") { // This case would apply when an input follows a "!"
         rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
-    else if (currentOp === "(") {
+    } else if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops.get("(") + "\"");
-        rightRet = generateInputTreeCore(tokens, ops, nextOp, index);
+            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+        rightRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
+    } else {
+        rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
     }
-    else
-        rightRet = generateInputTreeCore(tokens, ops, currentOp, index);
     index = rightRet.index;
     if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops.get("(") + "\"");
+            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
         if (tokens[index].type !== ")")
-            throw new Error("Encountered Unmatched \"" + ops.get("(") + "\"");
+            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
         rightRet.index += 1; // Incremented to skip the ")"
         return rightRet;
     }
@@ -107,7 +114,7 @@ import {IsOperator} from "./Utils";
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Array<Token>, ops: Map<FormatLabels, string> = FormatMap.get("|")): InputTree | null {
+export function GenerateInputTree(tokens: Array<Token>, ops: Record<TokenType, string> = Formats[0].ops): InputTree | null {
     if (tokens.length === 0)
         return null;
     const ret = generateInputTreeCore(tokens, ops);
@@ -115,28 +122,16 @@ export function GenerateInputTree(tokens: Array<Token>, ops: Map<FormatLabels, s
     const index = ret.index;
     if (index < tokens.length) {
         if (tokens[index].type === ")")
-            throw new Error("Encountered Unmatched \"" + ops.get(")") + "\"");
+            throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
 
-        let prev: string = null;
-        for(let prevIndex = index-1; prevIndex >= 0; prevIndex--) {
-            const prevToken = tokens[prevIndex];
-            if (prevToken.type === "input") {
-                prev = prevToken.name;
-                break;
-            }
-        }
-        let next: string = null;
-        for(let nextIndex = index; nextIndex < tokens.length; nextIndex++) {
-            const nextToken = tokens[nextIndex];
-            if (nextToken.type === "input") {
-                next = nextToken.name;
-                break;
-            }
-        }
-        if (prev !== null && next !== null)
-            throw new Error("No valid operator between \"" + prev + "\" and \"" + next + "\"");
-        
-        console.log(ret.tree);
+        const prev = tokens.slice(index-1) // Decrementing through the array starting at right before the returned index
+                           .reverse()
+                           .find(token => token.type === "input") as InputToken;
+        const next = tokens.slice(index)
+                           .find(token => token.type === "input") as InputToken;
+        if (prev.name && next.name)
+            throw new Error("No valid operator between \"" + prev.name + "\" and \"" + next.name + "\"");
+
         throw new Error("Parsing ended prematurely");
     }
 

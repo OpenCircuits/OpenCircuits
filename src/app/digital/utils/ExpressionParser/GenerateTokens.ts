@@ -1,6 +1,6 @@
-import {SubEquals} from "core/utils/StringUtils";
-import {FormatLabels, InputToken, Token} from "./Constants/DataStructures";
-import {OpsArray} from "./Constants/Objects";
+import {SubStrEquals} from "core/utils/StringUtils";
+import {InputToken, OperatorFormat, Token} from "./Constants/DataStructures";
+import {TokenTypesArray} from "./Constants/Objects";
 
 
 /**
@@ -11,18 +11,17 @@ import {OpsArray} from "./Constants/Objects";
  * @param ops the representation format for the operations used in this expression
  * @returns an InputToken with the input name in it
  */
- function getInput(expression: string, index: number, ops: Map<FormatLabels, string>): InputToken {
-    let endIndex = index + 1;
-    while(endIndex < expression.length) {
-        for(const op of OpsArray) {
-            if (SubEquals(expression, endIndex, ops.get(op)))
-                return {type: "input", name: expression.substring(index, endIndex)};
-        }
-        if (SubEquals(expression, endIndex, ops.get("separator")))
-            return {type: "input", name: expression.substring(index, endIndex)};
-        endIndex++;
-    }
-    return {type: "input", name: expression.substring(index, endIndex)};
+ function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
+    const endIndex = Array.from({length: expression.length - index - 1}, (_, i) => i + index + 1)
+                          .find(endIndex =>
+                                // Check if the substring from index to endIndex is a token [|, ^, &, !, (, )]
+                                TokenTypesArray.find(tokenType => SubStrEquals(expression, endIndex, ops.ops[tokenType])) ||
+                                // Check if the substring from index to endIndex is the separator, usually " "
+                                SubStrEquals(expression, endIndex, ops.separator)  
+                          );
+    if (endIndex)
+        return {type: "input", name: expression.substring(index, endIndex)};
+    return {type: "input", name: expression.substring(index, expression.length)};
 }
 
 /**
@@ -34,12 +33,11 @@ import {OpsArray} from "./Constants/Objects";
  * @returns the token extracted from the expression or null if the index points to the starting location of
  *              a separator (like " ")
  */
-function getToken(expression: string, index: number, ops: Map<FormatLabels, string>): Token | null {
-    for(const op of OpsArray) {
-        if (SubEquals(expression, index, ops.get(op)))
-            return {type: op};
-    }
-    if (SubEquals(expression, index, ops.get("separator")))
+function getToken(expression: string, index: number, ops: OperatorFormat): Token | null {
+    const tokenType = TokenTypesArray.find(tokenType => SubStrEquals(expression, index, ops.ops[tokenType]));
+    if (tokenType)
+        return {type: tokenType};
+    if (SubStrEquals(expression, index, ops.separator))
         return null;
     return getInput(expression, index, ops);
 }
@@ -53,40 +51,31 @@ function getToken(expression: string, index: number, ops: Map<FormatLabels, stri
  * @throws {Error} if ops is missing the keys "|", "^", "&", "(", ")", or "separator"
  * @throws {Error} if the value in ops for keys "|", "^", "&", "(", ")", or "separator" is ""
  */
-export function GenerateTokens(expression: string, ops: Map<FormatLabels, string>): Token[] {
-    for(const op of OpsArray) {
-        if (!ops.has(op))
-            throw new Error("No " + op + " in supplied operation symbols");
-        if (ops.get(op) === "")
-            throw new Error("Length zero " + op + " in supplied operation symbols");
+export function GenerateTokens(expression: string, ops: OperatorFormat): Token[] {
+    for (const tokenType of TokenTypesArray) {
+        if (!(tokenType in ops.ops))
+            throw new Error("No " + tokenType + " in supplied operation symbols");
+        if (ops.ops[tokenType] === "")
+            throw new Error("Length zero " + tokenType + " in supplied operation symbols");
     }
-    if (!ops.has("separator"))
-        throw new Error("No separator in supplied operation symbols");
-    if (ops.get("separator") === "")
+    if (ops.separator === "")
         throw new Error("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
-    let extraSkip = 0;
     let token: Token;
-
     let index = 0;
 
-    while(index < expression.length) {
-        extraSkip = 0;
-
+    while (index < expression.length) {
         token = getToken(expression, index, ops);
-        if (token === null)
-            index += ops.get("separator").length;
-        else if (token.type === "input") {
+        if (token === null) {
+            index += ops.separator.length;
+        } else if (token.type === "input") {
             tokenList.push(token);
             index += token.name.length;
-        }
-        else {
+        } else {
             tokenList.push(token);
-            index += ops.get(token.type).length;
+            index += ops.ops[token.type].length;
         }
-
-        index += extraSkip;
     }
 
     return tokenList;

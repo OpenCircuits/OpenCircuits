@@ -16,8 +16,8 @@ import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
 import {ConnectGate} from "digital/utils/ExpressionParser/Utils";
-import {FormatLabels, InputToken, Token, InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {FormatMap} from "digital/utils/ExpressionParser/Constants/Objects";
+import {InputToken, Token, InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent, OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
 
 
 /**
@@ -86,7 +86,7 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
  * @see testInputs
  * @see ExpressionToCircuit
  */
-function runTests(numInputs: number, expression: string, expected: boolean[], ops?: Map<FormatLabels, string>) {
+function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat) {
     describe("Parse: '" + expression + "'", () => {
         if (numInputs > 16)
             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);

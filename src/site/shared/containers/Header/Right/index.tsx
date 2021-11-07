@@ -27,7 +27,7 @@ export const HeaderRight = ({ helpers, extraUtilities }: Props) => {
             </button>
             <div className={`header__right__btns ${isHidden ? "header__right__collapsed" : ""}`}>
                 <SignInOutButtons />
-                {extraUtilities.length > 0 && // Render only if there are tools
+                {extraUtilities.length > 0 && // Render only if there are utilities
                     <UtilitiesDropdown extraUtilities={extraUtilities} />
                 }
                 <DownloadMenuDropdown helpers={helpers} />

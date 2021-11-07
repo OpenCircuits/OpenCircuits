@@ -1,3 +1,6 @@
+import {Formats} from "./Constants/Objects";
+import {OperatorFormat} from "./Constants/DataStructures";
+
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {CreateNegatedGates} from "digital/utils/simplifications/CreateNegatedGates";
@@ -5,8 +8,6 @@ import {ValidateInputOutputTypes} from "./Utils";
 import {GenerateInputTree} from "./GenerateInputTree";
 import {GenerateTokens} from "./GenerateTokens";
 import {TreeToCircuit} from "./TreeToCircuit";
-import {FormatMap} from "./Constants/Objects";
-import {FormatLabels} from "./Constants/DataStructures";
 
 
 /**
@@ -30,13 +31,13 @@ import {FormatLabels} from "./Constants/DataStructures";
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: Map<FormatLabels, string> = FormatMap.get("|")): DigitalObjectSet | null {
+                                    ops: OperatorFormat = Formats[0]): DigitalObjectSet | null {
 
     ValidateInputOutputTypes(inputs, output);
 
     const tokenList = GenerateTokens(expression, ops);
 
-    const connectedTree = GenerateInputTree(tokenList, ops);
+    const connectedTree = GenerateInputTree(tokenList, ops.ops);
 
     const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
 
