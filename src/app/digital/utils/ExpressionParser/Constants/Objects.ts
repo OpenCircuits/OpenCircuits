@@ -91,8 +91,12 @@ const literal2: OperatorFormat = {
     }
 }
 
+/**
+ * Stores the different types of preset formats.
+ * If any new formats are added, they must be added to the end of the array.
+ */
 export const Formats = [
-    programming1, // Must be at the first spot in this array
+    programming1,
     programming2,
     algebraic1,
     algebraic2,

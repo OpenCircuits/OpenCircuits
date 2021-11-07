@@ -3,7 +3,6 @@ import {OperatorFormat} from "./Constants/DataStructures";
 
 import {DigitalComponent} from "digital/models/index";
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-import {CreateNegatedGates} from "digital/utils/simplifications/CreateNegatedGates";
 import {ValidateInputOutputTypes} from "./Utils";
 import {GenerateInputTree} from "./GenerateInputTree";
 import {GenerateTokens} from "./GenerateTokens";
@@ -41,7 +40,5 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
 
-    const condensedCircuit = CreateNegatedGates(fullCircuit);
-
-    return new DigitalObjectSet(condensedCircuit);
+    return new DigitalObjectSet(fullCircuit);
 }

@@ -1,24 +1,5 @@
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalWire} from "digital/models/DigitalWire";
 
-
-/**
- * Connects two components together. Source must have an output and destination must have an available input.
- * 
- * @param source the source component to connect
- * @param destination the destination component to connect
- * @returns the wire used to connect the components together
- */
-export function ConnectGate(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
-    const outPort = source.getOutputPort(0);
-    let inPort = destination.getInputPort(0);
-    if (inPort.getWires().length > 0)
-        inPort = destination.getInputPort(1);
-    const wire = new DigitalWire(outPort, inPort);
-    inPort.connect(wire);
-    outPort.connect(wire);
-    return wire;
-}
 
 /**
  * Validates that the given inputs are inputs (thus have 0 input ports and at least 1 output ports)

@@ -19,6 +19,10 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
@@ -362,4 +366,36 @@ export function PortContains(port: Port, mousePos: Vector): boolean {
     rect.setParent(port.getParent().getTransform());
 
     return RectContains(rect, mousePos);
+}
+
+/**
+ * Replaces the original component with a new one. Both must have the same number of ports.
+ * 
+ * @param designer the designer that original is placed on
+ * @param original the component to replace
+ * @param replacement the new component
+ * @throws {Error} if original and replacement do not have the same number of ports
+ }
+ */
+export function ReplaceComponent(designer: CircuitDesigner, original: Component, replacement: Component) {
+    const originalPorts = original.getPorts();
+    const replacementPorts = replacement.getPorts();
+
+    // An even more general replacer may need to modify this for an instance such as replacing
+    //  and ANDGate only connected by its output port with a Switch
+    if (originalPorts.length !== replacementPorts.length)
+        throw new Error("Mismatched number of ports of replacement");
+    
+    new PlaceAction(designer, replacement).execute();
+    
+    originalPorts.forEach((port, index) => {
+        port.getWires().forEach(wire => {
+            const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
+            new DisconnectAction(designer, wire).execute();
+            new ConnectionAction(designer, replacementPorts[index], otherPort);
+        });
+    });
+
+    new TranslateAction([replacement], [replacement.getPos()], [original.getPos()]);
+    new DeleteAction(designer, original).execute();
 }

@@ -5,7 +5,8 @@ import {TypeToGate} from "./Constants/Objects";
 
 import {IOObject} from "core/models";
 import {DigitalComponent} from "digital/models";
-import {ConnectGate} from "./Utils";
+import {LazyConnect} from "digital/utils/ComponentUtils";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
 
 
 /**
@@ -32,18 +33,17 @@ import {ConnectGate} from "./Utils";
     }
 
     const ret = circuit;
-    const newGate = Create<DigitalComponent>(TypeToGate[node.type]);
+    const newGate = Create<Gate>(TypeToGate[node.type]);
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wire = ConnectGate(prevNode, newGate);
+        const wire = LazyConnect(prevNode, newGate);
         ret.push(wire);
-    }
-    else if (node.kind === "binop") {
+    } else if (node.kind === "binop") {
         const prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireL = ConnectGate(prevNodeL, newGate);
+        const wireL = LazyConnect(prevNodeL, newGate);
         ret.push(wireL);
         const prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireR = ConnectGate(prevNodeR, newGate);
+        const wireR = LazyConnect(prevNodeR, newGate);
         ret.push(wireR);
     }
     ret.push(newGate);
@@ -66,7 +66,7 @@ export function TreeToCircuit(tree: InputTree, inputs: Map<string, DigitalCompon
     let ret: IOObject[] = Array.from(inputs.values());
 
     ret = treeToCircuitCore(tree, inputs, ret);
-    const wire = ConnectGate(ret.slice(-1)[0] as DigitalComponent, output);
+    const wire = LazyConnect(ret.slice(-1)[0] as DigitalComponent, output);
     ret.push(wire);
     ret.push(output);
     return ret;

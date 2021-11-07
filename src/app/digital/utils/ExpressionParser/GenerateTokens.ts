@@ -53,8 +53,6 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
  */
 export function GenerateTokens(expression: string, ops: OperatorFormat): Token[] {
     for (const tokenType of TokenTypesArray) {
-        if (!(tokenType in ops.ops))
-            throw new Error("No " + tokenType + " in supplied operation symbols");
         if (ops.ops[tokenType] === "")
             throw new Error("Length zero " + tokenType + " in supplied operation symbols");
     }

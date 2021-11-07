@@ -124,12 +124,12 @@ export function GenerateInputTree(tokens: Array<Token>, ops: Record<TokenType, s
         if (tokens[index].type === ")")
             throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
 
-        const prev = tokens.slice(index-1) // Decrementing through the array starting at right before the returned index
+        const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
                            .reverse()
                            .find(token => token.type === "input") as InputToken;
         const next = tokens.slice(index)
                            .find(token => token.type === "input") as InputToken;
-        if (prev.name && next.name)
+        if (prev && prev.name && next && next.name)
             throw new Error("No valid operator between \"" + prev.name + "\" and \"" + next.name + "\"");
 
         throw new Error("Parsing ended prematurely");

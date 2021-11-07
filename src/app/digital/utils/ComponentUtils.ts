@@ -1,14 +1,18 @@
-import {serializable} from "serialeazy";
+import {Deserialize, serializable} from "serialeazy";
 
 import {BCDtoDecimal} from "math/MathUtils";
 
-import {IOObjectSet} from "core/utils/ComponentUtils";
+import {CopyGroup, IOObjectSet, SerializeForCopy} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 
 import {DigitalComponent, DigitalWire} from "digital/models/index";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {DeleteAction} from "core/actions/addition/PlaceAction";
 
 /**
  * Helper class to hold different groups of components.
@@ -81,6 +85,67 @@ export class DigitalObjectSet extends IOObjectSet {
     }
 }
 
+/**
+ * Gets a new instance of the inverted version of the supplied gate
+ * 
+ * @param oldGate the gate to get the inverted version of
+ * @returns NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate,
+ *              XNORGate when supplied with a XORGate, null otherwise
+ */
+export function GetInvertedGate(oldGate: Gate): Gate {
+    const newGate = CopyGroup([oldGate]).getComponents()[0] as Gate;
+    newGate["setNot"](!oldGate.isNot());
+    return newGate;
+}
+
 export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
     return BCDtoDecimal(ports.map(p => p.getIsOn()));
+}
+
+/**
+ * Removes the supplied gate while connecting its input component (if it exists)
+ *  to its output components
+ * 
+ * @param gate the gate to remove
+ * @throws {Error} if gate is not placed in a designer
+ */
+export function RemoveGate(gate: BUFGate | NOTGate) {
+    const designer = gate.getDesigner();
+    if(!designer)
+        throw new Error("gate not placed in designer");
+
+    const inputs = gate.getInputs();
+    if (inputs.length === 0)
+        return;
+
+    const inputPort = inputs[0].getInput();
+    gate.getOutputPort(0).getWires().forEach(wire => {
+        const outputPort = wire.getOutput();
+        new DisconnectAction(designer, wire).execute();
+        new ConnectionAction(designer, inputPort, outputPort);
+    });
+
+    new DeleteAction(designer, gate).execute();
+}
+
+/**
+ * Connects two components together. Source must have an output and destination must have an available input.
+ * The first available port of destination will be used as the input port
+ * 
+ * @param source the source component to connect
+ * @param destination the destination component to connect
+ * @returns the wire used to connect the components together
+ * @throws {Error} if there is no available InputPort on destination
+ */
+export function LazyConnect(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
+    const outPort = source.getOutputPort(0);
+    const inPort = destination.getInputPorts().find(port => port.getWires().length === 0);
+
+    if (!inPort)
+        throw new Error("No available InputPort on destination");
+
+    const wire = new DigitalWire(outPort, inPort);
+    inPort.connect(wire);
+    outPort.connect(wire);
+    return wire;
 }
