@@ -55,16 +55,13 @@ export const DigitalItemNav = ({info}: Props) => {
         }}
         onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
             const {designer} = info;
-            const icIndex: number = +ic.id.substr(ic.id.indexOf('/')+1);
-            const icData = designer.getICData()[icIndex];
+            const icData = designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
             const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
             if (icInUse) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");
                 return;
             }
-            else {
-                sec.items.splice(sec.items.indexOf(ic));
-                info.history.add(new DeleteICDataAction(icData, designer).execute());
-            }
+            sec.items.splice(sec.items.indexOf(ic));
+            info.history.add(new DeleteICDataAction(icData, designer).execute());
         }}/>;
 }

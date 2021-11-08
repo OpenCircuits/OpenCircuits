@@ -14,7 +14,6 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
-
 import "./index.scss";
 
 
@@ -128,12 +127,8 @@ export const ItemNav = ({ info, config, onDelete }: Props) => {
                                            }}>
 
 
-                                    <div onMouseEnter={() => {
-                                             if (item.removable) {setHover(item.id)}
-                                         }}
-                                         onMouseLeave={() => {
-                                             if (item.removable) {setHover("")}
-                                         }}>
+                                    <div onMouseEnter={() => {item.removable && setHover(item.id)}}
+                                         onMouseLeave={() => {item.removable && setHover("")}}>
 
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
                                         {
@@ -147,7 +142,9 @@ export const ItemNav = ({ info, config, onDelete }: Props) => {
                                                           numClicks: 1});
 
                                                 ev.stopPropagation();
-                                            }}>X</div>
+                                                }}>
+                                                    X
+                                                </div>
                                         }
                                         <br />
                                     </div>
