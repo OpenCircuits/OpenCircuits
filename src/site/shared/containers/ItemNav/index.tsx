@@ -43,7 +43,7 @@ type Props<D> = {
     additionalData?: D;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
-    onDelete: (section: ItemNavSection, item: ItemNavItem) => void;
+    onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
 export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
@@ -210,14 +210,13 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                                         {
                                             (item.removable && hovering === item.id) &&
                                             <div onClick={(ev) => {
-                                                setHover("");
                                                 // Resets click tracking and stops propgation so that an
                                                 // Components are not clicked onto the canvas after being deleted.
                                                 setState({curItemID: "",
                                                           numClicks: 1});
                                                 // Stops drag'n'drop preview when deleting
                                                 setCurItemImg("");
-                                                onDelete(section, item);
+                                                onDelete(section, item) && setHover("");
 
                                                 ev.stopPropagation();
                                                 }}>

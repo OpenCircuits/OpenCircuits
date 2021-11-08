@@ -115,10 +115,11 @@ export const DigitalItemNav = ({info}: Props) => {
             const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
             if (icInUse) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");
-                return;
+                return false;
             }
             sec.items.splice(sec.items.indexOf(ic));
             info.history.add(new DeleteICDataAction(icData, designer).execute());
+            return true;
         }}
         additionalPreview={(smartPlace, curItemId) => {
             if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
