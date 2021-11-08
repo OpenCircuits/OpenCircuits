@@ -2,7 +2,7 @@ import {ReplaceComponent} from "core/utils/ComponentUtils";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {DigitalObjectSet, GetInvertedGate, RemoveGate} from "digital/utils/ComponentUtils";
+import {DigitalObjectSet, GetInvertedGate, SnipGate} from "digital/utils/ComponentUtils";
 
 
 /**
@@ -13,15 +13,17 @@ import {DigitalObjectSet, GetInvertedGate, RemoveGate} from "digital/utils/Compo
  * @returns a copy of the circuit with the negation simplifications made
  */
 export function CreateNegatedGates(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet) {
-    circuit.getOthers().forEach(gate => {
-        if (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate) {
-            const wires = gate.getOutputPort(0).getWires();
-            if (wires.length === 1) {
-                const other = wires[0].getOutputComponent();
-                if (other instanceof NOTGate) {
-                    RemoveGate(other);
-                    ReplaceComponent(designer, gate, GetInvertedGate(gate));
-                }
+    const gates = circuit.getOthers().filter(gate =>
+        (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
+    ) as (ANDGate | ORGate | XORGate)[];
+
+    gates.forEach(gate => {
+        const wires = gate.getOutputPort(0).getWires();
+        if (wires.length === 1) {
+            const other = wires[0].getOutputComponent();
+            if (other instanceof NOTGate) {
+                SnipGate(other);
+                ReplaceComponent(designer, gate, GetInvertedGate(gate));
             }
         }
     });

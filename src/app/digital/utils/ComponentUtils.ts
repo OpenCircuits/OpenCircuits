@@ -1,8 +1,8 @@
-import {Deserialize, serializable} from "serialeazy";
+import {Create, Deserialize, serializable} from "serialeazy";
 
 import {BCDtoDecimal} from "math/MathUtils";
 
-import {CopyGroup, IOObjectSet, SerializeForCopy} from "core/utils/ComponentUtils";
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
 
@@ -86,16 +86,29 @@ export class DigitalObjectSet extends IOObjectSet {
 }
 
 /**
+ * Stores identifier of types of gates corresponded to their inverted counterparts
+ */
+const gateInversion: Record<string, string> = {
+    "ANDGate": "NANDGate",
+    "NANDGate": "ANDGate",
+    "ORGate": "NORGate",
+    "NORGate": "ORGate",
+    "XORGate": "XNORGate",
+    "XNORGate": "XORGate",
+    "BUFGate": "NOTGate",
+    "NOTGate": "BUFGate",
+}
+
+/**
  * Gets a new instance of the inverted version of the supplied gate
  * 
  * @param oldGate the gate to get the inverted version of
- * @returns NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate,
- *              XNORGate when supplied with a XORGate, null otherwise
+ * @returns NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate, etc.
  */
 export function GetInvertedGate(oldGate: Gate): Gate {
-    const newGate = CopyGroup([oldGate]).getComponents()[0] as Gate;
-    newGate["setNot"](!oldGate.isNot());
-    return newGate;
+    const oldName = oldGate.constructor.name;
+    const newName = gateInversion[oldName];
+    return Create<Gate>(newName);
 }
 
 export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
@@ -109,7 +122,7 @@ export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
  * @param gate the gate to remove
  * @throws {Error} if gate is not placed in a designer
  */
-export function RemoveGate(gate: BUFGate | NOTGate) {
+export function SnipGate(gate: BUFGate | NOTGate) {
     const designer = gate.getDesigner();
     if(!designer)
         throw new Error("gate not placed in designer");
@@ -118,11 +131,12 @@ export function RemoveGate(gate: BUFGate | NOTGate) {
     if (inputs.length === 0)
         return;
 
-    const inputPort = inputs[0].getInput();
+    const prevPort = inputs[0].getInput();
+    new DisconnectAction(designer, inputs[0]).execute();
     gate.getOutputPort(0).getWires().forEach(wire => {
-        const outputPort = wire.getOutput();
+        const newPort = wire.getOutput();
         new DisconnectAction(designer, wire).execute();
-        new ConnectionAction(designer, inputPort, outputPort);
+        new ConnectionAction(designer, prevPort, newPort).execute();
     });
 
     new DeleteAction(designer, gate).execute();

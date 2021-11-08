@@ -1,18 +1,24 @@
 import "jest";
 
 import {IOObject} from "core/models";
-import {DigitalCircuitDesigner} from "digital/models";
-import {Switch, LED, ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
+import {Switch, LED, ANDGate} from "digital/models/ioobjects";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {DigitalObjectSet, LazyConnect} from "digital/utils/ComponentUtils";
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {CreateNegatedGates} from "digital/utils/simplifications/CreateNegatedGates";
+
+import "digital/models/ioobjects";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup} from "test/helpers/Setup";
 
 
 describe("Simplifications", () => {
+    const {designer, input} = Setup();
+    const {Place, Connect} = GetHelpers({designer});
+
     describe("Create Negation Gates", () => {
         describe("!(a&b)", () => {
-            const a = new Switch(), b = new Switch(), o = new LED();
-            const and = new ANDGate(), not = new NOTGate();
+            const [a, b, and, not, o] = Place(new Switch(), new Switch(), new ANDGate(), new NOTGate(), new LED());
+
             const objects: IOObject[] = [
                 a,
                 b,
@@ -20,16 +26,15 @@ describe("Simplifications", () => {
                 and,
                 not
             ];
-            objects.push(LazyConnect(a, and));
-            objects.push(LazyConnect(b, and));
-            objects.push(LazyConnect(and, not));
-            objects.push(LazyConnect(not, o));
+
+            objects.push(Connect(a, 0, and, 0).getWire());
+            objects.push(Connect(b, 0, and, 1).getWire());
+            objects.push(Connect(and, 0, not, 0).getWire());
+            objects.push(Connect(not, 0, o, 0).getWire());
 
             const circuit = new DigitalObjectSet(objects);
-            const designer = new DigitalCircuitDesigner(0);
-            designer.addGroup(circuit);
 
-            CreateNegatedGates(designer, circuit);
+            CreateNegatedGates(designer, circuit); 
     
             test("NOTGate and ANDGate removed", () => {
                 expect(and.getDesigner()).toBe(undefined);

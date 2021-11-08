@@ -8,13 +8,13 @@ import {Button}              from "digital/models/ioobjects/inputs/Button";
 import {Switch}              from "digital/models/ioobjects/inputs/Switch";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
-import {ANDGate}             from "digital/models/ioobjects/gates/ANDGate";
+import {ANDGate, NANDGate}             from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}              from "digital/models/ioobjects/gates/ORGate";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 import {IC} from "digital/models/ioobjects/other/IC";
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
+import {DigitalObjectSet, GetInvertedGate} from "digital/utils/ComponentUtils";
 
 function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
@@ -492,4 +492,10 @@ describe("CopyGroup", () => {
             expect(l1_copy.getConnections()).toHaveLength(1);
         });
     });
+});
+
+describe("GetInvertedGate", () => {
+    test("AND -> NAND", () => {
+        expect(GetInvertedGate(new ANDGate()) instanceof NANDGate).toBeTruthy();
+    })
 });

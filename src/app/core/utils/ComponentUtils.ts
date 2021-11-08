@@ -370,6 +370,7 @@ export function PortContains(port: Port, mousePos: Vector): boolean {
 
 /**
  * Replaces the original component with a new one. Both must have the same number of ports.
+ * original must be placed in designer, and replacement must not be placed in designer.
  * 
  * @param designer the designer that original is placed on
  * @param original the component to replace
@@ -392,10 +393,10 @@ export function ReplaceComponent(designer: CircuitDesigner, original: Component,
         port.getWires().forEach(wire => {
             const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
             new DisconnectAction(designer, wire).execute();
-            new ConnectionAction(designer, replacementPorts[index], otherPort);
+            new ConnectionAction(designer, replacementPorts[index], otherPort).execute();
         });
     });
 
-    new TranslateAction([replacement], [replacement.getPos()], [original.getPos()]);
+    new TranslateAction([replacement], [replacement.getPos()], [original.getPos()]).execute();
     new DeleteAction(designer, original).execute();
 }
