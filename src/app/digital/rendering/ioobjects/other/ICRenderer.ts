@@ -12,6 +12,12 @@ import {Renderer} from "core/rendering/Renderer";
 
 import {IC} from "digital/models/ioobjects/other/IC";
 
+/**
+ * Render ICs
+ * * Colour and style border and fill as per selection status
+ * * Draw Rectangle to size
+ * * Render IC name aligned in center
+ */
 export const ICRenderer = (() => {
     return {
         render(renderer: Renderer, _: Camera, ic: IC, selected: boolean): void {
