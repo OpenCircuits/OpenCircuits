@@ -21,7 +21,7 @@ export const WiringTool = (() => {
     let wire: Wire;
     let stateType: StateType;
 
-    function getAllPorts({input, camera, designer}: Partial<CircuitInfo>): Port[] {
+    function allNearPorts({input, camera, designer}: Partial<CircuitInfo>): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 
@@ -89,7 +89,7 @@ export const WiringTool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const list = getAllPorts(info);
+            const list = allNearPorts(info);
             port = findNearestPort(info, list);
 
             // Create wire and set it's other point to be at `port`
@@ -100,7 +100,7 @@ export const WiringTool = (() => {
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
             const {history, designer} = info;
-            const list = getAllPorts(info).filter(p => wire.canConnectTo(p));
+            const list = allNearPorts(info).filter(p => wire.canConnectTo(p));
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
