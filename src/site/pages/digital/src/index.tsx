@@ -63,7 +63,6 @@ async function Init(): Promise<void> {
             try {
                 if (!process.env.OC_GA_ID)
                     throw new Error("Can't find Google Analytics ID");
-                console.log(process.env.OC_GA_ID);
                 ReactGA.initialize(process.env.OC_GA_ID, {});
                 ReactGA.pageview("/");
             } catch (e) {
