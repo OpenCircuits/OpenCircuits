@@ -36,7 +36,7 @@ export const WiringTool = (() => {
         if (ports.length < 1)
             return undefined;
         
-        let nearestport= ports[0];
+        let nearestport = ports[0];
         let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
         for (const port of ports) {
             const test = worldMousePos.distanceTo(port.getWorldTargetPos());
