@@ -12,7 +12,7 @@ import {Setup} from "test/helpers/Setup";
 
 
 describe("Simplifications", () => {
-    const {designer, input} = Setup();
+    const {designer} = Setup();
     const {Place, Connect} = GetHelpers({designer});
 
     describe("Create Negation Gates", () => {

@@ -48,6 +48,6 @@ export type Token =
 export type OperatorFormat = {
     label: string;
     separator: string;
-    icon: string;
+    icon: string; // All icons should be unique (and "custom" should be reserved for frontend)
     ops: Record<TokenType, string>;
 }
