@@ -337,3 +337,20 @@ export function CalculateMidpoint(positions: Array<Vector>): Vector {
 export function BCDtoDecimal(bcd: boolean[]): number {
     return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
 }
+
+/**
+ * Calculates the BCD representation of the input number.
+ * @param decimal The number to convert
+ * @requires `decimal >= 0`
+ * @returns The BCD representation of the input
+ */
+export function DecimalToBCD(decimal: number): boolean[] {
+    if (!Number.isInteger(decimal) || decimal < 0)
+        throw "input must be a nonnegative integer";
+    let result : boolean[] = [];
+    while (decimal) {
+        result.push(decimal % 2 == 1);
+        decimal = Math.floor(decimal / 2);
+    }
+    return result;
+}

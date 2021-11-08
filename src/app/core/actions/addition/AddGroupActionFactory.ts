@@ -6,6 +6,13 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
+/**
+ * Creates a GroupAction of PlaceActions and ConnectionActions
+ * 
+ * @param designer the CircuitDesigner the actions are being done on
+ * @param group an IOObjectSet of objects being added
+ * @returns a GroupAction consisting of all the addition actions
+ */
 export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectSet): GroupAction {
     const action = new GroupAction();
 
