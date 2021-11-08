@@ -57,7 +57,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
-          
+
     const [hovering, setHover] = useState("");
 
     // State to keep track of drag'n'drop preview current image
@@ -210,12 +210,14 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                                         {
                                             (item.removable && hovering === item.id) &&
                                             <div onClick={(ev) => {
-                                                onDelete(section, item);
                                                 setHover("");
                                                 // Resets click tracking and stops propgation so that an
-                                                //  IC is not clicked onto the canvas after being deleted.
+                                                // Components are not clicked onto the canvas after being deleted.
                                                 setState({curItemID: "",
                                                           numClicks: 1});
+                                                // Stops drag'n'drop preview when deleting
+                                                setCurItemImg("");
+                                                onDelete(section, item);
 
                                                 ev.stopPropagation();
                                                 }}>
