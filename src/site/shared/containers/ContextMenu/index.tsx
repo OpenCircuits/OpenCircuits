@@ -1,4 +1,5 @@
 import {useEffect, useRef} from "react";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
@@ -15,7 +16,6 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 
 
 import "./index.scss";
-import { HEADER_HEIGHT } from "shared/utils/Constants";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -24,7 +24,7 @@ function isClipboardSupported(type: "read" | "write"): boolean {
                                navigator.clipboard.writeText !== undefined));
 }
 
-
+// vertical offset so that context menu appears at cursor location
 const CONTEXT_MENU_OFFSET = 4;
 
 type Props = {
@@ -118,6 +118,8 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     const menu = useRef<HTMLDivElement>();
     let pos = input?.getMousePos();
+
+    console.log(isOpen);
 
     if (isOpen) {
         const offset = 1;
