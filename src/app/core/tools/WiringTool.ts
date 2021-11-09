@@ -1,4 +1,4 @@
-import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -29,6 +29,26 @@ export const WiringTool = (() => {
         //  and find one where the mouse is over
         return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
     }
+    function findNearestPort({input, camera}: Partial<CircuitInfo>, ports: Port[]): Port | undefined {
+        const worldMousePos = camera.getWorldPos(input.getMousePos());
+        // Look through all ports in array
+        //  and find closest one to the mouse
+        if (ports.length < 1)
+            return undefined;
+        
+        let nearestport = ports[0];
+        let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
+        for (const port of ports) {
+            const test = worldMousePos.distanceTo(port.getWorldTargetPos());
+            if (test <= IO_PORT_RADIUS)
+                return port;
+            if (test < dist) {
+                nearestport = port;
+                dist = test;
+            }
+        }
+        return nearestport;
+    }
     function setWirePoint(v: Vector): void {
         // The wiring tool always starts with 1 port connected
         //  and the other point should be following the mouse
@@ -55,7 +75,7 @@ export const WiringTool = (() => {
             return ((event.type === "mousedown" && event.button === LEFT_MOUSE_BUTTON && input.getTouchCount() === 1) ||
                     (event.type === "click")) &&
                     ports.length > 0 &&
-                    designer.createWire(ports[0], undefined) !== undefined;
+                    designer.createWire(findNearestPort(info, ports), undefined) !== undefined;
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Two possibilites for deactivating:
@@ -69,7 +89,8 @@ export const WiringTool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            port = findPorts(info)[0];
+            const list = findPorts(info);
+            port = findNearestPort(info, list);
 
             // Create wire and set it's other point to be at `port`
             wire = info.designer.createWire(port, undefined);
@@ -79,8 +100,9 @@ export const WiringTool = (() => {
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
             const {history, designer} = info;
+            const list = findPorts(info).filter(p => wire.canConnectTo(p));
             // See if we ended on a port
-            const port2 = findPorts(info).find(p => wire.canConnectTo(p));
+            const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
                 history.add(new ConnectionAction(designer, port, port2).execute());
         },
