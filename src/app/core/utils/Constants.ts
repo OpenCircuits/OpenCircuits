@@ -82,6 +82,11 @@ export const Z_KEY = "z";
 export const COMMAND_KEY = "Command";
 export const META_KEY = "Meta";
 
+export const ARROW_LEFT = "ArrowLeft";
+export const ARROW_RIGHT = "ArrowRight";
+export const ARROW_UP = "ArrowUp";
+export const ARROW_DOWN = "ArrowDown";
+
 export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
 export const FIT_PADDING_RATIO = 1.2;
