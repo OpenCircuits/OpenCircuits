@@ -302,6 +302,13 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
     // // It's assumed that every object has the same designer
     // copies.forEach(c => c.setDesigner(objects[0].getDesigner()));
 
+    // Unpresses button of newly placed copy
+    //  See: https://github.com/OpenCircuits/OpenCircuits/issues/545
+    for (const object of copies) {
+        if (isPressable(object))
+            object.release();
+    }
+
     return new IOObjectSet(copies);
 }
 

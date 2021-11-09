@@ -11,6 +11,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
+import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
 
