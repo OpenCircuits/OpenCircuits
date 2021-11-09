@@ -11,6 +11,7 @@ export class Line implements Shape {
 
     /**
      * Constructor for Line
+     * 
      * @param p1 start point
      * @param p2 end point
      */
@@ -21,6 +22,7 @@ export class Line implements Shape {
 
     /**
      * Draws the Line on the canvas
+     * 
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

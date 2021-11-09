@@ -11,6 +11,7 @@ export class ArcCircle extends Circle {
 
     /**
      * Constructor for ArcCircle
+     * 
      * @param pos the position
      * @param radius the radius
      * @param a0 the starting angle
@@ -24,6 +25,7 @@ export class ArcCircle extends Circle {
 
     /**
      * Draws the ArcCircle on the canvas
+     * 
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

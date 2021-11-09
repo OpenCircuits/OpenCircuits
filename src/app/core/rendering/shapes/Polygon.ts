@@ -10,6 +10,7 @@ export class Polygon implements Shape {
 
     /**
      * Constructor for Polygon
+     * 
      * @param points list of vertices
      */
     public constructor(points: Array<Vector>) {
@@ -18,6 +19,7 @@ export class Polygon implements Shape {
 
     /**
      * Draws the Polygon on the canvas
+     * 
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {
