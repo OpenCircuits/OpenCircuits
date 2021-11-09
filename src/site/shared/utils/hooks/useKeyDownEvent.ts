@@ -22,7 +22,7 @@ export const useKeyDownEvent = (input: Input, key: string, f: () => void, deps?:
 export const useWindowKeyDownEvent = (key: string, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         const LookForKey = (ev: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement) && ev.keyCode === key)
+            if (!(document.activeElement instanceof HTMLInputElement) && ev.key === key)
                 f();
         }
 
