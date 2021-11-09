@@ -12,8 +12,6 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 import {Dropdown} from "../Dropdown";
 import {AutoSaveToggle} from "./AutoSaveToggle";
 
-import "./index.scss";
-
 type Props = {
     helpers: CircuitInfoHelpers;
     info: CircuitInfo;
