@@ -25,7 +25,7 @@ function isClipboardSupported(type: "read" | "write"): boolean {
 }
 
 // vertical offset so that context menu appears at cursor location
-const CONTEXT_MENU_OFFSET = 4;
+const CONTEXT_MENU_VERT_OFFSET = 4;
 
 type Props = {
     info: CircuitInfo;
@@ -118,9 +118,8 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     const menu = useRef<HTMLDivElement>();
     let pos = input?.getMousePos();
-
-    console.log(isOpen);
-
+    
+    /* Relocate context menu to opposite side of cursor if it were to go off-screen */
     if (isOpen) {
         const offset = 1;
         const contextMenuWidth = menu.current.getBoundingClientRect().width;
@@ -129,17 +128,17 @@ export const ContextMenu = ({info, paste}: Props) => {
         if (pos.x + contextMenuWidth > window.innerWidth)
             pos.x -= contextMenuWidth - offset;
                 
-        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_OFFSET > window.innerHeight)
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
             pos.y -= contextMenuHeight - offset;
-    }   
+    }
 
     return (
         <div className="contextmenu"
              ref={menu}
              style={{
                  left: `${pos?.x}px`,
-                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_OFFSET}px`,
-                 display: (isOpen ? "initial" : "none")
+                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
             <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>
