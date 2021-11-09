@@ -3,6 +3,7 @@ import {BezierCurve} from "math/BezierCurve";
 
 import {Shape} from "./Shape";
 
+
 /**
  * A representation of a Curve shape.
  */

@@ -2,6 +2,7 @@ import {Vector} from "Vector";
 
 import {Shape} from "./Shape";
 
+
 /**
  * A representation of a Line shape.
  */

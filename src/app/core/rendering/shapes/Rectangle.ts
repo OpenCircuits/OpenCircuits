@@ -3,6 +3,7 @@ import {Transform} from "math/Transform";
 
 import {Shape} from "./Shape";
 
+
 /**
  * A representation of a Rectangle shape.
  */

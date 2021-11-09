@@ -2,6 +2,7 @@ import {Vector} from "Vector";
 
 import {Circle} from "./Circle";
 
+
 /**
  * A representation of an ArcCircle shape.
  */
