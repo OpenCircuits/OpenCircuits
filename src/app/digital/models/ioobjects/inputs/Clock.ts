@@ -1,58 +1,35 @@
-import {V, Vector} from "Vector";
-import {ClampedValue} from "math/ClampedValue";
 import {serializable, serialize} from "serialeazy";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import { WiringTool } from "core/tools/WiringTool";
-import { DigitalWire } from "digital/models/DigitalWire";
+import {V, Vector} from "Vector";
+import {ClampedValue} from "math/ClampedValue";
+
+import {TimedComponent} from "../TimedComponent";
+
 
 @serializable("Clock")
-export class Clock extends DigitalComponent {
-    @serialize
-    private frequency: number;
-
+export class Clock extends TimedComponent {
     @serialize
     private isOn: boolean;
 
     public constructor() {
-        super(new ClampedValue(0), new ClampedValue(1), V(60, 42));
-        this.frequency = 1000;
+        super(1000, new ClampedValue(0), new ClampedValue(1), V(60, 42));
+        this.reset();
+    }
+
+    protected onTick(): void {
+        this.isOn = !this.isOn;
+        super.activate(this.isOn);
+    }
+
+    // Reset to off and start ticking
+    public reset(): void {
         this.isOn = false;
-        this.tick();
-    }
-
-    // Changing the clock
-    public tick(): void {
-        this.activate(!this.isOn);
-        setTimeout(() => this.tick(), this.frequency);
-    }
-
-    public setFrequency(freq: number): void {
-        this.frequency = freq;
-    }
-
-    // Activate changes state and image
-    public activate(bool: boolean): void {
-        super.activate(bool);
-        this.isOn = bool;
-
-        // If WiringTool is active (and its parent is a clock), activate its wire as well
-        if (WiringTool.getWire() !== undefined && WiringTool.getWire().getP1Component().getName() == "Clock") {
-            const w = WiringTool.getWire() as DigitalWire;
-            w.activate(bool);
-        }
-
-        if (this.designer !== undefined)
-            this.designer.forceUpdate();
+        super.reset();
     }
 
     // @Override
     public getOffset(): Vector {
         return V();
-    }
-
-    public getFrequency(): number {
-        return this.frequency;
     }
 
     public getDisplayName(): string {

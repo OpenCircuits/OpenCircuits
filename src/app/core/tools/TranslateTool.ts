@@ -1,5 +1,6 @@
 import {GRID_SIZE,
-        SPACEBAR_KEY}  from "core/utils/Constants";
+        SPACEBAR_KEY,
+        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -10,14 +11,15 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
+import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
-import { Action } from "core/actions/Action";
-import { GroupAction } from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 
 
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];
     let components = [] as Component[];
+    let worldMouseDownPos = V();
     let action: GroupAction;
 
     function snap(p: Vector): Vector {
@@ -30,17 +32,19 @@ export const TranslateTool: Tool = (() => {
             if (locked)
                 return false;
             // Activate if the user is pressing down on an object
-            return (event.type === "mousedrag" &&
+            return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     currentlyPressedObject instanceof Component);
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse
-            return (event.type === "mouseup");
+            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON);
         },
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {selections, currentlyPressedObject, designer} = info;
+            const {camera, input, selections, currentlyPressedObject, designer} = info;
+
+            worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
@@ -73,8 +77,11 @@ export const TranslateTool: Tool = (() => {
             const {input, camera, history, designer} = info;
 
             switch (event.type) {
-                case "mousedrag":
-                    const worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
+                // Using mousemove instead of mousedrag here because when a button besides
+                //  mouse left is released, mousedrag events are no longer created, only mousemove.
+                //  So instead mousemove is used and whether or not left mouse is still pressed is
+                //  handled within the activation and deactivation of this tool.
+                case "mousemove":
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);

@@ -22,6 +22,9 @@ export const QuickStartPopup = () => {
                 <li><b>Translate</b>: Click and drag on an object in the circuit to move it around.</li>
                 <li><b>Rotate</b>: Select some objects and click the red circle to rotate them.</li>
                 <li><b>Splitting wires</b>: Click and drag on an existing wire to split it at that point.</li>
+                <li><b>Multi-select</b>: Hold the SHIFT key and click on items or drag mouse across area to select
+                    multiple objects.</li>
+                <li><b>Removing wire split</b>: Select wire node(s) and press the X key to snip and remove split.</li>
             </ul>
             <h2>Advanced Interactions</h2>
             <ul>
@@ -35,6 +38,8 @@ export const QuickStartPopup = () => {
                     and then press the 'Bus' button.</li>
                 <li><b>Quick Duplicate Group</b>: To quickly duplicate a group of selected objects, begin Translating
                     them and then press the Spacebar.</li>
+                <li><b>Quick Change Gate Input Count</b>: To quickly change the input count of alike gates, select
+                    them together and change the input count for all.</li>
             </ul>
         </Popup>
     );
