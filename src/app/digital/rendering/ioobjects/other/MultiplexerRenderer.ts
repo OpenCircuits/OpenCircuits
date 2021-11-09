@@ -14,6 +14,11 @@ import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 import {Polygon} from "core/rendering/shapes/Polygon";
 import {Style} from "core/rendering/Style";
 
+/**
+ * Renders Muxs
+ * * Colour and style border and fill as per selection status
+ * * Draw Mux correct size and shape depending on whether it is a Multiplexor or Demultiplexor
+ */
 export const MultiplexerRenderer = (() => {
 
     return {
