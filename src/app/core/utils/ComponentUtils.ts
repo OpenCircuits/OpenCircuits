@@ -367,36 +367,3 @@ export function PortContains(port: Port, mousePos: Vector): boolean {
 
     return RectContains(rect, mousePos);
 }
-
-/**
- * Replaces the original component with a new one. Both must have the same number of ports.
- * original must be placed in designer, and replacement must not be placed in designer.
- * 
- * @param designer the designer that original is placed on
- * @param original the component to replace
- * @param replacement the new component
- * @throws {Error} if original and replacement do not have the same number of ports
- }
- */
-export function ReplaceComponent(designer: CircuitDesigner, original: Component, replacement: Component) {
-    const originalPorts = original.getPorts();
-    const replacementPorts = replacement.getPorts();
-
-    // An even more general replacer may need to modify this for an instance such as replacing
-    //  and ANDGate only connected by its output port with a Switch
-    if (originalPorts.length !== replacementPorts.length)
-        throw new Error("Mismatched number of ports of replacement");
-    
-    new PlaceAction(designer, replacement).execute();
-    
-    originalPorts.forEach((port, index) => {
-        port.getWires().forEach(wire => {
-            const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
-            new DisconnectAction(designer, wire).execute();
-            new ConnectionAction(designer, replacementPorts[index], otherPort).execute();
-        });
-    });
-
-    new TranslateAction([replacement], [replacement.getPos()], [original.getPos()]).execute();
-    new DeleteAction(designer, original).execute();
-}

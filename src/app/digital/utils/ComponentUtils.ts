@@ -116,33 +116,6 @@ export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
 }
 
 /**
- * Removes the supplied gate while connecting its input component (if it exists)
- *  to its output components
- * 
- * @param gate the gate to remove
- * @throws {Error} if gate is not placed in a designer
- */
-export function SnipGate(gate: BUFGate | NOTGate) {
-    const designer = gate.getDesigner();
-    if(!designer)
-        throw new Error("gate not placed in designer");
-
-    const inputs = gate.getInputs();
-    if (inputs.length === 0)
-        return;
-
-    const prevPort = inputs[0].getInput();
-    new DisconnectAction(designer, inputs[0]).execute();
-    gate.getOutputPort(0).getWires().forEach(wire => {
-        const newPort = wire.getOutput();
-        new DisconnectAction(designer, wire).execute();
-        new ConnectionAction(designer, prevPort, newPort).execute();
-    });
-
-    new DeleteAction(designer, gate).execute();
-}
-
-/**
  * Connects two components together. Source must have an output and destination must have an available input.
  * The first available port of destination will be used as the input port
  * 
