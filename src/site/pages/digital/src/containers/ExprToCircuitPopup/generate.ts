@@ -31,7 +31,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     // Create input tokens
     const tokenList = GenerateTokens(expression, ops);
     const inputMap = new Map<string, DigitalComponent>();
-    for(const token of tokenList) {
+    for (const token of tokenList) {
         if (token.type !== "input" || inputMap.has(token.name))
             continue;
         inputMap.set(token.name, Create<DigitalComponent>(input));
