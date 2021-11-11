@@ -39,11 +39,22 @@ export class CreateNegatedGatesAction implements Action {
             if (wires.length === 1) {
                 const other = wires[0].getOutputComponent();
                 if (other instanceof NOTGate) {
-                    this.action.add(CreateSnipGateAction(other));
-                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(other), 1);
                     const newGate = GetInvertedGate(gate);
-                    this.action.add(CreateReplaceComponentAction(designer, gate, newGate));
+
+                    // Remove wires and gates from this.negatedCircuit
+                    gate.getInputs().forEach(wire => this.negatedCircuit.splice(this.negatedCircuit.indexOf(wire), 1));
+                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(wires[0]), 1);
+                    other.getOutputs().forEach(wire => this.negatedCircuit.splice(this.negatedCircuit.indexOf(wire), 1));
+                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(other), 1);
                     this.negatedCircuit.splice(this.negatedCircuit.indexOf(gate), 1, newGate);
+
+                    // Swap out the gates
+                    this.action.add(CreateSnipGateAction(other));
+                    this.action.add(CreateReplaceComponentAction(designer, gate, newGate));
+
+                    // Add new wires to this.negatedCircuit
+                    newGate.getInputs().forEach(wire => this.negatedCircuit.push(wire));
+                    newGate.getOutputs().forEach(wire => this.negatedCircuit.push(wire));
                 }
             }
         });

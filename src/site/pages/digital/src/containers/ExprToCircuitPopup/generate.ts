@@ -18,6 +18,7 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
 import {OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 
 export function Generate(info: DigitalCircuitInfo, expression: string,
@@ -47,29 +48,28 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
-    OrganizeMinDepth(circuit, startPos);
-    const action = new GroupAction([CreateDeselectAllAction(info.selections)]);
+    const action = new GroupAction([CreateDeselectAllAction(info.selections).execute(),
+                                    CreateAddGroupAction(info.designer, circuit).execute()]);
+    const negateAction = new CreateNegatedGatesAction(info.designer, circuit);
+    action.add(negateAction);
+    const negated = negateAction.getNegatedCircuit();
+    OrganizeMinDepth(negated, startPos);
 
     if (isIC) { // If creating as IC
-        const data = ICData.Create(circuit);
+        const data = ICData.Create(negated);
         data.setName(expression);
         const ic = new IC(data);
         ic.setName(expression);
         ic.setPos(info.camera.getPos());
-        action.add(new CreateICDataAction(data, info.designer));
-        action.add(new PlaceAction(info.designer, ic));
-        action.add(new SelectAction(info.selections, ic));
+        action.add(CreateDeleteGroupAction(info.designer, negated.getComponents()).execute());
+        action.add(new CreateICDataAction(data, info.designer).execute());
+        action.add(new PlaceAction(info.designer, ic).execute());
+        action.add(new SelectAction(info.selections, ic).execute());
     } else { // If placing directly
-        action.add(CreateAddGroupAction(info.designer, circuit).execute());
-        const negateAction = new CreateNegatedGatesAction(info.designer, circuit).execute() as CreateNegatedGatesAction;
-        action.add(negateAction);
-        const negated = negateAction.getNegatedCircuit();
         action.add(CreateGroupSelectAction(info.selections, negated.getComponents()).execute());
-        // info.history.add(action.execute());
-        OrganizeMinDepth(negated, startPos);
     }
 
-    // info.history.add(action.execute());
+    info.history.add(action);
     info.renderer.render();
 }
 

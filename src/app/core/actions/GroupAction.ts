@@ -17,10 +17,8 @@ export class GroupAction implements Action {
     }
 
     public execute(): GroupAction {
-        for (const action of this.actions) {
-            // console.log(action.constructor.name);
+        for (const action of this.actions)
             action.execute();
-        }
 
         return this;
     }
