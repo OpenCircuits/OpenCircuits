@@ -3,7 +3,7 @@ import "jest";
 import {DigitalCircuitDesigner} from "digital/models";
 import {LED, Switch} from "digital/models/ioobjects";
 import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {SnipGateAction} from "digital/actions/SnipGateAction";
+import {CreateSnipGateAction} from "digital/actions/SnipGateActionFactory";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -17,18 +17,9 @@ describe("SnipGateAction", () => {
         Connect(input, 0, buf, 0);
         Connect(buf, 0, out, 0);
 
-        test("Initial", () => {
-            expect(out.isOn()).toBeFalsy();
-            input.activate(true);
-            expect(out.isOn()).toBeTruthy();
-            input.activate(false);
-            expect(out.isOn()).toBeFalsy();
-        });
-
-        const action = new SnipGateAction(buf);
+        const action = CreateSnipGateAction(buf);
 
         test("Execute/Undo", () => {
-            action.execute();
             expect(out.isOn()).toBeFalsy();
             input.activate(true);
             expect(out.isOn()).toBeTruthy();
@@ -62,18 +53,9 @@ describe("SnipGateAction", () => {
         Connect(input, 0, not, 0);
         Connect(not, 0, out, 0);
 
-        test("Initial", () => {
-            expect(out.isOn()).toBeTruthy();
-            input.activate(true);
-            expect(out.isOn()).toBeFalsy();
-            input.activate(false);
-            expect(out.isOn()).toBeTruthy();
-        });
-
-        const action = new SnipGateAction(not);
+        const action = CreateSnipGateAction(not);
 
         test("Execute/Undo", () => {
-            action.execute();
             expect(out.isOn()).toBeFalsy();
             input.activate(true);
             expect(out.isOn()).toBeTruthy();

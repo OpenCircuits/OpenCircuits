@@ -36,7 +36,6 @@ describe("Simplifications", () => {
             const circuit = new DigitalObjectSet(objects);
 
             const action = new CreateNegatedGatesAction(designer, circuit);
-            action.execute();
             const negatedCircuit = action.getNegatedCircuit();
     
             test("NOTGate and ANDGate removed", () => {
@@ -92,7 +91,6 @@ describe("Simplifications", () => {
             const circuit = new DigitalObjectSet(objects);
 
             const action = new CreateNegatedGatesAction(designer, circuit);
-            action.execute();
             const negatedCircuit = action.getNegatedCircuit();
     
             test("NOTGate and ORGate removed", () => {
@@ -148,7 +146,6 @@ describe("Simplifications", () => {
             const circuit = new DigitalObjectSet(objects);
 
             const action = new CreateNegatedGatesAction(designer, circuit);
-            action.execute();
             const negatedCircuit = action.getNegatedCircuit();
     
             test("NOTGate and XORGate removed", () => {

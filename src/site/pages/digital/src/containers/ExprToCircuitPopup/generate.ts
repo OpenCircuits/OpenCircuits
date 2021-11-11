@@ -9,9 +9,8 @@ import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
 import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
 
-import {CreateNegatedGates} from "digital/utils/simplifications/CreateNegatedGates";
-
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {CreateNegatedGatesAction} from "digital/actions/simplification/CreateNegatedGatesAction";
 
 import {DigitalComponent} from "digital/models";
 import {LED, ICData, IC} from "digital/models/ioobjects";
@@ -61,11 +60,16 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
         action.add(new PlaceAction(info.designer, ic));
         action.add(new SelectAction(info.selections, ic));
     } else { // If placing directly
-        action.add(CreateAddGroupAction(info.designer, circuit));
-        CreateNegatedGates(info.designer, circuit);
-        action.add(CreateGroupSelectAction(info.selections, circuit.getComponents()));
+        action.add(CreateAddGroupAction(info.designer, circuit).execute());
+        const negateAction = new CreateNegatedGatesAction(info.designer, circuit).execute() as CreateNegatedGatesAction;
+        action.add(negateAction);
+        const negated = negateAction.getNegatedCircuit();
+        action.add(CreateGroupSelectAction(info.selections, negated.getComponents()).execute());
+        // info.history.add(action.execute());
+        OrganizeMinDepth(negated, startPos);
     }
 
-    info.history.add(action.execute());
+    // info.history.add(action.execute());
     info.renderer.render();
 }
+

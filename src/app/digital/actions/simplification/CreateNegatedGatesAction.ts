@@ -1,21 +1,32 @@
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
-import {ReplaceComponentAction} from "core/actions/ReplaceComponentAction";
+import {CreateReplaceComponentAction} from "core/actions/ReplaceComponentActionFactory";
+import {IOObject} from "core/models";
 
-import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
+import {DigitalCircuitDesigner} from "digital/models";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 import {DigitalObjectSet, GetInvertedGate} from "digital/utils/ComponentUtils";
-import {SnipGateAction} from "../SnipGateAction";
+import {CreateSnipGateAction} from "../SnipGateActionFactory";
 
 
+/**
+ * This action replaces ANDGates, ORGates, and XORGates followed by only a NOTGate with
+ *  NANDGates, NORGates, and XNORGates respectively. This action is implicitly executed on creation.
+ */
 export class CreateNegatedGatesAction implements Action {
-    private originalCircuit: DigitalComponent[];
-    private negatedCircuit: DigitalComponent[];
+    private originalCircuit: IOObject[];
+    private negatedCircuit: IOObject[];
     private action: GroupAction;
 
+    /**
+     * Creates the action and implicitly executes it
+     * 
+     * @param designer the designer in which the action is taking place
+     * @param circuit the circuit to modify, must be placed in designer
+     */
     public constructor(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet) {
-        this.originalCircuit = [...circuit.getComponents()];
+        this.originalCircuit = [...circuit.toList()];
         this.negatedCircuit = [...this.originalCircuit];
         this.action = new GroupAction();
 
@@ -28,10 +39,10 @@ export class CreateNegatedGatesAction implements Action {
             if (wires.length === 1) {
                 const other = wires[0].getOutputComponent();
                 if (other instanceof NOTGate) {
-                    this.action.add(new SnipGateAction(other));
+                    this.action.add(CreateSnipGateAction(other));
                     this.negatedCircuit.splice(this.negatedCircuit.indexOf(other), 1);
                     const newGate = GetInvertedGate(gate);
-                    this.action.add(new ReplaceComponentAction(designer, gate, newGate));
+                    this.action.add(CreateReplaceComponentAction(designer, gate, newGate));
                     this.negatedCircuit.splice(this.negatedCircuit.indexOf(gate), 1, newGate);
                 }
             }
