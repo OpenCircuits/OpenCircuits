@@ -6,8 +6,10 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {TutorialDropdown} from "./TutorialDropdown";
 import {OpenFileButton} from "./OpenFileButton";
 import {DownloadMenuDropdown} from "./DownloadMenuDropdown";
+import {UtilitiesDropdown} from "./UtilitiesDropdown";
 import {SignInOutButtons} from "./SignInOutButtons";
 import {SettingsMenu} from "./SettingsMenu";
+import {Utility} from "./UtilitiesDropdown";
 
 import "./index.scss";
 
@@ -15,8 +17,10 @@ import "./index.scss";
 type Props = {
     helpers: CircuitInfoHelpers;
     info: CircuitInfo;
+    extraUtilities: Utility[];
 }
-export const HeaderRight = ({ helpers, info }: Props) => {
+
+export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
     return (
@@ -26,6 +30,9 @@ export const HeaderRight = ({ helpers, info }: Props) => {
             </button>
             <div className={`header__right__btns ${isHidden ? "header__right__collapsed" : ""}`}>
                 <SignInOutButtons />
+                {extraUtilities.length > 0 && // Render only if there are utilities
+                    <UtilitiesDropdown extraUtilities={extraUtilities} />
+                }
                 <DownloadMenuDropdown helpers={helpers} />
                 <OpenFileButton helpers={helpers} />
                 <SettingsMenu helpers={helpers} info={info} />
@@ -46,4 +53,4 @@ export const HeaderRight = ({ helpers, info }: Props) => {
             </div> */}
         </div>
     );
-}
+};
