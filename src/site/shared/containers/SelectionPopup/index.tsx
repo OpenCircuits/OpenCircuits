@@ -16,6 +16,7 @@ import {UseModuleProps} from "./modules/Module";
 import "./index.scss";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
+import docsUrlConfig from "./docsUrlConfig.json";
 
 type Props = {
     info: CircuitInfo;
@@ -96,6 +97,11 @@ export function SelectionPopup({info, modules}: Props) {
                 pointerEvents: (state.clickThrough ? "none" : "auto")
              }}
              tabIndex={-1}>
+
+            {selections.amount() === 1 && 
+                <div title="Click for component information" className="info-button" 
+                    //href={docsUrlConfig.urls[+typeof selections.get()[0]]}
+                    onClick={(ev) => console.log(docsUrlConfig.urls[+typeof selections.get()[0]])}>?</div>}
             <TitleModule selections={selections}
                          addAction={(a) => history.add(a)}
                          render={() => renderer.render()}
