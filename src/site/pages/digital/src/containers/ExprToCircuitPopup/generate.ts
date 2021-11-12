@@ -10,7 +10,7 @@ import {CreateDeselectAllAction, SelectAction, CreateGroupSelectAction} from "co
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
-import {CreateNegatedGatesAction} from "digital/actions/simplification/CreateNegatedGatesAction";
+import {CreateNegatedGatesAction} from "digital/actions/simplification/NegatedGatesActionFactory";
 
 import {DigitalComponent} from "digital/models";
 import {LED, ICData, IC} from "digital/models/ioobjects";

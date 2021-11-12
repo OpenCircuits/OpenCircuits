@@ -1,7 +1,5 @@
-import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateReplaceComponentAction} from "core/actions/ReplaceComponentActionFactory";
-import {IOObject} from "core/models";
 
 import {DigitalCircuitDesigner} from "digital/models";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
