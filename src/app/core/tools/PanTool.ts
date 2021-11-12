@@ -8,17 +8,21 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Tool}        from "core/tools/Tool";
 
+import {Component}   from "core/models";
+
 export const PanTool: Tool = (() => {
     let isDragging = false;
     return {
-        shouldActivate(event: Event, {input}: CircuitInfo): boolean {
+        shouldActivate(event: Event, {input, selections}: CircuitInfo): boolean {
             // Activate if the user just pressed the "option key"
             //  or if the user began dragging with either 2 fingers
             //                           or the middle mouse button
-            //  or if the user pressed one of of the arrow keys
-            return (event.type === "keydown"   && ((event.key === OPTION_KEY) ||  
+            //  or if the user pressed one of of the arrow keys while no components are selected
+            return ((event.type === "keydown" && 
+                  !((selections.all((c) => c instanceof Component) && selections.get().length > 0)) && 
+                                                  ((event.key === OPTION_KEY) ||  
                                                    (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                                    event.key == ARROW_UP || event.key == ARROW_DOWN )) ||
+                                                    event.key == ARROW_UP || event.key == ARROW_DOWN ))) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
