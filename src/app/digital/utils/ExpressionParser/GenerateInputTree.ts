@@ -1,5 +1,5 @@
 import {Token, TokenType, InputTree, OperatorFormat, InputToken} from "./Constants/DataStructures";
-import {DefaultPrecedences, Formats} from "./Constants/Objects";
+import {Formats} from "./Constants/Formats";
 
 
 /** Used to return current index and currently built tree in core tree generation function */
@@ -7,6 +7,8 @@ interface NewTreeRetValue {
     index: number;
     tree: InputTree;
 }
+
+const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
 
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
@@ -24,7 +26,7 @@ interface NewTreeRetValue {
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
- function generateInputTreeCore(tokens: Array<Token>, ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
+ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
@@ -114,7 +116,7 @@ interface NewTreeRetValue {
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Array<Token>, ops: Record<TokenType, string> = Formats[0].ops): InputTree | null {
+export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | null {
     if (tokens.length === 0)
         return null;
     const ret = generateInputTreeCore(tokens, ops);

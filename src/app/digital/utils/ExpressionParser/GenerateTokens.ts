@@ -1,7 +1,8 @@
 import {SubStrEquals} from "core/utils/StringUtils";
-import {InputToken, OperatorFormat, Token} from "./Constants/DataStructures";
-import {TokenTypesArray} from "./Constants/Objects";
+import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStructures";
 
+
+const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
 
 /**
  * Extracts the input name from an expression starting at a certain location

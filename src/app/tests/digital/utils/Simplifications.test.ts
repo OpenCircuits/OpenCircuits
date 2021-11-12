@@ -35,8 +35,7 @@ describe("Simplifications", () => {
 
             const circuit = new DigitalObjectSet(objects);
 
-            const action = new CreateNegatedGatesAction(designer, circuit);
-            const negatedCircuit = action.getNegatedCircuit();
+            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
     
             test("NOTGate and ANDGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(and)).toBe(-1);
@@ -90,8 +89,7 @@ describe("Simplifications", () => {
 
             const circuit = new DigitalObjectSet(objects);
 
-            const action = new CreateNegatedGatesAction(designer, circuit);
-            const negatedCircuit = action.getNegatedCircuit();
+            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
     
             test("NOTGate and ORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(or)).toBe(-1);
@@ -145,8 +143,7 @@ describe("Simplifications", () => {
 
             const circuit = new DigitalObjectSet(objects);
 
-            const action = new CreateNegatedGatesAction(designer, circuit);
-            const negatedCircuit = action.getNegatedCircuit();
+            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
     
             test("NOTGate and XORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(xor)).toBe(-1);

@@ -3,7 +3,7 @@ import "jest";
 import {InputToken, Token,
         InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent,
         OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";

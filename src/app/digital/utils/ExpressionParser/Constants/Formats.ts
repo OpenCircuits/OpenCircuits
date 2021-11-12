@@ -1,17 +1,6 @@
 import {InputTreeOpType, OperatorFormat, TokenType} from "./DataStructures";
 
 
-export const TokenTypesArray: Array<TokenType> = ["(", ")", "&", "^", "|", "!"];
-
-export const DefaultPrecedences: Array<TokenType> = ["|", "^", "&", "!", "("];
-
-export const TypeToGate: Record<InputTreeOpType, string> = {
-    "&": "ANDGate",
-    "!": "NOTGate",
-    "|": "ORGate",
-    "^": "XORGate",
-}
-
 const programming1: OperatorFormat = {
     label: "Programming 1 (&, |, ^, !)",
     separator: " ",

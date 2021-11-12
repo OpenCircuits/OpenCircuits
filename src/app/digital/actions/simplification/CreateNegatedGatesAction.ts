@@ -13,22 +13,13 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
 /**
  * This action replaces ANDGates, ORGates, and XORGates followed by only a NOTGate with
  *  NANDGates, NORGates, and XNORGates respectively. This action is implicitly executed on creation.
+ *
+ * @param designer the designer in which the action is taking place
+ * @param circuit the circuit to modify, must be placed in designer
  */
-export class CreateNegatedGatesAction implements Action {
-    private originalCircuit: IOObject[];
-    private negatedCircuit: IOObject[];
-    private action: GroupAction;
-
-    /**
-     * Creates the action and implicitly executes it
-     * 
-     * @param designer the designer in which the action is taking place
-     * @param circuit the circuit to modify, must be placed in designer
-     */
-    public constructor(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet) {
-        this.originalCircuit = [...circuit.toList()];
-        this.negatedCircuit = [...this.originalCircuit];
-        this.action = new GroupAction();
+export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
+        const action = new GroupAction();
+        const negatedCircuit = [...circuit.toList()];
 
         const gates = circuit.getOthers().filter(gate =>
             (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
@@ -41,42 +32,23 @@ export class CreateNegatedGatesAction implements Action {
                 if (other instanceof NOTGate) {
                     const newGate = GetInvertedGate(gate);
 
-                    // Remove wires and gates from this.negatedCircuit
-                    gate.getInputs().forEach(wire => this.negatedCircuit.splice(this.negatedCircuit.indexOf(wire), 1));
-                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(wires[0]), 1);
-                    other.getOutputs().forEach(wire => this.negatedCircuit.splice(this.negatedCircuit.indexOf(wire), 1));
-                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(other), 1);
-                    this.negatedCircuit.splice(this.negatedCircuit.indexOf(gate), 1, newGate);
+                    // Remove wires and gates from negatedCircuit
+                    gate.getInputs().forEach(wire => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
+                    negatedCircuit.splice(negatedCircuit.indexOf(wires[0]), 1);
+                    other.getOutputs().forEach(wire => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
+                    negatedCircuit.splice(negatedCircuit.indexOf(other), 1);
+                    negatedCircuit.splice(negatedCircuit.indexOf(gate), 1, newGate);
 
                     // Swap out the gates
-                    this.action.add(CreateSnipGateAction(other));
-                    this.action.add(CreateReplaceComponentAction(designer, gate, newGate));
+                    action.add(CreateSnipGateAction(other));
+                    action.add(CreateReplaceComponentAction(designer, gate, newGate));
 
-                    // Add new wires to this.negatedCircuit
-                    newGate.getInputs().forEach(wire => this.negatedCircuit.push(wire));
-                    newGate.getOutputs().forEach(wire => this.negatedCircuit.push(wire));
+                    // Add new wires to negatedCircuit
+                    newGate.getInputs().forEach(wire => negatedCircuit.push(wire));
+                    newGate.getOutputs().forEach(wire => negatedCircuit.push(wire));
                 }
             }
         });
-    }
 
-    public execute(): Action {
-        this.action.execute();
-
-        return this;
-    }
-
-    public undo(): Action {
-        this.action.undo();
-
-        return this;
-    }
-
-    public getOriginalCircuit(): DigitalObjectSet {
-        return new DigitalObjectSet(this.originalCircuit);
-    }
-
-    public getNegatedCircuit(): DigitalObjectSet {
-        return new DigitalObjectSet(this.negatedCircuit);
-    }
+    return [action, new DigitalObjectSet(negatedCircuit)];
 }

@@ -1,13 +1,19 @@
 import {Create} from "serialeazy";
 
-import {InputTree} from "./Constants/DataStructures";
-import {TypeToGate} from "./Constants/Objects";
+import {InputTree, InputTreeOpType} from "./Constants/DataStructures";
 
 import {IOObject} from "core/models";
 import {DigitalComponent} from "digital/models";
 import {LazyConnect} from "digital/utils/ComponentUtils";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 
+
+export const TypeToGate: Record<InputTreeOpType, string> = {
+    "&": "ANDGate",
+    "!": "NOTGate",
+    "|": "ORGate",
+    "^": "XORGate",
+}
 
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).

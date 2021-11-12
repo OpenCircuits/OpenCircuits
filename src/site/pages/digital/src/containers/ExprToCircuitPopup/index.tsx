@@ -1,9 +1,10 @@
 import {useState} from "react";
 
 import {OperatorFormat, OperatorFormatLabel, TokenType} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup} from "shared/components/Popup";
+import {SwitchToggle} from "shared/components/SwitchToggle";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
@@ -12,10 +13,9 @@ import {useSharedDispatch,
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 
 import {Generate} from "./generate";
+import {CustomOps} from "./CustomOps";
 
 import "./index.scss";
-import {CustomOps} from "./CustomOps";
-import {SwitchToggle} from "shared/components/SwitchToggle";
 
 
 type InputTypes = "Button" | "Clock" | "Switch";
@@ -60,11 +60,11 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                     <div>
                         <h3>Notation</h3>
                         {Formats.map(curFormat =>
-                            <SwitchToggle isOn={format === curFormat.icon} text={curFormat.label}
-                                            onChange={() => setFormat(curFormat.icon)} hideStateText={true} />
+                            <SwitchToggle key={curFormat.icon} isOn={format === curFormat.icon} text={curFormat.label}
+                                          onChange={() => setFormat(curFormat.icon)} hideStateText={true} />
                         )}
                         <SwitchToggle isOn={format === "custom"} text={"Custom"}
-                                        onChange={() => setFormat("custom")} hideStateText={true} />
+                                      onChange={() => setFormat("custom")} hideStateText={true} />
                         {
                             format === "custom" &&
                             <CustomOps customOps={customOps} setCustomOps={setCustomOps} />
@@ -82,7 +82,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                                 onChange={e => setInput(e.target.value as InputTypes)}
                                 onBlur={e => setInput(e.target.value as InputTypes)}>
 
-                            {(["Button", "Clock", "Switch"] as Array<InputTypes>).map(input =>
+                            {(["Button", "Clock", "Switch"] as InputTypes[]).map(input =>
                                 <option key={input} value={input}>{input}</option>
                             )}
 

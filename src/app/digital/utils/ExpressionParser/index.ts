@@ -1,4 +1,4 @@
-import {Formats} from "./Constants/Objects";
+import {Formats} from "./Constants/Formats";
 import {OperatorFormat} from "./Constants/DataStructures";
 
 import {DigitalComponent} from "digital/models/index";

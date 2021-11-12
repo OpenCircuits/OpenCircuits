@@ -1,6 +1,6 @@
 import {Create} from "serialeazy";
 
-import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
@@ -50,9 +50,8 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute(),
                                     CreateAddGroupAction(info.designer, circuit).execute()]);
-    const negateAction = new CreateNegatedGatesAction(info.designer, circuit);
+    const [negateAction, negated] = CreateNegatedGatesAction(info.designer, circuit);
     action.add(negateAction);
-    const negated = negateAction.getNegatedCircuit();
     OrganizeMinDepth(negated, startPos);
 
     if (isIC) { // If creating as IC
