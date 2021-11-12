@@ -3,6 +3,12 @@ import "jest";
 import {Graph} from "math/Graph";
 
 
+function compareDepths(expected: string[][], actual: string[][]) {
+    expect(actual.length).toEqual(expected.length);
+        for (var i = 0; i < actual.length; i++)
+            expect(actual[i].sort()).toEqual(expected[i].sort());
+}
+
 describe("Graph", () => {
     describe("isConnected", () => {
         test("Test 1", () => {
@@ -56,6 +62,182 @@ describe("Graph", () => {
             graph.createEdge("or1", "Cout", "edge");
 
             expect(graph.isConnected()).toBe(true);
+        });
+    });
+    describe("getMaxNodeDepths", () => {
+        test("Single Node graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+
+            const nodeDepths = graph.getMaxNodeDepths();
+
+            const expected = [["A"]];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Simple graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+
+            graph.createEdge("A", "B", "edge");
+            graph.createEdge("A", "D", "edge");
+            graph.createEdge("B", "C", "edge");
+
+            const nodeDepths = graph.getMaxNodeDepths();
+
+            const expected = [
+                ["A"],
+                ["B", "D"],
+                ["C"]
+            ];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Multisource graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("B", "C", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("A", "E", "edge");
+            graph.createEdge("B", "F", "edge");
+
+            const nodeDepths = graph.getMaxNodeDepths();
+
+            const expected = [
+                ["A", "B"],
+                ["C", "E", "F"],
+                ["D"]
+            ];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Advanced graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+            graph.createNode("G");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("A", "F", "edge");
+            graph.createEdge("C", "F", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("F", "G", "edge");
+            graph.createEdge("D", "E", "edge");
+            graph.createEdge("B", "E", "edge");
+            graph.createEdge("E", "G", "edge");
+
+            const nodeDepths = graph.getMaxNodeDepths();
+
+            const expected = [
+                ["A", "B"],
+                ["C"],
+                ["D", "F"],
+                ["E"],
+                ["G"]
+            ];
+            compareDepths(expected, nodeDepths);
+        });
+    });
+    describe("getMinNodeDepths", () => {
+        test("Single Node graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+
+            const nodeDepths = graph.getMinNodeDepths();
+
+            const expected = [["A"]];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Simple graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+
+            graph.createEdge("A", "B", "edge");
+            graph.createEdge("A", "D", "edge");
+            graph.createEdge("B", "C", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+
+            const expected = [
+                ["A"],
+                ["B", "D"],
+                ["C"]
+            ];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Multisource graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("B", "C", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("A", "E", "edge");
+            graph.createEdge("B", "F", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+
+            const expected = [
+                ["A", "B"],
+                ["C", "E", "F"],
+                ["D"]
+            ];
+            compareDepths(expected, nodeDepths);
+        });
+        test("Advanced graph", () => {
+            const graph = new Graph<string, string>();
+
+            graph.createNode("A");
+            graph.createNode("B");
+            graph.createNode("C");
+            graph.createNode("D");
+            graph.createNode("E");
+            graph.createNode("F");
+            graph.createNode("G");
+
+            graph.createEdge("A", "C", "edge");
+            graph.createEdge("A", "F", "edge");
+            graph.createEdge("C", "F", "edge");
+            graph.createEdge("C", "D", "edge");
+            graph.createEdge("F", "G", "edge");
+            graph.createEdge("D", "E", "edge");
+            graph.createEdge("B", "E", "edge");
+            graph.createEdge("E", "G", "edge");
+
+            const nodeDepths = graph.getMinNodeDepths();
+
+            const expected = [
+                ["A", "B"],
+                ["C", "F", "E"],
+                ["D", "G"]
+            ];
+            compareDepths(expected, nodeDepths);
         });
     });
 });

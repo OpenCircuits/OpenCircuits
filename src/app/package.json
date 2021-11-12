@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "hammerjs": "^2.0.8",
-    "serialeazy": "^2.0.3",
+    "serialeazy": "^2.0.5",
     "svg2canvas": "^0.0.10"
   },
   "devDependencies": {
