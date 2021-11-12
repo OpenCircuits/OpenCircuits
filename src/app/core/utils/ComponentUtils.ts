@@ -19,6 +19,10 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**

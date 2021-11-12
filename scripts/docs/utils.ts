@@ -9,7 +9,9 @@ const EscapeCodes = {
     '}': '#125',
 } as Record<string, string>;
 const EscapeRegex = new RegExp(`[${Object.keys(EscapeCodes).join("")}]`, "g");
-export function escapeStr(str: string): string {
+export function escapeStr(str: string | undefined): string | undefined {
+    if (!str)
+        return undefined;
     return str.replace(EscapeRegex, (m) => {
         return `&${EscapeCodes[m]};`;
     });

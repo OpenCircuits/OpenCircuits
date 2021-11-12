@@ -1,7 +1,7 @@
 name: Build and Deploy the nightly and documentation sites for the up-to-date code
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
-  
+
 concurrency:
   group: deploy-night-workflow
   cancel-in-progress: true
@@ -40,6 +40,7 @@ jobs:
       env:
         OC_OAUTH2_ID: ${{ secrets.OAUTH_ID }}
         OC_AUTH_TYPES: google
+        OC_GA_ID: UA-201145837-1
       run: |
         yarn build --ci --prod server digital
 

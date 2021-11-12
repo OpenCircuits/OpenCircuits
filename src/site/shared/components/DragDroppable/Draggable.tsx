@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from "react"
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+
+import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
+
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {DragDropHandlers} from "./DragDropHandlers";
 
@@ -13,13 +18,28 @@ type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Draggable = ({ children, data, onDragChange, ...other }: Props) => {
     const [isDragging, setIsDragging] = useState(false);
 
-    // console.log(`i has data: ${data}`);
     function onDragEnd(pos: Vector) {
         if (!isDragging)
             return;
         DragDropHandlers.drop(pos, ...data);
         setIsDragging(false);
     }
+
+
+    // Cancel placing when pressing escape
+    useWindowKeyDownEvent(ESC_KEY, () => {
+        setIsDragging(false);
+    });
+
+    // Also cancel on Right Click
+    useDocEvent("mouseup", (ev) => {
+        if (isDragging && ev.button === RIGHT_MOUSE_BUTTON) {
+            setIsDragging(false);
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        // v-- Essentially increases priority for this event so we can cancel the context menu
+    }, [isDragging], true);
 
     useEffect(() => {
         if (onDragChange)
@@ -29,12 +49,12 @@ export const Draggable = ({ children, data, onDragChange, ...other }: Props) => 
     useDocEvent(
         "mouseup",
         (ev) => onDragEnd(V(ev.clientX, ev.clientY)),
-        [isDragging, setIsDragging, ...data]
+        [isDragging, ...data]
     );
     useDocEvent(
         "touchend",
         (ev) => onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY)),
-        [isDragging, setIsDragging, ...data]
+        [isDragging, ...data]
     );
 
     return <button {...other}

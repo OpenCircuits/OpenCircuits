@@ -16,6 +16,11 @@ import {LED} from "digital/models/ioobjects";
 import {Images} from "digital/utils/Images";
 import {Circle} from "core/rendering/shapes/Circle";
 
+/**
+ * Renders LEDs
+ * * Draws LED svg
+ * * If LED is on, draws glow the appropriate colour
+ */
 export const LEDRenderer = (() => {
     return {
         render(renderer: Renderer, _: Camera, led: LED, selected: boolean): void {

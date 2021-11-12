@@ -66,7 +66,9 @@ export function displayConstructor(c: Class): string {
                     // Display parameters of overload
                     (cc.parameters.length === 0 ? `` : `<h4>Parameters</h4>\n`) +
                     cc.parameters.map(p =>
-                        `\n* <code>${escapeStr(p.name)}: ${
+                        //   | this HTML space character is needed because idfk, but it makes
+                        //   V   the JSDocs for the rest of the line actually function
+                        `\n* &nbsp;<code>${escapeStr(p.name)}: ${
                             displayType(p.type)}</code> – ${p.docs || "*Description needed*"
                         }\n`
                     ).join("") +
@@ -83,14 +85,16 @@ export function displayFunc(f: Method, global: boolean = false): string {
             `${f.name}(${fo.parameters.map(p => escapeStr(p.name)).join(", ")})` +
             ` => ${fo.returns.length > 0 ?
                 fo.returns.map(r => displayType(r.type)).join(" | ") :
-                displaySpecial(escapeStr("void"), Colors.primitive)}` +
+                displaySpecial(escapeStr("void")!, Colors.primitive)}` +
         `</code></h4>` +
         `\n${fo.docs || "\n*Description needed*\n"}\n` +
 
         // Display parameters of overload
         (fo.parameters.length === 0 ? `` : `\n<h4>Parameters</h4>\n`) +
         fo.parameters.map(p =>
-            `\n* <code>${escapeStr(p.name)}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
+            //   | this HTML space character is needed because idfk, but it makes
+            //   V   the JSDocs for the rest of the line actually function
+            `\n* &nbsp;<code>${escapeStr(p.name)}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
         ).join("") +
 
         // Display returns for overload
@@ -98,7 +102,9 @@ export function displayFunc(f: Method, global: boolean = false): string {
         fo.returns.map(r =>
             // The space after the <code> tag is necessary (for some reason)
             //  and activates the `code` tag background w/o actually showing the space
-            `\n* <code> ${displayType(r.type)}</code> – ${r.docs || "*Description needed*"}\n`
+            //   | this HTML space character is needed because idfk, but it makes
+            //   V   the JSDocs for the rest of the line actually function
+            `\n* &nbsp;<code> ${displayType(r.type)}</code> – ${r.docs || "*Description needed*"}\n`
         ).join("");
 
     return `` +
