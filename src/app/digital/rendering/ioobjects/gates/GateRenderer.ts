@@ -19,7 +19,14 @@ import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
 import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
-
+/**
+ * Renders Gates
+ * * Choose fill and border colour as per selection status
+ * * If Not Gate (of any kind), draw not circle
+ * * If AND Gate, draw AND gate line to match number of input ports
+ * * If OR Gate, draw quad curve(s) to match number of input ports
+ * * If XOR Gate, draw double quad curve(s) to match number of input ports
+ */
 export const GateRenderer = (() => {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {

@@ -4,6 +4,7 @@ import {HeaderState}      from "./Header";
 import {SideNavState}     from "./SideNav";
 import {ItemNavState}     from "./ItemNav";
 import {ContextMenuState} from "./ContextMenu";
+import {DebugInfoState}   from "./DebugInfo";
 
 
 export type SharedAppState = {
@@ -13,4 +14,5 @@ export type SharedAppState = {
     sideNav: SideNavState;
     itemNav: ItemNavState;
     contextMenu: ContextMenuState;
+    debugInfo: DebugInfoState;
 }
