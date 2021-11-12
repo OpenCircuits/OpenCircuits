@@ -12,12 +12,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("Button", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {Place, Connect} = GetHelpers({designer});
-    const a = new Switch();
-    const b = new Button(), b2 = new Button();
-    const g = new ANDGate();
-    const o = new LED(), o2 = new LED();
 
-    Place(a, b, g, o, b2, o2);
+    const [a, b, b2, g, o, o2] = Place(new Switch(), new Button() , new Button(),
+                                       new ANDGate(), new LED() , new LED());
     Connect(a, 0,  g, 0);
     Connect(b, 0,  g, 1);
     Connect(g, 0,  o, 0);

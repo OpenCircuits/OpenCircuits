@@ -1,9 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {JKFlipFlop}      from "digital/models/ioobjects/flipflops/JKFlipFlop";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+import {JKFlipFlop} from "digital/models/ioobjects/flipflops/JKFlipFlop";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
@@ -12,18 +10,9 @@ describe("JKFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const C = new Switch(), J = new Switch(), K = new Switch(), PRE = new Switch();
-    const f = new JKFlipFlop(), CLR = new Switch(), Q = new LED(), Q2 = new LED();
+    const {AutoPlace} = GetHelpers({designer});
 
-    Place(C, J, K, PRE, CLR, f, Q, Q2);
-    Connect(C,  0, f, JKFlipFlop.CLK_PORT);
-    Connect(J, 0, f, JKFlipFlop.SET_PORT);
-    Connect(K, 0, f, JKFlipFlop.RST_PORT);
-    Connect(PRE, 0, f, JKFlipFlop.PRE_PORT);
-    Connect(CLR, 0, f, JKFlipFlop.CLR_PORT);
-    Connect(f, JKFlipFlop.Q_PORT,  Q, 0);
-    Connect(f, JKFlipFlop.Q2_PORT, Q2, 0);
+    const [f, [PRE, CLR, J, C, K], [Q, Q2]] = AutoPlace(new JKFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

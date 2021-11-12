@@ -9,7 +9,8 @@ import {DRAG_TIME,
         S_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
-        META_KEY} from "core/utils/Constants";
+        META_KEY,
+        ESC_KEY} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -34,7 +35,7 @@ export class Input {
     private touchCount: number;
 
     private listeners: Listener[];
-    private keysDown: Map<number, boolean>;
+    private keysDown: Map<string, boolean>;
 
     private dragTime: number;
 
@@ -53,13 +54,14 @@ export class Input {
         this.setupHammer();
     }
 
-    private isPreventedCombination(newKey: number): boolean {
+    private isPreventedCombination(newKey: string): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
+            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
@@ -75,31 +77,39 @@ export class Input {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
-                this.onKeyDown(e.keyCode);
+                this.onKeyDown(e.key);
 
-                if (this.isPreventedCombination(e.keyCode))
+                if (this.isPreventedCombination(e.key))
                     e.preventDefault();
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.keyCode)
+                this.onKeyUp(e.key);
         }, false);
 
         window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
+
+        window.addEventListener("paste", (ev: ClipboardEvent) => this.callListeners({ type: "paste", ev }));
+        window.addEventListener("copy",  (ev: ClipboardEvent) => this.callListeners({ type: "copy",  ev }));
+        window.addEventListener("cut",   (ev: ClipboardEvent) => this.callListeners({ type: "cut",   ev }));
     }
 
     private hookupMouseEvents(): void {
         // Mouse events
-        this.canvas.addEventListener("click",       (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener("dblclick",    (e: MouseEvent) => this.onDoubleClick(e.button), false);
-        this.canvas.addEventListener("wheel",       (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener("mousedown",   (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener("mouseup",     (e: MouseEvent) => this.onMouseUp(e.button), false);
-        this.canvas.addEventListener("mousemove",   (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        this.canvas.addEventListener("mouseenter",  (_: MouseEvent) => this.onMouseEnter(), false);
-        this.canvas.addEventListener("mouseleave",  (_: MouseEvent) => this.onMouseLeave(), false);
-        this.canvas.addEventListener("contextmenu", (e: MouseEvent) => { e.preventDefault(); this.callListeners({ type: "contextmenu" }); });
+        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
+        this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
+        this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
+        this.canvas.addEventListener("mouseleave", (_: MouseEvent) => this.onMouseLeave(), false);
+
+        this.canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+            e.preventDefault();
+            this.callListeners({ type: "contextmenu" });
+        });
     }
 
     private hookupTouchEvents(): void {
@@ -179,11 +189,14 @@ export class Input {
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
+    public removeListener(listener: Listener): void {
+        this.listeners.splice(this.listeners.indexOf(listener), 1);
+    }
 
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
-    public isKeyDown(key: number): boolean {
+    public isKeyDown(key: string): boolean {
         return (this.keysDown.has(key) &&
                 this.keysDown.get(key) == true);
     }
@@ -191,6 +204,11 @@ export class Input {
     public isShiftKeyDown(): boolean {
         return this.isKeyDown(SHIFT_KEY);
     }
+
+    public isEscKeyDown(): boolean {
+        return this.isKeyDown(ESC_KEY);
+    }
+
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
@@ -212,13 +230,13 @@ export class Input {
         return this.touchCount;
     }
 
-    protected onKeyDown(key: number): void {
+    protected onKeyDown(key: string): void {
         this.keysDown.set(key, true);
 
         // call each listener
         this.callListeners({type: "keydown", key});
     }
-    protected onKeyUp(key: number): void {
+    protected onKeyUp(key: string): void {
         this.keysDown.set(key, false);
 
         // call each listener

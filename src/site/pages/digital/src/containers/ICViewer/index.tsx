@@ -1,7 +1,6 @@
 import {useEffect, useLayoutEffect, useRef} from "react";
-import {connect} from "react-redux";
 
-import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
+import {ESC_KEY, IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
@@ -15,127 +14,116 @@ import {PanTool}          from "core/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {ICData} from "digital/models/ioobjects/other/ICData";
-
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
+import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 
-import {AppState} from "site/digital/state";
-import {CloseICViewer} from "site/digital/state/ICViewer/actions";
+import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
 
 
-type OwnProps = {
+type Props = {
     mainInfo: DigitalCircuitInfo;
 }
-type StateProps = {
-    active: boolean;
-    data: ICData;
-}
-type DispatchProps = {
-    CloseICViewer: typeof CloseICViewer;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
 export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
-    return connect<StateProps, DispatchProps, OwnProps, AppState>(
-        (state: AppState) => ({ active: state.icViewer.active,
-                                data: state.icViewer.ic }),
-        { CloseICViewer }
-    )(
-        ({active, data, mainInfo, CloseICViewer}: Props) => {
-            const {camera, designer, history, selections, toolManager, renderer} = info;
+    return ({ mainInfo }: Props) => {
+        const {camera, designer, history, selections, toolManager, renderer} = info;
 
-            const {w, h} = useWindowSize();
-            const canvas = useRef<HTMLCanvasElement>();
+        const {isActive, ic: data} = useDigitalSelector(
+            state => ({ ...state.icViewer })
+        );
+        const dispatch = useDigitalDispatch();
 
-            // On resize (useLayoutEffect happens sychronously so
-            //  there's no pause/glitch when resizing the screen)
-            useLayoutEffect(() => {
-                if (!active)
-                    return;
-                camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-                renderer.render(); // Re-render
-            }, [active, w, h]);
+        const {w, h} = useWindowSize();
+        const canvas = useRef<HTMLCanvasElement>();
 
-
-            // Initial function called after the canvas first shows up
-            useEffect(() => {
-                // Create input w/ canvas
-                info.input = new Input(canvas.current);
-
-                // Get render function
-                const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
-
-                // Add input listener
-                info.input.addListener((event) => {
-                    const change = toolManager.onEvent(event, info);
-                    if (change) renderer.render();
-                });
-
-                // Input should be blocked initially
-                info.input.block();
-
-                // Add render callbacks and set render function
-                designer.addCallback(() => renderer.render());
-
-                renderer.setRenderFunction(() => renderFunc());
-                renderer.render();
-            }, []); // Pass empty array so that this only runs once on mount
-
-            // Happens when activated
-            useLayoutEffect(() => {
-                if (!active || !data)
-                    return;
-                // Unlock input
-                info.input.unblock();
-
-                // Block input for main designer
-                mainInfo.input.block();
+        // On resize (useLayoutEffect happens sychronously so
+        //  there's no pause/glitch when resizing the screen)
+        useLayoutEffect(() => {
+            if (!isActive)
+                return;
+            camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
+            renderer.render(); // Re-render
+        }, [isActive, w, h]);
 
 
-                // Reset designer and add IC insides
-                designer.reset();
-                const inside = data.copy();
-                designer.addGroup(inside);
+        // Initial function called after the canvas first shows up
+        useEffect(() => {
+            // Create input w/ canvas
+            info.input = new Input(canvas.current);
 
-                // Adjust the camera so it all fits in the viewer
-                const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
-                new MoveCameraAction(camera, pos, zoom).execute();
+            // Get render function
+            const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
-                renderer.render();
-            }, [active, data]);
+            // Add input listener
+            info.input.addListener((event) => {
+                const change = toolManager.onEvent(event, info);
+                if (change) renderer.render();
+            });
+
+            // Input should be blocked initially
+            info.input.block();
+
+            // Add render callbacks and set render function
+            designer.addCallback(() => renderer.render());
+
+            renderer.setRenderFunction(() => renderFunc());
+            renderer.render();
+        }, []); // Pass empty array so that this only runs once on mount
+
+        // Happens when activated
+        useLayoutEffect(() => {
+            if (!isActive || !data)
+                return;
+            // Unlock input
+            info.input.unblock();
+
+            // Block input for main designer
+            mainInfo.input.block();
 
 
-            const close = () => {
-                // Block input while closed
-                info.input.block();
+            // Reset designer and add IC insides
+            designer.reset();
+            const inside = data.copy();
+            designer.addGroup(inside);
 
-                // Unblock main input
-                mainInfo.input.unblock();
+            // Adjust the camera so it all fits in the viewer
+            const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
+            new MoveCameraAction(camera, pos, zoom).execute();
 
-                CloseICViewer();
-            }
+            renderer.render();
+        }, [isActive, data]);
 
+        const close = () => {
+            // Block input while closed
+            info.input.block();
 
-            return (
-                <div className="icviewer" style={{ display: (active ? "initial" : "none") }}>
-                    <canvas ref={canvas}
-                            width={w*IC_DESIGNER_VW}
-                            height={h*IC_DESIGNER_VH} />
+            // Unblock main input
+            mainInfo.input.unblock();
 
-                    <div className="icviewer__buttons">
-                        <button name="close" onClick={close}>
-                            Close
-                        </button>
-                    </div>
-                </div>
-            );
+            dispatch(CloseICViewer());
         }
-    );
+
+        useKeyDownEvent(info.input, ESC_KEY, close);
+
+        return (
+            <div className="icviewer" style={{ display: (isActive ? "initial" : "none") }}>
+                <canvas ref={canvas}
+                        width={w*IC_DESIGNER_VW}
+                        height={h*IC_DESIGNER_VH} />
+
+                <div className="icviewer__buttons">
+                    <button name="close" onClick={close}>
+                        Close
+                    </button>
+                </div>
+            </div>
+        );
+    }
 })();

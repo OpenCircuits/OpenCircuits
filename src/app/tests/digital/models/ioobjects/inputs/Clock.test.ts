@@ -8,10 +8,10 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe ("Clock", () => {
-    const designer = new DigitalCircuitDesigner(0), c = new Clock(), l = new LED();
+    const designer = new DigitalCircuitDesigner(0);
     const {Place, Connect} = GetHelpers({designer});
 
-    Place(c, l);
+    const [c, l] = Place(new Clock(), new LED());
     Connect(c, 0, l, 0);
 
     test("Initial State", () => {

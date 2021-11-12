@@ -18,10 +18,8 @@ describe("CircuitDesigner", () => {
         test("Add Object", () => {
             const designer = new DigitalCircuitDesigner(0);
             const {Place} = GetHelpers({designer});
-            const a = new Switch(), o = new LED();
 
-            Place(a);
-            Place(o);
+            const [a, o] = Place(new Switch(), new LED());
 
             expect(designer.getObjects().length).toBe(2);
 
@@ -34,9 +32,8 @@ describe("CircuitDesigner", () => {
         test("Add Objects", () => {
             const designer = new DigitalCircuitDesigner(0);
             const {Place} = GetHelpers({designer});
-            const a = new Switch(), o = new LED();
 
-            Place(a, o);
+            const [a, o] = Place(new Switch(), new LED());
 
             expect(designer.getObjects().length).toBe(2);
 
@@ -50,9 +47,8 @@ describe("CircuitDesigner", () => {
     describe("Basic Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), o = new LED();
 
-        Place(a, o);
+        const [a, o] = Place(new Switch(), new LED());
         Connect(a, 0,  o, 0);
 
         const objects = designer.getObjects();
@@ -79,9 +75,8 @@ describe("CircuitDesigner", () => {
         test("Add Remove No Connection", () => {
             const designer = new DigitalCircuitDesigner(0);
             const {Place, Remove} = GetHelpers({designer});
-            const a = new Switch(), o = new LED();
 
-            Place(a, o);
+            const [a, o] = Place(new Switch(), new LED());
 
             expect(designer.getObjects().length).toBe(2);
 
@@ -98,9 +93,8 @@ describe("CircuitDesigner", () => {
         test("Add Remove Connected 1", () => {
             const designer = new DigitalCircuitDesigner(0);
             const {Place, Connect, Remove} = GetHelpers({designer});
-            const a = new Switch(), o = new LED();
 
-            Place(a, o);
+            const [a, o] = Place(new Switch(), new LED());
             Connect(a, 0,  o, 0);
 
             expect(designer.getObjects().length).toBe(2);
@@ -121,9 +115,16 @@ describe("CircuitDesigner", () => {
     describe("Reset Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), o = new LED();
 
-        Place(a, o);
+        const [a, o] = Place(new Switch(), new LED());
         Connect(a, 0,  o, 0);
+
+        expect(designer.getObjects().length).toBe(2);
+        expect(designer.getWires().length).toBe(1);
+
+        designer.reset();
+
+        expect(designer.getObjects().length).toBe(0);
+        expect(designer.getWires().length).toBe(0);
     });
 });

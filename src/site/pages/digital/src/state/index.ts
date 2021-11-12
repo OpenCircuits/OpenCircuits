@@ -3,8 +3,8 @@ import {ThunkDispatch} from "redux-thunk";
 import {SharedAppState}  from "shared/state";
 import {AllActions} from "./actions";
 
-import {ICDesignerState} from "./ICDesigner/state";
-import {ICViewerState}   from "./ICViewer/state";
+import {ICDesignerState} from "./ICDesigner";
+import {ICViewerState}   from "./ICViewer";
 
 
 export type AppState = SharedAppState & {

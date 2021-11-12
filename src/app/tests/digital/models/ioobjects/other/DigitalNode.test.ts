@@ -1,21 +1,16 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-import {DigitalNode}     from "digital/models/ioobjects/other/DigitalNode";
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Digital Node", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const wp = new DigitalNode(), s = new Switch(), o = new LED();
+    const {AutoPlace} = GetHelpers({designer});
 
-    Place(wp, s, o);
-    Connect(s, 0,  wp, 0);
-    Connect(wp, 0,  o, 0);
+    const [wp, [s], [o]] = AutoPlace(new DigitalNode());
 
     test("Off", () => {
     	s.activate(false);
