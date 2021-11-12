@@ -13,11 +13,12 @@ import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 import {LED} from "digital/models/ioobjects/outputs/LED";
 import {DigitalComponent} from "digital/models/index";
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
+import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
+
 import "digital/models/ioobjects";
 
 
@@ -73,23 +74,57 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
 }
 
 /**
+ * This function is similar to testInputs but only generates one test case rather than one for every state
+ * 
+ * @param inputs an array of the names of the switches along with their corresponding Switch,
+ *  those same Switch objects must be present in circuit
+ * @param circuit the components and wires that make up the circuit being tested
+ * @param output the component whose state will be evaluated in the test, must be present in circuit
+ * @param expected the expected states of the output LED for all the different switch combinations
+ * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ * @see testInputs
+ */
+function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+    if (2 ** inputs.length !== expected.length)
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
+
+    const designer = new DigitalCircuitDesigner(0);
+    designer.addGroup(circuit);
+
+    // Decrements because there can be weird propagation issues when trying to read initial state
+    // For more, see issues #468 and #613
+    // TODO: Make this increment rather than decrement if/when #468 and #613 are fixed
+    test("Test all states", () => {
+        for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
+            for (let index = 0; index < inputs.length; index++)
+                inputs[index][1].activate(!!(num & (2 ** index)));
+            expect(output.isOn()).toBe(expected[num]);
+        }
+    });
+}
+
+/**
  * This is a function that autogenerates and tests all states of a circuit represented by a given expression.
  * The names of these switches are procedurally generated from "a" through "z". Note that the expression should
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
  * 
+ * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the entire expression.
+ * This behavior can be overwritten with the verbose argument.
+ * 
  * @param numInputs the number of switches that are used by this expression/test
  * @param expression the logical boolean expression to test
  * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
  * @param ops the strings used to represent the different operators
+ * @param verbose true to force creating a new test for every state, false to force creating one single test encompassing all states
  * @throws {Error} if numInputs > 8
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs
  * @see ExpressionToCircuit
  */
-function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat) {
+function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
     describe("Parse: '" + expression + "'", () => {
-        if (numInputs > 16)
+        if (numInputs > 8)
             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
@@ -100,7 +135,10 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
-        testInputs(inputs, objectSet, o, expected);
+        if (verbose === false || (verbose == undefined && numInputs > 3))
+            testInputsSimple(inputs, objectSet, o, expected);
+        else
+            testInputs(inputs, objectSet, o, expected);
     });
 }
  
