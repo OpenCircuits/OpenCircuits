@@ -6,6 +6,11 @@ import {Camera} from "math/Camera";
 import {Renderer} from "core/rendering/Renderer";
 import {Component} from "core/models/Component";
 
+/**
+ * Renders IOLabels
+ * * Check if Component is on screen, quit if not
+ * * For each port, align and render name of port at port position
+ */
 export const IOLabelRenderer = (() => {
 
     const drawPortText = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
