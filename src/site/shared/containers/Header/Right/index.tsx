@@ -1,6 +1,7 @@
 import {useState} from "react";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {TutorialDropdown} from "./TutorialDropdown";
 import {OpenFileButton} from "./OpenFileButton";
@@ -13,8 +14,9 @@ import "./index.scss";
 
 type Props = {
     helpers: CircuitInfoHelpers;
+    info: CircuitInfo;
 }
-export const HeaderRight = ({ helpers }: Props) => {
+export const HeaderRight = ({ helpers, info }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
     return (
@@ -26,7 +28,7 @@ export const HeaderRight = ({ helpers }: Props) => {
                 <SignInOutButtons />
                 <DownloadMenuDropdown helpers={helpers} />
                 <OpenFileButton helpers={helpers} />
-                <SettingsMenu helpers={helpers} />
+                <SettingsMenu helpers={helpers} info={info} />
                 <TutorialDropdown />
             </div>
             {/* <div className="header__right">
