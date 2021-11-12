@@ -38,7 +38,7 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
-import { InputField } from "shared/components/InputField";
+import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 

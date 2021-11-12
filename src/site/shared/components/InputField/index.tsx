@@ -1,7 +1,4 @@
-
-   
-import { useEffect, useRef } from "react"
-
+import {useEffect, useRef} from "react"
 
 
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
@@ -12,12 +9,10 @@ export const InputField = (props: Props) => {
 
     useEffect(() => {
         ref.current.addEventListener("keydown", function(evt) {
-            if (evt.key === "Escape") {
+            if (evt.key === "Escape")
                 ref.current.blur();
-            }
         });
     }, [ref]);
 
-    return <input ref={ref}
-                  {...props} />
+    return <input ref={ref} {...props} />
 }

@@ -5,7 +5,7 @@ import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
 
-import { InputField } from "shared/components/InputField";
+import {InputField} from "shared/components/InputField";
 
 
 export type ModuleTypes = number | string;

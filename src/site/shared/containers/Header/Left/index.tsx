@@ -4,7 +4,7 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 import {ToggleCircuitLocked, SetCircuitName} from "shared/state/CircuitInfo";
 import {ToggleSideNav} from "shared/state/SideNav";
 
-import { InputField } from "shared/components/InputField";
+import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
