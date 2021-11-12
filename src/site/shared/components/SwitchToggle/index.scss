@@ -1,0 +1,8 @@
+@import "~shared/utils/constants", "~shared/utils/theme";
+
+.switchtoggle {
+    & > img {
+        border: thin solid #888;
+        border-radius: 0px;
+    }
+}
