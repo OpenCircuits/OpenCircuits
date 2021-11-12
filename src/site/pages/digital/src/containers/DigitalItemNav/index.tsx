@@ -110,8 +110,7 @@ export const DigitalItemNav = ({info}: Props) => {
         onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
         onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            const {designer} = info;
-            const icData = designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
+            const icData = info.designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
             const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
             if (icInUse) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");

@@ -219,9 +219,9 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                                                 onDelete(section, item) && setHover("");
 
                                                 ev.stopPropagation();
-                                                }}>
-                                                    X
-                                                </div>
+                                                    }}>
+                                                        X
+                                                    </div>
                                         }
                                         <br />
                                     </div>
