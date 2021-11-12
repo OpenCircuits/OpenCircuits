@@ -37,7 +37,7 @@ export const LoginPopup = () => {
                             <div className="login__popup__label">NoAuth Login</div>
                             <div>
                                 <input type="text" placeholder="username"
-                                       value={username} onChange={e => setUsername(e.target.value.trim())} />
+                                            value={username} onChange={e => setUsername(e.target.value.trim())} />
                             </div>
                             <button onClick={() => {
                                 if (username === "") {
