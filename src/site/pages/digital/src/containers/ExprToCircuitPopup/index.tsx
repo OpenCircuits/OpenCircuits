@@ -15,6 +15,7 @@ import {Generate} from "./generate";
 
 import "./index.scss";
 import {CustomOps} from "./CustomOps";
+import {SwitchToggle} from "shared/components/SwitchToggle";
 
 
 type InputTypes = "Button" | "Clock" | "Switch";
@@ -59,16 +60,11 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                     <div>
                         <h3>Notation</h3>
                         {Formats.map(curFormat =>
-                            <div key={curFormat.icon}>
-                                <input type="radio" id={curFormat.icon} name="format" checked={format === curFormat.icon}
-                                       onChange={() => setFormat(curFormat.icon)} value={curFormat.icon} />
-                                <label htmlFor={curFormat.icon}>{curFormat.label}</label><br/>
-                            </div>
+                            <SwitchToggle isOn={format === curFormat.icon} text={curFormat.label}
+                                            onChange={() => setFormat(curFormat.icon)} hideStateText={true} />
                         )}
-                        <div>
-                            <input type="radio" name="format" checked={format === "custom"} onChange={() => setFormat("custom")} value={"custom"} />
-                            <label htmlFor={"custom"}>Custom</label><br/>
-                        </div>
+                        <SwitchToggle isOn={format === "custom"} text={"Custom"}
+                                        onChange={() => setFormat("custom")} hideStateText={true} />
                         {
                             format === "custom" &&
                             <CustomOps customOps={customOps} setCustomOps={setCustomOps} />
@@ -77,8 +73,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <input id="isIC" type="checkbox" name="isIC" checked={isIC} onChange={() => setIsIC(!isIC)} />
-                        <label htmlFor="isIC">Generate into IC</label>
+                        <SwitchToggle isOn={isIC} text={"Generate into IC"} onChange={() => setIsIC(!isIC)} hideStateText={true} />
                         <br/>
                         <br/>
                         <label>Input Component Type:  </label>

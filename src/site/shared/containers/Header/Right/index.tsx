@@ -53,4 +53,4 @@ export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
             </div> */}
         </div>
     );
-});
+};

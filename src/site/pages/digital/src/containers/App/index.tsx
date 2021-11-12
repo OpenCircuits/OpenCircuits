@@ -26,7 +26,6 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {ContextMenu}     from "shared/containers/ContextMenu";
-import {Header}          from "shared/containers/Header";
 import {SideNav}         from "shared/containers/SideNav";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";

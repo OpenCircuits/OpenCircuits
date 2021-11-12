@@ -58,34 +58,6 @@
         font-size: 1.35em;
     }
 
-    input[type=checkbox], input[type=radio] {
-        -webkit-appearance: none;
-        background-color: #fff;
-        border-width: 0px 2px 0px;
-        border-style: solid;
-        border-color: $background-color;
-        padding: 9px 6.5px;
-        border-radius: 3px;
-        display: inline-block;
-        position: relative;
-        vertical-align: middle;
-
-        &:active {
-            background-color: $background-color;
-            border-color: $background-color;
-        }
-
-        &:checked {
-            background-color: #5ccee7;
-            border-color: #5ccee7;
-
-            &:active {
-                background-color: #4ba9bd;
-                border-color: #4ba9bd;
-            }
-        }
-    }
-
     &__settings {
         display: flex;
         flex-wrap: wrap;
@@ -98,6 +70,18 @@
 
         div {
             flex-grow: 1;
+        }
+
+        & > div {
+            & > div {
+                height: 40px;
+                padding: 3px;
+                white-space: nowrap;
+                & > span {
+                    color: $secondary-color;
+                    margin-left: 3px;
+                }
+            }
         }
     }
 
