@@ -23,12 +23,7 @@ export class DigitalWire extends Wire {
 
         this.p1 = input;
         this.p2 = output;
-        if (input !== undefined) {
-            this.isOn = input.getIsOn();
-        }
-        else {
-            this.isOn = undefined;
-        }
+        this.isOn = false;       
     }
 
     public activate(signal: boolean): void {
