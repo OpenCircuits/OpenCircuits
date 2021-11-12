@@ -9900,10 +9900,10 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-serialeazy@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/serialeazy/-/serialeazy-2.0.3.tgz#2c9d14681f495c1369ac2b393fb4c42a1554819a"
-  integrity sha512-n80yoIewBTKvVYSXy54twCufb8ZcdiJypbpYRdgDXB9xf2+pTrG+RjM9VKJN2PR140R3/SMV96wjji4Wo6HhKQ==
+serialeazy@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/serialeazy/-/serialeazy-2.0.5.tgz#8e917014338b99e6d8d1fedb96c2efe507779755"
+  integrity sha512-+mTZpWEMDV50vo70jZ786J7qgByUPMIO6Gv3UdRKo8AOXoGv2Nslaq9BN2q7y2yICL0wT4etMxoZi8SDR0446Q==
   dependencies:
     reflect-metadata "^0.1.13"
 
