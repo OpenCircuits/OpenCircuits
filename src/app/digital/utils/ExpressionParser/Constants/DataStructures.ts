@@ -1,7 +1,7 @@
 /** Represents the operand of a binary operation */
-export type InputTreeBinOpType = "|" | "^" | "&"
+export type InputTreeBinOpType = "|" | "^" | "&";
 /** Represents the operand of a unary operation */
-export type InputTreeUnOpType = "!"
+export type InputTreeUnOpType = "!";
 /** Represents operands of both unary and binary operations */
 export type InputTreeOpType = InputTreeBinOpType | InputTreeUnOpType;
 export type ParenType = "(" | ")";
@@ -45,9 +45,13 @@ export type Token =
     | OpToken
     | InputToken;
 
+/** When adding a new format, this type must also be expanded to include its new unique icon */
+export type OperatorFormatLabel = "|" | "||" | "+" | "+_" | "OR" | "or" | "custom";
+
+/** Represents a format to represent the operators in the expression */
 export type OperatorFormat = {
-    label: string;
+    label: string; // Text displayed to explain the OperatorFormat
     separator: string;
-    icon: string; // All icons should be unique (and "custom" should be reserved for frontend)
+    icon: OperatorFormatLabel; // All icons should be unique (and "custom" should be reserved for frontend)
     ops: Record<TokenType, string>;
 }

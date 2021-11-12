@@ -1,20 +1,23 @@
 import {useState} from "react";
 
+import {OperatorFormat, OperatorFormatLabel, TokenType} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
+
 import {Popup} from "shared/components/Popup";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {TokenType} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats}   from "digital/utils/ExpressionParser/Constants/Objects";
-
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 
 import {Generate} from "./generate";
 
 import "./index.scss";
+import {CustomOps} from "./CustomOps";
 
+
+type InputTypes = "Button" | "Clock" | "Switch";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
@@ -29,24 +32,15 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const [expression, setExpression] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isIC, setIsIC] = useState(false);
-    const [input, setInput] = useState("Switch");
-    const [format, setFormat] = useState("|");
-    const [userOps, setUserOps] = useState({...Formats[0], icon: "custom"});
+    const [input, setInput] = useState<InputTypes>("Switch");
+    const [format, setFormat] = useState<OperatorFormatLabel>("|");
+    const [customOps, setCustomOps] = useState<OperatorFormat>({...Formats[0], icon: "custom"});
 
     function reset() {
         setExpression("");
         setErrorMessage("");
         dispatch(CloseHeaderPopups());
     }
-
-    const customOps: [string, TokenType][] = [
-        ["AND", "&"],
-        ["OR", "|"],
-        ["XOR", "^"],
-        ["NOT", "!"],
-        ["(", "("],
-        [")", ")"],
-    ];
 
     return (
         <Popup title="Digital Expression To Circuit Generator"
@@ -77,20 +71,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         </div>
                         {
                             format === "custom" &&
-                            <div>
-                                {customOps.map((op) => 
-                                    <div className="exprtocircuit__popup__customOps" key={op[0]}>
-                                        <input title={"Enter symbol for " + op[0]} type="text" value={userOps.ops[op[1]]}
-                                               onChange={e => setUserOps({...userOps, ops: {...userOps.ops, [op[1]]: e.target.value}})}/>
-                                        <label htmlFor={userOps.ops[op[1]]}>Custom {op[0]}: "{userOps.ops[op[1]]}"</label>
-                                    </div>
-                                )}
-                                <div className="exprtocircuit__popup__customOps" key="separator">
-                                    <input title="Enter symbol for Separator" type="text" value={userOps.separator}
-                                           onChange={e => setUserOps({...userOps, separator: e.target.value})}/>
-                                    <label htmlFor={userOps.separator}>Custom Separator: "{userOps.separator}"</label>
-                                </div>
-                            </div>
+                            <CustomOps customOps={customOps} setCustomOps={setCustomOps} />
                         }
                     </div>
 
@@ -103,10 +84,10 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         <label>Input Component Type:  </label>
                         <select id="input"
                                 value={input}
-                                onChange={e => setInput(e.target.value)}
-                                onBlur={e => setInput(e.target.value)}>
+                                onChange={e => setInput(e.target.value as InputTypes)}
+                                onBlur={e => setInput(e.target.value as InputTypes)}>
 
-                            {["Button", "Clock", "Switch"].map(input =>
+                            {(["Button", "Clock", "Switch"] as Array<InputTypes>).map(input =>
                                 <option key={input} value={input}>{input}</option>
                             )}
 
@@ -116,7 +97,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                 <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                     try {
-                        Generate(mainInfo, expression, isIC, input, format, userOps);
+                        Generate(mainInfo, expression, isIC, input, format, customOps);
                         reset();
                     } catch (err) {
                         setErrorMessage(err.message);

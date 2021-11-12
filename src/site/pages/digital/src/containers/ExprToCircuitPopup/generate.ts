@@ -1,13 +1,13 @@
 import {Create} from "serialeazy";
 
+import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
+
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, SelectAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
-
-import {Formats} from "digital/utils/ExpressionParser/Constants/Objects";
 
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 import {CreateNegatedGatesAction} from "digital/actions/simplification/CreateNegatedGatesAction";
