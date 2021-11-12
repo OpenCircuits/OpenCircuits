@@ -15,6 +15,7 @@ export class Multiplexer extends Mux {
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
               new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE));
+        this.updatePortNames();
     }
 
     /**
@@ -32,6 +33,19 @@ export class Multiplexer extends Mux {
         super.setSelectPortCount(val);
         // update the output port to align with the right edge of the Mux
         this.outputs.updatePortPositions();
+        // update the default names (applicable when increasing select ports)
+        this.updatePortNames();
+    }
+
+    /**
+     * Sets default names for the select and input ports so the user can easily
+     * tell what they are used for.
+     */
+    private updatePortNames(): void {
+        this.selects.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('S'+i)});
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('I'+i)});
     }
 
     public getDisplayName(): string {

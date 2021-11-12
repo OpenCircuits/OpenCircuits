@@ -15,6 +15,7 @@ export class Demultiplexer extends Mux {
     public constructor() {
         super(new ClampedValue(1), new ClampedValue(4, 2, Math.pow(2,8)),
               undefined, new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
+        this.updatePortNames();
     }
 
     public activate(): void {
@@ -32,6 +33,19 @@ export class Demultiplexer extends Mux {
         super.setSelectPortCount(val);
         // update the input port to align with the left edge of the DeMux
         this.inputs.updatePortPositions();
+        // update the default names (applicable when increasing select ports)
+        this.updatePortNames();
+    }
+
+    /**
+     * Sets default names for the select and output ports so the user can easily
+     * tell what they are used for.
+     */
+    private updatePortNames(): void {
+        this.selects.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('S'+i)});
+        this.outputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('O'+i)});
     }
 
     public getDisplayName(): string {
