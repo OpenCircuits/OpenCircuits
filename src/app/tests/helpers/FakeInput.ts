@@ -18,12 +18,12 @@ export class FakeInput extends Input {
         this.center = cameraCenter;
     }
 
-    public pressKey(key: string): FakeInput {
-        super.onKeyDown(key);
+    public pressKey(code: number): FakeInput {
+        super.onKeyDown(code);
         return this;
     }
-    public releaseKey(key: string): FakeInput {
-        super.onKeyUp(key);
+    public releaseKey(code: number): FakeInput {
+        super.onKeyUp(code);
         return this;
     }
 
