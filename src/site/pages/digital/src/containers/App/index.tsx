@@ -47,18 +47,25 @@ import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsP
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
-import {ViewICButtonModule}      from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
-import {InputCountModule}        from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-import {DecoderInputCountModule} from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {SelectPortCountModule}   from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {ColorModule}             from "site/digital/containers/SelectionPopup/modules/ColorModule";
-import {ClockFrequencyModule}    from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
-import {OutputCountModule}       from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-import {SegmentCountModule}      from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-import {TextColorModule}         from "site/digital/containers/SelectionPopup/modules/TextColorModule";
-import {BusButtonModule}         from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-import {CreateICButtonModule}    from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {ClockSyncButtonModule} from "../SelectionPopup/modules/ClockSyncButtonModule";
+import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
+import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {DecoderInputCountModule}   from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
+import {SelectPortCountModule}     from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
+import {ColorModule}               from "site/digital/containers/SelectionPopup/modules/ColorModule";
+import {FrequencyModule}           from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
+import {OutputCountModule}         from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {SegmentCountModule}        from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+import {TextColorModule}           from "site/digital/containers/SelectionPopup/modules/TextColorModule";
+import {BusButtonModule}           from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
+import {CreateICButtonModule}      from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {ConstantNumberInputModule} from "../SelectionPopup/modules/ConstantNumberInputModule";
+import {ClockSyncButtonModule}     from "../SelectionPopup/modules/ClockSyncButtonModule";
+import {ResumeButtonModule,
+        PauseButtonModule}         from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {ClearOscilloscopeButtonModule,
+        OscilloscopeDisplaySizeModule,
+        OscilloscopeInputCountModule,
+        OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
 
@@ -105,7 +112,8 @@ export const App = ((store: AppStore) => {
 
                 <div className="App__container">
                     <DigitalHeader img="img/icons/logo.svg"
-                            helpers={helpers} />
+                                   helpers={helpers}
+                                   info={info} />
 
                     <main>
                         <MainDesigner info={info} canvas={canvas} />
@@ -117,10 +125,15 @@ export const App = ((store: AppStore) => {
                                                   SelectPortCountModule,
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
-                                                  ClockFrequencyModule,
+                                                  OscilloscopeDisplaySizeModule,
+                                                  OscilloscopeInputCountModule,
+                                                  FrequencyModule, OscilloscopeSamplesModule,
+                                                  ResumeButtonModule, PauseButtonModule,
+                                                  ClearOscilloscopeButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule, CreateICButtonModule,
-                                                  ViewICButtonModule, ClockSyncButtonModule]} />
+                                                  ViewICButtonModule, ConstantNumberInputModule,
+                                                  ClockSyncButtonModule]} />
 
                         <ContextMenu info={info}
                                      paste={(data) => DigitalPaste(data, info)} />
