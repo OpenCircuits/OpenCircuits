@@ -2,7 +2,7 @@ import {Create} from "serialeazy";
 
 import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
+import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, SelectAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
@@ -49,13 +49,15 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute(),
-                                    CreateAddGroupAction(info.designer, circuit).execute()]);
+                                    new AddGroupAction(info.designer, circuit).execute()]);
     const [negateAction, negated] = CreateNegatedGatesAction(info.designer, circuit);
     action.add(negateAction);
     OrganizeMinDepth(negated, startPos);
 
     if (isIC) { // If creating as IC
         const data = ICData.Create(negated);
+        if (!data)
+            throw new Error("Failed to create ICData");
         data.setName(expression);
         const ic = new IC(data);
         ic.setName(expression);

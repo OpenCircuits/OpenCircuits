@@ -163,7 +163,7 @@ export class ICData {
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SegmentDisplay, Oscilloscope];
 
-        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : new DigitalObjectSet(CopyGroup(objects).toList());
 
         const objs  = group.getComponents();
         const wires = group.getWires();
@@ -172,15 +172,15 @@ export class ICData {
         //  and we can still have labels within the IC (issue #555)
         const filteredGroup = new IOObjectSet((<IOObject[]>wires).concat(objs.filter(o => !(o instanceof Label))));
         const graph = CreateGraph(filteredGroup);
-
+        
         // Make sure it's a connected circuit
         if (!graph.isConnected())
             return false;
-
+            
         // Make sure there's nothing on the blacklist
         if (objs.some((o) => BLACKLIST.some((type) => o instanceof type)))
             return false;
-
+            
         // Make sure all wires connected to components are in the group
         const allWires = objs.flatMap(o => o.getConnections());
         if (allWires.some((w) => !wires.includes(w)))
