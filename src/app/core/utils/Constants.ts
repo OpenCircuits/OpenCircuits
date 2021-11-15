@@ -20,6 +20,8 @@ export const DEFAULT_ON_COLOR      = "#3cacf2";
 export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
+export const GRAPH_LINE_WIDTH = 4;
+
 export const DEFAULT_BORDER_WIDTH = 2;
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
@@ -89,3 +91,6 @@ export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 export const FIT_PADDING_RATIO = 1.2;
 export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
 export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
+
+export const ORGANIZE_SEP_X = 250;
+export const ORGANIZE_SEP_Y = 150;

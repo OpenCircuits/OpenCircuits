@@ -1,5 +1,6 @@
 import React, {createRef} from "react";
 import ReactDOM from "react-dom";
+import ReactGA from "react-ga";
 
 import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
@@ -85,7 +86,16 @@ async function Init(): Promise<void> {
                 console.error(e);
             }
         }],
-
+        [99, "Google Analytics", async () => {
+            try {
+                if (!process.env.OC_GA_ID)
+                    throw new Error("Can't find Google Analytics ID");
+                ReactGA.initialize(process.env.OC_GA_ID, {});
+                ReactGA.pageview("/");
+            } catch (e) {
+                console.error("Failed to connect with Google Analytics: ", e);
+            }
+        }],
         [100, "Rendering", async () => {
             // Setup
             const canvas = createRef<HTMLCanvasElement>();

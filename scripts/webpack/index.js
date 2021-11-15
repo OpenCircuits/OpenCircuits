@@ -115,7 +115,6 @@ module.exports = async (dir, mode) => {
 
         ["SIGINT", "SIGTERM"].forEach(sig => {
             process.on(sig, () => {
-                console.log("ADSADSADSADSASDASD");
                 server.stop();
                 process.exit();
             });
