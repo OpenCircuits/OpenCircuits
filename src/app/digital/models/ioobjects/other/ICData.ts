@@ -198,7 +198,8 @@ export class ICData {
      * @returns The newly created ICData
      */
     public static Create(objects: IOObject[] | DigitalObjectSet): ICData {
-        const copies = objects instanceof DigitalObjectSet ? objects : new DigitalObjectSet(CopyGroup(objects).toList());
+        objects = objects instanceof DigitalObjectSet ? objects.toList() : objects;
+        const copies = new DigitalObjectSet(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
 
