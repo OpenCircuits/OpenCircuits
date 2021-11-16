@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import ReactGA from "react-ga";
 
 import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
@@ -56,6 +57,16 @@ async function Init(): Promise<void> {
                     await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
+            }
+        }],
+        [99, "Google Analytics", async () => {
+            try {
+                if (!process.env.OC_GA_ID)
+                    throw new Error("Can't find Google Analytics ID");
+                ReactGA.initialize(process.env.OC_GA_ID, {});
+                ReactGA.pageview("/");
+            } catch (e) {
+                console.error("Failed to connect with Google Analytics: ", e);
             }
         }],
         [100, "Rendering", async () => {
