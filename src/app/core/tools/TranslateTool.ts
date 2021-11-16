@@ -1,4 +1,4 @@
-import {GRID_SIZE, ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL,
+import {GRID_SIZE, ARROW_TRANSLATE_DISTANCE_NORMAL, ARROW_TRANSLATE_DISTANCE_SMALL,
         SPACEBAR_KEY, LEFT_MOUSE_BUTTON, 
         ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
@@ -54,7 +54,7 @@ export const TranslateTool: Tool = (() => {
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                selections.has(currentlyPressedObject) ?
+                selections.has(currentlyPressedObject) || !currentlyPressedObject ?
                         selections.get().filter(s => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];
@@ -99,7 +99,6 @@ export const TranslateTool: Tool = (() => {
                         curPositions;
 
                     // Execute translate but don't save to group
-                    //  action since we do that onDeactivate
                     new TranslateAction(components, initalPositions, newPositions).execute();
 
                     return true;
@@ -112,7 +111,27 @@ export const TranslateTool: Tool = (() => {
                     }
                     break;
                 
-                //Make a keydown case here
+                case "keydown":
+                    //Translate with the arrow keys
+                    let deltaPos = new Vector();
+                
+                    // No else if because it introduces bugs when 
+                    //  multiple arrow keys are pressed
+                    if (input.isKeyDown(ARROW_LEFT))
+                        deltaPos = deltaPos.add(-1, 0);
+                    if (input.isKeyDown(ARROW_RIGHT))
+                        deltaPos = deltaPos.add(1, 0);
+                    if (input.isKeyDown(ARROW_UP))
+                        deltaPos = deltaPos.add(0, -1);
+                    if (input.isKeyDown(ARROW_DOWN))
+                        deltaPos = deltaPos.add(0, 1);
+                    
+                    // Object gets moved different amounts depending on if the shift key is held
+                    const factor = (input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL); 
+                    
+                    new TranslateAction(components, initalPositions, initalPositions.map(p => p.add(deltaPos.scale(factor)))).execute();
+                    
+                    return true;
             }
             return false;
         }
