@@ -37,6 +37,11 @@ export class ICData {
     private inputPorts:  InputPort[];
     private outputPorts: OutputPort[];
 
+    /**
+     * The sole constructor for ICData, it is recommended to use the Create function instead.
+     * 
+     * @param collection the circuit to create an instance of ICData of
+     */
     public constructor(collection?: DigitalObjectSet) {
         this.name = ""; // TODO: have names
         this.transform = new Transform(V(0,0), V(0,0));
@@ -158,7 +163,7 @@ export class ICData {
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SegmentDisplay, Oscilloscope];
 
-        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : new DigitalObjectSet(CopyGroup(objects).toList());
 
         const objs  = group.getComponents();
         const wires = group.getWires();
@@ -184,7 +189,16 @@ export class ICData {
         return true;
     }
 
-    public static Create(objects: IOObject[]): ICData {
+    /**
+     * This function is the preferred way to create an instance of ICData
+     * 
+     * @param objects The circuit to create the ICData from. If it is an IOObject[], then the objects are copied.
+     *  If it is a DigitalObjectSet, then the objects input will be modified so that Switch and Button are considered
+     *  as the only inputs.
+     * @returns The newly created ICData
+     */
+    public static Create(objects: IOObject[] | DigitalObjectSet): ICData {
+        objects = objects instanceof DigitalObjectSet ? objects.toList() : objects;
         const copies = new DigitalObjectSet(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
