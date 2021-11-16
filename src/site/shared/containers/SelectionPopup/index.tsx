@@ -99,9 +99,9 @@ export function SelectionPopup({info, modules}: Props) {
              tabIndex={-1}>
 
             {selections.amount() === 1 && 
-                <div title="Click for component information" className="info-button" 
-                    //href={docsUrlConfig.urls[+typeof selections.get()[0]]}
-                    onClick={(ev) => console.log(docsUrlConfig.urls[+typeof selections.get()[0]])}>?</div>}
+            <a href={docsUrlConfig["Button"]}>
+                <div title="Click for component information" className="info-button"
+                    onClick={(ev) => console.log()}>?</div></a>}
             <TitleModule selections={selections}
                          addAction={(a) => history.add(a)}
                          render={() => renderer.render()}
