@@ -98,8 +98,8 @@ export function SelectionPopup({info, modules}: Props) {
              }}
              tabIndex={-1}>
 
-            {selections.amount() === 1 && 
-            <a href={docsUrlConfig["Button"]}>
+            {selections.amount() === 1 &&
+            <a href={docsUrlConfig["Button"]} target="_blank" rel="noopener noreferrer">
                 <div title="Click for component information" className="info-button"
                     onClick={(ev) => console.log()}>?</div></a>}
             <TitleModule selections={selections}
