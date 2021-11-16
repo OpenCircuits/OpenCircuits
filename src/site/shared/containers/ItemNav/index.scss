@@ -1,7 +1,7 @@
 @import "~shared/utils/constants";
 
 $itemnav-width: 235px; // On wide screens, ItemNav is on the left
-$itemnav-height: 500px; // On small screens, ItemNav is on the bottom
+$itemnav-height: 500px; // On narrow screens, ItemNav is on the bottom
 
 $tab-width: 18px;
 $tab-padding: 8px;
@@ -10,6 +10,8 @@ $tab-padding: 8px;
 .itemnav {
     $top-margin: 10px;
     $top-height: 35px;
+    $tab-size: $top-height + $top-margin + $header-padding;
+    $nav-root: &;
 
     position: absolute;
     z-index: 2;
@@ -29,24 +31,6 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    @media (max-width: 768px) {
-        top: unset;
-        right: 0;
-        width: unset;
-        height: $itemnav-height;
-
-        border-right-width: 0;
-        border-top-width: $header-border-width;
-    }
-
-    &__move {
-        @media (min-width: 768px) {
-            left: -$itemnav-width - $header-border-width;
-        }
-        @media (max-width: 768px) {
-            bottom: -$itemnav-height - $header-border-width;
-        }
-    }
     & img {
         width: 100%;
     }
@@ -136,31 +120,18 @@ $tab-padding: 8px;
         position: relative;
 
         & > div {
-            $size: $top-height + $top-margin + $header-padding;
 
             position: absolute;
 
             top: -$top-margin - $header-border-width;
             left: $header-padding + $header-border-width;
 
-            width: $size;
-            height: $size;
-
-            @media (max-width: 768px) {
-                left: -$size - $header-border-width;
-                top: -$size - 2*$header-border-width - $top-margin;
-            }
+            width: $tab-size;
+            height: $tab-size;
 
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
-
-            @media (min-width: 768px) {
-                border-bottom-right-radius: 15px;
-            }
-            @media (max-width: 768px) {
-                border-top-left-radius: 15px;
-            }
 
             cursor: pointer;
 
@@ -172,11 +143,6 @@ $tab-padding: 8px;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
-
-                @media (max-width: 768px) {
-                    left: 50%;
-                    top: calc(50% + #{$size + $header-padding});
-                }
 
                 color: black;
                 font-size: 2.5em;
@@ -223,24 +189,8 @@ $tab-padding: 8px;
             border-radius: 15px;
         }
 
-        @media (min-width: 768px) {
-            border-top: 3px solid #888;
-        }
-
-        @media (max-width: 768px) {
-            overflow-x: auto;
-
-            scroll-snap-type: x mandatory;
-
-            flex-wrap: wrap;
-        }
-
         & > div {
             scroll-snap-align: center;
-
-            @media (max-width: 768px) {
-                width: 100%;
-            }
 
             &:nth-child(2) > h4 {
                 margin-top: 10px;
@@ -266,11 +216,6 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: 768px) {
-                    width: calc(100% - 120px);
-                    margin: 0px 60px;
-                }
-
                 & > button {
                     font-size: 1em;
                     font-weight: bold;
@@ -286,4 +231,69 @@ $tab-padding: 8px;
             }
         }
     }
+
+    &__onside {
+        &#{$nav-root}__move {
+            left: -$itemnav-width - $header-border-width;
+        }
+
+        #{$nav-root}__tab {
+            & > div {
+                border-bottom-right-radius: 15px;
+            }
+        }
+
+        #{$nav-root}__sections {
+            border-top: 3px solid #888;
+        }
+    }
+
+    &__onbottom {
+        top: unset;
+        right: 0;
+        width: unset;
+        height: $itemnav-height;
+
+        border-right-width: 0;
+        border-top-width: $header-border-width;
+
+        &#{$nav-root}__move {
+            bottom: -$itemnav-height - $header-border-width;
+        }
+
+        #{$nav-root}__tab {
+            & > div {
+                left: -$tab-size - $header-border-width;
+                top: -$tab-size - 2*$header-border-width - $top-margin;
+                border-top-left-radius: 15px;
+
+                &:after {
+                    left: 50%;
+                    top: calc(50% + #{$tab-size + $header-padding});
+                }
+            }
+
+            &__closed > div {
+                &:after {
+                    top: 50%;
+                }
+            }
+        }
+
+        #{$nav-root}__sections {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            flex-wrap: wrap;
+
+            & > div {
+                width: 100%;
+
+                & > div {
+                    width: calc(100% - 120px);
+                    margin: 0px 60px;
+                }
+            }
+        }
+    }
+
 }

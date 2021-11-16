@@ -59,7 +59,6 @@ const exampleCircuits = exampleConfig.examples.map((example) =>
         .build()
 );
 
-{/* <div className="App__container" style={{height: h+"px"}}> */}
 type Props = {
     info: DigitalCircuitInfo;
     helpers: CircuitInfoHelpers;
@@ -67,7 +66,7 @@ type Props = {
 }
 
 export const App = ({info, helpers, canvas}: Props) => {
-    const {w, h} = useWindowSize();
+    const {h} = useWindowSize();
 
     return (
         <div className="App">

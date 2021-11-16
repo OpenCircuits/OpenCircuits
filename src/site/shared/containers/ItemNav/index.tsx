@@ -12,6 +12,7 @@ import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
 
@@ -36,6 +37,10 @@ export type ItemNavConfig = {
     sections: ItemNavSection[];
 }
 
+function onSide(w: number, h: number): boolean {
+    return w >= 768;
+}
+
 type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
@@ -58,6 +63,9 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
+
+    // State to decide whether the itemnav should be on the left or on the bottom
+    const {w, h} = useWindowSize();
 
 
     // Resets the curItemID and numClicks
@@ -130,7 +138,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
                 x{numClicks}
             </span>
         </div>
-        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
+        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"} ${(onSide(w, h)) ? "itemnav__onside" : "itemnav__onbottom"}`}>
             <div className="itemnav__top">
                 <div>
                     {/* History box button goes here */}
