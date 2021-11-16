@@ -1,13 +1,29 @@
 import jsPDF from "jspdf";
 
+export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: string){
+    let filename;
+    let data;
+    if(type == "png"){
+          data = canvas.toDataURL("image/png", 1.0);
+    }
+    if(type == "jpeg"){
+    const context = canvas.getContext('2d'); // get the context to overwrite the background of the canvas 
+    const background_color = "#ccc"; // set the background color
 
-export function SavePNG(canvas: HTMLCanvasElement, projectName: string): void {
-    const data = canvas.toDataURL("image/png", 1.0);
+    context.save();// save the current state of the canvas
+    context.globalCompositeOperation = 'destination-over'; // set the composite operation to overwrite the background
+    context.fillStyle = background_color ;
+    
+    context.fillRect(0, 0, canvas.width, canvas.height);    
+    data = canvas.toDataURL("image/jpeg", 1.0); // get the data from the canvas
+    context.restore() // restore the canvas to its previous state
+    }
 
-    // Get name
-    if (projectName.replace(/\s+/g, "") === "")
+        // Get name
+        if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
-    const filename = projectName + ".png";
+
+    type == "png" ? filename=projectName + ".png" : filename=projectName + ".jpeg";
 
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         const file = new Blob([data], {type: "image/png"});
@@ -25,6 +41,8 @@ export function SavePNG(canvas: HTMLCanvasElement, projectName: string): void {
         }, 0);
     }
 }
+
+
 
 export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
     const width  = canvas.width;
@@ -49,37 +67,3 @@ export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
 }
 
 
-export function SaveJPG(canvas: HTMLCanvasElement, projectName: string): void { 
-    const context = canvas.getContext('2d'); // get the context to overwrite the background of the canvas 
-    const background_color = "#ccc"; // set the background color
-
-    context.save();// save the current state of the canvas
-    context.globalCompositeOperation = 'destination-over'; // set the composite operation to overwrite the background
-    context.fillStyle = background_color ;
-    
-    context.fillRect(0, 0, canvas.width, canvas.height);    
-    const data = canvas.toDataURL("image/jpeg", 1.0); // get the data from the canvas
-    context.restore() // restore the canvas to its previous state
-
-    if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
-    const filename = projectName + ".jpg";
-
-    if (window.navigator.msSaveOrOpenBlob) { // IE10+
-        const file = new Blob([data], {type: "image/jpeg"});
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    } else { // Others
-        const a = document.createElement("a");
-        const url = data;
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-
-    
-}
