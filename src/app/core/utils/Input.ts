@@ -35,7 +35,7 @@ export class Input {
     private touchCount: number;
 
     private listeners: Listener[];
-    private keysDown: Map<string, boolean>;
+    private keysDown: Map<number, boolean>;
 
     private dragTime: number;
 
@@ -54,7 +54,7 @@ export class Input {
         this.setupHammer();
     }
 
-    private isPreventedCombination(newKey: string): boolean {
+    private isPreventedCombination(newKey: number): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
@@ -77,15 +77,15 @@ export class Input {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
-                this.onKeyDown(e.key);
+                this.onKeyDown(e.keyCode);
 
-                if (this.isPreventedCombination(e.key))
+                if (this.isPreventedCombination(e.keyCode))
                     e.preventDefault();
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key);
+                this.onKeyUp(e.keyCode)
         }, false);
 
         window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
@@ -196,7 +196,7 @@ export class Input {
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
-    public isKeyDown(key: string): boolean {
+    public isKeyDown(key: number): boolean {
         return (this.keysDown.has(key) &&
                 this.keysDown.get(key) == true);
     }
@@ -230,13 +230,13 @@ export class Input {
         return this.touchCount;
     }
 
-    protected onKeyDown(key: string): void {
+    protected onKeyDown(key: number): void {
         this.keysDown.set(key, true);
 
         // call each listener
         this.callListeners({type: "keydown", key});
     }
-    protected onKeyUp(key: string): void {
+    protected onKeyUp(key: number): void {
         this.keysDown.set(key, false);
 
         // call each listener
