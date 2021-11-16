@@ -60,7 +60,6 @@ import {ClockSyncButtonModule} from "../SelectionPopup/modules/ClockSyncButtonMo
 
 import exampleConfig from "site/digital/data/examples.json";
 import "./index.scss";
-import { compatibility_check,warn_compatibility } from "site/digital/utils/BrowserCompatibility";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -96,7 +95,6 @@ export const App = ((store: AppStore) => {
 
 
     return function AppView() {
-        warn_compatibility();
         return (
             <div className="App">
                 <SideNav helpers={helpers}

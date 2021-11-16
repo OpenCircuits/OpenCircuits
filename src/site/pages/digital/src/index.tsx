@@ -20,11 +20,15 @@ import {AllActions} from "./state/actions";
 import {reducers} from "./state/reducers";
 
 import {App} from "./containers/App";
+import {CompatibilityCheck} from "site/digital/utils/BrowserCompatibility";
 
 
 async function Init(): Promise<void> {
     // Load images
     await Images.Load();
+
+    CompatibilityCheck(); // Check browser compatibility
+
 
     const store: AppStore = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
 
