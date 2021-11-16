@@ -51,7 +51,9 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
         return V(Clamp(pos.x, bl.x, tr.x), bl.y);
     if (pos.y > tr.y)
         return V(Clamp(pos.x, bl.x, tr.x), tr.y);
-    return V(0, 0);
+    // If point inside rectangle, return position of port
+    return pos;
+    //return V(0, 0);
 }
 
 /**

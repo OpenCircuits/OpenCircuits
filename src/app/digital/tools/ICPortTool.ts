@@ -1,5 +1,5 @@
 import {IO_PORT_LENGTH, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
@@ -50,6 +50,11 @@ export const ICPortTool = (() => {
             if (ic.isWithinSelectBounds(worldMousePos)) {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
+
+                // allow port to be placed inside an IC
+                port.setOriginPos(new Vector(worldMousePos));
+                port.setTargetPos(new Vector(worldMousePos));
+                ic.update();
             } else {
                 const size = ic.getSize();
                 const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
