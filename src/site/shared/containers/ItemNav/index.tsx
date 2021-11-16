@@ -38,7 +38,7 @@ export type ItemNavConfig = {
 }
 
 function onSide(w: number, h: number): boolean {
-    return w >= 768;
+    return w >= 768 || h < w;
 }
 
 type Props<D> = {

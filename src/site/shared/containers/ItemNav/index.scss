@@ -1,7 +1,7 @@
 @import "~shared/utils/constants";
 
 $itemnav-width: 235px; // On wide screens, ItemNav is on the left
-$itemnav-height: 500px; // On narrow screens, ItemNav is on the bottom
+$itemnav-height: 300px; // On narrow screens, ItemNav is on the bottom
 
 $tab-width: 18px;
 $tab-padding: 8px;
@@ -264,12 +264,12 @@ $tab-padding: 8px;
         #{$nav-root}__tab {
             & > div {
                 left: -$tab-size - $header-border-width;
-                top: -$tab-size - 2*$header-border-width - $top-margin;
+                top: -$tab-size - 3*$header-border-width - $top-margin;
                 border-top-left-radius: 15px;
 
                 &:after {
                     left: 50%;
-                    top: calc(50% + #{$tab-size + $header-padding});
+                    top: calc(50% + #{$tab-size + $header-padding + 1.5*$header-border-width});
                 }
             }
 
@@ -288,9 +288,12 @@ $tab-padding: 8px;
             & > div {
                 width: 100%;
 
+                h4 {
+                    margin: 0;
+                }
+
                 & > div {
-                    width: calc(100% - 120px);
-                    margin: 0px 60px;
+                    margin: 0;
                 }
             }
         }
