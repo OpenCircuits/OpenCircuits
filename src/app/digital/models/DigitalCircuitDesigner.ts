@@ -238,6 +238,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.objects.push(obj);
 
         this.callback({ type: "obj", op: "added", obj });
+
+        // checking all ports (issue #613)
+        for (let p of obj.getPorts().filter(r => r instanceof InputPort) as InputPort[])
+            p.activate(p.getInput() != null && p.getInput().getIsOn());
     }
 
     public addWire(wire: DigitalWire): void {
