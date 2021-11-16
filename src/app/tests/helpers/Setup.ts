@@ -74,7 +74,13 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
         input,
         selections,
         toolManager,
-        renderer
+        renderer,
+        debugOptions: {
+            debugCullboxes: false,
+            debugPressableBounds: false,
+            debugSelectionBounds: false,
+            debugNoFill: false
+        }
     };
 
     input.addListener((ev) => toolManager.onEvent(ev, info));
