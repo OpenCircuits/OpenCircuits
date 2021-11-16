@@ -23,7 +23,7 @@ export class DigitalWire extends Wire {
 
         this.p1 = input;
         this.p2 = output;
-        this.isOn = false;       
+        this.isOn = false;
     }
 
     public activate(signal: boolean): void {

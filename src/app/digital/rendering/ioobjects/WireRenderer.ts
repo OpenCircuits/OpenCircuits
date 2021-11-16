@@ -45,13 +45,7 @@ export const WireRenderer = (() => {
             ));
                 
             // @TODO move to function for getting color based on being selection/on/off
-            let color;
-            if (wire.getInput() !== undefined) {
-                color = (wire.getInput().getIsOn() ? DEFAULT_ON_COLOR : (selected ? selectedColor : wire.getColor()));
-            }
-            else {
-                color = selected ? selectedColor : wire.getColor();
-            }
+            const color = (wire.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : (selected ? selectedColor : wire.getColor()));
             const style = new Style(undefined, color, WIRE_THICKNESS / camera.getZoom());
 
             // get curve and start/end positions
