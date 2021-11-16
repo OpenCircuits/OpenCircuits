@@ -1,13 +1,14 @@
 import {WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
 import {Component} from "core/models";
 
-/*
+/**
  * Utility used for calculating positions of ports and wires when a component
  * gets moved.
+ * @param obj the component that will be snapped
  */
 export function SnapPos(obj: Component): void {
     // if x-c is less than the wire snap threshold, 
-    //DoSnap is set to c, if greater it's set to x
+    // DoSnap is set to c, if greater it's set to x
     const DoSnap = (x: number, c: number) =>
         (Math.abs(x - c) <= WIRE_SNAP_THRESHOLD) ? c : x;
 
