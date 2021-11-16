@@ -52,6 +52,11 @@ export const HeaderLeft = ({helpers}: Props) => {
                         disabled={saving}
                         onClick={() => helpers.SaveCircuitRemote() }>Save</button>
             </div>
+            <div>
+                <button className="header__left__duplicate"
+                        title="Duplicate the circuit"
+                        onClick={() => helpers.DuplicateCircuitRemote() }>Duplicate</button>
+            </div>
             <div className="header__left__saving__icons">
                 <img src="img/icons/error.svg" className={error ? "" : "hide"}
                      title={`Error occured while saving: ${error}`} alt="Icon when save failed" />

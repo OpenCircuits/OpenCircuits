@@ -9,7 +9,7 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {DeleteUserCircuit} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
@@ -120,6 +120,21 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
+        },
+
+        DuplicateCircuitRemote: async () => {
+            console.log("DuplicateCircuitRemote");
+
+            const {circuit} = store.getState();
+            const {user} = store.getState();
+
+            console.log(circuit)
+
+            store.dispatch(SetCircuitName(circuit.name + " copy"));
+            
+            await CreateUserCircuit(user.auth, helpers.GetSerializedCircuit());
+
+            await store.dispatch(LoadUserCircuits());
         }
     }
 

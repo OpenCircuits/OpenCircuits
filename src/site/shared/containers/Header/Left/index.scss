@@ -10,7 +10,7 @@
         height: $header-height - 2*$header-padding;
         margin-top: $header-padding;
     }
-    &__save {
+    &__save, &__duplicate {
         line-height: $header-button-height;
 
         height: $header-button-height;
@@ -36,6 +36,9 @@
             border-color: #aaa;
             background-color: darken($success-color, 10%);
         }
+    }
+    &__duplicate {
+        margin-left: 10px;
     }
     &__saving__icons {
         & > img {
