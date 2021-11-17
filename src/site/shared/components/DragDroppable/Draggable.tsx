@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 
-import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {DRAG_TIME, ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -8,6 +8,7 @@ import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {DragDropHandlers} from "./DragDropHandlers";
+import {number} from "yargs";
 
 
 type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
@@ -17,6 +18,13 @@ type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElemen
 };
 export const Draggable = ({ children, data, onDragChange, ...other }: Props) => {
     const [isDragging, setIsDragging] = useState(false);
+
+    // State to keep track of when to "start" dragging for a mobile touch-down
+    //  This is necessary so that if a user tries to scroll on a Draggable
+    //   they have a tiny amount of time before it starts dragging so they can swipe
+    const [{startTapTime, touchDown}, setState] = useState({
+        startTapTime: 0, touchDown: false,
+    });
 
     function onDragEnd(pos: Vector) {
         if (!isDragging)
@@ -60,7 +68,15 @@ export const Draggable = ({ children, data, onDragChange, ...other }: Props) => 
     return <button {...other}
                    onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
                    onMouseDown={() => setIsDragging(true) }
-                   onTouchStart={() => setIsDragging(true) }>
+                   // This is necessary for mobile such that when the user is trying to
+                   //  swipe to scroll, it doesn't drag too quickly
+                   onTouchStart={() => setState({ startTapTime: Date.now(), touchDown: true }) }
+                   onTouchMove={() => {
+                       if (touchDown && (Date.now() - startTapTime) > DRAG_TIME) {
+                           setIsDragging(true)
+                           setState({ startTapTime: undefined, touchDown: false });
+                       }
+                   }}>
         {children}
     </button>
 }

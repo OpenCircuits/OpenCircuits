@@ -174,7 +174,10 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
                     }
                 </div>
             </div>
-            <div className="itemnav__sections">
+            <div className="itemnav__sections"
+                 style={{
+                     overflow: (curItemImg ? "hidden" : undefined)
+                 }}>
                 {config.sections.map((section, i) =>
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
