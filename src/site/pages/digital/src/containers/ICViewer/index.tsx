@@ -113,7 +113,7 @@ export const ICViewer = (() => {
         useKeyDownEvent(info.input, ESC_KEY, close);
 
         return (
-            <div className="icviewer" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH} />

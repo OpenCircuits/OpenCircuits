@@ -13,6 +13,8 @@
 
     background-color: rgba(200, 200, 200, 0.5);
 
+    touch-action: none;
+
     & canvas {
         position: absolute;
 

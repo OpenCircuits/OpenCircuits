@@ -180,7 +180,7 @@ export const ICDesigner = (() => {
         useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false));
 
         return (
-            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH}
