@@ -53,7 +53,7 @@ export class MuxPortChangeAction extends PortChangeAction {
     
     /**
      * gets selected ports from obj
-     * @returns selected ports from ofbj
+     * @returns selected ports from obj
      */
     protected getPorts(): Port[] {
         return this.obj.getSelectPorts();
