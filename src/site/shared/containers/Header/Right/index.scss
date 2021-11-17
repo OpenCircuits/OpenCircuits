@@ -6,15 +6,17 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+    
+    margin-right: 19px;
 
     @media (max-width: 600px) {
         flex: 0;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        margin-right: 9px;
     }
 
-    margin-right: 14px;
 
     & > button {
         display: none;
