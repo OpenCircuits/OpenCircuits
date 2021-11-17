@@ -8,9 +8,7 @@ import {GetNearestPointOnRect} from "math/MathUtils";
 import {serializable} from "serialeazy";
 
 import {CopyGroup,
-        CreateGraph,
-        CreateGroup,
-        IOObjectSet} from "core/utils/ComponentUtils";
+        CreateGroup} from "core/utils/ComponentUtils";
 
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
@@ -19,7 +17,6 @@ import {Port} from "core/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
-import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
@@ -163,7 +160,7 @@ export class ICData {
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SegmentDisplay, Oscilloscope];
 
-        const group = (objects instanceof DigitalObjectSet) ? (objects) : new DigitalObjectSet(objects);
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
 
         const objs  = group.getComponents();
         const wires = group.getWires();
