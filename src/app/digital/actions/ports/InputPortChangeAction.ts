@@ -23,7 +23,7 @@ export class InputPortChangeAction extends PortChangeAction {
     }
     
     /**
-     * returns the objects input ports
+     * Returns the objects input ports
      * @returns the objects input inports
      */
     protected getPorts(): Port[] {
@@ -31,7 +31,7 @@ export class InputPortChangeAction extends PortChangeAction {
     }
 
     /**
-     * changes the number of input ports on the object to the target count.
+     * Changes the number of input ports on the object to the target count.
      * @returns the object with the new number of ports.
      */
     public execute(): Action {
@@ -41,7 +41,7 @@ export class InputPortChangeAction extends PortChangeAction {
     }
 
     /**
-     * undoes the change in input port count by setting it back to the initial count.
+     * Undoes the change in input port count by setting it back to the initial count.
      * @returns the object with the initial number of ports.
      */
     public undo(): Action {
