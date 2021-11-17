@@ -16,6 +16,8 @@
 
     transform: translate(0, -50%);
 
+    touch-action: none;
+
     & div {
         margin-top: 6px;
         margin-bottom: 2px;
