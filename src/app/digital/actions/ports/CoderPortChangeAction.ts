@@ -11,8 +11,8 @@ import {InputPortChangeAction} from "./InputPortChangeAction";
 import {OutputPortChangeAction} from "./OutputPortChangeAction";
 
 /**
- * This code changes the size of the Encoder/Decoder object based on how many inputs/ouputs are entered 
- * The number of inputs (decoder) or outputs (encoder) are increased by 2 to the power of the number of inputs or outputs chosen 
+ * This code changes the size of the Encoder/Decoder object based on how many inputs/ouputs are entered.
+ * The number of inputs (decoder) or outputs (encoder) are increased by 2 to the power of the number of inputs or outputs chosen.
  * Ex.) output count chosen  = 3, then the number of inputs changes to 2^3 or 8 for an encoder.
  * The actual size of the object is also changed accordingly.
  */
