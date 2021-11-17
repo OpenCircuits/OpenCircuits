@@ -174,45 +174,44 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
                     }
                 </div>
             </div>
-            <div className="itemnav__sections"
-                 style={{
-                     overflow: (curItemImg ? "hidden" : undefined)
-                 }}>
+            <div className={`itemnav__sections ${curItemImg ? "dragging" : ""}`}>
                 {config.sections.map((section, i) =>
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
                             {section.items.map((item, j) =>
-                                <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                           data={[item.id, Math.max(numClicks,1), additionalData]}
-                                           onClick={(ev) => {
-                                               setState({
-                                                   curItemID: item.id,
-                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1),
-                                               });
-                                               setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
-                                               onStart && onStart();
+                                <div>
+                                    <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                            data={[item.id, Math.max(numClicks,1), additionalData]}
+                                            onClick={(ev) => {
+                                                setState({
+                                                    curItemID: item.id,
+                                                    numClicks: (item.id === curItemID ? numClicks+1 : 1),
+                                                });
+                                                setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                                onStart && onStart();
 
-                                               // Prevents `onClick` listener of placing the component to fire
-                                               ev.stopPropagation();
-                                           }}
-                                           onDragChange={(d) => {
-                                               // Set image if user started dragging on this item
-                                               if (d === "start") {
-                                                    // For instance, if user clicked on Button 4 times then dragged the
-                                                    //  Switch, we want to reset the numClicks to 1
-                                                   setState({
-                                                       curItemID: item.id,
-                                                       numClicks: (item.id === curItemID ? numClicks : 0),
-                                                   });
-                                                   setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
-                                                   onStart && onStart();
-                                               }
-                                           }}>
-                                    <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                                // Prevents `onClick` listener of placing the component to fire
+                                                ev.stopPropagation();
+                                            }}
+                                            onDragChange={(d) => {
+                                                // Set image if user started dragging on this item
+                                                if (d === "start") {
+                                                        // For instance, if user clicked on Button 4 times then dragged the
+                                                        //  Switch, we want to reset the numClicks to 1
+                                                    setState({
+                                                        curItemID: item.id,
+                                                        numClicks: (item.id === curItemID ? numClicks : 0),
+                                                    });
+                                                    setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                                    onStart && onStart();
+                                                }
+                                            }}>
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                    </Draggable>
                                     <br />
                                     {item.label}
-                                </Draggable>
+                                </div>
                             )}
                         </div>
                     </div>

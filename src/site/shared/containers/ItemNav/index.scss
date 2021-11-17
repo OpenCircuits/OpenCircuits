@@ -189,6 +189,11 @@ $tab-padding: 8px;
             border-radius: 15px;
         }
 
+        &.dragging {
+            overflow: hidden !important;
+            padding-right: 7px;
+        }
+
         & > div {
             scroll-snap-align: center;
 
@@ -216,9 +221,18 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                & > button {
+                & > div {
+                    display: inline-block;
+
+                    text-align: center;
+                    align-items: flex-start;
+                    box-sizing: border-box;
+
                     font-size: 1em;
                     font-weight: bold;
+
+                    padding: 0;
+                    margin: 0;
 
                     width: 100px;
                     padding: 10px;
