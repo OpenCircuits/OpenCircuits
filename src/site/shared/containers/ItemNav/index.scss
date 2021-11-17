@@ -28,6 +28,8 @@ $tab-padding: 8px;
     border: $header-border;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
+    
+    touch-action: none;
 
     @media (max-width: 768px) and (orientation:portrait) {
         top: unset;
@@ -135,6 +137,7 @@ $tab-padding: 8px;
 
         position: relative;
 
+
         & > div {
             $size: $top-height + $top-margin + $header-padding;
 
@@ -202,6 +205,8 @@ $tab-padding: 8px;
     }
 
     &__sections {
+        touch-action: pan-x pan-y;
+
         display: flex;
         flex-direction: column;
 
