@@ -59,7 +59,7 @@ $sidenav-border-width: 5px;
 
         height: 100%;
 
-        touch-action: none;
+        touch-action: pan-y;
 
         & h4 {
             font-size: 24px;

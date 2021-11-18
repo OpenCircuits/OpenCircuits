@@ -29,7 +29,7 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    touch-action: none;
+    touch-action: pan-x pan-y;
 
     @media (max-width: 768px) and (orientation:portrait) {
         top: unset;
@@ -42,7 +42,9 @@ $tab-padding: 8px;
     }
 
     &__move {
-        left: -$itemnav-width - $header-border-width;
+        @media (min-width: 768px), (orientation:landscape) {
+            left: -$itemnav-width - $header-border-width;
+        }
 
         @media (max-width: 768px) and (orientation:portrait) {
             bottom: -$itemnav-height - $header-border-width;
@@ -205,7 +207,6 @@ $tab-padding: 8px;
     }
 
     &__sections {
-        touch-action: pan-x pan-y;
 
         display: flex;
         flex-direction: column;
