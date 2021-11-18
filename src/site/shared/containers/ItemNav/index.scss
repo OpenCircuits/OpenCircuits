@@ -225,6 +225,8 @@ $tab-padding: 8px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             flex-wrap: wrap;
+
+            margin: 0 15px;
         }
 
         &::-webkit-scrollbar {
