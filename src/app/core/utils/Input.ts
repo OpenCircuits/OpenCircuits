@@ -37,7 +37,7 @@ export class Input {
     private touchCount: number;
 
     private listeners: Listener[];
-    private keysDown: Map<number, boolean>;
+    private keysDown: Map<string, boolean>;
 
     private dragTime: number;
 
