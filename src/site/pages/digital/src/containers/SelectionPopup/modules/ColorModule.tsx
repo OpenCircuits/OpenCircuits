@@ -13,8 +13,7 @@ const Config: ModuleConfig<[LED, Label, Wire], string> = {
     valType: "string",
     isActive: (selections) => {
     // Make sure that this is only active if all the types are LED/Label/Wire/Node, but not ONLY Nodes
-    return (selections.all((s) => (isNode(s) || s instanceof LED || s instanceof Label || s instanceof Wire)) &&
-    !selections.all((s) => isNode(s))); 
+    return (selections.all((s) => (isNode(s) || s instanceof LED || s instanceof Label || s instanceof Wire)) && !selections.all((s) => isNode(s))); 
     },
     getProps: (o) => (isNode(o) ? undefined : o.getColor()),
     getAction: (s, newCol) => new GroupAction(s.filter(o => !isNode(o)).map(o => new ColorChangeAction(o, newCol)))
