@@ -8,9 +8,7 @@ import {GetNearestPointOnRect} from "math/MathUtils";
 import {serializable} from "serialeazy";
 
 import {CopyGroup,
-        CreateGraph,
-        CreateGroup,
-        IOObjectSet} from "core/utils/ComponentUtils";
+        CreateGroup} from "core/utils/ComponentUtils";
 
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
@@ -19,7 +17,6 @@ import {Port} from "core/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
-import {Label} from "./Label";
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
@@ -39,7 +36,7 @@ export class ICData {
 
     /**
      * The sole constructor for ICData, it is recommended to use the Create function instead.
-     * 
+     *
      * @param collection the circuit to create an instance of ICData of
      */
     public constructor(collection?: DigitalObjectSet) {
@@ -163,19 +160,10 @@ export class ICData {
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
         const BLACKLIST = [SegmentDisplay, Oscilloscope];
 
-        const group = (objects instanceof DigitalObjectSet) ? (objects) : new DigitalObjectSet(CopyGroup(objects).toList());
+        const group = (objects instanceof DigitalObjectSet) ? (objects) : (CreateGroup(objects));
 
         const objs  = group.getComponents();
         const wires = group.getWires();
-
-        // Filter out the labels so that they don't make the graph 'disconnected'
-        //  and we can still have labels within the IC (issue #555)
-        const filteredGroup = new IOObjectSet((<IOObject[]>wires).concat(objs.filter(o => !(o instanceof Label))));
-        const graph = CreateGraph(filteredGroup);
-
-        // Make sure it's a connected circuit
-        if (!graph.isConnected())
-            return false;
 
         // Make sure there's nothing on the blacklist
         if (objs.some((o) => BLACKLIST.some((type) => o instanceof type)))
@@ -191,7 +179,7 @@ export class ICData {
 
     /**
      * This function is the preferred way to create an instance of ICData
-     * 
+     *
      * @param objects The circuit to create the ICData from. If it is an IOObject[], then the objects are copied.
      *  If it is a DigitalObjectSet, then the objects input will be modified so that Switch and Button are considered
      *  as the only inputs.

@@ -4,10 +4,15 @@ import {useEffect, useState} from "react";
 import {OPTION_KEY} from "core/utils/Constants";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 
+import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
+import {IC} from "digital/models/ioobjects";
+import {ICData} from "digital/models/ioobjects";
+
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
+import {ItemNav, ItemNavItem, ItemNavSection} from "shared/containers/ItemNav";
 
 import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
@@ -78,7 +83,8 @@ export const DigitalItemNav = ({info}: Props) => {
                 ics: designer.getICData().map((d, i) => ({
                     id: `ic/${i}`,
                     label: d.getName(),
-                    icon: "multiplexer.svg"
+                    icon: "multiplexer.svg",
+                    removable: true,
                 }))
             });
         }
@@ -103,6 +109,17 @@ export const DigitalItemNav = ({info}: Props) => {
         additionalData={smartPlace}
         onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
+        onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
+            const icData = info.designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
+            const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
+            if (icInUse) {
+                window.alert("Cannot delete this IC while instances remain in the circuit.");
+                return false;
+            }
+            sec.items.splice(sec.items.indexOf(ic));
+            info.history.add(new DeleteICDataAction(icData, designer).execute());
+            return true;
+        }}
         additionalPreview={(smartPlace, curItemId) => {
             if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
                 return undefined;
