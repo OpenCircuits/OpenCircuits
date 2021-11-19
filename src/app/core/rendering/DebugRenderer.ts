@@ -1,7 +1,4 @@
-import {DEBUG_CULLBOXES,
-        DEBUG_SELECTION_BOUNDS,
-        IO_PORT_SELECT_RADIUS,
-        DEBUG_PRESSABLE_BOUNDS} from "core/utils/Constants";
+import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
 import {DEBUG_CULLBOX_STYLE,
         DEBUG_SELECTION_BOUNDS_STYLE,
         DEBUG_PRESSABLE_BOUNDS_STYLE} from "./Styles";
@@ -27,7 +24,7 @@ export const DebugRenderer = (() => {
             const wires = designer.getWires();
 
 
-            if (DEBUG_CULLBOXES) {
+            if (info.debugOptions.debugCullboxes) {
                 const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));
                 renderer.save();
                 for (const cullBox of cullboxes) {
@@ -37,7 +34,7 @@ export const DebugRenderer = (() => {
                 renderer.restore();
             }
 
-            if (DEBUG_PRESSABLE_BOUNDS) {
+            if (info.debugOptions.debugPressableBounds) {
                 const pressables = objects.filter((c) => isPressable(c)) as Pressable[];
                 const cullboxes = pressables.map((p) => p.getPressableBox());
                 renderer.save();
@@ -48,7 +45,7 @@ export const DebugRenderer = (() => {
                 renderer.restore();
             }
 
-            if (DEBUG_SELECTION_BOUNDS) {
+            if (info.debugOptions.debugSelectionBounds) {
                 const ports = GetAllPorts(objects);
                 renderer.save();
                 for (const port of ports) {

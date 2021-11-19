@@ -26,7 +26,6 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {ContextMenu}     from "shared/containers/ContextMenu";
-import {Header}          from "shared/containers/Header";
 import {SideNav}         from "shared/containers/SideNav";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";
@@ -38,7 +37,9 @@ import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
 
 import {AppStore} from "site/digital/state";
 
+import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
+import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
 import {ICDesigner}             from "site/digital/containers/ICDesigner";
 import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
@@ -109,8 +110,9 @@ export const App = ((store: AppStore) => {
                          exampleCircuits={exampleCircuits} />
 
                 <div className="App__container">
-                    <Header img="img/icons/logo.svg"
-                            helpers={helpers} />
+                    <DigitalHeader img="img/icons/logo.svg"
+                                   helpers={helpers}
+                                   info={info} />
 
                     <main>
                         <MainDesigner info={info} canvas={canvas} />
@@ -142,6 +144,8 @@ export const App = ((store: AppStore) => {
 
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
+
+                <ExprToCircuitPopup mainInfo={info} />
 
                 <LoginPopup />
             </div>

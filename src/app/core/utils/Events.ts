@@ -29,7 +29,7 @@ export type MouseEvent = {
 }
 export type KeyboardEvent = {
     type: "keydown" | "keyup";
-    key: string;
+    key: number;
 }
 export type ZoomEvent = {
     type: "zoom";

@@ -10,7 +10,7 @@
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
-    "serialeazy": "^2.0.3"
+    "serialeazy": "^2.0.5"
   },
   "devDependencies": {
     "@types/gapi": "^0.0.39",
