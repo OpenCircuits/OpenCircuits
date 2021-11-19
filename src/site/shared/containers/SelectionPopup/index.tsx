@@ -1,3 +1,4 @@
+import {GetIDFor} from "serialeazy";
 import {useLayoutEffect, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
@@ -17,6 +18,7 @@ import "./index.scss";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import docsUrlConfig from "./docsUrlConfig.json";
+//const docsUrlConfig = require("./docsUrlConfig.json") as Record<string,string>;
 
 type Props = {
     info: CircuitInfo;
@@ -87,6 +89,17 @@ export function SelectionPopup({info, modules}: Props) {
 
         return () => {console.log("I SHOULD NOT BE HERE")}
     }, [input, camera, selections, setState]);
+    let infoLink = "";
+    let showInfoButton = false;
+    let id = "";
+
+    if (selections.amount() > 0 ){
+        id = GetIDFor(selections.get()[0]);
+        if (selections.get().every(c => GetIDFor(c) === id || selections.amount() === 1)){
+            infoLink = (id in docsUrlConfig ? docsUrlConfig[id as keyof typeof docsUrlConfig] : undefined);
+            showInfoButton = true;
+        }
+    }
 
     return (
         <div className="selection-popup"
@@ -98,10 +111,10 @@ export function SelectionPopup({info, modules}: Props) {
              }}
              tabIndex={-1}>
 
-            {selections.amount() === 1 &&
-            <a href={docsUrlConfig["Button"]} target="_blank" rel="noopener noreferrer">
-                <div title="Click for component information" className="info-button"
-                    onClick={(ev) => console.log()}>?</div></a>}
+            {showInfoButton && <div className="info-button">
+                <div>{id}</div>
+                <a href={infoLink} target="_blank" rel="noopener noreferrer" title="Click for component information">?</a> 
+            </div>}
             <TitleModule selections={selections}
                          addAction={(a) => history.add(a)}
                          render={() => renderer.render()}
