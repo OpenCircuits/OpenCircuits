@@ -37,6 +37,7 @@ export const MultiplexerRenderer = (() => {
                 const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
                 
+                // Renders to the beginning two points again in order to fully connect the last corner
                 renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
             }
             else {
@@ -45,6 +46,7 @@ export const MultiplexerRenderer = (() => {
                 const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
                 
+                // Renders to the beginning two points again in order to fully connect the last corner
                 renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
             }
         }

@@ -31,22 +31,44 @@ export const GateRenderer = (() => {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
         const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
         const amt = 2 * Math.floor(inputs / 4) + 1;
-        for (let i = 0; i < amt; i++) {
-            const d = (i - Math.floor(amt/2)) * size.y;
-            const h = DEFAULT_BORDER_WIDTH;
-            const l1 = -size.y/2;
-            const l2 = +size.y/2;
 
-            const s = size.x/2 - h;
-            const l = size.x/5 - h;
+        if (amt == 1 && dx != 0) {
+            for (let i = 0; i < amt; i++) {
+                const d = (i - Math.floor(amt/2)) * size.y;
+                const h = DEFAULT_BORDER_WIDTH;
+                const l1 = -size.y/2;
+                const l2 = +size.y/2;
+    
+                const s = size.x/2 - h;
+                const l = size.x/5 - h;
+    
+                const p1 = V(-s + dx, l1+0.7 + d);
+                const p2 = V(-s + dx, l2-0.7 + d);
+                const c  = V(-l + dx, d);
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+            }
+        }
+        else {
+            for (let i = 0; i < amt; i++) {
+                const d = (i - Math.floor(amt/2)) * size.y;
+                const h = DEFAULT_BORDER_WIDTH;
+                const l1 = -size.y/2;
+                const l2 = +size.y/2;
 
-            const p1 = V(-s + dx, l1 + d);
-            const p2 = V(-s + dx, l2 + d);
-            const c  = V(-l + dx, d);
+                const s = size.x/2 - h;
+                const l = size.x/5 - h;
 
-            renderer.draw(new QuadCurve(p1, p2, c), style);
+                const p1 = V(-s-0.6 + dx, l1 + d);
+                const p2 = V(-s-0.6 + dx, l2 + d);
+                const c  = V(-l + dx, d);
+                if (amt != 1 || dx != 0) {
+                    renderer.save();
+                    renderer.setPathStyle({ lineCap: "round" });
+                    renderer.draw(new QuadCurve(p1, p2, c), style);
+                    renderer.restore();
+                }
+            }
         }
     }
 
