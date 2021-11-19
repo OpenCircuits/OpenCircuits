@@ -21,6 +21,7 @@ export const TranslateTool: Tool = (() => {
     let components = [] as Component[];
     let worldMouseDownPos = V();
     let action: GroupAction;
+    let activatedButton = -1;
 
     function snap(p: Vector): Vector {
         return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
@@ -47,6 +48,10 @@ export const TranslateTool: Tool = (() => {
 
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
+
+            // The event that activates this will either be keydown or mousedrag, so 
+            //  we can save the key like this to use later
+            activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
 
@@ -86,6 +91,8 @@ export const TranslateTool: Tool = (() => {
                 //  So instead mousemove is used and whether or not left mouse is still pressed is
                 //  handled within the activation and deactivation of this tool.
                 case "mousemove":
+                    if (activatedButton != LEFT_MOUSE_BUTTON) break;
+
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);
@@ -101,7 +108,7 @@ export const TranslateTool: Tool = (() => {
                     // Execute translate but don't save to group
                     new TranslateAction(components, initalPositions, newPositions).execute();
 
-                    return true;
+                    return true;  
 
                 case "keyup":
                     // Duplicate group when we press the spacebar
