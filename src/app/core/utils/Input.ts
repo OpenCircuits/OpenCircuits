@@ -7,7 +7,7 @@ import {DRAG_TIME,
         COMMAND_KEY,
         D_KEY,
         S_KEY,
-        OPTION_KEY,
+        ALT_KEY,
         BACKSPACE_KEY,
         META_KEY,
         ESC_KEY} from "core/utils/Constants";
@@ -61,7 +61,8 @@ export class Input {
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
-            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
+            [[ALT_KEY]]   // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
+            
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
@@ -212,8 +213,8 @@ export class Input {
     public isModifierKeyDown(): boolean {
         return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
     }
-    public isOptionKeyDown(): boolean {
-        return this.isKeyDown(OPTION_KEY);
+    public isAltKeyDown() : boolean {
+        return this.isKeyDown(ALT_KEY);
     }
 
     public getMousePos(): Vector {

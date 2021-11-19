@@ -1,4 +1,4 @@
-import {MIDDLE_MOUSE_BUTTON, OPTION_KEY,
+import {MIDDLE_MOUSE_BUTTON, ALT_KEY, 
         ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT,
         ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL}  from "core/utils/Constants";
 import {Vector}      from "Vector";
@@ -12,24 +12,24 @@ export const PanTool: Tool = (() => {
     let isDragging = false;
     return {
         shouldActivate(event: Event, {input}: CircuitInfo): boolean {
-            // Activate if the user just pressed the "option key"
+            // Activate if the user just pressed the "alt key"
             //  or if the user began dragging with either 2 fingers
             //                           or the middle mouse button
             //  or if the user pressed one of of the arrow keys
-            return (event.type === "keydown"   && ((event.key === OPTION_KEY) ||  
-                                                   (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                                    event.key == ARROW_UP || event.key == ARROW_DOWN )) ||
+            return (event.type === "keydown"   && ((event.key === ALT_KEY) ||
+                                                   (event.key === ARROW_LEFT || event.key === ARROW_RIGHT || 
+                                                    event.key === ARROW_UP || event.key === ARROW_DOWN )) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
-            //  or if no dragging happened and OPTION_KEY was released
+            //  or if no dragging happened and ALT_KEY was released
             //  or if one of the arrow keys were released
             return (event.type === "mouseup") ||
-                   (event.type === "keyup" && ((!isDragging && event.key === OPTION_KEY) || 
+                   (event.type === "keyup" && ((!isDragging && event.key === ALT_KEY || 
                                                (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                                event.key == ARROW_UP || event.key == ARROW_DOWN )))
+                                                event.key == ARROW_UP || event.key == ARROW_DOWN ))))
         },
 
 

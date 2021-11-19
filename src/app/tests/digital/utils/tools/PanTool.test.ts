@@ -1,6 +1,6 @@
 import "jest";
 
-import {OPTION_KEY, SHIFT_KEY,
+import {SHIFT_KEY, ALT_KEY, 
         MIDDLE_MOUSE_BUTTON,
         ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ARROW_DOWN} from "core/utils/Constants";
 
@@ -17,22 +17,22 @@ describe("Pan Tool", () => {
         camera.setPos(V());
     });
 
-    test("Drag without option key", () => {
+    test("Drag without alt key", () => {
         input.drag(V(0, 0), V(-20, 0));
         expect(camera.getPos()).toEqual(V(0, 0));
     });
 
-    test("Drag with option key", () => {
-        input.pressKey(OPTION_KEY)
+    test("Drag with alt key", () => {
+        input.pressKey(ALT_KEY)
                 .drag(V(0, 0), V(20, 0))
-                .releaseKey(OPTION_KEY);
+                .releaseKey(ALT_KEY);
         expect(camera.getPos()).toEqual(V(-20, 0));
     });
 
-    test("No drag with option key", () => {
-        input.pressKey(OPTION_KEY)
+    test("No drag with alt key", () => {
+        input.pressKey(ALT_KEY)
                 .press(V(0, 0))
-                .releaseKey(OPTION_KEY)
+                .releaseKey(ALT_KEY)
                 .release();
         expect(camera.getPos()).toEqual(V(0, 0));
     });
