@@ -1,4 +1,5 @@
 import {DEFAULT_SIZE,
+        GRID_SIZE,
         IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
@@ -13,12 +14,14 @@ import {CopyGroup,
 import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 import {IOObject} from "core/models/IOObject";
+import {Component} from "core/models/Component";
 import {Port} from "core/models/ports/Port";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
 import {Switch} from "../inputs/Switch";
 import {Button} from "../inputs/Button";
+import {LED}    from "../outputs/LED";
 import {SegmentDisplay} from "../outputs/SegmentDisplay";
 import {Oscilloscope} from "../outputs/Oscilloscope";
 
@@ -72,7 +75,7 @@ export class ICData {
                                  h < this.getSize().y ? this.getSize().y : h));
     }
 
-    private createPorts(type: typeof InputPort | typeof OutputPort, ports: Array<Port>, arr: Array<IOObject>, side: -1 | 1): void {
+    private createPorts(type: typeof InputPort | typeof OutputPort, ports: Port[], arr: IOObject[], side: -1 | 1): void {
         const w = this.transform.getSize().x;
 
         for (let i = 0; i < arr.length; i++) {
@@ -142,11 +145,8 @@ export class ICData {
         return this.outputPorts[i];
     }
 
-    public getPorts(): Array<Port> {
-        let ports: Array<Port> = [];
-        ports = ports.concat(this.inputPorts);
-        ports = ports.concat(this.outputPorts);
-        return ports;
+    public getPorts(): Port[] {
+        return [...this.inputPorts, ...this.outputPorts];
     }
 
     public getGroup(): DigitalObjectSet {
@@ -191,21 +191,26 @@ export class ICData {
         if (!this.IsValid(copies))
             return undefined;
 
-        // // Set designer of copies to null
-        // copies.toList().forEach((obj) => obj.setDesigner(undefined));
-
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not
         //  things like ConstantHigh and ConstantLow which aren't interactive
         const INPUT_WHITELIST = [Switch, Button];
+        const OUTPUT_WHITELIST = [LED];
 
-        const inputs = copies.getInputs().filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
-        const others = copies.getOthers().concat(copies.getInputs())
-                .filter((c) => !INPUT_WHITELIST.some((type) => c instanceof type));
+        const inputs  = copies.getInputs().filter( i => INPUT_WHITELIST.some( (type) => i instanceof type));
+        const outputs = copies.getOutputs().filter(o => OUTPUT_WHITELIST.some((type) => o instanceof type));
+        const others  = copies.getComponents().filter(c => (!inputs.includes(c) && !outputs.includes(c)));
 
-        copies.setInputs(inputs);
-        copies.setOthers(others);
+        // Sort inputs/outputs by their position
+        const sortByPos = (a: Component, b: Component) => {
+            const p1 = a.getPos(), p2 = b.getPos();
+            if (Math.abs(p2.y - p1.y) <= 0.5*GRID_SIZE) // If same-ish-y, sort by x from LtR
+                return p2.x - p1.x;
+            return p2.y - p1.y; // Sort by y-pos from Top to Bottom
+        }
+        inputs.sort(sortByPos);
+        outputs.sort(sortByPos);
 
-        return new ICData(copies);
+        return new ICData(new DigitalObjectSet([...inputs, ...outputs, ...others]));
     }
 }
