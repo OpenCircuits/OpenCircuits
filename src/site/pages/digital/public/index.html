@@ -33,6 +33,14 @@
 
         <link rel="stylesheet" href="%PUBLIC_URL%/assets/index.css">
 
+        <script>
+            setTimeout(() => {  
+                const loadingText = document.getElementById("loading-screen-text");
+                if (loadingText.innerHTML === "Loading Scripts...")
+                    loadingText.innerHTML = "Loading Scripts (may take awhile on slow networks)...";
+            }, 10000);
+        </script>
+
         <!-- Google Auth script -->
         <% if ((process.env.OC_AUTH_TYPES ?? "").includes("google")) { %>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -44,6 +52,12 @@
         <div id="loading-screen" class="loading__screen">
             <div class="loading__screen__background"></div>
             <img class="loading__screen__logo" src="%PUBLIC_URL%/img/icons/logo.svg"/>
+            <div class="loading__screen__progress">
+                <h3 id="loading-screen-text" class="loading__screen__text">Loading Scripts...</h3>
+                <div class="loading__screen__progress__bar">
+                    <div id="loading-screen-progress-bar"></div>
+                </div>
+            </div>
         </div>
 
         <div id="root"></div>

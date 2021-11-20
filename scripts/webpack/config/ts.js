@@ -59,7 +59,6 @@ module.exports = (config) => {
 
         plugins: [
             // Setup hot-module refreshing
-            (isDev && new webpack.HotModuleReplacementPlugin()),
             (isDev && new ReactRefreshWebpackPlugin()),
         ].filter(Boolean),
 

@@ -57,8 +57,6 @@ export const HistoryBox = ({ info }: Props) => {
                 left: (isOpen ? "" : "0px"),
             }}>
             {info.history.getActions().reverse().map((a, i) => {
-                //   you could also declare a separate component for the GroupActionEntry so that it's all nice and separate
-                //    then for the HTML we need to make it special and return a list of all the sub-actions using the `HistoryEntry` components
                 return(<HistoryEntry key = {`history-box-entry-${i}`} a = {a}></HistoryEntry>)
             })}
         </div>

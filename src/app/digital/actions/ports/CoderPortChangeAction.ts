@@ -25,12 +25,12 @@ export class CoderPortChangeAction implements Action {
 
         if (obj instanceof Encoder) {
             this.initialCount = obj.getOutputPortCount().getValue();
-            this.inputPortAction  = new InputPortChangeAction(obj, initial, Math.pow(2, target));
+            this.inputPortAction  = new InputPortChangeAction(obj, obj.getInputPortCount().getValue(), Math.pow(2, target));
             this.outputPortAction = new OutputPortChangeAction(obj, initial, target);
         } else {
             this.initialCount = obj.getInputPortCount().getValue();
             this.inputPortAction  = new InputPortChangeAction(obj, initial, target);
-            this.outputPortAction = new OutputPortChangeAction(obj, initial, Math.pow(2, target));
+            this.outputPortAction = new OutputPortChangeAction(obj, obj.getOutputPortCount().getValue(), Math.pow(2, target));
         }
     }
 

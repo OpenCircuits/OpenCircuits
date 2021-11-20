@@ -3,6 +3,8 @@
 $historybox-height: 60vh;
 $historybox-width: 250px;
 
+$itemnav-height: 500px;
+
 .historybox {
     width: $historybox-width;
     height: $historybox-height;
@@ -21,6 +23,16 @@ $historybox-width: 250px;
     padding-bottom: 10px;
 
     transition: all 0.5s;
+
+    @media (max-width: 768px) {
+        position: absolute;
+        bottom: $itemnav-height;
+        left: 0px;
+
+        margin-bottom: 0px;
+
+        height: calc(100% - #{$itemnav-height} - #{$header-total-height});
+    }
 
     &__entry {
         height: 50px;
