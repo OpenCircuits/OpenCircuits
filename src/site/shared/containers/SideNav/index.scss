@@ -21,6 +21,8 @@ $sidenav-border-width: 5px;
     border-right-width: $sidenav-border-width;
     background-color: $primary-color;
 
+    touch-action: pan-y;
+
     &__move {
         left: -$sidenav-width - $sidenav-border-width;
     }
@@ -56,6 +58,8 @@ $sidenav-border-width: 5px;
         overflow-y: auto;
 
         height: 100%;
+
+        touch-action: pan-y;
 
         & h4 {
             font-size: 24px;

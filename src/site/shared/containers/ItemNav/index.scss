@@ -10,8 +10,6 @@ $tab-padding: 8px;
 .itemnav {
     $top-margin: 10px;
     $top-height: 35px;
-    $tab-size: $top-height + $top-margin + $header-padding;
-    $nav-root: &;
 
     position: absolute;
     z-index: 2;
@@ -30,6 +28,28 @@ $tab-padding: 8px;
     border: $header-border;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
+
+    touch-action: pan-x pan-y;
+
+    @media (max-width: 768px) and (orientation:portrait) {
+        top: unset;
+        right: 0;
+        width: unset;
+        height: $itemnav-height;
+
+        border-right-width: 0;
+        border-top-width: $header-border-width;
+    }
+
+    &__move {
+        @media (min-width: 768px), (orientation:landscape) {
+            left: -$itemnav-width - $header-border-width;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            bottom: -$itemnav-height - $header-border-width;
+        }
+    }
 
     & img {
         width: 100%;
@@ -119,15 +139,17 @@ $tab-padding: 8px;
 
         position: relative;
 
+
         & > div {
+            $size: $top-height + $top-margin + $header-padding;
 
             position: absolute;
 
             top: -$top-margin - $header-border-width;
             left: $header-padding + $header-border-width;
 
-            width: $tab-size;
-            height: $tab-size;
+            width: $size;
+            height: $size;
 
             border: $header-border;
             border-width: $header-border-width;
@@ -136,6 +158,16 @@ $tab-padding: 8px;
             cursor: pointer;
 
             transition: 0.5s;
+
+            @media (min-width: 768px), (orientation:landscape) {
+                border-bottom-right-radius: 15px;
+            }
+
+            @media (max-width: 768px) and (orientation:portrait) {
+                left: -$size - $header-border-width;
+                top: -$size - 3*$header-border-width - $top-margin;
+                border-top-left-radius: 15px;
+            }
 
             &:after {
                 content: '×';
@@ -150,6 +182,11 @@ $tab-padding: 8px;
                 transition: 0.5s;
 
                 transform: translate(-50%, -50%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
+                }
             }
         }
 
@@ -161,11 +198,16 @@ $tab-padding: 8px;
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    top: 50%;
+                }
             }
         }
     }
 
     &__sections {
+
         display: flex;
         flex-direction: column;
 
@@ -174,6 +216,18 @@ $tab-padding: 8px;
 
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        @media (min-width: 768px), (orientation:landscape) {
+            border-top: 3px solid #888;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            flex-wrap: wrap;
+
+            margin: 0 15px;
+        }
 
         &::-webkit-scrollbar {
             width: 7px;  // vertical scrollbars
@@ -189,8 +243,17 @@ $tab-padding: 8px;
             border-radius: 15px;
         }
 
+        &.dragging {
+            overflow: hidden !important;
+            padding-right: 7px;
+        }
+
         & > div {
             scroll-snap-align: center;
+
+            @media (max-width: 768px) and (orientation:portrait) {
+                width: 100%;
+            }
 
             &:nth-child(2) > h4 {
                 margin-top: 10px;
@@ -207,6 +270,10 @@ $tab-padding: 8px;
 
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
+                }
             }
 
             & > div {
@@ -216,9 +283,23 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                & > button {
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
+                }
+
+                & > div {
+                    position: relative;
+                    display: inline-block;
+
+                    text-align: center;
+                    align-items: flex-start;
+                    box-sizing: border-box;
+
                     font-size: 1em;
                     font-weight: bold;
+
+                    padding: 0;
+                    margin: 0;
 
                     width: 100px;
                     padding: 10px;
@@ -229,84 +310,13 @@ $tab-padding: 8px;
                     color: darken($secondary-color, 5%);
 
                     & > div {
-                        position: relative;
-
-                        & > div {
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            color: red;
-                            display: unset;
-                        }
+                        position: absolute;
+                        top: 5px;
+                        right: 15px;
+                        color: red;
+                        display: unset;
                     }
                  }
-            }
-        }
-    }
-
-    &__onside {
-        &#{$nav-root}__move {
-            left: -$itemnav-width - $header-border-width;
-        }
-
-        #{$nav-root}__tab {
-            & > div {
-                border-bottom-right-radius: 15px;
-            }
-        }
-
-        #{$nav-root}__sections {
-            border-top: 3px solid #888;
-        }
-    }
-
-    &__onbottom {
-        top: unset;
-        right: 0;
-        width: unset;
-        height: $itemnav-height;
-
-        border-right-width: 0;
-        border-top-width: $header-border-width;
-
-        &#{$nav-root}__move {
-            bottom: -$itemnav-height - $header-border-width;
-        }
-
-        #{$nav-root}__tab {
-            & > div {
-                left: -$tab-size - $header-border-width;
-                top: -$tab-size - 3*$header-border-width - $top-margin;
-                border-top-left-radius: 15px;
-
-                &:after {
-                    left: 50%;
-                    top: calc(50% + #{$tab-size + $header-padding + 1.5*$header-border-width});
-                }
-            }
-
-            &__closed > div {
-                &:after {
-                    top: 50%;
-                }
-            }
-        }
-
-        #{$nav-root}__sections {
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            flex-wrap: wrap;
-
-            & > div {
-                width: 100%;
-
-                h4 {
-                    margin: 0;
-                }
-
-                & > div {
-                    margin: 0;
-                }
             }
         }
     }

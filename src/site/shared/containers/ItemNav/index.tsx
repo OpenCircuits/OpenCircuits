@@ -12,7 +12,6 @@ import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
 
@@ -36,10 +35,6 @@ export type ItemNavSection = {
 export type ItemNavConfig = {
     imgRoot: string;
     sections: ItemNavSection[];
-}
-
-function onSide(w: number, h: number): boolean {
-    return w >= 768 || h < w;
 }
 
 type Props<D> = {
@@ -67,10 +62,6 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
-
-    // State to decide whether the itemnav should be on the left or on the bottom
-    const {w, h} = useWindowSize();
-
 
     // Resets the curItemID and numClicks
     function reset(cancelled: boolean = false) {
@@ -141,7 +132,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                 x{numClicks}
             </span>
         </div>
-        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"} ${(onSide(w, h)) ? "itemnav__onside" : "itemnav__onbottom"}`}>
+        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
                 <div>
                     {/* History box button goes here */}
@@ -177,64 +168,61 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                     }
                 </div>
             </div>
-            <div className="itemnav__sections">
+            <div className={`itemnav__sections ${curItemImg ? "dragging" : ""}`}>
                 {config.sections.map((section, i) =>
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
                             {section.items.map((item, j) =>
-                                <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                           data={[item.id, Math.max(numClicks,1), additionalData]}
-                                           onClick={(ev) => {
-                                               setState({
-                                                   curItemID: item.id,
-                                                   numClicks: (item.id === curItemID ? numClicks+1 : 1),
-                                               });
-                                               setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
-                                               onStart && onStart();
-
-                                               // Prevents `onClick` listener of placing the component to fire
-                                               ev.stopPropagation();
-                                           }}
-                                           onDragChange={(d) => {
-                                               // Set image if user started dragging on this item
-                                               if (d === "start") {
-                                                    // For instance, if user clicked on Button 4 times then dragged the
-                                                    //  Switch, we want to reset the numClicks to 1
+                                <div onMouseEnter={() => {item.removable && setHover(item.id)}}
+                                     onMouseLeave={() => {item.removable && setHover("")}}>
+                                    <Draggable key={`itemnav-section-${i}-item-${j}`}
+                                               data={[item.id, Math.max(numClicks,1), additionalData]}
+                                               onClick={(ev) => {
                                                    setState({
                                                        curItemID: item.id,
-                                                       numClicks: (item.id === curItemID ? numClicks : 0),
+                                                       numClicks: (item.id === curItemID ? numClicks+1 : 1),
                                                    });
                                                    setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                                    onStart && onStart();
-                                               }
-                                           }}>
 
+                                                   // Prevents `onClick` listener of placing the component to fire
+                                                   ev.stopPropagation();
+                                               }}
+                                               onDragChange={(d) => {
+                                                   // Set image if user started dragging on this item
+                                                   if (d === "start") {
+                                                           // For instance, if user clicked on Button 4 times then dragged the
+                                                           //  Switch, we want to reset the numClicks to 1
+                                                       setState({
+                                                           curItemID: item.id,
+                                                           numClicks: (item.id === curItemID ? numClicks : 0),
+                                                       });
+                                                       setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                                       onStart && onStart();
+                                                   }
+                                               }}>
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
+                                    </Draggable>
+                                    {
+                                        (item.removable && hovering === item.id) &&
+                                        <div onClick={(ev) => {
+                                            // Resets click tracking and stops propgation so that an
+                                            // Components are not clicked onto the canvas after being deleted.
+                                            setState({curItemID: "",
+                                                        numClicks: 1});
+                                            // Stops drag'n'drop preview when deleting
+                                            setCurItemImg("");
+                                            onDelete(section, item) && setHover("");
 
-                                    <div onMouseEnter={() => {item.removable && setHover(item.id)}}
-                                         onMouseLeave={() => {item.removable && setHover("")}}>
-
-                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
-                                        {
-                                            (item.removable && hovering === item.id) &&
-                                            <div onClick={(ev) => {
-                                                // Resets click tracking and stops propgation so that an
-                                                // Components are not clicked onto the canvas after being deleted.
-                                                setState({curItemID: "",
-                                                          numClicks: 1});
-                                                // Stops drag'n'drop preview when deleting
-                                                setCurItemImg("");
-                                                onDelete(section, item) && setHover("");
-
-                                                ev.stopPropagation();
-                                            }}>
-                                                X
-                                            </div>
-                                        }
-                                        <br />
-                                    </div>
+                                            ev.stopPropagation();
+                                        }}>
+                                            X
+                                        </div>
+                                    }
+                                    <br />
                                     {item.label}
-                                </Draggable>
+                                </div>
                             )}
                         </div>
                     </div>
