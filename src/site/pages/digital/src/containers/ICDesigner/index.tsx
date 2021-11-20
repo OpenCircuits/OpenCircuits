@@ -91,7 +91,7 @@ export const ICDesigner = (() => {
             icInfo.input = new Input(canvas.current);
 
             // Get render function
-            const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
+            const renderFunc = GetRenderFunc({ canvas: canvas.current, info: icInfo });
 
             // Add input listener
             icInfo.input.addListener((event) => {
@@ -130,6 +130,9 @@ export const ICDesigner = (() => {
                 return;
             // Clear name
             setName({ name: "" });
+
+            // Retrieve current debug info from mainInfo
+            icInfo.debugOptions = mainInfo.debugOptions;
 
             // Unlock input
             icInfo.input.unblock();
