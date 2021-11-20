@@ -39,6 +39,7 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
 import "./index.scss";
+import {Event} from "core/utils/Events";
 
 
 type Props = {
@@ -175,14 +176,13 @@ export const ICDesigner = (() => {
             // Unblock main input
             mainInfo.input.unblock();
 
-            // Clear name
-            setName({ name: "" });
-
+            icInfo.ic = undefined;
             dispatch(CloseICDesigner());
+            setName({ name: "" }); // Clear name
         }
 
-        useKeyDownEvent(icInfo.input, ESC_KEY, () => close(true));
-        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false));
+        useKeyDownEvent(icInfo.input, ESC_KEY,   () => close(true),  [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false), [data, mainInfo]);
 
         return (
             <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
