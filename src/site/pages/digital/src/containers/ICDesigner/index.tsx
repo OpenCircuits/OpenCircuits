@@ -116,20 +116,19 @@ export const ICDesigner = (() => {
             renderer.render();
         }, [setCursor]); // Pass empty array so that this only runs once on mount
 
-
+        // Keeps the ICData/IC name's in sync with `name`
         useLayoutEffect(() => {
-            if (!data)
+            if (!data || !icInfo.ic)
                 return;
             data.setName(name);
+            icInfo.ic.update();
             renderer.render();
-        }, [name, data]);
+        }, [name, data, icInfo.ic]);
 
         // Happens when activated
         useLayoutEffect(() => {
             if (!isActive || !data)
                 return;
-            // Clear name
-            setName({ name: "" });
 
             // Retrieve current debug info from mainInfo
             icInfo.debugOptions = mainInfo.debugOptions;
@@ -176,6 +175,9 @@ export const ICDesigner = (() => {
             // Unblock main input
             mainInfo.input.unblock();
 
+            // Clear name
+            setName({ name: "" });
+
             dispatch(CloseICDesigner());
         }
 
@@ -190,11 +192,12 @@ export const ICDesigner = (() => {
                         style={{ cursor }} />
 
                 <input type="text"
-                        placeholder="IC Name"
-                        onChange={(ev) => setName({name: ev.target.value})}
-                        onKeyUp={(ev) => {
-                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
-                        }} />
+                       placeholder="IC Name"
+                       value={name}
+                       onChange={(ev) => setName({name: ev.target.value})}
+                       onKeyUp={(ev) => {
+                           if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
+                       }} />
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>
