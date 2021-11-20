@@ -77,6 +77,9 @@ export class IC extends DigitalComponent {
 
         // Update port positions
         this.copyPorts();
+
+        // Update cullbox
+        this.onTransformChange();
     }
 
     public activate(): void {
