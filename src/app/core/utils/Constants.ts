@@ -91,3 +91,6 @@ export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 export const FIT_PADDING_RATIO = 1.2;
 export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
 export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
+
+export const ORGANIZE_SEP_X = 250;
+export const ORGANIZE_SEP_Y = 150;

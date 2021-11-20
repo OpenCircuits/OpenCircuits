@@ -5,7 +5,7 @@ import {V} from "Vector";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupActionFactory";
+import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
@@ -31,7 +31,7 @@ export function DigitalPaste(data: string, {history, designer, selections, rende
 
         history.add(new GroupAction([
             new TransferICDataAction(icData, designer),
-            CreateAddGroupAction(designer, new IOObjectSet(objs)),
+            new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(V(5, 5))))

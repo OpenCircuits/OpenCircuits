@@ -38,7 +38,7 @@ export function getType(t: Type<ts.Type>): Types {
                 if (matches.length === 0)
                     return {type: baseType, args};
                 if (matches.length !== 1)
-                    throw new Error(`Received multiple type matches for: ${baseType}!`);
+                    console.warn(`Received multiple type matches for: ${baseType}!`);
                 const [_, link, type] = matches[0];
                 return { type, args, link: parseUrl(link) };
             })

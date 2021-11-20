@@ -7,6 +7,8 @@ import {DRAG_TIME,
         COMMAND_KEY,
         D_KEY,
         S_KEY,
+        Z_KEY,
+        Y_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
         META_KEY,
@@ -60,7 +62,10 @@ export class Input {
         const PREVENTED_COMBINATIONS = [
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
+            [[Z_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
+            [[Y_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
+            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
