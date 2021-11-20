@@ -227,7 +227,19 @@ $tab-padding: 8px;
                     word-break: break-word;
 
                     color: darken($secondary-color, 5%);
-                }
+
+                    & > div {
+                        position: relative;
+
+                        & > div {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            color: red;
+                            display: unset;
+                        }
+                    }
+                 }
             }
         }
     }

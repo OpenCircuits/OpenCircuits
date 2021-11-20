@@ -26,6 +26,7 @@ export type ItemNavItem = {
     id: string;
     label: string;
     icon: string;
+    removable?: boolean;
 }
 export type ItemNavSection = {
     id: string;
@@ -47,9 +48,10 @@ type Props<D> = {
     additionalData?: D;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
+    onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, additionalPreview }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
     const {isOpen, isEnabled} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -60,6 +62,8 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
+
+    const [hovering, setHover] = useState("");
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
@@ -74,7 +78,6 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
         setCurItemImg("");
         onFinish && onFinish(cancelled);
     }
-
     // Drop the current item on click
     useDocEvent("click", (ev) => {
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
@@ -158,7 +161,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
                                 onClick={() => {
                                     info.history.redo();
                                     info.renderer.render(); // Re-render
-                                 }}>
+                                }}>
                             <img src="img/icons/redo.svg" alt="" />
                         </button>
                     </div>
@@ -206,8 +209,30 @@ export const ItemNav = <D,>({ info, config, additionalData, onStart, onFinish, a
                                                    onStart && onStart();
                                                }
                                            }}>
-                                    <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
-                                    <br />
+
+
+                                    <div onMouseEnter={() => {item.removable && setHover(item.id)}}
+                                         onMouseLeave={() => {item.removable && setHover("")}}>
+
+                                        <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label}/>
+                                        {
+                                            (item.removable && hovering === item.id) &&
+                                            <div onClick={(ev) => {
+                                                // Resets click tracking and stops propgation so that an
+                                                // Components are not clicked onto the canvas after being deleted.
+                                                setState({curItemID: "",
+                                                          numClicks: 1});
+                                                // Stops drag'n'drop preview when deleting
+                                                setCurItemImg("");
+                                                onDelete(section, item) && setHover("");
+
+                                                ev.stopPropagation();
+                                            }}>
+                                                X
+                                            </div>
+                                        }
+                                        <br />
+                                    </div>
                                     {item.label}
                                 </Draggable>
                             )}
