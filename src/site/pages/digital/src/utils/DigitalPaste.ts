@@ -1,4 +1,4 @@
-import {Deserialize} from "serialeazy";
+import {Deserialize, Serialize} from "serialeazy";
 
 import {V} from "Vector";
 
@@ -23,14 +23,33 @@ export function DigitalPaste(data: string, {history, designer, selections, rende
         // Find ICs and ICData
         const ics = objs.filter(o => o instanceof IC) as IC[];
         const icData = [...new Set(ics.map(ic => ic.getData()))]; // Get unique ICData
-        // TODO: Check if any of the ICData's are identical to existing ICData's
-        //  cause right now copy/pasting an IC w/in same circuit duplicates the ICData
+
+        // Check if any of the icData's are already within this circuit by comparing
+        //  their serialized versions (fixes issue #712)
+        const serializedICDatas = designer.getICData().map(d => Serialize(d));
+
+        // Get indices of ICData that already exist (-1 if the ICData is new)
+        const icDataIndices = icData
+            .map(d => Serialize(d))
+            .map(s => serializedICDatas.indexOf(s));
+
+        // Filter out only the new ICData
+        const newICData = icData.filter((_, i) => (icDataIndices[i] === -1));
+
+        // Update ICs to use existing ICData if applicable
+        ics.forEach(ic => {
+            const dataIndex = icDataIndices[icData.indexOf(ic.getData())];
+            if (dataIndex === -1)
+                return; // Don't change IC since it uses the new Data
+            // Change ICData to point to the existing ICData in the designer
+            ic["data"] = designer.getICData()[icDataIndices[dataIndex]];
+        });
 
         // Get all components
         const comps = objs.filter(o => o instanceof Component) as Component[];
 
         history.add(new GroupAction([
-            new TransferICDataAction(icData, designer),
+            new TransferICDataAction(newICData, designer),
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
