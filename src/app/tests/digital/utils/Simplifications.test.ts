@@ -6,8 +6,8 @@ import {IOObject} from "core/models";
 import {CreateNegatedGatesAction} from "digital/actions/simplification/NegatedGatesActionFactory";
 import {Switch, LED, ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 import "digital/models/ioobjects";
 

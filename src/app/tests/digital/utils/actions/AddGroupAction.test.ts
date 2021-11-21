@@ -4,10 +4,9 @@ import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {LED} from "digital/models/ioobjects/outputs/LED";
-
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 
 describe("Add Group Action", () => {

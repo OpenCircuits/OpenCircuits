@@ -12,10 +12,10 @@ import {ANDGate, NANDGate}  from "digital/models/ioobjects/gates/ANDGate";
 import {ORGate}             from "digital/models/ioobjects/gates/ORGate";
 import {DigitalComponent}   from "digital/models/DigitalComponent";
 import {DigitalWire}        from "digital/models/DigitalWire";
+import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {ICData}             from "digital/models/ioobjects/other/ICData";
 import {IC}                 from "digital/models/ioobjects/other/IC";
-import {DigitalObjectSet,
-        GetInvertedGate}    from "digital/utils/ComponentUtils";
+import {GetInvertedGate}    from "digital/utils/ComponentUtils";
 
 function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
