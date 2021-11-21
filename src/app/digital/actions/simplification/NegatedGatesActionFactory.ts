@@ -1,5 +1,5 @@
 import {GroupAction} from "core/actions/GroupAction";
-import {CreateReplaceComponentAction} from "core/actions/ReplaceComponentActionFactory";
+import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
 
 import {DigitalCircuitDesigner} from "digital/models";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
@@ -39,7 +39,7 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
 
                 // Swap out the gates
                 action.add(CreateSnipGateAction(other));
-                action.add(CreateReplaceComponentAction(designer, gate, newGate));
+                action.add(CreateReplaceDigitalComponentAction(designer, gate, newGate));
 
                 // Add new wires to negatedCircuit
                 newGate.getInputs().forEach(wire => negatedCircuit.push(wire));
