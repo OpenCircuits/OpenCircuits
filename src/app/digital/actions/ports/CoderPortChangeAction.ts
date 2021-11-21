@@ -27,6 +27,7 @@ export class CoderPortChangeAction implements Action {
 
  /**
   * The constrcutor determines whether the object is an encoder or decoder and calls on the corresponding actions based on the type.
+  *
   * @param obj is the encoder or decoder selected
   * @param initial the inital number of outputs/inputs
   * @param target the target numbe of outputs/inputs
@@ -47,6 +48,7 @@ export class CoderPortChangeAction implements Action {
     }
      /**
       * This code changes the size of the actual object.
+      *
       * @param val refers to the target number chosen by the user.
       */
     protected changeSize(val: number): void {
@@ -54,6 +56,7 @@ export class CoderPortChangeAction implements Action {
     }
      /**
       * This function calls upon the change size function and the port actions to change the size of the obj and the number of inputs/output ports.
+      *
       * @returns the changed object
       */
     public execute(): Action {
@@ -66,6 +69,7 @@ export class CoderPortChangeAction implements Action {
     }
      /**
       * This function undoes the execute(): Action function and sets the size and number of ports back to the inital count and size.
+      *
       * @returns the initial object
       */
     public undo(): Action {
