@@ -47,7 +47,8 @@ Creating a large circuit just to realize that you accidentally used the wrong ga
 - ORGate for a NANDGate
 - ANDGate with no inputs for a Switch
 - XORGate with one input for a NOTGate
-- Switch for an XORGate
+- Switch for an XORGate with only outputs
+- Multiplexer for ANDGate with six inputs
 - IC with four inputs and two outputs for an encoder
 
 
