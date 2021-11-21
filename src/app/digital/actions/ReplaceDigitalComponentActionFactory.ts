@@ -4,6 +4,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
+import {Switch, XORGate} from "digital/models/ioobjects";
 
 
 /**
@@ -28,22 +29,24 @@ import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
     const origInputsInUse = origInputs.filter(port => port.getWires().length > 0);
     const origOutputsInUse = origOutputs.filter(port => port.getWires().length > 0);
     if (origInputsInUse.length > repInputs.length)
-        throw new Error("Insufficient input ports available on replacement (replacement has ${repInputs.length}, needs at least ${origInputsInUse.length}");
+        throw new Error(`Insufficient input ports available on replacement (replacement has ${repInputs.length}, needs at least ${origInputsInUse.length})`);
     if (origOutputsInUse.length > repOutputs.length)
-        throw new Error("Insufficient output ports available on replacement (replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length}");
+        throw new Error(`Insufficient output ports available on replacement (replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length})`);
 
     action.add(new PlaceAction(designer, replacement).execute());
 
     origInputsInUse.forEach((port, index) => {
-        port.getWires().forEach(wire => {
-            const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
+        const wires = [...port.getWires()];
+        wires.forEach(wire => {
+            const otherPort = wire.getInput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
         });
     });
     origOutputsInUse.forEach((port, index) => {
-        port.getWires().forEach(wire => {
-            const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
+        const wires = [...port.getWires()];
+        wires.forEach(wire => {
+            const otherPort = wire.getOutput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repOutputs[index], otherPort).execute());
         });
