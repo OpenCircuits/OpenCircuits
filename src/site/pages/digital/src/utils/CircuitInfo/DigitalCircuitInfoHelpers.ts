@@ -9,7 +9,7 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {CreateUserCircuit, DeleteUserCircuit} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
@@ -123,16 +123,37 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
         },
 
         DuplicateCircuitRemote: async () => {
-            console.log("DuplicateCircuitRemote");
-
-            const {circuit} = store.getState();
             const {user} = store.getState();
 
-            console.log(circuit)
+            // Can't duplicate if not logged in
+            if (!user.auth)
+                return;
 
-            store.dispatch(SetCircuitName(circuit.name + " copy"));
+            const {circuit} = store.getState();
             
-            await CreateUserCircuit(user.auth, helpers.GetSerializedCircuit());
+
+            const thumbnail = GenerateThumbnail({ info });
+            const circuitCopy = JSON.stringify(
+                new Circuit(
+                    new CircuitMetadataBuilder()
+                        .withName(circuit.name + " (copy)")
+                        .withThumbnail(thumbnail)
+                        .build()
+                        .getDef(),
+                    info.designer,
+                    info.camera
+                )
+            );
+
+            console.log(circuit)
+            console.log(circuitCopy)
+            
+            const meta = await CreateUserCircuit(user.auth, circuitCopy);
+            console.log(meta.getId())
+            console.log(circuit.id)
+            const copyId = meta.getId();
+
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, meta.getId()));
 
             await store.dispatch(LoadUserCircuits());
         }

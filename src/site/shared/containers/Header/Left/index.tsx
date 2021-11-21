@@ -53,7 +53,7 @@ export const HeaderLeft = ({helpers}: Props) => {
                         onClick={() => helpers.SaveCircuitRemote() }>Save</button>
             </div>
             <div>
-                <button className="header__left__duplicate"
+                <button className={`header__left__duplicate ${!isLoggedIn ? "invisible" : ""}`}
                         title="Duplicate the circuit"
                         onClick={() => helpers.DuplicateCircuitRemote() }>Duplicate</button>
             </div>
