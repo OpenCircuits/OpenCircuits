@@ -2,9 +2,12 @@ import {Create, GetIDFor} from "serialeazy";
 
 import {BCDtoDecimal} from "math/MathUtils";
 
-import {Gate}       from "digital/models/ioobjects/gates/Gate";
-import {DigitalComponent, DigitalWire} from "digital/models";
+import {IOObject} from "core/models";
+
+import {DigitalCircuitDesigner, DigitalComponent, DigitalWire} from "digital/models";
 import {InputPort, OutputPort} from "digital/models/ports";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {IC, ICData} from "digital/models/ioobjects";
 
 
 /**
@@ -60,4 +63,24 @@ export function LazyConnect(source: DigitalComponent, destination: DigitalCompon
     inPort.connect(wire);
     outPort.connect(wire);
     return wire;
+}
+
+
+/**
+ * Check if the given ICData is currently being used by an IC within the given DigitalCircuitDesigner
+ *
+ * @param designer the designer to check for usage in
+ * @param data the ICData to check for usage for
+ * @returns true if the ICData is being used somewhere, false otherwise
+ */
+export function IsICDataInUse(designer: DigitalCircuitDesigner, data: ICData): boolean {
+    const checkInUse = (objs: IOObject[]): boolean => {
+        return objs.some(o =>
+            (o instanceof IC &&
+                (o.getData() === data ||
+                 // Recursively check if this IC depends on the given data
+                 checkInUse(o.getData().getGroup().toList())))
+        );
+    };
+    return checkInUse(designer.getAll());
 }
