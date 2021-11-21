@@ -11,19 +11,19 @@ import {serializable} from "serialeazy";
 import {CopyGroup,
         CreateGroup} from "core/utils/ComponentUtils";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
 import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
 import {Port} from "core/models/ports/Port";
+
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
-import {Switch} from "../inputs/Switch";
-import {Button} from "../inputs/Button";
-import {LED}    from "../outputs/LED";
-import {SegmentDisplay} from "../outputs/SegmentDisplay";
-import {Oscilloscope} from "../outputs/Oscilloscope";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+import {Button} from "digital/models/ioobjects/inputs/Button";
+import {LED}    from "digital/models/ioobjects/outputs/LED";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {Oscilloscope} from "digital/models/ioobjects/outputs/Oscilloscope";
 
 
 @serializable("ICData")

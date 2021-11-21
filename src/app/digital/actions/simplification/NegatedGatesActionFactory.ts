@@ -1,10 +1,13 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateReplaceComponentAction} from "core/actions/ReplaceComponentActionFactory";
 
+import {GetInvertedGate} from "digital/utils/ComponentUtils";
+
 import {DigitalCircuitDesigner} from "digital/models";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {DigitalObjectSet, GetInvertedGate} from "digital/utils/ComponentUtils";
+
 import {CreateSnipGateAction} from "../SnipGateActionFactory";
 
 

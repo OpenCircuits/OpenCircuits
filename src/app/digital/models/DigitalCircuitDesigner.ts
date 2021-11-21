@@ -5,9 +5,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
-import {DigitalWire, DigitalComponent, InputPort, OutputPort, Propagation} from "./index";
+import {DigitalWire, DigitalComponent, DigitalObjectSet, InputPort, OutputPort, Propagation} from "./index";
 
 import {ICData} from "./ioobjects/other/ICData";
 
