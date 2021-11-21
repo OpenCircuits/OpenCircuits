@@ -76,7 +76,7 @@ export class MuxPortChangeAction extends PortChangeAction {
     
     /**
      * This code does the same as execute except it changes the size and number of ports back to the initial number. 
-     * @returns 
+     * @returns the new object with the initial size and number of ports.
      */
     public undo(): Action {
         // Change size back first
