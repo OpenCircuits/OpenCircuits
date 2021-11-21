@@ -23,7 +23,7 @@ import {PanTool}            from "core/tools/PanTool";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {IC}     from "digital/models/ioobjects";
+import {IC} from "digital/models/ioobjects";
 
 import {ICPortTool}   from "digital/tools/ICPortTool";
 import {ICEdge,
@@ -39,7 +39,6 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
 import "./index.scss";
-import {Event} from "core/utils/Events";
 
 
 type Props = {
