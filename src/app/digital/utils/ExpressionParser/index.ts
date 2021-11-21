@@ -40,5 +40,5 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
 
-    return new DigitalObjectSet(fullCircuit);
+    return DigitalObjectSet.from(fullCircuit);
 }

@@ -1,4 +1,4 @@
-import {Create, Deserialize, serializable, GetIDFor} from "serialeazy";
+import {Create, serializable, GetIDFor} from "serialeazy";
 
 import {BCDtoDecimal} from "math/MathUtils";
 
@@ -10,9 +10,7 @@ import {DigitalComponent, DigitalWire} from "digital/models/index";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
-import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {DeleteAction} from "core/actions/addition/PlaceAction";
+import {Wire} from "core/models";
 
 /**
  * Helper class to hold different groups of components.
@@ -33,39 +31,15 @@ export class DigitalObjectSet extends IOObjectSet {
     private outputs: DigitalComponent[];
     private others:  DigitalComponent[];
 
-    public constructor(set: IOObject[] = []) {
-        super(set);
+    public constructor();
+    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[], others: DigitalComponent[], wires: Wire[]);
+    public constructor(inputs: DigitalComponent[] = [], outputs: DigitalComponent[] = [],
+                       others: DigitalComponent[] = [], wires: Wire[] = []) {
+        super([...inputs, ...outputs, ...others, ...wires]);
 
-        this.inputs  = [];
-        this.outputs = [];
-        this.others  = [];
-
-        // Filter out inputs and outputs
-        const objs = set.filter(o => o instanceof DigitalComponent) as DigitalComponent[];
-        for (const obj of objs) {
-            // Input => >0 output ports and 0 input ports
-            if (obj.numInputs() === 0 && obj.numOutputs() > 0)
-                this.inputs.push(obj);
-            // Output => >0 input ports and 0 output ports
-            else if (obj.numInputs() > 0 && obj.numOutputs() === 0)
-                this.outputs.push(obj);
-            // Component => neither just input or output
-            else
-                this.others.push(obj);
-        }
-    }
-
-    // TODO: Remove, this is bad (ICData 228)
-    public setInputs(inputs: DigitalComponent[]): void {
         this.inputs = inputs;
-    }
-    // TODO: Remove, this is bad (ICData 229)
-    public setOthers(comps: DigitalComponent[]): void {
-        this.others = comps;
-    }
-
-    public getWires(): DigitalWire[] {
-        return Array.from(this.wires) as DigitalWire[];
+        this.outputs = outputs;
+        this.others = others;
     }
 
     public getInputs(): DigitalComponent[] {
@@ -80,8 +54,35 @@ export class DigitalObjectSet extends IOObjectSet {
         return this.others.slice(); // Shallow Copy
     }
 
+    public getWires(): DigitalWire[] {
+        return Array.from(this.wires) as DigitalWire[];
+    }
+
     public getComponents(): DigitalComponent[] {
-        return this.inputs.concat(this.outputs, this.others);
+        return [...this.inputs, ...this.outputs, ...this.others];
+    }
+
+    public static from(set: IOObject[] = []): DigitalObjectSet {
+        const inputs  = [] as DigitalComponent[];
+        const outputs = [] as DigitalComponent[];
+        const others  = [] as DigitalComponent[];
+        const wires   = set.filter(w => w instanceof Wire) as Wire[];
+
+        // Filter out inputs and outputs
+        const objs = set.filter(o => o instanceof DigitalComponent) as DigitalComponent[];
+        for (const obj of objs) {
+            // Input => >0 output ports and 0 input ports
+            if (obj.numInputs() === 0 && obj.numOutputs() > 0)
+                inputs.push(obj);
+            // Output => >0 input ports and 0 output ports
+            else if (obj.numInputs() > 0 && obj.numOutputs() === 0)
+                outputs.push(obj);
+            // Component => neither just input or output
+            else
+                others.push(obj);
+        }
+
+        return new DigitalObjectSet(inputs, outputs, others, wires);
     }
 }
 
@@ -101,7 +102,7 @@ const gateInversion: Record<string, string> = {
 
 /**
  * Gets a new instance of the inverted version of the supplied gate
- * 
+ *
  * @param oldGate the gate to get the inverted version of
  * @returns NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate, etc.
  * @throws {Error} when the ID for oldGate cannot be found
@@ -121,7 +122,7 @@ export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
 /**
  * Connects two components together. Source must have an output and destination must have an available input.
  * The first available port of destination will be used as the input port
- * 
+ *
  * @param source the source component to connect
  * @param destination the destination component to connect
  * @returns the wire used to connect the components together

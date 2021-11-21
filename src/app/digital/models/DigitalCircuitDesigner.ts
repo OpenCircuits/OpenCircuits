@@ -311,7 +311,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return new DigitalObjectSet((this.objects as IOObject[]).concat(this.wires));
+        return DigitalObjectSet.from([...this.objects, ...this.wires]);
     }
 
     public getObjects(): DigitalComponent[] {

@@ -365,7 +365,7 @@ describe("CopyGroup", () => {
         const objs = [new Switch(), new LED()];
         const wire = Connect(objs[0], 0, objs[1], 0);
 
-        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
+        const data = new ICData(DigitalObjectSet.from([objs[0], objs[1], wire]));
         const ic = new IC(data);
 
         const copy = CopyGroup([ic]);
@@ -381,14 +381,14 @@ describe("CopyGroup", () => {
         const objs = [new Switch(), new LED()];
         const wire = Connect(objs[0], 0, objs[1], 0);
 
-        const data = new ICData(new DigitalObjectSet([objs[0], objs[1], wire]));
+        const data = new ICData(DigitalObjectSet.from([objs[0], objs[1], wire]));
         const ic = new IC(data);
 
         const objs2 = [new Switch(), new LED()];
         const wire2a = Connect(objs2[0], 0, ic, 0);
         const wire2b = Connect(ic, 0, objs2[1], 0);
 
-        const data2 = new ICData(new DigitalObjectSet([objs2[0], wire2a, ic, wire2b, objs2[1]]));
+        const data2 = new ICData(DigitalObjectSet.from([objs2[0], wire2a, ic, wire2b, objs2[1]]));
         const ic2 = new IC(data2);
 
         const copy = CopyGroup([ic2]);

@@ -154,7 +154,7 @@ export class ICData {
     }
 
     public copy(): DigitalObjectSet {
-        return new DigitalObjectSet(CopyGroup(this.collection.toList()).toList());
+        return DigitalObjectSet.from(CopyGroup(this.collection.toList()).toList());
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
@@ -186,8 +186,8 @@ export class ICData {
      * @returns The newly created ICData
      */
     public static Create(objects: IOObject[] | DigitalObjectSet): ICData {
-        objects = objects instanceof DigitalObjectSet ? objects.toList() : objects;
-        const copies = new DigitalObjectSet(CopyGroup(objects).toList());
+        objects = (objects instanceof DigitalObjectSet ? objects.toList() : objects);
+        const copies = DigitalObjectSet.from(CopyGroup(objects).toList());
         if (!this.IsValid(copies))
             return undefined;
 
@@ -211,6 +211,6 @@ export class ICData {
         inputs.sort(sortByPos);
         outputs.sort(sortByPos);
 
-        return new ICData(new DigitalObjectSet([...inputs, ...outputs, ...others]));
+        return new ICData(new DigitalObjectSet(inputs, outputs, others, copies.getWires()));
     }
 }

@@ -33,10 +33,10 @@ describe("Simplifications", () => {
             objects.push(Connect(and, 0, not, 0).getWire());
             objects.push(Connect(not, 0, o, 0).getWire());
 
-            const circuit = new DigitalObjectSet(objects);
+            const circuit = DigitalObjectSet.from(objects);
 
             const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
-    
+
             test("NOTGate and ANDGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(and)).toBe(-1);
                 expect(negatedCircuit.getComponents().indexOf(not)).toBe(-1);
@@ -50,27 +50,27 @@ describe("Simplifications", () => {
                 });
                 test("Input a on", () => {
                     a.activate(true);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
                 test("Input a,b on", () => {
                     b.activate(true);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Input b on", () => {
                     a.activate(false);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
                 test("Inputs off", () => {
                     b.activate(false);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
             });
         });
-        
+
         describe("!(a|b)", () => {
             const [a, b, or, not, o] = Place(new Switch(), new Switch(), new ORGate(), new NOTGate(), new LED());
 
@@ -87,10 +87,10 @@ describe("Simplifications", () => {
             objects.push(Connect(or, 0, not, 0).getWire());
             objects.push(Connect(not, 0, o, 0).getWire());
 
-            const circuit = new DigitalObjectSet(objects);
+            const circuit = DigitalObjectSet.from(objects);
 
             const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
-    
+
             test("NOTGate and ORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(or)).toBe(-1);
                 expect(negatedCircuit.getComponents().indexOf(not)).toBe(-1);
@@ -104,27 +104,27 @@ describe("Simplifications", () => {
                 });
                 test("Input a on", () => {
                     a.activate(true);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Input a,b on", () => {
                     b.activate(true);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Input b on", () => {
                     a.activate(false);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Inputs off", () => {
                     b.activate(false);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
             });
         });
-        
+
         describe("!(a^b)", () => {
             const [a, b, xor, not, o] = Place(new Switch(), new Switch(), new XORGate(), new NOTGate(), new LED());
 
@@ -141,10 +141,10 @@ describe("Simplifications", () => {
             objects.push(Connect(xor, 0, not, 0).getWire());
             objects.push(Connect(not, 0, o, 0).getWire());
 
-            const circuit = new DigitalObjectSet(objects);
+            const circuit = DigitalObjectSet.from(objects);
 
             const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
-    
+
             test("NOTGate and XORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(xor)).toBe(-1);
                 expect(negatedCircuit.getComponents().indexOf(not)).toBe(-1);
@@ -158,22 +158,22 @@ describe("Simplifications", () => {
                 });
                 test("Input a on", () => {
                     a.activate(true);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Input a,b on", () => {
                     b.activate(true);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
                 test("Input b on", () => {
                     a.activate(false);
-            
+
                     expect(o.isOn()).toBe(false);
                 });
                 test("Inputs off", () => {
                     b.activate(false);
-            
+
                     expect(o.isOn()).toBe(true);
                 });
             });
