@@ -39,7 +39,7 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
 
                 // Swap out the gates
                 action.add(CreateSnipGateAction(other));
-                action.add(CreateReplaceDigitalComponentAction(designer, gate, newGate));
+                action.add(CreateReplaceDigitalComponentAction(gate, newGate));
 
                 // Add new wires to negatedCircuit
                 newGate.getInputs().forEach(wire => negatedCircuit.push(wire));

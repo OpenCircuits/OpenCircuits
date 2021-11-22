@@ -3,27 +3,27 @@ import {PlaceAction, DeleteAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
-import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
-import {Switch, XORGate} from "digital/models/ioobjects";
+import {DigitalComponent} from "digital/models";
+import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
 /**
  * Returns a GroupAction for replacing the original component with a new one. Replacement must have at least as many input/output ports
- * as original has in use. original must be placed in designer, and replacement must not be placed in designer.
+ * as original has in use. original must be placed in a designer, and replacement must not be placed in a designer.
  * This action implicitly executes on creation.
  * 
- * @param designer the designer that original is placed on
  * @param original the component to replace, already in designer
  * @param replacement the new component, not yet in designer
  * @return a GroupAction containing the actions required to replace the component
  * @throws {Error} if replacement has less input ports than original has in use
  * @throws {Error} if replacement has less output ports than original has in use
  */
- export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesigner, original: DigitalComponent, replacement: DigitalComponent): GroupAction {
+ export function CreateReplaceDigitalComponentAction(original: DigitalComponent, replacement: DigitalComponent): GroupAction {
+    const designer = original.getDesigner();
     const action = new GroupAction();
-    const origInputs = original.getInputPorts();
+    const origInputs = original instanceof Mux ? original.getInputPorts().concat(original.getSelectPorts()) : original.getInputPorts();
     const origOutputs = original.getOutputPorts();
-    const repInputs = replacement.getInputPorts();
+    const repInputs = replacement instanceof Mux ? replacement.getInputPorts().concat(replacement.getSelectPorts()) : replacement.getInputPorts();
     const repOutputs = replacement.getOutputPorts();
 
     const origInputsInUse = origInputs.filter(port => port.getWires().length > 0);
