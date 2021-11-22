@@ -135,8 +135,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             }
 
             // Make sure all selections are exactly of types:
-            const active = config.isActive ? 
-                config.isActive(selections) : 
+            const active = config.isActive?.(selections) ??
                 config.types.reduce(
                     (enabled, Type) => enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()
                 ),
@@ -148,7 +147,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
             const comps = selections.get() as T;
 
-            const counts = comps.map(s => config.getProps(s)).filter(Boolean);
+            const counts = comps
+                .map(s => config.getProps(s))
+                .filter(s => (s !== undefined));
 
             same = counts.every(c => (c === counts[0]));
             val = counts[0];
