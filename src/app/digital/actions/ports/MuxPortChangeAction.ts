@@ -38,7 +38,7 @@ export class MuxPortChangeAction extends PortChangeAction {
         if (obj instanceof Multiplexer)
             this.otherPortAction = new InputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
         else
-            this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(3, target));
+            this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
     }
 
 
