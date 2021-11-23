@@ -3,7 +3,7 @@ import {K_KEY} from "core/utils/Constants";
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Component} from "core/models";
-import { Snap } from "core/utils/ComponentUtils";
+import {Snap} from "core/utils/ComponentUtils";
 
 import {EventHandler} from "../EventHandler";
 
