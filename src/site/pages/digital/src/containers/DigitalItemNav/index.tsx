@@ -4,12 +4,11 @@ import {useEffect, useState} from "react";
 import {ALT_KEY} from "core/utils/Constants";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {IsICDataInUse} from "digital/utils/ComponentUtils";
+
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 
 import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
-import {IC} from "digital/models/ioobjects";
-import {ICData} from "digital/models/ioobjects";
 
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {ItemNav, ItemNavItem, ItemNavSection} from "shared/containers/ItemNav";
@@ -111,8 +110,7 @@ export const DigitalItemNav = ({info}: Props) => {
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
         onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
             const icData = info.designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
-            const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
-            if (icInUse) {
+            if (IsICDataInUse(info.designer, icData)) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");
                 return false;
             }

@@ -11,6 +11,7 @@ export type ModuleTypes = number | string;
 export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
     valType: "float" | "int" | "string";
+    isActive?: (selections: SelectionsWrapper) => boolean;
     getProps: (o: T[number]) => P;
     getAction: (s: (T[number])[], newVal: P) => Action;
     getDisplayVal?: (val: P) => string | number;
@@ -134,8 +135,10 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             }
 
             // Make sure all selections are exactly of types:
-            const active = config.types.reduce((enabled, Type) =>
-                enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()),
+            const active = config.isActive?.(selections) ??
+                config.types.reduce(
+                    (enabled, Type) => enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()
+                ),
             false);
             if (!active) {
                 setState({active: false});
@@ -144,7 +147,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
             const comps = selections.get() as T;
 
-            const counts = comps.map(s => config.getProps(s));
+            const counts = comps
+                .map(s => config.getProps(s))
+                .filter(s => (s !== undefined));
 
             same = counts.every(c => (c === counts[0]));
             val = counts[0];
