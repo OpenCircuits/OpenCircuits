@@ -1,6 +1,6 @@
 import {Deserialize} from "serialeazy";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -15,9 +15,29 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {TransferICDataAction} from "digital/actions/TransferICDataAction";
 import {IC} from "digital/models/ioobjects";
 
+/**
+ * Maps positions of pasted components based around intially selected item
+ * @param comps components in clipboard
+ * @param info circuit info from which to pull camera and input
+ * @returns target positions for pasting at mouse pos
+ */
+function shiftAllObj(comps: Component[], info: DigitalCircuitInfo): Vector[] {
+    const {camera, input} = info;
+    let worldMousePos = camera.getWorldPos(input.getMousePos());
+    let shift = comps[0].getPos().sub(worldMousePos);
+    return comps.map(o => o.getPos().sub(shift))
+}
 
-export function DigitalPaste(data: string, {history, designer, selections, renderer}: DigitalCircuitInfo): boolean {
+/**
+ * 
+ * @param data clipboard data
+ * @param info circuit info
+ * @param mouse true if being pasted using right click menu
+ * @returns true if successful paste
+ */
+export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: boolean): boolean {
     try {
+        const {history, designer, selections, renderer} = info;
         const objs = Deserialize<IOObject[]>(data);
 
         // Find ICs and ICData
@@ -29,12 +49,16 @@ export function DigitalPaste(data: string, {history, designer, selections, rende
         // Get all components
         const comps = objs.filter(o => o instanceof Component) as Component[];
 
+        let targetPositions = mouse ?
+            shiftAllObj(comps, info) :
+            comps.map(o => o.getPos().add(V(5, 5)));
+
         history.add(new GroupAction([
             new TransferICDataAction(icData, designer),
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(V(5, 5))))
+            new TranslateAction(comps, comps.map(o => o.getPos()), targetPositions)
         ]).execute());
 
         renderer.render();
