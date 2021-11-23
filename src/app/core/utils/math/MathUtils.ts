@@ -5,6 +5,7 @@ import {WIRE_DIST_ITERATIONS,
 import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
 import {BezierCurve} from "./BezierCurve";
+import { posix } from "path/posix";
 
 /**
  * Clamps a number between a given min and max
@@ -57,6 +58,18 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
     // return point on closest side, so if dragging port inside IC, snaps it to edge, makes dragging easier
     let minDist = pos.x-bl.x;
     let minPos = V(bl.x, pos.y)
+    if (tr.x - pos.x < minDist) {
+        minDist = tr.x-pos.x;
+        minPos = V(tr.x, pos.y);
+    }
+    if (pos.y - bl.y < minDist) {
+        minDist = pos.y-bl.y;
+        minPos = V(pos.x,bl.y);
+    }
+    if (tr.y - pos.y < minDist) {
+        minDist = tr.y-pos.y;
+        minPos = V(pos.x,tr.y);
+    }
     return minPos;
     // Old default return, (0,0), was reason for ports getting stuck inside
     //return V(0, 0);
