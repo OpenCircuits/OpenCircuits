@@ -51,9 +51,19 @@ export const ICPortTool = (() => {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
 
+                //----
+                const size = ic.getSize();
+                const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
+                const v = worldMousePos.sub(p).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
+                                                                                       IO_PORT_LENGTH+size.y/2))).add(p);
+                port.setOriginPos(p);
+                port.setTargetPos(v);
+                //----
+
+
                 // allow port to be placed inside an IC
-                port.setOriginPos(new Vector(worldMousePos));
-                port.setTargetPos(new Vector(worldMousePos));
+                // port.setOriginPos(new Vector(worldMousePos));
+                // port.setTargetPos(new Vector(worldMousePos));
                 ic.update();
             } else {
                 const size = ic.getSize();
