@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
 import {ClampedValue} from "math/ClampedValue";
 
@@ -16,6 +16,33 @@ export class Demultiplexer extends Mux {
         super(new ClampedValue(1), new ClampedValue(4, 2, Math.pow(2,8)),
               undefined, new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
         this.updatePortNames();
+        this.setOriginPositions();
+    }
+
+    /**
+     * Sets default names for the select and output ports so the user can easily
+     * tell what they are used for.
+     */
+     private updatePortNames(): void {
+        this.selects.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('S'+i)});
+        this.outputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('O'+i)});
+    }
+
+    /**
+     * Sets the selector port origin positions to be diagonally along the bottom
+     * edge of the Demultiplexer.
+     */
+    private setOriginPositions(): void {
+        const width = this.getSize().x;
+        const slope = MULTIPLEXER_HEIGHT_OFFSET / width;
+        const midPortOriginOffset = this.getSize().y / 2 - MULTIPLEXER_HEIGHT_OFFSET / 2;
+        this.getSelectPorts().forEach((p) => {
+            let pos = p.getOriginPos();
+            pos.y = midPortOriginOffset + slope * pos.x;
+            p.setOriginPos(pos);
+        });
     }
 
     public activate(): void {
@@ -33,19 +60,8 @@ export class Demultiplexer extends Mux {
         super.setSelectPortCount(val);
         // update the input port to align with the left edge of the DeMux
         this.inputs.updatePortPositions();
-        // update the default names (applicable when increasing select ports)
         this.updatePortNames();
-    }
-
-    /**
-     * Sets default names for the select and output ports so the user can easily
-     * tell what they are used for.
-     */
-    private updatePortNames(): void {
-        this.selects.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('S'+i)});
-        this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('O'+i)});
+        this.setOriginPositions();
     }
 
     public getDisplayName(): string {

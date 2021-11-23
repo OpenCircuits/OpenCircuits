@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
 import {ClampedValue} from "math/ClampedValue";
 
@@ -16,6 +16,36 @@ export class Multiplexer extends Mux {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
               new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE));
         this.updatePortNames();
+        this.setOriginPositions();
+    }
+
+    /**
+     * Sets default names for the select and input ports so the user can easily
+     * tell what they are used for.
+     */
+     private updatePortNames(): void {
+        this.selects.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('S'+i)});
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName('I'+i)});
+    }
+
+    /**
+     * Sets the selector port origin positions to be diagonally along the bottom
+     * edge of the Multiplexer.
+     */
+    private setOriginPositions(): void {
+        const width = this.getSize().x;
+        const slope = MULTIPLEXER_HEIGHT_OFFSET / width; // give the 7 a name somewhere in Constants.ts
+        const midPortOriginOffset = this.getSize().y / 2 - MULTIPLEXER_HEIGHT_OFFSET / 2;
+        this.getSelectPorts().forEach((p) => {
+            let pos = p.getOriginPos();
+            pos.y = midPortOriginOffset - slope * pos.x;
+            p.setOriginPos(pos);
+        });
+        // TODO move y origin coordinate for input ports up by default_size/2
+        // move selector ports up default_size/2
+        // make a little smaller so there isn't so much extra space at the top
     }
 
     /**
@@ -33,19 +63,8 @@ export class Multiplexer extends Mux {
         super.setSelectPortCount(val);
         // update the output port to align with the right edge of the Mux
         this.outputs.updatePortPositions();
-        // update the default names (applicable when increasing select ports)
         this.updatePortNames();
-    }
-
-    /**
-     * Sets default names for the select and input ports so the user can easily
-     * tell what they are used for.
-     */
-    private updatePortNames(): void {
-        this.selects.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('S'+i)});
-        this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('I'+i)});
+        this.setOriginPositions();
     }
 
     public getDisplayName(): string {
