@@ -96,7 +96,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         reset();
                     } catch (err) {
                         setErrorMessage(err.message);
-                        console.log(err);
+                        console.error(err);
                     }
                 }}>Generate</button>
 
