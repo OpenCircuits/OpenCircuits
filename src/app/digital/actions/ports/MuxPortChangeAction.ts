@@ -1,7 +1,3 @@
-import {DEFAULT_SIZE} from "core/utils/Constants";
-
-import {V} from "Vector";
-
 import {Action} from "core/actions/Action";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
@@ -28,9 +24,7 @@ export class MuxPortChangeAction extends PortChangeAction {
     }
 
     protected changeSize(val: number): void {
-        const width = Math.max(DEFAULT_SIZE/2*(val-1), DEFAULT_SIZE);
-        const height = DEFAULT_SIZE/2*Math.pow(2, val);
-        this.obj.setSize(V(width+10, height));
+        this.obj.setSize(Mux.calcSize(val));
     }
 
     protected getPorts(): Port[] {
