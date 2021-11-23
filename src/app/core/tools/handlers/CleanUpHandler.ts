@@ -3,14 +3,14 @@ import {K_KEY} from "core/utils/Constants";
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Component} from "core/models";
+import { Snap } from "core/utils/ComponentUtils";
 
 import {EventHandler} from "../EventHandler";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {RotateAction} from "core/actions/transform/RotateAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
-import {TranslateTool} from "../TranslateTool";
-import { Snap } from "core/utils/ComponentUtils";
+
 
 
 
