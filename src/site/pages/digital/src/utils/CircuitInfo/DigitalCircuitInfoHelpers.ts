@@ -9,7 +9,7 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
@@ -130,7 +130,13 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                 return;
 
             const {circuit} = store.getState();
-            
+
+            console.log("Id ==>", circuit.id);
+
+            if (circuit.id == "") {
+                window.alert("Unable to duplicate");
+                return;
+            }
 
             const thumbnail = GenerateThumbnail({ info });
             const circuitCopy = JSON.stringify(
