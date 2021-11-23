@@ -10,6 +10,7 @@ import {Transform} from "math/Transform";
 import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
+import { GRID_SIZE } from "./Constants";
 
 import {isPressable} from "core/utils/Pressable";
 
@@ -19,6 +20,8 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+
+import { TranslateTool } from "core/tools/TranslateTool";
 
 
 /**
@@ -360,4 +363,10 @@ export function PortContains(port: Port, mousePos: Vector): boolean {
     rect.setParent(port.getParent().getTransform());
 
     return RectContains(rect, mousePos);
+}
+
+//Snap the vector to the grid
+export function Snap(p: Vector): Vector {
+    return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
+             Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
 }

@@ -8,6 +8,9 @@ import {EventHandler} from "../EventHandler";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {RotateAction} from "core/actions/transform/RotateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {TranslateTool} from "../TranslateTool";
+import { Snap } from "core/utils/ComponentUtils";
 
 
 
@@ -23,11 +26,17 @@ export const CleanUpHandler: EventHandler = ({
         // If nothing is selected, select all units.
         const action = new GroupAction();
         const components = (selections.amount() == 0) ? (designer.getObjects() as Component[]) : (selections.get() as Component[]);
-        
         action.add(
             components.map(c => 
                 new RotateAction([c], c.getPos(), [c.getAngle()], [0])
         ));
+        action.add(
+            new TranslateAction(
+                components,
+                components.map(o => o.getPos()),
+                components.map(o => Snap(o.getPos()))
+            )
+        );
 
         history.add(action.execute()); 
     }
