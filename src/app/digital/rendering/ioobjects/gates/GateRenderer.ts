@@ -30,21 +30,23 @@ import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 export const GateRenderer = (() => {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
-        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+        // Border width increased to account for curve not being able to cover small visual clips
+        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH+0.1);
         const amt = 2 * Math.floor(inputs / 4) + 1;
 
+        // Renders a specialized, shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
         if (amt == 1 && dx != 0) {
             for (let i = 0; i < amt; i++) {
                 const d = (i - Math.floor(amt/2)) * size.y;
                 const h = DEFAULT_BORDER_WIDTH;
-                const l1 = -size.y/2;
-                const l2 = +size.y/2;
+                const l1 = -size.y/2 + 0.7;
+                const l2 = +size.y/2 - 0.7;
     
                 const s = size.x/2 - h;
                 const l = size.x/5 - h;
     
-                const p1 = V(-s + dx, l1+0.7 + d);
-                const p2 = V(-s + dx, l2-0.7 + d);
+                const p1 = V(-s + dx, l1 + d);
+                const p2 = V(-s + dx, l2 + d);
                 const c  = V(-l + dx, d);
                 renderer.draw(new QuadCurve(p1, p2, c), style);
             }
@@ -56,12 +58,12 @@ export const GateRenderer = (() => {
                 const l1 = -size.y/2;
                 const l2 = +size.y/2;
 
-                const s = size.x/2 - h;
+                const s = size.x/2 - h + 0.6;
                 const l = size.x/5 - h;
-
-                const p1 = V(-s-0.6 + dx, l1 + d);
-                const p2 = V(-s-0.6 + dx, l2 + d);
+                const p1 = V(-s + dx, l1 + d);
+                const p2 = V(-s + dx, l2 + d);
                 const c  = V(-l + dx, d);
+                // Rounds the caps of the curves for better fitting, and only renders if it is not overlaying the original edge of the gate
                 if (amt != 1 || dx != 0) {
                     renderer.save();
                     renderer.setPathStyle({ lineCap: "round" });
