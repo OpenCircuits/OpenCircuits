@@ -1,10 +1,11 @@
 import {useState} from "react";
 
-import {OperatorFormat, OperatorFormatLabel, TokenType} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
 import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
+import {ButtonToggle} from "shared/components/ButtonToggle";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
@@ -60,10 +61,11 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                     <div>
                         <h3>Notation</h3>
                         {Formats.map(curFormat =>
-                            <SwitchToggle key={curFormat.icon} isOn={format === curFormat.icon} text={curFormat.label}
+                            <ButtonToggle key={curFormat.icon}
+                                          isOn={format === curFormat.icon} text={curFormat.label} height="40px"
                                           onChange={() => setFormat(curFormat.icon)} />
                         )}
-                        <SwitchToggle isOn={format === "custom"} text={"Custom"}
+                        <ButtonToggle isOn={format === "custom"} text={"Custom"} height="40px"
                                       onChange={() => setFormat("custom")} />
                         {
                             format === "custom" &&
@@ -73,7 +75,8 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <SwitchToggle isOn={isIC} text={"Generate into IC"} onChange={() => setIsIC(!isIC)} />
+                        <SwitchToggle isOn={isIC} text={"Generate into IC"} height="40px"
+                                      onChange={() => setIsIC(!isIC)} />
                         <br/>
                         <br/>
                         <label>Input Component Type:  </label>
