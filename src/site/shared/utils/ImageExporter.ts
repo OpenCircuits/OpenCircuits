@@ -1,29 +1,25 @@
 import jsPDF from "jspdf";
 
-export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: string){
-    let filename;
-    let data;
-    if(type == "png"){
-          data = canvas.toDataURL("image/png", 1.0);
-    }
-    if(type == "jpeg"){
-    const context = canvas.getContext('2d'); // get the context to overwrite the background of the canvas 
-    const background_color = "#ccc"; // set the background color
 
-    context.save();// save the current state of the canvas
-    context.globalCompositeOperation = 'destination-over'; // set the composite operation to overwrite the background
-    context.fillStyle = background_color ;
-    
-    context.fillRect(0, 0, canvas.width, canvas.height);    
-    data = canvas.toDataURL("image/jpeg", 1.0); // get the data from the canvas
-    context.restore() // restore the canvas to its previous state
+export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: "png" | "jpeg") {
+    // For JPEG, need to color the background manually
+    if (type == "jpeg") {
+        // From https://stackoverflow.com/a/50126796
+        const ctx = canvas.getContext("2d"); // get the context to overwrite the background of the canvas
+        ctx.save(); // save the current state of the context
+        ctx.globalCompositeOperation = "destination-over"; // set the composite operation to overwrite the background
+        ctx.fillStyle = "#ccc";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore() // restore the context to its previous state (back to default bg and operation)
     }
 
-        // Get name
-        if (projectName.replace(/\s+/g, "") === "")
+    const data = canvas.toDataURL(`image/${type}, 1.0`);
+
+    // Get name
+    if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
 
-    type == "png" ? filename=projectName + ".png" : filename=projectName + ".jpeg";
+    const filename = `${projectName}.${type}`;
 
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         const file = new Blob([data], {type: "image/png"});
@@ -41,7 +37,6 @@ export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: 
         }, 0);
     }
 }
-
 
 
 export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
@@ -65,5 +60,3 @@ export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
     pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save(projectName + ".pdf");
 }
-
-

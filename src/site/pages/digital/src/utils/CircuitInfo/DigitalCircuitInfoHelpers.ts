@@ -85,7 +85,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     SaveFile(helpers.GetSerializedCircuit(), circuit.name);
                     break;
                 case "jpeg":
-                    SaveImage(canvas.current, circuit.name,"jpeg");
+                    SaveImage(canvas.current, circuit.name, "jpeg");
                     break;
             }
         },
