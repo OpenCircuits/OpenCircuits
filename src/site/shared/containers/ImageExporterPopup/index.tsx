@@ -1,29 +1,23 @@
 import {useEffect, useRef, useState} from "react";
 
+import {HEADER_HEIGHT} from "shared/utils/Constants";
+
+import {Clamp} from "math/MathUtils";
+
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {ImageExportOptions, SaveImage} from "shared/utils/ImageExporter";
+
 import {CloseHeaderPopups} from "shared/state/Header";
 
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
+import {ButtonToggle} from "shared/components/ButtonToggle";
 
 import "./index.scss";
-import {Clamp} from "math/MathUtils";
-import {ButtonToggle} from "shared/components/ButtonToggle";
-import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 
 const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10000;
-
-
-type ImageExportOptions = {
-    type: "png" | "jpeg" | "pdf";
-    width: number;
-    height: number;
-    bgColor: string;
-    useBg: boolean;
-    useGrid: boolean;
-}
 
 export type ImageExporterPreviewProps = {
     canvas: React.MutableRefObject<HTMLCanvasElement>;
@@ -38,8 +32,8 @@ type Props = {
     preview: (props: ImageExporterPreviewProps) => JSX.Element;
 }
 export const ImageExporterPopup = ({preview}: Props) => {
-    const {curPopup} = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup })
+    const {curPopup, circuitName} = useSharedSelector(
+        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
@@ -158,8 +152,12 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         </div>
                     </div>
                     <div>
-                        <button name="confirm">Export as {state.type.toUpperCase()}</button>
-                        <button name="cancel">Cancel</button>
+                        <button name="confirm" onClick={() => SaveImage(canvas.current, circuitName, state)}>
+                            Export as {state.type.toUpperCase()}
+                        </button>
+                        <button name="cancel" onClick={() => dispatch(CloseHeaderPopups())}>
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </div>

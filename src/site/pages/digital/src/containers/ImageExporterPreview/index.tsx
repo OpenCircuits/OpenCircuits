@@ -36,7 +36,7 @@ export const ImageExporterPreview = (() => {
         useLayoutEffect(() => {
             renderer.setOptions(renderingOptions);
             renderer.render();
-        }, [renderingOptions.useGrid]);
+        }, [renderingOptions.useGrid, style.backgroundColor]);
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
