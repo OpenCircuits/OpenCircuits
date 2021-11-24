@@ -20,7 +20,7 @@ type Props = ImageExporterPreviewProps & {
 export const ImageExporterPreview = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
-    return ({ mainInfo, isActive, canvas, width, height, style }: Props) => {
+    return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
 
         // On resize (useLayoutEffect happens sychronously so
@@ -31,6 +31,12 @@ export const ImageExporterPreview = (() => {
             camera.resize(width, height); // Update camera size when w/h changes
             renderer.render(); // Re-render
         }, [isActive, width, height]);
+
+        // Re-render when rendering options change
+        useLayoutEffect(() => {
+            renderer.setOptions(renderingOptions);
+            renderer.render();
+        }, [renderingOptions.useGrid]);
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
@@ -52,7 +58,7 @@ export const ImageExporterPreview = (() => {
             // Add render callbacks and set render function
             designer.addCallback(() => renderer.render());
 
-            renderer.setRenderFunction(() => renderFunc());
+            renderer.setRenderFunction(renderFunc);
             renderer.render();
         }, []); // Pass empty array so that this only runs once on mount
 

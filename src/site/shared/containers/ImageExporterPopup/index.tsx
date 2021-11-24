@@ -29,6 +29,7 @@ export type ImageExporterPreviewProps = {
     isActive: boolean;
     width: number;
     height: number;
+    useGrid: boolean;
     style: React.CSSProperties;
 }
 
@@ -87,6 +88,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         isActive: (curPopup === "image_exporter"),
                         width: Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
                         height: Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        useGrid: state.useGrid,
                         style: {
                             backgroundColor: state.bgColor,
                         }
