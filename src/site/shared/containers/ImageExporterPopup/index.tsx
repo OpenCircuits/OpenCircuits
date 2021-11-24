@@ -21,6 +21,7 @@ type ImageExportOptions = {
     width: number;
     height: number;
     bgColor: string;
+    useBg: boolean;
     useGrid: boolean;
 }
 
@@ -46,7 +47,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
     const [state, setState] = useState<ImageExportOptions>({
         type: "png",
         width: window.innerWidth, height: window.innerHeight-HEADER_HEIGHT,
-        bgColor: "#cccccc", useGrid: true,
+        bgColor: "#cccccc", useBg: true, useGrid: true,
     });
 
     const wrapper = useRef<HTMLDivElement>();
@@ -101,10 +102,8 @@ export const ImageExporterPopup = ({preview}: Props) => {
                             <span>Grid</span>
                             <div className="imageexporter__popup__options__switch">
                                 <SwitchToggle
-                                    isOn={state.useGrid}
-                                    onChange={() => setState({...state, useGrid: !state.useGrid})}
-                                    hideStateText
-                                    text={""} />
+                                    isOn={state.useGrid} height="60px"
+                                    onChange={() => setState({...state, useGrid: !state.useGrid})} />
                             </div>
                         </div>
                         <div>

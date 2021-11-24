@@ -61,10 +61,10 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         <h3>Notation</h3>
                         {Formats.map(curFormat =>
                             <SwitchToggle key={curFormat.icon} isOn={format === curFormat.icon} text={curFormat.label}
-                                          onChange={() => setFormat(curFormat.icon)} hideStateText={true} />
+                                          onChange={() => setFormat(curFormat.icon)} />
                         )}
                         <SwitchToggle isOn={format === "custom"} text={"Custom"}
-                                      onChange={() => setFormat("custom")} hideStateText={true} />
+                                      onChange={() => setFormat("custom")} />
                         {
                             format === "custom" &&
                             <CustomOps customOps={customOps} setCustomOps={setCustomOps} />
@@ -73,7 +73,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <SwitchToggle isOn={isIC} text={"Generate into IC"} onChange={() => setIsIC(!isIC)} hideStateText={true} />
+                        <SwitchToggle isOn={isIC} text={"Generate into IC"} onChange={() => setIsIC(!isIC)} />
                         <br/>
                         <br/>
                         <label>Input Component Type:  </label>
