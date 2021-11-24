@@ -111,18 +111,12 @@
             margin-bottom: 40px;
         }
 
-        &__switch {
-            & > div {
-                height: 60px;
-            }
-        }
-
-        &__buttons {
+        &__buttons, &__switches {
             display: flex;
 
             flex-direction: row;
 
-            justify-content: space-between;
+            justify-content: space-around;
 
             & > div {
                 display: flex;

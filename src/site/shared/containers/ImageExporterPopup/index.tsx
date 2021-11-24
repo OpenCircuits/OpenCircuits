@@ -91,19 +91,25 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         height: Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
                         useGrid: state.useGrid,
                         style: {
-                            backgroundColor: state.bgColor,
+                            backgroundColor: state.useBg ? state.bgColor : "transparent",
                         }
                     })}
                 </div>
                 <div className="imageexporter__popup__options">
                     <h2>Options</h2>
                     <div>
-                        <div>
-                            <span>Grid</span>
-                            <div className="imageexporter__popup__options__switch">
+                        <div className="imageexporter__popup__options__switches">
+                            <div>
+                                <span>Grid</span>
                                 <SwitchToggle
                                     isOn={state.useGrid} height="60px"
                                     onChange={() => setState({...state, useGrid: !state.useGrid})} />
+                            </div>
+                            <div>
+                                <span>Background</span>
+                                <SwitchToggle
+                                    isOn={state.useBg} height="60px"
+                                    onChange={() => setState({...state, useBg: !state.useBg})} />
                             </div>
                         </div>
                         <div>
