@@ -9,6 +9,7 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 import "./index.scss";
 import {Clamp} from "math/MathUtils";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 
 const MIN_IMG_SIZE = 50;
@@ -23,7 +24,18 @@ type ImageExportOptions = {
     useGrid: boolean;
 }
 
-export const ImageExporterPopup = () => {
+export type ImageExporterPreviewProps = {
+    canvas: React.MutableRefObject<HTMLCanvasElement>;
+    isActive: boolean;
+    width: number;
+    height: number;
+    style: React.CSSProperties;
+}
+
+type Props = {
+    preview: (props: ImageExporterPreviewProps) => JSX.Element;
+}
+export const ImageExporterPopup = ({preview}: Props) => {
     const {curPopup} = useSharedSelector(
         state => ({ curPopup: state.header.curPopup })
     );
@@ -31,7 +43,9 @@ export const ImageExporterPopup = () => {
 
 
     const [state, setState] = useState<ImageExportOptions>({
-        type: "png", width: 300, height: 200, bgColor: "#cccccc", useGrid: true,
+        type: "png",
+        width: window.innerWidth, height: window.innerHeight-HEADER_HEIGHT,
+        bgColor: "#cccccc", useGrid: true,
     });
 
     const wrapper = useRef<HTMLDivElement>();
@@ -68,13 +82,15 @@ export const ImageExporterPopup = () => {
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="imageexporter__popup">
                 <div className="imageexporter__popup__canvas-wrapper" ref={wrapper}>
-                    <canvas
-                        ref={canvas}
-                        width ={`${Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE)}px`}
-                        height={`${Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE)}px`}
-                        style={{
+                    {preview({
+                        canvas,
+                        isActive: (curPopup === "image_exporter"),
+                        width: Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        height: Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        style: {
                             backgroundColor: state.bgColor,
-                        }} />
+                        }
+                    })}
                 </div>
                 <div className="imageexporter__popup__options">
                     <h2>Options</h2>

@@ -70,6 +70,7 @@ import {ClearOscilloscopeButtonModule,
 import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
+import {ImageExporterPreview} from "../ImageExporterPreview";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>
@@ -145,7 +146,9 @@ export const App = ((store: AppStore) => {
 
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
-                <ImageExporterPopup />
+                <ImageExporterPopup preview={(props) => (
+                    <ImageExporterPreview mainInfo={info} {...props} />
+                )} />
 
                 <ExprToCircuitPopup mainInfo={info} />
 
