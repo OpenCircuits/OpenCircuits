@@ -1,27 +1,14 @@
-import {useEffect, useLayoutEffect, useRef} from "react";
+import {useEffect, useLayoutEffect} from "react";
 
-import {ESC_KEY, IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
-import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
+import {Input} from "core/utils/Input";
 
-import {Input}        from "core/utils/Input";
-import {GetCameraFit} from "core/utils/ComponentUtils";
-
-import {CullableObject} from "core/models";
-
-import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-
-import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
-
-import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
@@ -77,9 +64,11 @@ export const ImageExporterPreview = (() => {
                 return;
             }
 
+            info.debugOptions = mainInfo.debugOptions;
             info.designer.replace(mainInfo.designer);
             info.camera.setPos(mainInfo.camera.getPos());
             info.camera.setZoom(mainInfo.camera.getZoom());
+            info.camera.resize(width, height);
 
             // Unblock input
             info.input.unblock();
