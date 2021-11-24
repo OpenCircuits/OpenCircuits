@@ -1,7 +1,7 @@
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-import {OpenHeaderMenu, CloseHeaderMenus} from "shared/state/Header";
+import {OpenHeaderMenu, CloseHeaderMenus, OpenHeaderPopup} from "shared/state/Header";
 
 import {Dropdown} from "./Dropdown";
 
@@ -23,6 +23,13 @@ export const DownloadMenuDropdown = ({ helpers: {SaveCircuitToFile} }: Props) =>
             <div title="Download circuit locally" onClick={() => SaveCircuitToFile("circuit")}>
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
                 <span>Download</span>
+            </div>
+            <div title="Export as Image" onClick={() => {
+                    dispatch(CloseHeaderMenus());
+                    dispatch(OpenHeaderPopup("image_exporter"));
+                }}>
+                <img src="img/icons/png_download.svg" height="100%" alt="Export current scene as an image"/>
+                <span>Export Image</span>
             </div>
             <div title="Save circuit as PDF" onClick={() => SaveCircuitToFile("pdf")}>
                 <img src="img/icons/pdf_download.svg" height="100%" alt="Download current scene as PDF"/>

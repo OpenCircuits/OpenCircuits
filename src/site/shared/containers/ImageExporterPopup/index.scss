@@ -1,0 +1,137 @@
+@import "~shared/utils/constants";
+
+
+.imageexporter__popup {
+    display: flex;
+    flex-direction: row;
+
+    height: calc(100% - 100px);
+
+    & input {
+        font-size: 100%;
+
+        width: 30%;
+        padding: 3px;
+
+        color: #000;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+
+        background-color: transparent;
+
+        &[type="color"] {
+            border: 0;
+        }
+    }
+    & button {
+        color: #fff;
+
+        height: 30px;
+        margin-top: 5px;
+
+        padding: 0 7px;
+
+        border-radius: 4px;
+
+        cursor: pointer;
+
+        &[name="confirm"] {
+            background-color: $success-color;
+            &:hover {
+                background-color: darken($success-color, 5%);
+            }
+            &:active {
+                background-color: darken($success-color, 10%);
+            }
+        }
+        &[name="cancel"] {
+            background-color: $danger-color;
+            &:hover {
+                background-color: darken($danger-color, 5%);
+            }
+            &:active {
+                background-color: darken($danger-color, 10%);
+            }
+        }
+    }
+    & div {
+        text-align: center;
+    }
+
+    & hr {
+        margin-top: 20px;
+    }
+
+    &__canvas-wrapper {
+        display: flex;
+
+        flex: 1 0 auto;
+
+        align-items: center;
+        justify-content: center;
+
+        margin: 30px 0;
+
+        border: thin solid black;
+    }
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+
+        margin-left: 20px;
+
+        min-width: 200px;
+
+        & div, h2 {
+            text-align: left;
+        }
+
+        & > div {
+            display: flex;
+            flex-direction: column;
+
+            flex-grow: 0 1 auto;
+
+            & > div {
+                margin-bottom: 25px;
+
+                & > span {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                // height: 50px;
+            }
+        }
+
+        & > div:last-child {
+            margin-top: auto;
+            margin-bottom: 40px;
+        }
+
+        &__switch {
+            & > div {
+                height: 60px;
+            }
+        }
+
+        &__buttons {
+            display: flex;
+
+            flex-direction: row;
+
+            justify-content: space-between;
+
+            & > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                & > span {
+                    font-size: small;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+}
