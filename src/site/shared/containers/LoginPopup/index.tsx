@@ -44,7 +44,6 @@ export const LoginPopup = () => {
                                     alert("User name must not be blank!")
                                     return;
                                 }
-                                console.log("tesststst");
                                 dispatch(Login(new NoAuthState(username)));
                                 dispatch(CloseHeaderPopups());
                             }}>

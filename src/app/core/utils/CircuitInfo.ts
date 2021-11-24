@@ -26,4 +26,11 @@ export type CircuitInfo = {
     toolManager: ToolManager;
 
     renderer: RenderQueue;
+
+    debugOptions: {
+        debugCullboxes: boolean,
+        debugPressableBounds: boolean,
+        debugSelectionBounds: boolean,
+        debugNoFill: boolean
+    }
 }

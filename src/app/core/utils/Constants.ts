@@ -2,9 +2,6 @@ import {V} from "Vector";
 
 export const SAVE_VERSION = "2.1";
 
-export const DEBUG_CULLBOXES = false;
-export const DEBUG_PRESSABLE_BOUNDS = false;
-export const DEBUG_SELECTION_BOUNDS = false;
 export const DEBUG_NO_FILL = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;
@@ -91,3 +88,6 @@ export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 export const FIT_PADDING_RATIO = 1.2;
 export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
 export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
+
+export const ORGANIZE_SEP_X = 250;
+export const ORGANIZE_SEP_Y = 150;
