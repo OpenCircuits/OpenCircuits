@@ -16,7 +16,7 @@ import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/Circui
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
 import {SaveFile} from "shared/utils/Exporter";
-import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
+import {SaveImage, SavePDF} from "shared/utils/ImageExporter";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {GenerateThumbnail} from "../GenerateThumbnail";
@@ -79,10 +79,13 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     SavePDF(canvas.current, circuit.name);
                     break;
                 case "png":
-                    SavePNG(canvas.current, circuit.name);
+                    SaveImage(canvas.current, circuit.name, "png");
                     break;
                 case "circuit":
                     SaveFile(helpers.GetSerializedCircuit(), circuit.name);
+                    break;
+                case "jpeg":
+                    SaveImage(canvas.current, circuit.name, "jpeg");
                     break;
             }
         },
