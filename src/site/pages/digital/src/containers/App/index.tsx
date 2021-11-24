@@ -46,6 +46,7 @@ import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
 import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
@@ -70,7 +71,6 @@ import {ClearOscilloscopeButtonModule,
 import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
-import {ImageExporterPreview} from "../ImageExporterPreview";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) =>

@@ -7,11 +7,10 @@ import {PanTool}          from "core/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
+import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
+
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
-
-import "./index.scss";
-import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
 
 type Props = ImageExporterPreviewProps & {
