@@ -32,6 +32,10 @@ export const DownloadMenuDropdown = ({ helpers: {SaveCircuitToFile} }: Props) =>
                 <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as PNG"/>
                 <span>Download as PNG</span>
             </div>
+            <div title="Save circuit as JPEG" onClick={() => SaveCircuitToFile("jpeg")}>
+                <img src="img/icons/png_download.svg" height="100%" alt="Download current scene as JPEG"/>
+                <span>Download as JPEG</span>
+            </div>
         </Dropdown>
     );
 }
