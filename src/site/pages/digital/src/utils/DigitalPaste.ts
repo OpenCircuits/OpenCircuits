@@ -72,16 +72,16 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
  */
 function shiftAllObj(comps: Component[], info: DigitalCircuitInfo): Vector[] {
     const {camera, input} = info;
-    let worldMousePos = camera.getWorldPos(input.getMousePos());
-    let shift = comps[0].getPos().sub(worldMousePos);
-    return comps.map(o => o.getPos().sub(shift))
+    const worldMousePos = camera.getWorldPos(input.getMousePos());
+    const shift = worldMousePos.sub(comps[0].getPos());
+    return comps.map(o => o.getPos().add(shift));
 }
 
 /**
  * Performs paste action in Digital Circuit
  * @param data Clipboard data
  * @param info Circuit info
- * @param mouse True if being pasted using right click menu
+ * @param mouse True if being pasted using context menu
  * @returns True if successful paste
  */
 export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: boolean): boolean {
@@ -95,7 +95,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: bool
         const comps = objs.filter(o => o instanceof Component) as Component[];
 
         // Determine target positions for pasted components
-        let targetPositions = mouse ?
+        const targetPositions = mouse ?
             shiftAllObj(comps, info) :
             comps.map(o => o.getPos().add(V(5, 5)));
 
