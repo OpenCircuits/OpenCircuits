@@ -7,6 +7,17 @@ import {Node} from "core/models/Node";
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
 
+import {blend, parseColor, Color} from "svg2canvas";
+
+
+// @TODO @leon - Move this function to "svg2canvas"
+function ColorToHex(col: Color): string {
+    return `#${[col.r, col.g, col.b].map(x => {
+        const hex = Math.round(x).toString(16);
+        return (hex.length === 1 ? '0'+hex : hex);
+    }).join('')}`
+}
+
 /**
  * Creates an action to represent a Wire being split.
  * 
@@ -56,9 +67,22 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     action.add(new DisconnectAction(designer, wires[0]).execute());
     action.add(new DisconnectAction(designer, wires[1]).execute());
     action.add(new DeleteAction(designer, port).execute());
-    action.add(new ConnectionAction(designer, ports[0], ports[1]).execute());
+    const con1 = new ConnectionAction(designer, ports[0], ports[1]);
+    action.add(con1.execute());
+    if(wires[1].getColor() === wires[0].getColor()){
+     
+     con1.getWire().setColor(wires[1].getColor());
+    }
+    else{
+        const selectedColor = ColorToHex(blend(
+            parseColor(wires[0].getColor()), 
+            parseColor(wires[1].getColor()), 0.5
+    ));
+    con1.getWire().setColor(selectedColor);
 
-    return action;
+    }
+    
+     return action;
 }
 
 /**
