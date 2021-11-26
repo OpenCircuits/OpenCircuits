@@ -110,7 +110,29 @@
                     display: block;
                     margin-bottom: 10px;
                 }
-                // height: 50px;
+
+                & button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    height: unset;
+
+                    float: right;
+                    margin-left: 30px;
+                    padding: 4px;
+
+                    color: black;
+
+                    border: 1px solid black;
+
+                    &:hover {
+                        background-color: #eee;
+                    }
+                    &:active {
+                        background-color: #ccc;
+                    }
+                }
             }
         }
 

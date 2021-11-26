@@ -115,6 +115,9 @@ export const ImageExporterPopup = ({preview}: Props) => {
                                     type="color"
                                     value={state.bgColor}
                                     onChange={(ev) => setState({...state, bgColor: ev.target.value})} />
+                                <span>
+                                    <button onClick={() => setState({...state, bgColor: "#cccccc"})}>Reset</button>
+                                </span>
                             </div>
                         </div>
                         <div>
