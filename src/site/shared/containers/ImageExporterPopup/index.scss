@@ -63,6 +63,8 @@
     }
 
     &__canvas-wrapper {
+        position: relative;
+
         display: flex;
 
         flex: 1 0 auto;

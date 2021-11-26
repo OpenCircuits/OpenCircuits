@@ -4,6 +4,7 @@ import {Input} from "core/utils/Input";
 
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -12,12 +13,14 @@ import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 
+import "./index.scss";
+
 
 type Props = ImageExporterPreviewProps & {
     mainInfo: DigitalCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const info = CreateInfo(new InteractionTool([]), PanTool);
+    const info = CreateInfo(new InteractionTool([FitToScreenHandler]), PanTool);
 
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
@@ -84,11 +87,17 @@ export const ImageExporterPreview = (() => {
             renderer.render();
         }, [isActive]);
 
-        return (
+        return (<>
+            <img src="img/icons/fitscreen.svg"
+                 className="image-exporter-preview__button"
+                 onClick={() => {
+                    FitToScreenHandler.getResponse(info);
+                    renderer.render();
+                 }} />
             <canvas ref={canvas}
                     width={`${width}px`}
                     height={`${height}px`}
                     style={style} />
-        );
+        </>);
     }
 })();
