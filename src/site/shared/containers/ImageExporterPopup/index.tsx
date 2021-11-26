@@ -77,7 +77,8 @@ export const ImageExporterPopup = ({preview}: Props) => {
                isOpen={(curPopup === "image_exporter")}
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="imageexporter__popup">
-                <div className="imageexporter__popup__canvas-wrapper" ref={wrapper}>
+                <div ref={wrapper}
+                     className={`imageexporter__popup__canvas-wrapper ${state.useBg ? "" : "checkered"}`}>
                     {preview({
                         canvas,
                         isActive: (curPopup === "image_exporter"),
@@ -85,6 +86,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         height: Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
                         useGrid: state.useGrid,
                         style: {
+                            border: "1px solid black",
                             backgroundColor: state.useBg ? state.bgColor : "transparent",
                         }
                     })}
