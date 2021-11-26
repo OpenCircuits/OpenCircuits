@@ -1,3 +1,5 @@
+import {blend, parseColor, Color} from "svg2canvas";
+
 import {GroupAction} from "../GroupAction";
 
 import {CircuitDesigner} from "core/models";
@@ -7,7 +9,7 @@ import {Node} from "core/models/Node";
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
 
-import {blend, parseColor, Color} from "svg2canvas";
+
 
 
 // @TODO @leon - Move this function to "svg2canvas"
