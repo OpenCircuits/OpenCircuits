@@ -109,7 +109,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
                             </div>
                         </div>
                         <div>
-                            <span>Background color</span>
+                            <span>Background Color</span>
                             <div>
                                 <input
                                     type="color"
