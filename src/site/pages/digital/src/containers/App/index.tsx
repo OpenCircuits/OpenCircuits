@@ -20,6 +20,7 @@ import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
@@ -91,7 +92,8 @@ export const App = ((store: AppStore) => {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
+            CopyHandler, PasteHandler((data) => DigitalPaste(data, info)),
+            SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,
         TranslateTool, WiringTool,
