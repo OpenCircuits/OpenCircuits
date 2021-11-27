@@ -19,7 +19,7 @@ export const GoogleAuthButton = () => {
     }
 
     useEffect(() => {
-        if (!gapi) // GAPI failed to load for some reason
+        if (!("gapi" in window)) // GAPI failed to load for some reason
             return;
 
         // Render sign in button
