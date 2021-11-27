@@ -285,7 +285,10 @@ export class Input {
         this.isDragging = false;
         this.startTapTime = Date.now();
         this.mouseDown = true;
-        this.mouseDownPos = pos.sub(V(rect.left, rect.top));
+        this.mouseDownPos = pos.sub(rect.left, rect.top)
+                               // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                               .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
+
         this.mousePos = V(this.mouseDownPos);
         this.mouseDownButton = button;
 
@@ -296,7 +299,9 @@ export class Input {
 
         // get raw and relative mouse positions
         this.prevMousePos = V(this.mousePos);
-        this.mousePos = pos.sub(V(rect.left, rect.top));
+        this.mousePos = pos.sub(rect.left, rect.top)
+                           // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                           .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
         // determine if mouse is dragging
         this.isDragging = (this.mouseDown &&

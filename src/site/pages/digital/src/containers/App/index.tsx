@@ -29,6 +29,7 @@ import {ContextMenu}     from "shared/containers/ContextMenu";
 import {SideNav}         from "shared/containers/SideNav";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";
+import {ImageExporterPopup}   from "shared/containers/ImageExporterPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 
@@ -45,6 +46,7 @@ import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
 import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
@@ -144,6 +146,9 @@ export const App = ((store: AppStore) => {
 
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
+                <ImageExporterPopup preview={(props) => (
+                    <ImageExporterPreview mainInfo={info} {...props} />
+                )} />
 
                 <ExprToCircuitPopup mainInfo={info} />
 
