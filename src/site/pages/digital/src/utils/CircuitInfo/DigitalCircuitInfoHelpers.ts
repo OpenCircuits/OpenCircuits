@@ -131,10 +131,9 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             const {circuit} = store.getState();
 
-            console.log("Id ==>", circuit.id);
-
+            // Shouldn't be able to duplicate if circuit has never been saved
             if (circuit.id == "") {
-                window.alert("Unable to duplicate");
+                window.alert(`You must save circuit "${circuit.name}" in order to duplicate it.`);
                 return;
             }
 
@@ -150,16 +149,12 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
-
-            console.log(circuit)
-            console.log(circuitCopy)
             
-            const meta = await CreateUserCircuit(user.auth, circuitCopy);
-            console.log(meta.getId())
-            console.log(circuit.id)
-            const copyId = meta.getId();
+            // Create circuit copy
+            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
-            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, meta.getId()));
+            // Load circuit copy onto canvas
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
 
             await store.dispatch(LoadUserCircuits());
         }

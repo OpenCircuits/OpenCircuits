@@ -11,7 +11,7 @@ type Props = {
     helpers: CircuitInfoHelpers;
 }
 export const HeaderLeft = ({helpers}: Props) => {
-    const {name, isSaved, isLocked, isLoggedIn, saving, error} = useSharedSelector(
+    const {id, name, isSaved, isLocked, isLoggedIn, saving, error} = useSharedSelector(
         state => ({ ...state.circuit, isLoggedIn: state.user.isLoggedIn })
     );
     const dispatch = useSharedDispatch();
@@ -47,15 +47,17 @@ export const HeaderLeft = ({helpers}: Props) => {
                        alt="Name of project" />
             </div>
             <div>
+                <button className={`header__left__duplicate ${!isLoggedIn || id === "" ? "invisible" : ""}`}
+                        title="Duplicate the circuit"
+                        onClick={() => helpers.DuplicateCircuitRemote() }>
+                            <img src="img/icons/content_copy.svg" height="100%" alt="Copy circuit"/>
+                        </button>
+            </div>
+            <div>
                 <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
                         title="Save the circuit remotely"
                         disabled={saving}
                         onClick={() => helpers.SaveCircuitRemote() }>Save</button>
-            </div>
-            <div>
-                <button className={`header__left__duplicate ${!isLoggedIn ? "invisible" : ""}`}
-                        title="Duplicate the circuit"
-                        onClick={() => helpers.DuplicateCircuitRemote() }>Duplicate</button>
             </div>
             <div className="header__left__saving__icons">
                 <img src="img/icons/error.svg" className={error ? "" : "hide"}
