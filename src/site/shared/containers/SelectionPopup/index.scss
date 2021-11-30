@@ -23,18 +23,24 @@
             margin-right: auto;
             margin-top: auto;
             margin-bottom: auto;
+
+            font-weight: bold;
         }
         & a {
-            display: inline-block;
-            float: right;
             text-decoration: none;
+            color:rgb(119, 111, 111);
+            display: inline-block;
+            font-weight: normal;
+            float: right;
+
             border: 1.5px solid rgb(119, 111, 111);
             border-radius:50%;
             font-size:12px;
-            width: 13px;
-            height: 13px;
+            width: 14px;
+            height: 14px;
+
             text-align: center;
-            color:rgb(119, 111, 111);
+            vertical-align: middle;
 
             margin-left: auto;
             margin-right: 0;

@@ -17,14 +17,15 @@ import {UseModuleProps} from "./modules/Module";
 import "./index.scss";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import docsUrlConfig from "./docsUrlConfig.json";
+//import docsUrlConfig from "./docsUrlConfig.json";
 //const docsUrlConfig = require("./docsUrlConfig.json") as Record<string,string>;
 
 type Props = {
     info: CircuitInfo;
     modules: ((props: UseModuleProps) => JSX.Element)[];
+    docsUrlConfig: Record<string,string>;
 }
-export function SelectionPopup({info, modules}: Props) {
+export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     const {input, camera, history, designer, selections, renderer} = info;
     const [state, setState] = useState({
         visible: false,
