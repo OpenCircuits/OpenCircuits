@@ -1,4 +1,5 @@
 import {useEffect, useLayoutEffect} from "react";
+import {Deserialize, Serialize} from "serialeazy";
 
 import {Input} from "core/utils/Input";
 
@@ -7,6 +8,7 @@ import {PanTool}          from "core/tools/PanTool";
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
@@ -14,8 +16,6 @@ import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import "./index.scss";
-import {Deserialize, Serialize} from "serialeazy";
-import {DigitalCircuitDesigner} from "digital/models";
 
 
 type Props = ImageExporterPreviewProps & {
