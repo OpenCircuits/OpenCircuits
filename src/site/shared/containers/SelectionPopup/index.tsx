@@ -17,9 +17,6 @@ import {UseModuleProps} from "./modules/Module";
 import "./index.scss";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-//import docsUrlConfig from "./docsUrlConfig.json";
-//const docsUrlConfig = require("./docsUrlConfig.json") as Record<string,string>;
-
 type Props = {
     info: CircuitInfo;
     modules: ((props: UseModuleProps) => JSX.Element)[];
