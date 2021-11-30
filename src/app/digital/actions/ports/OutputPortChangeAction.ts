@@ -4,6 +4,7 @@ import {Port} from "core/models/ports/Port";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
+
 /**
  * This code allows for the change in the number of output ports on a DigitalComponent
  */
@@ -41,7 +42,8 @@ export class OutputPortChangeAction extends PortChangeAction {
         this.obj.setOutputPortCount(this.targetCount);
         return this;
     }
-     /**
+    
+    /**
      * Resets the number of output ports back to the initial count.
      *
      * @returns the object with the initial number of ports.
