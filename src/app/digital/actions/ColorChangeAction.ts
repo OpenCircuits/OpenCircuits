@@ -22,6 +22,7 @@ export class ColorChangeAction implements Action {
 
     /**
      * Initialize the action with the given component and the given targetColor
+     * 
      * @param component The component we want to change the color
      * @param targetCol The target color we want change to
      */
@@ -33,6 +34,7 @@ export class ColorChangeAction implements Action {
 
     /**
      * Set the component's color to the targetColor
+     * 
      * @returns This Action
      */
     public execute(): Action {
@@ -43,6 +45,7 @@ export class ColorChangeAction implements Action {
 
     /**
      * Undo the action, back the color of the component to the initialColor
+     * 
      * @returns This Action
      */
     public undo(): Action {

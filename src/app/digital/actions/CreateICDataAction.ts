@@ -15,6 +15,7 @@ export class CreateICDataAction implements Action {
 
     /**
      * Initialize the Action with the data in "ICData" and target in "DigitalCircuitDesigner"
+     * 
      * @param data The ICData 
      * @param target The target dessigner that we want to add ICData to it.
      */
@@ -25,6 +26,7 @@ export class CreateICDataAction implements Action {
 
     /**
      * Execute the action, add the ICData to the target designer.
+     * 
      * @returns This action
      */
     public execute(): Action {
@@ -34,6 +36,7 @@ export class CreateICDataAction implements Action {
 
      /**
      * Undo the action, remove the ICData that added to the designer.
+     * 
      * @returns This action
      */
     public undo(): Action {

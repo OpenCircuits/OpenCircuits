@@ -18,6 +18,7 @@ export class LabelTextColorChangeAction implements Action {
 
     /**
      * Initialize the action with label value 'label' and targetColor value 'targetCol'
+     * 
      * @param label The label component
      * @param targetCol The target color
      */
@@ -30,6 +31,7 @@ export class LabelTextColorChangeAction implements Action {
 
     /**
      * Change the color of the text to the target color.
+     * 
      * @returns This action
      */
     public execute(): Action {
@@ -40,6 +42,7 @@ export class LabelTextColorChangeAction implements Action {
 
      /**
      * Undo the change, back the color of the text to the initial color.
+     * 
      * @returns This action
      */
     public undo(): Action {

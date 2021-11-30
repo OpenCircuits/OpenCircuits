@@ -21,6 +21,7 @@ export class FrequencyChangeAction implements Action {
     /**
      * Initialize a FrequencyChangeAction with the component and 
      * target frequency given.
+     * 
      * @param component The component that we need to change the frequency
      * @param targetFreq The frequency that we want the clock change to
      */
@@ -34,6 +35,7 @@ export class FrequencyChangeAction implements Action {
 
     /**
      * Set the frequency of the component to the target ferquency.
+     * 
      * @returns This action
      */
     public execute(): Action {
@@ -44,6 +46,7 @@ export class FrequencyChangeAction implements Action {
 
     /**
      * Undo the changing action, back the frequency of the clock to initialFreq
+     * 
      * @returns This action
      */
     public undo(): Action {
