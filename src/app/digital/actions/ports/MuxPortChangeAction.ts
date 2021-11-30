@@ -41,7 +41,6 @@ export class MuxPortChangeAction extends PortChangeAction {
             this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
     }
 
-
     /**
      * This function changes the width and height of the obj based on the number of ports chosen.
      *
