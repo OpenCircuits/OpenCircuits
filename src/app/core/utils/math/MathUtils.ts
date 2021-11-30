@@ -44,6 +44,7 @@ export function Clamp(x: number, min: number, max: number): number {
  *         the rectangle from 'pos'
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
+    // Position is outside the rectangle
     if (pos.x <= bl.x)
         return V(bl.x, Clamp(pos.y, bl.y, tr.y));
     if (pos.x >= tr.x)
@@ -52,10 +53,7 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
         return V(Clamp(pos.x, bl.x, tr.x), bl.y);
     if (pos.y >= tr.y)
         return V(Clamp(pos.x, bl.x, tr.x), tr.y);
-    // If point inside rectangle, 
-    // return position of port. Lets you put port anywhere inside IC, good for if switches should be anywhere
-    //return pos;
-    // return point on closest side, so if dragging port inside IC, snaps it to edge, makes dragging easier
+    // Position is inside the rectangle
     let minDist = pos.x-bl.x;
     let minPos = V(bl.x, pos.y)
     if (tr.x - pos.x < minDist) {
@@ -71,8 +69,6 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
         minPos = V(pos.x,tr.y);
     }
     return minPos;
-    // Old default return, (0,0), was reason for ports getting stuck inside
-    //return V(0, 0);
 }
 
 /**

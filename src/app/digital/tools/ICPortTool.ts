@@ -59,18 +59,25 @@ export const ICPortTool = (() => {
                 port.setOriginPos(p);
                 port.setTargetPos(v);
                 //----
-
-
-                // allow port to be placed inside an IC
-                // port.setOriginPos(new Vector(worldMousePos));
-                // port.setTargetPos(new Vector(worldMousePos));
                 ic.update();
             } else {
                 const size = ic.getSize();
                 const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
-                const v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
+                let v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
                                                                                        IO_PORT_LENGTH+size.y/2))).add(p);
-
+                // Mouse position is on the edge of the IC
+                if (p.x == v.x && p.y == v.y){
+                    console.log("same")
+                    //v = V(0,0).sub(p).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
+                    //                                                                    IO_PORT_LENGTH+size.y/2))).add(p);
+                    let t = V(0,0);
+                    if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
+                        t = V(0,-1).scale(p.y);
+                    else
+                        t = V(-1,0).scale(p.x);
+                    v = t.normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
+                                                                    IO_PORT_LENGTH+size.y/2))).add(p);
+                }
                 // Set port for IC
                 port.setOriginPos(p);
                 port.setTargetPos(v);
