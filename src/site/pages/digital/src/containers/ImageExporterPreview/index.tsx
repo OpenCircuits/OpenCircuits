@@ -14,6 +14,8 @@ import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import "./index.scss";
+import {Deserialize, Serialize} from "serialeazy";
+import {DigitalCircuitDesigner} from "digital/models";
 
 
 type Props = ImageExporterPreviewProps & {
@@ -69,14 +71,19 @@ export const ImageExporterPreview = (() => {
             if (!isActive) {
                 info.input?.block();
                 mainInfo.input?.unblock();
+                info.designer.reset();
                 return;
             }
 
             info.debugOptions = mainInfo.debugOptions;
-            info.designer.replace(mainInfo.designer);
+
+            // Make a deep copy of the entire designer so that they don't share components
+            const copy = Deserialize<DigitalCircuitDesigner>(Serialize(mainInfo.designer));
+            info.designer.replace(copy);
+
+            info.camera.resize(width, height);
             info.camera.setPos(mainInfo.camera.getPos());
             info.camera.setZoom(mainInfo.camera.getZoom());
-            info.camera.resize(width, height);
 
             // Unblock input
             info.input.unblock();
