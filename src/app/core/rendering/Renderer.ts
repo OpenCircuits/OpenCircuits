@@ -82,9 +82,9 @@ export class Renderer {
         img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
 
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000"): void {
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000", font?: string): void {
         this.save();
-        this.context.font = FONT;
+        this.context.font = font ?? FONT;
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = "middle";
@@ -101,9 +101,29 @@ export class Renderer {
         this.context.textBaseline = "middle";
         return this.context.measureText(txt).width;
     }
+    public moveTo(p: Vector): void {
+        this.context.moveTo(p.x, p.y);
+    }
+    public lineTo(p: Vector): void {
+        this.context.lineTo(p.x, p.y);
+    }
+    public lineWith(p: Vector): void {
+        this.lineTo(p);
+        this.moveTo(p);
+    }
     public pathLine(p1: Vector, p2: Vector): void {
-        this.context.moveTo(p1.x, p1.y);
-        this.context.lineTo(p2.x, p2.y);
+        this.moveTo(p1);
+        this.lineTo(p2);
+    }
+    public setPathStyle(style: Partial<Omit<CanvasPathDrawingStyles, "lineWidth" | "getLineDash" | "setLineDash">>): void {
+        if (style.lineCap && style.lineCap !== this.context.lineCap)
+            this.context.lineCap = style.lineCap;
+        if (style.lineDashOffset && style.lineDashOffset !== this.context.lineDashOffset)
+            this.context.lineDashOffset = style.lineDashOffset;
+        if (style.lineJoin && style.lineJoin !== this.context.lineJoin)
+            this.context.lineJoin = style.lineJoin;
+        if (style.miterLimit && style.miterLimit !== this.context.miterLimit)
+            this.context.miterLimit = style.miterLimit;
     }
     public setStyle(style: Style, alpha: number = 1): void {
         // Set styles but only change them if they're different for optimization purposes

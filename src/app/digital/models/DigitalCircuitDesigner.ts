@@ -5,9 +5,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
-import {DigitalWire, DigitalComponent, InputPort, OutputPort, Propagation} from "./index";
+import {DigitalWire, DigitalComponent, DigitalObjectSet, InputPort, OutputPort, Propagation} from "./index";
 
 import {ICData} from "./ioobjects/other/ICData";
 
@@ -57,7 +55,11 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
     private propagationTime: number;
 
+    private paused: boolean;
+
     private updateCallbacks: ((ev: DigitalEvent) => void)[];
+
+    private timeout: number;
 
     public constructor(propagationTime: number = 1) {
         super();
@@ -68,6 +70,8 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.ics = [];
         this.objects = [];
         this.wires = [];
+
+        this.paused = false;
 
         this.propagationQueue = [];
         this.updateRequests = 0;
@@ -83,6 +87,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         for (let i = this.wires.length-1; i >= 0; i--)
             this.removeWire(this.wires[i]);
 
+        this.paused = false;
         this.propagationQueue = [];
         this.updateRequests = 0;
     }
@@ -118,6 +123,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
      * @param signal
      */
     public propagate(receiver: DigitalComponent | DigitalWire, signal: boolean): void {
+        if (this.paused)
+            return;
+
         this.propagationQueue.push(new Propagation(receiver, signal));
 
         if (this.updateRequests > 0)
@@ -129,7 +137,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (this.propagationTime === 0)
             this.update();
         else if (this.propagationTime > 0)
-            setTimeout(() => this.update(), this.propagationTime);
+            this.timeout = window.setTimeout(() => this.update(), this.propagationTime);
         // Else if propagation time is < 0 then don't propagate at all
     }
 
@@ -137,6 +145,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
      * @return True if the updated component(s) require rendering
      */
     private update(): boolean {
+        if (this.paused)
+            return false;
+
         // Create temp queue before sending, in the case that sending them triggers
         //   more propagations to occur
         const tempQueue = [];
@@ -159,10 +170,26 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             if (this.propagationTime === 0)
                 this.update();
             else
-                setTimeout(() => this.update(), this.propagationTime);
+                this.timeout = window.setTimeout(() => this.update(), this.propagationTime);
         }
 
         return true;
+    }
+
+    public pause(): void {
+        this.paused = true;
+        if (this.timeout !== null) {
+            window.clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+    }
+
+    public resume(): void {
+        if (!this.paused) // Already not paused
+            return;
+        this.paused = false;
+        if (this.updateRequests > 0)
+            this.update();
     }
 
     public createWire(p1: OutputPort, p2?: InputPort): DigitalWire;
@@ -209,6 +236,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.objects.push(obj);
 
         this.callback({ type: "obj", op: "added", obj });
+
+        // checking all ports (issue #613)
+        for (let p of obj.getPorts().filter(r => r instanceof InputPort) as InputPort[])
+            p.activate(p.getInput() != null && p.getInput().getIsOn());
     }
 
     public addWire(wire: DigitalWire): void {
@@ -282,7 +313,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return new DigitalObjectSet((this.objects as IOObject[]).concat(this.wires));
+        return DigitalObjectSet.from([...this.objects, ...this.wires]);
     }
 
     public getObjects(): DigitalComponent[] {

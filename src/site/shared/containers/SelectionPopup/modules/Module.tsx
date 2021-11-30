@@ -1,4 +1,4 @@
-import {useLayoutEffect, useState, cloneElement} from "react";
+import {useLayoutEffect, useState, cloneElement, useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 import {Selectable} from "core/utils/Selectable";
@@ -11,6 +11,7 @@ export type ModuleTypes = number | string;
 export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
     valType: "float" | "int" | "string";
+    isActive?: (selections: SelectionsWrapper) => boolean;
     getProps: (o: T[number]) => P;
     getAction: (s: (T[number])[], newVal: P) => Action;
     getDisplayVal?: (val: P) => string | number;
@@ -37,6 +38,7 @@ export type UseModuleProps = {
     selections: SelectionsWrapper;
     addAction: (action: Action) => void;
     render: () => void;
+    forceUpdate: () => void;
 }
 
 
@@ -122,6 +124,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
 
+        const inputRef = useRef<HTMLInputElement>();
+
         useLayoutEffect(() => {
             // This means Selections changed, so we must check if
             //  we should should show this module or not
@@ -131,8 +135,10 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             }
 
             // Make sure all selections are exactly of types:
-            const active = config.types.reduce((enabled, Type) =>
-                enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()),
+            const active = config.isActive?.(selections) ??
+                config.types.reduce(
+                    (enabled, Type) => enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()
+                ),
             false);
             if (!active) {
                 setState({active: false});
@@ -141,7 +147,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
             const comps = selections.get() as T;
 
-            const counts = comps.map(s => config.getProps(s));
+            const counts = comps
+                .map(s => config.getProps(s))
+                .filter(s => (s !== undefined));
 
             same = counts.every(c => (c === counts[0]));
             val = counts[0];
@@ -161,12 +169,16 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const onChange = (newVal: string) => {
             const val = parseVal(newVal);
 
+            // Due to Firefox not focusing when the arrow keys
+            //  are pressed on number inputs (issue #818)
+            if (inputRef?.current)
+                inputRef.current.focus();
+
             // Do action w/o saving it if the textVal is valid right now
             if (isValid(val)) {
                 if (tempAction)
                     tempAction.undo();
                 tempAction = config.getAction(selections.get() as T, val).execute();
-                tempAction.execute();
                 render();
             }
 
@@ -221,7 +233,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
-            <input type={props.inputType}
+            <input ref={inputRef}
+                   type={props.inputType}
                    value={focused ? textVal : ((same ? displayVal(val) : ""))}
                    placeholder={same ? "" : (props.placeholder ?? "-")}
                    step={"step" in props ? props.step : ""}
@@ -248,7 +261,7 @@ type ButtonModuleProps = UseModuleProps & {
     isActive: (selections: Selectable[]) => boolean;
     onClick: (selections: Selectable[]) => Action | void;
 }
-export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render}: ButtonModuleProps) => {
+export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render, forceUpdate}: ButtonModuleProps) => {
     const [state, setState] = useState({active: false});
 
     const dependencyStr = selections.get().reduce((c, s) => c + s.constructor.name + getDependencies(s), "");
@@ -269,6 +282,7 @@ export const ButtonPopupModule = ({selections, text, alt, getDependencies, isAct
         if (a)
             addAction(a);
         render();
+        forceUpdate(); // Send an update back to the SelectionPopup
     }
 
     if (!state.active)

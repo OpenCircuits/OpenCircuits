@@ -20,7 +20,9 @@ export const CopyHandler: EventHandler = ({
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
 
         const str = SerializeForCopy(objs);
-        ev.clipboardData.setData("text/json", str);
+        // We don't copy the data from the json since it will cause 
+        // some weird error, which will cause the issue #746
+        ev.clipboardData.setData("text/plain", str);
         ev.preventDefault(); // Necessary to copy correctly
 
         if (type === "cut") {
