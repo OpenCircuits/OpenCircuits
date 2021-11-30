@@ -1,25 +1,45 @@
 import jsPDF from "jspdf";
 
 
-export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: "png" | "jpeg") {
-    // For JPEG, need to color the background manually
-    if (type == "jpeg") {
+export type ImageExportOptions = {
+    type: "png" | "jpeg" | "pdf";
+    width: number;
+    height: number;
+    bgColor: string;
+    useBg: boolean;
+    useGrid: boolean;
+}
+export function SaveImage(canvas: HTMLCanvasElement, name: string, options: ImageExportOptions) {
+    switch(options.type) {
+    case "png":
+    case "jpeg":
+        SaveImg(canvas, name, options);
+        break;
+    case "pdf":
+        SavePDF(canvas, name, options);
+        break;
+    }
+}
+
+
+function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageExportOptions) {
+    if (options.useBg) {
         // From https://stackoverflow.com/a/50126796
         const ctx = canvas.getContext("2d"); // get the context to overwrite the background of the canvas
         ctx.save(); // save the current state of the context
         ctx.globalCompositeOperation = "destination-over"; // set the composite operation to overwrite the background
-        ctx.fillStyle = "#ccc";
+        ctx.fillStyle = options.bgColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore() // restore the context to its previous state (back to default bg and operation)
     }
 
-    const data = canvas.toDataURL(`image/${type}, 1.0`);
+    const data = canvas.toDataURL(`image/${options.type}, 1.0`);
 
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
 
-    const filename = `${projectName}.${type}`;
+    const filename = `${projectName}.${options.type}`;
 
     if (window.navigator.msSaveOrOpenBlob) { // IE10+
         const file = new Blob([data], {type: "image/png"});
@@ -39,7 +59,7 @@ export function SaveImage(canvas: HTMLCanvasElement, projectName: string, type: 
 }
 
 
-export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
+function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageExportOptions): void {
     const width  = canvas.width;
     const height = canvas.height;
 
@@ -51,8 +71,10 @@ export function SavePDF(canvas: HTMLCanvasElement, projectName: string): void {
         projectName = "Untitled Circuit";
 
     // Fill background
-    pdf.setFillColor("#CCC");
-    pdf.rect(0, 0, width, height, "F");
+    if (options.useBg) {
+        pdf.setFillColor(options.bgColor);
+        pdf.rect(0, 0, width, height, "F");
+    }
 
     const pdfWidth  = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();

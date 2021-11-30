@@ -1,0 +1,27 @@
+@import "~shared/utils/theme";
+
+
+.image-exporter-preview__button {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    width: 30px;
+    height: 30px;
+
+    padding: 10px;
+
+    background-color: transparentize($background-color, 0.6);
+
+    border: 2px solid $secondary-color;
+    border-radius: 30px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: transparentize($background-color, 0.5);
+    }
+    &:active {
+        background-color: transparentize($background-color, 0.4);
+    }
+}
