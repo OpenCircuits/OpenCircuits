@@ -1,4 +1,5 @@
 import {useEffect, useLayoutEffect} from "react";
+import {Deserialize, Serialize} from "serialeazy";
 
 import {Input} from "core/utils/Input";
 
@@ -7,6 +8,7 @@ import {PanTool}          from "core/tools/PanTool";
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
@@ -69,14 +71,19 @@ export const ImageExporterPreview = (() => {
             if (!isActive) {
                 info.input?.block();
                 mainInfo.input?.unblock();
+                info.designer.reset();
                 return;
             }
 
             info.debugOptions = mainInfo.debugOptions;
-            info.designer.replace(mainInfo.designer);
+
+            // Make a deep copy of the entire designer so that they don't share components
+            const copy = Deserialize<DigitalCircuitDesigner>(Serialize(mainInfo.designer));
+            info.designer.replace(copy);
+
+            info.camera.resize(width, height);
             info.camera.setPos(mainInfo.camera.getPos());
             info.camera.setZoom(mainInfo.camera.getZoom());
-            info.camera.resize(width, height);
 
             // Unblock input
             info.input.unblock();
