@@ -5,6 +5,7 @@ import {Port} from "core/models/ports/Port";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+
 /**
  * This code allows for the change in the number of input ports on a DigitalComponent
  */
