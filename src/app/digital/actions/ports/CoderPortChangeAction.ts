@@ -36,7 +36,6 @@ export class CoderPortChangeAction implements Action {
     public constructor(obj: Encoder | Decoder, initial: number, target: number) {
         this.obj = obj;
         this.targetCount = target;
-        
         if (obj instanceof Encoder) {
             this.initialCount = obj.getOutputPortCount().getValue();
             this.inputPortAction  = new InputPortChangeAction(obj, obj.getInputPortCount().getValue(), Math.pow(2, target));
