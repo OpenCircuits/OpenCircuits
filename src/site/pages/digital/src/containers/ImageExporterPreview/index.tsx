@@ -93,6 +93,7 @@ export const ImageExporterPreview = (() => {
 
             renderer.render();
         }, [isActive]);
+        
 
         return (<>
             <img src="img/icons/fitscreen.svg"

@@ -12,9 +12,11 @@ import {CloseHeaderPopups} from "shared/state/Header";
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
-
+import { useWindowKeyDownEvent } from "shared/utils/hooks/useKeyDownEvent";
+import { ESC_KEY,ENTER_KEY } from "core/utils/Constants";
 import "./index.scss";
-
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+ 
 
 const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10000;
@@ -31,13 +33,11 @@ export type ImageExporterPreviewProps = {
 type Props = {
     preview: (props: ImageExporterPreviewProps) => JSX.Element;
 }
-export const ImageExporterPopup = ({preview}: Props) => {
+export const ImageExporterPopup = ({preview}: Props , DesignInfo : DigitalCircuitInfo) => {
     const {curPopup, circuitName} = useSharedSelector(
         state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
-
-
     const [state, setState] = useState<ImageExportOptions>({
         type: "png",
         width: window.innerWidth, height: window.innerHeight-HEADER_HEIGHT,
@@ -71,6 +71,19 @@ export const ImageExporterPopup = ({preview}: Props) => {
         if (curPopup === "image_exporter")
             onResize();
     }, [curPopup, state.width, state.height]);
+
+    useWindowKeyDownEvent(ESC_KEY, () => { // Close the popup when the escape key is pressed
+        if (curPopup === "image_exporter")
+            dispatch(CloseHeaderPopups());
+    } )
+
+    useWindowKeyDownEvent(ENTER_KEY, () => { // Use Enter Key to confirm the image 
+        console.log("enter key pressed");
+        if (curPopup === "image_exporter")
+        SaveImage(canvas.current, circuitName, state);
+    } )
+
+
 
     return (
         <Popup title="Image Exporter"
