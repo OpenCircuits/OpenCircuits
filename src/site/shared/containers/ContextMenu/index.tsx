@@ -3,6 +3,7 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
+import {V, Vector} from "core/utils/math/Vector";
 
 import {IOObject} from "core/models";
 
@@ -29,12 +30,12 @@ const CONTEXT_MENU_VERT_OFFSET = 4;
 
 type Props = {
     info: CircuitInfo;
-    paste: (text: string) => boolean;
+    paste: (text: string, menuPos: Vector) => boolean;
 }
 
 
 export const ContextMenu = ({info, paste}: Props) => {
-    const {locked, input, history, designer, selections, renderer} = info;
+    const {locked, input, camera, history, designer, selections, renderer} = info;
     const {undoHistory, redoHistory} = useHistory(info);
 
     const {isOpen} = useSharedSelector(
@@ -93,7 +94,7 @@ export const ContextMenu = ({info, paste}: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        paste(await navigator.clipboard.readText());
+        paste(await navigator.clipboard.readText(), menuPos);
     }
 
     /* Context Menu "Select All" */
@@ -118,6 +119,7 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     const menu = useRef<HTMLDivElement>();
     let pos = input?.getMousePos();
+    let menuPos: Vector = null;
     
     /* Relocate context menu to opposite side of cursor if it were to go off-screen */
     if (isOpen) {
@@ -130,6 +132,9 @@ export const ContextMenu = ({info, paste}: Props) => {
                 
         if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
             pos.y -= contextMenuHeight - offset;
+
+        // Update context menu position on canvas
+        menuPos = camera.getWorldPos(input.getMousePos());
     }
 
     return (

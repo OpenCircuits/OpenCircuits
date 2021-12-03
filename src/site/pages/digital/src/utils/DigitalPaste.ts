@@ -65,26 +65,13 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
 }
 
 /**
- * Maps positions of pasted components based around intially selected item
- * @param comps Components in clipboard
- * @param info Circuit info from which to pull camera and input
- * @returns Target positions for pasting at mouse pos
- */
-function shiftAllObj(comps: Component[], info: DigitalCircuitInfo): Vector[] {
-    const {camera, input} = info;
-    const worldMousePos = camera.getWorldPos(input.getMousePos());
-    const shift = worldMousePos.sub(comps[0].getPos());
-    return comps.map(o => o.getPos().add(shift));
-}
-
-/**
  * Performs paste action in Digital Circuit
  * @param data Clipboard data
  * @param info Circuit info
- * @param mouse True if being pasted using context menu
+ * @param menuPos Top left of context menu if being pasted using context menu
  * @returns True if successful paste
  */
-export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: boolean): boolean {
+export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos: Vector): boolean {
     try {
         const {history, designer, selections, renderer} = info;
         const objs = Deserialize<IOObject[]>(data);
@@ -94,10 +81,9 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: bool
         // Get all components
         const comps = objs.filter(o => o instanceof Component) as Component[];
 
-        // Determine target positions for pasted components
-        const targetPositions = mouse ?
-            shiftAllObj(comps, info) :
-            comps.map(o => o.getPos().add(V(5, 5)));
+        // Determine shift for target positions for pasted components
+        const targetPosShift = menuPos == null ?
+            V(5, 5) : menuPos.sub(comps[0].getPos());
 
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
         const action = new GroupAction();
@@ -107,7 +93,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, mouse: bool
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), targetPositions)
+            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift)))
         ]).execute());
 
         history.add(action);

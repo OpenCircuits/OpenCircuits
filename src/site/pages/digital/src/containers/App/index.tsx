@@ -94,7 +94,7 @@ export const App = ((store: AppStore) => {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CopyHandler, PasteHandler((data) => DigitalPaste(data, info, false)),
+            CopyHandler, PasteHandler((data) => DigitalPaste(data, info, null)),
             SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,
@@ -139,7 +139,7 @@ export const App = ((store: AppStore) => {
                                                   ClockSyncButtonModule]} />
 
                         <ContextMenu info={info}
-                                     paste={(data) => DigitalPaste(data, info, true)} />
+                                     paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
                     </main>
                 </div>
 
