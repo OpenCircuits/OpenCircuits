@@ -28,4 +28,8 @@ export class FrequencyChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Frequency Change"
+    }
+
 }
