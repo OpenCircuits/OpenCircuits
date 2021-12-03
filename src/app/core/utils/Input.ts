@@ -12,7 +12,8 @@ import {DRAG_TIME,
         OPTION_KEY,
         BACKSPACE_KEY,
         META_KEY,
-        ESC_KEY} from "core/utils/Constants";
+        ESC_KEY,
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -104,7 +105,15 @@ export class Input {
         this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
         this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
         this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+
+        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => {
+            this.onMouseDown(V(e.clientX, e.clientY), e.button);
+
+            // Fixes issue #777, stops Firefox from scrolling and allows panning
+            if (e.button === MIDDLE_MOUSE_BUTTON)
+                e.preventDefault();
+        }, false);
+
         this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
         this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
         this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
