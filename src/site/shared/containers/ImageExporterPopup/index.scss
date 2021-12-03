@@ -1,0 +1,165 @@
+@import "~shared/utils/constants";
+
+
+.imageexporter__popup {
+    display: flex;
+    flex-direction: row;
+
+    height: calc(100% - 100px);
+
+    & input {
+        font-size: 100%;
+
+        width: 30%;
+        padding: 3px;
+
+        color: #000;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+
+        background-color: transparent;
+
+        &[type="color"] {
+            border: 0;
+        }
+    }
+    & button {
+        color: #fff;
+
+        height: 30px;
+        margin-top: 5px;
+
+        padding: 0 7px;
+
+        border-radius: 4px;
+
+        cursor: pointer;
+
+        &[name="confirm"] {
+            background-color: $success-color;
+            &:hover {
+                background-color: darken($success-color, 5%);
+            }
+            &:active {
+                background-color: darken($success-color, 10%);
+            }
+        }
+        &[name="cancel"] {
+            background-color: $danger-color;
+            &:hover {
+                background-color: darken($danger-color, 5%);
+            }
+            &:active {
+                background-color: darken($danger-color, 10%);
+            }
+        }
+    }
+    & div {
+        text-align: center;
+    }
+
+    & hr {
+        margin-top: 20px;
+    }
+
+    &__canvas-wrapper {
+        position: relative;
+
+        display: flex;
+
+        flex: 1 0 auto;
+
+        max-width: calc(100% - 200px);
+
+        align-items: center;
+        justify-content: center;
+
+        margin: 30px 0;
+
+        border: thin solid black;
+
+        // From https://stackoverflow.com/a/51117224
+        &.checkered {
+            background-position: 0px 0px, 10px 10px;
+            background-size: 20px 20px;
+            background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%),
+                              linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%);
+        }
+    }
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+
+        margin-left: 20px;
+
+        min-width: 200px;
+
+        & div, h2 {
+            text-align: left;
+        }
+
+        & > div {
+            display: flex;
+            flex-direction: column;
+
+            flex-grow: 0 1 auto;
+
+            & > div {
+                margin-bottom: 25px;
+
+                & > span {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+
+                & button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    height: unset;
+
+                    float: right;
+                    margin-left: 30px;
+                    padding: 4px;
+
+                    color: black;
+
+                    border: 1px solid black;
+
+                    &:hover {
+                        background-color: #eee;
+                    }
+                    &:active {
+                        background-color: #ccc;
+                    }
+                }
+            }
+        }
+
+        & > div:last-child {
+            margin-top: auto;
+            margin-bottom: 40px;
+        }
+
+        &__buttons, &__switches {
+            display: flex;
+
+            flex-direction: row;
+
+            justify-content: space-around;
+
+            & > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                & > span {
+                    font-size: small;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+}
