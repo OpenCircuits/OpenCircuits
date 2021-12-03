@@ -26,13 +26,26 @@ $itemnav-height: 500px;
 
     @media (max-width: 768px) {
         position: absolute;
-        bottom: $itemnav-height;
+        margin-bottom: $itemnav-height;
         left: 0px;
 
-        margin-bottom: 0px;
-
-        height: calc(100% - #{$itemnav-height} - #{$header-total-height});
+        height: calc(100% - (475px) - (50px));
     }
+
+    &__move {
+
+        @media (min-width: 768px) {
+            left: 0px;            
+        }
+
+        @media (max-width: 768px) {
+            margin-bottom: 0px;
+            left: 0px;
+            height: $historybox-height;
+        }
+    }
+
+    
 
     &__entry {
         height: 50px;

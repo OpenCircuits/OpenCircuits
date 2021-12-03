@@ -52,13 +52,11 @@ export const HistoryBox = ({ info }: Props) => {
     const {undoHistory, redoHistory} = useHistory(info);
 
     return (
-        <div className="historybox" style={{
-                display: (isHistoryBoxOpen ? "initial" : "none"),
-                left: (isOpen ? "" : "0px"),
-            }}>
+        <div className={`historybox ${isOpen ? "" : "historybox__move"}`}>
             {info.history.getActions().reverse().map((a, i) => {
                 return(<HistoryEntry key = {`history-box-entry-${i}`} a = {a}></HistoryEntry>)
             })}
         </div>
+
     );
 }
