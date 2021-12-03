@@ -1,4 +1,4 @@
-import {ESC_KEY,BACKSPACE_KEY,LEFT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
+import {ESC_KEY,BACKSPACE_KEY,LEFT_MOUSE_BUTTON, IO_PORT_RADIUS,RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -72,7 +72,6 @@ export const WiringTool = (() => {
                 return false;
             const ports = findPorts(info);
             // Activate if the user drags or clicks on a port
-            console.log("Activating WiringTool");
             return ((event.type === "mousedown" && event.button === LEFT_MOUSE_BUTTON && input.getTouchCount() === 1) ||
                     (event.type === "click")) &&
                     ports.length > 0 &&
@@ -83,11 +82,12 @@ export const WiringTool = (() => {
             //  1) if the port was initial clicked on,
             //      then a 2nd click is what will deactivate this
             //  2) if the port was initial dragged on,
-            //      then letting go of the mouse will deactivate this
-            console.log("DS WiringTool");
+            //      then letting go of the mouse will deactivate this       
             return (stateType === StateType.CLICKED && event.type === "click")  ||
                    (stateType === StateType.DRAGGED && event.type === "mouseup") ||
-                   (event.type === "keydown" && event.key === ESC_KEY);
+                   (event.type === "keydown" && event.key === ESC_KEY) ||
+                   (event.type === "keydown" && event.key === BACKSPACE_KEY) ||
+                   (event.type === "mousedown" && event.button === RIGHT_MOUSE_BUTTON);
         },
 
 
