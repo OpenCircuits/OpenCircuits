@@ -4,6 +4,7 @@ import {Component} from "core/models";
 /**
  * Utility used for calculating positions of ports and wires when a component
  * gets moved.
+ *
  * @param obj the component that will be snapped
  */
 export function SnapPos(obj: Component): void {
