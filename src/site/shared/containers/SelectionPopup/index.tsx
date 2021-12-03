@@ -3,10 +3,9 @@ import {useLayoutEffect, useState} from "react";
 import {DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
 
 import {V} from "Vector";
-import {Camera} from "math/Camera";
 
 import {Event} from "core/utils/Events";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action} from "core/actions/Action";
 
@@ -14,7 +13,6 @@ import {TitleModule} from "./modules/TitleModule";
 import {UseModuleProps} from "./modules/Module";
 
 import "./index.scss";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 type Props = {
@@ -79,6 +77,9 @@ export function SelectionPopup({info, modules}: Props) {
         if (!input)
             return;
         input.addListener(update);
+
+        // Fixes issue #647. Necessary since the undo/redo buttons don't trigger `input` to call update
+        selections.addChangeListener(() => update({type:"unknown"}, true));
 
         // Fixes issue #753. This is necessary because when a bus is made, no change is recorded in the system, so it does not
         // update to remove the bus button as intended. The function below ensures that when a bus is made, an upate is called.

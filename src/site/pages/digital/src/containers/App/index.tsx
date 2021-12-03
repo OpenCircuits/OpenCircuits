@@ -20,6 +20,7 @@ import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
@@ -29,6 +30,7 @@ import {ContextMenu}     from "shared/containers/ContextMenu";
 import {SideNav}         from "shared/containers/SideNav";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";
+import {ImageExporterPopup}   from "shared/containers/ImageExporterPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 import {HistoryBox}           from "shared/containers/HistoryBox";
@@ -46,6 +48,7 @@ import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
 import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
@@ -92,7 +95,8 @@ export const App = ((store: AppStore) => {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
+            CopyHandler, PasteHandler((data) => DigitalPaste(data, info)),
+            SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,
         TranslateTool, WiringTool,
@@ -146,6 +150,9 @@ export const App = ((store: AppStore) => {
 
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
+                <ImageExporterPopup preview={(props) => (
+                    <ImageExporterPreview mainInfo={info} {...props} />
+                )} />
 
                 <ExprToCircuitPopup mainInfo={info} />
 
