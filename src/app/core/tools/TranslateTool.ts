@@ -41,13 +41,16 @@ export const TranslateTool: Tool = (() => {
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse or an arrow key
             return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
-            (event.type === "keyup" && (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
+            (event.type === "keyup" && event.key == activatedButton &&
+                                       (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
                                         event.key == ARROW_UP   || event.key == ARROW_DOWN ));
         },
 
 
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
+
+            console.log("i have been activated");
 
             // The event that activates this will either be keydown or mousedrag, so 
             //  we can save the key like this to use later
@@ -119,6 +122,8 @@ export const TranslateTool: Tool = (() => {
                     break;
                 
                 case "keydown":
+                    if (activatedButton == LEFT_MOUSE_BUTTON) break;
+
                     //Translate with the arrow keys
                     let deltaPos = new Vector();
                 
