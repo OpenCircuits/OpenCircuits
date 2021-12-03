@@ -48,6 +48,30 @@ async function Init(): Promise<void> {
                     const clientId = process.env.OC_OAUTH2_ID;
                     if (!clientId)
                         throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
+
+                    // Wait for GAPI to load
+                    if (!gapi) {
+                        const loaded = await new Promise<boolean>((resolve) => {
+                            let numChecks = 0;
+                            const interval = setInterval(() => {
+                                // Check if GAPI loaded
+                                if (gapi) {
+                                    clearInterval(interval);
+                                    resolve(true);
+                                }
+                                // Stop trying to load GAPI after 100 iterations
+                                else if (numChecks > 100) {
+                                    clearInterval(interval);
+                                    resolve(false);
+                                }
+                                numChecks++;
+                            }, 50); // Poll every 1/20th of a second
+                        });
+
+                        if (!loaded)
+                            throw new Error(`Failed to load GAPI!`);
+                    }
+
                     await new Promise((resolve) => gapi.load("auth2", resolve));
                     await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
                 }

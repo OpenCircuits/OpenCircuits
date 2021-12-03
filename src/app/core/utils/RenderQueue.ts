@@ -1,4 +1,9 @@
 
+
+export type RenderOptions = {
+    useGrid: boolean;
+}
+
 /**
  * Utility class to help cut down on render times by
  *  grouping together render calls into a single call
@@ -7,16 +12,18 @@
  */
 export class RenderQueue {
     private queued: number;
-    private renderFunction?: () => void;
+    private renderFunction?: (options?: RenderOptions) => void;
     private lastFrameId: number;
+    private options: RenderOptions;
 
     /**
      * Constructor for RenderQueue
      * @param renderFunction The callback actual render function
      */
-    public constructor(renderFunction?: () => void) {
+    public constructor(renderFunction?: (options?: RenderOptions) => void, options: RenderOptions = { useGrid: true }) {
         this.queued = 0;
         this.renderFunction = renderFunction;
+        this.options = options;
     }
 
     /**
@@ -25,10 +32,14 @@ export class RenderQueue {
     private actualRender(): void {
         this.queued = 0;
         if (this.renderFunction)
-            this.renderFunction();
+            this.renderFunction(this.options);
     }
 
-    public setRenderFunction(renderFunction?: () => void): void {
+    public setOptions(options: Partial<RenderOptions>): void {
+        this.options = {...this.options, ...options};
+    }
+
+    public setRenderFunction(renderFunction?: (options?: RenderOptions) => void): void {
         this.renderFunction = renderFunction;
     }
 

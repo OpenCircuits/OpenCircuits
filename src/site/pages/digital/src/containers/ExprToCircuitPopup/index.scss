@@ -74,12 +74,11 @@
 
         & > div {
             & > div {
-                height: 40px;
-                padding: 3px;
                 white-space: nowrap;
+                margin: 5px 3px;
                 & > span {
                     color: $secondary-color;
-                    margin-left: 3px;
+                    margin-left: 10px;
                 }
             }
         }

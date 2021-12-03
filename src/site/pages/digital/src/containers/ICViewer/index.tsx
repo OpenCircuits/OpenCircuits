@@ -33,7 +33,7 @@ export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
     return ({ mainInfo }: Props) => {
-        const {camera, designer, history, selections, toolManager, renderer} = info;
+        const {camera, designer, toolManager, renderer} = info;
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icViewer })
@@ -81,6 +81,10 @@ export const ICViewer = (() => {
         useLayoutEffect(() => {
             if (!isActive || !data)
                 return;
+
+            // Retrieve current debug info from mainInfo
+            info.debugOptions = mainInfo.debugOptions;
+
             // Unlock input
             info.input.unblock();
 
