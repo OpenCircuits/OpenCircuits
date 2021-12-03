@@ -29,7 +29,8 @@ export class RotateAction implements Action {
     private finalAngles: Array<number>;
 
     /**
-     * Creates a rotation action for a component or agroup of components
+     * Creates a rotation action for a component or a group of components
+     *
      * @param objects Initializes the action with an Array of the selected component(s)
      * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between the selected component(s)
      * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s) are placed at
@@ -44,6 +45,7 @@ export class RotateAction implements Action {
 
     /**
      * Rotates a component or group of components.
+     *
      * @param angles the final angle(s) the component(s) will be set as
      */
     private setAngles(angles: Array<number>): void {
@@ -56,6 +58,7 @@ export class RotateAction implements Action {
     /**
      * Rotates a component or group of components from the initial angle(s)
      * to the final angle(s).
+     *
      * @returns an Action where the rotation is executed
      */
     public execute(): Action {
@@ -67,6 +70,7 @@ export class RotateAction implements Action {
     /**
      * Reverts the RotateAction object's angles to the original angles it was
      * set to, putting the components back in their initial orientation.
+     *
      * @returns an Action where the rotation is undone
      */
     public undo(): Action {
