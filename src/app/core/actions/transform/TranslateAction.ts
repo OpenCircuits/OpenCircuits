@@ -28,6 +28,7 @@ export class TranslateAction implements Action {
      * Creates a translation of component(s) from one position to another.
      * Each component in objs list has corresponding initial position and target position in those
      * respective lists.
+     *
      * @param objs Initializes the array with the selected component(s)
      * @param initialPositions Initializes the array with the selected components' starting positions
      * @param targetPositions Initializes the array with the selected components' final positions
@@ -41,6 +42,7 @@ export class TranslateAction implements Action {
 
     /**
      * Moves object from the initial to target position, and snaps the wires accordingly.
+     *
      * @returns an Action where the translation is executed
      */
     public execute(): Action {
@@ -53,6 +55,7 @@ export class TranslateAction implements Action {
 
     /**
      * Reverts a previous translation by moving component back to initial position.
+     *
      * @returns an Action where the translation is undone
      */
     public undo(): Action {
