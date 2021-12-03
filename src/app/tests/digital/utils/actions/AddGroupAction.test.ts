@@ -4,10 +4,9 @@ import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalWire} from "digital/models/DigitalWire";
+import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {LED} from "digital/models/ioobjects/outputs/LED";
-
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 
 
 describe("Add Group Action", () => {
@@ -22,7 +21,7 @@ describe("Add Group Action", () => {
         outPort.connect(wire);
         inPort.connect(wire);
 
-        const circuit = new DigitalObjectSet([input, output, wire]);
+        const circuit = DigitalObjectSet.from([input, output, wire]);
         new AddGroupAction(designer, circuit).execute();
 
         expect(circuit.getWires().length).toBe(1);
