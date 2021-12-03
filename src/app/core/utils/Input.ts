@@ -12,7 +12,8 @@ import {DRAG_TIME,
         Y_KEY,
         BACKSPACE_KEY,
         META_KEY,
-        ESC_KEY} from "core/utils/Constants";
+        ESC_KEY,
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -105,7 +106,15 @@ export class Input {
         this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
         this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
         this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+
+        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => {
+            this.onMouseDown(V(e.clientX, e.clientY), e.button);
+
+            // Fixes issue #777, stops Firefox from scrolling and allows panning
+            if (e.button === MIDDLE_MOUSE_BUTTON)
+                e.preventDefault();
+        }, false);
+
         this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
         this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
         this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
@@ -286,7 +295,10 @@ export class Input {
         this.isDragging = false;
         this.startTapTime = Date.now();
         this.mouseDown = true;
-        this.mouseDownPos = pos.sub(V(rect.left, rect.top));
+        this.mouseDownPos = pos.sub(rect.left, rect.top)
+                               // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                               .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
+
         this.mousePos = V(this.mouseDownPos);
         this.mouseDownButton = button;
 
@@ -297,7 +309,9 @@ export class Input {
 
         // get raw and relative mouse positions
         this.prevMousePos = V(this.mousePos);
-        this.mousePos = pos.sub(V(rect.left, rect.top));
+        this.mousePos = pos.sub(rect.left, rect.top)
+                           // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                           .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
         // determine if mouse is dragging
         this.isDragging = (this.mouseDown &&

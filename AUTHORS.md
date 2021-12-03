@@ -26,6 +26,7 @@ Dominic Beyer (Fall 2021 - current)
 Vishal Hada (Fall 2021 - current)  
 Vansh Reddy Cheguri (Fall 2021 - current)  
 Tinashe Osewe (Fall 2021 - current)  
+Long Guo (Fall 2021 - current)  
 
 
   
