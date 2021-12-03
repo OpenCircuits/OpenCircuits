@@ -51,14 +51,13 @@ export const ICPortTool = (() => {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
 
-                //----
                 const size = ic.getSize();
                 const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
                 const v = worldMousePos.sub(p).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
                                                                                        IO_PORT_LENGTH+size.y/2))).add(p);
                 port.setOriginPos(p);
                 port.setTargetPos(v);
-                //----
+
                 ic.update();
             } else {
                 const size = ic.getSize();
@@ -67,10 +66,8 @@ export const ICPortTool = (() => {
                                                                                        IO_PORT_LENGTH+size.y/2))).add(p);
                 // Mouse position is on the edge of the IC
                 if (p.x == v.x && p.y == v.y){
-                    console.log("same")
-                    //v = V(0,0).sub(p).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
-                    //                                                                    IO_PORT_LENGTH+size.y/2))).add(p);
                     let t = V(0,0);
+                    // Set port's target position outwards from the edge the origin is on
                     if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
                         t = V(0,-1).scale(p.y);
                     else
