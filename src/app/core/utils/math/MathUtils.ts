@@ -5,7 +5,6 @@ import {WIRE_DIST_ITERATIONS,
 import {Vector, V} from "./Vector";
 import {Transform} from "./Transform";
 import {BezierCurve} from "./BezierCurve";
-import { posix } from "path/posix";
 
 /**
  * Clamps a number between a given min and max

@@ -1,5 +1,5 @@
 import {IO_PORT_LENGTH, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
@@ -63,7 +63,7 @@ export const ICPortTool = (() => {
                 else
                     v = V(-1,0).scale(p.x);
             }
-            
+
             // Set the direction vector to the length of a port
             v = v.normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,IO_PORT_LENGTH+size.y/2))).add(p);
 
