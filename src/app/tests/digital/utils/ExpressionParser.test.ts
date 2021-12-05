@@ -6,6 +6,7 @@ import {InputToken, Token,
 import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
 import {ConstantLow} from "digital/models/ioobjects/inputs/ConstantLow";
@@ -14,7 +15,6 @@ import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 import {LED} from "digital/models/ioobjects/outputs/LED";
 import {DigitalComponent} from "digital/models/index";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
@@ -24,7 +24,7 @@ import "digital/models/ioobjects";
 
 /**
  * This function is used to create and run a separate test for every combination of switch states.
- * 
+ *
  * For each test, switches are set to on or off based on a bitwise and operation of the index of that test
  * in expected and 2 to the power of the index of the Switch in inputs. If the result is 0, then the switch
  * will be off. If it is anything else, it will be on.
@@ -33,12 +33,12 @@ import "digital/models/ioobjects";
  * (2**0 & 6) => 0 so Switch a will be off
  * (2**1 & 6) => 2 so Switch b will be on
  * (2**2 & 6) => 4 so Switch c will be on
- * 
+ *
  * Currently, jest runs the test in the opposite order of how they are given in the expected array.
  * This is done to avoid an issue where circuits initial state is incorrect. This is likely due to
  * the same underlying issue as issues #468 and #613 and if those are fixed, this function should
  * also be modified.
- * 
+ *
  * @param inputs an array of the names of the switches along with their corresponding Switch,
  *  those same Switch objects must be present in circuit
  * @param circuit the components and wires that make up the circuit being tested
@@ -75,7 +75,7 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
 
 /**
  * This function is similar to testInputs but only generates one test case rather than one for every state
- * 
+ *
  * @param inputs an array of the names of the switches along with their corresponding Switch,
  *  those same Switch objects must be present in circuit
  * @param circuit the components and wires that make up the circuit being tested
@@ -108,10 +108,10 @@ function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet,
  * The names of these switches are procedurally generated from "a" through "z". Note that the expression should
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
- * 
+ *
  * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the entire expression.
  * This behavior can be overwritten with the verbose argument.
- * 
+ *
  * @param numInputs the number of switches that are used by this expression/test
  * @param expression the logical boolean expression to test
  * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
@@ -141,7 +141,7 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             testInputs(inputs, objectSet, o, expected);
     });
 }
- 
+
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
 
@@ -331,7 +331,7 @@ describe("Expression Parser", () => {
 
         describe("Invalid ops", () => {
             const expression = "a | b ^ c & d | !(e & f)";
-            
+
             test("Invalid |", () => {
                 const testOps: OperatorFormat = {
                     label: "Programming 1 (&, |, ^, !)",
@@ -475,7 +475,7 @@ describe("Expression Parser", () => {
             const inputMap = new Map<string, DigitalComponent>();
 
             const objectSet = ExpressionToCircuit(inputMap, " ", o);
-            
+
             expect(objectSet.toList().length).toBe(0);
         });
     });
@@ -590,11 +590,11 @@ describe("Expression Parser", () => {
 
     describe("Alternate Formats", () => {
         runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], Formats[1]);
-        
+
         runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], Formats[2]);
-        
+
         runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], Formats[1]);
-        
+
         runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], Formats[2]);
 
         runTests(1, "_a", [true, false], Formats[3]);
@@ -631,7 +631,7 @@ describe("Expression Parser", () => {
                 expect(treeRight.ident).toBe("b");
             });
         });
-        
+
         describe("!a", () => {
             const tokenA: InputToken = {type: "input", name: "a"};
             const notToken: Token = {type: "!"};

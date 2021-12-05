@@ -11,19 +11,20 @@ export class FakeInput extends Input {
         // Fake canvas and instant drag time
         super({
             addEventListener: () => {},
-            getBoundingClientRect: () => ({left: 0, top: 0})
+            getBoundingClientRect: () => ({left: 0, top: 0, width: 1, height: 1}),
+            width: 1, height: 1,
         } as any, -1);
 
         this.touches = [];
         this.center = cameraCenter;
     }
 
-    public pressKey(key: string): FakeInput {
-        super.onKeyDown(key);
+    public pressKey(code: number): FakeInput {
+        super.onKeyDown(code);
         return this;
     }
-    public releaseKey(key: string): FakeInput {
-        super.onKeyUp(key);
+    public releaseKey(code: number): FakeInput {
+        super.onKeyUp(code);
         return this;
     }
 

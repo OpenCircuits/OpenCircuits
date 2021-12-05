@@ -7,10 +7,13 @@ import {DRAG_TIME,
         COMMAND_KEY,
         D_KEY,
         S_KEY,
+        Z_KEY,
+        Y_KEY,
         OPTION_KEY,
         BACKSPACE_KEY,
         META_KEY,
-        ESC_KEY} from "core/utils/Constants";
+        ESC_KEY,
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
@@ -35,7 +38,7 @@ export class Input {
     private touchCount: number;
 
     private listeners: Listener[];
-    private keysDown: Map<string, boolean>;
+    private keysDown: Map<number, boolean>;
 
     private dragTime: number;
 
@@ -54,12 +57,14 @@ export class Input {
         this.setupHammer();
     }
 
-    private isPreventedCombination(newKey: string): boolean {
+    private isPreventedCombination(newKey: number): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
             [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
+            [[Z_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
+            [[Y_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
             [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ];
@@ -77,15 +82,15 @@ export class Input {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
-                this.onKeyDown(e.key);
+                this.onKeyDown(e.keyCode);
 
-                if (this.isPreventedCombination(e.key))
+                if (this.isPreventedCombination(e.keyCode))
                     e.preventDefault();
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key);
+                this.onKeyUp(e.keyCode)
         }, false);
 
         window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
@@ -100,7 +105,15 @@ export class Input {
         this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
         this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
         this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
-        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => this.onMouseDown(V(e.clientX, e.clientY), e.button), false);
+
+        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => {
+            this.onMouseDown(V(e.clientX, e.clientY), e.button);
+
+            // Fixes issue #777, stops Firefox from scrolling and allows panning
+            if (e.button === MIDDLE_MOUSE_BUTTON)
+                e.preventDefault();
+        }, false);
+
         this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
         this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
         this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
@@ -196,7 +209,7 @@ export class Input {
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
-    public isKeyDown(key: string): boolean {
+    public isKeyDown(key: number): boolean {
         return (this.keysDown.has(key) &&
                 this.keysDown.get(key) == true);
     }
@@ -230,13 +243,13 @@ export class Input {
         return this.touchCount;
     }
 
-    protected onKeyDown(key: string): void {
+    protected onKeyDown(key: number): void {
         this.keysDown.set(key, true);
 
         // call each listener
         this.callListeners({type: "keydown", key});
     }
-    protected onKeyUp(key: string): void {
+    protected onKeyUp(key: number): void {
         this.keysDown.set(key, false);
 
         // call each listener
@@ -281,7 +294,10 @@ export class Input {
         this.isDragging = false;
         this.startTapTime = Date.now();
         this.mouseDown = true;
-        this.mouseDownPos = pos.sub(V(rect.left, rect.top));
+        this.mouseDownPos = pos.sub(rect.left, rect.top)
+                               // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                               .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
+
         this.mousePos = V(this.mouseDownPos);
         this.mouseDownButton = button;
 
@@ -292,7 +308,9 @@ export class Input {
 
         // get raw and relative mouse positions
         this.prevMousePos = V(this.mousePos);
-        this.mousePos = pos.sub(V(rect.left, rect.top));
+        this.mousePos = pos.sub(rect.left, rect.top)
+                           // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                           .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
         // determine if mouse is dragging
         this.isDragging = (this.mouseDown &&
