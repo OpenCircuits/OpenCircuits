@@ -1,22 +1,17 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
-
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
-
-import {InputPort} from "../../ports/InputPort";
 import {Mux} from "./Mux";
+import {MultiplexerInputPositioner, MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
 @serializable("Multiplexer")
 export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE));
+              new MuxSelectPositioner(true), new MultiplexerInputPositioner());
         this.updatePortNames();
-        this.setOriginPositions();
     }
 
     /**
@@ -28,24 +23,6 @@ export class Multiplexer extends Mux {
             if (p.getName() == "") p.setName('S'+i)});
         this.inputs.getPorts().forEach((p, i) => {
             if (p.getName() == "") p.setName('I'+i)});
-    }
-
-    /**
-     * Sets the selector port origin positions to be diagonally along the bottom
-     * edge of the Multiplexer.
-     */
-    private setOriginPositions(): void {
-        const width = this.getSize().x;
-        const slope = MULTIPLEXER_HEIGHT_OFFSET / width; // give the 7 a name somewhere in Constants.ts
-        const midPortOriginOffset = this.getSize().y / 2 - MULTIPLEXER_HEIGHT_OFFSET / 2;
-        this.getSelectPorts().forEach((p) => {
-            let pos = p.getOriginPos();
-            pos.y = midPortOriginOffset - slope * pos.x;
-            p.setOriginPos(pos);
-        });
-        // TODO move y origin coordinate for input ports up by default_size/2
-        // move selector ports up default_size/2
-        // make a little smaller so there isn't so much extra space at the top
     }
 
     /**
@@ -64,7 +41,6 @@ export class Multiplexer extends Mux {
         // update the output port to align with the right edge of the Mux
         this.outputs.updatePortPositions();
         this.updatePortNames();
-        this.setOriginPositions();
     }
 
     public getDisplayName(): string {

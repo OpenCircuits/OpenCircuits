@@ -1,22 +1,17 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
-
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
-
-import {OutputPort} from "../../ports/OutputPort";
 import {Mux} from "./Mux";
+import {DemultiplexerOutputPositioner, MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
 @serializable("Demultiplexer")
 export class Demultiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(1), new ClampedValue(4, 2, Math.pow(2,8)),
-              undefined, new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
+              new MuxSelectPositioner(false), undefined, new DemultiplexerOutputPositioner());
         this.updatePortNames();
-        this.setOriginPositions();
     }
 
     /**
@@ -28,21 +23,6 @@ export class Demultiplexer extends Mux {
             if (p.getName() == "") p.setName('S'+i)});
         this.outputs.getPorts().forEach((p, i) => {
             if (p.getName() == "") p.setName('O'+i)});
-    }
-
-    /**
-     * Sets the selector port origin positions to be diagonally along the bottom
-     * edge of the Demultiplexer.
-     */
-    private setOriginPositions(): void {
-        const width = this.getSize().x;
-        const slope = MULTIPLEXER_HEIGHT_OFFSET / width;
-        const midPortOriginOffset = this.getSize().y / 2 - MULTIPLEXER_HEIGHT_OFFSET / 2;
-        this.getSelectPorts().forEach((p) => {
-            let pos = p.getOriginPos();
-            pos.y = midPortOriginOffset + slope * pos.x;
-            p.setOriginPos(pos);
-        });
     }
 
     public activate(): void {
@@ -61,7 +41,6 @@ export class Demultiplexer extends Mux {
         // update the input port to align with the left edge of the DeMux
         this.inputs.updatePortPositions();
         this.updatePortNames();
-        this.setOriginPositions();
     }
 
     public getDisplayName(): string {
