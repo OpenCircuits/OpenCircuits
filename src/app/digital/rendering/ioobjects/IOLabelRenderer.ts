@@ -1,5 +1,6 @@
 import {IO_LABEL_DIR_PADDING, IO_LABEL_VERTICAL_TEXT_PADDING} from "core/utils/Constants";
 import {V, Vector} from "Vector";
+import {Clamp} from "math/MathUtils";
 
 import {Camera} from "math/Camera";
 import {Renderer} from "core/rendering/Renderer";
@@ -24,6 +25,12 @@ export const IOLabelRenderer = (() => {
         pos = pos.add(port.getDir().scale(-textWidth/2).project(V(1,0)));
         // add in vertical direction so label is a bit farther from port
         pos = pos.add(port.getDir().scale(-IO_LABEL_VERTICAL_TEXT_PADDING).project(V(0,1)));
+
+        // clamp the position inside the box
+        const xBound = size.x/2 - IO_LABEL_DIR_PADDING - textWidth/2;
+        const yBound = size.y/2 - 2*IO_LABEL_VERTICAL_TEXT_PADDING;
+        pos.x = Clamp(pos.x, -xBound, xBound);
+        pos.y = Clamp(pos.y, -yBound, yBound);
 
         renderer.text(port.getName(), pos, align);
     }
