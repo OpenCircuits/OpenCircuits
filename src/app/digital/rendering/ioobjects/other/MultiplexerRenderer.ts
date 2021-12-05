@@ -37,10 +37,6 @@ export const MultiplexerRenderer = (() => {
                 const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
-                // Add offset so the selector labels do not overlap
-                //p1.y += MULTIPLEXER_HEIGHT_OFFSET;
-                //p4.y += MULTIPLEXER_HEIGHT_OFFSET;
-
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
             else {
@@ -48,10 +44,6 @@ export const MultiplexerRenderer = (() => {
                 const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2);
                 const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
-
-                // Add offset so the selector labels do not overlap
-                //p1.y += MULTIPLEXER_HEIGHT_OFFSET;
-                //p4.y += MULTIPLEXER_HEIGHT_OFFSET;
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
