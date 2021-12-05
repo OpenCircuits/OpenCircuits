@@ -8,7 +8,7 @@ import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxSelectPositioners";
+import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortSet} from "core/models/ports/PortSets";
@@ -20,12 +20,14 @@ export abstract class Mux extends DigitalComponent {
     protected selects: PortSet<InputPort>;
 
     public constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue,
-                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+                        selectPositioner: Positioner<InputPort>,
+                        inputPositioner?: Positioner<InputPort>,
+                        outputPositioner?: Positioner<OutputPort>) {
         super(inputPortCount, outputPortCount, Mux.calcSize(MUX_DEFAULT_SELECT_PORTS),
                 inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
-                                                new MuxSelectPositioner(), InputPort);
+                                                selectPositioner, InputPort);
 
         this.setSelectPortCount(MUX_DEFAULT_SELECT_PORTS);
     }
