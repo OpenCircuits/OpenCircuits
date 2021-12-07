@@ -3,6 +3,7 @@ import {Action} from "core/actions/Action";
 import {Component} from "core/models/Component";
 import {SnapPos} from "./SnapUtils";
 
+
 /**
  * Translate can be applied to single components or groups of components,
  * used for moving componets from one position to another.
@@ -48,6 +49,7 @@ export class TranslateAction implements Action {
     public execute(): Action {
         this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
 
+        // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
 
         return this;
@@ -60,7 +62,8 @@ export class TranslateAction implements Action {
      */
     public undo(): Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
-
+        
+        // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
 
         return this;
