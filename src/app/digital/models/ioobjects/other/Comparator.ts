@@ -26,7 +26,7 @@ export class Comparator extends DigitalComponent {
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
 
         this.activate();
-        this.setInputPortCount(4);
+        this.setInputPortCount(2);
         
         this.getOutputPort(Comparator.LT_PORT).setName("<");        
         this.getOutputPort(Comparator.EQ_PORT).setName("=");
@@ -34,7 +34,8 @@ export class Comparator extends DigitalComponent {
     }
 
     public setInputPortCount(val: number): void {
-        super.setInputPortCount(val);
+        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*val));
+        super.setInputPortCount(2*val);
 
         this.getInputPorts()
             .slice(0,this.getInputPortCount().getValue()/2)
