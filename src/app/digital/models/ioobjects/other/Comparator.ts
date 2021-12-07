@@ -11,6 +11,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 import { PortsToDecimal } from "digital/utils/ComponentUtils";
+import { ComparatorPositioner } from "digital/models/ports/positioners/ComparatorPositioner";
 
 @serializable("Comparator")
 export class Comparator extends DigitalComponent {
@@ -22,7 +23,7 @@ export class Comparator extends DigitalComponent {
         super(new ClampedValue(4, 2, 16),
               new ClampedValue(3), //3 shorthand for all
               V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*2),
-              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE), // update later ->>> default, maybe add a distinction between the two inputs
+              new ComparatorPositioner("left", DEFAULT_SIZE),
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
 
         this.activate();
@@ -34,7 +35,7 @@ export class Comparator extends DigitalComponent {
     }
 
     public setInputPortCount(val: number): void {
-        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*val));
+        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*(val+0.5)));
         super.setInputPortCount(2*val);
 
         this.getInputPorts()
