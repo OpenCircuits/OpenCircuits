@@ -50,6 +50,7 @@ export class BezierCurve {
      * Initializes bezier curve with the given start point, end point, and intermediate points.
      * If no point(s) are given, then it will be initialized with a blank Vector.
      * Bounding Box holds meaningless values by default
+     *
      * @param p1 Initializes start point with given coordinates
      * @param p2 Initializes end point with given coordinates
      * @param c1 Initializes first control point with given coordinates
@@ -67,6 +68,7 @@ export class BezierCurve {
 
     /**
      * Calculates t by using the quadratic formula with the given a, b, and c
+     *
      * @param a the a value in the quadratic formula
      * @param b the b value in the quadratic formula
      * @param c the c value in the quadratic formula
@@ -117,6 +119,7 @@ export class BezierCurve {
 
     /**
      * Changes start point (P1), for Bezier curve.
+     *
      * @param v the x, y coordinates to set the point to
      */
     public setP1(v: Vector): void {
@@ -126,6 +129,7 @@ export class BezierCurve {
 
     /**
      * Changes end point (P2) for Bezier curve.
+     *
      * @param v the x, y coordinates to set the point to
      */
     public setP2(v: Vector): void {
@@ -135,6 +139,7 @@ export class BezierCurve {
 
     /**
      * Changes first control point (C1) for Bezier curve.
+     *
      * @param v the x, y coordinates to set the point to
      */
     public setC1(v: Vector): void {
@@ -144,6 +149,7 @@ export class BezierCurve {
 
     /**
      * Changes second control point (C2) for Bezier curve.
+     *
      * @param v the x, y coordinates to set the point to
      */
     public setC2(v: Vector): void {
@@ -153,6 +159,7 @@ export class BezierCurve {
 
     /**
      * Returns start point of curve (p1).
+     *
      * @returns the x, y coordinates of the start point
      */
     public getP1(): Vector {
@@ -161,6 +168,7 @@ export class BezierCurve {
 
     /**
      * Returns end point of curve (p2).
+     *
      * @returns the x, y coordinates of the end point
      */
     public getP2(): Vector {
@@ -169,6 +177,7 @@ export class BezierCurve {
 
     /**
      * Returns first control point (C1) for Bezier curve.
+     *
      * @returns the x, y coordinates of the first control point
      */
     public getC1(): Vector {
@@ -177,6 +186,7 @@ export class BezierCurve {
 
     /**
      * Returns second control point (C2) for Bezier curve.
+     *
      * @returns the x, y coordinates of the second control point
      */
     public getC2(): Vector {
@@ -185,6 +195,7 @@ export class BezierCurve {
 
     /**
      * Calculates x coordinate of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns x coordinate of t
      */
@@ -195,6 +206,7 @@ export class BezierCurve {
 
     /**
      * Calculates y coordinate of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns y coordinate of t
      */
@@ -205,6 +217,7 @@ export class BezierCurve {
 
     /**
      * Calculates x and y coordinates of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns x and y coordinates of t
      */
@@ -214,6 +227,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 1st derivative of x coord of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 1st derivative of x coord of t
      */
@@ -224,6 +238,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 1st derivative of y coord of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 1st derivative of y coord of t
      */
@@ -234,6 +249,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 1st derivatives of x and y coordinates of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 1st derivatives of x and y coordinates of t
      */
@@ -243,6 +259,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 2nd derivative of x coordinate of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 2nd derivative of x coordinate of t
      */
@@ -254,6 +271,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 2nd derivative of y coordinate of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 2nd derivative of y coordinate of t
      */
@@ -265,6 +283,7 @@ export class BezierCurve {
 
     /**
      * Calculates the 2nd derivatives of x and y coordinates of t
+     *
      * @param t how far along the bezier curve the given point is
      * @returns the 2nd derivative of x and y coordinates of t
      */
@@ -274,6 +293,7 @@ export class BezierCurve {
 
     /**
      * Bounding box accessor updates the bounding box and returns it
+     *
      * @returns a Transform that contains the bounding box of the curve
      */
     public getBoundingBox(): Transform {
