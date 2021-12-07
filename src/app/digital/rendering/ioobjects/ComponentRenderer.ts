@@ -39,6 +39,7 @@ import {LEDRenderer}            from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
 import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
+import { Comparator } from "digital/models/ioobjects";
 
 /**
  * Renders Components
@@ -119,6 +120,8 @@ export const ComponentRenderer = (() => {
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
+                drawBox(renderer, transform, selected);
+            else if (object instanceof Comparator)
                 drawBox(renderer, transform, selected);
             else if (object instanceof ConstantNumber)
                 ConstantNumberRenderer.render(renderer, object, selected);
