@@ -23,6 +23,18 @@ export class Comparator extends DigitalComponent {
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
 
         this.activate();
+        this.setInputPortCount(4);
+    }
+
+    public setInputPortCount(val: number): void {
+        super.setInputPortCount(val);
+
+        this.getInputPorts()
+            .slice(0,this.getInputPortCount().getValue()/2)
+            .forEach((port, i) => port.setName("a"+i));
+        this.getInputPorts()
+            .slice(this.getInputPortCount().getValue()/2)
+            .forEach((port, i) => port.setName("b"+i));
     }
 
     public activate(): void {
@@ -31,7 +43,6 @@ export class Comparator extends DigitalComponent {
         super.activate(a<b,0);
         super.activate(a===b, 1);
         super.activate(a>b, 2);
-
     }
 
     public getDisplayName(): string {
