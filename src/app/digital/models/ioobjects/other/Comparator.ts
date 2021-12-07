@@ -14,6 +14,9 @@ import { PortsToDecimal } from "digital/utils/ComponentUtils";
 
 @serializable("Comparator")
 export class Comparator extends DigitalComponent {
+    public static readonly LT_PORT = 0;
+    public static readonly EQ_PORT = 1;
+    public static readonly GT_PORT = 2;
 
     public constructor() {
         super(new ClampedValue(4, 2, 16),
@@ -25,9 +28,9 @@ export class Comparator extends DigitalComponent {
         this.activate();
         this.setInputPortCount(4);
         
-        this.getOutputPort(0).setName("<");        
-        this.getOutputPort(1).setName("=");
-        this.getOutputPort(2).setName(">");
+        this.getOutputPort(Comparator.LT_PORT).setName("<");        
+        this.getOutputPort(Comparator.EQ_PORT).setName("=");
+        this.getOutputPort(Comparator.GT_PORT).setName(">");
     }
 
     public setInputPortCount(val: number): void {
@@ -44,9 +47,9 @@ export class Comparator extends DigitalComponent {
     public activate(): void {
         const a = PortsToDecimal(this.getInputPorts().slice(0,this.getInputPortCount().getValue()/2));
         const b = PortsToDecimal(this.getInputPorts().slice(this.getInputPortCount().getValue()/2));
-        super.activate(a<b,0);
-        super.activate(a===b, 1);
-        super.activate(a>b, 2);
+        super.activate(a<b,Comparator.LT_PORT);
+        super.activate(a===b, Comparator.EQ_PORT);
+        super.activate(a>b, Comparator.GT_PORT);
     }
 
     public getDisplayName(): string {
