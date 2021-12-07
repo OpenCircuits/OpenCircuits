@@ -1,6 +1,7 @@
 import {WIRE_SNAP_THRESHOLD} from "core/utils/Constants";
 import {Component} from "core/models";
 
+
 /**
  * Utility used for calculating positions of ports and wires when a component
  * gets moved.
