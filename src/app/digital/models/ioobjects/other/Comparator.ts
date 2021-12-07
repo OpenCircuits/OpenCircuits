@@ -18,12 +18,16 @@ export class Comparator extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(4, 2, 16),
               new ClampedValue(3), //3 shorthand for all
-              V(DEFAULT_SIZE, DEFAULT_SIZE*2),
+              V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*2),
               new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE), // update later ->>> default, maybe add a distinction between the two inputs
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
 
         this.activate();
         this.setInputPortCount(4);
+        
+        this.getOutputPort(0).setName("<");        
+        this.getOutputPort(1).setName("=");
+        this.getOutputPort(2).setName(">");
     }
 
     public setInputPortCount(val: number): void {
