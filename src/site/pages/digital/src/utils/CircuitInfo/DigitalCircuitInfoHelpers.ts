@@ -15,8 +15,6 @@ import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
-import {SaveFile} from "shared/utils/Exporter";
-import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {GenerateThumbnail} from "../GenerateThumbnail";
@@ -69,22 +67,6 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             success = await store.dispatch(LoadUserCircuits()) && success;
 
             return success;
-        },
-
-        SaveCircuitToFile: async (type) => {
-            const {circuit} = store.getState();
-
-            switch (type) {
-                case "pdf":
-                    SavePDF(canvas.current, circuit.name);
-                    break;
-                case "png":
-                    SavePNG(canvas.current, circuit.name);
-                    break;
-                case "circuit":
-                    SaveFile(helpers.GetSerializedCircuit(), circuit.name);
-                    break;
-            }
         },
 
         DeleteCircuitRemote: async (circuitData) => {
