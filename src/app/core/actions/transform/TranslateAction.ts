@@ -65,7 +65,7 @@ export class TranslateAction implements Action {
      */
     public undo(): Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
-        
+
         // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
 
