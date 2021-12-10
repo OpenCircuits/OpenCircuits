@@ -25,6 +25,7 @@ export const LEDRenderer = (() => {
     return {
         render(renderer: Renderer, _: Camera, led: LED, selected: boolean): void {
             const size = led.getSize();
+            console.log("Led",size);
 
             // draw the LED object
             renderer.image(Images.GetImage(led.getImageName()), V(), size, led.getColor());

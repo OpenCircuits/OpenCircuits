@@ -65,6 +65,11 @@
             "id": "Oscilloscope",
             "label": "Oscillo-scope",
             "icon": "oscilloscope.svg"
+          },
+          {
+            "id": "Speaker",
+            "label": "Speaker",
+            "icon": "speaker.svg"
           }
         ]
       },

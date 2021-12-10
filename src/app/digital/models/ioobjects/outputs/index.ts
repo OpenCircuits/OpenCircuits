@@ -3,3 +3,4 @@ export {SegmentDisplay} from "./SegmentDisplay";
 export {BCDDisplay} from "./BCDDisplay";
 export {ASCIIDisplay} from "./ASCIIDisplay";
 export {Oscilloscope} from "./Oscilloscope";
+export {DigitalSpeaker} from "./DigitalSpeaker";

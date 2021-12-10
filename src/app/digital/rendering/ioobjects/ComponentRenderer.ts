@@ -27,6 +27,7 @@ import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDispl
 import {Oscilloscope}        from "digital/models/ioobjects/outputs/Oscilloscope";
 import {IC}                  from "digital/models/ioobjects/other/IC";
 import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumber";
+import {DigitalSpeaker}    from "digital/models/ioobjects/outputs/DigitalSpeaker";
 
 import {Images} from "digital/utils/Images";
 
@@ -39,6 +40,7 @@ import {LEDRenderer}            from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
 import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
+import {DigitalSpeakerRenderer} from "./outputs/SpeakerRenderer";
 
 /**
  * Renders Components
@@ -125,6 +127,7 @@ export const ComponentRenderer = (() => {
             else if (object instanceof Oscilloscope)
                 OscilloscopeRenderer.render(renderer, camera, object, selected);
 
+
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (object instanceof LED) {
@@ -132,6 +135,10 @@ export const ComponentRenderer = (() => {
             }
             else if (imgName) {
                 renderer.image(Images.GetImage(imgName), V(), size, tint);
+            }
+
+            if(object instanceof DigitalSpeaker) {
+                DigitalSpeakerRenderer.render(renderer, camera, object, selected);
             }
 
             // Render the IOLabels, does not render labels if they are blank
