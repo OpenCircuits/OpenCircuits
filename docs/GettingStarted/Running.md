@@ -49,6 +49,16 @@ To test OpenCircuits locally, simply run
 yarn test
 ```
 
+To view the coverage of tests on files you changed, run
+```bash
+yarn coverage
+```
+
+To view coverage of tests on all files, run
+```bash
+yarn coverage:all
+```
+
 ---
 
 ## Documentation

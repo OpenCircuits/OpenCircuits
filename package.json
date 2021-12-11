@@ -12,7 +12,9 @@
     "docs": "cd ./src/site/pages/docs && yarn start",
     "build:docs": "cd ./src/site/pages/docs && yarn build",
     "build:jsdocs": "ts-node ./scripts/docs/index.ts",
-    "test": "node ./scripts/test.js"
+    "test": "node ./scripts/test.js",
+    "coverage": "node ./scripts/test.js --coverage",
+    "coverage:all": "node ./scripts/test.js --coverage --watchAll"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",

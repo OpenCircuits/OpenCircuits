@@ -32,9 +32,13 @@ async function launch_test(dir, flags) {
 (async () => {
     const argv = yargs(process.argv.slice(2))
         .boolean("ci")
+        .boolean("coverage")
+        .boolean("watchAll")
         .argv;
 
     const ci = argv.ci;
+    const coverage = argv.coverage;
+    const watchAll = argv.watchAll;
 
     let dirs = argv._;
     if (ci && dirs.length === 0) {
@@ -54,7 +58,9 @@ async function launch_test(dir, flags) {
     }
 
     const flags = {
-        ci, watch: (dirs.length === 1 && !ci)
+        ci, watch: (dirs.length === 1 && !ci),
+        coverage: coverage,
+        watchAll: watchAll
     };
 
     const results = [];
