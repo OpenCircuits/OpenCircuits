@@ -6,6 +6,7 @@ const getEnv = require("./utils/env");
 const getDirs = require("./utils/getDirs");
 const getAliases = require("./utils/getAliases");
 const path = require("path");
+const open = require("open");
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -17,6 +18,8 @@ const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 async function launch_test(dir, flags) {
+    if (flags.coverage)
+        open(flags.coverageDirectory + "/lcov-report/index.html");
     return await jest.runCLI({
         ...flags,
         config: JSON.stringify({
@@ -81,8 +84,10 @@ async function launch_test(dir, flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
+        const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
+        flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
         results.push(
-            (await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags)).results
+            (await launch_test(testDir, flags)).results
         );
     }
 
