@@ -18,8 +18,6 @@ const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 async function launch_test(dir, flags) {
-    if (flags.coverage)
-        open(flags.coverageDirectory + "/lcov-report/index.html");
     return await jest.runCLI({
         ...flags,
         config: JSON.stringify({
@@ -36,12 +34,10 @@ async function launch_test(dir, flags) {
     const argv = yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("coverage")
-        .boolean("watchAll")
         .argv;
 
     const ci = argv.ci;
     const coverage = argv.coverage;
-    const watchAll = argv.watchAll;
 
     let dirs = argv._;
     if (ci && dirs.length === 0) {
@@ -61,9 +57,10 @@ async function launch_test(dir, flags) {
     }
 
     const flags = {
-        ci, watch: (dirs.length === 1 && !ci),
+        ci: (dirs.length === 1 && !ci),
+        watch: (dirs.length === 1 && !ci) && !coverage,
         coverage: coverage,
-        watchAll: watchAll
+        collectCoverageFrom: "**/*.{js,ts,tsx}"
     };
 
     const results = [];
@@ -89,6 +86,8 @@ async function launch_test(dir, flags) {
         results.push(
             (await launch_test(testDir, flags)).results
         );
+        if (coverage)
+            open(flags.coverageDirectory + "/lcov-report/index.html");
     }
 
     const pass = results.every(r => r.success);
