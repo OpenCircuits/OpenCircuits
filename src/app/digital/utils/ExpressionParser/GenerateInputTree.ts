@@ -97,7 +97,14 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     // The tree tree is created with the new node as the root and returned
     let tree: InputTree;
     if (currentOp === "!") {
-        tree = {kind: "unop", type: "!", child: rightRet.tree};
+        const rTree = rightRet.tree;
+        if (rTree.kind === "binop" && !rTree.isNot) {
+            tree = rTree;
+            tree.isNot = true;
+        }
+        else {
+            tree = {kind: "unop", type: "!", child: rightRet.tree};
+        }
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         const lTree = leftRet.tree;

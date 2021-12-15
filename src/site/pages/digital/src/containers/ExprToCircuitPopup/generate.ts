@@ -50,24 +50,22 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute(),
                                     new AddGroupAction(info.designer, circuit).execute()]);
-    const [negateAction, negated] = CreateNegatedGatesAction(info.designer, circuit);
-    action.add(negateAction);
-    OrganizeMinDepth(negated, startPos);
+    OrganizeMinDepth(circuit, startPos);
 
     if (isIC) { // If creating as IC
-        const data = ICData.Create(negated);
+        const data = ICData.Create(circuit);
         if (!data)
             throw new Error("Failed to create ICData");
         data.setName(expression);
         const ic = new IC(data);
         ic.setName(expression);
         ic.setPos(info.camera.getPos());
-        action.add(CreateDeleteGroupAction(info.designer, negated.getComponents()).execute());
+        action.add(CreateDeleteGroupAction(info.designer, circuit.getComponents()).execute());
         action.add(new CreateICDataAction(data, info.designer).execute());
         action.add(new PlaceAction(info.designer, ic).execute());
         action.add(new SelectAction(info.selections, ic).execute());
     } else { // If placing directly
-        action.add(CreateGroupSelectAction(info.selections, negated.getComponents()).execute());
+        action.add(CreateGroupSelectAction(info.selections, circuit.getComponents()).execute());
     }
 
     info.history.add(action);

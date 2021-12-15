@@ -1,6 +1,6 @@
 import {Create} from "serialeazy";
 
-import {InputTree, InputTreeOpType} from "./Constants/DataStructures";
+import {InputTree, InputTreeBinOpType, InputTreeOpType} from "./Constants/DataStructures";
 
 import {IOObject} from "core/models";
 import {DigitalComponent} from "digital/models";
@@ -8,11 +8,23 @@ import {LazyConnect} from "digital/utils/ComponentUtils";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 
 
+/**
+ * Used to get the string for the Create funciton from the operation
+ */
 export const TypeToGate: Record<InputTreeOpType, string> = {
     "&": "ANDGate",
     "!": "NOTGate",
     "|": "ORGate",
     "^": "XORGate",
+}
+
+/**
+ * Used to get the string for the Create funciton from the negated operation
+ */
+export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
+    "&": "NANDGate",
+    "|": "NORGate",
+    "^": "XNORGate",
 }
 
 /**
@@ -39,7 +51,7 @@ export const TypeToGate: Record<InputTreeOpType, string> = {
     }
 
     const ret = circuit;
-    const newGate = Create<Gate>(TypeToGate[node.type]);
+    const newGate = Create<Gate>((node.kind === "binop" && node.isNot) ? NegatedTypeToGate[node.type] : TypeToGate[node.type]);
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = LazyConnect(prevNode, newGate);
