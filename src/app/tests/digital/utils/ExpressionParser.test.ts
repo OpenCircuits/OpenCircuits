@@ -600,6 +600,70 @@ describe("Expression Parser", () => {
         runTests(1, "_a", [true, false], Formats[3]);
     });
 
+    describe("Binary gate variants", () => {
+        describe("7 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 7; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(9);
+            });
+
+            test("Correct connections", () => {
+                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                for (let i = 1; i < 7; i++)
+                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+            });
+        });
+
+        describe("8 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 8; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(10);
+            });
+
+            test("Correct connections", () => {
+                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                for (let i = 1; i < 8; i++)
+                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+            });
+        });
+
+        describe("9 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 9; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(12);
+            });
+
+            test("Correct connections", () => {
+                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                for (let i = 1; i < 7; i++)
+                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+                // Doesn't matter if input 8 is connected to bigGate or the other or gate
+                expect(inputs[8][1].getOutputs()[0].getOutputComponent()).not.toBe(bigGate);
+            });
+        });
+    });
+
     describe("Generate Input Tree", () => {
         describe("!(a&b)", () => {
             const tokenA: InputToken = {type: "input", name: "a"};
@@ -619,14 +683,14 @@ describe("Expression Parser", () => {
             const treeAnd = treeNot.child as InputTreeBinOpNode;
             test("&", () => {
                 expect(treeAnd.type).toBe("&");
-                expect(treeAnd.lChild.kind).toBe("leaf");
-                expect(treeAnd.rChild.kind).toBe("leaf");
+                expect(treeAnd.children[0].kind).toBe("leaf");
+                expect(treeAnd.children[1].kind).toBe("leaf");
             });
-            const treeLeft = treeAnd.lChild as InputTreeIdent;
+            const treeLeft = treeAnd.children[0] as InputTreeIdent;
             test("a", () => {
                 expect(treeLeft.ident).toBe("a");
             });
-            const treeRight = treeAnd.rChild as InputTreeIdent;
+            const treeRight = treeAnd.children[1] as InputTreeIdent;
             test("a", () => {
                 expect(treeRight.ident).toBe("b");
             });

@@ -1,4 +1,4 @@
-import {Token, TokenType, InputTree, OperatorFormat, InputToken} from "./Constants/DataStructures";
+import {Token, TokenType, InputTree, InputToken, BinOpChildren} from "./Constants/DataStructures";
 import {Formats} from "./Constants/Formats";
 
 
@@ -93,10 +93,34 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
 
     // The tree tree is created with the new node as the root and returned
     let tree: InputTree;
-    if (currentOp === "!")
+    if (currentOp === "!") {
         tree = {kind: "unop", type: "!", child: rightRet.tree};
-    else if (currentOp === "|" || currentOp === "^" || currentOp === "&")
-        tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
+    }
+    else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
+        const lTree = leftRet.tree;
+        const rTree = rightRet.tree;
+        // 7 + rTree = 8, that is why 7 is used
+        let childrenArray: InputTree[] = (lTree.kind === "binop"
+                             && lTree.type === currentOp
+                             && !lTree.isNot
+                             && lTree.children.length <= 7) ? lTree.children : [lTree];
+        if (rTree.kind === "binop" && rTree.type === currentOp && !rTree.isNot) {
+            const rChildren: InputTree[] = rTree.children;
+            while (rChildren.length > 0 && childrenArray.length < 7)
+                childrenArray.push(rChildren.shift());
+            // if there is only one more child left in the right tree and a spot for it, add it
+            // otherwise add the rest of the right tree
+            if (rChildren.length === 1 && childrenArray.length === 7)
+                childrenArray.push(rChildren[0]);
+            else if (rChildren.length !== 0)
+                childrenArray.push(rTree);
+        }
+        else {
+            childrenArray.push(rTree);
+        }
+            
+        tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
+    }
     return {index: index, tree: tree};
 
 }

@@ -45,12 +45,12 @@ export const TypeToGate: Record<InputTreeOpType, string> = {
         const wire = LazyConnect(prevNode, newGate);
         ret.push(wire);
     } else if (node.kind === "binop") {
-        const prevNodeL = treeToCircuitCore(node.lChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireL = LazyConnect(prevNodeL, newGate);
-        ret.push(wireL);
-        const prevNodeR = treeToCircuitCore(node.rChild, inputs, ret).slice(-1)[0] as DigitalComponent;
-        const wireR = LazyConnect(prevNodeR, newGate);
-        ret.push(wireR);
+        newGate.setInputPortCount(node.children.length);
+        node.children.forEach(child => {
+            const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
+            const wire = LazyConnect(prevNode, newGate);
+            ret.push(wire);
+        });
     }
     ret.push(newGate);
     return ret;
