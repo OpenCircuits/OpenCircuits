@@ -88,6 +88,8 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
         if (tokens[index].type !== ")")
             throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
         rightRet.index += 1; // Incremented to skip the ")"
+        if (rightRet.tree.kind === "binop")
+            rightRet.tree.final = true;
         return rightRet;
     }
 
@@ -103,8 +105,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
         let childrenArray: InputTree[] = (lTree.kind === "binop"
                              && lTree.type === currentOp
                              && !lTree.isNot
+                             && !lTree.final
                              && lTree.children.length <= 7) ? lTree.children : [lTree];
-        if (rTree.kind === "binop" && rTree.type === currentOp && !rTree.isNot) {
+        if (rTree.kind === "binop" && rTree.type === currentOp && !rTree.isNot && !rTree.final) {
             const rChildren: InputTree[] = rTree.children;
             while (rChildren.length > 0 && childrenArray.length < 7)
                 childrenArray.push(rChildren.shift());

@@ -23,6 +23,16 @@ import "digital/models/ioobjects";
 
 
 /**
+ * Gets the component that the first wire of the first output port of the supplied component is connected to
+ * 
+ * @param component the component whose output is wanted
+ * @returns the component that is the "first" connected from the supplied component
+ */
+function getOutputComponent(component: DigitalComponent): DigitalComponent {
+    return component.getOutputPort(0).getWires()[0].getOutputComponent();
+}
+
+/**
  * This function is used to create and run a separate test for every combination of switch states.
  *
  * For each test, switches are set to on or off based on a bitwise and operation of the index of that test
@@ -615,9 +625,9 @@ describe("Expression Parser", () => {
             });
 
             test("Correct connections", () => {
-                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -635,9 +645,9 @@ describe("Expression Parser", () => {
             });
 
             test("Correct connections", () => {
-                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 8; i++)
-                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -655,11 +665,34 @@ describe("Expression Parser", () => {
             });
 
             test("Correct connections", () => {
-                const bigGate = inputs[0][1].getOutputs()[0].getOutputComponent();
+                const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-                    expect(inputs[i][1].getOutputs()[0].getOutputComponent()).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
                 // Doesn't matter if input 8 is connected to bigGate or the other or gate
-                expect(inputs[8][1].getOutputs()[0].getOutputComponent()).not.toBe(bigGate);
+                expect(getOutputComponent(inputs[8][1])).not.toBe(bigGate);
+            });
+        });
+
+        describe("(a|b)|(c|d)", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 4; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(8);
+            });
+
+            test("Correct connections", () => {
+                const gate1 = getOutputComponent(inputs[1][1]);
+                const gate2 = getOutputComponent(inputs[3][1]);
+                expect(getOutputComponent(inputs[0][1])).toBe(gate1);
+                expect(getOutputComponent(inputs[2][1])).toBe(gate2);
+                expect(gate1).not.toBe(gate2);
+                expect(getOutputComponent(gate1)).toBe(getOutputComponent(gate2));
             });
         });
     });
