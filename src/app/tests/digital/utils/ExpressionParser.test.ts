@@ -552,7 +552,7 @@ describe("Expression Parser", () => {
         });
     });
 
-    //0, a, b, (a, b)
+    // 0, a, b, (a, b)
     describe("2 Inputs", () => {
         runTests(2, "a&b", [false, false, false, true]);
 
@@ -581,7 +581,7 @@ describe("Expression Parser", () => {
         runTests(2, "!(a|b)", [true, false, false, false]);
     });
 
-    //0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
+    // 0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
     describe("3 Inputs", () => {
         runTests(3, "a&b&c", [false, false, false, false, false, false, false, true]);
 

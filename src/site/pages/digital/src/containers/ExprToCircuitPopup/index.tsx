@@ -54,7 +54,8 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                        type="text"
                        value={expression}
                        placeholder="!a | (B^third)"
-                       onChange={e => setExpression(e.target.value)} />
+                       onChange={e => setExpression(e.target.value)}
+                       spellCheck={false} />
                 <br/>
 
                 <div className="exprtocircuit__popup__settings">
