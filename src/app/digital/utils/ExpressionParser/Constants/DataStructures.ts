@@ -30,7 +30,6 @@ export interface InputTreeBinOpNode {
     isNot: boolean // true for NAND, false for AND
     // Can have 2-8 children
     children: BinOpChildren
-    final?: boolean // true if this gate cannot be used to make a gate with >2 inputs
 }
 /** Represents all possible types of nodes for the input tree */
 export type InputTree =
