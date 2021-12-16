@@ -37,9 +37,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
             if (prevTokenType === "(")
                 throw new Error("Empty Parenthesis");
             if (prevTokenType !== ")" && prevTokenType !== "input")
-                throw new Error("Missing Right Operand: \"" + ops[prevTokenType] + "\"");
+                throw new Error(`Missing Right Operand: "${ops[prevTokenType]}"`);
         }
-        throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
+        throw new Error(`Encountered Unmatched "${ops[")"]}"`);
     }
 
     // When this function has recursed through to "!" and the token still isn't that, then
@@ -50,7 +50,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
             return generateInputTreeCore(tokens, ops, nextOpNum, index);
         if (token.type === "input")
             return {index: index+1, tree: {kind: "leaf", ident: token.name}};
-        throw new Error("Missing Left Operand: \"" + ops[token.type] + "\"");
+        throw new Error(`Missing Left Operand: "${ops[token.type]}"`);
     }
 
     // This section gets the part of the tree from the left side of the operator.
@@ -68,7 +68,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     //  so it now points to the token on the right side of the operator.
     index += 1;
     if (index >= tokens.length && currentOp !== "(") {
-        throw new Error("Missing Right Operand: \"" + ops[currentOp] + "\"");
+        throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
     }
     let rightRet: NewTreeRetValue = null;
     const rightToken = tokens[index];
@@ -78,7 +78,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
         rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
     } else if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         rightRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
     } else {
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
@@ -86,9 +86,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     index = rightRet.index;
     if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         if (tokens[index].type !== ")")
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         rightRet.index += 1; // Incremented to skip the ")"
         rightRet.final = true; // used to not combine gates in (a|b)|(c|d) for example
         return rightRet;
@@ -159,15 +159,25 @@ export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string
     const index = ret.index;
     if (index < tokens.length) {
         if (tokens[index].type === ")")
-            throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
+            throw new Error(`Encountered Unmatched "${ops[")"]}"`);
 
         const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
                            .reverse()
                            .find(token => token.type === "input") as InputToken;
         const next = tokens.slice(index)
                            .find(token => token.type === "input") as InputToken;
-        if (prev && prev.name && next && next.name)
-            throw new Error("No valid operator between \"" + prev.name + "\" and \"" + next.name + "\"");
+        if (prev && prev.name && next && next.name) {
+            let errorMessage = `No valid operator between "${prev.name}" and "${next.name}"`;
+            for (const format of Formats) {
+                Object.entries(format.ops).forEach(([tokenType, op]) => {
+                    if (op === prev.name)
+                        errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${prev.name}"?`
+                    if (op === next.name)
+                        errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${next.name}"?`
+                });
+            }
+            throw new Error(errorMessage);
+        }
 
         throw new Error("Parsing ended prematurely");
     }
