@@ -5,13 +5,14 @@ import {DEFAULT_SIZE, IO_PORT_LENGTH, MULTIPLEXER_HEIGHT_OFFSET} from "core/util
 import {V} from "Vector";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {InputPort} from "../InputPort";
 import {OutputPort} from "../OutputPort";
 
+
 @serializable("MuxSelectPositioner")
 export class MuxSelectPositioner extends Positioner<InputPort> {
-
-    // multiplier for slope, since Multiplexer and Demultiplexer angle on the
+    // Multiplier for slope, since Multiplexer and Demultiplexer angle on the
     // lower edge are different, so the offsets are opposite of each other
     private slopeMultiplier: number;
 
@@ -26,7 +27,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
      * @param arr The array of input ports
      */
     public updatePortPositions(ports: Array<InputPort>): void {
-        // calculations for parameters to use in determining origin positions
+        // Calculations for parameters to use in determining origin positions
         const size = ports[0].getParent().getSize();
         const width = size.x;
         const height = size.y;
@@ -42,9 +43,10 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
     }
 }
 
+
 @serializable("MultiplexerInputPositioner")
 export class MultiplexerInputPositioner extends Positioner<InputPort> {
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         const x = -ports[0].getParent().getSize().x / 2;
         ports.forEach((port, i) => {
             const y = this.calcSpacingPos(i, ports.length, DEFAULT_SIZE) - DEFAULT_SIZE/4;
@@ -54,9 +56,10 @@ export class MultiplexerInputPositioner extends Positioner<InputPort> {
     }
 }
 
+
 @serializable("DemultiplexerOutputPositioner")
 export class DemultiplexerOutputPositioner extends Positioner<OutputPort> {
-    public updatePortPositions(ports: Array<OutputPort>): void {
+    public updatePortPositions(ports: OutputPort[]): void {
         const x = ports[0].getParent().getSize().x / 2;
         ports.forEach((port, i) => {
             const y = this.calcSpacingPos(i, ports.length, DEFAULT_SIZE) - DEFAULT_SIZE/4;

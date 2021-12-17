@@ -1,19 +1,19 @@
+import {serialize} from "serialeazy";
+
 import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET, MUX_DEFAULT_SELECT_PORTS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "serialeazy";
 
+import {Port} from "core/models/ports/Port";
+import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalWire} from "digital/models/DigitalWire";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {PortSet} from "core/models/ports/PortSets";
-import {DigitalWire} from "digital/models/DigitalWire";
-import {Port} from "core/models/ports/Port";
 
 export abstract class Mux extends DigitalComponent {
     @serialize
@@ -27,22 +27,24 @@ export abstract class Mux extends DigitalComponent {
                 inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
-                                                selectPositioner, InputPort);
+                                              selectPositioner, InputPort);
 
         this.setSelectPortCount(MUX_DEFAULT_SELECT_PORTS);
     }
 
-    /**
-     * Calculates the size for a Mux with a number of selectors.
-     * @param ports number of selectors
-     * @returns a Vector of the size for a Mux
-     */
-    public static calcSize(ports: number): Vector {
-        return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);
+    protected updatePortNames(): void {
+        this.selects.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName(`S${i}`);
+        });
     }
 
     public setSelectPortCount(val: number): void {
         this.selects.setPortCount(val);
+
+        // Update input port positions and port names
+        this.inputs.updatePortPositions();
+        this.outputs.updatePortPositions();
+        this.updatePortNames();
     }
 
     public getSelectPorts(): Array<InputPort> {
@@ -74,6 +76,15 @@ export abstract class Mux extends DigitalComponent {
     // @Override
     public getPorts(): Port[] {
         return super.getPorts().concat(this.getSelectPorts());
+    }
+
+    /**
+     * Calculates the size for a Mux with a number of selectors.
+     * @param ports number of selectors
+     * @returns a Vector of the size for a Mux
+     */
+    public static calcSize(ports: number): Vector {
+        return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);
     }
 
 }

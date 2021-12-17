@@ -1,11 +1,13 @@
 import {IO_LABEL_DIR_PADDING, IO_LABEL_VERTICAL_TEXT_PADDING} from "core/utils/Constants";
-import {V, Vector} from "Vector";
-import {Clamp} from "math/MathUtils";
 
+import {V, Vector} from "Vector";
 import {Camera} from "math/Camera";
-import {Renderer} from "core/rendering/Renderer";
-import {Component} from "core/models/Component";
+
 import {Port} from "core/models";
+import {Component} from "core/models/Component";
+
+import {Renderer} from "core/rendering/Renderer";
+
 
 /**
  * Renders IOLabels
@@ -17,22 +19,22 @@ export const IOLabelRenderer = (() => {
     const drawPortText = function(renderer: Renderer, port: Port, size: Vector): void {
         const align: CanvasTextAlign = "center";
         const textWidth = renderer.getTextWidth(port.getName());
-        let pos = port.getOriginPos();
 
-        // move a padding distance from the origin position
-        pos = pos.add(port.getDir().scale(-IO_LABEL_DIR_PADDING));
-        // move half the text width distance projected onto a horizontal vector
-        pos = pos.add(port.getDir().scale(-textWidth/2).project(V(1,0)));
-        // add in vertical direction so label is a bit farther from port
-        pos = pos.add(port.getDir().scale(-IO_LABEL_VERTICAL_TEXT_PADDING).project(V(0,1)));
+        const pos = port.getOriginPos()
+            // Move a padding distance from the origin position
+            .add(port.getDir().scale(-IO_LABEL_DIR_PADDING))
+            // Move half the text width distance projected onto a horizontal vector
+            .add(port.getDir().scale(-textWidth/2).project(V(1,0)))
+            // Add in vertical direction so label is a bit farther from port
+            .add(port.getDir().scale(-IO_LABEL_VERTICAL_TEXT_PADDING).project(V(0,1)));
 
-        // clamp the position inside the box
+        // Clamp the position inside the box
         const xBound = size.x/2 - IO_LABEL_DIR_PADDING - textWidth/2;
         const yBound = size.y/2 - 2*IO_LABEL_VERTICAL_TEXT_PADDING;
-        pos.x = Clamp(pos.x, -xBound, xBound);
-        pos.y = Clamp(pos.y, -yBound, yBound);
+        const min = V(-xBound, -yBound);
+        const max = V( xBound,  yBound);
 
-        renderer.text(port.getName(), pos, align);
+        renderer.text(port.getName(), Vector.clamp(pos, min, max), align);
     }
 
     return {

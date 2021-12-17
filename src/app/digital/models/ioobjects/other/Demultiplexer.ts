@@ -2,8 +2,10 @@ import {serializable} from "serialeazy";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {Mux} from "./Mux";
 import {DemultiplexerOutputPositioner, MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
+
+import {Mux} from "./Mux";
+
 
 @serializable("Demultiplexer")
 export class Demultiplexer extends Mux {
@@ -18,11 +20,11 @@ export class Demultiplexer extends Mux {
      * Sets default names for the select and output ports so the user can easily
      * tell what they are used for.
      */
-     private updatePortNames(): void {
-        this.selects.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('S'+i)});
+    protected updatePortNames(): void {
+        super.updatePortNames();
         this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName('O'+i)});
+            if (p.getName() == "") p.setName(`O${i}`);
+        });
     }
 
     public activate(): void {
@@ -34,13 +36,6 @@ export class Demultiplexer extends Mux {
         this.getOutputPorts().forEach((_, i) => super.activate(false, i));
 
         super.activate(this.inputs.last.getIsOn(), num);
-    }
-
-    public setSelectPortCount(val: number): void {
-        super.setSelectPortCount(val);
-        // update the input port to align with the left edge of the DeMux
-        this.inputs.updatePortPositions();
-        this.updatePortNames();
     }
 
     public getDisplayName(): string {
