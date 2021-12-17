@@ -5,12 +5,11 @@ import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET, MUX_DEFAULT_SELECT_PORTS} from 
 import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Port} from "core/models/ports/Port";
+import {Port} from "core/models";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalWire} from "digital/models/DigitalWire";
+import {DigitalComponent, DigitalWire} from "digital/models";
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
