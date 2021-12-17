@@ -8,6 +8,7 @@ import {headerReducer}      from "shared/state/Header";
 import {sideNavReducer}     from "shared/state/SideNav";
 import {itemNavReducer}     from "shared/state/ItemNav";
 import {contextMenuReducer} from "shared/state/ContextMenu";
+import {debugInfoReducer}   from "shared/state/DebugInfo";
 import {icDesignerReducer}  from "./ICDesigner";
 import {icViewerReducer}    from "./ICViewer";
 
@@ -19,6 +20,7 @@ export const reducers = combineReducers<AppState>({
     sideNav: sideNavReducer,
     itemNav: itemNavReducer,
     contextMenu: contextMenuReducer,
+    debugInfo: debugInfoReducer,
     icDesigner: icDesignerReducer,
     icViewer: icViewerReducer
 });
