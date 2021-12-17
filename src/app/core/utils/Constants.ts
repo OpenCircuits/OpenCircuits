@@ -22,9 +22,13 @@ export const GRAPH_LINE_WIDTH = 4;
 export const DEFAULT_BORDER_WIDTH = 2;
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
-export const MULTIPLEXER_HEIGHT_OFFSET = 18;
+export const MULTIPLEXER_HEIGHT_OFFSET = 25;
+export const MUX_DEFAULT_SELECT_PORTS = 2;
 
 export const DRAG_TIME = 50;
+
+export const IO_LABEL_DIR_PADDING = 5;
+export const IO_LABEL_VERTICAL_TEXT_PADDING = 7;
 
 export const IO_PORT_LENGTH = 35;
 export const IO_PORT_RADIUS = 7;
