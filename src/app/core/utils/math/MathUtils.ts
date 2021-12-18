@@ -43,31 +43,19 @@ export function Clamp(x: number, min: number, max: number): number {
  *         the rectangle from 'pos'
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
-    // Position is outside the rectangle
-    if (pos.x <= bl.x)
-        return V(bl.x, Clamp(pos.y, bl.y, tr.y));
-    if (pos.x >= tr.x)
-        return V(tr.x, Clamp(pos.y, bl.y, tr.y));
-    if (pos.y <= bl.y)
-        return V(Clamp(pos.x, bl.x, tr.x), bl.y);
-    if (pos.y >= tr.y)
-        return V(Clamp(pos.x, bl.x, tr.x), tr.y);
-    // Position is inside the rectangle
-    let minDist = pos.x-bl.x;
-    let minPos = V(bl.x, pos.y)
-    if (tr.x - pos.x < minDist) {
-        minDist = tr.x-pos.x;
-        minPos = V(tr.x, pos.y);
-    }
-    if (pos.y - bl.y < minDist) {
-        minDist = pos.y-bl.y;
-        minPos = V(pos.x,bl.y);
-    }
-    if (tr.y - pos.y < minDist) {
-        minDist = tr.y-pos.y;
-        minPos = V(pos.x,tr.y);
-    }
-    return minPos;
+    // First clamp point to within the rectangle
+    pos = Vector.clamp(pos, bl, tr);
+
+    // Then find corresponding edge when point is inside the rectangle
+    // (see https://www.desmos.com/calculator/edhaqiwgf1)
+    const DR = Math.abs(tr.x - pos.x), DL = Math.abs(bl.x - pos.x);
+    const DT = Math.abs(tr.y - pos.y), DB = Math.abs(bl.y - pos.y);
+    const DX = Math.min(DR, DL), DY = Math.min(DT, DB);
+
+    pos.x = (DY > DX) ? (DR < DL ? tr.x : bl.x) : pos.x;
+    pos.y = (DX > DY) ? (DT < DB ? tr.y : bl.y) : pos.y;
+
+    return pos;
 }
 
 /**
