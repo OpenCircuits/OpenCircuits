@@ -65,7 +65,7 @@ export const ICPortTool = (() => {
             }
 
             // Set the direction vector to the length of a port
-            v = v.normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,IO_PORT_LENGTH+size.y/2))).add(p);
+            v = v.normalize().scale(IO_PORT_LENGTH).add(p);
 
             // Set port for IC
             port.setOriginPos(p);
