@@ -47,22 +47,32 @@ export const ICPortTool = (() => {
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
 
+            const size = ic.getSize();
+            const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
+
+            // Set v to point away from the IC depending on the mouse position
+            let v = p.sub(worldMousePos);
             if (ic.isWithinSelectBounds(worldMousePos)) {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
-            } else {
-                const size = ic.getSize();
-                const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), worldMousePos);
-                const v = p.sub(worldMousePos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2,
-                                                                                       IO_PORT_LENGTH+size.y/2))).add(p);
-
-                // Set port for IC
-                port.setOriginPos(p);
-                port.setTargetPos(v);
-
-                // Set pos for ICData
-                ic.update();
+                v = worldMousePos.sub(p);
+            } else if (worldMousePos.x == p.x && worldMousePos.y == p.y) {
+                // Set v outwards from the edge the origin position is on
+                if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
+                    v = V(0,-1).scale(p.y);
+                else
+                    v = V(-1,0).scale(p.x);
             }
+
+            // Set the direction vector to the length of a port
+            v = v.normalize().scale(IO_PORT_LENGTH).add(p);
+
+            // Set port for IC
+            port.setOriginPos(p);
+            port.setTargetPos(v);
+
+            // Set pos for ICData
+            ic.update();
 
             // Return true since we did something
             //  that requires a re-render
