@@ -1,5 +1,5 @@
 # Order of imports #
-When importing code from other files make sure the imports maintain this order
+When importing code from other files make sure the imports maintain the following order
 
 ## EXTERNAL LIBRARIES: ##
         react
@@ -9,7 +9,7 @@ When importing code from other files make sure the imports maintain this order
         
 
 ## CONSTANTS ##
-    Any constants. For example the constants from app/core/utils/Constants
+    Any constants. For example, the constants from app/core/utils/Constants
 ## VECTOR ##   
     Always use import "Vector" instead of import "app/core/utils/math/Vector"
 
@@ -19,7 +19,7 @@ When importing code from other files make sure the imports maintain this order
 
 
 ## APP/CORE/ ##
-**Files imported from the app/core directory should be orderd by subdirectory in the following order**
+**Files imported from the `app/core` directory should be orderd by subdirectory in the following order**
     
     UTILS
     ACTIONS
@@ -27,7 +27,7 @@ When importing code from other files make sure the imports maintain this order
     RENDERING
     MODELS
 ## APP/DIGITAL/ ##
-**Files imported from the app/digital directory should be orderd by subdirectory in the following order**
+**Files imported from the `app/digital` directory should be orderd by subdirectory in the following order**
     
     UTILS
     ACTIONS
@@ -36,7 +36,7 @@ When importing code from other files make sure the imports maintain this order
     MODELS
 
 ## SITE/SHARED/ ##
-**Files imported from the site/shared directory should be orderd by subdirectory in the following order**
+**Files imported from the `site/shared` directory should be orderd by subdirectory in the following order**
     
     UTILS
     API
@@ -44,7 +44,7 @@ When importing code from other files make sure the imports maintain this order
     COMPONENTS
     CONTAINERS
 ## SITE/DIGITAL ##
-**Files imported from the site/digital directory should be orderd by subdirectory in the following order**
+**Files imported from the `site/digital` directory should be orderd by subdirectory in the following order**
     
     UTILS
     API
@@ -53,7 +53,7 @@ When importing code from other files make sure the imports maintain this order
     CONTAINERS
     
 ## FILES IN THE SAME DIRECTORY STRUCTURE ##
-    If none of the previous rules apply as a general rule of thumb, files higher in the directory structure should be imported before files lower in the directory structre ex:
+    If none of the previous rules apply, as a general rule of thumb, files higher in the directory structure should be imported before files lower in the directory structre ex:
     "../../THE_FILE"
     "../THE_FILE"
     "./THE_FILE"
@@ -65,12 +65,12 @@ When importing code from other files make sure the imports maintain this order
     Any css or scss files
 
 ## ALPHABETICAL ##
-    if none of the prevouis rules apply default to alphabetical order
+    If none of the previous rules apply, default to alphabetical order
     
 # IMPORTANT #
-    files in the site/shared directory should never import from the digital directory
-    files in the app/core directory should never import from the app/digital directory
-    files in the app/ directory should never import from the site/ directory 
+    Files in the site/shared directory should never import from the digital directory
+    Files in the app/core directory should never import from the app/digital directory
+    Files in the app/ directory should never import from the site/ directory 
 
 # EXAMPLE #
     import {createRef} from "react";
