@@ -26,39 +26,40 @@ export type Listener = (event: Event) => void;
 export class Input {
     /** The canvas the user is performing inputs on */
     private canvas: HTMLCanvasElement;
-    /** A vector representing the previous position of the mouse*/
+    /** A vector representing the previous position of the mouse */
     private prevMousePos: Vector;
-    /** A vector representing the current position of the mouse*/
+    /** A vector representing the current position of the mouse */
     private mousePos: Vector;
 
-    /** True if a mousebutton is held down, false otherwise*/
+    /** True if a mousebutton is held down, false otherwise */
     private mouseDown: boolean;
-    /** A vector representing the position the mouse was when the mousebutton first became pressed*/
+    /** A vector representing the position the mouse was when the mousebutton first became pressed */
     private mouseDownPos: Vector;
-    /** Represents the mousebutton being pressed (left, middle, right, etc.)*/
+    /** Represents the mousebutton being pressed (left, middle, right, etc.) */
     private mouseDownButton: number;
 
-    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click")*/
+    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click") */
     private isDragging: boolean;
-    /** Represents the time at which the mouse button became held down*/
+    /** Represents the time at which the mouse button became held down */
     private startTapTime: number;
 
-    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device)*/
+    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device) */
     private touchCount: number;
 
-    /** Stores the Listeners for events that may be triggered by user input*/
+    /** Stores the Listeners for events that may be triggered by user input */
     private listeners: Listener[];
-    /** Map with keycodes as keys and booleans representing whether that key is held as values*/
+    /** Map with keycodes as keys and booleans representing whether that key is held as values */
     private keysDown: Map<number, boolean>;
 
-    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click")*/
+    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click") */
     private dragTime: number;
 
-    /** If true, "blocks" Input, stopping listeners from triggering events*/
+    /** If true, "blocks" Input, stopping listeners from triggering events */
     private blocked: boolean;
 
     /**
      * Initializes Input with given canvas and dragTime
+     *
      * @param canvas the canvas input is being applied to
      * @param dragTime the minimum length of time a mousedown must last to be considered a drag rather than a click
      */
@@ -77,6 +78,7 @@ export class Input {
 
     /**
      * Checks if newKey is a prevented combination of keys
+     *
      * @param newKey represents the key combination being pressed
      * @returns true if newKey is a prevented combination, false otherwise
      */
@@ -234,6 +236,7 @@ export class Input {
 
     /**
      * Adds a Listener to the list of Listeners Events are checked against
+     *
      * @param listener is the Listener being added
      */
     public addListener(listener: Listener): void {
@@ -241,6 +244,7 @@ export class Input {
     }
     /**
      * Removes a Listener from the list of Listeners Events are checked against
+     *
      * @param listener is the Listener being removed
      */
     public removeListener(listener: Listener): void {
@@ -248,7 +252,8 @@ export class Input {
     }
 
     /**
-     * 
+     * Checks if the mouse is pressed down
+     *
      * @returns true if the mouse is down, false otherwise
      */
     public isMouseDown(): boolean {
@@ -256,6 +261,7 @@ export class Input {
     }
     /**
      * Checks if the given key is held down
+     *
      * @param key represents the key being checked
      * @returns true if key is down, false otherwise
      */
@@ -266,6 +272,7 @@ export class Input {
 
     /**
      * Checks if the shift key is held down
+     *
      * @returns true if the shift key is down, false otherwise
      */
     public isShiftKeyDown(): boolean {
@@ -275,6 +282,7 @@ export class Input {
 
     /**
      * Checks if the option key is held down
+     *
      * @returns true if the option key is down, false otherwise
      */
     public isEscKeyDown(): boolean {
@@ -283,6 +291,7 @@ export class Input {
 
     /**
      * Checks if the modifier key is held down
+     *
      * @returns true if the modifier key (control, command, or meta) is down, false otherwise
      */
      public isModifierKeyDown(): boolean {
@@ -290,6 +299,7 @@ export class Input {
     }
     /**
      * Checks if the option key is held down
+     *
      * @returns true if the option key is down, false otherwise
      */
     public isOptionKeyDown(): boolean {
@@ -297,21 +307,24 @@ export class Input {
     }
 
     /**
-     * 
+     * Gets the position of the cursor of the mouse
+     *
      * @returns current position of the mouse
      */
     public getMousePos(): Vector {
         return V(this.mousePos);
     }
     /**
-     * 
+     * Gets the position where the mouse was pressed down
+     *
      * @returns current position of the mouse down
      */
     public getMouseDownPos(): Vector {
         return V(this.mouseDownPos);
     }
     /**
-     * 
+     * Gets the difference between the current and previous mouse position
+     *
      * @returns difference between current and previous mouse position
      */
     public getDeltaMousePos(): Vector {
@@ -319,8 +332,9 @@ export class Input {
     }
 
     /**
-     * 
-     * @returns touchCount
+     * Gets the number of times the mouse has been pressed
+     *
+     * @returns the touchCount
      */
     public getTouchCount(): number {
         return this.touchCount;
@@ -328,6 +342,7 @@ export class Input {
 
     /**
      * Sets the given key as down, and calls each Listener on Event "keydown", key
+     *
      * @param key represents the key being pressed
      */
     protected onKeyDown(key: number): void {
@@ -338,6 +353,7 @@ export class Input {
     }
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key
+     *
      * @param key represents the key being released
      */
     protected onKeyUp(key: number): void {
@@ -349,6 +365,7 @@ export class Input {
 
     /**
      * Calls each Listener on Event "click", button
+     *
      * @param _ unused position vector
      * @param button represents the mouse button being clicked (left mouse button by default)
      */
@@ -364,6 +381,7 @@ export class Input {
     }
     /**
      * Calls each Listener on Event "dbclick", button
+     *
      * @param button represents the mouse button being double clicked
      */
     protected onDoubleClick(button: number): void {
@@ -375,6 +393,7 @@ export class Input {
     /**
      * Calls each Listener on Event "zoom", zoomFactor, mousePos
      * where zoomFactor is calculated from delta
+     *
      * @param delta represents whether the user is zooming in or out (negative and positive, respectively)
      */
     protected onScroll(delta: number): void {
@@ -393,6 +412,7 @@ export class Input {
     /**
      * Adjusts mouse variables (dragging, position, etc.),
      * and triggers Listeners on Event "mousedown", button
+     *
      * @param pos represents the position of the mouse being pressed
      * @param button represents the mouse button being pressed (0 by default)
      */
@@ -415,6 +435,7 @@ export class Input {
      * Triggered on mouse movement, calculates new mouse position,
      * and triggers Listeners on Event "mousemove", as well as Listeners
      * on Event "mousedrag", [current mouse button down] if the user is clicking
+     *
      * @param pos represents the new absolute position of the mouse
      */
     protected onMouseMove(pos: Vector): void {
@@ -439,6 +460,7 @@ export class Input {
     /**
      * Calls each Listener on Event "mouseup", button
      * and adjusts variables tracking mouse buttons
+     *
      * @param button represents the mouse button being released (0 by default)
      */
     protected onMouseUp(button: number = 0): void {
@@ -476,6 +498,7 @@ export class Input {
 
     /**
      * Calls onMouseDown for the midpoint of multiple touches
+     *
      * @param touches represents the positions of the touches
      */
     protected onTouchStart(touches: Vector[]): void {
@@ -484,6 +507,7 @@ export class Input {
     /**
      * Called when a user moves a touch point (as when using a touchpad or mobile device)
      * Calls onMouseMove for the midpoint of multiple movements
+     *
      * @param touches represents the positions of the touches
      */
     protected onTouchMove(touches: Vector[]): void {
@@ -508,6 +532,7 @@ export class Input {
 
     /**
      * Calls the Listeners in 'listeners' for Event 'event', if Input not blocked
+     *
      * @param event Event being given to the Listeners
      */
     private callListeners(event: Event): void {
