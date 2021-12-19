@@ -62,8 +62,7 @@ import {BusButtonModule}           from "site/digital/containers/SelectionPopup/
 import {CreateICButtonModule}      from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 import {ConstantNumberInputModule} from "../SelectionPopup/modules/ConstantNumberInputModule";
 import {ClockSyncButtonModule}     from "../SelectionPopup/modules/ClockSyncButtonModule";
-import {ResumeButtonModule,
-        PauseButtonModule}         from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {PauseResumeButtonModule}   from "../SelectionPopup/modules/PauseResumeButtonModules";
 import {ClearOscilloscopeButtonModule,
         OscilloscopeDisplaySizeModule,
         OscilloscopeInputCountModule,
@@ -108,6 +107,7 @@ export const App = ((store: AppStore) => {
 
 
     return function AppView() {
+        console.log("???app");
         return (
             <div className="App">
                 <SideNav helpers={helpers}
@@ -126,17 +126,18 @@ export const App = ((store: AppStore) => {
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
                                                   SelectPortCountModule,
+                                                  ConstantNumberInputModule,
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
                                                   OscilloscopeDisplaySizeModule,
                                                   OscilloscopeInputCountModule,
                                                   FrequencyModule, OscilloscopeSamplesModule,
-                                                  ResumeButtonModule, PauseButtonModule,
+                                                  PauseResumeButtonModule,
                                                   ClearOscilloscopeButtonModule,
+                                                  ClockSyncButtonModule,
                                                   ColorModule, TextColorModule,
-                                                  BusButtonModule, CreateICButtonModule,
-                                                  ViewICButtonModule, ConstantNumberInputModule,
-                                                  ClockSyncButtonModule]} />
+                                                  BusButtonModule,
+                                                  CreateICButtonModule, ViewICButtonModule]} />
 
                         <ContextMenu info={info}
                                      paste={(data) => DigitalPaste(data, info)} />
