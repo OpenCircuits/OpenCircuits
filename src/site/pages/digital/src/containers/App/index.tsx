@@ -108,7 +108,6 @@ export const App = ((store: AppStore) => {
 
 
     return function AppView() {
-        console.log("???app");
         return (
             <div className="App">
                 <SideNav helpers={helpers}
