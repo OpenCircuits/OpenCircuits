@@ -49,24 +49,25 @@ import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
-import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
-import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-import {DecoderInputCountModule}   from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {SelectPortCountModule}     from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {ColorModule}               from "site/digital/containers/SelectionPopup/modules/ColorModule";
-import {FrequencyModule}           from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
-import {OutputCountModule}         from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-import {SegmentCountModule}        from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-import {TextColorModule}           from "site/digital/containers/SelectionPopup/modules/TextColorModule";
-import {BusButtonModule}           from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-import {CreateICButtonModule}      from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {ConstantNumberInputModule} from "../SelectionPopup/modules/ConstantNumberInputModule";
-import {ClockSyncButtonModule}     from "../SelectionPopup/modules/ClockSyncButtonModule";
-import {PauseResumeButtonModule}   from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
+import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
+import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
+import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
+import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
+import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
+import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
+import {BusButtonModule}            from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
+import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
+import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
+import {PauseResumeButtonModule}    from "../SelectionPopup/modules/PauseResumeButtonModules";
 import {ClearOscilloscopeButtonModule,
         OscilloscopeDisplaySizeModule,
         OscilloscopeInputCountModule,
-        OscilloscopeSamplesModule} from "../SelectionPopup/modules/OscilloscopeModules";
+        OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
 
@@ -125,6 +126,7 @@ export const App = ((store: AppStore) => {
 
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
+                                                  ComparatorInputCountModule,
                                                   SelectPortCountModule,
                                                   ConstantNumberInputModule,
                                                   DecoderInputCountModule,

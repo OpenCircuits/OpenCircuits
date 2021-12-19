@@ -22,12 +22,13 @@ import {Decoder}             from "digital/models/ioobjects/other/Decoder";
 import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
 import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
 import {Label}               from "digital/models/ioobjects/other/Label";
+import {IC}                  from "digital/models/ioobjects/other/IC";
+import {Comparator}          from "digital/models/ioobjects/other/Comparator";
 import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
 import {Gate}                from "digital/models/ioobjects/gates/Gate";
 import {LED}                 from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
 import {Oscilloscope}        from "digital/models/ioobjects/outputs/Oscilloscope";
-import {IC}                  from "digital/models/ioobjects/other/IC";
 import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumber";
 
 import {Images} from "digital/utils/Images";
@@ -40,6 +41,7 @@ import {LEDRenderer}            from "./outputs/LEDRenderer";
 import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
 import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
+
 
 /**
  * Renders Components
@@ -120,6 +122,8 @@ export const ComponentRenderer = (() => {
             else if (object instanceof FlipFlop || object instanceof Latch)
                 drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
+                drawBox(renderer, transform, selected);
+            else if (object instanceof Comparator)
                 drawBox(renderer, transform, selected);
             else if (object instanceof ConstantNumber)
                 ConstantNumberRenderer.render(renderer, object, selected);
