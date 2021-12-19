@@ -1,6 +1,6 @@
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {DOUBLE_CLICK_DURATION} from "shared/utils/Constants";
+import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -10,6 +10,8 @@ import {TitleModule} from "./modules/TitleModule";
 import {UseModuleProps} from "./modules/Module";
 
 import "./index.scss";
+import {Clamp} from "math/MathUtils";
+import {ITEMNAV_WIDTH} from "core/utils/Constants";
 
 
 type Props = {
@@ -69,8 +71,25 @@ export function SelectionPopup({info, modules}: Props) {
     }, input, [setClickThrough]);
 
 
+    const popup = useRef<HTMLDivElement>();
+
+    // Clamp position to screen if visible
+    if (isVisible && !isDragging) {
+        const popupWidth = popup.current.getBoundingClientRect().width;
+        const popupHeight = popup.current.getBoundingClientRect().height;
+
+        console.log(HEADER_HEIGHT, popupHeight, window.innerHeight);
+
+        pos.x = Clamp(pos.x, 0, window.innerWidth - popupWidth);
+
+        // Since the Selection Popup has a transform (0, -50%), this `y` position is the
+        //  y position of the middle of it, not the top
+        pos.y = Clamp(pos.y, popupHeight/2, window.innerHeight - HEADER_HEIGHT - popupHeight/2);
+    }
+
     return (
-        <div className="selection-popup"
+        <div ref={popup}
+             className="selection-popup"
              style={{
                 left: `${pos.x}px`,
                 top:  `${pos.y}px`,

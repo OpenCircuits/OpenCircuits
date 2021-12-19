@@ -57,7 +57,7 @@ export const ARROW_PAN_DISTANCE_NORMAL = 75;
 export const ARROW_PAN_DISTANCE_SMALL = 5;
 
 export const SIDENAV_WIDTH = 300;
-export const ITEMNAV_WIDTH = 200;
+export const ITEMNAV_WIDTH = 240;
 
 export const LEFT_MOUSE_BUTTON  = 0;
 export const MIDDLE_MOUSE_BUTTON = 1;
