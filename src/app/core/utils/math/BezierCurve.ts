@@ -3,6 +3,7 @@ import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
 import {serializable} from "serialeazy";
 
+
 /**
  * Cubic Bezier Curve class
  * 
