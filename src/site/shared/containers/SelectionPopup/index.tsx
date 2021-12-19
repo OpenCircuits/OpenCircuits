@@ -78,8 +78,6 @@ export function SelectionPopup({info, modules}: Props) {
         const popupWidth = popup.current.getBoundingClientRect().width;
         const popupHeight = popup.current.getBoundingClientRect().height;
 
-        console.log(HEADER_HEIGHT, popupHeight, window.innerHeight);
-
         pos.x = Clamp(pos.x, 0, window.innerWidth - popupWidth);
 
         // Since the Selection Popup has a transform (0, -50%), this `y` position is the
