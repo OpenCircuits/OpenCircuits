@@ -2,16 +2,17 @@ import {serializable} from "serialeazy";
 
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V}            from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
-import { PortsToDecimal } from "digital/utils/ComponentUtils";
-import { ComparatorPositioner } from "digital/models/ports/positioners/ComparatorPositioner";
+import {DigitalComponent}     from "digital/models/DigitalComponent";
+import {OutputPort}           from "digital/models/ports/OutputPort";
+import {ComparatorPositioner} from "digital/models/ports/positioners/ComparatorPositioner";
+
+import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
 
 @serializable("Comparator")
 export class Comparator extends DigitalComponent {
@@ -21,7 +22,7 @@ export class Comparator extends DigitalComponent {
 
     public constructor() {
         super(new ClampedValue(4, 2, 16),
-              new ClampedValue(3), //3 shorthand for all
+              new ClampedValue(3),
               V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*2),
               new ComparatorPositioner("left", DEFAULT_SIZE),
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
@@ -49,9 +50,9 @@ export class Comparator extends DigitalComponent {
     public activate(): void {
         const a = PortsToDecimal(this.getInputPorts().slice(0,this.getInputPortCount().getValue()/2));
         const b = PortsToDecimal(this.getInputPorts().slice(this.getInputPortCount().getValue()/2));
-        super.activate(a<b,Comparator.LT_PORT);
-        super.activate(a===b, Comparator.EQ_PORT);
-        super.activate(a>b, Comparator.GT_PORT);
+        super.activate(a  <  b, Comparator.LT_PORT);
+        super.activate(a === b, Comparator.EQ_PORT);
+        super.activate(a  >  b, Comparator.GT_PORT);
     }
 
     public getDisplayName(): string {

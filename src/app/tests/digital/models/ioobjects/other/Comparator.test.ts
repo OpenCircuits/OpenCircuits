@@ -1,11 +1,9 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Encoder} from "digital/models/ioobjects/other/Encoder";
-import {Decoder} from "digital/models/ioobjects/other/Decoder";
 
 import {GetHelpers} from "test/helpers/Helpers";
-import { Comparator, ConstantNumber, LED } from "digital/models/ioobjects";
+import {Comparator, ConstantNumber, LED} from "digital/models/ioobjects";
 
 
 describe("Comparator", () => {
