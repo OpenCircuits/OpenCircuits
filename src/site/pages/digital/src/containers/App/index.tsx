@@ -20,6 +20,7 @@ import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
@@ -29,6 +30,7 @@ import {ContextMenu}     from "shared/containers/ContextMenu";
 import {SideNav}         from "shared/containers/SideNav";
 
 import {LoginPopup}           from "shared/containers/LoginPopup";
+import {ImageExporterPopup}   from "shared/containers/ImageExporterPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 
@@ -45,6 +47,7 @@ import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
 import {ViewICButtonModule}        from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}          from "site/digital/containers/SelectionPopup/modules/InputCountModule";
@@ -59,8 +62,7 @@ import {BusButtonModule}           from "site/digital/containers/SelectionPopup/
 import {CreateICButtonModule}      from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 import {ConstantNumberInputModule} from "../SelectionPopup/modules/ConstantNumberInputModule";
 import {ClockSyncButtonModule}     from "../SelectionPopup/modules/ClockSyncButtonModule";
-import {ResumeButtonModule,
-        PauseButtonModule}         from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {PauseResumeButtonModule}   from "../SelectionPopup/modules/PauseResumeButtonModules";
 import {ClearOscilloscopeButtonModule,
         OscilloscopeDisplaySizeModule,
         OscilloscopeInputCountModule,
@@ -91,7 +93,8 @@ export const App = ((store: AppStore) => {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
+            CopyHandler, PasteHandler((data) => DigitalPaste(data, info)),
+            SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,
         TranslateTool, WiringTool,
@@ -104,6 +107,7 @@ export const App = ((store: AppStore) => {
 
 
     return function AppView() {
+        console.log("???app");
         return (
             <div className="App">
                 <SideNav helpers={helpers}
@@ -122,17 +126,18 @@ export const App = ((store: AppStore) => {
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
                                                   SelectPortCountModule,
+                                                  ConstantNumberInputModule,
                                                   DecoderInputCountModule,
                                                   OutputCountModule, SegmentCountModule,
                                                   OscilloscopeDisplaySizeModule,
                                                   OscilloscopeInputCountModule,
                                                   FrequencyModule, OscilloscopeSamplesModule,
-                                                  ResumeButtonModule, PauseButtonModule,
+                                                  PauseResumeButtonModule,
                                                   ClearOscilloscopeButtonModule,
+                                                  ClockSyncButtonModule,
                                                   ColorModule, TextColorModule,
-                                                  BusButtonModule, CreateICButtonModule,
-                                                  ViewICButtonModule, ConstantNumberInputModule,
-                                                  ClockSyncButtonModule]} />
+                                                  BusButtonModule,
+                                                  CreateICButtonModule, ViewICButtonModule]} />
 
                         <ContextMenu info={info}
                                      paste={(data) => DigitalPaste(data, info)} />
@@ -144,6 +149,9 @@ export const App = ((store: AppStore) => {
 
                 <QuickStartPopup />
                 <KeyboardShortcutsPopup />
+                <ImageExporterPopup preview={(props) => (
+                    <ImageExporterPreview mainInfo={info} {...props} />
+                )} />
 
                 <ExprToCircuitPopup mainInfo={info} />
 

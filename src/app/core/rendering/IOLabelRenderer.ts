@@ -1,23 +1,40 @@
-import {V, Vector} from "Vector";
-import {Clamp,
-        GetNearestPointOnRect} from "math/MathUtils";
+import {IO_LABEL_DIR_PADDING, IO_LABEL_VERTICAL_TEXT_PADDING} from "core/utils/Constants";
 
+import {V, Vector} from "Vector";
 import {Camera} from "math/Camera";
-import {Renderer} from "core/rendering/Renderer";
+
+import {Port} from "core/models";
 import {Component} from "core/models/Component";
 
+import {Renderer} from "core/rendering/Renderer";
+
+
+/**
+ * Renders IOLabels
+ * * Check if Component is on screen, quit if not
+ * * For each port, align and render name of port at port position
+ */
 export const IOLabelRenderer = (() => {
-    const drawPortText = function(renderer: Renderer, pos0: Vector, name: string, size: Vector): void {
+
+    const drawPortText = function(renderer: Renderer, port: Port, size: Vector): void {
         const align: CanvasTextAlign = "center";
-        const padding = 8;
-        const ww = renderer.getTextWidth(name)/2;
+        const textWidth = renderer.getTextWidth(port.getName());
 
-        let pos = GetNearestPointOnRect(V(-size.x/2, -size.y/2), V(size.x/2, size.y/2), pos0);
-        pos = pos.sub(pos0).normalize().scale(padding).add(pos);
-        pos.x = Clamp(pos.x, -size.x/2+padding+ww, size.x/2-padding-ww);
-        pos.y = Clamp(pos.y, -size.y/2+14, size.y/2-14);
+        const pos = port.getOriginPos()
+            // Move a padding distance from the origin position
+            .add(port.getDir().scale(-IO_LABEL_DIR_PADDING))
+            // Move half the text width distance projected onto a horizontal vector
+            .add(port.getDir().scale(-textWidth/2).project(V(1,0)))
+            // Add in vertical direction so label is a bit farther from port
+            .add(port.getDir().scale(-IO_LABEL_VERTICAL_TEXT_PADDING).project(V(0,1)));
 
-        renderer.text(name, pos, align);
+        // Clamp the position inside the box
+        const xBound = size.x/2 - IO_LABEL_DIR_PADDING - textWidth/2;
+        const yBound = size.y/2 - 2*IO_LABEL_VERTICAL_TEXT_PADDING;
+        const min = V(-xBound, -yBound);
+        const max = V( xBound,  yBound);
+
+        renderer.text(port.getName(), Vector.clamp(pos, min, max), align);
     }
 
     return {
@@ -25,16 +42,9 @@ export const IOLabelRenderer = (() => {
             if (!camera.cull(object.getCullBox()))
                 return;
 
-            const transform = object.getTransform();
-            const size: Vector = transform.getSize();
-
-            const ports = object.getPorts();
-            for (const port of ports) {
-                const name = port.getName();
-                const pos = port.getTargetPos();
-                if (name)
-                    drawPortText(renderer, pos, name, size);
-            }
+            const size = object.getTransform().getSize();
+            object.getPorts().forEach((p) => drawPortText(renderer, p, size));
         }
     };
-}) ();
+
+})();

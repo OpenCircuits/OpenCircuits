@@ -5,9 +5,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
-import {DigitalWire, DigitalComponent, InputPort, OutputPort, Propagation} from "./index";
+import {DigitalWire, DigitalComponent, DigitalObjectSet, InputPort, OutputPort, Propagation} from "./index";
 
 import {ICData} from "./ioobjects/other/ICData";
 
@@ -238,6 +236,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.objects.push(obj);
 
         this.callback({ type: "obj", op: "added", obj });
+
+        // checking all ports (issue #613)
+        for (let p of obj.getPorts().filter(r => r instanceof InputPort) as InputPort[])
+            p.activate(p.getInput() != null && p.getInput().getIsOn());
     }
 
     public addWire(wire: DigitalWire): void {
@@ -311,7 +313,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return new DigitalObjectSet((this.objects as IOObject[]).concat(this.wires));
+        return DigitalObjectSet.from([...this.objects, ...this.wires]);
     }
 
     public getObjects(): DigitalComponent[] {
