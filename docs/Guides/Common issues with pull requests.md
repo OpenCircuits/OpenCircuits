@@ -41,3 +41,6 @@
 
 14. Make sure you have an space after each comment
     *  Do ```// "stuff"``` not ```//"stuff"```
+
+15. You do not need to merge master unless there is a conflict
+    * You do not need to press the `Update Branch` button (on Github) unless there is a merge conflict
