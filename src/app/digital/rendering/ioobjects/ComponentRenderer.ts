@@ -13,6 +13,8 @@ import {Renderer}    from "core/rendering/Renderer";
 import {Rectangle}   from "core/rendering/shapes/Rectangle";
 import {Style}       from "core/rendering/Style";
 
+import {IOLabelRenderer} from "core/rendering/IOLabelRenderer";
+
 import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
 import {Latch}               from "digital/models/ioobjects/latches/Latch";
 import {Encoder}             from "digital/models/ioobjects/other/Encoder";
@@ -31,7 +33,6 @@ import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumbe
 
 import {Images} from "digital/utils/Images";
 
-import {IOLabelRenderer}        from "./IOLabelRenderer";
 import {IOPortRenderer}         from "./IOPortRenderer";
 import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
 import {ICRenderer}             from "./other/ICRenderer";
