@@ -57,9 +57,9 @@ async function launch_test(dir, flags) {
     }
 
     const flags = {
-        ci: (dirs.length === 1 && !ci),
+        ci,
         watch: (dirs.length === 1 && !ci) && !coverage,
-        coverage: coverage,
+        coverage,
         collectCoverageFrom: "**/*.{js,ts,tsx}"
     };
 
