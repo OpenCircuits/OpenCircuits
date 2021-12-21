@@ -114,10 +114,8 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const {circuit} = store.getState();
 
             // Shouldn't be able to duplicate if circuit has never been saved
-            if (circuit.id == "") {
-                window.alert(`You must save circuit "${circuit.name}" in order to duplicate it.`);
+            if (circuit.id == "")
                 return;
-            }
 
             const thumbnail = GenerateThumbnail({ info });
             const circuitCopy = JSON.stringify(
@@ -131,7 +129,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
-            
+
             // Create circuit copy
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
