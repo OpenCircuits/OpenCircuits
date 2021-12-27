@@ -12,7 +12,7 @@ import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {DigitalComponent} from "digital/models";
-import {LED, ICData, IC} from "digital/models/ioobjects";
+import {LED, ICData, IC, Clock} from "digital/models/ioobjects";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
@@ -20,8 +20,10 @@ import {OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStruc
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 
+export type InputTypes = "Button" | "Clock" | "Switch";
+
 export function Generate(info: DigitalCircuitInfo, expression: string,
-                         isIC: boolean, input: string, format: string,
+                         isIC: boolean, input: InputTypes, format: string,
                          ops: OperatorFormat) {
     // Set the operator format
     if (format !== "custom")
@@ -68,6 +70,13 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     }
 
     info.history.add(action);
+    if (input === "Clock") {
+        let inIndex = 0;
+        for (let clock of inputMap.values() as IterableIterator<Clock>) {
+            clock.setFrequency(500 * (2**Math.min(inIndex, 4)));
+            inIndex++;
+        }
+    }
     info.renderer.render();
 }
 

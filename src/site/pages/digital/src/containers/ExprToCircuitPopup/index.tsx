@@ -13,13 +13,11 @@ import {useSharedDispatch,
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 
-import {Generate} from "./generate";
-import {CustomOps} from "./CustomOps";
+import {InputTypes, Generate} from "./generate";
+import {CustomOps}            from "./CustomOps";
 
 import "./index.scss";
 
-
-type InputTypes = "Button" | "Clock" | "Switch";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
