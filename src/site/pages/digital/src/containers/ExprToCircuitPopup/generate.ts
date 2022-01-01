@@ -104,13 +104,20 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     // Set clock frequencies, also connect to oscilloscope if that option is set
     if (input === "Clock") {
         let inIndex = 0;
-        if (connectClocksToOscope)
-            action.add(new InputPortChangeAction(o, 1, inputMap.size+1).execute());
+        // Set clock frequencies
         for (let clock of inputMap.values() as IterableIterator<Clock>) {
             action.add(new FrequencyChangeAction(clock, 500 * (2 ** inIndex)).execute());
-            if (connectClocksToOscope)
-                action.add(new ConnectionAction(info.designer, clock.getOutputPort(0), o.getInputPort(inIndex+1)).execute());
-            inIndex = inIndex >= 4 ? 4 : inIndex + 1;
+            inIndex = Math.min(inIndex+1, 4);
+        }
+        // Connect clocks to oscilloscope
+        if (connectClocksToOscope) {
+            inIndex = 0;
+            action.add(new InputPortChangeAction(o, 1, Math.min(inputMap.size + 1, 6)).execute());
+            for (let clock of inputMap.values() as IterableIterator<Clock>) {
+                action.add(new ConnectionAction(info.designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
+                inIndex++;
+                if (inIndex === 5) break;
+            }
         }
     }
 
