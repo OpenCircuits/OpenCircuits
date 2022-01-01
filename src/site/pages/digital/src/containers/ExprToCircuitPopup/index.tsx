@@ -1,9 +1,10 @@
 import {useState} from "react";
 
-import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
+import {OperatorFormat,
+        OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {Formats}             from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {Popup} from "shared/components/Popup";
+import {Popup}        from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
 
@@ -13,8 +14,11 @@ import {useSharedDispatch,
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 
-import {InputTypes, Generate, ExprToCirGeneratorOptions, OutputTypes} from "./generate";
-import {CustomOps}            from "./CustomOps";
+import {InputTypes,
+        Generate,
+        ExprToCirGeneratorOptions,
+        OutputTypes} from "./generate";
+import {CustomOps}   from "./CustomOps";
 
 import "./index.scss";
 
