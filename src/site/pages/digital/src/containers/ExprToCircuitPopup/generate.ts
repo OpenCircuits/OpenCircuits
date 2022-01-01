@@ -13,7 +13,7 @@ import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {DigitalComponent, DigitalObjectSet} from "digital/models";
-import {ICData, IC, Clock} from "digital/models/ioobjects";
+import {ICData, IC, Clock, Label} from "digital/models/ioobjects";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
@@ -25,6 +25,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {ORGANIZE_SEP_X} from "core/utils/Constants";
 
 
 export type ExprToCirGeneratorOptions = {
@@ -32,6 +33,7 @@ export type ExprToCirGeneratorOptions = {
     output?: OutputTypes,
     isIC?: boolean,
     connectClocksToOscope?: boolean,
+    label?: boolean,
     format?: OperatorFormatLabel,
     ops?: OperatorFormat,
 }
@@ -46,6 +48,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     const output = options.output ?? "LED";
     const isIC = (output !== "Oscilloscope") ? (options.isIC ?? false) : false;
     const connectClocksToOscope = options.connectClocksToOscope ?? false;
+    const label = options.label ?? false;
     const format = options.format ?? "|";
     const ops = (format === "custom") ? (options.ops ?? Formats[0]) : Formats.find(form => form.icon === format);
 
@@ -73,11 +76,31 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
         throw err;
     }
 
+    action.add(new AddGroupAction(info.designer, circuit).execute());
+
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
-    action.add(new AddGroupAction(info.designer, circuit).execute());
+    // TODO: Replace with a better (action based) way of organizing a circuit
     OrganizeMinDepth(circuit, startPos);
+
+    const circuitComponents = circuit.getComponents();
+
+    // Add labels next to inputs
+    // TODO: This will have to be redone when there is a better organization algorithm
+    if (label) {
+        for (const [name, component] of inputMap) {
+            const newLabel = Create<Label>("Label");
+            // 100 is an arbitrary value here
+            const pos = component.getPos().sub(100, 0);
+            action.add(new PlaceAction(info.designer, newLabel).execute());
+            action.add(new SetNameAction(newLabel, name).execute());
+            action.add(new TranslateAction([newLabel], [newLabel.getPos()], [pos]).execute());
+            circuitComponents.push(newLabel);
+        }
+    }
+
+    // Set clock frequencies, also connect to oscilloscope if that option is set
     if (input === "Clock") {
         let inIndex = 0;
         if (connectClocksToOscope)
@@ -91,19 +114,19 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     }
 
     if (isIC) { // If creating as IC
-        const data = ICData.Create(circuit);
+        const data = ICData.Create(circuitComponents);
         if (!data)
             throw new Error("Failed to create ICData");
         data.setName(expression);
         const ic = new IC(data);
         action.add(new SetNameAction(ic, expression).execute());
         action.add(new CreateICDataAction(data, info.designer).execute());
-        action.add(CreateDeleteGroupAction(info.designer, circuit.getComponents()).execute());
+        action.add(CreateDeleteGroupAction(info.designer, circuitComponents).execute());
         action.add(new PlaceAction(info.designer, ic).execute());
         action.add(new TranslateAction([ic], [ic.getPos()], [info.camera.getPos()]).execute());
         action.add(new SelectAction(info.selections, ic).execute());
     } else { // If placing directly
-        action.add(CreateGroupSelectAction(info.selections, circuit.getComponents()).execute());
+        action.add(CreateGroupSelectAction(info.selections, circuitComponents).execute());
     }
 
     info.history.add(action);

@@ -33,6 +33,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const [errorMessage, setErrorMessage] = useState("");
     const [isIC, setIsIC] = useState(false);
     const [clocksToOscope, setClocksToOscope] = useState(false);
+    const [label, setLabel] = useState(false);
     const [input, setInput] = useState<InputTypes>("Switch");
     const [output, setOutput] = useState<OutputTypes>("LED");
     const [format, setFormat] = useState<OperatorFormatLabel>("|");
@@ -76,6 +77,9 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
+                        <SwitchToggle isOn={label} text={"Place labels for inputs"} height="40px"
+                            onChange={() => setLabel(!label)} />
+                        <br/>
                         {
                             output !== "Oscilloscope" &&
                             <>
@@ -89,7 +93,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                             <>
                                 <SwitchToggle isOn={clocksToOscope} text={"Connect Clocks to Oscilloscope"} height="40px"
                                               onChange={() => setClocksToOscope(!clocksToOscope)} />
-                                <br />
+                                <br/>
                             </>
                         }
                         <br/>
@@ -127,6 +131,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                             output: output,
                             isIC: isIC,
                             connectClocksToOscope: clocksToOscope,
+                            label: label,
                             format: format,
                             ops: customOps,
                         }
