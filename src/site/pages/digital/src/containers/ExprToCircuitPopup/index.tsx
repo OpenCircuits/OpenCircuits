@@ -5,7 +5,6 @@ import {OperatorFormat,
 import {Formats}             from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup}        from "shared/components/Popup";
-import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
 
 import {CloseHeaderPopups} from "shared/state/Header";
@@ -17,8 +16,10 @@ import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {InputTypes,
         Generate,
         ExprToCirGeneratorOptions,
-        OutputTypes} from "./generate";
-import {CustomOps}   from "./CustomOps";
+        OutputTypes}    from "./generate";
+import {CustomOps}      from "./CustomOps";
+import {BooleanOption}  from "./BooleanOption";
+import {DropdownOption} from "./DropdownOption";
 
 import "./index.scss";
 
@@ -81,50 +82,29 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <SwitchToggle isOn={label} text={"Place labels for inputs"} height="40px"
-                            onChange={() => setLabel(!label)} />
-                        <br/>
-                        {
-                            output !== "Oscilloscope" &&
-                            <>
-                                <SwitchToggle isOn={isIC} text={"Generate into IC"} height="40px"
-                                              onChange={() => setIsIC(!isIC)} />
-                                <br/>
-                            </>
-                        }
-                        {
-                            output === "Oscilloscope" && input === "Clock" &&
-                            <>
-                                <SwitchToggle isOn={clocksToOscope} text={"Connect Clocks to Oscilloscope"} height="40px"
-                                              onChange={() => setClocksToOscope(!clocksToOscope)} />
-                                <br/>
-                            </>
-                        }
-                        <br/>
-                        <label>Input Component Type:  </label>
-                        <select id="input"
-                                value={input}
-                                onChange={e => setInput(e.target.value as InputTypes)}
-                                onBlur={e => setInput(e.target.value as InputTypes)}>
-
-                            {(["Button", "Clock", "Switch"] as InputTypes[]).map(input =>
-                                <option key={input} value={input}>{input}</option>
-                            )}
-
-                        </select>
-                        <br/>
-                        <br/>
-                        <label>Output Component Type:  </label>
-                        <select id="output"
-                            value={output}
-                            onChange={e => setOutput(e.target.value as OutputTypes)}
-                            onBlur={e => setOutput(e.target.value as OutputTypes)}>
-
-                            {(["LED", "Oscilloscope"] as OutputTypes[]).map(output =>
-                                <option key={output} value={output}>{output}</option>
-                            )}
-
-                        </select>
+                        <BooleanOption displayCondition={true}
+                                       option={label}
+                                       setOption={setLabel}
+                                       text="Place labels for inputs" />
+                        <BooleanOption displayCondition={output !== "Oscilloscope"}
+                                       option={isIC}
+                                       setOption={setIsIC}
+                                       text="Generate into IC" />
+                        <BooleanOption displayCondition={output === "Oscilloscope" && input === "Clock"}
+                                       option={clocksToOscope}
+                                       setOption={setClocksToOscope}
+                                       text="Connect Clocks to Oscilloscope" />
+                        <DropdownOption id="input"
+                                        option={input}
+                                        options={["Button", "Clock", "Switch"]}
+                                        setOption={setInput}
+                                        text="Input Component Type:  " />
+                        <br />
+                        <DropdownOption id="output"
+                                        option={output}
+                                        options={["LED", "Oscilloscope"]}
+                                        setOption={setOutput}
+                                        text="Output Component Type:  " />
                     </div>
                 </div>
 
