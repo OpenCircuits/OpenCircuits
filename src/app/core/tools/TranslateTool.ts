@@ -1,5 +1,4 @@
-import {GRID_SIZE,
-        SPACEBAR_KEY,
+import {SPACEBAR_KEY,
         LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
@@ -12,10 +11,8 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
-
 
 
 export const TranslateTool: Tool = (() => {

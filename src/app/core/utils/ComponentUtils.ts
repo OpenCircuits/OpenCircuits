@@ -2,7 +2,8 @@ import {serializable, Serialize, Deserialize} from "serialeazy";
 
 import {IO_PORT_LINE_WIDTH,
         EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN} from "./Constants";
+        EMPTY_CIRCUIT_MIN,
+        GRID_SIZE} from "./Constants";
 
 import {Vector, V} from "Vector";
 import {Graph} from "math/Graph";
@@ -10,7 +11,6 @@ import {Transform} from "math/Transform";
 import {BoundingBox} from "math/BoundingBox";
 import {RectContains} from "math/MathUtils";
 import {Camera} from "math/Camera";
-import { GRID_SIZE } from "./Constants";
 
 import {isPressable} from "core/utils/Pressable";
 
@@ -20,8 +20,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-
-import { TranslateTool } from "core/tools/TranslateTool";
 
 
 /**
@@ -59,23 +57,6 @@ export class IOObjectSet {
         return (<IOObject[]>this.getComponents()).concat(this.getWires());
     }
 }
-// export class AnalogObjectSet extends IOObjectSet<AnalogComponent> {
-
-// }
-
-// /**
-//  * Helper function to connect two components at the given
-//  *  port indices
-//  *
-//  * @param  c1 The "output" component
-//  * @param  i1 The index relating to the output ports of c1
-//  * @param  c2 The "input" component
-//  * @param  i2 The index relating to the input ports of c2
-//  * @return    The wire connecting the two components
-//  */
-// export function Connect(c1: Component, i1: number, c2: Component, i2: number): Wire {
-//     return CreateWire(c1.getOutputPort(i1), c2.getInputPort(i2));
-// }
 
 /**
  * Helper function to retrieve a list of all the Input/Output ports
@@ -365,7 +346,7 @@ export function PortContains(port: Port, mousePos: Vector): boolean {
     return RectContains(rect, mousePos);
 }
 
-//Snap the vector to the grid
+// Snap the vector to the grid
 export function Snap(p: Vector): Vector {
     return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
              Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
