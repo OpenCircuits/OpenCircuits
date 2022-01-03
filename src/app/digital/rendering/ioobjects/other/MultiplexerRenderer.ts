@@ -14,6 +14,11 @@ import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
 import {Polygon} from "core/rendering/shapes/Polygon";
 import {Style} from "core/rendering/Style";
 
+/**
+ * Renders Muxs
+ * * Colour and style border and fill as per selection status
+ * * Draw Mux correct size and shape depending on whether it is a Multiplexor or Demultiplexor
+ */
 export const MultiplexerRenderer = (() => {
 
     return {
@@ -27,16 +32,16 @@ export const MultiplexerRenderer = (() => {
             // Creates the Multiplexer and Demultiplexer the correct size
             //
             if (mul instanceof Multiplexer){
-                const p1 = V(-transform.getSize().x/2 , transform.getSize().y/2 + 7);
-                const p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2 - 7);
+                const p1 = V(-transform.getSize().x/2 , transform.getSize().y/2);
+                const p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2);
                 const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
                 renderer.draw(new Polygon([p1, p2, p3, p4]), style);
             }
             else {
-                const p1 = V(transform.getSize().x/2 , transform.getSize().y/2 + 7);
-                const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2 - 7);
+                const p1 = V(transform.getSize().x/2 , transform.getSize().y/2);
+                const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2);
                 const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 

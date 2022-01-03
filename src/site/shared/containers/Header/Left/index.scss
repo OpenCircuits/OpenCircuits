@@ -37,6 +37,19 @@
             background-color: darken($success-color, 10%);
         }
     }
+    &__duplicate {
+        height: 40px;
+        padding: 5px;
+        cursor: pointer;
+        margin-left: 7px;
+        color: #ccc;
+
+        transition: 0.5s;
+
+        &:hover {
+            background-color: lighten($primary-color, 10%);
+        }
+    }
     &__saving__icons {
         & > img {
             margin-left: 7px;
@@ -80,12 +93,13 @@
     }
     & input {
         font-size: 24px;
-
         width: 175px; // @TODO: Auto-adjust to fit within a min/max width
         height: $header-height - 2*$header-padding;
         margin-right: 10px;
 
         color: $secondary-color;
+
+        text-overflow: ellipsis;
     }
     & span {
         font-size: 24px;

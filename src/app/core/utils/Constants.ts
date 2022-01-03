@@ -2,9 +2,6 @@ import {V} from "Vector";
 
 export const SAVE_VERSION = "2.1";
 
-export const DEBUG_CULLBOXES = false;
-export const DEBUG_PRESSABLE_BOUNDS = false;
-export const DEBUG_SELECTION_BOUNDS = false;
 export const DEBUG_NO_FILL = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;
@@ -20,12 +17,18 @@ export const DEFAULT_ON_COLOR      = "#3cacf2";
 export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
+export const GRAPH_LINE_WIDTH = 4;
+
 export const DEFAULT_BORDER_WIDTH = 2;
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
-export const MULTIPLEXER_HEIGHT_OFFSET = 18;
+export const MULTIPLEXER_HEIGHT_OFFSET = 25;
+export const MUX_DEFAULT_SELECT_PORTS = 2;
 
 export const DRAG_TIME = 50;
+
+export const IO_LABEL_DIR_PADDING = 5;
+export const IO_LABEL_VERTICAL_TEXT_PADDING = 7;
 
 export const IO_PORT_LENGTH = 35;
 export const IO_PORT_RADIUS = 7;
@@ -50,8 +53,11 @@ export const ROTATION_CIRCLE_THRESHOLD = 8;
 export const ROTATION_CIRCLE_R1 = Math.pow(ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD, 2);
 export const ROTATION_CIRCLE_R2 = Math.pow(ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD, 2);
 
+export const ARROW_PAN_DISTANCE_NORMAL = 75;
+export const ARROW_PAN_DISTANCE_SMALL = 5;
+
 export const SIDENAV_WIDTH = 300;
-export const ITEMNAV_WIDTH = 200;
+export const ITEMNAV_WIDTH = 240;
 
 export const LEFT_MOUSE_BUTTON  = 0;
 export const MIDDLE_MOUSE_BUTTON = 1;
@@ -64,6 +70,10 @@ export const CONTROL_KEY = 17;
 export const OPTION_KEY = 18;
 export const ESC_KEY    = 27;
 export const SPACEBAR_KEY = 32;
+export const ARROW_LEFT = 37;
+export const ARROW_UP = 38;
+export const ARROW_RIGHT = 39;
+export const ARROW_DOWN = 40;
 export const DELETE_KEY = 46;
 export const A_KEY = 65;
 export const C_KEY = 67;
@@ -83,3 +93,6 @@ export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 export const FIT_PADDING_RATIO = 1.2;
 export const EMPTY_CIRCUIT_MAX = V(GRID_SIZE*5);
 export const EMPTY_CIRCUIT_MIN = EMPTY_CIRCUIT_MAX.scale(-1);
+
+export const ORGANIZE_SEP_X = 250;
+export const ORGANIZE_SEP_Y = 150;

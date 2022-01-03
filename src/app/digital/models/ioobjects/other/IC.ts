@@ -5,10 +5,9 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
 import {ICData} from "./ICData";
 
@@ -77,6 +76,9 @@ export class IC extends DigitalComponent {
 
         // Update port positions
         this.copyPorts();
+
+        // Update cullbox
+        this.onTransformChange();
     }
 
     public activate(): void {

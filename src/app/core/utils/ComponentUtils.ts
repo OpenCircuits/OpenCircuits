@@ -20,6 +20,10 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
@@ -313,9 +317,11 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  * @return Tuple of desired camera position and zoom
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
-    const bbox = objs.length === 0
-        ? new BoundingBox(EMPTY_CIRCUIT_MIN, EMPTY_CIRCUIT_MAX)
-        : CircuitBoundingBox(objs);
+    // If no objects return to default zoom
+    if (objs.length === 0)
+        return [V(), 1];
+
+    const bbox = CircuitBoundingBox(objs);
     const finalPos = bbox.getCenter();
 
     const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
