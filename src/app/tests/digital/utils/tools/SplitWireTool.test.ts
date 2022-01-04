@@ -1,8 +1,6 @@
 import "jest";
 import "test/helpers/Extensions";
 
-import {"Control", "z"} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Switch, LED,
