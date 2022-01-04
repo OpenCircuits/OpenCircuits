@@ -96,7 +96,7 @@ export const App = ((store: AppStore) => {
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
             CleanUpHandler, CopyHandler,
-            PasteHandler((data) => DigitalPaste(data, info)),
+            PasteHandler((data) => DigitalPaste(data, info, null)),
             SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,
@@ -143,7 +143,7 @@ export const App = ((store: AppStore) => {
                                                   CreateICButtonModule, ViewICButtonModule]} />
 
                         <ContextMenu info={info}
-                                     paste={(data) => DigitalPaste(data, info)} />
+                                     paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
                     </main>
                 </div>
 

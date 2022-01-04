@@ -1,6 +1,6 @@
 import {Deserialize, Serialize} from "serialeazy";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -17,7 +17,12 @@ import {TransferICDataAction} from "digital/actions/TransferICDataAction";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {IC} from "digital/models/ioobjects/other";
 
-
+/**
+ * Finds and adds any new IC data upon paste
+ * @param objs All objects in data
+ * @param designer Circuit designer
+ * @returns GroupAction to add all relevant IC data
+ */
 function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): Action | undefined {
     // Find ICs and ICData
     const ics = objs.filter(o => o instanceof IC) as IC[];
@@ -59,15 +64,25 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     return action;
 }
 
-
-export function DigitalPaste(data: string, {history, designer, selections, renderer}: DigitalCircuitInfo): boolean {
+/**
+ * Performs paste action in Digital Circuit
+ * @param data Clipboard data
+ * @param info Circuit info
+ * @param menuPos Top left of context menu if being pasted using context menu
+ * @returns True if successful paste
+ */
+export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos: Vector | null): boolean {
     try {
+        const {history, designer, selections, renderer} = info;
         const objs = Deserialize<IOObject[]>(data);
 
         const newICDataAction = TransferNewICData(objs, designer);
 
         // Get all components
         const comps = objs.filter(o => o instanceof Component) as Component[];
+
+        // Determine shift for target positions for pasted components
+        const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
 
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
         const action = new GroupAction();
@@ -77,7 +92,7 @@ export function DigitalPaste(data: string, {history, designer, selections, rende
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(V(5, 5))))
+            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift)))
         ]).execute());
 
         history.add(action);
