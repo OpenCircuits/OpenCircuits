@@ -63,31 +63,6 @@ export const LEFT_MOUSE_BUTTON  = 0;
 export const MIDDLE_MOUSE_BUTTON = 1;
 export const RIGHT_MOUSE_BUTTON = 2;
 
-export const BACKSPACE_KEY = 8;
-export const ENTER_KEY  = 13;
-export const SHIFT_KEY  = 16;
-export const CONTROL_KEY = 17;
-export const OPTION_KEY = 18;
-export const ESC_KEY    = 27;
-export const SPACEBAR_KEY = 32;
-export const ARROW_LEFT = 37;
-export const ARROW_UP = 38;
-export const ARROW_RIGHT = 39;
-export const ARROW_DOWN = 40;
-export const DELETE_KEY = 46;
-export const A_KEY = 65;
-export const C_KEY = 67;
-export const D_KEY = 68;
-export const F_KEY = 70;
-export const K_KEY = 75;
-export const S_KEY = 83;
-export const V_KEY = 86;
-export const X_KEY = 88;
-export const Y_KEY = 89;
-export const Z_KEY = 90;
-export const COMMAND_KEY = 91;
-export const META_KEY = 224;
-
 export const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
 export const FIT_PADDING_RATIO = 1.2;

@@ -1,7 +1,5 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Switch, Button,
@@ -135,8 +133,8 @@ describe("Translate Tool", () => {
             // Start Translating then Clone
             input.press(V(0, 0))
                     .moveTo(V(-100, 0))
-                    .pressKey(SPACEBAR_KEY)
-                    .releaseKey(SPACEBAR_KEY)
+                    .pressKey(" ")
+                    .releaseKey(" ")
                     .moveTo(V(100, 0))
                     .release();
 

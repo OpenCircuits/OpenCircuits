@@ -2,23 +2,13 @@ import Hammer from "hammerjs";
 
 import {DRAG_TIME,
         LEFT_MOUSE_BUTTON,
-        SHIFT_KEY,
-        CONTROL_KEY,
-        COMMAND_KEY,
-        D_KEY,
-        S_KEY,
-        Z_KEY,
-        Y_KEY,
-        OPTION_KEY,
-        BACKSPACE_KEY,
-        META_KEY,
-        MIDDLE_MOUSE_BUTTON,
-        ESC_KEY} from "core/utils/Constants";
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector,V} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
 
 import {Event} from "./Events";
+import {Key} from "./Key";
 
 
 export type Listener = (event: Event) => void;
@@ -52,7 +42,7 @@ export class Input {
     /** Stores the Listeners for events that may be triggered by user input */
     private listeners: Listener[];
     /** Map with keycodes as keys and booleans representing whether that key is held as values */
-    private keysDown: Map<number, boolean>;
+    private keysDown: Map<Key, boolean>;
 
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click") */
     private dragTime: number;
@@ -85,17 +75,17 @@ export class Input {
      * @param newKey represents the key combination being pressed
      * @returns true if newKey is a prevented combination, false otherwise
      */
-    private isPreventedCombination(newKey: number): boolean {
+    private isPreventedCombination(newKey: Key): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
         //  So we need to disable some certain combinations of keys
         const PREVENTED_COMBINATIONS = [
-            [[S_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[D_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[Z_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[Y_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
-            [[BACKSPACE_KEY]],
-            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
-        ];
+            [["s"], ["Control", "Meta"]],
+            [["d"], ["Control", "Meta"]],
+            [["z"], ["Control", "Meta"]],
+            [["y"], ["Control", "Meta"]],
+            [["Backspace"]],
+            [["Alt"]]   // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
+        ] as Key[][][];
 
         // Check if some combination has every key pressed and newKey is one of them
         //  and return true if that's the case
@@ -113,15 +103,15 @@ export class Input {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement)) {
-                this.onKeyDown(e.keyCode);
+                this.onKeyDown(e.key as Key);
 
-                if (this.isPreventedCombination(e.keyCode))
+                if (this.isPreventedCombination(e.key as Key))
                     e.preventDefault();
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.keyCode)
+                this.onKeyUp(e.key as Key)
         }, false);
 
         window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
@@ -289,7 +279,7 @@ export class Input {
      * @param key represents the key being checked
      * @returns true if key is down, false otherwise
      */
-    public isKeyDown(key: number): boolean {
+    public isKeyDown(key: Key): boolean {
         return (this.keysDown.has(key) &&
                 this.keysDown.get(key) == true);
     }
@@ -300,7 +290,7 @@ export class Input {
      * @returns true if the shift key is down, false otherwise
      */
     public isShiftKeyDown(): boolean {
-        return this.isKeyDown(SHIFT_KEY);
+        return this.isKeyDown("Shift");
     }
 
 
@@ -310,7 +300,7 @@ export class Input {
      * @returns true if the option key is down, false otherwise
      */
     public isEscKeyDown(): boolean {
-        return this.isKeyDown(ESC_KEY);
+        return this.isKeyDown("Escape");
     }
 
     /**
@@ -319,15 +309,15 @@ export class Input {
      * @returns true if the modifier key (control, command, or meta) is down, false otherwise
      */
      public isModifierKeyDown(): boolean {
-        return (this.isKeyDown(CONTROL_KEY) || this.isKeyDown(COMMAND_KEY) || this.isKeyDown(META_KEY));
+        return (this.isKeyDown("Control") || this.isKeyDown("Meta"));
     }
     /**
      * Checks if the option key is held down
      *
      * @returns true if the option key is down, false otherwise
      */
-    public isOptionKeyDown(): boolean {
-        return this.isKeyDown(OPTION_KEY);
+    public isAltKeyDown(): boolean {
+        return this.isKeyDown("Alt");
     }
 
     /**
@@ -369,7 +359,7 @@ export class Input {
      *
      * @param key represents the key being pressed
      */
-    protected onKeyDown(key: number): void {
+    protected onKeyDown(key: Key): void {
         this.keysDown.set(key, true);
 
         // call each listener
@@ -380,7 +370,7 @@ export class Input {
      *
      * @param key represents the key being released
      */
-    protected onKeyUp(key: number): void {
+    protected onKeyUp(key: Key): void {
         this.keysDown.set(key, false);
 
         // call each listener
