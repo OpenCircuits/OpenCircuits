@@ -1,12 +1,12 @@
-import {MIDDLE_MOUSE_BUTTON, ALT_KEY, 
-        ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT,
-        ARROW_PAN_DISTANCE_NORMAL, ARROW_PAN_DISTANCE_SMALL}  from "core/utils/Constants";
-import {Vector}      from "Vector";
+import {MIDDLE_MOUSE_BUTTON,
+        ARROW_PAN_DISTANCE_NORMAL,
+        ARROW_PAN_DISTANCE_SMALL} from "core/utils/Constants";
+import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Tool}        from "core/tools/Tool";
+import {Tool} from "core/tools/Tool";
 
 export const PanTool: Tool = (() => {
     let isDragging = false;
@@ -16,20 +16,20 @@ export const PanTool: Tool = (() => {
             //  or if the user began dragging with either 2 fingers
             //                           or the middle mouse button
             //  or if the user pressed one of of the arrow keys
-            return (event.type === "keydown"   && ((event.key === ALT_KEY) ||
-                                                   (event.key === ARROW_LEFT || event.key === ARROW_RIGHT || 
-                                                    event.key === ARROW_UP || event.key === ARROW_DOWN )) ||
+            return (event.type === "keydown"   && ((event.key === "Alt") ||
+                                                   (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                                    event.key === "ArrowUp" || event.key === "ArrowDown")) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
-            //  or if no dragging happened and ALT_KEY was released
+            //  or if no dragging happened and "Alt" was released
             //  or if one of the arrow keys were released
             return (event.type === "mouseup") ||
-                   (event.type === "keyup" && ((!isDragging && event.key === ALT_KEY || 
-                                               (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                                event.key == ARROW_UP || event.key == ARROW_DOWN ))))
+                   (event.type === "keyup" && ((!isDragging && event.key === "Alt" || 
+                                               (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                                event.key === "ArrowUp" || event.key === "ArrowDown"))))
         },
 
 
@@ -57,13 +57,13 @@ export const PanTool: Tool = (() => {
                 
                 // No else if because it introduces bugs when 
                 // multiple arrow keys are pressed
-                if (input.isKeyDown(ARROW_LEFT))
+                if (input.isKeyDown("ArrowLeft"))
                     dPos = dPos.add(-1, 0);
-                if (input.isKeyDown(ARROW_RIGHT))
+                if (input.isKeyDown("ArrowRight"))
                     dPos = dPos.add(1, 0);
-                if (input.isKeyDown(ARROW_UP))
+                if (input.isKeyDown("ArrowUp"))
                     dPos = dPos.add(0, -1);
-                if (input.isKeyDown(ARROW_DOWN))
+                if (input.isKeyDown("ArrowDown"))
                     dPos = dPos.add(0, 1);
                 
                 // Screen gets moved different amounts depending on if the shift key is held

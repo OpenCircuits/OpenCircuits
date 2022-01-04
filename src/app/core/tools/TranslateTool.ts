@@ -1,5 +1,4 @@
-import {SPACEBAR_KEY,
-        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -96,7 +95,7 @@ export const TranslateTool: Tool = (() => {
 
                 case "keyup":
                     // Duplicate group when we press the spacebar
-                    if (event.key === SPACEBAR_KEY) {
+                    if (event.key === " ") {
                         history.add(new CopyGroupAction(designer, components).execute());
                         return true;
                     }
