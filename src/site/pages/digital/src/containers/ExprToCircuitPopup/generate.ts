@@ -21,7 +21,7 @@ import {CreateICDataAction}    from "digital/actions/CreateICDataAction";
 import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-import {DigitalComponent, DigitalObjectSet} from "digital/models";
+import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digital/models";
 import {ICData, IC, Clock, Label}           from "digital/models/ioobjects";
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
@@ -30,28 +30,68 @@ import {GenerateTokens}      from "digital/utils/ExpressionParser/GenerateTokens
 
 
 export type ExprToCirGeneratorOptions = {
-    input?: InputTypes,
-    output?: OutputTypes,
-    isIC?: boolean,
-    connectClocksToOscope?: boolean,
-    label?: boolean,
-    format?: OperatorFormatLabel,
-    ops?: OperatorFormat,
+    input: InputTypes,
+    output: OutputTypes,
+    isIC: boolean,
+    connectClocksToOscope: boolean,
+    label: boolean,
+    format: OperatorFormatLabel,
+    ops: OperatorFormat,
 }
 
 export type InputTypes = "Button" | "Clock" | "Switch";
 export type OutputTypes = "Oscilloscope" | "LED";
 
+const defaultOptions: ExprToCirGeneratorOptions = {
+    input: "Switch",
+    output: "LED",
+    isIC: false,
+    connectClocksToOscope: false,
+    label: false,
+    format: "|",
+    ops: Formats[0],
+}
+
+function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
+    circuitComponents: DigitalComponent[], designer: DigitalCircuitDesigner) {
+    // Add labels next to inputs
+    // TODO: This will have to be redone when there is a better organization algorithm
+    for (const [name, component] of inputMap) {
+        const newLabel = Create<Label>("Label");
+        const pos = component.getPos().sub(newLabel.getSize().x + component.getSize().x, 0);
+        action.add(new PlaceAction(designer, newLabel).execute());
+        action.add(new SetNameAction(newLabel, name).execute());
+        action.add(new TranslateAction([newLabel], [newLabel.getPos()], [pos]).execute());
+        circuitComponents.push(newLabel);
+    }
+}
+
+function setClocks(inputMap: Map<string, Clock>, action: GroupAction, connectClocksToOscope: boolean,
+    o: DigitalComponent, designer: DigitalCircuitDesigner) {
+    let inIndex = 0;
+    // Set clock frequencies
+    for (const clock of inputMap.values()) {
+        action.add(new FrequencyChangeAction(clock, 500 * (2 ** inIndex)).execute());
+        inIndex = Math.min(inIndex + 1, 4);
+    }
+    // Connect clocks to oscilloscope
+    if (connectClocksToOscope) {
+        inIndex = 0;
+        action.add(new InputPortChangeAction(o, 1, Math.min(inputMap.size + 1, 6)).execute());
+        for (const clock of inputMap.values()) {
+            action.add(new ConnectionAction(designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
+            inIndex++;
+            if (inIndex === 5) break;
+        }
+    }
+}
+
 // TODO: Refactor this to a GroupAction factory once there is a better (and Action) algorithm to arrange the circuit
 export function Generate(info: DigitalCircuitInfo, expression: string,
-                         options: ExprToCirGeneratorOptions) {
-    const input = options.input ?? "Switch";
-    const output = options.output ?? "LED";
-    const isIC = (output !== "Oscilloscope") ? (options.isIC ?? false) : false;
-    const connectClocksToOscope = options.connectClocksToOscope ?? false;
-    const label = options.label ?? false;
-    const format = options.format ?? "|";
-    const ops = (format === "custom") ? (options.ops ?? Formats[0]) : Formats.find(form => form.icon === format);
+                         userOptions: Partial<ExprToCirGeneratorOptions>) {
+    const options = {...defaultOptions, ...userOptions};
+    options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
+    const ops = options.format === "custom" ? options.ops : Formats.find(form => form.icon === options.format);
 
     // Create input tokens
     const tokenList = GenerateTokens(expression, ops);
@@ -60,12 +100,12 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     for (const token of tokenList) {
         if (token.type !== "input" || inputMap.has(token.name))
             continue;
-        inputMap.set(token.name, Create<DigitalComponent>(input));
+        inputMap.set(token.name, Create<DigitalComponent>(options.input));
         action.add(new SetNameAction(inputMap.get(token.name), token.name).execute());
     }
 
     // Create output LED
-    const o = Create<DigitalComponent>(output);
+    const o = Create<DigitalComponent>(options.output);
     action.add(new SetNameAction(o, "Output").execute());
 
     // Get the generated circuit
@@ -87,41 +127,15 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
 
     const circuitComponents = circuit.getComponents();
 
-    // Add labels next to inputs
-    // TODO: This will have to be redone when there is a better organization algorithm
-    if (label) {
-        for (const [name, component] of inputMap) {
-            const newLabel = Create<Label>("Label");
-            // 100 is an arbitrary value here
-            const pos = component.getPos().sub(100, 0);
-            action.add(new PlaceAction(info.designer, newLabel).execute());
-            action.add(new SetNameAction(newLabel, name).execute());
-            action.add(new TranslateAction([newLabel], [newLabel.getPos()], [pos]).execute());
-            circuitComponents.push(newLabel);
-        }
-    }
+    // Add labels if necessary
+    if (options.label)
+        addLabels(inputMap, action, circuitComponents, info.designer);
 
     // Set clock frequencies, also connect to oscilloscope if that option is set
-    if (input === "Clock") {
-        let inIndex = 0;
-        // Set clock frequencies
-        for (let clock of inputMap.values() as IterableIterator<Clock>) {
-            action.add(new FrequencyChangeAction(clock, 500 * (2 ** inIndex)).execute());
-            inIndex = Math.min(inIndex+1, 4);
-        }
-        // Connect clocks to oscilloscope
-        if (connectClocksToOscope) {
-            inIndex = 0;
-            action.add(new InputPortChangeAction(o, 1, Math.min(inputMap.size + 1, 6)).execute());
-            for (let clock of inputMap.values() as IterableIterator<Clock>) {
-                action.add(new ConnectionAction(info.designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
-                inIndex++;
-                if (inIndex === 5) break;
-            }
-        }
-    }
+    if (options.input === "Clock")
+        setClocks(inputMap as Map<string, Clock>, action, options.connectClocksToOscope, o, info.designer);
 
-    if (isIC) { // If creating as IC
+    if (options.isIC) { // If creating as IC
         const data = ICData.Create(circuitComponents);
         if (!data)
             throw new Error("Failed to create ICData");

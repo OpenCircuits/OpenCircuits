@@ -1,4 +1,4 @@
-import {Token, TokenType, InputTree, InputToken, BinOpChildren} from "./Constants/DataStructures";
+import {Token, TokenType, InputTree, InputToken, BinOpChildren, InputTreeBinOpType, InputTreeBinOpNode} from "./Constants/DataStructures";
 import {Formats} from "./Constants/Formats";
 
 
@@ -11,6 +11,57 @@ interface NewTreeRetValue {
 }
 
 const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
+
+/**
+ * Checks if the input tree can have its number of inputs increased.
+ * 
+ * @param tree the tree to check
+ * @param op the operation the tree should have
+ * @param isFinal whether or not the tree can be modified
+ * @returns true if tree has kind "binop", tree's type is op, and isFinal is false, false otherwise
+ */
+function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal: boolean): tree is InputTreeBinOpNode {
+    return tree.kind === "binop" && tree.type === op && !isFinal;
+}
+
+/**
+ * Generates a nested tree structure where each layer has at most 8 children
+ * 
+ * @param children the array of children to turn into a nested structure
+ * @param currentOp the operand all these nodes have
+ * @returns the properly nested tree structure
+ */
+function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpType): InputTree[] {
+    if (children.length <= 8)
+        return children;
+    const next = children.slice(7);
+    const newTree: InputTree = {
+        kind: "binop", type: currentOp, isNot: false,
+        children: generateNestedTrees(next, currentOp) as BinOpChildren,
+    }
+    return [...children.slice(0, 7), newTree];
+}
+
+/**
+ * Generates a specific error message when no operator is detected between two tokens.
+ * This message searches to see if one of the tokens is the operator for a different format.
+ * 
+ * @param prev the name of the first token
+ * @param next the name of the second token
+ * @param ops the represenation of the operands in the original expression
+ */
+function generateErrorMessage(prev: string, next: string, ops: Record<TokenType, string>): string {
+    let errorMessage = `No valid operator between "${prev}" and "${next}"`;
+    for (const format of Formats) {
+        Object.entries(format.ops).forEach(([tokenType, op]) => {
+            if (op === prev)
+                errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${prev}"?`
+            if (op === next)
+                errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${next}"?`
+        });
+    }
+    return errorMessage;
+}
 
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
@@ -28,7 +79,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
- function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
+function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
@@ -109,26 +160,14 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         const lTree = leftRet.tree;
         const rTree = rightRet.tree;
-        // 7 + rTree = 8, that is why 7 is used
-        let childrenArray: InputTree[] = (lTree.kind === "binop"
-                             && lTree.type === currentOp
-                             && !lTree.isNot
-                             && !leftRet.final
-                             && lTree.children.length <= 7) ? lTree.children : [lTree];
-        if (rTree.kind === "binop" && rTree.type === currentOp && !rTree.isNot && !rightRet.final) {
-            const rChildren: InputTree[] = rTree.children;
-            while (rChildren.length > 0 && childrenArray.length < 7)
-                childrenArray.push(rChildren.shift());
-            // if there is only one more child left in the right tree and a spot for it, add it
-            // otherwise add the rest of the right tree
-            if (rChildren.length === 1 && childrenArray.length === 7)
-                childrenArray.push(rChildren[0]);
-            else if (rChildren.length !== 0)
-                childrenArray.push(rTree);
-        }
-        else {
+        let childrenArray: InputTree[] = (isTreeExtendable(lTree, currentOp, leftRet.final)) ? lTree.children : [lTree];
+        if (isTreeExtendable(rTree, currentOp, rightRet.final))
+            childrenArray = [...childrenArray, ...rTree.children];
+            //a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z
+        else
             childrenArray.push(rTree);
-        }
+
+        childrenArray = generateNestedTrees(childrenArray, currentOp);
             
         tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
     }
@@ -166,18 +205,8 @@ export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string
                            .find(token => token.type === "input") as InputToken;
         const next = tokens.slice(index)
                            .find(token => token.type === "input") as InputToken;
-        if (prev && prev.name && next && next.name) {
-            let errorMessage = `No valid operator between "${prev.name}" and "${next.name}"`;
-            for (const format of Formats) {
-                Object.entries(format.ops).forEach(([tokenType, op]) => {
-                    if (op === prev.name)
-                        errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${prev.name}"?`
-                    if (op === next.name)
-                        errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${next.name}"?`
-                });
-            }
-            throw new Error(errorMessage);
-        }
+        if (prev && prev.name && next && next.name)
+            throw new Error(generateErrorMessage(prev.name, next.name, ops));
 
         throw new Error("Parsing ended prematurely");
     }
