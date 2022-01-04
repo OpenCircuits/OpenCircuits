@@ -1,23 +1,22 @@
 import {useState} from "react";
 
+import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
 import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField} from "shared/components/InputField";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
-
 import {Generate} from "./generate";
 import {CustomOps} from "./CustomOps";
 
 import "./index.scss";
-import { InputField } from "shared/components/InputField";
 
 
 type InputTypes = "Button" | "Clock" | "Switch";

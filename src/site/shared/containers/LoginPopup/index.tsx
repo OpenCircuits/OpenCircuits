@@ -8,11 +8,11 @@ import {CloseHeaderPopups} from "shared/state/Header";
 import {Login} from "shared/state/thunks/User";
 
 import {Popup} from "shared/components/Popup";
+import {InputField} from "shared/components/InputField";
 
 import {GoogleAuthButton} from "./GoogleSignInButton";
 
 import "./index.scss";
-import { InputField } from "shared/components/InputField";
 
 
 export const LoginPopup = () => {

@@ -12,9 +12,9 @@ import {CloseHeaderPopups} from "shared/state/Header";
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
-import { InputField } from "shared/components/InputField";
 
 
 const MIN_IMG_SIZE = 50;
