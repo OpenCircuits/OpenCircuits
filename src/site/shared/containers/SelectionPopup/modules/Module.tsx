@@ -236,9 +236,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                         onChange={(ev) => onChange(ev.target.value)}
                         onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
                         onBlur={() => onSubmit()}
-                        onKeyPress={({target, key}) => (props.inputType !== "color" &&
-                                                        key === "Enter" &&
-                                                        (target as HTMLInputElement).blur())}
+                        onEnter={({target}) => (props.inputType !== "color" &&
+                                               (target as HTMLInputElement).blur())}
                         alt={props.alt} />
         )
     }

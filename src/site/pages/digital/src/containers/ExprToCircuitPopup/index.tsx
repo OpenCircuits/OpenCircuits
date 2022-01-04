@@ -17,6 +17,7 @@ import {Generate} from "./generate";
 import {CustomOps} from "./CustomOps";
 
 import "./index.scss";
+import { InputField } from "shared/components/InputField";
 
 
 type InputTypes = "Button" | "Clock" | "Switch";
@@ -50,11 +51,11 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="exprtocircuit__popup">
                 { errorMessage && <p className="exprtocircuit__popup__errorMessage">{"ERROR: " + errorMessage}</p> }
-                <input title="Enter Circuit Expression"
-                       type="text"
-                       value={expression}
-                       placeholder="!a | (B^third)"
-                       onChange={e => setExpression(e.target.value)} />
+                <InputField title="Enter Circuit Expression"
+                            type="text"
+                            value={expression}
+                            placeholder="!a | (B^third)"
+                            onChange={e => setExpression(e.target.value)} />
                 <br/>
 
                 <div className="exprtocircuit__popup__settings">
