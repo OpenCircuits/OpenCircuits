@@ -9,6 +9,9 @@ export type TokenType =
     | InputTreeOpType
     | ParenType;
 
+/** Represents that a "binary" operation can have 2-8 children */
+export type BinOpChildren = [InputTree, InputTree, InputTree?, InputTree?, InputTree?, InputTree?, InputTree?, InputTree?];
+
 /** Represents a node on the parsed tree that itself represents an input component */
 export interface InputTreeIdent {
     kind: "leaf"
@@ -24,9 +27,11 @@ export interface InputTreeUnOpNode {
 export interface InputTreeBinOpNode {
     kind: "binop"
     type: InputTreeBinOpType
-    lChild: InputTree
-    rChild: InputTree
+    isNot: boolean // true for NAND, false for AND
+    // Can have 2-8 children
+    children: BinOpChildren
 }
+/** Represents all possible types of nodes for the input tree */
 export type InputTree =
     | InputTreeIdent
     | InputTreeUnOpNode
