@@ -3,7 +3,6 @@ import {Fragment, useState} from "react";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
-import {GoogleAuthState} from "shared/api/auth/GoogleAuthState";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {Login} from "shared/state/thunks/User";
@@ -44,7 +43,6 @@ export const LoginPopup = () => {
                                     alert("User name must not be blank!")
                                     return;
                                 }
-                                console.log("tesststst");
                                 dispatch(Login(new NoAuthState(username)));
                                 dispatch(CloseHeaderPopups());
                             }}>

@@ -1,17 +1,16 @@
-import {GRID_SIZE,
-        SPACEBAR_KEY,
+import {SPACEBAR_KEY,
         LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Snap}        from "core/utils/ComponentUtils";
 
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -21,11 +20,6 @@ export const TranslateTool: Tool = (() => {
     let components = [] as Component[];
     let worldMouseDownPos = V();
     let action: GroupAction;
-
-    function snap(p: Vector): Vector {
-        return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                 Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
-    }
 
     return {
         shouldActivate(event: Event, {locked, currentlyPressedObject}: CircuitInfo): boolean {
@@ -91,7 +85,7 @@ export const TranslateTool: Tool = (() => {
 
                     // Get snapped positions if shift is held
                     const newPositions = input.isShiftKeyDown() ?
-                        curPositions.map(p => snap(p)):
+                        curPositions.map(p => Snap(p)):
                         curPositions;
 
                     // Execute translate but don't save to group

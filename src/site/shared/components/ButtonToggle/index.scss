@@ -1,0 +1,25 @@
+@import "~shared/utils/constants", "~shared/utils/theme";
+
+.buttontoggle {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+
+    padding: 0;
+
+    & > img {
+        flex-grow: 0;
+
+        border: thin solid #888;
+        border-radius: 0px;
+        height: 90%;
+    }
+    & > span {
+        flex-grow: 1;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}
