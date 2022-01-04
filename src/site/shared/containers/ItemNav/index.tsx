@@ -106,7 +106,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     const MAX_STACK = 4;
 
-    const additionalPreviewComp = (additionalPreview && additionalData && additionalPreview(additionalData, curItemID));
+    const additionalPreviewComp = (additionalPreview && !!additionalData && additionalPreview(additionalData, curItemID));
 
     return (<>
         <div className="itemnav__preview"
