@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 import {SegmentDisplay} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[SegmentDisplay], number> = {
@@ -18,4 +18,4 @@ export const SegmentCountModule = PopupModule({
         config: Config,
         options: [7, 9, 14, 16],
     })]
-});
+}) as (props: UseModuleProps) => JSX.Element;

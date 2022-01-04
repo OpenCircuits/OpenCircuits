@@ -4,7 +4,7 @@ import {Comparator} from "digital/models/ioobjects";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Comparator], number> = {
@@ -23,4 +23,4 @@ export const ComparatorInputCountModule = PopupModule({
         step: 1, min: 1, max: 8,
         alt: "Number of inputs object(s) have"
     })]
-});
+}) as (props: UseModuleProps) => JSX.Element;

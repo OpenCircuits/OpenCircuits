@@ -33,7 +33,7 @@ const [initialState, actions, reducer] = CreateState()(
         },
         "LOGOUT_ACTION_ID": (state) => {
             if (state.auth) state.auth.logOut();
-            return { ...state, auth: undefined, isLoggedIn: false, circuits: [] };
+            return { ...state, auth: undefined as unknown as AuthState, isLoggedIn: false, circuits: [] };
         },
         "LOGIN_ACTION_ID": (state, action) => ({ ...state, auth: action.auth, isLoggedIn: true }),
         "LOAD_CIRCUITS_START_ID": (state) => {
@@ -44,7 +44,7 @@ const [initialState, actions, reducer] = CreateState()(
         "LOAD_CIRCUITS_FINISH_ID": (state, action) => {
             if (!state.auth)
                 return { ...state, circuits: [], loading: false, error: "MNot logged in!" };
-            return { ...state, circuits: (action.circuits ?? []), error: action.err, loading: false };
+            return { ...state, circuits: (action.circuits ?? []), error: action.err as string, loading: false };
         },
     }
 );

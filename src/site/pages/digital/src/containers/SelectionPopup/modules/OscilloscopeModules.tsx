@@ -26,7 +26,7 @@ export const OscilloscopeSamplesModule = PopupModule({
         max: 400,
         alt: "The number of samples that the Oscilloscope takes"
     })]
-});
+}) as (props: UseModuleProps) => JSX.Element;
 
 export const ClearOscilloscopeButtonModule = (props: UseModuleProps) => (
     <ButtonPopupModule
@@ -58,7 +58,7 @@ export const OscilloscopeInputCountModule = PopupModule({
         step: 1, min: 1, max: 8,
         alt: "Number of inputs for the Oscilloscope"
     })]
-});
+}) as (props: UseModuleProps) => JSX.Element;
 
 
 const OscilloscopeDisplaySizeModuleXConfig: ModuleConfig<[Oscilloscope], number> = {
@@ -98,4 +98,4 @@ export const OscilloscopeDisplaySizeModule = PopupModule({
             alt: "Height of display size part"
         })
     ]
-});
+}) as (props: UseModuleProps) => JSX.Element;

@@ -31,7 +31,7 @@ const [initialState, actions, reducer] = CreateState()(
             ...state,
             saving: false,
             isSaved: (action.err === undefined),
-            error: action.err,
+            error: action.err as string,
         }),
     }
 );

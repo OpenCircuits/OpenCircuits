@@ -1,6 +1,6 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {ConstantNumber} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 import {ConstantNumberChangeAction} from "digital/actions/ConstantNumberChangeAction"
 
 
@@ -21,4 +21,4 @@ export const ConstantNumberInputModule = PopupModule({
         max: 15,
         alt: "Constant number input (0-15)"
     })]
-});
+}) as (props: UseModuleProps) => JSX.Element;
