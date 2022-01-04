@@ -1,5 +1,3 @@
-import {K_KEY} from "core/utils/Constants";
-
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Snap} from "core/utils/ComponentUtils";
@@ -16,7 +14,7 @@ import {EventHandler} from "../EventHandler";
 export const CleanUpHandler: EventHandler = ({
     conditions: (event: Event, {designer}: CircuitInfo) =>
         (event.type === "keydown" &&
-         event.key === K_KEY &&
+         event.key === "k" &&
          // Don't want to select all if nothing to select or everything is already selected
          designer.getObjects().length > 0),
 

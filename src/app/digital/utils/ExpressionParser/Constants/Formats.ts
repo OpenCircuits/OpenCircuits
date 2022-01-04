@@ -1,4 +1,4 @@
-import {InputTreeOpType, OperatorFormat, TokenType} from "./DataStructures";
+import {OperatorFormat} from "./DataStructures";
 
 
 const programming1: Readonly<OperatorFormat> = {
