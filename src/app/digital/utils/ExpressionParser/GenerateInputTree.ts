@@ -38,7 +38,7 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
     const newTree: InputTree = {
         kind: "binop", type: currentOp, isNot: false,
         children: generateNestedTrees(next, currentOp) as BinOpChildren,
-    }
+    };
     return [...children.slice(0, 7), newTree];
 }
 
@@ -158,12 +158,10 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
         }
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
-        const lTree = leftRet.tree;
-        const rTree = rightRet.tree;
-        let childrenArray: InputTree[] = (isTreeExtendable(lTree, currentOp, leftRet.final)) ? lTree.children : [lTree];
+        const lTree = leftRet.tree, rTree = rightRet.tree;
+        let childrenArray: InputTree[] = isTreeExtendable(lTree, currentOp, leftRet.final) ? lTree.children : [lTree];
         if (isTreeExtendable(rTree, currentOp, rightRet.final))
             childrenArray = [...childrenArray, ...rTree.children];
-            //a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z
         else
             childrenArray.push(rTree);
 

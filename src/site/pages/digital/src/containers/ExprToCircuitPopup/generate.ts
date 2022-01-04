@@ -66,7 +66,7 @@ function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
     }
 }
 
-function setClocks(inputMap: Map<string, Clock>, action: GroupAction, connectClocksToOscope: boolean,
+function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: ExprToCirGeneratorOptions,
     o: DigitalComponent, designer: DigitalCircuitDesigner) {
     let inIndex = 0;
     // Set clock frequencies
@@ -75,7 +75,7 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, connectClo
         inIndex = Math.min(inIndex + 1, 4);
     }
     // Connect clocks to oscilloscope
-    if (connectClocksToOscope) {
+    if (options.connectClocksToOscope) {
         inIndex = 0;
         action.add(new InputPortChangeAction(o, 1, Math.min(inputMap.size + 1, 6)).execute());
         for (const clock of inputMap.values()) {
@@ -84,6 +84,20 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, connectClo
             if (inIndex === 5) break;
         }
     }
+}
+
+function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string, info: DigitalCircuitInfo) {
+    const data = ICData.Create(circuitComponents);
+    if (!data)
+        throw new Error("Failed to create ICData");
+    data.setName(expression);
+    const ic = new IC(data);
+    action.add(new SetNameAction(ic, expression).execute());
+    action.add(new CreateICDataAction(data, info.designer).execute());
+    action.add(CreateDeleteGroupAction(info.designer, circuitComponents).execute());
+    action.add(new PlaceAction(info.designer, ic).execute());
+    action.add(new TranslateAction([ic], [ic.getPos()], [info.camera.getPos()]).execute());
+    action.add(new SelectAction(info.selections, ic).execute());
 }
 
 // TODO: Refactor this to a GroupAction factory once there is a better (and Action) algorithm to arrange the circuit
@@ -133,23 +147,12 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
 
     // Set clock frequencies, also connect to oscilloscope if that option is set
     if (options.input === "Clock")
-        setClocks(inputMap as Map<string, Clock>, action, options.connectClocksToOscope, o, info.designer);
+        setClocks(inputMap as Map<string, Clock>, action, options, o, info.designer);
 
-    if (options.isIC) { // If creating as IC
-        const data = ICData.Create(circuitComponents);
-        if (!data)
-            throw new Error("Failed to create ICData");
-        data.setName(expression);
-        const ic = new IC(data);
-        action.add(new SetNameAction(ic, expression).execute());
-        action.add(new CreateICDataAction(data, info.designer).execute());
-        action.add(CreateDeleteGroupAction(info.designer, circuitComponents).execute());
-        action.add(new PlaceAction(info.designer, ic).execute());
-        action.add(new TranslateAction([ic], [ic.getPos()], [info.camera.getPos()]).execute());
-        action.add(new SelectAction(info.selections, ic).execute());
-    } else { // If placing directly
+    if (options.isIC) // If creating as IC
+        handleIC(action, circuitComponents, expression, info);
+    else // If placing directly
         action.add(CreateGroupSelectAction(info.selections, circuitComponents).execute());
-    }
 
     info.history.add(action);
     info.renderer.render();

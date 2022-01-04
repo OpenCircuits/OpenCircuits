@@ -109,13 +109,12 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                 <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                     try {
-                        const options: ExprToCirGeneratorOptions = {
+                        Generate(mainInfo, expression, {
                             input, output, isIC,
                             connectClocksToOscope: clocksToOscope,
                             label, format,
                             ops: customOps,
-                        }
-                        Generate(mainInfo, expression, options);
+                        });
                         reset();
                     } catch (err) {
                         setErrorMessage(err.message);
