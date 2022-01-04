@@ -179,10 +179,11 @@ export class Input {
      */
     private setupHammer(): void {
         // Pinch to zoom
-        const touchManager = new Hammer.Manager(this.canvas, {recognizers: []});
+        const touchManager = new Hammer.Manager(this.canvas, {recognizers: [], domEvents: true});
         let lastScale = 1;
 
         touchManager.add(new Hammer.Pinch());
+
         touchManager.on("pinch", (e) => {
             this.callListeners({
                 type: "zoom",
@@ -191,6 +192,7 @@ export class Input {
             });
             lastScale = e.scale;
         });
+
         touchManager.on("pinchend", (_) => {
             lastScale = 1;
         });
@@ -202,6 +204,13 @@ export class Input {
 
             this.onClick(V(e.center.x, e.center.y));
         });
+
+        // This function is used to prevent default zoom in gesture for all browsers
+        //  Fixes #745
+        document.addEventListener("wheel",
+            (e) => { if (e.ctrlKey) e.preventDefault(); },
+            { passive: false }
+        );
     }
 
     /**
@@ -246,6 +255,7 @@ export class Input {
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
+
     /**
      * Removes a Listener from the list of Listeners Events are checked against
      *
