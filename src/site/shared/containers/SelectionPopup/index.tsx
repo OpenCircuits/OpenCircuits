@@ -17,7 +17,7 @@ import {Clamp} from "math/MathUtils";
 type Props = {
     info: CircuitInfo;
     modules: ((props: UseModuleProps) => JSX.Element)[];
-    docsUrlConfig: Record<string,string>;
+    docsUrlConfig: Record<string, string>;
 }
 export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     const calcPos = () => camera.getScreenPos(selections.midpoint(true));
