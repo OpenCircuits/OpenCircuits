@@ -1,11 +1,11 @@
-import {useEffect, useRef} from "react"
+import {MutableRefObject, useEffect, useRef} from "react"
 
 
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
     onEnter?: (e: KeyboardEvent) => void;
 }
 export const InputField = (props: Props) => {
-    const ref = useRef<HTMLInputElement>();
+    const ref = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {
         ref.current.addEventListener("keyup", function(evt) {

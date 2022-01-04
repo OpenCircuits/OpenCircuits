@@ -18,9 +18,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @param tree the tree to check
  * @param op the operation the tree should have
  * @param isFinal whether or not the tree can be modified
- * @returns true if tree has kind "binop", tree's type is op, and isFinal is false, false otherwise
+ * @returns true if tree has kind "binop", tree's type is op, and isFinal is false or undefined, false otherwise
  */
-function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal: boolean): tree is InputTreeBinOpNode {
+function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boolean): tree is InputTreeBinOpNode {
     return tree.kind === "binop" && tree.type === op && !isFinal;
 }
 
@@ -106,8 +106,8 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
 
     // This section gets the part of the tree from the left side of the operator.
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
-    let leftRet: NewTreeRetValue;
-    if (currentOp !== "!" && currentOp !== "(") {
+    let leftRet: NewTreeRetValue | null = null;
+    if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         leftRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
         index = leftRet.index;
         // If this isn't the right operation to apply, return
@@ -121,7 +121,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     if (index >= tokens.length && currentOp !== "(") {
         throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
     }
-    let rightRet: NewTreeRetValue = null;
+    let rightRet: NewTreeRetValue | null = null;
     const rightToken = tokens[index];
     if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
@@ -146,7 +146,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     }
 
     // The tree tree is created with the new node as the root and returned
-    let tree: InputTree;
+    let tree: InputTree | null = null;
     if (currentOp === "!") {
         const rTree = rightRet.tree;
         if (rTree.kind === "binop" && !rTree.isNot) {
@@ -158,10 +158,10 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
         }
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
-        const lTree = leftRet.tree, rTree = rightRet.tree;
-        let childrenArray: InputTree[] = isTreeExtendable(lTree, currentOp, leftRet.final) ? lTree.children : [lTree];
+        const lTree = leftRet!.tree, rTree = rightRet.tree;
+        let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final) ? lTree.children as InputTree[] : [lTree];
         if (isTreeExtendable(rTree, currentOp, rightRet.final))
-            childrenArray = [...childrenArray, ...rTree.children];
+            childrenArray = [...childrenArray, ...rTree.children as InputTree[]];
         else
             childrenArray.push(rTree);
 
@@ -169,7 +169,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
             
         tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
     }
-    return {index: index, tree: tree};
+    return {index: index, tree: tree!};
 
 }
 

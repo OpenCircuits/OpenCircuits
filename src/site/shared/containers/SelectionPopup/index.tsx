@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import React, {MutableRefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -71,7 +71,7 @@ export function SelectionPopup({info, modules}: Props) {
     }, input, [setClickThrough]);
 
 
-    const popup = useRef<HTMLDivElement>();
+    const popup = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
 
     // Clamp position to screen if visible
     if (isVisible && !isDragging) {

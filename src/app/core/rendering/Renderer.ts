@@ -75,7 +75,8 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: SVGDrawing, center: Vector, size: Vector, tint?: string): void {
+    public image(img: SVGDrawing | undefined, center: Vector, size: Vector, tint?: string): void {
+        if (!img) return;
         const pos = center.sub(size.scale(0.5));
         const col = (tint ? parseColor(tint) : undefined);
 

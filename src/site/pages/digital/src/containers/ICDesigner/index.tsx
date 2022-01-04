@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {MutableRefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
@@ -52,7 +52,7 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined
+        ic: undefined as unknown as IC
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
@@ -71,7 +71,7 @@ export const ICDesigner = (() => {
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
+        const canvas = useRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
         const [{name}, setName] = useState({ name: "" });
         const [{cursor}, setCursor] = useState({ cursor: "default" });
 
@@ -175,7 +175,7 @@ export const ICDesigner = (() => {
             // Unblock main input
             mainInfo.input.unblock();
 
-            icInfo.ic = undefined;
+            icInfo.ic = undefined as unknown as IC;
             dispatch(CloseICDesigner());
             setName({ name: "" }); // Clear name
         }

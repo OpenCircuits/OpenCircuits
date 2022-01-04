@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {MutableRefObject, useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -45,8 +45,8 @@ export const ImageExporterPopup = ({preview}: Props) => {
         bgColor: "#cccccc", useBg: true, useGrid: true,
     });
 
-    const wrapper = useRef<HTMLDivElement>();
-    const canvas = useRef<HTMLCanvasElement>();
+    const wrapper = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
+    const canvas = useRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
 
     const onResize = () => {
         // Fit the canvas within the wrapper using the same ratio as the actual canvas

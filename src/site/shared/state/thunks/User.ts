@@ -20,7 +20,7 @@ export function LoadUserCircuits(): ThunkResult<Promise<boolean>> {
         try {
             // Attempt to load circuits from backend
             const circuits = await QueryUserCircuits(auth);
-            dispatch(_LoadCircuitsFinish(circuits));
+            dispatch(_LoadCircuitsFinish(circuits!));
 
             return true; // success
         } catch (e) {

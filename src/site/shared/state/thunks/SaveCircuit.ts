@@ -26,7 +26,7 @@ export function SaveCircuit(data: string): ThunkResult<Promise<boolean>> {
             const newData = await (id ? UpdateUserCircuit(auth, id, data) :
                                         CreateUserCircuit(auth, data));
 
-            dispatch(SetCircuitId(newData.getId()));
+            dispatch(SetCircuitId(newData!.getId()));
             dispatch(_SetCircuitSavingFinish());
 
             return true; // Success

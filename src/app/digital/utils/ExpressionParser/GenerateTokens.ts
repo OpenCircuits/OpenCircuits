@@ -61,7 +61,7 @@ export function GenerateTokens(expression: string, ops: OperatorFormat): Token[]
         throw new Error("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
-    let token: Token;
+    let token: Token | null;
     let index = 0;
 
     while (index < expression.length) {

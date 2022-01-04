@@ -28,7 +28,7 @@ export const LoginPopup = () => {
                isOpen={(curPopup === "login")}
                close={() => dispatch(CloseHeaderPopups())}>
             {(process.env.OC_AUTH_TYPES ?? "").trim().length > 0 &&
-              process.env.OC_AUTH_TYPES.split(" ").map((s) => (
+              process.env.OC_AUTH_TYPES!.split(" ").map((s) => (
                 <Fragment key={`login-popup-auth-${s}`}>
                     {s === "google" ? (
                         <GoogleAuthButton />

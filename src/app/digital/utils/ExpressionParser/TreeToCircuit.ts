@@ -44,9 +44,9 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");
-        const index = circuit.indexOf(inputs.get(node.ident));
+        const index = circuit.indexOf(inputs.get(node.ident)!);
         circuit.splice(index, 1);
-        circuit.push(inputs.get(node.ident));
+        circuit.push(inputs.get(node.ident)!);
         return circuit;
     }
 
@@ -59,9 +59,11 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
     } else if (node.kind === "binop") {
         newGate.setInputPortCount(node.children.length);
         node.children.forEach(child => {
-            const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
-            const wire = LazyConnect(prevNode, newGate);
-            ret.push(wire);
+            if (child) {
+                const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
+                const wire = LazyConnect(prevNode, newGate);
+                ret.push(wire);
+            }
         });
     }
     ret.push(newGate);
@@ -71,13 +73,13 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
  * 
- * @param node the root node of the InputTree to convert
+ * @param tree the root node of the InputTree to convert or an empty array if tree is null
  * @param inputs the input components used by this expression
  * @param output the component that the circuit outputs to
  * @returns the components and wires converted from the tree
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
  */
-export function TreeToCircuit(tree: InputTree, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+export function TreeToCircuit(tree: InputTree | null, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
     if (tree === null)
         return [];
 

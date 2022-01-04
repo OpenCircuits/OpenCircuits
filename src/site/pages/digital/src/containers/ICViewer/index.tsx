@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useRef} from "react";
+import {MutableRefObject, useEffect, useLayoutEffect, useRef} from "react";
 
 import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
@@ -41,7 +41,7 @@ export const ICViewer = (() => {
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
+        const canvas = useRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)

@@ -30,7 +30,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
             if (!open) return;
 
-            const circuitData = await getData();
+            const circuitData = await getData() as string;
 
             const {camera, history, designer, selections, renderer} = info;
 
@@ -134,7 +134,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
             // Load circuit copy onto canvas
-            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata!.getId()));
 
             await store.dispatch(LoadUserCircuits());
         }

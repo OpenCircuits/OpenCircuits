@@ -16,7 +16,9 @@ export abstract class PortChangeAction implements Action {
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(designer: CircuitDesigner, target: number, initialCount: number) {
+    protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
+        if (designer === undefined)
+            throw new Error("PortChangeAction failed: designer not found");
         this.designer = designer;
 
         this.targetCount = target;
