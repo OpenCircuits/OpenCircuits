@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 
-import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -27,7 +27,7 @@ export const Draggable = ({ children, data, onDragChange, ...other }: Props) => 
 
 
     // Cancel placing when pressing escape
-    useWindowKeyDownEvent(ESC_KEY, () => {
+    useWindowKeyDownEvent("Escape", () => {
         setIsDragging(false);
     });
 

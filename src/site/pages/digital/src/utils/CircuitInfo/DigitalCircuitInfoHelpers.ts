@@ -9,14 +9,12 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {DeleteUserCircuit} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
-import {SaveFile} from "shared/utils/Exporter";
-import {SaveImage, SavePDF} from "shared/utils/ImageExporter";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {GenerateThumbnail} from "../GenerateThumbnail";
@@ -71,25 +69,6 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             return success;
         },
 
-        SaveCircuitToFile: async (type) => {
-            const {circuit} = store.getState();
-
-            switch (type) {
-                case "pdf":
-                    SavePDF(canvas.current, circuit.name);
-                    break;
-                case "png":
-                    SaveImage(canvas.current, circuit.name, "png");
-                    break;
-                case "circuit":
-                    SaveFile(helpers.GetSerializedCircuit(), circuit.name);
-                    break;
-                case "jpeg":
-                    SaveImage(canvas.current, circuit.name, "jpeg");
-                    break;
-            }
-        },
-
         DeleteCircuitRemote: async (circuitData) => {
             const {user} = store.getState();
 
@@ -123,6 +102,41 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
+        },
+
+        DuplicateCircuitRemote: async () => {
+            const {user} = store.getState();
+
+            // Can't duplicate if not logged in
+            if (!user.auth)
+                return;
+
+            const {circuit} = store.getState();
+
+            // Shouldn't be able to duplicate if circuit has never been saved
+            if (circuit.id == "")
+                return;
+
+            const thumbnail = GenerateThumbnail({ info });
+            const circuitCopy = JSON.stringify(
+                new Circuit(
+                    new CircuitMetadataBuilder()
+                        .withName(circuit.name + " (copy)")
+                        .withThumbnail(thumbnail)
+                        .build()
+                        .getDef(),
+                    info.designer,
+                    info.camera
+                )
+            );
+
+            // Create circuit copy
+            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
+
+            // Load circuit copy onto canvas
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
+
+            await store.dispatch(LoadUserCircuits());
         }
     }
 
