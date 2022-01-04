@@ -23,6 +23,16 @@ import "digital/models/ioobjects";
 
 
 /**
+ * Gets the component that the first wire of the first output port of the supplied component is connected to
+ * 
+ * @param component the component whose output is wanted
+ * @returns the component that is the "first" connected from the supplied component
+ */
+function getOutputComponent(component: DigitalComponent): DigitalComponent {
+    return component.getOutputPort(0).getWires()[0].getOutputComponent();
+}
+
+/**
  * This function is used to create and run a separate test for every combination of switch states.
  *
  * For each test, switches are set to on or off based on a bitwise and operation of the index of that test
@@ -542,7 +552,7 @@ describe("Expression Parser", () => {
         });
     });
 
-    //0, a, b, (a, b)
+    // 0, a, b, (a, b)
     describe("2 Inputs", () => {
         runTests(2, "a&b", [false, false, false, true]);
 
@@ -571,7 +581,7 @@ describe("Expression Parser", () => {
         runTests(2, "!(a|b)", [true, false, false, false]);
     });
 
-    //0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
+    // 0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
     describe("3 Inputs", () => {
         runTests(3, "a&b&c", [false, false, false, false, false, false, false, true]);
 
@@ -600,37 +610,144 @@ describe("Expression Parser", () => {
         runTests(1, "_a", [true, false], Formats[3]);
     });
 
-    describe("Generate Input Tree", () => {
-        describe("!(a&b)", () => {
-            const tokenA: InputToken = {type: "input", name: "a"};
-            const tokenB: InputToken = {type: "input", name: "b"};
-            const parenOpen: Token = {type: "("};
-            const parenClose: Token = {type: ")"};
-            const andToken: Token = {type: "&"};
-            const notToken: Token = {type: "!"};
-            const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
-            const tree = GenerateInputTree(tokenList);
-            const treeNot = tree as InputTreeUnOpNode;
-            test("!", () => {
-                expect(treeNot.kind).toBe("unop");
-                expect(treeNot.type).toBe("!");
-                expect(treeNot.child.kind).toBe("binop");
+    describe("Binary gate variants", () => {
+        describe("7 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 7; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(9);
             });
-            const treeAnd = treeNot.child as InputTreeBinOpNode;
-            test("&", () => {
-                expect(treeAnd.type).toBe("&");
-                expect(treeAnd.lChild.kind).toBe("leaf");
-                expect(treeAnd.rChild.kind).toBe("leaf");
-            });
-            const treeLeft = treeAnd.lChild as InputTreeIdent;
-            test("a", () => {
-                expect(treeLeft.ident).toBe("a");
-            });
-            const treeRight = treeAnd.rChild as InputTreeIdent;
-            test("a", () => {
-                expect(treeRight.ident).toBe("b");
+
+            test("Correct connections", () => {
+                const bigGate = getOutputComponent(inputs[0][1]);
+                for (let i = 1; i < 7; i++)
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
+
+        describe("8 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 8; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(10);
+            });
+
+            test("Correct connections", () => {
+                const bigGate = getOutputComponent(inputs[0][1]);
+                for (let i = 1; i < 8; i++)
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+            });
+        });
+
+        describe("9 variable OR", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 9; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(12);
+            });
+
+            test("Correct connections", () => {
+                const bigGate = getOutputComponent(inputs[0][1]);
+                for (let i = 1; i < 7; i++)
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+                // Doesn't matter if input 8 is connected to bigGate or the other or gate
+                expect(getOutputComponent(inputs[8][1])).not.toBe(bigGate);
+            });
+        });
+
+        describe("(a|b)|(c|d)", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 4; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(8);
+            });
+
+            test("Correct connections", () => {
+                const gate1 = getOutputComponent(inputs[1][1]);
+                const gate2 = getOutputComponent(inputs[3][1]);
+                expect(getOutputComponent(inputs[0][1])).toBe(gate1);
+                expect(getOutputComponent(inputs[2][1])).toBe(gate2);
+                expect(gate1).not.toBe(gate2);
+                expect(getOutputComponent(gate1)).toBe(getOutputComponent(gate2));
+            });
+        });
+
+        describe("!(a|b|c)", () => {
+            const o = new LED();
+            const inputs: [string, Switch][] = [];
+            const charCodeStart = "a".charCodeAt(0);
+            for (let i = 0; i < 3; i++)
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+
+            const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
+
+            test("Correct number of components", () => {
+                expect(objectSet.getComponents().length).toBe(5);
+            });
+
+            test("Correct connections", () => {
+                const gate = getOutputComponent(inputs[0][1]);
+                expect(getOutputComponent(inputs[0][1])).toBe(gate);
+                expect(getOutputComponent(inputs[1][1])).toBe(gate);
+            });
+        });
+    });
+
+    describe("Generate Input Tree", () => {
+        // describe("!(a&b)", () => {
+        //     const tokenA: InputToken = {type: "input", name: "a"};
+        //     const tokenB: InputToken = {type: "input", name: "b"};
+        //     const parenOpen: Token = {type: "("};
+        //     const parenClose: Token = {type: ")"};
+        //     const andToken: Token = {type: "&"};
+        //     const notToken: Token = {type: "!"};
+        //     const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
+        //     const tree = GenerateInputTree(tokenList);
+        //     const treeNot = tree as InputTreeUnOpNode;
+        //     test("!", () => {
+        //         expect(treeNot.kind).toBe("unop");
+        //         expect(treeNot.type).toBe("!");
+        //         expect(treeNot.child.kind).toBe("binop");
+        //     });
+        //     const treeAnd = treeNot.child as InputTreeBinOpNode;
+        //     test("&", () => {
+        //         expect(treeAnd.type).toBe("&");
+        //         expect(treeAnd.children[0].kind).toBe("leaf");
+        //         expect(treeAnd.children[1].kind).toBe("leaf");
+        //     });
+        //     const treeLeft = treeAnd.children[0] as InputTreeIdent;
+        //     test("a", () => {
+        //         expect(treeLeft.ident).toBe("a");
+        //     });
+        //     const treeRight = treeAnd.children[1] as InputTreeIdent;
+        //     test("a", () => {
+        //         expect(treeRight.ident).toBe("b");
+        //     });
+        // });
 
         describe("!a", () => {
             const tokenA: InputToken = {type: "input", name: "a"};
