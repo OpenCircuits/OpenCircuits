@@ -63,7 +63,7 @@ export async function LoadingScreen(
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";
-            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank">
+            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
                 Error occurred while "${label}". Please refresh the page.
                 <br />
                 If this error continues to occur, please click this text to submit a bug report.

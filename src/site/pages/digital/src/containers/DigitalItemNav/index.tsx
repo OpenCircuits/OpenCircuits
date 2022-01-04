@@ -1,13 +1,15 @@
 import {Create} from "serialeazy";
 import {useEffect, useState} from "react";
 
-import {OPTION_KEY} from "core/utils/Constants";
-
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {IsICDataInUse} from "digital/utils/ComponentUtils";
+
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 
+import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
+
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
+import {ItemNav, ItemNavItem, ItemNavSection} from "shared/containers/ItemNav";
 
 import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
@@ -59,8 +61,8 @@ export const DigitalItemNav = ({info}: Props) => {
     // State for if we should 'Smart Place' (issue #689)
     const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
 
-    // Cycle through Smart Place options on Option key press
-    useWindowKeyDownEvent(OPTION_KEY, () => {
+    // Cycle through Smart Place options on Alt key press
+    useWindowKeyDownEvent("Alt", () => {
         setSmartPlace((smartPlace) => SmartPlaceOrder[
             // Calculate index of current option and find next one in the list
             (SmartPlaceOrder.indexOf(smartPlace) + 1) % SmartPlaceOrder.length]
@@ -78,7 +80,8 @@ export const DigitalItemNav = ({info}: Props) => {
                 ics: designer.getICData().map((d, i) => ({
                     id: `ic/${i}`,
                     label: d.getName(),
-                    icon: "multiplexer.svg"
+                    icon: "multiplexer.svg",
+                    removable: true,
                 }))
             });
         }
@@ -103,6 +106,16 @@ export const DigitalItemNav = ({info}: Props) => {
         additionalData={smartPlace}
         onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
+        onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
+            const icData = info.designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
+            if (IsICDataInUse(info.designer, icData)) {
+                window.alert("Cannot delete this IC while instances remain in the circuit.");
+                return false;
+            }
+            sec.items.splice(sec.items.indexOf(ic));
+            info.history.add(new DeleteICDataAction(icData, designer).execute());
+            return true;
+        }}
         additionalPreview={(smartPlace, curItemId) => {
             if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
                 return undefined;

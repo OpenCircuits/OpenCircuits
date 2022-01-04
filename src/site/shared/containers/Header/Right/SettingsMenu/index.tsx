@@ -41,16 +41,16 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
                     <hr/>
                     <SwitchToggle isOn={debugInfo.debugCullboxes}
                                   onChange={() => dispatch(ToggleDebugCullboxes())}
-                                  text={"Debug Cullboxes"} />
+                                  text={`Debug Cullboxes : ${debugInfo.debugCullboxes ? "On" : "Off"}`} />
                     <SwitchToggle isOn={debugInfo.debugPressableBounds}
                                   onChange={() => dispatch(ToggleDebugPressableBounds())}
-                                  text={"Debug Pressable Bounds"} />
+                                  text={`Debug Pressable Bounds : ${debugInfo.debugPressableBounds ? "On" : "Off"}`} />
                     <SwitchToggle isOn={debugInfo.debugSelectionBounds}
                                   onChange={() => dispatch(ToggleDebugSelectionBounds())}
-                                  text={"Debug Selection Bounds"} />
+                                  text={`Debug Selection Bounds : ${debugInfo.debugSelectionBounds ? "On" : "Off"}`} />
                     <SwitchToggle isOn={debugInfo.debugNoFill}
                                   onChange={() => dispatch(ToggleDebugNoFill())}
-                                  text={"Debug No Fill"} />
+                                  text={`Debug No Fill : ${debugInfo.debugNoFill ? "On" : "Off"}`} />
                 </>
             }
         </Dropdown>
