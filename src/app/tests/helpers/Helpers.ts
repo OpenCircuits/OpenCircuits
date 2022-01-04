@@ -9,9 +9,10 @@ import {Action} from "core/actions/Action";
 import {LED, Switch} from "digital/models/ioobjects";
 import {GroupAction} from "core/actions/GroupAction";
 import {Wire} from "core/models";
+import {RequireOnly} from "core/utils/Types";
 
 
-export function GetHelpers({designer}: Partial<DigitalCircuitInfo>) {
+export function GetHelpers({designer}: RequireOnly<DigitalCircuitInfo, "designer">) {
     return {
         Place: <T extends DigitalComponent[]>(...objs: T) => {
             return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];

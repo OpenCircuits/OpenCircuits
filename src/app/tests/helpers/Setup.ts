@@ -65,7 +65,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
     const designer = new DigitalCircuitDesigner(propagationTime);
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
-    const toolManager = new ToolManager(tools.defaultTool, ...tools.tools);
+    const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
     const input = new FakeInput(camera.getCenter());
 
     const info = {

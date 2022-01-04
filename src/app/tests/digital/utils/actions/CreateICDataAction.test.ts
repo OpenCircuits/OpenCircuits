@@ -24,7 +24,7 @@ describe("IC Action", () => {
         expect(designer.getICData().length).toBe(0);
 
         // connect
-        const data = ICData.Create([a, b]);
+        const data = ICData.Create([a, b])!;
         const ac = new CreateICDataAction(data, designer).execute();
 
         // initial
