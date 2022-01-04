@@ -94,6 +94,7 @@ export class Input {
             [[Z_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[Y_KEY], [CONTROL_KEY, COMMAND_KEY, META_KEY]],
             [[BACKSPACE_KEY]],
+            [[OPTION_KEY]], // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ];
 
         // Check if some combination has every key pressed and newKey is one of them
@@ -188,10 +189,8 @@ export class Input {
      */
     private setupHammer(): void {
         // Pinch to zoom
-        const touchManager = new Hammer.Manager(this.canvas, {recognizers: [], domEvents:true});
+        const touchManager = new Hammer.Manager(this.canvas, {recognizers: [], domEvents: true});
         let lastScale = 1;
-
-        this.canvas.ontouchmove = () => {return false;}
 
         touchManager.add(new Hammer.Pinch());
 
@@ -216,15 +215,12 @@ export class Input {
             this.onClick(V(e.center.x, e.center.y));
         });
 
-        // this fucntion is used to prevent default zoom in gesture for all browers
-        document.addEventListener('wheel',
-        function touchHandler(e) {
-            if (e.ctrlKey) {
-                e.preventDefault();
-            }
-          },
-          {passive: false }
-        )
+        // This function is used to prevent default zoom in gesture for all browsers
+        //  Fixes #745
+        document.addEventListener("wheel",
+            (e) => { if (e.ctrlKey) e.preventDefault(); },
+            { passive: false }
+        );
     }
 
     /**
