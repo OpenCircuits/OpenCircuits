@@ -1,7 +1,5 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {ENTER_KEY, ESC_KEY} from "core/utils/Constants";
-
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
@@ -182,8 +180,8 @@ export const ICDesigner = (() => {
             setName({ name: "" }); // Clear name
         }
 
-        useKeyDownEvent(icInfo.input, ESC_KEY,   () => close(true),  [data, mainInfo]);
-        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false), [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
 
         return (
             <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>

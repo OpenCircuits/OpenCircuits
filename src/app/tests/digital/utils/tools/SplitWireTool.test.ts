@@ -1,8 +1,6 @@
 import "jest";
 import "test/helpers/Extensions";
 
-import {CONTROL_KEY, Z_KEY} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Switch, LED,
@@ -36,11 +34,11 @@ describe("Split Wire Tool", () => {
         input.press(wire.getShape().getPos(0.5))
                 .move(V(20, 0))
                 .release()
-                .pressKey(CONTROL_KEY)
-                .pressKey(Z_KEY)
-                .releaseKey(Z_KEY)
-                .pressKey(Z_KEY)
-                .releaseKey(Z_KEY);
+                .pressKey("Control")
+                .pressKey("z")
+                .releaseKey("z")
+                .pressKey("z")
+                .releaseKey("z");
     });
 
     test("Connect Switch -> LED then Split and Snap then Unsnap and move Down", () => {
