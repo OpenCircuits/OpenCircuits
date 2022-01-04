@@ -1,4 +1,6 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
+
+import {GetIDFor} from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -11,22 +13,28 @@ import {UseModuleProps} from "./modules/Module";
 
 import "./index.scss";
 import {Clamp} from "math/MathUtils";
-import {ITEMNAV_WIDTH} from "core/utils/Constants";
-
 
 type Props = {
     info: CircuitInfo;
     modules: ((props: UseModuleProps) => JSX.Element)[];
+    docsUrlConfig: Record<string, string>;
 }
-export function SelectionPopup({info, modules}: Props) {
+export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     const calcPos = () => camera.getScreenPos(selections.midpoint(true));
 
     const {input, camera, history, selections, renderer} = info;
 
 
     const [isVisible, setIsVisible] = useState(false);
+    const [id, setID] = useState("");
     useEffect(() => {
-        const update = () => setIsVisible(selections.amount() > 0);
+        const update = () => {
+            setIsVisible(selections.amount() > 0);
+
+            // Make sure all components have same ID
+            const ids = selections.get().map(GetIDFor);
+            setID((ids.length > 0 && ids.every(id => id === ids[0])) ? ids[0] : "");
+        }
 
         selections.addChangeListener(update);
         return () => selections.removeChangeListener(update);
@@ -85,6 +93,8 @@ export function SelectionPopup({info, modules}: Props) {
         pos.y = Clamp(pos.y, popupHeight/2, window.innerHeight - HEADER_HEIGHT - popupHeight/2);
     }
 
+    const infoLink = (id in docsUrlConfig ? docsUrlConfig[id as keyof typeof docsUrlConfig] : undefined);
+
     return (
         <div ref={popup}
              className="selection-popup"
@@ -95,6 +105,10 @@ export function SelectionPopup({info, modules}: Props) {
                 pointerEvents: (clickThrough ? "none" : "auto")
              }}
              tabIndex={-1}>
+            {id && <div className="info-button">
+                <div>{id}</div>
+                <a href={infoLink} target="_blank" rel="noopener noreferrer" title="Click for component information">?</a>
+            </div>}
             <TitleModule selections={selections}
                          addAction={(a) => history.add(a)}
                          render={() => renderer.render()}  />

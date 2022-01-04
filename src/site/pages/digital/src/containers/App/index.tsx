@@ -71,6 +71,7 @@ import {ClearOscilloscopeButtonModule,
         OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
+import docsConfig from "site/digital/data/docsUrlConfig.json";
 
 import "./index.scss";
 
@@ -140,7 +141,8 @@ export const App = ((store: AppStore) => {
                                                   ClockSyncButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule,
-                                                  CreateICButtonModule, ViewICButtonModule]} />
+                                                  CreateICButtonModule, ViewICButtonModule]}
+                                        docsUrlConfig={docsConfig} />
 
                         <ContextMenu info={info}
                                      paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
