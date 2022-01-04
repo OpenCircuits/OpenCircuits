@@ -32,8 +32,8 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
             setIsVisible(selections.amount() > 0);
 
             // Make sure all components have same ID
-            const id = GetIDFor(selections.get()[0]);
-            setID((selections.get().every(c => GetIDFor(c) === id)) ? id : "");
+            const ids = selections.get().map(GetIDFor);
+            setID((ids.length > 0 && ids.every(id => id === ids[0])) ? ids[0] : "");
         }
 
         selections.addChangeListener(update);
