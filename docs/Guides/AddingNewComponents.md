@@ -133,75 +133,44 @@ modules={[PositionModule, InputCountModule,
 
 ```
 
-Laslty create any custom renderers your component needs in app/digital/rendering/ioobjects/inputs/YOUR_REDNERER.ts . 
+Lastly create any custom renderers your component needs in app/digital/rendering/ioobjects/FOLDER/YOUR_RENDERER.ts . 
 Here is 
-an example from `GateRenderer.ts`
+an example from `ConstantNumberRenderer.ts`
 ```typescript
-export const GateRenderer = (() => {
+export const ConstantNumberRenderer = (() => {
 
-    const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
-        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
-        const amt = 2 * Math.floor(inputs / 4) + 1;
-        for (let i = 0; i < amt; i++) {
-            const d = (i - Math.floor(amt/2)) * size.y;
-            const h = DEFAULT_BORDER_WIDTH;
-            const l1 = -size.y/2;
-            const l2 = +size.y/2;
-
-            const s = size.x/2 - h;
-            const l = size.x/5 - h;
-
-            const p1 = V(-s + dx, l1 + d);
-            const p2 = V(-s + dx, l2 + d);
-            const c  = V(-l + dx, d);
-
-            renderer.draw(new QuadCurve(p1, p2, c), style);
-        }
+    // Function to draw the line connecting the 4 outputs
+    const drawOutputConnector = function(renderer: Renderer, size: Vector, borderColor: string): void {
+        const style = new Style(undefined, borderColor, DEFAULT_BORDER_WIDTH);
+        // Y coordinates of the top and bottom
+        const l1 = -(size.y/2)*(1.5);
+        const l2 =  (size.y/2)*(1.5);
+        // X coordinate to draw the vertical line
+        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
+        renderer.draw(new Line(V(s, l1), V(s, l2)), style);
     }
 
-    const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
-        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
-        // Draw line to visually match input ports
-        const l1 = -(size.y/2)*(0.5-inputs/2);
-        const l2 =  (size.y/2)*(0.5-inputs/2);
-
-        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-        const p1 = V(-s, l1);
-        const p2 = V(-s, l2);
-
-        renderer.draw(new Line(p1, p2), style);
+    // Function to draw the input value on the component
+    const drawInputText = function(renderer: Renderer, value: number): void {
+        const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
+        renderer.text(text, V(0, 2.5), "center", DEFAULT_ON_COLOR, FONT_CONSTANT_NUMBER);
     }
 
     return {
-        render(renderer: Renderer, _: Camera, gate: Gate, selected: boolean): void {
-            const transform = gate.getTransform();
+        render(renderer: Renderer, object: ConstantNumber, selected: boolean): void {
+            const transform = object.getTransform();
+            const fillColor = selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR;
 
-            const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
-            const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+            const borderColor = selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR;
+            const style = new Style(fillColor, borderColor, DEFAULT_BORDER_WIDTH);
 
-            if (gate.isNot()) {
-                const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-                const l = transform.getSize().x/2 + 5;
-                renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), style);
-            }
+            // Draw the rectangle first, subtracting border width for alignment
+            const rectSize = transform.getSize().sub(DEFAULT_BORDER_WIDTH);
+            renderer.draw(new Rectangle(V(), rectSize), style);
 
-            if (gate instanceof ANDGate) {
-                // Draw AND gate line to match ports
-                drawANDLines(renderer, transform.getSize(), gate.numInputs(), borderCol);
-            }
-            else if (gate instanceof ORGate) {
-                // Draw curve to visually match input ports
-                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
-            }
-            else if (gate instanceof XORGate) {
-                // Draw curves to visually match input ports
-                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
-                drawQuadCurve(renderer, -12, transform.getSize(), gate.numInputs(), borderCol);
-            }
-
-
+            // Connect the output lines together and draw the text
+            drawOutputConnector(renderer, transform.getSize(), borderColor);
+            drawInputText(renderer, object.getInputNum());
         }
     };
 })();
