@@ -22,9 +22,13 @@ export const GRAPH_LINE_WIDTH = 4;
 export const DEFAULT_BORDER_WIDTH = 2;
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
-export const MULTIPLEXER_HEIGHT_OFFSET = 18;
+export const MULTIPLEXER_HEIGHT_OFFSET = 25;
+export const MUX_DEFAULT_SELECT_PORTS = 2;
 
 export const DRAG_TIME = 50;
+
+export const IO_LABEL_DIR_PADDING = 5;
+export const IO_LABEL_VERTICAL_TEXT_PADDING = 7;
 
 export const IO_PORT_LENGTH = 35;
 export const IO_PORT_RADIUS = 7;
@@ -53,7 +57,7 @@ export const ARROW_PAN_DISTANCE_NORMAL = 75;
 export const ARROW_PAN_DISTANCE_SMALL = 5;
 
 export const SIDENAV_WIDTH = 300;
-export const ITEMNAV_WIDTH = 200;
+export const ITEMNAV_WIDTH = 240;
 
 export const LEFT_MOUSE_BUTTON  = 0;
 export const MIDDLE_MOUSE_BUTTON = 1;
@@ -75,6 +79,7 @@ export const A_KEY = 65;
 export const C_KEY = 67;
 export const D_KEY = 68;
 export const F_KEY = 70;
+export const K_KEY = 75;
 export const S_KEY = 83;
 export const V_KEY = 86;
 export const X_KEY = 88;
