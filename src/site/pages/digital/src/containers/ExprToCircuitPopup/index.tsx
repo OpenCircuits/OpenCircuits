@@ -1,17 +1,16 @@
 import {useState} from "react";
 
-import {OperatorFormat,
-        OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats}             from "digital/utils/ExpressionParser/Constants/Formats";
+import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
+import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup}        from "shared/components/Popup";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField} from "shared/components/InputField";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
-
-import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 
 import {InputTypes,
         Generate,
@@ -56,12 +55,12 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="exprtocircuit__popup">
                 { errorMessage && <p className="exprtocircuit__popup__errorMessage">{"ERROR: " + errorMessage}</p> }
-                <input title="Enter Circuit Expression"
-                       type="text"
-                       value={expression}
-                       placeholder="!a | (B^third)"
-                       onChange={e => setExpression(e.target.value)}
-                       spellCheck={false} />
+                <InputField title="Enter Circuit Expression"
+                            type="text"
+                            value={expression}
+                            placeholder="!a | (B^third)"
+                            onChange={e => setExpression(e.target.value)}
+                            spellCheck={false} />
                 <br/>
 
                 <div className="exprtocircuit__popup__settings">

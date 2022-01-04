@@ -12,6 +12,7 @@ import {CloseHeaderPopups} from "shared/state/Header";
 import {Popup} from "shared/components/Popup";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
@@ -111,7 +112,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         <div>
                             <span>Background Color</span>
                             <div>
-                                <input
+                                <InputField
                                     type="color"
                                     value={state.bgColor}
                                     onChange={(ev) => setState({...state, bgColor: ev.target.value})} />
@@ -123,12 +124,12 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         <div>
                             <span>Size</span>
                             <div>
-                                <input
+                                <InputField
                                     type="number"
                                     value={state.width}
                                     step={50} min={MIN_IMG_SIZE} max={MAX_IMG_SIZE}
                                     onChange={(ev) => setState({...state, width: ev.target.valueAsNumber})} />
-                                <input
+                                <InputField
                                     type="number"
                                     value={state.height}
                                     step={50} min={MIN_IMG_SIZE} max={MAX_IMG_SIZE}

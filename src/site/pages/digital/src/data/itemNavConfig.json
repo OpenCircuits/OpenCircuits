@@ -181,6 +181,11 @@
             "icon": "decoder.svg"
           },
           {
+            "id": "Comparator",
+            "label": "Comparator",
+            "icon": "decoder.svg"
+          },
+          {
             "id": "Label",
             "label": "Label",
             "icon": "label.svg"
