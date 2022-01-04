@@ -1,4 +1,4 @@
-import {ESC_KEY,BACKSPACE_KEY,LEFT_MOUSE_BUTTON, IO_PORT_RADIUS,RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -6,7 +6,6 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {Tool}             from "core/tools/Tool";
 
 import {Port, Wire} from "core/models";
 
@@ -35,7 +34,7 @@ export const WiringTool = (() => {
         //  and find closest one to the mouse
         if (ports.length < 1)
             return undefined;
-        
+
         let nearestport = ports[0];
         let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
         for (const port of ports) {
@@ -82,11 +81,12 @@ export const WiringTool = (() => {
             //  1) if the port was initial clicked on,
             //      then a 2nd click is what will deactivate this
             //  2) if the port was initial dragged on,
-            //      then letting go of the mouse will deactivate this       
+            //      then letting go of the mouse will deactivate this
+            //  3) the user cancels using Escape, Backspace or RMB
             return (stateType === StateType.CLICKED && event.type === "click")  ||
                    (stateType === StateType.DRAGGED && event.type === "mouseup") ||
-                   (event.type === "keydown" && event.key === ESC_KEY) ||
-                   (event.type === "keydown" && event.key === BACKSPACE_KEY) ||
+                   (event.type === "keydown" && event.key === "Escape") ||
+                   (event.type === "keydown" && event.key === "Backspace") ||
                    (event.type === "mousedown" && event.button === RIGHT_MOUSE_BUTTON);
         },
 
