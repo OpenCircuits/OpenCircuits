@@ -25,9 +25,9 @@ export class PortSet<T extends Port> {
     public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component) => T);
     public constructor(parent?: Component, count?: ClampedValue,
                        positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component) => T) {
-        this.parent = parent;
-        this.type = type;
-        this.count = count;
+        this.parent = parent!;
+        this.type = type!;
+        this.count = count!;
         this.positioner = positioner;
 
         this.oldPorts = [];
@@ -54,7 +54,7 @@ export class PortSet<T extends Port> {
 
         // add or remove ports to meet target
         while (this.currentPorts.length > this.count.getValue())
-            this.oldPorts.push(this.currentPorts.pop());
+            this.oldPorts.push(this.currentPorts.pop()!);
         while (this.currentPorts.length < this.count.getValue())
             this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
 

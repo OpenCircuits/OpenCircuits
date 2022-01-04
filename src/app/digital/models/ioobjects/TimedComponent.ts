@@ -15,7 +15,7 @@ export abstract class TimedComponent extends DigitalComponent {
     @serialize
     protected paused: boolean;
 
-    private timeout: number;
+    private timeout: number | null;
 
     public constructor(initialFreq: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {

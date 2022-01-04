@@ -46,9 +46,9 @@ export class ClampedValue {
      * @param maxValue The maximum value the number can hold
      */
     public constructor(initialValue?: number, minValue?: number, maxValue?: number) {
-        this.value = initialValue;
-        this.minValue = minValue || initialValue; // if min not given use initial
-        this.maxValue = maxValue || initialValue; // if max not given use initial
+        this.value = initialValue!;
+        this.minValue = minValue || initialValue!; // if min not given use initial
+        this.maxValue = maxValue || initialValue!; // if max not given use initial
     }
 
     /**

@@ -22,7 +22,7 @@ export const CopyHandler: EventHandler = ({
         const str = SerializeForCopy(objs);
         // We don't copy the data from the json since it will cause 
         // some weird error, which will cause the issue #746
-        ev.clipboardData.setData("text/plain", str);
+        ev.clipboardData?.setData("text/plain", str);
         ev.preventDefault(); // Necessary to copy correctly
 
         if (type === "cut") {

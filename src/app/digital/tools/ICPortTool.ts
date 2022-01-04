@@ -4,6 +4,7 @@ import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
 import {Event} from "core/utils/Events";
+import {RequireOnly} from "core/utils/Types";
 
 import {Port} from "core/models";
 
@@ -11,9 +12,9 @@ import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 
 
 export const ICPortTool = (() => {
-    let port: Port;
+    let port: Port | undefined;
 
-    function findPort({input, camera, ic}: Partial<ICCircuitInfo>): Port {
+    function findPort({input, camera, ic}: RequireOnly<ICCircuitInfo, "input" | "camera" | "ic">): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         return ic.getPorts().find(p => PortContains(p, worldMousePos));
     }
@@ -34,7 +35,7 @@ export const ICPortTool = (() => {
 
         onActivate(_: Event, info: ICCircuitInfo): void {
             const icPort = findPort(info);
-            port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort)];
+            port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort!)];
         },
         onDeactivate(_: Event, __: ICCircuitInfo): void {
             port = undefined;
@@ -68,8 +69,8 @@ export const ICPortTool = (() => {
             v = v.normalize().scale(-IO_PORT_LENGTH).add(p);
 
             // Set port for IC
-            port.setOriginPos(p);
-            port.setTargetPos(v);
+            port?.setOriginPos(p);
+            port?.setTargetPos(v);
 
             // Set pos for ICData
             ic.update();

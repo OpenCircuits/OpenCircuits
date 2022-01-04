@@ -59,7 +59,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     private updateCallbacks: ((ev: DigitalEvent) => void)[];
 
-    private timeout: number;
+    private timeout: number | null;
 
     public constructor(propagationTime: number = 1) {
         super();
@@ -155,7 +155,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
             tempQueue.push(this.propagationQueue.pop());
 
         while (tempQueue.length > 0)
-            tempQueue.pop().send();
+            tempQueue.pop()?.send();
 
         // If something else was added during the sending, add request
         if (this.propagationQueue.length > 0)

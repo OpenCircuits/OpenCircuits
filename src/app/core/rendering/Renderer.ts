@@ -16,7 +16,7 @@ export class Renderer {
 
     public constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.context = this.canvas.getContext("2d");
+        this.context = this.canvas.getContext("2d")!;
     }
     public setCursor(cursor: string): void {
         this.canvas.style.cursor = cursor;
@@ -130,11 +130,11 @@ export class Renderer {
         if (alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;
 
-        if (style.fillColor !== this.context.fillStyle)
+        if (style.fillColor !== this.context.fillStyle && style.fillColor)
             this.context.fillStyle = style.fillColor;
-        if (style.borderColor !== this.context.strokeStyle)
+        if (style.borderColor !== this.context.strokeStyle && style.borderColor)
             this.context.strokeStyle = style.borderColor;
-        if (style.borderSize !== this.context.lineWidth)
+        if (style.borderSize !== this.context.lineWidth && style.borderSize)
             this.context.lineWidth = style.borderSize;
     }
 }

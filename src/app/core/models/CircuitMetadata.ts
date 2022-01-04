@@ -17,7 +17,7 @@ export class CircuitMetadata {
     private data: CircuitMetadataDef;
 
     public constructor(data?: CircuitMetadataDef) {
-        this.data = data;
+        this.data = data!;
     }
 
     public getId(): string {

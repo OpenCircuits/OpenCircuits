@@ -17,11 +17,11 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     // Connect closest pairs of input and output ports
     while (outputPorts.length > 0) {
         // Find closest pair of input and output ports
-        const max = {dist: -Infinity, in: undefined as InputPort, out: undefined as OutputPort};
+        const max = {dist: -Infinity, in: undefined as unknown as InputPort, out: undefined as unknown as OutputPort};
         outputPorts.forEach((outPort) => {
 
             // Find the closest input port
-            const min = {dist: Infinity, in: undefined as InputPort};
+            const min = {dist: Infinity, in: undefined as unknown as InputPort};
             inputPorts.forEach((inPort) => {
                 // Calculate distance between target pos of ports
                 const dist = outPort.getWorldTargetPos().distanceTo(inPort.getWorldTargetPos());

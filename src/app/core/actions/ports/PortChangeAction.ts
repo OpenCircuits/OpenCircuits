@@ -30,7 +30,7 @@ export abstract class PortChangeAction implements Action {
         // Disconnect all wires from each port
         //  that will be remove if target < ports.length
         while (ports.length > this.targetCount) {
-            const wires = ports.pop().getWires();
+            const wires = ports.pop()?.getWires() ?? [];
             action.add(wires.map(w => CreateDeletePathAction(this.designer, GetPath(w))));
         }
 

@@ -13,8 +13,8 @@ export class OutputPort extends Port {
     protected connections: DigitalWire[];
 
     public constructor(parent?: DigitalComponent) {
-        super(parent);
-        this.parent = parent;
+        super(parent!);
+        this.parent = parent!;
         this.connections = [];
     }
 

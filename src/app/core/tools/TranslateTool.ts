@@ -35,7 +35,7 @@ export const TranslateTool: Tool = (() => {
         },
 
 
-        onActivate(event: Event, info: CircuitInfo): void {
+        onActivate(event: Event, info: CircuitInfo & Required<Pick<CircuitInfo, "currentlyPressedObject">>): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());

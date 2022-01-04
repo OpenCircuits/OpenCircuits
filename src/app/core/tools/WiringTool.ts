@@ -4,6 +4,7 @@ import {Vector} from "Vector";
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
+import {RequireOnly} from "core/utils/Types";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 import {Tool}             from "core/tools/Tool";
@@ -21,7 +22,7 @@ export const WiringTool = (() => {
     let wire: Wire;
     let stateType: StateType;
 
-    function findPorts({input, camera, designer}: Partial<CircuitInfo>): Port[] {
+    function findPorts({input, camera, designer}: RequireOnly<CircuitInfo, "input" | "camera" | "designer">): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 
@@ -29,7 +30,8 @@ export const WiringTool = (() => {
         //  and find one where the mouse is over
         return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
     }
-    function findNearestPort({input, camera}: Partial<CircuitInfo>, ports: Port[]): Port | undefined {
+    function findNearestPort({input, camera}: RequireOnly<CircuitInfo, "input" | "camera">,
+                             ports: Port[]): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array
         //  and find closest one to the mouse
@@ -90,7 +92,7 @@ export const WiringTool = (() => {
 
         onActivate(event: Event, info: CircuitInfo): void {
             const list = findPorts(info);
-            port = findNearestPort(info, list);
+            port = findNearestPort(info, list)!;
 
             // Create wire and set it's other point to be at `port`
             wire = info.designer.createWire(port, undefined);

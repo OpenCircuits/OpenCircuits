@@ -4,6 +4,7 @@ import {Transform} from "math/Transform";
 import {RectContains} from "math/MathUtils";
 
 import {Event} from "core/utils/Events";
+import {RequireOnly} from "core/utils/Types";
 
 import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 
@@ -13,7 +14,7 @@ export type ICEdge = "horizontal" | "vertical" | "none";
 export const ICResizeTool = (() => {
     let edge: ICEdge = "none";
 
-    function findEdge({input, camera, ic}: Partial<ICCircuitInfo>): ICEdge {
+    function findEdge({input, camera, ic}: RequireOnly<ICCircuitInfo, "input" | "camera" | "ic">): ICEdge {
         // Create slightly larger and smaller box and check
         //  if the mouse is between the two for an edge check
         const t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH*5)));

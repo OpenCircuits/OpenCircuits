@@ -5,6 +5,7 @@ import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {RequireOnly} from "core/utils/Types";
 
 import {RotateAction} from "core/actions/transform/RotateAction";
 
@@ -19,7 +20,7 @@ export const RotateTool = (() => {
     let prevAngle = 0;
 
 
-    function isMouseOnCircle({camera, input, selections}: Partial<CircuitInfo>): boolean {
+    function isMouseOnCircle({camera, input, selections}: RequireOnly<CircuitInfo, "camera" | "input" | "selections">): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const d = worldMousePos.sub(selections.midpoint()).len2();
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2)
