@@ -10,8 +10,6 @@ import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
 
 
-
-
 // @TODO @leon - Move this function to "svg2canvas"
 function ColorToHex(col: Color): string {
     return `#${[col.r, col.g, col.b].map(x => {
@@ -20,9 +18,10 @@ function ColorToHex(col: Color): string {
     }).join('')}`
 }
 
+
 /**
  * Creates an action to represent a Wire being split.
- * 
+ *
  * @param designer the CirctuitDesigner the action is being done on
  * @param w the Wire being split
  * @param port the new Port that is splitting the Wire
@@ -32,11 +31,11 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
     const action = new GroupAction();
     action.add(new DisconnectAction(designer, w).execute());
     action.add(new PlaceAction(designer, port).execute());
-    
+
     // Creates and saves new ConnectionAction to a var and then executes the action.
     const con1 = new ConnectionAction(designer, w.getP1(), port.getP1());
     action.add(con1.execute());
- 
+
     //After execution the color of the first half of the new wire is set to the color of the old wire.
     con1.getWire().setColor(w.getColor());
 
@@ -48,20 +47,21 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
     return action;
 }
 
+
 /**
  * Creates an action to represent a Wire being snipped.
- * 
+ *
  * @param designer The CircuitDesigner the action is being done on
  * @param port the Port being snipped from the Wire
  * @returns a GroupAction representing the Wire being snipped
  */
 export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): GroupAction {
     const wires = port.getP1().getWires().concat(port.getP2().getWires());
-    if (wires.length != 2)
+    if (wires.length !== 2)
         throw new Error("Cannot create snip action with WirePort of >2 wires!");
 
     const ports = wires.flatMap(w => [w.getP1(), w.getP2()]).filter(p => p.getParent() != port);
-    if (ports.length != 2)
+    if (ports.length !== 2)
         throw new Error("Failed to find 2 ports to snip to");
 
     const action = new GroupAction();
@@ -69,27 +69,23 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     action.add(new DisconnectAction(designer, wires[0]).execute());
     action.add(new DisconnectAction(designer, wires[1]).execute());
     action.add(new DeleteAction(designer, port).execute());
+
     const con1 = new ConnectionAction(designer, ports[0], ports[1]);
     action.add(con1.execute());
-    if(wires[1].getColor() === wires[0].getColor()){
-     
-     con1.getWire().setColor(wires[1].getColor());
-    }
-    else{
-        const selectedColor = ColorToHex(blend(
-            parseColor(wires[0].getColor()), 
-            parseColor(wires[1].getColor()), 0.5
-    ));
-    con1.getWire().setColor(selectedColor);
 
-    }
-    
-     return action;
+    // Change color on new wire that's a blend between the two wires
+    con1.getWire().setColor(ColorToHex(blend(
+        parseColor(wires[0].getColor()),
+        parseColor(wires[1].getColor()), 0.5
+    )));
+
+    return action;
 }
+
 
 /**
  * Creates a GroupAction of snip actions
- * 
+ *
  * @param designer the CircuitDesigner the actions are being done on
  * @param ports the Ports being snipped
  * @returns a GroupAction of the actions to snip the wires
