@@ -167,9 +167,9 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                     { // Hide tab if the circuit is locked
                     isEnabled &&
                         <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
-                            title="Circuit Components"
-                            onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
-                            <div></div>
+                             title="Circuit Components"
+                             onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
+                             <div></div>
                         </div>
                     }
                 </div>

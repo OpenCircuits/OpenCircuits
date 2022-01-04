@@ -12,9 +12,8 @@ type HistoryEntryProps = {
     a: Action;
 }
 const HistoryEntry = ({a}: HistoryEntryProps) => {
-    if (a instanceof GroupAction) {
-        return(<GroupActionEntry g = {a}></GroupActionEntry>)
-    }
+    if (a instanceof GroupAction)
+        return(<GroupActionEntry g={a}></GroupActionEntry>)
     return(<div className="historybox__entry">{a.getName()}</div>);
 }
 
@@ -23,17 +22,16 @@ type GroupActionEntryProps = {
     g: GroupAction;
 }
 const GroupActionEntry = ({g}: GroupActionEntryProps) => {
-    if (g.isEmpty()) {
+    if (g.isEmpty())
         return null;
+    if (g.getActions().length === 1) {
+        return(<HistoryEntry a={g.getActions()[0]}></HistoryEntry>);
     }
-    else if (g.getActions().length == 1) {
-        return(<HistoryEntry a = {g.getActions()[0]}></HistoryEntry>);
-    }
-    return(
+    return (
         <div className="historybox__groupentry">
             <span>Group Action</span>
             {g.getActions().map((a, i) => {
-                return(<HistoryEntry key = {`group-action-entry-${i}`} a = {a}></HistoryEntry>);
+                return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
             })}
         </div>
     );
@@ -53,9 +51,9 @@ export const HistoryBox = ({ info }: Props) => {
 
     return (
         <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-            {info.history.getActions().reverse().map((a, i) => {
-                return(<HistoryEntry key = {`history-box-entry-${i}`} a = {a}></HistoryEntry>)
-            })}
+            {info.history.getActions().reverse().map((a, i) => 
+                <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+            )}
         </div>
 
     );
