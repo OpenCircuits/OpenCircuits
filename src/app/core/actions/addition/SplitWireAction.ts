@@ -1,4 +1,4 @@
-import {blend, parseColor, Color} from "svg2canvas";
+import {blend, parseColor, ColorToHex} from "svg2canvas";
 
 import {GroupAction} from "../GroupAction";
 
@@ -8,15 +8,6 @@ import {Node} from "core/models/Node";
 
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {PlaceAction, DeleteAction} from "./PlaceAction";
-
-
-// @TODO @leon - Move this function to "svg2canvas"
-function ColorToHex(col: Color): string {
-    return `#${[col.r, col.g, col.b].map(x => {
-        const hex = Math.round(x).toString(16);
-        return (hex.length === 1 ? '0'+hex : hex);
-    }).join('')}`
-}
 
 
 /**
