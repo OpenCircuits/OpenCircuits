@@ -82,8 +82,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos: Ve
         const comps = objs.filter(o => o instanceof Component) as Component[];
 
         // Determine shift for target positions for pasted components
-        const targetPosShift = menuPos == null ?
-            V(5, 5) : menuPos.sub(comps[0].getPos());
+        const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
 
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
         const action = new GroupAction();

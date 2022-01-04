@@ -43,6 +43,7 @@ export const ContextMenu = ({info, paste}: Props) => {
     );
     const dispatch = useSharedDispatch();
 
+    let menuPos: Vector;
 
     useEffect(() => {
         if (!input)
@@ -119,8 +120,7 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     const menu = useRef<HTMLDivElement>();
     let pos = input?.getMousePos();
-    let menuPos: Vector = null;
-    
+
     /* Relocate context menu to opposite side of cursor if it were to go off-screen */
     if (isOpen) {
         const offset = 1;
@@ -129,7 +129,7 @@ export const ContextMenu = ({info, paste}: Props) => {
 
         if (pos.x + contextMenuWidth > window.innerWidth)
             pos.x -= contextMenuWidth - offset;
-                
+
         if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
             pos.y -= contextMenuHeight - offset;
 
