@@ -2,6 +2,8 @@ import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector, V} from "Vector";
 import {Input} from "core/utils/Input";
+import {Key} from "core/utils/Key";
+
 
 export class FakeInput extends Input {
     private touches: Vector[];
@@ -19,11 +21,11 @@ export class FakeInput extends Input {
         this.center = cameraCenter;
     }
 
-    public pressKey(code: number): FakeInput {
+    public pressKey(code: Key): FakeInput {
         super.onKeyDown(code);
         return this;
     }
-    public releaseKey(code: number): FakeInput {
+    public releaseKey(code: Key): FakeInput {
         super.onKeyUp(code);
         return this;
     }
