@@ -8,6 +8,7 @@ import {CloseHeaderPopups} from "shared/state/Header";
 import {Login} from "shared/state/thunks/User";
 
 import {Popup} from "shared/components/Popup";
+import {InputField} from "shared/components/InputField";
 
 import {GoogleAuthButton} from "./GoogleSignInButton";
 
@@ -35,8 +36,8 @@ export const LoginPopup = () => {
                         <div>
                             <div className="login__popup__label">NoAuth Login</div>
                             <div>
-                                <input type="text" placeholder="username"
-                                       value={username} onChange={e => setUsername(e.target.value.trim())} />
+                                <InputField type="text" placeholder="username"
+                                            value={username} onChange={e => setUsername(e.target.value.trim())} />
                             </div>
                             <button onClick={() => {
                                 if (username === "") {
