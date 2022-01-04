@@ -1,25 +1,27 @@
 import {useState} from "react";
 
+import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
 import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {Popup} from "shared/components/Popup";
-import {SwitchToggle} from "shared/components/SwitchToggle";
+import {Popup}        from "shared/components/Popup";
 import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField} from "shared/components/InputField";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
-
-import {Generate} from "./generate";
-import {CustomOps} from "./CustomOps";
+import {InputTypes,
+        Generate,
+        ExprToCirGeneratorOptions,
+        OutputTypes}    from "./generate";
+import {CustomOps}      from "./CustomOps";
+import {BooleanOption}  from "./BooleanOption";
+import {DropdownOption} from "./DropdownOption";
 
 import "./index.scss";
 
-
-type InputTypes = "Button" | "Clock" | "Switch";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
@@ -34,7 +36,10 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const [expression, setExpression] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isIC, setIsIC] = useState(false);
+    const [clocksToOscope, setClocksToOscope] = useState(false);
+    const [label, setLabel] = useState(false);
     const [input, setInput] = useState<InputTypes>("Switch");
+    const [output, setOutput] = useState<OutputTypes>("LED");
     const [format, setFormat] = useState<OperatorFormatLabel>("|");
     const [customOps, setCustomOps] = useState<OperatorFormat>({...Formats[0], icon: "custom"});
 
@@ -50,11 +55,12 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="exprtocircuit__popup">
                 { errorMessage && <p className="exprtocircuit__popup__errorMessage">{"ERROR: " + errorMessage}</p> }
-                <input title="Enter Circuit Expression"
-                       type="text"
-                       value={expression}
-                       placeholder="!a | (B^third)"
-                       onChange={e => setExpression(e.target.value)} />
+                <InputField title="Enter Circuit Expression"
+                            type="text"
+                            value={expression}
+                            placeholder="!a | (B^third)"
+                            onChange={e => setExpression(e.target.value)}
+                            spellCheck={false} />
                 <br/>
 
                 <div className="exprtocircuit__popup__settings">
@@ -75,27 +81,40 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <SwitchToggle isOn={isIC} text={"Generate into IC"} height="40px"
-                                      onChange={() => setIsIC(!isIC)} />
-                        <br/>
-                        <br/>
-                        <label>Input Component Type:  </label>
-                        <select id="input"
-                                value={input}
-                                onChange={e => setInput(e.target.value as InputTypes)}
-                                onBlur={e => setInput(e.target.value as InputTypes)}>
-
-                            {(["Button", "Clock", "Switch"] as InputTypes[]).map(input =>
-                                <option key={input} value={input}>{input}</option>
-                            )}
-
-                        </select>
+                        <BooleanOption displayCondition={true}
+                                       option={label}
+                                       setOption={setLabel}
+                                       text="Place labels for inputs" />
+                        <BooleanOption displayCondition={output !== "Oscilloscope"}
+                                       option={isIC}
+                                       setOption={setIsIC}
+                                       text="Generate into IC" />
+                        <BooleanOption displayCondition={output === "Oscilloscope" && input === "Clock"}
+                                       option={clocksToOscope}
+                                       setOption={setClocksToOscope}
+                                       text="Connect Clocks to Oscilloscope" />
+                        <DropdownOption id="input"
+                                        option={input}
+                                        options={["Button", "Clock", "Switch"]}
+                                        setOption={setInput}
+                                        text="Input Component Type:  " />
+                        <br />
+                        <DropdownOption id="output"
+                                        option={output}
+                                        options={["LED", "Oscilloscope"]}
+                                        setOption={setOutput}
+                                        text="Output Component Type:  " />
                     </div>
                 </div>
 
                 <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
                     try {
-                        Generate(mainInfo, expression, isIC, input, format, customOps);
+                        Generate(mainInfo, expression, {
+                            input, output, isIC,
+                            connectClocksToOscope: clocksToOscope,
+                            label, format,
+                            ops: customOps,
+                        });
                         reset();
                     } catch (err) {
                         setErrorMessage(err.message);

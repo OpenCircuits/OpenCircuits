@@ -9,7 +9,7 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {DeleteUserCircuit} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
@@ -102,6 +102,41 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
+        },
+
+        DuplicateCircuitRemote: async () => {
+            const {user} = store.getState();
+
+            // Can't duplicate if not logged in
+            if (!user.auth)
+                return;
+
+            const {circuit} = store.getState();
+
+            // Shouldn't be able to duplicate if circuit has never been saved
+            if (circuit.id == "")
+                return;
+
+            const thumbnail = GenerateThumbnail({ info });
+            const circuitCopy = JSON.stringify(
+                new Circuit(
+                    new CircuitMetadataBuilder()
+                        .withName(circuit.name + " (copy)")
+                        .withThumbnail(thumbnail)
+                        .build()
+                        .getDef(),
+                    info.designer,
+                    info.camera
+                )
+            );
+
+            // Create circuit copy
+            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
+
+            // Load circuit copy onto canvas
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
+
+            await store.dispatch(LoadUserCircuits());
         }
     }
 
