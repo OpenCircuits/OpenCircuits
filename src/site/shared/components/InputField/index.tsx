@@ -12,7 +12,7 @@ export const InputField = (props: Props) => {
             if (evt.key === "Escape" || evt.key === "Enter")
                 ref.current.blur();
 
-            if (evt.key === "Enter")
+            if (evt.key === "Enter" && props.onEnter)
                 props.onEnter(evt);
         });
     }, [ref]);
