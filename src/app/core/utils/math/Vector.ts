@@ -258,7 +258,5 @@ export function V(x: number, y: number): Vector;
 export function V(x: Vector | number = 0, y?: number): Vector {
     if (x instanceof Vector)
         return new Vector(x);
-    else if (y !== undefined)
-        return new Vector(x, y);
-    return new Vector();
+    return new Vector(x, y!);
 }
