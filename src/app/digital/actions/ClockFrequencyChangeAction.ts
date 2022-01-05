@@ -1,0 +1,33 @@
+import {Action} from "core/actions/Action";
+import {Clock} from "digital/models/ioobjects/inputs/Clock";
+
+export class ClockFrequencyChangeAction implements Action {
+    private clock: Clock;
+
+    private initialFreq: number;
+    private targetFreq: number;
+
+    public constructor(clock: Clock, targetFreq: number) {
+        this.clock = clock;
+
+        this.initialFreq = clock.getFrequency();
+        this.targetFreq = targetFreq;
+    }
+
+    public execute(): Action {
+        this.clock.setFrequency(this.targetFreq);
+
+        return this;
+    }
+
+    public undo(): Action {
+        this.clock.setFrequency(this.initialFreq);
+
+        return this;
+    }
+
+    public getName(): string {
+        return "Clock Frequency Change";
+    }
+
+}

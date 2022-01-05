@@ -80,4 +80,8 @@ export class RotateAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Rotate";
+    }
+
 }

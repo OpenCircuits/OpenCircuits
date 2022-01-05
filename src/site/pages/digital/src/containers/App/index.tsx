@@ -34,6 +34,7 @@ import {LoginPopup}           from "shared/containers/LoginPopup";
 import {ImageExporterPopup}   from "shared/containers/ImageExporterPopup";
 import {SelectionPopup}       from "shared/containers/SelectionPopup";
 import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
+import {HistoryBox}           from "shared/containers/HistoryBox";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
@@ -71,6 +72,7 @@ import {ClearOscilloscopeButtonModule,
         OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
+import docsConfig from "site/digital/data/docsUrlConfig.json";
 
 import "./index.scss";
 
@@ -124,6 +126,7 @@ export const App = ((store: AppStore) => {
                         <MainDesigner info={info} canvas={canvas} />
 
                         <DigitalItemNav info={info} />
+                        <HistoryBox info={info} />
 
                         <SelectionPopup info={info}
                                         modules={[PositionModule, InputCountModule,
@@ -140,7 +143,8 @@ export const App = ((store: AppStore) => {
                                                   ClockSyncButtonModule,
                                                   ColorModule, TextColorModule,
                                                   BusButtonModule,
-                                                  CreateICButtonModule, ViewICButtonModule]} />
+                                                  CreateICButtonModule, ViewICButtonModule]}
+                                        docsUrlConfig={docsConfig} />
 
                         <ContextMenu info={info}
                                      paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />

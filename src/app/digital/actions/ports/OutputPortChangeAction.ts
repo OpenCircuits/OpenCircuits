@@ -54,4 +54,7 @@ export class OutputPortChangeAction extends PortChangeAction {
         return this;
     }
 
+    public getName(): string {
+        return "Outport Change";
+    }
 }

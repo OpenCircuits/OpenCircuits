@@ -29,4 +29,8 @@ export class TransferICDataAction implements Action {
 
         return this;
     }
+
+    public getName(): string {
+        return "Transfer IC Data";
+    }
 }

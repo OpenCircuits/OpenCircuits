@@ -54,4 +54,8 @@ export class ColorChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Color Change";
+    }
+
 }
