@@ -10,6 +10,7 @@ import {Tool} from "core/tools/Tool";
 
 import {Component}   from "core/models";
 
+
 export const PanTool: Tool = (() => {
     let isDragging = false;
     return {

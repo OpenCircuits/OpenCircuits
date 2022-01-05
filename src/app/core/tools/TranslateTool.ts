@@ -46,8 +46,6 @@ export const TranslateTool: Tool = (() => {
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
-            console.log("i have been activated");
-
             // The event that activates this will either be keydown or mousedrag, so 
             //  we can save the key like this to use later
             activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);
@@ -90,7 +88,7 @@ export const TranslateTool: Tool = (() => {
                 //  So instead mousemove is used and whether or not left mouse is still pressed is
                 //  handled within the activation and deactivation of this tool.
                 case "mousemove":
-                    if (activatedButton != LEFT_MOUSE_BUTTON) break;
+                    if (activatedButton !== LEFT_MOUSE_BUTTON) break;
 
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -107,7 +105,7 @@ export const TranslateTool: Tool = (() => {
                     // Execute translate but don't save to group
                     new TranslateAction(components, initalPositions, newPositions).execute();
 
-                    return true;  
+                    return true;
 
                 case "keyup":
                     // Duplicate group when we press the spacebar
@@ -118,9 +116,9 @@ export const TranslateTool: Tool = (() => {
                     break;
                 
                 case "keydown":
-                    if (activatedButton == LEFT_MOUSE_BUTTON) break;
+                    if (activatedButton === LEFT_MOUSE_BUTTON) break;
 
-                    //Translate with the arrow keys
+                    // Translate with the arrow keys
                     let deltaPos = new Vector();
                 
                     // No else if because it introduces bugs when 
