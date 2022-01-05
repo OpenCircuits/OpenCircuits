@@ -1,11 +1,14 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
+import {Action} from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
+
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
+import {CloseHistoryBox} from "shared/state/ItemNav";
+
 import "./index.scss";
-import {Action} from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
 
 
 type HistoryEntryProps = {
@@ -51,9 +54,15 @@ export const HistoryBox = ({ info }: Props) => {
 
     return (
         <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-            {info.history.getActions().reverse().map((a, i) => 
-                <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
-            )}
+            <div>
+                <span>History</span>
+                <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
+            </div>
+            <div>
+                {[...undoHistory].reverse().map((a, i) =>
+                    <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+                )}
+            </div>
         </div>
 
     );

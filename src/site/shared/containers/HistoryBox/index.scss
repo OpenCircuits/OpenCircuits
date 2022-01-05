@@ -1,14 +1,12 @@
 @import "~shared/utils/constants";
 
 $historybox-height: 60vh;
+$historybox-header-height: 30px;
 $historybox-width: 250px;
 
-$itemnav-height: 500px;
 
 .historybox {
     width: $historybox-width;
-    height: $historybox-height;
-
     border: 5px solid $secondary-color;
     background-color: $primary-color;
 
@@ -17,9 +15,6 @@ $itemnav-height: 500px;
     bottom: 0px;
     z-index: 4;
 
-    overflow-y: auto;
-
-    padding-top: 10px;
     padding-bottom: 10px;
 
     transition: all 0.5s;
@@ -32,10 +27,35 @@ $itemnav-height: 500px;
         height: calc(100% - (475px) - (50px));
     }
 
-    &__move {
+    & > div:first-child {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
+        padding: 10px 5px;
+
+        height: $historybox-header-height;
+
+        & > span:first-child {
+            font-size: 30px;
+        }
+        & > span:last-child {
+            font-size: 40px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+    & > div:last-child {
+        height: $historybox-height;
+
+        overflow-y: auto;
+    }
+
+    &__move {
         @media (min-width: 768px) {
-            left: 0px;            
+            left: 0px;
         }
 
         @media (max-width: 768px) {
@@ -63,7 +83,7 @@ $itemnav-height: 500px;
         border-radius: 7px;
 
         padding: 5px;
-        
+
         & > span {
             font-size: 18px;
         }
