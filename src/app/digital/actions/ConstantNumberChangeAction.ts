@@ -34,4 +34,8 @@ export class ConstantNumberChangeAction implements Action {
         this.constantNumber.setInput(this.initialNum);
         return this;
     }
+
+    public getName(): string {
+        return "Constant Number Change"
+    }
 }

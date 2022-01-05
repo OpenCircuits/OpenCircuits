@@ -1,10 +1,10 @@
 @import "~shared/utils/constants";
 
-$itemnav-width: 235px; // On wide screens, ItemNav is on the left
-$itemnav-height: 500px; // On small screens, ItemNav is on the bottom
+
 
 $tab-width: 18px;
 $tab-padding: 8px;
+
 
 
 .itemnav {
@@ -102,8 +102,9 @@ $tab-padding: 8px;
             display: flex;
             justify-content: center;
 
-            &:first-child > div {
+            &:first-child > button {
                 margin-right: auto;
+                margin-left: 5px;
             }
             &:last-child > div {
                 margin-left: auto;

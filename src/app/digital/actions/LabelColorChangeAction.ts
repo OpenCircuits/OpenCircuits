@@ -51,4 +51,8 @@ export class LabelColorChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Changed Label Color";
+    }
+
 }

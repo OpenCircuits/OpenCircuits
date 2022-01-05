@@ -30,4 +30,8 @@ export class OscilloscopeSizeChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Changed the size of the Oscilloscope";
+    }
+
 }

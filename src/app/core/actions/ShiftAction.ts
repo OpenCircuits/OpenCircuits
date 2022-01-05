@@ -27,4 +27,8 @@ export class ShiftAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Shift Object";
+    }
+
 }
