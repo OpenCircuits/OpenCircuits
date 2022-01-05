@@ -20,6 +20,7 @@ export const SELECTED_BORDER_COLOR = "#0d7f1f";
 export const GRAPH_LINE_WIDTH = 4;
 
 export const DEFAULT_BORDER_WIDTH = 2;
+export const DEFAULT_CURVE_BORDER_WIDTH = 2.1
 export const SEGMENT_DISPLAY_WIDTH = 35;
 
 export const MULTIPLEXER_HEIGHT_OFFSET = 25;
