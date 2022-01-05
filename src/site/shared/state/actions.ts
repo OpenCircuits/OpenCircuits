@@ -6,7 +6,8 @@ type ActionCreators =
     typeof import("./SideNav")     &
     typeof import("./ItemNav")     &
     typeof import("./CircuitInfo") &
-    typeof import("./UserInfo");
+    typeof import("./UserInfo")    &
+    typeof import("./DebugInfo");
 
 export type AllSharedActions = {
     [Name in keyof ActionCreators]: ActionCreators[Name] extends ActionCreatorType

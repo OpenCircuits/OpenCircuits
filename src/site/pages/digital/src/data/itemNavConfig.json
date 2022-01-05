@@ -6,6 +6,16 @@
         "label": "Inputs",
         "items": [
           {
+            "id": "Button",
+            "label": "Button",
+            "icon": "button.svg"
+          },
+          {
+            "id": "Switch",
+            "label": "Switch",
+            "icon": "switch.svg"
+          },
+          {
             "id": "ConstantLow",
             "label": "Constant Low",
             "icon": "constantlow.svg"
@@ -16,14 +26,9 @@
             "icon": "constanthigh.svg"
           },
           {
-            "id": "Button",
-            "label": "Button",
-            "icon": "button.svg"
-          },
-          {
-            "id": "Switch",
-            "label": "Switch",
-            "icon": "switch.svg"
+            "id": "ConstantNumber",
+            "label": "Constant Number",
+            "icon": "constantnumber.svg"
           },
           {
             "id": "Clock",
@@ -173,6 +178,11 @@
           {
             "id": "Decoder",
             "label": "Decoder",
+            "icon": "decoder.svg"
+          },
+          {
+            "id": "Comparator",
+            "label": "Comparator",
             "icon": "decoder.svg"
           },
           {

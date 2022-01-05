@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import ReactGA from "react-ga";
 
 import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
@@ -47,6 +48,30 @@ async function Init(): Promise<void> {
                     const clientId = process.env.OC_OAUTH2_ID;
                     if (!clientId)
                         throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
+
+                    // Wait for GAPI to load
+                    if (!gapi) {
+                        const loaded = await new Promise<boolean>((resolve) => {
+                            let numChecks = 0;
+                            const interval = setInterval(() => {
+                                // Check if GAPI loaded
+                                if (gapi) {
+                                    clearInterval(interval);
+                                    resolve(true);
+                                }
+                                // Stop trying to load GAPI after 100 iterations
+                                else if (numChecks > 100) {
+                                    clearInterval(interval);
+                                    resolve(false);
+                                }
+                                numChecks++;
+                            }, 50); // Poll every 1/20th of a second
+                        });
+
+                        if (!loaded)
+                            throw new Error(`Failed to load GAPI!`);
+                    }
+
                     await new Promise((resolve) => gapi.load("auth2", resolve));
                     await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
                 }
@@ -56,6 +81,16 @@ async function Init(): Promise<void> {
                     await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
+            }
+        }],
+        [99, "Google Analytics", async () => {
+            try {
+                if (!process.env.OC_GA_ID)
+                    throw new Error("Can't find Google Analytics ID");
+                ReactGA.initialize(process.env.OC_GA_ID, {});
+                ReactGA.pageview("/");
+            } catch (e) {
+                console.error("Failed to connect with Google Analytics: ", e);
             }
         }],
         [100, "Rendering", async () => {

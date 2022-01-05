@@ -1,17 +1,18 @@
-import {GRID_SIZE, ARROW_TRANSLATE_DISTANCE_NORMAL, ARROW_TRANSLATE_DISTANCE_SMALL,
-        SPACEBAR_KEY, LEFT_MOUSE_BUTTON, 
-        ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT}  from "core/utils/Constants";
+import {ARROW_TRANSLATE_DISTANCE_NORMAL,
+        ARROW_TRANSLATE_DISTANCE_SMALL} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON}              from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Snap}        from "core/utils/ComponentUtils";
 
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -21,12 +22,7 @@ export const TranslateTool: Tool = (() => {
     let components = [] as Component[];
     let worldMouseDownPos = V();
     let action: GroupAction;
-    let activatedButton = -1;
-
-    function snap(p: Vector): Vector {
-        return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                 Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
-    }
+    let activatedButton: string | number;
 
     return {
         shouldActivate(event: Event, {locked, currentlyPressedObject}: CircuitInfo): boolean {
@@ -35,15 +31,15 @@ export const TranslateTool: Tool = (() => {
             // Activate if the user is pressing down on an object or an arrow key
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     currentlyPressedObject instanceof Component) ||
-                   (event.type === "keydown"  && (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                                  event.key == ARROW_UP   || event.key == ARROW_DOWN));
+                   (event.type === "keydown"  && (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                                  event.key === "ArrowUp"   || event.key === "ArrowDown"));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse or an arrow key
             return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
-            (event.type === "keyup" && event.key == activatedButton &&
-                                       (event.key == ARROW_LEFT || event.key == ARROW_RIGHT || 
-                                        event.key == ARROW_UP   || event.key == ARROW_DOWN ));
+            (event.type === "keyup" && event.key === activatedButton &&
+                                       (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                        event.key === "ArrowUp"   || event.key === "ArrowDown" ));
         },
 
 
@@ -105,7 +101,7 @@ export const TranslateTool: Tool = (() => {
 
                     // Get snapped positions if shift is held
                     const newPositions = input.isShiftKeyDown() ?
-                        curPositions.map(p => snap(p)):
+                        curPositions.map(p => Snap(p)):
                         curPositions;
 
                     // Execute translate but don't save to group
@@ -115,7 +111,7 @@ export const TranslateTool: Tool = (() => {
 
                 case "keyup":
                     // Duplicate group when we press the spacebar
-                    if (event.key === SPACEBAR_KEY) {
+                    if (event.key === " ") {
                         history.add(new CopyGroupAction(designer, components).execute());
                         return true;
                     }
@@ -129,13 +125,13 @@ export const TranslateTool: Tool = (() => {
                 
                     // No else if because it introduces bugs when 
                     //  multiple arrow keys are pressed
-                    if (input.isKeyDown(ARROW_LEFT))
+                    if (input.isKeyDown("ArrowLeft"))
                         deltaPos = deltaPos.add(-1, 0);
-                    if (input.isKeyDown(ARROW_RIGHT))
+                    if (input.isKeyDown("ArrowRight"))
                         deltaPos = deltaPos.add(1, 0);
-                    if (input.isKeyDown(ARROW_UP))
+                    if (input.isKeyDown("ArrowUp"))
                         deltaPos = deltaPos.add(0, -1);
-                    if (input.isKeyDown(ARROW_DOWN))
+                    if (input.isKeyDown("ArrowDown"))
                         deltaPos = deltaPos.add(0, 1);
                     
                     // Object gets moved different amounts depending on if the shift key is held

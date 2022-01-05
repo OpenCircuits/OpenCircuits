@@ -6,6 +6,7 @@ import {Selectable} from "core/utils/Selectable";
 import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
 import {CircleContains} from "math/MathUtils";
+
 /**
  * Represents a port,
  * ports are attached to a parent component
@@ -86,6 +87,7 @@ export abstract class Port implements Selectable {
         this.origin = pos;
         this.updateDir();
     }
+
     /**
      * Changes the position of where the port is on the canvas relative to the parent component
      * @param pos vector representing the position to change it to
@@ -108,6 +110,7 @@ export abstract class Port implements Selectable {
      * @param w Wire to disconnect
      */
     public abstract disconnect(w: Wire): void;
+
     /**
      * When clicking on a port returns true if the position clicked is within the selection bound and false otherwise
      * @param v vector representing the position clicked
@@ -124,6 +127,7 @@ export abstract class Port implements Selectable {
     public getIndex(): number {
         return this.parent.getPorts().indexOf(this);
     }
+
     /**
      * Returns the parent Component of this port
      * @returns `this.parent`
@@ -131,6 +135,7 @@ export abstract class Port implements Selectable {
     public getParent(): Component {
         return this.parent;
     }
+
     /**
      * Returns whether or not the port is on
      * @returns True if `this.isOn` is true and false otherwise
@@ -149,7 +154,7 @@ export abstract class Port implements Selectable {
 
     /**
     * Returns the intial direction of a port represented as a Vector
-    * Left as abstract since ports will have a different intial direction depending on thier parent component and whether they
+    * Left as abstract since ports will have a different intial direction depending on their parent component and whether they
     * serve as input or output ports
     */
     public abstract getInitialDir(): Vector;
@@ -210,6 +215,7 @@ export abstract class Port implements Selectable {
     public getPos(): Vector {
         return this.getTargetPos();
     }
+
     /**
      * Returns an array that contains the Wires connected to the port
      * @returns `this.connections`

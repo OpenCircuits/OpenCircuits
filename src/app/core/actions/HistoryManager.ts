@@ -1,8 +1,8 @@
 import {Action} from "core/actions/Action";
 
 
-type HistoryCallbackType = "add" | "undo" | "redo";
-type HistoryCallback = (type: HistoryCallbackType) => void;
+export type HistoryCallbackType = "add" | "undo" | "redo";
+export type HistoryCallback = (type: HistoryCallbackType, action: Action) => void;
 
 /**
  * Manages undo/redo actions
@@ -13,25 +13,25 @@ export class HistoryManager {
 
     private disabled: boolean;
 
-    private callbacks: HistoryCallback[];
+    private callbacks: Set<HistoryCallback>;
 
     public constructor() {
         this.undoStack = [];
         this.redoStack = [];
         this.disabled = false;
-        this.callbacks = [];
+        this.callbacks = new Set();
     }
 
-    private callback(type: HistoryCallbackType): void {
-        this.callbacks.forEach(c => c(type));
+    private callback(type: HistoryCallbackType, action: Action): void {
+        this.callbacks.forEach(c => c(type, action));
     }
 
     public addCallback(callback: HistoryCallback): void {
-        this.callbacks.push(callback);
+        this.callbacks.add(callback);
     }
 
     public removeCallback(callback: HistoryCallback): void {
-        this.callbacks.splice(this.callbacks.indexOf(callback), 1);
+        this.callbacks.delete(callback);
     }
 
     public setDisabled(disabled = true): void {
@@ -49,7 +49,7 @@ export class HistoryManager {
         this.redoStack = [];
         this.undoStack.push(action);
 
-        this.callback("add");
+        this.callback("add", action);
 
         return this;
     }
@@ -69,7 +69,7 @@ export class HistoryManager {
             // add to redo stack
             this.redoStack.push(action);
 
-            this.callback("undo");
+            this.callback("undo", action);
         }
 
         return this;
@@ -90,7 +90,7 @@ export class HistoryManager {
             // add back to undo stack
             this.undoStack.push(action);
 
-            this.callback("redo");
+            this.callback("redo", action);
         }
 
         return this;
