@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -86,7 +86,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
 
     // Cancel placing when pressing escape
-    useWindowKeyDownEvent(ESC_KEY, () => {
+    useWindowKeyDownEvent("Escape", () => {
         reset(true);
     });
 
