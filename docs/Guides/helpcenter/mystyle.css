@@ -1,0 +1,168 @@
+/* Mystyle.css */
+
+/* 
+ * It's not recommend you edit the code between the Start Position CSS and End Position CSS comments unless you really know what
+ * you're doing.  If you do, you could break the layout, and you could experience a lot of wacky behaviour.
+ * 
+ **/
+
+
+body { 
+	/*Start Position CSS*/
+	margin: 0;
+	padding: 1em;
+	/*End Position CSS*/
+}
+
+.header { 
+	
+	/*Start Position CSS*/
+	height: 80px; 	
+	padding-left: 19em;
+	padding-top: 3em;
+	/*End Position CSS*/	
+
+	background-image:url(./images/logo.svg);
+	background-position: left, center;
+	background-repeat: no-repeat;
+		
+	text-align: left;	
+	font: 1em;
+	font-family: 'Courier New', monospace;
+}
+
+.search {
+	height: 500px;
+	text-align: center;
+	font: 3em serif;
+	display: flex;
+	justify-content: center;
+	align-items:center;
+	background-image:url(./images/background.jpg)
+}
+
+.search input {
+	align-items: center;
+	height: 80px;
+	width: 600px;
+	padding-left: 10px;
+	padding-right: 60px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	outline: none;
+	border: 2px solid #999999;
+	border-radius: 10px;
+	font-family: Cambria, Cochin, Georgia, serif;
+	font-size: 40px;
+	background-image:url(./images/search_icon1.png);
+	background-position: right, center;
+	background-repeat: no-repeat;
+	background-color: #FFFFFF;
+	border-color: #333333;
+	
+
+}
+
+
+.search button {
+	align-items: center;
+	height: 85px;
+	width: 200px;
+	border: 2px solid #999999;
+	border-radius: 10px;
+	font-family: 'Courier New', monospace;
+	font-size: 40px;
+	background-color: #a3aaaf;
+}
+
+.mainitems {
+	height: 400px;
+	display: flex;
+	justify-content: space-around;
+	align-items:center;
+}
+
+.mainitems button {
+	margin: 1em;
+	align-items: center;
+	height: 200px;
+	width: 400px;
+	border: 2px solid #999999;
+	border-radius: 10px;
+	font-family: 'Courier New', monospace;
+	font-size: 50px;
+	background-color: #a3aaaf;
+}
+
+.maintext { 
+	
+	/*Start Position CSS*/
+	width: 640px;	
+	float: left;
+	margin: 0;
+	padding: 1em;	
+	border-left: 1px solid #3c7796;
+	/*End Position CSS*/
+	background-color: white;
+}
+
+.TutorialDetails {
+	height: 550px;
+	font-size: 30px;
+	text-align: center;
+	font-family: 'Courier New', monospace;
+}
+
+.ArticleDetails {
+	height: 150px;
+	text-align: center;
+	font-size: 30px;
+	font-family: 'Courier New', monospace;
+}
+
+.ForumDetails {
+	height: 150px;
+	text-align: center;
+	font-size: 30px;
+	font-family: 'Courier New', monospace;
+}
+
+.FutherSupport {
+	height: 240px;
+	display: flex;
+	background-color: #a3aaaf;
+	justify-content: center;
+	text-align: center;
+	align-items: center;
+	font-size: 30px;
+	font-family: 'Courier New', monospace;
+}
+
+h1 {
+	margin: 0;
+	padding: 0;
+	font-family: 'Courier New', monospace;
+	color: black;
+}
+
+h2 {
+	margin: 0;
+	padding: 0;
+	color: green;
+}
+
+h3 {
+	margin: 0;
+	padding: 0;
+	color: blue;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+
+.footer {
+	clear: both;
+}

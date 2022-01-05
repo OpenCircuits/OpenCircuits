@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--The above line tells the browser what type of html to use.-->
+
+<html>
+
+	<head>
+		<title>HELP CENTER</title>
+		<link rel="stylesheet" href="mystyle.css" type="text/css" />
+		<script src="helpCenter.js"></script>
+		
+		<style>
+			div.scrolloutput {
+                margin:4px, 4px;
+                padding:4px;
+                width: 800px;
+                height: 200px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify;
+			}
+		</style>
+
+	</head>
+
+	<body>
+
+		<!-- THIS DIV TAG IS RESPONSIBLE FOR LAYOUT, DON'T REMOVE IT UNLESS YOU WANT YOUR LAYOUT TO ME MESSED UP.-->
+		
+		<div class="header">
+			<!-- EDIT THIS SECTION. Code between <div class="header"> and </div> will go in the header.-->
+
+			<p style="text-align:left;">
+				HELP CENTER
+				<span style="float:right; padding-right:20px">
+					<a href="https://www.opencircuits.io/" target="_blank">OPENCIRCUIT HOMEPAGE</a>
+				</span>
+			</p>
+			
+		</div>
+		
+		
+		<div class="search">
+			<div>
+				<h1 style="font-size: 70px; font-family:'Courier New', monospace; font-style:bold">How can we help?</h1>
+				<div class="input">
+					<input id="keyword" type="string" placeholder="Search..." autocomplete="off"/>
+					<button class="buttonSearch" id="butn" onclick="search()"> Search </button>   <!--in Ex0, add event for mouse --> 
+				</div>
+				<div class="scrolloutput" id="output">
+					
+				</div>
+			</div>
+			
+			
+			
+			
+		</div>
+
+			
+		<div class="mainitems">
+			<!-- EDIT THIS SECTION. Code between <div id="maintext"> and </div> will go in the main part of the page-->
+			<div class="button">
+				<button id="tutorialBtn" onclick="search()"> Tutorial </button>   <!--in Ex0, add event for mouse --> 
+				<button id="articleBtn" onclick="search()"> Articles </button>   <!--in Ex0, add event for mouse --> 
+				<button id="forumBtn" onclick="search()"> Forum </button>   <!--in Ex0, add event for mouse --> 
+			</div>
+			
+			
+		</div>
+			
+		<div class="TutorialDetails">
+			
+			<h1>Tutorial</h1>
+				<a href="http://docs.opencircuits.io/" target="_blank" class="box">Introduction</a><br>
+				<a href="http://docs.opencircuits.io/GettingStarted/Installation/index.html" target="_blank" class="box">Installation</a><br>
+				<a href="http://docs.opencircuits.io/GettingStarted/Running/index.html#backend" target="_blank" class="box">Running</a><br>
+				<a href="http://docs.opencircuits.io/Guides/AddingNewComponents" target="_blank" class="box">Add new components</a><br>
+				<a href="http://docs.opencircuits.io/Guides/CheatSheets" target="_blank" class="box">CheatSheets</a><br>
+				<a href="http://docs.opencircuits.io/Guides/GoCrashCourse" target="_blank" class="box">Go Crash Course</a><br>
+				<a href="http://docs.opencircuits.io/test" target="_blank" class="box">Style Guide</a><br>
+				<a href="http://docs.opencircuits.io/ts/app/Overview" target="_blank" class="box">App docs</a><br>
+				<a href="http://docs.opencircuits.io/Other/References/Analog/UsingNGSpice" target="_blank" class="box">Using NGSpice</a><br>
+				<a href="http://docs.opencircuits.io/Other/References/GAuthSetup" target="_blank" class="box">GAuth setup</a><br>
+				<a href="http://docs.opencircuits.io/Other/References/GCPDatastoreSetup" target="_blank" class="box">GCP datastore setup</a><br>
+				<a href="http://docs.opencircuits.io/Other/DesignDocs/Template" target="_blank" class="box">Design Docs template</a><br>
+		</div>
+		<div class="ArticleDetails">
+			<h1>Articles</h1>
+				<a href="http://docs.opencircuits.io/Other/References/Analog/Fall2019Research" target="_blank" class="box">Fall 2019 Research</a>
+		</div>
+		
+		<div class="ForumDetails">
+			<h1>Forum</h1>
+				To be continued
+
+		</div>
+		
+		<div class="FutherSupport">
+			<strong><p> If you have a question or would like to recommend a feature, please reach out to <br> <a href="mailto:contact@opencircuits.io">contact@opencircuits.io</a> </p></strong>
+		</div>
+
+		<!-- THIS DIV TAG IS RESPONSIBLE FOR LAYOUT, DON'T REMOVE IT UNLESS YOU WANT YOUR LAYOUT TO ME MESSED UP.-->
+		<div class="footer"></div>
+	</body>
+</html>
