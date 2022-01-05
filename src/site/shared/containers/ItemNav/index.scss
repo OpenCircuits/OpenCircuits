@@ -102,8 +102,9 @@ $tab-padding: 8px;
             display: flex;
             justify-content: center;
 
-            &:first-child > div {
+            &:first-child > button {
                 margin-right: auto;
+                margin-left: 5px;
             }
             &:last-child > div {
                 margin-left: auto;
