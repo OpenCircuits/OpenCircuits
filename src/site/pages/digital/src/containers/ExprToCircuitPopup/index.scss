@@ -1,0 +1,101 @@
+@import "~shared/utils/theme";
+
+.exprtocircuit__popup {
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+
+    /* Using 576px since that is the smallest cutoff for Bootstrap */
+    @media (min-width: 576px) {
+        margin: 0px 50px;
+    }
+
+    label {
+        vertical-align: middle;
+        color: $secondary-color;
+    }
+
+    button {
+        line-height: 30px;
+        height: 30px;
+        margin-top: 5px;
+        padding-right: 7px;
+        padding-left: 7px;
+        cursor: pointer;
+        transition: 0.5s;
+        color: #fff;
+        border-radius: 4px;
+        float: right;
+
+        &:enabled:hover {
+            color: #ccc;
+            border-color: #aaa;
+        }
+    }
+
+    button:disabled,
+    button[disabled] {
+        background-color: $secondary-color;
+        cursor: not-allowed;
+    }
+
+    &__generate {
+        background-color: $success-color;
+
+        &:enabled:hover {
+            background-color: darken($success-color, 10%);
+        }
+    }
+
+    input[type=text] {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0px;
+        border: 2px solid $background-color;
+        border-radius: 10px;
+        font-size: 1.35em;
+    }
+
+    &__settings {
+        display: flex;
+        flex-wrap: wrap;
+
+        h3 {
+            margin: 15px 0px 2px;
+            font-size: 1.25em;
+            color: #666;
+        }
+
+        div {
+            flex-grow: 1;
+        }
+
+        & > div {
+            & > div {
+                white-space: nowrap;
+                margin: 5px 3px;
+                & > span {
+                    color: $secondary-color;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    &__errorMessage {
+        color: $danger-color;
+        font-weight: bold;
+        white-space: pre-wrap;
+    }
+
+    &__customOps {
+        input[type=text] {
+            width: 50%;
+            padding: 9px 6.5px;
+            margin: 3px;
+            font-size: 1em;
+        }
+    }
+}

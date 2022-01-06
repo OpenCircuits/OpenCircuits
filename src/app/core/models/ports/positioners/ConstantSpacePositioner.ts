@@ -5,7 +5,7 @@ import {Positioner, Dir} from "core/models/ports/positioners/Positioner";
 
 @serializable("ConstantSpacePositioner")
 export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
-    private spacing: number;
+    public spacing: number;
 
     public constructor(dir?: Dir, spacing?: number, shortenEdges: boolean = true) {
         super(dir, undefined, undefined, shortenEdges);
@@ -18,8 +18,11 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
      *
      * @param arr The array of input ports
      */
-    public updatePortPositions(ports: Array<T>): void {
+    public updatePortPositions(ports: T[]): void {
         ports.forEach((port, i) => {
+            if (!port) // Ignore undefined ports for 'blank spaces' in the positioning
+                return;
+
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;
 

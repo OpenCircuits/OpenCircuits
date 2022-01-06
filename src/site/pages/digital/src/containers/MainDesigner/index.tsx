@@ -1,51 +1,47 @@
-import {Create} from "serialeazy";
-import {useLayoutEffect, useRef} from "react";
-import {connect} from "react-redux";
+import {useLayoutEffect} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
-import {Camera} from "math/Camera";
 
-import {SelectionsWrapper}  from "core/utils/SelectionsWrapper";
-import {RenderQueue}        from "core/utils/RenderQueue";
-import {Input}              from "core/utils/Input";
+import {Input} from "core/utils/Input";
 
-import {HistoryManager} from "core/actions/HistoryManager";
-import {PlaceAction}    from "core/actions/addition/PlaceAction";
+import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner, DigitalComponent} from "digital/models";
+
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
+import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
-import {AppState} from "site/digital/state";
+import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
+import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
 import "./index.scss";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
-type OwnProps = {
+type Props = {
     info: DigitalCircuitInfo;
+    canvas: React.MutableRefObject<HTMLCanvasElement>;
 }
-type StateProps = {
-    isLocked: boolean;
-}
-type DispatchProps = {}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _MainDesigner = ({info, isLocked}: Props) => {
+export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
 
+    const isPageVisible = usePageVisibility();
+
+    const {isLocked} = useDigitalSelector(
+        state => ({ isLocked: state.circuit.isLocked })
+    );
+
     const {w, h} = useWindowSize();
-    const canvas = useRef<HTMLCanvasElement>();
 
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        camera.resize(w, h); // Update camera size when w/h changes
+        camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes
         renderer.render(); // Re-render
     }, [w, h]);
 
@@ -81,31 +77,34 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         selections.setDisabled(isLocked);
     }, [isLocked]);
 
+    useLayoutEffect(() => {
+        if (isPageVisible)
+            info.designer.resume();
+        else
+            info.designer.pause();
+    }, [isPageVisible]);
+
 
     return (<>
-        <canvas className="main__canvas"
-                width={w}
-                height={h-HEADER_HEIGHT}
-                ref={canvas}
-                onDragOver={(ev) => {
-                        ev.preventDefault();
-                }}
-                onDrop={(ev) => {
-                        const uuid = ev.dataTransfer.getData("custom/component");
-                    if (!uuid)
-                        return;
-                    const rect = canvas.current.getBoundingClientRect();
-                    const pos = V(ev.pageX, ev.clientY-rect.top);
-                    const component = Create<DigitalComponent>(uuid);
-                    component.setPos(camera.getWorldPos(pos));
-                    history.add(new PlaceAction(designer, component).execute());
-                    renderer.render();
-                }} />
+        <Droppable ref={canvas}
+                   onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
+                       num = num ?? 1;
+                       if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
+                           return;
+                       pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
+
+                       if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                           history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
+                       } else {
+                           history.add(
+                               CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
+                           );
+                       }
+                       renderer.render();
+                   }}>
+            <canvas className="main__canvas"
+                    width={w}
+                    height={h-HEADER_HEIGHT} />
+        </Droppable>
     </>);
 }
-
-
-export const MainDesigner = connect<StateProps, DispatchProps, OwnProps, AppState>(
-    (state) => ({ isLocked: state.circuit.isLocked }),
-    { }
-)(_MainDesigner);

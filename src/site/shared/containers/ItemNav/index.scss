@@ -1,20 +1,27 @@
 @import "~shared/utils/constants";
 
-$itemnav-width: 215px;
+
 
 $tab-width: 18px;
 $tab-padding: 8px;
 
-.itemnav {
-    position: fixed;
-    z-index: 2;
-    bottom: 0;
-    left: 0;
 
-    overflow-x: hidden;
+
+.itemnav {
+    $top-margin: 10px;
+    $top-height: 35px;
+
+    position: absolute;
+    z-index: 2;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
 
     width: $itemnav-width;
-    height: calc(100% - #{$header-total-height});
 
     transition: all 0.5s;
 
@@ -22,75 +29,274 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
+    @media (max-width: 768px) {
+        top: unset;
+        right: 0;
+        width: unset;
+        height: $itemnav-height;
+
+        border-right-width: 0;
+        border-top-width: $header-border-width;
+    }
+
     &__move {
-        left: -$itemnav-width - $header-border-width;
-    }
-
-    & h4 {
-        font-size: 24px;
-
-        margin-bottom: 15px;
-
-        cursor: default;
-        transition: 0.5s;
-        text-align: center;
-
-        color: #fff;
-        text-shadow: -1px 1px 3px darken(#fff, 40%);
-    }
-    & button {
-        font-size: 1em;
-        font-weight: bold;
-
-        width: calc(49% - 5px);
-        padding: 10px;
-
-        cursor: pointer;
-        transition: 0.3s;
-        vertical-align: top;
-        word-break: break-all;
-
-        color: darken($secondary-color, 5%);
+        @media (min-width: 768px) {
+            left: -$itemnav-width - $header-border-width;
+        }
+        @media (max-width: 768px) {
+            bottom: -$itemnav-height - $header-border-width;
+        }
     }
     & img {
         width: 100%;
     }
-}
 
-.tab {
-    font-size: 2em;
+    &__preview {
+        position: fixed;
+        z-index: 100;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
 
-    position: fixed;
-    z-index: 4;
-    top: $header-total-height - $header-border-width;
-    left: 0;
+        & img {
+            position: relative;
+            opacity: 1;
+            z-index: 100;
 
-    cursor: pointer;
-    transition: 0.5s;
+            filter: drop-shadow(3px 3px 4px #888);
+        }
+        & > span {
+            display: table-cell;
 
-    color: #000;
-    border: $header-border;
-    border-width: $header-border-width;
-    border-bottom-right-radius: 15px;
-    background-color: rgba($background-color, 0.7);
+            position: absolute;
+            left: calc(100% - 10px);
+            top: 0;
+            z-index: 101;
+            transform: translate(-50%, -10px);
 
-    &:after {
-        width: $tab-width;
-        margin: 0 $tab-padding 0 $tab-padding;
+            vertical-align: middle;
+            text-align: center;
 
-        content: '+';
+            color: #888;
+            background-color: #fff;
+            font-weight: normal;
+
+            border: 2px solid #888;
+            border-radius: 50%;
+
+            padding: 3px;
+        }
     }
 
-    &__closed {
-        font-size: 2.5em;
+    &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
 
-        left: $itemnav-width - ($tab-width + 2*$tab-padding + 2*$header-border-width) - 15px;
+        width: calc(100% - 10px);
+        flex: 0 0 $top-height;
 
-        border-color: transparent;
-        background-color: transparent;
+        padding: $top-margin 5px 5px 5px;
 
-        &:after {
-            content: '×';
+        & > div {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+
+            &:first-child > button {
+                margin-right: auto;
+                margin-left: 5px;
+            }
+            &:last-child > div {
+                margin-left: auto;
+            }
+        }
+
+        &__history__buttons {
+            display: flex;
+
+            & > button {
+                width: 30px;
+                padding: 0;
+
+                & > img {
+                    vertical-align: middle;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+    &__tab {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        position: relative;
+
+        & > div {
+            $size: $top-height + $top-margin + $header-padding;
+
+            position: absolute;
+
+            top: -$top-margin - $header-border-width;
+            left: $header-padding + $header-border-width;
+
+            width: $size;
+            height: $size;
+
+            @media (max-width: 768px) {
+                left: -$size - $header-border-width;
+                top: -$size - 2*$header-border-width - $top-margin;
+            }
+
+            border: $header-border;
+            border-width: $header-border-width;
+            border-color: transparent;
+
+            @media (min-width: 768px) {
+                border-bottom-right-radius: 15px;
+            }
+            @media (max-width: 768px) {
+                border-top-left-radius: 15px;
+            }
+
+            cursor: pointer;
+
+            transition: 0.5s;
+
+            &:after {
+                content: '×';
+
+                position: absolute;
+                left: calc(-50% - #{$header-border-width + $header-padding});
+                top: 50%;
+
+                @media (max-width: 768px) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding});
+                }
+
+                color: black;
+                font-size: 2.5em;
+
+                transition: 0.5s;
+
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        &__closed > div {
+            border-color: $secondary-color;
+            background-color: rgba($background-color, 0.7);
+
+            &:after {
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+            }
+        }
+    }
+
+    &__sections {
+        display: flex;
+        flex-direction: column;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-track {
+            background: hsl(0, 0%, 65%);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        @media (min-width: 768px) {
+            border-top: 3px solid #888;
+        }
+
+        @media (max-width: 768px) {
+            overflow-x: auto;
+
+            scroll-snap-type: x mandatory;
+
+            flex-wrap: wrap;
+        }
+
+        & > div {
+            scroll-snap-align: center;
+
+            @media (max-width: 768px) {
+                width: 100%;
+            }
+
+            &:nth-child(2) > h4 {
+                margin-top: 10px;
+            }
+
+            & > h4 {
+                font-size: 24px;
+
+                margin-bottom: 15px;
+
+                cursor: default;
+                transition: 0.5s;
+                text-align: center;
+
+                color: #fff;
+                text-shadow: -1px 1px 3px darken(#fff, 40%);
+            }
+
+            & > div {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+
+                @media (max-width: 768px) {
+                    width: calc(100% - 120px);
+                    margin: 0px 60px;
+                }
+
+                & > button {
+                    font-size: 1em;
+                    font-weight: bold;
+
+                    width: 100px;
+                    padding: 10px;
+
+                    transition: 0.3s;
+                    word-break: break-word;
+
+                    color: darken($secondary-color, 5%);
+
+                    & > div {
+                        position: relative;
+
+                        & > div {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            color: red;
+                            display: unset;
+                        }
+                    }
+                 }
+            }
         }
     }
 }

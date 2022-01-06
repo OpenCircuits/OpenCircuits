@@ -1,9 +1,10 @@
-import {UserInfoState}    from "./UserInfo/state";
-import {CircuitInfoState} from "./CircuitInfo/state";
-import {HeaderState}      from "./Header/state";
-import {SideNavState}     from "./SideNav/state";
-import {ItemNavState}     from "./ItemNav/state";
-import {ContextMenuState} from "./ContextMenu/state";
+import {UserInfoState}    from "./UserInfo";
+import {CircuitInfoState} from "./CircuitInfo";
+import {HeaderState}      from "./Header";
+import {SideNavState}     from "./SideNav";
+import {ItemNavState}     from "./ItemNav";
+import {ContextMenuState} from "./ContextMenu";
+import {DebugInfoState}   from "./DebugInfo";
 
 
 export type SharedAppState = {
@@ -13,4 +14,5 @@ export type SharedAppState = {
     sideNav: SideNavState;
     itemNav: ItemNavState;
     contextMenu: ContextMenuState;
+    debugInfo: DebugInfoState;
 }

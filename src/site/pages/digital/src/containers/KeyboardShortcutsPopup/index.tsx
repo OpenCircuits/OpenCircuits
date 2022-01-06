@@ -1,27 +1,21 @@
 import React, {useState} from "react";
-import {connect} from "react-redux";
 
-import {Overlay} from "shared/components/Overlay";
+import {GetOS} from "shared/utils/GetOS";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
 import {Popup} from "shared/components/Popup";
 
-import {SharedAppState}    from "shared/state";
-import {CloseHeaderPopups} from "shared/state/Header/actions";
-import {HeaderPopups}      from "shared/state/Header/state";
-import {GetOS} from "shared/utils/GetOS";
+import {CloseHeaderPopups} from "shared/state/Header";
 
 import "./index.scss";
 
 
-type OwnProps = {}
-type StateProps = {
-    curPopup: HeaderPopups;
-}
-type DispatchProps = {
-    CloseHeaderPopups: typeof CloseHeaderPopups;
-}
+export const KeyboardShortcutsPopup = () => {
+    const {curPopup} = useSharedSelector(
+        state => ({ curPopup: state.header.curPopup })
+    );
+    const dispatch = useSharedDispatch();
 
-type Props = StateProps & DispatchProps & OwnProps;
-const _KeyboardShortcutsPopup = ({curPopup, CloseHeaderPopups}: Props) => {
     const [{os}, setState] = useState({ os: GetOS() });
 
     const Shortcut = ({label, pre, keys, mod}: { label: string, pre?: string, keys: string[], mod?: boolean }) => (
@@ -40,13 +34,11 @@ const _KeyboardShortcutsPopup = ({curPopup, CloseHeaderPopups}: Props) => {
         </tr>
     );
 
-    console.log(curPopup);
-
     return (
         <Popup title="Keyboard Shortcuts"
                className="keyboardshortcuts__popup"
                isOpen={(curPopup === "keyboard_shortcuts")}
-               close={CloseHeaderPopups}>
+               close={() => dispatch(CloseHeaderPopups())}>
             <div className="keyboardshortcuts__popup__toggle__container">
                 <button name="win"
                         className={os !== "mac" ? "selected" : ""}
@@ -79,20 +71,5 @@ const _KeyboardShortcutsPopup = ({curPopup, CloseHeaderPopups}: Props) => {
                 </tbody>
             </table>
         </Popup>
-    )
-
-    return (<>
-        <Overlay isOpen={curPopup === "keyboard_shortcuts"} close={CloseHeaderPopups} />
-
-        <div className="keyboardshortcuts__popup"
-             style={{ display: (curPopup === "keyboard_shortcuts" ? "initial" : "none") }}>
-            <h1>Keyboard Shortcuts</h1>
-
-        </div>
-    </>);
+    );
 };
-
-export const KeyboardShortcutsPopup = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ curPopup: state.header.curPopup }),
-    { CloseHeaderPopups }
-)(_KeyboardShortcutsPopup);

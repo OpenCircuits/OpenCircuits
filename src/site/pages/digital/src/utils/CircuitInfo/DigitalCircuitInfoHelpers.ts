@@ -1,24 +1,24 @@
 import {Deserialize} from "serialeazy";
-import {Store} from "redux";
+import {RefObject} from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
-
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner} from "digital/models";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {SaveCircuit, SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo/actions";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models";
 
-import {AppStore} from "../../state";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
+
+import {LoadUserCircuits} from "shared/state/thunks/User";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
+import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
+
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {GenerateThumbnail} from "../GenerateThumbnail";
-import {RefObject} from "react";
-import {SavePDF, SavePNG} from "shared/utils/ImageExporter";
-import {SaveFile} from "shared/utils/Exporter";
-import {LoadUserCircuits} from "shared/state/UserInfo/actions";
-import {DeleteUserCircuit} from "shared/api/Circuits";
+import {AppStore} from "../../state";
 
 
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
@@ -50,9 +50,9 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             renderer.render();
 
-            // Set name, reset id, and set unsaved
+            // Set name, id, and set unsaved
             store.dispatch(SetCircuitName(metadata.name));
-            store.dispatch(SetCircuitId(""));
+            store.dispatch(SetCircuitId(metadata.id));
             store.dispatch(SetCircuitSaved(false));
         },
 
@@ -63,24 +63,10 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             if (circuit.saving || user.loading)
                 return;
 
-            await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
-            await store.dispatch(LoadUserCircuits());
-        },
+            let success = await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
+            success = await store.dispatch(LoadUserCircuits()) && success;
 
-        SaveCircuitToFile: async (type) => {
-            const {circuit} = store.getState();
-
-            switch (type) {
-                case "pdf":
-                    SavePDF(canvas.current, circuit.name);
-                    break;
-                case "png":
-                    SavePNG(canvas.current, circuit.name);
-                    break;
-                case "circuit":
-                    SaveFile(helpers.GetSerializedCircuit(), circuit.name);
-                    break;
-            }
+            return success;
         },
 
         DeleteCircuitRemote: async (circuitData) => {
@@ -116,6 +102,41 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
                     info.camera
                 )
             );
+        },
+
+        DuplicateCircuitRemote: async () => {
+            const {user} = store.getState();
+
+            // Can't duplicate if not logged in
+            if (!user.auth)
+                return;
+
+            const {circuit} = store.getState();
+
+            // Shouldn't be able to duplicate if circuit has never been saved
+            if (circuit.id == "")
+                return;
+
+            const thumbnail = GenerateThumbnail({ info });
+            const circuitCopy = JSON.stringify(
+                new Circuit(
+                    new CircuitMetadataBuilder()
+                        .withName(circuit.name + " (copy)")
+                        .withThumbnail(thumbnail)
+                        .build()
+                        .getDef(),
+                    info.designer,
+                    info.camera
+                )
+            );
+
+            // Create circuit copy
+            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
+
+            // Load circuit copy onto canvas
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
+
+            await store.dispatch(LoadUserCircuits());
         }
     }
 

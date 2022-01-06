@@ -30,7 +30,7 @@ export function Dropdown(props: Props) {
 
     // Check for clicking outside of the menu as to call onClose
     useEffect(() => {
-        function onClick(ev: MouseEvent) {
+        function onWindowClick(ev: MouseEvent) {
             if (!open || onClose === undefined)
                 return;
 
@@ -39,18 +39,21 @@ export function Dropdown(props: Props) {
                 onClose();
         }
 
+        //listener for mobile and desktop (see Issue #597)
+        const events = ["click", "touchend"];
+
         // Add listener on start
-        window.addEventListener("click", onClick);
+        events.forEach((e) => window.addEventListener(e, onWindowClick));
 
         // Remove listener for cleanup
-        return () => window.removeEventListener("click", onClick);
+        return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))};
     });
 
     return (
         <div className="header__right__dropdown">
             <button className={`header__right__dropdown__button ${open ? "white" : ""}`}
                     title={btnInfo.title}
-                    onClick={onClick}>
+                    onClick={open ? onClose : onClick}>
                 <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
             </button>
             <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}>

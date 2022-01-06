@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/constants";
 
 .icdesigner {
@@ -6,6 +7,9 @@
 
     width: 100vw;
     height: 100vh;
+
+    top: 0;
+    left: 0;
 
     background-color: rgba(200, 200, 200, 0.5);
 
@@ -36,7 +40,7 @@
         position: absolute;
 
         top: 12vh;
-        left: calc(50vw - #{$icdesigner-name-input-width / 2} - 32px);
+        left: calc(50vw - #{math.div($icdesigner-name-input-width,2)} - 32px);
 
         width: $icdesigner-name-input-width;
         padding: 15px 32px;

@@ -1,7 +1,15 @@
+@use "sass:math";
 @import "~shared/utils/theme";
 
 $sidenav-width: 250px;
 $sidenav-border-width: 5px;
+
+$sidenav-message-margin: 25px;
+
+$sidenav-footer-height: 50px;
+$sidenav-footer-margin-y: 10px;
+
+
 
 .sidenav {
     position: fixed;
@@ -36,11 +44,33 @@ $sidenav-border-width: 5px;
         border: 0 solid $secondary-color;
         border-bottom-width: 3px;
         background-color: lighten($primary-color, 20%);
+
+        &__name {
+            width: 150px;
+            height: 60px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        &__sign {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    }
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        height: calc(100% - 60px);
+
+        overflow-y: auto;
     }
     &__content {
-        overflow-y: auto;
-
-        height: 100%;
+        // max-height: 100%;
+        flex: 1;
 
         & h4 {
             font-size: 24px;
@@ -73,25 +103,40 @@ $sidenav-border-width: 5px;
             }
         }
     }
+
+    &__footer {
+        position: relative;
+
+        height: $sidenav-footer-height;
+        padding: 10px 25px 10px 25px;
+
+        flex-shrink: 0;
+
+        &__history {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+        }
+    }
+
     &__circuit {
         $img-width: 50px;
         $height: 50px;
         $padding-v: 4px;
         $padding-h: 6px;
 
-        display: flex;
-
         height: $height;
         padding: $padding-v $padding-h $padding-v $padding-h;
 
         cursor: pointer;
 
-        border-bottom: solid $sidenav-border-width/3 $secondary-color;
+        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
         background-color: lighten($primary-color, 5%);
 
+        cursor: pointer;
+        display: flex;
+
         &__icon {
-            width: $img-width;
-            padding: 0 5px 0 0;
             img {
                 width: $img-width;
                 height: $img-width;
@@ -99,11 +144,13 @@ $sidenav-border-width: 5px;
                 border-radius: 5px;
                 background-color: $background-color;
             }
+            width: $img-width;
+            padding: 0 5px 0 0;
         }
         &__text {
             display: inline-block;
-            flex-grow: 1;
 
+            flex-grow: 1;
             width: 50px;
 
             vertical-align: top;

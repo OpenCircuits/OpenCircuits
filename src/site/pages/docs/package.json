@@ -1,0 +1,38 @@
+{
+  "name": "docs",
+  "description": "Documentation site for OpenCircuits",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-beta.1",
+    "@docusaurus/preset-classic": "^2.0.0-beta.1",
+    "@mdx-js/react": "^1.6.22",
+    "clsx": "^1.1.1",
+    "hast-util-is-element": "1.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rehype-katex": "4",
+    "remark-math": "3"
+  },
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

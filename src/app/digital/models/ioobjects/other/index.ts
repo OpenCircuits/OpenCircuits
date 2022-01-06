@@ -4,3 +4,6 @@ export {Encoder} from "./Encoder";
 export {Decoder} from "./Decoder";
 export {Label} from "./Label";
 export {IC} from "./IC";
+export {ICData} from "./ICData";
+export {DigitalNode} from "./DigitalNode";
+export {Comparator} from "./Comparator";
