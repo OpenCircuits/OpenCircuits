@@ -2,9 +2,7 @@ import {Action} from "core/actions/Action";
 
 import {GetPath} from "core/utils/ComponentUtils";
 
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models/Component";
-import {Port} from "core/models/ports/Port";
+import {CircuitDesigner, Port} from "core/models";
 
 import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
@@ -55,6 +53,10 @@ export abstract class PortChangeAction implements Action {
         this.wireDeletionAction.undo();
 
         return this;
+    }
+
+    public getName(): string {
+        return "Port Change";
     }
 
 }

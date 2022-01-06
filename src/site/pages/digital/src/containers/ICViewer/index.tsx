@@ -1,6 +1,6 @@
 import {useEffect, useLayoutEffect, useRef} from "react";
 
-import {ESC_KEY, IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
+import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
@@ -114,7 +114,7 @@ export const ICViewer = (() => {
             dispatch(CloseICViewer());
         }
 
-        useKeyDownEvent(info.input, ESC_KEY, close);
+        useKeyDownEvent(info.input, "Escape", close);
 
         return (
             <div className="icviewer" style={{ display: (isActive ? "initial" : "none") }}>

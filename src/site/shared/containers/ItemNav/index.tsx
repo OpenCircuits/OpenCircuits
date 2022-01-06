@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -13,7 +13,7 @@ import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
-import {OpenItemNav, CloseItemNav} from "shared/state/ItemNav";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
@@ -47,7 +47,7 @@ type Props<D> = {
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
 export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
-    const {isOpen, isEnabled} = useSharedSelector(
+    const {isOpen, isEnabled, isHistoryBoxOpen} = useSharedSelector(
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
@@ -86,7 +86,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
 
     // Cancel placing when pressing escape
-    useWindowKeyDownEvent(ESC_KEY, () => {
+    useWindowKeyDownEvent("Escape", () => {
         reset(true);
     });
 
@@ -136,7 +136,12 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
             <div className="itemnav__top">
                 <div>
-                    {/* History box button goes here */}
+                    <button  title="History" onClick={() => {
+                        if (isHistoryBoxOpen) dispatch(CloseHistoryBox());
+                        else dispatch(OpenHistoryBox());
+                    }}>
+                        <img src="img/icons/history.svg"></img>
+                    </button>
                 </div>
                 <div>
                     <div className="itemnav__top__history__buttons">
@@ -164,7 +169,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                         <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
                              title="Circuit Components"
                              onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
-                            <div></div>
+                             <div></div>
                         </div>
                     }
                 </div>

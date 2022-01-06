@@ -6,4 +6,5 @@ export type CircuitInfoHelpers = {
     SaveCircuitRemote: () => Promise<boolean>;
     DeleteCircuitRemote: (circuit: CircuitMetadata) => Promise<void>;
     GetSerializedCircuit: () => string;
+    DuplicateCircuitRemote: () => Promise<void>;
 }

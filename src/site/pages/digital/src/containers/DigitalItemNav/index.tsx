@@ -1,8 +1,6 @@
 import {Create} from "serialeazy";
 import {useEffect, useState} from "react";
 
-import {OPTION_KEY} from "core/utils/Constants";
-
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {IsICDataInUse} from "digital/utils/ComponentUtils";
 
@@ -63,8 +61,8 @@ export const DigitalItemNav = ({info}: Props) => {
     // State for if we should 'Smart Place' (issue #689)
     const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
 
-    // Cycle through Smart Place options on Option key press
-    useWindowKeyDownEvent(OPTION_KEY, () => {
+    // Cycle through Smart Place options on Alt key press
+    useWindowKeyDownEvent("Alt", () => {
         setSmartPlace((smartPlace) => SmartPlaceOrder[
             // Calculate index of current option and find next one in the list
             (SmartPlaceOrder.indexOf(smartPlace) + 1) % SmartPlaceOrder.length]

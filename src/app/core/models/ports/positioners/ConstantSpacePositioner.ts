@@ -18,8 +18,11 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
      *
      * @param arr The array of input ports
      */
-    public updatePortPositions(ports: Array<T>): void {
+    public updatePortPositions(ports: T[]): void {
         ports.forEach((port, i) => {
+            if (!port) // Ignore undefined ports for 'blank spaces' in the positioning
+                return;
+
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;
 

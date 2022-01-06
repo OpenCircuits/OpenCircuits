@@ -3,7 +3,8 @@ import {DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR,
-        GATE_NOT_CIRCLE_RADIUS} from "core/utils/Constants";
+        GATE_NOT_CIRCLE_RADIUS,
+        DEFAULT_CURVE_BORDER_WIDTH} from "core/utils/Constants";
 import {Vector,V} from "Vector";
 
 import {Camera} from "math/Camera";
@@ -30,28 +31,39 @@ import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 export const GateRenderer = (() => {
 
     const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
-        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
-
+        // Border width increased to account for curve not being able to cover small visual clips
+        const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
         const amt = 2 * Math.floor(inputs / 4) + 1;
-        for (let i = 0; i < amt; i++) {
-            const d = (i - Math.floor(amt/2)) * size.y;
-            const h = DEFAULT_BORDER_WIDTH;
-            const l1 = -size.y/2;
-            const l2 = +size.y/2;
 
-            const s = size.x/2 - h;
-            const l = size.x/5 - h;
+        // Renders a specialized, shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
+        const lNumMod = (amt === 1 && dx !== 0) ? 0.7 : 0.0;
+        const sMod = (amt === 1 && dx !== 0) ? 0.0 : 0.6;
+        for (let i = 0; i < amt; i++) {
+            const d = (i - Math.floor(amt / 2)) * size.y;
+            const h = DEFAULT_BORDER_WIDTH;
+            const l1 = -size.y / 2 + lNumMod;
+            const l2 = +size.y / 2 - lNumMod;
+
+            const s = size.x / 2 - h + sMod;
+            const l = size.x / 5 - h;
 
             const p1 = V(-s + dx, l1 + d);
             const p2 = V(-s + dx, l2 + d);
-            const c  = V(-l + dx, d);
-
-            renderer.draw(new QuadCurve(p1, p2, c), style);
+            const c = V(-l + dx, d);
+            if (amt === 1 && dx !== 0) {
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+            }
+            else if (amt !== 1 || dx !== 0) {
+                renderer.save();
+                renderer.setPathStyle({lineCap: "round"});
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+                renderer.restore();
+            }
         }
     }
 
     const drawANDLines = function(renderer: Renderer, size: Vector, inputs: number, borderCol: string): void {
-        const style = new Style(undefined, borderCol, DEFAULT_BORDER_WIDTH);
+        const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
 
         // Draw line to visually match input ports
         const l1 = -(size.y/2)*(0.5-inputs/2);
