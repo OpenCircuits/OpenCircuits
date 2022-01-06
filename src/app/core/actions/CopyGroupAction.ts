@@ -44,5 +44,8 @@ export class CopyGroupAction implements Action {
     public getCopies(): IOObjectSet {
         return this.copy;
     }
-
+    
+    public getName(): string {
+        return "Copy";
+    }
 }

@@ -29,4 +29,8 @@ export class AddGroupAction implements Action {
 
         return this;
     }
+
+    public getName(): string {
+        return "Added Group Action"
+    }
 }

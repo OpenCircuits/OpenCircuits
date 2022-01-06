@@ -48,6 +48,10 @@ export class PlaceAction extends ReversableAction {
         return this;
     }
 
+    public getName(): string {
+        return `Placed ${this.obj.getName()}`;
+    }
+
 }
 
 /**
