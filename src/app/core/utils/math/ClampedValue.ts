@@ -57,9 +57,9 @@ export class ClampedValue {
      * @throws {Error} If this.minValue or this.maxValue are undefined
      */
     public setValue(val: number): void {
-        if (!this.minValue)
+        if (this.minValue === undefined)
             throw new Error("ClampedValue.setValue failed: this.minValue is undefined");
-        if (!this.maxValue)
+        if (this.maxValue === undefined)
             throw new Error("ClampedValue.setValue failed: this.minValue is undefined");
         this.value = Clamp(val, this.minValue, this.maxValue);
     }
@@ -86,7 +86,7 @@ export class ClampedValue {
      * @throws {Error} If this.value is undefined
      */
     public getValue(): number {
-        if (!this.value)
+        if (this.value === undefined)
             throw new Error("ClampedValue.getValue failed: this.value is undefined");
         return this.value;
     }
@@ -97,7 +97,7 @@ export class ClampedValue {
      * @throws {Error} If this.minValue is undefined
      */
     public getMinValue(): number {
-        if (!this.minValue)
+        if (this.minValue === undefined)
             throw new Error("ClampedValue.getMinValue failed: this.minValue is undefined");
         return this.minValue;
     }
@@ -108,7 +108,7 @@ export class ClampedValue {
      * @throws {Error} If this.maxValue is undefined
      */
     public getMaxValue(): number {
-        if (!this.maxValue)
+        if (this.maxValue === undefined)
             throw new Error("ClampedValue.getMaxValue failed: this.maxValue is undefined");
         return this.maxValue;
     }
