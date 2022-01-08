@@ -21,7 +21,7 @@ export const WiringTool = (() => {
     let wire: Wire;
     let stateType: StateType;
 
-    function findPorts({input, camera, designer}: RequireOnly<CircuitInfo, "input" | "camera" | "designer">): Port[] {
+    function findPorts({input, camera, designer}: CircuitInfo): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 

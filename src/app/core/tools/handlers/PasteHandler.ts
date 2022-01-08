@@ -11,7 +11,9 @@ export const PasteHandler = (paste: (text: string) => boolean): EventHandler => 
              (event.ev.clipboardData.getData("text/plain").length > 0)),
 
         getResponse: (_, {ev}: CopyPasteEvent) => {
-            paste(ev.clipboardData!.getData("text/plain"));
+            if (!ev.clipboardData)
+                throw new Error("PasteHandler.getResponse failed: ev.clipboard is null");
+            paste(ev.clipboardData.getData("text/plain"));
         }
     });
 }

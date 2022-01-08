@@ -42,10 +42,10 @@ export class ConnectionAction extends ReversableAction {
             this.wire = p1;
             this.p1 = this.wire.getP1();
             this.p2 = this.wire.getP2();
-        } else if (p2) {
+        } else {
             this.wire = this.designer.createWire(p1, p2);
             this.p1 = p1;
-            this.p2 = p2;
+            this.p2 = p2!;
         }
     }
 

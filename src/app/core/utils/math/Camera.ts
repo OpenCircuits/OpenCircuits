@@ -24,9 +24,9 @@ export class Camera {
     private inv: Matrix2x3;
 
     @serialize
-    private width: number;
+    private width?: number;
     @serialize
-    private height: number;
+    private height?: number;
 
     private dirty: boolean;
 
@@ -39,8 +39,8 @@ export class Camera {
      * @param startZoom This initialzed zoom to 1
      */
     public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
-        this.width = width!;
-        this.height = height!;
+        this.width = width;
+        this.height = height;
         this.pos = startPos;
         this.zoom = startZoom;
         this.transform = new Transform(V(0,0), V(0,0), 0);
@@ -50,10 +50,19 @@ export class Camera {
     /**
      * If dirty is true then it updates and recalculates the matrix to the new position, height, and width. 
      * dirty represents whether the screen has been changed/moved or not.
+     * 
+     * @throws {Error} if this.width is undefined
+     * @throws {Error} if this.height is undefined
      */
     private updateMatrix(): void {
         if (!this.dirty)
             return;
+        
+        if (!this.width)
+            throw new Error("Camera.updateMatrix failed: this.width is undefined");
+        if (!this.height)
+            throw new Error("Camera.updateMatrix failed: this.height is undefined");
+
         this.dirty = false;
 
         this.mat = new Matrix2x3();
@@ -138,8 +147,14 @@ export class Camera {
     /**
      * This returns the coordinates of the center of the screen wherever it is.
      * @returns return vector with coordinates
+     * @throws {Error} if this.width is undefined
+     * @throws {Error} if this.height is undefined
      */
     public getCenter(): Vector {
+        if (!this.width)
+            throw new Error("Camera.updateMatrix failed: this.width is undefined");
+        if (!this.height)
+            throw new Error("Camera.updateMatrix failed: this.height is undefined");
         return V(this.width/2, this.height/2);
     }
     /**

@@ -18,7 +18,7 @@ export class InteractionTool extends DefaultTool {
         super(...handlers);
     }
 
-    private findObject(pos: Vector, {designer}: RequireOnly<CircuitInfo, "designer">): IOObject | null {
+    private findObject(pos: Vector, {designer}: CircuitInfo): IOObject | null {
         // Very specifically get the objects and wires and reverse them SEPARATELY
         //  doing `designer.getAll().reverse()` would put the wires BEFORE the objects
         //  which will cause incorrect behavior! Objects are always going to need to be

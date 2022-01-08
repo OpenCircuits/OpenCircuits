@@ -20,7 +20,7 @@ export const RotateTool = (() => {
     let prevAngle = 0;
 
 
-    function isMouseOnCircle({camera, input, selections}: RequireOnly<CircuitInfo, "camera" | "input" | "selections">): boolean {
+    function isMouseOnCircle({camera, input, selections}: CircuitInfo): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const d = worldMousePos.sub(selections.midpoint()).len2();
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2)
@@ -30,7 +30,10 @@ export const RotateTool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, {locked, camera, input, selections}: CircuitInfo): boolean {
+        shouldActivate(event: Event, info: CircuitInfo): boolean {
+            const input = info.input;
+            const selections = info.selections;
+            const locked = info.locked;
             if (locked)
                 return false;
             // Activate if the user pressed their mouse or finger down
@@ -40,7 +43,7 @@ export const RotateTool = (() => {
                     input.getTouchCount() === 1 &&
                     selections.amount() > 0 &&
                     selections.all(s => s instanceof Component) &&
-                    isMouseOnCircle({camera, input, selections}));
+                    isMouseOnCircle(info));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate only mouse release

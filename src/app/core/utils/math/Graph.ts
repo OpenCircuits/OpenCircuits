@@ -58,8 +58,8 @@ export class Graph<V, E> {
         if (!this.list.has(target))
             throw new Error("Graph doesn't have node of value: " + target);
 
-        this.list.get(source)?.push(new Edge<V, E>(target, weight));
-        this.reverseList.get(target)?.push(new Edge<V, E>(source, weight));
+        this.list.get(source)!.push(new Edge<V, E>(target, weight));
+        this.reverseList.get(target)!.push(new Edge<V, E>(source, weight));
     }
 
     public isConnected(): boolean {

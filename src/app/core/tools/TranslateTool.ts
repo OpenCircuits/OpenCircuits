@@ -34,7 +34,7 @@ export const TranslateTool: Tool = (() => {
         },
 
 
-        onActivate(event: Event, info: CircuitInfo & Required<Pick<CircuitInfo, "currentlyPressedObject">>): void {
+        onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
@@ -43,7 +43,7 @@ export const TranslateTool: Tool = (() => {
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                selections.has(currentlyPressedObject) ?
+                selections.has(currentlyPressedObject!) ?
                         selections.get().filter(s => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];

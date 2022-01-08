@@ -34,9 +34,9 @@ export class Rectangle implements Shape {
         if (pos instanceof Transform) {
             this.pos  = pos.getPos();
             this.size = pos.getSize();
-        } else if (size) {
+        } else {
             this.pos  = pos;
-            this.size = size;
+            this.size = size!;
         }
     }
 

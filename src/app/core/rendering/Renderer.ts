@@ -75,8 +75,7 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: SVGDrawing | undefined, center: Vector, size: Vector, tint?: string): void {
-        if (!img) return;
+    public image(img: SVGDrawing, center: Vector, size: Vector, tint?: string): void {
         const pos = center.sub(size.scale(0.5));
         const col = (tint ? parseColor(tint) : undefined);
 
@@ -131,11 +130,11 @@ export class Renderer {
         if (alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;
 
-        if (style.fillColor !== this.context.fillStyle && style.fillColor)
+        if (style.fillColor && style.fillColor !== this.context.fillStyle)
             this.context.fillStyle = style.fillColor;
-        if (style.borderColor !== this.context.strokeStyle && style.borderColor)
+        if (style.borderColor && style.borderColor !== this.context.strokeStyle)
             this.context.strokeStyle = style.borderColor;
-        if (style.borderSize !== this.context.lineWidth && style.borderSize)
+        if (style.borderSize && style.borderSize !== this.context.lineWidth)
             this.context.lineWidth = style.borderSize;
     }
 }
