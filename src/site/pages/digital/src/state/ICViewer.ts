@@ -5,7 +5,7 @@ import {CreateState} from "shared/utils/CreateState";
 const [initialState, actions, reducer] = CreateState()(
     {
         isActive: false,
-        ic: undefined as unknown as ICData,
+        ic: undefined,
     },
     {
         OpenICViewer:  (data: ICData) => ({ type: "OPEN_ICVIEWER_ID", data }) as const,
@@ -13,7 +13,7 @@ const [initialState, actions, reducer] = CreateState()(
     },
     {
         "OPEN_ICVIEWER_ID":  (_, action) => ({ isActive: true, ic: action.data }),
-        "CLOSE_ICVIEWER_ID": (_)         => ({ isActive: false, ic: undefined as unknown as ICData }),
+        "CLOSE_ICVIEWER_ID": (_)         => ({ isActive: false, ic: undefined }),
     }
 );
 

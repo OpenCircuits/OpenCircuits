@@ -52,7 +52,7 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined as unknown as IC
+        ic: undefined
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
@@ -175,7 +175,7 @@ export const ICDesigner = (() => {
             // Unblock main input
             mainInfo.input.unblock();
 
-            icInfo.ic = undefined as unknown as IC;
+            icInfo.ic = undefined;
             dispatch(CloseICDesigner());
             setName({ name: "" }); // Clear name
         }

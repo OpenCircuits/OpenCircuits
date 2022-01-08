@@ -105,7 +105,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
-    const ops = options.format === "custom" ? options.ops : Formats.find(form => form.icon === options.format) ?? Formats[0];
+    const ops = (options.format === "custom") ? (options.ops) : (Formats.find(form => form.icon === options.format) ?? Formats[0]);
 
     // Create input tokens
     const tokenList = GenerateTokens(expression, ops);
