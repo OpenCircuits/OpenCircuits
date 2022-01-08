@@ -15,6 +15,8 @@ export const ICPortTool = (() => {
     let port: Port | undefined;
 
     function findPort({input, camera, ic}: ICCircuitInfo): Port | undefined {
+        if (!ic)
+            throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         return ic.getPorts().find(p => PortContains(p, worldMousePos));
     }
@@ -34,6 +36,8 @@ export const ICPortTool = (() => {
 
 
         onActivate(_: Event, info: ICCircuitInfo): void {
+            if (!info.ic)
+                throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
             const icPort = findPort(info);
             port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort!)];
         },
@@ -45,6 +49,9 @@ export const ICPortTool = (() => {
         onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
+
+            if (!ic)
+                throw new Error("ICPortTool.onEvent failed: ic was undefined");
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
 

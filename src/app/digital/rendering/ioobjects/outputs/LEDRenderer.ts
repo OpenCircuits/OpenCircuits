@@ -27,7 +27,7 @@ export const LEDRenderer = (() => {
             const size = led.getSize();
 
             // draw the LED object
-            renderer.image(Images.GetImage(led.getImageName()), V(), size, led.getColor());
+            renderer.image(Images.GetImage(led.getImageName())!, V(), size, led.getColor());
 
             // draw the LED glow
             if (led.isOn()) {

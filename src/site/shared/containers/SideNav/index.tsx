@@ -57,6 +57,8 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <CircuitPreview key={`sidenav-user-circuit-${i}`}
                                     data={circuit}
                                     onClick={async () => {
+                                        if (!auth)
+                                            throw new Error("SideNav.CircuitPreview.onClick failed: auth is undefined");
                                         await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
                                         dispatch(ToggleSideNav());
                                     }}

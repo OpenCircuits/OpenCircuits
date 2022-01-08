@@ -98,7 +98,7 @@ export const App = ((store: AppStore) => {
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
             CleanUpHandler, CopyHandler,
-            PasteHandler((data) => DigitalPaste(data, info, null)),
+            PasteHandler((data) => DigitalPaste(data, info)),
             SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
         ]),
         PanTool, RotateTool,

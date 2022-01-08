@@ -10,11 +10,11 @@ import {CreateState} from "shared/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        auth: undefined as unknown as AuthState,
+        auth: undefined as AuthState | undefined,
         isLoggedIn: false,
         circuits: [] as CircuitMetadata[],
         loading: false,
-        error: undefined as unknown as string,
+        error: undefined as string | undefined,
         autoSave: (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
     },
     {

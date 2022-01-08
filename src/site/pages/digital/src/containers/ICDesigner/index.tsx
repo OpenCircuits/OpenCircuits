@@ -67,7 +67,7 @@ export const ICDesigner = (() => {
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icDesigner })
-        )
+        );
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
@@ -120,7 +120,8 @@ export const ICDesigner = (() => {
         useLayoutEffect(() => {
             if (!data || !icInfo.ic)
                 return;
-            data.setName(name);
+            if (name)
+                data.setName(name);
             icInfo.ic.update();
             renderer.render();
         }, [name, data, icInfo.ic]);
@@ -157,6 +158,9 @@ export const ICDesigner = (() => {
             icInfo.input.block();
 
             if (!cancelled) {
+                if (!data)
+                    throw new Error("ICDesigner.close failed: data was undefined");
+
                 // Create IC on center of screen
                 const ic = new IC(data);
                 ic.setPos(mainInfo.camera.getPos());

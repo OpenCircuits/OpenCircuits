@@ -9,7 +9,7 @@ const [initialState, actions, reducer] = CreateState()(
         isLocked: false,
 
         saving: false,
-        error: "",
+        error: "" as string | undefined,
     },
     {
         // TODO: make factory methods for trivial action types when TS4.4 gets adopted
