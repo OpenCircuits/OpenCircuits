@@ -106,7 +106,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
 
     // This section gets the part of the tree from the left side of the operator.
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
-    let leftRet: NewTreeRetValue | null = null;
+    let leftRet: NewTreeRetValue;
     if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         leftRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
         index = leftRet.index;
@@ -121,7 +121,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     if (index >= tokens.length && currentOp !== "(") {
         throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
     }
-    let rightRet: NewTreeRetValue | null = null;
+    let rightRet: NewTreeRetValue;
     const rightToken = tokens[index];
     if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
@@ -146,7 +146,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     }
 
     // The tree tree is created with the new node as the root and returned
-    let tree: InputTree | null = null;
+    let tree: InputTree;
     if (currentOp === "!") {
         const rTree = rightRet.tree;
         if (rTree.kind === "binop" && !rTree.isNot) {
@@ -178,7 +178,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * 
  * @param tokens the array of tokens representing the expression to parse
  * @param ops the representation format for the operations used in this expression (only used for error messages)
- * @returns null if tokens.length is 0, the relevant input tree otherwise
+ * @returns undefined if tokens.length is 0, the relevant input tree otherwise
  * @throws {Error} parenthesis do not include anything (such as "()")
  * @throws {Error} an opening parenthesis is missing a corresponding closing parenthesis (such as "(")
  * @throws {Error} a closing parenthesis is missing a corresponding opening parenthesis (such as ")")
@@ -188,9 +188,9 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | null {
+export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | undefined {
     if (tokens.length === 0)
-        return null;
+        return;
     const ret = generateInputTreeCore(tokens, ops);
 
     const index = ret.index;

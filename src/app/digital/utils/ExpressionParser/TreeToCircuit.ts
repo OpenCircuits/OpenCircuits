@@ -59,11 +59,11 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
     } else if (node.kind === "binop") {
         newGate.setInputPortCount(node.children.length);
         node.children.forEach(child => {
-            if (child) {
-                const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
-                const wire = LazyConnect(prevNode, newGate);
-                ret.push(wire);
-            }
+            if (!child)
+                return;
+            const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
+            const wire = LazyConnect(prevNode, newGate);
+            ret.push(wire);
         });
     }
     ret.push(newGate);
@@ -79,8 +79,8 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  * @returns the components and wires converted from the tree
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
  */
-export function TreeToCircuit(tree: InputTree | null, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
-    if (tree === null)
+export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+    if (!tree)
         return [];
 
     let ret: IOObject[] = Array.from(inputs.values());

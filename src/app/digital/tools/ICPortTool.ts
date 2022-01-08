@@ -14,7 +14,7 @@ import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 export const ICPortTool = (() => {
     let port: Port | undefined;
 
-    function findPort({input, camera, ic}: RequireOnly<ICCircuitInfo, "input" | "camera" | "ic">): Port | undefined {
+    function findPort({input, camera, ic}: ICCircuitInfo): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         return ic.getPorts().find(p => PortContains(p, worldMousePos));
     }
@@ -68,9 +68,12 @@ export const ICPortTool = (() => {
             // Set the direction vector to the length of a port
             v = v.normalize().scale(-IO_PORT_LENGTH).add(p);
 
+            if (!port)
+                throw new Error("ICPortTool.onEvent failed: port is undefined");
+
             // Set port for IC
-            port?.setOriginPos(p);
-            port?.setTargetPos(v);
+            port.setOriginPos(p);
+            port.setTargetPos(v);
 
             // Set pos for ICData
             ic.update();
