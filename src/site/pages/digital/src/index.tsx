@@ -30,8 +30,10 @@ import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
+import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
-import {GetCookie} from "shared/utils/Cookies";
+import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {SetCircuitSaved} from "shared/state/CircuitInfo";
@@ -41,11 +43,11 @@ import {NoAuthState} from "shared/api/auth/NoAuthState";
 import {Login} from "shared/state/thunks/User";
 
 import {DigitalPaste} from "./utils/DigitalPaste";
-import {Setup} from "./utils/CircuitInfo/Setup";
+import {Setup}        from "./utils/CircuitInfo/Setup";
 
 import {AppState, AppStore} from "./state";
-import {AllActions} from "./state/actions";
-import {reducers} from "./state/reducers";
+import {AllActions}         from "./state/actions";
+import {reducers}           from "./state/reducers";
 
 import {App} from "./containers/App";
 
@@ -131,7 +133,9 @@ async function Init(): Promise<void> {
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
                     SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                    CopyHandler, PasteHandler((data) => DigitalPaste(data, info))
+                    CleanUpHandler, CopyHandler,
+                    PasteHandler((data) => DigitalPaste(data, info, null)),
+                    SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
                 ]),
                 PanTool, RotateTool,
                 TranslateTool, WiringTool,
