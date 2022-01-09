@@ -87,6 +87,16 @@ export class SelectionsWrapper {
     }
 
     /**
+     * Returns whether or not `f` returns true for at least one element of `this.selections`
+     * 
+     * @param f a function that takes a Selectable `s` and returns a boolean
+     * @returns returns true if `f` returns true for every element in `this.selections` and false otherwise
+     */
+    public any(f: (s: Selectable) => boolean): boolean {
+        return this.get().some(s => f(s));
+    }
+
+    /**
      * Checks to see if the elements of `s` are also in `this.selections`
      * @param s an array of type Selectable
      * @returns true if every Selectable in s is also in `this.selections` and false otherwise
