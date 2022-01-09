@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 
-import {DRAG_TIME, ESC_KEY, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -8,7 +8,6 @@ import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {DragDropHandlers} from "./DragDropHandlers";
-import {number} from "yargs";
 
 
 type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
@@ -35,7 +34,7 @@ export const Draggable = ({ children, data, onDragChange, ...other }: Props) => 
 
 
     // Cancel placing when pressing escape
-    useWindowKeyDownEvent(ESC_KEY, () => {
+    useWindowKeyDownEvent("Escape", () => {
         setIsDragging(false);
     });
 

@@ -4,6 +4,13 @@
 $sidenav-width: 250px;
 $sidenav-border-width: 5px;
 
+$sidenav-message-margin: 25px;
+
+$sidenav-footer-height: 50px;
+$sidenav-footer-margin-y: 10px;
+
+
+
 .sidenav {
     position: fixed;
     z-index: 6;
@@ -54,10 +61,18 @@ $sidenav-border-width: 5px;
             right: 10px;
         }
     }
-    &__content {
-        overflow-y: auto;
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-        height: 100%;
+        height: calc(100% - 60px);
+
+        overflow-y: auto;
+    }
+    &__content {
+        // max-height: 100%;
+        flex: 1;
 
         touch-action: pan-y;
 
@@ -92,13 +107,27 @@ $sidenav-border-width: 5px;
             }
         }
     }
+
+    &__footer {
+        position: relative;
+
+        height: $sidenav-footer-height;
+        padding: 10px 25px 10px 25px;
+
+        flex-shrink: 0;
+
+        &__history {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+        }
+    }
+
     &__circuit {
         $img-width: 50px;
         $height: 50px;
         $padding-v: 4px;
         $padding-h: 6px;
-
-        display: flex;
 
         height: $height;
         padding: $padding-v $padding-h $padding-v $padding-h;
@@ -108,9 +137,10 @@ $sidenav-border-width: 5px;
         border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
         background-color: lighten($primary-color, 5%);
 
+        cursor: pointer;
+        display: flex;
+
         &__icon {
-            width: $img-width;
-            padding: 0 5px 0 0;
             img {
                 width: $img-width;
                 height: $img-width;
@@ -118,11 +148,13 @@ $sidenav-border-width: 5px;
                 border-radius: 5px;
                 background-color: $background-color;
             }
+            width: $img-width;
+            padding: 0 5px 0 0;
         }
         &__text {
             display: inline-block;
-            flex-grow: 1;
 
+            flex-grow: 1;
             width: 50px;
 
             vertical-align: top;

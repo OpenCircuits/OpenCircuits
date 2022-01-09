@@ -1,4 +1,4 @@
-import {Token, TokenType, InputTree, OperatorFormat, InputToken} from "./Constants/DataStructures";
+import {Token, TokenType, InputTree, InputToken, BinOpChildren, InputTreeBinOpType, InputTreeBinOpNode} from "./Constants/DataStructures";
 import {Formats} from "./Constants/Formats";
 
 
@@ -6,9 +6,62 @@ import {Formats} from "./Constants/Formats";
 interface NewTreeRetValue {
     index: number;
     tree: InputTree;
+    // indicates to the program that the tree in this return value should not be used for merging into a larger gate
+    final?: boolean;
 }
 
 const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
+
+/**
+ * Checks if the input tree can have its number of inputs increased.
+ * 
+ * @param tree the tree to check
+ * @param op the operation the tree should have
+ * @param isFinal whether or not the tree can be modified
+ * @returns true if tree has kind "binop", tree's type is op, and isFinal is false, false otherwise
+ */
+function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal: boolean): tree is InputTreeBinOpNode {
+    return tree.kind === "binop" && tree.type === op && !isFinal;
+}
+
+/**
+ * Generates a nested tree structure where each layer has at most 8 children
+ * 
+ * @param children the array of children to turn into a nested structure
+ * @param currentOp the operand all these nodes have
+ * @returns the properly nested tree structure
+ */
+function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpType): InputTree[] {
+    if (children.length <= 8)
+        return children;
+    const next = children.slice(7);
+    const newTree: InputTree = {
+        kind: "binop", type: currentOp, isNot: false,
+        children: generateNestedTrees(next, currentOp) as BinOpChildren,
+    };
+    return [...children.slice(0, 7), newTree];
+}
+
+/**
+ * Generates a specific error message when no operator is detected between two tokens.
+ * This message searches to see if one of the tokens is the operator for a different format.
+ * 
+ * @param prev the name of the first token
+ * @param next the name of the second token
+ * @param ops the represenation of the operands in the original expression
+ */
+function generateErrorMessage(prev: string, next: string, ops: Record<TokenType, string>): string {
+    let errorMessage = `No valid operator between "${prev}" and "${next}"`;
+    for (const format of Formats) {
+        Object.entries(format.ops).forEach(([tokenType, op]) => {
+            if (op === prev)
+                errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${prev}"?`
+            if (op === next)
+                errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${next}"?`
+        });
+    }
+    return errorMessage;
+}
 
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
@@ -26,7 +79,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
- function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
+function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
@@ -35,9 +88,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
             if (prevTokenType === "(")
                 throw new Error("Empty Parenthesis");
             if (prevTokenType !== ")" && prevTokenType !== "input")
-                throw new Error("Missing Right Operand: \"" + ops[prevTokenType] + "\"");
+                throw new Error(`Missing Right Operand: "${ops[prevTokenType]}"`);
         }
-        throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
+        throw new Error(`Encountered Unmatched "${ops[")"]}"`);
     }
 
     // When this function has recursed through to "!" and the token still isn't that, then
@@ -48,7 +101,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
             return generateInputTreeCore(tokens, ops, nextOpNum, index);
         if (token.type === "input")
             return {index: index+1, tree: {kind: "leaf", ident: token.name}};
-        throw new Error("Missing Left Operand: \"" + ops[token.type] + "\"");
+        throw new Error(`Missing Left Operand: "${ops[token.type]}"`);
     }
 
     // This section gets the part of the tree from the left side of the operator.
@@ -66,7 +119,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     //  so it now points to the token on the right side of the operator.
     index += 1;
     if (index >= tokens.length && currentOp !== "(") {
-        throw new Error("Missing Right Operand: \"" + ops[currentOp] + "\"");
+        throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
     }
     let rightRet: NewTreeRetValue = null;
     const rightToken = tokens[index];
@@ -76,7 +129,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
         rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
     } else if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         rightRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
     } else {
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
@@ -84,19 +137,38 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
     index = rightRet.index;
     if (currentOp === "(") {
         if (index >= tokens.length)
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         if (tokens[index].type !== ")")
-            throw new Error("Encountered Unmatched \"" + ops["("] + "\"");
+            throw new Error(`Encountered Unmatched "${ops["("]}"`);
         rightRet.index += 1; // Incremented to skip the ")"
+        rightRet.final = true; // used to not combine gates in (a|b)|(c|d) for example
         return rightRet;
     }
 
     // The tree tree is created with the new node as the root and returned
     let tree: InputTree;
-    if (currentOp === "!")
-        tree = {kind: "unop", type: "!", child: rightRet.tree};
-    else if (currentOp === "|" || currentOp === "^" || currentOp === "&")
-        tree = {kind: "binop", type: currentOp, lChild: leftRet.tree, rChild: rightRet.tree};
+    if (currentOp === "!") {
+        const rTree = rightRet.tree;
+        if (rTree.kind === "binop" && !rTree.isNot) {
+            tree = rTree;
+            tree.isNot = true;
+        }
+        else {
+            tree = {kind: "unop", type: "!", child: rightRet.tree};
+        }
+    }
+    else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
+        const lTree = leftRet.tree, rTree = rightRet.tree;
+        let childrenArray: InputTree[] = isTreeExtendable(lTree, currentOp, leftRet.final) ? lTree.children : [lTree];
+        if (isTreeExtendable(rTree, currentOp, rightRet.final))
+            childrenArray = [...childrenArray, ...rTree.children];
+        else
+            childrenArray.push(rTree);
+
+        childrenArray = generateNestedTrees(childrenArray, currentOp);
+            
+        tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
+    }
     return {index: index, tree: tree};
 
 }
@@ -124,7 +196,7 @@ export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string
     const index = ret.index;
     if (index < tokens.length) {
         if (tokens[index].type === ")")
-            throw new Error("Encountered Unmatched \"" + ops[")"] + "\"");
+            throw new Error(`Encountered Unmatched "${ops[")"]}"`);
 
         const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
                            .reverse()
@@ -132,7 +204,7 @@ export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string
         const next = tokens.slice(index)
                            .find(token => token.type === "input") as InputToken;
         if (prev && prev.name && next && next.name)
-            throw new Error("No valid operator between \"" + prev.name + "\" and \"" + next.name + "\"");
+            throw new Error(generateErrorMessage(prev.name, next.name, ops));
 
         throw new Error("Parsing ended prematurely");
     }
