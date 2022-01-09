@@ -1,28 +1,3 @@
-import {createRef} from "react";
-
-import {InteractionTool}    from "core/tools/InteractionTool";
-import {PanTool}            from "core/tools/PanTool";
-import {RotateTool}         from "core/tools/RotateTool";
-import {TranslateTool}      from "core/tools/TranslateTool";
-import {WiringTool}         from "core/tools/WiringTool";
-import {SplitWireTool}      from "core/tools/SplitWireTool";
-import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
-
-import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
-import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
-import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
-import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
-import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
-import {UndoHandler}          from "core/tools/handlers/UndoHandler";
-import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
-import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-import {PasteHandler}         from "core/tools/handlers/PasteHandler";
-import {SaveHandler}          from "core/tools/handlers/SaveHandler";
-
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
@@ -111,6 +86,7 @@ export const App = ({info, helpers, canvas}: Props) => {
                     <MainDesigner info={info} canvas={canvas} />
 
                     <DigitalItemNav info={info} />
+                    <HistoryBox info={info} />
 
                     <SelectionPopup info={info}
                                     modules={[PositionModule, InputCountModule,
