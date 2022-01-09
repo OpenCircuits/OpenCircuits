@@ -120,10 +120,10 @@ describe("Translate Tool", () => {
         test("Clone Switch -> LED with Snapped WirePort", () => {
             const [sw, led, port] = Place(new Switch(), new LED(), new DigitalNode());
 
+            sw.setPos(V(0, 0));
+            led.setPos(V(2, 0));
             // Set port to vertically align with Switch and horizontally with LED
             port.setPos(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
-            sw.setPos(V(0, 0));
-            led.setPos(V(100, 0));
 
             // Connect to Port and set as straight
             Connect(sw,   0, port, 0).getWire().setIsStraight(true);
@@ -134,15 +134,15 @@ describe("Translate Tool", () => {
 
             // Start Translating then Clone
             input.press(V(0, 0))
-                    .moveTo(V(-100, 0))
-                    .pressKey(" ")
-                    .releaseKey(" ")
-                    .moveTo(V(100, 0))
-                    .release();
+                 .moveTo(V(-10, -10), 1)
+                 .pressKey(" ")
+                 .releaseKey(" ")
+                 .moveTo(V(10, 10), 1)
+                 .release();
 
             // Expect initial objects to stay relatively the same
-            expect(sw.getPos()).toEqual(V(100, 0));
-            expect(led.getPos()).toEqual(V(200, 0));
+            expect(sw.getPos()).toEqual(V(10, 10));
+            expect(led.getPos()).toEqual(V(12, 10));
             expect(port.getPos()).toEqual(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
             expect(port.getInputs()[0].isStraight()).toBe(true);
             expect(port.getOutputs()[0].isStraight()).toBe(true);
@@ -175,21 +175,16 @@ describe("Translate Tool", () => {
             });
     
             test("Midpoint Snap in x direction", () => {
-                const sw   = new Switch();
-                const led  = new LED();
+                const [sw, led] = Place(new Switch(), new LED());
     
                 // Set switch and LED initial positions
                 sw.setPos(V(0, 0));
                 led.setPos(V(100, 100));
-    
-                Place(designer, [sw, led]);
                 
                 //Move LED to where it should snap
                 input.press(V(100, 100))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(4.99, 50))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(4.99, 50))
+                     .release();
     
                 // Expect LED to have snapped to 0, 50
                 expect(sw.getPos()).toEqual(V(0, 0));
@@ -197,21 +192,16 @@ describe("Translate Tool", () => {
             });
             
             test("Midpoint Snap in x direction v2", () => {
-                const sw   = new Switch();
-                const led  = new LED();
+                const [sw, led] = Place(new Switch(), new LED());
     
                 // Set switch and LED initial positions
                 sw.setPos(V(0, 0));
                 led.setPos(V(100, 100));
-    
-                Place(designer, [sw, led]);
                 
                 //Move LED to where it shouldn't snap
                 input.press(V(100, 100))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(5.01, 50))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(5.01, 50))
+                     .release();
     
                 // Expect LED to not snap
                 expect(sw.getPos()).toEqual(V(0, 0));
@@ -219,21 +209,16 @@ describe("Translate Tool", () => {
             });
 
             test("Midpoint Snap in y direction", () => {
-                const sw   = new Switch();
-                const led  = new LED();
+                const [sw, led] = Place(new Switch(), new LED());
     
                 // Set switch and LED initial positions
                 sw.setPos(V(0, 0));
                 led.setPos(V(100, 100));
-    
-                Place(designer, [sw, led]);
                 
                 //Move LED to where it should snap
                 input.press(V(100, 100))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(50, 4.99))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(50, 4.99))
+                     .release();
     
                 // Expect LED to have snapped to 50, 0
                 expect(sw.getPos()).toEqual(V(0, 0));
@@ -241,21 +226,16 @@ describe("Translate Tool", () => {
             });
 
             test("Midpoint Snap in x direction", () => {
-                const sw   = new Switch();
-                const led  = new LED();
+                const [sw, led] = Place(new Switch(), new LED());
     
                 // Set switch and LED initial positions
                 sw.setPos(V(0, 0));
                 led.setPos(V(100, 100));
-    
-                Place(designer, [sw, led]);
                 
                 //Move LED to where it shouldn't snap
                 input.press(V(100, 100))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(50, 5.01))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(50, 5.01))
+                     .release();
     
                 // Expect LED to not snap
                 expect(sw.getPos()).toEqual(V(0, 0));
@@ -263,21 +243,16 @@ describe("Translate Tool", () => {
             });
 
             test("Edge snap 1", () => {
-                const SR1 = new SRFlipFlop();
-                const SR2 = new SRFlipFlop();
+                const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
     
                 // Set SR flip flop initial positions
                 SR1.setPos(V(0, 0));
                 SR2.setPos(V(1000, 1000));
-    
-                Place(designer, [SR1, SR2]);
                 
                 //Move SR2 to where it should snap
                 input.press(V(1000, 1000))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(102, 200))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(102, 200))
+                     .release();
     
                 // Expect SR2 to have snapped to 100, 200
                 expect(SR1.getPos()).toEqual(V(0, 0));
@@ -285,21 +260,16 @@ describe("Translate Tool", () => {
             });
 
             test("Edge snap 2", () => {
-                const SR1 = new SRFlipFlop();
-                const SR2 = new SRFlipFlop();
+                const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
     
                 // Set SR flip flop initial positions
                 SR1.setPos(V(0, 0));
                 SR2.setPos(V(1000, 1000));
-    
-                Place(designer, [SR1, SR2]);
                 
                 //Move SR2 to where it shouldn't snap
                 input.press(V(1000, 1000))
-                        .pressKey(LEFT_MOUSE_BUTTON)
-                        .moveTo(V(105, 200))
-                        .releaseKey(LEFT_MOUSE_BUTTON)
-                        .release();
+                     .moveTo(V(105, 200))
+                     .release();
     
                 // Expect SR2 to not snap
                 expect(SR1.getPos()).toEqual(V(0, 0));

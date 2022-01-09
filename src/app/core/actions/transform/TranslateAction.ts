@@ -38,7 +38,8 @@ export class TranslateAction implements Action {
      * @param objs Initializes the array with the selected component(s)
      * @param initialPositions Initializes the array with the selected components' starting positions
      * @param targetPositions Initializes the array with the selected components' final positions
-     * @param circuit The circuit designer that this translation is on
+     * @param circuit The circuit designer that this translation is performed on, used to check for midpoint and edge snapping.
+     *                  If undefined, then no midpoint or edge snapping occurs
      */
     public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], circuit?: CircuitDesigner) {
         this.objs = objs;
@@ -61,10 +62,10 @@ export class TranslateAction implements Action {
         if (!this.circuit)
             return this;
 
-        //Midpoint snap
+        // Midpoint snap
         this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
 
-        //Edge snap
+        // Edge snap
         this.objs.forEach(o => SnapEdges(o, this.circuit.getObjects()))
 
         return this;
@@ -80,6 +81,9 @@ export class TranslateAction implements Action {
 
         // Always snap afterwards to avoid issue #417
         this.objs.forEach(o => SnapPos(o));
+
+        if (!this.circuit)
+            return this;
 
         //Midpoint snap
         this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))

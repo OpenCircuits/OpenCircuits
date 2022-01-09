@@ -1,6 +1,5 @@
 import {MID_SNAP_CONST, WIRE_SNAP_THRESHOLD, EDGE_SNAP_CONST} from "core/utils/Constants";
 import {Component} from "core/models";
-import { posix } from "node:path";
 
 
 /**
