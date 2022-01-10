@@ -12,6 +12,7 @@ import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
 
@@ -107,6 +108,25 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     const additionalPreviewComp = (additionalPreview && additionalPreview(additionalData, curItemID));
 
+    const {w, h} = useWindowSize();
+    let sections = (w > 768 || w > h) ? config.sections : [];
+    if (sections === []) {
+        let numPerSection = Math.floor(w / 100);
+        config.sections.forEach(section => {
+            let items = section.items.slice();
+            let subSectionNum = 0;
+            while (items.length > 0) {
+                sections.push({
+                    id: section.id + subSectionNum,
+                    label: section.label,
+                    items: items.slice(0, numPerSection),
+                });
+                items = items.slice(numPerSection);
+                subSectionNum++;
+            }
+        });
+    }
+
     return (<>
         <div className="itemnav__preview"
              style={{
@@ -174,7 +194,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                 </div>
             </div>
             <div className={`itemnav__sections ${curItemImg ? "dragging" : ""}`}>
-                {config.sections.map((section, i) =>
+                {sections.map((section, i) =>
                     <div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
