@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // Code from https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
 function isMobile(): boolean {
     var check = false;
