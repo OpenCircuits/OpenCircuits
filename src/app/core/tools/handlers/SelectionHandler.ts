@@ -24,7 +24,7 @@ export const SelectionHandler: EventHandler = ({
             action.add(CreateDeselectAllAction(selections).execute());
 
         const ports = GetAllPorts(designer.getObjects());
-        const objs = designer.getAll() as (Component | Wire)[];
+        const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
 
         // Check if an object was clicked
         const obj = objs.find(o => o.isWithinSelectBounds(worldMousePos));
