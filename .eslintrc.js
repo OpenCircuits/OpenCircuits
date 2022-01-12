@@ -9,26 +9,39 @@ module.exports = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended"
     ],
-    "ignorePatterns": ["*.js"],
+    "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": "./tsconfig.base.json"
     },
     "plugins": ["@typescript-eslint", "opencircuits"],
     "rules": {
-        "quotes": ["warn", "double"],
+        "max-len": ["warn", {
+            "code": 120,
+            "ignoreUrls": true,
+            "ignoreTrailingComments": true,
+        }],
+        "quotes": ["error", "double"],
         "@typescript-eslint/adjacent-overload-signatures": "error",
-        "@typescript-eslint/array-type": "off",
-        "@typescript-eslint/ban-types": "error",
+        "@typescript-eslint/array-type": ["error", { "default": "array-simple" }],
+        "@typescript-eslint/ban-types": ["error", {
+            "types": {
+                "null": {
+                    "message": "Use undefined instead",
+                    "fixWith": "undefined",
+                },
+            },
+            "extendDefaults": true,
+        }],
         "camelcase": "off",
-        //"@typescript-eslint/camelcase": "error",
-
-        //"@typescript-eslint/class-name-casing": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/explicit-function-return-type": ["off"],
-        "no-console": "off",
+        "no-console": ["error", { "allow": ["warn", "error"] }],
         "@typescript-eslint/explicit-member-accessibility": "error",
+
+        // Apparently broken, see https://github.com/typescript-eslint/typescript-eslint/issues/1824
         "indent": "off",
-        "@typescript-eslint/indent": ["error", 4, {
+        "@typescript-eslint/indent": ["off", 4, {
             "ImportDeclaration": "first",
             "ArrayExpression": "first",
             "MemberExpression": 2,
@@ -37,18 +50,7 @@ module.exports = {
             "CallExpression": { "arguments": "first" },
             "ignoredNodes": ["ConditionalExpression"]
         }],
-        // "@typescript-eslint/interface-name-prefix": "error",
-        // "@typescript-eslint/naming-convention": [
-        //     "error",
-        //     {
-        //       "selector": "interface",
-        //       "format": ["PascalCase"],
-        //       "custom": {
-        //         "regex": "^I[A-Z]",
-        //         "match": true
-        //       }
-        //     }
-        //   ],
+
         "@typescript-eslint/member-delimiter-style": ["error", {
             "multiline": {
                 "delimiter": "semi",
@@ -59,6 +61,7 @@ module.exports = {
                 "requireLast": false
             }
         }],
+        "prefer-const": "error",
         "comma-dangle": "off",
         "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
         "@typescript-eslint/no-angle-bracket-type-assertion": "off",
@@ -70,13 +73,12 @@ module.exports = {
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-non-null-assertion": "error",
-        //"@typescript-eslint/no-object-literal-type-assertion": "error",
+        "@typescript-eslint/no-object-literal-type-assertion": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
         "@typescript-eslint/no-parameter-properties": "error",
-        //"@typescript-eslint/no-triple-slash-reference": "error",
         "@typescript-eslint/triple-slash-reference": "error",
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["warn", {
+        "@typescript-eslint/no-unused-vars": ["error", {
             "argsIgnorePattern": "_",
             "args": "after-used",
             "ignoreRestSiblings": false
