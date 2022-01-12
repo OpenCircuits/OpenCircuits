@@ -10,6 +10,7 @@ import {IC}     from "digital/models/ioobjects/other/IC";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 import {GetHelpers} from "test/helpers/Helpers";
+import {ConstantHigh} from "digital/models/ioobjects";
 
 
 describe("IC", () => {
@@ -67,6 +68,53 @@ describe("IC", () => {
         expect(o2.isOn()).toBe(false);
         a2.activate(true);
         b2.activate(true);
+        expect(o2.isOn()).toBe(true);
+    });
+    test("Basic IC 3 - ON Switch -> LED (issue #468)", () => {
+        const designer = new DigitalCircuitDesigner(0);
+        const {Place, Connect} = GetHelpers({designer});
+        const a = new Switch, o = new LED();
+
+        Place(a, o);
+        Connect(a, 0, o, 0);
+
+        a.click(); // Turn on Switch initially
+
+        const icdata = ICData.Create([a, o]);
+        const ic = new IC(icdata);
+
+        expect(ic.numInputs()).toBe(1);
+        expect(ic.numOutputs()).toBe(1);
+
+        const a2 = new Switch(), o2 = new LED();
+        Place(a2, o2, ic);
+        Connect(a2, 0, ic, 0);
+        Connect(ic, 0, o2, 0);
+
+        expect(o2.isOn()).toBe(false);
+        a2.activate(true);
+        expect(o2.isOn()).toBe(true);
+        a2.activate(false);
+        expect(o2.isOn()).toBe(false);
+    });
+    test("Basic IC 4 - Constant High -> LED (issue #468)", () => {
+        const designer = new DigitalCircuitDesigner(0);
+        const {Place, Connect} = GetHelpers({designer});
+        const a = new ConstantHigh(), o = new LED();
+
+        Place(a, o);
+        Connect(a, 0, o, 0);
+
+        const icdata = ICData.Create([a, o]);
+        const ic = new IC(icdata);
+
+        expect(ic.numInputs()).toBe(0);
+        expect(ic.numOutputs()).toBe(1);
+
+        const o2 = new LED();
+        Place(o2, ic);
+        Connect(ic, 0, o2, 0);
+
         expect(o2.isOn()).toBe(true);
     });
 });
