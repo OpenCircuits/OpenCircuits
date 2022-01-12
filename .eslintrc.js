@@ -1,4 +1,4 @@
-{
+module.exports = {
     "env": {
         "browser": true,
         "es6": true,
@@ -7,12 +7,14 @@
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"],
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "ignorePatterns": ["*.js"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./tsconfig.json"
+        "project": "./tsconfig.base.json"
     },
-    "plugins": ["@typescript-eslint"],
+    "plugins": ["@typescript-eslint", "opencircuits"],
     "rules": {
         "quotes": ["warn", "double"],
         "@typescript-eslint/adjacent-overload-signatures": "error",
@@ -20,11 +22,9 @@
         "@typescript-eslint/ban-types": "error",
         "camelcase": "off",
         //"@typescript-eslint/camelcase": "error",
-        
+
         //"@typescript-eslint/class-name-casing": "error",
-        "@typescript-eslint/explicit-function-return-type": ["warn", {
-            "allowExpressions": true
-        }],
+        "@typescript-eslint/explicit-function-return-type": ["off"],
         "no-console": "off",
         "@typescript-eslint/explicit-member-accessibility": "error",
         "indent": "off",
@@ -59,6 +59,8 @@
                 "requireLast": false
             }
         }],
+        "comma-dangle": "off",
+        "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
         "@typescript-eslint/no-angle-bracket-type-assertion": "off",
         "no-array-constructor": "off",
         "@typescript-eslint/no-array-constructor": "error",
@@ -80,7 +82,7 @@
             "ignoreRestSiblings": false
         }],
         "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": ["error", {"classes": false}],
+        "@typescript-eslint/no-use-before-define": ["off"],
         "@typescript-eslint/no-var-requires": "error",
         //"@typescript-eslint/prefer-interface": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
@@ -94,6 +96,7 @@
                 }
             }
         }],
-        "object-curly-spacing": ["error", "never"]
+        "object-curly-spacing": ["off"],
+        "opencircuits/object-curly-spacing": ["error", "always"]
     }
 }
