@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {GetIDFor} from "serialeazy";
 
@@ -79,10 +79,12 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     }, input, [setClickThrough]);
 
 
-    const popup = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
+    const popup = useRef<HTMLDivElement>(null);
 
     // Clamp position to screen if visible
     if (isVisible && !isDragging) {
+        if (!popup.current)
+            throw new Error("SelectionPopup failed: popup.current is null");
         const popupWidth = popup.current.getBoundingClientRect().width;
         const popupHeight = popup.current.getBoundingClientRect().height;
 

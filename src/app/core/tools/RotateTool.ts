@@ -5,7 +5,6 @@ import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {RequireOnly} from "core/utils/Types";
 
 import {RotateAction} from "core/actions/transform/RotateAction";
 

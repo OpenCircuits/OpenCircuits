@@ -12,7 +12,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Split Wire Tool", () => {
     const {camera, designer, input} = Setup();
-    const {Place} = GetHelpers({designer});
+    const {Place} = GetHelpers(designer);
 
     afterEach(() => {
         // Clear circuit

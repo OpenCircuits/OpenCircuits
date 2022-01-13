@@ -1,4 +1,4 @@
-import {createRef, MutableRefObject} from "react";
+import {createRef} from "react";
 
 import {InteractionTool}    from "core/tools/InteractionTool";
 import {PanTool}            from "core/tools/PanTool";
@@ -88,7 +88,7 @@ const exampleCircuits = exampleConfig.examples.map((example) =>
 );
 
 export const App = ((store: AppStore) => {
-    const canvas = createRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
+    const canvas = createRef<HTMLCanvasElement>();
 
     // Setup circuit and get the CircuitInfo and helpers
     const [info, helpers] = Setup(

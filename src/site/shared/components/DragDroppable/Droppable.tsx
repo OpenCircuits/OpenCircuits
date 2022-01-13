@@ -9,12 +9,16 @@ type Props = {
     children: React.ReactElement;
     onDrop: (pos: Vector, ...data: any[]) => void;
 };
-export const Droppable = React.forwardRef(<T extends HTMLElement>({ children, onDrop }: Props, ref: React.MutableRefObject<T>) => {
+export const Droppable = React.forwardRef(<T extends HTMLElement>({ children, onDrop }: Props, ref: React.RefObject<T>) => {
     const actualRef = ref ?? useRef<T>();
 
     useEffect(() => {
+        if (!actualRef.current)
+            throw new Error("Droppable.useEffect failed: actualRef.current is null");
         DragDropHandlers.add(actualRef.current, onDrop);
         return () => {
+            if (!actualRef.current)
+                throw new Error("Droppable.useEffect failed: actualRef.current is null");
             DragDropHandlers.remove(actualRef.current);
         }
     }, [actualRef, onDrop]);

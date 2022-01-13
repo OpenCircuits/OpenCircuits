@@ -4,7 +4,6 @@ import {Transform} from "math/Transform";
 import {RectContains} from "math/MathUtils";
 
 import {Event} from "core/utils/Events";
-import {RequireOnly} from "core/utils/Types";
 
 import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 

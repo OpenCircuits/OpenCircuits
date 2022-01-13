@@ -4,11 +4,15 @@ import React, {useEffect, useRef} from "react"
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
     onEnter?: (e: KeyboardEvent) => void;
 }
-export const InputField = React.forwardRef(({onEnter, ...props}: Props, ref: React.MutableRefObject<HTMLInputElement>) => {
+export const InputField = React.forwardRef(({onEnter, ...props}: Props, ref: React.RefObject<HTMLInputElement>) => {
     ref = ref ?? useRef<HTMLInputElement>();
 
     useEffect(() => {
-        ref.current.addEventListener("keyup", function(evt) {
+        if (!ref.current)
+            throw new Error("InputField.useEffect failed: ref.current is null");
+        ref.current.addEventListener("keyup", function (evt) {
+            if (!ref.current)
+                throw new Error("InputField.useEffect failed: ref.current is null");
             if (evt.key === "Escape" || evt.key === "Enter")
                 ref.current.blur();
 

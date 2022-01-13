@@ -4,7 +4,6 @@ import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
 import {Event} from "core/utils/Events";
-import {RequireOnly} from "core/utils/Types";
 
 import {Port} from "core/models";
 

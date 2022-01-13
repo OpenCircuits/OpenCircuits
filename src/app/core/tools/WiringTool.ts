@@ -4,7 +4,6 @@ import {Vector} from "Vector";
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
-import {RequireOnly} from "core/utils/Types";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
@@ -29,7 +28,7 @@ export const WiringTool = (() => {
         //  and find one where the mouse is over
         return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
     }
-    function findNearestPort({input, camera}: RequireOnly<CircuitInfo, "input" | "camera">,
+    function findNearestPort({input, camera}: CircuitInfo,
                              ports: Port[]): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array

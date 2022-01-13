@@ -10,7 +10,7 @@ describe("SRLatch", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const {AutoPlace} = GetHelpers(designer);
 
     const [f, [S, E, R], [Q, Q2]] = AutoPlace(new SRLatch());
 

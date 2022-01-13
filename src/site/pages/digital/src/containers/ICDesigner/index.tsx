@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
@@ -52,7 +52,6 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
@@ -71,7 +70,7 @@ export const ICDesigner = (() => {
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
+        const canvas = useRef<HTMLCanvasElement>(null);
         const [{name}, setName] = useState({ name: "" });
         const [{cursor}, setCursor] = useState({ cursor: "default" });
 
@@ -87,6 +86,8 @@ export const ICDesigner = (() => {
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ICDesigner.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             icInfo.input = new Input(canvas.current);
 

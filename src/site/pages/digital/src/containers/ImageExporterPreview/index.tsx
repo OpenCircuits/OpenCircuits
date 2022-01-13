@@ -44,6 +44,8 @@ export const ImageExporterPreview = (() => {
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ImageExporterPreview.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             info.input = new Input(canvas.current);
 

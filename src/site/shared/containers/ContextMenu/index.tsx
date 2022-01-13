@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -118,11 +118,13 @@ export const ContextMenu = ({info, paste}: Props) => {
         dispatch(CloseContextMenu());
     }
 
-    const menu = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
+    const menu = useRef<HTMLDivElement>(null);
     let pos = input?.getMousePos();
 
     /* Relocate context menu to opposite side of cursor if it were to go off-screen */
     if (isOpen) {
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
         const offset = 1;
         const contextMenuWidth = menu.current.getBoundingClientRect().width;
         const contextMenuHeight = menu.current.getBoundingClientRect().height;

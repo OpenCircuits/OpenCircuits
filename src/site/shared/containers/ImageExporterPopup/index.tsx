@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -21,7 +21,7 @@ const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10000;
 
 export type ImageExporterPreviewProps = {
-    canvas: React.MutableRefObject<HTMLCanvasElement>;
+    canvas: React.RefObject<HTMLCanvasElement>;
     isActive: boolean;
     width: number;
     height: number;
@@ -45,10 +45,14 @@ export const ImageExporterPopup = ({preview}: Props) => {
         bgColor: "#cccccc", useBg: true, useGrid: true,
     });
 
-    const wrapper = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
-    const canvas = useRef<HTMLCanvasElement>() as MutableRefObject<HTMLCanvasElement>;
+    const wrapper = useRef<HTMLDivElement>(null);
+    const canvas = useRef<HTMLCanvasElement>(null);
 
     const onResize = () => {
+        if (!wrapper.current)
+            throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");
+        if (!canvas.current)
+            throw new Error("ImageExporterPopup.onResize failed: canvas.current is null")
         // Fit the canvas within the wrapper using the same ratio as the actual canvas
         const sw = Clamp(state.width, MIN_IMG_SIZE, MAX_IMG_SIZE);
         const sh = Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE);
@@ -158,7 +162,11 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         </div>
                     </div>
                     <div>
-                        <button name="confirm" onClick={() => SaveImage(canvas.current, circuitName, state)}>
+                        <button name="confirm" onClick={() => {
+                            if (!canvas.current)
+                                throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");
+                            SaveImage(canvas.current, circuitName, state);
+                            }}>
                             Export as {state.type.toUpperCase()}
                         </button>
                         <button name="cancel" onClick={() => dispatch(CloseHeaderPopups())}>

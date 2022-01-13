@@ -4,7 +4,6 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event} from "core/utils/Events";
 import {isPressable} from "core/utils/Pressable";
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
-import {RequireOnly} from "core/utils/Types";
 
 import {CircuitDesigner, IOObject} from "core/models";
 

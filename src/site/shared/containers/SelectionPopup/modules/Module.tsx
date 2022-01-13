@@ -1,4 +1,4 @@
-import {useLayoutEffect, useState, cloneElement, useRef, MutableRefObject} from "react";
+import {useLayoutEffect, useState, cloneElement, useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 import {Selectable} from "core/utils/Selectable";
@@ -117,7 +117,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
 
-        const inputRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
+        const inputRef = useRef<HTMLInputElement>(null);
 
         useLayoutEffect(() => {
             // This means Selections changed, so we must check if
