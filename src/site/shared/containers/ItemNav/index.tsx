@@ -111,13 +111,13 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
     const {w, h} = useWindowSize();
     let sections = (w > 768 || w > h) ? config.sections : [];
     if (sections.length === 0) {
-        let numPerSection = Math.floor(w / 100);
+        let numPerSection = Math.floor((w - 30) / 100);
         config.sections.forEach(section => {
             let items = section.items.slice();
             let subSectionNum = 0;
             while (items.length > 0) {
                 sections.push({
-                    id: section.id + subSectionNum,
+                    id: section.id,
                     label: section.label,
                     items: items.slice(0, numPerSection),
                 });
