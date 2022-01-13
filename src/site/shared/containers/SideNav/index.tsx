@@ -33,8 +33,9 @@ type Props = {
     exampleCircuits: CircuitMetadata[];
 }
 export const SideNav = ({ helpers, exampleCircuits }: Props) => {
-    const { auth, isOpen, loading, circuits } = useSharedSelector(
-        state => ({ ...state.user, isOpen: state.sideNav.isOpen, loading: state.circuit.loading })
+    const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
+        state => ({ ...state.user, isOpen: state.sideNav.isOpen,
+                    loading: state.circuit.loading, loadingCircuits: state.user.loading })
     );
     const dispatch = useSharedDispatch();
 
@@ -60,20 +61,23 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
-                {circuits.map((circuit, i) =>
-                    <CircuitPreview key={`sidenav-user-circuit-${i}`}
-                                    data={circuit}
-                                    onClick={async () => {
-                                        if (loading) // Don't load another circuit if already loading
-                                            return;
-                                        await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
-                                        dispatch(ToggleSideNav());
-                                    }}
-                                    onDelete={() => {
-                                        if (loading) // Don't let user delete circuit while loading
-                                            return;
-                                        helpers.DeleteCircuitRemote(circuit);
-                                    }} />
+                {loadingCircuits ?
+                    <div className="sidenav__content__circuits-loading"></div> :
+                    circuits.map((circuit, i) =>
+                        <CircuitPreview
+                            key={`sidenav-user-circuit-${i}`}
+                            data={circuit}
+                            onClick={async () => {
+                                if (loading) // Don't load another circuit if already loading
+                                    return;
+                                await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
+                                dispatch(ToggleSideNav());
+                            }}
+                            onDelete={() => {
+                                if (loading) // Don't let user delete circuit while loading
+                                    return;
+                                helpers.DeleteCircuitRemote(circuit);
+                            }} />
                 )}
                 </div>
                 <h4 unselectable="on">Examples</h4>

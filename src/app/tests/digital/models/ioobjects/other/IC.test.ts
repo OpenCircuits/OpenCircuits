@@ -1,6 +1,7 @@
 import "jest";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
 import {Switch}          from "digital/models/ioobjects/inputs/Switch";
 import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
 import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
@@ -10,7 +11,6 @@ import {IC}     from "digital/models/ioobjects/other/IC";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 import {GetHelpers} from "test/helpers/Helpers";
-import {ConstantHigh} from "digital/models/ioobjects";
 
 
 describe("IC", () => {
