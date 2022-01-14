@@ -60,11 +60,6 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
         (ev) => onDragEnd(V(ev.clientX, ev.clientY)),
         [isDragging, ...data]
     );
-    useDocEvent(
-        "touchend",
-        (ev) => onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY)),
-        [isDragging, ...data]
-    );
 
     return (
         <button
@@ -95,6 +90,10 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
                         setState({ startTapTime: undefined, startX: 0, startY: 0, touchDown: false });
                     }
                 }
+            }}
+            onTouchEnd={(ev) => {
+                onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY));
+                if (other.onTouchEnd) other.onTouchEnd(ev);
             }}>
             {children}
         </button>

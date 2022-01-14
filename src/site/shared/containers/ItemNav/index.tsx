@@ -70,9 +70,14 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         setCurItemImg("");
         onFinish && onFinish(cancelled);
     }
-    // Drop the current item on click
+    // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
+        reset();
+    }, [curItemID, numClicks, setState, additionalData]);
+    useDocEvent("touchend", (ev) => {
+        const {clientX: x, clientY: y} = ev.changedTouches.item(0);
+        DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
     }, [curItemID, numClicks, setState, additionalData]);
 
@@ -244,6 +249,10 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                                                 setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                                 onStart && onStart();
                                             }
+                                        }}
+                                        onTouchEnd={(ev) => {
+                                            // Prevents the `touchend` listener of placing the component to fire
+                                            ev.stopPropagation();
                                         }}>
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     </Draggable>
