@@ -13,16 +13,18 @@ import {DragDropHandlers} from "./DragDropHandlers";
 type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
     children: React.ReactNode;
     data: any[];
+    dragDir: "horizontal" | "vertical";
     onDragChange?: (type: "start" | "end") => void;
 };
-export const Draggable = ({ children, data, onDragChange, ...other }: Props) => {
+export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: Props) => {
     const [isDragging, setIsDragging] = useState(false);
 
     // State to keep track of when to "start" dragging for a mobile touch-down
     //  This is necessary so that if a user tries to scroll on a Draggable
     //   they have a tiny amount of time before it starts dragging so they can swipe
-    const [{startTapTime, touchDown}, setState] = useState({
-        startTapTime: 0, touchDown: false,
+    //  Also keep track of starting position so we can determine direction of movement
+    const [state, setState] = useState({
+        startTapTime: 0, startX: 0, startY: 0, touchDown: false
     });
 
     function onDragEnd(pos: Vector) {
@@ -64,18 +66,37 @@ export const Draggable = ({ children, data, onDragChange, ...other }: Props) => 
         [isDragging, ...data]
     );
 
-    return <button {...other}
-                   onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
-                   onMouseDown={() => setIsDragging(true) }
-                   // This is necessary for mobile such that when the user is trying to
-                   //  swipe to scroll, it doesn't drag too quickly
-                   onTouchStart={() => setState({ startTapTime: Date.now(), touchDown: true }) }
-                   onTouchMove={() => {
-                       if (touchDown && (Date.now() - startTapTime) > DRAG_TIME) {
-                           setIsDragging(true)
-                           setState({ startTapTime: undefined, touchDown: false });
-                       }
-                   }}>
-        {children}
-    </button>
+    return (
+        <button
+            {...other}
+            onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
+            onMouseDown={() => setIsDragging(true) }
+            // This is necessary for mobile such that when the user is trying to
+            //  swipe to scroll, it doesn't drag too quickly
+            onTouchStart={(e) => {
+                const {clientX: x, clientY: y} = e.touches.item(0);
+                setState({ startTapTime: Date.now(), startX: x, startY: y, touchDown: true });
+            }}
+            onTouchMove={(e) => {
+                const {startTapTime, startX, startY, touchDown} = state;
+                const {clientX: x, clientY: y} = e.touches.item(0);
+                const vx = (x - startX), vy = (y - startY);
+                const dt = (Date.now() - startTapTime);
+
+                // Wait to check for a drag
+                if (touchDown && dt > DRAG_TIME) {
+                    // Make sure it's being dragged in correct direction
+                    const dir = (Math.abs(vy) > Math.abs(vx)) ? "vertical" : "horizontal";
+                    if (dir === dragDir) { // Check for correct direction
+                        setIsDragging(true);
+                        setState({ startTapTime: undefined, startX: 0, startY: 0, touchDown: false });
+                    } else if (dt > 4*DRAG_TIME) {
+                        // If waited *too* long, then we're probably not dragging, move on
+                        setState({ startTapTime: undefined, startX: 0, startY: 0, touchDown: false });
+                    }
+                }
+            }}>
+            {children}
+        </button>
+    );
 }
