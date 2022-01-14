@@ -1,5 +1,7 @@
 import React, {useEffect} from "react";
 
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+
 
 const DOCUMENT_NODE_TYPE = 9;
 
@@ -49,6 +51,8 @@ export function Dropdown(props: Props) {
         return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))};
     });
 
+    const {h} = useWindowSize();
+
     return (
         <div className="header__right__dropdown">
             <button className={`header__right__dropdown__button ${open ? "white" : ""}`}
@@ -56,7 +60,8 @@ export function Dropdown(props: Props) {
                     onClick={open ? onClose : onClick}>
                 <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
             </button>
-            <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}>
+            <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}
+                 style={{maxHeight: h-75+"px"}}>
                 {props.children}
             </div>
         </div>
