@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 
 import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
@@ -109,23 +109,39 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
     const additionalPreviewComp = (additionalPreview && additionalPreview(additionalData, curItemID));
 
     const {w, h} = useWindowSize();
-    let sections = (w > 768 || w > h) ? config.sections : [];
-    if (sections.length === 0) {
-        let numPerSection = Math.floor((w - 30) / 100);
-        config.sections.forEach(section => {
-            let items = section.items.slice();
-            let subSectionNum = 0;
-            while (items.length > 0) {
-                sections.push({
-                    id: section.id,
-                    label: section.label,
-                    items: items.slice(0, numPerSection),
-                });
-                items = items.slice(numPerSection);
-                subSectionNum++;
-            }
-        });
-    }
+
+    // Calculate alternate sections view for when the ItemNav is on the bottom of the screen
+    //  By placing them all on a single row
+    const sectionsBottom = useMemo(() => {
+        // Utility reducer to reduce an array to groups of size `amt`
+        //  i.e. [1,2,3,4,5,6,7].reduce(GroupBy(3),[[]])
+        //     => [[1,2,3],[4,5,6],[7]]
+        function GroupBy<T>(amt: number) {
+            return ((prev: T[][], cur: T) => [
+                ...prev.slice(0,-1),
+                ...(prev[prev.length-1].length < amt
+                    ? [[...prev[prev.length-1], cur]] // Add cur to last group
+                    : [prev[prev.length-1], [cur]])   // Create new group with just cur
+            ]);
+        }
+
+        const H_MARGIN = 30, ITEM_WIDTH = 100;
+
+        const numPerSection = Math.floor((w - H_MARGIN) / ITEM_WIDTH);
+        return config.sections.reduce((prev, section) => {
+            return [
+                ...prev,
+                ...section.items
+                    // Reduce items to group of `numPerSection`
+                    .reduce(GroupBy(numPerSection), [[]] as ItemNavItem[][])
+                    // Map each group to a new section with same ID and label
+                    .map<ItemNavSection>(items => ({ id: section.id, label: section.label, items }))
+            ];
+        }, [] as ItemNavSection[]);
+    }, [config.sections, w]);
+
+    const side = (w > 768 || w > h) ? "left" : "bottom";
+    const sections = (side === "left") ? config.sections : sectionsBottom;
 
     return (<>
         <div className="itemnav__preview"
@@ -199,34 +215,36 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                         <h4>{section.label}</h4>
                         <div>
                             {section.items.map((item, j) =>
-                                <div onMouseEnter={() => {item.removable && setHover(item.id)}}
-                                     onMouseLeave={() => {item.removable && setHover("")}}>
-                                    <Draggable key={`itemnav-section-${i}-item-${j}`}
-                                               data={[item.id, Math.max(numClicks,1), additionalData]}
-                                               onClick={(ev) => {
-                                                   setState({
-                                                       curItemID: item.id,
-                                                       numClicks: (item.id === curItemID ? numClicks+1 : 1),
-                                                   });
-                                                   setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
-                                                   onStart && onStart();
+                                <div key={`itemnav-section-${i}-item-${j}`}
+                                    onMouseEnter={() => {item.removable && setHover(item.id)}}
+                                    onMouseLeave={() => {item.removable && setHover("")}}>
+                                    <Draggable
+                                        dragDir={(side === "left") ? "horizontal" : "vertical"}
+                                        data={[item.id, Math.max(numClicks,1), additionalData]}
+                                        onClick={(ev) => {
+                                            setState({
+                                                curItemID: item.id,
+                                                numClicks: (item.id === curItemID ? numClicks+1 : 1),
+                                            });
+                                            setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                            onStart && onStart();
 
-                                                   // Prevents `onClick` listener of placing the component to fire
-                                                   ev.stopPropagation();
-                                               }}
-                                               onDragChange={(d) => {
-                                                   // Set image if user started dragging on this item
-                                                   if (d === "start") {
-                                                           // For instance, if user clicked on Button 4 times then dragged the
-                                                           //  Switch, we want to reset the numClicks to 1
-                                                       setState({
-                                                           curItemID: item.id,
-                                                           numClicks: (item.id === curItemID ? numClicks : 0),
-                                                       });
-                                                       setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
-                                                       onStart && onStart();
-                                                   }
-                                               }}>
+                                            // Prevents `onClick` listener of placing the component to fire
+                                            ev.stopPropagation();
+                                        }}
+                                        onDragChange={(d) => {
+                                            // Set image if user started dragging on this item
+                                            if (d === "start") {
+                                                    // For instance, if user clicked on Button 4 times then dragged the
+                                                    //  Switch, we want to reset the numClicks to 1
+                                                setState({
+                                                    curItemID: item.id,
+                                                    numClicks: (item.id === curItemID ? numClicks : 0),
+                                                });
+                                                setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
+                                                onStart && onStart();
+                                            }
+                                        }}>
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     </Draggable>
                                     {
