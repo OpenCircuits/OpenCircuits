@@ -122,14 +122,6 @@
             
             overflow-y: auto;
 
-            // touch-action defines whether or not the thing is scrollable when height > max-height
-            // max-height is variable per dropdown in portrait since they start at a different height,
-            //  so for now scrolling is disabled on them in portrait (otherwise you would scroll into the itemnav
-            touch-action: pan-y;
-            @media (max-width: 600px) {
-                touch-action: none;
-            }
-
             & h1 {
                 font-size: 1.5em;
 

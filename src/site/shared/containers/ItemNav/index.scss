@@ -1,8 +1,5 @@
 @import "~shared/utils/constants";
 
-$itemnav-width: 235px; // On wide screens, ItemNav is on the left
-$itemnav-height: 250px; // On narrow screens, ItemNav is on the bottom
-
 $tab-width: 18px;
 $tab-padding: 8px;
 
@@ -29,8 +26,6 @@ $tab-padding: 8px;
     border: $header-border;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
-
-    touch-action: pan-x pan-y;
 
     @media (max-width: 768px) and (orientation:portrait) {
         top: unset;

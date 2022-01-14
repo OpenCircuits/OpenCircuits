@@ -15,8 +15,6 @@ header {
     border-bottom-width: $header-border-width;
     background-color: $primary-color;
 
-    touch-action: none;
-
     & > div {
         flex: 1;
 
