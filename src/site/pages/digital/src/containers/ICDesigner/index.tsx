@@ -1,7 +1,5 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {ENTER_KEY, ESC_KEY} from "core/utils/Constants";
-
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
@@ -23,7 +21,7 @@ import {PanTool}            from "core/tools/PanTool";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {IC}     from "digital/models/ioobjects";
+import {IC} from "digital/models/ioobjects";
 
 import {ICPortTool}   from "digital/tools/ICPortTool";
 import {ICEdge,
@@ -37,6 +35,8 @@ import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
+
+import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
@@ -91,7 +91,7 @@ export const ICDesigner = (() => {
             icInfo.input = new Input(canvas.current);
 
             // Get render function
-            const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
+            const renderFunc = GetRenderFunc({ canvas: canvas.current, info: icInfo });
 
             // Add input listener
             icInfo.input.addListener((event) => {
@@ -116,20 +116,22 @@ export const ICDesigner = (() => {
             renderer.render();
         }, [setCursor]); // Pass empty array so that this only runs once on mount
 
-
+        // Keeps the ICData/IC name's in sync with `name`
         useLayoutEffect(() => {
-            if (!data)
+            if (!data || !icInfo.ic)
                 return;
             data.setName(name);
+            icInfo.ic.update();
             renderer.render();
-        }, [name, data]);
+        }, [name, data, icInfo.ic]);
 
         // Happens when activated
         useLayoutEffect(() => {
             if (!isActive || !data)
                 return;
-            // Clear name
-            setName({ name: "" });
+
+            // Retrieve current debug info from mainInfo
+            icInfo.debugOptions = mainInfo.debugOptions;
 
             // Unlock input
             icInfo.input.unblock();
@@ -173,25 +175,25 @@ export const ICDesigner = (() => {
             // Unblock main input
             mainInfo.input.unblock();
 
+            icInfo.ic = undefined;
             dispatch(CloseICDesigner());
+            setName({ name: "" }); // Clear name
         }
 
-        useKeyDownEvent(icInfo.input, ESC_KEY, () => close(true));
-        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false));
+        useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
 
         return (
-            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH}
                         style={{ cursor }} />
 
-                <input type="text"
-                        placeholder="IC Name"
-                        onChange={(ev) => setName({name: ev.target.value})}
-                        onKeyUp={(ev) => {
-                            if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
-                        }} />
+                <InputField type="text"
+                            value={name}
+                            placeholder="IC Name"
+                            onChange={(ev) => setName({name: ev.target.value})} />
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>

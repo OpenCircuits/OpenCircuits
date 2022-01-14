@@ -5,25 +5,19 @@ import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
 
+import {InputField} from "shared/components/InputField";
+
 
 export type ModuleTypes = number | string;
 
 export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
     valType: "float" | "int" | "string";
+    isActive?: (selections: SelectionsWrapper) => boolean;
     getProps: (o: T[number]) => P;
     getAction: (s: (T[number])[], newVal: P) => Action;
     getDisplayVal?: (val: P) => string | number;
 }
-
-// export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
-//     types: (Function & {prototype: T[number]})[];
-//     getProps: (o: T[number]) => P;
-//     getAction: (s: (T[number])[], newVal: P) => Action;
-// } &
-//     (P extends number ? { valType: "float" | "int" } :
-//     (P extends string ? { valType: "string" } :
-//                         { valType: "boolean" }));
 
 type State = {
     active: true;
@@ -34,10 +28,10 @@ type State = {
 }
 
 export type UseModuleProps = {
+    key?: string;
     selections: SelectionsWrapper;
     addAction: (action: Action) => void;
     render: () => void;
-    forceUpdate: () => void;
 }
 
 
@@ -134,8 +128,10 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             }
 
             // Make sure all selections are exactly of types:
-            const active = config.types.reduce((enabled, Type) =>
-                enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()),
+            const active = config.isActive?.(selections) ??
+                config.types.reduce(
+                    (enabled, Type) => enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()
+                ),
             false);
             if (!active) {
                 setState({active: false});
@@ -144,7 +140,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
             const comps = selections.get() as T;
 
-            const counts = comps.map(s => config.getProps(s));
+            const counts = comps
+                .map(s => config.getProps(s))
+                .filter(s => (s !== undefined));
 
             same = counts.every(c => (c === counts[0]));
             val = counts[0];
@@ -228,20 +226,19 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
-            <input ref={inputRef}
-                   type={props.inputType}
-                   value={focused ? textVal : ((same ? displayVal(val) : ""))}
-                   placeholder={same ? "" : (props.placeholder ?? "-")}
-                   step={"step" in props ? props.step : ""}
-                   min ={"min"  in props ? props.min  : ""}
-                   max ={"max"  in props ? props.max  : ""}
-                   onChange={(ev) => onChange(ev.target.value)}
-                   onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
-                   onBlur={() => onSubmit()}
-                   onKeyPress={({target, key}) => (props.inputType !== "color" &&
-                                                   key === "Enter" &&
-                                                   (target as HTMLInputElement).blur())}
-                   alt={props.alt} />
+            <InputField ref={inputRef}
+                        type={props.inputType}
+                        value={focused ? textVal : ((same ? displayVal(val) : ""))}
+                        placeholder={same ? "" : (props.placeholder ?? "-")}
+                        step={"step" in props ? props.step : ""}
+                        min ={"min"  in props ? props.min  : ""}
+                        max ={"max"  in props ? props.max  : ""}
+                        onChange={(ev) => onChange(ev.target.value)}
+                        onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                        onBlur={() => onSubmit()}
+                        onEnter={({target}) => (props.inputType !== "color" &&
+                                               (target as HTMLInputElement).blur())}
+                        alt={props.alt} />
         )
     }
 });
@@ -250,48 +247,55 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
 
 type ButtonModuleProps = UseModuleProps & {
-    text: string;
+    text: string | ((selections: Selectable[]) => string);
     alt: string;
     getDependencies: (s: Selectable) => string;
     isActive: (selections: Selectable[]) => boolean;
     onClick: (selections: Selectable[]) => Action | void;
 }
-export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render, forceUpdate}: ButtonModuleProps) => {
-    const [state, setState] = useState({active: false});
+export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render}: ButtonModuleProps) => {
+    // This "state" represents the "dependencies" that this module requires from the selections
+    //  and is in string form so that the React state can properly detect the changes
+    const buildState = () =>
+        selections.get().reduce((c, s) => c + s.constructor.name + getDependencies(s), "");
 
-    const dependencyStr = selections.get().reduce((c, s) => c + s.constructor.name + getDependencies(s), "");
+    const [_, setState] = useState("");
 
+
+    // Subscribe to selection changes and update the dependency string
     useLayoutEffect(() => {
-        // This means Selections changed, so we must check if
-        //  we should should show this module or not
-        if (selections.amount() === 0) {
-            setState({active: false});
-            return;
-        }
+        const update = () => setState(buildState());
 
-        setState({ active: isActive(selections.get()) });
-    }, [selections, isActive, dependencyStr]);
+        selections.addChangeListener(update);
+        return () => selections.removeChangeListener(update);
+    }, [selections, setState]);
+
 
     const click = () => {
         const a = onClick(selections.get());
         if (a)
             addAction(a);
         render();
-        forceUpdate(); // Send an update back to the SelectionPopup
+        setState(buildState());
     }
 
-    if (!state.active)
+
+    const active = selections.amount() === 0 ? false : isActive(selections.get());
+    if (!active)
         return null;
 
     return (
-        <button title={alt}
-                // When the create IC button is clicked, it must be blurred so that when enter is pressed to
-                // to confirm creation of the IC, the create button in the selection popup does not also register
-                // an enter press (Resulted in immediately opening a new IC creator with the newly made IC as the only target).
-                onClick={(ev) => {
-                    click();
-                    ev.currentTarget.blur();
-                }}>{text}</button>
+        <button
+            title={alt}
+            // When the create IC button is clicked, it must be blurred so that when enter is pressed to
+            // to confirm creation of the IC, the create button in the selection popup does not also register
+            // an enter press (Resulted in immediately opening a new IC creator with the newly made IC as the only target).
+            onClick={(ev) => {
+                click();
+                ev.currentTarget.blur();
+            }}>
+            {(typeof text === "string" ? text : text(selections.get()))}
+        </button>
     )
 }
 
@@ -315,135 +319,3 @@ export const PopupModule = (({label, modules}: PopupModuleProps) => {
         </div>;
     }
 });
-
-
-
-
-
-// const Config: ModuleConfig<[Label], boolean> = {
-//     types: [Label],
-//     valType: "boolean",
-//     getProps: (o) => o.getTextColor(),
-//     getAction: (s, newCol) => new GroupAction(s.map(o => new LabelTextColorChangeAction(o, newCol)))
-// }
-
-// export const BusButtonModule = PopupModule({
-//     label: "",
-//     modules: [CreateModule({
-//         inputType: "button",
-//         text: "Bus",
-//         config: Config,
-//         alt: "Create a bus between selected ports"
-//     })]
-// });
-
-// type BaseProps<T extends any[]> = {
-//     allowedTypes: (Function & {prototype: T[number]})[];
-// }
-// type StatefulBaseProps<T extends any[], P extends (string | number)> = BaseProps<T> & {
-//     getProps: (o: T[number]) => P;
-//     getAction: (s: (T[number])[], newVal: P) => Action;
-// }
-// type InputBaseProps<T extends any[], P extends (string | number)> = StatefulBaseProps<T, P> & {
-//     alt: string;
-// }
-
-
-// // type ButtonProps<T extends any[]> = BaseProps<T> & {
-// //     inputType: "button";
-// //     text: string;
-// //     alt: string;
-// //     onClick: () => void;
-// // }
-
-// type NumberProps<T extends any[]> = InputBaseProps<T, number> & {
-//     inputType: "number";
-//     valType: "int" | "float";
-//     step?: number;
-//     min?: number;
-//     max?: number;
-// }
-
-// type ColorProps<T extends any[]> = InputBaseProps<T, string> & {
-//     inputType: "color";
-//     valType: "string";
-// }
-
-// type TextProps<T extends any[]> = InputBaseProps<T, string> & {
-//     inputType: "text";
-//     valType: "string";
-// }
-
-// type SelectProps<T extends any[]> = StatefulBaseProps<T, string | number> & {
-//     inputType: "select";
-//     options: (string | number)[];
-// }
-
-
-
-
-// type Props<T extends any[]> =
-//     NumberProps<T> | ColorProps<T> | TextProps<T> | SelectProps<T>;
-//     // (P extends number ? NumberProps<T> : ButtonProps<T>);
-
-
-// function Test<T extends any[]>(props: Props<T>) {
-//     if (props.inputType === "number") {
-//         const {} = props;
-//     } else {
-
-//     }
-// }
-
-
-
-// Test<[Label]>({
-//     allowedTypes: [Label],
-//     inputType: "select",
-//     options: [7, 9, 14],
-//     getProps: (o) => o.getAngle(),
-//     getAction: (s, newAngle) => new GroupAction()
-// });
-
-
-// Test<[Label]>({
-//     allowedTypes: [Label],
-//     inputType: "color",
-//     valType: "string",
-//     alt: "Color",
-//     getProps: (o) => o.getTextColor(),
-//     getAction: (s, newVal) => new GroupAction()
-// });
-
-
-// Test<[Clock, Label]>({
-//     allowedTypes: [Clock, Label],
-//     inputType: "text",
-//     valType: "string",
-//     alt: "String",
-//     getProps: (o) => o.getName(),
-//     getAction: (s, newVal) => new GroupAction()
-// });
-
-
-// Test<[Clock]>({
-//     allowedTypes: [Clock],
-//     inputType: "number",
-//     valType: "int",
-//     step: 100,
-//     min: 200,
-//     max: 10000,
-//     alt: "Number",
-//     getProps: (o) => o.getFrequency(),
-//     getAction: (s, newFreq) => new GroupAction(s.map(o => new ClockFrequencyChangeAction(s, newFreq)))
-// });
-
-
-
-// Test<[Label]>({
-//     allowedTypes: [Label],
-//     inputType: "button",
-//     text: "Bus",
-//     alt: "Create a bus between selected ports",
-//     onClick: () => {}
-// })

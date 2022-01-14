@@ -1,10 +1,13 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
 
+import {GetInvertedGate} from "digital/utils/ComponentUtils";
+
 import {DigitalCircuitDesigner} from "digital/models";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
-import {DigitalObjectSet, GetInvertedGate} from "digital/utils/ComponentUtils";
+
 import {CreateSnipGateAction} from "../SnipGateActionFactory";
 
 
@@ -48,5 +51,5 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
         }
     });
 
-    return [action, new DigitalObjectSet(negatedCircuit)];
+    return [action, DigitalObjectSet.from(negatedCircuit)];
 }

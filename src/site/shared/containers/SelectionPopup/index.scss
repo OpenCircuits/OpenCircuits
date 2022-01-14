@@ -5,7 +5,7 @@
 
     z-index: 1;
 
-    width: 120px;
+    width: 170px;
     padding: 1em;
 
     color: $secondary-color;
@@ -15,7 +15,37 @@
     background-color: rgba(white, 0.8);
 
     transform: translate(0, -50%);
+    & .info-button {
+        & div {
+            display: inline-block;
+            float: left;
+            margin-left: 0;
+            margin-right: auto;
+            margin-top: auto;
+            margin-bottom: auto;
 
+            font-weight: bold;
+        }
+        & a {
+            text-decoration: none;
+            color:rgb(119, 111, 111);
+            display: inline-block;
+            font-weight: normal;
+            float: right;
+
+            border: 1.5px solid rgb(119, 111, 111);
+            border-radius:50%;
+            font-size:12px;
+            width: 14px;
+            height: 14px;
+
+            text-align: center;
+            vertical-align: middle;
+
+            margin-left: auto;
+            margin-right: 0;
+        }
+    }
     & div {
         margin-top: 6px;
         margin-bottom: 2px;

@@ -12,7 +12,9 @@
     "docs": "cd ./src/site/pages/docs && yarn start",
     "build:docs": "cd ./src/site/pages/docs && yarn build",
     "build:jsdocs": "ts-node ./scripts/docs/index.ts",
-    "test": "node ./scripts/test.js"
+    "test": "node ./scripts/test.js",
+    "coverage": "node ./scripts/test.js --coverage",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -30,6 +32,10 @@
     "detect-port-alt": "^1.1.6",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
+    "eslint": "^8.6.0",
+    "eslint-config-react-app": "^7.0.0",
+    "eslint-plugin-opencircuits": "file:./scripts/linting",
+    "eslint-webpack-plugin": "^3.1.1",
     "file-loader": "^6.2.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^5.5.0",

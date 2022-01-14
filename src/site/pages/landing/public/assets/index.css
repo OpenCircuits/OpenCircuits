@@ -1,0 +1,32 @@
+
+body {
+    font-family: Arial, sans-serif;
+
+    margin: 0;
+    padding: 0;
+
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+
+    color: #fff;
+    outline: none;
+    background-color: #ccc;
+
+    -webkit-touch-callout: none;
+     -khtml-user-select: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+}
+button,
+input {
+    padding: 0;
+
+    border-style: none;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: none;
+}
+button {
+    cursor: pointer;
+}

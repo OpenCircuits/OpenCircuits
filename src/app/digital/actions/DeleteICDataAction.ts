@@ -22,4 +22,8 @@ export class DeleteICDataAction implements Action {
         this.target.addICData(this.data);
         return this;
     }
+
+    public getName(): string {
+        return "Deleted IC Data"
+    }
 }

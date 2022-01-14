@@ -24,4 +24,5 @@ export abstract class ReversableAction implements Action {
         return (this.flipped) ? (this.normalExecute()) : (this.normalUndo());
     }
 
+    public abstract getName(): string;
 }
