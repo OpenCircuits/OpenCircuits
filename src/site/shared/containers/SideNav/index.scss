@@ -28,8 +28,6 @@ $sidenav-footer-margin-y: 10px;
     border-right-width: $sidenav-border-width;
     background-color: $primary-color;
 
-    touch-action: pan-y;
-
     &__move {
         left: -$sidenav-width - $sidenav-border-width;
     }
@@ -73,8 +71,6 @@ $sidenav-footer-margin-y: 10px;
     &__content {
         // max-height: 100%;
         flex: 1;
-
-        touch-action: pan-y;
 
         & h4 {
             font-size: 24px;

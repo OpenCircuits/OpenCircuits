@@ -21,12 +21,12 @@ $historybox-width: 250px;
 
     transition: all 0.5s;
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px) and (orientation:portrait) {
         position: absolute;
         margin-bottom: $itemnav-height;
         left: 0px;
 
-        height: calc(100% - (475px) - (50px));
+        height: 50%;
     }
 
     & > div:first-child {
@@ -57,11 +57,11 @@ $historybox-width: 250px;
 
     &__move {
         & > div:last-child {
-            @media (min-width: 768px) {
+            @media (min-width: 768px), (orientation:landscape) {
                 left: 0px;
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: 768px) and (orientation:portrait) {
                 margin-bottom: 0px;
                 left: 0px;
                 height: $historybox-height;
