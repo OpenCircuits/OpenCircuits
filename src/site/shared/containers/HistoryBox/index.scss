@@ -26,7 +26,7 @@ $historybox-width: 250px;
         margin-bottom: $itemnav-height;
         left: 0px;
 
-        height: 50%;
+        max-height: calc((40vh) + (#{$historybox-header-height}));
     }
 
     & > div:first-child {
@@ -64,7 +64,6 @@ $historybox-width: 250px;
             @media (max-width: 768px) and (orientation:portrait) {
                 margin-bottom: 0px;
                 left: 0px;
-                height: $historybox-height;
             }
         }
     }
