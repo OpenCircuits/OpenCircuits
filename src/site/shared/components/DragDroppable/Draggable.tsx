@@ -70,7 +70,7 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
         <button
             {...other}
             onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
-            onMouseDown={() => setIsDragging(true) }
+            onMouseDown={(e) => {if (!state.touchDown) setIsDragging(true);}}
             // This is necessary for mobile such that when the user is trying to
             //  swipe to scroll, it doesn't drag too quickly
             onTouchStart={(e) => {
