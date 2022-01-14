@@ -40,3 +40,6 @@ jobs:
       run: |
         yarn build:jsdocs
         yarn build:docs
+    
+    - name: Run eslint
+      run: yarn lint
