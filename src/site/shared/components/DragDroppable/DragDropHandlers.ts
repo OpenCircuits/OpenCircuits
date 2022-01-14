@@ -16,10 +16,9 @@ export const DragDropHandlers = (() => {
         },
         drop: (pos: Vector, ...data: any[]) => {
             const el = document.elementFromPoint(pos.x, pos.y) as HTMLElement;
-            if (handlers.has(el)) {
+            if (handlers.has(el))
                 handlers.get(el)(pos, ...data);
-                listeners.forEach(l => l(pos, ...data));
-            }
+            listeners.forEach(l => l(pos, ...data));
         },
         addListener: (listener: DropHandler) => {
             listeners.add(listener);
