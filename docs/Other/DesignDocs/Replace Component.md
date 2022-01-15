@@ -128,4 +128,4 @@ The function will check the number of output/input ports in use vs. the number t
 
 ### Milestone 3
 
-Using a Popup would likely be the easiest way to do this.
+Using a Popup would likely be the easiest way to do this. Flexbox can be used to display the items and they can be grouped like they are grouped in the itemnav.
