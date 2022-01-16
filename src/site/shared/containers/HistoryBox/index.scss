@@ -66,17 +66,18 @@ $historybox-width: 250px;
             background: hsl(0, 0%, 30%);
             border-radius: 15px;
         }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            max-height: 40vh;
+        }
     }
 
     &__move {
         & > div:last-child {
-            @media (min-width: 768px), (orientation:landscape) {
-                left: 0px;
-            }
+            left: 0px;
 
             @media (max-width: 768px) and (orientation:portrait) {
                 margin-bottom: 0px;
-                left: 0px;
             }
         }
     }
