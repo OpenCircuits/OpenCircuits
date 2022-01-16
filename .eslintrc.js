@@ -98,7 +98,60 @@ module.exports = {
                 }
             }
         }],
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": "default",
+                "format": ["camelCase"],
+            },
+            {
+                "selector": "typeLike",
+                "format": ["PascalCase"],
+            },
+            {
+                "selector": "parameter",
+                "format": ["camelCase", "PascalCase"],
+                "leadingUnderscore": "allow",
+            },
+            {
+                "selector": "variable",
+                "format": ["camelCase", "PascalCase"],
+                "leadingUnderscore": "allow",
+            },
+            {
+                "selector": "variable",
+                "types": ["function"],
+                "format": ["PascalCase", "camelCase"],
+                "leadingUnderscore": "allow",
+            },
+            {
+                "selector": "variable",
+                "types": ["number"],
+                "modifiers": ["const"],
+                "format": ["camelCase", "UPPER_CASE"],
+                "leadingUnderscore": "allow",
+            },
+            {
+                "selector": "objectLiteralMethod",
+                "format": ["PascalCase", "UPPER_CASE", "camelCase"],
+                "leadingUnderscore": "allow",
+            },
+            {
+                "selector": "function",
+                "format": ["PascalCase", "camelCase"],
+            },
+            {
+                "selector": "typeProperty",
+                "format": ["PascalCase", "camelCase"],
+            },
+            {
+                "selector": "variable",
+                "modifiers": ["exported", "const"],
+                "types": ["boolean", "string", "number"],
+                "format": ["UPPER_CASE"],
+            },
+        ],
         "object-curly-spacing": ["off"],
-        "opencircuits/object-curly-spacing": ["error", "always"]
+        "opencircuits/object-curly-spacing": ["error", "always"],
     }
 }
