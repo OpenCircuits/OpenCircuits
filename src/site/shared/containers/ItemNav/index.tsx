@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from "react";
 
 import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -83,7 +83,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
-        const resetListener = () => reset(false);
+        const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
