@@ -12,7 +12,7 @@ import {DigitalCircuitDesigner} from "digital/models";
 import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
-import {SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
@@ -30,7 +30,9 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
             if (!open) return;
 
-            const circuitData = await getData() as string;
+            store.dispatch(_SetCircuitLoading(true));
+
+            const circuitData = await getData();
 
             const {camera, history, designer, selections, renderer} = info;
 
@@ -54,6 +56,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             store.dispatch(SetCircuitName(metadata.name));
             store.dispatch(SetCircuitId(metadata.id));
             store.dispatch(SetCircuitSaved(false));
+            store.dispatch(_SetCircuitLoading(false));
         },
 
         SaveCircuitRemote: async () => {

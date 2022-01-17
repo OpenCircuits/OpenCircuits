@@ -1,31 +1,10 @@
-import {createRef} from "react";
-
-import {InteractionTool}    from "core/tools/InteractionTool";
-import {PanTool}            from "core/tools/PanTool";
-import {RotateTool}         from "core/tools/RotateTool";
-import {TranslateTool}      from "core/tools/TranslateTool";
-import {WiringTool}         from "core/tools/WiringTool";
-import {SplitWireTool}      from "core/tools/SplitWireTool";
-import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
-
-import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
-import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
-import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
-import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
-import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
-import {UndoHandler}          from "core/tools/handlers/UndoHandler";
-import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
-import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-import {PasteHandler}         from "core/tools/handlers/PasteHandler";
-import {SaveHandler}          from "core/tools/handlers/SaveHandler";
-
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {SetCircuitSaved} from "shared/state/CircuitInfo";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import {ContextMenu}     from "shared/containers/ContextMenu";
 import {SideNav}         from "shared/containers/SideNav";
@@ -37,9 +16,6 @@ import {PositionModule}       from "shared/containers/SelectionPopup/modules/Pos
 import {HistoryBox}           from "shared/containers/HistoryBox";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
-import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
-
-import {AppStore} from "site/digital/state";
 
 import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
@@ -87,83 +63,66 @@ const exampleCircuits = exampleConfig.examples.map((example) =>
         .build()
 );
 
-export const App = ((store: AppStore) => {
-    const canvas = createRef<HTMLCanvasElement>();
+type Props = {
+    info: DigitalCircuitInfo;
+    helpers: CircuitInfoHelpers;
+    canvas: React.RefObject<HTMLCanvasElement>;
+}
 
-    // Setup circuit and get the CircuitInfo and helpers
-    const [info, helpers] = Setup(
-        store, canvas,
-        new InteractionTool([
-            SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-            DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-            SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CleanUpHandler, CopyHandler,
-            PasteHandler((data) => DigitalPaste(data, info)),
-            SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-        ]),
-        TranslateTool, PanTool,
-        RotateTool, WiringTool,
-        SplitWireTool, SelectionBoxTool
-    );
+export const App = ({info, helpers, canvas}: Props) => {
+    const {h} = useWindowSize();
 
-    info.history.addCallback(() => {
-        store.dispatch(SetCircuitSaved(false));
-    });
+    return (
+        <div className="App">
+            <SideNav helpers={helpers}
+                     exampleCircuits={exampleCircuits} />
 
+            <div className="App__container" style={{height: h+"px"}}>
+                <DigitalHeader img="img/icons/logo.svg"
+                               helpers={helpers}
+                               info={info} />
 
-    return function AppView() {
-        return (
-            <div className="App">
-                <SideNav helpers={helpers}
-                         exampleCircuits={exampleCircuits} />
+                <main>
+                    <MainDesigner info={info} canvas={canvas} />
 
-                <div className="App__container">
-                    <DigitalHeader img="img/icons/logo.svg"
-                                   helpers={helpers}
-                                   info={info} />
+                    <DigitalItemNav info={info} />
+                    <HistoryBox info={info} />
 
-                    <main>
-                        <MainDesigner info={info} canvas={canvas} />
+                    <SelectionPopup info={info}
+                                    modules={[PositionModule, InputCountModule,
+                                        ComparatorInputCountModule,
+                                        SelectPortCountModule,
+                                        ConstantNumberInputModule,
+                                        DecoderInputCountModule,
+                                        OutputCountModule, SegmentCountModule,
+                                        OscilloscopeDisplaySizeModule,
+                                        OscilloscopeInputCountModule,
+                                        FrequencyModule, OscilloscopeSamplesModule,
+                                        PauseResumeButtonModule,
+                                        ClearOscilloscopeButtonModule,
+                                        ClockSyncButtonModule,
+                                        ColorModule, TextColorModule,
+                                        BusButtonModule,
+                                        CreateICButtonModule, ViewICButtonModule]}
+                                    docsUrlConfig={docsConfig} />
 
-                        <DigitalItemNav info={info} />
-                        <HistoryBox info={info} />
-
-                        <SelectionPopup info={info}
-                                        modules={[PositionModule, InputCountModule,
-                                                  ComparatorInputCountModule,
-                                                  SelectPortCountModule,
-                                                  ConstantNumberInputModule,
-                                                  DecoderInputCountModule,
-                                                  OutputCountModule, SegmentCountModule,
-                                                  OscilloscopeDisplaySizeModule,
-                                                  OscilloscopeInputCountModule,
-                                                  FrequencyModule, OscilloscopeSamplesModule,
-                                                  PauseResumeButtonModule,
-                                                  ClearOscilloscopeButtonModule,
-                                                  ClockSyncButtonModule,
-                                                  ColorModule, TextColorModule,
-                                                  BusButtonModule,
-                                                  CreateICButtonModule, ViewICButtonModule]}
-                                        docsUrlConfig={docsConfig} />
-
-                        <ContextMenu info={info}
-                                     paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
-                    </main>
-                </div>
-
-                <ICDesigner mainInfo={info} />
-                <ICViewer mainInfo={info} />
-
-                <QuickStartPopup />
-                <KeyboardShortcutsPopup />
-                <ImageExporterPopup preview={(props) => (
-                    <ImageExporterPreview mainInfo={info} {...props} />
-                )} />
-
-                <ExprToCircuitPopup mainInfo={info} />
-
-                <LoginPopup />
+                    <ContextMenu info={info}
+                                 paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
+                </main>
             </div>
-        );
-    }
-});
+
+            <ICDesigner mainInfo={info} />
+            <ICViewer mainInfo={info} />
+
+            <QuickStartPopup />
+            <KeyboardShortcutsPopup />
+            <ImageExporterPopup preview={(props) => (
+                <ImageExporterPreview mainInfo={info} {...props} />
+            )} />
+
+            <ExprToCircuitPopup mainInfo={info} />
+
+            <LoginPopup />
+        </div>
+    );
+};

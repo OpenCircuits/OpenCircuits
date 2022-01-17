@@ -32,6 +32,10 @@ input {
 button {
     cursor: pointer;
 }
+* {
+    /* Prevents pinch to zoom on things other than the canvas on touchscreen */
+    touch-action: pan-x pan-y;
+}
 
 
 .loading__screen {

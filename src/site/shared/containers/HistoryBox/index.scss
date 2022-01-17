@@ -21,12 +21,12 @@ $historybox-width: 250px;
 
     transition: all 0.5s;
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px) and (orientation:portrait) {
         position: absolute;
         margin-bottom: $itemnav-height;
         left: 0px;
 
-        height: calc(100% - (475px) - (50px));
+        max-height: calc((40vh) + (#{$historybox-header-height}));
     }
 
     & > div:first-child {
@@ -53,18 +53,31 @@ $historybox-width: 250px;
         height: $historybox-height;
 
         overflow-y: scroll;
+        
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            max-height: 40vh;
+        }
     }
 
     &__move {
         & > div:last-child {
-            @media (min-width: 768px) {
-                left: 0px;
-            }
+            left: 0px;
 
-            @media (max-width: 768px) {
+            @media (max-width: 768px) and (orientation:portrait) {
                 margin-bottom: 0px;
-                left: 0px;
-                height: $historybox-height;
             }
         }
     }

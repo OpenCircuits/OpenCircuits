@@ -1,7 +1,5 @@
 @import "~shared/utils/constants";
 
-
-
 $tab-width: 18px;
 $tab-padding: 8px;
 
@@ -29,7 +27,7 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px) and (orientation:portrait) {
         top: unset;
         right: 0;
         width: unset;
@@ -40,13 +38,15 @@ $tab-padding: 8px;
     }
 
     &__move {
-        @media (min-width: 768px) {
+        @media (min-width: 768px), (orientation:landscape) {
             left: -$itemnav-width - $header-border-width;
         }
-        @media (max-width: 768px) {
+
+        @media (max-width: 768px) and (orientation:portrait) {
             bottom: -$itemnav-height - $header-border-width;
         }
     }
+
     & img {
         width: 100%;
     }
@@ -136,6 +136,7 @@ $tab-padding: 8px;
 
         position: relative;
 
+
         & > div {
             $size: $top-height + $top-margin + $header-padding;
 
@@ -147,25 +148,23 @@ $tab-padding: 8px;
             width: $size;
             height: $size;
 
-            @media (max-width: 768px) {
-                left: -$size - $header-border-width;
-                top: -$size - 2*$header-border-width - $top-margin;
-            }
-
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
 
-            @media (min-width: 768px) {
-                border-bottom-right-radius: 15px;
-            }
-            @media (max-width: 768px) {
-                border-top-left-radius: 15px;
-            }
-
             cursor: pointer;
 
             transition: 0.5s;
+
+            @media (min-width: 768px), (orientation:landscape) {
+                border-bottom-right-radius: 15px;
+            }
+
+            @media (max-width: 768px) and (orientation:portrait) {
+                left: -$size - $header-border-width;
+                top: -$size - 3*$header-border-width - $top-margin;
+                border-top-left-radius: 15px;
+            }
 
             &:after {
                 content: '×';
@@ -174,17 +173,17 @@ $tab-padding: 8px;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
 
-                @media (max-width: 768px) {
-                    left: 50%;
-                    top: calc(50% + #{$size + $header-padding});
-                }
-
                 color: black;
                 font-size: 2.5em;
 
                 transition: 0.5s;
 
                 transform: translate(-50%, -50%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
+                }
             }
         }
 
@@ -196,11 +195,16 @@ $tab-padding: 8px;
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    top: 50%;
+                }
             }
         }
     }
 
     &__sections {
+
         display: flex;
         flex-direction: column;
 
@@ -209,6 +213,18 @@ $tab-padding: 8px;
 
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        @media (min-width: 768px), (orientation:landscape) {
+            border-top: 3px solid #888;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            flex-wrap: wrap;
+
+            margin: 0 15px;
+        }
 
         &::-webkit-scrollbar {
             width: 7px;  // vertical scrollbars
@@ -224,22 +240,15 @@ $tab-padding: 8px;
             border-radius: 15px;
         }
 
-        @media (min-width: 768px) {
-            border-top: 3px solid #888;
-        }
-
-        @media (max-width: 768px) {
-            overflow-x: auto;
-
-            scroll-snap-type: x mandatory;
-
-            flex-wrap: wrap;
+        &.dragging {
+            overflow: hidden !important;
+            padding-right: 7px;
         }
 
         & > div {
             scroll-snap-align: center;
 
-            @media (max-width: 768px) {
+            @media (max-width: 768px) and (orientation:portrait) {
                 width: 100%;
             }
 
@@ -258,6 +267,10 @@ $tab-padding: 8px;
 
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
+                }
             }
 
             & > div {
@@ -267,14 +280,23 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: 768px) {
-                    width: calc(100% - 120px);
-                    margin: 0px 60px;
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
                 }
 
-                & > button {
+                & > div {
+                    position: relative;
+                    display: inline-block;
+
+                    text-align: center;
+                    align-items: flex-start;
+                    box-sizing: border-box;
+
                     font-size: 1em;
                     font-weight: bold;
+
+                    padding: 0;
+                    margin: 0;
 
                     width: 100px;
                     padding: 10px;
@@ -285,18 +307,15 @@ $tab-padding: 8px;
                     color: darken($secondary-color, 5%);
 
                     & > div {
-                        position: relative;
-
-                        & > div {
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            color: red;
-                            display: unset;
-                        }
+                        position: absolute;
+                        top: 5px;
+                        right: 15px;
+                        color: red;
+                        display: unset;
                     }
                  }
             }
         }
     }
+
 }
