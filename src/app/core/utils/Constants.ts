@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-export const SAVE_VERSION = "2.1";
+export const SAVE_VERSION = "3.0";
 
 export const DEBUG_NO_FILL = false;
 
