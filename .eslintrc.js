@@ -7,14 +7,15 @@ module.exports = {
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": "./tsconfig.base.json"
     },
-    "plugins": ["@typescript-eslint", "opencircuits"],
+    "plugins": ["@typescript-eslint", "opencircuits", "import"],
     "rules": {
         "max-len": ["warn", {
             "code": 120,
@@ -153,5 +154,24 @@ module.exports = {
         ],
         "object-curly-spacing": ["off"],
         "opencircuits/object-curly-spacing": ["error", "always"],
-    }
+        "import/no-self-import": "error",
+        "import/no-cycle": "error",
+        "import/no-useless-path-segments": "error",
+        "import/no-relative-packages": "error",
+        "import/no-deprecated": "warn",
+        "import/no-mutable-exports": "error",
+        "import/first": "error",
+        "import/exports-last": "error",
+        "import/no-duplicates": "error",
+        "import/no-namespace": "error",
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "ts": "never",
+                "tsx": "never",
+            }
+        ],
+        "import/newline-after-import": ["error", { "count": 2 }],
+    },
 }
