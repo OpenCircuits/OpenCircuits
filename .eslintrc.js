@@ -101,55 +101,53 @@ module.exports = {
         }],
         "@typescript-eslint/naming-convention": [
             "error",
-            {
+            { // General default, only camelCase with no leading/trailing underscores
                 "selector": "default",
                 "format": ["camelCase"],
             },
-            {
+            { // class, interface, typeAlias, enum, typeParameter are Pascalcase by default, no leading underscore
                 "selector": "typeLike",
                 "format": ["PascalCase"],
             },
-            {
-                "selector": "parameter",
+            { // parameters and variables can be camelCase or PascalCase with a leading underscore
+                "selector": ["parameter", "variable"],
                 "format": ["camelCase", "PascalCase"],
                 "leadingUnderscore": "allow",
             },
-            {
+            { // const non-exported variables can be camelCase, PascalCase, or UPPER_CASE with a leading underscore
                 "selector": "variable",
-                "format": ["camelCase", "PascalCase"],
-                "leadingUnderscore": "allow",
-            },
-            {
-                "selector": "variable",
-                "types": ["function"],
-                "format": ["PascalCase", "camelCase"],
-                "leadingUnderscore": "allow",
-            },
-            {
-                "selector": "variable",
-                "types": ["number"],
                 "modifiers": ["const"],
-                "format": ["camelCase", "UPPER_CASE"],
+                "format": ["camelCase", "PascalCase", "UPPER_CASE"],
                 "leadingUnderscore": "allow",
             },
-            {
-                "selector": "objectLiteralMethod",
-                "format": ["PascalCase", "UPPER_CASE", "camelCase"],
-                "leadingUnderscore": "allow",
-            },
-            {
-                "selector": "function",
-                "format": ["PascalCase", "camelCase"],
-            },
-            {
-                "selector": "typeProperty",
-                "format": ["PascalCase", "camelCase"],
-            },
-            {
+            { // const exported non-function variables can only be UPPER_CASE, no leading underscore allowed
                 "selector": "variable",
                 "modifiers": ["exported", "const"],
-                "types": ["boolean", "string", "number"],
+                "types": ["boolean", "string", "number", "array"],
                 "format": ["UPPER_CASE"],
+            },
+            { // object literal methods can be camelCase, PascalCase, or UPPER_CASE with a leading underscore
+                "selector": "objectLiteralMethod",
+                "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+                "leadingUnderscore": "allow",
+            },
+            { // functions, typeProperties, and object literal properties can be camelCase or PascalCase, no leading underscore allowed
+                "selector": ["function", "typeProperty", "objectLiteralProperty"],
+                "format": ["camelCase", "PascalCase"],
+            },
+            { // enum members
+                "selector": "enumMember",
+                "format": ["PascalCase"],
+            },
+            { // static class properties must be UPPER_CASE, no leading underscore
+                "selector": "classProperty",
+                "modifiers": ["static"],
+                "format": ["UPPER_CASE"],
+            },
+            { // static class methods can be camelCase or  PascalCase, no leading underscore
+                "selector": "classMethod",
+                "modifiers": ["static"],
+                "format": ["camelCase", "PascalCase"],
             },
         ],
         "object-curly-spacing": ["off"],
