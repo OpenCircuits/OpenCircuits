@@ -153,6 +153,41 @@ module.exports = {
         "object-curly-spacing": ["off"],
         "opencircuits/object-curly-spacing": ["error", "always"],
         "import/no-unresolved": "error",
+        "import/no-restricted-paths": [
+            "error",
+            {
+                "zones": [
+                    {
+                        "target": "./src/app/core/**",
+                        "from": "./src/app/!(core)/**",
+                    },
+                    {
+                        "target": "./src/app/digital/**",
+                        "from": "./src/app/!(core|digital)/**",
+                    },
+                    {
+                        "target": "./src/app/**",
+                        "from": "./src/site/**",
+                    },
+                    {
+                        "target": "./src/site/shared/**",
+                        "from": "./src/app/!(core)/**",
+                    },
+                    {
+                        "target": "./src/site/shared/**",
+                        "from": "./src/site/pages/**",
+                    },
+                    {
+                        "target": "./src/site/pages/digital/**",
+                        "from": "./src/site/pages/!(digital)/**",
+                    },
+                    {
+                        "target": "./src/site/pages/landing/**",
+                        "from": "./src/site/pages/!(landing)/**",
+                    },
+                ],
+            },
+        ],
         "import/no-self-import": "error",
         "import/no-cycle": "error",
         "import/no-useless-path-segments": "error",
