@@ -152,6 +152,7 @@ module.exports = {
         ],
         "object-curly-spacing": ["off"],
         "opencircuits/object-curly-spacing": ["error", "always"],
+        "import/no-unresolved": "error",
         "import/no-self-import": "error",
         "import/no-cycle": "error",
         "import/no-useless-path-segments": "error",
@@ -170,6 +171,77 @@ module.exports = {
                 "tsx": "never",
             }
         ],
+        "import/order": [
+            "error",
+            {
+                "pathGroups": [
+                    {"pattern": "react", "group": "external"},
+
+                    {"pattern": "**Constants**", "group": "external", "position": "after"},
+                    {"pattern": "Vector", "group": "external", "position": "after"},
+                    {"pattern": "math/**", "group": "external", "position": "after"},
+
+                    {"pattern": "core/utils/**", "group": "external", "position": "after"},
+                    {"pattern": "core/actions/**", "group": "external", "position": "after"},
+                    {"pattern": "core/tools/**", "group": "external", "position": "after"},
+                    {"pattern": "core/rendering/**", "group": "external", "position": "after"},
+                    {"pattern": "core/models/**", "group": "external", "position": "after"},
+
+                    {"pattern": "digital/utils/**", "group": "external", "position": "after"},
+                    {"pattern": "digital/actions/**", "group": "external", "position": "after"},
+                    {"pattern": "digital/tools/**", "group": "external", "position": "after"},
+                    {"pattern": "digital/rendering/**", "group": "external", "position": "after"},
+                    {"pattern": "digital/models/**", "group": "external", "position": "after"},
+
+                    {"pattern": "shared/utils/**", "group": "external", "position": "after"},
+                    {"pattern": "shared/api/**", "group": "external", "position": "after"},
+                    {"pattern": "shared/state/**", "group": "external", "position": "after"},
+                    {"pattern": "shared/components/**", "group": "external", "position": "after"},
+                    {"pattern": "shared/containers/**", "group": "external", "position": "after"},
+
+                    {"pattern": "site/*/utils/**", "group": "external", "position": "after"},
+                    {"pattern": "site/*/api/**", "group": "external", "position": "after"},
+                    {"pattern": "site/*/state/**", "group": "external", "position": "after"},
+                    {"pattern": "site/*/components/**", "group": "external", "position": "after"},
+                    {"pattern": "site/*/containers/**", "group": "external", "position": "after"},
+
+                    {"pattern": "**.json", "group": "sibling", "position": "after"},
+                    {"pattern": "**.scss", "group": "sibling", "position": "after"},
+                    {"pattern": "./index.scss", "group": "sibling", "position": "after"},
+                    // ./index.scss doesn't seem to be working,
+                    // see https://github.com/import-js/eslint-plugin-import/issues/1239 for further reserach
+                ],
+                "pathGroupsExcludedImportTypes": ["react"],
+                "groups":
+                [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index",
+                    "object",
+                    "type",
+                ],
+                "alphabetize":
+                {
+                    "order": "asc",
+                    "caseInsensitive": true,
+                },
+                "newlines-between": "always-and-inside-groups",
+            },
+        ],
         "import/newline-after-import": ["error", { "count": 2 }],
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {
+                "project": [
+                    "src/app/tsconfig.json",
+                    "src/site/shared/tsconfig.json",
+                    "src/site/pages/*/tsconfig.json",
+                ]
+            }
+        }
     },
 }
