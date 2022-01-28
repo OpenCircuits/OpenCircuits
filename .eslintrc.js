@@ -1,3 +1,35 @@
+const appDirectories = ["core", "digital"];
+const appSubDirectories = ["utils", "actions", "tools", "rendering", "models"];
+const siteDirectories = ["shared", "site/*"];
+const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
+const pathGroups = [
+    {"pattern": "react", "group": "external"},
+    {"pattern": "{**Constants**,**/Constants**,Constants/**,**/Constants/**}", "group": "external", "position": "after"},
+    {"pattern": "Vector", "group": "external", "position": "after"},
+    {"pattern": "math/**", "group": "external", "position": "after"},
+];
+appDirectories.forEach(dir => {
+    appSubDirectories.forEach(sub => {
+        pathGroups.push({
+            "pattern": `${dir}/${sub}/**`,
+            "group": "external",
+            "position": "after"
+        });
+    });
+});
+siteDirectories.forEach(dir => {
+    siteSubDirectories.forEach(sub => {
+        pathGroups.push({
+            "pattern": `${dir}/${sub}/**`,
+            "group": "external",
+            "position": "after"
+        });
+    });
+});
+pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});
+// ./index.scss doesn't seem to be working, see https://github.com/import-js/eslint-plugin-import/issues/1239 for further reserach
+pathGroups.push({"pattern": "{**.scss,./index.scss}", "group": "sibling", "position": "after"});           
+
 module.exports = {
     "env": {
         "browser": true,
@@ -209,43 +241,7 @@ module.exports = {
         "import/order": [
             "error",
             {
-                "pathGroups": [
-                    {"pattern": "react", "group": "external"},
-
-                    {"pattern": "**Constants**", "group": "external", "position": "after"},
-                    {"pattern": "Vector", "group": "external", "position": "after"},
-                    {"pattern": "math/**", "group": "external", "position": "after"},
-
-                    {"pattern": "core/utils/**", "group": "external", "position": "after"},
-                    {"pattern": "core/actions/**", "group": "external", "position": "after"},
-                    {"pattern": "core/tools/**", "group": "external", "position": "after"},
-                    {"pattern": "core/rendering/**", "group": "external", "position": "after"},
-                    {"pattern": "core/models/**", "group": "external", "position": "after"},
-
-                    {"pattern": "digital/utils/**", "group": "external", "position": "after"},
-                    {"pattern": "digital/actions/**", "group": "external", "position": "after"},
-                    {"pattern": "digital/tools/**", "group": "external", "position": "after"},
-                    {"pattern": "digital/rendering/**", "group": "external", "position": "after"},
-                    {"pattern": "digital/models/**", "group": "external", "position": "after"},
-
-                    {"pattern": "shared/utils/**", "group": "external", "position": "after"},
-                    {"pattern": "shared/api/**", "group": "external", "position": "after"},
-                    {"pattern": "shared/state/**", "group": "external", "position": "after"},
-                    {"pattern": "shared/components/**", "group": "external", "position": "after"},
-                    {"pattern": "shared/containers/**", "group": "external", "position": "after"},
-
-                    {"pattern": "site/*/utils/**", "group": "external", "position": "after"},
-                    {"pattern": "site/*/api/**", "group": "external", "position": "after"},
-                    {"pattern": "site/*/state/**", "group": "external", "position": "after"},
-                    {"pattern": "site/*/components/**", "group": "external", "position": "after"},
-                    {"pattern": "site/*/containers/**", "group": "external", "position": "after"},
-
-                    {"pattern": "**.json", "group": "sibling", "position": "after"},
-                    {"pattern": "**.scss", "group": "sibling", "position": "after"},
-                    {"pattern": "./index.scss", "group": "sibling", "position": "after"},
-                    // ./index.scss doesn't seem to be working,
-                    // see https://github.com/import-js/eslint-plugin-import/issues/1239 for further reserach
-                ],
+                "pathGroups": pathGroups,
                 "pathGroupsExcludedImportTypes": ["react"],
                 "groups":
                 [
