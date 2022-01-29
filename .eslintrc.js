@@ -2,6 +2,13 @@ const path = require("path");
 const fs = require("fs");
 
 
+/**
+ * Returns an array of subdirectory paths (not including prefix) found in a depth first search
+ * 
+ * @param {string} prefix prefix of the path to search
+ * @param {string} topDir path to search
+ * @returns {string[]} An array of all subdirectories in a depth first recursive manner
+ */
 function getSubdirectories(prefix, topDir) {
     const paths = [];
     if (fs.existsSync(path.join(prefix, topDir))) {
@@ -16,6 +23,18 @@ function getSubdirectories(prefix, topDir) {
     return paths;
 }
 
+/**
+ * Modifies pathGroupsIn, adding pattern to it both with and without "/*" appended to the end.
+ * The "group" will be "external" and the "position" will be "after".
+ * 
+ * @param {string} pathGroupsIn the array of pathGroups to add to
+ * @param {string} pattern the new pattern to add
+ */
+function addPath(pathGroupsIn, pattern) {
+    pathGroupsIn.push({ "pattern": pattern, "group": "external", "position": "after" });
+    pathGroupsIn.push({ "pattern": pattern + "/*", "group": "external", "position": "after" });
+}
+
 const appDirectories = ["core", "digital"];
 const appSubDirectories = ["utils", "actions", "tools", "rendering", "models"];
 const siteDirectories = ["shared", "digital", "landing"];
@@ -28,19 +47,11 @@ const pathGroups = [
 ];
 appDirectories.forEach(dir => {
     appSubDirectories.forEach(sub => {
-        const pattern = `${dir}/${sub}`
-        pathGroups.push({
-            "pattern": pattern + "/*",
-            "group": "external",
-            "position": "after",
-        });
+        const pattern = `${dir}/${sub}`;
+        addPath(pathGroups, pattern);
         getSubdirectories("./src/app", pattern).forEach(subDir => {
             if (!subDir.includes("Constants") && !subDir.includes("constants"))
-                pathGroups.push({
-                    "pattern": subDir + "/*",
-                    "group": "external",
-                    "position": "after",
-                });
+                addPath(pathGroups, subDir);
         });
     });
 });
@@ -48,25 +59,16 @@ siteDirectories.forEach(dir => {
     siteSubDirectories.forEach(sub => {
         const pattern = `${dir}/${sub}`;
         const shared = dir === "shared";
-        pathGroups.push({
-            "pattern": (shared ? "" : "site/") + pattern + "/*",
-            "group": "external",
-            "position": "after",
-        });
+        addPath(pathGroups, (shared ? "" : "site/") + pattern);
         const prefix = shared ? "./src/site" : "./src/site/pages";
         const topDir = shared ? pattern : `${dir}/src/${sub}`;
         getSubdirectories(prefix, topDir).forEach(subDir => {
             if (!subDir.includes("Constants") && !subDir.includes("constants"))
-                pathGroups.push({
-                    "pattern": (shared ? "" : "site/") + subDir.replace("/src/", "/") + "/*",
-                    "group": "external",
-                    "position": "after",
-                });
+                addPath(pathGroups, (shared ? "" : "site/") + subDir.replace("/src/", "/"));
         });
     });
 });
 pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});
-console.log(pathGroups);
 
 module.exports = {
     "env": {
