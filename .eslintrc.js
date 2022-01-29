@@ -4,7 +4,7 @@ const siteDirectories = ["shared", "site/*"];
 const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
-    {"pattern": "{**Constants**,**/Constants**,Constants/**,**/Constants/**}", "group": "external", "position": "after"},
+    {"pattern": "{**,**/,,./}Constants{**,/**,,}", "group": "external", "position": "after"},
     {"pattern": "Vector", "group": "external", "position": "after"},
     {"pattern": "math/**", "group": "external", "position": "after"},
 ];
@@ -26,9 +26,7 @@ siteDirectories.forEach(dir => {
         });
     });
 });
-pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});
-// ./index.scss doesn't seem to be working, see https://github.com/import-js/eslint-plugin-import/issues/1239 for further reserach
-pathGroups.push({"pattern": "{**.scss,./index.scss}", "group": "sibling", "position": "after"});           
+pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});      
 
 module.exports = {
     "env": {
@@ -260,6 +258,7 @@ module.exports = {
                     "caseInsensitive": true,
                 },
                 "newlines-between": "always-and-inside-groups",
+                "warnOnUnassignedImports": true,
             },
         ],
         "import/newline-after-import": ["error", { "count": 2 }],
