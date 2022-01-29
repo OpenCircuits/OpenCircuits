@@ -79,6 +79,7 @@ module.exports = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
+        "plugin:react-hooks/recommended",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
