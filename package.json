@@ -35,6 +35,7 @@
     "eslint": "^8.6.0",
     "eslint-config-react-app": "^7.0.0",
     "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-align-import": "^1.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-opencircuits": "file:./scripts/linting",
     "eslint-plugin-react-hooks": "^4.3.0",

@@ -88,7 +88,7 @@ module.exports = {
     "parserOptions": {
         "project": "./tsconfig.base.json"
     },
-    "plugins": ["@typescript-eslint", "opencircuits", "import"],
+    "plugins": ["@typescript-eslint", "opencircuits", "import", "align-import"],
     "rules": {
         "max-len": ["warn", {
             "code": 120,
@@ -305,6 +305,8 @@ module.exports = {
             },
         ],
         "import/newline-after-import": ["error", { "count": 2 }],
+        "align-import/align-import": "error",
+        "align-import/trim-import": "error",
     },
     "settings": {
         "import/resolver": {
