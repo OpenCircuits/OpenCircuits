@@ -1,32 +1,72 @@
+const path = require("path");
+const fs = require("fs");
+
+
+function getSubdirectories(prefix, topDir) {
+    const paths = [];
+    if (fs.existsSync(path.join(prefix, topDir))) {
+        fs.readdirSync(path.join(prefix, topDir))
+          .map(fileName => { return topDir + "/" + fileName; })
+          .filter(dir => fs.lstatSync(path.join(prefix, dir)).isDirectory())
+          .forEach(dir => {
+              paths.push(dir);
+              getSubdirectories(prefix, dir).forEach(subDir => paths.push(subDir));
+          });
+    }
+    return paths;
+}
+
 const appDirectories = ["core", "digital"];
 const appSubDirectories = ["utils", "actions", "tools", "rendering", "models"];
-const siteDirectories = ["shared", "site/*"];
+const siteDirectories = ["shared", "digital", "landing"];
 const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
-    {"pattern": "{**,**/,,./}Constants{**,/**,,}", "group": "external", "position": "after"},
+    {"pattern": "{**,**/,,./}{C,c}onstants{**,/**,,}", "group": "external", "position": "after"},
     {"pattern": "Vector", "group": "external", "position": "after"},
     {"pattern": "math/**", "group": "external", "position": "after"},
 ];
 appDirectories.forEach(dir => {
     appSubDirectories.forEach(sub => {
+        const pattern = `${dir}/${sub}`
         pathGroups.push({
-            "pattern": `${dir}/${sub}/**`,
+            "pattern": pattern + "/*",
             "group": "external",
-            "position": "after"
+            "position": "after",
+        });
+        getSubdirectories("./src/app", pattern).forEach(subDir => {
+            if (!subDir.includes("Constants") && !subDir.includes("constants"))
+                pathGroups.push({
+                    "pattern": subDir + "/*",
+                    "group": "external",
+                    "position": "after",
+                });
         });
     });
 });
 siteDirectories.forEach(dir => {
     siteSubDirectories.forEach(sub => {
+        const pattern = `${dir}/${sub}`;
+        const shared = dir === "shared";
         pathGroups.push({
-            "pattern": `${dir}/${sub}/**`,
+            "pattern": (shared ? "" : "site/") + pattern + "/*",
             "group": "external",
-            "position": "after"
+            "position": "after",
+        });
+        const prefix = shared ? "./src/site" : "./src/site/pages";
+        const topDir = shared ? pattern : `${dir}/src/${sub}`;
+        getSubdirectories(prefix, topDir).forEach(subDir => {
+            if (!subDir.includes("Constants") && !subDir.includes("constants"))
+                pathGroups.push({
+                    "pattern": (shared ? "" : "site/") + subDir.replace("/src/", "/") + "/*",
+                    "group": "external",
+                    "position": "after",
+                });
         });
     });
 });
-pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});      
+pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});
+console.log(pathGroups);
 
 module.exports = {
     "env": {
@@ -257,7 +297,7 @@ module.exports = {
                     "order": "asc",
                     "caseInsensitive": true,
                 },
-                "newlines-between": "always-and-inside-groups",
+                "newlines-between": "always",
                 "warnOnUnassignedImports": true,
             },
         ],
