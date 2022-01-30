@@ -37,6 +37,7 @@
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-align-import": "^1.0.0",
     "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsdoc": "^37.7.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-opencircuits": "file:./scripts/linting",
     "eslint-plugin-react": "^7.28.0",
