@@ -87,6 +87,7 @@ module.exports = {
         "plugin:react-redux/recommended",
         "plugin:jsx-a11y/strict",
         "plugin:sonarjs/recommended",
+        "plugin:unicorn/recommended",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
@@ -106,6 +107,7 @@ module.exports = {
         "jsx-a11y",
         "jsdoc",
         "sonarjs",
+        "unicorn",
     ],
     "rules": {
         "max-len": ["warn", {
@@ -431,6 +433,23 @@ module.exports = {
         "jsdoc/require-yields-check": "error",
         "jsdoc/tag-lines": ["error", "never"],
         "jsdoc/valid-types": "error",
+
+        "unicorn/catch-error-name": ["error", {"name": "e"}],
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/custom-error-definition": "error",
+        "unicorn/expiring-todo-comments": "off",
+        "unicorn/filename-case": ["error", {
+            "cases": {
+                "camelCase": true,
+                "pascalCase": true,
+            },
+        }],
+        "unicorn/no-array-for-each": "off",
+        "unicorn/no-unsafe-regex": "error",
+        "unicorn/no-unused-properties": "error",
+        "unicorn/prefer-at": "error",
+        "unicorn/prefer-string-replace-all": "error",
+        "unicorn/prevent-abbreviations": "off",
     },
     "settings": {
         "import/resolver": {
