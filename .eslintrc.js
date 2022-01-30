@@ -81,14 +81,20 @@ module.exports = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
+        "plugin:react-redux/recommended",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./tsconfig.base.json"
+        "project": "./tsconfig.base.json",
+        "ecmaFeatures": {
+            "jsx": true,
+        },
     },
-    "plugins": ["@typescript-eslint", "opencircuits", "import", "align-import"],
+    "plugins": ["@typescript-eslint", "opencircuits", "import", "align-import", "react", "react-redux"],
     "rules": {
         "max-len": ["warn", {
             "code": 120,
@@ -225,7 +231,9 @@ module.exports = {
         ],
         "object-curly-spacing": ["off"],
         "opencircuits/object-curly-spacing": ["error", "always"],
+
         "import/no-unresolved": "error",
+        "import/named": "error",
         "import/no-restricted-paths": [
             "error",
             {
@@ -307,6 +315,71 @@ module.exports = {
         "import/newline-after-import": ["error", { "count": 2 }],
         "align-import/align-import": "error",
         "align-import/trim-import": "error",
+
+        "react/button-has-type": "error",
+        // TODO: Decide on destructuring behavior, "always" can also be "never"
+        "react/destructuring-assignment": ["off", "always"],
+        "react/forbid-elements": ["error", {"forbid": [
+            {"element": "input", "message": "use <InputField> instead"},
+        ]}],
+        "react/forbid-foreign-prop-types": "error",
+        "react/function-component-definition": ["error", {
+            "namedComponents": "arrow-function",
+            "unnamedComponents": "arrow-function",
+        }],
+        // TODO: uncomment below when it is actually released https://github.com/yannickcr/eslint-plugin-react/blob/master/CHANGELOG.md
+        // "react/hook-use-state": "error",
+        "react/no-adjacent-inline-elements": "error",
+        "react/no-arrow-function-lifecycle": "error",
+        "react/no-danger": "error",
+        "react/no-did-mount-set-state": "error",
+        "react/no-did-update-set-state": "error",
+        "react/no-multi-comp": "error",
+        "react/no-namespace": "error",
+        "react/no-redundant-should-component-update": "error",
+        "react/no-this-in-sfc": "error",
+        "react/no-typos": "error",
+        "react/no-unsafe": "error",
+        "react/no-unstable-nested-components": "error",
+        "react/no-unused-class-component-methods": "error",
+        "react/no-unused-prop-types": "error",
+        "react/no-unused-state": "error",
+        "react/no-will-update-set-state": "error",
+        "react/prefer-read-only-props": "error",
+        "react/self-closing-comp": ["error", {
+            "component": true,
+            "html": true,
+        }],
+        "react/sort-comp": "error",
+        // TODO: decide if this should be set to something
+        "react/sort-prop-types": "off",
+        // TODO: this one also
+        "react/static-property-placement": "off",
+        "react/style-prop-object": "error",
+        "react/void-dom-elements-no-children": "error",
+        // TODO: this one also
+        "react/jsx-boolean-value": ["off", "never"],
+        "react/jsx-closing-tag-location": "error",
+        "react/jsx-curly-newline": ["error", {
+            "multiline": "consistent",
+            "singleline": "consistent",
+        }],
+        "react/jsx-equals-spacing": ["error", "never"],
+        "react/jsx-filename-extension": ["error", {"extensions": [".tsx"]}],
+        "react/jsx-fragments": ["error", "syntax"],
+        "react/jsx-handler-names": "error",
+        "react/jsx-indent": "error",
+        "react/jsx-no-constructed-context-values": "error",
+        "react/jsx-no-literals": "error",
+        "react/jsx-no-script-url": "error",
+        "react/jsx-no-useless-fragment": "error",
+        "react/jsx-one-expression-per-line": "error",
+        "react/jsx-pascal-case": "error",
+        "react/jsx-props-no-multi-spaces": "error",
+        "react/jsx-tag-spacing": ["error", {
+            "beforeClosing": "never",
+        }],
+        "react/jsx-wrap-multilines": "error",
     },
     "settings": {
         "import/resolver": {
@@ -317,6 +390,9 @@ module.exports = {
                     "src/site/pages/*/tsconfig.json",
                 ]
             }
-        }
+        },
+        "react": {
+            "version": "detect",
+        },
     },
 }
