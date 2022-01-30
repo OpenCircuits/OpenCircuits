@@ -86,6 +86,7 @@ module.exports = {
         "plugin:react-hooks/recommended",
         "plugin:react-redux/recommended",
         "plugin:jsx-a11y/strict",
+        "plugin:sonarjs/recommended",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
@@ -104,6 +105,7 @@ module.exports = {
         "react-redux",
         "jsx-a11y",
         "jsdoc",
+        "sonarjs",
     ],
     "rules": {
         "max-len": ["warn", {
