@@ -85,6 +85,7 @@ module.exports = {
         "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
         "plugin:react-redux/recommended",
+        "plugin:jsx-a11y/strict",
     ],
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
@@ -94,7 +95,7 @@ module.exports = {
             "jsx": true,
         },
     },
-    "plugins": ["@typescript-eslint", "opencircuits", "import", "align-import", "react", "react-redux"],
+    "plugins": ["@typescript-eslint", "opencircuits", "import", "align-import", "react", "react-redux", "jsx-a11y"],
     "rules": {
         "max-len": ["warn", {
             "code": 120,
@@ -380,6 +381,11 @@ module.exports = {
             "beforeClosing": "never",
         }],
         "react/jsx-wrap-multilines": "error",
+
+        "jsx-a11y/autocomplete-valid": ["error", {
+            "inputComponents": ["InputField"],
+        }],
+        "jsx-a11y/lang": "error",
     },
     "settings": {
         "import/resolver": {
