@@ -74,7 +74,8 @@ module.exports = {
     "env": {
         "browser": true,
         "es6": true,
-        "jest": true
+        "jest": true,
+        "jest/globals": true,
     },
     "extends": [
         "eslint:recommended",
@@ -88,8 +89,11 @@ module.exports = {
         "plugin:jsx-a11y/strict",
         "plugin:sonarjs/recommended",
         "plugin:unicorn/recommended",
+        "plugin:jest/recommended",
+        "plugin:jest/style",
+        "plugin:jest-formatting/strict",
     ],
-    "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
+    "ignorePatterns": ["*.js", "scripts/**"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": "./tsconfig.base.json",
@@ -108,6 +112,17 @@ module.exports = {
         "jsdoc",
         "sonarjs",
         "unicorn",
+        "jest",
+        "jest-formatting",
+    ],
+    "overrides": [
+        {
+            "files": ["**/tests/**"],
+            "rules": {
+                '@typescript-eslint/unbound-method': 'off',
+                'jest/unbound-method': 'error',
+            }
+        },
     ],
     "rules": {
         "max-len": ["warn", {
@@ -450,6 +465,14 @@ module.exports = {
         "unicorn/prefer-at": "error",
         "unicorn/prefer-string-replace-all": "error",
         "unicorn/prevent-abbreviations": "off",
+
+        "jest/prefer-comparison-matcher": "error",
+        "jest/prefer-equality-matcher": "error",
+        "jest/prefer-expect-resolves": "error",
+        "jest/prefer-hooks-on-top": "error",
+        "jest/prefer-strict-equal": "error",
+        // Disabled jest/valid-title because it is not type aware
+        "jest/valid-title": "off",
     },
     "settings": {
         "import/resolver": {
