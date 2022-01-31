@@ -13,7 +13,7 @@ $sidenav-footer-margin-y: 10px;
 // For status indicator when loading a circuit
 .overlay > div {
     position: absolute;
-    left: calc(50% + #{$sidenav-width/2});
+    left: calc(50% + math.div($sidenav-width, 2));
     top: 50%;
 
     width: 120px;

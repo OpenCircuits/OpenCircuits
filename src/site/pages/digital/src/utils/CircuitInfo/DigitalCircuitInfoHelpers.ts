@@ -7,9 +7,11 @@ import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {VersionConflictPostResolver, VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
+
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit, QueryUserCircuits} from "shared/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
@@ -32,13 +34,14 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             store.dispatch(_SetCircuitLoading(true));
 
-            const circuitData = await getData();
-
             const {camera, history, designer, selections, renderer} = info;
 
+            // Load data and run through version conflict resolution
+            const circuitData = VersionConflictResolver(await getData());
             const {metadata, contents} = JSON.parse(circuitData) as Circuit;
 
             const data = Deserialize<ContentsData>(contents);
+            VersionConflictPostResolver(metadata.version, data);
 
             // Load camera, reset selections, clear history, and replace circuit
             camera.setPos(data.camera.getPos());
