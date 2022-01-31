@@ -91,7 +91,7 @@ module.exports = {
         "plugin:unicorn/recommended",
         "plugin:jest/recommended",
         "plugin:jest/style",
-        "plugin:jest-formatting/strict",
+        "plugin:jest-formatting/recommended",
     ],
     "ignorePatterns": ["*.js", "scripts/**"],
     "parser": "@typescript-eslint/parser",
@@ -119,8 +119,9 @@ module.exports = {
         {
             "files": ["**/tests/**"],
             "rules": {
-                '@typescript-eslint/unbound-method': 'off',
-                'jest/unbound-method': 'error',
+                "@typescript-eslint/unbound-method": "off",
+                "jest/unbound-method": "error",
+                "sonarjs/no-duplicate-string": "off",
             }
         },
     ],
@@ -474,6 +475,8 @@ module.exports = {
         "jest/prefer-strict-equal": "error",
         // Disabled jest/valid-title because it is not type aware
         "jest/valid-title": "off",
+
+        "jest-formatting/padding-around-test-blocks": "off",
     },
     "settings": {
         "import/resolver": {
