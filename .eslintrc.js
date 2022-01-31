@@ -117,7 +117,7 @@ module.exports = {
     ],
     "overrides": [
         {
-            "files": ["**/tests/**"],
+            "files": ["**.test.ts"],
             "rules": {
                 "@typescript-eslint/unbound-method": "off",
                 "jest/unbound-method": "error",
@@ -262,8 +262,8 @@ module.exports = {
         "object-curly-spacing": ["off"],
         "opencircuits/object-curly-spacing": ["error", "always"],
 
-        "import/no-unresolved": "error",
-        "import/named": "error",
+        "import/no-unresolved": "off", // redundant because typescript
+        "import/named": "off", // redundant because typescript
         "import/no-restricted-paths": [
             "error",
             {
@@ -303,8 +303,8 @@ module.exports = {
         // TODO: enable import/no-cycle after model refactor
         "import/no-cycle": "off",
         "import/no-useless-path-segments": "error",
-        "import/no-relative-packages": "error",
-        "import/no-deprecated": "warn",
+        "import/no-relative-packages": "off", // slow
+        "import/no-deprecated": "off", // very few external imports
         "import/no-mutable-exports": "error",
         "import/first": "error",
         "import/exports-last": "error",
