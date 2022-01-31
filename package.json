@@ -14,7 +14,8 @@
     "build:jsdocs": "ts-node ./scripts/docs/index.ts",
     "test": "node ./scripts/test.js",
     "coverage": "node ./scripts/test.js --coverage",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
