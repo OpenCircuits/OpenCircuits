@@ -299,7 +299,8 @@ module.exports = {
             },
         ],
         "import/no-self-import": "error",
-        "import/no-cycle": "error",
+        // TODO: enable import/no-cycle after model refactor
+        "import/no-cycle": "off",
         "import/no-useless-path-segments": "error",
         "import/no-relative-packages": "error",
         "import/no-deprecated": "warn",
