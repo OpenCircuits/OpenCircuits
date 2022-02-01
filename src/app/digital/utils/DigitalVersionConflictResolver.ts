@@ -1,4 +1,7 @@
-import {Circuit} from "core/models/Circuit";
+import {Circuit, ContentsData} from "core/models/Circuit";
+import {DigitalCircuitDesigner} from "digital/models";
+import {Button, IC, Switch} from "digital/models/ioobjects";
+
 
 type SerializationDataTypes = string | number | boolean | {ref: string}
 interface SerializationEntry {
@@ -49,4 +52,28 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
     }
 
     return JSON.stringify(circuit);
+}
+
+export function VersionConflictPostResolver(version: string, data: ContentsData) {
+    const v = parseFloat(version);
+
+    const designer = data.designer as DigitalCircuitDesigner;
+
+    if (v < 3.0) {
+        // Fix issue where old ICs don't have the properly separated 'collections' so need to sort them out
+        designer.getObjects().filter(o => o instanceof IC).forEach((ic: IC) => {
+            const INPUT_WHITELIST = [Switch, Button];
+
+            const c = ic["collection"];
+            const inputs = c["inputs"];
+            const others = c["others"];
+
+            const wrongInputs = inputs.filter(i => !INPUT_WHITELIST.some((type) => i instanceof type));
+            wrongInputs.forEach(i => {
+                // Remove from `inputs` and push into `others`
+                inputs.splice(inputs.indexOf(i), 1);
+                others.push(i);
+            });
+        });
+    }
 }
