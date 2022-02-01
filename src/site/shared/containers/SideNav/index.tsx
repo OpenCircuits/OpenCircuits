@@ -70,6 +70,8 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                             onClick={async () => {
                                 if (loading) // Don't load another circuit if already loading
                                     return;
+                                if (!auth)
+                                    throw new Error("Sidenav failed: auth is undefined");
                                 await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
                                 dispatch(ToggleSideNav());
                             }}

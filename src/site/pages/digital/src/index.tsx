@@ -134,7 +134,7 @@ async function Init(): Promise<void> {
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
                     SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                     CleanUpHandler, CopyHandler,
-                    PasteHandler((data) => DigitalPaste(data, info, null)),
+                    PasteHandler((data) => DigitalPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
                 ]),
                 PanTool, RotateTool,

@@ -34,6 +34,11 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             const circuitData = await getData();
 
+            if (!circuitData) {
+                store.dispatch(_SetCircuitLoading(false));
+                throw new Error("DigitalCircuitInfoHelpers.LoadCircuit failed: circuitData isundefined");
+            }
+
             const {camera, history, designer, selections, renderer} = info;
 
             const {metadata, contents} = JSON.parse(circuitData) as Circuit;

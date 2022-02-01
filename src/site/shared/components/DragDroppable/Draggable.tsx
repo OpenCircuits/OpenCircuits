@@ -84,10 +84,10 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
                     const dir = (Math.abs(vy) > Math.abs(vx)) ? "vertical" : "horizontal";
                     if (dir === dragDir) { // Check for correct direction
                         setIsDragging(true);
-                        setState({ startTapTime: undefined, startX: 0, startY: 0, touchDown: false });
+                        setState({ startTapTime: 0, startX: 0, startY: 0, touchDown: false });
                     } else if (dt > 4*DRAG_TIME) {
                         // If waited *too* long, then we're probably not dragging, move on
-                        setState({ startTapTime: undefined, startX: 0, startY: 0, touchDown: false });
+                        setState({ startTapTime: 0, startX: 0, startY: 0, touchDown: false });
                     }
                 }
             }}

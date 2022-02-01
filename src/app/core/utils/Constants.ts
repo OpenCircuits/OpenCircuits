@@ -2,7 +2,7 @@ import {V} from "Vector";
 
 export const SAVE_VERSION = "2.1";
 
-export const DEBUG_NO_FILL = true;
+export const DEBUG_NO_FILL = false;
 
 export const WIRE_DIST_THRESHOLD  = 5;
 export const WIRE_DIST_THRESHOLD2 = Math.pow(WIRE_DIST_THRESHOLD, 2);

@@ -152,9 +152,9 @@ export class Camera {
      */
     public getCenter(): Vector {
         if (!this.width)
-            throw new Error("Camera.updateMatrix failed: this.width is undefined");
+            throw new Error("Camera.getCenter failed: this.width is undefined");
         if (!this.height)
-            throw new Error("Camera.updateMatrix failed: this.height is undefined");
+            throw new Error("Camera.getCenter failed: this.height is undefined");
         return V(this.width/2, this.height/2);
     }
     /**

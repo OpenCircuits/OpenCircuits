@@ -121,8 +121,7 @@ export const ICDesigner = (() => {
         useLayoutEffect(() => {
             if (!data || !icInfo.ic)
                 return;
-            if (name)
-                data.setName(name);
+            data.setName(name ?? "");
             icInfo.ic.update();
             renderer.render();
         }, [name, data, icInfo.ic]);

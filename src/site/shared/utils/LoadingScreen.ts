@@ -19,7 +19,7 @@ export async function LoadingScreen(
     segments: [
         number,
         string,
-        (onProgress?: (percentDone: number) => void) => Promise<void>
+        (onProgress: (percentDone: number) => void) => Promise<void>
     ][]
 ): Promise<void> {
     const loadingText = document.getElementById(`${id}-text`)!;

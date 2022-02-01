@@ -13,7 +13,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         return action;
 
     const designer = inputPorts[0].getParent().getDesigner();
-    if (designer === undefined)
+    if (!designer)
         throw new Error("CreateBusAction failed: Designer not found");
 
     // Connect closest pairs of input and output ports

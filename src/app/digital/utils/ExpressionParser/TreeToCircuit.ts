@@ -60,7 +60,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
         newGate.setInputPortCount(node.children.length);
         node.children.forEach(child => {
             if (!child)
-                return;
+                throw new Error("treeToCircuitCore failed: child was undefined");
             const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
             const wire = LazyConnect(prevNode, newGate);
             ret.push(wire);

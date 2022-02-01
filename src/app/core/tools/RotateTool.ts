@@ -30,9 +30,7 @@ export const RotateTool = (() => {
 
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
-            const input = info.input;
-            const selections = info.selections;
-            const locked = info.locked;
+            const {input, selections, locked} = info;
             if (locked)
                 return false;
             // Activate if the user pressed their mouse or finger down
