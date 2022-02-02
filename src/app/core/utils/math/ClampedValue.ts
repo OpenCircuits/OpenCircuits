@@ -78,7 +78,7 @@ export class ClampedValue {
 
     /**
      * Returns the clamped value of the number.
-     * @returns The clamped value of the number'
+     * @returns The clamped value of the number
      */
     public getValue(): number {
         return this.value;
