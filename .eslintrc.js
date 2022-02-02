@@ -85,7 +85,6 @@ module.exports = {
         "plugin:react/recommended",
         "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
-        "plugin:react-redux/recommended",
         "plugin:jsx-a11y/strict",
         "plugin:sonarjs/recommended",
         "plugin:unicorn/recommended",
@@ -107,7 +106,6 @@ module.exports = {
         "import",
         "align-import",
         "react",
-        "react-redux",
         "jsx-a11y",
         "jsdoc",
         "sonarjs",
@@ -143,7 +141,7 @@ module.exports = {
             "ignoreDeclarationSort": true,
         }],
         "spaced-comment": "error",
-        "key-spacing": "error",
+        "key-spacing": ["error", { "align": "value" }],
         "no-tabs": "error",
         "no-trailing-spaces": "error",
         "@typescript-eslint/adjacent-overload-signatures": "error",
@@ -404,7 +402,6 @@ module.exports = {
         "react/void-dom-elements-no-children": "error",
         // TODO: this one also
         "react/jsx-boolean-value": ["off", "never"],
-        "react/jsx-closing-tag-location": "error",
         "react/jsx-curly-newline": ["error", {
             "multiline": "consistent",
             "singleline": "consistent",
@@ -418,13 +415,13 @@ module.exports = {
         "react/jsx-no-literals": "error",
         "react/jsx-no-script-url": "error",
         "react/jsx-no-useless-fragment": "error",
-        "react/jsx-one-expression-per-line": "error",
         "react/jsx-pascal-case": "error",
         "react/jsx-props-no-multi-spaces": "error",
         "react/jsx-tag-spacing": ["error", {
             "beforeClosing": "never",
         }],
         "react/jsx-wrap-multilines": "error",
+        "react/jsx-one-expression-per-line": ["error", { "allow": "single-child" }],
 
         "jsx-a11y/autocomplete-valid": ["error", {
             "inputComponents": ["InputField"],
@@ -481,6 +478,7 @@ module.exports = {
         "unicorn/prefer-at": "error",
         "unicorn/prefer-string-replace-all": "error",
         "unicorn/prevent-abbreviations": "off",
+        "unicorn/no-array-callback-reference": "off",
 
         "jest/prefer-comparison-matcher": "error",
         "jest/prefer-equality-matcher": "error",
@@ -491,6 +489,8 @@ module.exports = {
         "jest/valid-title": "off",
 
         "jest-formatting/padding-around-test-blocks": "off",
+
+        "sonarjs/cognitive-complexity": "off",
     },
     "settings": {
         "import/resolver": {

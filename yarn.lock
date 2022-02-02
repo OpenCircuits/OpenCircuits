@@ -6199,15 +6199,7 @@ eslint-plugin-react-hooks@^4.3.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.3.0.tgz#318dbf312e06fab1c835a4abef00121751ac1172"
   integrity sha512-XslZy0LnMn+84NEG9jSGR6eGqaZB3133L8xewQo3fQagbQuGt7a63gf+P1NGKZavEYEC3UXaWEAA/AqDkuN6xA==
 
-eslint-plugin-react-redux@^3.3.4:
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-redux/-/eslint-plugin-react-redux-3.3.4.tgz#6842568cfab86ce24b56de991d42f6908a5b8e4d"
-  integrity sha512-VbyTrEf9L9Yr7CcEaNytY+8kFTIkuzKI8JrDvYhiyLKUmDL9eoG80rcnciGfGiqrwNAxeQ//GwM7xdCCQ8qH4Q==
-  dependencies:
-    eslint-plugin-react "^7.16.0"
-    eslint-rule-composer "^0.3.0"
-
-eslint-plugin-react@^7.16.0, eslint-plugin-react@^7.27.1, eslint-plugin-react@^7.28.0:
+eslint-plugin-react@^7.27.1, eslint-plugin-react@^7.28.0:
   version "7.28.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.28.0.tgz#8f3ff450677571a659ce76efc6d80b6a525adbdf"
   integrity sha512-IOlFIRHzWfEQQKcAD4iyYDndHwTQiCMcJVJjxempf203jnNLUnW34AXLrV33+nEXoifJE2ZEGmcjKPL8957eSw==
@@ -6258,11 +6250,6 @@ eslint-plugin-unicorn@^40.1.0:
     safe-regex "^2.1.1"
     semver "^7.3.5"
     strip-indent "^3.0.0"
-
-eslint-rule-composer@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/eslint-rule-composer/-/eslint-rule-composer-0.3.0.tgz#79320c927b0c5c0d3d3d2b76c8b4a488f25bbaf9"
-  integrity sha512-bt+Sh8CtDmn2OajxvNO+BX7Wn4CIWMpTRm3MaiKPCQcnnlm0CS2mhui6QaoeQugs+3Kj2ESKEEGJUdVafwhiCg==
 
 eslint-scope@5.1.1, eslint-scope@^5.1.1:
   version "5.1.1"
