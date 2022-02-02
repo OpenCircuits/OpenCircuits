@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAction";
 import {Label} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Label], string> = {
@@ -18,4 +18,4 @@ export const TextColorModule = PopupModule({
         config: Config,
         alt: "Text color of object(s)"
     })]
-}) as (props: UseModuleProps) => JSX.Element;
+});

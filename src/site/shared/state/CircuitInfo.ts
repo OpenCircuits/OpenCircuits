@@ -10,7 +10,7 @@ const [initialState, actions, reducer] = CreateState()(
 
         loading: false,
         saving: false,
-        error: "" as string | undefined,
+        error: "",
     },
     {
         // TODO: make factory methods for trivial action types when TS4.4 gets adopted
@@ -34,7 +34,7 @@ const [initialState, actions, reducer] = CreateState()(
             ...state,
             saving: false,
             isSaved: (action.err === undefined),
-            error: action.err,
+            error: action.err ?? "",
         }),
     }
 );

@@ -48,9 +48,6 @@ export const TranslateTool: Tool = (() => {
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
-            // if (!currentlyPressedObject)
-            //     throw new Error("TranslateTool.onActivate failed: currentlyPressedObject is null")
-
             // The event that activates this will either be keydown or mousedrag, so 
             //  we can save the key like this to use later
             activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);

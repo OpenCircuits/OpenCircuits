@@ -37,39 +37,42 @@ export class InteractionTool extends DefaultTool {
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = this.findObject(worldMousePos, info);
+        if (!obj) {
+            if (locked)
+                return false;
+            return super.onEvent(event, info);
+        }
 
-        if (obj) {
-            switch (event.type) {
-                case "mousedown":
-                    info.currentlyPressedObject = obj;
+        switch (event.type) {
+            case "mousedown":
+                info.currentlyPressedObject = obj;
 
-                    // Check that mouse type is left mouse button and
-                    //  if the object is "Pressable" and
-                    //  if we should call their ".press" method
-                    if (event.button == LEFT_MOUSE_BUTTON && isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
-                        obj.press();
-                        return true;
-                    }
-                    break;
+                // Check that mouse type is left mouse button and
+                //  if the object is "Pressable" and
+                //  if we should call their ".press" method
+                if (event.button == LEFT_MOUSE_BUTTON && isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
+                    obj.press();
+                    return true;
+                }
+                break;
 
-                case "mouseup":
-                    // Release currently pressed object
-                    if (isPressable(currentlyPressedObject)) {
-                        currentlyPressedObject.release();
-                        info.currentlyPressedObject = undefined;
-                        return true;
-                    }
+            case "mouseup":
+                // Release currently pressed object
+                if (isPressable(currentlyPressedObject)) {
+                    currentlyPressedObject.release();
                     info.currentlyPressedObject = undefined;
-                    break;
+                    return true;
+                }
+                info.currentlyPressedObject = undefined;
+                break;
 
-                case "click":
-                    // Find and click object
-                    if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
-                        obj.click();
-                        return true;
-                    }
-                    break;
-            }
+            case "click":
+                // Find and click object
+                if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
+                    obj.click();
+                    return true;
+                }
+                break;
         }
 
         if (locked)

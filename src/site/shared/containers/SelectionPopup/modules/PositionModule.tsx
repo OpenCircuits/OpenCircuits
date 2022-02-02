@@ -3,7 +3,7 @@ import {V} from "Vector";
 import {Component} from "core/models";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
-import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "./Module";
+import {CreateModule, ModuleConfig, PopupModule} from "./Module";
 
 
 const XConfig: ModuleConfig<[Component], number> = {
@@ -41,4 +41,4 @@ export const PositionModule = PopupModule({
             alt: "Y-Position of object(s)"
         })
     ]
-}) as (props: UseModuleProps) => JSX.Element;
+});

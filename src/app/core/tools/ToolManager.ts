@@ -20,6 +20,7 @@ export class ToolManager {
         // Call the current tool's (or default tool's) onEvent method
 
         if (this.currentTool) {
+            const changed = this.currentTool.onEvent(event, info);
             // Check if we should deactivate the current tool
             if (this.currentTool.shouldDeactivate(event, info)) {
                 // Deactivate the tool
@@ -28,7 +29,7 @@ export class ToolManager {
                 this.defaultTool.onActivate(event, info);
                 return true;
             }
-            return this.currentTool.onEvent(event, info);
+            return changed;
         } else {
             // Check if some other tool should be activated
             const newTool = this.tools.find(t => t.shouldActivate(event, info));

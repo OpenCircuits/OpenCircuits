@@ -5,7 +5,7 @@ import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {IOObject, Port} from "core/models";
 import {UndoHandler} from "core/tools/handlers/UndoHandler";
-import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[LED, Label, Wire], string> = {
@@ -27,4 +27,4 @@ export const ColorModule = PopupModule({
         config: Config,
         alt: "Color of object(s)"
     })]
-}) as (props: UseModuleProps) => JSX.Element;
+});

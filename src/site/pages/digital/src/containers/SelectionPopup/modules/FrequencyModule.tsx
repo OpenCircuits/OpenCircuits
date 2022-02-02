@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
 import {Clock, Oscilloscope} from "digital/models/ioobjects";
-import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Clock, Oscilloscope], number> = {
@@ -21,4 +21,4 @@ export const FrequencyModule = PopupModule({
         max: 10000,
         alt: "Delay in milliseconds"
     })]
-}) as (props: UseModuleProps) => JSX.Element;
+});

@@ -11,10 +11,8 @@ export const InputField = React.forwardRef(({onEnter, ...props}: Props, ref: Rea
         if (!ref.current)
             throw new Error("InputField.useEffect failed: ref.current is null");
         ref.current.addEventListener("keyup", function (evt) {
-            if (!ref.current)
-                throw new Error("InputField.useEffect failed: ref.current is null");
             if (evt.key === "Escape" || evt.key === "Enter")
-                ref.current.blur();
+                ref.current!.blur();
 
             if (evt.key === "Enter" && onEnter)
                 onEnter(evt);

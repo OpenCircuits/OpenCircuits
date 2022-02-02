@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {Encoder} from "digital/models/ioobjects";
 import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {CreateModule, ModuleConfig, PopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
+import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
 const Config: ModuleConfig<[Encoder], number> = {
@@ -20,4 +20,4 @@ export const OutputCountModule = PopupModule({
         step: 1, min: 1, max: 8,
         alt: "Number of outputs object(s) have"
     })]
-}) as (props: UseModuleProps) => JSX.Element;
+});

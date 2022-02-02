@@ -17,14 +17,14 @@ export class PortSet<T extends Port> {
 
     private count: ClampedValue;
 
-    private type: new(c: Component) => T;
+    private type: new(c: Component | undefined) => T;
 
     private positioner: Positioner<T>;
 
     public constructor();
-    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component) => T);
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component | undefined) => T);
     public constructor(parent?: Component, count?: ClampedValue,
-                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component) => T) {
+                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component | undefined) => T) {
         this.parent = parent!;
         this.type = type!;
         this.count = count!;

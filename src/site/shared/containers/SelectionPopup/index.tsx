@@ -16,7 +16,7 @@ import {Clamp} from "math/MathUtils";
 
 type Props = {
     info: CircuitInfo;
-    modules: ((props: UseModuleProps) => JSX.Element)[];
+    modules: ((props: UseModuleProps) => JSX.Element | null)[];
     docsUrlConfig: Record<string, string>;
 }
 export function SelectionPopup({info, modules, docsUrlConfig}: Props) {

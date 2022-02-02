@@ -26,8 +26,8 @@ export abstract class DigitalComponent extends Component {
                           outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right")) {
         super(size);
 
-        this.inputs = new PortSet<InputPort>(this, inputPortCount, inputPositioner, InputPort as new (c: Component) => InputPort);
-        this.outputs = new PortSet<OutputPort>(this, outputPortCount, outputPositioner, OutputPort as new (c: Component) => OutputPort);
+        this.inputs = new PortSet<InputPort>(this, inputPortCount, inputPositioner, InputPort);
+        this.outputs = new PortSet<OutputPort>(this, outputPortCount, outputPositioner, OutputPort);
     }
 
     /**

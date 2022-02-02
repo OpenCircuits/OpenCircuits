@@ -17,9 +17,7 @@ export const Droppable = React.forwardRef(<T extends HTMLElement>({ children, on
             throw new Error("Droppable.useEffect failed: actualRef.current is null");
         DragDropHandlers.add(actualRef.current, onDrop);
         return () => {
-            if (!actualRef.current)
-                throw new Error("Droppable.useEffect failed: actualRef.current is null");
-            DragDropHandlers.remove(actualRef.current);
+            DragDropHandlers.remove(actualRef.current!);
         }
     }, [actualRef, onDrop]);
 

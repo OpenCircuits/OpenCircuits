@@ -6,7 +6,7 @@ import {serializable} from "serialeazy";
  */
 @serializable("Name")
 export class Name {
-    private name?: string;
+    private name: string;
     private set: boolean;
 
     /**
@@ -14,7 +14,7 @@ export class Name {
      * @param name The initial name
      */
     public constructor(name?: string) {
-        this.name = name;
+        this.name = name!;
         this.set = false;
     }
 
@@ -30,11 +30,8 @@ export class Name {
     /**
      * Get the current name
      * @return the current name
-     * @throws {Error} if this.name is undefined
      */
     public getName(): string {
-        if (!this.name)
-            throw new Error("Name.getName failed: this.name is undefined");
         return this.name;
     }
 

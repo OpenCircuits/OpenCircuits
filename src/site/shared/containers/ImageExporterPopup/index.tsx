@@ -166,7 +166,7 @@ export const ImageExporterPopup = ({preview}: Props) => {
                             if (!canvas.current)
                                 throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");
                             SaveImage(canvas.current, circuitName, state);
-                            }}>
+                        }}>
                             Export as {state.type.toUpperCase()}
                         </button>
                         <button name="cancel" onClick={() => dispatch(CloseHeaderPopups())}>
