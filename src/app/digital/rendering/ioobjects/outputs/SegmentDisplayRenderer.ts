@@ -51,7 +51,7 @@ export const SegmentDisplayRenderer = (() => {
 
                 const col = (on ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
 
-                const img = Images.GetImage(`segment_${type}.svg`);
+                const img = Images.GetImage(`segment_${type}.svg`)!;
                 const size = V(img.width, img.height).scale(0.1);
                 renderer.image(img, pos, size, col);
             }

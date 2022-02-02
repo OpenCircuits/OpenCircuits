@@ -34,12 +34,12 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
  * @returns the token extracted from the expression or null if the index points to the starting location of
  *              a separator (like " ")
  */
-function getToken(expression: string, index: number, ops: OperatorFormat): Token | null {
+function getToken(expression: string, index: number, ops: OperatorFormat): Token | undefined {
     const tokenType = TokenTypesArray.find(tokenType => SubStrEquals(expression, index, ops.ops[tokenType]));
     if (tokenType)
         return {type: tokenType};
     if (SubStrEquals(expression, index, ops.separator))
-        return null;
+        return;
     return getInput(expression, index, ops);
 }
 
@@ -61,12 +61,12 @@ export function GenerateTokens(expression: string, ops: OperatorFormat): Token[]
         throw new Error("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
-    let token: Token;
+    let token: Token | undefined;
     let index = 0;
 
     while (index < expression.length) {
         token = getToken(expression, index, ops);
-        if (token === null) {
+        if (!token) {
             index += ops.separator.length;
         } else if (token.type === "input") {
             tokenList.push(token);

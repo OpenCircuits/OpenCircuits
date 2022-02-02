@@ -107,7 +107,7 @@ async function Init(): Promise<void> {
             };
             try {
                 if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-                    await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
+                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map(a => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
             }
@@ -134,7 +134,7 @@ async function Init(): Promise<void> {
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
                     SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                     CleanUpHandler, CopyHandler,
-                    PasteHandler((data) => DigitalPaste(data, info, null)),
+                    PasteHandler((data) => DigitalPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
                 ]),
                 PanTool, RotateTool,

@@ -25,14 +25,14 @@ export const Images = (() => {
 
         const drawing = CreateDrawingFromSVG(svgXML, DEBUG_NO_FILL ? {
             fillStyle: "none"
-        } : {});
+        } : {})!;
 
         images.set(imageName, drawing);
         return 1;
     };
 
     return {
-        GetImage: function(img: string): SVGDrawing {
+        GetImage: function(img: string): SVGDrawing | undefined {
             return images.get(img);
         },
         Load: async function(onprogress: (percentDone: number) => void): Promise<void> {

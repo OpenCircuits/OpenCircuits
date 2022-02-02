@@ -9,7 +9,7 @@ import {ConstantHigh, ConstantLow} from "digital/models/ioobjects";
 
 describe("SelectionHandler", () => {
     const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers({designer});
+    const {Place} = GetHelpers(designer);
 
 
     afterEach(() => {

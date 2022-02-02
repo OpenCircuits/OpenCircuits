@@ -9,7 +9,7 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
 
     public constructor(dir?: Dir, spacing?: number, shortenEdges: boolean = true) {
         super(dir, undefined, undefined, shortenEdges);
-        this.spacing = spacing;
+        this.spacing = spacing!;
     }
 
     /**
@@ -18,7 +18,7 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
      *
      * @param arr The array of input ports
      */
-    public updatePortPositions(ports: T[]): void {
+    public updatePortPositions(ports: (T | undefined)[]): void {
         ports.forEach((port, i) => {
             if (!port) // Ignore undefined ports for 'blank spaces' in the positioning
                 return;

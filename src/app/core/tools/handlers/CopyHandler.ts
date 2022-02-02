@@ -20,6 +20,10 @@ export const CopyHandler: EventHandler = ({
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
 
         const str = SerializeForCopy(objs);
+
+        if (!ev.clipboardData)
+            throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
+
         // We don't copy the data from the json since it will cause 
         // some weird error, which will cause the issue #746
         ev.clipboardData.setData("text/plain", str);

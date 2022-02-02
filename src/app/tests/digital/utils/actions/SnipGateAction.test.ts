@@ -10,7 +10,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("SnipGateAction", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("BUFGate", () => {
         const [input, buf, out] = Place(new Switch(), new BUFGate(), new LED());

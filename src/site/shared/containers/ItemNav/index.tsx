@@ -76,7 +76,10 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         reset();
     }, [curItemID, numClicks, setState, additionalData]);
     useDocEvent("touchend", (ev) => {
-        const {clientX: x, clientY: y} = ev.changedTouches.item(0);
+        const touch = ev.changedTouches.item(0);
+        if (!touch)
+            throw new Error("ItemNav.useDocEvent failed: touch is null");
+        const {clientX: x, clientY: y} = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
     }, [curItemID, numClicks, setState, additionalData]);
@@ -111,7 +114,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     const MAX_STACK = 4;
 
-    const additionalPreviewComp = (additionalPreview && additionalPreview(additionalData, curItemID));
+    const additionalPreviewComp = (additionalPreview && !!additionalData && additionalPreview(additionalData, curItemID));
 
     const {w, h} = useWindowSize();
 

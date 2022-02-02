@@ -23,5 +23,6 @@
         "isolatedModules": true,
         "strict": false,
         "sourceMap": true,
+        "strictNullChecks": true,
     },
 }

@@ -34,10 +34,17 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             store.dispatch(_SetCircuitLoading(true));
 
+            const circuitDataRaw = await getData();
+
+            if (!circuitDataRaw) {
+                store.dispatch(_SetCircuitLoading(false));
+                throw new Error("DigitalCircuitInfoHelpers.LoadCircuit failed: circuitData is undefined");
+            }
+
             const {camera, history, designer, selections, renderer} = info;
 
             // Load data and run through version conflict resolution
-            const circuitData = VersionConflictResolver(await getData());
+            const circuitData = VersionConflictResolver(circuitDataRaw);
             const {metadata, contents} = JSON.parse(circuitData) as Circuit;
 
             const data = Deserialize<ContentsData>(contents);
@@ -139,8 +146,11 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             // Create circuit copy
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
+            if (!circuitCopyMetadata)
+                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: circuitCopyMetadata is undefined");
+
             // Load circuit copy onto canvas
-            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth, circuitCopyMetadata.getId()));
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, circuitCopyMetadata.getId()));
 
             await store.dispatch(LoadUserCircuits());
         }

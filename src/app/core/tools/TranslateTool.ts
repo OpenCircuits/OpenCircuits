@@ -58,7 +58,7 @@ export const TranslateTool: Tool = (() => {
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                selections.has(currentlyPressedObject) || !currentlyPressedObject ?
+                !currentlyPressedObject || selections.has(currentlyPressedObject) ?
                         selections.get().filter(s => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];

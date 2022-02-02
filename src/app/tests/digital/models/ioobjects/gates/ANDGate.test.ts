@@ -9,7 +9,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("ANDGate", () => {
     describe("ANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers({designer});
+        const {AutoPlace} = GetHelpers(designer);
 
         const [g, [a, b], [o]] = AutoPlace(new ANDGate());
 
@@ -44,7 +44,7 @@ describe("ANDGate", () => {
 
     describe("NANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers({designer});
+        const {AutoPlace} = GetHelpers(designer);
 
         const [g, [a, b], [o]] = AutoPlace(new ANDGate(true));
 
