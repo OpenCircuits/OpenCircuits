@@ -69,6 +69,7 @@ siteDirectories.forEach(dir => {
     });
 });
 pathGroups.push({"pattern": "**.json", "group": "sibling", "position": "after"});
+pathGroups.push({"pattern": "{.,..}/**/*.{css,sass,scss}", "patternOptions": { "dot": true }, "group": "sibling", "position": "after"});
 
 module.exports = {
     "env": {
