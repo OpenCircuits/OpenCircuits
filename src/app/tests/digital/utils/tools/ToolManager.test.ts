@@ -9,9 +9,7 @@ import {DefaultTool} from "core/tools/DefaultTool";
 import {RotateTool}  from "core/tools/RotateTool";
 import {WiringTool}  from "core/tools/WiringTool";
 
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {Switch}  from "digital/models/ioobjects/inputs/Switch";
-import {LED}     from "digital/models/ioobjects/outputs/LED";
+import {ANDGate, Switch, LED} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
@@ -19,7 +17,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Tool Manager", () => {
     const {designer, input, toolManager} = Setup();
-    const {Place} = GetHelpers({designer});
+    const {Place, AutoPlace} = GetHelpers(designer);
 
     const defaultTool = toolManager.getCurrentTool() as DefaultTool;
 
@@ -34,11 +32,8 @@ describe("Tool Manager", () => {
     })
 
     test("Click Switch, Wire Switch -> LED, Select All then Rotate", () => {
-        const s = new Switch();
-        const l = new LED();
+        const [s, l] = Place(new Switch(), new LED());
         l.setPos(V(200, 0));
-
-        Place(s, l);
 
         const lPortPos = l.getInputPort(0).getWorldTargetPos();
         const sPortPos = s.getOutputPort(0).getWorldTargetPos();
@@ -73,16 +68,11 @@ describe("Tool Manager", () => {
     });
 
     test("Wire Switches to ANDGate, then ANDGate to LED, then turn them On", () => {
-        const s1 = new Switch();
-        const s2 = new Switch();
-        const a  = new ANDGate();
-        const l  = new LED();
+        const [a, [s1, s2], [l]] = AutoPlace(new ANDGate());
         s1.setPos(V(-200, -50));
         s2.setPos(V(-200, 50));
         a.setPos(V(0, 0));
         l.setPos(V(200, 0));
-
-        Place(s1, s2, a, l);
 
         const s1PortPos = s1.getOutputPort(0).getWorldTargetPos();
         const s2PortPos = s2.getOutputPort(0).getWorldTargetPos();

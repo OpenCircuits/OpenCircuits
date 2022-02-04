@@ -5,8 +5,7 @@ import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+import {ANDGate, ORGate} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
@@ -15,7 +14,7 @@ import { Label } from "digital/models/ioobjects";
 
 describe("Rotate Tool", () => {
     const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers({designer});
+    const {Place} = GetHelpers(designer);
 
     describe("Single Object", () => {
         const obj = new ANDGate();

@@ -1,44 +1,28 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "noImplicitAny": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "isolatedModules": true,
-    "strict": false,
-    "baseUrl": ".",
-    "paths": {
-      "Vector":         ["src/app/core/utils/math/Vector"],
-      "math/*":         ["src/app/core/utils/math/*"],
-      "core/*":         ["src/app/core/*"],
-      "digital/*":      ["src/app/digital/*"],
-      "analog/*":       ["src/app/analog/*"],
-      "shared/*":       ["src/site/shared/*"],
-      "site/digital/*": ["src/site/pages/digital/src/*"],
-      "test/helpers/*": ["src/app/tests/helpers/*"]
-    }
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src"
-  ]
+    "compilerOptions": {
+        "target": "es5",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "noImplicitAny": true,
+        "allowJs": true,
+        "jsx": "react-jsx",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "isolatedModules": true,
+        "strict": false,
+        "sourceMap": true,
+        "strictNullChecks": true,
+    },
 }

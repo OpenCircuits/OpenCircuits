@@ -4,8 +4,7 @@ import {Vector,V} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalWire}      from "../DigitalWire";
+import {DigitalComponent, DigitalWire} from "../index";
 
 
 @serializable("DigitalOutputPort")
@@ -14,8 +13,8 @@ export class OutputPort extends Port {
     protected connections: DigitalWire[];
 
     public constructor(parent?: DigitalComponent) {
-        super(parent);
-        this.parent = parent;
+        super(parent!);
+        this.parent = parent!;
         this.connections = [];
     }
 

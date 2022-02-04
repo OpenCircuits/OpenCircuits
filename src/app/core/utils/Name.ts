@@ -14,7 +14,7 @@ export class Name {
      * @param name The initial name
      */
     public constructor(name?: string) {
-        this.name = name;
+        this.name = name!;
         this.set = false;
     }
 

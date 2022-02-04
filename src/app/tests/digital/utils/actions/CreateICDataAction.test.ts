@@ -13,11 +13,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("IC Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
-        const a = new Switch(), b = new LED();
+        const {Place, Connect} = GetHelpers(designer);
 
-        Place(a);
-        Place(b);
+        const [a, b] = Place(new Switch(), new LED());
         Connect(a, 0, b, 0);
 
         // before ic creation
@@ -26,7 +24,7 @@ describe("IC Action", () => {
         expect(designer.getICData().length).toBe(0);
 
         // connect
-        const data = ICData.Create([a, b]);
+        const data = ICData.Create([a, b])!;
         const ac = new CreateICDataAction(data, designer).execute();
 
         // initial

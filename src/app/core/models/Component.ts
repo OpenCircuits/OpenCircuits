@@ -116,7 +116,7 @@ export abstract class Component extends CullableObject {
         return Vector.max(max, ...corners, ...ports);
     }
 
-    public getImageName(): string {
+    public getImageName(): string | undefined {
         return undefined;
     }
 }

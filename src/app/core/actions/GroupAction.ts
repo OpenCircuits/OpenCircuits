@@ -40,4 +40,14 @@ export class GroupAction implements Action {
         return true;
     }
 
+    public getName(): string {
+        if (this.actions.length === 1) {
+            return this.actions[0].getName();
+        }
+        return `Grouped ${this.actions.length} actions` ;
+    }
+
+    public getActions(): Action[] {
+        return this.actions;
+    }
 }

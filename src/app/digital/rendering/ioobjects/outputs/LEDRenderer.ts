@@ -16,19 +16,24 @@ import {LED} from "digital/models/ioobjects";
 import {Images} from "digital/utils/Images";
 import {Circle} from "core/rendering/shapes/Circle";
 
+/**
+ * Renders LEDs
+ * * Draws LED svg
+ * * If LED is on, draws glow the appropriate colour
+ */
 export const LEDRenderer = (() => {
     return {
         render(renderer: Renderer, _: Camera, led: LED, selected: boolean): void {
             const size = led.getSize();
 
             // draw the LED object
-            renderer.image(Images.GetImage(led.getImageName()), V(), size, led.getColor());
+            renderer.image(Images.GetImage(led.getImageName())!, V(), size, led.getColor());
 
             // draw the LED glow
             if (led.isOn()) {
                 // Parse colors and blend them if selected
                 const ledColor = parseColor(led.getColor());
-                const selectedColor = parseColor(SELECTED_FILL_COLOR);
+                const selectedColor = parseColor(SELECTED_FILL_COLOR!);
                 const col = (selected ? blend(ledColor, selectedColor, 0.5) : ledColor);
 
                 // Create gradient

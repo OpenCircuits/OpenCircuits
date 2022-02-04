@@ -23,4 +23,8 @@ export class SetNameAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Set Name";
+    }
+
 }

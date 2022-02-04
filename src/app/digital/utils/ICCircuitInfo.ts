@@ -1,7 +1,7 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
 import {IC} from "digital/models/ioobjects";
+import {DigitalCircuitInfo} from "./DigitalCircuitInfo";
 
 
-export type ICCircuitInfo = CircuitInfo & {
-    ic: IC;
+export type ICCircuitInfo = DigitalCircuitInfo & {
+    ic?: IC;
 }

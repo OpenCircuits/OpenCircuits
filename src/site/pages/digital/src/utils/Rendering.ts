@@ -3,6 +3,8 @@ import {Grid}            from "core/rendering/Grid";
 import {Renderer}        from "core/rendering/Renderer";
 import {DebugRenderer}   from "core/rendering/DebugRenderer";
 
+import {RenderOptions} from "core/utils/RenderQueue";
+
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
@@ -25,13 +27,14 @@ export function GetRenderFunc({canvas, info}: Info) {
         debugRenderer: DebugRenderer
     });
 
-    return function render() {
+    return function render({useGrid}: RenderOptions = { useGrid: true }) {
         const {Grid, Wires, Components, Tools, Debug} = renderers;
         const {designer, selections, toolManager} = info;
 
         renderer.clear();
 
-        Grid.render();
+        if (useGrid)
+            Grid.render();
 
         Wires.renderAll(designer.getWires(), selections.get());
         Components.renderAll(designer.getObjects(), selections.get());

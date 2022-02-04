@@ -1,6 +1,10 @@
-name: Build and Deploy to GAE for update-to-date builds
+name: Build and Deploy the nightly and documentation sites for the up-to-date code
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
+
+concurrency:
+  group: deploy-night-workflow
+  cancel-in-progress: true
 
 on:
   push:
@@ -16,25 +20,29 @@ jobs:
       uses: actions/checkout@master
 
     - name: Setup GCloud
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@master
       with:
         version: '274.0.0'
         service_account_email: ${{ secrets.GCP_SA_EMAIL }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
 
-    - name: Set Node.js 15.x
+    - name: Set Node.js 16.x
       uses: actions/setup-node@master
       with:
-        node-version: 15.x
+        node-version: 16.x
 
     - name: Install
-      run: npm install --loglevel=error
+      run: yarn
 
+    # Build nightly site
     - name: Build
+      env:
+        OC_OAUTH2_ID: ${{ secrets.OAUTH_ID }}
+        OC_AUTH_TYPES: google
+        OC_GA_ID: UA-201145837-1
       run: |
-        export REACT_APP_AUTH_TYPES=google
-        export REACT_APP_OAUTH2_ID=${{ secrets.OAUTH_ID }}
-        npm run build -- --ci --prod server digital
+        yarn build --ci --prod server digital
 
     - name: Create OAuth credentials and app.yaml
       run: |
@@ -45,3 +53,15 @@ jobs:
       working-directory: ./build
       run: gcloud app deploy --quiet
 
+    # Build docs site
+    - name: Build Docs
+      run: |
+        yarn build:jsdocs
+        yarn build:docs
+
+    - name: Upload Docs to GCS
+      uses: google-github-actions/upload-cloud-storage@main
+      with:
+        path: src/site/pages/docs/build
+        destination: docs.opencircuits.io
+        parent: false

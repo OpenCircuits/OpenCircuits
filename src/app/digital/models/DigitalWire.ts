@@ -1,14 +1,12 @@
 import {serializable, serialize} from "serialeazy";
 
+import {Port} from "core/models";
 import {Wire} from "core/models/Wire";
 
-import {DigitalComponent} from "./index";
-
-import {InputPort} from "./ports/InputPort";
-import {OutputPort} from "./ports/OutputPort";
+import {DigitalComponent, InputPort, OutputPort} from "./index";
 
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
-import {Port} from "core/models";
+
 
 @serializable("DigitalWire")
 export class DigitalWire extends Wire {
@@ -21,10 +19,10 @@ export class DigitalWire extends Wire {
     private isOn: boolean;
 
     public constructor(input?: OutputPort, output?: InputPort) {
-        super(input, output);
+        super(input!, output!);
 
-        this.p1 = input;
-        this.p2 = output;
+        this.p1 = input!;
+        this.p2 = output!;
         this.isOn = false;
     }
 

@@ -27,7 +27,7 @@ export const SelectPathHandler: EventHandler = ({
             .getWires()
             .reverse()
             .find(o => o.isWithinSelectBounds(worldMousePos));
-        const path = GetPath(wire);
+        const path = GetPath(wire!);
 
         history.add(CreateGroupSelectAction(selections, path).execute());
     }

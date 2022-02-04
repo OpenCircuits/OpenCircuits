@@ -1,13 +1,27 @@
 import {useEffect} from "react";
 
-import {Login} from "shared/state/UserInfo/actions";
+import {useSharedDispatch} from "shared/utils/hooks/useShared";
+
+import {GoogleAuthState} from "shared/api/auth/GoogleAuthState";
+
+import {CloseHeaderPopups} from "shared/state/Header";
+import {Login} from "shared/state/thunks/User";
 
 
-type Props = {
-    onLogin: (success: boolean) => void;
-}
-export const GoogleAuthButton = ({ onLogin }: Props) => {
+export const GoogleAuthButton = () => {
+    const dispatch = useSharedDispatch();
+
+    function onLogin(success: boolean) {
+        if (success) {
+            dispatch(Login(new GoogleAuthState()));
+            dispatch(CloseHeaderPopups());
+        } // Else don't login or close
+    }
+
     useEffect(() => {
+        if (!("gapi" in window)) // GAPI failed to load for some reason
+            return;
+
         // Render sign in button
         gapi.signin2.render("login-popup-google-signin", {
             "scope": "profile email",
@@ -17,7 +31,11 @@ export const GoogleAuthButton = ({ onLogin }: Props) => {
             "onsuccess": (_) => onLogin(true),
             "onfailure": (e) => { if (e.error !== "popup_closed_by_user") throw new Error(e.error); onLogin(false); }
         });
-    }, [Login]);
+
+        return () => {
+            throw new Error("Google Sign In Button effect happened again! This should not happen!");
+        }
+    }, []);
 
     return (<div id="login-popup-google-signin"></div>);
 }

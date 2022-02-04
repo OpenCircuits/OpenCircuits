@@ -1,5 +1,6 @@
 import {Camera} from "math/Camera";
 
+import {Input} from "core/utils/Input";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {RenderQueue} from "core/utils/RenderQueue";
 
@@ -21,16 +22,23 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
 
-    const info = {
+    const info: DigitalCircuitInfo = {
         locked: false,
         history,
         camera,
         designer,
-        input: undefined,
+        // This is necessary because input is created later in the pipeline because it requires canvas
+        input: undefined as unknown as Input,
         selections,
         toolManager,
-        renderer
-    } as DigitalCircuitInfo;
+        renderer,
+        debugOptions: {
+            debugCullboxes: false,
+            debugPressableBounds: false,
+            debugSelectionBounds: false,
+            debugNoFill: false
+        }
+    };
 
     return info;
 }

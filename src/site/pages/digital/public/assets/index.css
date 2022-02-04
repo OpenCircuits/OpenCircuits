@@ -29,6 +29,13 @@ input {
     background-color: rgba(0, 0, 0, 0);
     box-shadow: none;
 }
+button {
+    cursor: pointer;
+}
+* {
+    /* Prevents pinch to zoom on things other than the canvas on touchscreen */
+    touch-action: pan-x pan-y;
+}
 
 
 .loading__screen {
@@ -68,6 +75,33 @@ input {
 
     width: 30%;
     margin-left: -15%;
+}
+.loading__screen__progress {
+    position: absolute;
+    bottom: 4em;
+    width: 100%;
+}
+.loading__screen__progress__bar {
+    width: 50%;
+    height: 1em;
+    margin: auto;
+    border-radius: .33em;
+    background-color: #999;
+}
+.loading__screen__progress__bar > div {
+    width: 0%;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #4caf50;;
+    display: block;
+}
+.loading__screen__text {
+    text-align: center;
+    color: #888;
+}
+.loading__screen__text > a {
+    text-decoration: none;
+    color: #f44336;
 }
 
 @keyframes pulse {

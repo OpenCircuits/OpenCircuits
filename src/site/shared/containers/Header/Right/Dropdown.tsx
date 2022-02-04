@@ -1,5 +1,7 @@
 import React, {useEffect} from "react";
 
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+
 
 const DOCUMENT_NODE_TYPE = 9;
 
@@ -39,12 +41,17 @@ export function Dropdown(props: Props) {
                 onClose();
         }
 
+        //listener for mobile and desktop (see Issue #597)
+        const events = ["click", "touchend"];
+
         // Add listener on start
-        window.addEventListener("click", onWindowClick);
+        events.forEach((e) => window.addEventListener(e, onWindowClick));
 
         // Remove listener for cleanup
-        return () => window.removeEventListener("click", onWindowClick);
+        return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))};
     });
+
+    const {h} = useWindowSize();
 
     return (
         <div className="header__right__dropdown">
@@ -53,7 +60,8 @@ export function Dropdown(props: Props) {
                     onClick={open ? onClose : onClick}>
                 <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
             </button>
-            <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}>
+            <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}
+                 style={{maxHeight: h-75+"px"}}>
                 {props.children}
             </div>
         </div>

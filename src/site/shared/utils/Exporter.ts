@@ -6,8 +6,8 @@ export function SaveFile(data: string, name: string): void {
         name = "Untitled Circuit";
     const filename = name + ".circuit";
     const file = new Blob([data], {type: "text/json"});
-    if (window.navigator.msSaveOrOpenBlob) { // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
+    if ((window.navigator as any).msSaveOrOpenBlob) { // IE10+
+        (window.navigator as any).msSaveOrOpenBlob(file, filename);
     } else { // Others
         const a = document.createElement("a");
         const url = URL.createObjectURL(file);

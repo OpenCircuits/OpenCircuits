@@ -26,4 +26,8 @@ export class ClockFrequencyChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Clock Frequency Change";
+    }
+
 }
