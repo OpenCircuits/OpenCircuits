@@ -27,13 +27,13 @@ export const LEDRenderer = (() => {
             const size = led.getSize();
 
             // draw the LED object
-            renderer.image(Images.GetImage(led.getImageName()), V(), size, led.getColor());
+            renderer.image(Images.GetImage(led.getImageName())!, V(), size, led.getColor());
 
             // draw the LED glow
             if (led.isOn()) {
                 // Parse colors and blend them if selected
                 const ledColor = parseColor(led.getColor());
-                const selectedColor = parseColor(SELECTED_FILL_COLOR);
+                const selectedColor = parseColor(SELECTED_FILL_COLOR!);
                 const col = (selected ? blend(ledColor, selectedColor, 0.5) : ledColor);
 
                 // Create gradient

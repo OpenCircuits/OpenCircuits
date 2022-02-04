@@ -116,7 +116,7 @@ export function GetPath(w: Wire | Node): Array<Wire | Node> {
     const visited = new Set<Wire | Node>();
 
     while(queue.length > 0) {
-        const q = queue.shift();
+        const q = queue.shift()!;
 
         visited.add(q);
         path.push(q);
@@ -200,8 +200,8 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     // Create edges
     for (let j = 0; j < wires.length; j++) {
         const wire = wires[j];
-        const c1 = map.get(wire.getP1Component());
-        const c2 = map.get(wire.getP2Component());
+        const c1 = map.get(wire.getP1Component())!;
+        const c2 = map.get(wire.getP2Component())!;
         graph.createEdge(c1, c2, j);
     }
 

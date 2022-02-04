@@ -2,10 +2,11 @@ import {Vector} from "Vector";
 
 
 type DropHandler = (pos: Vector, ...data: any[]) => void;
+type DropListener = (pos: Vector, hit: boolean, ...data: any[]) => void;
 
 export const DragDropHandlers = (() => {
     const handlers = new Map<HTMLElement, DropHandler>();
-    const listeners = new Set<DropHandler>();
+    const listeners = new Set<DropListener>();
 
     return {
         add: (el: HTMLElement, onDrop: DropHandler) => {
@@ -16,15 +17,15 @@ export const DragDropHandlers = (() => {
         },
         drop: (pos: Vector, ...data: any[]) => {
             const el = document.elementFromPoint(pos.x, pos.y) as HTMLElement;
-            if (handlers.has(el)) {
-                handlers.get(el)(pos, ...data);
-                listeners.forEach(l => l(pos, ...data));
-            }
+            const hit = handlers.has(el);
+            if (hit)
+                handlers.get(el)!(pos, ...data);
+            listeners.forEach(l => l(pos, hit, ...data));
         },
-        addListener: (listener: DropHandler) => {
+        addListener: (listener: DropListener) => {
             listeners.add(listener);
         },
-        removeListener: (listener: DropHandler) => {
+        removeListener: (listener: DropListener) => {
             listeners.delete(listener);
         },
     };

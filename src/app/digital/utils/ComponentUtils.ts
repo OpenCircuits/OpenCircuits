@@ -33,7 +33,7 @@ const gateInversion: Record<string, string> = {
  */
 export function GetInvertedGate(oldGate: Gate): Gate {
     const oldName = GetIDFor(oldGate);
-    if (!(oldName in gateInversion))
+    if (!oldName || !(oldName in gateInversion))
         throw new Error(`Failed to find gate to invert with ID: ${oldName}!`);
     const newName = gateInversion[oldName];
     return Create<Gate>(newName);

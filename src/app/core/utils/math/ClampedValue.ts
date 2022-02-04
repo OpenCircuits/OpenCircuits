@@ -46,17 +46,18 @@ export class ClampedValue {
      * @param maxValue The maximum value the number can hold
      */
     public constructor(initialValue?: number, minValue?: number, maxValue?: number) {
-        this.value = initialValue;
-        this.minValue = minValue || initialValue; // if min not given use initial
-        this.maxValue = maxValue || initialValue; // if max not given use initial
+        this.value = initialValue!;
+        this.minValue = minValue ?? initialValue!; // if min not given use initial
+        this.maxValue = maxValue ?? initialValue!; // if max not given use initial
     }
 
     /**
      * Update the number to a new value, or the closest clamp bound if outside allowed range.
      * @param val The clamped value of the number
+     * @throws {Error} If this.minValue or this.maxValue are undefined
      */
     public setValue(val: number): void {
-        this.value = Clamp(val, this.minValue, this.maxValue);
+        this.value = Clamp(val, this.minValue!, this.maxValue!);
     }
 
     /**
@@ -104,7 +105,7 @@ export class ClampedValue {
      * @returns A new instance of the ClampedValue object, identical to the original
      */
     public copy(): ClampedValue {
-        return new ClampedValue(this.value, this.minValue, this.maxValue);
+        return new ClampedValue(this.value!, this.minValue!, this.maxValue!);
     }
 
 }

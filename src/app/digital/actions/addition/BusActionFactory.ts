@@ -13,15 +13,17 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         return action;
 
     const designer = inputPorts[0].getParent().getDesigner();
+    if (!designer)
+        throw new Error("CreateBusAction failed: Designer not found");
 
     // Connect closest pairs of input and output ports
     while (outputPorts.length > 0) {
         // Find closest pair of input and output ports
-        const max = {dist: -Infinity, in: undefined as InputPort, out: undefined as OutputPort};
+        const max = {dist: -Infinity, in: undefined as InputPort | undefined, out: undefined as OutputPort | undefined};
         outputPorts.forEach((outPort) => {
 
             // Find the closest input port
-            const min = {dist: Infinity, in: undefined as InputPort};
+            const min = {dist: Infinity, in: undefined as InputPort | undefined};
             inputPorts.forEach((inPort) => {
                 // Calculate distance between target pos of ports
                 const dist = outPort.getWorldTargetPos().distanceTo(inPort.getWorldTargetPos());
@@ -39,12 +41,12 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         });
 
         // Create action
-        action.add(new ConnectionAction(designer, max.out, max.in));
+        action.add(new ConnectionAction(designer, max.out!, max.in!));
         // wire.setAsStraight(true); @TODO
 
         // Remove ports from array
-        inputPorts.splice(inputPorts.indexOf(max.in), 1);
-        outputPorts.splice(outputPorts.indexOf(max.out), 1);
+        inputPorts.splice(inputPorts.indexOf(max.in!), 1);
+        outputPorts.splice(outputPorts.indexOf(max.out!), 1);
     }
 
     return action;

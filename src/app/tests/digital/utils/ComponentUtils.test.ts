@@ -19,7 +19,7 @@ import {GetInvertedGate}    from "digital/utils/ComponentUtils";
 
 function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
-    const p2 = c2.getInputPort(i2);
+    const p2 = c2!.getInputPort(i2!);
     const wire = new DigitalWire(p1, p2);
     p1.connect(wire);
     p2.connect(wire);

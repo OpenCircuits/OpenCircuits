@@ -19,11 +19,11 @@ export async function LoadingScreen(
     segments: [
         number,
         string,
-        (onProgress?: (percentDone: number) => void) => Promise<void>
+        (onProgress: (percentDone: number) => void) => Promise<void>
     ][]
 ): Promise<void> {
-    const loadingText = document.getElementById(`${id}-text`);
-    const loadingBar  = document.getElementById(`${id}-progress-bar`);
+    const loadingText = document.getElementById(`${id}-text`)!;
+    const loadingBar  = document.getElementById(`${id}-progress-bar`)!;
 
     const setText     = (text: string)   => loadingText.innerHTML = text;
     const setProgress = (amount: number) => loadingBar.style.width = amount + "%";
@@ -77,5 +77,5 @@ export async function LoadingScreen(
         setProgress((curPercent = endPercent));
     }
 
-    document.getElementById(id).style.display = "none";
+    document.getElementById(id)!.style.display = "none";
 }

@@ -27,10 +27,10 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Set Node.js 15.x
+    - name: Set Node.js 16.x
       uses: actions/setup-node@master
       with:
-        node-version: 15.x
+        node-version: 16.x
 
     - name: Install
       run: yarn

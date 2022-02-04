@@ -14,7 +14,7 @@ export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
     valType: "float" | "int" | "string";
     isActive?: (selections: SelectionsWrapper) => boolean;
-    getProps: (o: T[number]) => P;
+    getProps: (o: T[number]) => P | undefined;
     getAction: (s: (T[number])[], newVal: P) => Action;
     getDisplayVal?: (val: P) => string | number;
 }
@@ -62,7 +62,7 @@ type ModuleProps<T extends any[], P extends ModuleTypes> =
 export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: ModuleProps<T, P>) => {
     let val: P;
     let same: boolean;
-    let tempAction: Action;
+    let tempAction: Action | undefined;
     let prevDependencyStr: string;
 
     const {config} = props;
@@ -117,7 +117,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
 
-        const inputRef = useRef<HTMLInputElement>();
+        const inputRef = useRef<HTMLInputElement>(null);
 
         useLayoutEffect(() => {
             // This means Selections changed, so we must check if
@@ -142,7 +142,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
             const counts = comps
                 .map(s => config.getProps(s))
-                .filter(s => (s !== undefined));
+                .filter(s => (s !== undefined)) as P[];
 
             same = counts.every(c => (c === counts[0]));
             val = counts[0];
@@ -314,7 +314,7 @@ export const PopupModule = (({label, modules}: PopupModuleProps) => {
         return <div key={`selection-popup-${label}-module`}>
             {label}
             <label unselectable="on">
-                {ms.map((m, i) => cloneElement(m, {key: `selection-popup-${label}-module-${i}`}))}
+                {ms.map((m, i) => cloneElement(m!, {key: `selection-popup-${label}-module-${i}`}))}
             </label>
         </div>;
     }

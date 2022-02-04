@@ -3,5 +3,5 @@ import {DigitalCircuitInfo} from "./DigitalCircuitInfo";
 
 
 export type ICCircuitInfo = DigitalCircuitInfo & {
-    ic: IC;
+    ic?: IC;
 }

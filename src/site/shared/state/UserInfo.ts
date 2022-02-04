@@ -10,11 +10,11 @@ import {CreateState} from "shared/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        auth: undefined as AuthState,
+        auth: undefined as AuthState | undefined,
         isLoggedIn: false,
         circuits: [] as CircuitMetadata[],
         loading: false,
-        error: undefined as string,
+        error: "",
         autoSave: (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
     },
     {
@@ -44,7 +44,7 @@ const [initialState, actions, reducer] = CreateState()(
         "LOAD_CIRCUITS_FINISH_ID": (state, action) => {
             if (!state.auth)
                 return { ...state, circuits: [], loading: false, error: "MNot logged in!" };
-            return { ...state, circuits: (action.circuits ?? []), error: action.err, loading: false };
+            return { ...state, circuits: (action.circuits ?? []), error: action.err ?? "", loading: false };
         },
     }
 );

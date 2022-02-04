@@ -16,7 +16,7 @@ import {Clamp} from "math/MathUtils";
 
 type Props = {
     info: CircuitInfo;
-    modules: ((props: UseModuleProps) => JSX.Element)[];
+    modules: ((props: UseModuleProps) => JSX.Element | null)[];
     docsUrlConfig: Record<string, string>;
 }
 export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
@@ -33,7 +33,7 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
 
             // Make sure all components have same ID
             const ids = selections.get().map(GetIDFor);
-            setID((ids.length > 0 && ids.every(id => id === ids[0])) ? ids[0] : "");
+            setID((ids.length > 0 && ids.every(id => id === ids[0])) ? ids[0]! : "");
         }
 
         selections.addChangeListener(update);
@@ -79,10 +79,12 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     }, input, [setClickThrough]);
 
 
-    const popup = useRef<HTMLDivElement>();
+    const popup = useRef<HTMLDivElement>(null);
 
     // Clamp position to screen if visible
     if (isVisible && !isDragging) {
+        if (!popup.current)
+            throw new Error("SelectionPopup failed: popup.current is null");
         const popupWidth = popup.current.getBoundingClientRect().width;
         const popupHeight = popup.current.getBoundingClientRect().height;
 

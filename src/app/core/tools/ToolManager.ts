@@ -18,9 +18,9 @@ export class ToolManager {
 
     public onEvent(event: Event, info: CircuitInfo): boolean {
         // Call the current tool's (or default tool's) onEvent method
-        let changed = this.getCurrentTool().onEvent(event, info);
 
-        if (this.currentTool !== undefined) {
+        if (this.currentTool) {
+            const changed = this.currentTool.onEvent(event, info);
             // Check if we should deactivate the current tool
             if (this.currentTool.shouldDeactivate(event, info)) {
                 // Deactivate the tool
@@ -29,6 +29,7 @@ export class ToolManager {
                 this.defaultTool.onActivate(event, info);
                 return true;
             }
+            return changed;
         } else {
             // Check if some other tool should be activated
             const newTool = this.tools.find(t => t.shouldActivate(event, info));
@@ -37,9 +38,13 @@ export class ToolManager {
                 newTool.onActivate(event, info);
                 return true;
             }
-        }
 
-        return changed;
+            // Specifically do defaultTool's `onEvent` last
+            //  which means that Tool activations will take priority
+            //  over the default behavior for things like Handlers
+            //  Fixes #624
+            return this.defaultTool.onEvent(event, info);
+        }
     }
 
     public hasTool(tool: Tool): boolean {

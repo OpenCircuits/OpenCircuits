@@ -8,7 +8,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Digital Node", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const {AutoPlace} = GetHelpers(designer);
 
     const [wp, [s], [o]] = AutoPlace(new DigitalNode());
 

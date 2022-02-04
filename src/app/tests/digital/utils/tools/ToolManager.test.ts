@@ -17,7 +17,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Tool Manager", () => {
     const {designer, input, toolManager} = Setup();
-    const {Place, AutoPlace} = GetHelpers({designer});
+    const {Place, AutoPlace} = GetHelpers(designer);
 
     const defaultTool = toolManager.getCurrentTool() as DefaultTool;
 

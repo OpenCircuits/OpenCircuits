@@ -105,7 +105,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
-    const ops = options.format === "custom" ? options.ops : Formats.find(form => form.icon === options.format);
+    const ops = (options.format === "custom") ? (options.ops) : (Formats.find(form => form.icon === options.format) ?? Formats[0]);
 
     // Create input tokens
     const tokenList = GenerateTokens(expression, ops);
@@ -115,7 +115,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
         if (token.type !== "input" || inputMap.has(token.name))
             continue;
         inputMap.set(token.name, Create<DigitalComponent>(options.input));
-        action.add(new SetNameAction(inputMap.get(token.name), token.name).execute());
+        action.add(new SetNameAction(inputMap.get(token.name)!, token.name).execute());
     }
 
     // Create output LED

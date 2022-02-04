@@ -36,7 +36,7 @@ export class Rectangle implements Shape {
             this.size = pos.getSize();
         } else {
             this.pos  = pos;
-            this.size = size;
+            this.size = size!;
         }
     }
 

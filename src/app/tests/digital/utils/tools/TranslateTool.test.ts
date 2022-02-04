@@ -13,7 +13,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Translate Tool", () => {
     const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {

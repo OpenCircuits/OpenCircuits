@@ -45,7 +45,7 @@ export class ICData {
     public constructor(collection?: DigitalObjectSet) {
         this.name = ""; // TODO: have names
         this.transform = new Transform(V(0,0), V(0,0));
-        this.collection = collection;
+        this.collection = collection!;
         this.inputPorts  = [];
         this.outputPorts = [];
 
@@ -154,7 +154,32 @@ export class ICData {
     }
 
     public copy(): DigitalObjectSet {
-        return DigitalObjectSet.from(CopyGroup(this.collection.toList()).toList());
+        return ICData.CreateSet(this.collection.toList());
+    }
+
+    private static CreateSet(objs: IOObject[]): DigitalObjectSet {
+        const copies = DigitalObjectSet.from(CopyGroup(objs).toList());
+
+        // Move non-whitelisted inputs to regular components list
+        //  So that the ports that come out of the IC are useful inputs and not
+        //  things like ConstantHigh and ConstantLow which aren't interactive
+        const INPUT_WHITELIST = [Switch, Button];
+        const OUTPUT_WHITELIST = [LED];
+        const inputs  = copies.getInputs().filter( i => INPUT_WHITELIST.some( (type) => i instanceof type));
+        const outputs = copies.getOutputs().filter(o => OUTPUT_WHITELIST.some((type) => o instanceof type));
+        const others  = copies.getComponents().filter(c => (!inputs.includes(c) && !outputs.includes(c)));
+
+        // Sort inputs/outputs by their position
+        const sortByPos = (a: Component, b: Component) => {
+            const p1 = a.getPos(), p2 = b.getPos();
+            if (Math.abs(p2.y - p1.y) <= 0.5*GRID_SIZE) // If same-ish-y, sort by x from LtR
+                return p2.x - p1.x;
+            return p2.y - p1.y; // Sort by y-pos from Top to Bottom
+        }
+        inputs.sort(sortByPos);
+        outputs.sort(sortByPos);
+
+        return new DigitalObjectSet(inputs, outputs, others, copies.getWires());
     }
 
     public static IsValid(objects: IOObject[] | DigitalObjectSet): boolean {
@@ -185,32 +210,11 @@ export class ICData {
      *  as the only inputs.
      * @returns The newly created ICData
      */
-    public static Create(objects: IOObject[] | DigitalObjectSet): ICData {
+    public static Create(objects: IOObject[] | DigitalObjectSet): ICData | undefined {
         objects = (objects instanceof DigitalObjectSet ? objects.toList() : objects);
-        const copies = DigitalObjectSet.from(CopyGroup(objects).toList());
-        if (!this.IsValid(copies))
+        const set = ICData.CreateSet(objects);
+        if (!this.IsValid(set))
             return undefined;
-
-        // Move non-whitelisted inputs to regular components list
-        //  So that the ports that come out of the IC are useful inputs and not
-        //  things like ConstantHigh and ConstantLow which aren't interactive
-        const INPUT_WHITELIST = [Switch, Button];
-        const OUTPUT_WHITELIST = [LED];
-
-        const inputs  = copies.getInputs().filter( i => INPUT_WHITELIST.some( (type) => i instanceof type));
-        const outputs = copies.getOutputs().filter(o => OUTPUT_WHITELIST.some((type) => o instanceof type));
-        const others  = copies.getComponents().filter(c => (!inputs.includes(c) && !outputs.includes(c)));
-
-        // Sort inputs/outputs by their position
-        const sortByPos = (a: Component, b: Component) => {
-            const p1 = a.getPos(), p2 = b.getPos();
-            if (Math.abs(p2.y - p1.y) <= 0.5*GRID_SIZE) // If same-ish-y, sort by x from LtR
-                return p2.x - p1.x;
-            return p2.y - p1.y; // Sort by y-pos from Top to Bottom
-        }
-        inputs.sort(sortByPos);
-        outputs.sort(sortByPos);
-
-        return new ICData(new DigitalObjectSet(inputs, outputs, others, copies.getWires()));
+        return new ICData(set);
     }
 }

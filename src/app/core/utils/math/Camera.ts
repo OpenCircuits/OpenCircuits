@@ -39,8 +39,8 @@ export class Camera {
      * @param startZoom This initialzed zoom to 1
      */
     public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
-        this.width = width;
-        this.height = height;
+        this.width = width!;
+        this.height = height!;
         this.pos = startPos;
         this.zoom = startZoom;
         this.transform = new Transform(V(0,0), V(0,0), 0);
@@ -54,6 +54,7 @@ export class Camera {
     private updateMatrix(): void {
         if (!this.dirty)
             return;
+
         this.dirty = false;
 
         this.mat = new Matrix2x3();

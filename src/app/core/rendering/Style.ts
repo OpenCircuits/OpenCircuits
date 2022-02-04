@@ -17,7 +17,7 @@ export class Style {
     }
 
     public stroke(): boolean {
-        return (this.borderColor != null && this.borderSize > 0);
+        return (this.borderColor != null && this.borderSize != null && this.borderSize > 0);
     }
 
 }

@@ -52,7 +52,6 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
@@ -67,11 +66,11 @@ export const ICDesigner = (() => {
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icDesigner })
-        )
+        );
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
+        const canvas = useRef<HTMLCanvasElement>(null);
         const [{name}, setName] = useState({ name: "" });
         const [{cursor}, setCursor] = useState({ cursor: "default" });
 
@@ -87,6 +86,8 @@ export const ICDesigner = (() => {
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ICDesigner.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             icInfo.input = new Input(canvas.current);
 
@@ -120,7 +121,7 @@ export const ICDesigner = (() => {
         useLayoutEffect(() => {
             if (!data || !icInfo.ic)
                 return;
-            data.setName(name);
+            data.setName(name ?? "");
             icInfo.ic.update();
             renderer.render();
         }, [name, data, icInfo.ic]);
@@ -157,6 +158,9 @@ export const ICDesigner = (() => {
             icInfo.input.block();
 
             if (!cancelled) {
+                if (!data)
+                    throw new Error("ICDesigner.close failed: data was undefined");
+
                 // Create IC on center of screen
                 const ic = new IC(data);
                 ic.setPos(mainInfo.camera.getPos());
@@ -184,7 +188,7 @@ export const ICDesigner = (() => {
         useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
 
         return (
-            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH}

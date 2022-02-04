@@ -18,7 +18,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Selection Tool", () => {
     const {designer, input, selections, history} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
