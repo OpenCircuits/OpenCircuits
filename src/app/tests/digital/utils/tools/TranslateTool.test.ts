@@ -120,10 +120,10 @@ describe("Translate Tool", () => {
         test("Clone Switch -> LED with Snapped WirePort", () => {
             const [sw, led, port] = Place(new Switch(), new LED(), new DigitalNode());
 
-            sw.setPos(V(0, 0));
-            led.setPos(V(2, 0));
             // Set port to vertically align with Switch and horizontally with LED
             port.setPos(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
+            sw.setPos(V(0, 0));
+            led.setPos(V(100, 0));
 
             // Connect to Port and set as straight
             Connect(sw,   0, port, 0).getWire().setIsStraight(true);
@@ -134,15 +134,15 @@ describe("Translate Tool", () => {
 
             // Start Translating then Clone
             input.press(V(0, 0))
-                 .moveTo(V(-10, -10), 1)
+                 .moveTo(V(-100, 0))
                  .pressKey(" ")
                  .releaseKey(" ")
-                 .moveTo(V(10, 10), 1)
+                 .moveTo(V(100, 0))
                  .release();
 
             // Expect initial objects to stay relatively the same
-            expect(sw.getPos()).toEqual(V(10, 10));
-            expect(led.getPos()).toEqual(V(12, 10));
+            expect(sw.getPos()).toEqual(V(100, 0));
+            expect(led.getPos()).toEqual(V(200, 0));
             expect(port.getPos()).toEqual(V(sw.getOutputPortPos(0).x, led.getInputPortPos(0).y));
             expect(port.getInputs()[0].isStraight()).toBe(true);
             expect(port.getOutputs()[0].isStraight()).toBe(true);
@@ -167,118 +167,48 @@ describe("Translate Tool", () => {
             expect(port2.getInputs()[0].isStraight()).toBe(true);
             expect(port2.getOutputs()[0].isStraight()).toBe(true);
         });
+    });
 
-        describe("Snapping", () => {
-            afterEach(() => {
-                // Clear previous circuit
-                designer.reset();
-            });
-    
-            test("Midpoint Snap in x direction", () => {
-                const [sw, led] = Place(new Switch(), new LED());
-    
-                // Set switch and LED initial positions
-                sw.setPos(V(0, 0));
-                led.setPos(V(100, 100));
-                
-                //Move LED to where it should snap
-                input.press(V(100, 100))
-                     .moveTo(V(4.99, 50))
-                     .release();
-    
-                // Expect LED to have snapped to 0, 50
-                expect(sw.getPos()).toEqual(V(0, 0));
-                expect(led.getPos()).toEqual(V(0, 50));
-            });
-            
-            test("Midpoint Snap in x direction v2", () => {
-                const [sw, led] = Place(new Switch(), new LED());
-    
-                // Set switch and LED initial positions
-                sw.setPos(V(0, 0));
-                led.setPos(V(100, 100));
-                
-                //Move LED to where it shouldn't snap
-                input.press(V(100, 100))
-                     .moveTo(V(5.01, 50))
-                     .release();
-    
-                // Expect LED to not snap
-                expect(sw.getPos()).toEqual(V(0, 0));
-                expect(led.getPos()).toEqual(V(5.01, 50));
-            });
-
-            test("Midpoint Snap in y direction", () => {
-                const [sw, led] = Place(new Switch(), new LED());
-    
-                // Set switch and LED initial positions
-                sw.setPos(V(0, 0));
-                led.setPos(V(100, 100));
-                
-                //Move LED to where it should snap
-                input.press(V(100, 100))
-                     .moveTo(V(50, 4.99))
-                     .release();
-    
-                // Expect LED to have snapped to 50, 0
-                expect(sw.getPos()).toEqual(V(0, 0));
-                expect(led.getPos()).toEqual(V(50, 0));
-            });
-
-            test("Midpoint Snap in x direction", () => {
-                const [sw, led] = Place(new Switch(), new LED());
-    
-                // Set switch and LED initial positions
-                sw.setPos(V(0, 0));
-                led.setPos(V(100, 100));
-                
-                //Move LED to where it shouldn't snap
-                input.press(V(100, 100))
-                     .moveTo(V(50, 5.01))
-                     .release();
-    
-                // Expect LED to not snap
-                expect(sw.getPos()).toEqual(V(0, 0));
-                expect(led.getPos()).toEqual(V(50, 5.01));
-            });
-
-            test("Edge snap 1", () => {
-                const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
-    
-                // Set SR flip flop initial positions
-                SR1.setPos(V(0, 0));
-                SR2.setPos(V(1000, 1000));
-                
-                //Move SR2 to where it should snap
-                input.press(V(1000, 1000))
-                     .moveTo(V(102, 200))
-                     .release();
-    
-                // Expect SR2 to have snapped to 100, 200
-                expect(SR1.getPos()).toEqual(V(0, 0));
-                expect(SR2.getPos()).toEqual(V(100, 200));
-            });
-
-            test("Edge snap 2", () => {
-                const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
-    
-                // Set SR flip flop initial positions
-                SR1.setPos(V(0, 0));
-                SR2.setPos(V(1000, 1000));
-                
-                //Move SR2 to where it shouldn't snap
-                input.press(V(1000, 1000))
-                     .moveTo(V(105, 200))
-                     .release();
-    
-                // Expect SR2 to not snap
-                expect(SR1.getPos()).toEqual(V(0, 0));
-                expect(SR2.getPos()).toEqual(V(105, 200));
-            });
-
-            // TODO: More cloning tests
+    describe("Snapping", () => {
+        afterEach(() => {
+            // Clear previous circuit
+            designer.reset();
         });
-    
-        // TODO: More cloning tests
+
+        // TODO: Add tests for Midpoint snapping
+
+        test("Edge Snap: Snap", () => {
+            const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
+
+            // Set SR flip flop initial positions
+            SR1.setPos(V(0, 0));
+            SR2.setPos(V(1000, 1000));
+
+            // Move SR2 to where it should snap
+            input.press(V(1000, 1000))
+                .moveTo(V(102, 200))
+                .release();
+
+            // Expect SR2 to have snapped to 100, 200
+            expect(SR1.getPos()).toEqual(V(0, 0));
+            expect(SR2.getPos()).toEqual(V(100, 200));
+        });
+
+        test("Edge Snap: Don't Snap", () => {
+            const [SR1, SR2] = Place(new SRFlipFlop(), new SRFlipFlop());
+
+            // Set SR flip flop initial positions
+            SR1.setPos(V(0, 0));
+            SR2.setPos(V(1000, 1000));
+
+            // Move SR2 to where it shouldn't snap
+            input.press(V(1000, 1000))
+                .moveTo(V(105, 200))
+                .release();
+
+            // Expect SR2 to not snap
+            expect(SR1.getPos()).toEqual(V(0, 0));
+            expect(SR2.getPos()).toEqual(V(105, 200));
+        });
     });
 });

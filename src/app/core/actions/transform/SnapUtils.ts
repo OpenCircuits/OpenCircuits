@@ -30,18 +30,21 @@ export function SnapPos(obj: Component): void {
     obj.setPos(v);
 }
 
-export function SnapMidpoint(obj: Component, objs: Component[]): void {
+export function SnapMidpoint(obj: Component, objs: Component[], selection: Component[]): void {
     const DoSnap = (x: number, c: number, s: number) =>
         (Math.abs(x - c) <= s) ? c : x;
 
-    const v = obj.getPos()
+    const v = obj.getPos();
+
+    // Convert to Set for performance concerns with lots of selected components on large circuits
+    const selectionSet = new Set(selection);
     
     for (const obj2 of objs) {
-        if (obj2 == obj) {
-            continue
-        }
+        // Don't snap to anything in the same selection
+        if (selectionSet.has(obj2))
+            continue;
         const pos = obj2.getPos();
-        //calculate scaling constants for x and y direction
+        // Calculate scaling constants for x and y direction
         const scale = MID_SNAP_CONST * WIRE_SNAP_THRESHOLD/(Math.abs(v.x-pos.x))
         const scale2 = MID_SNAP_CONST * WIRE_SNAP_THRESHOLD/(Math.abs(v.y-pos.y))
         
@@ -56,20 +59,24 @@ export function SnapMidpoint(obj: Component, objs: Component[]): void {
     obj.setPos(v);
 }
 
-export function SnapEdges(obj: Component, objs: Component[]): void {
+export function SnapEdges(obj: Component, objs: Component[], selection: Component[]): void {
     const DoSnap = (x: number, c: number, s: number) =>
         (Math.abs(x - c) <= s) ? c : x;
 
     const v = obj.getPos();
     const s = obj.getSize();
 
+    // Convert to Set for performance concerns with lots of selected components on large circuits
+    const selectionSet = new Set(selection);
+
     for (const obj2 of objs) {
-        if (obj2 == obj)
+        // Don't snap to anything in the same selection
+        if (selectionSet.has(obj2))
             continue;
         const pos = obj2.getPos();
         const size = obj2.getSize();
 
-        //Calculate distance between components to scale snapping
+        // Calculate distance between components to scale snapping
         const temp = Math.pow(Math.abs(v.x - pos.x), 2) + Math.pow(Math.abs(v.y - pos.y), 2)
         const scale = EDGE_SNAP_CONST * WIRE_SNAP_THRESHOLD/(Math.sqrt(temp))
 

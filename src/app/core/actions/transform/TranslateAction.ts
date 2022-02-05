@@ -2,10 +2,11 @@ import {Vector} from "Vector";
 
 import {Action} from "core/actions/Action";
 
+import {CircuitDesigner} from "core/models";
+
 import {Component} from "core/models/Component";
 
 import {SnapPos, SnapMidpoint, SnapEdges} from "./SnapUtils";
-import { CircuitDesigner } from "core/models";
 
 
 /**
@@ -63,10 +64,10 @@ export class TranslateAction implements Action {
             return this;
 
         // Midpoint snap
-        this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
+        this.objs.forEach(o => SnapMidpoint(o, this.circuit!.getObjects(), this.objs));
 
         // Edge snap
-        this.objs.forEach(o => SnapEdges(o, this.circuit.getObjects()))
+        this.objs.forEach(o => SnapEdges(o, this.circuit!.getObjects(), this.objs));
 
         return this;
     }
@@ -85,11 +86,11 @@ export class TranslateAction implements Action {
         if (!this.circuit)
             return this;
 
-        //Midpoint snap
-        this.objs.forEach(o => SnapMidpoint(o, this.circuit.getObjects()))
+        // Midpoint snap
+        this.objs.forEach(o => SnapMidpoint(o, this.circuit!.getObjects(), this.objs));
 
-        //Edge snap
-        this.objs.forEach(o => SnapEdges(o, this.circuit.getObjects()))
+        // Edge snap
+        this.objs.forEach(o => SnapEdges(o, this.circuit!.getObjects(), this.objs));
 
         return this;
     }
