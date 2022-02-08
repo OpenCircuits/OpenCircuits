@@ -42,6 +42,7 @@ import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup
 import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
 import {PauseResumeButtonModule}    from "../SelectionPopup/modules/PauseResumeButtonModules";
+import {AddLabelButtonModule} from "shared/containers/SelectionPopup/modules/AddLabelButtonModule";
 import {ClearOscilloscopeButtonModule,
         OscilloscopeDisplaySizeModule,
         OscilloscopeInputCountModule,
@@ -103,6 +104,7 @@ export const App = ({info, helpers, canvas}: Props) => {
                                         ClockSyncButtonModule,
                                         ColorModule, TextColorModule,
                                         BusButtonModule,
+                                        AddLabelButtonModule,
                                         CreateICButtonModule, ViewICButtonModule]}
                                     docsUrlConfig={docsConfig} />
 
