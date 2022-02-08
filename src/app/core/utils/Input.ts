@@ -400,6 +400,7 @@ export class Input {
      */
     protected onDoubleClick(button: number): void {
 
+        // elephant
         // call each listener
         this.callListeners({type: "dblclick", button});
     }

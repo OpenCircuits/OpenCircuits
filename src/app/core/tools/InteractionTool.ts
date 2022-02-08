@@ -67,11 +67,15 @@ export class InteractionTool extends DefaultTool {
                 break;
 
             case "click":
+                console.log("click!");
                 // Find and click object
                 if (isPressable(obj) && obj.isWithinPressBounds(worldMousePos)) {
                     obj.click();
                     return true;
                 }
+                break;
+            case "dblclick": // elephant
+                console.log("double click!!!");
                 break;
         }
 
