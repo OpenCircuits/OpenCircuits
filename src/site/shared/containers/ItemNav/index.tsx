@@ -148,7 +148,8 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         }, [] as ItemNavSection[]);
     }, [config.sections, w]);
 
-    const side = (w > 768 || w > h) ? "left" : "bottom";
+    const desktopWidth = 768; //TODO import width from constants.scss 
+    const side = (w > desktopWidth || w > h) ? "left" : "bottom";
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
     return (<>
