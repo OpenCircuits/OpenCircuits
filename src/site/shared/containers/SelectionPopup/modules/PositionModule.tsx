@@ -34,13 +34,13 @@ export const PositionModule = PopupModule({
             inputType: "number",
             config: XConfig,
             step: 1,
-            alt: "X-Position of object(s)"
+            alt: "X-Position of object(s)",
         }),
         CreateModule({
             inputType: "number",
             config: YConfig,
             step: 1,
-            alt: "Y-Position of object(s)"
-        })
-    ]
+            alt: "Y-Position of object(s)",
+        }),
+    ],
 });
