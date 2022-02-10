@@ -12,7 +12,8 @@ const XConfig: ModuleConfig<[Component], number> = {
     getProps: (o) => o.getPos().x/100,
     getAction: (s, newX) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
-                                                s.map(s => V(newX*100, s.getPos().y))),
+                                                s.map(s => V(newX*100, s.getPos().y)),
+                                                false),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
 }
 const YConfig: ModuleConfig<[Component], number> = {
@@ -21,7 +22,8 @@ const YConfig: ModuleConfig<[Component], number> = {
     getProps: (o) => o.getPos().y/100,
     getAction: (s, newY) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
-                                                s.map(s => V(s.getPos().x, newY*100))),
+                                                s.map(s => V(s.getPos().x, newY*100)),
+                                                false),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
 }
 

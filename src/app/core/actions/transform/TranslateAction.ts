@@ -28,6 +28,8 @@ export class TranslateAction implements Action {
      */
     protected targetPositions: Vector[];
 
+    protected snap: boolean;
+
     /**
      * Creates a translation of component(s) from one position to another.
      * Each component in objs list has corresponding initial position and target position in those
@@ -37,11 +39,13 @@ export class TranslateAction implements Action {
      * @param initialPositions Initializes the array with the selected components' starting positions
      * @param targetPositions Initializes the array with the selected components' final positions
      */
-    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[]) {
+    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap?: boolean) {
         this.objs = objs;
 
         this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
+        if(typeof snap === "undefined"){ this.snap = true; }
+        else{ this.snap = snap;}
     }
 
     /**
@@ -53,7 +57,9 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        this.objs.forEach(o => SnapPos(o));
+        if(this.snap){
+            this.objs.forEach(o => SnapPos(o));
+        }
 
         return this;
     }
@@ -67,7 +73,9 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        this.objs.forEach(o => SnapPos(o));
+        if(this.snap){
+            this.objs.forEach(o => SnapPos(o));
+        }
 
         return this;
     }
