@@ -142,6 +142,7 @@ export function GetWirePath(w: Wire | Node): Array<Wire | Node> {
  *
  * @param  c The component to start from
  * @return   The array of components in the same circuit (including c)
+ */
 export function GetComponentPath(c: Component): Array<Component> {
     const path: Array<Component> = [];
 
@@ -154,24 +155,18 @@ export function GetComponentPath(c: Component): Array<Component> {
 
         visited.add(q);
         path.push(q);
-        const ports = q.getPorts();
-        for (let p of ports)
-        // if (q instanceof Component) {
-        //     const p1 = q.getP1Component();
-        //     const p2 = q.getP2Component();
-        //     if (isNode(p1) && !visited.has(p1))
-        //         queue.push(p1);
-        //     if (isNode(p2) && !visited.has(p2))
-        //         queue.push(p2);
-        // } else {
-            // Push all of the Node's connecting wires, filtered by if they've been visited
-            // queue.push(...q.getConnections().filter((w) => !visited.has(w)));
-        // }
+        for (let p of q.getPorts()) {
+            for (let w of p.getWires()) {
+                if (!visited.has(w.getP1Component()))
+                    queue.push(w.getP1Component());
+                if (!visited.has(w.getP2Component()))
+                    queue.push(w.getP2Component());
+            }
+        }
     }
 
     return path;
 }
- */
 
 /**
  * Gathers all wires + wireports in the path from the inputs/outputs

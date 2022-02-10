@@ -2,7 +2,7 @@ import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GetWirePath} from "core/utils/ComponentUtils";
+import {GetComponentPath, GetWirePath} from "core/utils/ComponentUtils";
 
 import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
@@ -13,7 +13,7 @@ export const SelectPathHandler: EventHandler = ({
     conditions: (event: Event, {input, camera, designer}: CircuitInfo) =>
         (event.type === "dblclick" &&
          event.button === LEFT_MOUSE_BUTTON &&
-         ( // is there a wire or component within select bounds? elephant
+         ( // is there a wire or component within select bounds?
           designer
             .getWires()
             .find(o =>
@@ -38,10 +38,13 @@ export const SelectPathHandler: EventHandler = ({
             .getObjects()
             .reverse()
             .find(o => o.isWithinSelectBounds(worldMousePos));
-        const wirePath = GetWirePath(wire!);
-        // const objPath 
 
-
-        history.add(CreateGroupSelectAction(selections, wirePath).execute());
+        if (wire != null) {
+            const wirePath = GetWirePath(wire!);
+            history.add(CreateGroupSelectAction(selections, wirePath).execute());
+        } else {
+            const objPath = GetComponentPath(component!);
+            history.add(CreateGroupSelectAction(selections, objPath).execute())
+        }
     }
 });
