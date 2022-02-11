@@ -108,7 +108,7 @@ export const MainDesigner = ({info, canvas}: Props) => {
                    }}>
             <canvas className="main__canvas"
                     width={w}
-                    height={h-HEADER_HEIGHT} />
+                    height={h-HEADER_HEIGHT+4} />
         </Droppable>
     </>);
 }
