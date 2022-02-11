@@ -45,6 +45,13 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     let menuPos: Vector;
 
+    /* LEON EXAMPLE
+    const [{posX,posY}, setPos] = useState({x:0,y:0});
+    useEffect(() => {
+
+    }, [isOpen]);
+     */
+
     useEffect(() => {
         if (!input)
             return;
