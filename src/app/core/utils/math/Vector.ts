@@ -194,7 +194,7 @@ export class Vector {
      * @returns The projection of 'this' on vector 'v'.
      */
     public project(v: Vector): Vector {
-        return this.scale(v.dot(this) / this.len2());
+        return v.scale(this.dot(v) / v.len2())
     }
     /**
      * Return a negative reciprocal vector of 'this'
@@ -258,5 +258,5 @@ export function V(x: number, y: number): Vector;
 export function V(x: Vector | number = 0, y?: number): Vector {
     if (x instanceof Vector)
         return new Vector(x);
-    return new Vector(x, y);
+    return new Vector(x, y!);
 }

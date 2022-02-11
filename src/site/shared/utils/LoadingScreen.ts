@@ -19,11 +19,11 @@ export async function LoadingScreen(
     segments: [
         number,
         string,
-        (onProgress?: (percentDone: number) => void) => Promise<void>
+        (onProgress: (percentDone: number) => void) => Promise<void>
     ][]
 ): Promise<void> {
-    const loadingText = document.getElementById(`${id}-text`);
-    const loadingBar  = document.getElementById(`${id}-progress-bar`);
+    const loadingText = document.getElementById(`${id}-text`)!;
+    const loadingBar  = document.getElementById(`${id}-progress-bar`)!;
 
     const setText     = (text: string)   => loadingText.innerHTML = text;
     const setProgress = (amount: number) => loadingBar.style.width = amount + "%";
@@ -63,7 +63,7 @@ export async function LoadingScreen(
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";
-            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank">
+            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
                 Error occurred while "${label}". Please refresh the page.
                 <br />
                 If this error continues to occur, please click this text to submit a bug report.
@@ -77,5 +77,5 @@ export async function LoadingScreen(
         setProgress((curPercent = endPercent));
     }
 
-    document.getElementById(id).style.display = "none";
+    document.getElementById(id)!.style.display = "none";
 }

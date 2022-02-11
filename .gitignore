@@ -19,6 +19,7 @@ site/data/config.txt
 site/public/js/combined-min.js
 tests/index.js
 app.yaml
+yarn-error.log
 
 # IntelliJ
 .idea/

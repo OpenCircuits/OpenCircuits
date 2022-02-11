@@ -2,7 +2,7 @@
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
 .header__left {
-    margin-left: 7px;
+    margin-left: 12px;
 
     & div {
         float: left;
@@ -35,6 +35,19 @@
             color: #ccc;
             border-color: #aaa;
             background-color: darken($success-color, 10%);
+        }
+    }
+    &__duplicate {
+        height: 40px;
+        padding: 5px;
+        cursor: pointer;
+        margin-left: 7px;
+        color: #ccc;
+
+        transition: 0.5s;
+
+        &:hover {
+            background-color: lighten($primary-color, 10%);
         }
     }
     &__saving__icons {

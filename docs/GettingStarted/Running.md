@@ -48,3 +48,25 @@ To test OpenCircuits locally, simply run
 ```bash
 yarn test
 ```
+
+To view the coverage of all tests, run
+```bash
+yarn coverage
+```
+
+---
+
+## Documentation
+
+To run this documentation site locally, simply run
+```bash
+yarn docs
+```
+
+If you get the error `TypeError: Cannot read property 'latest' of undefined` then run the command again.
+
+To generate the documentation from jsdocs, run
+```bash
+yarn build:jsdocs
+```
+You can even run that command while `yarn docs` is open in another window!

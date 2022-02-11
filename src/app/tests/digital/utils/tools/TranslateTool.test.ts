@@ -1,7 +1,5 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Switch, Button,
@@ -13,7 +11,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Translate Tool", () => {
     const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
@@ -135,8 +133,8 @@ describe("Translate Tool", () => {
             // Start Translating then Clone
             input.press(V(0, 0))
                     .moveTo(V(-100, 0))
-                    .pressKey(SPACEBAR_KEY)
-                    .releaseKey(SPACEBAR_KEY)
+                    .pressKey(" ")
+                    .releaseKey(" ")
                     .moveTo(V(100, 0))
                     .release();
 

@@ -1,17 +1,18 @@
-import {GRID_SIZE,
-        SPACEBAR_KEY,
-        LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {ARROW_TRANSLATE_DISTANCE_NORMAL,
+        ARROW_TRANSLATE_DISTANCE_SMALL,
+        LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Snap}        from "core/utils/ComponentUtils";
 
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Tool}            from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {Action} from "core/actions/Action";
 import {ShiftAction} from "core/actions/ShiftAction";
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -21,28 +22,35 @@ export const TranslateTool: Tool = (() => {
     let components = [] as Component[];
     let worldMouseDownPos = V();
     let action: GroupAction;
-
-    function snap(p: Vector): Vector {
-        return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                 Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
-    }
+    let activatedButton: string | number;
 
     return {
-        shouldActivate(event: Event, {locked, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, {locked, currentlyPressedObject, selections}: CircuitInfo): boolean {
             if (locked)
                 return false;
-            // Activate if the user is pressing down on an object
+            // Activate if the user is pressing down on an object or an arrow key
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
-                    currentlyPressedObject instanceof Component);
+                    currentlyPressedObject instanceof Component) ||
+                   (event.type === "keydown" && (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                                  event.key === "ArrowUp"  || event.key === "ArrowDown")
+                                             && ((selections.any((c) => c instanceof Component) &&
+                                                  selections.get().length > 0)));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
-            // Deactivate by releasing mouse
-            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON);
+            // Deactivate by releasing mouse or an arrow key
+            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
+            (event.type === "keyup" && event.key === activatedButton &&
+                                       (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                        event.key === "ArrowUp"   || event.key === "ArrowDown" ));
         },
 
 
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
+
+            // The event that activates this will either be keydown or mousedrag, so 
+            //  we can save the key like this to use later
+            activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);
 
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
 
@@ -50,7 +58,7 @@ export const TranslateTool: Tool = (() => {
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                selections.has(currentlyPressedObject) ?
+                !currentlyPressedObject || selections.has(currentlyPressedObject) ?
                         selections.get().filter(s => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];
@@ -82,6 +90,8 @@ export const TranslateTool: Tool = (() => {
                 //  So instead mousemove is used and whether or not left mouse is still pressed is
                 //  handled within the activation and deactivation of this tool.
                 case "mousemove":
+                    if (activatedButton !== LEFT_MOUSE_BUTTON) break;
+
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);
@@ -91,22 +101,45 @@ export const TranslateTool: Tool = (() => {
 
                     // Get snapped positions if shift is held
                     const newPositions = input.isShiftKeyDown() ?
-                        curPositions.map(p => snap(p)):
+                        curPositions.map(p => Snap(p)):
                         curPositions;
 
                     // Execute translate but don't save to group
-                    //  action since we do that onDeactivate
                     new TranslateAction(components, initalPositions, newPositions).execute();
 
                     return true;
 
                 case "keyup":
                     // Duplicate group when we press the spacebar
-                    if (event.key === SPACEBAR_KEY) {
+                    if (event.key === " ") {
                         history.add(new CopyGroupAction(designer, components).execute());
                         return true;
                     }
                     break;
+                
+                case "keydown":
+                    if (activatedButton === LEFT_MOUSE_BUTTON) break;
+
+                    // Translate with the arrow keys
+                    let deltaPos = new Vector();
+                
+                    // No else if because it introduces bugs when 
+                    //  multiple arrow keys are pressed
+                    if (input.isKeyDown("ArrowLeft"))
+                        deltaPos = deltaPos.add(-1, 0);
+                    if (input.isKeyDown("ArrowRight"))
+                        deltaPos = deltaPos.add(1, 0);
+                    if (input.isKeyDown("ArrowUp"))
+                        deltaPos = deltaPos.add(0, -1);
+                    if (input.isKeyDown("ArrowDown"))
+                        deltaPos = deltaPos.add(0, 1);
+                    
+                    // Object gets moved different amounts depending on if the shift key is held
+                    const factor = (input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL); 
+                    
+                    new TranslateAction(components, initalPositions, initalPositions.map(p => p.add(deltaPos.scale(factor)))).execute();
+                    
+                    return true;
             }
             return false;
         }

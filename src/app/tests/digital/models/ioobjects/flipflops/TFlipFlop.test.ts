@@ -10,7 +10,7 @@ describe("TFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const {AutoPlace} = GetHelpers(designer);
 
     const [f, [PRE, CLR, T, C], [Q, Q2]] = AutoPlace(new TFlipFlop());
 

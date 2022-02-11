@@ -1,7 +1,9 @@
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
+import {V, Vector} from "core/utils/math/Vector";
 
 import {IOObject} from "core/models";
 
@@ -23,15 +25,17 @@ function isClipboardSupported(type: "read" | "write"): boolean {
                                navigator.clipboard.writeText !== undefined));
 }
 
+// vertical offset so that context menu appears at cursor location
+const CONTEXT_MENU_VERT_OFFSET = 4;
 
 type Props = {
     info: CircuitInfo;
-    paste: (text: string) => boolean;
+    paste: (text: string, menuPos: Vector) => boolean;
 }
 
 
 export const ContextMenu = ({info, paste}: Props) => {
-    const {locked, input, history, designer, selections, renderer} = info;
+    const {locked, input, camera, history, designer, selections, renderer} = info;
     const {undoHistory, redoHistory} = useHistory(info);
 
     const {isOpen} = useSharedSelector(
@@ -39,6 +43,7 @@ export const ContextMenu = ({info, paste}: Props) => {
     );
     const dispatch = useSharedDispatch();
 
+    let menuPos: Vector;
 
     useEffect(() => {
         if (!input)
@@ -90,7 +95,7 @@ export const ContextMenu = ({info, paste}: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        paste(await navigator.clipboard.readText());
+        paste(await navigator.clipboard.readText(), menuPos);
     }
 
     /* Context Menu "Select All" */
@@ -113,15 +118,34 @@ export const ContextMenu = ({info, paste}: Props) => {
         dispatch(CloseContextMenu());
     }
 
+    const menu = useRef<HTMLDivElement>(null);
+    let pos = input?.getMousePos();
 
-    const pos = input?.getMousePos();
+    /* Relocate context menu to opposite side of cursor if it were to go off-screen */
+    if (isOpen) {
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
+        const offset = 1;
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+        if (pos.x + contextMenuWidth > window.innerWidth)
+            pos.x -= contextMenuWidth - offset;
+
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            pos.y -= contextMenuHeight - offset;
+
+        // Update context menu position on canvas
+        menuPos = camera.getWorldPos(input.getMousePos());
+    }
 
     return (
         <div className="contextmenu"
+             ref={menu}
              style={{
                  left: `${pos?.x}px`,
-                 top: `${pos?.y + 65}px`,
-                 display: (isOpen ? "initial" : "none")
+                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
             <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>

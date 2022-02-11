@@ -3,15 +3,15 @@ import {V, Vector} from "Vector";
 import {Selectable} from "./Selectable";
 
 /**
- * Wrapper class to hold and manage a set of Selectables 
- * Can notfiy to other parts of the code about changes in 
+ * Wrapper class to hold and manage a set of Selectables
+ * Can notfiy to other parts of the code about changes in
  * the # of selections through its array of listeners functions
  */
 export class SelectionsWrapper {
     private selections: Set<Selectable>;
     private disabled: boolean;
 
-    private listeners: (() => void)[];
+    private listeners: Set<(() => void)>;
 
     /**
      * Intializes a SelectionsWrapper with no elements in `this.seclections` or `this.listeners` and `this.disabled` set to false
@@ -19,7 +19,7 @@ export class SelectionsWrapper {
     public constructor() {
         this.selections = new Set();
         this.disabled = false;
-        this.listeners = [];
+        this.listeners = new Set();
     }
 
     /**
@@ -27,7 +27,15 @@ export class SelectionsWrapper {
      * @param listener function to call when an element gets added or removed from `this.selections`
     */
     public addChangeListener(listener: () => void): void {
-        this.listeners.push(listener);
+        this.listeners.add(listener);
+    }
+
+    /**
+     * Removes `listener` to `this.listeners`
+     * @param listener function to call when an element gets added or removed from `this.selections`
+    */
+    public removeChangeListener(listener: () => void): void {
+        this.listeners.delete(listener);
     }
 
     /**
@@ -71,11 +79,21 @@ export class SelectionsWrapper {
 
     /**
      * Returns whether or not `f` returns true for every element of `this.selections`
-     * @param f a function that takes a Selectable `s` and returns a boolean 
+     * @param f a function that takes a Selectable `s` and returns a boolean
      * @returns returns true if `f` returns true for every element in `this.selections` and false otherwise
      */
     public all(f: (s: Selectable) => boolean): boolean {
         return this.get().every(s => f(s));
+    }
+
+    /**
+     * Returns whether or not `f` returns true for at least one element of `this.selections`
+     * 
+     * @param f a function that takes a Selectable `s` and returns a boolean
+     * @returns returns true if `f` returns true for every element in `this.selections` and false otherwise
+     */
+    public any(f: (s: Selectable) => boolean): boolean {
+        return this.get().some(s => f(s));
     }
 
     /**
@@ -87,7 +105,7 @@ export class SelectionsWrapper {
         return s.every(s => this.selections.has(s));
     }
 
-    
+
     /**
      * Returns the number of elements in `this.selections`
      * @returns `this.selections.size`
@@ -97,8 +115,8 @@ export class SelectionsWrapper {
     }
 
     /**
-     * Returns a vector that represents the midpoint of the elements in `this.selections`, will returns 
-     * zero vector if there no elements 
+     * Returns a vector that represents the midpoint of the elements in `this.selections`, will returns
+     * zero vector if there no elements
      * @param all if `all` is set to false elements of type Wire and Port will
      * be excluded from the midpoint calculation and only elements of type Component will
      * be used to calculate the midpoint (defaults to false)

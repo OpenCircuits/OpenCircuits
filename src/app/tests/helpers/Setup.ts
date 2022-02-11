@@ -26,6 +26,7 @@ import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
 import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
+import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
@@ -38,6 +39,7 @@ export function GetDefaultTools() {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+            CleanUpHandler,
         ]),
         tools: [PanTool, RotateTool, TranslateTool,
                 WiringTool, SplitWireTool, SelectionBoxTool]
@@ -63,7 +65,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
     const designer = new DigitalCircuitDesigner(propagationTime);
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
-    const toolManager = new ToolManager(tools.defaultTool, ...tools.tools);
+    const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
     const input = new FakeInput(camera.getCenter());
 
     const info = {
@@ -74,7 +76,13 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
         input,
         selections,
         toolManager,
-        renderer
+        renderer,
+        debugOptions: {
+            debugCullboxes: false,
+            debugPressableBounds: false,
+            debugSelectionBounds: false,
+            debugNoFill: false
+        }
     };
 
     input.addListener((ev) => toolManager.onEvent(ev, info));

@@ -1,6 +1,6 @@
 import {useEffect, useLayoutEffect, useRef} from "react";
 
-import {ESC_KEY, IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
+import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
@@ -33,7 +33,7 @@ export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
     return ({ mainInfo }: Props) => {
-        const {camera, designer, history, selections, toolManager, renderer} = info;
+        const {camera, designer, toolManager, renderer} = info;
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icViewer })
@@ -41,7 +41,7 @@ export const ICViewer = (() => {
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
+        const canvas = useRef<HTMLCanvasElement>(null);
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -55,6 +55,8 @@ export const ICViewer = (() => {
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ICViewer.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             info.input = new Input(canvas.current);
 
@@ -81,6 +83,10 @@ export const ICViewer = (() => {
         useLayoutEffect(() => {
             if (!isActive || !data)
                 return;
+
+            // Retrieve current debug info from mainInfo
+            info.debugOptions = mainInfo.debugOptions;
+
             // Unlock input
             info.input.unblock();
 
@@ -110,10 +116,10 @@ export const ICViewer = (() => {
             dispatch(CloseICViewer());
         }
 
-        useKeyDownEvent(info.input, ESC_KEY, close);
+        useKeyDownEvent(info.input, "Escape", close);
 
         return (
-            <div className="icviewer" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH} />

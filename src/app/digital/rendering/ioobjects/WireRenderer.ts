@@ -22,6 +22,13 @@ function ColorToHex(col: Color): string {
     }).join('')}`
 }
 
+/**
+ * Renders Wires
+ * * Check if wire is on screen, quit render if not
+ * * Set wire colour - prioritize on colour, else colour as selection status
+ * * Calculate Wire Bezier Curve
+ * * Draw
+ */
 export const WireRenderer = (() => {
     return {
         render(renderer: Renderer, {camera, selections}: CircuitInfo, wire: DigitalWire): void {
@@ -34,11 +41,11 @@ export const WireRenderer = (() => {
             //  selected blended with constant color SELECTED_FILL_COLOR
             const selectedColor = ColorToHex(blend(
                     parseColor(wire.getColor()), 
-                    parseColor(SELECTED_FILL_COLOR), 0.2
+                    parseColor(SELECTED_FILL_COLOR!), 0.2
             ));
                 
             // @TODO move to function for getting color based on being selection/on/off
-            const color = (wire.getIsOn() ? DEFAULT_ON_COLOR : (selected ? selectedColor : wire.getColor()));
+            const color = (wire.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : (selected ? selectedColor : wire.getColor()));
             const style = new Style(undefined, color, WIRE_THICKNESS / camera.getZoom());
 
             // get curve and start/end positions

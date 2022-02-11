@@ -35,4 +35,8 @@ export class MoveCameraAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Moved Camera"
+    }
+
 }
