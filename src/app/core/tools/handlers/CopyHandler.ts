@@ -28,9 +28,12 @@ export const CopyHandler: EventHandler = ({
         // some weird error, which will cause the issue #746
         ev.clipboardData.setData("text/plain", str);
 
-        // If no text is selected, copy the component
-        // Otherwise, do default copying
-        if (document.getSelection()?.anchorNode?.nodeName != 'LABEL' || document.getSelection()?.type == "Caret") {
+        // If an editable component (LABEL) is not selected, 
+        // or if an editable component is selected but it is a "Caret" (cursor) instead of highlighted text,
+        // then copy the component
+        // Otherwise there is text selected, so do default copying
+        // Necessary to fix #874
+        if (document.getSelection()?.anchorNode?.nodeName !== "LABEL" || document.getSelection()?.type === "Caret") {
             ev.preventDefault(); // Necessary to copy correctly
         }
 
