@@ -104,6 +104,11 @@ $historybox-width: 250px;
         & > span {
             font-size: 18px;
         }
+
+        &collapse {
+            margin-left: 5px;
+            cursor: pointer;
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
+import { useState } from "react";
 
 
 type HistoryEntryProps = {
@@ -25,6 +26,8 @@ type GroupActionEntryProps = {
     g: GroupAction;
 }
 const GroupActionEntry = ({g}: GroupActionEntryProps) => {
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
     if (g.isEmpty())
         return null;
     if (g.getActions().length === 1) {
@@ -33,7 +36,8 @@ const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     return (
         <div className="historybox__groupentry">
             <span>Group Action</span>
-            {g.getActions().map((a, i) => {
+            <span className="historybox__groupentrycollapse" onClick={() => setIsCollapsed(!isCollapsed)}>&rsaquo;</span>
+            {isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
             })}
         </div>
