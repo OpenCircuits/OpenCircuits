@@ -22,6 +22,8 @@ export class Decoder extends DigitalComponent {
 
         // activate 0th port for initial state
         super.activate(true, 0);
+
+        this.updatePortNames();
     }
 
     public activate(): void {
@@ -34,6 +36,15 @@ export class Decoder extends DigitalComponent {
         this.getOutputPorts().forEach((_, i) => {
             super.activate(i === num, i);
         });
+    }
+
+    protected updatePortNames(): void {
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName(`I${i}`);
+        })
+        this.outputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName(`O${i}`);
+        })
     }
 
     public getDisplayName(): string {
