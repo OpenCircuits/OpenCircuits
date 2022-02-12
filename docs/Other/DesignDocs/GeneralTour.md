@@ -16,7 +16,7 @@ import Timeline from './_timeline';
 
 
 # *General Tour* Design Doc
-#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Harshita Garg](https://github.com/mercuryhg31)* (Last updated *XX/XX/2022*)
+#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Harshita Garg](https://github.com/mercuryhg31)* (Last updated *02/12/2022*)
 
 
 <details>
@@ -101,7 +101,7 @@ There should be a single button that can be used to exit the tutorial at any poi
 
 ## Known Unknowns
 
-Basically all implementation details are still unknown, this section and milestone details will be filled in later.
+Basically all implementation details are still unknown.
 
 
 
@@ -120,10 +120,10 @@ Basically all implementation details are still unknown, this section and milesto
                 "body": "[welcome message]",
                 "button": {
                     "title": "Button Text Content ('Next')",
-                    "action": "Name of the next slide this button will take the user to"
+                    "action": "Name of the next step this button will take the user to"
                 }
             },
-            "slide_1": {
+            "step_1": {
                 "body": "Body text ('Click on this button to open the Item Nav... etc')",
                 "location": "item that the text box should be pointing towards (think Desmos tour design)",
                 "side": "top/left/bottom/right (direction from which the arrow should be pointing)",
@@ -133,17 +133,17 @@ Basically all implementation details are still unknown, this section and milesto
                 },
                 "button": {
                     "title": "Next",
-                    "action": "slide_2"
+                    "action": "step_2"
                 }
             },
-            "slide_2": {
+            "step_2": {
                 ...
             }
         }
         ```
     2. Consider how much should be specified in the JSON file and how much should be decided in whatever interprets the file data.
         1. Does the direction from which the box points at the indicated feature on the site be determined in the JSON file? this probably changes depending on what device is being used so perhaps this would be handeled programmatically.
-        2. Is there a need to define which slides the next button will take the user to? To even define the button in here? Can we consider that by default we will insert prev and next buttons that will automatically make one progress through the tutorial? (similar to how there will by default be an 'X' button to close out of the tutorial at all times)
+        2. Is there a need to define which steps the next button will take the user to? To even define the button in here? Can we consider that by default we will insert prev and next buttons that will automatically make one progress through the tutorial? (similar to how there will by default be an 'X' button to close out of the tutorial at all times)
 2. Create actual files containing the information for the tour.
     1. For the general tour it'd just be `general_tour.json`, but we can plan out other tours for specific features such as the expression to circuit generator, creating and snipping wire nodes, smart place, etc etc.
     2. As stated before, the tour would just be a simple walkthrough of placing two Switchs, an AND Gate, and an LED and connecting them.
@@ -153,6 +153,7 @@ Basically all implementation details are still unknown, this section and milesto
 
 1. Implement code for translating JSON files to actual tour on site.
     1. ???
+    2. Looking into using Shepherd.js
 
 
 ### Milestone 3
