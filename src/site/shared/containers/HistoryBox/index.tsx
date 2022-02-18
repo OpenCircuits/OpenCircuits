@@ -35,7 +35,7 @@ const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     }
     return (
         <div className="historybox__groupentry">
-            <span>Group Action</span>
+            {g.getCustomName() == "" ? <span>Group Action</span> : <span>{g.getCustomName()}</span>}
             <span className="historybox__groupentrycollapse" onClick={() => setIsCollapsed(!isCollapsed)}>&rsaquo;</span>
             {isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);

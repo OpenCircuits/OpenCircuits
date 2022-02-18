@@ -2,9 +2,11 @@ import {Action} from "core/actions/Action";
 
 export class GroupAction implements Action {
     private actions: Action[];
+    private customName: string;
 
-    public constructor(actions?: Action[]) {
+    public constructor(actions?: Action[], customName?: string) {
         this.actions = actions || [];
+        this.customName = customName || "";
     }
 
     public add(action: Action | Action[]): GroupAction {
@@ -49,5 +51,9 @@ export class GroupAction implements Action {
 
     public getActions(): Action[] {
         return this.actions;
+    }
+
+    public getCustomName(): string {
+        return this.customName;
     }
 }
