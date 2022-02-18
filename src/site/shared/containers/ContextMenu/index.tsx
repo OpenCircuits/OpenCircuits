@@ -168,10 +168,10 @@ export const ContextMenu = ({info, paste}: Props) => {
                  top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
                  visibility: (isOpen ? "initial" : "hidden")
              }}>
-            <button title="Cut"        onClick={() => doFunc(onCut)}disabled = {selections.amount() === 0}>Cut</button>
-            <button title="Copy"       onClick={() => doFunc(onCopy)}disabled= {selections.amount() === 0}>Copy</button>
+            <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
+            <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
-            <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled = {designer.getObjects().length === 0}>Select All</button>
+            <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
             <button title="Focus"      onClick={() => doFunc(OnFocus)}>Focus</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
