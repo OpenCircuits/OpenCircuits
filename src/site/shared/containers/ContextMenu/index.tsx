@@ -130,9 +130,6 @@ export const ContextMenu = ({info, paste}: Props) => {
             designer.getObjects() :
             selections.get().filter(o => o instanceof Component)) as Component[];
 
-        if (components.length === 0)
-            return;
-
         history.add(new GroupAction([
             ...components.map(c =>
                 new RotateAction([c], c.getPos(), [c.getAngle()], [0])
@@ -201,7 +198,7 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
             <hr/>
             <button title="Focus"      onClick={() => doFunc(OnFocus)}>Focus</button>
-            <button title="CleanUp"      onClick={() => doFunc(onCleanUp)}>Clean Up</button>
+            <button title="CleanUp"      onClick={() => doFunc(onCleanUp)}disabled = {designer.getObjects.length === 0}>Clean Up</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
