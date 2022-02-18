@@ -1,9 +1,10 @@
 import {useEffect, useRef} from "react";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
-import { FIT_PADDING_RATIO } from "core/utils/Constants";
+import {FIT_PADDING_RATIO} from "core/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 import {V, Vector} from "core/utils/math/Vector";
 
 import {IOObject} from "core/models";
@@ -12,13 +13,14 @@ import {CullableObject} from "core/models";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
-import {GetCameraFit } from "core/utils/ComponentUtils";
-import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
+
+
 
 import "./index.scss";
 
