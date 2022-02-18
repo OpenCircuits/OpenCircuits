@@ -6,14 +6,18 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
 import {GetCameraFit} from "core/utils/ComponentUtils";
 import {V, Vector} from "core/utils/math/Vector";
+import {Snap} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models";
+import {Component} from "core/models";
 import {CullableObject} from "core/models";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
+import {RotateAction} from "core/actions/transform/RotateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
@@ -110,8 +114,7 @@ export const ContextMenu = ({info, paste}: Props) => {
     }
 
     /* Context Menu "Focus" */
-    const OnFocus = () => {
-
+    const OnFocus = async () => {
         const objs = (selections.amount() === 0 ?
             designer.getAll() :
             selections.get().filter(o => o instanceof CullableObject)) as CullableObject[];
@@ -119,6 +122,30 @@ export const ContextMenu = ({info, paste}: Props) => {
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
         history.add(new MoveCameraAction(camera, pos, zoom).execute());
+    }
+
+    /* Context Menu "Clean Up" */
+    const onCleanUp = async () => {
+        const components = (selections.amount() === 0 ?
+            designer.getObjects() :
+            selections.get().filter(o => o instanceof Component)) as Component[];
+
+        if (components.length === 0)
+            return;
+
+        history.add(new GroupAction([
+            ...components.map(c =>
+                new RotateAction([c], c.getPos(), [c.getAngle()], [0])
+            ),
+            new TranslateAction(
+                components,
+                components.map(o => o.getPos()),
+                components.map(o => Snap(o.getPos()))
+            )
+        ]).execute());
+
+
+
     }
 
 
@@ -172,7 +199,9 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
             <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
+            <hr/>
             <button title="Focus"      onClick={() => doFunc(OnFocus)}>Focus</button>
+            <button title="CleanUp"      onClick={() => doFunc(onCleanUp)}>Clean Up</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
