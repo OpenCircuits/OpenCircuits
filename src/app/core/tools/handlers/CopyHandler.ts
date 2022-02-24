@@ -35,7 +35,7 @@ export const CopyHandler: EventHandler = ({
         // some weird error, which will cause the issue #746
         ev.clipboardData.setData("text/plain", str);
         ev.preventDefault(); // Necessary to copy correctly
-        
+
         if (type === "cut") {
             // Delete selections
             history.add(new GroupAction([
