@@ -154,9 +154,9 @@ $tab-padding: 8px;
 
             cursor: pointer;
             pointer-events: none;
-            
+
             transition: 0.5s;
-            
+
             @media (min-width: 768px), (orientation:landscape) {
                 border-bottom-right-radius: 15px;
             }
