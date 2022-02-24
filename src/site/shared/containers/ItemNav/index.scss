@@ -153,8 +153,8 @@ $tab-padding: 8px;
             border-color: transparent;
 
             cursor: pointer;
-            pointer-events:none;
-
+            pointer-events: none;
+            
             transition: 0.5s;
             
             @media (min-width: 768px), (orientation:landscape) {
@@ -169,7 +169,7 @@ $tab-padding: 8px;
 
             &:after {
                 content: '×';
-                pointer-events:all;
+                pointer-events: all;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
