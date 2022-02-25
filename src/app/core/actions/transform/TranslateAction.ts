@@ -9,7 +9,8 @@ import {SnapPos} from "./SnapUtils";
 
 /**
  * Translate can be applied to single components or groups of components,
- * used for moving componets from one position to another.
+ * used for moving componets from one position to another.* used for moving
+ * componets from one position to another.
  */
 export class TranslateAction implements Action {
     
@@ -39,13 +40,12 @@ export class TranslateAction implements Action {
      * @param initialPositions Initializes the array with the selected components' starting positions
      * @param targetPositions Initializes the array with the selected components' final positions
      */
-    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap?: boolean) {
+    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap = true) {
         this.objs = objs;
 
         this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
-        if(typeof snap === "undefined"){ this.snap = true; }
-        else{ this.snap = snap;}
+        this.snap = snap;
     }
 
     /**
@@ -57,9 +57,8 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        if(this.snap){
+        if(this.snap)
             this.objs.forEach(o => SnapPos(o));
-        }
 
         return this;
     }
@@ -73,9 +72,8 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        if(this.snap){
+        if(this.snap)
             this.objs.forEach(o => SnapPos(o));
-        }
 
         return this;
     }
