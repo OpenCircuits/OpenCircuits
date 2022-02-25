@@ -18,6 +18,7 @@ import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFa
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {RotateAction} from "core/actions/transform/RotateAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {CopyGroupAction} from "core/actions/CopyGroupAction";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
@@ -114,7 +115,7 @@ export const ContextMenu = ({info, paste}: Props) => {
     }
 
     /* Context Menu "Focus" */
-    const OnFocus = async () => {
+    const onFocus = async () => {
         const objs = (selections.amount() === 0 ?
             designer.getAll() :
             selections.get().filter(o => o instanceof CullableObject)) as CullableObject[];
@@ -140,12 +141,27 @@ export const ContextMenu = ({info, paste}: Props) => {
                 components.map(o => Snap(o.getPos()))
             )
         ]).execute());
+    }
 
+    /* Context Menu "Duplicate" */
+    const onDuplicate = async () => {
+        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
+
+        const copyGroupAction = new CopyGroupAction(designer, objs);
+        const components = copyGroupAction.getCopies().getComponents();
+
+        // Copy the group and then select them and move them over slightly
+        history.add(new GroupAction([
+            copyGroupAction.execute(),
+            CreateDeselectAllAction(selections).execute(),
+            CreateGroupSelectAction(selections, components).execute(),
+            new TranslateAction(components,
+                                components.map(o => o.getPos()),
+                                components.map(o => o.getPos().add(V(5, 5)))).execute()
+        ]));
 
 
     }
-
-
 
     /* Context Menu "Undo/Redo" */
     const onUndo = async () => history.undo();
@@ -197,8 +213,9 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
             <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
             <hr/>
-            <button title="Focus"      onClick={() => doFunc(OnFocus)}>Focus</button>
-            <button title="CleanUp"      onClick={() => doFunc(onCleanUp)}disabled = {designer.getObjects.length === 0}>Clean Up</button>
+            <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
+            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects.length === 0}>Clean Up</button>
+            <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
