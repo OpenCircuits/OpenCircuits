@@ -1,24 +1,19 @@
 import {useEffect, useRef} from "react";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
-import {FIT_PADDING_RATIO} from "core/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
-import {GetCameraFit} from "core/utils/ComponentUtils";
 import {V, Vector} from "core/utils/math/Vector";
-import {Snap} from "core/utils/ComponentUtils";
 
 import {IOObject} from "core/models";
-import {Component} from "core/models";
-import {CullableObject} from "core/models";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
-import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
-import {RotateAction} from "core/actions/transform/RotateAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
-import {CopyGroupAction} from "core/actions/CopyGroupAction";
+
+import {CleanUpHandler} from "core/tools/handlers/CleanUpHandler"
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
+import {DuplicateHandler} from "core/tools/handlers/DuplicateHandler"
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
@@ -116,51 +111,17 @@ export const ContextMenu = ({info, paste}: Props) => {
 
     /* Context Menu "Focus" */
     const onFocus = async () => {
-        const objs = (selections.amount() === 0 ?
-            designer.getAll() :
-            selections.get().filter(o => o instanceof CullableObject)) as CullableObject[];
-
-        // Get final camera position and zoom
-        const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
-        history.add(new MoveCameraAction(camera, pos, zoom).execute());
+        FitToScreenHandler.getResponse(info);
     }
 
     /* Context Menu "Clean Up" */
     const onCleanUp = async () => {
-        const components = (selections.amount() === 0 ?
-            designer.getObjects() :
-            selections.get().filter(o => o instanceof Component)) as Component[];
-
-        history.add(new GroupAction([
-            ...components.map(c =>
-                new RotateAction([c], c.getPos(), [c.getAngle()], [0])
-            ),
-            new TranslateAction(
-                components,
-                components.map(o => o.getPos()),
-                components.map(o => Snap(o.getPos()))
-            )
-        ]).execute());
+        CleanUpHandler.getResponse(info);
     }
 
     /* Context Menu "Duplicate" */
     const onDuplicate = async () => {
-        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
-
-        const copyGroupAction = new CopyGroupAction(designer, objs);
-        const components = copyGroupAction.getCopies().getComponents();
-
-        // Copy the group and then select them and move them over slightly
-        history.add(new GroupAction([
-            copyGroupAction.execute(),
-            CreateDeselectAllAction(selections).execute(),
-            CreateGroupSelectAction(selections, components).execute(),
-            new TranslateAction(components,
-                                components.map(o => o.getPos()),
-                                components.map(o => o.getPos().add(V(5, 5)))).execute()
-        ]));
-
-
+        DuplicateHandler.getResponse(info);
     }
 
     /* Context Menu "Undo/Redo" */
@@ -214,7 +175,7 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
             <hr/>
             <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
-            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects.length === 0}>Clean Up</button>
+            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects().length === 0}>Clean Up</button>
             <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
