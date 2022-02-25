@@ -19,9 +19,6 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
-
-
-
 import "./index.scss";
 
 
