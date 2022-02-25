@@ -83,8 +83,9 @@ $historybox-width: 250px;
     }
 
     &__entry {
-        height: 50px;
-        line-height: 50px;
+        height: auto;
+        line-height: 30px;
+        padding: 10px;
 
         margin: 5px;
         text-align: center;
