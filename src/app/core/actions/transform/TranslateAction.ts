@@ -9,8 +9,7 @@ import {SnapPos} from "./SnapUtils";
 
 /**
  * Translate can be applied to single components or groups of components,
- * used for moving componets from one position to another.* used for moving
- * componets from one position to another.
+ * used for moving componets from one position to another.
  */
 export class TranslateAction implements Action {
     
