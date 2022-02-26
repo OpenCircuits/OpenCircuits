@@ -39,7 +39,7 @@ export class Encoder extends DigitalComponent {
         });
     }
 
-    protected updatePortNames(): void {
+    public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
             if (p.getName() == "") p.setName(`I${i}`);
         })

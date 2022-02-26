@@ -67,6 +67,7 @@ export class CoderPortChangeAction implements Action {
 
         this.inputPortAction.execute();
         this.outputPortAction.execute();
+        this.obj.updatePortNames();
         return this;
     }
     
@@ -81,6 +82,7 @@ export class CoderPortChangeAction implements Action {
 
         this.outputPortAction.undo();
         this.inputPortAction.undo();
+        this.obj.updatePortNames();
         return this;
     }
 
