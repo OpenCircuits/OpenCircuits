@@ -13,7 +13,7 @@ const OscilloscopeSamplesConfig: ModuleConfig<[Oscilloscope], number> = {
     types: [Oscilloscope],
     valType: "int",
     getProps: (o) => o.getNumSamples(),
-    getAction: (s, newNumSamples) => new GroupAction(s.map(o => new OscilloscopeSamplesChangeAction(o, newNumSamples)))
+    getAction: (s, newNumSamples) => new GroupAction(s.map(o => new OscilloscopeSamplesChangeAction(o, newNumSamples)), "Oscilloscope Action")
 }
 
 export const OscilloscopeSamplesModule = PopupModule({
@@ -46,7 +46,7 @@ const OscilloscopeInputCountConfig: ModuleConfig<[Oscilloscope], number> = {
     valType: "int",
     getProps: (o) => o.getInputPortCount().getValue(),
     getAction: (s, newCount) => (
-        new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(),  newCount)))
+        new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(),  newCount)), "Oscilloscope Action")
     )
 }
 
@@ -66,7 +66,7 @@ const OscilloscopeDisplaySizeModuleXConfig: ModuleConfig<[Oscilloscope], number>
     valType: "float",
     getProps: (o) => o.getDisplaySize().x,
     getAction: (s, newW) => (
-        new GroupAction(s.map(o => new OscilloscopeSizeChangeAction(o, V(newW, o.getDisplaySize().y))))
+        new GroupAction(s.map(o => new OscilloscopeSizeChangeAction(o, V(newW, o.getDisplaySize().y))), "Oscilloscope Action")
     )
 }
 const OscilloscopeDisplaySizeModuleYConfig: ModuleConfig<[Oscilloscope], number> = {
@@ -74,7 +74,7 @@ const OscilloscopeDisplaySizeModuleYConfig: ModuleConfig<[Oscilloscope], number>
     valType: "float",
     getProps: (o) => o.getDisplaySize().y,
     getAction: (s, newH) => (
-        new GroupAction(s.map(o => new OscilloscopeSizeChangeAction(o, V(o.getDisplaySize().x, newH))))
+        new GroupAction(s.map(o => new OscilloscopeSizeChangeAction(o, V(o.getDisplaySize().x, newH))), "Oscilloscope Action")
     )
 }
 
