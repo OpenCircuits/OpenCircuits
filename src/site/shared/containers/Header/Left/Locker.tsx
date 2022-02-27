@@ -11,7 +11,7 @@ export const LockToggleButton = () => {
     const dispatch = useSharedDispatch();
 
 	return (
-		<div>
+			<div>
 	        <button className="header__left__lock"
 	                title="Lock/Unlock Editing"
 	                onClick={() => dispatch(ToggleCircuitLocked())}>
