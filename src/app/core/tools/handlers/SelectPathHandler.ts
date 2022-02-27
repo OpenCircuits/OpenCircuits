@@ -8,43 +8,30 @@ import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
 import {EventHandler} from "../EventHandler";
 
+import {Component} from "core/models";
+import {Wire} from "core/models";
 
 export const SelectPathHandler: EventHandler = ({
     conditions: (event: Event, {input, camera, designer}: CircuitInfo) =>
         (event.type === "dblclick" &&
          event.button === LEFT_MOUSE_BUTTON &&
-         ( // is there a wire or component within select bounds?
-          designer
-            .getWires()
-            .find(o =>
-                o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
-            !== undefined ||
-          designer
-            .getObjects()
-            .find(o =>
-                o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
-            !== undefined
-         )
+         designer // is there a wire or component within select bounds?
+           .getAll()
+           .find(o =>
+               o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
+           !== undefined
         ),
 
     getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 
-        const wire = designer
-            .getWires()
+        const obj: Component | Wire = designer
+            .getAll()
             .reverse()
-            .find(o => o.isWithinSelectBounds(worldMousePos));
-        const component = designer
-            .getObjects()
-            .reverse()
-            .find(o => o.isWithinSelectBounds(worldMousePos));
+            .find(o =>
+                o.isWithinSelectBounds(worldMousePos)) as Component | Wire;
 
-        if (wire != null) {
-            const wirePath = GetWirePath(wire!);
-            history.add(CreateGroupSelectAction(selections, wirePath).execute());
-        } else {
-            const objPath = GetComponentPath(component!);
-            history.add(CreateGroupSelectAction(selections, objPath).execute())
-        }
+        const path = (obj instanceof Wire) ? (GetWirePath(obj)) : (GetComponentPath(obj!));
+        history.add(CreateGroupSelectAction(selections, path).execute());
     }
 });

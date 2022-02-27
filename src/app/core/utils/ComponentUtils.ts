@@ -115,7 +115,7 @@ export function GetWirePath(w: Wire | Node): Array<Wire | Node> {
     const queue = new Array<Wire | Node>(w);
     const visited = new Set<Wire | Node>();
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
         const q = queue.shift()!;
 
         visited.add(q);
@@ -150,18 +150,16 @@ export function GetComponentPath(c: Component): Array<Component> {
     const queue = new Array<Component>(c);
     const visited = new Set<Component>();
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
         const q = queue.shift()!;
 
         visited.add(q);
         path.push(q);
-        for (let p of q.getPorts()) {
-            for (let w of p.getWires()) {
-                if (!visited.has(w.getP1Component()))
-                    queue.push(w.getP1Component());
-                if (!visited.has(w.getP2Component()))
-                    queue.push(w.getP2Component());
-            }
+        for (const w of q.getConnections()) {
+            if (!visited.has(w.getP1Component()))
+                queue.push(w.getP1Component());
+            if (!visited.has(w.getP2Component()))
+                queue.push(w.getP2Component());
         }
     }
 
