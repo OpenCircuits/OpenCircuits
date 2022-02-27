@@ -6,6 +6,9 @@ import {GroupAction} from "core/actions/GroupAction";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
+import {Input} from "core/utils/Input";
+import {Draggable} from "shared/components/DragDroppable/Draggable";
+import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
@@ -40,6 +43,9 @@ const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     );
 }
 
+var posx = 240, posy = 240;
+var reltvx = 0, reltvy = 0;
+var isMoving = false;
 
 type Props = {
     info: CircuitInfo;
@@ -52,10 +58,30 @@ export const HistoryBox = ({ info }: Props) => {
 
     const {undoHistory, redoHistory} = useHistory(info);
 
+    var mouse = useMousePos();
+
+    function mouseD() {
+        if (mouse.x!==undefined && mouse.y!==undefined) {
+            reltvx = mouse.x - posx;
+            reltvy = mouse.y - posy;
+        }
+        isMoving = true;
+    }
+    function mouseU() {
+        isMoving = false;
+    }
+
+    var cname = `historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`;
+
+    if (isMoving && mouse.x!==undefined && mouse.y!==undefined) {
+        posx = mouse.x-reltvx;
+        posy = mouse.y-reltvy;
+    }
+
     return (
-        <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
+        <div className={cname} style = {{ left: posx, top: posy }}>
             <div>
-                <span>History</span>
+                <span onMouseDown = {() => mouseD()} onMouseUp = {() => mouseU()}>History</span>
                 <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
             </div>
             <div>
@@ -64,6 +90,6 @@ export const HistoryBox = ({ info }: Props) => {
                 )}
             </div>
         </div>
-
     );
+
 }

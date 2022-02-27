@@ -1,30 +1,23 @@
 @import "~shared/utils/constants";
 
-$historybox-height: 60vh;
+$historybox-height: 40vh;
 $historybox-header-height: 30px;
 $historybox-width: 250px;
 
+$history-box-left: 235px;
+$history-box-bottom: 30px;
 
 .historybox {
-    width: $historybox-width;
-    border: 5px solid $secondary-color;
-    background-color: $primary-color;
-
     position: absolute;
-    left: $itemnav-width;
-    bottom: 0px;
     z-index: 4;
 
-    overflow-y: hidden;
-
-    padding-bottom: 10px;
-
-    transition: all 0.5s;
+    border-radius: 0px 15px;
+    border: 5px solid $secondary-color;
+    background-color: $primary-color;
 
     @media (max-width: 768px) and (orientation:portrait) {
         position: absolute;
         margin-bottom: $itemnav-height;
-        left: 0px;
 
         max-height: calc((40vh) + (#{$historybox-header-height}));
     }
@@ -35,31 +28,33 @@ $historybox-width: 250px;
         justify-content: space-between;
         align-items: center;
 
-        padding: 10px 5px;
-
-        height: $historybox-header-height;
+        border: 5px $secondary-color;
+        border-style: none none solid none;
 
         & > span:first-child {
+            flex-grow: 1;
             font-size: 30px;
+            cursor: all-scroll;
+            padding: 1vh 2vh;
         }
         & > span:last-child {
             font-size: 40px;
-            &:hover {
-                cursor: pointer;
-            }
+            cursor: pointer;
+            padding: 1vh 2vh;
         }
     }
+
     & > div:last-child {
-        height: $historybox-height;
+        min-height: $historybox-height;
+        min-width: $historybox-width;
 
         overflow-y: scroll;
-        
-        scrollbar-width: thin;
-        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+        resize: both;
 
         &::-webkit-scrollbar {
-            width: 7px;  // vertical scrollbars
+            width: 11px; // vertical scrollbars
             height: 7px; // horizontal scrollbar
+            background: $primary-color;
         }
 
         &::-webkit-scrollbar-thumb {
@@ -69,6 +64,10 @@ $historybox-width: 250px;
 
         @media (max-width: 768px) and (orientation:portrait) {
             max-height: 40vh;
+        }
+
+        &::-webkit-resizer {
+            background-image: url("~shared/../pages/digital/public/img/icons/resizer.svg");
         }
     }
 
@@ -83,8 +82,9 @@ $historybox-width: 250px;
     }
 
     &__entry {
-        height: 50px;
-        line-height: 50px;
+        height: auto;
+        line-height: 30px;
+        padding: 10px;
 
         margin: 5px;
         text-align: center;
