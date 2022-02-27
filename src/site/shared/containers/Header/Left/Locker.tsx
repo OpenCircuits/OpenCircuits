@@ -3,6 +3,7 @@ import {ToggleCircuitLocked} from "shared/state/CircuitInfo";
 
 import "./index.scss";
 
+
 export const LockToggleButton = () => {
     const {isLocked} = useSharedSelector(
         state => ({ ...state.circuit })

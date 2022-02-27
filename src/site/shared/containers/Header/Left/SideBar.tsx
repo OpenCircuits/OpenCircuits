@@ -3,6 +3,7 @@ import {ToggleSideNav} from "shared/state/SideNav";
 
 import "./index.scss";
 
+
 export const SideBarToggleButton = () => {
     const dispatch = useSharedDispatch();
 
