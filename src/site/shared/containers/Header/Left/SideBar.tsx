@@ -7,7 +7,7 @@ import "./index.scss";
 export const SideBarToggleButton = () => {
     const dispatch = useSharedDispatch();
 
-	return (
+    return (
             <div>
             <span title="Side Bar" role="button" tabIndex={0}
                   onClick={() => dispatch(ToggleSideNav())}>&#9776;</span>
