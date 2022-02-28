@@ -126,7 +126,6 @@ export const ContextMenu = ({info, paste}: Props) => {
     const onRedo = async () => history.redo();
 
 
-
     /* Helper function for buttons to call the function and render/close the popup */
     const doFunc = (func: () => void) => {
         // Don't do anything if locked
