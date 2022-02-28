@@ -1,9 +1,9 @@
 import {GroupAction} from "core/actions/GroupAction";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Port} from "core/models";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import {Port} from "core/models";
 
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
