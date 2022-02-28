@@ -3,8 +3,7 @@ import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
-import { Port } from "core/models";
-import { GRID_SIZE } from "core/utils/Constants";
+import {Port} from "core/models";
 
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
@@ -32,48 +31,13 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     inputPorts.sort(sortByPos);
     outputPorts.sort(sortByPos);
 
-    var currPort:number = 0;
-    for(currPort = 0; currPort < inputPorts.length; currPort++){
+    // Connect ports by descending y-pos unless they are almost horizontal
+    // in which they are connected left to right
+    for(let currPort = 0; currPort < inputPorts.length; currPort++){
          // Create action
          action.add(new ConnectionAction(designer, outputPorts[currPort]!, inputPorts[currPort]!));
          // wire.setAsStraight(true); @TODO
     }
-
-
-
-
-    // Connect closest pairs of input and output ports
-    // while (outputPorts.length > 0) {
-    //     // Find closest pair of input and output ports
-    //     const max = {dist: -Infinity, in: undefined as InputPort | undefined, out: undefined as OutputPort | undefined};
-    //     outputPorts.forEach((outPort) => {
-
-    //         // Find the closest input port
-    //         const min = {dist: Infinity, in: undefined as InputPort | undefined};
-    //         inputPorts.forEach((inPort) => {
-    //             // Calculate distance between target pos of ports
-    //             const dist = outPort.getWorldTargetPos().distanceTo(inPort.getWorldTargetPos());
-    //             if (dist < min.dist) {
-    //                 min.dist = dist;
-    //                 min.in = inPort;
-    //             }
-    //         });
-
-    //         if (min.dist > max.dist) {
-    //             max.dist = min.dist;
-    //             max.in = min.in;
-    //             max.out = outPort;
-    //         }
-    //     });
-
-    //     // Create action
-    //     action.add(new ConnectionAction(designer, max.out!, max.in!));
-    //     // wire.setAsStraight(true); @TODO
-
-    //     // Remove ports from array
-    //     inputPorts.splice(inputPorts.indexOf(max.in!), 1);
-    //     outputPorts.splice(outputPorts.indexOf(max.out!), 1);
-    // }
 
     return action;
 }
