@@ -24,10 +24,10 @@ export const PanTool: Tool = (() => {
                                                    input.getTouchCount() === 2)));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
-            // Deactivate if stopped dragging by releasing mouse
+            // Deactivate if alt key is released
             //  or if no dragging happened and "Alt" was released
             //  or if one of the arrow keys were released
-            return (event.type === "mouseup") ||
+            return (event.type === "keyup" && event.key === "Alt") ||
                    (event.type === "keyup" && ((!isDragging && event.key === "Alt" || 
                                                (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
                                                 event.key === "ArrowUp" || event.key === "ArrowDown"))))
