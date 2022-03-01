@@ -22,7 +22,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     // Sort inputs/outputs by their position
     const sortByPos = (a: Port, b: Port) => {
         const p1 = a.getWorldTargetPos(), p2 = b.getWorldTargetPos();
-        if (Math.abs(p2.y - p1.y) <= .25){ // If same-ish-y, sort by x from LtR
+        if (Math.abs(p1.y - p2.y) <= .25){ // If same-ish-y, sort by x from LtR
             return p1.x - p2.x;
         }
         return p1.y - p2.y; // Sort by y-pos from Top to Bottom
