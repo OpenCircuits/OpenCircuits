@@ -32,30 +32,27 @@ func getPort() string {
 	return "8080"
 }
 
+// Check if env variable exists, if not set to default value, return value of env variable 
+func checkEnv(key string, defaultVal string) string {
+	if !LookupEnv(key){
+		os.Setenv(key, defaultVal)
+	}
+	return os.Getenv(key)
+}
+
 func main() {
 	var err error
 
-	// First try with env 
-	os.Setenv("google_auth", "")
-	os.Setenv("no_auth", "false")
-	os.Setenv("interface", "sqlite")
-	os.Setenv("sqlitePath", "sql/sqlite")
-	os.Setenv("ds_emu_host", "")
-	os.Setenv("ds_emu_project_id", "")
-	os.Setenv("ip_address", "0.0.0.0")
-	os.Setenv("port", "8080")
-
-	// Parse flags
-	//googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
-	//noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
-	//userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	//sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
-	//dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
-	//dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
-	//ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
-	//portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
-	//flag.Parse()
-
+	// Unsure how to store help messages in env variables, for now they are commented
+	googleAuthConfig := checkEnv("google_auth", "") // <path-to-config>; Enables google sign-in API login
+	noAuthConfig := checkEnv("no_auth", "false") // Enables username-only authentication for testing and development
+	userCsifConfig := checkEnv("interface", "sqlite") // The storage interface
+	sqlitePathConfig := checkEnv("sqlitePath", "sql/sqlite") // The path to the sqlite working directory 
+	dsEmulatorHost := checkEnv("ds_emu_host", "") // The emulator host address for cloud datastore
+	dsProjectId := checkEnv("ds_emu_project_id", "") // The gcp project id for the datastore emulator
+	ipAddressConfig := checkEnv("ip_address", "0.0.0.0") // IP address of server
+	portConfig := checkEnv("port", "8080") // Port to serve application, use \"auto\" to select the first available port starting at 8080
+	
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	// Where is this env variable set?
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
