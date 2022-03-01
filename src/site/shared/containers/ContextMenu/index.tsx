@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -34,24 +34,44 @@ type Props = {
 }
 
 
-export const ContextMenu = ({info, paste}: Props) => {
-    const {locked, input, camera, history, designer, selections, renderer} = info;
-    const {undoHistory, redoHistory} = useHistory(info);
+export const ContextMenu = ({ info, paste }: Props) => {
+    const { locked, input, camera, history, designer, selections, renderer } = info;
+    const { undoHistory, redoHistory } = useHistory(info);
 
-    const {isOpen} = useSharedSelector(
+    const { isOpen } = useSharedSelector(
         state => ({ isOpen: state.contextMenu.isOpen })
     );
     const dispatch = useSharedDispatch();
 
     let menuPos: Vector;
 
-    /* LEON EXAMPLE
-    const [{posX,posY}, setPos] = useState({x:0,y:0});
+    const [{ posX,posY }, setPos] = useState({ posX:0,posY:0 });
+
+    /*Position changes are calculated using the react hook so that the
+     *context menu does not jump around during other update events.
+    */
     useEffect(() => {
+        let pos = input?.getMousePos();
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
 
+        const offset = 1;
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+        /* Relocate context menu to opposite side of cursor if it were to go off-screen */
+        if (pos.x+ contextMenuWidth > window.innerWidth)
+            pos.x -= contextMenuWidth - offset;
+
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            pos.y -= contextMenuHeight - offset;
+
+        //updates position state
+        setPos({ posX:pos.x, posY:pos.y });
+
+        // Update context menu position on canvas
+        menuPos = camera.getWorldPos(input.getMousePos());
     }, [isOpen]);
-     */
-
     useEffect(() => {
         if (!input)
             return;
@@ -126,32 +146,13 @@ export const ContextMenu = ({info, paste}: Props) => {
     }
 
     const menu = useRef<HTMLDivElement>(null);
-    let pos = input?.getMousePos();
-
-    /* Relocate context menu to opposite side of cursor if it were to go off-screen */
-    if (isOpen) {
-        if (!menu.current)
-            throw new Error("ContextMenu failed: menu.current is null");
-        const offset = 1;
-        const contextMenuWidth = menu.current.getBoundingClientRect().width;
-        const contextMenuHeight = menu.current.getBoundingClientRect().height;
-
-        if (pos.x + contextMenuWidth > window.innerWidth)
-            pos.x -= contextMenuWidth - offset;
-
-        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-            pos.y -= contextMenuHeight - offset;
-
-        // Update context menu position on canvas
-        menuPos = camera.getWorldPos(input.getMousePos());
-    }
 
     return (
         <div className="contextmenu"
              ref={menu}
              style={{
-                 left: `${pos?.x}px`,
-                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 left: `${posX}px`,
+                 top: `${posY + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
                  visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
