@@ -47,31 +47,6 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     const [{ posX,posY }, setPos] = useState({ posX:0,posY:0 });
 
-    /*Position changes are calculated using the react hook so that the
-     *context menu does not jump around during other update events.
-    */
-    useEffect(() => {
-        let pos = input?.getMousePos();
-        if (!menu.current)
-            throw new Error("ContextMenu failed: menu.current is null");
-
-        const offset = 1;
-        const contextMenuWidth = menu.current.getBoundingClientRect().width;
-        const contextMenuHeight = menu.current.getBoundingClientRect().height;
-
-        /* Relocate context menu to opposite side of cursor if it were to go off-screen */
-        if (pos.x+ contextMenuWidth > window.innerWidth)
-            pos.x -= contextMenuWidth - offset;
-
-        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-            pos.y -= contextMenuHeight - offset;
-
-        //updates position state
-        setPos({ posX:pos.x, posY:pos.y });
-
-        // Update context menu position on canvas
-        menuPos = camera.getWorldPos(input.getMousePos());
-    }, [isOpen]);
     useEffect(() => {
         if (!input)
             return;
@@ -84,6 +59,37 @@ export const ContextMenu = ({ info, paste }: Props) => {
         });
     }, [input])
 
+    if (isOpen) {
+        dispatch(CloseContextMenu());
+    }
+    /*Position changes are calculated using the react hook so that the
+     *context menu does not jump around during other update events.
+    */
+    useEffect(() => {
+        if(isOpen){
+            let pos = input?.getMousePos();
+
+            if (!menu.current)
+                throw new Error("ContextMenu failed: menu.current is null");
+
+            const offset = 1;
+            const contextMenuWidth = menu.current.getBoundingClientRect().width;
+            const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+
+            if (pos.x+ contextMenuWidth > window.innerWidth)
+                pos.x -= contextMenuWidth - offset;
+
+            if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+                pos.y -= contextMenuHeight - offset;
+
+            //updates position state
+            setPos({ posX:pos.x, posY:pos.y });
+
+            // Update context menu position on canvas
+            menuPos = camera.getWorldPos(input.getMousePos());
+        }
+    }, [isOpen]);
 
     const copy = () => {
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
@@ -146,6 +152,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
     }
 
     const menu = useRef<HTMLDivElement>(null);
+
 
     return (
         <div className="contextmenu"
