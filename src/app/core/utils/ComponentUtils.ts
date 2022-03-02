@@ -108,7 +108,7 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (including w)
  */
-export function GetPath(w: Wire | Node): Array<Wire | Node> {
+export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
@@ -121,12 +121,22 @@ export function GetPath(w: Wire | Node): Array<Wire | Node> {
         visited.add(q);
         path.push(q);
         if (q instanceof Wire) {
-            const p1 = q.getP1Component();
-            const p2 = q.getP2Component();
-            if (isNode(p1) && !visited.has(p1))
-                queue.push(p1);
-            if (isNode(p2) && !visited.has(p2))
-                queue.push(p2);
+            if(full){
+                const p1 = q.getP1Component();
+            
+                if (isNode(p1) && !visited.has(p1))
+                    queue.push(p1);
+    
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+            if(!full){
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+           
         } else {
             // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
@@ -143,12 +153,12 @@ export function GetPath(w: Wire | Node): Array<Wire | Node> {
  * @param  obj  The component
  * @return      An array of connections + WirePorts
  */
-export function GetAllPaths(obj: Component): Array<Wire | Node> {
+export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | Node> {
     // Get all distinct connections
     const wires = [...new Set(obj.getConnections())];
 
     // Get all distinct paths
-    return [...new Set(wires.flatMap((w) => GetPath(w)))];
+    return [...new Set(wires.flatMap((w) => GetPath(w,full)))];
 }
 
 /**
@@ -158,15 +168,17 @@ export function GetAllPaths(obj: Component): Array<Wire | Node> {
  * @param  objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
-export function GatherGroup(objects: IOObject[]): IOObjectSet {
+export function GatherGroup(objects: IOObject[], full: boolean = true): IOObjectSet {
+    
     const group = new IOObjectSet(objects);
-
+   
     // Gather all connecting paths
     const wires = group.getWires();
+
     const components = group.getComponents();
 
-    const paths = [...new Set(wires.flatMap((w) => GetPath(w))
-            .concat(components.flatMap((c) => GetAllPaths(c))))];
+    const paths = [...new Set(wires.flatMap((w) => GetPath(w, full))
+            .concat(components.flatMap((c) => GetAllPaths(c,full))))];
 
     return new IOObjectSet((components as IOObject[]).concat(wires, paths));
 }
