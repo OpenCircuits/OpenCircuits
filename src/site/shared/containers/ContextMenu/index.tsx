@@ -89,8 +89,16 @@ export const ContextMenu = ({ info, paste }: Props) => {
         }
     }, [isOpen]);
 
-    useDocEvent("mousedown", () => {
-        dispatch(CloseContextMenu());
+    useDocEvent("mousedown", (ev) => {
+        const pos = input.getMouseDownPos();
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
+
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+        if(pos.x < posX || pos.x > (posX + contextMenuWidth) || pos.y < posY || pos.y > (posY + contextMenuHeight))
+            dispatch(CloseContextMenu());
     });
 
 
