@@ -101,13 +101,15 @@ $historybox-width: 250px;
 
         padding: 5px;
 
+        cursor: pointer;
+
         & > span {
             font-size: 18px;
         }
 
-        &collapse {
-            margin-left: 5px;
-            cursor: pointer;
+        &-collapse {
+            margin-right: 5px;
+            float: right;
         }
     }
 

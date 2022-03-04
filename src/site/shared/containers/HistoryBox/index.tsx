@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action} from "core/actions/Action";
@@ -9,16 +11,19 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
-import { useState } from "react";
 
 
 type HistoryEntryProps = {
     a: Action;
 }
 const HistoryEntry = ({a}: HistoryEntryProps) => {
+    function stopPropagation(e: any) {
+        e.stopPropagation();
+    }
+
     if (a instanceof GroupAction)
         return(<GroupActionEntry g={a}></GroupActionEntry>)
-    return(<div className="historybox__entry">{a.getName()}</div>);
+    return(<div className="historybox__entry" onClick={(e) => stopPropagation(e)}>{a.getName()}</div>);
 }
 
 
@@ -28,15 +33,24 @@ type GroupActionEntryProps = {
 const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
+    function collapse(e: any) {
+        e.stopPropagation();
+        setIsCollapsed(!isCollapsed);
+    }
+
     if (g.isEmpty())
         return null;
     if (g.getActions().length === 1) {
         return(<HistoryEntry a={g.getActions()[0]}></HistoryEntry>);
     }
     return (
-        <div className="historybox__groupentry">
+        <div className="historybox__groupentry" onClick={(e) => collapse(e)}>
             <span>Group Action</span>
-            <span className="historybox__groupentrycollapse" onClick={() => setIsCollapsed(!isCollapsed)}>&rsaquo;</span>
+            {isCollapsed ?
+                <span className="historybox__groupentry-collapse">&#8964;</span>
+                :
+                <span className="historybox__groupentry-collapse">&rsaquo;</span>
+            }
             {isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
             })}
