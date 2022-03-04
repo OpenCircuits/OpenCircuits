@@ -8,7 +8,7 @@ const Config: ModuleConfig<[Clock, Oscilloscope], number> = {
     types: [Clock, Oscilloscope],
     valType: "int",
     getProps: (o) => o.getFrequency(),
-    getAction: (s, newFreq) => new GroupAction(s.map(o => new FrequencyChangeAction(o, newFreq)))
+    getAction: (s, newFreq) => new GroupAction(s.map(o => new FrequencyChangeAction(o, newFreq)), "Frequency Module")
 }
 
 export const FrequencyModule = PopupModule({

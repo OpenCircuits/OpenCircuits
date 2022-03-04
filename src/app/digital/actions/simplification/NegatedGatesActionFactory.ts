@@ -19,7 +19,7 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
  * @param circuit the circuit to modify, must be placed in designer
  */
 export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
-    const action = new GroupAction([], "Negated Gates Action");
+    const action = new GroupAction([], "Create Negated Gates Action");
     const negatedCircuit = [...circuit.toList()];
 
     const gates = circuit.getOthers().filter(gate =>

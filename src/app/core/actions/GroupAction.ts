@@ -4,9 +4,9 @@ export class GroupAction implements Action {
     private actions: Action[];
     private customName: string;
 
-    public constructor(actions?: Action[], customName?: string) {
+    public constructor(actions?: Action[], customName: string = "Group Action") {
         this.actions = actions || [];
-        this.customName = customName || "";
+        this.customName = customName;
     }
 
     public add(action: Action | Action[]): GroupAction {

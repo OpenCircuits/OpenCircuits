@@ -37,7 +37,7 @@ export const SelectionBoxTool = (() => {
             p2 = input.getMousePos();
         },
         onDeactivate({}: Event, {input, camera, history, designer, selections}: CircuitInfo): void {
-            const action = new GroupAction([], "Selection Box Tools");
+            const action = new GroupAction([], "Selection Box Tool");
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())

@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action} from "core/actions/Action";
@@ -9,7 +11,6 @@ import {useHistory} from "shared/utils/hooks/useHistory";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
-import { useState } from "react";
 
 
 type HistoryEntryProps = {
@@ -35,7 +36,7 @@ const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     }
     return (
         <div className="historybox__groupentry">
-            {g.getCustomName() == "" ? <span>Group Action</span> : <span>{g.getCustomName()}</span>}
+            <span>{g.getCustomName()}</span>
             <span className="historybox__groupentrycollapse" onClick={() => setIsCollapsed(!isCollapsed)}>&rsaquo;</span>
             {isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);

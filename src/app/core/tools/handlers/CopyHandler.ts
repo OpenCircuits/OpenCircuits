@@ -34,7 +34,7 @@ export const CopyHandler: EventHandler = ({
             history.add(new GroupAction([
                 CreateDeselectAllAction(selections),
                 CreateDeleteGroupAction(designer, objs)
-            ]).execute());
+            ], "Copy Handler").execute());
         }
     }
 });
