@@ -12,6 +12,7 @@ import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/sel
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
@@ -57,11 +58,8 @@ export const ContextMenu = ({ info, paste }: Props) => {
             else if (ev.type === "mousedown")
                 dispatch(CloseContextMenu());
         });
-    }, [input])
+    }, [input]);
 
-    if (isOpen) {
-        dispatch(CloseContextMenu());
-    }
     /*Position changes are calculated using the react hook so that the
      *context menu does not jump around during other update events.
     */
@@ -90,6 +88,11 @@ export const ContextMenu = ({ info, paste }: Props) => {
             menuPos = camera.getWorldPos(input.getMousePos());
         }
     }, [isOpen]);
+
+    useDocEvent("mousedown", () => {
+        dispatch(CloseContextMenu());
+    });
+
 
     const copy = () => {
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
@@ -152,7 +155,6 @@ export const ContextMenu = ({ info, paste }: Props) => {
     }
 
     const menu = useRef<HTMLDivElement>(null);
-
 
     return (
         <div className="contextmenu"
