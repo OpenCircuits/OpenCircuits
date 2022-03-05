@@ -110,6 +110,15 @@ $historybox-width: 250px;
         &-collapse {
             margin-right: 5px;
             float: right;
+
+            &__collapsed {
+                transition: 0.5s;
+            }
+
+            &__not-collapsed {
+                transform: rotate(90deg);
+                transition: 0.5s;
+            }
         }
     }
 

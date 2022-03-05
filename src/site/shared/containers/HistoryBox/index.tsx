@@ -31,7 +31,7 @@ type GroupActionEntryProps = {
     g: GroupAction;
 }
 const GroupActionEntry = ({g}: GroupActionEntryProps) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
 
     function collapse(e: any) {
         e.stopPropagation();
@@ -46,12 +46,16 @@ const GroupActionEntry = ({g}: GroupActionEntryProps) => {
     return (
         <div className="historybox__groupentry" onClick={(e) => collapse(e)}>
             <span>Group Action</span>
-            {isCollapsed ?
-                <span className="historybox__groupentry-collapse">&#8964;</span>
-                :
-                <span className="historybox__groupentry-collapse">&rsaquo;</span>
-            }
-            {isCollapsed && g.getActions().map((a, i) => {
+            <span
+                className={`historybox__groupentry-collapse
+                ${isCollapsed ?
+                    "historybox__groupentry-collapse__collapsed"
+                    :
+                    "historybox__groupentry-collapse__not-collapsed"
+                }`}>
+                &rsaquo;
+            </span>
+            {!isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
             })}
         </div>
