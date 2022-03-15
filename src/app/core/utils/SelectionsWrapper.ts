@@ -1,4 +1,5 @@
 import {Component, Port, Wire} from "core/models";
+import { addAbortSignal } from "stream";
 import {V, Vector} from "Vector";
 import {Selectable} from "./Selectable";
 
@@ -150,6 +151,24 @@ export class SelectionsWrapper {
      */
     public get(): Selectable[] {
         return Array.from(this.selections);
+    }
+
+    /**
+     * Returns an array containing the elements of `this.selections` AND
+     * any children that those components may have
+     * @returns an array of type Selectable that contains the elements of `this.selections` 
+     * and their children
+     */
+    public getFamily(): Selectable[] {
+        let allTransformations = [];
+        this.selections.forEach(s => {
+            if (s instanceof Component) {
+                allTransformations.push(s);
+                s.getTransform().getChildren()?.forEach(t => {
+                    allTransformations.push(t);
+                })
+            }
+        })
     }
 
     /**

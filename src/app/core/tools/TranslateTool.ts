@@ -63,6 +63,10 @@ export const TranslateTool: Tool = (() => {
                         [currentlyPressedObject]
             ) as Component[];
 
+            components.forEach(element => {
+                console.log(element.getTransform().getParent());
+            });
+
             action = new GroupAction([
                 new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
             ]);

@@ -15,6 +15,9 @@ export class Transform {
     @serialize
     private parent?: Transform;
 
+    @serialize 
+    private children?: Transform[];
+
     @serialize
     private pos: Vector;
 
@@ -49,6 +52,7 @@ export class Transform {
      */
     public constructor(pos: Vector = V(0), size: Vector = V(1), angle: number = 0) {
         this.parent = undefined;
+        this.children = undefined;
 
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
@@ -137,6 +141,13 @@ export class Transform {
         this.dirty = true;
         this.dirtyCorners = true;
     }
+    public addChild(t: Transform): void {
+        if (this.children == undefined) {
+            this.children = [t];
+        } else {
+            this.children.push(t);
+        }
+    }
     public setPos(p: Vector): void {
         if (this.parent)
             p = this.parent.toLocalSpace(p);
@@ -202,6 +213,9 @@ export class Transform {
 
     public getParent(): Transform | undefined {
         return this.parent;
+    }
+    public getChildren(): Transform[] | undefined {
+        return this.children;
     }
     public getPos(): Vector {
         if (this.parent)
