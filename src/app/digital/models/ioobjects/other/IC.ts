@@ -97,7 +97,7 @@ export class IC extends DigitalComponent {
     }
 
     public getData(): ICData {
-        return this.data;
+        return ICData.Create(this.collection)!; // TODO create so that state is periodically updated? (for if inputs are clocks)
     }
 
     public getDisplayName(): string {

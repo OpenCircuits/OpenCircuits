@@ -24,6 +24,8 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
+import { Button, Switch } from "digital/models/ioobjects/inputs";
+import { IC } from "digital/models/ioobjects";
 
 
 type Props = {
@@ -74,6 +76,19 @@ export const ICViewer = (() => {
 
             // Add render callbacks and set render function
             designer.addCallback(() => renderer.render());
+
+            // Synchronize the inputs in the original designer and this IC viewer
+            //  (issue #754)
+            mainInfo.designer.addCallback(() => {
+                try { // will run on ANY change to main designer, even if ic is not being viewed
+                    // loop through all the inputs for this IC
+                    //  set their input value to be what the info.designer has for their input
+                    const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
+                    const ic = mainInfo.selections.get()[0] as IC;
+                    for (let i = 0; i < viewerInputs.length; ++i)
+                        viewerInputs[i].activate(ic.getInputs()[i].getIsOn());
+                } catch (error) {}
+            });
 
             renderer.setRenderFunction(() => renderFunc());
             renderer.render();
