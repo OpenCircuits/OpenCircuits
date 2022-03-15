@@ -19,6 +19,14 @@ import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
+import {DeleteAction}     from "core/actions/addition/PlaceAction"; 
+import {DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {IOObject} from "core/models";
+import {GroupAction} from "core/actions/GroupAction";
+import { Component } from "core/models";
+import { Selectable } from "core/utils/Selectable";
 import "./index.scss";
 
 
@@ -63,6 +71,21 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
+
+    const [currentlyPressedObj, setCurPressedObj] = useState(undefined as (Selectable | undefined));
+
+    useDocEvent("mousedown", () => {
+        if (info.currentlyPressedObject) 
+            setCurPressedObj(info.currentlyPressedObject);
+    });
+    useDocEvent("mouseup", () => {
+        //set currently pressed object to be undefined
+        setCurPressedObj(undefined);
+    });
+    useDocEvent("mouseleave", () => {
+        //set currently pressed object to be undefined
+        setCurPressedObj(undefined);
+    });
 
     // Resets the curItemID and numClicks
     function reset(cancelled: boolean = false) {
@@ -176,7 +199,24 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                 x{numClicks}
             </span>
         </div>
-        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}>
+        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
+             onMouseUp={(e) => {
+                 //drag items to itemnav to delete them
+                if (info.selections.get().length > 0){
+                    const objs = info.selections.get().filter(o => o instanceof IOObject) as IOObject[];
+                    info.history.add(new GroupAction([
+                        CreateDeselectAllAction(info.selections).execute(),
+                        CreateDeleteGroupAction(info.designer, objs).execute()
+                    ]));
+                }else{
+                    if(currentlyPressedObj instanceof Component){
+                        for(var wire of currentlyPressedObj.getConnections()){
+                            info.history.add(new DisconnectAction(info.designer, wire).execute());
+                        }
+                        info.history.add(new DeleteAction(info.designer, currentlyPressedObj).execute());
+                    }
+                }
+             }}>
             <div className="itemnav__top">
                 <div>
                     <button  title="History" onClick={() => {
@@ -286,3 +326,5 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         </nav>
     </>);
 }
+
+
