@@ -37,7 +37,7 @@
 
             position: absolute;
 
-            width: 30vw;
+            width: 20vw;
             padding: 15px 32px;
 
             color: white;
@@ -48,6 +48,19 @@
                 &:active {
                     background-color: darken($danger-color, 10%);
                 }
+            }
+
+            &[name="restore"] {
+                right: 28vw;
+                color: white;
+                background-color: $success-color;
+                &:active {
+                    background-color: darken($success-color, 10%);
+                }
+            }
+
+            &:disabled {
+                background-color: #888;
             }
         }
 
