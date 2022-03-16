@@ -104,7 +104,7 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 /**
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
- *
+ * @param full true if you want to return everything in the circuit otherwise returns only the wires/nodes connected to the wire.
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (including w)
  */
