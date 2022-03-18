@@ -47,7 +47,7 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                  e.stopPropagation();
                  setIsCollapsed(!isCollapsed);
              }}>
-            <span>{g.getCustomName()}</span>
+            <span>{g.getName()}</span>
             <span
                 className={`historybox__groupentry__collapse_btn \
                             ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
