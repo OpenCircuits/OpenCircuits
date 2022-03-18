@@ -104,9 +104,9 @@ export const TranslateTool: Tool = (() => {
                         curPositions.map(p => Snap(p)):
                         curPositions;
 
-                    const snapping = input.isShiftKeyDown() ? false : true;
+                    const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    new TranslateAction(components, initalPositions, newPositions, snapping).execute();
+                    new TranslateAction(components, initalPositions, newPositions, snapToConnections).execute();
 
                     return true;
 

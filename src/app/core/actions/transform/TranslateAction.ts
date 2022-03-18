@@ -28,6 +28,10 @@ export class TranslateAction implements Action {
      */
     protected targetPositions: Vector[];
 
+    /**
+     * Flag that represents whether or not positions should be snapped.
+     * Necessary to resolve issue #910
+     */
     protected snap: boolean;
 
     /**
@@ -38,6 +42,7 @@ export class TranslateAction implements Action {
      * @param objs Initializes the array with the selected component(s)
      * @param initialPositions Initializes the array with the selected components' starting positions
      * @param targetPositions Initializes the array with the selected components' final positions
+     * @param snap Sets whether or not components will snap. Defaults to true.
      */
     public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap = true) {
         this.objs = objs;
@@ -56,7 +61,7 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        if(this.snap)
+        if (this.snap)
             this.objs.forEach(o => SnapPos(o));
 
         return this;
@@ -71,7 +76,7 @@ export class TranslateAction implements Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
 
         // Always snap afterwards to avoid issue #417
-        if(this.snap)
+        if (this.snap)
             this.objs.forEach(o => SnapPos(o));
 
         return this;
