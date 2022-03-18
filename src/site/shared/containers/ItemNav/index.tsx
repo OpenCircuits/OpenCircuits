@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 
-import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -121,6 +121,11 @@ export const ItemNav = <D,>({ info, config, additionalData,
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState]);
+
+    //updates camera margin when itemnav is rendered open
+    useEffect( () => {
+        info.camera.setMargin({ left: (isOpen ? ITEMNAV_WIDTH : 0) });
+    }, [isOpen]);
 
 
     // Cancel placing when pressing escape
