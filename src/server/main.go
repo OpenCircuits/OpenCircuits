@@ -52,12 +52,6 @@ func main() {
 	ipAddressConfig := checkEnv("ip_address", "0.0.0.0")     // IP address of server
 	portConfig := checkEnv("port", "8080")                   // Port to serve application, use \"auto\" to select the first available port starting at 8080
 
-	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
-	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
-		os.Setenv("google_auth", "credentials.json")
-		os.Setenv("interface", "gcp_datastore")
-	}
-
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
 	if googleAuthConfig != "" {
