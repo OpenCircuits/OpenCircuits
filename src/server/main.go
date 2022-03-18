@@ -53,7 +53,6 @@ func main() {
 	portConfig := checkEnv("port", "8080")                   // Port to serve application, use \"auto\" to select the first available port starting at 8080
 
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
-	// Where is this env variable set?
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
 		os.Setenv("google_auth", "credentials.json")
 		os.Setenv("interface", "gcp_datastore")
@@ -64,7 +63,6 @@ func main() {
 	if googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(googleAuthConfig))
 	}
-	// Figure out a better way to do this (Convert to bool or decide on different indicator)
 	if noAuthConfig == "true" {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
