@@ -75,5 +75,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "react-shepherd": "^3.3.6"
   }
 }
