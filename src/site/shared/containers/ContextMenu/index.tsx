@@ -80,7 +80,7 @@ export const ContextMenu = ({info, paste}: Props) => {
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs)
-        ]).execute());
+        ], "Cut (Context Menu)").execute());
     }
 
     /* Context Menu "Copy" */

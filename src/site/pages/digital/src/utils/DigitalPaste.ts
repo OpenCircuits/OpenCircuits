@@ -52,7 +52,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     // Transfer the new ICData
     const action = new GroupAction([
         new TransferICDataAction(newICData, designer).execute()
-    ]);
+    ], "Recursive Transfer ICData Action");
 
     // Recursively look through all the new ICs for new ICData
     newICData.forEach(d => {
@@ -85,7 +85,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
 
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
-        const action = new GroupAction();
+        const action = new GroupAction([], "Digital Paste");
         if (newICDataAction)
             action.add(newICDataAction);
         action.add(new GroupAction([
