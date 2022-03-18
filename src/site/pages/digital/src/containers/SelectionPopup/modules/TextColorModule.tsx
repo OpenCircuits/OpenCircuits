@@ -8,7 +8,7 @@ const Config: ModuleConfig<[Label], string> = {
     types: [Label],
     valType: "string",
     getProps: (o) => o.getTextColor(),
-    getAction: (s, newCol) => new GroupAction(s.map(o => new LabelTextColorChangeAction(o, newCol)))
+    getAction: (s, newCol) => new GroupAction(s.map(o => new LabelTextColorChangeAction(o, newCol)), "Text Color Module")
 }
 
 export const TextColorModule = PopupModule({

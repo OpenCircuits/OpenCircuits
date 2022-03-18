@@ -8,7 +8,7 @@ const Config: ModuleConfig<[ConstantNumber], number> = {
     types: [ConstantNumber],
     valType: "int",
     getProps: (o) => o.getInputNum(),
-    getAction: (s,newInput) => new GroupAction(s.map(o => new ConstantNumberChangeAction(o,newInput)))
+    getAction: (s,newInput) => new GroupAction(s.map(o => new ConstantNumberChangeAction(o,newInput)), "Constant Number Input Module")
 }
 
 export const ConstantNumberInputModule = PopupModule({
