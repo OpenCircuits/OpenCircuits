@@ -8,15 +8,11 @@ import {Clamp} from "math/MathUtils";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable} from "core/utils/Selectable";
 
-import {GroupAction}             from "core/actions/GroupAction";
-import {DeleteAction}            from "core/actions/addition/PlaceAction";
-import {DisconnectAction}        from "core/actions/addition/ConnectionAction";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
 
-import {IOObject, Component} from "core/models";
+import {Component} from "core/models";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
@@ -58,17 +54,18 @@ type Props<D> = {
     onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
-    const {isOpen, isEnabled, isHistoryBoxOpen} = useSharedSelector(
+export const ItemNav = <D,>({ info, config, additionalData,
+                              onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
+    const { isOpen, isEnabled, isHistoryBoxOpen } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
 
-    const {undoHistory, redoHistory} = useHistory(info);
+    const { undoHistory, redoHistory } = useHistory(info);
 
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
-    const [{curItemID, numClicks}, setState] = useState({curItemID: "", numClicks: 1});
+    const [{ curItemID, numClicks }, setState] = useState({ curItemID: "", numClicks: 1 });
 
     const [hovering, setHover] = useState("");
 
@@ -98,8 +95,8 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
     }
 
     // Resets the curItemID and numClicks
-    function reset(cancelled: boolean = false) {
-        setState({curItemID: "", numClicks: 1});
+    function reset(cancelled = false) {
+        setState({ curItemID: "", numClicks: 1 });
         setCurItemImg("");
         onFinish && onFinish(cancelled);
     }
@@ -112,7 +109,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
         const touch = ev.changedTouches.item(0);
         if (!touch)
             throw new Error("ItemNav.useDocEvent failed: touch is null");
-        const {clientX: x, clientY: y} = touch;
+        const { clientX: x, clientY: y } = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
     }, [curItemID, numClicks, setState, additionalData]);
@@ -147,9 +144,10 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
 
     const MAX_STACK = 4;
 
-    const additionalPreviewComp = (additionalPreview && !!additionalData && additionalPreview(additionalData, curItemID));
+    const additionalPreviewComp = (additionalPreview && !!additionalData &&
+                                   additionalPreview(additionalData, curItemID));
 
-    const {w, h} = useWindowSize();
+    const { w, h } = useWindowSize();
 
     // Calculate alternate sections view for when the ItemNav is on the bottom of the screen
     //  By placing them all on a single row
@@ -162,7 +160,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                 ...prev.slice(0,-1),
                 ...(prev[prev.length-1].length < amt
                     ? [[...prev[prev.length-1], cur]] // Add cur to last group
-                    : [prev[prev.length-1], [cur]])   // Create new group with just cur
+                    : [prev[prev.length-1], [cur]]),  // Create new group with just cur
             ]);
         }
 
@@ -176,7 +174,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                     // Reduce items to group of `numPerSection`
                     .reduce(GroupBy(numPerSection), [[]] as ItemNavItem[][])
                     // Map each group to a new section with same ID and label
-                    .map<ItemNavSection>(items => ({ id: section.id, label: section.label, items }))
+                    .map<ItemNavSection>(items => ({ id: section.id, label: section.label, items })),
             ];
         }, [] as ItemNavSection[]);
     }, [config.sections, w]);
@@ -298,8 +296,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
                                         <div onClick={(ev) => {
                                             // Resets click tracking and stops propgation so that an
                                             // Components are not clicked onto the canvas after being deleted.
-                                            setState({curItemID: "",
-                                                        numClicks: 1});
+                                            setState({ curItemID: "", numClicks: 1 });
                                             // Stops drag'n'drop preview when deleting
                                             setCurItemImg("");
                                             onDelete(section, item) && setHover("");
