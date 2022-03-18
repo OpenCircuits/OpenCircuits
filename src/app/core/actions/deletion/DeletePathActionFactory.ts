@@ -9,7 +9,7 @@ import {Node}            from "core/models/Node";
 
 
 export function CreateDeletePathAction(designer: CircuitDesigner, path: Array<Wire | (Component & Node)>): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Delete Path Action");
 
     // Remove wires first
     path.filter((p) => p instanceof Wire)

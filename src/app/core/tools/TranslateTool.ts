@@ -68,8 +68,8 @@ export const TranslateTool: Tool = (() => {
             });
 
             action = new GroupAction([
-                new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
-            ]);
+                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute()
+            ], "Translate Tool");
 
             initalPositions = components.map(o => o.getPos());
 
