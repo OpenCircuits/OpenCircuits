@@ -53,7 +53,10 @@ export class CoderPortChangeAction implements Action {
      * @param val refers to the target number chosen by the user.
      */
     protected changeSize(val: number): void {
-        this.obj.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2 * Math.pow(2, val)));
+        let mul: number = 1;
+        if(val >= 5) mul = 1.2;
+        if(val == 8) mul = 1.4;
+        this.obj.setSize(V(DEFAULT_SIZE * mul, DEFAULT_SIZE/2 * Math.pow(2, val)));
     }
     
     /**
