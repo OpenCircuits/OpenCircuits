@@ -33,10 +33,10 @@ type Props = {
 }
 export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
-    
+
     // State controller for main designer callback
     let pauseUpdates = false;
-
+    
     return ({ mainInfo }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
 
@@ -47,6 +47,13 @@ export const ICViewer = (() => {
 
         const {w, h} = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
+        const restoreButton = useRef<HTMLButtonElement>(null);
+
+        // // State controller for main designer callback // TODO
+        // let [pauseUpdates, setPausedUpdates] = useState(false);
+        // setPausedUpdates = (val : boolean) => {
+        //     pauseUpdates = val;
+        // }
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -62,6 +69,7 @@ export const ICViewer = (() => {
         useEffect(() => {
             if (!canvas.current)
                 throw new Error("ICViewer.useEffect failed: canvas.current is null");
+            
             // Create input w/ canvas
             info.input = new Input(canvas.current);
 
@@ -70,14 +78,18 @@ export const ICViewer = (() => {
 
             // Add input listener
             info.input.addListener((event) => {
+                if (!restoreButton.current)
+                    throw new Error("ICViewer.useEffect failed: restoreButton.current is null");
                 const change = toolManager.onEvent(event, info);
-                const restoreButton = document.getElementsByName("restore")[0] as HTMLButtonElement;
                 if (change) {
+                    renderer.render();
                     if (toolManager.getCurrentTool() instanceof InteractionTool) {
+                        console.log("listener: " + pauseUpdates);
+                        // setPausedUpdates(true); // TODO
                         pauseUpdates = true;
-                        restoreButton.disabled = false;
+                        restoreButton.current.disabled = false;
                     }
-                } else restoreButton.disabled = !pauseUpdates;
+                } else restoreButton.current.disabled = !pauseUpdates;
             });
 
             // Input should be blocked initially
@@ -89,16 +101,9 @@ export const ICViewer = (() => {
             // Synchronize the inputs in the original designer and this IC viewer
             //  (issue #754)
             mainInfo.designer.addCallback(() => {
-                if (!pauseUpdates) {
-                    try { // will run on ANY change to main designer, even if ic is not being viewed
-                        // loop through all the inputs for this IC
-                        //  set their input value to be what the info.designer has for their input
-                        const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
-                        const ic = mainInfo.selections.get()[0] as IC;
-                        for (let i = 0; i < viewerInputs.length; ++i)
-                            viewerInputs[i].activate(ic.getInputs()[i].getIsOn());
-                    } catch (error) {}
-                } 
+                console.log("callback: " + pauseUpdates);
+                if (!pauseUpdates)
+                    updateViewer();
             });
 
             renderer.setRenderFunction(() => renderFunc());
@@ -134,6 +139,7 @@ export const ICViewer = (() => {
 
         const close = () => {
             // Reset in case for next time
+            // setPausedUpdates(false); // TODO
             pauseUpdates = false;
 
             // Block input while closed
@@ -145,9 +151,22 @@ export const ICViewer = (() => {
             dispatch(CloseICViewer());
         }
 
+        const updateViewer = () => {
+            try {
+                // loop through all the inputs for this IC
+                //  set their input value to be what the info.designer has for their input
+                const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
+                const ic = mainInfo.selections.get()[0] as IC;
+                for (let i = 0; i < viewerInputs.length; ++i)
+                    viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
+            } catch (error) {} // not viewing ic at the moment
+        }
+
         const restore = () => {
             pauseUpdates = false;
-            (document.getElementsByName("restore")[0] as HTMLButtonElement).disabled = true;
+            console.log("restore: " + pauseUpdates);
+            restoreButton.current!.disabled = true;
+            updateViewer();
         }
 
         useKeyDownEvent(info.input, "Escape", close);
@@ -162,7 +181,7 @@ export const ICViewer = (() => {
                     <button name="close" onClick={close}>
                         Close
                     </button>
-                    <button name="restore" /*disabled={restoreDisabled()}*/ onClick={restore}>
+                    <button ref={restoreButton} name="restore" /*disabled={!pauseUpdates}*/ onClick={restore}>
                         Restore
                     </button>
                 </div>
