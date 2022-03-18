@@ -1,13 +1,13 @@
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {ToggleCircuitLocked, SetCircuitName} from "shared/state/CircuitInfo";
-import {ToggleSideNav} from "shared/state/SideNav";
+import {SetCircuitName} from "shared/state/CircuitInfo";
 
 import {InputField} from "shared/components/InputField";
-import {HistoryToggleButton} from "./History";
-import {LockToggleButton} from "./Locker";
-import {SideBarToggleButton} from "./SideBar";
+
+import {HistoryToggleButton} from "./HistoryToggleButton";
+import {LockToggleButton} from "./LockToggleButton";
+import {SideBarToggleButton} from "./SideBarToggleButton";
 
 import "./index.scss";
 
@@ -15,8 +15,8 @@ import "./index.scss";
 type Props = {
     helpers: CircuitInfoHelpers;
 }
-export const HeaderLeft = ({helpers}: Props) => {
-    const {id, name, isSaved, isLoggedIn, saving, error} = useSharedSelector(
+export const HeaderLeft = ({ helpers }: Props) => {
+    const { id, name, isSaved, isLoggedIn, saving, error } = useSharedSelector(
         state => ({ ...state.circuit, isLoggedIn: state.user.isLoggedIn })
     );
     const dispatch = useSharedDispatch();
