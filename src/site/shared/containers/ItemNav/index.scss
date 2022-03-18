@@ -153,6 +153,7 @@ $tab-padding: 8px;
             border-color: transparent;
 
             cursor: pointer;
+            pointer-events: none;
 
             transition: 0.5s;
 
@@ -168,7 +169,7 @@ $tab-padding: 8px;
 
             &:after {
                 content: '×';
-
+                pointer-events: all;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
@@ -184,13 +185,14 @@ $tab-padding: 8px;
                     left: 50%;
                     top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
                 }
+                
             }
         }
 
         &__closed > div {
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
-
+            pointer-events: all;
             &:after {
                 left: 50%;
                 top: 50%;
