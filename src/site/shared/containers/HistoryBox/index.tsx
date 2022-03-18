@@ -16,43 +16,41 @@ import "./index.scss";
 type HistoryEntryProps = {
     a: Action;
 }
-const HistoryEntry = ({a}: HistoryEntryProps) => {
-    function stopPropagation(e: any) {
-        e.stopPropagation();
-    }
-
+const HistoryEntry = ({ a }: HistoryEntryProps) => {
     if (a instanceof GroupAction)
-        return(<GroupActionEntry g={a}></GroupActionEntry>)
-    return(<div className="historybox__entry" onClick={(e) => stopPropagation(e)}>{a.getName()}</div>);
+        return (<GroupActionEntry g={a}></GroupActionEntry>);
+    return (
+        <div className="historybox__entry"
+             // Necessary to stop child entries from collapsing the parent history entry
+             onClick={(e) => e.stopPropagation()}>
+            {a.getName()}
+        </div>
+    );
 }
 
 
 type GroupActionEntryProps = {
     g: GroupAction;
 }
-const GroupActionEntry = ({g}: GroupActionEntryProps) => {
+const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
-
-    function collapse(e: any) {
-        e.stopPropagation();
-        setIsCollapsed(!isCollapsed);
-    }
 
     if (g.isEmpty())
         return null;
-    if (g.getActions().length === 1) {
-        return(<HistoryEntry a={g.getActions()[0]}></HistoryEntry>);
-    }
+    if (g.getActions().length === 1)
+        return (<HistoryEntry a={g.getActions()[0]}></HistoryEntry>);
+
     return (
-        <div className="historybox__groupentry" onClick={(e) => collapse(e)}>
+        <div className="historybox__groupentry"
+             onClick={(e) => {
+                 // Necessary to stop child entries from collapsing the parent history entry
+                 e.stopPropagation();
+                 setIsCollapsed(!isCollapsed);
+             }}>
             <span>Group Action</span>
             <span
-                className={`historybox__groupentry-collapse
-                ${isCollapsed ?
-                    "historybox__groupentry-collapse__collapsed"
-                    :
-                    "historybox__groupentry-collapse__not-collapsed"
-                }`}>
+                className={`historybox__groupentry__collapse_btn \
+                            ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
                 &rsaquo;
             </span>
             {!isCollapsed && g.getActions().map((a, i) => {
@@ -67,12 +65,12 @@ type Props = {
     info: CircuitInfo;
 }
 export const HistoryBox = ({ info }: Props) => {
-    const {isOpen, isHistoryBoxOpen} = useSharedSelector(
+    const { isOpen, isHistoryBoxOpen } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
 
-    const {undoHistory, redoHistory} = useHistory(info);
+    const { undoHistory, redoHistory } = useHistory(info);
 
     return (
         <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
