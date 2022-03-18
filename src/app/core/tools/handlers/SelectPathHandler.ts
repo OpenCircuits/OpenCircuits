@@ -8,8 +8,7 @@ import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
 import {EventHandler} from "../EventHandler";
 
-import {Component} from "core/models";
-import {Wire} from "core/models";
+import {Component, Wire} from "core/models";
 
 export const SelectPathHandler: EventHandler = ({
     conditions: (event: Event, {input, camera, designer}: CircuitInfo) =>
@@ -25,7 +24,7 @@ export const SelectPathHandler: EventHandler = ({
     getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 
-        const obj: Component | Wire = designer
+        const obj = designer
             .getAll()
             .reverse()
             .find(o =>
