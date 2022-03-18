@@ -53,7 +53,7 @@ $historybox-width: 250px;
         height: $historybox-height;
 
         overflow-y: scroll;
-        
+
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
@@ -102,13 +102,22 @@ $historybox-width: 250px;
 
         padding: 5px;
 
+        cursor: pointer;
+
         & > span {
             font-size: 18px;
         }
 
-        &collapse {
-            margin-left: 5px;
-            cursor: pointer;
+        &__collapse_btn {
+            margin-right: 5px;
+            float: right;
+
+            transition: 0.5s;
+            transform: rotate(90deg);
+
+            &-collapsed {
+                transform: rotate(0deg);
+            }
         }
     }
 
