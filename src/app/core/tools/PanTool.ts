@@ -23,12 +23,12 @@ export const PanTool: Tool = (() => {
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
-            // Deactivate if alt key is released
+        shouldDeactivate(event: Event, {input}: CircuitInfo): boolean {
+            //  Deactivate if alt key is released
             //  or if no dragging happened and "Alt" was released
             //  or if one of the arrow keys were released
-            return (event.type === "keyup" && event.key === "Alt") ||
-                   (event.type === "keyup" && ((!isDragging && event.key === "Alt" || 
+            return  (!isDragging && !input.isAltKeyDown()) ||
+                    (event.type === "keyup" && ((!isDragging && event.key === "Alt" || 
                                                (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
                                                 event.key === "ArrowUp" || event.key === "ArrowDown"))))
         },
@@ -51,6 +51,10 @@ export const PanTool: Tool = (() => {
                 camera.translate(dPos.scale(-1 * camera.getZoom()));
                 
                 return true;
+            }
+
+            if (event.type === "mouseup") {
+                isDragging = false;
             }
             
             if (event.type === "keydown") {
