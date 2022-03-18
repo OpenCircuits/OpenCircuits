@@ -6,6 +6,17 @@ import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Selectable} from "core/utils/Selectable";
+
+import {GroupAction}             from "core/actions/GroupAction";
+import {DeleteAction}            from "core/actions/addition/PlaceAction";
+import {DisconnectAction}        from "core/actions/addition/ConnectionAction";
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+
+import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
+
+import {IOObject, Component} from "core/models";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
@@ -19,14 +30,6 @@ import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
-import {DeleteAction}     from "core/actions/addition/PlaceAction"; 
-import {DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
-import {IOObject} from "core/models";
-import {GroupAction} from "core/actions/GroupAction";
-import { Component } from "core/models";
-import { Selectable } from "core/utils/Selectable";
 import "./index.scss";
 
 
@@ -72,20 +75,27 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
+    // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
+    //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
     const [currentlyPressedObj, setCurPressedObj] = useState(undefined as (Selectable | undefined));
-
     useDocEvent("mousedown", () => {
-        if (info.currentlyPressedObject) 
+         // Update currentlyPressedObj if the user pressed an object
+        if (info.currentlyPressedObject)
             setCurPressedObj(info.currentlyPressedObject);
     });
-    useDocEvent("mouseup", () => {
-        //set currently pressed object to be undefined
-        setCurPressedObj(undefined);
-    });
-    useDocEvent("mouseleave", () => {
-        //set currently pressed object to be undefined
-        setCurPressedObj(undefined);
-    });
+    useDocEvent("mouseup",    () => setCurPressedObj(undefined));
+    useDocEvent("mouseleave", () => setCurPressedObj(undefined));
+    function handleItemNavDrag() { // Issue #478
+        if (!currentlyPressedObj || !(currentlyPressedObj instanceof Component))
+            return;
+        // If pressed object is part of selections, do a default deselect and delete of all selections
+        if (info.selections.has(currentlyPressedObj)) {
+            DeleteHandler.getResponse(info);
+            return;
+        }
+        // Else just delete
+        info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
+    }
 
     // Resets the curItemID and numClicks
     function reset(cancelled: boolean = false) {
@@ -200,23 +210,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, onStart, o
             </span>
         </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
-             onMouseUp={(e) => {
-                 //drag items to itemnav to delete them
-                if (info.selections.get().length > 0){
-                    const objs = info.selections.get().filter(o => o instanceof IOObject) as IOObject[];
-                    info.history.add(new GroupAction([
-                        CreateDeselectAllAction(info.selections).execute(),
-                        CreateDeleteGroupAction(info.designer, objs).execute()
-                    ]));
-                }else{
-                    if(currentlyPressedObj instanceof Component){
-                        for(var wire of currentlyPressedObj.getConnections()){
-                            info.history.add(new DisconnectAction(info.designer, wire).execute());
-                        }
-                        info.history.add(new DeleteAction(info.designer, currentlyPressedObj).execute());
-                    }
-                }
-             }}>
+             onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
                     <button  title="History" onClick={() => {
