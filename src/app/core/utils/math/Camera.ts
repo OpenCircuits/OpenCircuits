@@ -146,6 +146,9 @@ export class Camera {
     public getCenter(): Vector {
         return V(this.width/2, this.height/2);
     }
+    public getSize(): Vector {
+        return V(this.width, this.height);
+    }
     /**
      * makes a copy of pos to return
      * @returns the position
