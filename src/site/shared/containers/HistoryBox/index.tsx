@@ -5,6 +5,10 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
+import {ShiftAction} from "core/actions/ShiftAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+import { RotateAction } from "core/actions/transform/RotateAction";
+
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
@@ -17,14 +21,70 @@ type HistoryEntryProps = {
     a: Action;
 }
 const HistoryEntry = ({ a }: HistoryEntryProps) => {
+    const [isCollapsed, setIsCollapsed] = useState(true);
+
     if (a instanceof GroupAction)
         return (<GroupActionEntry g={a}></GroupActionEntry>);
     return (
         <div className="historybox__entry"
-             // Necessary to stop child entries from collapsing the parent history entry
-             onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => {
+                // Necessary to stop child entries from collapsing the parent history entry
+                e.stopPropagation();
+                setIsCollapsed(!isCollapsed);
+            }}>
             {a.getName()}
+            {(a instanceof ShiftAction || a instanceof TranslateAction || a instanceof RotateAction) &&
+                <span
+                    className={`historybox__entry__additionalinfo__collapse_btn \
+                    ${isCollapsed ? "historybox__entry__additionalinfo__collapse_btn-collapsed" : "" }`}>
+                    &rsaquo;
+                </span>
+            }
+            
+            {!isCollapsed &&
+                <AdditionalActionInformation a={a}></AdditionalActionInformation>
+            }
         </div>
+    );
+}
+
+
+type AdditionalActionInformationProps = {
+    a: Action;
+}
+const AdditionalActionInformation = ({ a }: AdditionalActionInformationProps) => {
+    if (a instanceof ShiftAction)
+        return (
+            <div className="historybox__entry"
+                onClick={(e) => {
+                    // Necessary to stop child entries from collapsing the parent history entry
+                    e.stopPropagation();
+                }}>
+                {a.getI()}
+            </div>
+        );
+    else if (a instanceof TranslateAction)
+        return (
+            <div className="historybox__entry"
+                onClick={(e) => {
+                    // Necessary to stop child entries from collapsing the parent history entry
+                    e.stopPropagation();
+                }}>
+                {a.getName()}
+            </div>
+        );
+    else if (a instanceof RotateAction)
+        return (
+            <div className="historybox__entry"
+                onClick={(e) => {
+                    // Necessary to stop child entries from collapsing the parent history entry
+                    e.stopPropagation();
+                }}>
+                {a.getName()}
+            </div>
+        );
+    return (
+        <div></div>
     );
 }
 

@@ -92,6 +92,21 @@ $historybox-width: 250px;
 
         border: 1px solid $secondary-color;
         border-radius: 7px;
+
+        cursor: pointer;
+
+        &__additionalinfo__collapse_btn {
+            font-size: 18px;
+
+            float: right;
+
+            transition: 0.5s;
+            transform: rotate(90deg);
+
+            &-collapsed {
+                transform: rotate(0deg);
+            }
+        }
     }
 
     &__groupentry {
