@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"net"
 	"os"
 	"strconv"
@@ -31,12 +32,23 @@ func getPort() string {
 	return "8080"
 }
 
+// Convert string to boolean value
+func toBool(s string) bool {
+	boolVal, err := strconv.ParseBool(s)
+	if err != nil {
+		core.CheckErrorMessage(err, "Failed to convert string to bool:")
+	}
+	return boolVal
+}
+
 func main() {
 	var err error
 
-	// Unsure how to store help messages in env variables, for now they are commented
+	// Flag for noAuthConfig to keep boolean type
+	noAuthConfig := flag.Bool("no_auth", toBool(os.Getenv("no_auth")), "Enables username-only authentication for testing and development")
+	flag.Parse()
+	// Help messages for env vars commented
 	googleAuthConfig := os.Getenv("google_auth")  // <path-to-config>; Enables google sign-in API login
-	noAuthConfig := os.Getenv("no_auth")          // Enables username-only authentication for testing and development
 	userCsifConfig := os.Getenv("interface")      // The storage interface
 	sqlitePathConfig := os.Getenv("sqlitePath")   // The path to the sqlite working directory
 	dsEmulatorHost := os.Getenv("ds_emu_host")    // The emulator host address for cloud datastore
@@ -46,11 +58,11 @@ func main() {
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
+	if *noAuthConfig {
+		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
+	}
 	if googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(googleAuthConfig))
-	}
-	if noAuthConfig == "true" {
-		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
 
 	// Set up the storage interface
@@ -65,7 +77,7 @@ func main() {
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
 	} else if userCsifConfig == "gcp_datastore" {
 		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
-		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
+		core.CheckErrorMessage(err, "Failed to load gcp datastore instance:")
 	}
 
 	// Route through Gin
