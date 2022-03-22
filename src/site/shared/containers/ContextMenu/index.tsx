@@ -44,9 +44,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
     );
     const dispatch = useSharedDispatch();
 
-    let menuPos: Vector;
-
-    const [{ posX,posY }, setPos] = useState({ posX:0,posY:0 });
+    const [{ posX, posY }, setPos] = useState({ posX:0, posY:0 });
 
     useEffect(() => {
         if (!input)
@@ -60,43 +58,27 @@ export const ContextMenu = ({ info, paste }: Props) => {
         });
     }, [input]);
 
-    /*Position changes are calculated using the react hook so that the
-     *context menu does not jump around during other update events.
-    */
+    // Position changes are calculated using the react hook so that the
+    // context menu does not jump around during other update events.
+    // fixes issue #914
     useEffect(() => {
-        if(isOpen){
-            let pos = input?.getMousePos();
+        if (!isOpen)
+            return;
 
-            if (!menu.current)
-                throw new Error("ContextMenu failed: menu.current is null");
-
-            const offset = 1;
-            const contextMenuWidth = menu.current.getBoundingClientRect().width;
-            const contextMenuHeight = menu.current.getBoundingClientRect().height;
+        let pos = input?.getMousePos();
 
 
-            if (pos.x+ contextMenuWidth > window.innerWidth)
-                pos.x -= contextMenuWidth - offset;
+        // Updates position state
+        setPos({ posX:pos.x, posY:pos.y });
 
-            if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-                pos.y -= contextMenuHeight - offset;
 
-            //updates position state
-            setPos({ posX:pos.x, posY:pos.y });
-
-            // Update context menu position on canvas
-            menuPos = camera.getWorldPos(input.getMousePos());
-        }
     }, [isOpen]);
 
     useDocEvent("mousedown", (ev) => {
         if (!menu.current)
             throw new Error("ContextMenu failed: menu.current is null");
 
-        const contextMenuWidth = menu.current.getBoundingClientRect().width;
-        const contextMenuHeight = menu.current.getBoundingClientRect().height;
-
-        if(ev.clientX < posX || ev.clientX > (posX + contextMenuWidth) ||  ev.clientY < posY || ev.clientY > (posY + contextMenuHeight))
+        if (!menu.current.contains(ev.target as Node))
             dispatch(CloseContextMenu());
     });
 
@@ -138,7 +120,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        paste(await navigator.clipboard.readText(), menuPos);
+        paste(await navigator.clipboard.readText(), camera.getWorldPos(V(posX, posY)));
     }
 
     /* Context Menu "Select All" */
@@ -161,14 +143,29 @@ export const ContextMenu = ({ info, paste }: Props) => {
         dispatch(CloseContextMenu());
     }
 
+
     const menu = useRef<HTMLDivElement>(null);
+
+    let pos = V(posX, posY);
+    if(menu.current){
+        const offset = 1;
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+
+        if (pos.x + contextMenuWidth > window.innerWidth)
+            pos.x -= contextMenuWidth - offset;
+
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            pos.y -= contextMenuHeight - offset;
+    }
 
     return (
         <div className="contextmenu"
              ref={menu}
              style={{
-                 left: `${posX}px`,
-                 top: `${posY + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 left: `${pos.x}px`,
+                 top: `${pos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
                  visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
@@ -179,5 +176,5 @@ export const ContextMenu = ({ info, paste }: Props) => {
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
         </div>
-    );
+   );
 }
