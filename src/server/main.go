@@ -21,6 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// why is port converted to string
 func getPort() string {
 	for port := 8080; port <= 65535; port++ {
 		ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
@@ -31,6 +32,15 @@ func getPort() string {
 	}
 	return "8080"
 }
+
+/*
+ For flag type interface:
+	- get the env variable using os.Getenv(key), will return a string
+	- identify what primitive type to convert the string to
+	- convert the string to that type
+	- set a flag variable with that type
+	- if string keep as string, no need to go through process
+*/
 
 func toBool(s string) bool {
 	boolVal, err := strconv.ParseBool(s)
