@@ -5,7 +5,7 @@ import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
 
-import {NumberInputField} from "shared/components/InputField";
+import {InputField, NumberInputField} from "shared/components/InputField";
 
 
 export type ModuleTypes = number | string;
@@ -226,22 +226,30 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             )
         }
 
-        return (
-            <NumberInputField ref={inputRef}
-//            <InputField ref={inputRef}
-                        type={props.inputType}
-                        value={focused ? textVal : ((same ? displayVal(val) : ""))}
-                        placeholder={same ? "" : (props.placeholder ?? "-")}
-                        step={"step" in props ? props.step : ""}
-                        min ={"min"  in props ? props.min  : ""}
-                        max ={"max"  in props ? props.max  : ""}
-                        onChange={(ev) => onChange(ev.target.value)}
-                        onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
-                        onBlur={() => onSubmit()}
-                        onEnter={({target}) => (props.inputType !== "color" &&
-                                               (target as HTMLInputElement).blur())}
-                        alt={props.alt} />
-        )
+        // special input object for numbers
+        if (props.inputType == "number") {
+            return (
+                <NumberInputField ref={inputRef}
+                    alt={props.alt} />
+            )
+        }
+        else {
+            return (
+                <InputField ref={inputRef}
+                            type={props.inputType}
+                            value={focused ? textVal : ((same ? displayVal(val) : ""))}
+                            placeholder={same ? "" : (props.placeholder ?? "-")}
+                            //step={"step" in props ? props.step : ""}
+                            //min ={"min"  in props ? props.min  : ""}
+                            //max ={"max"  in props ? props.max  : ""}
+                            onChange={(ev) => onChange(ev.target.value)}
+                            onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                            onBlur={() => onSubmit()}
+                            onEnter={({target}) => (props.inputType !== "color" &&
+                                                (target as HTMLInputElement).blur())}
+                            alt={props.alt} />
+            )
+        }
     }
 });
 

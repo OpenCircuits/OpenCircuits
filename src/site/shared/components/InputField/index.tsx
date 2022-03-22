@@ -37,8 +37,8 @@ export const NumberInputField = React.forwardRef(({onEnter, ...props}: Props, re
         });
     }, [ref]);
 
-    return  <div className="numberinputfield">
-                <input ref={ref} {...props} />
+    return  <div className="numberinputfield" ref={ref}>
+                <input />
                 <span>
                     <button>&and;</button>
                     <button>&or;</button>
