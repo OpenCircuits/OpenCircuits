@@ -6,9 +6,10 @@ import {GetComponentPath, GetWirePath} from "core/utils/ComponentUtils";
 
 import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
+import {Component, Wire} from "core/models";
+
 import {EventHandler} from "../EventHandler";
 
-import {Component, Wire} from "core/models";
 
 export const SelectPathHandler: EventHandler = ({
     conditions: (event: Event, {input, camera, designer}: CircuitInfo) =>
