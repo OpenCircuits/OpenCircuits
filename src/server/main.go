@@ -32,7 +32,6 @@ func getPort() string {
 	return "8080"
 }
 
-// Convert string to boolean value
 func toBool(s string) bool {
 	boolVal, err := strconv.ParseBool(s)
 	if err != nil {
@@ -47,7 +46,6 @@ func main() {
 	// Flag for noAuthConfig to keep boolean type
 	noAuthConfig := flag.Bool("no_auth", toBool(os.Getenv("no_auth")), "Enables username-only authentication for testing and development")
 	flag.Parse()
-	// Help messages for env vars commented
 	googleAuthConfig := os.Getenv("google_auth")  // <path-to-config>; Enables google sign-in API login
 	userCsifConfig := os.Getenv("interface")      // The storage interface
 	sqlitePathConfig := os.Getenv("sqlitePath")   // The path to the sqlite working directory
