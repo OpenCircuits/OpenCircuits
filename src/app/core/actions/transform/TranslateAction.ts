@@ -75,4 +75,16 @@ export class TranslateAction implements Action {
     public getName(): string {
         return "Move Object";
     }
+
+    public getObjs(): string[] {
+        return Array.from(this.objs, obj => obj.getName());
+    }
+
+    public getInitialPositions(): Vector[] {
+        return this.initialPositions;
+    }
+
+    public getTargetPositions(): Vector[] {
+        return this.targetPositions;
+    }
 }

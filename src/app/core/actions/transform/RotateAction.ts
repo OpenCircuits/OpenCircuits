@@ -84,4 +84,16 @@ export class RotateAction implements Action {
         return "Rotate";
     }
 
+    public getObjs(): string[] {
+        return Array.from(this.objects, obj => obj.getName());
+    }
+
+    public getInitialAngles(): Array<number> {
+        return this.initialAngles;
+    }
+
+    public getFinalAngles(): Array<number> {
+        return this.finalAngles;
+    }
+
 }

@@ -31,6 +31,10 @@ export class ShiftAction implements Action {
         return "Shift Object";
     }
 
+    public getObj(): string {
+        return this.obj.getName();
+    }
+
     public getI(): number {
         return this.i;
     }

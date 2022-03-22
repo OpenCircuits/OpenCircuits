@@ -60,7 +60,8 @@ const AdditionalActionInformation = ({ a }: AdditionalActionInformationProps) =>
                     // Necessary to stop child entries from collapsing the parent history entry
                     e.stopPropagation();
                 }}>
-                {a.getI()}
+                <div>{"obj: " + a.getObj()}</div>
+                <div>{"i: " + a.getI()}</div>
             </div>
         );
     else if (a instanceof TranslateAction)
@@ -70,7 +71,12 @@ const AdditionalActionInformation = ({ a }: AdditionalActionInformationProps) =>
                     // Necessary to stop child entries from collapsing the parent history entry
                     e.stopPropagation();
                 }}>
-                {a.getName()}
+                {a.getObjs().map((o, i) => {
+                    return(
+                        <div>{o}: ({Math.round(a.getInitialPositions()[i].x)}, {Math.round(a.getInitialPositions()[i].y)}) to
+                                ({Math.round(a.getTargetPositions()[i].x)}, {Math.round(a.getTargetPositions()[i].y)})
+                        </div>);
+                })}
             </div>
         );
     else if (a instanceof RotateAction)
@@ -80,7 +86,9 @@ const AdditionalActionInformation = ({ a }: AdditionalActionInformationProps) =>
                     // Necessary to stop child entries from collapsing the parent history entry
                     e.stopPropagation();
                 }}>
-                {a.getName()}
+                {a.getObjs().map((o, i) => {
+                    return(<div>{o}: {Math.round(a.getInitialAngles()[i])} to {Math.round(a.getFinalAngles()[i])}</div>);
+                })}
             </div>
         );
     return (
