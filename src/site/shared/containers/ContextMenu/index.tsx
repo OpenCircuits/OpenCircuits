@@ -64,11 +64,8 @@ export const ContextMenu = ({ info, paste }: Props) => {
     useEffect(() => {
         if (!isOpen)
             return;
-
-        let pos = input?.getMousePos();
-
-
         // Updates position state
+        let pos = input?.getMousePos();
         setPos({ posX:pos.x, posY:pos.y });
 
 
@@ -146,6 +143,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     const menu = useRef<HTMLDivElement>(null);
 
+    // Adjusts position of menu to keep it on screen
     let pos = V(posX, posY);
     if(menu.current){
         const offset = 1;
