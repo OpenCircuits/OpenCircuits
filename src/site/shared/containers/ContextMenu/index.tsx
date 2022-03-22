@@ -11,10 +11,13 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
+import {CleanUpHandler} from "core/tools/handlers/CleanUpHandler"
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
+import {DuplicateHandler} from "core/tools/handlers/DuplicateHandler"
+
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 import {useHistory} from "shared/utils/hooks/useHistory";
-
 
 import "./index.scss";
 
@@ -77,7 +80,7 @@ export const ContextMenu = ({info, paste}: Props) => {
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs)
-        ]).execute());
+        ], "Cut (Context Menu)").execute());
     }
 
     /* Context Menu "Copy" */
@@ -101,6 +104,21 @@ export const ContextMenu = ({info, paste}: Props) => {
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
         history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute());
+    }
+
+    /* Context Menu "Focus" */
+    const onFocus = async () => {
+        FitToScreenHandler.getResponse(info);
+    }
+
+    /* Context Menu "Clean Up" */
+    const onCleanUp = async () => {
+        CleanUpHandler.getResponse(info);
+    }
+
+    /* Context Menu "Duplicate" */
+    const onDuplicate = async () => {
+        DuplicateHandler.getResponse(info);
     }
 
     /* Context Menu "Undo/Redo" */
@@ -151,6 +169,10 @@ export const ContextMenu = ({info, paste}: Props) => {
             <button title="Copy"       onClick={() => doFunc(onCopy)} disabled={selections.amount() === 0}>Copy</button>
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
             <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
+            <hr/>
+            <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
+            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects().length === 0}>Clean Up</button>
+            <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
