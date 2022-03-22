@@ -5,7 +5,7 @@ import {Selectable} from "core/utils/Selectable";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {Action} from "core/actions/Action";
 
-import {InputField} from "shared/components/InputField";
+import {NumberInputField} from "shared/components/InputField";
 
 
 export type ModuleTypes = number | string;
@@ -59,6 +59,7 @@ type OtherModuleProps<T extends any[], P extends ModuleTypes> = {
 
 type ModuleProps<T extends any[], P extends ModuleTypes> =
     SelectModuleProps<T, P> | NumberModuleProps<T, P> | OtherModuleProps<T, P>;
+
 export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: ModuleProps<T, P>) => {
     let val: P;
     let same: boolean;
@@ -226,7 +227,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         return (
-            <InputField ref={inputRef}
+            <NumberInputField ref={inputRef}
+//            <InputField ref={inputRef}
                         type={props.inputType}
                         value={focused ? textVal : ((same ? displayVal(val) : ""))}
                         placeholder={same ? "" : (props.placeholder ?? "-")}
