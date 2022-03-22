@@ -4,7 +4,7 @@ import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
-import {GetCameraFit} from "core/utils/ComponentUtils";
+import {FindPressableObjects, GetCameraFit} from "core/utils/ComponentUtils";
 
 import {CullableObject} from "core/models";
 
@@ -24,8 +24,9 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
-import { Button, Switch } from "digital/models/ioobjects/inputs";
-import { IC } from "digital/models/ioobjects";
+import {Button, Switch} from "digital/models/ioobjects/inputs";
+import {IC} from "digital/models/ioobjects";
+import {isPressable} from "core/utils/Pressable";
 
 
 type Props = {
@@ -34,9 +35,6 @@ type Props = {
 export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
-    // State controller for main designer callback
-    let pauseUpdates = false;
-    
     return ({ mainInfo }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
 
@@ -47,13 +45,9 @@ export const ICViewer = (() => {
 
         const {w, h} = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
-        const restoreButton = useRef<HTMLButtonElement>(null);
 
-        // // State controller for main designer callback // TODO
-        // let [pauseUpdates, setPausedUpdates] = useState(false);
-        // setPausedUpdates = (val : boolean) => {
-        //     pauseUpdates = val;
-        // }
+        // State controller for main designer callback
+        const [pauseUpdates, setPauseUpdates] = useState(false);
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -69,7 +63,7 @@ export const ICViewer = (() => {
         useEffect(() => {
             if (!canvas.current)
                 throw new Error("ICViewer.useEffect failed: canvas.current is null");
-            
+
             // Create input w/ canvas
             info.input = new Input(canvas.current);
 
@@ -78,18 +72,14 @@ export const ICViewer = (() => {
 
             // Add input listener
             info.input.addListener((event) => {
-                if (!restoreButton.current)
-                    throw new Error("ICViewer.useEffect failed: restoreButton.current is null");
                 const change = toolManager.onEvent(event, info);
                 if (change) {
                     renderer.render();
-                    if (toolManager.getCurrentTool() instanceof InteractionTool) {
-                        console.log("listener: " + pauseUpdates);
-                        // setPausedUpdates(true); // TODO
-                        pauseUpdates = true;
-                        restoreButton.current.disabled = false;
-                    }
-                } else restoreButton.current.disabled = !pauseUpdates;
+                    const worldMousePos = camera.getWorldPos(info.input.getMousePos());
+                    const obj = FindPressableObjects(worldMousePos, info);
+                    if (isPressable(obj) && event.type === "click")
+                        setPauseUpdates(true);
+                }
             });
 
             // Input should be blocked initially
@@ -98,17 +88,19 @@ export const ICViewer = (() => {
             // Add render callbacks and set render function
             designer.addCallback(() => renderer.render());
 
-            // Synchronize the inputs in the original designer and this IC viewer
-            //  (issue #754)
-            mainInfo.designer.addCallback(() => {
-                console.log("callback: " + pauseUpdates);
-                if (!pauseUpdates)
-                    updateViewer();
-            });
-
             renderer.setRenderFunction(() => renderFunc());
             renderer.render();
         }, []); // Pass empty array so that this only runs once on mount
+
+        // Synchronize the inputs in the original designer and this IC viewer
+        //  (issue #754)
+        useEffect(() => {
+            if (pauseUpdates)
+                return; // if paused, don't add callback
+            mainInfo.designer.addCallback(updateViewer);
+            // remove callback when done
+            return () => mainInfo.designer.removeCallback(updateViewer);
+        }, [pauseUpdates]);
 
         // Happens when activated
         useLayoutEffect(() => {
@@ -124,7 +116,6 @@ export const ICViewer = (() => {
             // Block input for main designer
             mainInfo.input.block();
 
-
             // Reset designer and add IC insides
             designer.reset();
             const inside = data.copy();
@@ -139,8 +130,7 @@ export const ICViewer = (() => {
 
         const close = () => {
             // Reset in case for next time
-            // setPausedUpdates(false); // TODO
-            pauseUpdates = false;
+            setPauseUpdates(false);
 
             // Block input while closed
             info.input.block();
@@ -163,9 +153,7 @@ export const ICViewer = (() => {
         }
 
         const restore = () => {
-            pauseUpdates = false;
-            console.log("restore: " + pauseUpdates);
-            restoreButton.current!.disabled = true;
+            setPauseUpdates(false);
             updateViewer();
         }
 
@@ -181,7 +169,7 @@ export const ICViewer = (() => {
                     <button name="close" onClick={close}>
                         Close
                     </button>
-                    <button ref={restoreButton} name="restore" /*disabled={!pauseUpdates}*/ onClick={restore}>
+                    <button name="restore" disabled={!pauseUpdates} onClick={restore}>
                         Restore
                     </button>
                 </div>

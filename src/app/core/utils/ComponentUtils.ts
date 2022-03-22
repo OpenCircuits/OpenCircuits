@@ -1,8 +1,6 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
 import {IO_PORT_LINE_WIDTH,
-        EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN,
         GRID_SIZE} from "./Constants";
 
 import {Vector, V} from "Vector";
@@ -20,10 +18,7 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 /**
@@ -149,6 +144,23 @@ export function GetAllPaths(obj: Component): Array<Wire | Node> {
 
     // Get all distinct paths
     return [...new Set(wires.flatMap((w) => GetPath(w)))];
+}
+
+/**
+ * Very specifically get the objects and wires and reverse them SEPARATELY.
+ *  Doing `designer.getAll().reverse()` would put the wires BEFORE the objects
+ *  which will cause incorrect behavior! Objects are always going to need to be
+ *  pressed/selected before wires!
+ * 
+ * @param  pos   Position on designer
+ * @param  info  Uses designer from CircuitInfo
+ * @returns      Array of pressable objects at pos
+ */
+export function FindPressableObjects(pos: Vector, {designer}: CircuitInfo): IOObject | undefined {
+    const objs = designer.getObjects().reverse();
+    const wires = designer.getWires().reverse();
+    return (objs as IOObject[]).concat(wires).find(o => (isPressable(o) && o.isWithinPressBounds(pos) ||
+                                                         o.isWithinSelectBounds(pos)));
 }
 
 /**
