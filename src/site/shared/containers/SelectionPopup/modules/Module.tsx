@@ -230,6 +230,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         if (props.inputType == "number") {
             return (
                 <NumberInputField ref={inputRef}
+                    step={"step" in props ? props.step : ""}
+                    min ={"min"  in props ? props.min  : ""}
+                    max ={"max"  in props ? props.max  : ""}
                     alt={props.alt} />
             )
         }
