@@ -188,12 +188,13 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             setState({...state, textVal: newVal});
         }
 
-        // make on onIncrement  similar to onChange above
-        //                                                                                 VVV   VVVV
-        //   on this line   tempAction = (config.getAction as any)(selections.get() as T, step, true).execute();
-        // -step for decrement
-        //
-        // call these in the attributes for NumberInputField
+        // used for both increment and decrement
+        const onIncrement = (step: number) => {
+            tempAction = (config.getAction as any)(selections.get() as T, step, true).execute();
+            if (inputRef?.current)
+                inputRef.current.valueAsNumber += step;
+            render();
+        }
 
         const onSubmit = () => {
             // If temp action doesn't exist, it means that nothing was changed
@@ -245,7 +246,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         }
 
         // special input object for numbers
-        if (props.inputType == "number") {
+        if (props.inputType === "number") {
             return (
                 <NumberInputField ref={inputRef}
                     value={focused ? textVal : ((same ? displayVal(val) : ""))}
@@ -254,8 +255,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                     min ={props.min}
                     max ={props.max}
                     onChange={(ev) => onChange(ev.target.value)}
-                    onIncrement={() => {}}
-                    onDecrement={() => {}}
+                    onIncrement={() => onIncrement(props.step ?? 1)}
+                    onDecrement={() => onIncrement(-(props.step ?? 1))}
                     onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
                     onBlur={() => onSubmit()}
                     onEnter={({target}) => (target as HTMLElement).blur()}

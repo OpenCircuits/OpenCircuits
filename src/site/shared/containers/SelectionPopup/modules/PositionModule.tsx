@@ -14,7 +14,7 @@ const XConfig: ModuleConfig<[Component], number> = {
                                                 s.map(s => s.getPos()),
                                                 s.map(s => V(
                                                     // use value as either an increment or new position
-                                                    100*(incremented ? s.getPos().x + newX : newX), 
+                                                    incremented ? s.getPos().x + 100*newX : 100*newX, 
                                                     s.getPos().y
                                                 ))),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
@@ -27,7 +27,7 @@ const YConfig: ModuleConfig<[Component], number> = {
                                                 s.map(s => s.getPos()),
                                                 s.map(s => V(
                                                     s.getPos().x,
-                                                    100*(incremented ? s.getPos().y + newY : newY)
+                                                    incremented ? s.getPos().y + 100*newY : 100*newY
                                                 ))),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
 }
