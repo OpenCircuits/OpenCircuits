@@ -12,9 +12,12 @@
 }
 
 .numberinputfield button {
-    display:block;
-    width:25px;
-    height:12px;
-    line-height:6px;
-    font-size:0.5em;
+    display: block;
+    width: 25px;
+    height: 13px;
+    line-height: 0px;
+    font-size: 0.5em !important;
+    font-weight: bold !important;
+    margin-top: 0px !important;
+    padding: 0px 5px 0px 5px !important;
 }
