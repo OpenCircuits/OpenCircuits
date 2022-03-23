@@ -10,18 +10,25 @@ const XConfig: ModuleConfig<[Component], number> = {
     types: [Component],
     valType: "float",
     getProps: (o) => o.getPos().x/100,
-    getAction: (s, newX) => new TranslateAction(s,
+    getAction: (s, newX, incremented) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
-                                                s.map(s => V(newX*100, s.getPos().y))),
+                                                s.map(s => V(
+                                                    // use value as either an increment or new position
+                                                    100*(incremented ? s.getPos().x + newX : newX), 
+                                                    s.getPos().y
+                                                ))),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
 }
 const YConfig: ModuleConfig<[Component], number> = {
     types: [Component],
     valType: "float",
     getProps: (o) => o.getPos().y/100,
-    getAction: (s, newY) => new TranslateAction(s,
+    getAction: (s, newY, incremented) => new TranslateAction(s,
                                                 s.map(s => s.getPos()),
-                                                s.map(s => V(s.getPos().x, newY*100))),
+                                                s.map(s => V(
+                                                    s.getPos().x,
+                                                    100*(incremented ? s.getPos().y + newY : newY)
+                                                ))),
     getDisplayVal: (v) => parseFloat(v.toFixed(2)),
 }
 

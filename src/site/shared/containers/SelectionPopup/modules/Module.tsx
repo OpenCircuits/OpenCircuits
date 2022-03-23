@@ -12,12 +12,20 @@ export type ModuleTypes = number | string;
 
 export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
-    valType: "float" | "int" | "string";
     isActive?: (selections: SelectionsWrapper) => boolean;
     getProps: (o: T[number]) => P | undefined;
-    getAction: (s: (T[number])[], newVal: P) => Action;
     getDisplayVal?: (val: P) => string | number;
-}
+} & (P extends number ? {
+    valType: "float" | "int";
+    getAction: (s: (T[number])[], newVal: P, increment?: boolean) => Action; // TODO: make increment optional
+}: {
+    valType: "string";
+    getAction: (s: (T[number])[], newVal: P) => Action;
+})
+
+
+type Test = ModuleConfig<string[], string>;
+type Test2 = Test["getAction"];
 
 type State = {
     active: true;
@@ -172,12 +180,21 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             if (isValid(val)) {
                 if (tempAction)
                     tempAction.undo();
-                tempAction = config.getAction(selections.get() as T, val).execute();
+                // TODO: FIX THIS
+                tempAction = (config.getAction as any)(selections.get() as T, val, false).execute();
                 render();
             }
 
             setState({...state, textVal: newVal});
         }
+
+        // make on onIncrement  similar to onChange above
+        //                                                                                 VVV   VVVV
+        //   on this line   tempAction = (config.getAction as any)(selections.get() as T, step, true).execute();
+        // -step for decrement
+        //
+        // call these in the attributes for NumberInputField
+
         const onSubmit = () => {
             // If temp action doesn't exist, it means that nothing was changed
             //  So we shouldn't commit an action if nothing changed
@@ -199,7 +216,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                 return;
             }
 
-            const action = config.getAction(selections.get() as T, finalVal).execute();
+            // TODO: FIX THIS
+            const action = (config.getAction as any)(selections.get() as T, finalVal, false).execute();
             addAction(action);
             render();
 
@@ -230,9 +248,17 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         if (props.inputType == "number") {
             return (
                 <NumberInputField ref={inputRef}
-                    step={"step" in props ? props.step : ""}
-                    min ={"min"  in props ? props.min  : ""}
-                    max ={"max"  in props ? props.max  : ""}
+                    value={focused ? textVal : ((same ? displayVal(val) : ""))}
+                    placeholder={same ? "" : (props.placeholder ?? "-")}
+                    step={props.step}
+                    min ={props.min}
+                    max ={props.max}
+                    onChange={(ev) => onChange(ev.target.value)}
+                    onIncrement={() => {}}
+                    onDecrement={() => {}}
+                    onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                    onBlur={() => onSubmit()}
+                    onEnter={({target}) => (target as HTMLElement).blur()}
                     alt={props.alt} />
             )
         }
