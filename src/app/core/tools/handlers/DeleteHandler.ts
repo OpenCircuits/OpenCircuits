@@ -23,6 +23,6 @@ export const DeleteHandler: EventHandler = ({
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
             CreateDeleteGroupAction(designer, objs).execute()
-        ]));
+        ], "Delete Handler"));
     }
 });

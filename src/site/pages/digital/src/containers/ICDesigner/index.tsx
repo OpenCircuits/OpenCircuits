@@ -171,7 +171,7 @@ export const ICDesigner = (() => {
                     new CreateICDataAction(data, mainInfo.designer),
                     new PlaceAction(mainInfo.designer, ic),
                     new SelectAction(mainInfo.selections, ic)
-                ]);
+                ], "Create IC Action");
                 mainInfo.history.add(action.execute());
                 mainInfo.renderer.render();
             }

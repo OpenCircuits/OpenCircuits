@@ -35,6 +35,6 @@ export const DuplicateHandler: EventHandler = ({
             new TranslateAction(components,
                                 components.map(o => o.getPos()),
                                 components.map(o => o.getPos().add(V(5, 5)))).execute()
-        ]));
+        ], "Duplicate Handler"));
     }
 });

@@ -8,7 +8,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     if (inputPorts.length !== outputPorts.length)
         throw new Error("Expected equal size input and output ports to bus!");
 
-    const action = new GroupAction();
+    const action = new GroupAction([], "Bus Action");
     if (inputPorts.length === 0)
         return action;
 
