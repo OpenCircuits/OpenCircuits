@@ -1,0 +1,12 @@
+
+.container {
+    background-color: aqua;
+    border-color: red;
+    & p {
+        float:right;
+        text-align: right;
+    }
+    & button{
+        float: right;
+    }
+}

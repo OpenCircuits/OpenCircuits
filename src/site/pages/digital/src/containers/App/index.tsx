@@ -26,6 +26,7 @@ import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsP
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
+import {TimeControl}            from "site/digital/containers/TimeControl";
 
 import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
@@ -84,6 +85,7 @@ export const App = ({info, helpers, canvas}: Props) => {
 
                 <main>
                     <MainDesigner info={info} canvas={canvas} />
+                    <TimeControl info={info} />
 
                     <DigitalItemNav info={info} />
                     <HistoryBox info={info} />
