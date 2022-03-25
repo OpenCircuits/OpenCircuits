@@ -17,7 +17,7 @@ import {TranslateAction} from "./transform/TranslateAction";
  * @throws {Error} if original and replacement do not have the same number of ports
  */
  export function CreateReplaceComponentAction(designer: CircuitDesigner, original: Component, replacement: Component): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Replace Component Action");
     const originalPorts = original.getPorts();
     const replacementPorts = replacement.getPorts();
 
