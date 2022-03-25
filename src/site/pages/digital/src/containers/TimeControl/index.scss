@@ -1,19 +1,18 @@
 
-.container {
-    background-color: aqua;
-    border: thin solid;
-    border-color: red;
-    height: 30px;
-    display: inline;
+.timecontrol {
+    position: absolute;
+    z-index: 100;
+    right: 0;
+
+    &:hover {
+    }
     & p {
         float:right;
         text-align: right;
     }
-    & button{
-        float: right;
+    & > button{
         border: thin solid;
         border-color: blue;
-        height: 30px;
         &:hover {
             border-color: red;
         }
