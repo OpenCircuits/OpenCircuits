@@ -8,12 +8,9 @@ import {Setup} from "test/helpers/Setup";
 
 
 describe("Pan Tool", () => {
-    const {camera, input} = Setup();
+    const {camera, input, reset} = Setup();
 
-    afterEach(() => {
-        // Reset camera position for each test
-        camera.setPos(V());
-    });
+    afterEach(() => reset());
 
     test("Drag without alt key", () => {
         input.drag(V(0, 0), V(-20, 0));
@@ -38,19 +35,21 @@ describe("Pan Tool", () => {
     test("Drag with alt key left mouse, release alt key", () => {
         input.pressKey("Alt")
             .press(V(0,0))
-            .drag(V(0, 0), V(20, 0))
+            .moveTo(V(20, 0))
             .releaseKey("Alt")
-            .drag(V(20, 0), V(40, 0))
+            .moveTo(V(40, 0))
             .release()
         expect(camera.getPos()).toEqual(V(-40, 0));
     });
 
-    test("Drag with alt key and left mouse, release left mouse", () => {
+    test("Drag with alt key left mouse, release left mouse", () => {
         input.pressKey("Alt")
             .press(V(0, 0))
-            .drag(V(0, 0), V(20, 0))
+            .moveTo(V(20, 0))
             .release()
-            .drag(V(20, 0), V(40, 0))
+            .moveTo(V(20, 20))
+            .press()
+            .moveTo(V(40, 20))
             .releaseKey("Alt")
         expect(camera.getPos()).toEqual(V(-40, 0));
     });
@@ -72,7 +71,6 @@ describe("Pan Tool", () => {
     test("Pan with arrow keys no shift", () => {
         // Checking up/right and down/left at the same time
         //  since they don't affect each other
-        
         input.pressKey("ArrowUp")
                 .releaseKey("ArrowUp")
                 .pressKey("ArrowRight")
