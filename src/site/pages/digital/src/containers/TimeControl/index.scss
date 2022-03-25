@@ -1,12 +1,21 @@
 
 .container {
     background-color: aqua;
+    border: thin solid;
     border-color: red;
+    height: 30px;
+    display: inline;
     & p {
         float:right;
         text-align: right;
     }
     & button{
         float: right;
+        border: thin solid;
+        border-color: blue;
+        height: 30px;
+        &:hover {
+            border-color: red;
+        }
     }
 }
