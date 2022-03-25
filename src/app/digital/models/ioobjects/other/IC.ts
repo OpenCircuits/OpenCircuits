@@ -97,7 +97,11 @@ export class IC extends DigitalComponent {
     }
 
     public getData(): ICData {
-        return ICData.Create(this.collection)!;
+        return this.data;
+    }
+
+    public getCollection(): DigitalObjectSet {
+        return this.collection;
     }
 
     public getDisplayName(): string {

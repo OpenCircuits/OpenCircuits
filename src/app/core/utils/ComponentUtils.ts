@@ -147,23 +147,6 @@ export function GetAllPaths(obj: Component): Array<Wire | Node> {
 }
 
 /**
- * Very specifically get the objects and wires and reverse them SEPARATELY.
- *  Doing `designer.getAll().reverse()` would put the wires BEFORE the objects
- *  which will cause incorrect behavior! Objects are always going to need to be
- *  pressed/selected before wires!
- * 
- * @param  pos   Position on designer
- * @param  info  Uses designer from CircuitInfo
- * @returns      Array of pressable objects at pos
- */
-export function FindPressableObjects(pos: Vector, {designer}: CircuitInfo): IOObject | undefined {
-    const objs = designer.getObjects().reverse();
-    const wires = designer.getWires().reverse();
-    return (objs as IOObject[]).concat(wires).find(o => (isPressable(o) && o.isWithinPressBounds(pos) ||
-                                                         o.isWithinSelectBounds(pos)));
-}
-
-/**
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
  *

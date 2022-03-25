@@ -4,7 +4,7 @@ import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
-import {FindPressableObjects, GetCameraFit} from "core/utils/ComponentUtils";
+import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
 
 import {CullableObject} from "core/models";
 
@@ -25,8 +25,8 @@ import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
 import {Button, Switch} from "digital/models/ioobjects/inputs";
-import {IC} from "digital/models/ioobjects";
-import {isPressable} from "core/utils/Pressable";
+import {IC, ICData} from "digital/models/ioobjects";
+import {isPressable, Pressable} from "core/utils/Pressable";
 
 
 type Props = {
@@ -38,7 +38,7 @@ export const ICViewer = (() => {
     return ({ mainInfo }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
 
-        const {isActive, ic: data} = useDigitalSelector(
+        const {isActive, ic} = useDigitalSelector(
             state => ({ ...state.icViewer })
         );
         const dispatch = useDigitalDispatch();
@@ -75,10 +75,18 @@ export const ICViewer = (() => {
                 const change = toolManager.onEvent(event, info);
                 if (change) {
                     renderer.render();
-                    const worldMousePos = camera.getWorldPos(info.input.getMousePos());
-                    const obj = FindPressableObjects(worldMousePos, info);
-                    if (isPressable(obj) && event.type === "click")
-                        setPauseUpdates(true);
+                    if (toolManager.getCurrentTool() instanceof InteractionTool) {
+                        const worldMousePos = camera.getWorldPos(info.input.getMousePos());
+                        const obj = info.designer.getObjects().reverse()
+                            .find(p => isPressable(p) && p.isWithinPressBounds(worldMousePos));
+                        if (obj instanceof Switch && event.type === "click")
+                            setPauseUpdates(true);
+                        else if ((info.currentlyPressedObject === obj) && (obj instanceof Button && (event.type === "mousedown" || event.type === "mouseup")))
+                            setPauseUpdates(true);
+                        // if (isPressable(obj) && (event.type === "click" 
+                        //     || event.type === "mousedown" || event.type === "mouseup"))
+                        //     setPauseUpdates(true);
+                    }
                 }
             });
 
@@ -100,11 +108,11 @@ export const ICViewer = (() => {
             mainInfo.designer.addCallback(updateViewer);
             // remove callback when done
             return () => mainInfo.designer.removeCallback(updateViewer);
-        }, [pauseUpdates]);
+        }, [pauseUpdates, ic]);
 
         // Happens when activated
         useLayoutEffect(() => {
-            if (!isActive || !data)
+            if (!isActive || !ic)
                 return;
 
             // Retrieve current debug info from mainInfo
@@ -118,15 +126,16 @@ export const ICViewer = (() => {
 
             // Reset designer and add IC insides
             designer.reset();
-            const inside = data.copy();
+            const inside = CopyGroup(ic.getCollection().toList());
             designer.addGroup(inside);
 
             // Adjust the camera so it all fits in the viewer
             const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
             new MoveCameraAction(camera, pos, zoom).execute();
 
+            updateViewer();
             renderer.render();
-        }, [isActive, data]);
+        }, [isActive, ic]);
 
         const close = () => {
             // Reset in case for next time
@@ -142,14 +151,12 @@ export const ICViewer = (() => {
         }
 
         const updateViewer = () => {
-            try {
-                // loop through all the inputs for this IC
-                //  set their input value to be what the info.designer has for their input
-                const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
-                const ic = mainInfo.selections.get()[0] as IC;
-                for (let i = 0; i < viewerInputs.length; ++i)
-                    viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
-            } catch (error) {} // not viewing ic at the moment
+            if (!ic) return;
+            // loop through all the inputs for this IC
+            //  set their input value to be what the info.designer has for their input
+            const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
+            for (let i = 0; i < viewerInputs.length; ++i)
+                viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
         }
 
         const restore = () => {
