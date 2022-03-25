@@ -7,6 +7,7 @@ import {TransformContains} from "./MathUtils";
 
 
 type Margin = {left: number, right: number, bottom: number, top: number}
+
 /**
  * This code is for the camera object which is a representation of the screen while using OpenCircuits.
  */
@@ -146,6 +147,10 @@ export class Camera {
     public getCenter(): Vector {
         return V(this.width/2, this.height/2);
     }
+    /**
+     * Returns the size of the screen. This is the bottom-right corner
+     * @returns vector that contains the size of the screen
+     */
     public getSize(): Vector {
         return V(this.width, this.height);
     }
@@ -218,8 +223,7 @@ export class Camera {
      * @param bottom the bottom margin of the camera
      * @param top the top margin of the camera
      */
-    public setMargin(newMargin: Partial<Margin>): void
-    {
+    public setMargin(newMargin: Partial<Margin>): void{
         this.margin = {...this.margin, ...newMargin};
     }
 }
