@@ -102,7 +102,8 @@ export class Input {
     private hookupKeyboardEvents(): void {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement)) {
+            // Check for "Alt" to fix issue #943
+            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.key as Key);
 
                 if (this.isPreventedCombination(e.key as Key))
@@ -110,7 +111,8 @@ export class Input {
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement))
+            // Check for "Alt" to fix issue #943
+            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e.key as Key)
         }, false);
 
