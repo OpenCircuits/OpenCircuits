@@ -18,7 +18,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 
 /**

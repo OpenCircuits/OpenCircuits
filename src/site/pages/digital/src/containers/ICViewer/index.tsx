@@ -5,14 +5,17 @@ import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
 import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
-
-import {CullableObject} from "core/models";
+import {isPressable} from "core/utils/Pressable";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
 
+import {CullableObject} from "core/models";
+
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
+import {Button, Switch} from "digital/models/ioobjects/inputs";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
@@ -24,9 +27,6 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
-import {Button, Switch} from "digital/models/ioobjects/inputs";
-import {IC, ICData} from "digital/models/ioobjects";
-import {isPressable, Pressable} from "core/utils/Pressable";
 
 
 type Props = {
@@ -81,11 +81,9 @@ export const ICViewer = (() => {
                             .find(p => isPressable(p) && p.isWithinPressBounds(worldMousePos));
                         if (obj instanceof Switch && event.type === "click")
                             setPauseUpdates(true);
-                        else if ((info.currentlyPressedObject === obj) && (obj instanceof Button && (event.type === "mousedown" || event.type === "mouseup")))
+                        else if (info.currentlyPressedObject === obj && obj instanceof Button
+                                 && (event.type === "mousedown" || event.type === "mouseup"))
                             setPauseUpdates(true);
-                        // if (isPressable(obj) && (event.type === "click" 
-                        //     || event.type === "mousedown" || event.type === "mouseup"))
-                        //     setPauseUpdates(true);
                     }
                 }
             });
