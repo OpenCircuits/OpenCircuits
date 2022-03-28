@@ -4,6 +4,9 @@ import {Port} from "core/models";
 
 import {InputPort} from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+import { DigitalComponent } from "digital/models";
+import { Vector } from "Vector";
+import { Transform } from "math/Transform";
 
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
@@ -19,23 +22,62 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         throw new Error("CreateBusAction failed: Designer not found");
 
 
-    // Sort inputs/outputs by their position
-    const sortByPos = (a: Port, b: Port) => {
-        const p1 = a.getWorldTargetPos(), p2 = b.getWorldTargetPos();
-        if (Math.abs(p1.y - p2.y) <= .25){ // If same-ish-y, sort by x from LtR
-            return p1.x - p2.x;
-        }
-        return p1.y - p2.y; // Sort by y-pos from Top to Bottom
+    let inPosSum = new Vector();
+    let inSinSum = 0;
+    let inCosSum = 0;
+    inputPorts.forEach(((currPort) => {
+        const component = currPort.getParent();
+        inPosSum = inPosSum.add(component.getPos());
+        // Y-axis is flipped so need to convert angle for math
+        const angle = 2 * Math.PI - component.getAngle();
+        inSinSum += Math.sin(angle);
+        inCosSum += Math.cos(angle);
+    }))
+    
+    const avgInPos = inPosSum.scale(1.0/inputPorts.length);
+    // Convert back to flipped Y-axis
+    const avgInRot = 2 * Math.PI - Math.atan2(inSinSum/inputPorts.length,inCosSum/inputPorts.length)
+    const averageInputTransform = new Transform(avgInPos, new Vector(), avgInRot);
+    const inputTargetPositions = inputPorts.map(o => averageInputTransform.toLocalSpace(o.getWorldTargetPos()));
+
+    let outPosSum = new Vector();
+    let outSinSum = 0;
+    let outCosSum = 0;
+    outputPorts.forEach(((currPort) => {
+        const component = currPort.getParent();
+        outPosSum = outPosSum.add(component.getPos());
+        // Y-axis is flipped so need to convert angle for math
+        const angle = 2 * Math.PI - component.getAngle();
+        outSinSum += Math.sin(angle);
+        outCosSum += Math.cos(angle);
+    }))
+
+    const avgOutPos = outPosSum.scale(1.0 / outputPorts.length);
+    // Convert back to flipped Y-axis
+    const avgOutRot = 2 * Math.PI - Math.atan2(outSinSum/outputPorts.length,outCosSum/outputPorts.length);
+    const averageOutputTransform = new Transform(avgOutPos, new Vector(), avgOutRot);
+    const outputTargetPositions = outputPorts.map(o => averageOutputTransform.toLocalSpace(o.getWorldTargetPos()));
+    
+    let inputMap = new Map<Vector,InputPort>()
+    for(let currPort = 0; currPort < inputPorts.length; currPort++){
+        inputMap.set(inputTargetPositions[currPort],inputPorts[currPort])
+    }
+    let outputMap = new Map<Vector,OutputPort>()
+    for(let currPort = 0; currPort < outputPorts.length; currPort++){
+        outputMap.set(outputTargetPositions[currPort],outputPorts[currPort])
     }
 
-    inputPorts.sort(sortByPos);
-    outputPorts.sort(sortByPos);
+    const sortByPos = (a: Vector, b: Vector) => {
+        return a.y - b.y; // Sort by y-pos from Top to Bottom
+    }
 
-    // Connect ports by descending y-pos unless they are almost horizontal
-    // in which they are connected left to right
+    inputTargetPositions.sort(sortByPos);
+    outputTargetPositions.sort(sortByPos);
+    
+    // Connect Ports according to their target pos on the Average Component
     for(let currPort = 0; currPort < inputPorts.length; currPort++){
          // Create action
-         action.add(new ConnectionAction(designer, outputPorts[currPort]!, inputPorts[currPort]!));
+         action.add(new ConnectionAction(designer, outputMap.get(outputTargetPositions[currPort])!, inputMap.get(inputTargetPositions[currPort])!));
          // wire.setAsStraight(true); @TODO
     }
 
