@@ -13,14 +13,12 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     if (inputPorts.length !== outputPorts.length)
         throw new Error("Expected equal size input and output ports to bus!");
 
-    const action = new GroupAction();
     if (inputPorts.length === 0)
-        return action;
+        return new GroupAction();
 
     const designer = inputPorts[0].getParent().getDesigner();
     if (!designer)
         throw new Error("CreateBusAction failed: Designer not found");
-
 
     let inPosSum = new Vector();
     let inSinSum = 0;
@@ -65,6 +63,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     let outputMap = new Map<Vector,OutputPort>()
     for(let currPort = 0; currPort < outputPorts.length; currPort++){
         outputMap.set(outputTargetPositions[currPort],outputPorts[currPort])
+
     }
 
     const sortByPos = (a: Vector, b: Vector) => {
@@ -75,11 +74,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     outputTargetPositions.sort(sortByPos);
     
     // Connect Ports according to their target pos on the Average Component
-    for(let currPort = 0; currPort < inputPorts.length; currPort++){
-         // Create action
-         action.add(new ConnectionAction(designer, outputMap.get(outputTargetPositions[currPort])!, inputMap.get(inputTargetPositions[currPort])!));
-         // wire.setAsStraight(true); @TODO
-    }
-
-    return action;
+    return new GroupAction(inputTargetPositions.map((inputTargetPosition, i) =>
+        new ConnectionAction(designer, inputMap.get(inputTargetPosition)!, outputMap.get(outputTargetPositions[i])!)
+    ));
 }
