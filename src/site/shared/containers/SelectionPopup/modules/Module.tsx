@@ -269,9 +269,6 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                             type={props.inputType}
                             value={focused ? textVal : ((same ? displayVal(val) : ""))}
                             placeholder={same ? "" : (props.placeholder ?? "-")}
-                            //step={"step" in props ? props.step : ""}
-                            //min ={"min"  in props ? props.min  : ""}
-                            //max ={"max"  in props ? props.max  : ""}
                             onChange={(ev) => onChange(ev.target.value)}
                             onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
                             onBlur={() => onSubmit()}

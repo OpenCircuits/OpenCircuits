@@ -29,11 +29,11 @@ type NumberProps = Props & {
     onIncrement?: (step: number) => void;
     onDecrement?: (step: number) => void;
 }
-export const NumberInputField = React.forwardRef(({onEnter, value, onChange, onIncrement, onDecrement, step, ...props}: NumberProps, ref: React.RefObject<HTMLInputElement>) => {
-    ref = ref ?? useRef<HTMLInputElement>();
+export const NumberInputField = React.forwardRef(
+    ({onEnter, value, onChange, onIncrement, onDecrement, step, ...props}: NumberProps,
+        ref: React.RefObject<HTMLInputElement>) => {
 
-    //const [val, setVal] = useState(0);
-    // const [textVal, setTextVal] = useState("");
+    ref = ref ?? useRef<HTMLInputElement>();
 
     useEffect(() => {
         if (!ref.current)
@@ -45,19 +45,6 @@ export const NumberInputField = React.forwardRef(({onEnter, value, onChange, onI
             if (evt.key == "Enter" && onEnter)
                 onEnter(evt);
         });
-        /*
-        let buttons = ref.current.getElementsByTagName("button");
-        let input = ref.current.getElementsByTagName("input")[0];
-        let value = Number(input.value);
-        if (isNaN(value))
-            value = 0;
-        buttons[0].addEventListener("click", function (evt) {
-            input.value = String(value + Number(props.step));
-        });
-        buttons[1].addEventListener("click", function (evt) {
-            input.value = String(value - Number(props.step));
-        });
-        */
     }, [ref]);
 
     /*
