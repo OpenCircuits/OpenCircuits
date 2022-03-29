@@ -37,15 +37,36 @@ import { UndoHandler } from "core/tools/handlers/UndoHandler";
 import { ICPortTool } from "digital/tools/ICPortTool";
 import { ICResizeTool } from "digital/tools/ICResizeTool";
 import { ICCircuitInfo } from "digital/utils/ICCircuitInfo";
+import { RotateTool } from "core/tools/RotateTool";
+import { SelectionBoxTool } from "core/tools/SelectionBoxTool";
+import { SplitWireTool } from "core/tools/SplitWireTool";
+import { TranslateTool } from "core/tools/TranslateTool";
+import { WiringTool } from "core/tools/WiringTool";
+import { CleanUpHandler } from "core/tools/handlers/CleanUpHandler";
+import { CopyHandler } from "core/tools/handlers/CopyHandler";
+import { DeselectAllHandler } from "core/tools/handlers/DeselectAllHandler";
+import { DuplicateHandler } from "core/tools/handlers/DuplicateHandler";
+import { PasteHandler } from "core/tools/handlers/PasteHandler";
+import { SelectAllHandler } from "core/tools/handlers/SelectAllHandler";
+import { SelectionHandler } from "core/tools/handlers/SelectionHandler";
+import { SelectPathHandler } from "core/tools/handlers/SelectPathHandler";
+import { SnipWirePortsHandler } from "core/tools/handlers/SnipWirePortsHandler";
+import {EventHandler} from "core/tools/EventHandler"
 
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
 }
 export const ICEditor = (() => {
+    // TODO there has to be a better way of doing this
+    const handlers = [CleanUpHandler, CopyHandler, DeselectAllHandler,
+                      DuplicateHandler, FitToScreenHandler,
+                      RedoHandler, SelectAllHandler, SelectionHandler,
+                      SelectPathHandler, SnipWirePortsHandler, UndoHandler];
     const info = CreateInfo(
-        new DefaultTool(FitToScreenHandler, RedoHandler, UndoHandler),
-        PanTool, ICPortTool, ICResizeTool
+        new InteractionTool(handlers),
+        PanTool, RotateTool, SelectionBoxTool,
+        SplitWireTool, TranslateTool, WiringTool
     );
 
     const icInfo: ICCircuitInfo = {
@@ -114,7 +135,6 @@ export const ICEditor = (() => {
             // Block input for main designer
             mainInfo.input.block();
 
-
             // Reset designer and add IC insides
             designer.reset();
             const inside = data.copy();
@@ -123,6 +143,9 @@ export const ICEditor = (() => {
             // Adjust the camera so it all fits in the viewer
             const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
             new MoveCameraAction(camera, pos, zoom).execute();
+
+            // TODO figure out alternative method elephant
+            (document.getElementsByClassName("itemnav")[0] as HTMLElement).style.zIndex = "7";
 
             renderer.render();
         }, [isActive, data]);
@@ -155,6 +178,7 @@ export const ICEditor = (() => {
 
             // icInfo.ic = undefined;
             dispatch(CloseICEditor());
+            (document.getElementsByClassName("itemnav")[0] as HTMLElement).style.zIndex = "2";
             // setName({ name: "" }); // Clear name
         }
 

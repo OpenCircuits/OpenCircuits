@@ -31,12 +31,8 @@ export type ICDataEvent = {
     op: "added" | "removed" | "edited";
     data: ICData;
 }
-export type ICEditEvent = {
-    type: "ic_edit";
-    data: ICData;
-}
 export type DigitalEvent =
-    PropagationEvent | ForcedEvent | ObjEvent | WireEvent | ICDataEvent | ICEditEvent;
+    PropagationEvent | ForcedEvent | ObjEvent | WireEvent | ICDataEvent;
 
 
 @serializable("DigitalCircuitDesigner")
