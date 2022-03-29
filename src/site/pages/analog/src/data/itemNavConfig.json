@@ -1,0 +1,37 @@
+{
+    "imgRoot": "img/itemnav",
+    "sections": [
+      {
+        "id": "sources",
+        "label": "Sources",
+        "items": [
+          {
+            "id": "CurrentSource",
+            "label": "Current Source",
+            "icon": "currentsource.svg"
+          },
+          {
+            "id": "VoltageSource",
+            "label": "Voltage Source",
+            "icon": "voltagesource.svg"
+          }
+        ]
+      },
+      {
+        "id": "other",
+        "label": "Other",
+        "items": [
+          {
+            "id": "Resistor",
+            "label": "Resistor",
+            "icon": "resistor.svg"
+          },
+          {
+            "id": "Label",
+            "label": "Label",
+            "icon": "label.svg"
+          }
+        ]
+      }
+    ]
+  }
