@@ -65,10 +65,8 @@ export const ContextMenu = ({ info, paste }: Props) => {
         if (!isOpen)
             return;
         // Updates position state
-        let pos = input?.getMousePos();
+        const pos = input?.getMousePos();
         setPos({ posX:pos.x, posY:pos.y });
-
-
     }, [isOpen]);
 
     useDocEvent("mousedown", (ev) => {
@@ -77,7 +75,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
         if (!menu.current.contains(ev.target as Node))
             dispatch(CloseContextMenu());
-    });
+    }, []);
 
 
     const copy = () => {
@@ -144,26 +142,24 @@ export const ContextMenu = ({ info, paste }: Props) => {
     const menu = useRef<HTMLDivElement>(null);
 
     // Adjusts position of menu to keep it on screen
-    let pos = V(posX, posY);
-    if(menu.current){
+    const menuPos = V(posX, posY);
+    if (menu.current) {
         const offset = 1;
-        const contextMenuWidth = menu.current.getBoundingClientRect().width;
-        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+        const { width, height } = menu.current.getBoundingClientRect();
 
+        if (menuPos.x + width > window.innerWidth)
+            menuPos.x -= width - offset;
 
-        if (pos.x + contextMenuWidth > window.innerWidth)
-            pos.x -= contextMenuWidth - offset;
-
-        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-            pos.y -= contextMenuHeight - offset;
+        if (menuPos.y + height + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            menuPos.y -= height - offset;
     }
 
     return (
         <div className="contextmenu"
              ref={menu}
              style={{
-                 left: `${pos.x}px`,
-                 top: `${pos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 left: `${menuPos.x}px`,
+                 top: `${menuPos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
                  visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
@@ -174,5 +170,5 @@ export const ContextMenu = ({ info, paste }: Props) => {
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
         </div>
-   );
+    );
 }
