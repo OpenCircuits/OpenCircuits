@@ -95,6 +95,43 @@ func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Cont
 	c.JSON(http.StatusOK, circuit)
 }
 
+func circuitUpdateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
+	storageInterface := m.CreateCircuitStorageInterface()
+
+	circuitId := c.Param("id")
+
+	needToCreate := false
+	circuit := storageInterface.LoadCircuit(circuitId)
+	if circuit == nil {
+		needToCreate = true
+	}
+	newCircuit, err := parseCircuitRequestData(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if needToCreate {
+		*circuit = storageInterface.NewCircuit()
+		circuit.Metadata.Owner = userId
+		circuit.Update(newCircuit)
+		storageInterface.UpdateCircuit(*circuit)
+
+		// Returned the updated metadata so the client can get any changes the server made to it
+		c.JSON(http.StatusAccepted, circuit.Metadata)
+	} else {
+		if circuit.Metadata.Owner != userId {
+			c.JSON(http.StatusForbidden, nil)
+			return
+		}
+
+		circuit.Update(newCircuit)
+		storageInterface.UpdateCircuit(*circuit)
+
+		// Returned the updated metadata so the client can get any changes the server made to it
+		c.JSON(http.StatusAccepted, circuit.Metadata)
+	}
+}
+
 func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
 	storageInterface := m.CreateCircuitStorageInterface()
 	circuits := storageInterface.EnumerateCircuits(userId)
