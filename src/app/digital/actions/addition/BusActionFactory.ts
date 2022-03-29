@@ -1,13 +1,11 @@
-import {GroupAction} from "core/actions/GroupAction";
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {Port} from "core/models";
-
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
-import { DigitalComponent } from "digital/models";
 import { Vector } from "Vector";
 import { Transform } from "math/Transform";
 
+import {GroupAction} from "core/actions/GroupAction";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+
+import {InputPort} from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
     if (inputPorts.length !== outputPorts.length)
@@ -55,7 +53,8 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     const avgOutRot = 2 * Math.PI - Math.atan2(outSinSum/outputPorts.length,outCosSum/outputPorts.length);
     const averageOutputTransform = new Transform(avgOutPos, new Vector(), avgOutRot);
     const outputTargetPositions = outputPorts.map(o => averageOutputTransform.toLocalSpace(o.getWorldTargetPos()));
-    
+
+    // Associate the ports with their average component target position
     let inputMap = new Map<Vector,InputPort>()
     for(let currPort = 0; currPort < inputPorts.length; currPort++){
         inputMap.set(inputTargetPositions[currPort],inputPorts[currPort])
