@@ -23,9 +23,7 @@ import {ArcCircle} from "core/rendering/shapes/ArcCircle";
 import {Circle} from "core/rendering/shapes/Circle";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
-import {DigitalWire} from "digital/models/DigitalWire";
-
-import {WireRenderer} from "./ioobjects/WireRenderer";
+import {WireRenderer} from "./WireRenderer";
 
 
 export const ToolRenderer = (() => {
@@ -80,7 +78,7 @@ export const ToolRenderer = (() => {
             }
             else if (tool === WiringTool) {
                 // Draw fake wire
-                WireRenderer.render(renderer, info, WiringTool.getWire() as DigitalWire);
+                WireRenderer.render(renderer, info, WiringTool.getWire());
             }
         }
     };

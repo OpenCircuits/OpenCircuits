@@ -1,15 +1,15 @@
 import {GRID_SIZE} from "core/utils/Constants";
-import {GRID_LINE_COLOR} from "./Styles";
+import {GRID_LINE_COLOR} from "../Styles";
 
 import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Renderer} from "./Renderer";
-import {Style} from "./Style";
+import {Renderer} from "../Renderer";
+import {Style} from "../Style";
 
 
-export const Grid = (() => {
+export const GridRenderer = (() => {
 
     return {
         render(renderer: Renderer, {camera}: CircuitInfo): void {

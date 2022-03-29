@@ -12,6 +12,7 @@ module.exports = {
     "ignorePatterns": ["*.js", "scripts/**", "src/app/tests/**"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "tsconfigRootDir": __dirname,
         "project": "./tsconfig.base.json"
     },
     "plugins": ["@typescript-eslint", "opencircuits"],
