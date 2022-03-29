@@ -93,7 +93,14 @@ $historybox-width: 250px;
         border: 1px solid $secondary-color;
         border-radius: 7px;
 
+        position: relative;
+
         cursor: pointer;
+
+        &__extrainfo__icon {
+            left: 5px;
+            position: absolute;
+        }
 
         &__additionalinfo__collapse_btn {
             font-size: 18px;
@@ -121,6 +128,10 @@ $historybox-width: 250px;
 
         & > span {
             font-size: 18px;
+        }
+
+        &__extrainfo__icon {
+            margin-right: 5px;
         }
 
         &__collapse_btn {

@@ -3,10 +3,12 @@ import {Action} from "core/actions/Action";
 export class GroupAction implements Action {
     private actions: Action[];
     private customName?: string;
+    public getCustomInfo: (action: Action) => string[];
 
-    public constructor(actions?: Action[], customName?: string) {
+    public constructor(actions?: Action[], customName?: string, getCustomInfo?: (action: GroupAction) => string[]) {
         this.actions = actions || [];
         this.customName = customName;
+        this.getCustomInfo = (getCustomInfo == undefined) ? (action: GroupAction) => [`Applied to ${action["actions"].length} things.`] : getCustomInfo;
     }
 
     public add(action: Action | Action[]): GroupAction {
