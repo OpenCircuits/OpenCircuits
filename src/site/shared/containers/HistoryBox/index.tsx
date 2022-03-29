@@ -15,19 +15,30 @@ import "./index.scss";
 
 type HistoryEntryProps = {
     a: Action;
+    isRedo: boolean;
 }
-const HistoryEntry = ({ a }: HistoryEntryProps) => {
+const HistoryEntry = ({ a }: HistoryEntryProps, {isRedo} : HistoryEntryProps) => {
     if (a instanceof GroupAction)
         return (<GroupActionEntry g={a}></GroupActionEntry>);
-    return (
-        <div className="historybox__entry"
-             // Necessary to stop child entries from collapsing the parent history entry
-             onClick={(e) => e.stopPropagation()}>
+    if(!isRedo) {
+        return(
+            <div className="historybox__entry"
+            // Necessary to stop child entries from collapsing the parent history entry
+            onClick={(e) => e.stopPropagation()}>
             {a.getName()}
-        </div>
-    );
+            </div>
+        )
+    }
+    else {
+        return (
+            <div className="historybox__dashedentry"
+            // Necessary to stop child entries from collapsing the parent history entry
+            onClick={(e) => e.stopPropagation()}>
+            {a.getName()}
+            </div>
+        )
+    }
 }
-
 
 type GroupActionEntryProps = {
     g: GroupAction;
@@ -38,7 +49,8 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
     if (g.isEmpty())
         return null;
     if (g.getActions().length === 1)
-        return (<HistoryEntry a={g.getActions()[0]}></HistoryEntry>);
+        return (<HistoryEntry a={g.getActions()[0]} isRedo = {false}></HistoryEntry>);
+        // return (<HistoryEntry a={g.getActions()[0]} ></HistoryEntry>);
 
     return (
         <div className="historybox__groupentry"
@@ -54,7 +66,8 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                 &rsaquo;
             </span>
             {!isCollapsed && g.getActions().map((a, i) => {
-                return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
+                return(<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={false} ></HistoryEntry>);
+                // return(<HistoryEntry key={`group-action-entry-${i}`} a={a} ></HistoryEntry>);
             })}
         </div>
     );
@@ -79,9 +92,16 @@ export const HistoryBox = ({ info }: Props) => {
                 <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
             </div>
             <div>
-                {[...undoHistory].reverse().map((a, i) =>
-                    <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+                
+                {[...redoHistory].reverse().map((a, i) =>
+                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo={true}></HistoryEntry>
+                    // <RedoHistoryEntry key={`history-box-dashedentry-${i}`} a={a} ></RedoHistoryEntry>
                 )}
+                {[...undoHistory].reverse().map((a, i) =>
+                    <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
+                    // <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+                )}
+                
             </div>
         </div>
 

@@ -94,6 +94,19 @@ $historybox-width: 250px;
         border-radius: 7px;
     }
 
+    &__dashedentry {
+        height: auto;
+        line-height: 30px;
+        padding: 10px;
+
+        margin: 5px;
+        text-align: center;
+
+        border: 1px solid $secondary-color;
+        border-style: dashed;
+        border-radius: 7px;
+    }
+
     &__groupentry {
         margin: 5px;
 
