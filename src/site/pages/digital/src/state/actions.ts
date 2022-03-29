@@ -4,6 +4,7 @@ import {ActionCreatorType} from "shared/utils/CreateState";
 
 type ActionCreators =
     typeof import("./ICDesigner") &
+    typeof import("./ICEditor") &
     typeof import("./ICViewer");
 
 export type AllActions = AllSharedActions | {

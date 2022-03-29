@@ -21,12 +21,14 @@ import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
 import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
 import {ICDesigner}             from "site/digital/containers/ICDesigner";
+import {ICEditor}               from "site/digital/containers/ICEditor";
 import {ICViewer}               from "site/digital/containers/ICViewer";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
+import {EditICButtonModule}         from "site/digital/containers/SelectionPopup/modules/EditICButtonModule";
 import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
@@ -103,7 +105,7 @@ export const App = ({info, helpers, canvas}: Props) => {
                                         ClockSyncButtonModule,
                                         ColorModule, TextColorModule,
                                         BusButtonModule,
-                                        CreateICButtonModule, ViewICButtonModule]}
+                                        CreateICButtonModule, EditICButtonModule, ViewICButtonModule]}
                                     docsUrlConfig={docsConfig} />
 
                     <ContextMenu info={info}
@@ -112,6 +114,7 @@ export const App = ({info, helpers, canvas}: Props) => {
             </div>
 
             <ICDesigner mainInfo={info} />
+            <ICEditor mainInfo={info} />
             <ICViewer mainInfo={info} />
 
             <QuickStartPopup />

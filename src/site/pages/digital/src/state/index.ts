@@ -4,11 +4,13 @@ import {SharedAppState}  from "shared/state";
 import {AllActions} from "./actions";
 
 import {ICDesignerState} from "./ICDesigner";
+import {ICEditorState} from "./ICEditor";
 import {ICViewerState}   from "./ICViewer";
 
 
 export type AppState = SharedAppState & {
     icDesigner: ICDesignerState;
+    icEditor: ICEditorState;
     icViewer: ICViewerState;
 }
 
