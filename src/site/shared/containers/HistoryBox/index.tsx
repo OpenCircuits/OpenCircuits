@@ -17,9 +17,9 @@ type HistoryEntryProps = {
     a: Action;
     isRedo: boolean;
 }
-const HistoryEntry = ({ a }: HistoryEntryProps, {isRedo} : HistoryEntryProps) => {
+const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
     if (a instanceof GroupAction)
-        return (<GroupActionEntry g={a}></GroupActionEntry>);
+        return (<GroupActionEntry g={a} isRedo={isRedo}></GroupActionEntry>);
     if(!isRedo) {
         return(
             <div className="historybox__entry"
@@ -42,35 +42,57 @@ const HistoryEntry = ({ a }: HistoryEntryProps, {isRedo} : HistoryEntryProps) =>
 
 type GroupActionEntryProps = {
     g: GroupAction;
+    isRedo: boolean;
 }
-const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
+const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
 
     if (g.isEmpty())
         return null;
     if (g.getActions().length === 1)
-        return (<HistoryEntry a={g.getActions()[0]} isRedo = {false}></HistoryEntry>);
+        return (<HistoryEntry a={g.getActions()[0]} isRedo={isRedo}></HistoryEntry>);
         // return (<HistoryEntry a={g.getActions()[0]} ></HistoryEntry>);
 
-    return (
-        <div className="historybox__groupentry"
-             onClick={(e) => {
-                 // Necessary to stop child entries from collapsing the parent history entry
-                 e.stopPropagation();
-                 setIsCollapsed(!isCollapsed);
-             }}>
-            <span>{g.getName()}</span>
-            <span
-                className={`historybox__groupentry__collapse_btn \
-                            ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
-                &rsaquo;
-            </span>
-            {!isCollapsed && g.getActions().map((a, i) => {
-                return(<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={false} ></HistoryEntry>);
-                // return(<HistoryEntry key={`group-action-entry-${i}`} a={a} ></HistoryEntry>);
-            })}
-        </div>
-    );
+    if(!isRedo)
+        return (
+            <div className="historybox__groupentry"
+                onClick={(e) => {
+                    // Necessary to stop child entries from collapsing the parent history entry
+                    e.stopPropagation();
+                    setIsCollapsed(!isCollapsed);
+                }}>
+                <span>{g.getName()}</span>
+                <span
+                    className={`historybox__groupentry__collapse_btn \
+                                ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
+                    &rsaquo;
+                </span>
+                {!isCollapsed && g.getActions().map((a, i) => {
+                    return(<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={false} ></HistoryEntry>);
+                    // return(<HistoryEntry key={`group-action-entry-${i}`} a={a} ></HistoryEntry>);
+                })}
+            </div>
+        );
+    else 
+        return (
+            <div className="historybox__dashedgroupentry"
+                onClick={(e) => {
+                    // Necessary to stop child entries from collapsing the parent history entry
+                    e.stopPropagation();
+                    setIsCollapsed(!isCollapsed);
+                }}>
+                <span>{g.getName()}</span>
+                <span
+                    className={`historybox__groupentry__collapse_btn \
+                                ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
+                    &rsaquo;
+                </span>
+                {!isCollapsed && g.getActions().map((a, i) => {
+                    return(<HistoryEntry key={`group-action-dashedentry-${i}`} a={a} isRedo={true} ></HistoryEntry>);
+                    // return(<HistoryEntry key={`group-action-entry-${i}`} a={a} ></HistoryEntry>);
+                })}
+            </div>
+        );
 }
 
 
@@ -92,11 +114,17 @@ export const HistoryBox = ({ info }: Props) => {
                 <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
             </div>
             <div>
-                
+                <span>&nbsp;Redo History</span>
+                <div className={"historybox__separator"} > </div>
                 {[...redoHistory].reverse().map((a, i) =>
-                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo={true}></HistoryEntry>
+                    
+                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
                     // <RedoHistoryEntry key={`history-box-dashedentry-${i}`} a={a} ></RedoHistoryEntry>
                 )}
+                <span>&nbsp;Undo History</span>
+                <div className={"historybox__separator"} > </div>
+                
+                {/* <hr: style="border: none;"/> */}
                 {[...undoHistory].reverse().map((a, i) =>
                     <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
                     // <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>

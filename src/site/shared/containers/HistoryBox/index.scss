@@ -94,6 +94,13 @@ $historybox-width: 250px;
         border-radius: 7px;
     }
 
+    &__separator {
+        padding-bottom: 2px;
+        margin-left: 5px;
+        margin-bottom: 7px;
+        border-bottom: 1px solid $secondary-color;
+    }
+
     &__dashedentry {
         height: auto;
         line-height: 30px;
@@ -111,6 +118,33 @@ $historybox-width: 250px;
         margin: 5px;
 
         border: 1px solid $secondary-color;
+        border-radius: 7px;
+
+        padding: 5px;
+
+        cursor: pointer;
+
+        & > span {
+            font-size: 18px;
+        }
+
+        &__collapse_btn {
+            margin-right: 5px;
+            float: right;
+
+            transition: 0.5s;
+            transform: rotate(90deg);
+
+            &-collapsed {
+                transform: rotate(0deg);
+            }
+        }
+    }
+
+    &__dashedgroupentry {
+        margin: 5px;
+
+        border: 1px dashed $secondary-color;
         border-radius: 7px;
 
         padding: 5px;
