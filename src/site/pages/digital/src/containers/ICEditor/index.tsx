@@ -15,7 +15,6 @@ import {PanTool}          from "core/tools/PanTool";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
@@ -24,18 +23,10 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 import {CloseICEditor} from "site/digital/state/ICEditor";
 
 import "./index.scss";
-import { PlaceAction } from "core/actions/addition/PlaceAction";
-import { GroupAction } from "core/actions/GroupAction";
-import { CreateDeselectAllAction, SelectAction } from "core/actions/selection/SelectAction";
-import { CreateICDataAction } from "digital/actions/CreateICDataAction";
-import { IC, ICData } from "digital/models/ioobjects";
-import { CloseICDesigner } from "site/digital/state/ICDesigner";
-import { DefaultTool } from "core/tools/DefaultTool";
+import { CreateGroupPlaceAction } from "core/actions/addition/PlaceAction";
 import { FitToScreenHandler } from "core/tools/handlers/FitToScreenHandler";
 import { RedoHandler } from "core/tools/handlers/RedoHandler";
 import { UndoHandler } from "core/tools/handlers/UndoHandler";
-import { ICPortTool } from "digital/tools/ICPortTool";
-import { ICResizeTool } from "digital/tools/ICResizeTool";
 import { ICCircuitInfo } from "digital/utils/ICCircuitInfo";
 import { RotateTool } from "core/tools/RotateTool";
 import { SelectionBoxTool } from "core/tools/SelectionBoxTool";
@@ -51,18 +42,23 @@ import { SelectAllHandler } from "core/tools/handlers/SelectAllHandler";
 import { SelectionHandler } from "core/tools/handlers/SelectionHandler";
 import { SelectPathHandler } from "core/tools/handlers/SelectPathHandler";
 import { SnipWirePortsHandler } from "core/tools/handlers/SnipWirePortsHandler";
-import {EventHandler} from "core/tools/EventHandler"
+import { DigitalPaste } from "site/digital/utils/DigitalPaste";
+import { InputField } from "shared/components/InputField";
+import { Droppable } from "shared/components/DragDroppable/Droppable";
+import { SmartPlaceOptions, SmartPlace, DigitalCreateN } from "site/digital/utils/DigitalCreate";
+import { V } from "Vector";
 
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
 }
 export const ICEditor = (() => {
-    // TODO there has to be a better way of doing this
+    // TODO there has to be a better way of doing this elephant
     const handlers = [CleanUpHandler, CopyHandler, DeselectAllHandler,
                       DuplicateHandler, FitToScreenHandler,
                       RedoHandler, SelectAllHandler, SelectionHandler,
-                      SelectPathHandler, SnipWirePortsHandler, UndoHandler];
+                      SelectPathHandler, SnipWirePortsHandler, UndoHandler,
+                      PasteHandler((data) => DigitalPaste(data, info, undefined))];
     const info = CreateInfo(
         new InteractionTool(handlers),
         PanTool, RotateTool, SelectionBoxTool,
@@ -83,7 +79,7 @@ export const ICEditor = (() => {
 
         const {w, h} = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
-    //     const [{name}, setName] = useState({ name: "" });
+        const [{name}, setName] = useState({ name: "" });
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -121,6 +117,15 @@ export const ICEditor = (() => {
             renderer.render();
         }, []); // Pass empty array so that this only runs once on mount
 
+        // Keeps the ICData/IC name's in sync with `name`
+        useLayoutEffect(() => {
+            if (!data || !icInfo.ic)
+                return;
+            data.setName(name ?? "");
+            icInfo.ic.update();
+            renderer.render();
+        }, [name, data, icInfo.ic]);
+
         // Happens when activated
         useLayoutEffect(() => {
             if (!isActive || !data)
@@ -139,6 +144,9 @@ export const ICEditor = (() => {
             designer.reset();
             const inside = data.copy();
             designer.addGroup(inside);
+
+            // Get name
+            setName({name: data.getName()});
 
             // Adjust the camera so it all fits in the viewer
             const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
@@ -185,14 +193,41 @@ export const ICEditor = (() => {
     //     useKeyDownEvent(info.input, "Escape", close);
 
         return (
-            <div className="iceditor" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
-                <canvas ref={canvas}
-                        width={w*IC_DESIGNER_VW}
-                        height={h*IC_DESIGNER_VH} />
+            <div className="iceditor" style={{display: (isActive ? "initial" : "none"), height: h+"px"}}>
+                <Droppable ref={canvas}
+                        onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
+                            if (!canvas.current)
+                                throw new Error("ICEditor.Droppable.onDrop failed: canvas.current is null");
+                            num = num ?? 1;
+                            if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
+                                return;
+                            pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-                <div className="iceditor__buttons">
-                    <button name="close" onClick={() => close(true)}>
-                        Close
+                            if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                                icInfo.history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
+                            } else {
+                                icInfo.history.add(
+                                    CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
+                                );
+                            }
+                            renderer.render();
+                        }}>
+                    <canvas ref={canvas}
+                            width={w*IC_DESIGNER_VW}
+                            height={h*IC_DESIGNER_VH} />
+                </Droppable>
+
+                <InputField type="text"
+                            value={name}
+                            placeholder="IC Name"
+                            onChange={(ev) => setName({name: ev.target.value})} />
+
+                <div className="icdesigner__buttons">
+                    <button name="confirm" onClick={() => close(false)}>
+                        Confirm
+                    </button>
+                    <button name="cancel"  onClick={() => close(true)}>
+                        Cancel
                     </button>
                 </div>
             </div>
