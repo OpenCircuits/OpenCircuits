@@ -97,9 +97,13 @@ $historybox-width: 250px;
 
         cursor: pointer;
 
-        &__extrainfo__icon {
-            left: 5px;
-            position: absolute;
+        &__extrainfo {
+            text-align: left;
+
+            &__icon {
+                left: 5px;
+                position: absolute;
+            }
         }
 
         &__additionalinfo__collapse_btn {
@@ -130,8 +134,12 @@ $historybox-width: 250px;
             font-size: 18px;
         }
 
-        &__extrainfo__icon {
-            margin-right: 5px;
+        &__extrainfo {
+            padding: 5px;
+
+            &__icon {
+                margin-right: 5px;
+            }
         }
 
         &__collapse_btn {

@@ -84,6 +84,14 @@ export class RotateAction implements Action {
         return "Rotate";
     }
 
+    public getCustomInfo(): string[] {
+        return Array.from(
+            this.objects, (obj, i) =>
+                `${obj.getName()}: rotated from ${Math.round(this.initialAngles[i] * (180 / Math.PI))}
+                                            to ${Math.round(this.finalAngles[i] * (180 / Math.PI))}`
+        );
+    }
+
     public getObjs(): string[] {
         return Array.from(this.objects, obj => obj.getName());
     }

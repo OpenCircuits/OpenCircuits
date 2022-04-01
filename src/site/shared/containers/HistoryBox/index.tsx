@@ -41,9 +41,15 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
                 </span>
             } */}
             
-            {/* {!isCollapsed &&
-                // <AdditionalActionInformation a={a}></AdditionalActionInformation>
-            } */}
+            {!isCollapsed && (a.getCustomInfo != undefined ?
+                a.getCustomInfo().map((o, i) => {
+                    return (
+                        <div className="historybox__entry__extrainfo">{a.getCustomInfo?.()[i]}</div>
+                    )
+                }) :
+                <div className="historybox__entry__extrainfo">Applied to 1 thing.</div>)
+                // <div className="historybox__entry__extrainfo">{a.getCustomInfo()}</div>
+            }
         </div>
     );
 }
@@ -130,7 +136,7 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
             })}
 
             {displayExtraInfo &&
-                <div>{g.getCustomInfo(g)}</div>
+                <div className="historybox__groupentry__extrainfo">{g.getCustomInfo()}</div>
             }
         </div>
     );

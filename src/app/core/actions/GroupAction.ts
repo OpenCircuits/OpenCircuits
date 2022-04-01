@@ -3,12 +3,12 @@ import {Action} from "core/actions/Action";
 export class GroupAction implements Action {
     private actions: Action[];
     private customName?: string;
-    public getCustomInfo: (action: Action) => string[];
+    private customInfo?: string[];
 
-    public constructor(actions?: Action[], customName?: string, getCustomInfo?: (action: GroupAction) => string[]) {
+    public constructor(actions?: Action[], customName?: string, customInfo?: string[]) {
         this.actions = actions || [];
         this.customName = customName;
-        this.getCustomInfo = (getCustomInfo == undefined) ? (action: GroupAction) => [`Applied to ${action["actions"].length} things.`] : getCustomInfo;
+        this.customInfo = (customInfo == undefined) ? undefined : customInfo;
     }
 
     public add(action: Action | Action[]): GroupAction {
@@ -51,6 +51,12 @@ export class GroupAction implements Action {
         if (this.actions.length === 1)
             return this.actions[0].getName();
         return `Grouped ${this.actions.length} actions` ;
+    }
+
+    public getCustomInfo(): string[] {
+        if (this.customInfo)
+            return this.customInfo;
+        return [`Applied to ${this.actions.length} things.`]
     }
 
     public getActions(): Action[] {

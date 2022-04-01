@@ -76,6 +76,14 @@ export class TranslateAction implements Action {
         return "Move Object";
     }
 
+    public getCustomInfo(): string[] {
+        return Array.from(
+            this.objs, (obj, i) =>
+                `${obj.getName()}: moved from (${Math.round(this.initialPositions[i].x)}, ${Math.round(this.initialPositions[i].y)})
+                                            to (${Math.round(this.targetPositions[i].x)}, ${Math.round(this.targetPositions[i].y)})`
+        )
+    }
+
     public getObjs(): string[] {
         return Array.from(this.objs, obj => obj.getName());
     }
