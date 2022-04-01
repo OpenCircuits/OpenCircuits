@@ -97,11 +97,13 @@ $historybox-width: 250px;
     &__separator {
         padding-bottom: 2px;
         margin-left: 5px;
-        margin-bottom: 7px;
-        border-bottom: 1px solid $secondary-color;
+        margin-bottom: 2px;
+        border-bottom: 2px solid $secondary-color;
     }
 
     &__dashedentry {
+        background-color: rgb(65, 65, 65);
+
         height: auto;
         line-height: 30px;
         padding: 10px;
@@ -109,8 +111,7 @@ $historybox-width: 250px;
         margin: 5px;
         text-align: center;
 
-        border: 1px solid $secondary-color;
-        border-style: dashed;
+        border: 2px dashed $secondary-color;
         border-radius: 7px;
     }
 
@@ -142,9 +143,11 @@ $historybox-width: 250px;
     }
 
     &__dashedgroupentry {
+        background-color: rgb(65, 65, 65);
+
         margin: 5px;
 
-        border: 1px dashed $secondary-color;
+        border: 2px dashed $secondary-color;
         border-radius: 7px;
 
         padding: 5px;

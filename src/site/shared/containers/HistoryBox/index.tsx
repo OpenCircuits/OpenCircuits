@@ -104,34 +104,54 @@ export const HistoryBox = ({ info }: Props) => {
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
-
+    
     const { undoHistory, redoHistory } = useHistory(info);
 
-    return (
-        <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-            <div>
-                <span>History</span>
-                <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
-            </div>
-            <div>
-                <span>&nbsp;Redo History</span>
-                <div className={"historybox__separator"} > </div>
-                {[...redoHistory].reverse().map((a, i) =>
+    var redoHasMembers = false;
+    if(redoHistory.length > 0) {
+        return (
+            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
+                <div>
+                    <span>History</span>
+                    <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
+                </div>
+                <div>
+                    {[...redoHistory].reverse().map((a, i) =>
+                        
+                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
+                        // <RedoHistoryEntry key={`history-box-dashedentry-${i}`} a={a} ></RedoHistoryEntry>
+                    )}
+                    <div style={{textAlign: 'center', fontWeight: 'bold'}}> Redo </div>
+                    <div className={"historybox__separator"} > </div>
+                    <div style={{textAlign: 'center', fontWeight: 'bold'}}> Undo </div>
+                    {[...undoHistory].reverse().map((a, i) =>
+                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
+                        // <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+                    )}
                     
-                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
-                    // <RedoHistoryEntry key={`history-box-dashedentry-${i}`} a={a} ></RedoHistoryEntry>
-                )}
-                <span>&nbsp;Undo History</span>
-                <div className={"historybox__separator"} > </div>
-                
-                {/* <hr: style="border: none;"/> */}
-                {[...undoHistory].reverse().map((a, i) =>
-                    <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
-                    // <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
-                )}
-                
+                </div>
             </div>
-        </div>
 
-    );
+        );
+    }
+    else {
+        return (
+            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
+                <div>
+                    <span>History</span>
+                    <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
+                </div>
+                <div>
+                    <div style={{textAlign: 'center', fontWeight: 'bold'}}> Undo </div>
+                    {[...undoHistory].reverse().map((a, i) =>
+                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
+                        // <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
+                    )}
+                    
+                </div>
+            </div>
+
+        );
+    }
+    
 }
