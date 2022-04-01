@@ -126,7 +126,7 @@ export const HistoryBox = ({ info }: Props) => {
 
         );
     }
-    else if(undoHistory.length > 0) {
+    else {
         return (
             <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
                 <div>
@@ -142,18 +142,6 @@ export const HistoryBox = ({ info }: Props) => {
                 </div>
             </div>
 
-        );
-    }
-    else {
-        return (
-            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-                <div>
-                    <span>History</span>
-                    <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
-                </div>
-                <div>
-                </div>
-            </div>
         );
     }
 }
