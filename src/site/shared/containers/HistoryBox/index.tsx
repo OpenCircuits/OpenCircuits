@@ -5,10 +5,6 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ShiftAction} from "core/actions/ShiftAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
-import { RotateAction } from "core/actions/transform/RotateAction";
-
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
@@ -32,73 +28,22 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
                 e.stopPropagation();
                 setIsCollapsed(!isCollapsed);
             }}>
-            <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"/>
-            {a.getName()}
-            {/* {(a instanceof ShiftAction || a instanceof TranslateAction || a instanceof RotateAction) &&
-                <span
-                    className={`historybox__entry__additionalinfo__collapse_btn \
-                    ${isCollapsed ? "historybox__entry__additionalinfo__collapse_btn-collapsed" : "" }`}>
-                </span>
-            } */}
-            
-            {!isCollapsed && (a.getCustomInfo != undefined ?
-                a.getCustomInfo().map((o, i) => {
+            <div className="historybox__entry__header">
+                {a.getName()}
+                {a.getCustomInfo != undefined &&
+                    <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"/>
+                }
+            </div>
+            {!isCollapsed && a.getCustomInfo != undefined &&
+                a.getCustomInfo().map((obj, i) => {
                     return (
                         <div className="historybox__entry__extrainfo">{a.getCustomInfo?.()[i]}</div>
                     )
-                }) :
-                <div className="historybox__entry__extrainfo">Applied to 1 thing.</div>)
-                // <div className="historybox__entry__extrainfo">{a.getCustomInfo()}</div>
+                })
             }
         </div>
     );
 }
-
-
-type AdditionalActionInformationProps = {
-    a: Action;
-}
-const AdditionalActionInformation = ({ a }: AdditionalActionInformationProps) => {
-    if (a instanceof ShiftAction)
-        return (
-            <div onClick={(e) => {
-                    // Necessary to stop child entries from collapsing the parent history entry
-                    e.stopPropagation();
-                }}>
-                <div>{"obj: " + a.getObj()}</div>
-                <div>{"i: " + a.getI()}</div>
-            </div>
-        );
-    else if (a instanceof TranslateAction)
-        return (
-            <div onClick={(e) => {
-                    // Necessary to stop child entries from collapsing the parent history entry
-                    e.stopPropagation();
-                }}>
-                {a.getObjs().map((o, i) => {
-                    return(
-                        <div>{o}: ({Math.round(a.getInitialPositions()[i].x)}, {Math.round(a.getInitialPositions()[i].y)}) to
-                                ({Math.round(a.getTargetPositions()[i].x)}, {Math.round(a.getTargetPositions()[i].y)})
-                        </div>);
-                })}
-            </div>
-        );
-    else if (a instanceof RotateAction)
-        return (
-            <div onClick={(e) => {
-                    // Necessary to stop child entries from collapsing the parent history entry
-                    e.stopPropagation();
-                }}>
-                {a.getObjs().map((o, i) => {
-                    return(<div>{o}: {Math.round(a.getInitialAngles()[i])} to {Math.round(a.getFinalAngles()[i])}</div>);
-                })}
-            </div>
-        );
-    return (
-        <div></div>
-    );
-}
-
 
 type GroupActionEntryProps = {
     g: GroupAction;
@@ -119,25 +64,26 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                  e.stopPropagation();
                  setIsCollapsed(!isCollapsed);
              }}>
-            <img className="historybox__groupentry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"
-                onClick={(e) => {
-                    // Necessary to stop child entries from displaying extra info about the parent history entry
-                    e.stopPropagation();
-                    setDisplayExtraInfo(!displayExtraInfo);
-                }}/>
-            <span>{g.getName()}</span>
-            <span
-                className={`historybox__groupentry__collapse_btn \
-                            ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
-                &rsaquo;
-            </span>
-            {!isCollapsed && g.getActions().map((a, i) => {
-                return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
-            })}
-
+            <div className="historybox__groupentry__header">
+                <img className="historybox__groupentry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"
+                    onClick={(e) => {
+                        // Necessary to stop child entries from displaying extra info about the parent history entry
+                        e.stopPropagation();
+                        setDisplayExtraInfo(!displayExtraInfo);
+                    }}/>
+                {g.getName()}
+                <span
+                    className={`historybox__groupentry__collapse_btn \
+                                ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
+                    &rsaquo;
+                </span>
+            </div>
             {displayExtraInfo &&
                 <div className="historybox__groupentry__extrainfo">{g.getCustomInfo()}</div>
             }
+            {!isCollapsed && g.getActions().map((a, i) => {
+                return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
+            })}
         </div>
     );
 }
