@@ -1,109 +1,161 @@
 @import "~shared/utils/constants";
 
-$historybox-height: 40vh;
-$historybox-header-height: 30px;
-$historybox-width: 250px;
-
-$history-box-left: 235px;
-$history-box-bottom: 30px;
+$historybox-width: 240px;
+$historybox-height: 400px;
+$historybox-header-height: 60px;
+$historybox-content-height: 335px;
 
 .historybox {
     position: absolute;
-    z-index: 4;
+    background: transparent;
 
-    border-radius: 0px 15px;
-    border: 5px solid $secondary-color;
-    background-color: $primary-color;
-
-    @media (max-width: 768px) and (orientation:portrait) {
+    & > .box {
+        top: 5px;
+        left: 5px;
         position: absolute;
-        margin-bottom: $itemnav-height;
-
-        max-height: calc((40vh) + (#{$historybox-header-height}));
-    }
-
-    & > div:first-child {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-        border: 5px $secondary-color;
-        border-style: none none solid none;
-
-        & > span:first-child {
-            flex-grow: 1;
-            font-size: 30px;
-            cursor: all-scroll;
-            padding: 1vh 2vh;
-        }
-        & > span:last-child {
-            font-size: 40px;
-            cursor: pointer;
-            padding: 1vh 2vh;
-        }
-    }
-
-    & > div:last-child {
-        min-height: $historybox-height;
         min-width: $historybox-width;
+        min-height: $historybox-height;
 
-        overflow-y: scroll;
-        resize: both;
+        border-radius: 0px 15px;
+        background-color: $primary-color;
+        border: 5px solid $secondary-color;
 
-        &::-webkit-scrollbar {
-            width: 11px; // vertical scrollbars
-            height: 7px; // horizontal scrollbar
-            background: $primary-color;
+        & > .title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: $historybox-header-height;
+
+            border: 5px $secondary-color;
+            border-style: none none solid none;
+
+
+            & > span:first-child {
+                flex-grow: 1;
+                font-size: 30px;
+                cursor: all-scroll;
+                padding: 12px 15px;
+            }
+            & > span:last-child {
+                font-size: 40px;
+                cursor: pointer;
+                padding: 7px 16px;
+            }
         }
 
-        &::-webkit-scrollbar-thumb {
-            background: hsl(0, 0%, 30%);
-            border-radius: 15px;
-        }
+        & > .content {
+            overflow-y: scroll;
+            min-width: $historybox-width;
+            min-height: $historybox-content-height;
 
-        @media (max-width: 768px) and (orientation:portrait) {
-            max-height: 40vh;
-        }
+            &::-webkit-scrollbar {
+                width: 11px;
+                background: $primary-color;
+            }
 
-        &::-webkit-resizer {
-            background-image: url("~shared/../pages/digital/public/img/icons/resizer.svg");
-        }
-    }
-
-    &__move {
-        & > div:last-child {
-            left: 0px;
+            &::-webkit-scrollbar-thumb {
+                border-radius: 15px;
+                background: hsl(0, 0%, 30%);
+            }
 
             @media (max-width: 768px) and (orientation:portrait) {
-                margin-bottom: 0px;
+                max-height: 40vh;
             }
+        }
+
+        @media (orientation:portrait) {
+            position: absolute;
+            margin-bottom: $itemnav-height;
+
+            max-height: calc((40vh) + (#{$historybox-header-height}));
         }
     }
 
     &__entry {
         height: auto;
-        line-height: 30px;
         padding: 10px;
+        line-height: 30px;
 
         margin: 5px;
         text-align: center;
 
-        border: 1px solid $secondary-color;
         border-radius: 7px;
+        border: 1px solid $secondary-color;
     }
 
     &__groupentry {
         margin: 5px;
-
-        border: 1px solid $secondary-color;
-        border-radius: 7px;
-
         padding: 5px;
+
+        border-radius: 7px;
+        border: 1px solid $secondary-color;
 
         & > span {
             font-size: 18px;
         }
     }
 
+    & > .resizers {
+        & > .c {
+            z-index: 0;
+            position: absolute;
+            border: 10px solid transparent;
+
+            background: transparent;
+        }
+
+        & > .c.nw {
+            top: 0px;
+            left: 0px;
+            cursor: nw-resize;
+        }
+        & > .c.ne {
+            top: 0px;
+            right: 0px;
+            cursor: ne-resize;
+        }
+        & > .c.sw {
+            left: 0px;
+            bottom: 0px;
+            cursor: sw-resize;
+        }
+        & > .c.se {
+            right: 0px;
+            bottom: 0px;
+            cursor: se-resize;
+        }
+
+        & > .e {
+            z-index: 0;
+            position: absolute;
+
+            background: transparent;
+            border: solid transparent;
+        }
+
+        & > .e._n {
+            top: 0px;
+            height: 0px;
+            cursor: n-resize;
+            border-width: 5px 0px;
+        }
+        & > .e._s {
+            bottom: 0px;
+            height: 0px;
+            cursor: s-resize;
+            border-width: 5px 0px;
+        }
+        & > .e._w {
+            left: 0px;
+            width: 0px;
+            cursor: w-resize;
+            border-width: 0px 5px;
+        }
+        & > .e._e {
+            right: 0px;
+            width: 0px;
+            cursor: e-resize;
+            border-width: 0px 5px;
+        }
+    } 
 }
