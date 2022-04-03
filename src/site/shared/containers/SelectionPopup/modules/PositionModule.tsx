@@ -14,18 +14,16 @@ type Props = {
     info: CircuitInfo;
 }
 export const PositionModule = ({ info }: Props) => {
-    const { selections, renderer, history } = info;
+    const { renderer, history } = info;
 
-    const props = useSelectionProps(info, (s) => {
-        if (!(s instanceof Component))
-            return undefined;
-        return { x: s.getPos().x/100, y: s.getPos().y/100 };
-    });
+    const [props, cs] = useSelectionProps(
+        info,
+        (s): s is Component => (s instanceof Component),
+        (s) => ({ x: s.getPos().x/100, y: s.getPos().y/100 })
+    );
 
     if (!props.x || !props.y)
         return null;
-
-    const cs = selections.get().filter(s => s instanceof Component) as Component[];
 
     return <div>
         Position

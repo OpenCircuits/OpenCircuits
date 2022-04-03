@@ -5,6 +5,7 @@ import {SetNameAction} from "core/actions/SetNameAction";
 
 import {useSelectionProps} from "./useSelectionProps";
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
+import {Selectable} from "core/utils/Selectable";
 
 
 type Props = {
@@ -13,7 +14,11 @@ type Props = {
 export const TitleModule = ({ info }: Props) => {
     const { selections, renderer, history } = info;
 
-    const props = useSelectionProps(info, (s) => ({ name: s.getName() }));
+    const [props] = useSelectionProps(
+        info,
+        (s): s is Selectable => true,
+        (s) => ({ name: s.getName() })
+    );
 
     if (!props.name)
         return null;

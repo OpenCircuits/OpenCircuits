@@ -4,13 +4,25 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable} from "core/utils/Selectable";
 
 
+function test(thing: any): thing is Selectable {
+    return true;
+}
+
+type GuardedType<T> = T extends (x: any) => x is (infer T) ? T : never;
+
+
+type Tess = GuardedType<typeof test>;
+
 type BaseType = Record<string, string | number | boolean>;
 type RecordOfArrays<T extends BaseType> = {
     [Key in keyof T]?: Array<T[Key]>;
 }
 
-export const useSelectionProps = <T extends BaseType>(info: CircuitInfo,
-                                                      getProps: (s: Selectable) => (T | undefined)) => {
+export const useSelectionProps = <T extends BaseType, V extends Selectable = Selectable>(
+    info: CircuitInfo,
+    validTypes: (s: Selectable) => s is V,
+    getProps: (s: V) => T,
+) => {
     const [props, setProps] = useState({} as RecordOfArrays<T>);
 
     // This function is theoretically called anytime the Selections
@@ -18,7 +30,7 @@ export const useSelectionProps = <T extends BaseType>(info: CircuitInfo,
     const updateState = useCallback(() => {
         const selections = info.selections.get();
 
-        const allProps = selections.map(getProps).filter(s => (s !== undefined)) as T[];
+        const allProps = selections.filter(validTypes).map(getProps);
         if (allProps.length === 0) {
             setProps({});
             return;
@@ -43,5 +55,7 @@ export const useSelectionProps = <T extends BaseType>(info: CircuitInfo,
         }
     }, [updateState]);
 
-    return [props, updateState] as const;
+
+    const filteredSelections = info.selections.get().filter(validTypes);
+    return [props, filteredSelections, updateState] as const;
 }
