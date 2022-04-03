@@ -1,28 +1,28 @@
 import React, {useEffect, useRef, useState} from "react";
-
 import {GetIDFor} from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
+
+import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {useEvent} from "shared/utils/hooks/useEvent";
 
 import {TitleModule} from "./modules/TitleModule";
-import {UseModuleProps} from "./modules/Module";
 
 import "./index.scss";
-import {Clamp} from "math/MathUtils";
+
 
 type Props = {
     info: CircuitInfo;
-    modules: ((props: UseModuleProps) => JSX.Element | null)[];
     docsUrlConfig: Record<string, string>;
+    children: React.ReactNode;
 }
-export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
+export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
     const calcPos = () => camera.getScreenPos(selections.midpoint(true));
 
-    const {input, camera, history, selections, renderer} = info;
+    const { input, camera, history, selections } = info;
 
 
     const [isVisible, setIsVisible] = useState(false);
@@ -41,7 +41,7 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
     }, [selections, setIsVisible]);
 
 
-    const [pos, setPos] = useState({x: 0, y: 0});
+    const [pos, setPos] = useState({ x: 0, y: 0 });
     useEffect(() => {
         const update = () => setPos(calcPos());
 
@@ -109,18 +109,12 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
              tabIndex={-1}>
             {id && <div className="info-button">
                 <div>{id}</div>
-                <a href={infoLink} target="_blank" rel="noopener noreferrer" title="Click for component information">?</a>
+                <a href={infoLink} target="_blank" rel="noopener noreferrer"
+                   title="Click for component information">?</a>
             </div>}
-            <TitleModule selections={selections}
-                         addAction={(a) => history.add(a)}
-                         render={() => renderer.render()}  />
+            <TitleModule info={info}  />
             <hr />
-            {modules.map((m, i) => React.createElement(m, {
-                key: `selection-popup-module-${i}`,
-                selections,
-                addAction: (a) => history.add(a),
-                render: () => renderer.render(),
-            }))}
+            {children}
         </div>
     );
 }
