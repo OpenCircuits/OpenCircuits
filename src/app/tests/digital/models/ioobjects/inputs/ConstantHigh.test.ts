@@ -9,10 +9,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Constant Low", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
-    const i = new ConstantHigh(), o = new LED();
+    const {Place, Connect} = GetHelpers(designer);
 
-    Place(i, o);
+    const [i, o] = Place(new ConstantHigh(), new LED());
     Connect(i, 0,  o, 0);
 
     test("Check Status", () => {

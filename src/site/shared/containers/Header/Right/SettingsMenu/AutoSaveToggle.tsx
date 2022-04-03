@@ -1,28 +1,21 @@
 import {useEffect} from "react";
-import {connect} from "react-redux";
-
 import {SAVE_TIME} from "shared/utils/Constants";
 
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-import {SharedAppState} from "shared/state";
-import {SetAutoSave} from "shared/state/UserInfo/actions";
+import {SetAutoSave} from "shared/state/UserInfo";
+import {SwitchToggle} from "shared/components/SwitchToggle";
 
 
-type OwnProps = {
+type Props = {
     helpers: CircuitInfoHelpers;
 }
-type StateProps = {
-    isLoggedIn: boolean;
-    isSaved: boolean;
-    isAutoSave: boolean;
-}
-type DispatchProps = {
-    SetAutoSave: typeof SetAutoSave;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}: Props) => {
+export const AutoSaveToggle = ({helpers}: Props) => {
+    const {isLoggedIn, isSaved, autoSave} = useSharedSelector(
+        state => ({...state.user, isSaved: state.circuit.isSaved})
+    );
+    const dispatch = useSharedDispatch();
 
     useEffect(() => {
         // This function will get called everytime isSaved or isAutoSave is changed
@@ -31,7 +24,8 @@ const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}
 
         // Don't start autosave if user doesn't have it enabled
         //  or if the circuit is already currently saved
-        if (!isAutoSave || isSaved)
+        // or if the user is not logged in
+        if (!autoSave || isSaved || !isLoggedIn)
             return;
 
         let attempts = 1; // Track attempted saves
@@ -48,27 +42,12 @@ const _AutoSaveToggle = ({isLoggedIn, isSaved, isAutoSave, helpers, SetAutoSave}
         timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
-     }, [isSaved, isAutoSave, helpers]);
+     }, [isSaved, autoSave, isLoggedIn, helpers]);
 
     return (
-        <div className="header__right__settings__autosave">
-            <img src="img/items/switchDown.svg" style={{display: (isAutoSave ? "" : "none")}} height="100%" alt="Auto save on" />
-            <img src="img/items/switchUp.svg"   style={{display: (isAutoSave ? "none" : "")}} height="100%" alt="Auto save off" />
-            <span title="Auto-Save"
-                  style={{ display: (isLoggedIn ? "initial" : "none") }}
-                  onClick={ () => SetAutoSave() }>
-                Auto Save: {isAutoSave ? "On" : "Off"}
-            </span>
-        </div>
+        <SwitchToggle isOn={autoSave}
+                      onChange={() => dispatch(SetAutoSave(!autoSave))}
+                      text={`Auto Save : ${isLoggedIn && autoSave ? "On" : "Off"}`}
+                      disabled={!isLoggedIn} />
     );
 }
-
-
-export const AutoSaveToggle = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({
-        isLoggedIn: state.user.isLoggedIn,
-        isSaved: state.circuit.isSaved,
-        isAutoSave: state.user.autoSave
-    }),
-    {SetAutoSave}
-)(_AutoSaveToggle);

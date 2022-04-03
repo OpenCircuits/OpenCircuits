@@ -1,6 +1,4 @@
-import {Create} from "serialeazy";
-import {useLayoutEffect, useRef} from "react";
-import {connect} from "react-redux";
+import {useLayoutEffect} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -8,38 +6,36 @@ import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
 
-import {GroupAction} from "core/actions/GroupAction";
-import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DigitalComponent} from "digital/models";
-
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import {GetRenderFunc} from "site/digital/utils/Rendering";
-import {AppState} from "site/digital/state";
+import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
+import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
 import "./index.scss";
-import {IC} from "digital/models/ioobjects";
 
 
-type OwnProps = {
+type Props = {
     info: DigitalCircuitInfo;
+    canvas: React.RefObject<HTMLCanvasElement>;
 }
-type StateProps = {
-    isLocked: boolean;
-}
-type DispatchProps = {}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _MainDesigner = ({info, isLocked}: Props) => {
+export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
 
+    const isPageVisible = usePageVisibility();
+
+    const {isLocked} = useDigitalSelector(
+        state => ({ isLocked: state.circuit.isLocked })
+    );
+
     const {w, h} = useWindowSize();
-    const canvas = useRef<HTMLCanvasElement>();
 
 
     // On resize (useLayoutEffect happens sychronously so
@@ -52,6 +48,8 @@ const _MainDesigner = ({info, isLocked}: Props) => {
 
     // Initial function called after the canvas first shows up
     useLayoutEffect(() => {
+        if (!canvas.current)
+            throw new Error("MainDesigner.useLayoutEffect failed: canvas is null");
         // Create input w/ canvas
         info.input = new Input(canvas.current);
 
@@ -81,36 +79,31 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         selections.setDisabled(isLocked);
     }, [isLocked]);
 
+    useLayoutEffect(() => {
+        if (isPageVisible)
+            info.designer.resume();
+        else
+            info.designer.pause();
+    }, [isPageVisible]);
+
 
     return (<>
         <Droppable ref={canvas}
-                   onDrop={(pos, itemId, num) => {
+                   onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
+                       if (!canvas.current)
+                           throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
                        num = num ?? 1;
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;
                        pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-                       const action = new GroupAction();
-                       for (let i = 0; i < num; i++) {
-                           let component: DigitalComponent;
-
-                           // Check if the item is an IC or normal object
-                           if (itemId.startsWith("ic")) { // IC
-                               const [_, id] = itemId.split("/");
-                               component = new IC(info.designer.getICData()[parseInt(id)]);
-                           } else {
-                               component = Create<DigitalComponent>(itemId);
-                           }
-
-                           if (!component) { // Invalid itemId, return
-                               console.error("Failed to create item with id", itemId);
-                               return;
-                           }
-                           component.setPos(pos);
-                           action.add(new PlaceAction(designer, component));
-                           pos = pos.add(0, component.getCullBox().getSize().y);
+                       if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                           history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
+                       } else {
+                           history.add(
+                               CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
+                           );
                        }
-                       history.add(action.execute());
                        renderer.render();
                    }}>
             <canvas className="main__canvas"
@@ -119,9 +112,3 @@ const _MainDesigner = ({info, isLocked}: Props) => {
         </Droppable>
     </>);
 }
-
-
-export const MainDesigner = connect<StateProps, DispatchProps, OwnProps, AppState>(
-    (state) => ({ isLocked: state.circuit.isLocked }),
-    { }
-)(_MainDesigner);

@@ -1,5 +1,3 @@
-import {X_KEY} from "core/utils/Constants";
-
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -15,7 +13,7 @@ import {EventHandler} from "../EventHandler";
 export const SnipWirePortsHandler: EventHandler = ({
     conditions: (event: Event, {selections}: CircuitInfo) =>
         (event.type === "keydown" &&
-         event.key === X_KEY &&
+         event.key === "x" &&
          selections.amount() > 0 &&
          selections.all(o => isNode(o))),
 
@@ -25,7 +23,7 @@ export const SnipWirePortsHandler: EventHandler = ({
         // Deselect the ports and then snip them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
-            CreateGroupSnipAction(designer, ports).execute()
-        ]));
+            CreateGroupSnipAction(designer, ports) // Implicitly executed automatically
+        ], "Snip Wire Ports Handler"));
     }
 });

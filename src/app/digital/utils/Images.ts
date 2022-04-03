@@ -25,22 +25,23 @@ export const Images = (() => {
 
         const drawing = CreateDrawingFromSVG(svgXML, DEBUG_NO_FILL ? {
             fillStyle: "none"
-        } : {});
+        } : {})!;
 
         images.set(imageName, drawing);
-
         return 1;
     };
 
     return {
-        GetImage: function(img: string): SVGDrawing {
+        GetImage: function(img: string): SVGDrawing | undefined {
             return images.get(img);
         },
-        Load: async function(): Promise<void> {
+        Load: async function(onprogress: (percentDone: number) => void): Promise<void> {
+            let numLoaded = 0;
             const promises =
-                IMAGE_FILE_NAMES.map(async (name) =>
-                    await loadImage(name)
-                );
+                IMAGE_FILE_NAMES.map(async (name) => {
+                    await loadImage(name);
+                    onprogress((++numLoaded)/IMAGE_FILE_NAMES.length);
+                });
 
             await Promise.all(promises);
         }

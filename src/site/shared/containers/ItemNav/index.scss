@@ -1,14 +1,13 @@
 @import "~shared/utils/constants";
 
-$itemnav-width: 235px; // On wide screens, ItemNav is on the left
-$itemnav-height: 500px; // On small screens, ItemNav is on the bottom
-
 $tab-width: 18px;
 $tab-padding: 8px;
 
 
+
 .itemnav {
     $top-margin: 10px;
+    $top-height: 35px;
 
     position: absolute;
     z-index: 2;
@@ -20,9 +19,6 @@ $tab-padding: 8px;
     display: flex;
     flex-direction: column;
 
-    overflow-x: hidden;
-    overflow-y: auto;
-
     width: $itemnav-width;
 
     transition: all 0.5s;
@@ -31,29 +27,64 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    @media (max-width: 768px) {
+    @media (max-width: 768px) and (orientation:portrait) {
         top: unset;
         right: 0;
         width: unset;
         height: $itemnav-height;
-
-        overflow-x: hidden;
-        overflow-y: hidden;
 
         border-right-width: 0;
         border-top-width: $header-border-width;
     }
 
     &__move {
-        @media (min-width: 768px) {
+        @media (min-width: 768px), (orientation:landscape) {
             left: -$itemnav-width - $header-border-width;
         }
-        @media (max-width: 768px) {
+
+        @media (max-width: 768px) and (orientation:portrait) {
             bottom: -$itemnav-height - $header-border-width;
         }
     }
+
     & img {
         width: 100%;
+    }
+
+    &__preview {
+        position: fixed;
+        z-index: 100;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+
+        & img {
+            position: relative;
+            opacity: 1;
+            z-index: 100;
+
+            filter: drop-shadow(3px 3px 4px #888);
+        }
+        & > span {
+            display: table-cell;
+
+            position: absolute;
+            left: calc(100% - 10px);
+            top: 0;
+            z-index: 101;
+            transform: translate(-50%, -10px);
+
+            vertical-align: middle;
+            text-align: center;
+
+            color: #888;
+            background-color: #fff;
+            font-weight: normal;
+
+            border: 2px solid #888;
+            border-radius: 50%;
+
+            padding: 3px;
+        }
     }
 
     &__top {
@@ -62,17 +93,18 @@ $tab-padding: 8px;
         justify-content: space-between;
 
         width: calc(100% - 10px);
-        height: 40px;
+        flex: 0 0 $top-height;
 
-        margin: $top-margin 5px 5px 5px;
+        padding: $top-margin 5px 5px 5px;
 
         & > div {
             flex: 1;
             display: flex;
             justify-content: center;
 
-            &:first-child > div {
+            &:first-child > button {
                 margin-right: auto;
+                margin-left: 5px;
             }
             &:last-child > div {
                 margin-left: auto;
@@ -80,9 +112,15 @@ $tab-padding: 8px;
         }
 
         &__history__buttons {
+            display: flex;
+
             & > button {
                 width: 30px;
                 padding: 0;
+
+                & > img {
+                    vertical-align: middle;
+                }
 
                 &:disabled {
                     opacity: 0.5;
@@ -92,75 +130,127 @@ $tab-padding: 8px;
     }
 
     &__tab {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
         position: relative;
 
+
         & > div {
-            position: fixed;
+            $size: $top-height + $top-margin + $header-padding;
 
-            transform: translate(-100%, -25%);
+            position: absolute;
 
-            font-size: 2.5em;
+            top: -$top-margin - $header-border-width;
+            left: $header-padding + $header-border-width;
+
+            width: $size;
+            height: $size;
 
             border: $header-border;
             border-width: $header-border-width;
             border-color: transparent;
-            border-bottom-right-radius: 15px;
-            background-color: transparent;
 
             cursor: pointer;
+            pointer-events: none;
+
             transition: 0.5s;
 
-            color: #000;
-
-            &:after {
-                transition: 0.5s;
-
-                display: inline-block;
-                content: '×';
+            @media (min-width: 768px), (orientation:landscape) {
+                border-bottom-right-radius: 15px;
             }
-        }
 
-        &__closed > div {
-            transform: translate(20px, -$header-border-width - $top-margin);
-
-            font-size: 2em;
-
-            border-color: $secondary-color;
-            background-color: rgba($background-color, 0.7);
-
-            @media (max-width: 768px) {
-                transform: translate(calc(-100% + #{$header-border-width}), calc(-25% - 50px));
-                border-bottom-right-radius: 0;
+            @media (max-width: 768px) and (orientation:portrait) {
+                left: -$size - $header-border-width;
+                top: -$size - 3*$header-border-width - $top-margin;
                 border-top-left-radius: 15px;
             }
 
             &:after {
-                width: $tab-width;
-                padding: 0 $tab-padding;
-                transform: rotate(-45deg);
+                content: '×';
+                pointer-events: all;
+                position: absolute;
+                left: calc(-50% - #{$header-border-width + $header-padding});
+                top: 50%;
+
+                color: black;
+                font-size: 2.5em;
+
+                transition: 0.5s;
+
+                transform: translate(-50%, -50%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    left: 50%;
+                    top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
+                }
+                
+            }
+        }
+
+        &__closed > div {
+            border-color: $secondary-color;
+            background-color: rgba($background-color, 0.7);
+            pointer-events: all;
+            &:after {
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    top: 50%;
+                }
             }
         }
     }
 
     &__sections {
+
         display: flex;
         flex-direction: column;
 
-        // overflow-x: hidden;
-        // overflow-y: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
 
-        @media (max-width: 768px) {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        @media (min-width: 768px), (orientation:landscape) {
+            border-top: 3px solid #888;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
             overflow-x: auto;
-
             scroll-snap-type: x mandatory;
-
             flex-wrap: wrap;
+
+            margin: 0 15px;
+        }
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-track {
+            background: hsl(0, 0%, 65%);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        &.dragging {
+            overflow: hidden !important;
+            padding-right: 7px;
         }
 
         & > div {
             scroll-snap-align: center;
 
-            @media (max-width: 768px) {
+            @media (max-width: 768px) and (orientation:portrait) {
                 width: 100%;
             }
 
@@ -179,6 +269,10 @@ $tab-padding: 8px;
 
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
+
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
+                }
             }
 
             & > div {
@@ -188,14 +282,23 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: 768px) {
-                    width: calc(100% - 120px);
-                    margin: 0px 60px;
+                @media (max-width: 768px) and (orientation:portrait) {
+                    margin: 0;
                 }
 
-                & > button {
+                & > div {
+                    position: relative;
+                    display: inline-block;
+
+                    text-align: center;
+                    align-items: flex-start;
+                    box-sizing: border-box;
+
                     font-size: 1em;
                     font-weight: bold;
+
+                    padding: 0;
+                    margin: 0;
 
                     width: 100px;
                     padding: 10px;
@@ -204,8 +307,17 @@ $tab-padding: 8px;
                     word-break: break-word;
 
                     color: darken($secondary-color, 5%);
-                }
+
+                    & > div {
+                        position: absolute;
+                        top: 5px;
+                        right: 15px;
+                        color: red;
+                        display: unset;
+                    }
+                 }
             }
         }
     }
+
 }

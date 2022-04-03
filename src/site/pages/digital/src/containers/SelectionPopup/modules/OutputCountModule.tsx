@@ -9,7 +9,7 @@ const Config: ModuleConfig<[Encoder], number> = {
     valType: "int",
     getProps: (o) => o.getOutputPortCount().getValue(),
     getAction: (s, newCount) => new GroupAction(s.map(o =>
-        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)))
+        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)), "Output Count Module")
 }
 
 export const OutputCountModule = PopupModule({
@@ -17,7 +17,7 @@ export const OutputCountModule = PopupModule({
     modules: [CreateModule({
         inputType: "number",
         config: Config,
-        step: 1, min: 2, max: 8,
+        step: 1, min: 1, max: 8,
         alt: "Number of outputs object(s) have"
     })]
 });

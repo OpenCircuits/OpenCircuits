@@ -22,11 +22,14 @@ export abstract class Wire extends CullableObject {
     protected shape: BezierCurve;
     @serialize
     protected straight: boolean;
+    @serialize
+    private color: string;
 
     protected dirtyShape: boolean;
 
     public constructor(p1: Port, p2: Port) {
         super();
+        this.color = "#ffffff";
 
         this.p1 = p1;
         this.p2 = p2;
@@ -108,6 +111,14 @@ export abstract class Wire extends CullableObject {
 
         this.straight = straight;
         this.onTransformChange();
+    }
+
+    public setColor(color: string): void {
+        this.color = color;
+    }
+
+    public getColor(): string {
+        return this.color;
     }
 
     public getP1(): Port {

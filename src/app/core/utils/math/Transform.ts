@@ -34,7 +34,7 @@ export class Transform {
     private dirtySize: boolean;
     private dirtyCorners: boolean;
 
-    private prevParentMatrix: Matrix2x3;
+    private prevParentMatrix?: Matrix2x3;
 
     private matrix: Matrix2x3;
     private inverse: Matrix2x3;
@@ -65,7 +65,7 @@ export class Transform {
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix
-        if (this.parent != undefined &&
+        if (this.parent != undefined && this.prevParentMatrix != undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirty = true;
 
@@ -97,7 +97,7 @@ export class Transform {
     }
     private updateCorners(): void {
         // If parent changed then we need to recalculate corners
-        if (this.parent != undefined &&
+        if (this.parent != undefined && this.prevParentMatrix != undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirtyCorners = true;
 
@@ -195,7 +195,7 @@ export class Transform {
         return this.getMatrix().mul(v);
     }
 
-    public getParent(): Transform {
+    public getParent(): Transform | undefined {
         return this.parent;
     }
     public getPos(): Vector {

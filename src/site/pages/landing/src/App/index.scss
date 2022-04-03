@@ -1,0 +1,350 @@
+@use "sass:math";
+
+@import "~bootstrap/scss/bootstrap";
+
+
+$primary-color: #222;
+$secondary-color: #888;
+$background-color: #ccc;
+$ic-background-color: rgba(#eee, 0.9);
+
+$success-color: #4caf50;
+$danger-color: #f44336;
+
+
+
+$min-width-md: 1200px;
+$min-width-sm: 768px;
+
+
+html {
+    font-size: 16px;
+
+    @media (max-width: $min-width-sm) {
+        font-size: 14px;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+.container {
+    max-width: 960px;
+}
+
+.pricing-header {
+    max-width: 700px;
+}
+
+.card-deck .card {
+    min-width: 220px;
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+.header-simulator-btn {
+    @media (max-width: $min-width-sm) {
+        width: 40%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+a.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+    text-decoration: none;
+}
+
+nav {
+    @media (max-width: $min-width-sm) {
+        font-size: 0.9rem;
+    }
+}
+
+.circuit-launch-wrapper {
+    // Variables for normal view
+    $height: 400px;
+
+    $btn-height: 40px;
+    $btn-width: 250px;
+    $btn-1-top: 30%;
+    $btn-2-bot: 30%;
+
+    $wire-height: 15px;
+    $wire-width: 300px;
+
+    $output-width: 250px;
+
+    // Variables for compressed view
+    $height-md: 30vw;
+
+    $btn-height-md: 4vw;
+    $btn-width-md: 25vw;
+
+    $wire-height-md: 7px;
+    $wire-width-md: 20vw;
+
+    $output-width-md: 25vw;
+
+    // Variables for mobile view
+    $height-sm: 30vw;
+
+    $btn-height-sm: 4vw;
+    $btn-width-sm: 25vw;
+
+    $wire-height-sm: 7px;
+    $wire-width-sm: 20vw;
+
+    $output-width-sm: 25vw;
+
+
+    position: relative;
+    height: $height;
+
+    @media (max-width: $min-width-md) {
+        height: $height-md;
+    }
+    @media (max-width: $min-width-sm) {
+        height: $height-sm;
+    }
+
+    &-gate {
+        position: absolute;
+        left: calc(52% - #{math.div($height,2)});
+
+        height: 100%;
+
+        @media (max-width: $min-width-md) {
+            left: calc(52% - #{math.div($height-md,2)});
+        }
+        @media (max-width: $min-width-sm) {
+            left: calc(52% - #{math.div($height-sm,2)});
+        }
+    }
+    &-btn-1, &-btn-2 {
+        position: absolute;
+        right: calc(50% + #{$wire-width});
+
+        width: $btn-width;
+        height: $btn-height;
+
+        border-color: #999;
+
+        box-shadow: -4px 4px 2px gray;
+
+        & img {
+            height: 100%;
+
+            opacity: 0.6;
+        }
+
+        &:hover {
+            border-color: #999;
+            background-color: #3cacf23f;
+        }
+
+        @media (max-width: $min-width-md) {
+            right: calc(50% + #{$wire-width-md});
+
+            width: $btn-width-md;
+            height: $btn-height-md;
+        }
+        @media (max-width: $min-width-sm) {
+            right: calc(50% + #{$wire-width-sm});
+
+            width: $btn-width-sm;
+            height: $btn-height-sm;
+
+            box-shadow: -2px 2px 0px gray;
+        }
+        @media (max-width: $min-width-sm) {
+            height: auto;
+            padding-right: 0.25rem !important;
+            padding-left: 0.25rem !important;
+
+            & img {
+                width: 100%;
+
+                vertical-align: middle;
+            }
+        }
+    }
+    &-btn-1 {
+        top: $btn-1-top;
+
+        & img {
+            vertical-align: middle;
+        }
+
+        @media (max-width: $min-width-sm) {
+            top: 25%;
+        }
+        @media (max-width: 400px) {
+            top: 20%;
+        }
+    }
+    &-btn-2 {
+        bottom: $btn-2-bot;
+
+        & img {
+            vertical-align: middle;
+        }
+
+        @media (max-width: $min-width-sm) {
+            bottom: 25%;
+        }
+        @media (max-width: 400px) {
+            bottom: 20%;
+        }
+    }
+    &-btn-selected {
+        box-shadow: -1px 1px 2px gray;
+
+        @media (max-width: $min-width-sm) {
+            box-shadow: -1px 1px 0px gray;
+        }
+    }
+
+    &-wire1, &-wire2, &-wire3 {
+        position: absolute;
+
+        width: $wire-width;
+        height: $wire-height;
+
+        border: solid 1px black;
+        background-color: black;
+
+        @media (max-width: $min-width-md) {
+            width: $wire-width-md;
+            height: $wire-height-md;
+        }
+        @media (max-width: $min-width-sm) {
+            width: $wire-width-sm;
+            height: $wire-height-sm;
+        }
+    }
+    &-wire1 {
+        top: calc(#{$btn-1-top} + #{math.div($btn-height,2)} - #{math.div($wire-height,2)});
+        right: 50%;
+
+        @media (max-width: $min-width-md) {
+            top: calc(#{$btn-1-top} + #{math.div($btn-height-md,2)} - #{math.div($wire-height-md,2)});
+        }
+        @media (max-width: $min-width-sm) {
+            top: calc(#{$btn-1-top} + #{math.div($btn-height-sm,2)} - #{math.div($wire-height-sm,2)});
+        }
+    }
+    &-wire2 {
+        right: 50%;
+        bottom: calc(#{$btn-2-bot} + #{math.div($btn-height,2)} - #{math.div($wire-height,2)});
+
+        @media (max-width: $min-width-md) {
+            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-md,2)} - #{math.div($wire-height-md,2)});
+        }
+        @media (max-width: $min-width-sm) {
+            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-sm,2)} - #{math.div($wire-height-sm,2)});
+        }
+    }
+    &-wire3 {
+        top: calc(50% - #{math.div($wire-height,2)});
+        left: 50%;
+
+        @media (max-width: $min-width-md) {
+            top: calc(50% - #{math.div($wire-height-md,2)});
+        }
+        @media (max-width: $min-width-sm) {
+            top: calc(50% - #{math.div($wire-height-sm,2)});
+        }
+    }
+
+    &-output-div {
+        position: absolute;
+        top: 10%;
+        left: calc(50% + #{$wire-width});
+
+        width: $output-width;
+        height: 80%;
+
+        border: solid 1px black;
+        border-radius: 5px;
+
+        .card {
+            @media (max-width: $min-width-sm) {
+                border: none;
+            }
+
+            .card-img-top {
+                border-bottom: solid 1px black;
+
+                @media (max-width: $min-width-sm) {
+                    border: none;
+                }
+            }
+            .card-body {
+                .card-text {
+                    @media (max-width: 825px) {
+                        font-size: 0.9rem;
+                    }
+                    @media (max-width: $min-width-sm) {
+                        display: none;
+                    }
+                }
+
+                .extra-info {
+
+                    img {
+                        width: 100%;
+                        height: 120px;
+
+                        border-radius: 15px;
+
+                        object-fit: cover;
+                        object-position: 0 calc(50% + 10px);
+                    }
+
+                    @media (max-width: $min-width-md) {
+                        display: none;
+                    }
+                }
+
+                .btn-success {
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+
+                    border-radius: 0;
+
+                    @media (max-width: $min-width-sm) {
+                        line-height: calc(#{$height-sm}*0.8 - 25vw * 0.2583163265 - 1rem);
+
+                        height: calc(#{$height-sm}*0.8 - 25vw * 0.2583163265 - 0.5rem);
+                    }
+                }
+            }
+        }
+
+        @media (max-width: $min-width-md) {
+            left: calc(50% + #{$wire-width-md});
+
+            width: $output-width-md;
+        }
+        @media (max-width: $min-width-sm) {
+            left: calc(50% + #{$wire-width-sm});
+
+            width: $output-width-sm;
+        }
+    }
+}

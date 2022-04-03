@@ -1,8 +1,9 @@
-import {useEffect} from "react";
-import {connect} from "react-redux";
+import {useEffect, useRef} from "react";
+import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
+import {V, Vector} from "core/utils/math/Vector";
 
 import {IOObject} from "core/models";
 
@@ -10,8 +11,13 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
-import {SharedAppState} from "shared/state";
-import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu/actions";
+import {CleanUpHandler} from "core/tools/handlers/CleanUpHandler"
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
+import {DuplicateHandler} from "core/tools/handlers/DuplicateHandler"
+
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
+import {useHistory} from "shared/utils/hooks/useHistory";
 
 import "./index.scss";
 
@@ -22,22 +28,25 @@ function isClipboardSupported(type: "read" | "write"): boolean {
                                navigator.clipboard.writeText !== undefined));
 }
 
-type OwnProps = {
+// vertical offset so that context menu appears at cursor location
+const CONTEXT_MENU_VERT_OFFSET = 4;
+
+type Props = {
     info: CircuitInfo;
-    paste: (text: string) => boolean;
-}
-type StateProps = {
-    isOpen: boolean;
-}
-type DispatchProps = {
-    OpenContextMenu: typeof OpenContextMenu;
-    CloseContextMenu: typeof CloseContextMenu;
+    paste: (text: string, menuPos: Vector) => boolean;
 }
 
-type Props = StateProps & DispatchProps & OwnProps;
-const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: Props) => {
-    const {locked, input, history, designer, selections, renderer} = info;
 
+export const ContextMenu = ({info, paste}: Props) => {
+    const {locked, input, camera, history, designer, selections, renderer} = info;
+    const {undoHistory, redoHistory} = useHistory(info);
+
+    const {isOpen} = useSharedSelector(
+        state => ({ isOpen: state.contextMenu.isOpen })
+    );
+    const dispatch = useSharedDispatch();
+
+    let menuPos: Vector;
 
     useEffect(() => {
         if (!input)
@@ -45,9 +54,9 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
 
         input.addListener((ev) => {
             if (ev.type === "contextmenu")
-                OpenContextMenu();
+                dispatch(OpenContextMenu());
             else if (ev.type === "mousedown")
-                CloseContextMenu();
+                dispatch(CloseContextMenu());
         });
     }, [input])
 
@@ -71,7 +80,7 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs)
-        ]).execute());
+        ], "Cut (Context Menu)").execute());
     }
 
     /* Context Menu "Copy" */
@@ -89,12 +98,27 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        paste(await navigator.clipboard.readText());
+        paste(await navigator.clipboard.readText(), menuPos);
     }
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
         history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute());
+    }
+
+    /* Context Menu "Focus" */
+    const onFocus = async () => {
+        FitToScreenHandler.getResponse(info);
+    }
+
+    /* Context Menu "Clean Up" */
+    const onCleanUp = async () => {
+        CleanUpHandler.getResponse(info);
+    }
+
+    /* Context Menu "Duplicate" */
+    const onDuplicate = async () => {
+        DuplicateHandler.getResponse(info);
     }
 
     /* Context Menu "Undo/Redo" */
@@ -109,31 +133,49 @@ const _ContextMenu = ({isOpen, info, paste, OpenContextMenu, CloseContextMenu}: 
             return;
         func();
         renderer.render();
-        close();
+        dispatch(CloseContextMenu());
     }
 
+    const menu = useRef<HTMLDivElement>(null);
+    let pos = input?.getMousePos();
 
-    const pos = input?.getMousePos();
+    /* Relocate context menu to opposite side of cursor if it were to go off-screen */
+    if (isOpen) {
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
+        const offset = 1;
+        const contextMenuWidth = menu.current.getBoundingClientRect().width;
+        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+
+        if (pos.x + contextMenuWidth > window.innerWidth)
+            pos.x -= contextMenuWidth - offset;
+
+        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            pos.y -= contextMenuHeight - offset;
+
+        // Update context menu position on canvas
+        menuPos = camera.getWorldPos(input.getMousePos());
+    }
 
     return (
         <div className="contextmenu"
+             ref={menu}
              style={{
                  left: `${pos?.x}px`,
-                 top: `${pos?.y + 65}px`,
-                 display: (isOpen ? "initial" : "none")
+                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 visibility: (isOpen ? "initial" : "hidden")
              }}>
-            <button title="Cut"        onClick={() => doFunc(onCut)}>Cut</button>
-            <button title="Copy"       onClick={() => doFunc(onCopy)}>Copy</button>
+            <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
+            <button title="Copy"       onClick={() => doFunc(onCopy)} disabled={selections.amount() === 0}>Copy</button>
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
-            <button title="Select All" onClick={() => doFunc(onSelectAll)}>Select All</button>
+            <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
             <hr/>
-            <button title="Undo" onClick={() => doFunc(onUndo)}>Undo</button>
-            <button title="Redo" onClick={() => doFunc(onRedo)}>Redo</button>
+            <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
+            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects().length === 0}>Clean Up</button>
+            <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
+            <hr/>
+            <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
+            <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
         </div>
     );
 }
-
-export const ContextMenu = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    (state) => ({ isOpen: state.contextMenu.isOpen }),
-    { OpenContextMenu, CloseContextMenu }
-)(_ContextMenu);

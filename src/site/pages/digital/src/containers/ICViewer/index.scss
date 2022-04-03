@@ -7,7 +7,10 @@
     width: 100vw;
     height: 100vh;
 
-    background-color: rgba(200, 200, 200, 0.5);;
+    top: 0;
+    left: 0;
+
+    background-color: rgba(200, 200, 200, 0.5);
 
     & canvas {
         position: absolute;

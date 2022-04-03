@@ -6,7 +6,7 @@ const getEnv = require("./utils/env");
 const getDirs = require("./utils/getDirs");
 const getAliases = require("./utils/getAliases");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const open = require("open");
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -18,7 +18,7 @@ const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 async function launch_test(dir, flags) {
-    await jest.runCLI({
+    return await jest.runCLI({
         ...flags,
         config: JSON.stringify({
             "preset": "ts-jest",
@@ -38,9 +38,11 @@ async function launch_server_tests(flags) {
 (async () => {
     const argv = yargs(process.argv.slice(2))
         .boolean("ci")
+        .boolean("coverage")
         .argv;
 
     const ci = argv.ci;
+    const coverage = argv.coverage;
 
     let dirs = argv._;
     if (ci && dirs.length === 0) {
@@ -60,8 +62,13 @@ async function launch_server_tests(flags) {
     }
 
     const flags = {
-        ci, watch: (dirs.length === 1 && !ci)
+        ci,
+        watch: (dirs.length === 1 && !ci) && !coverage,
+        coverage,
+        collectCoverageFrom: "**/*.{js,ts,tsx}"
     };
+
+    const results = [];
 
     // Launch test in each directory
     for (const dir of dirs) {
@@ -79,12 +86,21 @@ async function launch_server_tests(flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
-
         if (dir === "server") {
             await launch_server_tests();
             continue;
         }
 
-        await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags);
+        const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
+        flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
+        results.push(
+            (await launch_test(testDir, flags)).results
+        );
+        if (coverage)
+            open(flags.coverageDirectory + "/lcov-report/index.html");
     }
+
+    const pass = results.every(r => r.success);
+    if (!pass && ci) // Exit with failure
+        process.exit(1);
 })();

@@ -1,88 +1,57 @@
-import {connect} from "react-redux";
-
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {SharedAppState} from "shared/state";
-import {ToggleCircuitLocked,
-        SetCircuitName} from "shared/state/CircuitInfo/actions";
-import {ToggleSideNav} from "shared/state/SideNav/actions";
+import {SetCircuitName} from "shared/state/CircuitInfo";
+
+import {InputField} from "shared/components/InputField";
+
+import {HistoryToggleButton} from "./HistoryToggleButton";
+import {LockToggleButton} from "./LockToggleButton";
+import {SideBarToggleButton} from "./SideBarToggleButton";
 
 import "./index.scss";
 
 
-type OwnProps = {
+type Props = {
     helpers: CircuitInfoHelpers;
 }
+export const HeaderLeft = ({ helpers }: Props) => {
+    const { id, name, isSaved, isLoggedIn, saving, error } = useSharedSelector(
+        state => ({ ...state.circuit, isLoggedIn: state.user.isLoggedIn })
+    );
+    const dispatch = useSharedDispatch();
 
-type StateProps = {
-    circuitName: string;
-    isSaved: boolean;
-    isLocked: boolean;
-    isLoggedIn: boolean;
-    isLoading: boolean;
-    error: string;
+    return (
+        <div className="header__left">
+            <SideBarToggleButton />
+            <HistoryToggleButton />
+            <LockToggleButton />
+            <div>
+                <InputField title="Circuit Name" type="text"
+                            value={name}
+                            placeholder="Untitled Circuit*"
+                            onChange={(s) => dispatch(SetCircuitName(s.target.value))}
+                            onEnter={() => helpers.SaveCircuitRemote()}
+                            alt="Name of project" />
+            </div>
+            <div>
+                <button className={`header__left__save ${isSaved || !isLoggedIn ? "hide" : ""}`}
+                        title="Save the circuit remotely"
+                        disabled={saving}
+                        onClick={() => helpers.SaveCircuitRemote() }>Save</button>
+            </div>
+            <div>
+                <button className={`header__left__duplicate ${!isLoggedIn || id === "" ? "hide" : ""}`}
+                        title="Duplicate the circuit"
+                        onClick={() => helpers.DuplicateCircuitRemote() }>
+                            <img src="img/icons/content_copy.svg" height="100%" alt="Copy circuit"/>
+                        </button>
+            </div>
+            <div className="header__left__saving__icons">
+                <img src="img/icons/error.svg" className={error ? "" : "hide"}
+                     title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
+                <span className={saving ? "" : "hide"} title="Saving..."></span>
+            </div>
+        </div>
+    );
 }
-
-type DispatchProps = {
-    toggleLock: () => void;
-    toggleSideNav: () => void;
-    setCircuitName: (name: string) => void;
-}
-
-type Props = StateProps & DispatchProps & OwnProps;
-const _HeaderLeft = ({ isLocked, isSaved, isLoggedIn, isLoading, circuitName, helpers, error, toggleLock, toggleSideNav, setCircuitName }: Props) => (
-    <div className="header__left">
-        <div>
-            <span title="Side Bar" role="button" tabIndex={0}
-                  onClick={() => toggleSideNav()}>&#9776;</span>
-        </div>
-        <div>
-            <button className="header__left__lock"
-                    title="Lock/Unlock Editing"
-                    onClick={() => toggleLock()}>
-                <img src="img/icons/lock_open.svg" className={isLocked ? "hide" : ""} alt="Icon for unlocked lock" />
-                <img src="img/icons/lock.svg"      className={isLocked ? "" : "hide"} alt="Icon for lock" />
-            </button>
-        </div>
-        <div>
-            <input title="Circuit Name" type="text"
-                   value={circuitName}
-                   placeholder="Untitled Circuit*"
-                   onChange={(s) => setCircuitName(s.target.value)}
-                   alt="Name of project" />
-        </div>
-        <div>
-            <button className={`header__left__save ${isSaved || !isLoggedIn ? "invisible" : ""}`}
-                    title="Save the circuit remotely"
-                    disabled={isLoading}
-                    onClick={() => helpers.SaveCircuitRemote() }>Save</button>
-        </div>
-        <div className="header__left__saving__icons">
-            <img src="img/icons/error.svg" className={error ? "" : "hide"} title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
-            <span className={isLoading ? "" : "hide"} title="Saving..."></span>
-        </div>
-    </div>
-);
-
-
-/*
- * Redux state connection
- */
-const MapState = (state: SharedAppState) => ({
-    circuitName: state.circuit.name,
-    isSaved:     state.circuit.isSaved,
-    isLocked:    state.circuit.isLocked,
-    isLoggedIn:  state.user.isLoggedIn,
-    isLoading:   state.circuit.saving,
-    error:       state.circuit.error
-});
-
-const MapDispatch = {
-    toggleLock:     ToggleCircuitLocked,
-    toggleSideNav:  ToggleSideNav,
-    setCircuitName: SetCircuitName
-};
-export const HeaderLeft = connect<StateProps, DispatchProps, OwnProps, SharedAppState>(
-    MapState,
-    MapDispatch
-)(_HeaderLeft);

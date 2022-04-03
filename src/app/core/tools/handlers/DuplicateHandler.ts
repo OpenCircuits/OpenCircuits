@@ -1,4 +1,3 @@
-import {D_KEY} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Event} from "core/utils/Events";
@@ -18,7 +17,7 @@ import {EventHandler} from "../EventHandler";
 export const DuplicateHandler: EventHandler = ({
     conditions: (event: Event, {input, selections}: CircuitInfo) =>
         (event.type === "keydown" &&
-         event.key === D_KEY &&
+         event.key === "d" &&
          input.isModifierKeyDown() &&
          selections.amount() > 0),
 
@@ -36,6 +35,6 @@ export const DuplicateHandler: EventHandler = ({
             new TranslateAction(components,
                                 components.map(o => o.getPos()),
                                 components.map(o => o.getPos().add(V(5, 5)))).execute()
-        ]));
+        ], "Duplicate Handler"));
     }
 });

@@ -1,7 +1,6 @@
 import "jest";
 
-import {OPTION_KEY,
-        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
+import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -16,22 +15,22 @@ describe("Pan Tool", () => {
         camera.setPos(V());
     });
 
-    test("Drag without option key", () => {
+    test("Drag without alt key", () => {
         input.drag(V(0, 0), V(-20, 0));
         expect(camera.getPos()).toEqual(V(0, 0));
     });
 
-    test("Drag with option key", () => {
-        input.pressKey(OPTION_KEY)
+    test("Drag with alt key", () => {
+        input.pressKey("Alt")
                 .drag(V(0, 0), V(20, 0))
-                .releaseKey(OPTION_KEY);
+                .releaseKey("Alt");
         expect(camera.getPos()).toEqual(V(-20, 0));
     });
 
-    test("No drag with option key", () => {
-        input.pressKey(OPTION_KEY)
+    test("No drag with alt key", () => {
+        input.pressKey("Alt")
                 .press(V(0, 0))
-                .releaseKey(OPTION_KEY)
+                .releaseKey("Alt")
                 .release();
         expect(camera.getPos()).toEqual(V(0, 0));
     });
@@ -48,6 +47,48 @@ describe("Pan Tool", () => {
                 .releaseTouch()
                 .releaseTouch();
         expect(camera.getPos()).toEqual(V(-20, 0));
+    });
+
+    test("Pan with arrow keys no shift", () => {
+        // Checking up/right and down/left at the same time
+        //  since they don't affect each other
+        
+        input.pressKey("ArrowUp")
+                .releaseKey("ArrowUp")
+                .pressKey("ArrowRight")
+                .releaseKey("ArrowRight");
+        expect(camera.getPos()).toEqual(V(75, -75));
+        camera.setPos(V(0, 0));
+
+        input.pressKey("ArrowDown")
+                .releaseKey("ArrowDown")
+                .pressKey("ArrowLeft")
+                .releaseKey("ArrowLeft");
+        expect(camera.getPos()).toEqual(V(-75, 75));
+        camera.setPos(V(0, 0));
+    });
+
+    test("Pan with arrow keys holding shift", () => {
+        // Checking up/right and down/left at the same time
+        //  since they don't affect each other
+
+        input.pressKey("Shift")
+                .pressKey("ArrowUp")
+                .releaseKey("ArrowUp")
+                .pressKey("ArrowRight")
+                .releaseKey("ArrowRight")
+                .releaseKey("Shift");
+        expect(camera.getPos()).toEqual(V(5, -5));
+        camera.setPos(V(0, 0));
+
+        input.pressKey("Shift")
+                .pressKey("ArrowDown")
+                .releaseKey("ArrowDown")
+                .pressKey("ArrowLeft")
+                .releaseKey("ArrowLeft")
+                .releaseKey("Shift");
+        expect(camera.getPos()).toEqual(V(-5, 5));
+        camera.setPos(V(0, 0));
     });
 
 });

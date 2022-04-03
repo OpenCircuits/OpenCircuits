@@ -12,11 +12,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("Connection Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place} = GetHelpers({designer});
-        const a = new Switch(), b = new LED();
+        const {Place} = GetHelpers(designer);
 
-        Place(a);
-        Place(b);
+        const [a, b] = Place(new Switch(), new LED());
 
         a.activate(true);
 

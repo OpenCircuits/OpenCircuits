@@ -29,6 +29,10 @@ export class SelectAction extends ReversableAction {
         return this;
     }
 
+    public getName(): string {
+        return `Selected ${this.obj.getName()}`;
+    }
+
 }
 
 export class DeselectAction extends SelectAction {
@@ -41,12 +45,12 @@ export class DeselectAction extends SelectAction {
 export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
     return objs.reduce((acc, s) => {
         return acc.add(new SelectAction(selections, s));
-    }, new GroupAction());
+    }, new GroupAction([], "Select Action"));
 }
 
 export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
     const objs = selections.get();
     return objs.reduce((acc, s) => {
         return acc.add(new DeselectAction(selections, s));
-    }, new GroupAction());
+    }, new GroupAction([], "Deselect All Action"));
 }

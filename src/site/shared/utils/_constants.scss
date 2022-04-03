@@ -6,3 +6,6 @@ $header-border-width: 5px;
 $header-total-height: $header-height + 2*$header-padding + $header-border-width;
 
 $header-border: 0 solid $secondary-color;
+
+$itemnav-width: 235px; // On wide screens, ItemNav is on the left
+$itemnav-height: 250px; // On small screens, ItemNav is on the bottom

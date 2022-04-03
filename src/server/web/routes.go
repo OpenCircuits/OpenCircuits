@@ -1,6 +1,8 @@
 package web
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +13,10 @@ func RegisterPages(router *gin.Engine) {
 	router.Static("/static", "./site/static")
 	router.Static("/examples", "./site/examples")
 
-	router.StaticFile("/", "./site/index.html")
+	router.LoadHTMLFiles("./site/index.html")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+	})
+
 	router.StaticFile("/robots.txt", "./site/robots.txt")
 }

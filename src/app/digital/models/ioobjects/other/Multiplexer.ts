@@ -1,20 +1,32 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
-
 import {ClampedValue} from "math/ClampedValue";
 
-import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+import {MultiplexerInputPositioner, MuxSelectPositioner} from "digital/models/ports/positioners/MuxPositioners";
 
-import {InputPort} from "../../ports/InputPort";
 import {Mux} from "./Mux";
+
 
 @serializable("Multiplexer")
 export class Multiplexer extends Mux {
 
     public constructor() {
         super(new ClampedValue(4, 2, Math.pow(2,8)), new ClampedValue(1),
-              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE));
+              new MuxSelectPositioner(true), new MultiplexerInputPositioner());
+        this.updatePortNames();
+    }
+
+    /**
+     * Sets default names for the select and input ports so the user can easily
+     * tell what they are used for.
+     */
+    protected updatePortNames(): void {
+        super.updatePortNames();
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() == "") p.setName(`I${i}`);
+        });
+        this.outputs.getPorts()[0].setName("O0");
+
     }
 
     /**
@@ -26,12 +38,6 @@ export class Multiplexer extends Mux {
         for (let i = 0; i < this.selects.length; i++)
             num = num | ((this.selects.get(i).getIsOn() ? 1 : 0) << i);
         super.activate(this.inputs.get(num).getIsOn());
-    }
-
-    public setSelectPortCount(val: number): void {
-        super.setSelectPortCount(val);
-        // update the output port to align with the right edge of the Mux
-        this.outputs.updatePortPositions();
     }
 
     public getDisplayName(): string {
