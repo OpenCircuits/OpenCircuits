@@ -1,21 +1,13 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable} from "core/utils/Selectable";
 
 
-function test(thing: any): thing is Selectable {
-    return true;
-}
-
-type GuardedType<T> = T extends (x: any) => x is (infer T) ? T : never;
-
-
-type Tess = GuardedType<typeof test>;
-
 type BaseType = Record<string, string | number | boolean>;
+type ToArray<Type> = Type extends any ? Type[] : never;
 type RecordOfArrays<T extends BaseType> = {
-    [Key in keyof T]?: Array<T[Key]>;
+    [Key in keyof T]: ToArray<T[Key]>;
 }
 
 export const useSelectionProps = <T extends BaseType, V extends Selectable = Selectable>(
@@ -23,21 +15,36 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     validTypes: (s: Selectable) => s is V,
     getProps: (s: V) => T,
 ) => {
-    const [props, setProps] = useState({} as RecordOfArrays<T>);
+    const [props, setProps] = useState(undefined as RecordOfArrays<T> | undefined);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
     const updateState = useCallback(() => {
         const selections = info.selections.get();
+        const filteredSelections = selections.filter(validTypes);
 
-        const allProps = selections.filter(validTypes).map(getProps);
+        // Ensure we only have the acceptable types selected
+        if (filteredSelections.length !== selections.length) {
+            setProps(undefined);
+            return;
+        }
+
+        const allProps = filteredSelections.map(getProps);
         if (allProps.length === 0) {
-            setProps({});
+            setProps(undefined);
+            return;
+        }
+
+        // Filter out keys that not all the objects have
+        const keys = Object.keys(allProps[0])
+            .filter((key) => ( allProps.every(prop => (key in prop)) ));
+        if (keys.length === 0) {
+            setProps(undefined);
             return;
         }
 
         const props = Object.fromEntries(
-            Object.keys(allProps[0]).map((key: keyof T) => (
+            keys.map((key: keyof T) => (
                 [key, allProps.map(p => p[key])] as const
             ))
         ) as RecordOfArrays<T>;

@@ -22,7 +22,7 @@ export const PositionModule = ({ info }: Props) => {
         (s) => ({ x: s.getPos().x/100, y: s.getPos().y/100 })
     );
 
-    if (!props.x || !props.y)
+    if (!props)
         return null;
 
     return <div>

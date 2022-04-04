@@ -1,11 +1,11 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Selectable} from "core/utils/Selectable";
 
 import {GroupAction} from "core/actions/GroupAction";
 import {SetNameAction} from "core/actions/SetNameAction";
 
 import {useSelectionProps} from "./useSelectionProps";
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
-import {Selectable} from "core/utils/Selectable";
 
 
 type Props = {
@@ -20,7 +20,7 @@ export const TitleModule = ({ info }: Props) => {
         (s) => ({ name: s.getName() })
     );
 
-    if (!props.name)
+    if (!props)
         return null;
 
     const s = selections.get();
