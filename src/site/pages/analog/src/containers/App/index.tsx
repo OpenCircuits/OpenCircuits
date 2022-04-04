@@ -9,11 +9,11 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {ContextMenu}     from "shared/containers/ContextMenu";
 import {SideNav}         from "shared/containers/SideNav";
 
-import {LoginPopup}           from "shared/containers/LoginPopup";
-import {ImageExporterPopup}   from "shared/containers/ImageExporterPopup";
-import {SelectionPopup}       from "shared/containers/SelectionPopup";
-import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
-import {HistoryBox}           from "shared/containers/HistoryBox";
+import {LoginPopup}         from "shared/containers/LoginPopup";
+import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
+import {HistoryBox}         from "shared/containers/HistoryBox";
+import {SelectionPopup}     from "shared/containers/SelectionPopup";
+import {PositionModule}     from "shared/containers/SelectionPopup/modules/PositionModule";
 
 import {AnalogPaste} from "site/analog/utils/AnalogPaste";
 
@@ -24,8 +24,7 @@ import {MainDesigner}           from "site/analog/containers/MainDesigner";
 import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
 
-import {ColorModule}                from "site/analog/containers/SelectionPopup/modules/ColorModule";
-import {TextColorModule}            from "site/analog/containers/SelectionPopup/modules/TextColorModule";
+import {PropertyModule} from "site/analog/containers/SelectionPopup/modules/PropertyModule";
 
 import exampleConfig from "site/analog/data/examples.json";
 import docsConfig from "site/analog/data/docsUrlConfig.json";
@@ -70,11 +69,10 @@ export const App = ({ info, helpers, canvas }: Props) => {
                     <HistoryBox info={info} />
 
                     <SelectionPopup info={info}
-                                    modules={[
-                                        PositionModule,
-                                        ColorModule, TextColorModule,
-                                    ]}
-                                    docsUrlConfig={docsConfig} />
+                                    docsUrlConfig={docsConfig}>
+                        <PositionModule info={info} />
+                        <PropertyModule info={info} />
+                    </SelectionPopup>
 
                     <ContextMenu info={info}
                                  paste={(data, menuPos) => AnalogPaste(data, info, menuPos)} />
