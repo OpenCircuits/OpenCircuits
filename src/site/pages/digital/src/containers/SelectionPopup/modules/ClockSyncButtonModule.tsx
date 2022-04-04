@@ -1,16 +1,33 @@
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {Clock} from "digital/models/ioobjects";
 
-import {ButtonPopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
+import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
 
-export const ClockSyncButtonModule = (props: UseModuleProps) => (
-    <ButtonPopupModule
-        text="Sync Clocks"
-        alt="Sychronize start of selected clocks"
-        getDependencies={(s) => (s instanceof Clock ? "1" : "0")}
-        isActive={(selections) => selections.every(s => s instanceof Clock)}
-        onClick={(selections) => {
-            (selections as Clock[]).forEach(c => c.reset());
-        }}
-        {...props} />
-);
+type Props = {
+    info: CircuitInfo;
+}
+export const PauseResumeButtonModule = ({ info }: Props) => {
+    const { renderer } = info;
+
+    const [props, cs, forceUpdate] = useSelectionProps(
+        info,
+        (s): s is Clock => (s instanceof Clock),
+        (_) => ({ isClock: true }) // Don't really need any props but
+                                   //  we need to be able to update the state
+    );
+
+    if (!props)
+        return null;
+
+    return <button
+        title="Sychronize start of selected clocks"
+        onClick={() => {
+            cs.forEach(c => c.reset());
+            renderer.render();
+            forceUpdate(); // Need to force an update since this isn't changed by an action
+        }}>
+        Sync Clocks
+    </button>
+}
