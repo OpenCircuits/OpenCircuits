@@ -3,19 +3,33 @@ import {serializable} from "serialeazy";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent} from "analog/models";
+import {AnalogComponent, PropInfo} from "analog/models";
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
 @serializable("Resistor")
 export class Resistor extends AnalogComponent {
+    private static info: Record<string, PropInfo> = {
+        "resistance": {
+            display: "Resistance",
+            type: "float",
+            min: 0,
+        },
+    }
 
     /**
      * Initializes Switch with no input ports, a single output port, and predetermined sizes
      */
     public constructor() {
-        super(new ClampedValue(2),
-              V(60, 50), new LeftRightPositioner());
+        super(
+            new ClampedValue(2),
+            V(60, 50), new LeftRightPositioner(),
+            { "resistance": 1000 }
+        );
+    }
+
+    public getPropInfo(key: string): PropInfo {
+        return Resistor.info[key];
     }
 
     /**
