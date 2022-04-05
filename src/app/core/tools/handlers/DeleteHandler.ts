@@ -13,13 +13,11 @@ import { IOObjectSet } from "core/utils/ComponentUtils";
 
 export const DeleteHandler: EventHandler = ({
     conditions: (event: Event, {selections}: CircuitInfo) =>
-        (event.type === "keydown" &&
+         (event.type === "keydown" &&
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
     getResponse: ({history, designer, selections}: CircuitInfo) => {
         selections.get().forEach(element => console.log(element));
-        const selectedWires = selections.get().filter(k => k instanceof Wire) as Wire[];
-        console.log(selectedWires);
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];        
         // Deselect the objects then remove them
         history.add(new GroupAction([
