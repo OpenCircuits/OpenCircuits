@@ -8,7 +8,7 @@ const Config: ModuleConfig<[IOObject, Port], string> = {
     types: [IOObject, Port],
     valType: "string",
     getProps: (o) => o.getName(),
-    getAction: (s, newName) => new GroupAction(s.map(o => new SetNameAction(o, newName)))
+    getAction: (s, newName) => new GroupAction(s.map(o => new SetNameAction(o, newName)), "Title Module")
 }
 
 export const TitleModule = PopupModule({

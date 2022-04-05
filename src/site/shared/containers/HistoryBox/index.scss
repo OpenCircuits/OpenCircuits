@@ -90,8 +90,22 @@ $historybox-content-height: 335px;
         border-radius: 7px;
         border: 1px solid $secondary-color;
 
+        cursor: pointer;
+
         & > span {
             font-size: 18px;
+        }
+
+        &__collapse_btn {
+            margin-right: 5px;
+            float: right;
+
+            transition: 0.5s;
+            transform: rotate(90deg);
+
+            &-collapsed {
+                transform: rotate(0deg);
+            }
         }
     }
 

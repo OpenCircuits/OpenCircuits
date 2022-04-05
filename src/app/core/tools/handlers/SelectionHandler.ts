@@ -16,7 +16,7 @@ export const SelectionHandler: EventHandler = ({
         (event.type === "click" && event.button === LEFT_MOUSE_BUTTON),
 
     getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
-        const action = new GroupAction();
+        const action = new GroupAction([], "Selection Handler");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 
         // Clear previous selections if not holding shift

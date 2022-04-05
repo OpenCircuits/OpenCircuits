@@ -12,7 +12,7 @@ const Config: ModuleConfig<[Decoder], number> = {
     valType: "int",
     getProps: (o) => o.getInputPortCount().getValue(),
     getAction: (s, newCount) =>
-        new GroupAction(s.map(o => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCount)))
+        new GroupAction(s.map(o => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCount)), "Decoder Input Count Module")
 }
 
 export const DecoderInputCountModule = PopupModule({

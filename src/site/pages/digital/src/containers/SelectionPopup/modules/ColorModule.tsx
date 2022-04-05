@@ -17,7 +17,7 @@ const Config: ModuleConfig<[LED, Label, Wire], string> = {
                !selections.all((s) => isNode(s)); 
     },
     getProps: (o) => (isNode(o) ? undefined : o.getColor()),
-    getAction: (s, newCol) => new GroupAction(s.filter(o => !isNode(o)).map(o => new ColorChangeAction(o, newCol)))
+    getAction: (s, newCol) => new GroupAction(s.filter(o => !isNode(o)).map(o => new ColorChangeAction(o, newCol)), "Color Module")
 }
 
 export const ColorModule = PopupModule({
