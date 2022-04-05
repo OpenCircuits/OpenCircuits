@@ -29,10 +29,12 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
                 setIsCollapsed(!isCollapsed);
             }}>
             <div className="historybox__entry__header">
-                {a.getName()}
                 {a.getCustomInfo != undefined &&
                     <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"/>
                 }
+                <span className="historybox__entry__actionname">
+                    {a.getName()}
+                </span>
             </div>
             {!isCollapsed && a.getCustomInfo != undefined &&
                 a.getCustomInfo().map((obj, i) => {
@@ -71,7 +73,9 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                         e.stopPropagation();
                         setDisplayExtraInfo(!displayExtraInfo);
                     }}/>
-                {g.getName()}
+                <span className="historybox__groupentry__actionname">
+                    {g.getName()}
+                </span>
                 <span
                     className={`historybox__groupentry__collapse_btn \
                                 ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
