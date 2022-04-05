@@ -2,7 +2,7 @@
 
 import {ThunkAction} from "redux-thunk";
 
-import {CreateUserCircuit, UpdateUserCircuit} from "shared/api/Circuits";
+import {UpdateUserCircuit} from "shared/api/Circuits";
 
 import {SharedAppState} from "shared/state";
 import {AllSharedActions} from "shared/state/actions";
@@ -19,12 +19,14 @@ export function SaveCircuit(data: string): ThunkResult<Promise<boolean>> {
 
         if (!auth)
             dispatch(_SetCircuitSavingFinish("Not logged in!"));
-
         dispatch(_SetCircuitSavingStart());
 
         try {
-            const newData = await (id ? UpdateUserCircuit(auth!, id, data) :
-                                        CreateUserCircuit(auth!, data));
+            // const newData = await (UpdateUserCircuit(auth!, id, data));
+
+            // const newData = await (id ? UpdateUserCircuit(auth!, id, data) :
+            //     CreateUserCircuit(auth!, data));
+            const newData = await UpdateUserCircuit(auth!, data, id);
             if (!newData)
                 throw new Error("SaveCircuit failed: newData is undefined");
             dispatch(SetCircuitId(newData.getId()));

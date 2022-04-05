@@ -11,7 +11,7 @@ import {VersionConflictPostResolver, VersionConflictResolver} from "digital/util
 
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
+import {DeleteUserCircuit, LoadUserCircuit, UpdateUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
@@ -144,7 +144,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             );
 
             // Create circuit copy
-            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
+            const circuitCopyMetadata = await UpdateUserCircuit(user.auth, circuitCopy, "");
 
             if (!circuitCopyMetadata)
                 throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: circuitCopyMetadata is undefined");
