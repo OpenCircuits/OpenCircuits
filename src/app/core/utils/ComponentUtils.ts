@@ -104,7 +104,7 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 /**
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
- *
+ * @param full true if you want to return everything in the circuit otherwise returns only the wires/nodes connected to the wire.
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (including w)
  */
@@ -121,7 +121,7 @@ export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node
         visited.add(q);
         path.push(q);
         if (q instanceof Wire) {
-            if(full){
+            if(full) {
                 const p1 = q.getP1Component();
             
                 if (isNode(p1) && !visited.has(p1))
@@ -131,7 +131,7 @@ export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node
                 if (isNode(p2) && !visited.has(p2))
                     queue.push(p2);
             }
-            if(!full){
+            else {
                 const p2 = q.getP2Component();
                 if (isNode(p2) && !visited.has(p2))
                     queue.push(p2);
@@ -164,14 +164,14 @@ export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | N
 /**
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
- *
+ * @param full true if you want to return everything in the circuit otherwise returns only the wires/nodes connected to the selected wire.
  * @param  objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
 export function GatherGroup(objects: IOObject[], full: boolean = true): IOObjectSet {
     
     const group = new IOObjectSet(objects);
-   
+  
     // Gather all connecting paths
     const wires = group.getWires();
 

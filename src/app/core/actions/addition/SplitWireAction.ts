@@ -55,7 +55,7 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     if (ports.length !== 2)
         throw new Error("Failed to find 2 ports to snip to");
         
-        const action = new GroupAction();
+    const action = new GroupAction();
 
     action.add(new DisconnectAction(designer, wires[0]).execute());
     action.add(new DisconnectAction(designer, wires[1]).execute());

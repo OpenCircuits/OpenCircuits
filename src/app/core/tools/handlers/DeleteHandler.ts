@@ -8,7 +8,7 @@ import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFa
 import {IOObject, Wire} from "core/models";
 
 import {EventHandler} from "../EventHandler";
-import { IOObjectSet } from "core/utils/ComponentUtils";
+import {IOObjectSet} from "core/utils/ComponentUtils";
 
 
 export const DeleteHandler: EventHandler = ({
@@ -17,13 +17,11 @@ export const DeleteHandler: EventHandler = ({
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
     getResponse: ({history, designer, selections}: CircuitInfo) => {
-        selections.get().forEach(element => console.log(element));
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];        
         // Deselect the objects then remove them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
-            CreateDeleteGroupAction(designer, objs).execute(),
-            
+            CreateDeleteGroupAction(designer, objs).execute(),    
         ]));
     }
 });
