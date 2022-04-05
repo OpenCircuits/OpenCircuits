@@ -1,6 +1,6 @@
 import {GroupAction} from "core/actions/GroupAction";
 
-import { Gate } from "digital/models/ioobjects/gates/Gate";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
