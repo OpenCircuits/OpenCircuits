@@ -21,7 +21,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// why is port converted to string
 func getPort() string {
 	for port := 8080; port <= 65535; port++ {
 		ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
@@ -33,57 +32,55 @@ func getPort() string {
 	return "8080"
 }
 
-/*
- For flag type interface:
-	- get the env variable using os.Getenv(key), will return a string
-	- identify what primitive type to convert the string to
-	- convert the string to that type
-	- set a flag variable with that type
-	- if string keep as string, no need to go through process
-*/
-
-func toBool(s string) bool {
-	boolVal, err := strconv.ParseBool(s)
-	if err != nil {
-		core.CheckErrorMessage(err, "Failed to convert string to bool:")
+func createConfig[T interface{ bool | string | int | uint }](key string, message string) (config *T) {
+	val := os.Getenv(key)
+	boolVal, errB := strconv.ParseBool(val)
+	uintVal, errU := strconv.ParseUint(val, 10, 0)
+	intVal, errI := strconv.Atoi(val)
+	if errB == nil {
+		config = flag.Bool(key, boolVal, message)
+	} else if errU == nil {
+		config = flag.Uint(key, uintVal, message)
+	} else if errI == nil {
+		config = flag.Int(key, intVal, message)
 	}
-	return boolVal
+	config = flag.String(key, val, message)
+	return
 }
 
 func main() {
 	var err error
 
-	// Flag for noAuthConfig to keep boolean type
-	noAuthConfig := flag.Bool("no_auth", toBool(os.Getenv("no_auth")), "Enables username-only authentication for testing and development")
+	noAuthConfig := createConfig[bool]("no_auth", "Enables username-only authentication for testing and development")
+	googleAuthConfig := createConfig[string]("google_auth", "<path-to-config>; Enables google sign-in API login")
+	userCsifConfig := createConfig[string]("interface", "The storage interface")
+	sqlitePathConfig := createConfig[string]("sqlitePath", "The path to the sqlite working directory")
+	dsEmulatorHost := createConfig[string]("ds_emu_host", "The emulator host address for cloud datastore")
+	dsProjectId := createConfig[string]("ds_emu_project_id", "The gcp project id for the datastore emulator")
+	ipAddressConfig := createConfig[string]("ip_address", "IP address of server")
+	portConfig := createConfig[string]("port", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
-	googleAuthConfig := os.Getenv("google_auth")  // <path-to-config>; Enables google sign-in API login
-	userCsifConfig := os.Getenv("interface")      // The storage interface
-	sqlitePathConfig := os.Getenv("sqlitePath")   // The path to the sqlite working directory
-	dsEmulatorHost := os.Getenv("ds_emu_host")    // The emulator host address for cloud datastore
-	dsProjectId := os.Getenv("ds_emu_project_id") // The gcp project id for the datastore emulator
-	ipAddressConfig := os.Getenv("ip_address")    // IP address of server
-	portConfig := os.Getenv("port")               // Port to serve application, use \"auto\" to select the first available port starting at 8080
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
 	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
-	if googleAuthConfig != "" {
+	if *googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(googleAuthConfig))
 	}
 
 	// Set up the storage interface
 	var userCsif interfaces.CircuitStorageInterfaceFactory
-	if userCsifConfig == "mem" {
+	if *userCsifConfig == "mem" {
 		userCsif = storage.NewMemStorageInterfaceFactory()
-	} else if userCsifConfig == "sqlite" {
+	} else if *userCsifConfig == "sqlite" {
 		userCsif, err = sqlite.NewInterfaceFactory(sqlitePathConfig)
 		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
-	} else if userCsifConfig == "gcp_datastore_emu" {
+	} else if *userCsifConfig == "gcp_datastore_emu" {
 		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), dsProjectId, dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
-	} else if userCsifConfig == "gcp_datastore" {
+	} else if *userCsifConfig == "gcp_datastore" {
 		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance:")
 	}
@@ -106,9 +103,9 @@ func main() {
 	api.RegisterRoutes(router, authManager, userCsif)
 
 	// Check if portConfig is set to auto, if so find available port
-	if portConfig == "auto" {
+	if *portConfig == "auto" {
 		os.Setenv("port", getPort())
 	}
 
-	router.Run(ipAddressConfig + ":" + portConfig)
+	router.Run(*ipAddressConfig + ":" + *portConfig)
 }
