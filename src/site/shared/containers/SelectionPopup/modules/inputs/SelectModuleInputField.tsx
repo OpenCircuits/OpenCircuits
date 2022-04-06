@@ -31,6 +31,7 @@ export const SelectModuleInputField = <T extends number|string>(
             onFocus={() => setState.onFocus()}
             onBlur={() => setState.onBlur()}
             placeholder={placeholder}>
+        <option value="" disabled hidden>{placeholder ?? "-"}</option>
         {options.map(o => (
             <option key={`select-module-${o}`} value={o[1]}>{o[0]}</option>
         ))}
