@@ -32,6 +32,7 @@
     "detect-port-alt": "^1.1.6",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
+    "emscript-loader": "^1.0.6",
     "eslint": "^8.6.0",
     "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-opencircuits": "file:./scripts/linting",
