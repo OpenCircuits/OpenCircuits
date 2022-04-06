@@ -73,16 +73,19 @@ const SineInfo: GroupPropInfo = {
             display: "Amplitude Voltage",
             type: "float", min: 0,
         },
+        // TODO: Add dependent variables
+        //  so we can `period` and `frequency` which are inverses and update
+        //  each-other as they update
+        "frequency": {
+            display: "Frequency",
+            type: "float", min: 0,
+        },
         "td": {
             display: "Delay Time",
             type: "float", min: 0,
         },
         "theta": {
             display: "Damping Factor",
-            type: "float", min: 0,
-        },
-        "period": {
-            display: "Period",
             type: "float", min: 0,
         },
         "phase": {
@@ -119,7 +122,7 @@ export class VoltageSource extends AnalogComponent {
             {
                 "waveform": "DC", "voltage": 5,
                 "v1": 0, "td": 0, "tr": 0.01, "tf": 0.01,
-                "pw": 0.1, "period": 0.2,
+                "pw": 0.1, "period": 0.2, "frequency": 5,
                 "phase": 0, "theta": 0,
             }
         );
@@ -130,9 +133,14 @@ export class VoltageSource extends AnalogComponent {
     }
 
     public override getNetlistValues() {
-        return [
+        const KeyMap = {
+            "DC":    Object.keys(ConstInfo.infos),
+            "PULSE": Object.keys(PulseInfo.infos),
+            "SINE":  Object.keys(SineInfo.infos),
+        };
 
-        ];
+        const keys = KeyMap[this.props["waveform"] as "DC"|"PULSE"|"SINE"];
+        return [`${this.props["waveform"]}(${keys.map(k => this.props[k]!).join(" ")})`];
     }
 
     public override getPropInfo(key: string): PropInfo {
