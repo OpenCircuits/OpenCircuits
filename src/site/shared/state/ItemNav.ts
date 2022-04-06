@@ -7,6 +7,7 @@ const [initialState, actions, reducer] = CreateState<typeof ToggleCircuitLocked>
         isEnabled: true,
         isOpen: false,
         isHistoryBoxOpen: false,
+        isPlacing: false
     },
     {
         OpenItemNav:     () => ({ type: "OPEN_ITEMNAV_ID"      }) as const,
@@ -14,6 +15,8 @@ const [initialState, actions, reducer] = CreateState<typeof ToggleCircuitLocked>
 
         OpenHistoryBox:  () => ({ type: "OPEN_HISTORY_BOX_ID"  }) as const,
         CloseHistoryBox: () => ({ type: "CLOSE_HISTORY_BOX_ID" }) as const,
+
+        PlaceComponent:  () => ({ type: "PLACE_ITEM_ID" }) as const
     },
     {
         "OPEN_ITEMNAV_ID":          (state) => ({ ...state, isOpen: (state.isEnabled ? true : false)  }),
@@ -22,9 +25,11 @@ const [initialState, actions, reducer] = CreateState<typeof ToggleCircuitLocked>
 
         "OPEN_HISTORY_BOX_ID":      (state) => ({ ...state, isHistoryBoxOpen: true }),
         "CLOSE_HISTORY_BOX_ID":     (state) => ({ ...state, isHistoryBoxOpen: false }),
+
+        "PLACE_ITEM_ID":            (state) => ({ ...state, isPlacing: !state.isPlacing })  
     }
 );
 
 export type ItemNavState = typeof initialState;
-export const {OpenItemNav, CloseItemNav, OpenHistoryBox, CloseHistoryBox} = actions;
+export const {OpenItemNav, CloseItemNav, OpenHistoryBox, CloseHistoryBox, PlaceComponent} = actions;
 export const itemNavReducer = reducer;

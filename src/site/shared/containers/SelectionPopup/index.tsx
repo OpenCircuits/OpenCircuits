@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {GetIDFor} from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
+import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -10,6 +11,8 @@ import {useEvent} from "shared/utils/hooks/useEvent";
 
 import {TitleModule} from "./modules/TitleModule";
 import {UseModuleProps} from "./modules/Module";
+
+import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import "./index.scss";
 import {Clamp} from "math/MathUtils";
@@ -53,6 +56,7 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
         setPos(calcPos()); // Recalculate position on zoom
     }, input, [camera, selections, setPos]);
 
+    const isPlacing = useSharedSelector(state => state.itemNav.isPlacing);
 
     const [isDragging, setIsDragging] = useState(false);
     useEvent("mousedrag", (_) => {
@@ -78,6 +82,12 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
         });
     }, input, [setClickThrough]);
 
+    // If placing, deselect all selections and re-render
+    useEffect(() => {
+        if (!isPlacing)
+            history.add(CreateDeselectAllAction(info.selections).execute());
+            renderer.render();
+    }, [isPlacing])
 
     const popup = useRef<HTMLDivElement>(null);
 

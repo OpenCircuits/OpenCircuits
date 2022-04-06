@@ -21,7 +21,7 @@ import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, PlaceComponent} from "shared/state/ItemNav";
 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
@@ -83,8 +83,11 @@ export const ItemNav = <D,>({ info, config, additionalData,
     useDocEvent("mouseup",    () => setCurPressedObj(undefined));
     useDocEvent("mouseleave", () => setCurPressedObj(undefined));
     function handleItemNavDrag() { // Issue #478
-        if (!currentlyPressedObj || !(currentlyPressedObj instanceof Component))
+        if (!currentlyPressedObj || !(currentlyPressedObj instanceof Component)) {
+            // Disable selection while placing object - resolves #863
+            info.selections.setDisabled(true);
             return;
+        }
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (info.selections.has(currentlyPressedObj)) {
             DeleteHandler.getResponse(info);
@@ -94,8 +97,15 @@ export const ItemNav = <D,>({ info, config, additionalData,
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
     }
 
+    // Change isPlacing
+    function setIsPlacing(): void {
+        dispatch(PlaceComponent());
+    }
+
     // Resets the curItemID and numClicks
     function reset(cancelled = false) {
+        // Re-enable selections
+        info.selections.setDisabled(false);
         setState({ curItemID: "", numClicks: 1 });
         setCurItemImg("");
         onFinish && onFinish(cancelled);
@@ -122,6 +132,15 @@ export const ItemNav = <D,>({ info, config, additionalData,
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState]);
 
+    // Keep track of if item is being placed
+    useEffect(() => {
+        if (curItemID) {
+            setIsPlacing();
+        }
+        else {
+            setIsPlacing();
+        }
+    }, [curItemID]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
