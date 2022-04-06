@@ -39,7 +39,7 @@ export class AnalogSim {
     }
 
     public getPlotIDs(): string[] {
-        const plotIDsPtr = this.lib.get_plots_ids();
+        const plotIDsPtr = this.lib.get_plot_ids();
         return this.lib.get_array(plotIDsPtr, { type: "string" });
     }
 

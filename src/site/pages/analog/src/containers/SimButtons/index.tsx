@@ -24,7 +24,19 @@ export const SimButtons = ({ info }: Props) => {
                 info.sim?.uploadNetlist(netlist);
             }}>Upload</span>
             <span onClick={() => {
-                info.sim?.printData();
+                console.log(info.sim?.getPlotIDs());
+                const curPlot = info.sim?.getCurPlotID();
+                console.log("cur", curPlot);
+                const vecs = info.sim?.getVecIDs(curPlot);
+                console.log("vecs", vecs);
+                const vecIDs = vecs?.map(v => `${curPlot}.${v}`);
+
+                const dataLens = vecIDs?.map(id => info.sim?.getVecLen(id));
+                console.log(dataLens);
+
+                const datas = vecIDs?.map((id => info.sim?.getVecData(id)));
+                console.log(datas);
+                // info.sim?.printData();
             }}>Print</span>
         </div>
     );

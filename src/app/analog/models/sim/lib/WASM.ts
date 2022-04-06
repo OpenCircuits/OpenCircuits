@@ -86,16 +86,18 @@ function GetArray<T extends GetArrayParams>(
     o: GetArrayParams,
 ): GetArrayReturn<T> {
     if (o.type === "char") {
+        ptr = ptr / module.HEAPU8.BYTES_PER_ELEMENT;
         let len = o.len;
         if (!len) {
             let pos = ptr;
-            while(module.HEAP8[pos++] !== 0);
+            while(module.HEAPU8[pos++] !== 0);
             len = pos - ptr - 1;
         }
-        const arr = module.HEAP8.subarray(ptr, ptr + len);
+        const arr = module.HEAPU8.subarray(ptr, ptr + len);
         return new TextDecoder().decode(arr) as GetArrayReturn<T>;
     }
     if (o.type === "string") {
+        ptr = ptr / module.HEAPU32.BYTES_PER_ELEMENT;
         let len = o.len;
         if (!len) {
             let pos = ptr;
@@ -106,9 +108,11 @@ function GetArray<T extends GetArrayParams>(
         return Array.from(arr, ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
+        ptr = ptr / module.HEAP32.BYTES_PER_ELEMENT;
         return Array.from(module.HEAP32.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
     }
     if (o.type === "double") {
+        ptr = ptr / module.HEAPF64.BYTES_PER_ELEMENT;
         return Array.from(module.HEAPF64.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
     }
     assertNever(o);

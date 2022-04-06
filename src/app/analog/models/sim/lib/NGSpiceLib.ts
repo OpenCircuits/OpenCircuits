@@ -6,7 +6,7 @@ export type NGSpiceLib = WASMModule & {
     set_data(data: number): number;
     run(): void;
 
-    get_plots_ids(): number; // => string[] ptr
+    get_plot_ids(): number; // => string[] ptr
     get_cur_plot(): number; // => string ptr
 
     get_vector_ids(plot: number): number; // plot: string ptr => string[] ptr
