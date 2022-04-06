@@ -58,8 +58,12 @@ $tab-padding: 8px;
 
         & img {
             position: relative;
-            opacity: 1;
+
+            width: 80px;
+            height: 80px;
             z-index: 100;
+
+            opacity: 1;
 
             filter: drop-shadow(3px 3px 4px #888);
         }
