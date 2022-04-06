@@ -1,8 +1,10 @@
 {
     "images": [
         "currentsource.svg",
-        "resistor.svg",
         "voltagesource.svg",
-        "ground.svg"
+        "ground.svg",
+        "resistor.svg",
+        "capacitor.svg",
+        "inductor.svg"
     ]
 }
