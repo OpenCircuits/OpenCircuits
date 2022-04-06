@@ -109,7 +109,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
 
     // Create input tokens
     const tokenList = GenerateTokens(expression, ops);
-    const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()]);
+    const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()], "Expression Parser Action");
     const inputMap = new Map<string, DigitalComponent>();
     for (const token of tokenList) {
         if (token.type !== "input" || inputMap.has(token.name))

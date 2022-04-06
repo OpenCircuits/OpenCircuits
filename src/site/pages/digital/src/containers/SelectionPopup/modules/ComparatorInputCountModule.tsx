@@ -12,7 +12,7 @@ const Config: ModuleConfig<[Comparator], number> = {
     valType: "int",
     getProps: (o) => o.getInputPortCount().getValue()/2,
     getAction: (s, newCount) =>
-        new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCount)))
+        new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCount)), "Comparator Input Count Module")
 }
 
 export const ComparatorInputCountModule = PopupModule({

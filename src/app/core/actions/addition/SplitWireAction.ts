@@ -19,7 +19,7 @@ import {PlaceAction, DeleteAction} from "./PlaceAction";
  * @returns a GroupAction representing the Wire being split
  */
 export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: Node): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Split Wire Action");
     action.add(new DisconnectAction(designer, w).execute());
     action.add(new PlaceAction(designer, port).execute());
 
@@ -54,8 +54,10 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     const ports = wires.flatMap(w => [w.getP1(), w.getP2()]).filter(p => p.getParent() != port);
     if (ports.length !== 2)
         throw new Error("Failed to find 2 ports to snip to");
-        
-    const action = new GroupAction();
+
+
+    const action = new GroupAction([], "Snip Wire Action");
+
 
     action.add(new DisconnectAction(designer, wires[0]).execute());
     action.add(new DisconnectAction(designer, wires[1]).execute());
@@ -82,5 +84,5 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
  * @returns a GroupAction of the actions to snip the wires
  */
 export function CreateGroupSnipAction(designer: CircuitDesigner, ports: Node[]): GroupAction {
-    return new GroupAction(ports.map(p => CreateSnipWireAction(designer, p)));
+    return new GroupAction(ports.map(p => CreateSnipWireAction(designer, p)), "Group Snip Action");
 }

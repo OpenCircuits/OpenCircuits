@@ -21,7 +21,9 @@ export const DeleteHandler: EventHandler = ({
         // Deselect the objects then remove them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
-            CreateDeleteGroupAction(designer, objs).execute(),    
-        ]));
+
+            CreateDeleteGroupAction(designer, objs).execute()
+        ], "Delete Handler"));
+
     }
 });

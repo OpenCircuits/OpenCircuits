@@ -9,9 +9,11 @@ import {IOObject} from "core/models/IOObject";
 
 
 export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
-    const action = new GroupAction();
-    
+
+    const action = new GroupAction([], "Delete Group Action");
+
     const allDeletions = GatherGroup(objects,false);
+
     const components = allDeletions.getComponents();
     const wires = allDeletions.getWires();
 
