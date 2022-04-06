@@ -10,6 +10,8 @@ import {itemNavReducer}     from "shared/state/ItemNav";
 import {contextMenuReducer} from "shared/state/ContextMenu";
 import {debugInfoReducer}   from "shared/state/DebugInfo";
 
+import {simStateReducer} from "./Sim";
+
 
 export const reducers = combineReducers<AppState>({
     user: userInfoReducer,
@@ -19,4 +21,5 @@ export const reducers = combineReducers<AppState>({
     itemNav: itemNavReducer,
     contextMenu: contextMenuReducer,
     debugInfo: debugInfoReducer,
+    sim: simStateReducer,
 });

@@ -65,8 +65,15 @@ function GetAllPaths(circuit: AnalogCircuitDesigner): Path[] {
 }
 
 
+export type SimDataMappings = {
+    elementUIDs: Map<AnalogComponent, number>;
+    elements: AnalogComponent[];
+    pathUIDs: Map<PathPart, number>;
+    paths: Path[];
+}
 
-export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner): Netlist {
+
+export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
     const graph = CreateGraph(circuit.getGroup());
     if (!graph.isConnected()) // Assume circuit is fully connected for now
         throw new Error("Cannot convert non-fully-connected circuit to a Netlist!");
@@ -102,7 +109,7 @@ export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner):
     });
 
     // Write each element to a Netlist line
-    return {
+    const netlist: Netlist = {
         title,
         elements: elements.map((e) => ({
             symbol: e.getNetlistSymbol()!,
@@ -118,4 +125,14 @@ export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner):
             kind: "op",
         }],
     };
+
+    return [
+        netlist,
+        {
+            elementUIDs,
+            elements,
+            pathUIDs,
+            paths,
+        },
+    ];
 }

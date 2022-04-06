@@ -42,4 +42,4 @@ export type NGNetlist = [
     ...(NGNetlistElement | NGNetlistAnalysis)[],
     [".end"],
     ["\0"],
-]
+];

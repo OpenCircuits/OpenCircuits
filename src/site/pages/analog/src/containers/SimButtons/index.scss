@@ -17,18 +17,20 @@
     background-color: #999999;
     color: #eeeeee;
 
-    font-size: 20px;
-
     border-radius: 5px;
 
-    & > span {
+    & > button {
         flex: 1 1 auto;
 
         height: 30px;
         line-height: 30px;
 
+        font-size: 20px;
+
         text-align: center;
         vertical-align: middle;
+
+        color: white;
 
         border-right: 1px solid #222222;
         border-left: 1px solid #222222;
@@ -38,6 +40,10 @@
         }
         &:last-child {
             border-right: none;
+        }
+
+        &:disabled {
+            color: #ccc;
         }
     }
 }
