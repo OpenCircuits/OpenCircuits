@@ -28,6 +28,14 @@ export class Resistor extends AnalogComponent {
         );
     }
 
+    public override getNetlistSymbol() {
+        return "R" as const;
+    }
+
+    public override getNetlistValues() {
+        return [`${this.props["resistance"]}`];
+    }
+
     public getPropInfo(key: string): PropInfo {
         return Resistor.info[key];
     }

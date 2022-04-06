@@ -1,0 +1,31 @@
+import {IO_PORT_LENGTH} from "core/utils/Constants";
+
+import {serializable} from "serialeazy";
+
+import {V} from "Vector";
+
+import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {AnalogPort} from "analog/models";
+
+
+@serializable("TopPositioner")
+export class TopPositioner extends Positioner<AnalogPort> {
+
+    public constructor() {
+        super();
+    }
+
+    /**
+     * Position ports with constant space but put blank space in the middle
+     *
+     * @param arr The array of input ports
+     */
+    public updatePortPositions([p1]: AnalogPort[]): void {
+        const height = p1.getParent().getSize().y;
+
+        p1.setOriginPos(V(0, -height/2));
+        p1.setTargetPos(V(0, -height/2-IO_PORT_LENGTH));
+    }
+
+}

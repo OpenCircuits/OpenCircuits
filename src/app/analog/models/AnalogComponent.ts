@@ -9,10 +9,12 @@ import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {AnalogCircuitDesigner, AnalogWire, AnalogPort} from "./index";
+import {NetlistElement} from "./sim/Netlist";
 
 
 export type Prop = number | string | boolean;
 export type BasePropInfo = {
+    readonly?: boolean;
     display: string;
 }
 export type NumberPropInfo = BasePropInfo & {
@@ -66,6 +68,14 @@ export abstract class AnalogComponent extends Component {
     public setPortCount(val: number): void {
         this.ports.setPortCount(val);
         this.onTransformChange();
+    }
+
+    public getNetlistSymbol(): NetlistElement["symbol"] | undefined {
+        return undefined;
+    }
+
+    public getNetlistValues(): NetlistElement["values"] {
+        return [];
     }
 
     public getPort(i: number): AnalogPort {

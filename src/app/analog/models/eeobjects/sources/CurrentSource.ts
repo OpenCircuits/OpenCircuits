@@ -29,6 +29,14 @@ export class CurrentSource extends AnalogComponent {
         );
     }
 
+    public override getNetlistSymbol() {
+        return "I" as const;
+    }
+
+    public override getNetlistValues() {
+        return [`${this.props["current"]}`];
+    }
+
     public getPropInfo(key: string): PropInfo {
         return CurrentSource.info[key];
     }

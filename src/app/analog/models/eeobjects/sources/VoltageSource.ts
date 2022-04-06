@@ -5,6 +5,7 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent, PropInfo} from "analog/models";
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
+import {NetlistElement} from "analog/models/sim/Netlist";
 
 
 @serializable("VoltageSource")
@@ -28,7 +29,15 @@ export class VoltageSource extends AnalogComponent {
         );
     }
 
-    public getPropInfo(key: string): PropInfo {
+    public override getNetlistSymbol() {
+        return "V" as const;
+    }
+
+    public override getNetlistValues() {
+        return [`${this.props["voltage"]}`];
+    }
+
+    public override getPropInfo(key: string): PropInfo {
         return VoltageSource.info[key];
     }
 
@@ -36,7 +45,7 @@ export class VoltageSource extends AnalogComponent {
      * Returns name of Component
      * @returns "Voltage Source"
      */
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Voltage Source";
     }
 
@@ -44,7 +53,7 @@ export class VoltageSource extends AnalogComponent {
      * Returns name of image file
      * @returns "voltagesource.svg"
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "voltagesource.svg";
     }
 }
