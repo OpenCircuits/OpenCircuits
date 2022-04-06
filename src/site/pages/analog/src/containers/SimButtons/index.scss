@@ -1,0 +1,43 @@
+
+
+.sim-buttons {
+    position: absolute;
+
+    right: 5px;
+    top: 5px;
+    width: 220px;
+    height: 50px;
+    line-height: 50px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    background-color: #999999;
+    color: #eeeeee;
+
+    font-size: 20px;
+
+    border-radius: 5px;
+
+    & > span {
+        flex: 1 1 auto;
+
+        height: 30px;
+        line-height: 30px;
+
+        text-align: center;
+        vertical-align: middle;
+
+        border-right: 1px solid #222222;
+        border-left: 1px solid #222222;
+
+        &:first-child {
+            border-left: none;
+        }
+        &:last-child {
+            border-right: none;
+        }
+    }
+}

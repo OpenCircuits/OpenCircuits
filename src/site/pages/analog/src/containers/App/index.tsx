@@ -2,6 +2,8 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
+import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
+
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
@@ -17,12 +19,13 @@ import {PositionModule}     from "shared/containers/SelectionPopup/modules/Posit
 
 import {AnalogPaste} from "site/analog/utils/AnalogPaste";
 
-import {AnalogHeader}          from "site/analog/containers/AnalogHeader";
-import {AnalogItemNav}         from "site/analog/containers/AnalogItemNav";
+import {AnalogHeader}           from "site/analog/containers/AnalogHeader";
+import {AnalogItemNav}          from "site/analog/containers/AnalogItemNav";
 import {KeyboardShortcutsPopup} from "site/analog/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/analog/containers/MainDesigner";
 import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
+import {SimButtons}             from "site/analog/containers/SimButtons";
 
 import {PropertyModule} from "site/analog/containers/SelectionPopup/modules/PropertyModule";
 
@@ -67,6 +70,8 @@ export const App = ({ info, helpers, canvas }: Props) => {
 
                     <AnalogItemNav info={info} />
                     <HistoryBox info={info} />
+
+                    <SimButtons info={info} />
 
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
