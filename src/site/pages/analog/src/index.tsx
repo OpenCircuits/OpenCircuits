@@ -33,6 +33,8 @@ import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import "analog/models/eeobjects";
 
+import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
+
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
@@ -53,14 +55,24 @@ import {App} from "./containers/App";
 
 import ImageFiles from "./data/images.json";
 
+import NGSpice from "./lib/ngspice.wasm";
+
 
 async function Init(): Promise<void> {
-    const startPercent = 30;
+    const startPercent = 10;
     let store: AppStore;
+    let ngSpiceLib: NGSpiceLib;
 
     await LoadingScreen("loading-screen", startPercent, [
-        [80, "Loading Images", async (onProgress) => {
+        [40, "Loading Images", async (onProgress) => {
             await Images.Load(ImageFiles.images, onProgress);
+        }],
+
+        [80, "Loading NGSpice Library", async () => {
+            ngSpiceLib = await NGSpice();
+            if (!ngSpiceLib)
+                throw new Error("Failed to load NGSpice WASM binary!");
+            ngSpiceLib.init();
         }],
 
         [85, "Initializing redux", async () => {
@@ -78,7 +90,7 @@ async function Init(): Promise<void> {
                     // Load auth2 from GAPI and initialize w/ metadata
                     const clientId = process.env.OC_OAUTH2_ID;
                     if (!clientId)
-                        throw new Error(`No client_id/OAUTH2_ID specificed for google auth!`);
+                        throw new Error("No client_id/OAUTH2_ID specificed for google auth!");
 
                     // Wait for GAPI to load
                     if (!gapi) {
@@ -100,12 +112,12 @@ async function Init(): Promise<void> {
                         });
 
                         if (!loaded)
-                            throw new Error(`Failed to load GAPI!`);
+                            throw new Error("Failed to load GAPI!");
                     }
 
                     await new Promise((resolve) => gapi.load("auth2", resolve));
                     await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
-                }
+                },
             };
             try {
                 if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
@@ -130,7 +142,7 @@ async function Init(): Promise<void> {
 
             // Setup circuit and get the CircuitInfo and helpers
             const [info, helpers] = Setup(
-                store, canvas,
+                store, canvas, ngSpiceLib,
                 new InteractionTool([
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
@@ -156,7 +168,7 @@ async function Init(): Promise<void> {
                 </React.StrictMode>,
                 document.getElementById("root")
             );
-        }]
+        }],
     ]);
 }
 

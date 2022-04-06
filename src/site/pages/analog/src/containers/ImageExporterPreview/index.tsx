@@ -22,7 +22,7 @@ type Props = ImageExporterPreviewProps & {
     mainInfo: AnalogCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const info = CreateInfo(new InteractionTool([FitToScreenHandler]), PanTool);
+    const info = CreateInfo(undefined, new InteractionTool([FitToScreenHandler]), PanTool);
 
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
         const { camera, designer, toolManager, renderer } = info;

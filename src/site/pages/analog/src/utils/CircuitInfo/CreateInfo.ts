@@ -12,9 +12,12 @@ import {ToolManager} from "core/tools/ToolManager";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {AnalogCircuitDesigner} from "analog/models";
+import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
+import {AnalogSim} from "analog/models/sim/AnalogSim";
 
 
-export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): AnalogCircuitInfo {
+export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
+                           defaultTool: DefaultTool, ...tools: Tool[]): AnalogCircuitInfo {
     const camera = new Camera();
     const history = new HistoryManager();
     const designer = new AnalogCircuitDesigner();
@@ -22,11 +25,14 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): AnalogCi
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
 
+    const sim = (ngSpiceLib ? new AnalogSim(ngSpiceLib) : undefined);
+
     const info: AnalogCircuitInfo = {
         locked: false,
         history,
         camera,
         designer,
+        sim,
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,
         selections,
