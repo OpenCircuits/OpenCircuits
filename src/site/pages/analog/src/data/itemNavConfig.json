@@ -27,6 +27,11 @@
             "icon": "resistor.svg"
           },
           {
+            "id": "Ground",
+            "label": "Ground",
+            "icon": "ground.svg"
+          },
+          {
             "id": "Label",
             "label": "Label",
             "icon": "label.svg"

@@ -2,6 +2,7 @@
     "images": [
         "currentsource.svg",
         "resistor.svg",
-        "voltagesource.svg"
+        "voltagesource.svg",
+        "ground.svg"
     ]
 }
