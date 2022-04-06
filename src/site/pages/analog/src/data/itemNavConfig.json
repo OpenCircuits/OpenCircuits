@@ -18,19 +18,25 @@
         ]
       },
       {
-        "id": "other",
-        "label": "Other",
+        "id": "essentials",
+        "label": "Essentials",
         "items": [
-          {
-            "id": "Resistor",
-            "label": "Resistor",
-            "icon": "resistor.svg"
-          },
           {
             "id": "Ground",
             "label": "Ground",
             "icon": "ground.svg"
           },
+          {
+            "id": "Resistor",
+            "label": "Resistor",
+            "icon": "resistor.svg"
+          }
+        ]
+      },
+      {
+        "id": "other",
+        "label": "Other",
+        "items": [
           {
             "id": "Label",
             "label": "Label",
