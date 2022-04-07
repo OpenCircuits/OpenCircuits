@@ -18,7 +18,7 @@ export const Unit = (sym: string, name:  string) => ({
 type UnitKey = keyof ReturnType<typeof Unit>;
 type UnitNumberInfoProps = Omit<NumberPropInfo, "type"|"unit"|"initial"> & { unit: UnitInfo };
 const UnitNumberInfo = (key: string, props: UnitNumberInfoProps,
-                        initial = 0, initialUnit?: UnitKey): Record<string, PropInfo> => ({
+                        initial = 0, initialU?: UnitKey): Record<string, PropInfo> => ({
     [key]: {
         type: "float" as const,
         initial: (initial ?? 0),
@@ -28,49 +28,49 @@ const UnitNumberInfo = (key: string, props: UnitNumberInfoProps,
         type: "string[]" as const,
         isActive: () => false, // This is a "hidden" property
         display: "",
-        initial: (initialUnit ?? ""),
+        initial: (initialU ?? ""),
         options: Object.entries(props.unit).map(([key, val]) => [val.display, key]),
     },
 });
 
-export const VoltageInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const VoltageInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("V", "Volt"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
 
-export const AmperageInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const AmperageInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("A", "Ampere"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
 
-export const ResistanceInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const ResistanceInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("&Omega;", "Ohm"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
-export const CapacitanceInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const CapacitanceInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("F", "Farad"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
-export const InductanceInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const InductanceInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("H", "Henry"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
 
-export const TimeInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const TimeInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("s", "Second"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
 
-export const FrequencyInfo = (key: string, display: string, initial = 0, initialUnit: UnitKey = " ") => UnitNumberInfo(
+export const FrequencyInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
     { display, unit: Unit("Hz", "Hertz"), min: 0 },
-    initial, initialUnit,
+    initial, initialU,
 );
 
 export const AngleInfo = (key: string, display: string, initial = 0) => ({
