@@ -21,9 +21,18 @@ const Info: Record<string, PropInfo> = {
     },
 };
 
+export type ScopeConfig = {
+    showAxes: boolean;
+    showLegend: boolean;
+    vecs: Record<`${string}.${string}`, {
+        enabled: boolean;
+        color: string;
+    }>;
+}
+
 @serializable("Oscilloscope")
 export class Oscilloscope extends AnalogComponent {
-    private enabledVecs: Array<`${string}.${string}`>;
+    private config: ScopeConfig;
 
     public constructor() {
         super(
@@ -32,23 +41,19 @@ export class Oscilloscope extends AnalogComponent {
             GenInitialInfo(Info),
         );
 
-        this.enabledVecs = [];
+        this.config = {
+            showAxes: true,
+            showLegend: true,
+            vecs: {},
+        };
     }
 
-    public setEnabledVecs(plots: typeof this.enabledVecs) {
-        this.enabledVecs = plots;
+    public setConfig(config: ScopeConfig) {
+        this.config = config;
     }
 
-    public enableVec(key: `${string}.${string}`) {
-        this.enabledVecs.push(key);
-    }
-
-    public disableVec(key: `${string}.${string}`) {
-        this.enabledVecs.splice(this.enabledVecs.indexOf(key), 1);
-    }
-
-    public getEnabledVecs() {
-        return this.enabledVecs;
+    public getConfig() {
+        return this.config;
     }
 
     public override setProp(key: string, val: Prop): void {

@@ -1,14 +1,26 @@
+import {useState} from "react";
+import {ColorToHex} from "svg2canvas";
+
+import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
 import {Oscilloscope} from "analog/models/eeobjects";
 import {NetlistAnalysis} from "analog/models/sim/Netlist";
 import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-import {useState} from "react";
-import {SetHasData, SetSimMappings} from "site/analog/state/Sim";
-import {useAnalogDispatch, useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
 
+import {useAnalogDispatch, useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
+import {SetHasData, SetSimMappings} from "site/analog/state/Sim";
 
 import "./index.scss";
 
+
+function HSLToHex(h: number, s: number, l: number) {
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) => {
+        const k = (n + h/30) % 12;
+        return Math.floor(255 * (l - a * Math.max(Math.min(k-3, 9-k, 1), -1)));
+    }
+    return ColorToHex({ r: f(0), g: f(8), b: f(4) });
+}
 
 type Props = {
     info: AnalogCircuitInfo;
@@ -48,7 +60,20 @@ export const SimButtons = ({ info }: Props) => {
 
                 // Add all current plots to all current Oscilloscopes
                 const o = info.designer.getObjects().filter(a => a instanceof Oscilloscope) as Oscilloscope[];
-                o.forEach(o => o.setEnabledVecs(info.sim!.getFullVecIDs()));
+                o.forEach(o => {
+                    o.setConfig({
+                        ...o.getConfig(),
+                        vecs: info.sim!.getFullVecIDs().reduce(
+                            (prev, key, i, arr) => ({
+                                ...prev,
+                                [key]: {
+                                    enabled: true,
+                                    color: HSLToHex(i*360/arr.length, 0.8, 0.45),
+                                },
+                            }), {}
+                        ),
+                    });
+                });
 
                 dispatch(SetHasData(true));
             }}>Sim</button>
