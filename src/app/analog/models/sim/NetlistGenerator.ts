@@ -6,7 +6,7 @@ import {AnalogNode} from "../AnalogNode";
 import {AnalogWire} from "../AnalogWire";
 import {Ground} from "../eeobjects";
 import {AnalogPort} from "../ports";
-import {Netlist} from "./Netlist";
+import {Netlist, NetlistAnalysis} from "./Netlist";
 
 
 type PathPart = AnalogWire | AnalogNode | AnalogPort; // <--- PORT !!
@@ -73,7 +73,8 @@ export type SimDataMappings = {
 }
 
 
-export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
+export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
+                                 circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
     const graph = CreateGraph(circuit.getGroup());
     if (!graph.isConnected()) // Assume circuit is fully connected for now
         throw new Error("Cannot convert non-fully-connected circuit to a Netlist!");
@@ -121,9 +122,7 @@ export function CircuitToNetlist(title: string, circuit: AnalogCircuitDesigner):
 
             values: e.getNetlistValues(),
         })),
-        analyses: [{
-            kind: "op",
-        }],
+        analyses: [analysis],
     };
 
     return [

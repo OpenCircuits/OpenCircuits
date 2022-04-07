@@ -17,15 +17,15 @@ export type NetlistElement = {
 export type NetlistOPAnalysis = {
     kind: "op";
 }
-export type NetlistDCSweepAnalysis = {
-    kind: "dc";
+// export type NetlistDCSweepAnalysis = {
+//     kind: "dc";
 
-    src: string;
+//     src: string;
 
-    start: string;
-    end: string;
-    step: string;
-}
+//     start: string;
+//     end: string;
+//     step: string;
+// }
 export type NetlistTranAnalysis = {
     kind: "tran";
 
@@ -38,7 +38,7 @@ export type NetlistTranAnalysis = {
 
 export type NetlistAnalysis =
     | NetlistOPAnalysis
-    | NetlistDCSweepAnalysis
+    // | NetlistDCSweepAnalysis
     | NetlistTranAnalysis;
 
 export type Netlist = {

@@ -19,7 +19,7 @@ const ConstInfo: GroupPropInfo = {
 
 const PulseInfo: GroupPropInfo = {
     type: "group",
-    isActive: (state) => (state["waveform"] === "PULSE"),
+    isActive: (state) => (state["waveform"] === "DC PULSE"),
     infos: {
         ...VoltageInfo("v1", "Low Voltage",  0),
         ...VoltageInfo( "V", "High Voltage", 5),
@@ -34,7 +34,7 @@ const PulseInfo: GroupPropInfo = {
 
 const SineInfo: GroupPropInfo = {
     type: "group",
-    isActive: (state) => (state["waveform"] === "SINE"),
+    isActive: (state) => (state["waveform"] === "DC SINE"),
     infos: {
         ...VoltageInfo("v1", "Offset Voltage", 0),
         ...VoltageInfo("V", "Amplitude Voltage", 5),
@@ -57,8 +57,8 @@ const Info = GenPropInfo([{
             initial: "DC",
             options: [
                 ["Const",  "DC"],
-                ["Square", "PULSE"],
-                ["Sine",   "SINE"],
+                ["Square", "DC PULSE"],
+                ["Sine",   "DC SINE"],
             ],
         },
     },
@@ -82,11 +82,11 @@ export class VoltageSource extends AnalogComponent {
     public override getNetlistValues() {
         const InfoMap = {
             "DC":    ConstInfo,
-            "PULSE": PulseInfo,
-            "SINE":  SineInfo,
+            "DC PULSE": PulseInfo,
+            "DC SINE":  SineInfo,
         };
 
-        const type = this.props["waveform"] as "DC"|"PULSE"|"SINE";
+        const type = this.props["waveform"] as "DC"|"DC PULSE"|"DC SINE";
 
         // Filter out unit keys
         const keys = Object.keys(InfoMap[type].infos).filter(key => !key.endsWith("_U"));
