@@ -43,6 +43,7 @@ export const SimButtons = ({ info }: Props) => {
         <div className="sim-buttons">
             <button disabled={!hasMappings} onClick={() => {
                 info.sim?.run();
+                info.renderer.render();
 
                 dispatch(SetHasData(true));
             }}>Sim</button>
