@@ -23,9 +23,6 @@ const Info: Record<string, PropInfo> = {
 
 @serializable("Oscilloscope")
 export class Oscilloscope extends AnalogComponent {
-    @serialize
-    private data: Record<string, number[]>;
-
     public constructor() {
         super(
             new ClampedValue(1),
@@ -41,10 +38,6 @@ export class Oscilloscope extends AnalogComponent {
             this.setSize(val as Vector);
             this.ports.updatePortPositions();
         }
-    }
-
-    public getData() {
-        return this.data;
     }
 
     public override getPropInfo(key: string): PropInfo {

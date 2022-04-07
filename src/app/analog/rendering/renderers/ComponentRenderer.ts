@@ -7,7 +7,6 @@ import {V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {Images}      from "core/utils/Images";
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Component} from "core/models/Component";
 
@@ -18,6 +17,7 @@ import {Style}     from "core/rendering/Style";
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
+import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope, Label} from "analog/models/eeobjects";
 
 import {OscilloscopeRenderer} from "./OscilloscopeRenderer";
@@ -40,7 +40,9 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, { camera, selections }: CircuitInfo, object: Component): void {
+        render(renderer: Renderer, info: AnalogCircuitInfo, object: Component): void {
+            const { camera, selections } = info;
+
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -78,7 +80,7 @@ export const ComponentRenderer = (() => {
 
             // Specific renderers
             if (object instanceof Oscilloscope)
-                OscilloscopeRenderer.render(renderer, camera, object, selected);
+                OscilloscopeRenderer.render(renderer, info, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
@@ -94,7 +96,7 @@ export const ComponentRenderer = (() => {
 
             renderer.restore();
         },
-        renderAll(renderer: Renderer, info: CircuitInfo, objects: Component[]): void {
+        renderAll(renderer: Renderer, info: AnalogCircuitInfo, objects: Component[]): void {
             for (const obj of objects)
                 ComponentRenderer.render(renderer, info, obj);
         },

@@ -1,5 +1,5 @@
 import {isNode} from "core/models";
-import {CreateGraph} from "core/utils/ComponentUtils";
+import {CreateGraph, IOObjectSet} from "core/utils/ComponentUtils";
 import {AnalogCircuitDesigner} from "../AnalogCircuitDesigner";
 import {AnalogComponent} from "../AnalogComponent";
 import {AnalogNode} from "../AnalogNode";
@@ -15,9 +15,7 @@ type Path = Set<PathPart>;
 
 // NOTE: need to account for multiple connections from a single Port
 //       which will technically be in the same Path
-function GetAllPaths(circuit: AnalogCircuitDesigner): Path[] {
-    const start = circuit.getWires()[0];
-
+function GetAllPaths(start: AnalogWire): Path[] {
     const paths = [] as Path[];
 
     const outgoingQueue = [start] as PathPart[];
@@ -75,11 +73,16 @@ export type SimDataMappings = {
 
 export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
                                  circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
-    const graph = CreateGraph(circuit.getGroup());
+    // Get elements, filtered by if they are valid NGSpice elements
+    const elements = circuit.getObjects().filter(a => !!a.getNetlistSymbol());
+    const grounds = circuit.getObjects().filter(a => a instanceof Ground);
+    const wires = circuit.getWires();
+
+    const graph = CreateGraph(new IOObjectSet([...elements, ...grounds, ...wires]));
     if (!graph.isConnected()) // Assume circuit is fully connected for now
         throw new Error("Cannot convert non-fully-connected circuit to a Netlist!");
 
-    const paths = GetAllPaths(circuit);
+    const paths = GetAllPaths(wires[0]);
 
     // Create unique IDs for each path to represent the node that each element
     //  is connected to since each path is electrically identical.
@@ -95,10 +98,6 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     const pathUIDs = new Map(paths.flatMap((s,i) => Array.from(s.values()).map((val) => [val, fullPathIDs[i]])));
 
     const elementConnections = new Map<AnalogComponent, [number, number]>();
-
-    // Get elements, filtered by if they are valid NGSpice elements
-    const elements = circuit.getObjects()
-        .filter(a => !!a.getNetlistSymbol());
     const elementUIDs = new Map(elements.map((e, i) => [e, i]));
 
     elements.forEach((comp) => {

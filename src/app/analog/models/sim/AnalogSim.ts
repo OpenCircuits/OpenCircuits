@@ -47,10 +47,10 @@ export class AnalogSim {
         this.lib.run();
 
         // Gather data (slice off end which has "const" plot/data)
-        this.plotIDs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string" }).slice(0, -1)
+        const plotIDPtrs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string*" }).slice(0, -1);
+        this.plotIDs = plotIDPtrs.map(ptr => this.lib.get_array(ptr, { type: "char" }));
         this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
         { // Get vec IDs
-            const plotIDPtrs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string*" }).slice(0, -1);
             this.vecIDs = plotIDPtrs.reduce((prev, plotIDPtr, i) => ({
                 ...prev,
                 [this.plotIDs[i]]:
@@ -64,7 +64,9 @@ export class AnalogSim {
 
                 const len = this.lib.get_vector_len(idPtr);
                 const data = this.lib.get_array(this.lib.get_vector_data(idPtr), { type: "double", len });
+
                 // TODO: free `idPtr`
+
                 return { ...prev, [id]: { len, data } };
             }, {});
         }
@@ -78,8 +80,12 @@ export class AnalogSim {
         return this.curPlotID;
     }
 
-    public getVecIDs(plot = this.getCurPlotID()) {
-        return this.vecIDs[plot];
+    public getVecIDs(plotID = this.getCurPlotID()) {
+        return this.vecIDs[plotID];
+    }
+
+    public getVecs(plotID = this.getCurPlotID()) {
+        return this.vecIDs[plotID].map(id => this.vecs[`${plotID}.${id}`]);
     }
 
     public getVecLen(id: keyof typeof this.vecs) {
