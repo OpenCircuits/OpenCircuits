@@ -2,8 +2,6 @@ import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
-
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
@@ -28,6 +26,7 @@ import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPrevie
 import {SimButtons}             from "site/analog/containers/SimButtons";
 
 import {PropertyModule} from "site/analog/containers/SelectionPopup/modules/PropertyModule";
+import {OscilloscopePlotsModule} from "../SelectionPopup/modules/OscilloscopePlotsModule";
 
 import exampleConfig from "site/analog/data/examples.json";
 import docsConfig from "site/analog/data/docsUrlConfig.json";
@@ -77,6 +76,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                                     docsUrlConfig={docsConfig}>
                         <PositionModule info={info} />
                         <PropertyModule info={info} />
+                        <OscilloscopePlotsModule info={info} />
                     </SelectionPopup>
 
                     <ContextMenu info={info}

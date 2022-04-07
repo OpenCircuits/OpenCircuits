@@ -14,57 +14,6 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
 
 
-function hash(str: string, digits?: number) {
-    digits = digits ?? 8;
-    const m = Math.pow(10, digits+1) - 1;
-    const phi = Math.pow(10, digits) / 2 - 1;
-    let n = 0;
-    for (let i = 0; i < str.length; i++) {
-        n = (n + phi * str.charCodeAt(i)) % m;
-    }
-    return n;
-}
-
-const randomColor = (() => {
-    const Rand = (seed: number) => {
-        let _seed = seed % 2147483647;
-        if (_seed <= 0) _seed += 2147483646;
-
-        const nextFloat = () => {
-            const next = _seed * 16807 % 2147483647;
-            _seed = next;
-            return (next - 1) / 2147483646
-        };
-
-        return {
-            randInt(min: number, max: number) {
-                return Math.floor(nextFloat() * (max - min + 1)) + min;
-            },
-        }
-    };
-
-    const startRand = Rand(Math.floor(Math.random() * 2147483647));
-
-    return (hash?: number) => {
-        const r = hash ? Rand(hash) : startRand;
-        const h = r.randInt(0, 360);
-        const s = r.randInt(42, 98);
-        const l = r.randInt(40, 90);
-        return `hsl(${h},${s}%,${l}%)`;
-    };
-})();
-
-// const randInt = (min: number, max: number) => {
-//     return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
-
-// const colors = Array(255).fill(0).map((_) => {
-//     const h = randInt(0, 360);
-//     const s = randInt(42, 98);
-//     const l = randInt(40, 90);
-//     return `hsl(${h},${s}%,${l}%)`;
-// });
-
 const selectColor = (val: number) => {
     return `hsl(${val*137.508}, 80%, 75%)`;
 }
@@ -72,7 +21,6 @@ const selectColor = (val: number) => {
 const selectColor2 = (i: number, numCols: number) => {
     return `hsl(${i*360/numCols}, 80%, 45%)`;
 }
-
 
 export const OscilloscopeRenderer = (() => {
     return {
@@ -91,15 +39,25 @@ export const OscilloscopeRenderer = (() => {
             const curPlot = info.sim.getCurPlotID();
             if (!curPlot)
                 return;
-            const allData = info.sim.getVecs(curPlot).map(p => p.data.map(d => -d));
+            const allData = o.getEnabledVecs().map(id => info.sim!.getVecData(id));
             if (!allData || Object.entries(allData).length === 0)
                 return;
 
             // Calculate offset to account for border/line widths
             const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
 
+            // Get sampled data
+            //  - uniformly spaced with `samples` number of points for performance
+            //    (also negate it since y is down in canvas-land)
+            const sampledData = allData.map((data) => {
+                const samples = Math.min(data.length, o.getProp("samples") as number);
+
+                return Array(samples).fill(0)
+                    .map((_, i) => -data[Math.floor(i * data.length / samples)]);
+            });
+
             // Find value range
-            const [minVal, maxVal] = Object.values(allData).reduce<[number, number]>(
+            const [minVal, maxVal] = sampledData.reduce<[number, number]>(
                 ([prevMin, prevMax], cur) =>
                     cur.reduce<[number,number]>(([prevMin, prevMax], cur) => [
                         Math.min(prevMin, cur),
@@ -108,39 +66,32 @@ export const OscilloscopeRenderer = (() => {
                 [Infinity, -Infinity]
             );
 
-
-
-
             // Draw signals graphs
             renderer.save();
             renderer.setPathStyle({ lineCap: "square" });
 
-            allData.forEach((data, i) => {
+            sampledData.forEach((data, i) => {
                 // Calculate y-scale with 0.05 padding on top/bottom
                 const yscale = size.y * 0.9 / (maxVal - minVal);
 
-                const samples = Math.min(data.length, o.getProp("samples") as number);
 
                 // Calculate the positions for each signal
-                const dx = (size.x - 2*offset)/(samples - 1);
+                const dx = (size.x - 2*offset)/(data.length - 1);
                 const dy = -(minVal + maxVal)/2;
-                const positions = Array(samples)
-                    .fill(0)
-                    // Get uniformly spaced data
-                    .map((_, i) => data[Math.floor(i*data.length/samples)])
+                const positions = data
                     .map((s, i) => V(
                         -size.x/2 + offset + i*dx, // x-position: linear space
                         (s + dy) * yscale          // y-position: based on signal value
                     ));
 
-                const color = selectColor2(i, allData.length);//colors[i];//randomColor(hash(key));
+                const color = selectColor2(i, sampledData.length);//colors[i];//randomColor(hash(key));
 
                 renderer.setStyle(new Style(undefined, color, GRAPH_LINE_WIDTH));
                 renderer.beginPath();
 
                 // Draw the graph
                 renderer.moveTo(positions[0]);
-                for (let s = 0; s < samples-1; s++)
+                for (let s = 0; s < data.length-1; s++)
                     renderer.lineWith(positions[s].add(dx, 0));
 
                 renderer.closePath();

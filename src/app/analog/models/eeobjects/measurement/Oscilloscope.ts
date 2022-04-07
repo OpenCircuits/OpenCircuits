@@ -1,4 +1,4 @@
-import {serializable, serialize} from "serialeazy";
+import {serializable} from "serialeazy";
 
 import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
@@ -23,12 +23,32 @@ const Info: Record<string, PropInfo> = {
 
 @serializable("Oscilloscope")
 export class Oscilloscope extends AnalogComponent {
+    private enabledVecs: Array<`${string}.${string}`>;
+
     public constructor() {
         super(
             new ClampedValue(1),
             V(400, 200), new SidePositioner("left"),
             GenInitialInfo(Info),
         );
+
+        this.enabledVecs = [];
+    }
+
+    public setEnabledVecs(plots: typeof this.enabledVecs) {
+        this.enabledVecs = plots;
+    }
+
+    public enableVec(key: `${string}.${string}`) {
+        this.enabledVecs.push(key);
+    }
+
+    public disableVec(key: `${string}.${string}`) {
+        this.enabledVecs.splice(this.enabledVecs.indexOf(key), 1);
+    }
+
+    public getEnabledVecs() {
+        return this.enabledVecs;
     }
 
     public override setProp(key: string, val: Prop): void {

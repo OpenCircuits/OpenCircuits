@@ -11,9 +11,9 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 type Props = {
     helpers: CircuitInfoHelpers;
 }
-export const AutoSaveToggle = ({helpers}: Props) => {
-    const {isLoggedIn, isSaved, autoSave} = useSharedSelector(
-        state => ({...state.user, isSaved: state.circuit.isSaved})
+export const AutoSaveToggle = ({ helpers }: Props) => {
+    const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
+        state => ({ ...state.user, isSaved: state.circuit.isSaved })
     );
     const dispatch = useSharedDispatch();
 
@@ -45,9 +45,10 @@ export const AutoSaveToggle = ({helpers}: Props) => {
      }, [isSaved, autoSave, isLoggedIn, helpers]);
 
     return (
-        <SwitchToggle isOn={autoSave}
-                      onChange={() => dispatch(SetAutoSave(!autoSave))}
-                      text={`Auto Save : ${isLoggedIn && autoSave ? "On" : "Off"}`}
-                      disabled={!isLoggedIn} />
+        <SwitchToggle
+            isOn={autoSave} disabled={!isLoggedIn}
+            onChange={() => dispatch(SetAutoSave(!autoSave))}>
+            {`Auto Save : ${isLoggedIn && autoSave ? "On" : "Off"}`}
+        </SwitchToggle>
     );
 }

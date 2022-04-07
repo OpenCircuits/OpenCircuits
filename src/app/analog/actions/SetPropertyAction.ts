@@ -21,22 +21,12 @@ export class SetPropertyAction implements Action {
         this.targetProp = prop;
     }
 
-    /**
-     * Set the label's color to the target color
-     *
-     * @returns This action
-     */
     public execute(): Action {
         this.component.setProp(this.propKey, this.targetProp);
 
         return this;
     }
 
-    /**
-     * Undo the change and reset the color of the label to initial color
-     *
-     * @returns This action
-     */
     public undo(): Action {
         this.component.setProp(this.propKey, this.initialProp);
 

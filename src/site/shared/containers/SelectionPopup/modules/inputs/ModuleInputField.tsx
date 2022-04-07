@@ -24,7 +24,7 @@ type State = {
     textVal: string;
     tempAction: Action | undefined;
 }
-type Types = string | number;
+type Types = string | number | boolean;
 type Props<V extends Types> = {
     props: V[];
 

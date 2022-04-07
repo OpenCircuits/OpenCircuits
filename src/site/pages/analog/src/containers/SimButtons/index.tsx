@@ -1,3 +1,4 @@
+import {Oscilloscope} from "analog/models/eeobjects";
 import {NetlistAnalysis} from "analog/models/sim/Netlist";
 import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -44,6 +45,10 @@ export const SimButtons = ({ info }: Props) => {
             <button disabled={!hasMappings} onClick={() => {
                 info.sim?.run();
                 info.renderer.render();
+
+                // Add all current plots to all current Oscilloscopes
+                const o = info.designer.getObjects().filter(a => a instanceof Oscilloscope) as Oscilloscope[];
+                o.forEach(o => o.setEnabledVecs(info.sim!.getFullVecIDs()));
 
                 dispatch(SetHasData(true));
             }}>Sim</button>

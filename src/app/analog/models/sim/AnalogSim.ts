@@ -84,6 +84,10 @@ export class AnalogSim {
         return this.vecIDs[plotID];
     }
 
+    public getFullVecIDs(plotID = this.getCurPlotID()) {
+        return this.getVecIDs().map(id => `${plotID}.${id}` as const);
+    }
+
     public getVecs(plotID = this.getCurPlotID()) {
         return this.vecIDs[plotID].map(id => this.vecs[`${plotID}.${id}`]);
     }
@@ -101,6 +105,10 @@ export class AnalogSim {
         // const vecDataPtr = this.lib.get_vector_data(idPtr);
         // return this.lib.get_array(vecDataPtr, { type: "double", len: this.getVecLen(id) });
         throw new Error("TODO");
+    }
+
+    public hasData() {
+        return !!this.curPlotID;
     }
 
     public printData() {

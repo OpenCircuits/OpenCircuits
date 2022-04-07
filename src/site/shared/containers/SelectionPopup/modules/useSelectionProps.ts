@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 
 import {Vector} from "Vector";
 
@@ -16,6 +16,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     info: CircuitInfo,
     validTypes: (s: Selectable) => s is V,
     getProps: (s: V) => T,
+    deps: React.DependencyList = [],
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<T> | undefined);
 
@@ -31,7 +32,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
             return;
         }
 
-        const allProps = filteredSelections.map(getProps);
+        const allProps = filteredSelections.map(s => getProps(s));
         if (allProps.length === 0) {
             setProps(undefined);
             return;
@@ -45,6 +46,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
             return;
         }
 
+
         const props = Object.fromEntries(
             keys.map((key: keyof T) => (
                 [key, allProps.map(p => p[key])] as const
@@ -52,7 +54,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
         ) as RecordOfArrays<T>;
 
         setProps(props);
-    }, []);
+    }, deps);
 
     useEffect(() => {
         info.history.addCallback(updateState);
