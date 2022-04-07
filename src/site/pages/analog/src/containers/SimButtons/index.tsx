@@ -21,6 +21,12 @@ function HSLToHex(h: number, s: number, l: number) {
     }
     return ColorToHex({ r: f(0), g: f(8), b: f(4) });
 }
+function GetCol(i: number, _len: number) {
+    const NiceColors = ["#c74440", "#2d70b3", "#388c46", "#fa7e19", "#6042a6", "#000000"];
+    if (i < NiceColors.length)
+        return NiceColors[i];
+    return HSLToHex(Math.random()*360, 0.8, 0.45);
+}
 
 type Props = {
     info: AnalogCircuitInfo;
@@ -67,8 +73,9 @@ export const SimButtons = ({ info }: Props) => {
                             (prev, key, i, arr) => ({
                                 ...prev,
                                 [key]: {
-                                    enabled: true,
-                                    color: HSLToHex(i*360/arr.length, 0.8, 0.45),
+                                    // Last data-array is x/time data, disabled by default
+                                    enabled: (i < arr.length-1),
+                                    color: GetCol(i, arr.length),
                                 },
                             }), {}
                         ),
@@ -92,7 +99,7 @@ export const SimButtons = ({ info }: Props) => {
                     setAnalysis({ kind: "op" });
                     return;
                 case "tran":
-                    setAnalysis({ kind: "tran", tstep: "1ms", tstop: "1s", tstart: "0", tmax: "1ms" })
+                    setAnalysis({ kind: "tran", tstep: "1ms", tstop: "1s", tstart: "0", tmax: "0ms" })
                 }
             }}>
                 <option value="" disabled hidden>Type</option>

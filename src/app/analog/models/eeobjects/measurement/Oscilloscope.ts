@@ -24,6 +24,7 @@ const Info: Record<string, PropInfo> = {
 export type ScopeConfig = {
     showAxes: boolean;
     showLegend: boolean;
+    showGrid: boolean;
     vecs: Record<`${string}.${string}`, {
         enabled: boolean;
         color: string;
@@ -44,6 +45,7 @@ export class Oscilloscope extends AnalogComponent {
         this.config = {
             showAxes: true,
             showLegend: true,
+            showGrid: true,
             vecs: {},
         };
     }

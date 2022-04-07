@@ -2,7 +2,8 @@ import {SELECTED_BORDER_COLOR,
         DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR,
         DEFAULT_BORDER_WIDTH,
-        GRAPH_LINE_WIDTH} from "core/utils/Constants";
+        GRAPH_LINE_WIDTH,
+        GRAPH_MARGIN} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -32,7 +33,7 @@ export const OscilloscopeRenderer = (() => {
             if (!curPlot)
                 return;
 
-            const { showAxes, showLegend, vecs } = o.getConfig();
+            const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
 
             const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter(id => vecs[id].enabled);
             const allData = enabledVecIDs.map(id => info.sim!.getVecData(id));
@@ -44,7 +45,7 @@ export const OscilloscopeRenderer = (() => {
             const xDataRaw = info.sim!.getVecData(info.sim!.getFullVecIDs()[info.sim!.getFullVecIDs().length-1]);
 
             // Calculate offset to account for border/line widths
-            const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
+            const offset = V(GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH).add(GRAPH_MARGIN);
 
             // Get sampled data
             //  - uniform samples of `xData`
@@ -68,14 +69,8 @@ export const OscilloscopeRenderer = (() => {
             );
 
             // Calculate scales and offsets
-            const scale = V(
-                (size.x - 2*offset) / (maxX   - minX),
-                 size.y * 0.9       / (maxVal - minVal)
-            );
-            const dpos = V(
-                -(maxX + minX)/2,
-                -(minVal + maxVal)/2
-            );
+            const scale = size.sub(offset).scale(V(1/(maxX - minX), 1/(maxVal - minVal)));
+            const dpos = V(maxX + minX, minVal + maxVal).scale(-1/2);
 
             // Draw signals graphs
             renderer.save();

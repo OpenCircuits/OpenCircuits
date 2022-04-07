@@ -21,6 +21,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         (o) => ({
             showAxes: o.getConfig().showAxes,
             showLegend: o.getConfig().showLegend,
+            showGrid: o.getConfig().showGrid,
             ...Object.fromEntries(
                 Object.entries(o.getConfig().vecs)
                     .map(([key, vecConfig]) => [`${key}_enabled`, vecConfig.enabled] as const)
@@ -32,6 +33,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         } as {
             showAxes: boolean;
             showLegend: boolean;
+            showGrid: boolean;
             [key: `${string}_enabled`]: boolean;
             [key: `${string}_color`]: string;
         }),
@@ -40,7 +42,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const { showAxes, showLegend, ...other } = props;
+    const { showAxes, showLegend, showGrid, ...other } = props;
 
     const otherKeys = Array.from(
         new Set(
@@ -63,6 +65,12 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
                     props={showLegend} text="Show Legend"
                     getAction={(showLegend) => new GroupAction(
                         os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showLegend }))
+                    )}
+                    onSubmit={() => { renderer.render(); forceUpdate(); }} />
+                <BooleanModuleInputField
+                    props={showGrid} text="Show Grid"
+                    getAction={(showGrid) => new GroupAction(
+                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showGrid }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
             </div>
