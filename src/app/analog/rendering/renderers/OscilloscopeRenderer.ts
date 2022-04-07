@@ -123,10 +123,15 @@ export const OscilloscopeRenderer = (() => {
 
                 // Calculate the positions for each signal
                 const dx = (size.x - 2*offset)/(samples - 1);
-                const positions = Array(samples).fill(0).map((_, i) => V(
-                    -size.x/2 + offset + i*dx, // x-position: linear space
-                    (data[Math.floor(i*data.length/samples)] - (minVal + maxVal)/2) * yscale // y-position: based on signal value
-                ));
+                const dy = -(minVal + maxVal)/2;
+                const positions = Array(samples)
+                    .fill(0)
+                    // Get uniformly spaced data
+                    .map((_, i) => data[Math.floor(i*data.length/samples)])
+                    .map((s, i) => V(
+                        -size.x/2 + offset + i*dx, // x-position: linear space
+                        (s + dy) * yscale          // y-position: based on signal value
+                    ));
 
                 const color = selectColor2(i, allData.length);//colors[i];//randomColor(hash(key));
 
