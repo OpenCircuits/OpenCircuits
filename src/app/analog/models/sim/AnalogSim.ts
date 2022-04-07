@@ -11,6 +11,14 @@ export class AnalogSim {
 
     private netlistPtrs: [number, ...number[]];
 
+    private plotIDs: string[];
+    private curPlotID: string;
+    private vecIDs: Record<string, string[]>;
+    private vecs: Record<`${string}.${string}`, {
+        len: number;
+        data: number[];
+    }>;
+
     public constructor(lib: NGSpiceLib) {
         this.lib = MakeInstance(lib);
     }
@@ -35,34 +43,51 @@ export class AnalogSim {
     }
 
     public run() {
+        // Happens sychronously which is fine for now but needs to change
         this.lib.run();
+
+        // Gather data (slice off end which has "const" plot/data)
+        this.plotIDs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string" }).slice(0, -1)
+        this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
+        { // Get vec IDs
+            const plotIDPtrs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string*" }).slice(0, -1);
+            this.vecIDs = plotIDPtrs.reduce((prev, plotIDPtr, i) => ({
+                ...prev,
+                [this.plotIDs[i]]:
+                    this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" }),
+            }), {});
+        }
+        { // Get vec data
+            const allIDs = this.plotIDs.flatMap(plotID => this.vecIDs[plotID].map(id => `${plotID}.${id}`));
+            this.vecs = allIDs.reduce((prev, id) => {
+                const idPtr = this.lib.create_array("string", id);
+
+                const len = this.lib.get_vector_len(idPtr);
+                const data = this.lib.get_array(this.lib.get_vector_data(idPtr), { type: "double", len });
+                // TODO: free `idPtr`
+                return { ...prev, [id]: { len, data } };
+            }, {});
+        }
     }
 
-    public getPlotIDs(): string[] {
-        const plotIDsPtr = this.lib.get_plot_ids();
-        return this.lib.get_array(plotIDsPtr, { type: "string" });
+    public getPlotIDs() {
+        return this.plotIDs;
     }
 
-    public getCurPlotID(): string {
-        const plotIDPtr = this.lib.get_cur_plot();
-        return this.lib.get_array(plotIDPtr, { type: "char" });
+    public getCurPlotID() {
+        return this.curPlotID;
     }
 
-    public getVecIDs(plot = this.getCurPlotID()): string[] {
-        const plotIDPtr = this.lib.create_array("string", plot);
-        const vecIDsPtr = this.lib.get_vector_ids(plotIDPtr);
-        return this.lib.get_array(vecIDsPtr, { type: "string" });
+    public getVecIDs(plot = this.getCurPlotID()) {
+        return this.vecIDs[plot];
     }
 
-    public getVecLen(id: string): number {
-        const idPtr = this.lib.create_array("string", id);
-        return this.lib.get_vector_len(idPtr);
+    public getVecLen(id: keyof typeof this.vecs) {
+        return this.vecs[id].len;
     }
 
-    public getVecData(id: string): number[] {
-        const idPtr = this.lib.create_array("string", id);
-        const vecDataPtr = this.lib.get_vector_data(idPtr);
-        return this.lib.get_array(vecDataPtr, { type: "double", len: this.getVecLen(id) });
+    public getVecData(id: keyof typeof this.vecs) {
+        return this.vecs[id].data;
     }
 
     public getVecDataIm(id: string): { re: number, im: number }[] {

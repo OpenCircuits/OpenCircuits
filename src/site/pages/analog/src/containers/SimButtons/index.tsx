@@ -76,7 +76,7 @@ export const SimButtons = ({ info }: Props) => {
                 console.log("cur", curPlot);
                 const vecs = info.sim?.getVecIDs(curPlot);
                 console.log("vecs", vecs);
-                const vecIDs = vecs?.map(v => `${curPlot}.${v}`);
+                const vecIDs = vecs?.map(v => `${curPlot!}.${v}` as const);
 
                 const dataLens = vecIDs?.map(id => info.sim?.getVecLen(id));
                 console.log(dataLens);

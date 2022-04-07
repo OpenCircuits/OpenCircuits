@@ -65,6 +65,9 @@ type GetArrayParams = {
     type: "string";
     len?: number;
 } | {
+    type: "string*";
+    len?: number;
+} | {
     type: "int";
     len: number;
 } | {
@@ -76,9 +79,7 @@ type GetArrayReturn<T> =
     ? string :
     T extends { type: "string" }
     ? string[] :
-    T extends { type: "int" }
-    ? number[] :
-    T extends { type: "double" }
+    T extends { type: "int"| "double" | "string*" }
     ? number[] : never;
 function GetArray<T extends GetArrayParams>(
     module: WASMModule,
@@ -96,7 +97,7 @@ function GetArray<T extends GetArrayParams>(
         const arr = module.HEAPU8.subarray(ptr, ptr + len);
         return new TextDecoder().decode(arr) as GetArrayReturn<T>;
     }
-    if (o.type === "string") {
+    if (o.type === "string" || o.type === "string*") {
         ptr = ptr / module.HEAPU32.BYTES_PER_ELEMENT;
         let len = o.len;
         if (!len) {
@@ -105,6 +106,8 @@ function GetArray<T extends GetArrayParams>(
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
+        if (o.type === "string*")
+            return Array.from(arr) as GetArrayReturn<T>;
         return Array.from(arr, ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
