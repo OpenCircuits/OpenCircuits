@@ -34,6 +34,7 @@ module.exports = {
             },
             "extendDefaults": true,
         }],
+        "no-case-declarations": "off",
         "camelcase": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/explicit-function-return-type": ["off"],

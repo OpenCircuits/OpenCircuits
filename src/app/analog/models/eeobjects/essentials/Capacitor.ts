@@ -3,28 +3,23 @@ import {serializable} from "serialeazy";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent, PropInfo} from "analog/models";
+import {AnalogComponent} from "analog/models";
+import {CapacitanceInfo} from "analog/models/Units";
+import {GenInitialInfo} from "analog/models/AnalogComponent";
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
+const Info = {
+    ...CapacitanceInfo("C", "Capacitance", 1, "u"),
+};
+
 @serializable("Capacitor")
 export class Capacitor extends AnalogComponent {
-    private static info: Record<string, PropInfo> = {
-        "capacitance": {
-            display: "Capacitance",
-            type: "float",
-            min: 0,
-        },
-    }
-
-    /**
-     * Initializes Switch with no input ports, a single output port, and predetermined sizes
-     */
     public constructor() {
         super(
             new ClampedValue(2),
             V(20, 60), new LeftRightPositioner(),
-            { "capacitance": 0.000001 }
+            GenInitialInfo(Info),
         );
     }
 
@@ -33,11 +28,11 @@ export class Capacitor extends AnalogComponent {
     }
 
     public override getNetlistValues() {
-        return [`${this.props["capacitance"]}`];
+        return [`${this.props["C"]}`];
     }
 
-    public getPropInfo(key: string): PropInfo {
-        return Capacitor.info[key];
+    public getPropInfo(key: string) {
+        return Info[key];
     }
 
     /**

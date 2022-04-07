@@ -1,8 +1,12 @@
+import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
 import {SetPropertyAction} from "analog/actions/SetPropertyAction";
-import {AnalogComponent, Prop, PropInfo} from "analog/models";
+
+import {AnalogComponent} from "analog/models";
+import {Prop, PropInfo} from "analog/models/AnalogComponent";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 import {TextModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
@@ -10,19 +14,23 @@ import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/in
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 import {ModuleSubmitInfo} from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
-import {Action} from "core/actions/Action";
 
 
-
-type IProps = {
+type PropInputFieldProps = {
+    propKey: string;
     info: PropInfo;
+
+    cs: AnalogComponent[];
+
     vals: string[] | number[] | boolean[];
+
     alt?: string;
+
     forceUpdate: () => void;
     getAction: (newVal: Prop) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
-const ModuleInputField = ({ info, vals, forceUpdate, ...otherProps }: IProps) => {
+const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherProps }: PropInputFieldProps) => {
     const { type } = info;
 
     switch (type) {
@@ -41,9 +49,38 @@ const ModuleInputField = ({ info, vals, forceUpdate, ...otherProps }: IProps) =>
                     }} />
     case "int":
     case "float":
-        return <NumberModuleInputField {...otherProps}
+        const unit = info.unit;
+        if (!unit) {
+            return <NumberModuleInputField {...otherProps}
+                        min={info.min} max={info.max} step={info.step}
+                        props={vals as number[]} />
+        }
+
+        const units = vals.map((_, i) => cs[i].getProp(`${propKey}_U`)) as string[];
+        const transformedVals = vals.map((v, i) => (v as number) / unit[units[i]].val);
+
+        // val is ALWAYS the unit value, and gets transformed on UI-end to unit-full value
+        return <div>
+            <span style={{ display: "inline-block", width: "70%" }}>
+                <NumberModuleInputField {...otherProps}
                     min={info.min} max={info.max} step={info.step}
-                    props={vals as number[]} />
+                    getAction={(newVal) => otherProps.getAction(newVal * unit[units[0]].val)}
+                    props={transformedVals} />
+            </span>
+            <span style={{ display: "inline-block", width: "30%" }}>
+                <SelectModuleInputField {...otherProps}
+                    kind="string[]" props={units}
+                    options={Object.entries(unit).map(([key, u]) => [u.display, key])}
+                    onSubmit={(info) => {
+                        otherProps.onSubmit(info);
+                        forceUpdate(); // Need to force update since these can trigger info-state changes
+                                       //  and feel less inituitive to the user about focus/blur
+                    }}
+                    getAction={(newVal) => new GroupAction(
+                        cs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
+                    )} />
+            </span>
+        </div>
     }
 }
 
@@ -88,8 +125,8 @@ export const PropertyModule = ({ info }: Props) => {
             <label>
             { info.readonly
                 ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0] : "-")
-                : <ModuleInputField
-                    info={info} vals={vals} forceUpdate={forceUpdate}
+                : <ModulePropInputField
+                    propKey={key} info={info} cs={cs} vals={vals} forceUpdate={forceUpdate}
                     getAction={(newVal) => new GroupAction(
                         cs.map(a => new SetPropertyAction(a, key, newVal))
                     )}

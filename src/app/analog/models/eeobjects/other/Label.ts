@@ -3,38 +3,37 @@ import {serializable} from "serialeazy";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent, PropInfo} from "analog/models/AnalogComponent";
+import {AnalogComponent, GenInitialInfo, PropInfo} from "analog/models/AnalogComponent";
 
+
+const Info: Record<string, PropInfo> = {
+    "color": {
+        type: "color",
+        display: "Color",
+        initial: "#ffffff",
+    },
+    "textColor": {
+        type: "color",
+        display: "Text Color",
+        initial: "#000000",
+    },
+};
 
 @serializable("Label")
 export class Label extends AnalogComponent {
-    private static info: Record<string, PropInfo> = {
-        "color": {
-            display: "Color",
-            type: "color",
-        },
-        "textColor": {
-            display: "Text Color",
-            type: "color",
-        },
-    }
-
     public constructor() {
         super(
             new ClampedValue(0),
             V(60, 30), undefined,
-            {
-                "color":  "#ffffff",
-                "textColor": "#000000",
-            }
+            GenInitialInfo(Info),
         );
     }
 
-    public getPropInfo(key: string): PropInfo {
-        return Label.info[key];
+    public override getPropInfo(key: string): PropInfo {
+        return Info[key];
     }
 
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "LABEL";
     }
 }

@@ -16,6 +16,13 @@ export const SimButtons = ({ info }: Props) => {
     );
     const dispatch = useAnalogDispatch();
 
+    // TODO:
+    // NOTE: Ngspice requires that the following topological constraints are satisfied:
+    //   > The circuit cannot contain a loop of voltage sources and/or inductors and cannot
+    //      contain a cut-set of current sources and/or capacitors.
+    //   > Each node in the circuit must have a dc path to ground.
+    //   > Every node must have at least two connections
+
     return (
         <div className="sim-buttons">
             <button disabled={!hasMappings} onClick={() => {

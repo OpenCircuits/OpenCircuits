@@ -3,21 +3,17 @@ import {serializable} from "serialeazy";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent, PropInfo} from "analog/models";
+import {AnalogComponent} from "analog/models";
+import {VoltageInfo, TimeInfo, AngleInfo, FrequencyInfo} from "analog/models/Units";
+import {GenInitialInfo, GenPropInfo, GroupPropInfo} from "analog/models/AnalogComponent";
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
-import {GenPropInfo, GroupPropInfo} from "analog/models/AnalogComponent";
-
-
 
 
 const ConstInfo: GroupPropInfo = {
     type: "group",
     isActive: (state) => (state["waveform"] === "DC"),
     infos: {
-        "voltage": {
-            display: "Voltage",
-            type: "float", min: 0,
-        },
+        ...VoltageInfo("V", "Voltage", 5),
     },
 };
 
@@ -25,39 +21,14 @@ const PulseInfo: GroupPropInfo = {
     type: "group",
     isActive: (state) => (state["waveform"] === "PULSE"),
     infos: {
-        "v1": {
-            display: "Low Voltage",
-            type: "float", min: 0,
-        },
-        "voltage": {
-            display: "High Voltage",
-            type: "float", min: 0,
-        },
-        "td": {
-            display: "Delay Time",
-            type: "float", min: 0,
-        },
-        "tr": {
-            display: "Rise Time",
-            type: "float", min: 0,
-        },
-        "tf": {
-            display: "Fall Time",
-            type: "float", min: 0,
-        },
-        "pw": {
-            display: "Pulse Width",
-            type: "float", min: 0,
-        },
-        "period": {
-            display: "Period",
-            type: "float", min: 0,
-        },
-        "phase": {
-            display: "Phase",
-            type: "float",
-            min: 0, max: 360, step: 1,
-        },
+        ...VoltageInfo("v1", "Low Voltage",  0),
+        ...VoltageInfo( "V", "High Voltage", 5),
+           ...TimeInfo("td", "Delay Time",   0),
+           ...TimeInfo("tr", "Rise Time",    0.01),
+           ...TimeInfo("tf", "Fall Time",    0.01),
+           ...TimeInfo("pw", "Pulse Width",  0.1),
+           ...TimeInfo( "p", "Period",       0.2),
+          ...AngleInfo("ph", "Phase",        0),
     },
 };
 
@@ -65,66 +36,42 @@ const SineInfo: GroupPropInfo = {
     type: "group",
     isActive: (state) => (state["waveform"] === "SINE"),
     infos: {
-        "v1": {
-            display: "Offset Voltage",
-            type: "float", min: 0,
-        },
-        "voltage": {
-            display: "Amplitude Voltage",
-            type: "float", min: 0,
-        },
+        ...VoltageInfo("v1", "Offset Voltage", 0),
+        ...VoltageInfo("V", "Amplitude Voltage", 5),
         // TODO: Add dependent variables
         //  so we can `period` and `frequency` which are inverses and update
         //  each-other as they update
-        "frequency": {
-            display: "Frequency",
-            type: "float", min: 0,
-        },
-        "td": {
-            display: "Delay Time",
-            type: "float", min: 0,
-        },
-        "theta": {
-            display: "Damping Factor",
-            type: "float", min: 0,
-        },
-        "phase": {
-            display: "Phase",
-            type: "float",
-            min: 0, max: 360, step: 1,
-        },
+        ...FrequencyInfo("f", "Frequency", 5),
+        ...TimeInfo("td", "Delay Time", 0),
+         "d": { display: "Damping Factor", initial: 0, type: "float", min: 0 },
+        ...AngleInfo("ph", "Phase", 0),
     },
 };
 
+const Info = GenPropInfo([{
+    type: "group",
+    infos: {
+        "waveform": { // Select
+            display: "Waveform",
+            type: "string[]",
+            initial: "DC",
+            options: [
+                ["Const",  "DC"],
+                ["Square", "PULSE"],
+                ["Sine",   "SINE"],
+            ],
+        },
+    },
+    subgroups: [ ConstInfo, PulseInfo, SineInfo ],
+}]);
 
 @serializable("VoltageSource")
 export class VoltageSource extends AnalogComponent {
-    private static info = GenPropInfo([{
-        type: "group",
-        infos: {
-            "waveform": { // Select
-                display: "Waveform",
-                type: "string[]",
-                options: [
-                    ["Const",  "DC"],
-                    ["Square", "PULSE"],
-                    ["Sine",   "SINE"],
-                ],
-            },
-        },
-        subgroups: [ ConstInfo, PulseInfo, SineInfo ],
-    }]);
-
     public constructor() {
         super(
             new ClampedValue(2),
             V(50, 50), new TopBottomPositioner(),
-            {
-                "waveform": "DC", "voltage": 5,
-                "v1": 0, "td": 0, "tr": 0.01, "tf": 0.01,
-                "pw": 0.1, "period": 0.2, "frequency": 5,
-                "phase": 0, "theta": 0,
-            }
+            GenInitialInfo(Info),
         );
     }
 
@@ -133,18 +80,22 @@ export class VoltageSource extends AnalogComponent {
     }
 
     public override getNetlistValues() {
-        const KeyMap = {
-            "DC":    Object.keys(ConstInfo.infos),
-            "PULSE": Object.keys(PulseInfo.infos),
-            "SINE":  Object.keys(SineInfo.infos),
+        const InfoMap = {
+            "DC":    ConstInfo,
+            "PULSE": PulseInfo,
+            "SINE":  SineInfo,
         };
 
-        const keys = KeyMap[this.props["waveform"] as "DC"|"PULSE"|"SINE"];
-        return [`${this.props["waveform"]}(${keys.map(k => this.props[k]!).join(" ")})`];
+        const type = this.props["waveform"] as "DC"|"PULSE"|"SINE";
+
+        // Filter out unit keys
+        const keys = Object.keys(InfoMap[type].infos).filter(key => !key.endsWith("_U"));
+
+        return [`${type}(${keys.map(k => this.props[k]!).join(" ")})`];
     }
 
-    public override getPropInfo(key: string): PropInfo {
-        return VoltageSource.info[key];
+    public override getPropInfo(key: string) {
+        return Info[key];
     }
 
     /**

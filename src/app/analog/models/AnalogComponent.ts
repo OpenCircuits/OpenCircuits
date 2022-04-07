@@ -12,6 +12,13 @@ import {AnalogCircuitDesigner, AnalogWire, AnalogPort} from "./index";
 import {NetlistElement} from "./sim/Netlist";
 
 
+export type UnitInfo = Record<string, {
+    name: string;
+    display: string;
+    val: number;
+}>;
+
+
 export type Prop = number | string | boolean;
 export type BasePropInfo = {
     readonly?: boolean;
@@ -21,19 +28,24 @@ export type BasePropInfo = {
 }
 export type NumberPropInfo = BasePropInfo & {
     type: "int" | "float";
+    initial: number;
+    unit?: UnitInfo;
     min?: number;
     max?: number;
     step?: number;
 }
 export type StringPropInfo = BasePropInfo & {
     type: "string";
-    constraint?: RegExp;
+    initial: string;
+    constraint?: RegExp; // TODO: use this
 }
 export type ColorPropInfo = BasePropInfo & {
     type: "color";
+    initial: string;
 }
 export type StringSelectPropInfo = BasePropInfo & {
     type: "string[]";
+    initial: string;
     options: Array<[
         string, // Display value
         string, // Option value
@@ -41,6 +53,7 @@ export type StringSelectPropInfo = BasePropInfo & {
 }
 export type NumberSelectPropInfo = BasePropInfo & {
     type: "number[]";
+    initial: number;
     options: Array<[
         string, // Display value
         number, // Option value
@@ -123,6 +136,14 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
     });
 
     return info;
+}
+
+
+export const GenInitialInfo = (info: Record<string, PropInfo>): Record<string, Prop> => {
+    return Object.fromEntries(
+        Object.entries(info)
+            .map(([key, info]) => [key, info.initial])
+    );
 }
 
 

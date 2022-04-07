@@ -1,5 +1,6 @@
 import {Action} from "core/actions/Action";
-import {AnalogComponent, Prop} from "analog/models";
+import {AnalogComponent} from "analog/models";
+import {Prop} from "analog/models/AnalogComponent";
 
 
 export class SetPropertyAction implements Action {

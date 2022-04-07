@@ -3,28 +3,23 @@ import {serializable} from "serialeazy";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent, PropInfo} from "analog/models";
+import {AnalogComponent} from "analog/models";
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
+import {ResistanceInfo} from "analog/models/Units";
+import {GenInitialInfo} from "analog/models/AnalogComponent";
 
+
+const Info = {
+    ...ResistanceInfo("R", "Resistance", 1, "k"),
+};
 
 @serializable("Resistor")
 export class Resistor extends AnalogComponent {
-    private static info: Record<string, PropInfo> = {
-        "resistance": {
-            display: "Resistance",
-            type: "float",
-            min: 0,
-        },
-    }
-
-    /**
-     * Initializes Switch with no input ports, a single output port, and predetermined sizes
-     */
     public constructor() {
         super(
             new ClampedValue(2),
             V(60, 50), new LeftRightPositioner(),
-            { "resistance": 1000 }
+            GenInitialInfo(Info),
         );
     }
 
@@ -33,18 +28,18 @@ export class Resistor extends AnalogComponent {
     }
 
     public override getNetlistValues() {
-        return [`${this.props["resistance"]}`];
+        return [`${this.props["R"]}`];
     }
 
-    public getPropInfo(key: string): PropInfo {
-        return Resistor.info[key];
+    public override getPropInfo(key: string) {
+        return Info[key];
     }
 
     /**
      * Returns name of Component
      * @returns "Resistor"
      */
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Resistor";
     }
 
@@ -52,7 +47,7 @@ export class Resistor extends AnalogComponent {
      * Returns name of image file
      * @returns "resistor.svg"
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "resistor.svg";
     }
 }
