@@ -1,10 +1,12 @@
 import {useCallback, useEffect, useState} from "react";
 
+import {Vector} from "Vector";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable} from "core/utils/Selectable";
 
 
-type BaseType = Record<string, string | number | boolean>;
+type BaseType = Record<string, string | number | Vector | boolean>;
 type ToArray<Type> = Type extends any ? Type[] : never;
 type RecordOfArrays<T extends BaseType> = {
     [Key in keyof T]: ToArray<T[Key]>;

@@ -44,6 +44,17 @@
         ]
       },
       {
+        "id": "measurements",
+        "label": "Measurements",
+        "items": [
+          {
+            "id": "Oscilloscope",
+            "label": "Oscillo-scope",
+            "icon": "oscilloscope.svg"
+          }
+        ]
+      },
+      {
         "id": "other",
         "label": "Other",
         "items": [

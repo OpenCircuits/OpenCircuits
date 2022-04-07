@@ -19,7 +19,7 @@ export type UnitInfo = Record<string, {
 }>;
 
 
-export type Prop = number | string | boolean;
+export type Prop = number | string | Vector | boolean;
 export type BasePropInfo = {
     readonly?: boolean;
     display: string | ((state: Record<string, Prop>) => string);
@@ -33,6 +33,13 @@ export type NumberPropInfo = BasePropInfo & {
     min?: number;
     max?: number;
     step?: number;
+}
+export type VectorPropInfo = BasePropInfo & {
+    type: "veci" | "vecf";
+    initial: Vector;
+    min?: Vector;
+    max?: Vector;
+    step?: Vector;
 }
 export type StringPropInfo = BasePropInfo & {
     type: "string";
@@ -61,7 +68,7 @@ export type NumberSelectPropInfo = BasePropInfo & {
 }
 export type PropInfo =
     | NumberPropInfo | StringPropInfo | ColorPropInfo
-    | StringSelectPropInfo | NumberSelectPropInfo;
+    | StringSelectPropInfo | NumberSelectPropInfo | VectorPropInfo;
 
 export type GroupPropInfo = {
     type: "group";

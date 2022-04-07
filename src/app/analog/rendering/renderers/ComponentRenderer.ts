@@ -18,7 +18,9 @@ import {Style}     from "core/rendering/Style";
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
-import {Label} from "analog/models/eeobjects/other/Label";
+import {Oscilloscope, Label} from "analog/models/eeobjects";
+
+import {OscilloscopeRenderer} from "./OscilloscopeRenderer";
 
 
 /**
@@ -73,6 +75,10 @@ export const ComponentRenderer = (() => {
 
                 renderer.text(object.getName(), V(), "center", object.getProp("textColor") as string);
             }
+
+            // Specific renderers
+            if (object instanceof Oscilloscope)
+                OscilloscopeRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);

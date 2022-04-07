@@ -1,3 +1,5 @@
+import {V, Vector} from "Vector";
+
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -22,7 +24,7 @@ type PropInputFieldProps = {
 
     cs: AnalogComponent[];
 
-    vals: string[] | number[] | boolean[];
+    vals: string[] | number[] | Vector[] | boolean[];
 
     alt?: string;
 
@@ -81,6 +83,23 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                     )} />
             </span>
         </div>
+    case "veci":
+    case "vecf":
+        const vvals = vals as Vector[];
+        return <>
+            <NumberModuleInputField {...otherProps}
+                min={info.min?.x} max={info.max?.x} step={info.step?.x}
+                getAction={(newVal) => new GroupAction(
+                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
+                )}
+                props={vvals.map(v => v.x)} />
+            <NumberModuleInputField {...otherProps}
+                min={info.min?.y} max={info.max?.y} step={info.step?.y}
+                getAction={(newVal) => new GroupAction(
+                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
+                )}
+                props={vvals.map(v => v.y)} />
+        </>
     }
 }
 
