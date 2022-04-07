@@ -11,7 +11,7 @@ const Info: Record<string, PropInfo> = {
     "samples": {
         type: "int",
         display: "Samples",
-        initial: 100, min: 0,
+        initial: 100, min: 0, step: 20,
     },
     "size": {
         type: "veci",
