@@ -42,6 +42,20 @@ export class Rect {
         this.height = newH;
     }
 
+    public intersects(rect: Rect): boolean {
+        return (rect.right  >= this.left  &&
+                rect.left   <= this.right &&
+                rect.top    <= this.top   &&
+                rect.bottom >= this.bottom);
+    }
+
+    public contains(pt: Vector): boolean {
+        return (pt.x <= this.right &&
+                pt.x >= this.left  &&
+                pt.y <= this.top   &&
+                pt.y >= this.bottom);
+    }
+
     public subMargin(margin: Margin) {
         const result = new Rect(this.center, this.size, (this.yIsUp === +1));
         result.left   += (margin.left  ?? 0);
@@ -49,6 +63,35 @@ export class Rect {
         result.bottom += this.yIsUp * (margin.bottom ?? 0);
         result.top    -= this.yIsUp * (margin.top    ?? 0);
         return result;
+    }
+    public sub(rect: Rect): Rect[] {
+        if (!this.intersects(rect))
+            return [];
+
+        return [
+            Rect.from({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top }),
+            Rect.from({ left: this.left,  right: rect.left,  top: rect.top,    bottom: rect.bottom }),
+            Rect.from({ left: this.left,  right: rect.left,  top: rect.bottom, bottom: this.bottom }),
+            Rect.from({ left: rect.left,  right: rect.right, top: this.top,    bottom: rect.top }),
+            Rect.from({ left: rect.left,  right: rect.right, top: rect.bottom, bottom: this.bottom }),
+            Rect.from({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top }),
+            Rect.from({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
+            Rect.from({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
+        ].filter(r => r.width > 0 && r.height > 0);
+    }
+
+    // Shifts sides given by amt
+    //  if dir.x < 0, shifts amt.x left
+    //  if dir.x > 0, shifts amt.x right
+    //  if dir.y < 0, shifts amt.y down
+    //  if dir.y > 0, shifts amt.y up
+    public shift(dir: Vector, amt: Vector): Rect {
+        return Rect.from({
+            left:   this.left   + (dir.x < 0 ? amt.x*dir.x : 0),
+            right:  this.right  + (dir.x > 0 ? amt.x*dir.x : 0),
+            top:    this.top    + (dir.y > 0 ? amt.y*dir.y : 0),
+            bottom: this.bottom + (dir.y < 0 ? amt.y*dir.y : 0),
+        });
     }
 
     public set left(left: number) {

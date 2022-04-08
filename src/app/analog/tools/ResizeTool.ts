@@ -1,20 +1,22 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V} from "Vector";
-
 import {Event} from "core/utils/Events";
 import {Action} from "core/actions/Action";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
 
-import {Edge, EdgeToCursor, FindEdge} from "./handlers/CursorHandler";
+import {AreaToCursor, FindEdge, ResizeArea} from "./handlers/CursorHandler";
 import {SetPropertyAction} from "analog/actions/SetPropertyAction";
+import {V, Vector} from "Vector";
+import {Rect} from "math/Rect";
+import {GroupAction} from "core/actions/GroupAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 
 export const ResizeTool = (() => {
-    let edge: Edge = "none";
+    let area: ResizeArea | undefined;
     let obj: Oscilloscope | undefined;
 
     let tempAction: Action | undefined;
@@ -25,7 +27,7 @@ export const ResizeTool = (() => {
             return (event.type === "mousedrag" &&
                     event.button === LEFT_MOUSE_BUTTON &&
                     info.input.getTouchCount() === 1 &&
-                    FindEdge(info)[0] !== "none");
+                    !!FindEdge(info)[0]);
         },
         shouldDeactivate(event: Event, _: AnalogCircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
@@ -33,9 +35,9 @@ export const ResizeTool = (() => {
         },
 
         onActivate(event: Event, info: AnalogCircuitInfo): void {
-            [edge, obj] = FindEdge(info);
+            [area, obj] = FindEdge(info);
 
-            info.cursor = EdgeToCursor[edge]; // Update cursor
+            info.cursor = AreaToCursor[area!]; // Update cursor
 
             if (event.type === "mousedrag")
                 this.onEvent(event, info); // Explicitly call drag event
@@ -43,12 +45,10 @@ export const ResizeTool = (() => {
         onDeactivate(_: Event, info: AnalogCircuitInfo): void {
             info.cursor = undefined;
 
-            const finalSize = obj!.getSize();
-            tempAction?.undo();
+            // Last temp action was final
+            info.history.add(tempAction!);
 
-            info.history.add(new SetPropertyAction(obj!, "size", finalSize).execute());
-
-            edge = "none";
+            area = undefined;
             obj = undefined;
             tempAction = undefined;
         },
@@ -57,18 +57,36 @@ export const ResizeTool = (() => {
             if (event.type !== "mousedrag")
                 return false;
 
-            const worldMousePos = camera.getWorldPos(input.getMousePos());
-
-            const originalSize = obj!.getSize();
-            const newSize = (worldMousePos.sub(obj!.getPos())).scale(2).abs();
+            const worldMousePos = camera.getWorldPos(input.getMousePos()).sub(camera.getWorldPos(input.getMouseDownPos()));
 
             // Undo previous temp action
             tempAction?.undo();
 
-            if (edge === "horizontal")
-                tempAction = new SetPropertyAction(obj!, "size", V(newSize.x, originalSize.y)).execute();
-            else if (edge === "vertical")
-                tempAction = new SetPropertyAction(obj!, "size", V(originalSize.x, newSize.y)).execute();
+            const DirMap: Record<ResizeArea, Vector> = {
+                "left":        V(-1,  0),
+                "right":       V( 1,  0),
+                "top":         V( 0, -1),
+                "bottom":      V( 0,  1),
+                "topleft":     V(-1, -1),
+                "topright":    V( 1, -1),
+                "bottomleft":  V(-1,  1),
+                "bottomright": V( 1,  1),
+            };
+
+            const curRect = new Rect(obj!.getPos(), obj!.getSize());
+
+            const dir = DirMap[area!];
+
+            // Shift each x/y direction separately so that corners work as expected
+            const amtX = worldMousePos.dot(V(dir.x, 0));
+            const amtY = worldMousePos.dot(V(0, dir.y));
+
+            const newRect = curRect.shift(dir, V(amtX, amtY));
+
+            tempAction = new GroupAction([
+                new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
+                new SetPropertyAction(obj!, "size", newRect.size),
+            ]).execute();
 
             // Return true since we did something
             //  that requires a re-render
