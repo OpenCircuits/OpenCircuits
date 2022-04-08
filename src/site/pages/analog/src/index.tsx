@@ -31,6 +31,9 @@ import {PasteHandler}         from "core/tools/handlers/PasteHandler";
 import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
+import {ResizeTool} from "analog/tools/ResizeTool";
+import {CursorHandler} from "analog/tools/handlers/CursorHandler";
+
 import "analog/models/eeobjects";
 
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
@@ -41,6 +44,7 @@ import {LoadingScreen} from "shared/utils/LoadingScreen";
 import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
+import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {Login} from "shared/state/thunks/User";
 
@@ -56,7 +60,6 @@ import {App} from "./containers/App";
 import ImageFiles from "./data/images.json";
 
 import NGSpice from "./lib/ngspice.wasm";
-import {LoadUserCircuit} from "shared/api/Circuits";
 
 
 async function Init(): Promise<void> {
@@ -148,11 +151,11 @@ async function Init(): Promise<void> {
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
                     SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                    CleanUpHandler, CopyHandler,
+                    CleanUpHandler, CopyHandler, CursorHandler,
                     PasteHandler((data) => AnalogPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
                 ]),
-                PanTool, RotateTool,
+                PanTool, RotateTool, ResizeTool,
                 TranslateTool, WiringTool,
                 SplitWireTool, SelectionBoxTool
             );

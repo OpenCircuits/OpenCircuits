@@ -1,10 +1,11 @@
-import {useLayoutEffect} from "react";
+import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
+import {Cursor} from "core/utils/CircuitInfo";
 
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
@@ -34,6 +35,8 @@ export const MainDesigner = ({ info, canvas }: Props) => {
 
     const { w, h } = useWindowSize();
 
+    const [ cursor, setCursor ] = useState(undefined as Cursor | undefined);
+
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
@@ -56,6 +59,10 @@ export const MainDesigner = ({ info, canvas }: Props) => {
         // Add input listener
         info.input.addListener((event) => {
             const change = toolManager.onEvent(event, info);
+
+            // Update cursor
+            setCursor(info.cursor);
+
             if (change) renderer.render();
         });
 
@@ -95,6 +102,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
             }}>
             <canvas
                 className="main__canvas"
+                style={{ cursor }}
                 width={w}
                 height={h-HEADER_HEIGHT} />
         </Droppable>

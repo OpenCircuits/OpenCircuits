@@ -64,6 +64,7 @@ export class Oscilloscope extends AnalogComponent {
 
         if (key === "size") {
             this.setSize(val as Vector);
+            this.onTransformChange();
             this.ports.updatePortPositions();
         }
     }
