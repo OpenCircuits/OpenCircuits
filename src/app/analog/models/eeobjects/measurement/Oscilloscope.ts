@@ -17,7 +17,7 @@ const Info: Record<string, PropInfo> = {
         type: "veci",
         display: "Display Size",
         initial: V(800, 400),
-        min: V(100, 100), step: V(100, 100),
+        min: V(400, 200), step: V(100, 100),
     },
 };
 

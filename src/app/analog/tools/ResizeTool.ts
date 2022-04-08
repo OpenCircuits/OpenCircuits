@@ -1,22 +1,26 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
-import {Action} from "core/actions/Action";
-
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-import {Oscilloscope} from "analog/models/eeobjects";
-
-import {AreaToCursor, FindEdge, ResizeArea} from "./handlers/CursorHandler";
-import {SetPropertyAction} from "analog/actions/SetPropertyAction";
 import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
+
+import {Event} from "core/utils/Events";
+import {Cursor} from "core/utils/CircuitInfo";
+
+import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
+import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
+import {SetPropertyAction} from "analog/actions/SetPropertyAction";
+
+import {Oscilloscope} from "analog/models/eeobjects";
+
+import {FindEdge} from "./handlers/CursorHandler";
 
 
 export const ResizeTool = (() => {
-    let area: ResizeArea | undefined;
+    let dir: Vector | undefined;
     let obj: Oscilloscope | undefined;
 
     let tempAction: Action | undefined;
@@ -35,9 +39,10 @@ export const ResizeTool = (() => {
         },
 
         onActivate(event: Event, info: AnalogCircuitInfo): void {
-            [area, obj] = FindEdge(info);
+            let cursor: Cursor | undefined;
+            [cursor, dir, obj] = FindEdge(info);
 
-            info.cursor = AreaToCursor[area!]; // Update cursor
+            info.cursor = cursor;
 
             if (event.type === "mousedrag")
                 this.onEvent(event, info); // Explicitly call drag event
@@ -48,7 +53,7 @@ export const ResizeTool = (() => {
             // Last temp action was final
             info.history.add(tempAction!);
 
-            area = undefined;
+            dir = undefined;
             obj = undefined;
             tempAction = undefined;
         },
@@ -57,35 +62,23 @@ export const ResizeTool = (() => {
             if (event.type !== "mousedrag")
                 return false;
 
-            const worldMousePos = camera.getWorldPos(input.getMousePos()).sub(camera.getWorldPos(input.getMouseDownPos()));
+            const worldMouseDiff = camera.getWorldPos(input.getMousePos())
+                                    .sub(camera.getWorldPos(input.getMouseDownPos()));
 
             // Undo previous temp action
             tempAction?.undo();
 
-            const DirMap: Record<ResizeArea, Vector> = {
-                "left":        V(-1,  0),
-                "right":       V( 1,  0),
-                "top":         V( 0, -1),
-                "bottom":      V( 0,  1),
-                "topleft":     V(-1, -1),
-                "topright":    V( 1, -1),
-                "bottomleft":  V(-1,  1),
-                "bottomright": V( 1,  1),
-            };
-
             const curRect = new Rect(obj!.getPos(), obj!.getSize());
 
-            const dir = DirMap[area!];
-
             // Shift each x/y direction separately so that corners work as expected
-            const amtX = worldMousePos.dot(V(dir.x, 0));
-            const amtY = worldMousePos.dot(V(0, dir.y));
+            const amtX = worldMouseDiff.dot(V(dir!.x, 0));
+            const amtY = worldMouseDiff.dot(V(0, dir!.y));
 
-            const newRect = curRect.shift(dir, V(amtX, amtY));
+            const newRect = curRect.shift(dir!, V(amtX, amtY));
 
             tempAction = new GroupAction([
                 new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
-                new SetPropertyAction(obj!, "size", newRect.size),
+                new SetPropertyAction(obj!, "size", Vector.max(V(400, 200), newRect.size)),
             ]).execute();
 
             // Return true since we did something

@@ -166,7 +166,8 @@ async function Init(): Promise<void> {
 
             // INITIAL STATE CAUSE IM TIRED OF DOING STUFF MANUALLY
             const user = store.getState().user;
-            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, user.circuits[0].getId()));
+            if (user.circuits.length > 0)
+                await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, user.circuits[0].getId()));
             // ----------------
 
             ReactDOM.render(

@@ -76,8 +76,10 @@ export const SimButtons = ({ info }: Props) => {
 
     // INITIALLY UPLOAD CAUSE IM TIRED OF DOING IT MANUALLY
     useEffect(() => {
-        Upload();
-        Simulate();
+        if (info.designer.getAll().length > 0) {
+            Upload();
+            Simulate();
+        }
     }, []);
     // --------------
 

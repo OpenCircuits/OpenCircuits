@@ -1,6 +1,6 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -18,7 +18,9 @@ export type ResizeArea = Edge | Corner;
 
 const EDGE_SIZE = DEFAULT_BORDER_WIDTH*5;
 
-export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undefined] | [ResizeArea, Oscilloscope] {
+const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map(s => `${s}-resize` as Cursor);
+
+export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undefined] | [Cursor, Vector, Oscilloscope] {
     const objs = designer.getObjects();
     const resizables = objs.filter(a => a instanceof Oscilloscope) as Oscilloscope[];
 
@@ -40,30 +42,22 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
         if (areaI === -1)
             continue;
 
-        const IndexMap: ResizeArea[] = [
-            "bottomleft", "left", "topleft", "bottom", "top", "bottomright", "right", "topright",
-        ];
+        const dPos = areas[areaI].center.sub(pos);
+        const dir = V(
+            Math.abs(dPos.x - 0) >= 1e-4 ? Math.sign(dPos.x) : 0,
+            Math.abs(dPos.y - 0) >= 1e-4 ? Math.sign(dPos.y) : 0
+        );
+        const cursor = CURSORS_MAP[areaI];
 
-        return [IndexMap[areaI], obj];
+        return [cursor, dir, obj];
     }
     return [undefined];
 }
 
-export const AreaToCursor: Record<ResizeArea, Cursor> = {
-    "left":        "w-resize",
-    "right":       "e-resize",
-    "top":         "n-resize",
-    "bottom":      "s-resize",
-    "topleft":     "nw-resize",
-    "topright":    "ne-resize",
-    "bottomleft":  "sw-resize",
-    "bottomright": "se-resize",
-};
-
 export const CursorHandler = ({
     conditions: (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
     getResponse: (info: AnalogCircuitInfo, _: Event) => {
-        const [area] = FindEdge(info);
-        info.cursor = area ? AreaToCursor[area] : undefined;
+        const [cursor] = FindEdge(info);
+        info.cursor = cursor;
     },
 });
