@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ColorToHex} from "svg2canvas";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -22,7 +22,7 @@ function HSLToHex(h: number, s: number, l: number) {
     return ColorToHex({ r: f(0), g: f(8), b: f(4) });
 }
 function GetCol(i: number, _len: number) {
-    const NiceColors = ["#c74440", "#2d70b3", "#388c46", "#fa7e19", "#6042a6", "#000000"];
+    const NiceColors = ["#c74440", "#2d70b3", "#388c46", "#fa7e19", "#6042a6"];
     if (i < NiceColors.length)
         return NiceColors[i];
     return HSLToHex(Math.random()*360, 0.8, 0.45);
@@ -37,7 +37,51 @@ export const SimButtons = ({ info }: Props) => {
         (state) => ({ name: state.circuit.name, ...state.sim })
     );
 
-    const [analysis, setAnalysis] = useState<NetlistAnalysis | undefined>(undefined);
+    const [analysis, setAnalysis] = useState<NetlistAnalysis | undefined>({
+        kind: "tran", tstep: "1ms", tstop: "1s", tstart: "0", tmax: "0ms",
+    });
+
+    const Simulate = () => {
+        info.sim?.run();
+        info.renderer.render();
+
+        // Add all current plots to all current Oscilloscopes
+        const o = info.designer.getObjects().filter(a => a instanceof Oscilloscope) as Oscilloscope[];
+        o.forEach(o => {
+            o.setConfig({
+                ...o.getConfig(),
+                vecs: info.sim!.getFullVecIDs().reduce(
+                    (prev, key, i, arr) => ({
+                        ...prev,
+                        [key]: {
+                            // Last data-array is x/time data, disabled by default
+                            enabled: (i < arr.length-1),
+                            color: GetCol(i, arr.length),
+                        },
+                    }), {}
+                ),
+            });
+        });
+
+        dispatch(SetHasData(true));
+    };
+
+    const Upload = () => {
+        const [netlist, data] = CircuitToNetlist(name, analysis!, info.designer);
+        info.sim?.uploadNetlist(netlist);
+
+        dispatch(SetSimMappings(data));
+    };
+
+
+    // INITIALLY UPLOAD CAUSE IM TIRED OF DOING IT MANUALLY
+    useEffect(() => {
+        Upload();
+        Simulate();
+    }, []);
+    // --------------
+
+
 
     // TODO:
     // NOTE: Ngspice requires that the following topological constraints are satisfied:
@@ -60,37 +104,9 @@ export const SimButtons = ({ info }: Props) => {
             ))}
         </div>}
         <div className="sim-buttons">
-            <button disabled={!hasMappings} onClick={() => {
-                info.sim?.run();
-                info.renderer.render();
+            <button disabled={!hasMappings} onClick={Simulate}>Sim</button>
 
-                // Add all current plots to all current Oscilloscopes
-                const o = info.designer.getObjects().filter(a => a instanceof Oscilloscope) as Oscilloscope[];
-                o.forEach(o => {
-                    o.setConfig({
-                        ...o.getConfig(),
-                        vecs: info.sim!.getFullVecIDs().reduce(
-                            (prev, key, i, arr) => ({
-                                ...prev,
-                                [key]: {
-                                    // Last data-array is x/time data, disabled by default
-                                    enabled: (i < arr.length-1),
-                                    color: GetCol(i, arr.length),
-                                },
-                            }), {}
-                        ),
-                    });
-                });
-
-                dispatch(SetHasData(true));
-            }}>Sim</button>
-
-            <button disabled={!analysis} onClick={() => {
-                const [netlist, data] = CircuitToNetlist(name, analysis!, info.designer);
-                info.sim?.uploadNetlist(netlist);
-
-                dispatch(SetSimMappings(data));
-            }}>Upload</button>
+            <button disabled={!analysis} onClick={Upload}>Upload</button>
 
             <select value={analysis?.kind ?? ""} onChange={(e) => {
                 const val = e.target.value as NetlistAnalysis["kind"];

@@ -56,6 +56,7 @@ import {App} from "./containers/App";
 import ImageFiles from "./data/images.json";
 
 import NGSpice from "./lib/ngspice.wasm";
+import {LoadUserCircuit} from "shared/api/Circuits";
 
 
 async function Init(): Promise<void> {
@@ -159,6 +160,11 @@ async function Init(): Promise<void> {
             info.history.addCallback(() => {
                 store.dispatch(SetCircuitSaved(false));
             });
+
+            // INITIAL STATE CAUSE IM TIRED OF DOING STUFF MANUALLY
+            const user = store.getState().user;
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, user.circuits[0].getId()));
+            // ----------------
 
             ReactDOM.render(
                 <React.StrictMode>

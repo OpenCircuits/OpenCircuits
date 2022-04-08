@@ -16,8 +16,8 @@ const Info: Record<string, PropInfo> = {
     "size": {
         type: "veci",
         display: "Display Size",
-        initial: V(400, 200),
-        min: V(50, 50), step: V(50, 50),
+        initial: V(800, 400),
+        min: V(100, 100), step: V(100, 100),
     },
 };
 
@@ -38,7 +38,8 @@ export class Oscilloscope extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(1),
-            V(400, 200), new SidePositioner("left"),
+            Info["size"].initial as Vector,
+            new SidePositioner("left"),
             GenInitialInfo(Info),
         );
 

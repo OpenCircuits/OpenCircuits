@@ -24,11 +24,11 @@ import {AppStore} from "../../state";
 
 export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: AnalogCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
-        LoadCircuit: async (getData) => {
+        LoadCircuit: async (getData, prompt = true) => {
             const { circuit } = store.getState();
 
             // Prompt to load
-            const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+            const open = circuit.isSaved || !prompt || (prompt && window.confirm(OVERWRITE_CIRCUIT_MESSAGE));
             if (!open) return;
 
             store.dispatch(_SetCircuitLoading(true));

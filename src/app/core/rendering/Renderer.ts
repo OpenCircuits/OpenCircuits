@@ -82,13 +82,18 @@ export class Renderer {
         img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
 
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000", font?: string): void {
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign,
+                color = "#000", font = FONT, textBaseline: CanvasTextBaseline = "middle", angle = 0): void {
         this.save();
-        this.context.font = font ?? FONT;
+        this.context.font = font;
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
-        this.context.textBaseline = "middle";
-        this.context.fillText(txt, pos.x, pos.y);
+        this.context.textBaseline = textBaseline;
+
+        this.translate(pos);
+        if (angle !== 0)
+            this.rotate(angle);
+        this.context.fillText(txt, 0, 0);
         this.restore();
     }
 
@@ -114,6 +119,14 @@ export class Renderer {
     public pathLine(p1: Vector, p2: Vector): void {
         this.moveTo(p1);
         this.lineTo(p2);
+    }
+    public strokePath(path: Vector[]): void {
+        this.beginPath();
+        this.moveTo(path[0]);
+        for (let s = 0; s < path.length-1; s++)
+            this.lineWith(path[s+1]);
+        this.closePath();
+        this.stroke();
     }
     public setPathStyle(style: Partial<Omit<CanvasPathDrawingStyles, "lineWidth" | "getLineDash" | "setLineDash">>): void {
         if (style.lineCap && style.lineCap !== this.context.lineCap)
