@@ -2,8 +2,12 @@ import {SELECTED_BORDER_COLOR,
         DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR,
         DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+import {GRID_LINE_COLOR} from "core/rendering/Styles";
 
 import {V} from "Vector";
+
+import {Margin, Rect} from "math/Rect";
+import {linspace, linspaceDX} from "math/MathUtils";
 
 import {Renderer} from "core/rendering/Renderer";
 import {Style} from "core/rendering/Style";
@@ -11,11 +15,11 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
-import {GRID_LINE_COLOR} from "core/rendering/Styles";
 
 
 const GRAPH_LINE_WIDTH = 1;
-const GRAPH_MARGIN = V(15, 15);
+
+const GRAPH_MARGIN = Margin(15, 15);
 
 const AXIS_MARK_FONT_SIZE = 12;
 const AXIS_LABEL_FONT_SIZE = 15;
@@ -27,6 +31,30 @@ const AXIS_MARK_LENGTH = 8;
 const AXIS_TEXT_PADDING = 4;
 const AXIS_PLOT_PADDING = 4;
 
+const AXIS_MARK_FONT = `lighter ${AXIS_MARK_FONT_SIZE}px arial`;
+const AXIS_LABEL_FONT = `lighter ${AXIS_LABEL_FONT_SIZE}px arial`;
+const AXIS_TEXT_OFFSET = AXIS_MARK_LENGTH/2 + AXIS_TEXT_PADDING;
+
+const LEGEND_MARGIN = 80;
+
+const AXES_INFO_MARGIN = Margin(
+    12 + AXIS_LABEL_FONT_SIZE*2 + AXIS_MARK_FONT_SIZE,
+    0,
+    12 + AXIS_LABEL_FONT_SIZE + AXIS_MARK_FONT_SIZE,
+    0,
+);
+
+const AXES_MARGIN = Margin(
+    AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING,
+    10,
+    AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING,
+    10,
+);
+
+
+function toShape(rect: Rect): Rectangle {
+    return new Rectangle(rect.center, rect.size);
+}
 
 export const OscilloscopeRenderer = (() => {
     return {
@@ -79,145 +107,131 @@ export const OscilloscopeRenderer = (() => {
                 [Infinity, -Infinity]
             );
 
-            // Calculate scales and offsets
-            let offset = { left: 0, right: 0, top: 0, bottom: 0 };
-            if (showAxes) {
-                offset.left += 20 + AXIS_LABEL_FONT_SIZE*2 + AXIS_MARK_FONT_SIZE;
-                offset.bottom += 20 + AXIS_LABEL_FONT_SIZE + AXIS_MARK_FONT_SIZE;
-                offset.top += 10;
-                offset.right += 10;
+            // Subdivide area into bounding box rectangles for each segment of the graph display
+            //   baseRect    : => Area for entire graph display
+            //   innerRect   : => Area for inner display, this essentially pads the entire display with whitespace
+            //   axesInfoRect: => Area for all the axes info + labels + grid + plot
+            //   axesGridRect: => Area just for axes + grid + plot
+            //   plotRect    : => Area just for the plot
+            //   legendRect  : => Area for the legend
+            const baseRect     = new Rect(V(0,0), size, false);
+            const innerRect    =     baseRect.subMargin(GRAPH_MARGIN);
+            const axesInfoRect =    innerRect.subMargin((showLegend ? { right: LEGEND_MARGIN } : {}));
+            const axesGridRect = axesInfoRect.subMargin((showAxes   ?         AXES_INFO_MARGIN : {}));
+            const plotRect     = axesGridRect.subMargin((showAxes   ?              AXES_MARGIN : {}));
+            const legendRect   =    innerRect.subMargin({ left: axesInfoRect.width });
+
+            // Debug drawing
+            if (info.debugOptions.debugSelectionBounds) {
+                renderer.draw(toShape(baseRect),       new Style("#999999", "#000000", 1));
+                renderer.draw(toShape(innerRect),      new Style("#ff0000", "#000000", 1));
+                renderer.draw(toShape(axesInfoRect),   new Style("#00ff00", "#000000", 1));
+                renderer.draw(toShape(axesGridRect),   new Style("#0000ff", "#000000", 1));
+                renderer.draw(toShape(plotRect),       new Style("#ff00ff", "#000000", 1));
+                renderer.draw(toShape(legendRect),     new Style("#00ffff", "#000000", 1));
             }
-            const graphSize = size // Size for graphable area: axes/legend/grid/plot
-                // Account for border/stroke-width
-                .sub(GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)
-                .sub(GRAPH_MARGIN.scale(2));
-            const plotSize = graphSize.sub(
-                V(offset.left + offset.right, offset.top + offset.bottom)
-            ); // Size for just plot area
-            const scale = plotSize.scale(V(1/(maxX - minX), 1/(maxVal - minVal)));
-            const dpos = V(maxX + minX, minVal + maxVal).scale(-1/2);
-            const plotOffset = V(offset.left - offset.right, offset.bottom - offset.top).scale(V(0.5, -0.5));
 
-            // DEBUG:
-            // renderer.draw(new Rectangle(V(), graphSize), new Style(undefined, "#eeeeee", 1));
-            // renderer.draw(new Rectangle(plotOffset, plotSize), new Style(undefined, "#ff00ff", 1));
+            if (showGrid)
+                drawGrid(axesGridRect, plotRect);
 
-            const numXMarks = Math.max(5, Math.ceil(AXIS_PTS * size.x));
-            const numYMarks = Math.max(5, Math.ceil(AXIS_PTS * size.y));
+            if (showAxes)
+                drawAxes(axesInfoRect, axesGridRect, plotRect);
 
-            const axisPadding = AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING;
-            const axesPositions = [
-                V(-graphSize.x/2 + offset.left - axisPadding, -graphSize.y/2),
-                V(-graphSize.x/2 + offset.left - axisPadding,  graphSize.y/2 - offset.bottom + axisPadding),
-                V( graphSize.x/2,                              graphSize.y/2 - offset.bottom + axisPadding),
-            ];
-            const x0 = axesPositions[0].x + axisPadding, xf = x0 + plotSize.x;
-            const y0 = axesPositions[0].y + offset.top, yf = y0 + plotSize.y;
+            drawGraphs(plotRect);
 
-            // Draw grid
-            if (showGrid) {
+            function getMarks(bounds: Rect) {
+                const num = V(
+                    Math.max(5, Math.ceil(AXIS_PTS * size.x)),
+                    Math.max(5, Math.ceil(AXIS_PTS * size.y))
+                );
+                return {
+                    xs: linspace(bounds.left, bounds.right, num.x),
+                    ys: linspace(bounds.bottom, bounds.top, num.y),
+                    xVals: linspace(minX,   maxX,   num.x).map(v => v.toFixed(2)),
+                    yVals: linspace(minVal, maxVal, num.y).map(v => v.toFixed(2)),
+                }
+            }
+
+            function drawGrid(bounds: Rect, innerBounds: Rect) {
                 renderer.save();
                 renderer.setPathStyle({ lineCap: "square" });
                 renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 0.5), 0.5);
 
-                const numGridMarksX = (GRID_PTS + 1) * numXMarks;
-                const numGridMarksY = (GRID_PTS + 1) * numYMarks;
+                const marks = getMarks(innerBounds);
 
-                const xGridPts = Array(numGridMarksX).fill(0).map((_, i, arr) => V(
-                    x0 + (xf - x0)*i/(arr.length-1),
-                    axesPositions[1].y
-                ));
-                const yGridPts = Array(numGridMarksY).fill(0).map((_, i, arr) => V(
-                    axesPositions[0].x,
-                    y0 + (yf - y0)*i/(arr.length-1),
-                ));
+                // We want to evenly space the grid such that it hits each axis-mark
+                //  and then has `GRID_PTS` number of lines in between each axis-mark
+                const dx = (marks.xs[1] - marks.xs[0]) / (GRID_PTS + 1);
+                const dy = (marks.ys[1] - marks.ys[0]) / (GRID_PTS + 1);
 
-                renderer.beginPath();
+                const xGridPts = linspaceDX(innerBounds.left,   bounds.right, dx);
+                const yGridPts = linspaceDX(innerBounds.bottom, bounds.top,   dy);
 
-                xGridPts.forEach((pt) => {
-                    renderer.pathLine(pt, pt.sub(0, plotSize.y + axisPadding + offset.top));
-                });
-                yGridPts.forEach((pt) => {
-                    renderer.pathLine(pt.add(plotSize.x + axisPadding + offset.right, 0), pt);
-                });
-
-                renderer.closePath()
-                renderer.stroke();
+                renderer.strokeVLines(xGridPts, bounds.bottom, bounds.height, "bottom");
+                renderer.strokeHLines(yGridPts, bounds.left,   bounds.width,  "left");
 
                 renderer.restore();
             }
 
-
-            // Draw axes
-            if (showAxes) {
+            function drawAxes(outerBounds: Rect, bounds: Rect, innerBounds: Rect) {
                 renderer.save();
                 renderer.setPathStyle({ lineCap: "square" });
                 renderer.setStyle(new Style(undefined, "#000000", 1));
 
-                renderer.strokePath(axesPositions);
+                // Draw each axis
+                renderer.strokePath([bounds.topLeft, bounds.bottomLeft, bounds.bottomRight]);
 
-                // Calculate all positions of x/y axis markings
-                const xAxisText = Array(numXMarks).fill(0).map((_, i, arr) => ({
-                    pos: V(x0 + (xf - x0)/(arr.length-1)*i, axesPositions[1].y),
-                    text: (minX + (maxX - minX)*i/(arr.length-1)).toFixed(2),
-                }));
-                const yAxisText = Array(numYMarks).fill(0).map((_, i, arr) => ({
-                    pos: V(axesPositions[0].x, y0 + (yf - y0)/(arr.length-1)*(arr.length-1-i)),
-                    text: (minVal + (maxVal - minVal)*i/(arr.length-1)).toFixed(2),
-                }));
+                const marks = getMarks(innerBounds);
 
-                // Draw marks on axes
-                renderer.beginPath();
-                xAxisText.forEach(({ pos }) => {
-                    renderer.pathLine(pos.add(0, -AXIS_MARK_LENGTH/2), pos.add(0, AXIS_MARK_LENGTH/2));
-                });
-                yAxisText.forEach(({ pos }) => {
-                    renderer.pathLine(pos.add(-AXIS_MARK_LENGTH/2, 0), pos.add(AXIS_MARK_LENGTH/2, 0));
-                });
-                renderer.closePath();
-                renderer.stroke();
+                // Create and draw marks on the axes
+                renderer.strokeVLines(marks.xs, bounds.bottom, AXIS_MARK_LENGTH, "middle");
+                renderer.strokeHLines(marks.ys, bounds.left,   AXIS_MARK_LENGTH, "center");
 
-                // Draw text on axes
-                const padding = AXIS_MARK_LENGTH/2 + AXIS_TEXT_PADDING;
-                const axisMarkFont = `lighter ${AXIS_MARK_FONT_SIZE}px arial`;
-                xAxisText.forEach(({ pos, text }) => {
-                    renderer.text(text, pos.add(0, padding), "center", "#000000", axisMarkFont, "top");
+                // Draw axis mark text
+                marks.xVals.forEach((text, i) => {
+                    const pos = V(marks.xs[i], bounds.bottom + AXIS_TEXT_OFFSET);
+                    renderer.text(text, pos, "center", "#000000", AXIS_MARK_FONT, "top");
                 });
-                yAxisText.forEach(({ pos, text }) => {
-                    renderer.text(text, pos.add(-padding, 0), "right", "#000000", axisMarkFont);
+                marks.yVals.forEach((text, i) => {
+                    const pos =  V(bounds.left - AXIS_TEXT_OFFSET, marks.ys[i]);
+                    renderer.text(text, pos, "right", "#000000", AXIS_MARK_FONT, "middle");
                 });
 
                 // Label axes
-                const axisLabelFont = `lighter ${AXIS_LABEL_FONT_SIZE}px arial`;
-                const xLabelPos = V((xf + x0)/2, graphSize.y/2);
-                const yLabeLpos = V(-graphSize.x/2, (yf + y0)/2);
-                renderer.text("time (s)", xLabelPos, "center", "#000000", axisLabelFont, "bottom");
-                renderer.text("Voltage (V)", yLabeLpos, "center", "#000000", axisLabelFont, "top", -Math.PI/2);
+                const xLabelPos = V(innerBounds.x, outerBounds.bottom);
+                const yLabelPos = V(outerBounds.left, innerBounds.y);
+                renderer.text("time (s)",    xLabelPos, "center", "#000000", AXIS_LABEL_FONT, "bottom");
+                renderer.text("Voltage (V)", yLabelPos, "center", "#000000", AXIS_LABEL_FONT, "top", -Math.PI/2);
 
                 renderer.restore();
             }
 
+            function drawGraphs(bounds: Rect) {
+                renderer.save();
+                renderer.setPathStyle({ lineCap: "round" });
 
-
-            // Draw signals graphs
-            renderer.save();
-            renderer.setPathStyle({ lineCap: "round" });
-
-            sampledData.forEach((data, i) => {
-                // Calculate the positions for each signal
-                const positions = data.map(
-                    // Negate data-y-value since y is down in canvas-land
-                    (s, i) => V(xData[i], minVal + maxVal - s).add(dpos).scale(scale).add(plotOffset),
+                const dataBounds = new Rect(
+                    V(maxX + minX, maxVal + minVal).scale(V(0.5, -0.5)),
+                    V(maxX - minX, maxVal - minVal)
                 );
+                const scale = V(bounds.width / dataBounds.width, bounds.height / dataBounds.height);
 
-                const color = vecs[enabledVecIDs[i]].color;
+                sampledData.forEach((data, i) => {
+                    // Calculate position for each data point
+                    const positions = data.map(
+                        (s, i) => V(xData[i], -s)
+                            .sub(dataBounds.center)
+                            .scale(scale)
+                            .add(bounds.center)
+                    );
+                    const color = vecs[enabledVecIDs[i]].color;
 
-                renderer.setStyle(new Style(undefined, color, GRAPH_LINE_WIDTH));
+                    renderer.setStyle(new Style(undefined, color, GRAPH_LINE_WIDTH));
+                    renderer.strokePath(positions);
+                });
 
-                renderer.strokePath(positions);
-            });
-
-            renderer.restore();
+                renderer.restore();
+            }
         },
     }
 })();

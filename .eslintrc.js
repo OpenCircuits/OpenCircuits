@@ -68,6 +68,7 @@ module.exports = {
         "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
         "@typescript-eslint/no-angle-bracket-type-assertion": "off",
         "no-array-constructor": "off",
+        "@typescript-eslint/adjacent-overload-signatures": "off",
         "@typescript-eslint/no-array-constructor": "error",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "warn",

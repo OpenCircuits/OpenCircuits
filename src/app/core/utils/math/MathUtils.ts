@@ -358,3 +358,29 @@ export function DecimalToBCD(decimal: number): boolean[] {
     }
     return result;
 }
+
+/**
+ * Creates a "linear space" or uniform/collocated grid from [x0, xf] with n points
+ *  uniformly between them
+ *
+ * @param x0 Start point (inclusive)
+ * @param xf End point (inclusive)
+ * @param n  The number of points in the space
+ * @returns An array of n uniform points on the domain [x0, xf]
+ */
+export function linspace(x0: number, xf: number, n: number) {
+    return Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
+}
+
+/**
+ * Creates a "linear space" or uniform/staggered grid from [x0, xf) with spacing dx
+ *
+ * @param x0 Start point (inclusive)
+ * @param xf End point (exclusive)
+ * @param dx The spacing between each point
+ * @returns An array of n uniform points on the domain [x0, xf)
+ */
+export function linspaceDX(x0: number, xf: number, dx: number) {
+    const N = Math.ceil((xf - x0) / dx);
+    return Array(N).fill(0).map((_, i) => x0 + dx * i);
+}
