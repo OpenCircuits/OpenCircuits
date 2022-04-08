@@ -93,7 +93,7 @@ $historybox-width: 250px;
         border: 1px solid $secondary-color;
         border-radius: 7px;
 
-        // position: relative;
+        position: relative;
 
         cursor: pointer;
 
@@ -105,9 +105,8 @@ $historybox-width: 250px;
             text-align: left;
 
             &__icon {
-                // left: 5px;
-                // position: absolute;
-                float: left;
+                left: 5px;
+                position: absolute;
                 vertical-align: middle;
             }
         }
