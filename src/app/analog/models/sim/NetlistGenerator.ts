@@ -75,10 +75,11 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
                                  circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
     // Get elements, filtered by if they are valid NGSpice elements
     const elements = circuit.getObjects().filter(a => !!a.getNetlistSymbol());
-    const grounds = circuit.getObjects().filter(a => a instanceof Ground);
+    const nodes    = circuit.getObjects().filter(a => a instanceof AnalogNode);
+    const grounds  = circuit.getObjects().filter(a => a instanceof Ground);
     const wires = circuit.getWires();
 
-    const graph = CreateGraph(new IOObjectSet([...elements, ...grounds, ...wires]));
+    const graph = CreateGraph(new IOObjectSet([...elements, ...nodes, ...grounds, ...wires]));
     if (!graph.isConnected()) // Assume circuit is fully connected for now
         throw new Error("Cannot convert non-fully-connected circuit to a Netlist!");
 

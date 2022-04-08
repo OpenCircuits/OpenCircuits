@@ -38,7 +38,7 @@ export const SimButtons = ({ info }: Props) => {
     );
 
     const [analysis, setAnalysis] = useState<NetlistAnalysis | undefined>({
-        kind: "tran", tstep: "1ms", tstop: "1s", tstart: "0", tmax: "0ms",
+        kind: "tran", tstep: "1ms", tstop: "0.45s", tstart: "0", tmax: "0ms",
     });
 
     const Simulate = () => {
