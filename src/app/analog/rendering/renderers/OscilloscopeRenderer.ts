@@ -11,6 +11,7 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
+import {GRID_LINE_COLOR} from "core/rendering/Styles";
 
 
 const GRAPH_LINE_WIDTH = 1;
@@ -20,6 +21,8 @@ const AXIS_MARK_FONT_SIZE = 12;
 const AXIS_LABEL_FONT_SIZE = 15;
 
 const AXIS_PTS = 5 / 400; // 5 pts / 400 units of size
+const GRID_PTS = 2; // (N+1) grid points / 1 axis pt
+
 const AXIS_MARK_LENGTH = 8;
 const AXIS_TEXT_PADDING = 4;
 const AXIS_PLOT_PADDING = 4;
@@ -99,43 +102,77 @@ export const OscilloscopeRenderer = (() => {
             // renderer.draw(new Rectangle(V(), graphSize), new Style(undefined, "#eeeeee", 1));
             // renderer.draw(new Rectangle(plotOffset, plotSize), new Style(undefined, "#ff00ff", 1));
 
+            const numXMarks = Math.max(5, Math.ceil(AXIS_PTS * size.x));
+            const numYMarks = Math.max(5, Math.ceil(AXIS_PTS * size.y));
+
+            const axisPadding = AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING;
+            const axesPositions = [
+                V(-graphSize.x/2 + offset.left - axisPadding, -graphSize.y/2),
+                V(-graphSize.x/2 + offset.left - axisPadding,  graphSize.y/2 - offset.bottom + axisPadding),
+                V( graphSize.x/2,                              graphSize.y/2 - offset.bottom + axisPadding),
+            ];
+            const x0 = axesPositions[0].x + axisPadding, xf = x0 + plotSize.x;
+            const y0 = axesPositions[0].y + offset.top, yf = y0 + plotSize.y;
+
+            // Draw grid
+            if (showGrid) {
+                renderer.save();
+                renderer.setPathStyle({ lineCap: "square" });
+                renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 0.5), 0.5);
+
+                const numGridMarksX = (GRID_PTS + 1) * numXMarks;
+                const numGridMarksY = (GRID_PTS + 1) * numYMarks;
+
+                const xGridPts = Array(numGridMarksX).fill(0).map((_, i, arr) => V(
+                    x0 + (xf - x0)*i/(arr.length-1),
+                    axesPositions[1].y
+                ));
+                const yGridPts = Array(numGridMarksY).fill(0).map((_, i, arr) => V(
+                    axesPositions[0].x,
+                    y0 + (yf - y0)*i/(arr.length-1),
+                ));
+
+                renderer.beginPath();
+
+                xGridPts.forEach((pt) => {
+                    renderer.pathLine(pt, pt.sub(0, plotSize.y + axisPadding + offset.top));
+                });
+                yGridPts.forEach((pt) => {
+                    renderer.pathLine(pt.add(plotSize.x + axisPadding + offset.right, 0), pt);
+                });
+
+                renderer.closePath()
+                renderer.stroke();
+
+                renderer.restore();
+            }
+
+
             // Draw axes
             if (showAxes) {
                 renderer.save();
                 renderer.setPathStyle({ lineCap: "square" });
                 renderer.setStyle(new Style(undefined, "#000000", 1));
 
-                const axisPadding = AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING;
-                const positions = [
-                    V(-graphSize.x/2 + offset.left - axisPadding, -graphSize.y/2),
-                    V(-graphSize.x/2 + offset.left - axisPadding,  graphSize.y/2 - offset.bottom + axisPadding),
-                    V( graphSize.x/2,                              graphSize.y/2 - offset.bottom + axisPadding),
-                ];
-
-                renderer.strokePath(positions);
+                renderer.strokePath(axesPositions);
 
                 // Calculate all positions of x/y axis markings
-                const numXMarks = Math.max(5, Math.ceil(AXIS_PTS * size.x));
-                const numYMarks = Math.max(5, Math.ceil(AXIS_PTS * size.y));
-
-                const y0 = positions[0].y + offset.top, yf = y0 + plotSize.y;
-                const yAxisText = Array(numYMarks).fill(0).map((_, i, arr) => ({
-                    pos: V(positions[0].x, y0 + (yf - y0)/(arr.length-1)*(arr.length-1-i)),
-                    text: (minVal + (maxVal - minVal)*i/(arr.length-1)).toFixed(2),
-                }));
-                const x0 = positions[0].x + axisPadding, xf = x0 + plotSize.x;
                 const xAxisText = Array(numXMarks).fill(0).map((_, i, arr) => ({
-                    pos: V(x0 + (xf - x0)/(arr.length-1)*i, positions[1].y),
+                    pos: V(x0 + (xf - x0)/(arr.length-1)*i, axesPositions[1].y),
                     text: (minX + (maxX - minX)*i/(arr.length-1)).toFixed(2),
+                }));
+                const yAxisText = Array(numYMarks).fill(0).map((_, i, arr) => ({
+                    pos: V(axesPositions[0].x, y0 + (yf - y0)/(arr.length-1)*(arr.length-1-i)),
+                    text: (minVal + (maxVal - minVal)*i/(arr.length-1)).toFixed(2),
                 }));
 
                 // Draw marks on axes
                 renderer.beginPath();
-                yAxisText.forEach(({ pos }) => {
-                    renderer.pathLine(pos.add(-AXIS_MARK_LENGTH/2, 0), pos.add(AXIS_MARK_LENGTH/2, 0));
-                });
                 xAxisText.forEach(({ pos }) => {
                     renderer.pathLine(pos.add(0, -AXIS_MARK_LENGTH/2), pos.add(0, AXIS_MARK_LENGTH/2));
+                });
+                yAxisText.forEach(({ pos }) => {
+                    renderer.pathLine(pos.add(-AXIS_MARK_LENGTH/2, 0), pos.add(AXIS_MARK_LENGTH/2, 0));
                 });
                 renderer.closePath();
                 renderer.stroke();
@@ -143,11 +180,11 @@ export const OscilloscopeRenderer = (() => {
                 // Draw text on axes
                 const padding = AXIS_MARK_LENGTH/2 + AXIS_TEXT_PADDING;
                 const axisMarkFont = `lighter ${AXIS_MARK_FONT_SIZE}px arial`;
-                yAxisText.forEach(({ pos, text }) => {
-                    renderer.text(text, pos.add(-padding, 0), "right", "#000000", axisMarkFont);
-                });
                 xAxisText.forEach(({ pos, text }) => {
                     renderer.text(text, pos.add(0, padding), "center", "#000000", axisMarkFont, "top");
+                });
+                yAxisText.forEach(({ pos, text }) => {
+                    renderer.text(text, pos.add(-padding, 0), "right", "#000000", axisMarkFont);
                 });
 
                 // Label axes
@@ -159,6 +196,7 @@ export const OscilloscopeRenderer = (() => {
 
                 renderer.restore();
             }
+
 
 
             // Draw signals graphs
