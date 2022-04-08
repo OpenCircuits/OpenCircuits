@@ -146,4 +146,12 @@ export class Rect {
     public get height() {
         return this.size.y;
     }
+
+    public static from(bounds: Required<Margin>, yIsUp = true): Rect {
+        return new Rect(
+            V(bounds.right + bounds.left, bounds.top + bounds.bottom).scale(V(0.5, (yIsUp ? 0.5 : -0.5))),
+            V(bounds.right - bounds.left, bounds.top - bounds.bottom),
+            yIsUp
+        );
+    }
 }

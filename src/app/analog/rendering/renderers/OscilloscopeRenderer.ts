@@ -19,23 +19,17 @@ import {Oscilloscope} from "analog/models/eeobjects";
 
 const GRAPH_LINE_WIDTH = 1;
 
-const GRAPH_MARGIN = Margin(15, 15);
+const DISPLAY_PADDING = Margin(15, 15);
 
+const AXIS_PTS = 5 / 400; // 5 pts / 400 units of size
 const AXIS_MARK_FONT_SIZE = 12;
 const AXIS_LABEL_FONT_SIZE = 15;
 
-const AXIS_PTS = 5 / 400; // 5 pts / 400 units of size
-const GRID_PTS = 2; // (N+1) grid points / 1 axis pt
-
 const AXIS_MARK_LENGTH = 8;
-const AXIS_TEXT_PADDING = 4;
-const AXIS_PLOT_PADDING = 4;
 
 const AXIS_MARK_FONT = `lighter ${AXIS_MARK_FONT_SIZE}px arial`;
 const AXIS_LABEL_FONT = `lighter ${AXIS_LABEL_FONT_SIZE}px arial`;
-const AXIS_TEXT_OFFSET = AXIS_MARK_LENGTH/2 + AXIS_TEXT_PADDING;
-
-const LEGEND_MARGIN = 80;
+const AXIS_TEXT_OFFSET = AXIS_MARK_LENGTH/2 + 4;
 
 const AXES_INFO_MARGIN = Margin(
     12 + AXIS_LABEL_FONT_SIZE*2 + AXIS_MARK_FONT_SIZE,
@@ -43,13 +37,22 @@ const AXES_INFO_MARGIN = Margin(
     12 + AXIS_LABEL_FONT_SIZE + AXIS_MARK_FONT_SIZE,
     0,
 );
-
 const AXES_MARGIN = Margin(
-    AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING,
+    AXIS_MARK_LENGTH/2 + 4,
     10,
-    AXIS_MARK_LENGTH/2 + AXIS_PLOT_PADDING,
+    AXIS_MARK_LENGTH/2 + 4,
     10,
 );
+
+
+const GRID_PTS = 2; // (N+1) grid points / 1 axis pt
+
+const LEGEND_AREA = 100;
+const LEGEND_PADDING = Margin(10, 10, 0, 0);
+const LEGEND_TITLE_FONT_SIZE = 15;
+const LEGEND_ENTRY_FONT_SIZE = 10;
+const LEGEND_TITLE_FONT = `normal ${LEGEND_TITLE_FONT_SIZE}px arial`;
+const LEGEND_ENTRY_FONT = `lighter ${LEGEND_ENTRY_FONT_SIZE}px arial`;
 
 
 function toShape(rect: Rect): Rectangle {
@@ -115,11 +118,11 @@ export const OscilloscopeRenderer = (() => {
             //   plotRect    : => Area just for the plot
             //   legendRect  : => Area for the legend
             const baseRect     = new Rect(V(0,0), size, false);
-            const innerRect    =     baseRect.subMargin(GRAPH_MARGIN);
-            const axesInfoRect =    innerRect.subMargin((showLegend ? { right: LEGEND_MARGIN } : {}));
-            const axesGridRect = axesInfoRect.subMargin((showAxes   ?         AXES_INFO_MARGIN : {}));
-            const plotRect     = axesGridRect.subMargin((showAxes   ?              AXES_MARGIN : {}));
-            const legendRect   =    innerRect.subMargin({ left: axesInfoRect.width });
+            const innerRect    =     baseRect.subMargin(DISPLAY_PADDING);
+            const axesInfoRect =    innerRect.subMargin((showLegend ? { right: LEGEND_AREA } : {}));
+            const axesGridRect = axesInfoRect.subMargin((showAxes   ?       AXES_INFO_MARGIN : {}));
+            const plotRect     = axesGridRect.subMargin((showAxes   ?            AXES_MARGIN : {}));
+            const legendRect   =    innerRect.subMargin({ left: axesInfoRect.width }).subMargin(LEGEND_PADDING);
 
             // Debug drawing
             if (info.debugOptions.debugSelectionBounds) {
@@ -138,6 +141,9 @@ export const OscilloscopeRenderer = (() => {
                 drawAxes(axesInfoRect, axesGridRect, plotRect);
 
             drawGraphs(plotRect);
+
+            if (showLegend)
+                drawLegend(legendRect);
 
             function getMarks(bounds: Rect) {
                 const num = V(
@@ -206,14 +212,37 @@ export const OscilloscopeRenderer = (() => {
                 renderer.restore();
             }
 
+            function drawLegend(bounds: Rect) {
+                renderer.save();
+
+                renderer.text("Legend", V(bounds.left, bounds.top), "left", "#000000", LEGEND_TITLE_FONT, "top");
+
+                const boxSize = 10;
+                enabledVecIDs.forEach((id, i) => {
+                    const color = vecs[id].color;
+                    const y = bounds.top + 20 + i*(boxSize+5);
+
+                    // Draw box
+                    const box = Rect.from({
+                        left: bounds.left, right: bounds.left + boxSize,
+                        bottom: y, top: y + boxSize,
+                    }, true);
+                    renderer.draw(toShape(box), new Style(color), 1);
+
+                    // Draw text
+                    renderer.text(id, V(box.right + 5, box.y), "left", "#000000", LEGEND_ENTRY_FONT, "middle");
+                });
+
+                renderer.restore();
+            }
+
             function drawGraphs(bounds: Rect) {
                 renderer.save();
                 renderer.setPathStyle({ lineCap: "round" });
 
-                const dataBounds = new Rect(
-                    V(maxX + minX, maxVal + minVal).scale(V(0.5, -0.5)),
-                    V(maxX - minX, maxVal - minVal)
-                );
+                // Get data bounds as a rectangle
+                const dataBounds = Rect.from({ left: minX, right: maxX, bottom: minVal, top: maxVal }, false);
+
                 const scale = V(bounds.width / dataBounds.width, bounds.height / dataBounds.height);
 
                 sampledData.forEach((data, i) => {
