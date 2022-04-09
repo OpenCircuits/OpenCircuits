@@ -3,12 +3,11 @@ package web
 import (
 	"net/http"
 
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
 )
 
 // RegisterPages Registers the web-page-serving routes
-func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
+func RegisterPages(router *gin.Engine) {
 	router.Static("/assets", "./site/assets")
 	router.Static("/img", "./site/img")
 	router.Static("/static", "./site/static")
