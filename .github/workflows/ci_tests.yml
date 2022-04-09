@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: 1.18
 
     - name: Use Node.js 16.x
       uses: actions/setup-node@v1
@@ -48,7 +48,7 @@ jobs:
 
     - uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: 1.18
 
     - name: Run coverage
       run: cd src/server && go test ./... -race -coverprofile=coverage.out -covermode=atomic
