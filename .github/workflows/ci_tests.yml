@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: 1.16
 
     - name: Use Node.js 16.x
       uses: actions/setup-node@v1
@@ -40,3 +40,17 @@ jobs:
       run: |
         yarn build:jsdocs
         yarn build:docs
+  
+  server-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Run coverage
+      run: cd src/server && go test ./... -race -coverprofile=coverage.out -covermode=atomic
+    - name: Upload coverage to Codecov
+      run: cd src/server && bash <(curl -s https://codecov.io/bash)

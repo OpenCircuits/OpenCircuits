@@ -3,19 +3,20 @@ package main
 import (
 	"context"
 	"flag"
+	"math/rand"
 	"net"
 	"os"
 	"strconv"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
+	api_routes "github.com/OpenCircuits/OpenCircuits/site/go/api/routes"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage/gcp_datastore"
-	"github.com/OpenCircuits/OpenCircuits/site/go/storage/sqlite"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/gcp_datastore"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
+	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/sqlite"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -60,11 +61,12 @@ func main() {
 	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
+	authManager.RegisterAuthenticationMethod(auth.NewAnonAuth())
 
 	// Set up the storage interface
-	var userCsif interfaces.CircuitStorageInterfaceFactory
+	var userCsif model.CircuitStorageInterfaceFactory
 	if *userCsifConfig == "mem" {
-		userCsif = storage.NewMemStorageInterfaceFactory()
+		userCsif = mem.NewInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
 		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
 		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
@@ -81,17 +83,24 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// Generate CSRF Token...
-	store := sessions.NewCookieStore([]byte(utils.RandToken(64)))
+	key := make([]byte, 64)
+	n, err := rand.Read(key)
+	if n != 64 || err != nil {
+		panic(err)
+	}
+	store := sessions.NewCookieStore(key)
 	store.Options(sessions.Options{
 		Path:   "/",
 		MaxAge: 60 * 60 * 24 * 7,
 	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
-	// Register pages
-	web.RegisterPages(router, authManager)
-	authManager.RegisterHandlers(router)
-	api.RegisterRoutes(router, authManager, userCsif)
+	// Setup authorization middleware
+	router.Use(api.AuthMiddleware(authManager))
+
+	// Register routes
+	web.RegisterPages(router)
+	api_routes.RegisterRoutes(router, userCsif, mem.NewAccess())
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {

@@ -28,6 +28,11 @@ async function launch_test(dir, flags) {
     }, [dir]);
 }
 
+async function launch_server_tests(flags) {
+    spawnSync("cd ./src/server && go test ./... --cover", {
+        shell: true, stdio: "inherit",
+    });
+}
 
 // CLI
 (async () => {
@@ -81,6 +86,11 @@ async function launch_test(dir, flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
+        if (dir === "server") {
+            await launch_server_tests();
+            continue;
+        }
+
         const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
         flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
         results.push(
