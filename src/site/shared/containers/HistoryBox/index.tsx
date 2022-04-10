@@ -83,7 +83,12 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                 </span>
             </div>
             {displayExtraInfo &&
-                <div className="historybox__groupentry__extrainfo">{g.getCustomInfo()}</div>
+                g.getCustomInfo().map((obj, i) => {
+                    return (
+                        <div className="historybox__groupentry__extrainfo">{g.getCustomInfo?.()[i]}</div>
+                    )
+                })
+                // <div className="historybox__groupentry__extrainfo">{g.getCustomInfo()}</div>
             }
             {!isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
