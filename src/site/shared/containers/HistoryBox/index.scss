@@ -58,17 +58,12 @@ $historybox-content-height: 335px;
                 background: hsl(0, 0%, 30%);
             }
 
-            @media (max-width: 768px) and (orientation:portrait) {
-                max-height: 40vh;
-            }
         }
+    }
 
-        @media (orientation:portrait) {
-            position: absolute;
-            margin-bottom: $itemnav-height;
-
-            max-height: calc((40vh) + (#{$historybox-header-height}));
-        }
+    @media (orientation:portrait) {
+        position: absolute;
+        min-bottom: $itemnav-height;
     }
 
     &__entry {
