@@ -26,7 +26,7 @@ export abstract class PortChangeAction implements Action {
     }
 
     private createAction(): GroupAction {
-        const action = new GroupAction();
+        const action = new GroupAction([], "Port Change Action");
         const ports = this.getPorts();
 
         // Disconnect all wires from each port

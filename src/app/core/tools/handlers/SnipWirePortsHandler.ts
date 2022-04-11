@@ -24,6 +24,6 @@ export const SnipWirePortsHandler: EventHandler = ({
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
             CreateGroupSnipAction(designer, ports) // Implicitly executed automatically
-        ]));
+        ], "Snip Wire Ports Handler"));
     }
 });

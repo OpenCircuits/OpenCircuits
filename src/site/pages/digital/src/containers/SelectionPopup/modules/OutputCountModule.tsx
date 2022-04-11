@@ -9,7 +9,7 @@ const Config: ModuleConfig<[Encoder], number> = {
     valType: "int",
     getProps: (o) => o.getOutputPortCount().getValue(),
     getAction: (s, newCount) => new GroupAction(s.map(o =>
-        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)))
+        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)), "Output Count Module")
 }
 
 export const OutputCountModule = PopupModule({
