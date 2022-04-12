@@ -17,6 +17,19 @@ export const DigitalHeader = ({ img, helpers, info }: Props) => (
             popupName: "expr_to_circuit",
             img: "img/icons/bool_expr_input_icon.svg",
             text: "Boolean Expression to Circuit",
+            enabled: true
         },
+        {
+            popupName: "cache_circuit",
+            img: "img/icons/bool_expr_input_icon.svg",
+            text: "Cache Circuit",
+            enabled: process.env.NODE_ENV === "development"
+        },
+        {
+            popupName: "reload_circuit",
+            img: "img/icons/bool_expr_input_icon.svg",
+            text: "Reload Cached Circuit",
+            enabled: process.env.NODE_ENV === "development"
+        }
     ]} />
 );

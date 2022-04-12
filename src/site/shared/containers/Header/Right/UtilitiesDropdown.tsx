@@ -9,6 +9,7 @@ export type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
+    enabled: boolean;
 }
 
 type Props = {
@@ -26,7 +27,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
               onClick={() => dispatch(OpenHeaderMenu("utilities"))}
               onClose={() => dispatch(CloseHeaderMenus())}
               btnInfo={{title: "Utilities", src: "img/icons/utilities.svg"}}>
-        {extraUtilities.map(utility => (
+        {extraUtilities.filter(utility => utility.enabled).map(utility => (
             <div key={utility.popupName} onClick={() => { dispatch(CloseHeaderMenus()); dispatch(OpenHeaderPopup(utility.popupName)); }}>
                 <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />
                 <span>{utility.text}</span>
