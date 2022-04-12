@@ -17,7 +17,7 @@ type HistoryEntryProps = {
     a: Action;
 }
 const HistoryEntry = ({ a }: HistoryEntryProps) => {
-    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [displayExtraInfo, setDisplayExtraInfo] = useState(true);
 
     if (a instanceof GroupAction)
         return (<GroupActionEntry g={a}></GroupActionEntry>);
@@ -26,20 +26,20 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
             onClick={(e) => {
                 // Necessary to stop child entries from collapsing the parent history entry
                 e.stopPropagation();
-                setIsCollapsed(!isCollapsed);
+                setDisplayExtraInfo(!displayExtraInfo);
             }}>
             <div className="historybox__entry__header">
-                {a.getCustomInfo != undefined &&
+                {a.getCustomInfo &&
                     <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"/>
                 }
                 <span className="historybox__entry__actionname">
                     {a.getName()}
                 </span>
             </div>
-            {!isCollapsed && a.getCustomInfo != undefined &&
-                a.getCustomInfo().map((obj, i) => {
+            {!displayExtraInfo && a.getCustomInfo &&
+                a.getCustomInfo()?.map((obj, i) => {
                     return (
-                        <div className="historybox__entry__extrainfo">{a.getCustomInfo?.()[i]}</div>
+                        <div key={`entry-extrainfo-${i}`} className="historybox__entry__extrainfo">{obj}</div>
                     )
                 })
             }
@@ -67,12 +67,12 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                  setIsCollapsed(!isCollapsed);
              }}>
             <div className="historybox__groupentry__header">
-                <img className="historybox__groupentry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"
+                {g.getCustomInfo() && <img className="historybox__groupentry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"
                     onClick={(e) => {
                         // Necessary to stop child entries from displaying extra info about the parent history entry
                         e.stopPropagation();
                         setDisplayExtraInfo(!displayExtraInfo);
-                    }}/>
+                    }}/>}
                 <span className="historybox__groupentry__actionname">
                     {g.getName()}
                 </span>
@@ -83,12 +83,11 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                 </span>
             </div>
             {displayExtraInfo &&
-                g.getCustomInfo().map((obj, i) => {
+                g.getCustomInfo()?.map((obj, i) => {
                     return (
-                        <div className="historybox__groupentry__extrainfo">{g.getCustomInfo?.()[i]}</div>
+                        <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
                     )
                 })
-                // <div className="historybox__groupentry__extrainfo">{g.getCustomInfo()}</div>
             }
             {!isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);

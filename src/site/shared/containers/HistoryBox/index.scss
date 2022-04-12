@@ -110,19 +110,6 @@ $historybox-width: 250px;
                 vertical-align: middle;
             }
         }
-
-        &__additionalinfo__collapse_btn {
-            font-size: 18px;
-
-            float: right;
-
-            transition: 0.5s;
-            transform: rotate(90deg);
-
-            &-collapsed {
-                transform: rotate(0deg);
-            }
-        }
     }
 
     &__groupentry {
@@ -137,6 +124,10 @@ $historybox-width: 250px;
 
         cursor: pointer;
 
+        &__header {
+            padding-left: 5px;
+        }
+
         &__actionname {
             display: inline-block;
         }
@@ -145,11 +136,11 @@ $historybox-width: 250px;
             font-size: 18px;
         }
 
-        &__extrainfo {
+        &__extrainfo {  
             padding-left: 5px;
-            
+                      
             &__icon {
-                margin-right: 10px;
+                margin-right: 5px;
                 float: left;
                 vertical-align: middle;
             }

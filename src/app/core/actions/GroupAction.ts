@@ -53,10 +53,10 @@ export class GroupAction implements Action {
         return `Grouped ${this.actions.length} actions` ;
     }
 
-    public getCustomInfo(): string[] {
+    public getCustomInfo(): string[] | undefined {
         if (this.customInfo)
             return this.customInfo;
-        return [`Applied to ${this.actions.length} things.`]
+        return undefined;
     }
 
     public getActions(): Action[] {
