@@ -9,6 +9,7 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 import {useHistory} from "shared/utils/hooks/useHistory";
 
 import {useMousePos} from "shared/utils/hooks/useMousePos";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
@@ -60,22 +61,6 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
     );
 }
 
-let width = screen.availWidth;
-let hight = screen.availHeight;
-let posx = width > 720 ? 240 : width / 2 - 130;
-let posy = hight > 1200 ? 240 : hight / 2 - 370;
-posy = posy < -10 ? -10 : posy;
-let lenx = 240, leny = 400;
-
-let stposx = 240, stposy = 240;
-let stlenx = 240, stleny = 400;
-let stcrlx = 0, stcrly = 0;
-let ctrlx = 0, ctrly = 0;
-
-let isMove_x = false, isMove_y = false;
-let isDrag_x = false, isDrag_y = false;
-let is_Title = false;
-
 type Props = {
     info: CircuitInfo;
 }
@@ -90,80 +75,107 @@ export const HistoryBox = ({ info }: Props) => {
     let cname = "historybox " + (isOpen ? "" : "historybox__move");
     cname += isHistoryBoxOpen ? " " : " hide";
 
-    let mouse = useMousePos();
+    const mouse = useMousePos();
+    const { w, h } = useWindowSize();
+    // if w > 720 then 240, elif w < 240 then -10, else w/2 - 130
+    let initx = w > 720 ? 240 : w < 240 ? -10 : w / 2 - 130;
+    // if h > 960 then 240, elif h < 720 then -10, else h/2 - 370
+    let inity = h > 960 ? 240 : h < 720 ? -10 : h / 2 - 370;
+
+    let [pos, set_pos] = useState({ x: initx, y: inity });
+    let [len, set_len] = useState({ x: 240, y: 400 });
+
+    // STart POSition before drag or resize
+    let [stpos, set_stpos] = useState({ x: 0, y: 0 });
+    // STart LENgth of box before drag or resize
+    let [stlen, set_stlen] = useState({ x: 0, y: 0 });
+    // start position of controller(mouse or touch) before ...
+    let [stcrl, set_stcrl] = useState({ x: 0, y: 0 });
+    // current position of MouSe or TouCH
+    let [mstch, set_mstch] = useState({ x: 0, y: 0 });
+
+    let [state, set_state] = useState({
+        isMove_x: false,
+        isMove_y: false,
+        isDrag_x: false,
+        isDrag_y: false,
+        is_Title: false });
 
     function ctrlD(position: string, type: string, touch: React.Touch | undefined) {
-        stposx = posx;
-        stposy = posy;
-        stlenx = lenx;
-        stleny = leny;
-        if (type === "mouse" && mouse !== undefined) {
-            stcrlx = mouse.x === undefined ? 0 : mouse.x;
-            stcrly = mouse.y === undefined ? 0 : mouse.y;
-        }
-        if (type === "touch" && touch !== undefined) {
-            stcrlx = touch.pageX;
-            stcrly = touch.pageY;
+        set_stpos({ x: pos.x, y: pos.y });
+        set_stlen({ x: len.x, y: len.y });
+        if (type === "mouse" && mouse !== undefined &&
+            mouse.x !== undefined && mouse.y !== undefined) {
+            set_stcrl({ x: mouse.x, y: mouse.y });
+        } else if (type === "touch" && touch !== undefined) {
+            set_stcrl({ x: touch.pageX, y: touch.pageY });
+        } else {
+            return;
         }
 
-        isDrag_x = position === "e" || position === "se" || position === "ne";
-        isDrag_y = position === "s" || position === "se" || position === "sw";
-        isMove_x = position === "w" || position === "nw" || position === "sw";
-        isMove_y = position === "n" || position === "nw" || position === "ne";
-        is_Title = position === "t";
+        state.isDrag_x = position.includes("e");
+        state.isDrag_y = position.includes("s");
+        state.isMove_x = position.includes("w");
+        state.isMove_y = position.includes("n");
+        state.is_Title = position.includes("t");
     }
 
     function ctrlM(type: string, touch: React.Touch | undefined) {
         if (type === "mouse" && mouse !== undefined) {
-            ctrlx = mouse.x === undefined ? 0 : mouse.x;
-            ctrly = mouse.y === undefined ? 0 : mouse.y;
+            mstch.x = mouse.x === undefined ? 0 : mouse.x;
+            mstch.y = mouse.y === undefined ? 0 : mouse.y;
         } else if (type === "touch" && touch !== undefined) {
-            ctrlx = touch.pageX;
-            ctrly = touch.pageY;
+            mstch.x = touch.pageX;
+            mstch.y = touch.pageY;
+        } else {
+            return;
         }
 
-        if (isMove_x) {
-            posx = stposx - stcrlx + ctrlx;
-            lenx = stlenx + stcrlx - ctrlx;
+        if (state.isMove_x) {
+            pos.x = stpos.x - stcrl.x + mstch.x;
+            len.x = stlen.x + stcrl.x - mstch.x;
         }
-        if (isMove_y) {
-            posy = stposy - stcrly + ctrly;
-            leny = stleny + stcrly - ctrly;
+        if (state.isMove_y) {
+            pos.y = stpos.y - stcrl.y + mstch.y;
+            len.y = stlen.y + stcrl.y - mstch.y;
         }
-        if (isDrag_x) {
-            lenx = stlenx - stcrlx + ctrlx;
+        if (state.isDrag_x) {
+            len.x = stlen.x - stcrl.x + mstch.x;
         }
-        if (isDrag_y) {
-            leny = stleny - stcrly + ctrly;
+        if (state.isDrag_y) {
+            len.y = stlen.y - stcrl.y + mstch.y;
         }
-        if (is_Title) {
-            posx = stposx - stcrlx + ctrlx;
-            posy = stposy - stcrly + ctrly;
+        if (state.is_Title) {
+            pos.x = stpos.x - stcrl.x + mstch.x;
+            pos.y = stpos.y - stcrl.y + mstch.y;
         }
 
-        if (isMove_x && posx > stposx + stlenx - 240) {
-            posx = stposx + stlenx - 240;
+        if (state.isMove_x && pos.x > stpos.x + stlen.x - 240) {
+            pos.x = stpos.x + stlen.x - 240;
         }
-        if (isMove_y && posy > stposy + stleny - 400) {
-            posy = stposy + stleny - 400;
+        if (state.isMove_y && pos.y > stpos.y + stlen.y - 400) {
+            pos.y = stpos.y + stlen.y - 400;
         }
-        lenx = lenx < 240 ? 240 : lenx;
-        leny = leny < 400 ? 400 : leny;
+        len.x = len.x < 240 ? 240 : len.x;
+        len.y = len.y < 400 ? 400 : len.y;
     }
 
     ctrlM("mouse", undefined);
 
     function ctrlU() {
-        isMove_x = false;
-        isMove_y = false;
-        isDrag_x = false;
-        isDrag_y = false;
-        is_Title = false;
+        set_state({
+            isMove_x: false,
+            isMove_y: false,
+            isDrag_x: false,
+            isDrag_y: false,
+            is_Title: false });
+        set_pos({ x: pos.x, y: pos.y });
+        set_len({ x: len.x, y: len.y });
     }
     
     return (
-        <div className={cname} style={{left:posx, top:posy, width:lenx+20, height:leny+20}}>
-            <div className="box" style={{width:lenx, height:leny}}>
+        <div className={cname} style={{left:pos.x, top:pos.y, width:len.x+20, height:len.y+20}}>
+            <div className="box" style={{width:len.x, height:len.y}}>
                 <div className="title">
                     <span
                         onMouseDown={() => ctrlD("t", "mouse", undefined)}
@@ -175,7 +187,7 @@ export const HistoryBox = ({ info }: Props) => {
                     </span>
                     <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
                 </div>
-                <div className="content" style={{width: lenx, height: leny-65}}>
+                <div className="content" style={{width: len.x, height: len.y-65}}>
                     {[...undoHistory].reverse().map((a, i) =>
                         <HistoryEntry key={`history-box-entry-${i}`} a={a}></HistoryEntry>
                     )}
@@ -213,28 +225,28 @@ export const HistoryBox = ({ info }: Props) => {
                     onTouchStart={(e) => ctrlD("n", "touch", e.touches.item(0))}
                     onTouchMove={(e) => ctrlM("touch", e.touches.item(0))}
                     onTouchEnd={() => ctrlU()}
-                    style={{left: 20, width: lenx-20}}/>
+                    style={{left: 20, width: len.x-20}}/>
                 <div className="e _s"
                     onMouseDown={() => ctrlD("s", "mouse", undefined)}
                     onMouseUp={() => ctrlU()}
                     onTouchStart={(e) => ctrlD("s", "touch", e.touches.item(0))}
                     onTouchMove={(e) => ctrlM("touch", e.touches.item(0))}
                     onTouchEnd={() => ctrlU()}
-                    style={{left: 20, width: lenx-20}}/>
+                    style={{left: 20, width: len.x-20}}/>
                 <div className="e _w"
                     onMouseDown={() => ctrlD("w", "mouse", undefined)}
                     onMouseUp={() => ctrlU()}
                     onTouchStart={(e) => ctrlD("w", "touch", e.touches.item(0))}
                     onTouchMove={(e) => ctrlM("touch", e.touches.item(0))}
                     onTouchEnd={() => ctrlU()}
-                    style={{top: 20, height: leny-20}}/>
+                    style={{top: 20, height: len.y-20}}/>
                 <div className="e _e"
                     onMouseDown={() => ctrlD("e", "mouse", undefined)}
                     onMouseUp={() => ctrlU()}
                     onTouchStart={(e) => ctrlD("e", "touch", e.touches.item(0))}
                     onTouchMove={(e) => ctrlM("touch", e.touches.item(0))}
                     onTouchEnd={() => ctrlU()}
-                    style={{top: 20, height: leny-20}}/>
+                    style={{top: 20, height: len.y-20}}/>
             </div>
         </div>
     );
