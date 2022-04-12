@@ -32,7 +32,12 @@ func getPort() string {
 	return "8080"
 }
 
-func createConfig[T interface{ bool | string | int | uint }](key string, message string) (config *T) {
+type flagType interface {
+	bool | uint | int | string
+}
+
+func createConfig[T flagType](key string, message string) *T {
+	var config *T
 	val := os.Getenv(key)
 	boolVal, errB := strconv.ParseBool(val)
 	uintVal, errU := strconv.ParseUint(val, 10, 0)
@@ -40,12 +45,12 @@ func createConfig[T interface{ bool | string | int | uint }](key string, message
 	if errB == nil {
 		config = flag.Bool(key, boolVal, message)
 	} else if errU == nil {
-		config = flag.Uint(key, uintVal, message)
+		config = flag.Uint64(key, uintVal, message)
 	} else if errI == nil {
 		config = flag.Int(key, intVal, message)
 	}
 	config = flag.String(key, val, message)
-	return
+	return config
 }
 
 func main() {
@@ -67,7 +72,7 @@ func main() {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
 	if *googleAuthConfig != "" {
-		authManager.RegisterAuthenticationMethod(google.New(googleAuthConfig))
+		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
 	}
 
 	// Set up the storage interface
@@ -75,10 +80,10 @@ func main() {
 	if *userCsifConfig == "mem" {
 		userCsif = storage.NewMemStorageInterfaceFactory()
 	} else if *userCsifConfig == "sqlite" {
-		userCsif, err = sqlite.NewInterfaceFactory(sqlitePathConfig)
+		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
 		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
 	} else if *userCsifConfig == "gcp_datastore_emu" {
-		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), dsProjectId, dsEmulatorHost)
+		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), *dsProjectId, *dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
 	} else if *userCsifConfig == "gcp_datastore" {
 		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
