@@ -1,6 +1,6 @@
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ANDGate, BUFGate} from "digital/models/ioobjects";
+import {BUFGate} from "digital/models/ioobjects";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
