@@ -134,12 +134,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // Keep track of if item is being placed
     useEffect(() => {
-        if (curItemID) {
-            setIsPlacing();
-        }
-        else {
-            setIsPlacing();
-        }
+        setIsPlacing();
     }, [curItemID]);
 
     // Cancel placing when pressing escape

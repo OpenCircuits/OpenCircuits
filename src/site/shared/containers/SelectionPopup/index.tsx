@@ -87,7 +87,7 @@ export function SelectionPopup({info, modules, docsUrlConfig}: Props) {
         if (!isPlacing)
             history.add(CreateDeselectAllAction(info.selections).execute());
             renderer.render();
-    }, [isPlacing])
+    }, [isPlacing]);
 
     const popup = useRef<HTMLDivElement>(null);
 
