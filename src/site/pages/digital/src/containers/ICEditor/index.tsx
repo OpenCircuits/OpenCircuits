@@ -47,18 +47,42 @@ import { InputField } from "shared/components/InputField";
 import { Droppable } from "shared/components/DragDroppable/Droppable";
 import { SmartPlaceOptions, SmartPlace, DigitalCreateN } from "site/digital/utils/DigitalCreate";
 import { V } from "Vector";
+import { useKeyDownEvent } from "shared/utils/hooks/useKeyDownEvent";
+import { SelectionPopup } from "shared/containers/SelectionPopup";
+import { PositionModule } from "shared/containers/SelectionPopup/modules/PositionModule";
+import { BusButtonModule } from "../SelectionPopup/modules/BusButtonModule";
+import { ClockSyncButtonModule } from "../SelectionPopup/modules/ClockSyncButtonModule";
+import { ColorModule } from "../SelectionPopup/modules/ColorModule";
+import { ComparatorInputCountModule } from "../SelectionPopup/modules/ComparatorInputCountModule";
+import { ConstantNumberInputModule } from "../SelectionPopup/modules/ConstantNumberInputModule";
+import { CreateICButtonModule } from "../SelectionPopup/modules/CreateICButtonModule";
+import { DecoderInputCountModule } from "../SelectionPopup/modules/DecoderInputCountModule";
+import { EditICButtonModule } from "../SelectionPopup/modules/EditICButtonModule";
+import { FrequencyModule } from "../SelectionPopup/modules/FrequencyModule";
+import { InputCountModule } from "../SelectionPopup/modules/InputCountModule";
+import { OscilloscopeDisplaySizeModule, OscilloscopeInputCountModule, OscilloscopeSamplesModule, ClearOscilloscopeButtonModule } from "../SelectionPopup/modules/OscilloscopeModules";
+import { OutputCountModule } from "../SelectionPopup/modules/OutputCountModule";
+import { PauseResumeButtonModule } from "../SelectionPopup/modules/PauseResumeButtonModules";
+import { SegmentCountModule } from "../SelectionPopup/modules/SegmentCountModule";
+import { SelectPortCountModule } from "../SelectionPopup/modules/SelectPortCountModule";
+import { TextColorModule } from "../SelectionPopup/modules/TextColorModule";
+import { ViewICButtonModule } from "../SelectionPopup/modules/ViewICButtonModule";
 
+import docsConfig from "site/digital/data/docsUrlConfig.json";
+import { HistoryBox } from "shared/containers/HistoryBox";
+import { DeleteHandler } from "core/tools/handlers/DeleteHandler";
+import { IC } from "digital/models/ioobjects";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
 }
 export const ICEditor = (() => {
-    // TODO there has to be a better way of doing this elephant
     const handlers = [CleanUpHandler, CopyHandler, DeselectAllHandler,
-                      DuplicateHandler, FitToScreenHandler,
+                      DeleteHandler, DuplicateHandler, FitToScreenHandler,
                       RedoHandler, SelectAllHandler, SelectionHandler,
                       SelectPathHandler, SnipWirePortsHandler, UndoHandler,
-                      PasteHandler((data) => DigitalPaste(data, info, undefined))];
+                      PasteHandler((data) => DigitalPaste(data, icInfo, undefined))];
+
     const info = CreateInfo(
         new InteractionTool(handlers),
         PanTool, RotateTool, SelectionBoxTool,
@@ -66,11 +90,11 @@ export const ICEditor = (() => {
     );
 
     const icInfo: ICCircuitInfo = {
-        ...info,
+        ...info
     };
 
     return ({ mainInfo }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
+        const {camera, designer, toolManager, renderer} = icInfo;
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icEditor })
@@ -79,6 +103,7 @@ export const ICEditor = (() => {
 
         const {w, h} = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
+        const historyBox = useRef<HTMLCanvasElement>(null);
         const [{name}, setName] = useState({ name: "" });
 
         // On resize (useLayoutEffect happens sychronously so
@@ -96,19 +121,19 @@ export const ICEditor = (() => {
             if (!canvas.current)
                 throw new Error("ICEditor.useEffect failed: canvas.current is null");
             // Create input w/ canvas
-            info.input = new Input(canvas.current);
+            icInfo.input = new Input(canvas.current);
 
             // Get render function
             const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
             // Add input listener
-            info.input.addListener((event) => {
-                const change = toolManager.onEvent(event, info);
+            icInfo.input.addListener((event) => {
+                const change = toolManager.onEvent(event, icInfo);
                 if (change) renderer.render();
             });
 
             // Input should be blocked initially
-            info.input.block();
+            icInfo.input.block();
 
             // Add render callbacks and set render function
             designer.addCallback(() => renderer.render());
@@ -132,10 +157,10 @@ export const ICEditor = (() => {
                 return;
 
             // Retrieve current debug info from mainInfo
-            info.debugOptions = mainInfo.debugOptions;
+            icInfo.debugOptions = mainInfo.debugOptions;
 
             // Unlock input
-            info.input.unblock();
+            icInfo.input.unblock();
 
             // Block input for main designer
             mainInfo.input.block();
@@ -159,38 +184,47 @@ export const ICEditor = (() => {
         }, [isActive, data]);
 
         const close = (cancelled: boolean = false) => {
-            // // Block input while closed
-            // icInfo.input.block();
+            // Block input while closed
+            icInfo.input.block();
 
-            // if (!cancelled) {
-            //     if (!data)
-            //         throw new Error("ICDesigner.close failed: data was undefined");
+            if (!cancelled) {
+                if (!data)
+                    throw new Error("ICEditor.close failed: data was undefined");
 
-            //     // Create IC on center of screen
-            //     const ic = new IC(data);
-            //     ic.setPos(mainInfo.camera.getPos());
+                // // Create IC on center of screen
+                // const ic = new IC(data);
+                // ic.setPos(mainInfo.camera.getPos());
 
-            //     // Deselect other things, create IC and select it
-            //     const action = new GroupAction([
-            //         CreateDeselectAllAction(mainInfo.selections),
-            //         new CreateICDataAction(data, mainInfo.designer),
-            //         new PlaceAction(mainInfo.designer, ic),
-            //         new SelectAction(mainInfo.selections, ic)
-            //     ], "Create IC Action");
-            //     mainInfo.history.add(action.execute());
-            //     mainInfo.renderer.render();
-            // }
+                // Update IC data
+                // icInfo.ic = new IC(data);
+                console.log(icInfo.ic);
+
+                // // Deselect other things, create IC and select it
+                // // const action = new GroupAction([
+                // //     CreateDeselectAllAction(mainInfo.selections),
+                // //     new CreateICDataAction(data, mainInfo.designer),
+                // //     new PlaceAction(mainInfo.designer, ic),
+                // //     new SelectAction(mainInfo.selections, ic)
+                // // ], "Create IC Action");
+                // const action = new GroupAction([ // TODO make work for all instances of ic on main designer
+                //     new EditICDataAction(data, data, mainInfo.designer) // make prev and new data
+                // ], "Edit IC Action");
+                // mainInfo.history.add(action.execute());
+                // mainInfo.renderer.render();
+            }
 
             // Unblock main input
             mainInfo.input.unblock();
 
             // icInfo.ic = undefined;
+            icInfo.history.reset();
             dispatch(CloseICEditor());
             (document.getElementsByClassName("itemnav")[0] as HTMLElement).style.zIndex = "2";
             // setName({ name: "" }); // Clear name
         }
 
-    //     useKeyDownEvent(info.input, "Escape", close);
+        useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
 
         return (
             <div className="iceditor" style={{display: (isActive ? "initial" : "none"), height: h+"px"}}>
@@ -217,17 +251,36 @@ export const ICEditor = (() => {
                             height={h*IC_DESIGNER_VH} />
                 </Droppable>
 
+                <HistoryBox info={icInfo} />
+                <SelectionPopup info={icInfo}
+                                    modules={[PositionModule, InputCountModule,
+                                        ComparatorInputCountModule,
+                                        SelectPortCountModule,
+                                        ConstantNumberInputModule,
+                                        DecoderInputCountModule,
+                                        OutputCountModule, SegmentCountModule,
+                                        OscilloscopeDisplaySizeModule,
+                                        OscilloscopeInputCountModule,
+                                        FrequencyModule, OscilloscopeSamplesModule,
+                                        PauseResumeButtonModule,
+                                        ClearOscilloscopeButtonModule,
+                                        ClockSyncButtonModule,
+                                        ColorModule, TextColorModule,
+                                        BusButtonModule,
+                                        CreateICButtonModule, EditICButtonModule, ViewICButtonModule]}
+                                    docsUrlConfig={docsConfig} />
+
                 <InputField type="text"
                             value={name}
                             placeholder="IC Name"
                             onChange={(ev) => setName({name: ev.target.value})} />
 
-                <div className="icdesigner__buttons">
+                <div className="iceditor__buttons">
                     <button name="confirm" onClick={() => close(false)}>
-                        Confirm
+                        &#10003;
                     </button>
                     <button name="cancel"  onClick={() => close(true)}>
-                        Cancel
+                        &#10007;
                     </button>
                 </div>
             </div>
