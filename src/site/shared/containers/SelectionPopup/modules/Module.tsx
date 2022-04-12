@@ -12,6 +12,7 @@ export type ModuleTypes = number | string;
 
 export type ModuleConfig<T extends any[], P extends ModuleTypes> = {
     types: (Function & {prototype: T[number]})[];
+    exclude?: (Function & {prototype: T[number]})[];
     valType: "float" | "int" | "string";
     isActive?: (selections: SelectionsWrapper) => boolean;
     getProps: (o: T[number]) => P | undefined;
@@ -98,8 +99,17 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         return v;
     }
 
+    const checkType = (s: Selectable, Type: Function & { prototype: T[number]; }) => {
+        // check if s instanceof Type and also not instnace of anything in config.exclude
+
+        if(config.exclude)
+        {for (let exclusion of config.exclude)  { if(s instanceof exclusion) {return false;}}}
+
+        return (s instanceof Type);
+    }
+
     const filterTypes = (s: Selectable[]) => {
-        return config.types.reduce((cur, Type) => [...cur, ...s.filter(s => s instanceof Type)], []) as T;
+        return config.types.reduce((cur, Type) => [...cur, ...s.filter(s => checkType(s, Type))], []) as T;
     }
 
     const getDependencies = (state: State, selections: SelectionsWrapper) => {
@@ -130,7 +140,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             // Make sure all selections are exactly of types:
             const active = config.isActive?.(selections) ??
                 config.types.reduce(
-                    (enabled, Type) => enabled || (selections.get().filter(s => s instanceof Type).length === selections.amount()
+                    (enabled, Type) => enabled || (selections.get().filter(s => checkType(s, Type)).length === selections.amount()
                 ),
             false);
             if (!active) {

@@ -1,5 +1,6 @@
 import {GroupAction} from "core/actions/GroupAction";
 
+import {ANDGate, BUFGate} from "digital/models/ioobjects";
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
@@ -11,6 +12,7 @@ import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/Selecti
 
 const Config: ModuleConfig<[Gate], number> = {
     types: [Gate],
+    exclude:[BUFGate],
     valType: "int",
     getProps: (o) => (o instanceof Mux ? o.getSelectPortCount() : o.getInputPortCount()).getValue(),
     getAction: (s, newCount) => (
