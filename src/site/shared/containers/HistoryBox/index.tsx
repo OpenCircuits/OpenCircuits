@@ -60,7 +60,11 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
     );
 }
 
-let posx = 240, posy = 240;
+let width = screen.availWidth;
+let hight = screen.availHeight;
+let posx = width > 720 ? 240 : width / 2 - 130;
+let posy = hight > 1200 ? 240 : hight / 2 - 370;
+posy = posy < -10 ? -10 : posy;
 let lenx = 240, leny = 400;
 
 let stposx = 240, stposy = 240;
