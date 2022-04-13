@@ -20,11 +20,11 @@ type HistoryEntryProps = {
 const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
     if (a instanceof GroupAction)
         return (<GroupActionEntry g={a} isRedo={isRedo}></GroupActionEntry>);
-    return(
+    return (
         <div className={isRedo ? "historybox__dashedentry" : "historybox__entry"}
-        // Necessary to stop child entries from collapsing the parent history entry
-        onClick={(e) => e.stopPropagation()}>
-        {a.getName()}
+            // Necessary to stop child entries from collapsing the parent history entry
+            onClick={(e) => e.stopPropagation()}>
+            {a.getName()}
         </div>
     )
 }
@@ -71,6 +71,7 @@ export const HistoryBox = ({ info }: Props) => {
     const dispatch = useSharedDispatch();
 
     const { undoHistory, redoHistory } = useHistory(info);
+    
     return (
         <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
             <div>
@@ -78,13 +79,13 @@ export const HistoryBox = ({ info }: Props) => {
                 <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
             </div>
             <div>
-                { redoHistory.length > 0 ? (<>
+                { redoHistory.length > 0 && (<>
                     {[...redoHistory].reverse().map((a, i) =>
                         <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
                     )}
                     <div style={{textAlign: 'center', fontWeight: 'bold'}}> Redo </div>
                     <div className={"historybox__separator"} > </div>
-                 </>) : (<></>)}
+                 </>)}
                 <div style={{textAlign: 'center', fontWeight: 'bold'}}> Undo </div>
                 {[...undoHistory].reverse().map((a, i) =>
                     <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
