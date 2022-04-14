@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg>
-<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="350px" enable-background="new -250 -250 500 350" viewBox="-250 -250 500 350">
-<rect fill="#FFFFFF" width="500" height="350" x="-250" y="-250"/>
-<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="-130" y1="0" x2="-130" y2="-150"/>
-<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="-135" y1="-140" x2="0" y2="-140"/>
-<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="0" y1="0" x2="0" y2="-150"/>
-<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="130" y1="-150" x2="130" y2="0"/>
-<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="135" y1="-10" x2="0" y2="-10"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="350px" enable-background="new -250 -175 500 350" viewBox="-250 -175 500 350">
+<rect fill="#FFFFFF" width="500" height="350" x="-250" y="-175"/>
+<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="-130" y1="75" x2="-130" y2="-75"/>
+<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="-135" y1="-65" x2="0" y2="-65"/>
+<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="0" y1="75" x2="0" y2="-75"/>
+<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="130" y1="-75" x2="130" y2="75"/>
+<line fill="none" stroke="#000000" stroke-width="20" stroke-miterlimit="10" x1="135" y1="65" x2="0" y2="65"/>
 </svg>
