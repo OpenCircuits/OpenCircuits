@@ -26,7 +26,7 @@ const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
             onClick={(e) => e.stopPropagation()}>
             {a.getName()}
         </div>
-    )
+    );
 }
 
 type GroupActionEntryProps = {
@@ -71,7 +71,7 @@ export const HistoryBox = ({ info }: Props) => {
     const dispatch = useSharedDispatch();
 
     const { undoHistory, redoHistory } = useHistory(info);
-    
+
     return (
         <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
             <div>
