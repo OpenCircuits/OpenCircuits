@@ -124,12 +124,9 @@ $historybox-width: 250px;
 
         cursor: pointer;
 
-        &__header {
-            padding-left: 5px;
-        }
-
         &__actionname {
             display: inline-block;
+            padding-left: 5px;
         }
 
         & > span {
@@ -140,7 +137,6 @@ $historybox-width: 250px;
             padding-left: 5px;
                       
             &__icon {
-                margin-right: 5px;
                 float: left;
                 vertical-align: middle;
             }
