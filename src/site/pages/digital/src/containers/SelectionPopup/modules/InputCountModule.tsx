@@ -9,7 +9,6 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
-
 const Config: ModuleConfig<[Gate], number> = {
     types: [Gate],
     exclude:[BUFGate],
