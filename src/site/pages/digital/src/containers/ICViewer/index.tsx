@@ -3,8 +3,10 @@ import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
-import {Input}        from "core/utils/Input";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
+import {Event} from "core/utils/Events";
+import {Input} from "core/utils/Input";
 import {isPressable} from "core/utils/Pressable";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
@@ -29,6 +31,25 @@ import {CloseICViewer} from "site/digital/state/ICViewer";
 import "./index.scss";
 
 
+function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
+    if (toolManager.getCurrentTool() instanceof InteractionTool) {
+        const worldMousePos = camera.getWorldPos(input.getMousePos());
+        const obj = designer.getObjects().reverse()
+            .find(p => isPressable(p) && p.isWithinPressBounds(worldMousePos));
+
+        // Check if Switch was clicked
+        if (obj instanceof Switch && ev.type === "click")
+            return true;
+
+        // Or if Button was pressed/released
+        if (currentlyPressedObject === obj && obj instanceof Button
+                 && (ev.type === "mousedown" || ev.type === "mouseup"))
+            return true;
+    }
+    return false;
+}
+
+
 type Props = {
     mainInfo: DigitalCircuitInfo;
 }
@@ -36,14 +57,14 @@ export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
     return ({ mainInfo }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
+        const { camera, designer, toolManager, renderer } = info;
 
-        const {isActive, ic} = useDigitalSelector(
+        const { isActive, ic } = useDigitalSelector(
             state => ({ ...state.icViewer })
         );
         const dispatch = useDigitalDispatch();
 
-        const {w, h} = useWindowSize();
+        const { w, h } = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
 
         // State controller for main designer callback
@@ -73,19 +94,12 @@ export const ICViewer = (() => {
             // Add input listener
             info.input.addListener((event) => {
                 const change = toolManager.onEvent(event, info);
-                if (change) {
-                    renderer.render();
-                    if (toolManager.getCurrentTool() instanceof InteractionTool) {
-                        const worldMousePos = camera.getWorldPos(info.input.getMousePos());
-                        const obj = info.designer.getObjects().reverse()
-                            .find(p => isPressable(p) && p.isWithinPressBounds(worldMousePos));
-                        if (obj instanceof Switch && event.type === "click")
-                            setPauseUpdates(true);
-                        else if (info.currentlyPressedObject === obj && obj instanceof Button
-                                 && (event.type === "mousedown" || event.type === "mouseup"))
-                            setPauseUpdates(true);
-                    }
-                }
+                if (!change)
+                    return;
+
+                renderer.render();
+                if (CheckForInteraction(event, info))
+                    setPauseUpdates(true);
             });
 
             // Input should be blocked initially
