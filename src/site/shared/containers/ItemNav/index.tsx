@@ -61,6 +61,9 @@ export const ItemNav = <D,>({ info, config, additionalData,
     );
     const dispatch = useSharedDispatch();
 
+    const { w, h } = useWindowSize();
+    const side = (w > 768 || w > h) ? "left" : "bottom";
+
     const { undoHistory, redoHistory } = useHistory(info);
 
     // State to keep track of the number of times an item is clicked
@@ -122,12 +125,14 @@ export const ItemNav = <D,>({ info, config, additionalData,
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState]);
 
-    //updates camera margin when itemnav is rendered open depending on size
+    // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
-        if(side == "left") {info.camera.setMargin({ left: (isOpen ? ITEMNAV_WIDTH : 0)});}
-        else {info.camera.setMargin({ bottom: (isOpen ? ITEMNAV_HEIGHT : 0) });}
-    }, [isOpen]);
-
+        info.camera.setMargin(
+            side === "left"
+            ? { left:   (isOpen ? ITEMNAV_WIDTH  : 0), bottom: 0 }
+            : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left:   0 }
+        );
+    }, [isOpen, side]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -152,8 +157,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const additionalPreviewComp = (additionalPreview && !!additionalData &&
                                    additionalPreview(additionalData, curItemID));
-
-    const { w, h } = useWindowSize();
 
     // Calculate alternate sections view for when the ItemNav is on the bottom of the screen
     //  By placing them all on a single row
@@ -185,7 +188,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
         }, [] as ItemNavSection[]);
     }, [config.sections, w]);
 
-    const side = (w > 768 || w > h) ? "left" : "bottom";
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
     return (<>
