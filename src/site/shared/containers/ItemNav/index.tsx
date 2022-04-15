@@ -1,5 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 
+import {GetIDFor} from "serialeazy";
+
 import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
@@ -69,6 +71,9 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const [hovering, setHover] = useState("");
 
+    //track whether mouse is over Nav bar 
+    const [overNav, setOverNav] = useState(false);
+
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
@@ -92,6 +97,39 @@ export const ItemNav = <D,>({ info, config, additionalData,
         }
         // Else just delete
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
+    }
+    function deletingItemPreview(){
+        if (!currentlyPressedObj)
+            return null;
+        if (!(currentlyPressedObj instanceof Component))
+            return null;
+        if(!overNav){
+            return null;
+        }
+        const id = GetIDFor(currentlyPressedObj);
+        var section_id;
+        var config_imgRoot;
+        var item_icon;
+        for (const section of sections) {
+            for (const item of section.items) {
+                if (item.id === id) {
+                    section_id = section.id;
+                    config_imgRoot = config.imgRoot;
+                    item_icon = item.icon;
+                    break;
+                }
+            }
+        }
+        const img = currentlyPressedObj.getImageName();
+        return <div className="itemnav__preview"
+            style={{
+                display: "initial",
+                left: pos.x,
+                top: pos.y,
+            }}>
+            {/* config.imgRoot / section.id / item.icon */}
+            <img src={`${config_imgRoot}/${section_id}/${item_icon}`} width="80px" />
+        </div>        
     }
 
     // Resets the curItemID and numClicks
@@ -183,12 +221,13 @@ export const ItemNav = <D,>({ info, config, additionalData,
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
     return (<>
+        {deletingItemPreview()}
         <div className="itemnav__preview"
              style={{
-                display: (curItemImg ? "initial" : "none"),
-                left: pos.x,
-                top: pos.y,
-             }}>
+                 display: (curItemImg ? "initial" : "none"),
+                 left: pos.x,
+                 top: pos.y,
+                }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
             {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
@@ -208,7 +247,9 @@ export const ItemNav = <D,>({ info, config, additionalData,
             </span>
         </div>
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
-             onMouseUp={handleItemNavDrag}>
+            onMouseOver={() => setOverNav(true)} 
+            onMouseLeave={() => setOverNav(false)}
+            onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
                     <button  title="History" onClick={() => {
