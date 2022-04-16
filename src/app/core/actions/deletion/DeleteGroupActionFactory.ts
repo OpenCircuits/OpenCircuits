@@ -7,7 +7,11 @@ import {DisconnectAction} from "core/actions/addition/ConnectionAction";
 import {CircuitDesigner, isNode, Node} from "core/models";
 import {IOObject} from "core/models/IOObject";
 
-
+/**
+ * Goes through group of selected IOObjects and deletes them along with other connected objects that need to be deleted as a result of deleting the selected IOObjects
+ * 
+ * @param designer is the CircuitDesigner the action is being done on.
+ * @param objects are the IOObjects that are being added to the Delete
 export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
 
     const action = new GroupAction([], "Delete Group Action");
