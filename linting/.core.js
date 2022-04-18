@@ -1,23 +1,6 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es6": true,
-    },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-    ],
-    "ignorePatterns": ["*.js", "scripts/**"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": "./tsconfig.base.json",
-        "ecmaFeatures": {
-            "jsx": true,
-        },
-    },
-    "plugins": [
-        "@typescript-eslint",
     ],
     "rules": {
         "max-len": ["warn", {
@@ -40,139 +23,18 @@ module.exports = {
         "key-spacing": ["error", {"align": "value"}],
         "no-tabs": "error",
         "no-trailing-spaces": "error",
-        "@typescript-eslint/adjacent-overload-signatures": "error",
-        "@typescript-eslint/array-type": ["error", {"default": "array-simple"}],
-        "@typescript-eslint/ban-types": ["error", {
-            "types": {
-                "null": {
-                    "message": "Use undefined instead",
-                    "fixWith": "undefined",
-                },
-            },
-            "extendDefaults": true,
-        }],
         "camelcase": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/explicit-function-return-type": ["off"],
         "no-console": ["error", {"allow": ["warn", "error"]}],
-        "@typescript-eslint/explicit-member-accessibility": "error",
 
         // Apparently broken, see https://github.com/typescript-eslint/typescript-eslint/issues/1824
         "indent": "off",
-        "@typescript-eslint/indent": ["off", 4, {
-            "ImportDeclaration": "first",
-            "ArrayExpression": "first",
-            "MemberExpression": 2,
-            "FunctionDeclaration": {"parameters": "first"},
-            "FunctionExpression": {"parameters": "first"},
-            "CallExpression": {"arguments": "first"},
-            "ignoredNodes": ["ConditionalExpression"]
-        }],
 
-        "@typescript-eslint/member-delimiter-style": ["error", {
-            "multiline": {
-                "delimiter": "semi",
-                "requireLast": true
-            },
-            "singleline": {
-                "delimiter": "comma",
-                "requireLast": false
-            }
-        }],
         "prefer-const": "error",
         "comma-dangle": "off",
-        "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
-        "@typescript-eslint/no-angle-bracket-type-assertion": "off",
         "no-array-constructor": "off",
-        "@typescript-eslint/no-array-constructor": "error",
-        "@typescript-eslint/no-empty-interface": "error",
-        "@typescript-eslint/no-explicit-any": "warn",
-        "@typescript-eslint/no-inferrable-types": "error",
-        "@typescript-eslint/no-misused-new": "error",
-        "@typescript-eslint/no-namespace": "error",
-        "@typescript-eslint/no-non-null-assertion": "error",
-        "@typescript-eslint/no-object-literal-type-assertion": "off",
-        "@typescript-eslint/consistent-type-assertions": "error",
-        "@typescript-eslint/no-parameter-properties": "error",
-        "@typescript-eslint/triple-slash-reference": "error",
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error", {
-            "argsIgnorePattern": "_",
-            "args": "after-used",
-            "ignoreRestSiblings": false
-        }],
         "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": ["off"],
-        "@typescript-eslint/no-var-requires": "error",
-        //"@typescript-eslint/prefer-interface": "error",
-        "@typescript-eslint/prefer-namespace-keyword": "error",
-        "@typescript-eslint/type-annotation-spacing": ["error", {
-            "before": false,
-            "after": true,
-            "overrides": {
-                "arrow": {
-                    "before": true,
-                    "after": true
-                }
-            }
-        }],
-        "@typescript-eslint/naming-convention": [
-            "error",
-            { // General default, only camelCase with no leading/trailing underscores
-                "selector": "default",
-                "format": ["camelCase"],
-            },
-            { // class, interface, typeAlias, enum, typeParameter are Pascalcase by default, no leading underscore
-                "selector": "typeLike",
-                "format": ["PascalCase"],
-            },
-            { // parameters and variables can be camelCase or PascalCase with a leading underscore
-                "selector": ["parameter", "variable"],
-                "format": ["camelCase", "PascalCase"],
-                "leadingUnderscore": "allow",
-            },
-            { // const non-exported variables can be camelCase, PascalCase, or UPPER_CASE with a leading underscore
-                "selector": "variable",
-                "modifiers": ["const"],
-                "format": ["camelCase", "PascalCase", "UPPER_CASE"],
-                "leadingUnderscore": "allow",
-            },
-            { // const exported non-function variables can only be UPPER_CASE, no leading underscore allowed
-                "selector": "variable",
-                "modifiers": ["exported", "const"],
-                "types": ["boolean", "string", "number", "array"],
-                "format": ["UPPER_CASE"],
-            },
-            { // object literal methods can be camelCase, PascalCase, or UPPER_CASE with a leading underscore
-                "selector": "objectLiteralMethod",
-                "format": ["camelCase", "PascalCase", "UPPER_CASE"],
-                "leadingUnderscore": "allow",
-            },
-            { // functions, typeProperties, and object literal properties can be camelCase or PascalCase, no leading underscore allowed
-                "selector": ["function", "typeProperty", "objectLiteralProperty"],
-                "format": ["camelCase", "PascalCase"],
-            },
-            { // enum members
-                "selector": "enumMember",
-                "format": ["PascalCase"],
-            },
-            { // static class properties must be UPPER_CASE, no leading underscore
-                "selector": "classProperty",
-                "modifiers": ["static"],
-                "format": ["UPPER_CASE"],
-            },
-            { // static class methods can be camelCase or  PascalCase, no leading underscore
-                "selector": "classMethod",
-                "modifiers": ["static"],
-                "format": ["camelCase", "PascalCase"],
-            },
-        ],
         "object-curly-spacing": ["off"],
 
-    },
-    "settings": {
-        "react": {
-            "version": "detect",
-        },
     },
 }

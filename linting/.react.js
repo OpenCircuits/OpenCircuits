@@ -74,4 +74,9 @@ module.exports = {
         "react/jsx-wrap-multilines": "error",
         "react/jsx-one-expression-per-line": ["error", {"allow": "single-child"}],
     },
+    "settings": {
+        "react": {
+            "version": "detect",
+        },
+    },
 }
