@@ -38,7 +38,7 @@ func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, user
 	// TODO: api versioning
 	router.GET("/api/ping", authenticatedHandler(manager, pingHandler))
 
-	// User-saveable circuits
+	// User-savable circuits
 	router.GET("/api/circuits/:id", authenticatedHandler(manager, circuitHandler(userCsif, circuitLoadHandler)))
 	router.GET("/api/circuits", authenticatedHandler(manager, circuitHandler(userCsif, circuitQueryHandler)))
 	router.POST("/api/circuits/:id", authenticatedHandler(manager, circuitHandler(userCsif, circuitUpdateHandler)))

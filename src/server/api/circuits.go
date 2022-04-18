@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -30,51 +29,6 @@ func parseCircuitRequestData(r io.Reader) (model.Circuit, error) {
 		return model.Circuit{}, err
 	}
 	return newCircuit, nil
-}
-
-func circuitStoreHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	circuitId := c.Param("id")
-
-	storageInterface := m.CreateCircuitStorageInterface()
-	circuit := storageInterface.LoadCircuit(circuitId)
-	if circuit == nil {
-		c.JSON(http.StatusNotFound, nil)
-		return
-	}
-	if circuit.Metadata.Owner != userId {
-		c.JSON(http.StatusForbidden, nil)
-		return
-	}
-
-	newCircuit, err := parseCircuitRequestData(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	circuit.Update(newCircuit)
-	storageInterface.UpdateCircuit(*circuit)
-
-	// Returned the updated metadata so the client can get any changes the server made to it
-	c.JSON(http.StatusAccepted, circuit.Metadata)
-}
-
-func circuitCreateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
-	storageInterface := m.CreateCircuitStorageInterface()
-
-	newCircuit, err := parseCircuitRequestData(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	circuit := storageInterface.NewCircuit()
-	circuit.Metadata.Owner = userId
-	circuit.Update(newCircuit)
-	storageInterface.UpdateCircuit(circuit)
-
-	// Returned the updated metadata so the client can get any changes the server made to it
-	c.JSON(http.StatusAccepted, circuit.Metadata)
 }
 
 func circuitLoadHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {
@@ -116,8 +70,7 @@ func circuitUpdateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 	} else {
 		circuit := storageInterface.LoadCircuit(circuitId)
 		if circuit == nil {
-			fmt.Println("nil for circuit")
-			fmt.Println("circuitId is", circuitId)
+			c.JSON(http.StatusNotFound, nil)
 		}
 		if circuit.Metadata.Owner != userId {
 			c.JSON(http.StatusForbidden, nil)
@@ -128,27 +81,6 @@ func circuitUpdateHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Co
 		storageInterface.UpdateCircuit(*circuit)
 		c.JSON(http.StatusAccepted, circuit.Metadata)
 	}
-	//c.JSON(http.StatusAccepted, circuit.Metadata)
-	//if circuit := storageInterface.LoadCircuit(circuitId); circuit == nil {
-	//	*circuit = storageInterface.NewCircuit()
-	//	circuit.Metadata.Owner = userId
-	//	circuit.Update(newCircuit)
-	//	storageInterface.UpdateCircuit(*circuit)
-	//
-	//	// Returned the updated metadata so the client can get any changes the server made to it
-	//	c.JSON(http.StatusAccepted, circuit.Metadata)
-	//} else {
-	//	if circuit.Metadata.Owner != userId {
-	//		c.JSON(http.StatusForbidden, nil)
-	//		return
-	//	}
-	//
-	//	circuit.Update(newCircuit)
-	//	storageInterface.UpdateCircuit(*circuit)
-	//
-	//	// Returned the updated metadata so the client can get any changes the server made to it
-	//	c.JSON(http.StatusAccepted, circuit.Metadata)
-	//}
 }
 
 func circuitQueryHandler(m interfaces.CircuitStorageInterfaceFactory, c *gin.Context, userId model.UserId) {

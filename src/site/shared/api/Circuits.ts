@@ -2,19 +2,6 @@ import {CircuitMetadata, CircuitMetadataDef} from "core/models/CircuitMetadata";
 import {Request} from "shared/utils/Request";
 import {AuthState} from "./auth/AuthState";
 
-//
-// export async function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata | undefined> {
-//     return new CircuitMetadata(JSON.parse(await Request({
-//         method: "POST",
-//         url: "api/circuits",
-//         headers: {
-//             "authType": auth.getType(),
-//             "authId": auth.getId()
-//         },
-//         data
-//     })) as CircuitMetadataDef);
-// }
-
 export async function UpdateUserCircuit(auth: AuthState, data: string, circuitId: string): Promise<CircuitMetadata | undefined> {
     return new CircuitMetadata(JSON.parse(await Request({
         method: "POST",
