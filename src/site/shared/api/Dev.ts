@@ -13,11 +13,12 @@ export async function DevCreateFile(data: string, fileId: string): Promise<void>
 }
 
 export async function DevListFiles(): Promise<string[]> {
-    return JSON.parse(await Request({
+    const result = await Request({
         method: "GET",
         url: "dev/filelist",
         headers: {},
-    }))["files"];
+    });
+    return JSON.parse(result)["files"];
 }
 
 export async function DevGetFile(fileId: string): Promise<string> {
