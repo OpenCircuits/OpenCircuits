@@ -52,10 +52,10 @@ module.exports = (devServer) => {
     // List saved files
     devServer.app.get("/dev/filelist", (req, res) => {
         if (!fs.existsSync(CACHE_PATH))
-            return res.status(204).json({ files: [] });
+            return res.status(200).json({ files: [] });
 
         const files = fs.readdirSync(CACHE_PATH).filter(f => f.endsWith(".circuit"));
 
-        res.status(200).json({ files })
+        res.status(200).json({ files });
     });
 }
