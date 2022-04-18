@@ -345,16 +345,22 @@ export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: nu
     if (objs.length === 0)
         return [V(), 1];
 
-    const bbox = CircuitBoundingBox(objs);
-    const finalPos = bbox.getCenter();
+    const { left, right, bottom, top } = camera.getMargin();
 
-    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const marginSize = V(left - right, top - bottom);
+
+    const bbox = CircuitBoundingBox(objs);
+
+    const screenSize = camera.getSize().sub(V(left, bottom)); // Bottom right corner of screen
     const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
 
     // Determine which bbox dimension will limit zoom level
-    const xRatio = bbox.getWidth()/worldSize.x;
-    const yRatio = bbox.getHeight()/worldSize.y;
-    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+    const ratio = V(bbox.getWidth() / worldSize.x, bbox.getHeight() / worldSize.y);
+    const finalZoom = camera.getZoom()*Math.max(ratio.x, ratio.y)*padding;
+
+    // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd
+    //  screen size so only half of the margin on the top/left need to be contributed
+    const finalPos = bbox.getCenter().sub(marginSize.scale(0.5 * finalZoom));
 
     return [finalPos, finalZoom];
 }
