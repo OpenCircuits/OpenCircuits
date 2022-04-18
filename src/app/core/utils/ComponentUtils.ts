@@ -1,8 +1,6 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
 import {IO_PORT_LINE_WIDTH,
-        EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN,
         GRID_SIZE} from "./Constants";
 
 import {Vector, V} from "Vector";
@@ -20,10 +18,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
