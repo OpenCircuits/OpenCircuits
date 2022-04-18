@@ -8,10 +8,10 @@ import {CircuitDesigner, isNode, Node} from "core/models";
 import {IOObject} from "core/models/IOObject";
 
 /**
- * Goes through group of selected IOObjects and deletes them along with other connected objects that need to be deleted as a result of deleting the selected IOObjects
+ * Goes through group of selected IOObjects and deletes them along with other connected objects that need to be deleted.
  * 
  * @param designer is the CircuitDesigner the action is being done on.
- * @param objects are the IOObjects that are being added to the Delete
+ * @param objects are the IOObjects that are being added to the DeleteGroupAction.
 export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
 
     const action = new GroupAction([], "Delete Group Action");
@@ -22,10 +22,10 @@ export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOOb
     const wires = allDeletions.getWires();
 
    
-    // go through all wires and get their input component -> store in array called like `inputComps` (use wires.map)
+    // go through all wires and get their input component
     const inputComps = wires.map(wire => wire.getP1Component());
 
-    // filter out duplicates (use Set) and non-nodes (use filter)
+    // filter out duplicates and non-nodes 
     const inputNodes = inputComps.filter(comp => isNode(comp)) as Node[];
     let inputNodesNoDuplicates = new Set(inputNodes.filter(node => !objects.includes(node)));
     console.log(inputNodesNoDuplicates);
