@@ -33,6 +33,8 @@ import {PasteHandler}         from "core/tools/handlers/PasteHandler";
 import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
+
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
@@ -145,6 +147,9 @@ async function Init(): Promise<void> {
             info.history.addCallback(() => {
                 store.dispatch(SetCircuitSaved(false));
             });
+
+            if ((await DevListFiles()).includes("devCached.circuit"))
+                helpers.LoadCircuit(() => DevGetFile("devCached.circuit"));
 
             ReactDOM.render(
                 <React.StrictMode>
