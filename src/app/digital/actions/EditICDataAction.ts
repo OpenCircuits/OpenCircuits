@@ -1,27 +1,38 @@
 import {Action} from "core/actions/Action";
+import { IOObject } from "core/models";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ICData} from "digital/models/ioobjects/other/ICData";
+import { IC } from "digital/models/ioobjects";
 
 export class EditICDataAction implements Action {
-    private prevData: ICData;
-    private newData: ICData;
-    private target: DigitalCircuitDesigner;
+    private target: DigitalCircuitDesigner
+    private ic: IC;
+    private prevName: string;
+    private newName: string;
+    private prevColl: IOObject[];
+    private newColl: IOObject[];
 
-    public constructor(prevData: ICData, newData: ICData, target: DigitalCircuitDesigner) {
-        this.prevData = prevData;
-		this.newData = newData;
+    public constructor(target: DigitalCircuitDesigner, ic: IC, prevColl: IOObject[],
+                       prevName: string, newColl: IOObject[], newName?: string) {
         this.target = target;
+        this.ic = ic;
+        this.prevName = prevName;
+        this.newName = newName ?? "";
+        this.prevColl = prevColl;
+        this.newColl = newColl;
     }
 
-    public execute(): Action { // TODO don't think this works how i think it will
-		this.target.removeICData(this.prevData);
-        this.target.addICData(this.newData);
+    public execute(): Action {
+		this.ic.getData().rebuild(this.newColl, this.newName);
+        this.ic.update();
+        this.target.editICData(this.ic.getData());
         return this;
     }
 
-    public undo(): Action { // TODO how????? save prev data??? elephant
-        this.target.removeICData(this.prevData);
+    public undo(): Action {
+        this.ic.getData().rebuild(this.prevColl, this.prevName);
+        this.ic.update();
+        this.target.editICData(this.ic.getData());
         return this;
     }
 

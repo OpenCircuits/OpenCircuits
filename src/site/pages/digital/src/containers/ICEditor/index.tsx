@@ -4,9 +4,9 @@ import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {Input}        from "core/utils/Input";
-import {GetCameraFit} from "core/utils/ComponentUtils";
+import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
 
-import {CullableObject} from "core/models";
+import {CullableObject, IOObject} from "core/models";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {InteractionTool}  from "core/tools/InteractionTool";
@@ -71,7 +71,11 @@ import { ViewICButtonModule } from "../SelectionPopup/modules/ViewICButtonModule
 import docsConfig from "site/digital/data/docsUrlConfig.json";
 import { HistoryBox } from "shared/containers/HistoryBox";
 import { DeleteHandler } from "core/tools/handlers/DeleteHandler";
-import { IC } from "digital/models/ioobjects";
+import { IC, ICData } from "digital/models/ioobjects";
+import { EditICDataAction } from "digital/actions/EditICDataAction";
+import { GroupAction } from "core/actions/GroupAction";
+import { DigitalWire } from "digital/models/DigitalWire";
+import { DisconnectAction } from "core/actions/addition/ConnectionAction";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
@@ -105,6 +109,8 @@ export const ICEditor = (() => {
         const canvas = useRef<HTMLCanvasElement>(null);
         const historyBox = useRef<HTMLCanvasElement>(null);
         const [{name}, setName] = useState({ name: "" });
+        let prevCollection: IOObject[];
+        let prevName: string;
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -173,6 +179,10 @@ export const ICEditor = (() => {
             // Get name
             setName({name: data.getName()});
 
+            // Get initial state
+            prevCollection = icInfo.designer.getAll();
+            prevName = name;
+
             // Adjust the camera so it all fits in the viewer
             const [pos, zoom] = GetCameraFit(camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO);
             new MoveCameraAction(camera, pos, zoom).execute();
@@ -191,36 +201,59 @@ export const ICEditor = (() => {
                 if (!data)
                     throw new Error("ICEditor.close failed: data was undefined");
 
-                // // Create IC on center of screen
-                // const ic = new IC(data);
-                // ic.setPos(mainInfo.camera.getPos());
+                // // Update IC data
+                // (mainInfo.selections.get()[0] as IC).getData().rebuild(icInfo.designer.getAll(), name);
 
-                // Update IC data
-                // icInfo.ic = new IC(data);
-                console.log(icInfo.ic);
+                const ic = mainInfo.selections.get()[0] as IC;
+                const oldInputCount = ic.getData().getInputCount();
+                const oldOutputCount = ic.getData().getOutputCount();
 
-                // // Deselect other things, create IC and select it
-                // // const action = new GroupAction([
-                // //     CreateDeselectAllAction(mainInfo.selections),
-                // //     new CreateICDataAction(data, mainInfo.designer),
-                // //     new PlaceAction(mainInfo.designer, ic),
-                // //     new SelectAction(mainInfo.selections, ic)
-                // // ], "Create IC Action");
-                // const action = new GroupAction([ // TODO make work for all instances of ic on main designer
-                //     new EditICDataAction(data, data, mainInfo.designer) // make prev and new data
-                // ], "Edit IC Action");
-                // mainInfo.history.add(action.execute());
-                // mainInfo.renderer.render();
+                let inputConn: DigitalWire[] = [];
+                ic.getInputPorts().forEach((p) => {
+                    inputConn.push(p.getWires()[0]);
+                });
+                console.log(inputConn);
+                let outputConn = ic.getOutputPorts();
+
+                console.log(ic);
+                console.log(oldInputCount);
+
+                // Create Edit action to update all ICData
+                const editICAction = new GroupAction([
+                    new EditICDataAction(
+                        mainInfo.designer, ic,
+                        prevCollection, prevName,
+                        icInfo.designer.getAll(), name
+                    ) // make prev and new data
+                ], "Edit IC Action");
+
+                mainInfo.history.add(editICAction.execute());
+
+                const newInputCount = ic.getData().getInputCount();
+                
+                console.log(ic);
+                console.log(newInputCount);
+
+                const cleanICAction = new GroupAction([], "IC Edit Clean Up");
+
+                for (let i = 0; i < oldInputCount - newInputCount; ++i) {
+                    // inputConn[i];
+                    cleanICAction.add(new DisconnectAction(mainInfo.designer, inputConn[i]));
+                }
+
+                mainInfo.history.add(cleanICAction.execute());
+
+                mainInfo.renderer.render();
             }
 
             // Unblock main input
             mainInfo.input.unblock();
 
-            // icInfo.ic = undefined;
+            icInfo.ic = undefined;
             icInfo.history.reset();
             dispatch(CloseICEditor());
             (document.getElementsByClassName("itemnav")[0] as HTMLElement).style.zIndex = "2";
-            // setName({ name: "" }); // Clear name
+            setName({ name: "" }); // Clear name
         }
 
         useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);

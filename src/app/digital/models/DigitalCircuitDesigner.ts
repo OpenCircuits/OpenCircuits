@@ -217,6 +217,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "ic", op: "added", data });
     }
 
+    public editICData(data: ICData): void {
+        this.callback({ type: "ic", op: "edited", data });
+    }
+
     public removeICData(data: ICData): void {
         const i = this.ics.indexOf(data);
         this.ics.splice(i, 1);

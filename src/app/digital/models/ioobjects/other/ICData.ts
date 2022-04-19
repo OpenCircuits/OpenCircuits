@@ -157,6 +157,25 @@ export class ICData {
         return ICData.CreateSet(this.collection.toList());
     }
 
+    public rebuild(objs: IOObject[], name?: string) {
+        const set = ICData.CreateSet(objs);
+        if (!ICData.IsValid(set))
+            throw new Error("ICData.rebuild failed: set is invalid");
+
+        this.name = name ?? "";
+        this.transform = new Transform(V(0,0), V(0,0));
+        this.collection = set!;
+        this.inputPorts = [];
+        this.outputPorts = [];
+
+        if (set) {
+            this.calculateSize();
+            this.createPorts(InputPort, this.inputPorts, this.collection.getInputs(), -1);
+            this.createPorts(OutputPort, this.outputPorts, this.collection.getOutputs(), 1);
+            this.positionPorts();
+        }
+    }
+
     private static CreateSet(objs: IOObject[]): DigitalObjectSet {
         const copies = DigitalObjectSet.from(CopyGroup(objs).toList());
 
