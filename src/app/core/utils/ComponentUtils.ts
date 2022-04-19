@@ -165,7 +165,7 @@ export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | N
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
  * @param full true if you want to return everything in the circuit otherwise returns only the wires/nodes connected to the selected wire.
- * @param  objects The list of objects
+ * @param objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
 export function GatherGroup(objects: IOObject[], full: boolean = true): IOObjectSet {
