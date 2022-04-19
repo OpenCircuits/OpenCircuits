@@ -100,6 +100,10 @@ export class IC extends DigitalComponent {
         return this.data;
     }
 
+    public getCollection(): DigitalObjectSet {
+        return this.collection;
+    }
+
     public getDisplayName(): string {
         return "IC";
     }
