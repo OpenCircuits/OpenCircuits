@@ -100,10 +100,10 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
     }
 
     const checkType = (s: Selectable, Type: Function & { prototype: T[number]; }) => {
-        // check if s instanceof Type and also not instnace of anything in config.exclude
+        //Check if s instanceof Type and also not instance of anything in config.exclude. Nesscary for issue #820
 
-        if(config.exclude)
-        {for (let exclusion of config.exclude)  { if(s instanceof exclusion) {return false;}}}
+        if (config.exclude?.some(exclusion => s instanceof exclusion))
+        return false;
 
         return (s instanceof Type);
     }
