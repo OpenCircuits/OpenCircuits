@@ -10,7 +10,11 @@ import {IOObject, Wire} from "core/models";
 import {EventHandler} from "../EventHandler";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
-
+/**
+ * Checks to see if a the backspace or delte key is pressed on a selected objects and then deletes the objects.
+ * @param event is the event of the key press
+ * @param selections are the selected objects that the action is being done on.
+ */
 export const DeleteHandler: EventHandler = ({
     conditions: (event: Event, {selections}: CircuitInfo) =>
          (event.type === "keydown" &&
