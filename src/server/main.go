@@ -32,38 +32,42 @@ func getPort() string {
 	return "8080"
 }
 
-type flagType interface {
-	bool | uint | int | string
+type flagVar struct {
+	uFlag *uint64
+	iFlag *int
+	bFlag *bool
+	sFlag *string
 }
 
-func createConfig[T flagType](key string, message string) *T {
-	var config *T
+func createConfig(key string, message string) flagVar {
+	var config flagVar
 	val := os.Getenv(key)
-	boolVal, errB := strconv.ParseBool(val)
 	uintVal, errU := strconv.ParseUint(val, 10, 0)
 	intVal, errI := strconv.Atoi(val)
-	if errB == nil {
-		config = flag.Bool(key, boolVal, message)
-	} else if errU == nil {
-		config = flag.Uint64(key, uintVal, message)
+	boolVal, errB := strconv.ParseBool(val)
+	if errU == nil {
+		config.uFlag = flag.Uint64(key, uintVal, message)
 	} else if errI == nil {
-		config = flag.Int(key, intVal, message)
+		config.iFlag = flag.Int(key, intVal, message)
+	} else if errB == nil {
+		config.bFlag = flag.Bool(key, boolVal, message)
+	} else {
+		config.sFlag = flag.String(key, val, message)
 	}
-	config = flag.String(key, val, message)
 	return config
 }
 
 func main() {
 	var err error
 
-	noAuthConfig := createConfig[bool]("no_auth", "Enables username-only authentication for testing and development")
-	googleAuthConfig := createConfig[string]("google_auth", "<path-to-config>; Enables google sign-in API login")
-	userCsifConfig := createConfig[string]("interface", "The storage interface")
-	sqlitePathConfig := createConfig[string]("sqlitePath", "The path to the sqlite working directory")
-	dsEmulatorHost := createConfig[string]("ds_emu_host", "The emulator host address for cloud datastore")
-	dsProjectId := createConfig[string]("ds_emu_project_id", "The gcp project id for the datastore emulator")
-	ipAddressConfig := createConfig[string]("ip_address", "IP address of server")
-	portConfig := createConfig[string]("port", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
+	noAuthConfig := createConfig("no_auth", "Enables username-only authentication for testing and development").bFlag
+	googleAuthConfig := createConfig("google_auth", "<path-to-config>; Enables google sign-in API login").sFlag
+	userCsifConfig := createConfig("interface", "The storage interface").sFlag
+	sqlitePathConfig := createConfig("sqlitePath", "The path to the sqlite working directory").sFlag
+	dsEmulatorHost := createConfig("ds_emu_host", "The emulator host address for cloud datastore").sFlag
+	dsProjectId := createConfig("ds_emu_project_id", "The gcp project id for the datastore emulator").sFlag
+	ipAddressConfig := createConfig("ip_address", "IP address of server").sFlag
+	portConfig := createConfig("port", "Port to serve application, use \"auto\" to select the first available port starting at 8080").uFlag
 	flag.Parse()
 
 	// Register authentication method
@@ -108,9 +112,9 @@ func main() {
 	api.RegisterRoutes(router, authManager, userCsif)
 
 	// Check if portConfig is set to auto, if so find available port
-	if *portConfig == "auto" {
+	if strconv.FormatUint(*portConfig, 10) == "auto" {
 		os.Setenv("port", getPort())
 	}
 
-	router.Run(*ipAddressConfig + ":" + *portConfig)
+	router.Run(*ipAddressConfig + ":" + strconv.FormatUint(*portConfig, 10))
 }
