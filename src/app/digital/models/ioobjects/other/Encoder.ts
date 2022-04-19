@@ -20,6 +20,7 @@ export class Encoder extends DigitalComponent {
               V(DEFAULT_SIZE, DEFAULT_SIZE*2),
               new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE),
               new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
+        this.updatePortNames();
     }
 
     public activate(): void {
@@ -35,6 +36,15 @@ export class Encoder extends DigitalComponent {
         const bits = index.toString(2).padStart(this.outputs.length, "0").split("").reverse();
         bits.forEach((bit, i) => {
             super.activate(bit === "1", i);
+        });
+    }
+
+    public updatePortNames(): void {
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() === "") p.setName(`I${i}`);
+        });
+        this.outputs.getPorts().forEach((p, i) => {
+            if (p.getName() === "") p.setName(`O${i}`);
         });
     }
 

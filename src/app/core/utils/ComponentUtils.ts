@@ -1,8 +1,6 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
 import {IO_PORT_LINE_WIDTH,
-        EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN,
         GRID_SIZE} from "./Constants";
 
 import {Vector, V} from "Vector";
@@ -20,10 +18,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
@@ -108,14 +102,16 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
  * @param  w The wire to start from
  * @return   The array of wires/WirePorts in this path (including w)
  */
+
 export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node> {
+  
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
     const queue = new Array<Wire | Node>(w);
     const visited = new Set<Wire | Node>();
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
         const q = queue.shift()!;
 
         visited.add(q);
@@ -147,6 +143,36 @@ export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node
 }
 
 /**
+ * Gets all the components connected to this component
+ *  Note: this path is UN-ORDERED!
+ *
+ * @param  c The component to start from
+ * @return   The array of components in the same circuit (including c)
+ */
+export function GetComponentPath(c: Component): Array<Component> {
+    const path: Array<Component> = [];
+
+    // Breadth First Search
+    const queue = new Array<Component>(c);
+    const visited = new Set<Component>();
+
+    while (queue.length > 0) {
+        const q = queue.shift()!;
+
+        visited.add(q);
+        path.push(q);
+        for (const w of q.getConnections()) {
+            if (!visited.has(w.getP1Component()))
+                queue.push(w.getP1Component());
+            if (!visited.has(w.getP2Component()))
+                queue.push(w.getP2Component());
+        }
+    }
+
+    return path;
+}
+
+/**
  * Gathers all wires + wireports in the path from the inputs/outputs
  *  of the given component.
  *
@@ -158,7 +184,9 @@ export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | N
     const wires = [...new Set(obj.getConnections())];
 
     // Get all distinct paths
+
     return [...new Set(wires.flatMap((w) => GetPath(w,full)))];
+
 }
 
 /**
@@ -176,6 +204,7 @@ export function GatherGroup(objects: IOObject[], full: boolean = true): IOObject
     const wires = group.getWires();
 
     const components = group.getComponents();
+
 
     const paths = [...new Set(wires.flatMap((w) => GetPath(w, full))
             .concat(components.flatMap((c) => GetAllPaths(c,full))))];
@@ -234,7 +263,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
     const ends = graph.getEndNodes();
     const badBoys = ends
             .filter((i) => isNode(components[i]))
-            .flatMap((i) => GetPath(components[i] as Node)) as IOObject[];
+            .flatMap((i) => GetWirePath(components[i] as Node)) as IOObject[];
 
     objects = group.toList().filter((obj) => !badBoys.includes(obj));
 
@@ -333,16 +362,22 @@ export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: nu
     if (objs.length === 0)
         return [V(), 1];
 
-    const bbox = CircuitBoundingBox(objs);
-    const finalPos = bbox.getCenter();
+    const { left, right, bottom, top } = camera.getMargin();
 
-    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const marginSize = V(left - right, top - bottom);
+
+    const bbox = CircuitBoundingBox(objs);
+
+    const screenSize = camera.getSize().sub(V(left, bottom)); // Bottom right corner of screen
     const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
 
     // Determine which bbox dimension will limit zoom level
-    const xRatio = bbox.getWidth()/worldSize.x;
-    const yRatio = bbox.getHeight()/worldSize.y;
-    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+    const ratio = V(bbox.getWidth() / worldSize.x, bbox.getHeight() / worldSize.y);
+    const finalZoom = camera.getZoom()*Math.max(ratio.x, ratio.y)*padding;
+
+    // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd
+    //  screen size so only half of the margin on the top/left need to be contributed
+    const finalPos = bbox.getCenter().sub(marginSize.scale(0.5 * finalZoom));
 
     return [finalPos, finalZoom];
 }
