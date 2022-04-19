@@ -12,6 +12,7 @@ import {IOObject} from "core/models/IOObject";
  * 
  * @param designer is the CircuitDesigner the action is being done on.
  * @param objects are the IOObjects that are being added to the DeleteGroupAction.
+ */
 export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
 
     const action = new GroupAction([], "Delete Group Action");
