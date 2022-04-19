@@ -5,7 +5,7 @@ module.exports = mergeDeep({
             "browser": true,
             "es6": true,
         },
-        "ignorePatterns": ["*.js", "scripts/**"],
+        "ignorePatterns": ["*.js", "scripts/**", "*.d.ts"],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
             "project": "./tsconfig.base.json",
