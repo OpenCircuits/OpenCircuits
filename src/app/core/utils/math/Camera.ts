@@ -6,6 +6,7 @@ import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
 
 
+type Margin = {left: number, right: number, bottom: number, top: number}
 
 /**
  * This code is for the camera object which is a representation of the screen while using OpenCircuits.
@@ -30,6 +31,8 @@ export class Camera {
 
     private dirty: boolean;
 
+    private margin: Margin;
+
     /**
      * This constructor creates new Camera object which is the field of view (the screen) and initializes all the variables.
      * It sets dirty to true which means that 
@@ -45,6 +48,7 @@ export class Camera {
         this.zoom = startZoom;
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
+        this.margin = {left: 0, right: 0, bottom: 0, top: 0};
     }
 
     /**
@@ -144,6 +148,13 @@ export class Camera {
         return V(this.width/2, this.height/2);
     }
     /**
+     * Returns the size of the screen. This is the bottom-right corner
+     * @returns vector that contains the size of the screen
+     */
+    public getSize(): Vector {
+        return V(this.width, this.height);
+    }
+    /**
      * makes a copy of pos to return
      * @returns the position
      */
@@ -197,4 +208,22 @@ export class Camera {
         return this.getMatrix().mul(v.sub(this.getCenter()));
     }
 
+    /**
+     * Returns a set of margins that adjusts the view of the camera
+     * @returns margin values for the camera 
+     */
+    public getMargin(): Margin {
+        return this.margin;
+    }
+
+    /**
+     * This sets the margin for the camera
+     * @param left the left margin of the camera
+     * @param right the right margin of the camera
+     * @param bottom the bottom margin of the camera
+     * @param top the top margin of the camera
+     */
+    public setMargin(newMargin: Partial<Margin>): void{
+        this.margin = {...this.margin, ...newMargin};
+    }
 }
