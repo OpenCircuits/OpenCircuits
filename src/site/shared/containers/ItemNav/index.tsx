@@ -16,17 +16,19 @@ import {Component} from "core/models";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
+import {useKey} from "shared/utils/hooks/useKey";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, itemNavReducer} from "shared/state/ItemNav";
 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
+import { boolean } from "yargs";
 
 
 export type ItemNavItem = {
@@ -69,6 +71,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const [hovering, setHover] = useState("");
 
+    const [isShiftDown, setShift] = useState(false);
+
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
@@ -94,6 +98,10 @@ export const ItemNav = <D,>({ info, config, additionalData,
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
     }
 
+    // function handleShiftPress() {
+    //     setShift(useKey("Shift"));
+    // }
+
     // Resets the curItemID and numClicks
     function reset(cancelled = false) {
         setState({ curItemID: "", numClicks: 1 });
@@ -102,8 +110,18 @@ export const ItemNav = <D,>({ info, config, additionalData,
     }
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
-        DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
-        reset();
+        if(ev.shiftKey && numClicks > 1) {
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
+            setState({
+                curItemID: curItemID,
+                numClicks: numClicks - 1,
+            });
+            setCurItemImg(curItemImg);
+        }
+        else {
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
+            reset();
+        }
     }, [curItemID, numClicks, setState, additionalData]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
@@ -116,7 +134,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
-        const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
+        const resetListener = (_: Vector, hit: boolean) => { if (hit && !isShiftDown) reset(false); }
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
