@@ -75,7 +75,8 @@ export const App = ({info, helpers, canvas}: Props) => {
     return (
         <div className="App">
             <SideNav helpers={helpers}
-                     exampleCircuits={exampleCircuits} />
+                     exampleCircuits={exampleCircuits}
+                     info={info} />
 
             <div className="App__container" style={{height: h+"px"}}>
                 <DigitalHeader img="img/icons/logo.svg"
