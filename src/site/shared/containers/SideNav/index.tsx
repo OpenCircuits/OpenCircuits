@@ -1,3 +1,4 @@
+
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
 import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
@@ -15,6 +16,16 @@ import {CircuitPreview} from "shared/components/CircuitPreview";
 
 import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons";
 
+import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+
+
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {IOObject} from "core/models";
+import {IC} from "digital/models/ioobjects/other/IC";
+import {GroupAction} from "core/actions/GroupAction";
+
+
 import "./index.scss";
 
 
@@ -31,13 +42,37 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 type Props = {
     helpers: CircuitInfoHelpers;
     exampleCircuits: CircuitMetadata[];
+    info: CircuitInfo;
 }
-export const SideNav = ({ helpers, exampleCircuits }: Props) => {
-    const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
-        state => ({ ...state.user, isOpen: state.sideNav.isOpen,
+export const SideNav = ({ helpers, exampleCircuits, info }: Props) => {
+    const { auth, circuits, isSaved, isOpen, loading, loadingCircuits } = useSharedSelector(
+        state => ({ ...state.user, isSaved: state.circuit, isOpen: state.sideNav.isOpen,
                     loading: state.circuit.loading, loadingCircuits: state.user.loading })
     );
     const dispatch = useSharedDispatch();
+
+    function saveCircuit() {
+        console.log("save");
+    }
+
+    function NewCircuit() {
+        if (!isSaved.isSaved) {
+            const willSave = window.confirm("not saved yet");
+            if (willSave) {
+                saveCircuit();
+                helpers.SaveCircuitRemote();
+            }
+        }
+        
+
+        CreateGroupSelectAction(info.selections, info.designer.getObjects()).execute();
+        const objs = info.selections.get().filter(s => s instanceof IOObject) as IOObject[];
+        new GroupAction([
+            CreateDeselectAllAction(info.selections),
+            CreateDeleteGroupAction(info.designer, objs)
+        ], "Cut (Context Menu)").execute();
+        info.history.reset();
+    }
 
     return (<>
         <Overlay
@@ -58,6 +93,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
+            <button onClick={() => NewCircuit()}>New Circuit</button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
