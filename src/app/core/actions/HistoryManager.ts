@@ -1,8 +1,8 @@
 import {Action} from "core/actions/Action";
 
 
-export type HistoryCallbackType = "add" | "undo" | "redo" | "reset";
-export type HistoryCallback = (type: HistoryCallbackType, action?: Action) => void;
+export type HistoryCallbackType = "add" | "undo" | "redo";
+export type HistoryCallback = (type: HistoryCallbackType, action: Action) => void;
 
 /**
  * Manages undo/redo actions
@@ -22,7 +22,7 @@ export class HistoryManager {
         this.callbacks = new Set();
     }
 
-    private callback(type: HistoryCallbackType, action?: Action): void {
+    private callback(type: HistoryCallbackType, action: Action): void {
         this.callbacks.forEach(c => c(type, action));
     }
 
@@ -99,7 +99,6 @@ export class HistoryManager {
     public reset(): void {
         this.undoStack = [];
         this.redoStack = [];
-        this.callback("reset");
     }
 
     public getActions(): Action[] {
