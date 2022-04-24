@@ -24,5 +24,8 @@ yarn-error.log
 # IntelliJ
 .idea/
 
+# VS Code
+.vscode
+
 # Secrets (to prevent devs from pushing api keys to the repo)
 src/secrets/

@@ -41,6 +41,14 @@ func (u UUID) Base64Encode() string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
+func (u UUID) MarshalText() ([]byte, error) {
+	return []byte(u.Base64Encode()), nil
+}
+
+func (u *UUID) UnmarshalText(data []byte) error {
+	return u.Base64Decode(string(data))
+}
+
 func NewUUID() UUID {
 	return UUID{uuid.New()}
 }

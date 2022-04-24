@@ -1,7 +1,10 @@
 package mem
 
 import (
-	"errors"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"sync"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 )
@@ -14,15 +17,17 @@ type memCircuitStorageInterfaceFactory struct {
 
 // A simple, array-based circuit storage for testing and example circuits
 type memCircuitStorage struct {
-	m      []model.Circuit
-	idxMap map[model.CircuitID]int
+	Circuits map[model.CircuitID]model.Circuit `json:"circuits"`
+	mut      sync.Mutex
 }
 
 func newMemCircuitStorage() *memCircuitStorage {
-	return &memCircuitStorage{
-		m:      nil,
-		idxMap: make(map[model.CircuitID]int),
+	mem := &memCircuitStorage{
+		Circuits: make(map[model.CircuitID]model.Circuit),
+		mut:      sync.Mutex{},
 	}
+	mem.load()
+	return mem
 }
 
 func NewInterfaceFactory() model.CircuitStorageInterfaceFactory {
@@ -33,17 +38,43 @@ func (m *memCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() mode
 	return m.memInterface
 }
 
-func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
-	val, ok := mem.idxMap[c.Metadata.ID]
-	if !ok {
-		panic(errors.New("circuit did not exist for given id"))
+const MEM_FILE_PATH string = "/tmp/OpenCircuits_Circuits.json"
+
+func (mem *memCircuitStorage) load() {
+	data, err := ioutil.ReadFile(MEM_FILE_PATH)
+	if err != nil {
+		fmt.Printf("Failed to load \"mem\" circuit data from %s: %e\n", MEM_FILE_PATH, err)
+		return
 	}
-	mem.m[val] = c
+	if err := json.Unmarshal(data, &mem); err != nil {
+		panic(err)
+	}
 }
 
-func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.OldCircuitMetadata {
-	var ret []model.OldCircuitMetadata
-	for _, v := range mem.m {
+// save assumes the mutex is already held
+func (mem *memCircuitStorage) save() {
+	data, err := json.Marshal(&mem)
+	if err != nil {
+		panic(err)
+	}
+	if err := ioutil.WriteFile(MEM_FILE_PATH, data, 0644); err != nil {
+		panic(err)
+	}
+}
+
+func (mem *memCircuitStorage) UpsertCircuit(c model.Circuit) {
+	mem.mut.Lock()
+	defer mem.mut.Unlock()
+	mem.Circuits[c.Metadata.ID] = c
+	mem.save()
+}
+
+func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
+	mem.mut.Lock()
+	defer mem.mut.Unlock()
+
+	var ret []model.CircuitMetadata
+	for _, v := range mem.Circuits {
 		if v.Metadata.Owner == userID {
 			ret = append(ret, v.Metadata)
 		}
@@ -52,28 +83,21 @@ func (mem *memCircuitStorage) EnumerateCircuits(userID model.UserID) []model.Old
 }
 
 func (mem *memCircuitStorage) LoadCircuit(id model.CircuitID) *model.Circuit {
-	val, ok := mem.idxMap[id]
-	if !ok {
-		return nil
-	}
-	return &mem.m[val]
-}
+	mem.mut.Lock()
+	defer mem.mut.Unlock()
 
-func (mem *memCircuitStorage) NewCircuit() model.Circuit {
-	var c model.Circuit
-	c.Metadata.ID = model.NewCircuitID()
-	mem.idxMap[c.Metadata.ID] = len(mem.m)
-	mem.m = append(mem.m, c)
-	return c
+	if copy, ok := mem.Circuits[id]; ok {
+		return &copy
+	}
+	return nil
 }
 
 func (mem *memCircuitStorage) DeleteCircuit(id model.CircuitID) {
-	v, ok := mem.idxMap[id]
-	if !ok {
-		return
-	}
-	mem.m[v] = model.Circuit{}
-	delete(mem.idxMap, id)
+	mem.mut.Lock()
+	defer mem.mut.Unlock()
+
+	delete(mem.Circuits, id)
+	mem.save()
 }
 
 func (mem *memCircuitStorage) Close() {}

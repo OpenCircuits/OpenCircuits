@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"math/rand"
 	"net"
 	"os"
@@ -15,7 +16,6 @@ import (
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/gcp_datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/mem"
-	"github.com/OpenCircuits/OpenCircuits/site/go/drivers/sqlite"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"
 	"github.com/gin-gonic/contrib/sessions"
@@ -39,8 +39,7 @@ func main() {
 	// Parse flags
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
-	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
-	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
+	userCsifConfig := flag.String("interface", "mem", "The storage interface")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
@@ -57,19 +56,19 @@ func main() {
 	authManager := auth.AuthenticationManager{}
 	if *googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
+		fmt.Println("Using google auth")
 	}
 	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
+		fmt.Println("Using noauth")
 	}
 	authManager.RegisterAuthenticationMethod(auth.NewAnonAuth())
+	fmt.Println("Using anon auth")
 
 	// Set up the storage interface
 	var userCsif model.CircuitStorageInterfaceFactory
 	if *userCsifConfig == "mem" {
 		userCsif = mem.NewInterfaceFactory()
-	} else if *userCsifConfig == "sqlite" {
-		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
-		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
 	} else if *userCsifConfig == "gcp_datastore_emu" {
 		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), *dsProjectId, *dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")

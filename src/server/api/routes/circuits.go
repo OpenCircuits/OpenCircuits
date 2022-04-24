@@ -9,6 +9,33 @@ import (
 
 type circuitRoutes struct{}
 
+type circuitMetadata struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Owner     string `json:"owner"`
+	Desc      string `json:"desc"`
+	Thumbnail string `json:"thumbnail"`
+	Version   string `json:"version"`
+}
+
+// Use a separate transmission struct since UUID types (id) fail to validate when empty
+type circuit struct {
+	Metadata circuitMetadata `json:"metadata"`
+	Designer string          `json:"contents"`
+}
+
+func (c circuit) toCircuit() model.Circuit {
+	return model.Circuit{
+		Metadata: model.CircuitMetadata{
+			Name:      c.Metadata.Name,
+			Desc:      c.Metadata.Desc,
+			Thumbnail: c.Metadata.Thumbnail,
+			Version:   c.Metadata.Version,
+		},
+		Designer: c.Designer,
+	}
+}
+
 func (circuitRoutes) store(c *api.Context) (int, interface{}) {
 	var circuitID model.CircuitID
 	if err := circuitID.Base64Decode(c.Param("id")); err != nil {
@@ -17,7 +44,7 @@ func (circuitRoutes) store(c *api.Context) (int, interface{}) {
 
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	var newCircuit model.Circuit
+	var newCircuit circuit
 	if err := c.ShouldBindJSON(&newCircuit); err != nil {
 		return http.StatusBadRequest, err
 	}
@@ -31,30 +58,32 @@ func (circuitRoutes) store(c *api.Context) (int, interface{}) {
 		return http.StatusNotFound, nil
 	}
 
-	circuit.Update(newCircuit)
-	storageInterface.UpdateCircuit(*circuit)
+	circuit.Update(newCircuit.toCircuit())
+	storageInterface.UpsertCircuit(*circuit)
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	return http.StatusAccepted, circuit.Metadata
+	return http.StatusAccepted, &circuit.Metadata
 }
 
 func (circuitRoutes) create(c *api.Context) (int, interface{}) {
 	storageInterface := c.Circuits.CreateCircuitStorageInterface()
 
-	var newCircuit model.Circuit
+	var newCircuit circuit
 	if err := c.ShouldBindJSON(&newCircuit); err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	circuit := storageInterface.NewCircuit()
+	var circuit model.Circuit
+	circuit.Metadata.ID = model.NewCircuitID()
 	circuit.Metadata.Owner = c.Identity()
-	circuit.Update(newCircuit)
-	storageInterface.UpdateCircuit(circuit)
+
+	circuit.Update(newCircuit.toCircuit())
+	storageInterface.UpsertCircuit(circuit)
 
 	c.Access.UpsertUserPermission(model.NewCreatorPermission(circuit.Metadata.ID, c.Identity()))
 
 	// Returned the updated metadata so the client can get any changes the server made to it
-	return http.StatusAccepted, circuit.Metadata
+	return http.StatusAccepted, &circuit.Metadata
 }
 
 func (circuitRoutes) load(c *api.Context) (int, interface{}) {

@@ -24,7 +24,7 @@ type datastoreCircuit struct {
 
 func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
 	return model.Circuit{
-		Metadata: model.OldCircuitMetadata{
+		Metadata: model.CircuitMetadata{
 			ID:        id,
 			Name:      dCircuit.Name,
 			Owner:     model.UserID(dCircuit.Owner),
@@ -93,11 +93,11 @@ func (d *datastoreStorageInterface) LoadCircuit(circuitID model.CircuitID) *mode
 	return &c
 }
 
-func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.OldCircuitMetadata {
+func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
 	query := datastore.NewQuery("Circuit").
 		Filter("Owner =", string(userID))
 	it := d.dsClient.Run(d.ctx, query)
-	var metadatas []model.OldCircuitMetadata
+	var metadatas []model.CircuitMetadata
 	for {
 		var x datastoreCircuit
 		key, err := it.Next(&x)
@@ -109,44 +109,44 @@ func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []mod
 		}
 
 		var circuitID model.CircuitID
-		if circuitID.Base64Decode(key.Name) != nil {
-			panic("Failed to parse circuit ID from GCP datastore")
+		if x.ID[len(x.ID)-1] != '=' {
+			// Hint that the old-style circuit ID is being used.  Migrate to the new type.
+			circuitID := model.NewCircuitID()
+			newKey := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
+
+			tx, err := d.dsClient.NewTransaction(d.ctx)
+			if err != nil {
+				panic(err)
+			}
+			if err := tx.Delete(key); err != nil {
+				panic(err)
+			}
+			if _, err := tx.Put(newKey, &x); err != nil {
+				panic(err)
+			}
+			if _, err := tx.Commit(); err != nil {
+				panic(err)
+			}
+		} else {
+			if circuitID.Base64Decode(key.Name) != nil {
+				panic("Failed to parse circuit ID from GCP datastore")
+			}
 		}
 		metadatas = append(metadatas, x.toCircuit(circuitID).Metadata)
 	}
 	return metadatas
 }
 
-func (d *datastoreStorageInterface) UpdateCircuit(c model.Circuit) {
+func (d *datastoreStorageInterface) UpsertCircuit(c model.Circuit) {
 	key, dCircuit := fromCircuit(c)
-	_, err := d.dsClient.Put(d.ctx, key, &dCircuit)
-	if err != nil {
+	if _, err := d.dsClient.Put(d.ctx, key, &dCircuit); err != nil {
 		panic(err)
 	}
-}
-
-func (d *datastoreStorageInterface) NewCircuit() model.Circuit {
-	// NOTE: If the user loads their list of circuits in between the `NewCircuit` and
-	//		 the `UpdateCircuit` call, they will see an empty listing.  In practice
-	//		 this should not happen very often, but could be avoided by merging
-	//		 the `Update` and `Create` actions into one and perform a transaction.
-	circuitID := model.NewCircuitID()
-	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
-	dCircuit := datastoreCircuit{}
-	nk, err := d.dsClient.Put(d.ctx, key, &dCircuit)
-	if err != nil {
-		panic(err)
-	}
-	print(nk)
-
-	circuit := model.Circuit{}
-	circuit.Metadata.ID = circuitID
-	return circuit
 }
 
 func (d datastoreStorageInterface) DeleteCircuit(circuitID model.CircuitID) {
-	err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID.Base64Encode(), nil))
-	if err != nil {
+
+	if err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)); err != nil {
 		panic(err)
 	}
 }
