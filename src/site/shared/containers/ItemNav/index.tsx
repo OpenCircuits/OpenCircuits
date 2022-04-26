@@ -132,7 +132,9 @@ export const ItemNav = <D,>({ info, config, additionalData,
     useEffect(() => {
         if (isShiftDown)
             return;
+
         const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
+
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState, isShiftDown]);
