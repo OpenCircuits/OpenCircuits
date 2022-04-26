@@ -49,10 +49,9 @@ export const SideNav = ({ helpers, exampleCircuits, info }: Props) => {
     const dispatch = useSharedDispatch();
 
     function newCircuit() {
-        if (!isSaved.isSaved) {
-            if (window.confirm("Current circuit not saved, do you want to save?")) {
-                helpers.SaveCircuitRemote();
-            }
+        if (!isSaved.isSaved && 
+            window.confirm("Current circuit not saved, do you want to save?")) {
+            helpers.SaveCircuitRemote();
         }
         CreateGroupSelectAction(selections, designer.getObjects()).execute();
         const objs = selections.get().filter(s => s instanceof IOObject) as IOObject[];
