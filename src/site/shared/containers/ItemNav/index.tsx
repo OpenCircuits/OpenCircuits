@@ -15,7 +15,7 @@ import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
 import {Component} from "core/models";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
+import {useKeyDownEvent, useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {useKey} from "shared/utils/hooks/useKey";
 import {useMousePos} from "shared/utils/hooks/useMousePos";
 import {useDocEvent} from "shared/utils/hooks/useDocEvent";
@@ -71,7 +71,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const [hovering, setHover] = useState("");
 
-    const [isShiftDown, setShift] = useState(false);
+    const isShiftDown = useKey("Shift");
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
@@ -97,10 +97,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
         // Else just delete
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
     }
-
-    // function handleShiftPress() {
-    //     setShift(useKey("Shift"));
-    // }
 
     // Resets the curItemID and numClicks
     function reset(cancelled = false) {
@@ -134,11 +130,12 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
-        const resetListener = (_: Vector, hit: boolean) => { if (hit && !isShiftDown) reset(false); }
-
+        if (isShiftDown)
+            return;
+        const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [setState]);
+    }, [setState, isShiftDown]);
 
 
     // Cancel placing when pressing escape
