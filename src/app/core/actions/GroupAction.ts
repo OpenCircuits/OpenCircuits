@@ -8,7 +8,7 @@ export class GroupAction implements Action {
     public constructor(actions?: Action[], customName?: string, customInfo?: string[]) {
         this.actions = actions || [];
         this.customName = customName;
-        this.customInfo = (customInfo == undefined) ? undefined : customInfo;
+        this.customInfo = customInfo;
     }
 
     public add(action: Action | Action[]): GroupAction {
@@ -54,9 +54,7 @@ export class GroupAction implements Action {
     }
 
     public getCustomInfo(): string[] | undefined {
-        if (this.customInfo)
-            return this.customInfo;
-        return undefined;
+        return this.customInfo;
     }
 
     public getActions(): Action[] {

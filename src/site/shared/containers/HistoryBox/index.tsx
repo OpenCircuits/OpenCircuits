@@ -30,7 +30,7 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
             }}>
             <div className="historybox__entry__header">
                 {a.getCustomInfo &&
-                    <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"/>
+                    <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info" />
                 }
                 <span className="historybox__entry__actionname">
                     {a.getName()}

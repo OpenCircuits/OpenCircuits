@@ -32,7 +32,7 @@ export class ShiftAction implements Action {
     }
 
     public getCustomInfo(): string[] {
-        return [`${this.obj.getName()}: ${this.i}`]
+        return [`${this.obj.getName()}: ${this.i}`];
     }
 
     public getObj(): string {

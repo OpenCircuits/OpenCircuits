@@ -85,7 +85,7 @@ export class RotateAction implements Action {
     }
 
     public getCustomInfo(): string[] {
-        let deg = String.fromCharCode(176);
+        const deg = String.fromCharCode(176);
         return Array.from(
             this.objects, (obj, i) =>
                 `${obj.getName()}: rotated from ${Math.round(this.initialAngles[i] * (180 / Math.PI))}${deg}
@@ -97,11 +97,11 @@ export class RotateAction implements Action {
         return Array.from(this.objects, obj => obj.getName());
     }
 
-    public getInitialAngles(): Array<number> {
+    public getInitialAngles(): number[] {
         return this.initialAngles;
     }
 
-    public getFinalAngles(): Array<number> {
+    public getFinalAngles(): number[] {
         return this.finalAngles;
     }
 
