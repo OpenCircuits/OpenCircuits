@@ -1,0 +1,53 @@
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler
+
+name: Labeler
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  LabelingJob:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Add Label Ready to Merge
+        if: |
+          github.event.review.state == 'approved' &&
+          github.event.review.author_association == 'OWNER'
+        uses: actions-ecosystem/action-add-labels@v1.1.0
+        with:
+          labels: Ready To Merge
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Remove Labels for Ready to Merge 
+        if: |
+          github.event.review.state == 'approved' &&
+          github.event.review.author_association == 'OWNER'
+        uses: actions-ecosystem/action-remove-labels@v1.3.0
+        with:
+          labels: |
+            Changes Requested
+            Review Required
+      - name: Add Label Changes Requested
+        if: |
+          github.event.review.state == 'changes_requested' &&
+          github.event.review.author_association == 'OWNER'
+        uses: actions-ecosystem/action-add-labels@v1.1.0
+        with:
+          labels: Changes Requested
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Remove Labels for Changes Requested
+        if: |
+          github.event.review.state == 'changes_requested' &&
+          github.event.review.author_association == 'OWNER'
+        uses: actions-ecosystem/action-remove-labels@v1.3.0
+        with:
+          labels: |
+            Ready To Merge
+            Review Required
