@@ -19,7 +19,7 @@ export const ViewICButtonModule = (props: UseModuleProps) => {
                 return selections.length === 1 && selections[0] instanceof IC;
             }}
             onClick={(selections) => {
-                dispatch(OpenICViewer((selections[0]as IC).getData()));
+                dispatch(OpenICViewer(selections[0]as IC));
             }}
             {...props} />
     );
