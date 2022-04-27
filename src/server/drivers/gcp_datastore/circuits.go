@@ -7,13 +7,12 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/OpenCircuits/OpenCircuits/site/go/model"
-	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
 
 // A flat data structure to load data to/from
 type datastoreCircuit struct {
-	ID              string
+	ID              string // TODO: Can this get the real circuit id type?
 	Name            string
 	Owner           string
 	Desc            string
@@ -22,10 +21,9 @@ type datastoreCircuit struct {
 	CircuitDesigner string `datastore:",noindex"`
 }
 
-func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
-	return model.Circuit{
+func (dCircuit datastoreCircuit) toCircuit() model.Circuit {
+	c := model.Circuit{
 		Metadata: model.CircuitMetadata{
-			ID:        id,
 			Name:      dCircuit.Name,
 			Owner:     model.UserID(dCircuit.Owner),
 			Desc:      dCircuit.Desc,
@@ -34,6 +32,8 @@ func (dCircuit datastoreCircuit) toCircuit(id model.CircuitID) model.Circuit {
 		},
 		Designer: dCircuit.CircuitDesigner,
 	}
+	c.Metadata.ID.Base64Decode(dCircuit.ID)
+	return c
 }
 
 func fromCircuit(c model.Circuit) (*datastore.Key, datastoreCircuit) {
@@ -52,12 +52,12 @@ func fromCircuit(c model.Circuit) (*datastore.Key, datastoreCircuit) {
 
 // A GCP cloud datastore interface provider that assumes the GCP DS state is valid for the current version of the
 //	application; Migrations may be required and a new "version" field may need to be added
-type datastoreStorageInterface struct {
+type circuitDriver struct {
 	dsClient *datastore.Client
 	ctx      context.Context
 }
 
-func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (model.CircuitStorageInterfaceFactory, error) {
+func NewCircuitDriver(ctx context.Context, ops ...option.ClientOption) (model.CircuitDriver, error) {
 	projectId := os.Getenv("DATASTORE_PROJECT_ID")
 	if projectId == "" {
 		return nil, errors.New("DATASTORE_PROJECT_ID environment variable must be set")
@@ -66,92 +66,79 @@ func NewInterfaceFactory(ctx context.Context, ops ...option.ClientOption) (model
 	if err != nil {
 		return nil, err
 	}
-	return &datastoreStorageInterface{dsClient: ds, ctx: ctx}, nil
+	return &circuitDriver{dsClient: ds, ctx: ctx}, nil
 }
 
 // Creates a new GCP datastore instance for use with the local datastore emulator
-func NewEmuInterfaceFactory(ctx context.Context, projectId string, emuHost string, ops ...option.ClientOption) (model.CircuitStorageInterfaceFactory, error) {
+func NewCircuitEmuDriver(ctx context.Context, projectId string, emuHost string, ops ...option.ClientOption) (model.CircuitDriver, error) {
 	_ = os.Setenv("DATASTORE_EMULATOR_HOST", emuHost)
 	ds, err := datastore.NewClient(ctx, projectId, ops...)
 	if err != nil {
 		return nil, err
 	}
-	return &datastoreStorageInterface{dsClient: ds, ctx: ctx}, nil
+	return &circuitDriver{dsClient: ds, ctx: ctx}, nil
 }
 
-func (d *datastoreStorageInterface) CreateCircuitStorageInterface() model.CircuitStorageInterface {
-	return d
-}
-
-func (d *datastoreStorageInterface) LoadCircuit(circuitID model.CircuitID) *model.Circuit {
+func (d *circuitDriver) LoadCircuit(circuitID model.CircuitID) *model.Circuit {
 	key := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
 	dCircuit := &datastoreCircuit{}
 	if err := d.dsClient.Get(d.ctx, key, dCircuit); err != nil {
 		return nil
 	}
-	c := dCircuit.toCircuit(circuitID)
+	c := dCircuit.toCircuit()
 	return &c
 }
 
-func (d *datastoreStorageInterface) EnumerateCircuits(userID model.UserID) []model.CircuitMetadata {
-	query := datastore.NewQuery("Circuit").
-		Filter("Owner =", string(userID))
-	it := d.dsClient.Run(d.ctx, query)
-	var metadatas []model.CircuitMetadata
-	for {
-		var x datastoreCircuit
-		key, err := it.Next(&x)
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
+// // TODO: Move this to a proper migration
+// circuitID := model.NewCircuitID()
+// newKey := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
+// x.ID = circuitID.Base64Encode()
+// tx, err := d.dsClient.NewTransaction(d.ctx)
+// if err != nil {
+// 	panic(err)
+// }
+// if err := tx.Delete(key); err != nil {
+// 	panic(err)
+// }
+// if _, err := tx.Put(newKey, &x); err != nil {
+// 	panic(err)
+// }
+// if _, err := tx.Commit(); err != nil {
+// 	panic(err)
+// }
 
-		var circuitID model.CircuitID
-		if x.ID[len(x.ID)-1] != '=' {
-			// Hint that the old-style circuit ID is being used.  Migrate to the new type.
-			circuitID := model.NewCircuitID()
-			newKey := datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)
-
-			tx, err := d.dsClient.NewTransaction(d.ctx)
-			if err != nil {
-				panic(err)
-			}
-			if err := tx.Delete(key); err != nil {
-				panic(err)
-			}
-			if _, err := tx.Put(newKey, &x); err != nil {
-				panic(err)
-			}
-			if _, err := tx.Commit(); err != nil {
-				panic(err)
-			}
-		} else {
-			if circuitID.Base64Decode(key.Name) != nil {
-				panic("Failed to parse circuit ID from GCP datastore")
-			}
-		}
-		metadatas = append(metadatas, x.toCircuit(circuitID).Metadata)
+func (d *circuitDriver) LoadMetadata(ids []model.CircuitID) []model.CircuitMetadata {
+	var keys []*datastore.Key
+	for _, id := range ids {
+		keys = append(keys, datastore.NameKey("Circuit", id.Base64Encode(), nil))
 	}
-	return metadatas
+	var circuits []datastoreCircuit
+	if err := d.dsClient.GetMulti(d.ctx, keys, &circuits); err != nil {
+		panic(err)
+	}
+
+	var metadata []model.CircuitMetadata
+	for _, c := range circuits {
+		metadata = append(metadata, c.toCircuit().Metadata)
+	}
+	return metadata
 }
 
-func (d *datastoreStorageInterface) UpsertCircuit(c model.Circuit) {
+func (d *circuitDriver) UpsertCircuit(c model.Circuit) {
 	key, dCircuit := fromCircuit(c)
 	if _, err := d.dsClient.Put(d.ctx, key, &dCircuit); err != nil {
 		panic(err)
 	}
 }
 
-func (d datastoreStorageInterface) DeleteCircuit(circuitID model.CircuitID) {
+func (d circuitDriver) DeleteCircuit(circuitID model.CircuitID) {
 
 	if err := d.dsClient.Delete(d.ctx, datastore.NameKey("Circuit", circuitID.Base64Encode(), nil)); err != nil {
 		panic(err)
 	}
 }
 
-func (d *datastoreStorageInterface) Close() {
+func (d *circuitDriver) Close() {
 	if err := d.dsClient.Close(); err != nil {
 		panic(err)
 	}

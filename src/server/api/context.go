@@ -10,7 +10,7 @@ import (
 // Context is an extended context with drivers for access and circuit
 type Context struct {
 	Access   model.AccessDriver
-	Circuits model.CircuitStorageInterfaceFactory
+	Circuits model.CircuitDriver
 	*gin.Context
 }
 
@@ -31,7 +31,7 @@ func (c Context) Identity() model.UserID {
 type HandlerFunc = func(c *Context) (int, interface{})
 
 // Wrap wraps handlers for routes using extended context
-func Wrap(access model.AccessDriver, circuits model.CircuitStorageInterfaceFactory, handler HandlerFunc) gin.HandlerFunc {
+func Wrap(access model.AccessDriver, circuits model.CircuitDriver, handler HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code, obj := handler(&Context{
 			access,

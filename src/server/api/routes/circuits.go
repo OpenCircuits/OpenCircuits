@@ -10,9 +10,7 @@ import (
 type circuitRoutes struct{}
 
 type circuitMetadata struct {
-	ID        string `json:"id"`
 	Name      string `json:"name"`
-	Owner     string `json:"owner"`
 	Desc      string `json:"desc"`
 	Thumbnail string `json:"thumbnail"`
 	Version   string `json:"version"`
@@ -42,8 +40,6 @@ func (circuitRoutes) store(c *api.Context) (int, interface{}) {
 		return http.StatusNotFound, err
 	}
 
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-
 	var newCircuit circuit
 	if err := c.ShouldBindJSON(&newCircuit); err != nil {
 		return http.StatusBadRequest, err
@@ -53,21 +49,19 @@ func (circuitRoutes) store(c *api.Context) (int, interface{}) {
 		return http.StatusForbidden, nil
 	}
 
-	circuit := storageInterface.LoadCircuit(circuitID)
+	circuit := c.Circuits.LoadCircuit(circuitID)
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
 
 	circuit.Update(newCircuit.toCircuit())
-	storageInterface.UpsertCircuit(*circuit)
+	c.Circuits.UpsertCircuit(*circuit)
 
 	// Returned the updated metadata so the client can get any changes the server made to it
 	return http.StatusAccepted, &circuit.Metadata
 }
 
 func (circuitRoutes) create(c *api.Context) (int, interface{}) {
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-
 	var newCircuit circuit
 	if err := c.ShouldBindJSON(&newCircuit); err != nil {
 		return http.StatusBadRequest, err
@@ -78,7 +72,7 @@ func (circuitRoutes) create(c *api.Context) (int, interface{}) {
 	circuit.Metadata.Owner = c.Identity()
 
 	circuit.Update(newCircuit.toCircuit())
-	storageInterface.UpsertCircuit(circuit)
+	c.Circuits.UpsertCircuit(circuit)
 
 	c.Access.UpsertUserPermission(model.NewCreatorPermission(circuit.Metadata.ID, c.Identity()))
 
@@ -96,8 +90,7 @@ func (circuitRoutes) load(c *api.Context) (int, interface{}) {
 		return http.StatusNotFound, nil
 	}
 
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-	circuit := storageInterface.LoadCircuit(circuitID)
+	circuit := c.Circuits.LoadCircuit(circuitID)
 	if circuit == nil {
 		return http.StatusNotFound, nil
 	}
@@ -106,8 +99,13 @@ func (circuitRoutes) load(c *api.Context) (int, interface{}) {
 }
 
 func (circuitRoutes) query(c *api.Context) (int, interface{}) {
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-	return http.StatusOK, storageInterface.EnumerateCircuits(c.Identity())
+	var ids []model.CircuitID
+	for _, perm := range c.Access.UserPermissions(c.Identity()) {
+		if perm.CanView() {
+			ids = append(ids, perm.CircuitID)
+		}
+	}
+	return http.StatusOK, c.Circuits.LoadMetadata(ids)
 }
 
 func (circuitRoutes) delete(c *api.Context) (int, interface{}) {
@@ -120,7 +118,6 @@ func (circuitRoutes) delete(c *api.Context) (int, interface{}) {
 		return http.StatusForbidden, nil
 	}
 
-	storageInterface := c.Circuits.CreateCircuitStorageInterface()
-	storageInterface.DeleteCircuit(circuitID)
+	c.Circuits.DeleteCircuit(circuitID)
 	return http.StatusOK, nil
 }

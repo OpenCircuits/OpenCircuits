@@ -39,7 +39,7 @@ func main() {
 	// Parse flags
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
-	userCsifConfig := flag.String("interface", "mem", "The storage interface")
+	storageInterface := flag.String("interface", "mem", "The storage interface")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
 	dsProjectId := flag.String("ds_emu_project_id", "", "The gcp project id for the datastore emulator")
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
@@ -49,7 +49,7 @@ func main() {
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
 		*googleAuthConfig = "credentials.json"
-		*userCsifConfig = "gcp_datastore"
+		*storageInterface = "gcp_datastore"
 	}
 
 	// Register authentication method
@@ -66,14 +66,22 @@ func main() {
 	fmt.Println("Using anon auth")
 
 	// Set up the storage interface
-	var userCsif model.CircuitStorageInterfaceFactory
-	if *userCsifConfig == "mem" {
-		userCsif = mem.NewInterfaceFactory()
-	} else if *userCsifConfig == "gcp_datastore_emu" {
-		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), *dsProjectId, *dsEmulatorHost)
+	var circuitDriver model.CircuitDriver
+	var accessDriver model.AccessDriver
+	if *storageInterface == "mem" {
+		circuitDriver = mem.NewCircuitDriver()
+		accessDriver = mem.NewAccessDriver()
+	} else if *storageInterface == "gcp_datastore_emu" {
+		circuitDriver, err = gcp_datastore.NewCircuitEmuDriver(context.Background(), *dsProjectId, *dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
-	} else if *userCsifConfig == "gcp_datastore" {
-		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
+
+		accessDriver, err = gcp_datastore.NewAccessEmuDriver(context.Background(), *dsProjectId, *dsEmulatorHost)
+		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
+	} else if *storageInterface == "gcp_datastore" {
+		circuitDriver, err = gcp_datastore.NewCircuitDriver(context.Background())
+		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
+
+		accessDriver, err = gcp_datastore.NewAccessDriver(context.Background())
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}
 
@@ -99,7 +107,7 @@ func main() {
 
 	// Register routes
 	web.RegisterPages(router)
-	api_routes.RegisterRoutes(router, userCsif, mem.NewAccess())
+	api_routes.RegisterRoutes(router, circuitDriver, accessDriver)
 
 	// Check if portConfig is set to auto, if so find available port
 	if *portConfig == "auto" {

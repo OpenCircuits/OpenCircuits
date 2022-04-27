@@ -1,25 +1,15 @@
 package model
 
-// CircuitStorageInterface represents an interface to a circuit storage system that simply performs the requested operation.   Implementations
-// do not modify the provided circuits.
-type CircuitStorageInterface interface {
+// CircuitDriver represents an interface to a circuit storage system.
+type CircuitDriver interface {
 	// Tries to load a circuit with a given id
 	LoadCircuit(id CircuitID) *Circuit
-	// gets all circuits accessible to a user
-	EnumerateCircuits(userID UserID) []CircuitMetadata
+	// Loads a set of metadata for given ids
+	LoadMetadata(ids []CircuitID) []CircuitMetadata
 	// Creates / Updates a circuit
 	UpsertCircuit(c Circuit)
 	// Deletes a circuit by ID
 	DeleteCircuit(id CircuitID)
-	// Releases the resources the interface holds.  No guarantees are made about the state of this object beyond this
-	// point.  Call this when done using the interface.
-	Close()
-}
-
-// CircuitStorageInterfaceFactory generates interfaces to a storage systems, but each interface returned should be associated with the same storage
-//	system.  This is not required to generate unique instances if that is not required by the underlying storage system
-type CircuitStorageInterfaceFactory interface {
-	CreateCircuitStorageInterface() CircuitStorageInterface
 }
 
 // CircuitMetadata contains the non-content parts of the circuit

@@ -15,12 +15,12 @@ func pingHandler(c *gin.Context) {
 }
 
 // RegisterRoutes adds API routes to the provided engine
-func RegisterRoutes(router *gin.Engine, userCsif model.CircuitStorageInterfaceFactory, accessDriver model.AccessDriver) {
+func RegisterRoutes(router *gin.Engine, circuitDriver model.CircuitDriver, accessDriver model.AccessDriver) {
 	// TODO: api versioning
 	router.GET("/api/ping", pingHandler)
 
 	w := func(h api.HandlerFunc) gin.HandlerFunc {
-		return api.Wrap(accessDriver, userCsif, h)
+		return api.Wrap(accessDriver, circuitDriver, h)
 	}
 
 	// User-saveable circuits

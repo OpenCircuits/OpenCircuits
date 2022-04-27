@@ -5,8 +5,8 @@ type AccessDriver interface {
 	CircuitPermissions(circuitID CircuitID) CircuitPermissions
 	// UserPermission gets the permissions for the given circuit id and user id
 	UserPermission(circuitID CircuitID, userID UserID) UserPermission
-	// LinkPermission gets the permissions for the link id
-	LinkPermission(linkID LinkID) LinkPermission
+	// LinkPermission gets the permissions for the link id, if it exists
+	LinkPermission(linkID LinkID) (LinkPermission, bool)
 	// UserPermissions gets all permissions for a user
 	UserPermissions(userID UserID) AllUserPermissions
 
@@ -14,8 +14,8 @@ type AccessDriver interface {
 	// UpsertCircuit(perms CircuitPermissions) error
 	// UpsertUserPermission upserts permissions for a single user/circuit
 	UpsertUserPermission(perm UserPermission)
-	// UpsertLinkPermission upserts permissions for a link Id.  Link Id is created and returned if not provided
-	UpsertLinkPermission(perm LinkPermission) LinkPermission
+	// UpsertLinkPermission upserts permissions for a link Id
+	UpsertLinkPermission(perm LinkPermission)
 
 	// DeleteCircuitPermissions deletes all permissions for a circuit
 	DeleteCircuitPermissions(circuitID CircuitID)
@@ -188,17 +188,16 @@ func (user UserPermission) CanEnumeratePerms() bool {
 	return user.AccessLevel >= AccessOwner
 }
 
-func (link LinkPermission) Valid() bool {
-	return link.CircuitID == CircuitID{}
-}
-
 type LinkAccessProvider struct {
 	AccessDriver AccessDriver
 	LinkID       LinkID
 }
 
 func (ap LinkAccessProvider) Permissions() BasePermission {
-	return ap.AccessDriver.LinkPermission(ap.LinkID).BasePermission
+	if perm, ok := ap.AccessDriver.LinkPermission(ap.LinkID); ok {
+		return perm.BasePermission
+	}
+	return NewInvalidLink(ap.LinkID).BasePermission
 }
 
 type UserAccessProvider struct {

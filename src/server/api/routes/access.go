@@ -47,7 +47,6 @@ func (accessRoutes) upsertUserPermission(c *api.Context, requesterPerms model.Us
 	}
 
 	currentPerms := c.Access.UserPermission(requesterPerms.CircuitID, proposedPerms.UserID)
-
 	if !requesterPerms.CanUpdateUser(currentPerms, proposedPerms) {
 		return http.StatusForbidden, nil
 	}
@@ -65,15 +64,19 @@ func (accessRoutes) upsertLinkPermission(c *api.Context, requesterPerms model.Us
 		return http.StatusBadRequest, err
 	}
 
-	currentPerms := c.Access.LinkPermission(proposedPerms.LinkID)
-	if !requesterPerms.CanUpdateLink(currentPerms, proposedPerms) {
-		return http.StatusForbidden, nil
+	if currentPerms, ok := c.Access.LinkPermission(proposedPerms.LinkID); ok {
+		if !requesterPerms.CanUpdateLink(currentPerms, proposedPerms) {
+			return http.StatusForbidden, nil
+		}
+	} else {
+		// Does not exist, so create a new link
+		proposedPerms.CircuitID = requesterPerms.CircuitID
+		proposedPerms.LinkID = model.NewLinkID()
 	}
 
-	proposedPerms.CircuitID = requesterPerms.CircuitID
-	resultPerms := c.Access.UpsertLinkPermission(proposedPerms)
+	c.Access.UpsertLinkPermission(proposedPerms)
 
-	return http.StatusAccepted, resultPerms
+	return http.StatusAccepted, proposedPerms
 }
 
 func (accessRoutes) deleteUserPermission(c *api.Context, requesterPerms model.UserPermission) (int, interface{}) {
@@ -95,10 +98,12 @@ func (accessRoutes) deleteLinkPermission(c *api.Context, requesterPerms model.Us
 	if err != nil {
 		return http.StatusNotFound, nil
 	}
-	linkPerms := c.Access.LinkPermission(linkID)
-	if !linkPerms.Valid() {
+
+	linkPerms, ok := c.Access.LinkPermission(linkID)
+	if !ok {
 		return http.StatusNotFound, nil
 	}
+
 	if linkPerms.CircuitID != requesterPerms.CircuitID {
 		return http.StatusBadRequest, errors.New("link id does not match circuit id")
 	}
