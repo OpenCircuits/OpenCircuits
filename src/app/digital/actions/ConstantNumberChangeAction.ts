@@ -25,16 +25,28 @@ export class ConstantNumberChangeAction implements Action {
         this.targetNum = newInput;
     }
 
+    /**
+     * sets the input value of the ConstantNumber to the new Input value
+     * @returns the action
+     */
     public execute(): Action {
         this.constantNumber.setInput(this.targetNum);
         return this;
     }
 
+    /**
+     * sets the input value of the ConstantNumber to the initial Input value
+     * @returns the action
+     */
     public undo(): Action {
         this.constantNumber.setInput(this.initialNum);
         return this;
     }
 
+    /**
+     * gets the name of the action
+     * @returns "Constant Number Change"
+     */
     public getName(): string {
         return "Constant Number Change"
     }
