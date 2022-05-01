@@ -13,7 +13,8 @@ export class InputPort extends Port {
     protected connections: DigitalWire[];
 
     /**
-     * constructs the input port with no connections
+     * Constructs the input port with no connections
+     *
      * @param parent the parent component of the port
      */
     public constructor(parent?: DigitalComponent) {
@@ -23,7 +24,8 @@ export class InputPort extends Port {
     }
     
     /**
-     * activates the port and propagates the signal to all connections
+     * Activates the port and propagates the signal to all connections
+     *
      * @param signal is the signal to be propagated
      */
     public activate(signal: boolean): void {
@@ -41,7 +43,8 @@ export class InputPort extends Port {
     }
 
     /**
-     * connects the input wire to the port if the wire is not already connected.
+     * Connects the input wire to the port if the wire is not already connected.
+     *
      * @param wire new input wire
      */
     public connect(wire: DigitalWire): void {
@@ -51,9 +54,9 @@ export class InputPort extends Port {
         this.activate(wire.getIsOn());
     }
     
-   /**
-    * disconnects the input port from the input wire and changes the signal
-    */
+    /**
+     * Disconnects the input port from the input wire and changes the signal
+     */
     public disconnect(): void {
         // remove input and propagate false signal
         this.connections = [];
@@ -61,7 +64,8 @@ export class InputPort extends Port {
     }
 
     /**
-     * gets the input wire of the port
+     * Gets the input wire of the port
+     *
      * @returns the input wire 
      */
     public getInput(): DigitalWire {
@@ -69,8 +73,9 @@ export class InputPort extends Port {
     }
 
     /**
-     * gets initial direction of the input port as a vector. 
-     * value is -1 because it's an input port (facing left)
+     * Gets initial direction of the input port as a vector. 
+     * Value is -1 because it's an input port (facing left).
+     *
      * @returns vector that represents the direction of the input port
      */
     public getInitialDir(): Vector {
@@ -78,7 +83,8 @@ export class InputPort extends Port {
     }
     
     /**
-     * gets the parent component of the port
+     * Gets the parent component of the port
+     *
      * @returns the parent component
      */
     public getParent(): DigitalComponent {
@@ -86,7 +92,8 @@ export class InputPort extends Port {
     }
     
     /**
-     * gets all the wires the port is connected to
+     * Gets all the wires the port is connected to
+     *
      * @returns the wire connections 
      */
     public getWires(): DigitalWire[] {
