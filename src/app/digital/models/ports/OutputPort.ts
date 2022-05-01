@@ -27,7 +27,7 @@ export class OutputPort extends Port {
      * Active this port and propagate the signal
      * 	to all active connections
      *
-     * @param  {boolean} signal The signal to send
+     * @param signal The signal to send
      */
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
