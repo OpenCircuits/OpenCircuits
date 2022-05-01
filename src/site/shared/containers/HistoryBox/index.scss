@@ -94,25 +94,15 @@ $historybox-width: 250px;
         border-radius: 7px;
     }
 
+    &__entry--dashed {
+        border: 2px dashed $secondary-color;
+    }
+
     &__separator {
         padding-bottom: 2px;
         margin-left: 5px;
         margin-bottom: 2px;
         border-bottom: 2px solid $secondary-color;
-    }
-
-    &__dashedentry {
-        background-color: rgb(65, 65, 65);
-
-        height: auto;
-        line-height: 30px;
-        padding: 10px;
-
-        margin: 5px;
-        text-align: center;
-
-        border: 2px dashed $secondary-color;
-        border-radius: 7px;
     }
 
     &__groupentry {
@@ -142,33 +132,8 @@ $historybox-width: 250px;
         }
     }
 
-    &__dashedgroupentry {
-        background-color: rgb(65, 65, 65);
-
-        margin: 5px;
-
+    &__groupentry--dashed {
         border: 2px dashed $secondary-color;
-        border-radius: 7px;
-
-        padding: 5px;
-
-        cursor: pointer;
-
-        & > span {
-            font-size: 18px;
-        }
-
-        &__collapse_btn {
-            margin-right: 5px;
-            float: right;
-
-            transition: 0.5s;
-            transform: rotate(90deg);
-
-            &-collapsed {
-                transform: rotate(0deg);
-            }
-        }
     }
 
 }

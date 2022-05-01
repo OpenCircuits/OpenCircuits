@@ -12,7 +12,6 @@ import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
 
-
 type HistoryEntryProps = {
     a: Action;
     isRedo: boolean;
@@ -21,7 +20,7 @@ const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
     if (a instanceof GroupAction)
         return (<GroupActionEntry g={a} isRedo={isRedo}></GroupActionEntry>);
     return (
-        <div className={isRedo ? "historybox__dashedentry" : "historybox__entry"}
+        <div className={`historybox__entry ${isRedo ? 'historybox__entry--dashed' : ''}`}
             // Necessary to stop child entries from collapsing the parent history entry
             onClick={(e) => e.stopPropagation()}>
             {a.getName()}
@@ -41,7 +40,7 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
     if (g.getActions().length === 1)
         return (<HistoryEntry a={g.getActions()[0]} isRedo={isRedo}></HistoryEntry>);
     return (
-        <div className={isRedo ? "historybox__dashedgroupentry" : "historybox__groupentry"}
+        <div className={`historybox__groupentry ${isRedo ? 'historybox__groupentry--dashed' : ''}`}
             onClick={(e) => {
                 // Necessary to stop child entries from collapsing the parent history entry
                 e.stopPropagation();
