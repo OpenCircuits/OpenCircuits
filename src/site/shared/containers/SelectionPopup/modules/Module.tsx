@@ -66,7 +66,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
     let tempAction: Action | undefined;
     let prevDependencyStr: string;
 
-    const {config} = props;
+    const { config } = props;
     const displayVal = config.getDisplayVal ?? ((v) => (v as number | string));
 
 
@@ -83,8 +83,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
     const isValid = (v: P) => {
         if (props.inputType === "number") {
-            let mn = (props.min ?? -Infinity);
-            let mx = (props.max ?? +Infinity);
+            const mn = (props.min ?? -Infinity);
+            const mx = (props.max ?? +Infinity);
             return !isNaN(v as number) && (mn <= v && v <= mx);
         }
         return true;
@@ -92,18 +92,18 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
 
     const parseFinalVal = (v: P) => {
         if (props.inputType === "number") {
-            let mn = (props.min ?? -Infinity);
-            let mx = (props.max ?? +Infinity);
+            const mn = (props.min ?? -Infinity);
+            const mx = (props.max ?? +Infinity);
             return Clamp(v as number, mn, mx) as P;
         }
         return v;
     }
 
     const checkType = (s: Selectable, Type: Function & { prototype: T[number]; }) => {
-        //Check if s instanceof Type and also not instance of anything in config.exclude. Nesscary for issue #820
+        // Check if s instanceof Type and also not instance of anything in config.exclude. Necessary for issue #820
 
         if (config.exclude?.some(exclusion => s instanceof exclusion))
-        return false;
+            return false;
 
         return (s instanceof Type);
     }
@@ -121,8 +121,8 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
         return str;
     }
 
-    return function ModuleRender({selections, addAction, render}: UseModuleProps) {
-        const [state, setState] = useState<State>({active: false});
+    return function ModuleRender({ selections, addAction, render }: UseModuleProps) {
+        const [state, setState] = useState<State>({ active: false });
 
         const numSelections = selections.amount();
         const dependencyStr = getDependencies(state, selections);
@@ -133,18 +133,18 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             // This means Selections changed, so we must check if
             //  we should should show this module or not
             if (selections.amount() === 0) {
-                setState({active: false});
+                setState({ active: false });
                 return;
             }
 
             // Make sure all selections are exactly of types:
             const active = config.isActive?.(selections) ??
-                config.types.reduce(
-                    (enabled, Type) => enabled || (selections.get().filter(s => checkType(s, Type)).length === selections.amount()
+                config.types.reduce((enabled, Type) =>
+                    enabled || (selections.get().filter(s => checkType(s, Type)).length === selections.amount()
                 ),
             false);
             if (!active) {
-                setState({active: false});
+                setState({ active: false });
                 return;
             }
 
@@ -160,14 +160,14 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             setState({
                 active: true,
                 focused: false,
-                textVal: (same ? val.toString() : "")
+                textVal: (same ? val.toString() : ""),
             });
         }, [selections, numSelections, dependencyStr]);
 
         if (!state.active)
             return null;
 
-        const {focused, textVal} = state;
+        const { focused, textVal } = state;
 
         const onChange = (newVal: string) => {
             const val = parseVal(newVal);
@@ -185,13 +185,13 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                 render();
             }
 
-            setState({...state, textVal: newVal});
+            setState({ ...state, textVal: newVal });
         }
         const onSubmit = () => {
             // If temp action doesn't exist, it means that nothing was changed
             //  So we shouldn't commit an action if nothing changed
             if (!tempAction) {
-                setState({...state, focused: false});
+                setState({ ...state, focused: false });
                 render();
                 return;
             }
@@ -203,7 +203,7 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             const finalVal = parseFinalVal(parseVal(textVal));
             if (!isValid(finalVal)) {
                 // Invalid final input, so reset back to starting state
-                setState({...state, focused: false, textVal: val.toString()});
+                setState({ ...state, focused: false, textVal: val.toString() });
                 render();
                 return;
             }
@@ -218,14 +218,14 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
             val = finalVal;
             same = true;
 
-            setState({...state, focused: false});
+            setState({ ...state, focused: false });
         }
 
         if (props.inputType === "select") {
             return (
                 <select value={focused ? textVal : (same ? val as (string | number) : "")}
                         onChange={(ev) => onChange(ev.target.value)}
-                        onFocus={() => setState({...state, focused: true, textVal: val.toString()})}
+                        onFocus={() => setState({ ...state, focused: true, textVal: val.toString() })}
                         onBlur={() => onSubmit()}>
                     {props.options.map((o, i) =>
                         <option key={`selection-popup-select-option-${o}-${i}`}
@@ -244,9 +244,9 @@ export const CreateModule = (<T extends any[], P extends ModuleTypes>(props: Mod
                         min ={"min"  in props ? props.min  : ""}
                         max ={"max"  in props ? props.max  : ""}
                         onChange={(ev) => onChange(ev.target.value)}
-                        onFocus={() => setState({...state, focused: true, textVal: (same ? val.toString() : "")})}
+                        onFocus={() => setState({ ...state, focused: true, textVal: (same ? val.toString() : "") })}
                         onBlur={() => onSubmit()}
-                        onEnter={({target}) => (props.inputType !== "color" &&
+                        onEnter={({ target }) => (props.inputType !== "color" &&
                                                (target as HTMLInputElement).blur())}
                         alt={props.alt} />
         )
@@ -263,7 +263,7 @@ type ButtonModuleProps = UseModuleProps & {
     isActive: (selections: Selectable[]) => boolean;
     onClick: (selections: Selectable[]) => Action | void;
 }
-export const ButtonPopupModule = ({selections, text, alt, getDependencies, isActive, onClick, addAction, render}: ButtonModuleProps) => {
+export const ButtonPopupModule = ({ selections, text, alt, getDependencies, isActive, onClick, addAction, render }: ButtonModuleProps) => {
     // This "state" represents the "dependencies" that this module requires from the selections
     //  and is in string form so that the React state can properly detect the changes
     const buildState = () =>
@@ -324,7 +324,7 @@ export const PopupModule = (({label, modules}: PopupModuleProps) => {
         return <div key={`selection-popup-${label}-module`}>
             {label}
             <label unselectable="on">
-                {ms.map((m, i) => cloneElement(m!, {key: `selection-popup-${label}-module-${i}`}))}
+                {ms.map((m, i) => cloneElement(m!, { key: `selection-popup-${label}-module-${i}` }))}
             </label>
         </div>;
     }
