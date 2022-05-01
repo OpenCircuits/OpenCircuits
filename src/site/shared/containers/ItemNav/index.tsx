@@ -28,7 +28,6 @@ import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
 import "./index.scss";
-import { boolean } from "yargs";
 
 
 export type ItemNavItem = {
