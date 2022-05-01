@@ -74,7 +74,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const [hovering, setHover] = useState("");
 
-    //track whether mouse is over Nav bar 
+    // Track whether mouse is over Nav bar 
     const [overNav, setOverNav] = useState(false);
 
     // State to keep track of drag'n'drop preview current image
@@ -106,13 +106,12 @@ export const ItemNav = <D,>({ info, config, additionalData,
             return null;
         if (!(currentlyPressedObj instanceof Component))
             return null;
-        if(!overNav){
+        if (!overNav)
             return null;
-        }
         const id = GetIDFor(currentlyPressedObj);
-        var section_id;
-        var config_imgRoot;
-        var item_icon;
+        let section_id;
+        let config_imgRoot;
+        let item_icon;
         for (const section of sections) {
             for (const item of section.items) {
                 if (item.id === id) {
@@ -235,7 +234,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
                  display: (curItemImg ? "initial" : "none"),
                  left: pos.x,
                  top: pos.y,
-                }}>
+             }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
             {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
