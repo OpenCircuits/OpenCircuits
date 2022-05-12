@@ -240,4 +240,48 @@ describe("Bus Action", () => {
         expect(i3.getConnections()[0]).toBe(ic.getConnections()[3]);
         expect(i4.getConnections()[0]).toBe(ic.getConnections()[1]);
     });
+    test("Simple IC with Rotated Port 4-port", () => {
+        /*
+         *  [v]-o          ____________
+         *             o--[            ]
+         *  [v]-o         [            ]
+         *             o--[____________]
+         *  [v]-o             |         \
+         *                    o          o
+         *  [v]-o
+         */
+
+        const [i1, i2, i3, i4] = Place(new Switch(), new Switch(), new Switch(), new Switch());
+
+        i1.setPos(V(-200, -200));
+        i2.setPos(V(-200, -100));
+        i3.setPos(V(-200,  100));
+        i4.setPos(V(-200,  200));
+
+        // Create IC
+        const icdata = ICData.Create([i1,i2,i3,i4]);
+        {
+            icdata?.setSize(V(200, 100));
+
+            const setPort = (p: number, pos: Vector, dir: Vector) => {
+                icdata!.getPorts()[p].setOriginPos(pos);
+                icdata!.getPorts()[p].setTargetPos(pos.add(dir.normalize().scale(IO_PORT_LENGTH)));
+            }
+
+            setPort(0, V(-100, -50), V(-1, 0));
+            setPort(1, V( 100,  50), V( 1, 1)); // Diagonal
+            setPort(2, V(-100,  50), V(-1, 0));
+            setPort(3, V( -50,  50), V( 0, 1));
+        }
+
+        const [ic] = Place(new IC(icdata));
+
+        expectBusConnections([i1,i2,i3,i4].flatMap(i => i.getOutputPorts()), ic.getInputPorts());
+
+        // Assert order of connections
+        expect(i1.getConnections()[0]).toBe(ic.getConnections()[0]);
+        expect(i2.getConnections()[0]).toBe(ic.getConnections()[2]);
+        expect(i3.getConnections()[0]).toBe(ic.getConnections()[3]);
+        expect(i4.getConnections()[0]).toBe(ic.getConnections()[1]);
+    });
 });
