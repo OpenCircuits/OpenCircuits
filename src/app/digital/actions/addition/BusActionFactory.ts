@@ -37,12 +37,12 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         //  because averaging an angle like -270 and 90 would lead to
         //  -90 when they are both actually the same angle
         const avgRot = cs
-            .map(c => c.getAngle())
+            .map(c => -c.getAngle())
             .map(a => V(Math.cos(a), Math.sin(a)))
             .reduce((sum, cur) => sum.add(cur), V())
             .scale(1 / cs.length);
 
-        return new Transform(avgPos, V(), avgRot.angle());
+        return new Transform(avgPos, V(), 2*Math.PI - avgRot.angle());
     }
     const sortByPos = (a: Vector, b: Vector) => {
         return a.y - b.y; // Sort by y-pos from Top to Bottom
