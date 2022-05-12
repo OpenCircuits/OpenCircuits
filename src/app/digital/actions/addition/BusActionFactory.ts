@@ -37,15 +37,15 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         //  because averaging an angle like -270 and 90 would lead to
         //  -90 when they are both actually the same angle
         const avgRot = cs
-            .map(c => -c.getAngle())
+            .map(c => c.getAngle())
             .map(a => V(Math.cos(a), Math.sin(a)))
             .reduce((sum, cur) => sum.add(cur), V())
             .scale(1 / cs.length);
 
-        return new Transform(avgPos, V(), 2*Math.PI - avgRot.angle());
+        return new Transform(avgPos, V(), avgRot.angle());
     }
-    const sortByPos = (a: Vector, b: Vector) => {
-        return a.y - b.y; // Sort by y-pos from Top to Bottom
+    const sortByAngle = (a: number, b: number) => {
+        return a - b;
     }
 
     // Get average components
@@ -56,16 +56,19 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     const outputTargetPositions = outputPorts.map(o => avgOutputTransform.toLocalSpace(o.getWorldTargetPos()));
     const inputTargetPositions  =  inputPorts.map(o =>  avgInputTransform.toLocalSpace(o.getWorldTargetPos()));
 
-    // Associate the ports with their average component target position
-    // Keep track of port associated with each position
-    const inputMap  = new Map( inputTargetPositions.map((p, i) => [p,  inputPorts[i]]));
-    const outputMap = new Map(outputTargetPositions.map((p, i) => [p, outputPorts[i]]));
+    // Get angles of each port in local space
+    const outputAngles = outputTargetPositions.map(p => p.angle());
+    const inputAngles  =  inputTargetPositions.map(p => p.angle()).map(a => (a < 0 ? a + 2*Math.PI : a));
 
-    inputTargetPositions.sort(sortByPos);
-    outputTargetPositions.sort(sortByPos);
+    // Associate the ports with their angle
+    const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));
+    const inputMap  = new Map( inputAngles.map((a, i) => [a,  inputPorts[i]]));
+
+    outputAngles.sort(sortByAngle);
+    inputAngles.sort(sortByAngle).reverse();
 
     // Connect Ports according to their target pos on the Average Component
-    return new GroupAction(inputTargetPositions.map((inputTargetPosition, i) =>
-        new ConnectionAction(designer, inputMap.get(inputTargetPosition)!, outputMap.get(outputTargetPositions[i])!)
+    return new GroupAction(inputAngles.map((inputAngle, i) =>
+        new ConnectionAction(designer, inputMap.get(inputAngle)!, outputMap.get(outputAngles[i])!)
     ), "Bus Action");
 }
