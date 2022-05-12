@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -11,10 +11,14 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
+import {CleanUpHandler} from "core/tools/handlers/CleanUpHandler"
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
+import {DuplicateHandler} from "core/tools/handlers/DuplicateHandler"
+
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 import {useHistory} from "shared/utils/hooks/useHistory";
-
 
 import "./index.scss";
 
@@ -34,16 +38,16 @@ type Props = {
 }
 
 
-export const ContextMenu = ({info, paste}: Props) => {
-    const {locked, input, camera, history, designer, selections, renderer} = info;
-    const {undoHistory, redoHistory} = useHistory(info);
+export const ContextMenu = ({ info, paste }: Props) => {
+    const { locked, input, camera, history, designer, selections, renderer } = info;
+    const { undoHistory, redoHistory } = useHistory(info);
 
-    const {isOpen} = useSharedSelector(
+    const { isOpen } = useSharedSelector(
         state => ({ isOpen: state.contextMenu.isOpen })
     );
     const dispatch = useSharedDispatch();
 
-    let menuPos: Vector;
+    const [{ posX, posY }, setPos] = useState({ posX:0, posY:0 });
 
     useEffect(() => {
         if (!input)
@@ -55,7 +59,26 @@ export const ContextMenu = ({info, paste}: Props) => {
             else if (ev.type === "mousedown")
                 dispatch(CloseContextMenu());
         });
-    }, [input])
+    }, [input]);
+
+    // Position changes are calculated using the react hook so that the
+    // context menu does not jump around during other update events.
+    // fixes issue #914
+    useEffect(() => {
+        if (!isOpen)
+            return;
+        // Updates position state
+        const pos = input?.getMousePos();
+        setPos({ posX:pos.x, posY:pos.y });
+    }, [isOpen]);
+
+    useDocEvent("mousedown", (ev) => {
+        if (!menu.current)
+            throw new Error("ContextMenu failed: menu.current is null");
+
+        if (!menu.current.contains(ev.target as Node))
+            dispatch(CloseContextMenu());
+    }, []);
 
 
     const copy = () => {
@@ -77,7 +100,7 @@ export const ContextMenu = ({info, paste}: Props) => {
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs)
-        ]).execute());
+        ], "Cut (Context Menu)").execute());
     }
 
     /* Context Menu "Copy" */
@@ -95,12 +118,27 @@ export const ContextMenu = ({info, paste}: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        paste(await navigator.clipboard.readText(), menuPos);
+        paste(await navigator.clipboard.readText(), camera.getWorldPos(V(posX, posY)));
     }
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
         history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute());
+    }
+
+    /* Context Menu "Focus" */
+    const onFocus = async () => {
+        FitToScreenHandler.getResponse(info);
+    }
+
+    /* Context Menu "Clean Up" */
+    const onCleanUp = async () => {
+        CleanUpHandler.getResponse(info);
+    }
+
+    /* Context Menu "Duplicate" */
+    const onDuplicate = async () => {
+        DuplicateHandler.getResponse(info);
     }
 
     /* Context Menu "Undo/Redo" */
@@ -118,39 +156,38 @@ export const ContextMenu = ({info, paste}: Props) => {
         dispatch(CloseContextMenu());
     }
 
+
     const menu = useRef<HTMLDivElement>(null);
-    let pos = input?.getMousePos();
 
-    /* Relocate context menu to opposite side of cursor if it were to go off-screen */
-    if (isOpen) {
-        if (!menu.current)
-            throw new Error("ContextMenu failed: menu.current is null");
+    // Adjusts position of menu to keep it on screen
+    const menuPos = V(posX, posY);
+    if (menu.current) {
         const offset = 1;
-        const contextMenuWidth = menu.current.getBoundingClientRect().width;
-        const contextMenuHeight = menu.current.getBoundingClientRect().height;
+        const { width, height } = menu.current.getBoundingClientRect();
 
-        if (pos.x + contextMenuWidth > window.innerWidth)
-            pos.x -= contextMenuWidth - offset;
+        if (menuPos.x + width > window.innerWidth)
+            menuPos.x -= width - offset;
 
-        if (pos.y + contextMenuHeight + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-            pos.y -= contextMenuHeight - offset;
-
-        // Update context menu position on canvas
-        menuPos = camera.getWorldPos(input.getMousePos());
+        if (menuPos.y + height + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+            menuPos.y -= height - offset;
     }
 
     return (
         <div className="contextmenu"
              ref={menu}
              style={{
-                 left: `${pos?.x}px`,
-                 top: `${pos?.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 left: `${menuPos.x}px`,
+                 top: `${menuPos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
                  visibility: (isOpen ? "initial" : "hidden")
              }}>
             <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
             <button title="Copy"       onClick={() => doFunc(onCopy)} disabled={selections.amount() === 0}>Copy</button>
             <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
             <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
+            <hr/>
+            <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
+            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects().length === 0}>Clean Up</button>
+            <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
             <hr/>
             <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
             <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>

@@ -12,7 +12,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         throw new Error("Expected equal size input and output ports to bus!");
 
     if (inputPorts.length === 0)
-        return new GroupAction();
+        return new GroupAction([], "Bus Action");
 
     const designer = inputPorts[0].getParent().getDesigner();
     if (!designer)
@@ -29,7 +29,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         inSinSum += Math.sin(angle);
         inCosSum += Math.cos(angle);
     }))
-    
+
     const avgInPos = inPosSum.scale(1.0/inputPorts.length);
     // Convert back to flipped Y-axis
     const avgInRot = 2 * Math.PI - Math.atan2(inSinSum/inputPorts.length,inCosSum/inputPorts.length)
@@ -71,9 +71,9 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
 
     inputTargetPositions.sort(sortByPos);
     outputTargetPositions.sort(sortByPos);
-    
+
     // Connect Ports according to their target pos on the Average Component
     return new GroupAction(inputTargetPositions.map((inputTargetPosition, i) =>
         new ConnectionAction(designer, inputMap.get(inputTargetPosition)!, outputMap.get(outputTargetPositions[i])!)
-    ));
+    ), "Bus Action");
 }

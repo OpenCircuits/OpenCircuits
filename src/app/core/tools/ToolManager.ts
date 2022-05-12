@@ -16,6 +16,12 @@ export class ToolManager {
         this.tools = tools;
     }
 
+    public reset(info: CircuitInfo): void {
+        if (this.currentTool)
+            this.currentTool.onDeactivate({ type: "unknown" }, info);
+        this.currentTool = undefined;
+    }
+
     public onEvent(event: Event, info: CircuitInfo): boolean {
         // Call the current tool's (or default tool's) onEvent method
 

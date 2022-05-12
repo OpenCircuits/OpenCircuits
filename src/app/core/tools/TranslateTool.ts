@@ -64,8 +64,8 @@ export const TranslateTool: Tool = (() => {
             ) as Component[];
 
             action = new GroupAction([
-                new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
-            ]);
+                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute()
+            ], "Translate Tool");
 
             initalPositions = components.map(o => o.getPos());
 
@@ -104,8 +104,9 @@ export const TranslateTool: Tool = (() => {
                         curPositions.map(p => Snap(p)):
                         curPositions;
 
+                    const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    new TranslateAction(components, initalPositions, newPositions).execute();
+                    new TranslateAction(components, initalPositions, newPositions, snapToConnections).execute();
 
                     return true;
 
