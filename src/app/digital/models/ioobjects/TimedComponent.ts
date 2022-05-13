@@ -15,7 +15,7 @@ export abstract class TimedComponent extends DigitalComponent {
     @serialize
     protected paused: boolean;
 
-    private timeout: number;
+    private timeout?: number;
 
     public constructor(initialFreq: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
@@ -27,9 +27,9 @@ export abstract class TimedComponent extends DigitalComponent {
 
     private stopTimeout(): void {
         // Clear the timeout if it's currently set
-        if (this.timeout !== null) {
+        if (this.timeout !== undefined) {
             window.clearTimeout(this.timeout);
-            this.timeout = null;
+            this.timeout = undefined;
         }
     }
 
@@ -49,7 +49,7 @@ export abstract class TimedComponent extends DigitalComponent {
 
         // Recursively call `tick` to continuously update
         this.timeout = window.setTimeout(() => {
-            this.timeout = null;
+            this.timeout = undefined;
             this.tick();
         }, this.frequency);
     }

@@ -13,7 +13,7 @@ import {DigitalComponent} from "digital/models";
 
 describe("Node and Wire Interaction", () => {
     const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     function expectNotToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
         const connections = obj1.getOutputs().map((w) => w.getOutputComponent());

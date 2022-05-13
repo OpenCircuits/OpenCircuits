@@ -14,7 +14,7 @@ import "digital/models/ioobjects";
 
 describe("Simplifications", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Create Negation Gates", () => {
         describe("!(a&b)", () => {

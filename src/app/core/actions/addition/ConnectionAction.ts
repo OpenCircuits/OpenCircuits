@@ -45,7 +45,7 @@ export class ConnectionAction extends ReversableAction {
         } else {
             this.wire = this.designer.createWire(p1, p2);
             this.p1 = p1;
-            this.p2 = p2;
+            this.p2 = p2!;
         }
     }
 
@@ -118,5 +118,5 @@ export class DisconnectAction extends ConnectionAction {
  * @returns a GroupAction representing the DisconnectActions of each Wire
  */
 export function CreateGroupDisconnectAction(designer: CircuitDesigner, wires: Wire[]): GroupAction {
-    return new GroupAction(wires.map(w => new DisconnectAction(designer, w)));
+    return new GroupAction(wires.map(w => new DisconnectAction(designer, w)), "Group Disconnect Action");
 }

@@ -5,7 +5,7 @@ const [initialState, actions, reducer] = CreateState()(
     {
         id: "",
         name: "",
-        isSaved: false,
+        isSaved: true,
         isLocked: false,
 
         loading: false,
@@ -34,7 +34,7 @@ const [initialState, actions, reducer] = CreateState()(
             ...state,
             saving: false,
             isSaved: (action.err === undefined),
-            error: action.err,
+            error: action.err ?? "",
         }),
     }
 );

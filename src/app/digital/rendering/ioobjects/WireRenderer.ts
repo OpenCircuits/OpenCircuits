@@ -41,7 +41,7 @@ export const WireRenderer = (() => {
             //  selected blended with constant color SELECTED_FILL_COLOR
             const selectedColor = ColorToHex(blend(
                     parseColor(wire.getColor()), 
-                    parseColor(SELECTED_FILL_COLOR), 0.2
+                    parseColor(SELECTED_FILL_COLOR!), 0.2
             ));
                 
             // @TODO move to function for getting color based on being selection/on/off

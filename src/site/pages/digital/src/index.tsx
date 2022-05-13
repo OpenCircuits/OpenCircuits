@@ -1,3 +1,5 @@
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+
 import React, {createRef} from "react";
 import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
@@ -32,6 +34,8 @@ import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
 import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
+
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
@@ -107,7 +111,7 @@ async function Init(): Promise<void> {
             };
             try {
                 if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-                    await Promise.all(process.env.OC_AUTH_TYPES.split(" ").map(a => AuthMethods[a]()));
+                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map(a => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
             }
@@ -134,7 +138,7 @@ async function Init(): Promise<void> {
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
                     SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                     CleanUpHandler, CopyHandler,
-                    PasteHandler((data) => DigitalPaste(data, info, null)),
+                    PasteHandler((data) => DigitalPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
                 ]),
                 PanTool, RotateTool,
@@ -145,6 +149,12 @@ async function Init(): Promise<void> {
             info.history.addCallback(() => {
                 store.dispatch(SetCircuitSaved(false));
             });
+
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            }
 
             ReactDOM.render(
                 <React.StrictMode>

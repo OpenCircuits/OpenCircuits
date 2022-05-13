@@ -2,7 +2,7 @@ import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalWire} from "digital/models/DigitalWire";
 import {Action} from "core/actions/Action";
@@ -11,7 +11,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {Wire} from "core/models";
 
 
-export function GetHelpers({designer}: Partial<DigitalCircuitInfo>) {
+export function GetHelpers(designer: DigitalCircuitDesigner) {
     return {
         Place: <T extends DigitalComponent[]>(...objs: T) => {
             return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];

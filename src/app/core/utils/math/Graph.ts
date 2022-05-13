@@ -40,8 +40,8 @@ export class Graph<V, E> {
             return;
 
         visited.set(v, true);
-        this.list.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
-        this.reverseList.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
+        this.list.get(v)?.forEach((e) => this.dfs(visited, e.getTarget()));
+        this.reverseList.get(v)?.forEach((e) => this.dfs(visited, e.getTarget()));
     }
 
     public createNode(value: V): void {
@@ -58,8 +58,8 @@ export class Graph<V, E> {
         if (!this.list.has(target))
             throw new Error("Graph doesn't have node of value: " + target);
 
-        this.list.get(source).push(new Edge<V, E>(target, weight));
-        this.reverseList.get(target).push(new Edge<V, E>(source, weight));
+        this.list.get(source)!.push(new Edge<V, E>(target, weight));
+        this.reverseList.get(target)!.push(new Edge<V, E>(source, weight));
     }
 
     public isConnected(): boolean {
@@ -75,11 +75,11 @@ export class Graph<V, E> {
     }
 
     public getSources(): V[] {
-        return this.getNodes().filter((n) => this.reverseList.get(n).length === 0);
+        return this.getNodes().filter((n) => this.reverseList.get(n)?.length === 0);
     }
 
     public getSinks(): V[] {
-        return this.getNodes().filter((n) => this.list.get(n).length === 0);
+        return this.getNodes().filter((n) => this.list.get(n)?.length === 0);
     }
 
     public getEndNodes(): V[] {
@@ -92,11 +92,15 @@ export class Graph<V, E> {
     }
 
     public getDegree(node: V): number {
-        return this.list.get(node).length + this.reverseList.get(node).length;
+        if (!this.list.has(node))
+            throw new Error("getDegree() failed: node not found");
+        return this.list.get(node)!.length + this.reverseList.get(node)!.length;
     }
 
     public getConnections(value: V): Edge<V, E>[] {
-        return this.list.get(value);
+        if (!this.list.has(value))
+            throw new Error("getConnections() failed: value not found");
+        return this.list.get(value)!;
     }
 
     public getNodes(): V[] {
@@ -125,8 +129,8 @@ export class Graph<V, E> {
         //  that the node can be found at
         while (currentLayer.length != 0) {
             for (const node of currentLayer) {
-                const nextDepth = nodeToNumber.get(node) + 1;
-                for (const next of this.list.get(node))  {
+                const nextDepth = nodeToNumber.get(node)! + 1;
+                for (const next of this.list.get(node)!)  {
                     if (!nodeToNumber.has(next.getTarget()) || max) {
                         deepest = Math.max(deepest, nextDepth);
                         nodeToNumber.set(next.getTarget(), nextDepth);

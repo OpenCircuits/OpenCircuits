@@ -15,7 +15,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
  * @throws {Error} if gate is not placed in a designer
  */
  export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Snip Gate Action");
     const designer = gate.getDesigner();
     if (!designer)
         throw new Error("gate not placed in designer");

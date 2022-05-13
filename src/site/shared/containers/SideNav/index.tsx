@@ -37,6 +37,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
         state => ({ ...state.user, isOpen: state.sideNav.isOpen,
                     loading: state.circuit.loading, loadingCircuits: state.user.loading })
     );
+
     const dispatch = useSharedDispatch();
 
     return (<>
@@ -58,6 +59,10 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
+            <button onClick={() => helpers.ResetCircuit()}>
+                <span>+</span>
+                New Circuit
+            </button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
@@ -70,6 +75,8 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                             onClick={async () => {
                                 if (loading) // Don't load another circuit if already loading
                                     return;
+                                if (!auth)
+                                    throw new Error("Sidenav failed: auth is undefined");
                                 await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
                                 dispatch(ToggleSideNav());
                             }}

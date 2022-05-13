@@ -45,7 +45,7 @@ export class ICData {
     public constructor(collection?: DigitalObjectSet) {
         this.name = ""; // TODO: have names
         this.transform = new Transform(V(0,0), V(0,0));
-        this.collection = collection;
+        this.collection = collection!;
         this.inputPorts  = [];
         this.outputPorts = [];
 
@@ -210,7 +210,7 @@ export class ICData {
      *  as the only inputs.
      * @returns The newly created ICData
      */
-    public static Create(objects: IOObject[] | DigitalObjectSet): ICData {
+    public static Create(objects: IOObject[] | DigitalObjectSet): ICData | undefined {
         objects = (objects instanceof DigitalObjectSet ? objects.toList() : objects);
         const set = ICData.CreateSet(objects);
         if (!this.IsValid(set))

@@ -10,7 +10,7 @@ describe("SRFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const {AutoPlace} = GetHelpers(designer);
 
     const [f, [PRE, CLR, S, C, R], [Q, Q2]] = AutoPlace(new SRFlipFlop());
 

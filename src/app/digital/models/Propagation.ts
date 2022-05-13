@@ -8,8 +8,8 @@ export class Propagation {
     private signal: boolean;
 
     public constructor(receiver?: DigitalComponent | DigitalWire, signal?: boolean) {
-        this.receiver = receiver;
-        this.signal = signal;
+        this.receiver = receiver!;
+        this.signal = signal!;
     }
 
     public send(): void {

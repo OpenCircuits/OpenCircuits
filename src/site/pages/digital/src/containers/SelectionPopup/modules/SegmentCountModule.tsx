@@ -8,7 +8,7 @@ const Config: ModuleConfig<[SegmentDisplay], number> = {
     types: [SegmentDisplay],
     valType: "int",
     getProps: (o) => o.getSegmentCount(),
-    getAction: (s, newCount) => new GroupAction(s.map(o => new InputPortChangeAction(o, o.getSegmentCount(), newCount)))
+    getAction: (s, newCount) => new GroupAction(s.map(o => new InputPortChangeAction(o, o.getSegmentCount(), newCount)), "Segment Count Module")
 }
 
 export const SegmentCountModule = PopupModule({

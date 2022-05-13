@@ -60,6 +60,7 @@ export class Input {
         this.canvas = canvas;
         this.dragTime = dragTime;
         this.blocked = false;
+        this.listeners = [];
 
         this.reset();
 
@@ -102,7 +103,8 @@ export class Input {
     private hookupKeyboardEvents(): void {
         // Keyboard events
         window.addEventListener("keydown", (e: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement)) {
+            // Check for "Alt" to fix issue #943
+            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.key as Key);
 
                 if (this.isPreventedCombination(e.key as Key))
@@ -110,7 +112,8 @@ export class Input {
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
-            if (!(document.activeElement instanceof HTMLInputElement))
+            // Check for "Alt" to fix issue #943
+            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e.key as Key)
         }, false);
 
@@ -214,7 +217,8 @@ export class Input {
     }
 
     /**
-     * Resets most variables to default values
+     * Resets internal state of the Input
+     *  Keeps listeners and outer-controlled state
      */
     public reset(): void {
         this.prevMousePos = V();
@@ -229,8 +233,6 @@ export class Input {
 
         this.touchCount = 0;
 
-        this.listeners = [];
-        // this.listeners = new Map();
         this.keysDown  = new Map();
     }
 

@@ -25,7 +25,7 @@ export function SaveImage(canvas: HTMLCanvasElement, name: string, options: Imag
 function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageExportOptions) {
     if (options.useBg) {
         // From https://stackoverflow.com/a/50126796
-        const ctx = canvas.getContext("2d"); // get the context to overwrite the background of the canvas
+        const ctx = canvas.getContext("2d")!; // get the context to overwrite the background of the canvas
         ctx.save(); // save the current state of the context
         ctx.globalCompositeOperation = "destination-over"; // set the composite operation to overwrite the background
         ctx.fillStyle = options.bgColor;
@@ -41,9 +41,9 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
 
     const filename = `${projectName}.${options.type}`;
 
-    if (window.navigator.msSaveOrOpenBlob) { // IE10+
+    if ((window.navigator as any).msSaveOrOpenBlob) { // IE10+
         const file = new Blob([data], {type: "image/png"});
-        window.navigator.msSaveOrOpenBlob(file, filename);
+        (window.navigator as any).msSaveOrOpenBlob(file, filename);
     } else { // Others
         const a = document.createElement("a");
         const url = data;

@@ -136,7 +136,10 @@ export const ComponentRenderer = (() => {
                 LEDRenderer.render(renderer, camera, object, selected);
             }
             else if (imgName) {
-                renderer.image(Images.GetImage(imgName), V(), size, tint);
+                const img = Images.GetImage(imgName);
+                if (!img)
+                    throw new Error("ComponentRender.render failed: img is undefined");
+                renderer.image(img, V(), size, tint);
             }
 
             // Render the IOLabels, does not render labels if they are blank

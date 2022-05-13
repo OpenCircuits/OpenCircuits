@@ -19,10 +19,10 @@ export class DigitalWire extends Wire {
     private isOn: boolean;
 
     public constructor(input?: OutputPort, output?: InputPort) {
-        super(input, output);
+        super(input!, output!);
 
-        this.p1 = input;
-        this.p2 = output;
+        this.p1 = input!;
+        this.p2 = output!;
         this.isOn = false;
     }
 

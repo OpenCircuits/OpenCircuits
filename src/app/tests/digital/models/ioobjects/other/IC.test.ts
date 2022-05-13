@@ -16,7 +16,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 describe("IC", () => {
     test("Basic IC", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
+        const {Place, Connect} = GetHelpers(designer);
         const a = new Switch, o = new LED(), buf_gate = new BUFGate();
 
         Place(a, o, buf_gate);
@@ -40,7 +40,7 @@ describe("IC", () => {
     });
     test("Basic IC 2", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
+        const {Place, Connect} = GetHelpers(designer);
         const a = new Switch, b = new Switch, o = new LED(), and_gate = new ANDGate();
 
         Place(a, b, o, and_gate);
@@ -72,7 +72,7 @@ describe("IC", () => {
     });
     test("Basic IC 3 - ON Switch -> LED (issue #468)", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
+        const {Place, Connect} = GetHelpers(designer);
         const a = new Switch, o = new LED();
 
         Place(a, o);
@@ -99,7 +99,7 @@ describe("IC", () => {
     });
     test("Basic IC 4 - Constant High -> LED (issue #468)", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers({designer});
+        const {Place, Connect} = GetHelpers(designer);
         const a = new ConstantHigh(), o = new LED();
 
         Place(a, o);

@@ -5,7 +5,7 @@ import {CreateState} from "shared/utils/CreateState";
 const [initialState, actions, reducer] = CreateState()(
     {
         isActive: false,
-        ic: undefined as ICData,
+        ic: undefined as ICData | undefined,
     },
     {
         OpenICDesigner:  (data: ICData) => ({ type: "OPEN_ICDESIGNER_ID", data }) as const,
