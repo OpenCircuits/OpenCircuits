@@ -19,7 +19,6 @@ type Props = {
     info: CircuitInfo;
     extraUtilities: Utility[];
 }
-
 export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
@@ -30,28 +29,15 @@ export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
             </button>
             <div className={`header__right__btns ${isHidden ? "header__right__collapsed" : ""}`}>
                 <SignInOutButtons />
-                { extraUtilities.length > 0 && // Render only if there are utilities
-                    <UtilitiesDropdown extraUtilities={extraUtilities}
-                        helpers={helpers} info={info} />
+                {  // Render only if there are utilities or in dev mode for dev utilities
+                (extraUtilities.length > 0 || process.env.NODE_ENV === "development") &&
+                    <UtilitiesDropdown helpers={helpers} extraUtilities={extraUtilities} />
                 }
                 <DownloadMenuDropdown helpers={helpers} />
                 <OpenFileButton helpers={helpers} />
                 <SettingsMenu helpers={helpers} info={info} />
                 <TutorialDropdown />
             </div>
-            {/* <div className="header__right">
-            </div>
-            <div className="header__right__alt">
-                <button type="button" onClick = {() => setHidden(!isHidden)}><img className ="expand"
-                        src={isHidden ? "img/icons/expand.svg" : "img/icons/collapse.svg"} alt = ""/></button>
-                <div id={isHidden ? 'hidden' : 'notHidden' } >
-                    <li><OpenFileButton helpers={helpers} /></li>
-                    <li><SettingsMenu helpers={helpers} /></li>
-                    <li><DownloadMenuDropdown helpers={helpers} /></li>
-                    <li><TutorialDropdown /></li>
-                    <li><SignInOutButtons /></li>
-                </div>
-            </div> */}
         </div>
     );
 };
