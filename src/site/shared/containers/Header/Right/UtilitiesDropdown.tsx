@@ -1,19 +1,19 @@
 import {useEffect, useState} from "react";
 
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {DevCreateFile, DevGetFile, DevListFiles} from "shared/api/Dev";
 import {OpenHeaderMenu, OpenHeaderPopup, CloseHeaderMenus, HeaderPopups} from "shared/state/Header";
 
 import {Dropdown} from "./Dropdown";
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
 
 export type Utility = {
     popupName: HeaderPopups;
     img: string;
     text: string;
-    enabled: boolean;
 }
 
 type Props = {
@@ -37,7 +37,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
               onClick={() => dispatch(OpenHeaderMenu("utilities"))}
               onClose={() => dispatch(CloseHeaderMenus())}
               btnInfo={{ title: "Utilities", src: "img/icons/utilities.svg" }}>
-        {extraUtilities.filter(utility => utility.enabled).map(utility => (
+        {extraUtilities.map(utility => (
             <div key={utility.popupName}
                 onClick={() => {
                     dispatch(CloseHeaderMenus());
