@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 
-import {ITEMNAV_HEIGHT,ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -21,7 +21,7 @@ import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, SetCurItem} from "shared/state/ItemNav";
 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
@@ -49,14 +49,15 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData,
-                              onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
-    const { isOpen, isEnabled, isHistoryBoxOpen } = useSharedSelector(
+export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
+                              onStart, onFinish, additionalPreview }: Props<D>) => {
+    const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
@@ -68,8 +69,12 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
-    const [{ curItemID, numClicks }, setState] = useState({ curItemID: "", numClicks: 1 });
+    const [numClicks, setNumClicks] = useState(1);
 
+    // Track whether mouse is over entire ItemNav
+    const [hoveringNav, setHoveringNav] = useState(false);
+
+    // Track whether mouse is over specific Items
     const [hovering, setHover] = useState("");
 
     // State to keep track of drag'n'drop preview current image
@@ -99,15 +104,16 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // Resets the curItemID and numClicks
     function reset(cancelled = false) {
-        setState({ curItemID: "", numClicks: 1 });
+        dispatch(SetCurItem(""));
+        setNumClicks(1);
         setCurItemImg("");
-        onFinish && onFinish(cancelled);
+        onFinish?.(cancelled);
     }
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setState, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, additionalData]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -115,7 +121,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
         const { clientX: x, clientY: y } = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setState, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, additionalData]);
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
@@ -123,7 +129,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [setState]);
+    }, [setNumClicks]);
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
@@ -190,12 +196,34 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
+    // Get image for deletion preview (PR #1047)
+    const deleteImg = useMemo(() => {
+        // If not pressing a Component or not hovering the ItemNav, then returned undefined
+        if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
+            return undefined;
+        return getImgSrc(currentlyPressedObj);
+    }, [currentlyPressedObj, hoveringNav, getImgSrc]);
+
     return (<>
+        {/* Item Nav Deletion Preview (PR #1047) */}
+        {deleteImg && (
+        <div className="itemnav__preview"
+                style={{
+                    display: "initial",
+                    left: pos.x,
+                    top: pos.y,
+                }}>
+            {/* config.imgRoot / section.id / item.icon */}
+            <img src={deleteImg} width="80px" />
+        </div>
+        )}
+
+        {/* Item Nav Currently Placing Preview */}
         <div className="itemnav__preview"
              style={{
-                display: (curItemImg ? "initial" : "none"),
-                left: pos.x,
-                top: pos.y,
+                 display: (curItemImg ? "initial" : "none"),
+                 left: pos.x,
+                 top: pos.y,
              }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
@@ -215,7 +243,11 @@ export const ItemNav = <D,>({ info, config, additionalData,
                 x{numClicks}
             </span>
         </div>
+
+        {/* Actual Item Nav */}
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
+             onMouseOver ={() => setHoveringNav(true)}
+             onMouseLeave={() => setHoveringNav(false)}
              onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
@@ -270,10 +302,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         dragDir={(side === "left") ? "horizontal" : "vertical"}
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
                                         onClick={(ev) => {
-                                            setState({
-                                                curItemID: item.id,
-                                                numClicks: (item.id === curItemID ? numClicks+1 : 1),
-                                            });
+                                            dispatch(SetCurItem(item.id));
+                                            setNumClicks(item.id === curItemID ? numClicks+1 : 1);
                                             setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                             onStart && onStart();
 
@@ -283,12 +313,10 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         onDragChange={(d) => {
                                             // Set image if user started dragging on this item
                                             if (d === "start") {
-                                                    // For instance, if user clicked on Button 4 times then dragged the
-                                                    //  Switch, we want to reset the numClicks to 1
-                                                setState({
-                                                    curItemID: item.id,
-                                                    numClicks: (item.id === curItemID ? numClicks : 0),
-                                                });
+                                                // For instance, if user clicked on Button 4 times then dragged the
+                                                //  Switch, we want to reset the numClicks to 1
+                                                dispatch(SetCurItem(item.id));
+                                                setNumClicks(item.id === curItemID ? numClicks : 0);
                                                 setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                                 onStart && onStart();
                                             }
@@ -304,7 +332,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         <div onClick={(ev) => {
                                             // Resets click tracking and stops propgation so that an
                                             // Components are not clicked onto the canvas after being deleted.
-                                            setState({ curItemID: "", numClicks: 1 });
+                                            dispatch(SetCurItem(""));
+                                            setNumClicks(1);
                                             // Stops drag'n'drop preview when deleting
                                             setCurItemImg("");
                                             onDelete(section, item) && setHover("");
