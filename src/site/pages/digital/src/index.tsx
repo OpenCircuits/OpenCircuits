@@ -148,8 +148,11 @@ async function Init(): Promise<void> {
                 store.dispatch(SetCircuitSaved(false));
             });
 
-            if ((await DevListFiles()).includes("devCached.circuit"))
-                helpers.LoadCircuit(() => DevGetFile("devCached.circuit"));
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                if ((await DevListFiles()).includes("devCached.circuit"))
+                    await helpers.LoadCircuit(() => DevGetFile("devCached.circuit"));
+            }
 
             ReactDOM.render(
                 <React.StrictMode>
