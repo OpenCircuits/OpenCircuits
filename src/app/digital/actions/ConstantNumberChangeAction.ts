@@ -7,15 +7,16 @@ import {ConstantNumber} from "digital/models/ioobjects";
  */
 export class ConstantNumberChangeAction implements Action {
 
-    // the ConstantNumber component
+    // The ConstantNumber component
     private constantNumber: ConstantNumber;
 
-    // the input values
+    // The input values
     private initialNum: number;
     private targetNum: number;
 
     /**
      * Create an action to change the input for a ConstantNumber
+     *
      * @param constNum The `ConstantNumber` object
      * @param newInput The new input value (`0 <= newInput < 16`)
      */
@@ -25,16 +26,31 @@ export class ConstantNumberChangeAction implements Action {
         this.targetNum = newInput;
     }
 
+    /**
+     * Sets the input value of the ConstantNumber to the new Input value
+     *
+     * @returns the action
+     */
     public execute(): Action {
         this.constantNumber.setInput(this.targetNum);
         return this;
     }
 
+    /**
+     * Sets the input value of the ConstantNumber to the initial Input value
+     *
+     * @returns the action
+     */
     public undo(): Action {
         this.constantNumber.setInput(this.initialNum);
         return this;
     }
 
+    /**
+     * Gets the name of the action
+     *
+     * @returns "Constant Number Change"
+     */
     public getName(): string {
         return "Constant Number Change"
     }
