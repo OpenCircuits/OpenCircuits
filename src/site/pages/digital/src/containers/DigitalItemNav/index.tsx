@@ -1,10 +1,11 @@
-import {Create} from "serialeazy";
+import {Create, GetIDFor} from "serialeazy";
 import {useEffect, useState} from "react";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {IsICDataInUse} from "digital/utils/ComponentUtils";
 
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
+import {IC} from "digital/models/ioobjects";
 
 import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
 
@@ -90,24 +91,43 @@ export const DigitalItemNav = ({info}: Props) => {
         return () => designer.removeCallback(onEvent);
     }, [designer]);
 
+    const config = {
+        imgRoot: itemNavConfig.imgRoot,
+        sections: [
+            ...itemNavConfig.sections,
+            ...(ics.length === 0 ? [] : [{
+                id: "other",
+                label: "ICs",
+                items: ics
+            }])
+        ]
+    };
 
     // Append regular ItemNav items with ICs
-    return <ItemNav info={info} config={{
-            imgRoot: itemNavConfig.imgRoot,
-            sections: [
-                ...itemNavConfig.sections,
-                ...(ics.length === 0 ? [] : [{
-                    id: "other",
-                    label: "ICs",
-                    items: ics
-                }])
-            ]
-        }}
+    return <ItemNav
+        info={info}
+        config={config}
         additionalData={smartPlace}
+        getImgSrc={(c) => {
+            // Get ID
+            const id = (c instanceof IC)
+                // IC config 'id' is based on index of its ICData
+                ? (`ic/${designer.getICData().indexOf(c.getData())}`)
+                // Otherwise just get the Serialized ID
+                : (GetIDFor(c));
+            if (!id)
+                throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
+
+            // Get path within config of ItemNav icon
+            const section = config.sections.find(s => s.items.find(i => i.id === id));
+            const item = section?.items.find(i => i.id === id);
+
+            return `${config.imgRoot}/${section?.id}/${item?.icon}`;
+        }}
         onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
         onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            const icData = info.designer.getICData()[+ic.id.substring(ic.id.indexOf('/')+1)];
+            const icData = info.designer.getICData()[+ic.id.substring(ic.id.indexOf("/")+1)];
             if (IsICDataInUse(info.designer, icData)) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");
                 return false;

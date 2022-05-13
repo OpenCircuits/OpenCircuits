@@ -51,13 +51,14 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData,
-                              onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
+                              onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -72,10 +73,11 @@ export const ItemNav = <D,>({ info, config, additionalData,
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [{ curItemID, numClicks }, setState] = useState({ curItemID: "", numClicks: 1 });
 
-    const [hovering, setHover] = useState("");
+    // Track whether mouse is over entire ItemNav
+    const [hoveringNav, setHoveringNav] = useState(false);
 
-    // Track whether mouse is over Nav bar 
-    const [overNav, setOverNav] = useState(false);
+    // Track whether mouse is over specific Items
+    const [hovering, setHover] = useState("");
 
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
@@ -100,38 +102,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
         }
         // Else just delete
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
-    }
-    function deletingItemPreview(){
-        if (!currentlyPressedObj)
-            return null;
-        if (!(currentlyPressedObj instanceof Component))
-            return null;
-        if (!overNav)
-            return null;
-        const id = GetIDFor(currentlyPressedObj);
-        let section_id;
-        let config_imgRoot;
-        let item_icon;
-        for (const section of sections) {
-            for (const item of section.items) {
-                if (item.id === id) {
-                    section_id = section.id;
-                    config_imgRoot = config.imgRoot;
-                    item_icon = item.icon;
-                    break;
-                }
-            }
-        }
-        const img = currentlyPressedObj.getImageName();
-        return <div className="itemnav__preview"
-            style={{
-                display: "initial",
-                left: pos.x,
-                top: pos.y,
-            }}>
-            {/* config.imgRoot / section.id / item.icon */}
-            <img src={`${config_imgRoot}/${section_id}/${item_icon}`} width="80px" />
-        </div>        
     }
 
     // Resets the curItemID and numClicks
@@ -227,8 +197,29 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
+    // Get image for deletion preview (PR #1047)
+    const deleteImg = useMemo(() => {
+        // If not pressing a Component or not hovering the ItemNav, then returned undefined
+        if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
+            return undefined;
+        return getImgSrc(currentlyPressedObj);
+    }, [currentlyPressedObj, hoveringNav, getImgSrc]);
+
     return (<>
-        {deletingItemPreview()}
+        {/* Item Nav Deletion Preview (PR #1047) */}
+        {deleteImg && (
+        <div className="itemnav__preview"
+                style={{
+                    display: "initial",
+                    left: pos.x,
+                    top: pos.y,
+                }}>
+            {/* config.imgRoot / section.id / item.icon */}
+            <img src={deleteImg} width="80px" />
+        </div>
+        )}
+
+        {/* Item Nav Currently Placing Preview */}
         <div className="itemnav__preview"
              style={{
                  display: (curItemImg ? "initial" : "none"),
@@ -253,10 +244,12 @@ export const ItemNav = <D,>({ info, config, additionalData,
                 x{numClicks}
             </span>
         </div>
+
+        {/* Actual Item Nav */}
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
-            onMouseOver={() => setOverNav(true)} 
-            onMouseLeave={() => setOverNav(false)}
-            onMouseUp={handleItemNavDrag}>
+             onMouseOver ={() => setHoveringNav(true)}
+             onMouseLeave={() => setHoveringNav(false)}
+             onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
                     <button  title="History" onClick={() => {
