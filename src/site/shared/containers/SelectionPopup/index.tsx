@@ -104,6 +104,8 @@ export function SelectionPopup({ info, modules, docsUrlConfig }: Props) {
                 left: `${pos.x}px`,
                 top:  `${pos.y}px`,
                 visibility: (isVisible && !isDragging ? "visible": "hidden"),
+                // Fixes issue with double clicks and when dragging from the ItemNav
+                //  Issues #521 and #863 respectively
                 pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
              }}
              tabIndex={-1}>
