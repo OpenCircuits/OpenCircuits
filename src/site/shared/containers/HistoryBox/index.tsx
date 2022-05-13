@@ -12,7 +12,6 @@ import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
 
-
 type HistoryEntryProps = {
     a: Action;
     isRedo: boolean;
@@ -118,6 +117,7 @@ export const HistoryBox = ({ info }: Props) => {
                 {[...undoHistory].reverse().map((a, i) =>
                     <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
                 )}
+
             </div>
         </div>
     );
