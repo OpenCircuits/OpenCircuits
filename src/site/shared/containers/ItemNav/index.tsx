@@ -21,7 +21,7 @@ import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 import {useHistory} from "shared/utils/hooks/useHistory";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, PlaceComponent} from "shared/state/ItemNav";
+import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, SetCurItem} from "shared/state/ItemNav";
 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
@@ -56,7 +56,7 @@ type Props<D> = {
 }
 export const ItemNav = <D,>({ info, config, additionalData,
                               onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
-    const { isOpen, isEnabled, isHistoryBoxOpen } = useSharedSelector(
+    const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
@@ -68,7 +68,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
-    const [{ curItemID, numClicks }, setState] = useState({ curItemID: "", numClicks: 1 });
+    const [numClicks, setNumClicks] = useState(1);
 
     const [hovering, setHover] = useState("");
 
@@ -86,11 +86,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
     useDocEvent("mouseup",    () => setCurPressedObj(undefined));
     useDocEvent("mouseleave", () => setCurPressedObj(undefined));
     function handleItemNavDrag() { // Issue #478
-        if (!currentlyPressedObj || !(currentlyPressedObj instanceof Component)) {
-            // Disable selection while placing object - resolves #863
-            info.selections.setDisabled(true);
+        if (!currentlyPressedObj || !(currentlyPressedObj instanceof Component))
             return;
-        }
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (info.selections.has(currentlyPressedObj)) {
             DeleteHandler.getResponse(info);
@@ -100,24 +97,18 @@ export const ItemNav = <D,>({ info, config, additionalData,
         info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
     }
 
-    // Change isPlacing
-    function setIsPlacing(): void {
-        dispatch(PlaceComponent());
-    }
-
     // Resets the curItemID and numClicks
     function reset(cancelled = false) {
-        // Re-enable selections
-        info.selections.setDisabled(false);
-        setState({ curItemID: "", numClicks: 1 });
+        dispatch(SetCurItem(""));
+        setNumClicks(1);
         setCurItemImg("");
-        onFinish && onFinish(cancelled);
+        onFinish?.(cancelled);
     }
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setState, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, additionalData]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -125,7 +116,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
         const { clientX: x, clientY: y } = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setState, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, additionalData]);
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
@@ -133,12 +124,7 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [setState]);
-
-    // Keep track of if item is being placed
-    useEffect(() => {
-        setIsPlacing();
-    }, [curItemID]);
+    }, [setNumClicks]);
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
@@ -285,10 +271,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         dragDir={(side === "left") ? "horizontal" : "vertical"}
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
                                         onClick={(ev) => {
-                                            setState({
-                                                curItemID: item.id,
-                                                numClicks: (item.id === curItemID ? numClicks+1 : 1),
-                                            });
+                                            dispatch(SetCurItem(item.id));
+                                            setNumClicks(item.id === curItemID ? numClicks+1 : 1);
                                             setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                             onStart && onStart();
 
@@ -298,12 +282,10 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         onDragChange={(d) => {
                                             // Set image if user started dragging on this item
                                             if (d === "start") {
-                                                    // For instance, if user clicked on Button 4 times then dragged the
-                                                    //  Switch, we want to reset the numClicks to 1
-                                                setState({
-                                                    curItemID: item.id,
-                                                    numClicks: (item.id === curItemID ? numClicks : 0),
-                                                });
+                                                // For instance, if user clicked on Button 4 times then dragged the
+                                                //  Switch, we want to reset the numClicks to 1
+                                                dispatch(SetCurItem(item.id));
+                                                setNumClicks(item.id === curItemID ? numClicks : 0);
                                                 setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                                 onStart && onStart();
                                             }
@@ -319,7 +301,8 @@ export const ItemNav = <D,>({ info, config, additionalData,
                                         <div onClick={(ev) => {
                                             // Resets click tracking and stops propgation so that an
                                             // Components are not clicked onto the canvas after being deleted.
-                                            setState({ curItemID: "", numClicks: 1 });
+                                            dispatch(SetCurItem(""));
+                                            setNumClicks(1);
                                             // Stops drag'n'drop preview when deleting
                                             setCurItemImg("");
                                             onDelete(section, item) && setHover("");
