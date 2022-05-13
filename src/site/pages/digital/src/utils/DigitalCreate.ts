@@ -95,7 +95,7 @@ export enum SmartPlaceOptions {
  */
 export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuitDesigner,
                            N: number, options: SmartPlaceOptions): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Smart Place Group");
 
     for (let i = 0; i < N; i++) {
         const comp = DigitalCreate(itemId, designer);
@@ -133,7 +133,7 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
             new GroupAction(
                 outputs.map((v, i) => new ConnectionAction(designer, outputPorts[i], v.getInputPort(0)))
             ),
-        ]));
+        ], "Smart Place"));
 
         const totalCullBox = CircuitBoundingBox([comp, ...inputs, ...outputs]);
         pos = pos.add(V(0, totalCullBox.getHeight()));

@@ -29,7 +29,7 @@ export const UtilitiesDropdown = ({ extraUtilities, info }: Props) => {
               onClose={() => dispatch(CloseHeaderMenus())}
               btnInfo={{title: "Utilities", src: "img/icons/utilities.svg"}}>
         {extraUtilities.map(utility => (
-            <div key={utility.popupName} onClick={() => {!info.locked && dispatch(CloseHeaderMenus()); 
+            <div key={utility.popupName} onClick={() => {!info.locked && dispatch(CloseHeaderMenus());
             !info.locked && dispatch(OpenHeaderPopup(utility.popupName)); }}>
                 <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />
                 <span>{utility.text}</span>

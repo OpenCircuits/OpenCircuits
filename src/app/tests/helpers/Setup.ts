@@ -31,6 +31,7 @@ import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 import {FakeInput} from "./FakeInput";
+import {V} from "Vector";
 
 
 export function GetDefaultTools() {
@@ -55,7 +56,7 @@ type Props = {
         tools?: Tool[];
     };
 }
-export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input: FakeInput} {
+export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input: FakeInput, reset: (d?: boolean) => void} {
     const propagationTime = props?.propagationTime ?? -1;
     const screenSize = props?.screenSize ?? [500, 500];
     const tools = props?.tools ?? GetDefaultTools();
@@ -82,7 +83,17 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
             debugPressableBounds: false,
             debugSelectionBounds: false,
             debugNoFill: false
-        }
+        },
+
+        // Utility function to reset the state of the CircuitInfo
+        reset: (resetDesigner: boolean = false) => {
+            history.reset();
+            camera.setPos(V()); camera.setZoom(1); // Reset camera
+            if (resetDesigner) designer.reset();
+            input.reset();
+            selections.get().forEach(s => selections.deselect(s)); // Reset selections
+            toolManager.reset(info);
+        },
     };
 
     input.addListener((ev) => toolManager.onEvent(ev, info));
