@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 
-import {RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {ITEMNAV_HEIGHT,ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -61,6 +61,9 @@ export const ItemNav = <D,>({ info, config, additionalData,
         state => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
+
+    const { w, h } = useWindowSize();
+    const side = (w > 768 || w > h) ? "left" : "bottom";
 
     const { undoHistory, redoHistory } = useHistory(info);
 
@@ -138,6 +141,14 @@ export const ItemNav = <D,>({ info, config, additionalData,
         return () => DragDropHandlers.removeListener(resetListener);
     }, [setState, isShiftDown]);
 
+    // Updates camera margin when itemnav is open depending on size (Issue #656)
+    useEffect(() => {
+        info.camera.setMargin(
+            side === "left"
+            ? { left:   (isOpen ? ITEMNAV_WIDTH  : 0), bottom: 0 }
+            : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left:   0 }
+        );
+    }, [isOpen, side]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -162,8 +173,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const additionalPreviewComp = (additionalPreview && !!additionalData &&
                                    additionalPreview(additionalData, curItemID));
-
-    const { w, h } = useWindowSize();
 
     // Calculate alternate sections view for when the ItemNav is on the bottom of the screen
     //  By placing them all on a single row
@@ -195,7 +204,6 @@ export const ItemNav = <D,>({ info, config, additionalData,
         }, [] as ItemNavSection[]);
     }, [config.sections, w]);
 
-    const side = (w > 768 || w > h) ? "left" : "bottom";
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
     return (<>
