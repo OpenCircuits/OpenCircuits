@@ -21,8 +21,7 @@ module.exports = {
             "namedComponents": "arrow-function",
             "unnamedComponents": "arrow-function",
         }],
-        // TODO: uncomment below when it is actually released https://github.com/yannickcr/eslint-plugin-react/blob/master/CHANGELOG.md
-        // "react/hook-use-state": "error",
+        "react/hook-use-state": "error",
         "react/no-adjacent-inline-elements": "error",
         "react/no-arrow-function-lifecycle": "error",
         "react/no-danger": "error",

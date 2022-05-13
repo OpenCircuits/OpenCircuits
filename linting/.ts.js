@@ -121,7 +121,7 @@ module.exports = {
                 "selector": ["function", "typeProperty", "objectLiteralProperty"],
                 "format": ["camelCase", "PascalCase"],
             },
-            { // enum members
+            { // enum members must be PascalCase, no leading underscore
                 "selector": "enumMember",
                 "format": ["PascalCase"],
             },
@@ -130,7 +130,7 @@ module.exports = {
                 "modifiers": ["static"],
                 "format": ["UPPER_CASE"],
             },
-            { // static class methods can be camelCase or  PascalCase, no leading underscore
+            { // static class methods can be camelCase or PascalCase, no leading underscore
                 "selector": "classMethod",
                 "modifiers": ["static"],
                 "format": ["camelCase", "PascalCase"],
