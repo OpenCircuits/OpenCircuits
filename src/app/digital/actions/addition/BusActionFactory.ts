@@ -22,10 +22,15 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         throw new Error("CreateBusAction failed: Designer not found");
 
     // Basic idea is to take each input component and output component from each
-    //  port and assemble them into a sort-of single giant input component and output component
+    //  port and assemble them into a sort-of single giant average input component and output component
     //  using the average positions/rotations of each input/output and then transform them
-    //  into a space where they are aligned with eachother and connect the ports from top-to-bottom
-    //  in this space.
+    //  into a space where they are aligned with eachother.
+    // From there, each port-position is turned into an angle relative to this average component
+    //  and then sorted in an anti-clockwise direction for the output component and a clockwise
+    //  direction for the input component and matched accordingly. See https://www.desmos.com/calculator/yydnj2rj6z
+    // Since this problem is technically a travelling salesman problem, there is no way to have an efficient
+    //  exact solution, and so the downside here is that it assumes the flow of outputs -> inputs
+    //  goes from left to right
 
     const calcAvgComp = (cs: Component[]) => {
         const avgPos = cs
