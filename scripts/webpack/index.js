@@ -111,6 +111,8 @@ module.exports = async (dir, mode) => {
             client: {
                 overlay: true,
             },
+            // Allows devs to save local circuits for use in #1037
+            onBeforeSetupMiddleware: require("./customDevServer"),
         }, compiler);
 
         ["SIGINT", "SIGTERM"].forEach(sig => {
