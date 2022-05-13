@@ -53,7 +53,7 @@ export class CoderPortChangeAction implements Action {
      * @param val refers to the target number chosen by the user.
      */
     protected changeSize(val: number): void {
-        this.obj.setSize(V(DEFAULT_SIZE, DEFAULT_SIZE/2 * Math.pow(2, val)));
+        this.obj.setSize(V(DEFAULT_SIZE * (1 + (val - 1)/20), DEFAULT_SIZE/2 * Math.pow(2, val)));
     }
     
     /**
@@ -67,6 +67,7 @@ export class CoderPortChangeAction implements Action {
 
         this.inputPortAction.execute();
         this.outputPortAction.execute();
+        this.obj.updatePortNames();
         return this;
     }
     
@@ -81,6 +82,7 @@ export class CoderPortChangeAction implements Action {
 
         this.outputPortAction.undo();
         this.inputPortAction.undo();
+        this.obj.updatePortNames();
         return this;
     }
 
