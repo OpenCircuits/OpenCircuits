@@ -14,12 +14,14 @@ import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
 
 import {Component} from "core/models";
 
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useSharedDispatch,
+        useSharedSelector}     from "shared/utils/hooks/useShared";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-import {useMousePos} from "shared/utils/hooks/useMousePos";
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
-import {useHistory} from "shared/utils/hooks/useHistory";
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useKey}                from "shared/utils/hooks/useKey";
+import {useMousePos}           from "shared/utils/hooks/useMousePos";
+import {useDocEvent}           from "shared/utils/hooks/useDocEvent";
+import {useHistory}            from "shared/utils/hooks/useHistory";
+import {useWindowSize}         from "shared/utils/hooks/useWindowSize";
 
 import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, SetCurItem} from "shared/state/ItemNav";
 
@@ -77,6 +79,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     // Track whether mouse is over specific Items
     const [hovering, setHover] = useState("");
 
+    const isShiftDown = useKey("Shift");
+
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
@@ -111,9 +115,16 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     }
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
+        // If holding shift then drop only a single item (issue #1043)
+        if (isShiftDown && numClicks > 1) {
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
+            setNumClicks(numClicks - 1);
+            return;
+        }
+        // Otherwise drop all and reset
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setNumClicks, additionalData]);
+    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -125,11 +136,14 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
+        if (isShiftDown) // Don't reset on click if shift is down
+            return;
+
         const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [setNumClicks]);
+    }, [isShiftDown, setNumClicks]);
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
