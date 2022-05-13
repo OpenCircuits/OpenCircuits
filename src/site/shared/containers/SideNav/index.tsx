@@ -37,30 +37,14 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 type Props = {
     helpers: CircuitInfoHelpers;
     exampleCircuits: CircuitMetadata[];
-    info: DigitalCircuitInfo;
 }
-export const SideNav = ({ helpers, exampleCircuits, info }: Props) => {
-    const { history, designer, selections } = info;
-    const { auth, circuits, isSaved, isOpen, loading, loadingCircuits } = useSharedSelector(
-        state => ({ ...state.user, isSaved: state.circuit, isOpen: state.sideNav.isOpen,
+export const SideNav = ({ helpers, exampleCircuits }: Props) => {
+    const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
+        state => ({ ...state.user, isOpen: state.sideNav.isOpen,
                     loading: state.circuit.loading, loadingCircuits: state.user.loading })
     );
 
     const dispatch = useSharedDispatch();
-
-    function newCircuit() {
-        if (!isSaved.isSaved && 
-            window.confirm("Current circuit not saved, do you want to save?")) {
-            helpers.SaveCircuitRemote();
-        }
-        CreateGroupSelectAction(selections, designer.getObjects()).execute();
-        const objs = selections.get().filter(s => s instanceof IOObject) as IOObject[];
-        new GroupAction([
-            CreateDeselectAllAction(selections),
-            CreateDeleteGroupAction(designer, objs)
-        ], "Cut (Context Menu)").execute()
-        history.reset();
-    }
 
     return (<>
         <Overlay
@@ -81,7 +65,7 @@ export const SideNav = ({ helpers, exampleCircuits, info }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
-            <button onClick={() => newCircuit()}>New Circuit</button>
+            <button onClick={() => helpers.ResetCircuit()}>New Circuit</button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
