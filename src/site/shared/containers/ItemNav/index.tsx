@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 
-import {ITEMNAV_HEIGHT,ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 import {Clamp} from "math/MathUtils";
@@ -49,13 +49,14 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData,
-                              onDelete, onStart, onFinish, additionalPreview }: Props<D>) => {
+export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
+                              onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
         state => ({ ...state.itemNav })
     );
@@ -70,6 +71,10 @@ export const ItemNav = <D,>({ info, config, additionalData,
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
     const [numClicks, setNumClicks] = useState(1);
 
+    // Track whether mouse is over entire ItemNav
+    const [hoveringNav, setHoveringNav] = useState(false);
+
+    // Track whether mouse is over specific Items
     const [hovering, setHover] = useState("");
 
     // State to keep track of drag'n'drop preview current image
@@ -191,12 +196,34 @@ export const ItemNav = <D,>({ info, config, additionalData,
 
     const sections = (side === "left") ? config.sections : sectionsBottom;
 
+    // Get image for deletion preview (PR #1047)
+    const deleteImg = useMemo(() => {
+        // If not pressing a Component or not hovering the ItemNav, then returned undefined
+        if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
+            return undefined;
+        return getImgSrc(currentlyPressedObj);
+    }, [currentlyPressedObj, hoveringNav, getImgSrc]);
+
     return (<>
+        {/* Item Nav Deletion Preview (PR #1047) */}
+        {deleteImg && (
+        <div className="itemnav__preview"
+                style={{
+                    display: "initial",
+                    left: pos.x,
+                    top: pos.y,
+                }}>
+            {/* config.imgRoot / section.id / item.icon */}
+            <img src={deleteImg} width="80px" />
+        </div>
+        )}
+
+        {/* Item Nav Currently Placing Preview */}
         <div className="itemnav__preview"
              style={{
-                display: (curItemImg ? "initial" : "none"),
-                left: pos.x,
-                top: pos.y,
+                 display: (curItemImg ? "initial" : "none"),
+                 left: pos.x,
+                 top: pos.y,
              }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
@@ -216,7 +243,11 @@ export const ItemNav = <D,>({ info, config, additionalData,
                 x{numClicks}
             </span>
         </div>
+
+        {/* Actual Item Nav */}
         <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
+             onMouseOver ={() => setHoveringNav(true)}
+             onMouseLeave={() => setHoveringNav(false)}
              onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
