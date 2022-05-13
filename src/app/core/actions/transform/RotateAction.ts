@@ -92,17 +92,4 @@ export class RotateAction implements Action {
                                             to ${Math.round(this.finalAngles[i] * (180 / Math.PI))}${deg}`
         );
     }
-
-    public getObjs(): string[] {
-        return Array.from(this.objects, obj => obj.getName());
-    }
-
-    public getInitialAngles(): number[] {
-        return this.initialAngles;
-    }
-
-    public getFinalAngles(): number[] {
-        return this.finalAngles;
-    }
-
 }

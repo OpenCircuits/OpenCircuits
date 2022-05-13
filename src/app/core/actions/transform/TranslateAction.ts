@@ -12,7 +12,7 @@ import {SnapPos} from "./SnapUtils";
  * used for moving componets from one position to another.
  */
 export class TranslateAction implements Action {
-    
+
     /**
      * An array of the selected component(s)
      */
@@ -92,17 +92,5 @@ export class TranslateAction implements Action {
                 `${obj.getName()}: moved from (${this.initialPositions[i].x.toFixed(2)}, ${this.initialPositions[i].y.toFixed(2)})
                                             to (${this.targetPositions[i].x.toFixed(2)}, ${this.targetPositions[i].y.toFixed(2)})`
         )
-    }
-
-    public getObjs(): string[] {
-        return Array.from(this.objs, obj => obj.getName());
-    }
-
-    public getInitialPositions(): Vector[] {
-        return this.initialPositions;
-    }
-
-    public getTargetPositions(): Vector[] {
-        return this.targetPositions;
     }
 }

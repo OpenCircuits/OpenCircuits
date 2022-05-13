@@ -34,13 +34,4 @@ export class ShiftAction implements Action {
     public getCustomInfo(): string[] {
         return [`${this.obj.getName()}: ${this.i}`];
     }
-
-    public getObj(): string {
-        return this.obj.getName();
-    }
-
-    public getI(): number {
-        return this.i;
-    }
-
 }
