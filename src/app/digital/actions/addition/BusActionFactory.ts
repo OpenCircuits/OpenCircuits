@@ -1,4 +1,4 @@
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {GroupAction} from "core/actions/GroupAction";
