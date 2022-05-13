@@ -84,20 +84,32 @@ $sidenav-footer-margin-y: 10px;
         }
     }
 
+    // New Circuit button
     & > button {
-        font-size: 24px;
-        font-weight: bold;
-
-        text-align: left;
         display: block;
 
         width: $sidenav-width;
-        padding: 0.5em 1em 0.5em 0.5em;
 
-        border: 0 solid $secondary-color;
-        border-bottom-width: 3px;
+        padding: 0.85em 0.75em 0.75em 0.5em;
+
+        font-size: 24px;
+        text-align: left;
+
         color: lighten($secondary-color, 10%);
-        background-color: lighten($primary-color, 10%);
+        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
+
+        & > span {
+            padding: 5px 12px;
+            border: 2px solid $secondary-color;
+            border-radius: 30px;
+            margin-right: 10px;
+        }
+
+        &:hover {
+            & > span {
+                background-color: transparentize($secondary-color, 0.7);
+            }
+        }
     }
 
     &__content {
@@ -117,6 +129,7 @@ $sidenav-footer-margin-y: 10px;
 
             color: lighten($secondary-color, 10%);
             border: 0 solid $secondary-color;
+            border-top-width: 3px;
             border-bottom-width: 3px;
             background-color: lighten($primary-color, 10%);
         }

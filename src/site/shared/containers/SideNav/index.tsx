@@ -59,7 +59,10 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
-            <button onClick={() => helpers.ResetCircuit()}>New Circuit</button>
+            <button onClick={() => helpers.ResetCircuit()}>
+                <span>+</span>
+                New Circuit
+            </button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
