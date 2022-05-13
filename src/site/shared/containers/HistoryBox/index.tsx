@@ -30,19 +30,15 @@ const HistoryEntry = ({ a }: HistoryEntryProps) => {
             }}>
             <div className="historybox__entry__header">
                 {a.getCustomInfo &&
-                    <img className="historybox__entry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info" />
+                    <img className="historybox__entry__extrainfo__icon"
+                         src="img/icons/info.svg"
+                         alt="Display extra info" />
                 }
-                <span className="historybox__entry__actionname">
-                    {a.getName()}
-                </span>
+                <span className="historybox__entry__actionname">{a.getName()}</span>
             </div>
-            {!displayExtraInfo && a.getCustomInfo &&
-                a.getCustomInfo()?.map((obj, i) => {
-                    return (
-                        <div key={`entry-extrainfo-${i}`} className="historybox__entry__extrainfo">{obj}</div>
-                    )
-                })
-            }
+            {!displayExtraInfo && a.getCustomInfo?.()?.map((obj, i) =>
+                <div key={`entry-extrainfo-${i}`} className="historybox__entry__extrainfo">{obj}</div>
+            )}
         </div>
     );
 }
