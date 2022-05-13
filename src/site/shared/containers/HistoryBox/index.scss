@@ -94,6 +94,17 @@ $historybox-width: 250px;
         border-radius: 7px;
     }
 
+    &__entry--dashed {
+        border: 2px dashed $secondary-color;
+    }
+
+    &__separator {
+        padding-bottom: 2px;
+        margin-left: 5px;
+        margin-bottom: 2px;
+        border-bottom: 2px solid $secondary-color;
+    }
+
     &__groupentry {
         margin: 5px;
 
@@ -119,6 +130,10 @@ $historybox-width: 250px;
                 transform: rotate(0deg);
             }
         }
+    }
+
+    &__groupentry--dashed {
+        border: 2px dashed $secondary-color;
     }
 
 }

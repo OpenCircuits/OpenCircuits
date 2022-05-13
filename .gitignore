@@ -12,6 +12,7 @@
 docs/ts/app/core
 docs/ts/app/digital
 
+.devCache
 node_modules
 coverage
 build
