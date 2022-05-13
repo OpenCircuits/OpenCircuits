@@ -1,5 +1,5 @@
 import {Create, GetIDFor} from "serialeazy";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {IsICDataInUse} from "digital/utils/ComponentUtils";
@@ -55,9 +55,9 @@ const SmartPlaceOrder = [
 type Props = {
     info: DigitalCircuitInfo;
 }
-export const DigitalItemNav = ({info}: Props) => {
-    const {designer} = info;
-    const [{ics}, setState] = useState({ ics: [] as ItemNavItem[] });
+export const DigitalItemNav = ({ info }: Props) => {
+    const { designer } = info;
+    const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
     const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
@@ -83,7 +83,7 @@ export const DigitalItemNav = ({info}: Props) => {
                     label: d.getName(),
                     icon: "multiplexer.svg",
                     removable: true,
-                }))
+                })),
             });
         }
 
@@ -91,17 +91,18 @@ export const DigitalItemNav = ({info}: Props) => {
         return () => designer.removeCallback(onEvent);
     }, [designer]);
 
-    const config = {
+    // Generate ItemNavConfig with ICs included
+    const config = useMemo(() => ({
         imgRoot: itemNavConfig.imgRoot,
         sections: [
             ...itemNavConfig.sections,
             ...(ics.length === 0 ? [] : [{
                 id: "other",
                 label: "ICs",
-                items: ics
-            }])
-        ]
-    };
+                items: ics,
+            }]),
+        ],
+    }), [ics]);
 
     // Append regular ItemNav items with ICs
     return <ItemNav
