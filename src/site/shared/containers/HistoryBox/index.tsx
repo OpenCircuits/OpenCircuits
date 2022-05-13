@@ -107,14 +107,14 @@ export const HistoryBox = ({ info }: Props) => {
                 <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
             </div>
             <div>
+                {[...redoHistory].map((a, i) =>
+                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
+                )}
                 { redoHistory.length > 0 && (<>
-                    {[...redoHistory].reverse().map((a, i) =>
-                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
-                    )}
-                    <div style={{textAlign: "center", fontWeight: "bold"}}> Redo </div>
+                    <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
                     <div className={"historybox__separator"} > </div>
                  </>)}
-                <div style={{textAlign: "center", fontWeight: "bold"}}> Undo </div>
+                <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
                 {[...undoHistory].reverse().map((a, i) =>
                     <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
                 )}
