@@ -60,6 +60,7 @@ export class Input {
         this.canvas = canvas;
         this.dragTime = dragTime;
         this.blocked = false;
+        this.listeners = [];
 
         this.reset();
 
@@ -216,7 +217,8 @@ export class Input {
     }
 
     /**
-     * Resets most variables to default values
+     * Resets internal state of the Input
+     *  Keeps listeners and outer-controlled state
      */
     public reset(): void {
         this.prevMousePos = V();
@@ -231,8 +233,6 @@ export class Input {
 
         this.touchCount = 0;
 
-        this.listeners = [];
-        // this.listeners = new Map();
         this.keysDown  = new Map();
     }
 
