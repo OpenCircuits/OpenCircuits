@@ -34,13 +34,7 @@ module.exports = (devServer) => {
     devServer.app.get("/dev/file/:id", (req, res) => {
         const fileId = req.params.id;
 
-        console.log(req.params);
-        console.log(req.body);
-
         const filePath = path.resolve(CACHE_PATH, fileId);
-
-        console.log(filePath, fs.existsSync(filePath));
-
         if (!fs.existsSync(filePath))
             return res.status(404);
 
