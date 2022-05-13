@@ -1,5 +1,4 @@
 import {CircuitMetadata} from "core/models/CircuitMetadata";
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
 
@@ -10,11 +9,6 @@ import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {ToggleSideNav} from "shared/state/SideNav";
-
-import {IOObject} from "core/models";
-import {GroupAction} from "core/actions/GroupAction";
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
