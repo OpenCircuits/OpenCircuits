@@ -1,3 +1,5 @@
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+
 import React, {createRef} from "react";
 import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
@@ -150,8 +152,8 @@ async function Init(): Promise<void> {
 
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
-                if ((await DevListFiles()).includes("devCached.circuit"))
-                    await helpers.LoadCircuit(() => DevGetFile("devCached.circuit"));
+                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
             ReactDOM.render(
