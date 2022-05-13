@@ -63,28 +63,26 @@ const GroupActionEntry = ({ g }: GroupActionEntryProps) => {
                  setIsCollapsed(!isCollapsed);
              }}>
             <div className="historybox__groupentry__header">
-                {g.getCustomInfo() && <img className="historybox__groupentry__extrainfo__icon" src="img/icons/info.svg" alt="Display extra info"
-                    onClick={(e) => {
-                        // Necessary to stop child entries from displaying extra info about the parent history entry
-                        e.stopPropagation();
-                        setDisplayExtraInfo(!displayExtraInfo);
-                    }}/>}
-                <span className="historybox__groupentry__actionname">
-                    {g.getName()}
-                </span>
-                <span
-                    className={`historybox__groupentry__collapse_btn \
+                {g.getCustomInfo() &&
+                    <img className="historybox__groupentry__extrainfo__icon"
+                         src="img/icons/info.svg"
+                         alt="Display extra info"
+                         onClick={(e) => {
+                             // Necessary to stop child entries from displaying
+                             //  extra info about the parent history entry
+                             e.stopPropagation();
+                             setDisplayExtraInfo(!displayExtraInfo);
+                         }} />
+                }
+                <span className="historybox__groupentry__actionname">{g.getName()}</span>
+                <span className={`historybox__groupentry__collapse_btn \
                                 ${isCollapsed ? "historybox__groupentry__collapse_btn-collapsed" : "" }`}>
                     &rsaquo;
                 </span>
             </div>
-            {displayExtraInfo &&
-                g.getCustomInfo()?.map((obj, i) => {
-                    return (
-                        <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
-                    )
-                })
-            }
+            {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
+                <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
+            )}
             {!isCollapsed && g.getActions().map((a, i) => {
                 return(<HistoryEntry key={`group-action-entry-${i}`} a={a}></HistoryEntry>);
             })}
