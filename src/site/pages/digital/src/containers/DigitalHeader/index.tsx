@@ -17,7 +17,7 @@ export const DigitalHeader = ({ img, helpers, info }: Props) => (
             popupName: "expr_to_circuit",
             img: "img/icons/bool_expr_input_icon.svg",
             text: "Boolean Expression to Circuit",
-            enabled: true
-        }
+            enabled: true,
+        },
     ]} />
 );
