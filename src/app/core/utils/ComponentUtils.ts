@@ -104,7 +104,7 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
  */
 
 export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node> {
-  
+
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
@@ -119,10 +119,10 @@ export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node
         if (q instanceof Wire) {
             if(full) {
                 const p1 = q.getP1Component();
-            
+
                 if (isNode(p1) && !visited.has(p1))
                     queue.push(p1);
-    
+
                 const p2 = q.getP2Component();
                 if (isNode(p2) && !visited.has(p2))
                     queue.push(p2);
@@ -132,7 +132,7 @@ export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node
                 if (isNode(p2) && !visited.has(p2))
                     queue.push(p2);
             }
-           
+
         } else {
             // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
@@ -197,9 +197,9 @@ export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | N
  * @return         A SeparatedComponentCollection of the objects
  */
 export function GatherGroup(objects: IOObject[], full: boolean = true): IOObjectSet {
-    
+
     const group = new IOObjectSet(objects);
-  
+
     // Gather all connecting paths
     const wires = group.getWires();
 
@@ -263,7 +263,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
     const ends = graph.getEndNodes();
     const badBoys = ends
             .filter((i) => isNode(components[i]))
-            .flatMap((i) => GetWirePath(components[i] as Node)) as IOObject[];
+            .flatMap((i) => GetPath(components[i] as Node)) as IOObject[];
 
     objects = group.toList().filter((obj) => !badBoys.includes(obj));
 
