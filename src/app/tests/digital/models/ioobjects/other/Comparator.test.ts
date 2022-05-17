@@ -18,14 +18,12 @@ describe("Comparator", () => {
     c.setInputPortCount(4);
 
     // Connect everything together
-    for (let i = 0; i < 4; i++) {
-        Connect(a, i, c, i);
-        Connect(b, i, c, i+4);
-    }
+    Connect(a, c);
+    Connect(b, c);
     Connect(c, Comparator.LT_PORT, lt, 0);
     Connect(c, Comparator.EQ_PORT, eq, 0);
     Connect(c, Comparator.GT_PORT, gt, 0);
-    
+
     //testing numbers 0-15 to make sure they work
     test("Numbers 0-15", () => {
         a.setInput(5);
@@ -37,10 +35,10 @@ describe("Comparator", () => {
             a.setInput(i);
             for (let j = 0; j < 15; j++){
                 b.setInput(j);
-        
+
                 expect(lt.isOn()).toBe((i < j));
                 expect(gt.isOn()).toBe((i > j));
-                expect(eq.isOn()).toBe((i===j));                                
+                expect(eq.isOn()).toBe((i===j));
             }
         }
     });
