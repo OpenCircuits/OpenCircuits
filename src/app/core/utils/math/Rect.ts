@@ -196,6 +196,14 @@ export class Rect {
         return V(this.width, this.height);
     }
 
+    /**
+     * Utility method to create a rectangle from any combination of valid rectangle attributes, i.e. allows
+     *  specification of size + center, or bottom left + top right, or any other valid combination.
+     *
+     * @param bounds Attributes of rectangle
+     * @param yIsUp Whether this rectangle has +y or -y
+     * @returns A Rect from the given bounds/attributes and yIsUp direction
+     */
     public static from(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
         type BoundProps = ExpandTypes<BoundKeys, KeysToRecord<BoundKeys>>;
@@ -220,17 +228,18 @@ export class Rect {
                     : (2 * (b.max - b.center)))
         );
 
+        // Get "bounds" for each direction
         const boundsX = {
-            ...("left"  in bounds ? { min: bounds.left   } : {}),
-            ...("right" in bounds ? { max: bounds.right  } : {}),
-            ...("cx"    in bounds ? { center: bounds.cx  } : {}),
-            ...("width" in bounds ? { size: bounds.width } : {}),
+            ...("left"  in bounds ? { min:    bounds.left  } : {}),
+            ...("right" in bounds ? { max:    bounds.right } : {}),
+            ...("cx"    in bounds ? { center: bounds.cx    } : {}),
+            ...("width" in bounds ? { size:   bounds.width } : {}),
         } as BoundProps;
         const boundsY = {
-            ...("bottom" in bounds ? { min: bounds.bottom  } : {}),
-            ...("top"    in bounds ? { max: bounds.top     } : {}),
-            ...("cy"     in bounds ? { center: bounds.cy   } : {}),
-            ...("height" in bounds ? { size: bounds.height } : {}),
+            ...("bottom" in bounds ? { min:    bounds.bottom } : {}),
+            ...("top"    in bounds ? { max:    bounds.top    } : {}),
+            ...("cy"     in bounds ? { center: bounds.cy     } : {}),
+            ...("height" in bounds ? { size:   bounds.height } : {}),
         } as BoundProps;
 
         return new Rect(
