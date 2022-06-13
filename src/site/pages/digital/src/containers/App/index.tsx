@@ -32,7 +32,7 @@ import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup
 import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
 // import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
 // import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-// import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
+import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
 // import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
 // import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 // import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
@@ -105,7 +105,7 @@ export const App = ({info, helpers, canvas}: Props) => {
                         <PauseResumeButtonModule info={info} />
                         {/* <ClearOscilloscopeButtonModule info={info} /> */}
                         <ClockSyncButtonModule info={info} />
-                        {/* <ColorModule info={info} /> */}
+                        <ColorModule info={info} />
                         {/* <TextColorModule info={info} /> */}
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
