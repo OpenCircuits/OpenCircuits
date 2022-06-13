@@ -10,13 +10,14 @@ import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
 type Props = SharedModuleInputFieldProps & {
+    type: "float" | "int";
     props: number[];
     getAction: (newVal: number) => Action;
     step?: number;
     min?: number;
     max?: number;
 }
-export const NumberModuleInputField = ({ props, getAction, onSubmit,
+export const NumberModuleInputField = ({ type, props, getAction, onSubmit,
                                         placeholder, ...otherProps }: Props) => {
     const ref = useRef<HTMLInputElement>(null);
 
@@ -26,7 +27,7 @@ export const NumberModuleInputField = ({ props, getAction, onSubmit,
     const [state, setState] = useBaseModule<number>({
         props, getAction, onSubmit,
 
-        parseVal:      (val) => parseFloat(val),
+        parseVal:      (val) => (type === "float" ? parseFloat(val) : parseInt(val)),
         parseFinalVal: (val) => Clamp(val, min, max),
         isValid:       (val) => (!isNaN(val) && (min <= val && val <= max)),
     });

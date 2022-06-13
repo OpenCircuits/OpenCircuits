@@ -8,7 +8,7 @@ import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSel
 type Props = {
     info: CircuitInfo;
 }
-export const PauseResumeButtonModule = ({ info }: Props) => {
+export const ClockSyncButtonModule = ({ info }: Props) => {
     const { renderer } = info;
 
     const [props, cs, forceUpdate] = useSelectionProps(

@@ -15,8 +15,8 @@ export const BooleanOption = ({displayCondition, option, setOption, text}: Props
     <>{
         displayCondition &&
         <>
-            <SwitchToggle isOn={option} text={text} height="40px"
-                          onChange={() => setOption(!option)} />
+            <SwitchToggle isOn={option} height="40px"
+                          onChange={() => setOption(!option)}>{text}</SwitchToggle>
             <br />
         </>
     }</>

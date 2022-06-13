@@ -28,24 +28,24 @@ import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 
 import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
-import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+// import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
-import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
-import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
-import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
+// import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
+// import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
+// import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
+// import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
+// import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+// import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+// import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {BusButtonModule}            from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
+// import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
 import {PauseResumeButtonModule}    from "../SelectionPopup/modules/PauseResumeButtonModules";
-import {ClearOscilloscopeButtonModule,
-        OscilloscopeDisplaySizeModule,
-        OscilloscopeInputCountModule,
-        OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
+// import {ClearOscilloscopeButtonModule,
+//         OscilloscopeDisplaySizeModule,
+//         OscilloscopeInputCountModule,
+//         OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
 import docsConfig from "site/digital/data/docsUrlConfig.json";
@@ -91,22 +91,22 @@ export const App = ({info, helpers, canvas}: Props) => {
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
                         <PositionModule info={info} />
-                        <InputCountModule info={info} />
+                        {/* <InputCountModule info={info} /> */}
                         <ComparatorInputCountModule info={info} />
-                        <SelectPortCountModule info={info} />
-                        <ConstantNumberInputModule info={info} />
-                        <DecoderInputCountModule info={info} />
-                        <OutputCountModule info={info} />
-                        <SegmentCountModule info={info} />
-                        <OscilloscopeDisplaySizeModule info={info} />
-                        <OscilloscopeInputCountModule info={info} />
-                        <FrequencyModule info={info} />
-                        <OscilloscopeSamplesModule info={info} />
+                        {/* <SelectPortCountModule info={info} /> */}
+                        {/* <ConstantNumberInputModule info={info} /> */}
+                        {/* <DecoderInputCountModule info={info} /> */}
+                        {/* <OutputCountModule info={info} /> */}
+                        {/* <SegmentCountModule info={info} /> */}
+                        {/* <OscilloscopeDisplaySizeModule info={info} /> */}
+                        {/* <OscilloscopeInputCountModule info={info} /> */}
+                        {/* <FrequencyModule info={info} /> */}
+                        {/* <OscilloscopeSamplesModule info={info} /> */}
                         <PauseResumeButtonModule info={info} />
-                        <ClearOscilloscopeButtonModule info={info} />
+                        {/* <ClearOscilloscopeButtonModule info={info} /> */}
                         <ClockSyncButtonModule info={info} />
-                        <ColorModule info={info} />
-                        <TextColorModule info={info} />
+                        {/* <ColorModule info={info} /> */}
+                        {/* <TextColorModule info={info} /> */}
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />

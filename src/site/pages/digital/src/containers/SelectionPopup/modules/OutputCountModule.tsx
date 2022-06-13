@@ -1,23 +1,25 @@
-import {GroupAction} from "core/actions/GroupAction";
-import {Encoder} from "digital/models/ioobjects";
-import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+// import {GroupAction} from "core/actions/GroupAction";
+// import {Encoder} from "digital/models/ioobjects";
+// import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
+// import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
 
 
-const Config: ModuleConfig<[Encoder], number> = {
-    types: [Encoder],
-    valType: "int",
-    getProps: (o) => o.getOutputPortCount().getValue(),
-    getAction: (s, newCount) => new GroupAction(s.map(o =>
-        new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)), "Output Count Module")
-}
+// const Config: ModuleConfig<[Encoder], number> = {
+//     types: [Encoder],
+//     valType: "int",
+//     getProps: (o) => o.getOutputPortCount().getValue(),
+//     getAction: (s, newCount) => new GroupAction(s.map(o =>
+//         new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)), "Output Count Module")
+// }
 
-export const OutputCountModule = PopupModule({
-    label: "Output Count",
-    modules: [CreateModule({
-        inputType: "number",
-        config: Config,
-        step: 1, min: 1, max: 8,
-        alt: "Number of outputs object(s) have"
-    })]
-});
+// export const OutputCountModule = PopupModule({
+//     label: "Output Count",
+//     modules: [CreateModule({
+//         inputType: "number",
+//         config: Config,
+//         step: 1, min: 1, max: 8,
+//         alt: "Number of outputs object(s) have"
+//     })]
+// });
+
+export {};

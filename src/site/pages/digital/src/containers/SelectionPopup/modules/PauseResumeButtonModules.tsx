@@ -19,7 +19,7 @@ export const PauseResumeButtonModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const allPaused = props.isPaused.every(Boolean);
+    const allPaused = (props.isPaused as boolean[]).every(Boolean);
 
     return <button
         title="Resume/Pause the timed component"

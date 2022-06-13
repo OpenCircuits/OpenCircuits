@@ -13,7 +13,7 @@ import {OpenICDesigner} from "site/digital/state/ICDesigner";
 type Props = {
     info: CircuitInfo;
 }
-export const ViewICButtonModule = ({ info }: Props) => {
+export const CreateICButtonModule = ({ info }: Props) => {
     const dispatch = useDigitalDispatch();
 
     const [props, cs] = useSelectionProps(
