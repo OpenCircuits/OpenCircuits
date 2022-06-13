@@ -1,3 +1,5 @@
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+
 import React, {createRef} from "react";
 import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
@@ -32,6 +34,8 @@ import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import "digital/models/ioobjects";
+
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
@@ -147,6 +151,12 @@ async function Init(): Promise<void> {
             info.history.addCallback(() => {
                 store.dispatch(SetCircuitSaved(false));
             });
+
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            }
 
             ReactDOM.render(
                 <React.StrictMode>

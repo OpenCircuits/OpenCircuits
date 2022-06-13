@@ -34,7 +34,8 @@ export const PositionModule = ({ info }: Props) => {
                     new TranslateAction(
                         cs,
                         cs.map(c => c.getPos()),
-                        cs.map(c => V(newX*100, c.getPos().y))
+                        cs.map(c => V(newX*100, c.getPos().y)),
+                        false
                     )
                 }
                 onSubmit={(info) => {
@@ -50,7 +51,8 @@ export const PositionModule = ({ info }: Props) => {
                     new TranslateAction(
                         cs,
                         cs.map(c => c.getPos()),
-                        cs.map(c => V(c.getPos().x, newY*100))
+                        cs.map(c => V(c.getPos().x, newY*100)),
+                        false
                     )
                 }
                 onSubmit={(info) => {

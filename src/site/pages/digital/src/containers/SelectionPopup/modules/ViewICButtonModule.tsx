@@ -27,9 +27,7 @@ export const ViewICButtonModule = ({ info }: Props) => {
 
     return <button
         title="View the inside of this IC"
-        onClick={() => {
-            dispatch(OpenICViewer(ics[0].getData()))
-        }}>
+        onClick={() => dispatch(OpenICViewer(ics[0]))}>
         View IC
     </button>
 }
@@ -47,6 +45,19 @@ export const ViewICButtonModule = ({ info }: Props) => {
 //             }}
 //             onClick={(selections) => {
 //                 dispatch(OpenICViewer((selections[0]as IC).getData()));
+//             }}
+//             {...props} />
+//     );
+//     return (
+//         <ButtonPopupModule
+//             text="View IC"
+//             alt="View the inside of this IC"
+//             getDependencies={(s) => (s instanceof InputPort ? ""+s.getWires().length : "")}
+//             isActive={(selections) => {
+//                 return selections.length === 1 && selections[0] instanceof IC;
+//             }}
+//             onClick={(selections) => {
+//                 dispatch(OpenICViewer(selections[0]as IC));
 //             }}
 //             {...props} />
 //     );

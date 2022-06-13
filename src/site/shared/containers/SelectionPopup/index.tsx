@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
 import {GetIDFor} from "serialeazy";
+import React, {useEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -7,7 +7,8 @@ import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {useEvent} from "shared/utils/hooks/useEvent";
+import {useEvent}          from "shared/utils/hooks/useEvent";
+import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {TitleModule} from "./modules/TitleModule";
 
@@ -24,6 +25,7 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
 
     const { input, camera, history, selections } = info;
 
+    const itemNavCurItem = useSharedSelector(state => state.itemNav.curItemID);
 
     const [isVisible, setIsVisible] = useState(false);
     const [id, setID] = useState("");
@@ -53,7 +55,6 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
         setPos(calcPos()); // Recalculate position on zoom
     }, input, [camera, selections, setPos]);
 
-
     const [isDragging, setIsDragging] = useState(false);
     useEvent("mousedrag", (_) => {
         setIsDragging(true); // Don't show popup if dragging
@@ -78,21 +79,19 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
         });
     }, input, [setClickThrough]);
 
-
     const popup = useRef<HTMLDivElement>(null);
 
     // Clamp position to screen if visible
     if (isVisible && !isDragging) {
         if (!popup.current)
             throw new Error("SelectionPopup failed: popup.current is null");
-        const popupWidth = popup.current.getBoundingClientRect().width;
-        const popupHeight = popup.current.getBoundingClientRect().height;
+        const { width, height } = popup.current.getBoundingClientRect();
 
-        pos.x = Clamp(pos.x, 0, window.innerWidth - popupWidth);
+        pos.x = Clamp(pos.x, 0, window.innerWidth - width);
 
         // Since the Selection Popup has a transform (0, -50%), this `y` position is the
         //  y position of the middle of it, not the top
-        pos.y = Clamp(pos.y, popupHeight/2, window.innerHeight - HEADER_HEIGHT - popupHeight/2);
+        pos.y = Clamp(pos.y, height/2, window.innerHeight - HEADER_HEIGHT - height/2);
     }
 
     const infoLink = (id in docsUrlConfig ? docsUrlConfig[id as keyof typeof docsUrlConfig] : undefined);
@@ -104,7 +103,9 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
                 left: `${pos.x}px`,
                 top:  `${pos.y}px`,
                 visibility: (isVisible && !isDragging ? "visible": "hidden"),
-                pointerEvents: (clickThrough ? "none" : "auto")
+                // Fixes issue with double clicks and when dragging from the ItemNav
+                //  Issues #521 and #863 respectively
+                pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
              }}
              tabIndex={-1}>
             {id && <div className="info-button">
