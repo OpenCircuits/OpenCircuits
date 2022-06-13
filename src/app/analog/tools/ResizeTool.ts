@@ -8,6 +8,7 @@ import {Cursor} from "core/utils/CircuitInfo";
 
 import {Action} from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
+import {ShiftAction} from "core/actions/ShiftAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -58,7 +59,7 @@ export const ResizeTool = (() => {
             tempAction = undefined;
         },
 
-        onEvent(event: Event, { camera, input }: AnalogCircuitInfo): boolean {
+        onEvent(event: Event, { camera, input, designer }: AnalogCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
@@ -77,6 +78,7 @@ export const ResizeTool = (() => {
             const newRect = curRect.shift(dir!, V(amtX, amtY));
 
             tempAction = new GroupAction([
+                new ShiftAction(designer, obj!),
                 new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
                 new SetPropertyAction(obj!, "size", Vector.max(V(400, 200), newRect.size)),
             ]).execute();
