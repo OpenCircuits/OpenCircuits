@@ -3,6 +3,8 @@ import {RefObject} from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
 
+import {V} from "Vector";
+
 import {Circuit, ContentsData} from "core/models/Circuit";
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
@@ -64,6 +66,31 @@ export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<H
             store.dispatch(SetCircuitId(metadata.id));
             store.dispatch(SetCircuitSaved(false));
             store.dispatch(_SetCircuitLoading(false));
+        },
+
+        ResetCircuit: async () => {
+            const { circuit } = store.getState();
+
+            // Prompt to load
+            const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+            if (!open) return;
+
+            const { camera, history, designer, selections, renderer } = info;
+
+            // Load camera, reset selections, clear history, and replace circuit
+            camera.setPos(V());
+            camera.setZoom(1);
+
+            selections.get().forEach(s => selections.deselect(s));
+
+            history.reset();
+            designer.reset();
+            renderer.render();
+
+            // Set name, id, and set unsaved
+            store.dispatch(SetCircuitName(""));
+            store.dispatch(SetCircuitId(""));
+            store.dispatch(SetCircuitSaved(true));
         },
 
         SaveCircuitRemote: async () => {

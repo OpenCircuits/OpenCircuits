@@ -6,6 +6,8 @@ import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
 import {Provider} from "react-redux";
 
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+
 import {Images} from "core/utils/Images";
 
 import {InteractionTool}  from "core/tools/InteractionTool";
@@ -36,6 +38,8 @@ import {CursorHandler} from "analog/tools/handlers/CursorHandler";
 
 import "analog/models/eeobjects";
 
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
+
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
 
 import {GetCookie}     from "shared/utils/Cookies";
@@ -44,7 +48,6 @@ import {LoadingScreen} from "shared/utils/LoadingScreen";
 import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
-import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {Login} from "shared/state/thunks/User";
 
@@ -164,11 +167,11 @@ async function Init(): Promise<void> {
                 store.dispatch(SetCircuitSaved(false));
             });
 
-            // INITIAL STATE CAUSE IM TIRED OF DOING STUFF MANUALLY
-            const user = store.getState().user;
-            if (user.circuits.length > 0)
-                await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, user.circuits[0].getId()));
-            // ----------------
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            }
 
             ReactDOM.render(
                 <React.StrictMode>

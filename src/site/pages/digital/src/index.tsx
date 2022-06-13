@@ -1,5 +1,3 @@
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
-
 import React, {createRef} from "react";
 import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
@@ -7,6 +5,8 @@ import ReactGA from "react-ga";
 import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
 import {Provider} from "react-redux";
+
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
 import {Images} from "core/utils/Images";
 
