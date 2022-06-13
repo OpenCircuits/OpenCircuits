@@ -11,9 +11,13 @@ export type ModuleSubmitInfo = {
     isValid: false;
 }
 
-export type SharedModuleInputFieldProps = {
-    // If action is undefined, then
+export type SharedModuleInputFieldProps<V extends Types> = {
+    props: V[];
+
+    getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
+    getCustomDisplayVal?: (val: V) => V;
+
     placeholder?: string;
     alt?: string;
 }
@@ -29,19 +33,20 @@ type Props<V extends Types> = {
     props: V[];
 
     parseVal: (val: string) => V;
-    parseFinalVal: (val: V) => V; // TODO: CONSIDER REMOVING THIS
+    parseFinalVal?: (val: V) => V; // TODO: CONSIDER REMOVING THIS
     isValid: (val: V) => boolean;
 
     getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
+    getCustomDisplayVal?: (val: V) => V;
 }
 export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isValid,
-                                                            parseFinalVal, onSubmit }: Props<V>) => {
+                                                parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V>) => {
     const [state, setState] = useState<State>({
         focused: false,
-        textVal: "",  // TODO: Check if should start as (allSame ? val.toString() : "")
+        textVal: "",
         tempAction: undefined,
-     });
+    });
 
     const { focused, textVal, tempAction } = state;
 
@@ -100,7 +105,7 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
         // Temp action exists, so undo it before committing final action
         tempAction.undo();
 
-        const finalVal = parseFinalVal(parseVal(textVal));
+        const finalVal = (parseFinalVal ?? ((v) => v))(parseVal(textVal));
         if (!isValid(finalVal)) {
             // Invalid final input, keep action un-done and stay at starting state
             setState({ ...state, focused: false, textVal: val.toString(), tempAction: undefined }); // <----- TODO: ?? val.toString() correct??
@@ -118,7 +123,7 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
 
     return [
         {
-            value: (focused ? textVal : (allSame ? val : "")),
+            value: (focused ? textVal : (allSame ? (getCustomDisplayVal ?? ((v) => v))(val) : "")),
             allSame,
         },
         {

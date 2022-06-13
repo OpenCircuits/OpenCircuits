@@ -44,6 +44,7 @@ export const PositionModule = ({ info }: Props) => {
                     if (info.isValid && info.isFinal) /// Only add final action to history
                         history.add(info.action);
                 }}
+                getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
                 step={1}
                 alt="X-Position of object(s)" />
             <NumberModuleInputField
@@ -62,6 +63,7 @@ export const PositionModule = ({ info }: Props) => {
                     if (info.isValid && info.isFinal) /// Only add final action to history
                         history.add(info.action);
                 }}
+                getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
                 step={1}
                 alt="Y-Position of object(s)" />
         </label>

@@ -1,25 +1,19 @@
 import {useRef} from "react";
 
-import {Action} from "core/actions/Action";
-
 import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
-type Props<T extends string|number> = SharedModuleInputFieldProps & {
+type Props<T extends string|number> = SharedModuleInputFieldProps<T> & {
     kind: (T extends string ? "string[]" : "number[]");
-    props: T[];
     options: Array<[string, T]>;
-    getAction: (newVal: T) => Action;
 }
-export const SelectModuleInputField = <T extends number|string>(
-    { kind, props, options, getAction, onSubmit, placeholder }: Props<T>) => {
+export const SelectModuleInputField = <T extends number|string>({ kind, options, placeholder, ...props }: Props<T>) => {
     const ref = useRef<HTMLSelectElement>(null);
 
     const [state, setState] = useBaseModule<T>({
-        props, getAction, onSubmit,
+        ...props,
 
         parseVal:      (val) => (kind === "string[]" ? val : Number(val)) as T,
-        parseFinalVal: (val) => val,
         isValid:        (_)  => true,
     });
 

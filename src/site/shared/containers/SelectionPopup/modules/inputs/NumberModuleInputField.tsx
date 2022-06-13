@@ -2,34 +2,29 @@ import {useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 
-import {Action} from "core/actions/Action";
-
 import {InputField} from "shared/components/InputField";
 
 import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
-type Props = SharedModuleInputFieldProps & {
+type Props = SharedModuleInputFieldProps<number> & {
     kind: "float" | "int";
-    props: number[];
-    getAction: (newVal: number) => Action;
     step?: number;
     min?: number;
     max?: number;
 }
-export const NumberModuleInputField = ({ kind, props, getAction, onSubmit,
-                                        placeholder, ...otherProps }: Props) => {
+export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt, ...props }: Props) => {
     const ref = useRef<HTMLInputElement>(null);
 
-    const min = otherProps.min ?? -Infinity;
-    const max = otherProps.max ?? +Infinity;
+    const Min = min ?? -Infinity;
+    const Max = max ?? +Infinity;
 
     const [state, setState] = useBaseModule<number>({
-        props, getAction, onSubmit,
+        ...props,
 
         parseVal:      (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
-        parseFinalVal: (val) => Clamp(val, min, max),
-        isValid:       (val) => (!isNaN(val) && (min <= val && val <= max)),
+        parseFinalVal: (val) => Clamp(val, Min, Max),
+        isValid:       (val) => (!isNaN(val) && (Min <= val && val <= Max)),
     });
 
     // TODO: Fix to 2 digits
@@ -42,6 +37,6 @@ export const NumberModuleInputField = ({ kind, props, getAction, onSubmit,
             onChange={(ev) => setState.onChange(ev.target.value)}
             onFocus={() => setState.onFocus()}
             onBlur={() => setState.onBlur()}
-            {...otherProps} />
+            min={min} max={max} step={step} alt={alt} />
     )
 }
