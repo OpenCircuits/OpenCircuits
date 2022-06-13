@@ -28,7 +28,7 @@ export const ComparatorInputCountModule = ({ info }: Props) => {
         Input Count
         <label>
             <NumberModuleInputField
-                type="int" min={1} max={8} step={1}
+                kind="int" min={1} max={8} step={1}
                 props={props.numInputs}
                 getAction={(newCount) =>
                     new GroupAction(

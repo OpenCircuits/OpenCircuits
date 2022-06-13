@@ -54,7 +54,7 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
         const unit = info.unit;
         if (!unit) {
             return <NumberModuleInputField {...otherProps}
-                        min={info.min} max={info.max} step={info.step}
+                        kind={type} min={info.min} max={info.max} step={info.step}
                         props={vals as number[]} />
         }
 
@@ -65,7 +65,7 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
         return <div>
             <span style={{ display: "inline-block", width: "70%" }}>
                 <NumberModuleInputField {...otherProps}
-                    min={info.min} max={info.max} step={info.step}
+                    kind={type} min={info.min} max={info.max} step={info.step}
                     getAction={(newVal) => otherProps.getAction(newVal * unit[units[0]].val)}
                     props={transformedVals} />
             </span>
@@ -85,16 +85,17 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
         </div>
     case "veci":
     case "vecf":
+        const kind = (type === "veci" ? "int" : "float");
         const vvals = vals as Vector[];
         return <>
             <NumberModuleInputField {...otherProps}
-                min={info.min?.x} max={info.max?.x} step={info.step?.x}
+                kind={kind} min={info.min?.x} max={info.max?.x} step={info.step?.x}
                 getAction={(newVal) => new GroupAction(
                     cs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
                 )}
                 props={vvals.map(v => v.x)} />
             <NumberModuleInputField {...otherProps}
-                min={info.min?.y} max={info.max?.y} step={info.step?.y}
+                kind={kind} min={info.min?.y} max={info.max?.y} step={info.step?.y}
                 getAction={(newVal) => new GroupAction(
                     cs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
                 )}

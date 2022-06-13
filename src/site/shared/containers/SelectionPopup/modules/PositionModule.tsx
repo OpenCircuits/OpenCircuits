@@ -29,7 +29,7 @@ export const PositionModule = ({ info }: Props) => {
         Position
         <label>
             <NumberModuleInputField
-                type="float"
+                kind="float"
                 props={props.x}
                 getAction={(newX) =>
                     new TranslateAction(
@@ -47,7 +47,7 @@ export const PositionModule = ({ info }: Props) => {
                 step={1}
                 alt="X-Position of object(s)" />
             <NumberModuleInputField
-                type="float"
+                kind="float"
                 props={props.y}
                 getAction={(newY) =>
                     new TranslateAction(
