@@ -17,13 +17,15 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     validTypes: (s: Selectable) => s is V,
     getProps: (s: V) => T,
     deps: React.DependencyList = [],
+    ignore: (s: Selectable) => boolean = (s) => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<T> | undefined);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
     const updateState = useCallback(() => {
-        const selections = info.selections.get();
+        // Get selections with ignored types filtered out
+        const selections = info.selections.get().filter(s => !ignore(s));
         const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
