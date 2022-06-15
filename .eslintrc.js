@@ -9,6 +9,7 @@ module.exports = mergeDeep({
         "ignorePatterns": ["*.js", "scripts/**", "*.d.ts"],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
+            "tsconfigRootDir": __dirname,
             "project": "./tsconfig.base.json",
             "ecmaFeatures": {
                 "jsx": true,

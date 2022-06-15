@@ -36,5 +36,6 @@ module.exports = {
         "no-use-before-define": "off",
         "object-curly-spacing": ["off"],
 
+        "no-case-declarations": "off",
     },
 }
