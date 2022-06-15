@@ -48,7 +48,7 @@ export const AutoSaveToggle = ({ helpers }: Props) => {
         <SwitchToggle
             isOn={autoSave} disabled={!isLoggedIn}
             onChange={() => dispatch(SetAutoSave(!autoSave))}>
-            {`Auto Save : ${isLoggedIn && autoSave ? "On" : "Off"}`}
+            Auto Save : {isLoggedIn && autoSave ? "On" : "Off"}
         </SwitchToggle>
     );
 }

@@ -43,22 +43,22 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
                     <SwitchToggle
                         isOn={debugInfo.debugCullboxes}
                         onChange={() => dispatch(ToggleDebugCullboxes())}>
-                        {`Debug Cullboxes : ${debugInfo.debugCullboxes ? "On" : "Off"}`}
+                        Debug Cullboxes : {debugInfo.debugCullboxes ? "On" : "Off"}
                     </SwitchToggle>
                     <SwitchToggle
                         isOn={debugInfo.debugPressableBounds}
                         onChange={() => dispatch(ToggleDebugPressableBounds())}>
-                        {`Debug Pressable Bounds : ${debugInfo.debugPressableBounds ? "On" : "Off"}`}
+                        Debug Pressable Bounds : {debugInfo.debugPressableBounds ? "On" : "Off"}
                     </SwitchToggle>
                     <SwitchToggle
                         isOn={debugInfo.debugSelectionBounds}
                         onChange={() => dispatch(ToggleDebugSelectionBounds())}>
-                        {`Debug Selection Bounds : ${debugInfo.debugSelectionBounds ? "On" : "Off"}`}
+                        Debug Selection Bounds : {debugInfo.debugSelectionBounds ? "On" : "Off"}
                     </SwitchToggle>
                     <SwitchToggle
                         isOn={debugInfo.debugNoFill}
                         onChange={() => dispatch(ToggleDebugNoFill())}>
-                        {`Debug No Fill : ${debugInfo.debugNoFill ? "On" : "Off"}`}
+                        Debug No Fill : {debugInfo.debugNoFill ? "On" : "Off"}
                     </SwitchToggle>
                 </>
             }
