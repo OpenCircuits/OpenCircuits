@@ -19,5 +19,14 @@ export const InputField = React.forwardRef(({onEnter, ...props}: Props, ref: Rea
         });
     }, [ref]);
 
-    return <input ref={ref} {...props} />
+    return <input
+        {...props}
+        ref={ref}
+        onChange={(ev) => {
+            props.onChange?.(ev);
+            // Due to Firefox not focusing when the arrow keys
+            //  are pressed on number inputs (issue #818)
+            // NOTE: May be fixed with PR #1033
+            ref.current?.focus();
+        }} />
 });

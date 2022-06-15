@@ -2,8 +2,7 @@ import {SELECTED_BORDER_COLOR,
         DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR,
         DEFAULT_BORDER_WIDTH,
-        DEFAULT_ON_COLOR,
-        GRAPH_LINE_WIDTH} from "core/utils/Constants";
+        DEFAULT_ON_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -15,6 +14,8 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Oscilloscope} from "digital/models/ioobjects";
 
+
+const GRAPH_LINE_WIDTH = 4;
 
 export const OscilloscopeRenderer = (() => {
     return {

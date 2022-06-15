@@ -7,31 +7,31 @@ import {V} from "Vector";
 import {Transform} from "math/Transform";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Component}   from "core/models/Component";
+import {Images}      from "core/utils/Images";
 
-import {Renderer}    from "core/rendering/Renderer";
-import {Rectangle}   from "core/rendering/shapes/Rectangle";
-import {Style}       from "core/rendering/Style";
+import {Component} from "core/models/Component";
 
-import {IOLabelRenderer} from "core/rendering/IOLabelRenderer";
+import {Renderer}  from "core/rendering/Renderer";
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+import {Style}     from "core/rendering/Style";
 
-import {FlipFlop}            from "digital/models/ioobjects/flipflops/FlipFlop";
-import {Latch}               from "digital/models/ioobjects/latches/Latch";
-import {Encoder}             from "digital/models/ioobjects/other/Encoder";
-import {Decoder}             from "digital/models/ioobjects/other/Decoder";
-import {Multiplexer}         from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer}       from "digital/models/ioobjects/other/Demultiplexer";
-import {Label}               from "digital/models/ioobjects/other/Label";
-import {IC}                  from "digital/models/ioobjects/other/IC";
-import {Comparator}          from "digital/models/ioobjects/other/Comparator";
-import {PressableComponent}  from "digital/models/ioobjects/PressableComponent";
-import {Gate}                from "digital/models/ioobjects/gates/Gate";
-import {LED}                 from "digital/models/ioobjects/outputs/LED";
-import {SegmentDisplay}      from "digital/models/ioobjects/outputs/SegmentDisplay";
-import {Oscilloscope}        from "digital/models/ioobjects/outputs/Oscilloscope";
-import {ConstantNumber}      from "digital/models/ioobjects/inputs/ConstantNumber";
+import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 
-import {Images} from "digital/utils/Images";
+import {FlipFlop}           from "digital/models/ioobjects/flipflops/FlipFlop";
+import {Latch}              from "digital/models/ioobjects/latches/Latch";
+import {Encoder}            from "digital/models/ioobjects/other/Encoder";
+import {Decoder}            from "digital/models/ioobjects/other/Decoder";
+import {Multiplexer}        from "digital/models/ioobjects/other/Multiplexer";
+import {Demultiplexer}      from "digital/models/ioobjects/other/Demultiplexer";
+import {Label}              from "digital/models/ioobjects/other/Label";
+import {IC}                 from "digital/models/ioobjects/other/IC";
+import {Comparator}         from "digital/models/ioobjects/other/Comparator";
+import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
+import {Gate}               from "digital/models/ioobjects/gates/Gate";
+import {LED}                from "digital/models/ioobjects/outputs/LED";
+import {SegmentDisplay}     from "digital/models/ioobjects/outputs/SegmentDisplay";
+import {Oscilloscope}       from "digital/models/ioobjects/outputs/Oscilloscope";
+import {ConstantNumber}     from "digital/models/ioobjects/inputs/ConstantNumber";
 
 import {IOPortRenderer}         from "./IOPortRenderer";
 import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
