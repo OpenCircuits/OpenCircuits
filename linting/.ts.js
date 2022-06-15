@@ -10,8 +10,7 @@ module.exports = {
         {
             "files": ["**.test.ts"],
             "rules": {
-                "@typescript-eslint/unbound-method": "off",
-                "jest/unbound-method": "error",
+                "@typescript-eslint/unbound-method": "off", // Jest has its own version
             }
         },
     ],
@@ -31,6 +30,7 @@ module.exports = {
         "@typescript-eslint/explicit-member-accessibility": "error",
 
         // Apparently broken, see https://github.com/typescript-eslint/typescript-eslint/issues/1824
+        // TODO: Can some parts of this be enabled?
         "indent": "off",
         "@typescript-eslint/indent": ["off", 4, {
             "ImportDeclaration": "first",
@@ -84,6 +84,7 @@ module.exports = {
                 }
             }
         }],
+        // TODO: Finalize this
         "@typescript-eslint/naming-convention": [
             "error",
             { // General default, only camelCase with no leading/trailing underscores

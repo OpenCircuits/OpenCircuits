@@ -162,6 +162,7 @@ module.exports = {
             },
         ],
         "import/newline-after-import": ["error", {"count": 2}],
+
         "align-import/align-import": "error",
         "align-import/trim-import": "error",
     },

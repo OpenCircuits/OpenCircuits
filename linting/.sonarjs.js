@@ -3,7 +3,7 @@ module.exports = {
         {
             "files": ["**.test.ts"],
             "rules": {
-                "sonarjs/no-duplicate-string": "off",
+                "sonarjs/no-duplicate-string": "off", // Complained about similar test names
             }
         },
     ],

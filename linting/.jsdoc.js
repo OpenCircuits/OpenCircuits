@@ -6,6 +6,8 @@ module.exports = {
         "jsdoc/check-access": "error",
         "jsdoc/check-alignment": "error",
         "jsdoc/check-indentation": "error",
+        // TODO: Should this be enabled? https://github.com/gajus/eslint-plugin-jsdoc#check-line-alignment
+        "jsdoc/check-line-alignment": "off",
         "jsdoc/check-param-names": "error",
         "jsdoc/check-property-names": "error",
         "jsdoc/check-tag-names": ["error", {
@@ -20,6 +22,8 @@ module.exports = {
         "jsdoc/no-types": "error",
         "jsdoc/require-asterisk-prefix": "error",
         "jsdoc/require-description": "error",
+        // TODO: Should this be enabled? https://github.com/gajus/eslint-plugin-jsdoc#eslint-plugin-jsdoc-rules-require-description-complete-sentence
+        "jsdoc/require-description-complete-sentence": "error",
         // TODO: If all the code has jsdoc comments, consider turning this on
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param-description": "error",

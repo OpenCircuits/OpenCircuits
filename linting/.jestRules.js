@@ -7,7 +7,7 @@ module.exports = {
         {
             "files": ["**.test.ts"],
             "rules": {
-                "jest/unbound-method": "error",
+                "jest/unbound-method": "error", // Typescript version disabled in .ts.js
             }
         },
     ],

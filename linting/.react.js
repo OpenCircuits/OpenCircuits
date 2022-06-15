@@ -52,6 +52,12 @@ module.exports = {
         "react/void-dom-elements-no-children": "error",
         // TODO: this one also
         "react/jsx-boolean-value": ["off", "never"],
+        // TODO: this one also
+        "react/jsx-closing-bracket-location": "off",
+        // TODO: this one also
+        "react/jsx-curly-brace-presence": "off",
+        // TODO: this one also
+        "react/jsx-curly-spacing": "off",
         "react/jsx-curly-newline": ["error", {
             "multiline": "consistent",
             "singleline": "consistent",
@@ -61,17 +67,25 @@ module.exports = {
         "react/jsx-fragments": ["error", "syntax"],
         "react/jsx-handler-names": "error",
         "react/jsx-indent": "error",
+        // TODO: this one also
+        "react/jsx-indent-props": "off",
+        // TODO: this one also
+        "react/jsx-newline": "off",
         "react/jsx-no-constructed-context-values": "error",
         "react/jsx-no-literals": "error",
         "react/jsx-no-script-url": "error",
         "react/jsx-no-useless-fragment": "error",
+        "react/jsx-one-expression-per-line": ["error", {"allow": "single-child"}],
         "react/jsx-pascal-case": "error",
         "react/jsx-props-no-multi-spaces": "error",
+        // TODO: this one also
+        "react/jsx-sort-props": "off",
+        // TODO: this one also
+        "react/jsx-space-before-closing": "off",
+        // TODO: This has further settings to examine
         "react/jsx-tag-spacing": ["error", {
             "beforeClosing": "never",
         }],
-        "react/jsx-wrap-multilines": "error",
-        "react/jsx-one-expression-per-line": ["error", {"allow": "single-child"}],
     },
     "settings": {
         "react": {
