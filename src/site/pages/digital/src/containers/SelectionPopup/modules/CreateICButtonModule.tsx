@@ -32,24 +32,3 @@ export const CreateICButtonModule = ({ info }: Props) => {
         Create IC
     </button>
 }
-
-// export const CreateICButtonModule = (props: UseModuleProps) => {
-//     const dispatch = useDigitalDispatch();
-
-//     return (
-//         <ButtonPopupModule
-//             text="Create IC"
-//             alt="Create an IC from selections"
-//             getDependencies={(_) => ""}
-//             isActive={(selections) => {
-//                 if (!selections.every(s => s instanceof Component))
-//                     return false;
-//                 return ICData.IsValid(selections as Component[]);
-//             }}
-//             onClick={(selections) => {
-//                 const data = ICData.Create(selections as Component[])!;
-//                 dispatch(OpenICDesigner(data));
-//             }}
-//             {...props} />
-//     );
-// }

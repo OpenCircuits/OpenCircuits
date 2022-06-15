@@ -1,33 +1,47 @@
-// import {GroupAction} from "core/actions/GroupAction";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GroupAction} from "core/actions/GroupAction";
 
-// import {BUFGate} from "digital/models/ioobjects";
-// import {Gate} from "digital/models/ioobjects/gates/Gate";
-// import {Mux} from "digital/models/ioobjects/other/Mux";
+import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-// import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {BUFGate} from "digital/models/ioobjects";
+import {Gate} from "digital/models/ioobjects/gates/Gate";
 
-// import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
-// const Config: ModuleConfig<[Gate], number> = {
-//     types: [Gate],
-//     exclude: [BUFGate],
-//     valType: "int",
-//     getProps: (o) => (o instanceof Mux ? o.getSelectPortCount() : o.getInputPortCount()).getValue(),
-//     getAction: (s, newCount) => (
-//         new GroupAction(s.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(),  newCount)),
-//                         "Input Count Module")
-//     ),
-// }
+type Props = {
+    info: CircuitInfo;
+}
+export const InputCountModule = ({ info }: Props) => {
+    const { history, renderer } = info;
 
-// export const InputCountModule = PopupModule({
-//     label: "Input Count",
-//     modules: [CreateModule({
-//         inputType: "number",
-//         config: Config,
-//         step: 1, min: 2, max: 8,
-//         alt: "Number of inputs object(s) have",
-//     })],
-// });
+    const [props, cs] = useSelectionProps(
+        info,
+        (c): c is Gate => (c instanceof Gate && !(c instanceof BUFGate)),
+        (c) => ({ numInputs: c.getInputPortCount().getValue() })
+    );
 
-export {};
+    if (!props)
+        return null;
+
+    return <div>
+        Input Count
+        <label>
+            <NumberModuleInputField
+                kind="int" min={2} max={8} step={1}
+                props={props.numInputs}
+                getAction={(newCount) =>
+                    new GroupAction(
+                        cs.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
+                        "Input Count Module"
+                    )}
+                onSubmit={(info) => {
+                    renderer.render();
+                    if (info.isValid && info.isFinal)
+                        history.add(info.action);
+                }}
+                alt="Number of inputs object(s) have" />
+        </label>
+    </div>
+}

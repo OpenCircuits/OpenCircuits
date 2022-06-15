@@ -1,23 +1,45 @@
-// import {GroupAction} from "core/actions/GroupAction";
-// import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAction";
-// import {Label} from "digital/models/ioobjects";
-// import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAction";
+
+import {Label} from "digital/models/ioobjects";
+
+import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 
 
-// const Config: ModuleConfig<[Label], string> = {
-//     types: [Label],
-//     valType: "string",
-//     getProps: (o) => o.getTextColor(),
-//     getAction: (s, newCol) => new GroupAction(s.map(o => new LabelTextColorChangeAction(o, newCol)), "Text Color Module")
-// }
+type Props = {
+    info: CircuitInfo;
+}
+export const TextColorModule = ({ info }: Props) => {
+    const { history, renderer } = info;
 
-// export const TextColorModule = PopupModule({
-//     label: "Text Color",
-//     modules: [CreateModule({
-//         inputType: "color",
-//         config: Config,
-//         alt: "Text color of object(s)"
-//     })]
-// });
+    const [props, cs] = useSelectionProps(
+        info,
+        (c): c is Label => (c instanceof Label),
+        (c) => ({ color: c.getTextColor() }),
+    );
 
-export {};
+    if (!props)
+        return null;
+
+    return <div>
+        Text Color
+        <label>
+            <ColorModuleInputField
+                props={props.color}
+                getAction={(newCol) =>
+                    new GroupAction(
+                        cs.map(o => new LabelTextColorChangeAction(o, newCol)),
+                        "Text Color Module"
+                    )}
+                onSubmit={(info) => {
+                    renderer.render();
+                    if (info.isValid && info.isFinal)
+                        history.add(info.action);
+                }}
+                alt="Text color of object(s)" />
+        </label>
+    </div>
+}
