@@ -1,5 +1,6 @@
 import {Camera} from "math/Camera";
 
+import {Input} from "core/utils/Input";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {RenderQueue} from "core/utils/RenderQueue";
 
@@ -26,7 +27,8 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
         history,
         camera,
         designer,
-        input: undefined,
+        // This is necessary because input is created later in the pipeline because it requires canvas
+        input: undefined as unknown as Input,
         selections,
         toolManager,
         renderer,

@@ -10,7 +10,7 @@ describe("DLatch", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const {AutoPlace} = GetHelpers(designer);
 
     const [f, [D, E], [Q, Q2]] = AutoPlace(new DLatch());
 

@@ -14,8 +14,8 @@ export class ContentsData {
     public camera: Camera;
 
     public constructor(designer?: CircuitDesigner, camera?: Camera) {
-        this.designer = designer;
-        this.camera = camera;
+        this.designer = designer!;
+        this.camera = camera!;
     }
 }
 
@@ -24,7 +24,7 @@ export class Circuit {
     public contents: string;
 
     public constructor(metadata?: CircuitMetadataDef, designer?: CircuitDesigner, camera?: Camera) {
-        this.metadata = metadata;
+        this.metadata = metadata!;
         this.contents = Serialize(new ContentsData(designer, camera));
     }
 }

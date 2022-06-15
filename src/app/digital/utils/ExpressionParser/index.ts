@@ -31,7 +31,7 @@ import {TreeToCircuit} from "./TreeToCircuit";
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: OperatorFormat = Formats[0]): DigitalObjectSet | null {
+                                    ops: OperatorFormat = Formats[0]): DigitalObjectSet {
 
     ValidateInputOutputTypes(inputs, output);
 

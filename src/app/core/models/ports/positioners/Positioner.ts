@@ -18,12 +18,12 @@ export class Positioner<T extends Port> {
     /**
     * maps directions to their corresponding vectors  
     */
-    public static readonly DIRS = new Map<string, Vector>([
-        ["left",   V(-1, 0)],
-        ["right",  V(1,  0)],
-        ["top",    V(0, -1)],
-        ["bottom", V(0,  1)]
-    ]);
+    public static readonly DIRS: Record<Dir, Vector> = {
+        "left":   V(-1, 0),
+        "right":  V(1,  0),
+        "top":    V(0, -1),
+        "bottom": V(0,  1),
+    };
 
     /**
     * direction of the ports relative to the parent component 
@@ -52,7 +52,7 @@ export class Positioner<T extends Port> {
      * by one space in the spacing calculation (defaults to true)
      */
     public constructor(dir?: Dir, scale: number = 1, length: number = IO_PORT_LENGTH, shortenEdges: boolean = true) {
-        this.dir = Positioner.DIRS.get(dir) || V();
+        this.dir = (dir) ? (Positioner.DIRS[dir]) : (V());
         this.scale = scale;
         this.length = length;
         this.shortenEdges = shortenEdges;

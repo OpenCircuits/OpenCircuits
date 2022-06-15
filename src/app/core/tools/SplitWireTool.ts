@@ -48,7 +48,7 @@ export const SplitWireTool: Tool = (() => {
             port = wire.split();
             port.setPos(camera.getWorldPos(input.getMouseDownPos()));
 
-            action = new GroupAction();
+            action = new GroupAction([], "Split Wire Tool");
 
             // Set wireport as selection and being pressed
             action.add(CreateDeselectAllAction(selections).execute());

@@ -22,7 +22,7 @@ export const CreateICButtonModule = (props: UseModuleProps) => {
                 return ICData.IsValid(selections as Component[]);
             }}
             onClick={(selections) => {
-                const data = ICData.Create(selections as Component[]);
+                const data = ICData.Create(selections as Component[])!;
                 dispatch(OpenICDesigner(data));
             }}
             {...props} />

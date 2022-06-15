@@ -14,7 +14,7 @@ import {DigitalWire, DigitalCircuitDesigner, InputPort, OutputPort} from "./inde
 
 export abstract class DigitalComponent extends Component {
     @serialize
-    protected designer: DigitalCircuitDesigner;
+    protected designer?: DigitalCircuitDesigner;
 
     @serialize
     protected inputs:  PortSet<InputPort>;
@@ -123,7 +123,7 @@ export abstract class DigitalComponent extends Component {
     }
 
 
-    public getDesigner(): DigitalCircuitDesigner {
+    public getDesigner(): DigitalCircuitDesigner | undefined {
         return this.designer;
     }
 

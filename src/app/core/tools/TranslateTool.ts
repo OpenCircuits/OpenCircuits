@@ -58,14 +58,14 @@ export const TranslateTool: Tool = (() => {
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                selections.has(currentlyPressedObject) || !currentlyPressedObject ?
+                !currentlyPressedObject || selections.has(currentlyPressedObject) ?
                         selections.get().filter(s => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];
 
             action = new GroupAction([
-                new GroupAction(components.map(c => new ShiftAction(designer, c))).execute()
-            ]);
+                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute()
+            ], "Translate Tool", components.map(c => `Translated ${c.getName()}.`));
 
             initalPositions = components.map(o => o.getPos());
 
@@ -104,8 +104,9 @@ export const TranslateTool: Tool = (() => {
                         curPositions.map(p => Snap(p)):
                         curPositions;
 
+                    const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    new TranslateAction(components, initalPositions, newPositions).execute();
+                    new TranslateAction(components, initalPositions, newPositions, snapToConnections).execute();
 
                     return true;
 

@@ -13,7 +13,7 @@ export abstract class CircuitDesigner {
     public abstract addWire(wire: Wire): void;
     public abstract addGroup(group: IOObjectSet): void;
 
-    public abstract createWire(p1: Port, p2: Port): Wire;
+    public abstract createWire(p1?: Port, p2?: Port): Wire;
 
     public abstract removeObject(obj: Component): void;
     public abstract removeWire(wire: Wire): void;

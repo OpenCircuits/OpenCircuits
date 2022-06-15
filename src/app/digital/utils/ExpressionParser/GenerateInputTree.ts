@@ -18,9 +18,9 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @param tree the tree to check
  * @param op the operation the tree should have
  * @param isFinal whether or not the tree can be modified
- * @returns true if tree has kind "binop", tree's type is op, and isFinal is false, false otherwise
+ * @returns true if tree has kind "binop", tree's type is op, and isFinal is false or undefined, false otherwise
  */
-function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal: boolean): tree is InputTreeBinOpNode {
+function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boolean): tree is InputTreeBinOpNode {
     return tree.kind === "binop" && tree.type === op && !isFinal;
 }
 
@@ -107,7 +107,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     // This section gets the part of the tree from the left side of the operator.
     //  "!" and "(" only have operands on their right side, so this section is skipped for them
     let leftRet: NewTreeRetValue;
-    if (currentOp !== "!" && currentOp !== "(") {
+    if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         leftRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
         index = leftRet.index;
         // If this isn't the right operation to apply, return
@@ -121,7 +121,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     if (index >= tokens.length && currentOp !== "(") {
         throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
     }
-    let rightRet: NewTreeRetValue = null;
+    let rightRet: NewTreeRetValue;
     const rightToken = tokens[index];
     if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
@@ -158,10 +158,10 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
         }
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
-        const lTree = leftRet.tree, rTree = rightRet.tree;
-        let childrenArray: InputTree[] = isTreeExtendable(lTree, currentOp, leftRet.final) ? lTree.children : [lTree];
+        const lTree = leftRet!.tree, rTree = rightRet.tree;
+        let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final) ? lTree.children as InputTree[] : [lTree];
         if (isTreeExtendable(rTree, currentOp, rightRet.final))
-            childrenArray = [...childrenArray, ...rTree.children];
+            childrenArray = [...childrenArray, ...rTree.children as InputTree[]];
         else
             childrenArray.push(rTree);
 
@@ -169,7 +169,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
             
         tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
     }
-    return {index: index, tree: tree};
+    return {index: index, tree: tree!};
 
 }
 
@@ -178,7 +178,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * 
  * @param tokens the array of tokens representing the expression to parse
  * @param ops the representation format for the operations used in this expression (only used for error messages)
- * @returns null if tokens.length is 0, the relevant input tree otherwise
+ * @returns undefined if tokens.length is 0, the relevant input tree otherwise
  * @throws {Error} parenthesis do not include anything (such as "()")
  * @throws {Error} an opening parenthesis is missing a corresponding closing parenthesis (such as "(")
  * @throws {Error} a closing parenthesis is missing a corresponding opening parenthesis (such as ")")
@@ -188,9 +188,9 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | null {
+export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | undefined {
     if (tokens.length === 0)
-        return null;
+        return;
     const ret = generateInputTreeCore(tokens, ops);
 
     const index = ret.index;

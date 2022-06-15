@@ -5,7 +5,7 @@ import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET, MUX_DEFAULT_SELECT_PORTS} from 
 import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {Port} from "core/models";
+import {Component, Port} from "core/models";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -26,7 +26,7 @@ export abstract class Mux extends DigitalComponent {
                 inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
-                                              selectPositioner, InputPort);
+                                              selectPositioner, InputPort as new (c: Component) => InputPort);
 
         this.setSelectPortCount(MUX_DEFAULT_SELECT_PORTS);
     }
