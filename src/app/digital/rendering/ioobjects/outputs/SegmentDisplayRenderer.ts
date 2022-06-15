@@ -5,9 +5,12 @@ import {DEFAULT_BORDER_WIDTH,
         SELECTED_FILL_COLOR,
         DEFAULT_ON_COLOR,
         SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
+
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
+
+import {Images} from "core/utils/Images";
 
 import {Renderer} from "core/rendering/Renderer";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
@@ -15,7 +18,6 @@ import {Style} from "core/rendering/Style";
 
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
-import {Images} from "digital/utils/Images";
 import {Line} from "core/rendering/shapes/Line";
 
 /**

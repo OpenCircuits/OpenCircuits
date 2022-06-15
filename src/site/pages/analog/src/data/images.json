@@ -1,0 +1,10 @@
+{
+    "images": [
+        "currentsource.svg",
+        "voltagesource.svg",
+        "ground.svg",
+        "resistor.svg",
+        "capacitor.svg",
+        "inductor.svg"
+    ]
+}
