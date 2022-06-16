@@ -25,7 +25,7 @@ module.exports = {
         "jsx-a11y/aria-proptypes": "warn",
         "jsx-a11y/aria-role": "warn",
         "jsx-a11y/aria-unsupported-elements": "warn",
-        "jsx-a11y/click-events-have-key-events": "warn",
+        "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/control-has-associated-label": ["off", {
             "ignoreElements": [
                 "audio",
@@ -74,7 +74,7 @@ module.exports = {
             },
         ],
         "jsx-a11y/label-has-for": "off",
-        "jsx-a11y/label-has-associated-control": "warn",
+        "jsx-a11y/label-has-associated-control": "off",
         "jsx-a11y/media-has-caption": "warn",
         "jsx-a11y/mouse-events-have-key-events": "warn",
         "jsx-a11y/no-access-key": "warn",
