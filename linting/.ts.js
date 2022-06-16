@@ -85,7 +85,7 @@ module.exports = {
                 }
             }
         }],
-        // TODO: Finalize this
+        // TODO: Finalize this better
         "@typescript-eslint/naming-convention": [
             "error",
             { // General default, only camelCase with no leading/trailing underscores
@@ -119,8 +119,14 @@ module.exports = {
                 "leadingUnderscore": "allow",
             },
             { // functions, typeProperties, and object literal properties can be camelCase or PascalCase, no leading underscore allowed
-                "selector": ["function", "typeProperty", "objectLiteralProperty"],
+                "selector": ["typeProperty", "objectLiteralProperty"],
                 "format": ["camelCase", "PascalCase"],
+                // TODO: see if "format": ["camelCase"], is reasonable
+            },
+            { // functions, typeProperties, and object literal properties can be camelCase or PascalCase, no leading underscore allowed
+                "selector": ["function"],
+                "format": ["camelCase", "PascalCase"],
+                // TODO: see if "format": ["PascalCase"], is reasonable
             },
             { // enum members must be PascalCase, no leading underscore
                 "selector": "enumMember",
@@ -134,7 +140,7 @@ module.exports = {
             { // static class methods can be camelCase or PascalCase, no leading underscore
                 "selector": "classMethod",
                 "modifiers": ["static"],
-                "format": ["camelCase", "PascalCase"],
+                "format": ["PascalCase"],
             },
         ],
 
