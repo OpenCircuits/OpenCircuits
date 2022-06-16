@@ -70,3 +70,17 @@ To generate the documentation from jsdocs, run
 yarn build:jsdocs
 ```
 You can even run that command while `yarn docs` is open in another window!
+
+---
+
+## Linting
+
+To lint locally, simply run
+```bash
+yarn lint
+```
+
+Convenientally, eslint supports automatically fixing some issues. To do this, run
+```bash
+yarn lint:fix
+```
