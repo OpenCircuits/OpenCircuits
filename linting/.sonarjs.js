@@ -1,12 +1,4 @@
 module.exports = {
-    "overrides": [
-        {
-            "files": ["**.test.ts"],
-            "rules": {
-                "sonarjs/no-duplicate-string": "off", // Complained about similar test names
-            }
-        },
-    ],
     "plugins": [
         "sonarjs",
     ],
@@ -15,5 +7,6 @@ module.exports = {
     ],
     "rules": {
         "sonarjs/cognitive-complexity": "off",
+        "sonarjs/no-duplicate-string": "off",
     },
 }

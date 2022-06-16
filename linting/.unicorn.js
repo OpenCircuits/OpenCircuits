@@ -18,11 +18,14 @@ module.exports = {
             },
             "ignore": [
                 // Ignore things with words like IC, ID, etc. (i.e. ICViewer)
-                /(.*?)(IC|ID|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|ASCII)(.*)/,
+                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII)(.*)/,
             ],
         }],
         "unicorn/no-array-reduce": "off",
         "unicorn/no-array-for-each": "off",
+        "unicorn/no-for-loop": "warn",
+        "unicorn/no-nested-ternary": "off",
+        "unicorn/no-new-array": "off",
         "unicorn/no-object-as-default-parameter": "off",
         "unicorn/no-unsafe-regex": "error",
         "unicorn/no-unused-properties": "error",
@@ -34,6 +37,7 @@ module.exports = {
         "unicorn/prefer-number-properties": "off",
         "unicorn/prefer-query-selector": "off",
         "unicorn/prefer-string-replace-all": "error",
+        "unicorn/prefer-ternary": ["error", "only-single-line"],
         "unicorn/prevent-abbreviations": "off",
         "unicorn/no-array-callback-reference": "off",
     },
