@@ -5,9 +5,8 @@ module.exports = {
     "rules": {
         "jsdoc/check-access": "error",
         "jsdoc/check-alignment": "error",
-        "jsdoc/check-indentation": "error",
-        // TODO: Should this be enabled? https://github.com/gajus/eslint-plugin-jsdoc#check-line-alignment
-        "jsdoc/check-line-alignment": "off",
+        "jsdoc/check-indentation": "off",
+        "jsdoc/check-line-alignment": ["error", "always", {"preserveMainDescriptionPostDelimiter": true}],
         "jsdoc/check-param-names": "error",
         "jsdoc/check-property-names": "error",
         "jsdoc/check-tag-names": ["error", {

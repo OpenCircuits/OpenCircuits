@@ -19,6 +19,7 @@ export const InputField = React.forwardRef(({onEnter, ...props}: Props, ref: Rea
         });
     }, [ref]);
 
+    // eslint-disable-next-line react/forbid-elements
     return <input
         {...props}
         ref={ref}

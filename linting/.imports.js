@@ -125,7 +125,7 @@ module.exports = {
         "import/no-deprecated": "off", // very few external imports
         "import/no-mutable-exports": "error",
         "import/first": "error",
-        "import/exports-last": "error",
+        "import/exports-last": "off",
         "import/no-duplicates": "error",
         "import/no-namespace": "error",
         "import/extensions": [

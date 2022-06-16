@@ -37,5 +37,6 @@ module.exports = {
         "object-curly-spacing": ["off"],
 
         "no-case-declarations": "off",
+        "no-empty-pattern": "off",
     },
 }
