@@ -19,6 +19,9 @@ module.exports = {
         "unicorn/no-array-for-each": "off",
         "unicorn/no-unsafe-regex": "error",
         "unicorn/no-unused-properties": "error",
+        "unicorn/no-useless-undefined": ["error", {
+            "checkArguments": false,
+        }],
         "unicorn/prefer-at": "error",
         "unicorn/prefer-string-replace-all": "error",
         "unicorn/prevent-abbreviations": "off",

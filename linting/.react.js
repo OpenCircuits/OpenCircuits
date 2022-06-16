@@ -72,6 +72,7 @@ module.exports = {
         // TODO: this one also
         "react/jsx-newline": "off",
         "react/jsx-no-constructed-context-values": "error",
+        // TODO: this one also
         "react/jsx-no-literals": "error",
         "react/jsx-no-script-url": "error",
         "react/jsx-no-useless-fragment": "error",
