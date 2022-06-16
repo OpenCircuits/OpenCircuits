@@ -21,8 +21,7 @@ module.exports = {
         "jsdoc/no-types": "error",
         "jsdoc/require-asterisk-prefix": "error",
         "jsdoc/require-description": "error",
-        // TODO: Should this be enabled? https://github.com/gajus/eslint-plugin-jsdoc#eslint-plugin-jsdoc-rules-require-description-complete-sentence
-        "jsdoc/require-description-complete-sentence": "error",
+        "jsdoc/require-description-complete-sentence": "warn",
         // TODO: If all the code has jsdoc comments, consider turning this on
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param-description": "error",

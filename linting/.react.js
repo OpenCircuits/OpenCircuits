@@ -49,22 +49,26 @@ module.exports = {
                 "react/sort-comp": "error",
                 "react/sort-prop-types": ["error", {
                     "callbacksLast": true,
-                    "ignoreCase": false,
                     "requiredFirst": true,
                     "sortShapeProp": true,
                     "noSortAlphabetically": false,
+                    "ignoreCase": false,
                 }],
                 // Applies only to React classes which we do not use
                 "react/static-property-placement": "off",
                 "react/style-prop-object": "error",
                 "react/void-dom-elements-no-children": "error",
                 "react/jsx-boolean-value": ["error", "never"],
-                // TODO: this one also
-                "react/jsx-closing-bracket-location": "off",
-                // TODO: this one also
-                "react/jsx-curly-brace-presence": "off",
-                // TODO: this one also
-                "react/jsx-curly-spacing": "off",
+                "react/jsx-closing-bracket-location": ["error", {
+                    selfClosing: "after-props",
+                    nonEmpty: "after-props",
+                }],
+                "react/jsx-curly-brace-presence": ["error", {
+                    "props": "never",
+                    "children": "never",
+                    "propElementValues": "always",
+                }],
+                "react/jsx-curly-spacing": ["error", { "when": "never" }],
                 "react/jsx-curly-newline": ["error", {
                     "multiline": "consistent",
                     "singleline": "consistent",
@@ -74,9 +78,7 @@ module.exports = {
                 "react/jsx-fragments": ["error", "syntax"],
                 "react/jsx-handler-names": "error",
                 "react/jsx-indent": "error",
-                // TODO: this one also
-                "react/jsx-indent-props": "off",
-                // TODO: this one also
+                "react/jsx-indent-props": ["error", "first"],
                 "react/jsx-newline": "off",
                 "react/jsx-no-constructed-context-values": "error",
                 "react/jsx-no-literals": "off",
@@ -85,12 +87,20 @@ module.exports = {
                 "react/jsx-one-expression-per-line": "off",
                 "react/jsx-pascal-case": "error",
                 "react/jsx-props-no-multi-spaces": "off", // It's useful to align things vertically
-                // TODO: this one also
-                "react/jsx-sort-props": "off",
-                // TODO: this one also
-                "react/jsx-space-before-closing": "off",
-                // TODO: This has further settings to examine
+                "react/jsx-sort-props": ["error", {
+                    "callbacksLast": true,
+                    "shorthandFirst": false,
+                    "shorthandLast": true,
+                    "multiline": "last",
+                    "ignoreCase": false,
+                    "reservedFirst": ["key", "ref"],
+                    "noSortAlphabetically": true, // TODO: Maybe consider this as false
+                }],
+                "react/jsx-space-before-closing": "off", // Deprecated rule
                 "react/jsx-tag-spacing": ["error", {
+                    "closingSlash": "never",
+                    "beforeSelfClosing": "always",
+                    "afterOpening": "never",
                     "beforeClosing": "never",
                 }],
                 // TODO: would be good to have parens-new-line, but only for non-fragment children
