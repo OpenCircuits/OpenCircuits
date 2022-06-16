@@ -25,7 +25,7 @@ module.exports = {
         "jest/prefer-equality-matcher": "error",
         "jest/prefer-expect-resolves": "error",
         "jest/prefer-hooks-on-top": "error",
-        "jest/prefer-strict-equal": "error",
+        "jest/prefer-strict-equal": "off",
         // Disabled jest/valid-title because it is not type aware
         "jest/valid-title": "off",
 
