@@ -35,15 +35,16 @@ function addPath(pathGroupsIn, pattern) {
     pathGroupsIn.push({"pattern": pattern + "/*", "group": "external", "position": "after"});
 }
 
-const appDirectories = ["core", "digital"];
+const appDirectories = ["core", "analog", "digital"];
 const appSubDirectories = ["utils", "actions", "tools", "rendering", "models"];
-const siteDirectories = ["shared", "digital", "landing"];
+const siteDirectories = ["shared", "analog", "digital", "landing"];
 const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
     {"pattern": "{**,**/,,./}{C,c}onstants{**,/**,,}", "group": "external", "position": "after"},
     {"pattern": "Vector", "group": "external", "position": "after"},
     {"pattern": "math/**", "group": "external", "position": "after"},
+    {"pattern": "test/helpers/*", "group": "external", "position": "after"},
 ];
 appDirectories.forEach(dir => {
     appSubDirectories.forEach(sub => {
@@ -95,6 +96,10 @@ module.exports = {
                         "from": "./src/app/!(core|digital)/**",
                     },
                     {
+                        "target": "./src/app/analog/**",
+                        "from": "./src/app/!(core|analog)/**",
+                    },
+                    {
                         "target": "./src/app/**",
                         "from": "./src/site/**",
                     },
@@ -105,6 +110,10 @@ module.exports = {
                     {
                         "target": "./src/site/shared/**",
                         "from": "./src/site/pages/**",
+                    },
+                    {
+                        "target": "./src/site/pages/analog/**",
+                        "from": "./src/site/pages/!(analog)/**",
                     },
                     {
                         "target": "./src/site/pages/digital/**",
@@ -161,7 +170,11 @@ module.exports = {
                 "warnOnUnassignedImports": true,
             },
         ],
-        "import/newline-after-import": ["error", {"count": 2}],
+        "import/newline-after-import": ["error", {
+            "count": 2,
+            // TODO: uncomment when this gets released
+            // "considerComments": true,
+        }],
 
         "align-import/align-import": "error",
         "align-import/trim-import": "error",
