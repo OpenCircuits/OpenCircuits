@@ -120,17 +120,49 @@ export class Rect {
      *  if dir.y < 0, shifts amt.y down
      *  if dir.y > 0, shifts amt.y up
      *
-     * @param dir The direction to shift this rectangle
-     * @param amt The amount to shift this rectangle
-     * @returns A new rectangle which is a shifted version of this one
+     * @param    dir                        The direction to shift this rectangle
+     * @param    amt                        The amount to shift this rectangle
+     * @param    constraints                a
+     * @param    constraints.minSize        a
+     * @param    constraints.minSize.width  a
+     * @param    constraints.minSize.height a
+     * @param    constraints.bounds         a
+     * @returns                             A new rectangle which is a shifted version of this one
      */
-    public shift(dir: Vector, amt: Vector): Rect {
-        return Rect.from({
-            left:   this.left   + (dir.x < 0 ? amt.x * dir.x : 0),
-            right:  this.right  + (dir.x > 0 ? amt.x * dir.x : 0),
-            top:    this.top    + (dir.y > 0 ? amt.y * dir.y : 0),
-            bottom: this.bottom + (dir.y < 0 ? amt.y * dir.y : 0),
-        });
+    public shift(dir: Vector, amt: Vector,
+                 constraints?: { minSize?: { width: number, height: number }, bounds?: Rect }): Rect {
+        const minSize = (constraints?.minSize ?? { width: 0, height: 0 });
+        const bounds  = (constraints?.bounds  ?? new Rect(V(0, 0), V(Infinity, Infinity)));
+
+        const shift = dir.scale(amt);
+
+        const newRect = Rect.from({ ...this }, this.yIsUp === +1);
+        if (dir.x < 0) {
+            // Shift left
+            const maxLeft = this.right - minSize.width;
+            newRect.left  = Math.min(this.left + shift.x, maxLeft);
+        } else {
+            // Shift right
+            const minRight = this.left + minSize.width;
+            newRect.right  = Math.max(this.right + shift.x, minRight);
+        }
+        if (dir.y < 0) {
+            // Shift down
+            const maxBottom = this.top - minSize.height;
+            newRect.bottom  = Math.min(this.bottom + shift.y, maxBottom);
+        } else {
+            // Shift up
+            const maxTop = this.bottom + minSize.height;
+            newRect.top  = Math.max(this.top + shift.y, maxTop);
+        }
+
+        return newRect;
+        // return Rect.from({
+        //     left:   this.left   + (dir.x < 0 ? amt.x * dir.x : 0),
+        //     right:  this.right  + (dir.x > 0 ? amt.x * dir.x : 0),
+        //     top:    this.top    + (dir.y > 0 ? amt.y * dir.y : 0),
+        //     bottom: this.bottom + (dir.y < 0 ? amt.y * dir.y : 0),
+        // });
     }
 
     public set x(x: number) {

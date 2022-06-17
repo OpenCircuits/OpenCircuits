@@ -1,71 +1,84 @@
 @import "~shared/utils/constants";
 
-
-$historybox-width: 240px;
 $historybox-height: 400px;
-$historybox-header-height: 60px;
-$historybox-content-height: 335px;
+$historybox-header-height: 30px;
+$historybox-width: 250px;
 
 
 .historybox {
+    // width: $historybox-width;
+    border: 5px solid $secondary-color;
+    background-color: $primary-color;
+
+    box-sizing: border-box;
+
     position: absolute;
-    background: transparent;
 
-    & > .box {
-        top: 5px;
-        left: 5px;
-        position: absolute;
-        min-width: $historybox-width;
-        min-height: $historybox-height;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
 
-        border-radius: 0px 15px;
-        background-color: $primary-color;
-        border: 5px solid $secondary-color;
+    bottom: 0px;
+    z-index: 4;
 
-        & > .title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: $historybox-header-height;
+    overflow-y: hidden;
 
-            border: 5px $secondary-color;
-            border-style: none none solid none;
+    padding-bottom: 10px;
 
+    transition: all 0.5s;
 
-            & > span:first-child {
-                flex-grow: 1;
-                font-size: 30px;
-                cursor: all-scroll;
-                padding: 12px 15px;
-            }
-            & > span:last-child {
-                font-size: 40px;
+    & > div:first-child {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 10px 5px;
+
+        height: $historybox-header-height;
+
+        & > span:first-child {
+            font-size: 30px;
+        }
+        & > span:last-child {
+            font-size: 40px;
+            &:hover {
                 cursor: pointer;
-                padding: 7px 16px;
             }
         }
+    }
+    & > div:last-child {
+        height: calc(100% - #{$historybox-header-height + 2*10px - 2*5px});
 
-        & > .content {
-            overflow-y: scroll;
-            min-width: $historybox-width;
-            min-height: $historybox-content-height;
+        overflow-y: scroll;
 
-            &::-webkit-scrollbar {
-                width: 11px;
-                background: $primary-color;
-            }
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
-            &::-webkit-scrollbar-thumb {
-                border-radius: 15px;
-                background: hsl(0, 0%, 30%);
-            }
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
 
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        @media (max-width: 768px) and (orientation:portrait) {
+            max-height: 40vh;
         }
     }
 
-    @media (orientation:portrait) {
-        position: absolute;
-        min-bottom: $itemnav-height;
+    &__move {
+        & > div:last-child {
+            left: 0px;
+
+            @media (max-width: 768px) and (orientation:portrait) {
+                margin-bottom: 0px;
+            }
+        }
     }
 
     &__separator {
@@ -81,6 +94,7 @@ $historybox-content-height: 335px;
 
         line-height: 30px;
 
+        border: 1px solid $secondary-color;
         border-radius: 7px;
 
         cursor: pointer;
@@ -133,70 +147,6 @@ $historybox-content-height: 335px;
                     transform: rotate(0deg);
                 }
             }
-        }
-    }
-
-    & > .resizers {
-        & > .c {
-            z-index: 0;
-            position: absolute;
-            border: 10px solid transparent;
-
-            background: transparent;
-        }
-
-        & > .c.nw {
-            top: 0px;
-            left: 0px;
-            cursor: nw-resize;
-        }
-        & > .c.ne {
-            top: 0px;
-            right: 0px;
-            cursor: ne-resize;
-        }
-        & > .c.sw {
-            left: 0px;
-            bottom: 0px;
-            cursor: sw-resize;
-        }
-        & > .c.se {
-            right: 0px;
-            bottom: 0px;
-            cursor: se-resize;
-        }
-
-        & > .e {
-            z-index: 0;
-            position: absolute;
-
-            background: transparent;
-            border: solid transparent;
-        }
-
-        & > .e._n {
-            top: 0px;
-            height: 0px;
-            cursor: n-resize;
-            border-width: 5px 0px;
-        }
-        & > .e._s {
-            bottom: 0px;
-            height: 0px;
-            cursor: s-resize;
-            border-width: 5px 0px;
-        }
-        & > .e._w {
-            left: 0px;
-            width: 0px;
-            cursor: w-resize;
-            border-width: 0px 5px;
-        }
-        & > .e._e {
-            right: 0px;
-            width: 0px;
-            cursor: e-resize;
-            border-width: 0px 5px;
         }
     }
 }
