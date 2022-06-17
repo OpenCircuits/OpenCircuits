@@ -35,7 +35,7 @@ export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOOb
         // if so then we want to also delete it
         // call CreateDeleteGroupAction again but with the current node includes in `objects`
         // and then just return early
-        if (found)
+        if (found) // TODO: Make this better cause it's pretty inefficient
             return CreateDeleteGroupAction(designer, [inputComp as IOObject, ...objects]);
     }
 
