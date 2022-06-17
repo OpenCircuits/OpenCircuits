@@ -6,7 +6,7 @@ import {Graph} from "math/Graph";
 function compareDepths(expected: string[][], actual: string[][]) {
     expect(actual.length).toEqual(expected.length);
         for (let i = 0; i < actual.length; i++)
-expect(actual[i].sort()).toEqual(expected[i].sort());
+            expect(actual[i].sort()).toEqual(expected[i].sort());
 }
 
 describe("Graph", () => {

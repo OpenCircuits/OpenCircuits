@@ -72,10 +72,10 @@ export const OscilloscopeRenderer = (() => {
             renderer.draw(new Rectangle(V(), size), style);
 
             if (!info.sim || !info.sim.hasData())
-return;
+                return;
             const curPlot = info.sim.getCurPlotID();
             if (!curPlot)
-return;
+                return;
 
             const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
 
@@ -83,7 +83,7 @@ return;
             const allData = enabledVecIDs.map(id => info.sim!.getVecData(id));
 
             if (!allData || Object.entries(allData).length === 0)
-return;
+                return;
 
             // Indepdendent axis data is always last element
             const xDataRaw = info.sim!.getVecData(info.sim!.getFullVecIDs()[info.sim!.getFullVecIDs().length-1]);
@@ -135,15 +135,15 @@ return;
             }
 
             if (showGrid)
-drawGrid(axesGridRect, plotRect);
+                drawGrid(axesGridRect, plotRect);
 
             if (showAxes)
-drawAxes(axesInfoRect, axesGridRect, plotRect);
+                drawAxes(axesInfoRect, axesGridRect, plotRect);
 
             drawGraphs(plotRect);
 
             if (showLegend)
-drawLegend(legendRect);
+                drawLegend(legendRect);
 
             function getMarks(bounds: Rect) {
                 const num = V(

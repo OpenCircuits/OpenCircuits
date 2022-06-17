@@ -35,7 +35,7 @@ export class PortSet<T extends Port> {
         this.currentPorts = [];
 
         if (count)
-this.setPortCount(count.getValue());
+            this.setPortCount(count.getValue());
     }
 
     /**
@@ -48,16 +48,16 @@ this.setPortCount(count.getValue());
         // no need to update if value is already
         //  the current amount
         if (newVal === this.currentPorts.length)
-return;
+            return;
 
         // set count (will auto-clamp)
         this.count.setValue(newVal);
 
         // add or remove ports to meet target
         while (this.currentPorts.length > this.count.getValue())
-this.oldPorts.push(this.currentPorts.pop()!);
+            this.oldPorts.push(this.currentPorts.pop()!);
         while (this.currentPorts.length < this.count.getValue())
-this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
+            this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
 
         // update positions
         this.positioner.updatePortPositions(this.currentPorts);

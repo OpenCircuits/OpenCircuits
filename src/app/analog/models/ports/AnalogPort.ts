@@ -26,7 +26,7 @@ export class AnalogPort extends Port {
         // find index and splice
         const i = this.connections.indexOf(w);
         if (i !== -1)
-this.connections.splice(i, 1);
+            this.connections.splice(i, 1);
     }
 
     public getInitialDir(): Vector {

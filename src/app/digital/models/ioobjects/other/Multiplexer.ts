@@ -24,7 +24,7 @@ export class Multiplexer extends Mux {
         super.updatePortNames();
         this.inputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
-p.setName(`I${i}`);
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts()[0].setName("O0");
 
@@ -37,7 +37,7 @@ p.setName(`I${i}`);
     public activate(): void {
         let num = 0;
         for (let i = 0; i < this.selects.length; i++)
-num = num | ((this.selects.get(i).getIsOn() ? 1 : 0) << i);
+            num = num | ((this.selects.get(i).getIsOn() ? 1 : 0) << i);
         super.activate(this.inputs.get(num).getIsOn());
     }
 

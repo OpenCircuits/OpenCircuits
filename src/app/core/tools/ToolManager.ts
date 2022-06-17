@@ -18,7 +18,7 @@ export class ToolManager {
 
     public reset(info: CircuitInfo): void {
         if (this.currentTool)
-this.currentTool.onDeactivate({ type: "unknown" }, info);
+            this.currentTool.onDeactivate({ type: "unknown" }, info);
         this.currentTool = undefined;
     }
 

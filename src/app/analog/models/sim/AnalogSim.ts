@@ -30,7 +30,7 @@ export class AnalogSim {
     public uploadNetlist(netlist: Netlist) {
         // If netlist already exists, free it
         if (this.netlistPtrs)
-this.netlistPtrs.forEach(ptr => this.lib.free_array(ptr));
+            this.netlistPtrs.forEach(ptr => this.lib.free_array(ptr));
 
         // Convert netlist to format for NGSpice
         const ngNetList = NetlistToNGSpice(netlist).map(line => line.join(" "));

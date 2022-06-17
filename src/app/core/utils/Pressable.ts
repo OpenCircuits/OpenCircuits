@@ -13,7 +13,7 @@ export interface Pressable extends Component {
 
 export function isPressable(p: unknown): p is Pressable {
     if (!(p instanceof Component))
-return false;
+        return false;
     return (p as Pressable).press   !== undefined &&
            (p as Pressable).click   !== undefined &&
            (p as Pressable).release !== undefined;

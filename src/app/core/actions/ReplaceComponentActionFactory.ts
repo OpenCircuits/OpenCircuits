@@ -23,7 +23,7 @@ import {TranslateAction} from "./transform/TranslateAction";
     const replacementPorts = replacement.getPorts();
 
     if (originalPorts.length !== replacementPorts.length)
-throw new Error("Mismatched number of ports of replacement");
+        throw new Error("Mismatched number of ports of replacement");
 
     action.add(new PlaceAction(designer, replacement).execute());
 

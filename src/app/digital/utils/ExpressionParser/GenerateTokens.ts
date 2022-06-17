@@ -21,7 +21,7 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
                                || SubStrEquals(expression, endIndex, ops.separator)
                           );
     if (endIndex)
-return {type: "input", name: expression.substring(index, endIndex)};
+        return {type: "input", name: expression.substring(index, endIndex)};
     return {type: "input", name: expression.substring(index, expression.length)};
 }
 

@@ -35,7 +35,7 @@ export function GetRenderFunc({ canvas, info }: Info) {
         renderer.clear();
 
         if (useGrid)
-Grid.render();
+            Grid.render();
 
         Wires.renderAll(designer.getWires(), selections.get());
         Components.renderAll(designer.getObjects(), selections.get());

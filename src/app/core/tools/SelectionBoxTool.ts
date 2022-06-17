@@ -18,7 +18,7 @@ export const SelectionBoxTool = (() => {
     return {
         shouldActivate(event: Event, {locked, input, selections, currentlyPressedObject}: CircuitInfo): boolean {
             if (locked)
-return false;
+                return false;
             // Activate if the user began dragging on empty canvas
             return (event.type === "mousedrag" &&
                     input.getTouchCount() === 1 &&
@@ -40,7 +40,7 @@ return false;
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())
-action.add(CreateDeselectAllAction(selections).execute());
+                action.add(CreateDeselectAllAction(selections).execute());
 
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
@@ -68,7 +68,7 @@ action.add(CreateDeselectAllAction(selections).execute());
 
         onEvent(event: Event, {input}: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
-return false;
+                return false;
 
             p2 = input.getMousePos();
 

@@ -24,7 +24,7 @@ export class Demultiplexer extends Mux {
         super.updatePortNames();
         this.outputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
-p.setName(`O${i}`);
+                p.setName(`O${i}`);
         });
         this.inputs.getPorts()[0].setName("I0");
     }

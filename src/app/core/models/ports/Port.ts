@@ -68,7 +68,7 @@ export abstract class Port implements Selectable {
     private updateDir(): void {
         // If target and origin are same, don't update dir
         if (this.target.sub(this.origin).len2() === 0)
-return;
+            return;
 
         this.dir = this.target.sub(this.origin).normalize();
     }

@@ -32,16 +32,16 @@ export class OutputPort extends Port {
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
         if (signal === this.isOn)
-return;
+            return;
         this.isOn = signal;
 
         // Get designer to propagate signal, exit if undefined
         const designer = this.parent.getDesigner();
         if (!designer)
-return;
+            return;
 
         for (const w of this.connections)
-designer.propagate(w, this.isOn);
+            designer.propagate(w, this.isOn);
     }
 
     /**
@@ -61,7 +61,7 @@ designer.propagate(w, this.isOn);
         // find index and splice
         const i = this.connections.indexOf(w);
         if (i !== -1)
-this.connections.splice(i, 1);
+            this.connections.splice(i, 1);
     }
 
     /**

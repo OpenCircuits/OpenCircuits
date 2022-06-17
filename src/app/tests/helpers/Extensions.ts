@@ -100,7 +100,7 @@ expect.extend({
                     break;
                 }
                 if (!visited.has(c))
-queue.push(c);
+                    queue.push(c);
             }
 
             depth--;

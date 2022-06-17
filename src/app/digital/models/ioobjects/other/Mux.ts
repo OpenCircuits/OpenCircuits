@@ -34,7 +34,7 @@ export abstract class Mux extends DigitalComponent {
     protected updatePortNames(): void {
         this.selects.getPorts().forEach((p, i) => {
             if (p.getName() === "")
-p.setName(`S${i}`);
+                p.setName(`S${i}`);
         });
     }
 

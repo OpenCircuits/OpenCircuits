@@ -19,7 +19,7 @@ import {AnalogCircuitDesigner, AnalogComponent} from "analog/models";
 export function AnalogCreate(itemId: string, _designer: AnalogCircuitDesigner): AnalogComponent {
     const component = Create<AnalogComponent>(itemId);
     if (!component)
-throw new Error(`Failed to create digital item w/ id: ${itemId}`);
+        throw new Error(`Failed to create digital item w/ id: ${itemId}`);
     return component;
 }
 

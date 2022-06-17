@@ -39,7 +39,7 @@ export async function LoadingScreen(
             await fn((percentDone) => {
                 // Update "sub-percent", i.e. for Images, would show progress as images load
                 if (errored)
-return;
+                    return;
                 setProgress(curPercent + (endPercent - curPercent) * percentDone);
                 setText(`${label} (${Math.floor(percentDone*100)}%)`);
             });

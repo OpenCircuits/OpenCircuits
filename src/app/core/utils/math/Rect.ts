@@ -99,7 +99,7 @@ export class Rect {
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
-return [];
+            return [];
 
         return [
             Rect.From({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),

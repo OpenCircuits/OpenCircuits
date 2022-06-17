@@ -68,9 +68,9 @@ export class Renderer {
 
         // Only fill or stroke if we have to
         if (style.fill())
-this.context.fill();
+            this.context.fill();
         if (style.stroke())
-this.context.stroke();
+            this.context.stroke();
 
         this.context.closePath();
         this.restore();
@@ -91,7 +91,7 @@ this.context.stroke();
 
         this.translate(pos);
         if (angle !== 0)
-this.rotate(angle);
+            this.rotate(angle);
         this.context.fillText(txt, 0, 0);
         this.restore();
     }
@@ -117,9 +117,9 @@ this.rotate(angle);
     }
     public hLine(pos: Vector, len: number, align: "left"|"center") {
         if (align === "center")
-this.pathLine(pos.sub(len/2, 0), pos.add(len/2, 0));
+            this.pathLine(pos.sub(len/2, 0), pos.add(len/2, 0));
         else
-this.pathLine(pos, pos.add(len, 0));
+            this.pathLine(pos, pos.add(len, 0));
     }
     public hLines(ys: number[], x0: number, len: number, align: "left"|"center") {
         ys.forEach(y => this.hLine(V(x0, y), len, align));
@@ -132,9 +132,9 @@ this.pathLine(pos, pos.add(len, 0));
     }
     public vLine(pos: Vector, len: number, baseline: "bottom"|"middle") {
         if (baseline === "middle")
-this.pathLine(pos.sub(0, len/2), pos.add(0, len/2));
+            this.pathLine(pos.sub(0, len/2), pos.add(0, len/2));
         else
-this.pathLine(pos, pos.sub(0, len));
+            this.pathLine(pos, pos.sub(0, len));
     }
     public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
         xs.forEach(x => this.vLine(V(x, y0), len, baseline));
@@ -153,30 +153,30 @@ this.pathLine(pos, pos.sub(0, len));
         this.beginPath();
         this.moveTo(path[0]);
         for (let s = 0; s < path.length-1; s++)
-this.lineWith(path[s+1]);
+            this.lineWith(path[s+1]);
         this.closePath();
         this.stroke();
     }
     public setPathStyle(style: Partial<Omit<CanvasPathDrawingStyles, "lineWidth" | "getLineDash" | "setLineDash">>) {
         if (style.lineCap && style.lineCap !== this.context.lineCap)
-this.context.lineCap = style.lineCap;
+            this.context.lineCap = style.lineCap;
         if (style.lineDashOffset && style.lineDashOffset !== this.context.lineDashOffset)
-this.context.lineDashOffset = style.lineDashOffset;
+            this.context.lineDashOffset = style.lineDashOffset;
         if (style.lineJoin && style.lineJoin !== this.context.lineJoin)
-this.context.lineJoin = style.lineJoin;
+            this.context.lineJoin = style.lineJoin;
         if (style.miterLimit && style.miterLimit !== this.context.miterLimit)
-this.context.miterLimit = style.miterLimit;
+            this.context.miterLimit = style.miterLimit;
     }
     public setStyle(style: Style, alpha = 1): void {
         // Set styles but only change them if they're different for optimization purposes
         if (alpha !== this.context.globalAlpha)
-this.context.globalAlpha = alpha;
+            this.context.globalAlpha = alpha;
 
         if (style.fillColor && style.fillColor !== this.context.fillStyle)
-this.context.fillStyle = style.fillColor;
+            this.context.fillStyle = style.fillColor;
         if (style.borderColor && style.borderColor !== this.context.strokeStyle)
-this.context.strokeStyle = style.borderColor;
+            this.context.strokeStyle = style.borderColor;
         if (style.borderSize && style.borderSize !== this.context.lineWidth)
-this.context.lineWidth = style.borderSize;
+            this.context.lineWidth = style.borderSize;
     }
 }

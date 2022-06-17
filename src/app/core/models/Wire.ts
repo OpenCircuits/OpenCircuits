@@ -42,7 +42,7 @@ export abstract class Wire extends CullableObject {
 
     private checkStraight(): void {
         if (!this.p1 || !this.p2)
-return;
+            return;
 
         const pos1 = this.p1.getWorldTargetPos();
         const pos2 = this.p2.getWorldTargetPos();
@@ -67,7 +67,7 @@ return;
 
     protected updateCurve(): void {
         if (!this.dirtyShape)
-return;
+            return;
         this.dirtyShape = false;
 
         this.checkStraight();
@@ -91,11 +91,11 @@ return;
 
     public canConnectTo(port: Port): boolean {
         if (this.p1 && this.p2)
-return false;
+            return false;
         if (this.p1)
-return port !== this.p1;
+            return port !== this.p1;
         if (this.p2)
-return port !== this.p2;
+            return port !== this.p2;
         return true;
     }
 
@@ -107,7 +107,7 @@ return port !== this.p2;
 
     public setIsStraight(straight: boolean): void {
         if (straight === this.straight)
-return;
+            return;
 
         this.straight = straight;
         this.onTransformChange();

@@ -13,7 +13,7 @@ export class SetPropertyAction implements Action {
 
     public constructor(component: AnalogComponent, key: string, prop: Prop) {
         if (!component.hasProp(key))
-throw new Error(`Cannot find property ${key} in ${component.getName()}!`);
+            throw new Error(`Cannot find property ${key} in ${component.getName()}!`);
 
         this.component = component;
         this.propKey = key;

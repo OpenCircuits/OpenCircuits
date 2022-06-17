@@ -28,7 +28,7 @@ export class XORGate extends Gate {
     public activate(): void {
         let on = false;
         for (const input of this.getInputPorts())
-on = (on !== input.getIsOn());
+            on = (on !== input.getIsOn());
         super.activate(on);
     }
 

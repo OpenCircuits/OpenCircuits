@@ -29,7 +29,7 @@ export const CopyHandler: EventHandler = ({
         const str = SerializeForCopy(objs);
 
         if (!ev.clipboardData)
-throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
+            throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
 
         // We don't copy the data from the json since it will cause
         // some weird error, which will cause the issue #746

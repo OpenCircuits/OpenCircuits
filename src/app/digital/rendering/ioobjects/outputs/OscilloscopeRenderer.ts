@@ -43,7 +43,7 @@ export const OscilloscopeRenderer = (() => {
                 const dy = -size.y/2 + (i + 0.5)*o.getDisplaySize().y;
 
                 if (signals.length <= 1)
-continue;
+                    continue;
 
                 // Calculate offset to account for border/line widths
                 const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
@@ -61,7 +61,7 @@ continue;
                     // Draws a vertical line so that the jump looks better
                     //  from 0 -> 1 or 1 -> 0
                     if (s > 0 && signals[s-1] !== signals[s])
-renderer.lineWith(positions[s]);
+                        renderer.lineWith(positions[s]);
                     renderer.lineWith(positions[s].add(dx, 0));
                 }
             }

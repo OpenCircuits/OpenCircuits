@@ -31,7 +31,7 @@ export const WireRenderer = (() => {
     return {
         render(renderer: Renderer, {camera, selections}: CircuitInfo, wire: Wire): void {
             if (!camera.cull(wire.getCullBox()))
-return;
+                return;
 
             const selected = selections.has(wire);
 
@@ -59,7 +59,7 @@ return;
         },
         renderAll(renderer: Renderer, info: CircuitInfo, wires: Wire[]): void {
             for (const wire of wires)
-WireRenderer.render(renderer, info, wire);
+                WireRenderer.render(renderer, info, wire);
         },
     };
 })();

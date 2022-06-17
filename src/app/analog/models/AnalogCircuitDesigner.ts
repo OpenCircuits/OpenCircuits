@@ -1,4 +1,4 @@
-import {serializable, serialize} from "serialeazy";
+            import {serializable, serialize} from "serialeazy";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -49,9 +49,9 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         // Remove objects, and wires 1-by-1
         //  (so that the proper callbacks get called)
         for (let i = this.objects.length-1; i >= 0; i--)
-this.removeObject(this.objects[i]);
+            this.removeObject(this.objects[i]);
         for (let i = this.wires.length-1; i >= 0; i--)
-this.removeWire(this.wires[i]);
+            this.removeWire(this.wires[i]);
     }
 
     public addCallback(callback: (ev: AnalogEvent) => void): void {
@@ -81,20 +81,20 @@ this.removeWire(this.wires[i]);
 
     public addGroup(group: IOObjectSet): void {
         for (const a of group.getComponents())
-this.addObject(a as AnalogComponent);
+            this.addObject(a as AnalogComponent);
 
         for (const b of group.getWires())
-this.addWire(b as AnalogWire);
+            this.addWire(b as AnalogWire);
     }
 
     public addObjects(objects: AnalogComponent[]): void {
         for (const object of objects)
-this.addObject(object);
+            this.addObject(object);
     }
 
     public addObject(obj: AnalogComponent): void {
         if (this.objects.includes(obj))
-throw new Error("Attempted to add an object that already existed!");
+            throw new Error("Attempted to add an object that already existed!");
 
         obj.setDesigner(this);
         this.objects.push(obj);
@@ -113,14 +113,14 @@ throw new Error("Attempted to add a wire that already existed!");
 
     public remove(o: AnalogComponent | AnalogWire): void {
         if (o instanceof AnalogComponent)
-this.removeObject(o);
+            this.removeObject(o);
         else
-this.removeWire(o);
+            this.removeWire(o);
     }
 
     public removeObject(obj: AnalogComponent): void {
         if (!this.objects.includes(obj))
-throw new Error("Attempted to remove object that doesn't exist!");
+            throw new Error("Attempted to remove object that doesn't exist!");
 
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
@@ -130,7 +130,7 @@ throw new Error("Attempted to remove object that doesn't exist!");
 
     public removeWire(wire: AnalogWire): void {
         if (!this.wires.includes(wire))
-throw new Error("Attempted to remove wire that doesn't exist!");
+            throw new Error("Attempted to remove wire that doesn't exist!");
 
         this.wires.splice(this.wires.indexOf(wire), 1);
 
@@ -149,7 +149,7 @@ throw new Error("Attempted to remove wire that doesn't exist!");
                 (obj instanceof AnalogComponent) ? (this.objects) : (this.wires);
         const i0 = arr.indexOf(obj);
         if (i0 === -1)
-throw new Error("Can't move object! Object doesn't exist!");
+            throw new Error("Can't move object! Object doesn't exist!");
 
         // Shift object to position
         i = (i === undefined ? arr.length : i);

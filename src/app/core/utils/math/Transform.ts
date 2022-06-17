@@ -67,10 +67,10 @@ export class Transform {
         // If parent changed then we need to recalculate matrix
         if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
-this.dirty = true;
+            this.dirty = true;
 
         if (!this.dirty)
-return;
+            return;
         this.dirty = false;
 
         this.matrix = new Matrix2x3();
@@ -87,7 +87,7 @@ return;
     }
     private updateSize(): void {
         if (!this.dirtySize)
-return;
+            return;
         this.dirtySize = false;
 
         this.localCorners = [this.size.scale(V(-0.5, 0.5)), this.size.scale(V(0.5, 0.5)),
@@ -99,15 +99,15 @@ return;
         // If parent changed then we need to recalculate corners
         if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
-this.dirtyCorners = true;
+            this.dirtyCorners = true;
 
         if (!this.dirtyCorners)
-return;
+            return;
         this.dirtyCorners = false;
 
         const corners = this.getLocalCorners();
         for (let i = 0; i < 4; i++)
-this.corners[i] = this.toWorldSpace(corners[i]);
+            this.corners[i] = this.toWorldSpace(corners[i]);
     }
 
     /**

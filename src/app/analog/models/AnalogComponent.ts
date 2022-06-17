@@ -99,7 +99,7 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
 
             Object.entries(infos).forEach(([key, info]) => {
                 if (!(key in allInfos))
-allInfos[key] = [];
+                    allInfos[key] = [];
                 allInfos[key].push(info);
 
                 // Merge isActive with groupIsActive
@@ -120,7 +120,7 @@ allInfos[key] = [];
 
         // If exactly one info, then no need to merge
         if (infos.length === 1)
-return;
+            return;
 
         // Merge displays
         if (infos.some(i => i.display !== info0.display)) {
@@ -181,7 +181,7 @@ export abstract class AnalogComponent extends Component {
     public setProp(key: string, val: Prop) {
         const prop = this.props[key];
         if (prop === undefined)
-throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
+            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
                             `My props: ${Object.entries(this.props).join(",")}`);
 
         this.props[key] = val;

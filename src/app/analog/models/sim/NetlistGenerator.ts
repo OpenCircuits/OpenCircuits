@@ -24,7 +24,7 @@ function GetAllPaths(start: AnalogWire): Path[] {
     while (outgoingQueue.length > 0) {
         const q = outgoingQueue.shift()!;
         if (visited.has(q))
-continue;
+            continue;
 
         const path = new Set<PathPart>();
         const queue = [q] as PathPart[];
@@ -45,13 +45,13 @@ continue;
                 const p1 = q.getP1Component(), p2 = q.getP2Component();
 
                 if (isNode(p1))
-outgoingConnected.push(p1 as AnalogNode);
+                    outgoingConnected.push(p1 as AnalogNode);
                 else
-outgoingConnected.push(q.getP1() as AnalogPort);
+                    outgoingConnected.push(q.getP1() as AnalogPort);
                 if (isNode(p2))
-outgoingConnected.push(p2 as AnalogNode);
+                    outgoingConnected.push(p2 as AnalogNode);
                 else
-outgoingConnected.push(q.getP2() as AnalogPort);
+                    outgoingConnected.push(q.getP2() as AnalogPort);
             } else {
                 outgoingConnected = q.getConnections();
             }
@@ -97,7 +97,7 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     paths.forEach((path, i) => {
         const ports = Array.from(path.values()).filter(p => p instanceof AnalogPort) as AnalogPort[];
         if (ports.some(p => p.getParent() instanceof Ground))
-fullPathIDs[i] = 0; // Whole path is connected to ground
+            fullPathIDs[i] = 0; // Whole path is connected to ground
     });
 
     const pathUIDs = new Map(paths.flatMap((s,i) => Array.from(s.values()).map((val) => [val, fullPathIDs[i]])));
@@ -109,7 +109,7 @@ fullPathIDs[i] = 0; // Whole path is connected to ground
         // Assume all components have only two ports for now
         const n1 = pathUIDs.get(comp.getPort(0)), n2 = pathUIDs.get(comp.getPort(1));
         if ((n1 === undefined) || (n2 === undefined))
-throw new Error(`Failed to get path for connections for component: ${comp.getName()}!`);
+            throw new Error(`Failed to get path for connections for component: ${comp.getName()}!`);
         elementConnections.set(comp, [n1, n2]);
     });
 

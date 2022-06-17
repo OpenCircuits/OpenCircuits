@@ -18,9 +18,9 @@ export function Request({method, url, headers, data, async}: Props): Promise<str
 
         xhr.onload = function() {
             if (this.status >= 200 && this.status < 400)
-resolve(this.response);
+                resolve(this.response);
             else
-reject(this.response);
+                reject(this.response);
         }
         xhr.onabort = xhr.onerror = xhr.ontimeout = (ev) => reject(ev);
 

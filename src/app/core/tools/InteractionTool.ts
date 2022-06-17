@@ -40,7 +40,7 @@ export class InteractionTool extends DefaultTool {
         const obj = this.findObject(worldMousePos, info);
         if (!obj) {
             if (locked)
-return false;
+                return false;
             return super.onEvent(event, info);
         }
 
@@ -77,7 +77,7 @@ return false;
         }
 
         if (locked)
-return false;
+            return false;
 
         return super.onEvent(event, info);
     }

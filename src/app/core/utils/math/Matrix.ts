@@ -32,7 +32,7 @@ export class Matrix2x3 {
         this.identity();
         if (other instanceof Matrix2x3) {
             for (let i = 0; i < 2*3; i++)
-this.mat[i] = other.mat[i];
+                this.mat[i] = other.mat[i];
         }
     }
 
@@ -42,7 +42,7 @@ this.mat[i] = other.mat[i];
      */
     public zero(): Matrix2x3 {
         for (let i = 0; i < 2*3; i++)
-this.mat[i] = 0;
+            this.mat[i] = 0;
         return this;
     }
 
@@ -169,13 +169,13 @@ this.mat[i] = 0;
         det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
 
         if (det === 0)
-return new Matrix2x3();
+            return new Matrix2x3();
 
         det = 1.0 / det;
 
         const m = new Matrix2x3();
         for (let i = 0; i < 2*3; i++)
-m.mat[i] = inv[i] * det;
+            m.mat[i] = inv[i] * det;
 
         return m;
     }
@@ -205,7 +205,7 @@ m.mat[i] = inv[i] * det;
     public equals(other: Matrix2x3): boolean {
         for (let i = 0; i < 2*3; i++) {
             if (this.mat[i] !== other.mat[i])
-return false;
+                return false;
         }
         return true;
     }

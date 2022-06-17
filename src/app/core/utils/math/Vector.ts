@@ -129,7 +129,7 @@ export class Vector {
 
     public scale(a: Vector | number): Vector {
         if (a instanceof Vector)
-return new Vector(a.x * this.x, a.y * this.y);
+            return new Vector(a.x * this.x, a.y * this.y);
         return new Vector(a * this.x, a * this.y);
     }
     /**
@@ -147,7 +147,7 @@ return new Vector(a.x * this.x, a.y * this.y);
     public normalize(): Vector {
         const len = this.len();
         if (len === 0)
-return new Vector(0, 0);
+            return new Vector(0, 0);
         return this.scale(1 / len);
     }
     /**
@@ -257,6 +257,6 @@ export function V(x: number): Vector;
 export function V(x: number, y: number): Vector;
 export function V(x: Vector | number = 0, y?: number): Vector {
     if (x instanceof Vector)
-return new Vector(x);
+        return new Vector(x);
     return new Vector(x, y!);
 }

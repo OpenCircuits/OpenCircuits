@@ -18,7 +18,7 @@ export class TFlipFlop extends FlipFlop {
         const toggle = this.inputs.get(TFlipFlop.TGL_PORT).getIsOn();
 
         if (this.up() && toggle)
-return !this.state;
+            return !this.state;
 
         return this.state;
     }

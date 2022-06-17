@@ -18,14 +18,14 @@ export class TransferICDataAction implements Action {
 
     public execute(): Action {
         for (const ic of this.data)
-this.target.addICData(ic);
+            this.target.addICData(ic);
 
         return this;
     }
 
     public undo(): Action {
         for (const ic of this.data)
-this.target.removeICData(ic);
+            this.target.removeICData(ic);
 
         return this;
     }

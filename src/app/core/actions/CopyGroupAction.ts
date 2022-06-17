@@ -32,11 +32,11 @@ export class CopyGroupAction implements Action {
     public undo(): Action {
         // Remove wires first
         for (const wire of this.copy.getWires())
-this.designer.removeWire(wire);
+            this.designer.removeWire(wire);
 
         // Remove objects
         for (const obj of this.copy.getComponents())
-this.designer.removeObject(obj);
+            this.designer.removeObject(obj);
 
         return this;
     }

@@ -27,7 +27,7 @@ export const SplitWireTool: Tool = (() => {
     return {
         shouldActivate(event: Event, {locked, input, currentlyPressedObject}: CircuitInfo): boolean {
             if (locked)
-return false;
+                return false;
             // Activate if the user dragged over a wire with 1 touch/finger
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     input.getTouchCount() === 1 &&
@@ -67,7 +67,7 @@ return false;
 
         onEvent(event: Event, info: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
-return false;
+                return false;
 
             const {input, camera} = info;
 

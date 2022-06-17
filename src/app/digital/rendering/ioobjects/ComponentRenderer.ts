@@ -70,7 +70,7 @@ export const ComponentRenderer = (() => {
         render(renderer: Renderer, {camera, selections}: CircuitInfo, object: Component): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
-return;
+                return;
 
             const selected = selections.has(object);
 
@@ -114,23 +114,23 @@ return;
 
             // Specific renderers
             if (object instanceof Gate)
-GateRenderer.render(renderer, camera, object, selected);
+                GateRenderer.render(renderer, camera, object, selected);
             else if (object instanceof Multiplexer || object instanceof Demultiplexer)
-MultiplexerRenderer.render(renderer, camera, object, selected);
+                MultiplexerRenderer.render(renderer, camera, object, selected);
             else if (object instanceof SegmentDisplay)
-SegmentDisplayRenderer.render(renderer, camera, object, selected);
+                SegmentDisplayRenderer.render(renderer, camera, object, selected);
             else if (object instanceof IC)
-ICRenderer.render(renderer, camera, object, selected);
+                ICRenderer.render(renderer, camera, object, selected);
             else if (object instanceof FlipFlop || object instanceof Latch)
-drawBox(renderer, transform, selected);
+                drawBox(renderer, transform, selected);
             else if (object instanceof Encoder || object instanceof Decoder)
-drawBox(renderer, transform, selected);
+                drawBox(renderer, transform, selected);
             else if (object instanceof Comparator)
-drawBox(renderer, transform, selected);
+                drawBox(renderer, transform, selected);
             else if (object instanceof ConstantNumber)
-ConstantNumberRenderer.render(renderer, object, selected);
+                ConstantNumberRenderer.render(renderer, object, selected);
             else if (object instanceof Oscilloscope)
-OscilloscopeRenderer.render(renderer, camera, object, selected);
+                OscilloscopeRenderer.render(renderer, camera, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
@@ -140,7 +140,7 @@ OscilloscopeRenderer.render(renderer, camera, object, selected);
             else if (imgName) {
                 const img = Images.GetImage(imgName);
                 if (!img)
-throw new Error("ComponentRender.render failed: img is undefined");
+                    throw new Error("ComponentRender.render failed: img is undefined");
                 renderer.image(img, V(), size, tint);
             }
 
@@ -151,7 +151,7 @@ throw new Error("ComponentRender.render failed: img is undefined");
         },
         renderAll(renderer: Renderer, info: CircuitInfo, objects: Component[]): void {
             for (const obj of objects)
-ComponentRenderer.render(renderer, info, obj);
+                ComponentRenderer.render(renderer, info, obj);
         },
     };
 })();

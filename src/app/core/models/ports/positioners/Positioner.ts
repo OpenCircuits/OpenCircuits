@@ -74,9 +74,9 @@ export class Positioner<T extends Port> {
         let l = this.scale * size/2 * (i - midpoint);
 
         if (this.shortenEdges && i === 0)
-l++;
+            l++;
         if (this.shortenEdges && i === numPorts-1)
-l--;
+            l--;
 
         return l;
     }

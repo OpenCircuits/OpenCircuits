@@ -141,20 +141,20 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
     describe("Parse: '" + expression + "'", () => {
         if (numInputs > 8)
-throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
         const inputs: Array<[string, Switch]> = [];
         const charCodeStart = "a".charCodeAt(0);
         for (let i = 0; i < numInputs; i++)
-inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
+            inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
         if (verbose === false || (verbose === undefined && numInputs > 3))
-testInputsSimple(inputs, objectSet, o, expected);
+            testInputsSimple(inputs, objectSet, o, expected);
         else
-testInputs(inputs, objectSet, o, expected);
+            testInputs(inputs, objectSet, o, expected);
     });
 }
 
@@ -629,7 +629,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 7; i++)
-inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
@@ -640,7 +640,7 @@ inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -649,7 +649,7 @@ expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 8; i++)
-inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
@@ -660,7 +660,7 @@ inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 8; i++)
-expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -669,7 +669,7 @@ expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 9; i++)
-inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
@@ -680,7 +680,7 @@ inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
                 // Doesn't matter if input 8 is connected to bigGate or the other or gate
                 expect(getOutputComponent(inputs[8][1])).not.toBe(bigGate);
             });
@@ -691,7 +691,7 @@ expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 4; i++)
-inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
@@ -714,7 +714,7 @@ inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 3; i++)
-inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 

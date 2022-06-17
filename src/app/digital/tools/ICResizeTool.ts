@@ -15,7 +15,7 @@ export const ICResizeTool = (() => {
 
     function findEdge({input, camera, ic}: ICCircuitInfo): ICEdge {
         if (!ic)
-throw new Error("ICResizeTool.findEdge failed: ic is undefined");
+            throw new Error("ICResizeTool.findEdge failed: ic is undefined");
         // Create slightly larger and smaller box and check
         //  if the mouse is between the two for an edge check
         const t1 = new Transform(ic.getPos(), ic.getSize().add(V(DEFAULT_BORDER_WIDTH*5)));
@@ -23,7 +23,7 @@ throw new Error("ICResizeTool.findEdge failed: ic is undefined");
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos)))
-return "none";
+            return "none";
 
         // Determine if mouse is over horizontal or vertical edge
         return (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - DEFAULT_BORDER_WIDTH*5/2 &&
@@ -49,7 +49,7 @@ return "none";
         onActivate(event: Event, info: ICCircuitInfo): void {
             edge = findEdge(info);
             if (event.type === "mousedrag")
-this.onEvent(event, info); // Explicitly call drag event
+                this.onEvent(event, info); // Explicitly call drag event
         },
         onDeactivate(): void {
             edge = "none";
@@ -58,10 +58,10 @@ this.onEvent(event, info); // Explicitly call drag event
 
         onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
-return false;
+                return false;
 
             if (!ic)
-throw new Error("ICResizeTool.onEvent failed: ic was undefined");
+                throw new Error("ICResizeTool.onEvent failed: ic was undefined");
 
             const data = ic.getData();
             const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -71,9 +71,9 @@ throw new Error("ICResizeTool.onEvent failed: ic was undefined");
             const newSize = (worldMousePos.sub(ic.getPos())).scale(2).abs();
 
             if (edge === "horizontal")
-data.setSize(V(newSize.x, originalSize.y));
+                data.setSize(V(newSize.x, originalSize.y));
             else if (edge === "vertical")
-data.setSize(V(originalSize.x, newSize.y));
+                data.setSize(V(originalSize.x, newSize.y));
 
             data.positionPorts();
             ic.update();

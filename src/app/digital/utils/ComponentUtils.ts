@@ -34,7 +34,7 @@ const gateInversion: Record<string, string> = {
 export function GetInvertedGate(oldGate: Gate): Gate {
     const oldName = GetIDFor(oldGate);
     if (!oldName || !(oldName in gateInversion))
-throw new Error(`Failed to find gate to invert with ID: ${oldName}!`);
+        throw new Error(`Failed to find gate to invert with ID: ${oldName}!`);
     const newName = gateInversion[oldName];
     return Create<Gate>(newName);
 }
@@ -57,7 +57,7 @@ export function LazyConnect(source: DigitalComponent, destination: DigitalCompon
     const inPort = destination.getInputPorts().find(port => port.getWires().length === 0);
 
     if (!inPort)
-throw new Error("No available InputPort on destination");
+        throw new Error("No available InputPort on destination");
 
     const wire = new DigitalWire(outPort, inPort);
     inPort.connect(wire);

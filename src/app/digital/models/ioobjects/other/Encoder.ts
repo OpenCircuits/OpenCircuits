@@ -27,7 +27,7 @@ export class Encoder extends DigitalComponent {
         // Filter ports that are on then map to their indices
         const onPorts = this.getInputPorts().filter((p) => p.getIsOn());
         if (onPorts.length !== 1)
-return; // Undefined behavior
+            return; // Undefined behavior
 
         // Get index of which port is on
         const index = this.getInputPorts().indexOf(onPorts[0]);
@@ -42,11 +42,11 @@ return; // Undefined behavior
     public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
-p.setName(`I${i}`);
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
-p.setName(`O${i}`);
+                p.setName(`O${i}`);
         });
     }
 

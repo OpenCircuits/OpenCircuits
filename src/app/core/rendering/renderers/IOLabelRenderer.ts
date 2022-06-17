@@ -40,7 +40,7 @@ export const IOLabelRenderer = (() => {
     return {
         render(renderer: Renderer, camera: Camera, object: Component): void {
             if (!camera.cull(object.getCullBox()))
-return;
+                return;
 
             const size = object.getTransform().getSize();
             object.getPorts().forEach((p) => drawPortText(renderer, p, size));

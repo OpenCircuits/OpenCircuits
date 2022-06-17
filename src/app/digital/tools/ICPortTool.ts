@@ -15,7 +15,7 @@ export const ICPortTool = (() => {
 
     function findPort({input, camera, ic}: ICCircuitInfo): Port | undefined {
         if (!ic)
-throw new Error("ICPortTool.findPort failed: ic was undefined");
+            throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         return ic.getPorts().find(p => PortContains(p, worldMousePos));
     }
@@ -36,7 +36,7 @@ throw new Error("ICPortTool.findPort failed: ic was undefined");
 
         onActivate(_: Event, info: ICCircuitInfo): void {
             if (!info.ic)
-throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
+                throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
             const icPort = findPort(info);
             port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort!)];
         },
@@ -47,10 +47,10 @@ throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
 
         onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
-return false;
+                return false;
 
             if (!ic)
-throw new Error("ICPortTool.onEvent failed: ic was undefined");
+                throw new Error("ICPortTool.onEvent failed: ic was undefined");
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -66,16 +66,16 @@ throw new Error("ICPortTool.onEvent failed: ic was undefined");
             } else if (worldMousePos.x === p.x && worldMousePos.y === p.y) {
                 // Set v outwards from the edge the origin position is on
                 if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
-v = V(0,-1).scale(p.y);
+                    v = V(0,-1).scale(p.y);
                 else
-v = V(-1,0).scale(p.x);
+                    v = V(-1,0).scale(p.x);
             }
 
             // Set the direction vector to the length of a port
             v = v.normalize().scale(-IO_PORT_LENGTH).add(p);
 
             if (!port)
-throw new Error("ICPortTool.onEvent failed: port is undefined");
+                throw new Error("ICPortTool.onEvent failed: port is undefined");
 
             // Set port for IC
             port.setOriginPos(p);

@@ -35,7 +35,7 @@ export function DigitalCreate(itemId: string, designer: DigitalCircuitDesigner):
     }
 
     if (!component)
-throw new Error(`Failed to create digital item w/ id: ${itemId}`);
+        throw new Error(`Failed to create digital item w/ id: ${itemId}`);
 
     return component;
 }

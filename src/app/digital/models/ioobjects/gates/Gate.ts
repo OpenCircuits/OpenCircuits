@@ -30,12 +30,12 @@ export abstract class Gate extends DigitalComponent {
     private setNot(not: boolean): void {
         // if flipped then flip output
         if (not !== this.not)
-this.outputs.first.activate(!this.outputs.first.getIsOn());
+            this.outputs.first.activate(!this.outputs.first.getIsOn());
         this.not = not;
 
         // change name to be the not'd name if name wasn't manually set by user
         if (!this.name.isSet())
-this.name = new Name(this.getDisplayName());
+            this.name = new Name(this.getDisplayName());
     }
 
     public isNot(): boolean {

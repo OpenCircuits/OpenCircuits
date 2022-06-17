@@ -31,7 +31,7 @@ export class ConstantNumber extends DigitalComponent {
      */
     public setInput(input: number): void {
         if (!Number.isInteger(input) || input < 0 || input >= 16)
-throw "input must be an integer in [0,16)"
+            throw "input must be an integer in [0,16)"
         this.inputNum = input;
         // set outputs for the new input value
         const outputs = DecimalToBCD(input);

@@ -41,7 +41,7 @@ export abstract class Latch extends DigitalComponent {
         this.enabled = this.inputs.get(Latch.E_PORT).getIsOn();
 
         if (this.enabled)
-this.state = this.getNextState();
+            this.state = this.getNextState();
 
         super.activate(this.state, Latch.Q_PORT);
         super.activate(!this.state, Latch.Q2_PORT);

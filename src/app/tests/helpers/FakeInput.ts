@@ -56,7 +56,7 @@ export class FakeInput extends Input {
     public move(amt: Vector, steps = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let i = 1; i <= steps; i++)
-super.onMouseMove(super.getMousePos().add(step));
+            super.onMouseMove(super.getMousePos().add(step));
         return this;
     }
     public moveTo(target: Vector, steps = 5): FakeInput {
@@ -66,7 +66,7 @@ super.onMouseMove(super.getMousePos().add(step));
 
         // Move a bit for each step
         for (let i = 1; i <= steps; i++)
-this.move(step);
+            this.move(step);
 
         return this;
     }
@@ -108,7 +108,7 @@ this.move(step);
     public moveTouches(amt: Vector, steps = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let i = 1; i <= steps; i++)
-this.touches.forEach((_, i) => this.moveTouch(i, step));
+            this.touches.forEach((_, i) => this.moveTouch(i, step));
         return this;
     }
     public releaseTouch(i = 0): FakeInput {

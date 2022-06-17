@@ -33,7 +33,7 @@ export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<H
             // Prompt to load
             const open = circuit.isSaved || !prompt || (prompt && window.confirm(OVERWRITE_CIRCUIT_MESSAGE));
             if (!open)
-return;
+                return;
 
             store.dispatch(_SetCircuitLoading(true));
 
@@ -76,7 +76,7 @@ return;
             // Prompt to load
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
             if (!open)
-return;
+                return;
 
             const { camera, history, designer, selections, renderer } = info;
 
@@ -101,7 +101,7 @@ return;
 
             // Don't save while loading
             if (circuit.saving || user.loading)
-return;
+                return;
 
             let success = await store.dispatch(SaveCircuit(helpers.GetSerializedCircuit()));
             success = await store.dispatch(LoadUserCircuits()) && success;
@@ -114,11 +114,11 @@ return;
 
             // Can't delete if not logged in
             if (!user.auth)
-return;
+                return;
 
             const shouldDelete = window.confirm(`Are you sure you want to delete circuit "${circuitData.getName()}"?`);
             if (!shouldDelete)
-return;
+                return;
 
             await DeleteUserCircuit(user.auth, circuitData.getId());
 
@@ -149,13 +149,13 @@ return;
 
             // Can't duplicate if not logged in
             if (!user.auth)
-return;
+                return;
 
             const { circuit } = store.getState();
 
             // Shouldn't be able to duplicate if circuit has never been saved
             if (circuit.id === "")
-return;
+                return;
 
             const thumbnail = GenerateThumbnail({ info });
             const circuitCopy = JSON.stringify(
@@ -174,7 +174,8 @@ return;
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
             if (!circuitCopyMetadata)
-throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: circuitCopyMetadata is undefined");
+                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: " +
+                                "circuitCopyMetadata is undefined");
 
             // Load circuit copy onto canvas
             await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, circuitCopyMetadata.getId()));

@@ -46,7 +46,7 @@ export const ResizeTool = (() => {
             info.cursor = cursor;
 
             if (event.type === "mousedrag")
-this.onEvent(event, info); // Explicitly call drag event
+                this.onEvent(event, info); // Explicitly call drag event
         },
         onDeactivate(_: Event, info: AnalogCircuitInfo): void {
             info.cursor = undefined;
@@ -61,7 +61,7 @@ this.onEvent(event, info); // Explicitly call drag event
 
         onEvent(event: Event, { camera, input, designer }: AnalogCircuitInfo): boolean {
             if (event.type !== "mousedrag")
-return false;
+                return false;
 
             const worldMouseDiff = camera.getWorldPos(input.getMousePos())
                                     .sub(camera.getWorldPos(input.getMouseDownPos()));

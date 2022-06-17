@@ -66,13 +66,13 @@ export class DigitalObjectSet extends IOObjectSet {
         for (const obj of objs) {
             // Input => >0 output ports and 0 input ports
             if (obj.numInputs() === 0 && obj.numOutputs() > 0)
-inputs.push(obj);
+                inputs.push(obj);
             // Output => >0 input ports and 0 output ports
             else if (obj.numInputs() > 0 && obj.numOutputs() === 0)
-outputs.push(obj);
+                outputs.push(obj);
             // Component => neither just input or output
             else
-others.push(obj);
+                others.push(obj);
         }
 
         return new DigitalObjectSet(inputs, outputs, others, wires);

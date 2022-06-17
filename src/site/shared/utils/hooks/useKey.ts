@@ -8,11 +8,11 @@ export const useKey = (key: Key) => {
 
     useDocEvent("keydown", (ev) => {
         if (ev.key === key)
-setIsKeyDown(true);
+            setIsKeyDown(true);
     }, [setIsKeyDown, key]);
     useDocEvent("keyup", (ev) => {
         if (ev.key === key)
-setIsKeyDown(false);
+            setIsKeyDown(false);
     }, [setIsKeyDown, key]);
 
     return isKeyDown;

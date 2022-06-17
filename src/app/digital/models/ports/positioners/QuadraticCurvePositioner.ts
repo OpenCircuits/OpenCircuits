@@ -27,7 +27,7 @@ export class QuadraticCurvePositioner extends Positioner<InputPort> {
 
             let t = ((port.getOriginPos().y) / parent.getSize().y + 0.5) % 1.0;
             if (t < 0)
-t += 1.0;
+                t += 1.0;
 
             // @TODO move to a MathUtils QuadCurve function or something
             const s = parent.getSize().x/2 - DEFAULT_BORDER_WIDTH;
