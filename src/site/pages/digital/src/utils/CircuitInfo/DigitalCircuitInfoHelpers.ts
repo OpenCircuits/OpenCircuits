@@ -177,7 +177,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
             if (!circuitCopyMetadata)
-                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: " + 
+                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: " +
                                 "circuitCopyMetadata is undefined");
 
             // Load circuit copy onto canvas
