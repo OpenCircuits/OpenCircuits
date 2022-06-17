@@ -85,7 +85,7 @@ module.exports = {
                 }
             }
         }],
-        // TODO: Finalize this better
+        // TODO: Finalize this
         "@typescript-eslint/naming-convention": [
             "error",
             { // General default, only camelCase with no leading/trailing underscores
@@ -141,6 +141,20 @@ module.exports = {
                 "selector": "classMethod",
                 "modifiers": ["static"],
                 "format": ["PascalCase"],
+            },
+            {
+                "selector": [
+                    "classProperty",
+                    "objectLiteralProperty",
+                    "typeProperty",
+                    "classMethod",
+                    "objectLiteralMethod",
+                    "typeMethod",
+                    "accessor",
+                    "enumMember"
+                ],
+                "format": null,
+                "modifiers": ["requiresQuotes"]
             },
         ],
 

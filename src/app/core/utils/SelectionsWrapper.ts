@@ -53,7 +53,7 @@ export class SelectionsWrapper {
      */
     public select(s: Selectable): boolean {
         if (this.isDisabled() || this.selections.has(s))
-            return false;
+return false;
         this.selections.add(s);
 
         // Callback change listeners
@@ -69,7 +69,7 @@ export class SelectionsWrapper {
      */
     public deselect(s: Selectable): boolean {
         if (this.isDisabled() || !this.selections.delete(s))
-            return false;
+return false;
 
         // Callback change listeners
         this.listeners.forEach(l => l());
@@ -124,7 +124,7 @@ export class SelectionsWrapper {
      */
     public midpoint(all = false): Vector {
         if (this.amount() === 0)
-            return V();
+return V();
 
         // Filter out selections that we can get the position of
         const selections =

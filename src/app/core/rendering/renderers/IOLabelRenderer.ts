@@ -34,13 +34,13 @@ export const IOLabelRenderer = (() => {
         const min = V(-xBound, -yBound);
         const max = V( xBound,  yBound);
 
-        renderer.text(port.getName(), Vector.clamp(pos, min, max), align);
+        renderer.text(port.getName(), Vector.Clamp(pos, min, max), align);
     }
 
     return {
         render(renderer: Renderer, camera: Camera, object: Component): void {
             if (!camera.cull(object.getCullBox()))
-                return;
+return;
 
             const size = object.getTransform().getSize();
             object.getPorts().forEach((p) => drawPortText(renderer, p, size));

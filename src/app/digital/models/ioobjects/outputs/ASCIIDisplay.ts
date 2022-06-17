@@ -27,11 +27,11 @@ export class ASCIIDisplay extends SegmentDisplay {
 
         const font = ASCIIFont[`${this.segmentCount}`];
         if (!font)
-            return false;
+return false;
 
         const glyph = font[dec] as number[];
         if (!glyph)
-            return false;
+return false;
 
         return glyph.includes(segment);
     }

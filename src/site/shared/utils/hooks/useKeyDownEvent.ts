@@ -8,10 +8,11 @@ import {Event} from "core/utils/Events";
 export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
-            return;
+return;
 
         const LookForKey = (ev: Event) => {
-            if (ev.type === "keydown" && ev.key === key) f();
+            if (ev.type === "keydown" && ev.key === key)
+f();
         }
 
         input.addListener(LookForKey);
@@ -24,7 +25,7 @@ export const useWindowKeyDownEvent = (key: Key, f: () => void, deps?: React.Depe
     useEffect(() => {
         const LookForKey = (ev: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement) && ev.key === key)
-                f();
+f();
         }
 
         window.addEventListener("keydown", LookForKey);

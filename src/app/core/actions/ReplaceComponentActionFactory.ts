@@ -1,5 +1,4 @@
-import {CircuitDesigner, Component, Port} from "core/models";
-import {Action} from "./Action";
+import {CircuitDesigner, Component} from "core/models";
 import {ConnectionAction, DisconnectAction} from "./addition/ConnectionAction";
 import {DeleteAction, PlaceAction} from "./addition/PlaceAction";
 import {GroupAction} from "./GroupAction";
@@ -22,7 +21,7 @@ import {TranslateAction} from "./transform/TranslateAction";
     const replacementPorts = replacement.getPorts();
 
     if (originalPorts.length !== replacementPorts.length)
-        throw new Error("Mismatched number of ports of replacement");
+throw new Error("Mismatched number of ports of replacement");
 
     action.add(new PlaceAction(designer, replacement).execute());
 

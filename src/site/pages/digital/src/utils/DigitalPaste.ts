@@ -44,7 +44,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     ics.forEach(ic => {
         const dataIndex = icDataIndices[icData.indexOf(ic.getData())];
         if (dataIndex === -1)
-            return; // Don't change IC since it uses the new Data
+return; // Don't change IC since it uses the new Data
         // Change ICData to point to the existing ICData in the designer
         ic["data"] = designer.getICData()[dataIndex];
     });
@@ -58,7 +58,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     newICData.forEach(d => {
         const newAction = TransferNewICData(d.getGroup().toList(), designer);
         if (newAction)
-            action.add(newAction)
+action.add(newAction)
     });
 
     return action;
@@ -87,7 +87,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
         const action = new GroupAction([], "Digital Paste");
         if (newICDataAction)
-            action.add(newICDataAction);
+action.add(newICDataAction);
         action.add(new GroupAction([
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),

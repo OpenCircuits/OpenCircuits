@@ -57,7 +57,7 @@ export class Camera {
      */
     private updateMatrix(): void {
         if (!this.dirty)
-            return;
+return;
 
         this.dirty = false;
 

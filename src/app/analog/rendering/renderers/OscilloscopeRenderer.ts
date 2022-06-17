@@ -72,10 +72,10 @@ export const OscilloscopeRenderer = (() => {
             renderer.draw(new Rectangle(V(), size), style);
 
             if (!info.sim || !info.sim.hasData())
-                return;
+return;
             const curPlot = info.sim.getCurPlotID();
             if (!curPlot)
-                return;
+return;
 
             const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
 
@@ -83,7 +83,7 @@ export const OscilloscopeRenderer = (() => {
             const allData = enabledVecIDs.map(id => info.sim!.getVecData(id));
 
             if (!allData || Object.entries(allData).length === 0)
-                return;
+return;
 
             // Indepdendent axis data is always last element
             const xDataRaw = info.sim!.getVecData(info.sim!.getFullVecIDs()[info.sim!.getFullVecIDs().length-1]);
@@ -135,15 +135,15 @@ export const OscilloscopeRenderer = (() => {
             }
 
             if (showGrid)
-                drawGrid(axesGridRect, plotRect);
+drawGrid(axesGridRect, plotRect);
 
             if (showAxes)
-                drawAxes(axesInfoRect, axesGridRect, plotRect);
+drawAxes(axesInfoRect, axesGridRect, plotRect);
 
             drawGraphs(plotRect);
 
             if (showLegend)
-                drawLegend(legendRect);
+drawLegend(legendRect);
 
             function getMarks(bounds: Rect) {
                 const num = V(
@@ -223,7 +223,7 @@ export const OscilloscopeRenderer = (() => {
                     const y = bounds.top + 20 + i*(boxSize+5);
 
                     // Draw box
-                    const box = Rect.from({
+                    const box = Rect.From({
                         left:   bounds.left, right:  bounds.left + boxSize,
                         bottom: y, top:    y + boxSize,
                     }, true);
@@ -241,7 +241,7 @@ export const OscilloscopeRenderer = (() => {
                 renderer.setPathStyle({ lineCap: "round" });
 
                 // Get data bounds as a rectangle
-                const dataBounds = Rect.from({ left: minX, right: maxX, bottom: minVal, top: maxVal }, false);
+                const dataBounds = Rect.From({ left: minX, right: maxX, bottom: minVal, top: maxVal }, false);
 
                 const scale = V(bounds.width / dataBounds.width, bounds.height / dataBounds.height);
 

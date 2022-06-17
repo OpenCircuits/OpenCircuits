@@ -49,9 +49,9 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         // Remove objects, and wires 1-by-1
         //  (so that the proper callbacks get called)
         for (let i = this.objects.length-1; i >= 0; i--)
-            this.removeObject(this.objects[i]);
+this.removeObject(this.objects[i]);
         for (let i = this.wires.length-1; i >= 0; i--)
-            this.removeWire(this.wires[i]);
+this.removeWire(this.wires[i]);
     }
 
     public addCallback(callback: (ev: AnalogEvent) => void): void {
@@ -68,8 +68,8 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     /**
      * Method to call when you want to force an update
-     * 	Used when something changed but isn't propagated
-     * 	(i.e. Clock updated but wasn't connected to anything)
+     *  Used when something changed but isn't propagated
+     *  (i.e. Clock updated but wasn't connected to anything)
      */
     public forceUpdate(): void {
         this.callback({ type: "forced" });
@@ -81,20 +81,20 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public addGroup(group: IOObjectSet): void {
         for (const a of group.getComponents())
-            this.addObject(a as AnalogComponent);
+this.addObject(a as AnalogComponent);
 
         for (const b of group.getWires())
-            this.addWire(b as AnalogWire);
+this.addWire(b as AnalogWire);
     }
 
     public addObjects(objects: AnalogComponent[]): void {
         for (const object of objects)
-            this.addObject(object);
+this.addObject(object);
     }
 
     public addObject(obj: AnalogComponent): void {
         if (this.objects.includes(obj))
-            throw new Error("Attempted to add an object that already existed!");
+throw new Error("Attempted to add an object that already existed!");
 
         obj.setDesigner(this);
         this.objects.push(obj);
@@ -104,7 +104,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public addWire(wire: AnalogWire): void {
         if (this.wires.includes(wire))
-            throw new Error("Attempted to add a wire that already existed!");
+throw new Error("Attempted to add a wire that already existed!");
 
         this.wires.push(wire);
 
@@ -113,14 +113,14 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public remove(o: AnalogComponent | AnalogWire): void {
         if (o instanceof AnalogComponent)
-            this.removeObject(o);
+this.removeObject(o);
         else
-            this.removeWire(o);
+this.removeWire(o);
     }
 
     public removeObject(obj: AnalogComponent): void {
         if (!this.objects.includes(obj))
-            throw new Error("Attempted to remove object that doesn't exist!");
+throw new Error("Attempted to remove object that doesn't exist!");
 
         this.objects.splice(this.objects.indexOf(obj), 1);
         obj.setDesigner(undefined);
@@ -130,7 +130,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public removeWire(wire: AnalogWire): void {
         if (!this.wires.includes(wire))
-            throw new Error("Attempted to remove wire that doesn't exist!");
+throw new Error("Attempted to remove wire that doesn't exist!");
 
         this.wires.splice(this.wires.indexOf(wire), 1);
 
@@ -149,7 +149,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
                 (obj instanceof AnalogComponent) ? (this.objects) : (this.wires);
         const i0 = arr.indexOf(obj);
         if (i0 === -1)
-            throw new Error("Can't move object! Object doesn't exist!");
+throw new Error("Can't move object! Object doesn't exist!");
 
         // Shift object to position
         i = (i === undefined ? arr.length : i);

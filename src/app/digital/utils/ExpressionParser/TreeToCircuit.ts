@@ -43,7 +43,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
-            throw new Error("Input Not Found: \"" + node.ident + "\"");
+throw new Error("Input Not Found: \"" + node.ident + "\"");
         const index = circuit.indexOf(inputs.get(node.ident)!);
         circuit.splice(index, 1);
         circuit.push(inputs.get(node.ident)!);
@@ -60,7 +60,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
         newGate.setInputPortCount(node.children.length);
         node.children.forEach(child => {
             if (!child)
-                throw new Error("treeToCircuitCore failed: child was undefined");
+throw new Error("treeToCircuitCore failed: child was undefined");
             const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
             const wire = LazyConnect(prevNode, newGate);
             ret.push(wire);
@@ -81,7 +81,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  */
 export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
     if (!tree)
-        return [];
+return [];
 
     let ret: IOObject[] = Array.from(inputs.values());
 

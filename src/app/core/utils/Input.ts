@@ -108,13 +108,13 @@ export class Input {
                 this.onKeyDown(e.key as Key);
 
                 if (this.isPreventedCombination(e.key as Key))
-                    e.preventDefault();
+e.preventDefault();
             }
         }, false);
         window.addEventListener("keyup",   (e: KeyboardEvent) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key as Key)
+this.onKeyUp(e.key as Key)
         }, false);
 
         window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
@@ -138,7 +138,7 @@ export class Input {
 
             // Fixes issue #777, stops Firefox from scrolling and allows panning
             if (e.button === MIDDLE_MOUSE_BUTTON)
-                e.preventDefault();
+e.preventDefault();
         }, false);
 
         this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
@@ -202,8 +202,8 @@ export class Input {
 
         touchManager.add(new Hammer.Tap());
         touchManager.on("tap", (e) => {
-            if (e.pointerType == "mouse")
-                return;
+            if (e.pointerType === "mouse")
+return;
 
             this.onClick(V(e.center.x, e.center.y));
         });
@@ -211,7 +211,8 @@ export class Input {
         // This function is used to prevent default zoom in gesture for all browsers
         //  Fixes #745
         document.addEventListener("wheel",
-            (e) => { if (e.ctrlKey) e.preventDefault(); },
+            (e) => { if (e.ctrlKey)
+e.preventDefault(); },
             { passive: false }
         );
     }
@@ -283,7 +284,7 @@ export class Input {
      */
     public isKeyDown(key: Key): boolean {
         return (this.keysDown.has(key) &&
-                this.keysDown.get(key) == true);
+                this.keysDown.get(key) === true);
     }
 
     /**
@@ -416,7 +417,7 @@ export class Input {
         // calculate zoom factor
         let zoomFactor = 0.95;
         if (delta >= 0)
-            zoomFactor = 1.0 / zoomFactor;
+zoomFactor = 1.0 / zoomFactor;
 
         this.callListeners({
             type:   "zoom",
@@ -547,7 +548,7 @@ export class Input {
     protected onBlur(): void {
         this.keysDown.forEach((down, key) => {
             if (down)
-                this.onKeyUp(key);
+this.onKeyUp(key);
         });
     }
 
@@ -558,9 +559,9 @@ export class Input {
      */
     private callListeners(event: Event): void {
         if (this.blocked)
-            return;
+return;
 
         for (const listener of this.listeners)
-            listener(event);
+listener(event);
     }
 }

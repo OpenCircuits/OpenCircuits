@@ -12,14 +12,14 @@ import {OutputPort} from "digital/models/ports/OutputPort";
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
     if (inputPorts.length !== outputPorts.length)
-        throw new Error("Expected equal size input and output ports to bus!");
+throw new Error("Expected equal size input and output ports to bus!");
 
     if (inputPorts.length === 0)
-        return new GroupAction([], "Bus Action");
+return new GroupAction([], "Bus Action");
 
     const designer = inputPorts[0].getParent().getDesigner();
     if (!designer)
-        throw new Error("CreateBusAction failed: Designer not found");
+throw new Error("CreateBusAction failed: Designer not found");
 
     // Basic idea is to take each input component and output component from each
     //  port and assemble them into a sort-of single giant average input component and output component

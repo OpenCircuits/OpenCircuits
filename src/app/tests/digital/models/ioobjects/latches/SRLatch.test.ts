@@ -12,7 +12,7 @@ describe("SRLatch", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {AutoPlace} = GetHelpers(designer);
 
-    const [f, [S, E, R], [Q, Q2]] = AutoPlace(new SRLatch());
+    const [, [S, E, R], [Q, Q2]] = AutoPlace(new SRLatch());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

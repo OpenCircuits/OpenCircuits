@@ -12,7 +12,7 @@ describe("TFlipFlop", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {AutoPlace} = GetHelpers(designer);
 
-    const [f, [PRE, CLR, T, C], [Q, Q2]] = AutoPlace(new TFlipFlop());
+    const [, [PRE, CLR, T, C], [Q, Q2]] = AutoPlace(new TFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

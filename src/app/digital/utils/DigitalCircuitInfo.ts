@@ -1,4 +1,3 @@
-import {HistoryManager} from "core/actions/HistoryManager";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {DigitalCircuitDesigner} from "digital/models";
 

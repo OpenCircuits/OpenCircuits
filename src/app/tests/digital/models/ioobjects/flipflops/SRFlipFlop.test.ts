@@ -12,7 +12,7 @@ describe("SRFlipFlop", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {AutoPlace} = GetHelpers(designer);
 
-    const [f, [PRE, CLR, S, C, R], [Q, Q2]] = AutoPlace(new SRFlipFlop());
+    const [, [PRE, CLR, S, C, R], [Q, Q2]] = AutoPlace(new SRFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

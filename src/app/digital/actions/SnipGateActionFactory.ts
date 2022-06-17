@@ -18,7 +18,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
     const action = new GroupAction([], "Snip Gate Action");
     const designer = gate.getDesigner();
     if (!designer)
-        throw new Error("gate not placed in designer");
+throw new Error("gate not placed in designer");
 
     const inputs = gate.getInputs();
     const outputs = gate.getOutputs();

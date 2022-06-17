@@ -21,7 +21,7 @@ describe("Add Group Action", () => {
         outPort.connect(wire);
         inPort.connect(wire);
 
-        const circuit = DigitalObjectSet.from([input, output, wire]);
+        const circuit = DigitalObjectSet.From([input, output, wire]);
         new AddGroupAction(designer, circuit).execute();
 
         expect(circuit.getWires().length).toBe(1);

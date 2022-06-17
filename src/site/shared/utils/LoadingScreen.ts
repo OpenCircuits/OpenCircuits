@@ -39,7 +39,7 @@ export async function LoadingScreen(
             await fn((percentDone) => {
                 // Update "sub-percent", i.e. for Images, would show progress as images load
                 if (errored)
-                    return;
+return;
                 setProgress(curPercent + (endPercent - curPercent) * percentDone);
                 setText(`${label} (${Math.floor(percentDone*100)}%)`);
             });
@@ -53,7 +53,8 @@ export async function LoadingScreen(
             if (isError(e)) {
                 issueURL.searchParams.set(
                     "body",
-                    `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n${getStackTrace(e).join("\n")}\n`
+                    `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n` +
+                        `${getStackTrace(e).join("\n")}\n`
                 );
             }
             issueURL.searchParams.set(
@@ -63,11 +64,12 @@ export async function LoadingScreen(
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";
-            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
-                Error occurred while "${label}". Please refresh the page.
-                <br />
-                If this error continues to occur, please click this text to submit a bug report.
-            </a>`;
+            loadingText.innerHTML =
+                `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
+                    Error occurred while "${label}". Please refresh the page.
+                    <br />
+                    If this error continues to occur, please click this text to submit a bug report.
+                </a>`;
 
             console.error(e);
 

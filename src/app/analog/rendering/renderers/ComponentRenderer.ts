@@ -45,7 +45,7 @@ export const ComponentRenderer = (() => {
 
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
-                return;
+return;
 
             const selected = selections.has(object);
 
@@ -80,14 +80,14 @@ export const ComponentRenderer = (() => {
 
             // Specific renderers
             if (object instanceof Oscilloscope)
-                OscilloscopeRenderer.render(renderer, info, object, selected);
+OscilloscopeRenderer.render(renderer, info, object, selected);
 
             // Draw tinted image
             const tint = (selected ? SELECTED_FILL_COLOR : undefined);
             if (imgName) {
                 const img = Images.GetImage(imgName);
                 if (!img)
-                    throw new Error("ComponentRender.render failed: img is undefined");
+throw new Error("ComponentRender.render failed: img is undefined");
                 renderer.image(img, V(), size, tint);
             }
 
@@ -98,7 +98,7 @@ export const ComponentRenderer = (() => {
         },
         renderAll(renderer: Renderer, info: AnalogCircuitInfo, objects: Component[]): void {
             for (const obj of objects)
-                ComponentRenderer.render(renderer, info, obj);
+ComponentRenderer.render(renderer, info, obj);
         },
     };
 })();

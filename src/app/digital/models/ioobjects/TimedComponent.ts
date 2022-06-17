@@ -39,13 +39,13 @@ export abstract class TimedComponent extends DigitalComponent {
         this.stopTimeout();
 
         if (this.paused)
-            return;
+return;
 
         this.onTick();
 
         // Send an update to the designer
         if (this.designer !== undefined)
-            this.designer.forceUpdate();
+this.designer.forceUpdate();
 
         // Recursively call `tick` to continuously update
         this.timeout = window.setTimeout(() => {
@@ -79,6 +79,6 @@ export abstract class TimedComponent extends DigitalComponent {
     // Restart ticking
     public reset(): void {
         if (!this.paused)
-            this.tick();
+this.tick();
     }
 }

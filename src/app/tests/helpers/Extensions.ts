@@ -2,7 +2,9 @@ import {DigitalComponent} from "digital/models";
 import "jest";
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace jest {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
             toApproximatelyEqual(expected: any, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
@@ -39,7 +41,7 @@ expect.extend({
         }
 
         Object.keys(received).forEach((key) => {
-            if (expected[key] == undefined) {
+            if (expected[key] === undefined) {
                 return {
                     message: () => `expected ${expected} to have key ${key} that ${received} has`,
                     pass:    false,
@@ -74,7 +76,7 @@ expect.extend({
 
     toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
         if (!(source instanceof DigitalComponent))
-            throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
+throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 
         let {depth} = options;
 
@@ -97,7 +99,7 @@ expect.extend({
                     break;
                 }
                 if (!visited.has(c))
-                    queue.push(c);
+queue.push(c);
             }
 
             depth--;

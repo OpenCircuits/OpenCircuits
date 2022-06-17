@@ -22,9 +22,9 @@ export abstract class CircuitDesigner {
         this.reset();
 
         for (const obj of designer.getObjects())
-            this.addObject(obj);
+this.addObject(obj);
         for (const wire of designer.getWires())
-            this.addWire(wire);
+this.addWire(wire);
     }
 
     public abstract shift(obj: Component | Wire, i?: number): number;

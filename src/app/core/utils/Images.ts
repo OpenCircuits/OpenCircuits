@@ -20,7 +20,7 @@ export const Images = (() => {
 
             const drawing = CreateDrawingFromSVG(svgXML, (DEBUG_NO_FILL ? { fillStyle: "none" } : {}));
             if (!drawing)
-                throw new Error(`Failed to create drawing for svg: img/items/${imageName}`);
+throw new Error(`Failed to create drawing for svg: img/items/${imageName}`);
             images.set(imageName, drawing);
         } catch (e) {
             throw new Error(e);

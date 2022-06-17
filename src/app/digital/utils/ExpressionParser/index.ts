@@ -1,4 +1,4 @@
-import {Formats} from "./Constants/Formats";
+import {FORMATS} from "./Constants/Formats";
 import {OperatorFormat} from "./Constants/DataStructures";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
@@ -31,7 +31,7 @@ import {TreeToCircuit} from "./TreeToCircuit";
 export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
                                     expression: string,
                                     output: DigitalComponent,
-                                    ops: OperatorFormat = Formats[0]): DigitalObjectSet {
+                                    ops: OperatorFormat = FORMATS[0]): DigitalObjectSet {
 
     ValidateInputOutputTypes(inputs, output);
 
@@ -41,5 +41,5 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
 
-    return DigitalObjectSet.from(fullCircuit);
+    return DigitalObjectSet.From(fullCircuit);
 }

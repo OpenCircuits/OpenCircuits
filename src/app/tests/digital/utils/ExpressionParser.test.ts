@@ -1,9 +1,9 @@
 import "jest";
 
-import {InputToken, InputTreeBinOpNode,
-        InputTreeIdent, InputTreeUnOpNode, OperatorFormat,
+import {InputToken, InputTreeIdent,
+        InputTreeUnOpNode, OperatorFormat,
         Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
@@ -58,7 +58,7 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  */
 function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
+throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -69,15 +69,15 @@ function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, 
     for (let num = 2**inputs.length - 1; num >= 0; num--) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
-            if (num & (2**index))
-                testTitle += " " + inputs[index][0];
+if (num & (2**index))
+testTitle += " " + inputs[index][0];
         if (testTitle === "Inputs on:")
-            testTitle += " [none]";
+testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
         test(testTitle, () => {
             for (let index = 0; index < inputs.length; index++)
-                inputs[index][1].activate(!!(num & (2**index)));
+inputs[index][1].activate(!!(num & (2**index)));
             expect(output.isOn()).toBe(expected[num]);
         });
     }
@@ -96,7 +96,7 @@ function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, 
  */
 function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
+throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -107,7 +107,7 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
     test("Test all states", () => {
         for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
             for (let index = 0; index < inputs.length; index++)
-                inputs[index][1].activate(!!(num & (2 ** index)));
+inputs[index][1].activate(!!(num & (2 ** index)));
             expect(output.isOn()).toBe(expected[num]);
         }
     });
@@ -135,20 +135,20 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
     describe("Parse: '" + expression + "'", () => {
         if (numInputs > 8)
-            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
         const inputs: Array<[string, Switch]> = [];
         const charCodeStart = "a".charCodeAt(0);
         for (let i = 0; i < numInputs; i++)
-            inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
-        if (verbose === false || (verbose == undefined && numInputs > 3))
-            testInputsSimple(inputs, objectSet, o, expected);
+        if (verbose === false || (verbose === undefined && numInputs > 3))
+testInputsSimple(inputs, objectSet, o, expected);
         else
-            testInputs(inputs, objectSet, o, expected);
+testInputs(inputs, objectSet, o, expected);
     });
 }
 
@@ -606,15 +606,15 @@ describe("Expression Parser", () => {
     });
 
     describe("Alternate Formats", () => {
-        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], Formats[1]);
+        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], FORMATS[1]);
 
-        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], Formats[2]);
+        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], FORMATS[2]);
 
-        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], Formats[1]);
+        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], FORMATS[1]);
 
-        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], Formats[2]);
+        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], FORMATS[2]);
 
-        runTests(1, "_a", [true, false], Formats[3]);
+        runTests(1, "_a", [true, false], FORMATS[3]);
     });
 
     describe("Binary gate variants", () => {
@@ -623,7 +623,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 7; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
@@ -634,7 +634,7 @@ describe("Expression Parser", () => {
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -643,7 +643,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 8; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
@@ -654,7 +654,7 @@ describe("Expression Parser", () => {
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 8; i++)
-                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
             });
         });
 
@@ -663,7 +663,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 9; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
@@ -674,7 +674,7 @@ describe("Expression Parser", () => {
             test("Correct connections", () => {
                 const bigGate = getOutputComponent(inputs[0][1]);
                 for (let i = 1; i < 7; i++)
-                    expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
+expect(getOutputComponent(inputs[i][1])).toBe(bigGate);
                 // Doesn't matter if input 8 is connected to bigGate or the other or gate
                 expect(getOutputComponent(inputs[8][1])).not.toBe(bigGate);
             });
@@ -685,7 +685,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 4; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
@@ -708,7 +708,7 @@ describe("Expression Parser", () => {
             const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 3; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 

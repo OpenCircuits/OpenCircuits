@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 
 export type WASMModule = {
     _malloc: (length: number) => number;
@@ -91,7 +92,8 @@ function GetArray<T extends GetArrayParams>(
         let len = o.len;
         if (!len) {
             let pos = ptr;
-            while(module.HEAPU8[pos++] !== 0);
+            while(module.HEAPU8[pos++] !== 0)
+;
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU8.subarray(ptr, ptr + len);
@@ -102,12 +104,13 @@ function GetArray<T extends GetArrayParams>(
         let len = o.len;
         if (!len) {
             let pos = ptr;
-            while(module.HEAPU32[pos++] !== 0);
+            while(module.HEAPU32[pos++] !== 0)
+;
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
         if (o.type === "string*")
-            return Array.from(arr) as GetArrayReturn<T>;
+return Array.from(arr) as GetArrayReturn<T>;
         return Array.from(arr, ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {

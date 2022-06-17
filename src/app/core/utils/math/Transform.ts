@@ -65,12 +65,12 @@ export class Transform {
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
-            this.dirty = true;
+this.dirty = true;
 
         if (!this.dirty)
-            return;
+return;
         this.dirty = false;
 
         this.matrix = new Matrix2x3();
@@ -78,7 +78,7 @@ export class Transform {
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
 
-        if (this.parent != undefined) {
+        if (this.parent !== undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
             this.prevParentMatrix = this.parent.getMatrix();
         }
@@ -87,7 +87,7 @@ export class Transform {
     }
     private updateSize(): void {
         if (!this.dirtySize)
-            return;
+return;
         this.dirtySize = false;
 
         this.localCorners = [this.size.scale(V(-0.5, 0.5)), this.size.scale(V(0.5, 0.5)),
@@ -97,17 +97,17 @@ export class Transform {
     }
     private updateCorners(): void {
         // If parent changed then we need to recalculate corners
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
-            this.dirtyCorners = true;
+this.dirtyCorners = true;
 
         if (!this.dirtyCorners)
-            return;
+return;
         this.dirtyCorners = false;
 
         const corners = this.getLocalCorners();
         for (let i = 0; i < 4; i++)
-            this.corners[i] = this.toWorldSpace(corners[i]);
+this.corners[i] = this.toWorldSpace(corners[i]);
     }
 
     /**
@@ -254,7 +254,7 @@ export class Transform {
         return trans;
     }
 
-    public static fromCorners(p1: Vector, p2: Vector): Transform {
+    public static FromCorners(p1: Vector, p2: Vector): Transform {
         return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
     }
 }

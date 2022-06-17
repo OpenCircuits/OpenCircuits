@@ -31,13 +31,13 @@ export class InputPort extends Port {
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
         if (signal === this.isOn)
-            return;
+return;
         this.isOn = signal;
 
         // Get designer to propagate signal, exit if undefined
         const designer = this.parent.getDesigner();
         if (!designer)
-            return;
+return;
 
         designer.propagate(this.parent, this.isOn);
     }
@@ -49,7 +49,7 @@ export class InputPort extends Port {
      */
     public connect(wire: DigitalWire): void {
         if (this.connections.length === 1)
-            throw new Error("Cannot connect to Input Port! Connection already exists!");
+throw new Error("Cannot connect to Input Port! Connection already exists!");
         this.connections = [wire];
         this.activate(wire.getIsOn());
     }

@@ -11,7 +11,7 @@ describe("XORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {AutoPlace} = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new XORGate());
+        const [, [a, b], [o]] = AutoPlace(new XORGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -45,7 +45,7 @@ describe("XORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {AutoPlace} = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new XORGate(true));
+        const [, [a, b], [o]] = AutoPlace(new XORGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

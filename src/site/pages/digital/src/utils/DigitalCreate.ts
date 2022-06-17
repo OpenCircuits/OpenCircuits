@@ -28,14 +28,14 @@ export function DigitalCreate(itemId: string, designer: DigitalCircuitDesigner):
     let component: DigitalComponent;
 
     if (itemId.startsWith("ic")) {
-        const [_, id] = itemId.split("/");
+        const [, id] = itemId.split("/");
         component = new IC(designer.getICData()[parseInt(id)]);
     } else {
         component = Create<DigitalComponent>(itemId);
     }
 
     if (!component)
-        throw new Error(`Failed to create digital item w/ id: ${itemId}`);
+throw new Error(`Failed to create digital item w/ id: ${itemId}`);
 
     return component;
 }

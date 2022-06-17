@@ -40,7 +40,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
 
         const areaI = areas.findIndex(a => a.contains(worldMousePos));
         if (areaI === -1)
-            continue;
+continue;
 
         const dPos = areas[areaI].center.sub(pos);
         const dir = V(

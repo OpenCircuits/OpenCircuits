@@ -33,9 +33,9 @@ export class MuxPortChangeAction extends PortChangeAction {
         this.obj = obj;
 
         if (obj instanceof Multiplexer)
-            this.otherPortAction = new InputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
+this.otherPortAction = new InputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
         else
-            this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
+this.otherPortAction = new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
     }
 
     /**
@@ -44,7 +44,7 @@ export class MuxPortChangeAction extends PortChangeAction {
      * @param val is the target number the user chose.
      */
     protected changeSize(val: number): void {
-        this.obj.setSize(Mux.calcSize(val));
+        this.obj.setSize(Mux.CalcSize(val));
     }
 
     /**

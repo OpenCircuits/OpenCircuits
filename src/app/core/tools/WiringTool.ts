@@ -33,14 +33,14 @@ export const WiringTool = (() => {
         // Look through all ports in array
         //  and find closest one to the mouse
         if (ports.length < 1)
-            return undefined;
+return undefined;
 
         let nearestport = ports[0];
         let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
         for (const port of ports) {
             const test = worldMousePos.distanceTo(port.getWorldTargetPos());
             if (test <= IO_PORT_RADIUS)
-                return port;
+return port;
             if (test < dist) {
                 nearestport = port;
                 dist = test;
@@ -68,7 +68,7 @@ export const WiringTool = (() => {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
             const {locked, input, designer} = info;
             if (locked)
-                return false;
+return false;
             const ports = findPorts(info);
             // Activate if the user drags or clicks on a port
             return ((event.type === "mousedown" && event.button === LEFT_MOUSE_BUTTON && input.getTouchCount() === 1) ||
@@ -107,13 +107,13 @@ export const WiringTool = (() => {
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
-                history.add(new ConnectionAction(designer, port, port2).execute());
+history.add(new ConnectionAction(designer, port, port2).execute());
         },
 
 
         onEvent(event: Event, {input, camera}: CircuitInfo): boolean {
             if (event.type !== "mousemove")
-                return false;
+return false;
 
             setWirePoint(camera.getWorldPos(input.getMousePos()));
             return true;

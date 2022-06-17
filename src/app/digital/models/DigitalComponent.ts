@@ -39,7 +39,7 @@ export abstract class DigitalComponent extends Component {
     public activate(signal: boolean, i = 0): void {
         // Don't try to activate an Output component since it has no outputs
         if (this.outputs.isEmpty())
-            return;
+return;
 
         this.outputs.get(i).activate(signal);
     }
@@ -81,7 +81,7 @@ export abstract class DigitalComponent extends Component {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput())
-                .filter((w) => w != null);
+                .filter(w => !!w);
     }
 
     public numInputs(): number {

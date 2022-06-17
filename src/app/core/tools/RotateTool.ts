@@ -1,7 +1,7 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -32,7 +32,7 @@ export const RotateTool = (() => {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
             const {input, selections, locked} = info;
             if (locked)
-                return false;
+return false;
             // Activate if the user pressed their mouse or finger down
             //  over the "rotation circle" which only appears if
             //  there are Components being selected
@@ -72,7 +72,7 @@ export const RotateTool = (() => {
 
         onEvent(event: Event, {camera, input, selections}: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
-                return false;
+return false;
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
             const components = selections.get() as Component[];

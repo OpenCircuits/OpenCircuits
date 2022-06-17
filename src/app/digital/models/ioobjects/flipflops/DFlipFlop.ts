@@ -19,7 +19,7 @@ export class DFlipFlop extends FlipFlop {
         const data = this.inputs.get(DFlipFlop.DATA_PORT).getIsOn();
 
         if (this.up())
-            return data;
+return data;
 
         return this.state;
     }

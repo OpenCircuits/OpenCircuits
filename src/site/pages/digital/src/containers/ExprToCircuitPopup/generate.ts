@@ -2,7 +2,7 @@ import {Create} from "serialeazy";
 
 import {OperatorFormat,
         OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats}             from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS}             from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {AddGroupAction}          from "core/actions/addition/AddGroupAction";
 import {ConnectionAction}        from "core/actions/addition/ConnectionAction";
@@ -49,7 +49,7 @@ const defaultOptions: ExprToCirGeneratorOptions = {
     connectClocksToOscope: false,
     label:                 false,
     format:                "|",
-    ops:                   Formats[0],
+    ops:                   FORMATS[0],
 }
 
 function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
@@ -81,7 +81,8 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
         for (const clock of inputMap.values()) {
             action.add(new ConnectionAction(designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
             inIndex++;
-            if (inIndex === 5) break;
+            if (inIndex === 5)
+                break;
         }
     }
 }
@@ -105,9 +106,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
-    const ops = (options.format === "custom") ? (options.ops) : (Formats.find(form => form.icon === options.format) ?? Formats[0]);
-
-    // Create input tokens
+    const ops = (options.format === "custom") ? (options.ops) : (FORMATS.find(form => form.icon === options.format) ?? FORMATS[0]);
     const tokenList = GenerateTokens(expression, ops);
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()], "Expression Parser Action");
     const inputMap = new Map<string, DigitalComponent>();

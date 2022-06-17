@@ -35,9 +35,9 @@ export class Curve implements Shape {
      */
     public constructor(p1: Vector | BezierCurve, p2?: Vector, c1?: Vector, c2?: Vector) {
         if (p1 instanceof BezierCurve)
-            this.curve = p1;
+this.curve = p1;
         else
-            this.curve = new BezierCurve(p1, p2, c1, c2);
+this.curve = new BezierCurve(p1, p2, c1, c2);
     }
 
     /**

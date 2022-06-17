@@ -16,7 +16,9 @@ export function LoadCircuit(circuit: Circuit): CircuitDesigner {
 }
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace jest {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
             toMatchCircuit(expected: CircuitDesigner): CustomMatcherResult;
         }

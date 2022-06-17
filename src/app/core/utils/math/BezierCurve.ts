@@ -78,11 +78,11 @@ export class BezierCurve {
      * @returns t, t represents how far along the bezier curve the given point is
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
-        if (a == 0)
-            return end;
+        if (a === 0)
+return end;
         const d = b*b - 4*a*c;
         if (d < 0)
-            return end;
+return end;
         return Clamp((-b + mod*Math.sqrt(d)) / (2*a), 0, 1);
     }
 
@@ -92,7 +92,7 @@ export class BezierCurve {
      */
     private updateBoundingBox(): void {
         if (!this.dirty)
-            return;
+return;
         this.dirty = false;
 
         const min = V(0, 0);

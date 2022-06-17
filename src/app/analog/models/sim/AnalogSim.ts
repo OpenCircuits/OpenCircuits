@@ -30,12 +30,12 @@ export class AnalogSim {
     public uploadNetlist(netlist: Netlist) {
         // If netlist already exists, free it
         if (this.netlistPtrs)
-            this.netlistPtrs.forEach(ptr => this.lib.free_array(ptr));
+this.netlistPtrs.forEach(ptr => this.lib.free_array(ptr));
 
         // Convert netlist to format for NGSpice
         const ngNetList = NetlistToNGSpice(netlist).map(line => line.join(" "));
 
-        console.log(ngNetList.join("\n"));
+        // console.log(ngNetList.join("\n"));
 
         // Upload data to NGSpice
         this.netlistPtrs = this.lib.create_str_array(ngNetList);
@@ -100,7 +100,7 @@ export class AnalogSim {
         return this.vecs[id].data;
     }
 
-    public getVecDataIm(id: string): Array<{ re: number, im: number }> {
+    public getVecDataIm(_id: string): Array<{ re: number, im: number }> {
         // const idPtr = this.lib.create_array("string", id);
         // const vecDataPtr = this.lib.get_vector_data(idPtr);
         // return this.lib.get_array(vecDataPtr, { type: "double", len: this.getVecLen(id) });

@@ -72,7 +72,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         const corners = this.pressableBox.getCorners().map((v) =>
             v.sub(this.getOffset())
         );
-        return Vector.min(min, ...corners);
+        return Vector.Min(min, ...corners);
     }
 
     public getMaxPos(): Vector {
@@ -81,7 +81,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         const corners = this.pressableBox.getCorners().map((v) =>
             v.add(this.getOffset())
         );
-        return Vector.max(max, ...corners);
+        return Vector.Max(max, ...corners);
     }
 
     public getImageName(): string {

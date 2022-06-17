@@ -99,17 +99,17 @@ export class Rect {
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
-            return [];
+return [];
 
         return [
-            Rect.from({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: this.left,  right: rect.left,  top: rect.top,    bottom: rect.bottom }),
-            Rect.from({ left: this.left,  right: rect.left,  top: rect.bottom, bottom: this.bottom }),
-            Rect.from({ left: rect.left,  right: rect.right, top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: rect.left,  right: rect.right, top: rect.bottom, bottom: this.bottom }),
-            Rect.from({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
-            Rect.from({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: this.left,  right: rect.left,  top: rect.top,    bottom: rect.bottom }),
+            Rect.From({ left: this.left,  right: rect.left,  top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: rect.left,  right: rect.right, top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: rect.left,  right: rect.right, top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
+            Rect.From({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
         ].filter(r => r.width > 0 && r.height > 0);
     }
 
@@ -125,7 +125,7 @@ export class Rect {
      * @returns A new rectangle which is a shifted version of this one
      */
     public shift(dir: Vector, amt: Vector): Rect {
-        return Rect.from({
+        return Rect.From({
             left:   this.left   + (dir.x < 0 ? amt.x * dir.x : 0),
             right:  this.right  + (dir.x > 0 ? amt.x * dir.x : 0),
             top:    this.top    + (dir.y > 0 ? amt.y * dir.y : 0),
@@ -204,7 +204,7 @@ export class Rect {
      * @param yIsUp Whether this rectangle has +y or -y
      * @returns A Rect from the given bounds/attributes and yIsUp direction
      */
-    public static from(bounds: RectProps, yIsUp = true): Rect {
+    public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
         type BoundProps = ExpandTypes<BoundKeys, KeysToRecord<BoundKeys>>;
 

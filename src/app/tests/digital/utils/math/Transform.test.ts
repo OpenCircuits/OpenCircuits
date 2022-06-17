@@ -47,11 +47,11 @@ import {Transform} from "math/Transform";
 describe("Transform", () => {
     describe("Constructor", () => {
         test("No parameters", () => {
-            const t = new Transform(V(0,0), V(0,0), 0);
+            new Transform(V(0,0), V(0,0), 0);
             // tests
         });
         test("All parameters", () => {
-            const t = new Transform(V(5, 5), V(10, 10), 0);
+            new Transform(V(5, 5), V(10, 10), 0);
             // tests
         });
     });
@@ -184,14 +184,14 @@ describe("Transform", () => {
             const v = new Vector();
             const t = new Transform(V(0,0), V(0,0), 0);
             // stuff
-            const v2 = t.toLocalSpace(v);
+            t.toLocalSpace(v);
             // tests
         });
         test("To World Space", () => {
             const v = new Vector();
             const t = new Transform(V(0,0), V(0,0), 0);
             // stuff
-            const v2 = t.toWorldSpace(v);
+            t.toWorldSpace(v);
             // tests
         });
         test("Corners", () => {

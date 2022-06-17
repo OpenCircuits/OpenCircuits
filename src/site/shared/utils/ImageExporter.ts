@@ -37,7 +37,7 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
 
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
+projectName = "Untitled Circuit";
 
     const filename = `${projectName}.${options.type}`;
 
@@ -68,7 +68,7 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
 
     // Get name
     if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
+projectName = "Untitled Circuit";
 
     // Fill background
     if (options.useBg) {

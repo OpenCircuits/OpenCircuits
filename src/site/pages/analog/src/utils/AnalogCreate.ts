@@ -16,10 +16,10 @@ import {AnalogCircuitDesigner, AnalogComponent} from "analog/models";
  * @returns The DigitalComponent associated with the given ID
  * @throws If the itemId is an invalid item or IC
  */
-export function AnalogCreate(itemId: string, designer: AnalogCircuitDesigner): AnalogComponent {
+export function AnalogCreate(itemId: string, _designer: AnalogCircuitDesigner): AnalogComponent {
     const component = Create<AnalogComponent>(itemId);
     if (!component)
-        throw new Error(`Failed to create digital item w/ id: ${itemId}`);
+throw new Error(`Failed to create digital item w/ id: ${itemId}`);
     return component;
 }
 

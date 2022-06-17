@@ -32,7 +32,7 @@ export class RenderQueue {
     private actualRender(): void {
         this.queued = 0;
         if (this.renderFunction)
-            this.renderFunction(this.options);
+this.renderFunction(this.options);
     }
 
     public setOptions(options: Partial<RenderOptions>): void {
@@ -48,7 +48,7 @@ export class RenderQueue {
      */
     public render(): void {
         if (this.queued === 0)
-            this.lastFrameId = requestAnimationFrame(() => this.actualRender());
+this.lastFrameId = requestAnimationFrame(() => this.actualRender());
         this.queued++;
     }
 

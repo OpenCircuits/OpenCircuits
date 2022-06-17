@@ -99,7 +99,7 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
 
             Object.entries(infos).forEach(([key, info]) => {
                 if (!(key in allInfos))
-                    allInfos[key] = [];
+allInfos[key] = [];
                 allInfos[key].push(info);
 
                 // Merge isActive with groupIsActive
@@ -120,7 +120,7 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
 
         // If exactly one info, then no need to merge
         if (infos.length === 1)
-            return;
+return;
 
         // Merge displays
         if (infos.some(i => i.display !== info0.display)) {
@@ -181,7 +181,7 @@ export abstract class AnalogComponent extends Component {
     public setProp(key: string, val: Prop) {
         const prop = this.props[key];
         if (prop === undefined)
-            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
+throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
                             `My props: ${Object.entries(this.props).join(",")}`);
 
         this.props[key] = val;
@@ -223,7 +223,7 @@ export abstract class AnalogComponent extends Component {
     public getConnections(): AnalogWire[] {
         // Get each wire connected to each port and then filter out the null ones
         return this.getPorts().flatMap((p) => p.getWires())
-                .filter((w) => w != null);
+                .filter(w => !!w);
     }
 
     public hasProp(key: string): boolean {

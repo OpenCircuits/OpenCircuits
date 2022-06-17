@@ -53,7 +53,7 @@ export class Vector {
             this.y = x.y;
         } else {
             this.x = x;
-            this.y = (y == null ? x : y);
+            this.y = (y === undefined ? x : y);
         }
     }
 
@@ -82,7 +82,7 @@ export class Vector {
 
     public add(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
-        const dy = (x instanceof Vector ? x.y : (y == null ? x : y));
+        const dy = (x instanceof Vector ? x.y : (y === undefined ? x : y));
         return new Vector(this.x + dx, this.y + dy);
     }
     /**
@@ -109,7 +109,7 @@ export class Vector {
 
     public sub(x: Vector | number, y?: number): Vector {
         const dx = (x instanceof Vector ? x.x : x);
-        const dy = (x instanceof Vector ? x.y : (y == null ? x : y));
+        const dy = (x instanceof Vector ? x.y : (y === undefined ? x : y));
         return new Vector(this.x - dx, this.y - dy);
     }
     /**
@@ -129,7 +129,7 @@ export class Vector {
 
     public scale(a: Vector | number): Vector {
         if (a instanceof Vector)
-            return new Vector(a.x * this.x, a.y * this.y);
+return new Vector(a.x * this.x, a.y * this.y);
         return new Vector(a * this.x, a * this.y);
     }
     /**
@@ -147,7 +147,7 @@ export class Vector {
     public normalize(): Vector {
         const len = this.len();
         if (len === 0)
-            return new Vector(0, 0);
+return new Vector(0, 0);
         return this.scale(1 / len);
     }
     /**
@@ -217,7 +217,7 @@ export class Vector {
      * @returns A Vector with the smallest 'x' and 'y' that
      *          from vector(s) in the array
      */
-    public static min(...vectors: Vector[]): Vector {
+    public static Min(...vectors: Vector[]): Vector {
         return new Vector(Math.min(...vectors.map((v) => v.x)),
                           Math.min(...vectors.map((v) => v.y)));
     }
@@ -228,7 +228,7 @@ export class Vector {
      * @returns A Vector with the biggest 'x' and 'y' that
      *          from vector(s) in the array
      */
-    public static max(...vectors: Vector[]): Vector {
+    public static Max(...vectors: Vector[]): Vector {
         return new Vector(Math.max(...vectors.map((v) => v.x)),
                           Math.max(...vectors.map((v) => v.y)));
     }
@@ -243,8 +243,8 @@ export class Vector {
      *          If both component of 'x' out of the range,
      *          it will return 'lo' or 'hi' depend on the valueof 'x'
      */
-    public static clamp(x: Vector, lo: Vector, hi: Vector): Vector {
-        return Vector.min(Vector.max(x, lo), hi);
+    public static Clamp(x: Vector, lo: Vector, hi: Vector): Vector {
+        return Vector.Min(Vector.Max(x, lo), hi);
     }
 }
 
@@ -257,6 +257,6 @@ export function V(x: number): Vector;
 export function V(x: number, y: number): Vector;
 export function V(x: Vector | number = 0, y?: number): Vector {
     if (x instanceof Vector)
-        return new Vector(x);
+return new Vector(x);
     return new Vector(x, y!);
 }

@@ -13,8 +13,8 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 export function ValidateInputOutputTypes(inputs: Map<string, DigitalComponent>, output: DigitalComponent) {
     for (const [name, component] of inputs) {
         if (component.getInputPortCount().getValue() !== 0 || component.getOutputPortCount().getValue() === 0)
-            throw new Error("Not An Input: \"" + name + "\"");
+throw new Error("Not An Input: \"" + name + "\"");
     }
     if (output.getInputPortCount().getValue() === 0 || output.getOutputPortCount().getValue() !== 0)
-        throw new Error("Supplied Output Is Not An Output");
+throw new Error("Supplied Output Is Not An Output");
 }

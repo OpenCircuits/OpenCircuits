@@ -10,7 +10,6 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction,
         CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {Tool}        from "core/tools/Tool";
 
 
 export const SelectionBoxTool = (() => {
@@ -19,7 +18,7 @@ export const SelectionBoxTool = (() => {
     return {
         shouldActivate(event: Event, {locked, input, selections, currentlyPressedObject}: CircuitInfo): boolean {
             if (locked)
-                return false;
+return false;
             // Activate if the user began dragging on empty canvas
             return (event.type === "mousedrag" &&
                     input.getTouchCount() === 1 &&
@@ -41,9 +40,9 @@ export const SelectionBoxTool = (() => {
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())
-                action.add(CreateDeselectAllAction(selections).execute());
+action.add(CreateDeselectAllAction(selections).execute());
 
-            const box = Transform.fromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
+            const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = designer.getObjects().filter(o => TransformContains(box, o.getTransform()));
@@ -69,7 +68,7 @@ export const SelectionBoxTool = (() => {
 
         onEvent(event: Event, {input}: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
-                return false;
+return false;
 
             p2 = input.getMousePos();
 

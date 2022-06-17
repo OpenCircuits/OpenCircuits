@@ -35,7 +35,7 @@ export const PanTool: Tool = (() => {
 
         onActivate(event: Event, info: CircuitInfo): void {
             if (event.type === "mousedrag" || event.type === "keydown")
-                this.onEvent(event, info); // Explicitly call drag event
+this.onEvent(event, info); // Explicitly call drag event
         },
         onDeactivate({}: Event, {}: CircuitInfo): void {
             isDragging = false;
@@ -63,13 +63,13 @@ export const PanTool: Tool = (() => {
                 // No else if because it introduces bugs when
                 // multiple arrow keys are pressed
                 if (input.isKeyDown("ArrowLeft"))
-                    dPos = dPos.add(-1, 0);
+dPos = dPos.add(-1, 0);
                 if (input.isKeyDown("ArrowRight"))
-                    dPos = dPos.add(1, 0);
+dPos = dPos.add(1, 0);
                 if (input.isKeyDown("ArrowUp"))
-                    dPos = dPos.add(0, -1);
+dPos = dPos.add(0, -1);
                 if (input.isKeyDown("ArrowDown"))
-                    dPos = dPos.add(0, 1);
+dPos = dPos.add(0, 1);
 
                 // Screen gets moved different amounts depending on if the shift key is held
                 const factor = (input.isShiftKeyDown() ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL);

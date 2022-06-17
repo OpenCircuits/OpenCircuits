@@ -13,23 +13,23 @@ export class GroupAction implements Action {
 
     public add(action: Action | Action[]): GroupAction {
         if (action instanceof Array)
-            this.actions = this.actions.concat(action);
+this.actions = this.actions.concat(action);
         else
-            this.actions.push(action);
+this.actions.push(action);
 
         return this;
     }
 
     public execute(): GroupAction {
         for (const action of this.actions)
-            action.execute();
+action.execute();
 
         return this;
     }
 
     public undo(): GroupAction {
         for (let i = this.actions.length-1; i >= 0; i--)
-            this.actions[i].undo();
+this.actions[i].undo();
 
         return this;
     }
@@ -38,7 +38,7 @@ export class GroupAction implements Action {
         for (const action of this.actions) {
             // Ignore other empty GroupActions
             if (action instanceof GroupAction && action.isEmpty())
-                continue;
+continue;
             return false;
         }
         return true;
@@ -46,10 +46,10 @@ export class GroupAction implements Action {
 
     public getName(): string {
         if (this.customName)
-            return this.customName;
+return this.customName;
         // Default behavior
         if (this.actions.length === 1)
-            return this.actions[0].getName();
+return this.actions[0].getName();
         return `Grouped ${this.actions.length} actions` ;
     }
 

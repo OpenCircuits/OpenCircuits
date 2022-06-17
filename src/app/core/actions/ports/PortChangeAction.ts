@@ -18,7 +18,7 @@ export abstract class PortChangeAction implements Action {
 
     protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
         if (!designer)
-            throw new Error("PortChangeAction failed: designer not found");
+throw new Error("PortChangeAction failed: designer not found");
         this.designer = designer;
 
         this.targetCount = target;
@@ -45,7 +45,7 @@ export abstract class PortChangeAction implements Action {
         // If executing for the first time, then get
         //  all wires that are going to be removed
         if (!this.wireDeletionAction)
-            this.wireDeletionAction = this.createAction();
+this.wireDeletionAction = this.createAction();
         this.wireDeletionAction.execute();
 
         return this;

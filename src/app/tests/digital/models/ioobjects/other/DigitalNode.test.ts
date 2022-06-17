@@ -10,10 +10,10 @@ describe("Digital Node", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {AutoPlace} = GetHelpers(designer);
 
-    const [wp, [s], [o]] = AutoPlace(new DigitalNode());
+    const [, [s], [o]] = AutoPlace(new DigitalNode());
 
     test("Off", () => {
-    	s.activate(false);
+        s.activate(false);
         expect(o.isOn()).toBe(false);
     });
     test("On", () => {

@@ -51,5 +51,5 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
         }
     });
 
-    return [action, DigitalObjectSet.from(negatedCircuit)];
+    return [action, DigitalObjectSet.From(negatedCircuit)];
 }

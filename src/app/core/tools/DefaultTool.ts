@@ -10,7 +10,7 @@ export class DefaultTool {
         this.handlers = handlers;
     }
 
-    public onActivate(event: Event, info: CircuitInfo): void {
+    public onActivate(_event: Event, _info: CircuitInfo): void {
     }
 
     // Method called when this tool is currently active and an event occurs

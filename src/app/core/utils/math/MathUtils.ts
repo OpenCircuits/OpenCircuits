@@ -44,7 +44,7 @@ export function Clamp(x: number, min: number, max: number): number {
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     // First clamp point to within the rectangle
-    pos = Vector.clamp(pos, bl, tr);
+    pos = Vector.Clamp(pos, bl, tr);
 
     // Then find corresponding edge when point is inside the rectangle
     // (see https://www.desmos.com/calculator/edhaqiwgf1)
@@ -147,7 +147,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     const sr = r1 + r2;                       // Sum of radius
     const dpos = A.getPos().sub(B.getPos());  // Delta position
     if (dpos.dot(dpos) > sr*sr)
-        return false;
+return false;
 
     /* Perform SAT */
 
@@ -182,7 +182,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         maxB = Math.max(corners[j+4].x, maxB);
     }
     if (maxA < minB || maxB < minA)
-        return false;
+return false;
 
     // SAT w/ y-axis
     // Axis is <1, 0>
@@ -196,7 +196,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         maxB = Math.max(corners[j+4].y, maxB);
     }
     if (maxA < minB || maxB < minA)
-        return false;
+return false;
 
     // SAT w/ other two axes
     const normals = [b[3].sub(b[0]), b[3].sub(b[2])];
@@ -212,7 +212,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
             maxB = Math.max(s2, maxB);
         }
         if (maxA < minB || maxB < minA)
-            return false;
+return false;
     }
 
     return true;
@@ -256,7 +256,7 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
         const v  = f(t, x, y);
         const dv = df(t, x, y);
         if (dv === 0)
-            break;
+break;
         t = t - v / dv;
         t = Clamp(t, 0.01, 0.99);
     } while((iterations--) > 0);
@@ -302,7 +302,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
     if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
+return true;
 
     const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
     const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
@@ -310,7 +310,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
     if (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
+return true;
 
     return false;
 }
@@ -350,10 +350,10 @@ export function BCDtoDecimal(bcd: boolean[]): number {
  */
 export function DecimalToBCD(decimal: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
-        throw "input must be a nonnegative integer";
+throw "input must be a nonnegative integer";
     const result: boolean[] = [];
     while (decimal) {
-        result.push(decimal % 2 == 1);
+        result.push(decimal % 2 === 1);
         decimal = Math.floor(decimal / 2);
     }
     return result;

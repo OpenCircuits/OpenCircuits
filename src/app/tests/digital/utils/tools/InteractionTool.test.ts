@@ -170,7 +170,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -182,7 +182,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate w/ Backspace", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))

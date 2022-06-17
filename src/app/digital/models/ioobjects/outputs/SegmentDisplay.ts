@@ -50,7 +50,7 @@ export class SegmentDisplay extends DigitalComponent {
         //  We do not want to reset the user typed name so we check
         // if it was set in the first place
         if (!this.name.isSet())
-            this.name = new Name(this.getDisplayName());
+this.name = new Name(this.getDisplayName());
     }
 
     /**

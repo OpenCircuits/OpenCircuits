@@ -12,7 +12,7 @@ describe("DLatch", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {AutoPlace} = GetHelpers(designer);
 
-    const [f, [D, E], [Q, Q2]] = AutoPlace(new DLatch());
+    const [, [D, E], [Q, Q2]] = AutoPlace(new DLatch());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

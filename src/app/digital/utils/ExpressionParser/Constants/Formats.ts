@@ -90,7 +90,7 @@ const literal2: Readonly<OperatorFormat> = {
  * Stores the different types of preset formats.
  * If any new formats are added, they must be added to the end of the array.
  */
-export const Formats = [
+export const FORMATS = [
     programming1,
     programming2,
     algebraic1,

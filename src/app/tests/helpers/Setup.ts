@@ -90,7 +90,8 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
         reset: (resetDesigner = false) => {
             history.reset();
             camera.setPos(V()); camera.setZoom(1); // Reset camera
-            if (resetDesigner) designer.reset();
+            if (resetDesigner)
+designer.reset();
             input.reset();
             selections.get().forEach(s => selections.deselect(s)); // Reset selections
             toolManager.reset(info);

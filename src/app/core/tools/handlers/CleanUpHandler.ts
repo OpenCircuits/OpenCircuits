@@ -26,7 +26,7 @@ export const CleanUpHandler: EventHandler = ({
             selections.get().filter(o => o instanceof Component)) as Component[];
 
         if (components.length === 0)
-            return;
+return;
 
         history.add(new GroupAction([
             ...components.map(c =>

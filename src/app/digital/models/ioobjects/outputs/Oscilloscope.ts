@@ -33,7 +33,7 @@ export class Oscilloscope extends TimedComponent {
         for (let i = 0; i < this.numInputs(); i++) {
             this.signals[i].push(this.inputs.get(i).getIsOn());
             if (this.signals[i].length > this.numSamples)
-                this.signals[i].splice(0, (this.signals[i].length-this.numSamples));
+this.signals[i].splice(0, (this.signals[i].length-this.numSamples));
         }
     }
 
@@ -45,9 +45,9 @@ export class Oscilloscope extends TimedComponent {
         super.setInputPortCount(val);
 
         while (val > this.signals.length)
-            this.signals.push(this.signals[0].map(_ => false));
+this.signals.push(this.signals[0].map(_ => false));
         while (val < this.signals.length)
-            this.signals.pop();
+this.signals.pop();
     }
 
     public setNumSamples(num: number): void {
@@ -67,7 +67,7 @@ export class Oscilloscope extends TimedComponent {
 
     public reset(): void {
         for (let i = 0; i < this.signals.length; i++)
-            this.signals[i] = [];
+this.signals[i] = [];
         super.reset();
     }
 

@@ -1,5 +1,4 @@
 import {RefObject} from "react";
-import {Store} from "redux";
 
 import {DefaultTool} from "core/tools/DefaultTool";
 import {Tool} from "core/tools/Tool";

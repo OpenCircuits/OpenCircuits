@@ -4,7 +4,7 @@ export function LoadFile(file: File): Promise<string> {
         const reader = new FileReader();
         reader.onload = () => {
             if (!reader.result)
-                throw new Error("LoadFile failed: reader.result is undefined");
+throw new Error("LoadFile failed: reader.result is undefined");
             resolve(reader.result.toString());
         };
         reader.onabort = reader.onerror = () => { reject("Failed to load file!"); };
