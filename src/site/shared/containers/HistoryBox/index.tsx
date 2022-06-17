@@ -14,6 +14,7 @@ import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
 import {useEvent} from "shared/utils/hooks/useEvent";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
 
 type HistoryEntryProps = {
@@ -105,7 +106,7 @@ export const HistoryBox = ({ info }: Props) => {
 
     const [isDragging, setIsDragging] = useState(false);
     useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]);
-    useEvent("mouseup",   (_) => setIsDragging(false), info.input, [setIsDragging]);
+    useDocEvent("mouseup", () => setIsDragging(false), [setIsDragging]);
 
     // Make history box passthrough if dragging on canvas or from ItemNav
     const passthrough = isDragging || !!curItemID;
