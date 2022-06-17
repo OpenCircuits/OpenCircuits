@@ -14,7 +14,8 @@ export class SelectionsWrapper {
     private listeners: Set<(() => void)>;
 
     /**
-     * Intializes a SelectionsWrapper with no elements in `this.seclections` or `this.listeners` and `this.disabled` set to false
+     * Intializes a SelectionsWrapper with no elements in `this.seclections`
+     * or `this.listeners` and `this.disabled` set to false
      */
     public constructor() {
         this.selections = new Set();

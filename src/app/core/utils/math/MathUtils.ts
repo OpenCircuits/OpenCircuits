@@ -297,7 +297,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     }
 
     const f1  = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
-    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
+    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2)
+                                                                  .dot(curve.getDerivative(t));
 
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
@@ -305,7 +306,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 return true;
 
     const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
-    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t))
+                                                             + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);

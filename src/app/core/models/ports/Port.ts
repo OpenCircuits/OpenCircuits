@@ -30,11 +30,13 @@ export abstract class Port implements Selectable {
     */
     protected dir: Vector;
     /**
-     * a vector representing the position where the port attaches to the parent component relative to the parent component
+     * a vector representing the position where the port attaches to the parent component relative to the
+     * parent component
      */
     protected origin: Vector;
     /**
-     * a vector representing the position of the port relative to the parent component relative to the parent component
+     * a vector representing the position of the port relative to the parent component relative to the
+     * parent component
      */
     protected target: Vector;
     /**
@@ -154,8 +156,8 @@ return;
 
     /**
     * Returns the intial direction of a port represented as a Vector
-    * Left as abstract since ports will have a different intial direction depending on their parent component and whether they
-    * serve as input or output ports
+    * Left as abstract since ports will have a different intial direction depending on their parent component
+    * and whether they serve as input or output ports
     */
     public abstract getInitialDir(): Vector;
 

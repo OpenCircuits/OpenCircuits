@@ -33,9 +33,12 @@ export class RotateAction implements Action {
      * Creates a rotation action for a component or a group of components
      *
      * @param objects Initializes the action with an Array of the selected component(s)
-     * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between the selected component(s)
-     * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s) are placed at
-     * @param finalAngles Inititalizes the action an Array of the final angles the selected component(s) will be placed at
+     * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between
+     *  the selected component(s)
+     * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s)
+     *  are placed at
+     * @param finalAngles Inititalizes the action an Array of the final angles the selected component(s)
+     *  will be placed at
      */
     public constructor(objects: Component[], midpoint: Vector, initialAngles: number[], finalAngles: number[]) {
         this.objects = objects;

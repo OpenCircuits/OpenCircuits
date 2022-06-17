@@ -34,7 +34,8 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  *
  * @param node the root node of the InputTree to convert
  * @param inputs the input components used by this expression
- * @param circuit used to store the circuit while recursing, on the intial call it should contain the DigitalComponents found in inputs
+ * @param circuit used to store the circuit while recursing, on the intial call it should contain the
+ *              DigitalComponents found in inputs
  * @returns the current part of the tree that has been converted to a circuit, the most recently used component
  *              should always be last in the array
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
@@ -43,7 +44,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
-throw new Error("Input Not Found: \"" + node.ident + "\"");
+            throw new Error("Input Not Found: \"" + node.ident + "\"");
         const index = circuit.indexOf(inputs.get(node.ident)!);
         circuit.splice(index, 1);
         circuit.push(inputs.get(node.ident)!);
@@ -51,7 +52,9 @@ throw new Error("Input Not Found: \"" + node.ident + "\"");
     }
 
     const ret = circuit;
-    const newGate = Create<Gate>((node.kind === "binop" && node.isNot) ? NegatedTypeToGate[node.type] : TypeToGate[node.type]);
+    const newGate = Create<Gate>((node.kind === "binop" && node.isNot)
+                                 ? NegatedTypeToGate[node.type]
+                                 : TypeToGate[node.type]);
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = LazyConnect(prevNode, newGate);
@@ -60,7 +63,7 @@ throw new Error("Input Not Found: \"" + node.ident + "\"");
         newGate.setInputPortCount(node.children.length);
         node.children.forEach(child => {
             if (!child)
-throw new Error("treeToCircuitCore failed: child was undefined");
+                throw new Error("treeToCircuitCore failed: child was undefined");
             const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
             const wire = LazyConnect(prevNode, newGate);
             ret.push(wire);
@@ -79,9 +82,10 @@ throw new Error("treeToCircuitCore failed: child was undefined");
  * @returns the components and wires converted from the tree
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
  */
-export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>,
+                              output: DigitalComponent): IOObject[] {
     if (!tree)
-return [];
+        return [];
 
     let ret: IOObject[] = Array.from(inputs.values());
 

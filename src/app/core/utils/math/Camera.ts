@@ -34,7 +34,8 @@ export class Camera {
     private margin: Margin;
 
     /**
-     * This constructor creates new Camera object which is the field of view (the screen) and initializes all the variables.
+     * This constructor creates new Camera object which is the field of view (the screen)
+     * and initializes all the variables.
      * It sets dirty to true which means that
      * @param width The width of the camera (screen)
      * @param height The height of the camera (screen)

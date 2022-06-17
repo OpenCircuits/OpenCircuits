@@ -17,7 +17,8 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
             return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
         },
         Connect: (c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number) => {
-            return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2)).execute() as ConnectionAction;
+            return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2))
+                       .execute() as ConnectionAction;
         },
         // Given a DigitalComponent
         // Creates Switches for each input and LEDs for each output

@@ -27,7 +27,9 @@ return "none";
 
         // Determine if mouse is over horizontal or vertical edge
         return (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - DEFAULT_BORDER_WIDTH*5/2 &&
-                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + DEFAULT_BORDER_WIDTH*5/2) ? "horizontal" : "vertical";
+                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + DEFAULT_BORDER_WIDTH*5/2)
+               ? "horizontal"
+               : "vertical";
     }
 
     return {

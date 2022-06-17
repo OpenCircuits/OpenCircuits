@@ -56,7 +56,8 @@ type Props = {
         tools?: Tool[];
     };
 }
-export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input: FakeInput, reset: (d?: boolean) => void} {
+export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
+                                      {input: FakeInput, reset: (d?: boolean) => void} {
     const propagationTime = props?.propagationTime ?? -1;
     const screenSize = props?.screenSize ?? [500, 500];
     const tools = props?.tools ?? GetDefaultTools();

@@ -13,7 +13,8 @@ import {GetDigitalCircuitInfoHelpers} from "./DigitalCircuitInfoHelpers";
 import {CreateInfo} from "./CreateInfo";
 
 
-export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, defaultTool: DefaultTool, ...tools: Tool[]): [DigitalCircuitInfo, CircuitInfoHelpers] {
+export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, defaultTool: DefaultTool,
+                      ...tools: Tool[]): [DigitalCircuitInfo, CircuitInfoHelpers] {
     const info = CreateInfo(defaultTool, ...tools);
 
     return [info, GetDigitalCircuitInfoHelpers(store, canvas, info)];

@@ -12,7 +12,8 @@ import {OutputPortChangeAction} from "./OutputPortChangeAction";
 
 /**
  * This code changes the size of the Mux object based on how many inputs are entered.
- * When the selector inputs are increased the number of inputs are also increased by 2 to the power of the number of selector inputs chosen.
+ * When the selector inputs are increased the number of inputs are also increased by
+ * 2 to the power of the number of selector inputs chosen.
  * Ex.) input count = 3, then the number of inputs changes to 2^3 or 8.
  * The actual size of the mux object is also changed accordingly.
  */

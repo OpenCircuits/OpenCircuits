@@ -36,7 +36,8 @@ throw new Error(`Failed to create digital item w/ id: ${itemId}`);
  * @returns The list of DigitalComponents associated with the given ID and of length `N`
  * @throws If the itemId is an invalid item or IC
  */
-export function AnalogCreateN(pos: Vector, itemId: string, designer: AnalogCircuitDesigner, N: number): AnalogComponent[] {
+export function AnalogCreateN(pos: Vector, itemId: string, designer: AnalogCircuitDesigner,
+                              N: number): AnalogComponent[] {
     const comps = [] as AnalogComponent[];
 
     for (let i = 0; i < N; i++) {

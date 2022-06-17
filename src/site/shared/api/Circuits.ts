@@ -15,7 +15,8 @@ export async function CreateUserCircuit(auth: AuthState, data: string): Promise<
     })) as CircuitMetadataDef);
 }
 
-export async function UpdateUserCircuit(auth: AuthState, circuitId: string, data: string): Promise<CircuitMetadata | undefined> {
+export async function UpdateUserCircuit(auth: AuthState, circuitId: string,
+                                        data: string): Promise<CircuitMetadata | undefined> {
     return new CircuitMetadata(JSON.parse(await Request({
         method:  "PUT",
         url:     `api/circuits/${circuitId}`,

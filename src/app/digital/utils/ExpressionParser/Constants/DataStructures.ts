@@ -10,7 +10,8 @@ export type TokenType =
     | ParenType;
 
 /** Represents that a "binary" operation can have 2-8 children */
-export type BinOpChildren = [InputTree, InputTree, InputTree?, InputTree?, InputTree?, InputTree?, InputTree?, InputTree?];
+export type BinOpChildren = [InputTree, InputTree, InputTree?, InputTree?,
+                             InputTree?, InputTree?, InputTree?, InputTree?];
 
 /** Represents a node on the parsed tree that itself represents an input component */
 export interface InputTreeIdent {
@@ -37,7 +38,8 @@ export type InputTree =
     | InputTreeUnOpNode
     | InputTreeBinOpNode
 
-/** Used to represent a unary operation, binary operation, or parenthesis when pasring the intial expression to a token list */
+/** Used to represent a unary operation, binary operation, or parenthesis when parsing the intial expression
+ * to a token list */
 export interface OpToken {
     type: TokenType;
 }

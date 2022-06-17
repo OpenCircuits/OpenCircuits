@@ -22,7 +22,8 @@ export class PortSet<T extends Port> {
     private positioner: Positioner<T>;
 
     public constructor();
-    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component | undefined) => T);
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>,
+                       type: new(c: Component | undefined) => T);
     public constructor(parent?: Component, count?: ClampedValue,
                        positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component | undefined) => T) {
         this.parent = parent!;

@@ -58,7 +58,8 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  */
 function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
-throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -69,15 +70,15 @@ throw new Error("The number of expected states (" + expected.length + ") does no
     for (let num = 2**inputs.length - 1; num >= 0; num--) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
-if (num & (2**index))
-testTitle += " " + inputs[index][0];
+            if (num & (2**index))
+                testTitle += " " + inputs[index][0];
         if (testTitle === "Inputs on:")
-testTitle += " [none]";
+            testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
         test(testTitle, () => {
             for (let index = 0; index < inputs.length; index++)
-inputs[index][1].activate(!!(num & (2**index)));
+                inputs[index][1].activate(!!(num & (2**index)));
             expect(output.isOn()).toBe(expected[num]);
         });
     }
@@ -94,9 +95,11 @@ inputs[index][1].activate(!!(num & (2**index)));
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs
  */
-function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED,
+                          expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
-throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2 ** inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -107,7 +110,7 @@ throw new Error("The number of expected states (" + expected.length + ") does no
     test("Test all states", () => {
         for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
             for (let index = 0; index < inputs.length; index++)
-inputs[index][1].activate(!!(num & (2 ** index)));
+                inputs[index][1].activate(!!(num & (2 ** index)));
             expect(output.isOn()).toBe(expected[num]);
         }
     });
@@ -119,14 +122,17 @@ inputs[index][1].activate(!!(num & (2 ** index)));
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
  *
- * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the entire expression.
+ * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
+ * entire expression.
  * This behavior can be overwritten with the verbose argument.
  *
  * @param numInputs the number of switches that are used by this expression/test
  * @param expression the logical boolean expression to test
- * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
+ * @param expected the expected states of the output LED for all the different switch combinations
+ *                  (see testInputs for order)
  * @param ops the strings used to represent the different operators
- * @param verbose true to force creating a new test for every state, false to force creating one single test encompassing all states
+ * @param verbose true to force creating a new test for every state, false to force creating one single test
+ *                  encompassing all states
  * @throws {Error} if numInputs > 8
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs

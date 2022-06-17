@@ -53,7 +53,8 @@ throw new Error(`Failed to create digital item w/ id: ${itemId}`);
  * @returns The list of DigitalComponents associated with the given ID and of length `N`
  * @throws If the itemId is an invalid item or IC
  */
-export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCircuitDesigner, N: number): DigitalComponent[] {
+export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCircuitDesigner,
+                               N: number): DigitalComponent[] {
     const comps = [] as DigitalComponent[];
 
     for (let i = 0; i < N; i++) {

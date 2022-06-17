@@ -25,7 +25,8 @@ import {GenerateThumbnail} from "../GenerateThumbnail";
 import {AppStore} from "../../state";
 
 
-export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
+export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>,
+                                             info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
         LoadCircuit: async (getData) => {
             const { circuit } = store.getState();

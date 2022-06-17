@@ -27,7 +27,8 @@ return GATE_OR_CULLBOX_OFFSET*2;
 @serializable("ORGate")
 export class ORGate extends Gate {
     /**
-     * Creates an OR Gate with a default of 2 ports, a minimum of two ports, a maximum of 8 ports, and a size of 60 by 50 pixels.
+     * Creates an OR Gate with a default of 2 ports, a minimum of two ports, a maximum of 8 ports,
+     * and a size of 60 by 50 pixels.
      */
     public constructor(not = false) {
         super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());

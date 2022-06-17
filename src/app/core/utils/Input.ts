@@ -129,7 +129,8 @@ this.onKeyUp(e.key as Key)
      */
     private hookupMouseEvents(): void {
         // Mouse events
-        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY),
+                                                                                     e.button), false);
         this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
         this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
 
@@ -443,7 +444,8 @@ zoomFactor = 1.0 / zoomFactor;
         this.startTapTime = Date.now();
         this.mouseDown = true;
         this.mouseDownPos = pos.sub(rect.left, rect.top)
-                               // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
+                               // Scale in case the real canvas size is different then the pixel size
+                               // (i.e. image exporter)
                                .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
         this.mousePos = V(this.mouseDownPos);

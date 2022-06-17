@@ -38,7 +38,8 @@ export const ToolRenderer = (() => {
                       new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
     }
 
-    const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
+    const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector,
+                                           a0: number, a1: number): void {
         // Get position, radius, and angles
         const pos = camera.getScreenPos(midpoint);
         const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
@@ -73,7 +74,8 @@ export const ToolRenderer = (() => {
                 // Draw rotation circle and outline
                 if (hasOnlyComponents) {
                     drawRotationCircleOutline(renderer, camera, midpoint);
-                    drawRotationCircleArc(renderer, camera, midpoint, RotateTool.getStartAngle(), RotateTool.getPrevAngle());
+                    drawRotationCircleArc(renderer, camera, midpoint, RotateTool.getStartAngle(),
+                                          RotateTool.getPrevAngle());
                 }
             }
             else if (tool === WiringTool) {

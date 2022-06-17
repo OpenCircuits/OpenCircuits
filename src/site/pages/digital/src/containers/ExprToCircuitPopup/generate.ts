@@ -87,7 +87,8 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
     }
 }
 
-function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string, info: DigitalCircuitInfo) {
+function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string,
+                  info: DigitalCircuitInfo) {
     const data = ICData.Create(circuitComponents);
     if (!data)
         throw new Error("Failed to create ICData");
@@ -106,7 +107,9 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
-    const ops = (options.format === "custom") ? (options.ops) : (FORMATS.find(form => form.icon === options.format) ?? FORMATS[0]);
+    const ops = (options.format === "custom")
+                ? (options.ops)
+                : (FORMATS.find(form => form.icon === options.format) ?? FORMATS[0]);
     const tokenList = GenerateTokens(expression, ops);
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()], "Expression Parser Action");
     const inputMap = new Map<string, DigitalComponent>();

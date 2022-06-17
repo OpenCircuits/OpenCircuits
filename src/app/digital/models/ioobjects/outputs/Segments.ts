@@ -1,4 +1,5 @@
-export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" | "horizontal0.5";
+export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" |
+                          "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
 export const Segments: Record<string, Array<[[number, number], SegmentType]>> = {
     "7": [

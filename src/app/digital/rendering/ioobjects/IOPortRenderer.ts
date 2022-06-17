@@ -15,7 +15,8 @@ import {Style} from "core/rendering/Style";
 
 /**
  * Renders Ports
- * * Colour, style, draw port line - selected colour only if parent object is selected as a whole without separate port selection
+ * * Colour, style, draw port line - selected colour only if parent object is selected as a whole without
+ * *  separate port selection
  * * Colour, style, draw port border and fill - selected colour both if port or parent object are selected
  */
 export const IOPortRenderer = (() => {

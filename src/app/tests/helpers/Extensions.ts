@@ -63,7 +63,8 @@ expect.extend({
             const diff = Math.atan2(Math.sin(otherAngle - received), Math.cos(otherAngle - received));
             const pass = Math.abs(diff) <= epsilon;
             return {
-                message: () => `expected angle ${received*180/Math.PI}° ${pass ? "" : "not "}to be approximately equal to angle ${otherAngle*180/Math.PI}°`,
+                message: () => `expected angle ${received*180/Math.PI}° ${pass ? "" : "not "}` +
+                               `to be approximately equal to angle ${otherAngle*180/Math.PI}°`,
                 pass,
             };
         }
@@ -76,7 +77,7 @@ expect.extend({
 
     toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
         if (!(source instanceof DigitalComponent))
-throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
+            throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 
         let {depth} = options;
 
@@ -106,7 +107,8 @@ queue.push(c);
         }
 
         return {
-            message: () => `expected ${source.getName()} to ${pass ? "" : "not "}be connected to ${target.getName()} within ${options.depth} connections`,
+            message: () => `expected ${source.getName()} to ${pass ? "" : "not "}be connected to ${target.getName()}` +
+                           ` within ${options.depth} connections`,
             pass,
         };
     },

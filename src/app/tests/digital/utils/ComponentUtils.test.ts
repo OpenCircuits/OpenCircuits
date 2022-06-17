@@ -253,7 +253,8 @@ describe("CopyGroup", () => {
      *                       2. The index of the second component (in types)
      *                       3. The index of the port from the second component
      */
-    function expectCopy(types: Array<new () => DigitalComponent>, connections: Array<[number, number, number, number]>): void {
+    function expectCopy(types: Array<new () => DigitalComponent>,
+                        connections: Array<[number, number, number, number]>): void {
         const originals = types.map((t) => new t());
         connections.forEach((c) => Connect(originals[c[0]], c[1], originals[c[2]], c[3]));
 
@@ -336,16 +337,16 @@ describe("CopyGroup", () => {
                     [                                          3,0,/* ---> */5,4]]);
     });
     test("Group 6", () => {
-        expectCopy([Switch,    Button,    DigitalNode,     ANDGate,    DigitalNode,    ORGate,     LED,     SegmentDisplay],
-                   [[0,0,/* ------------------------------> */3,0                                                      ],
-                    [           1,0,/* ---> */2,0                                                                      ],
-                    [                         2,0,/* -----> */3,1                                                      ],
-                    [                                         3,0,/* --> */4,0                                         ],
-                    [                                                      4,0,/* -------------> */6,0                 ],
-                    [                                         3,0,/* ----------------> */5,0                           ],
-                    [           1,0,/* -------------------------------------------------------------------------> */7,0],
-                    [           1,0,/* -------------------------------------------------------------------------> */7,3],
-                    [           1,0,/* -------------------------------------------------------------------------> */7,5]]);
+        expectCopy([Switch,   Button,   DigitalNode,   ANDGate,    DigitalNode,   ORGate,     LED,   SegmentDisplay],
+                   [[0,0,/* --------------------------> */3,0                                                   ],
+                    [          1,0,/* --> */2,0                                                                 ],
+                    [                       2,0,/* ---> */3,1                                                   ],
+                    [                                     3,0,/* --> */4,0                                      ],
+                    [                                                  4,0,/* ------------> */6,0               ],
+                    [                                     3,0,/* ---------------> */5,0                         ],
+                    [          1,0,/* -------------------------------------------------------------------> */7,0],
+                    [          1,0,/* -------------------------------------------------------------------> */7,3],
+                    [          1,0,/* -------------------------------------------------------------------> */7,5]]);
     });
     test("Group 7 - Semi Select", () => {
         const objs = [new Switch(), new LED()];
