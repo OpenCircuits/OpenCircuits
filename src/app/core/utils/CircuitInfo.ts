@@ -10,8 +10,17 @@ import {Selectable} from "./Selectable";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
 
+export type Cursor =
+    "auto" | "default" | "none" | "context-menu" | "help" | "pointer" | "progress" | "wait" | "cell" |
+    "crosshair" | "text" | "vertical-text" | "alias" | "copy" | "move" | "no-drop" | "not-allowed" |
+    "e-resize" | "n-resize" | "ne-resize" | "nw-resize" | "s-resize" | "se-resize" | "sw-resize" |
+    "w-resize" | "ew-resize" | "ns-resize" | "nesw-resize" | "nwse-resize" | "col-resize" | "row-resize" |
+    "all-scroll" | "zoom-in" | "zoom-out" | "grab" | "grabbing";
+
+
 export type CircuitInfo = {
     locked: boolean;
+    cursor?: Cursor;
 
     input: Input;
     camera: Camera;
@@ -28,9 +37,9 @@ export type CircuitInfo = {
     renderer: RenderQueue;
 
     debugOptions: {
-        debugCullboxes: boolean,
-        debugPressableBounds: boolean,
-        debugSelectionBounds: boolean,
-        debugNoFill: boolean
-    }
+        debugCullboxes: boolean;
+        debugPressableBounds: boolean;
+        debugSelectionBounds: boolean;
+        debugNoFill: boolean;
+    },
 }

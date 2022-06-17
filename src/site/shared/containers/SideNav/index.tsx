@@ -1,7 +1,5 @@
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
-import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
-
 import {Request} from "shared/utils/Request";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
@@ -22,10 +20,8 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
     return Request({
         method: "GET",
         url: `/examples/${data.getId()}`,
-        headers: {}
-    })
-    // We want to run example circuits through the VersionConflictResolver to make sure they're up to date.
-   .then(VersionConflictResolver);
+        headers: {},
+    });
 }
 
 type Props = {
@@ -37,6 +33,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
         state => ({ ...state.user, isOpen: state.sideNav.isOpen,
                     loading: state.circuit.loading, loadingCircuits: state.user.loading })
     );
+
     const dispatch = useSharedDispatch();
 
     return (<>
@@ -58,6 +55,10 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
+            <button onClick={() => helpers.ResetCircuit()}>
+                <span>+</span>
+                New Circuit
+            </button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>

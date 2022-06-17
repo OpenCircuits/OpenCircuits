@@ -121,6 +121,10 @@ export abstract class Wire extends CullableObject {
         return this.color;
     }
 
+    public getDisplayColor(): string {
+        return this.getColor();
+    }
+
     public getP1(): Port {
         return this.p1;
     }
