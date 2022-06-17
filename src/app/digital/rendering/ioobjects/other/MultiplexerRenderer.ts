@@ -4,15 +4,20 @@ import {DEFAULT_BORDER_COLOR,
         MULTIPLEXER_HEIGHT_OFFSET,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
+
 import {V} from "Vector";
 
-import {Renderer} from "core/rendering/Renderer";
 import {Camera} from "math/Camera";
-import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
+
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {Polygon} from "core/rendering/shapes/Polygon";
-import {Style} from "core/rendering/Style";
+
+import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
+import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
+
+
 
 /**
  * Renders Muxs

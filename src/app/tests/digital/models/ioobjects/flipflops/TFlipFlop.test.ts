@@ -1,9 +1,11 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {TFlipFlop} from "digital/models/ioobjects/flipflops/TFlipFlop";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("TFlipFlop", () => {

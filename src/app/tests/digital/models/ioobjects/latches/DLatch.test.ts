@@ -1,9 +1,11 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {DLatch} from "digital/models/ioobjects/latches/DLatch";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("DLatch", () => {

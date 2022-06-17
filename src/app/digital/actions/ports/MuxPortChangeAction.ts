@@ -1,12 +1,14 @@
-import {Port} from "core/models";
 
 import {Action} from "core/actions/Action";
+
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
-import {Mux} from "digital/models/ioobjects/other/Mux";
-import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
+import {Port} from "core/models";
 
-import {InputPortChangeAction} from "./InputPortChangeAction";
+import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
+import {Mux}         from "digital/models/ioobjects/other/Mux";
+
+import {InputPortChangeAction}  from "./InputPortChangeAction";
 import {OutputPortChangeAction} from "./OutputPortChangeAction";
 
 

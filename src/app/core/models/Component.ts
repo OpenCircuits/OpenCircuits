@@ -1,16 +1,18 @@
+import {serialize} from "serialeazy";
+
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_BORDER_WIDTH,
         IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {V,Vector}     from "Vector";
-import {Transform}    from "math/Transform";
+import {V,Vector} from "Vector";
+
 import {RectContains} from "math/MathUtils";
-import {serialize}    from "serialeazy";
+import {Transform}    from "math/Transform";
 
-import {Port}       from "./ports/Port";
+import {CullableObject} from "./CullableObject";
+import {Port}           from "./ports/Port";
+import {Wire}           from "./Wire";
 
-import {CullableObject}   from "./CullableObject";
-import {Wire}       from "./Wire";
 
 export abstract class Component extends CullableObject {
     @serialize

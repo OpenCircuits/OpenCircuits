@@ -1,9 +1,11 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Digital Node", () => {

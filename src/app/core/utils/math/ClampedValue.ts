@@ -1,5 +1,6 @@
-import {Clamp} from "./MathUtils";
 import {serializable} from "serialeazy";
+
+import {Clamp} from "./MathUtils";
 
 /**
  * A class containing a number, functions to change the value of the number and

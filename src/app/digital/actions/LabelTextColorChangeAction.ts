@@ -1,5 +1,7 @@
 import {Action} from "core/actions/Action";
+
 import {Label} from "digital/models/ioobjects/other/Label";
+
 
 export class LabelTextColorChangeAction implements Action {
     /**

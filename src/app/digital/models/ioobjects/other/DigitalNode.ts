@@ -3,8 +3,9 @@ import {serializable} from "serialeazy";
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
+import {ClampedValue}   from "math/ClampedValue";
 import {CircleContains} from "math/MathUtils";
-import {ClampedValue} from "math/ClampedValue";
 
 import {Node} from "core/models/Node";
 

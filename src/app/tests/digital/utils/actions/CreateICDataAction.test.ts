@@ -1,13 +1,18 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {LED}    from "digital/models/ioobjects/outputs/LED";
-import {ICData} from "digital/models/ioobjects/other/ICData";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {ICData} from "digital/models/ioobjects/other/ICData";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
+
 
 
 describe("IC Action", () => {

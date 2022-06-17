@@ -12,7 +12,8 @@ import {Images} from "core/utils/Images";
 
 import {Renderer} from "core/rendering/Renderer";
 import {Style}    from "core/rendering/Style";
-import {Circle}   from "core/rendering/shapes/Circle";
+
+import {Circle} from "core/rendering/shapes/Circle";
 
 import {LED} from "digital/models/ioobjects";
 

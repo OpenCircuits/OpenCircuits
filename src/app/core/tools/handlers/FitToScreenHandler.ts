@@ -1,8 +1,8 @@
 import {FIT_PADDING_RATIO} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}  from "core/utils/CircuitInfo";
 import {GetCameraFit} from "core/utils/ComponentUtils";
+import {Event}        from "core/utils/Events";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 

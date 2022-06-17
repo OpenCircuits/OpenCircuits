@@ -3,12 +3,15 @@ import {DEFAULT_BORDER_COLOR,
         DEFAULT_FILL_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
+
 import {V} from "Vector";
+
 import {Camera} from "math/Camera";
 
-import {Style} from "core/rendering/Style";
-import {Rectangle} from "core/rendering/shapes/Rectangle";
 import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {IC} from "digital/models/ioobjects/other/IC";
 

@@ -1,9 +1,12 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
+
+import "test/helpers/Extensions";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
 
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
@@ -12,8 +15,6 @@ import {ANDGate, BUFGate,
         LED,
         Multiplexer, Switch} from "digital/models/ioobjects";
 
-import {Setup}      from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Selection Tool", () => {

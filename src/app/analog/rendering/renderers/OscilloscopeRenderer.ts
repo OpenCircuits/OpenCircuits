@@ -2,18 +2,20 @@ import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
-import {GRID_LINE_COLOR} from "core/rendering/Styles";
 
 import {V} from "Vector";
 
-import {Margin, Rect} from "math/Rect";
 import {linspace, linspaceDX} from "math/MathUtils";
+import {Margin, Rect}         from "math/Rect";
 
-import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Renderer}        from "core/rendering/Renderer";
+import {Style}           from "core/rendering/Style";
+import {GRID_LINE_COLOR} from "core/rendering/Styles";
+
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
 import {Oscilloscope} from "analog/models/eeobjects";
 
 

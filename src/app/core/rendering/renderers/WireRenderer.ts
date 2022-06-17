@@ -5,9 +5,10 @@ import {SELECTED_FILL_COLOR,
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Style} from "core/rendering/Style";
-import {Curve} from "core/rendering/shapes/Curve";
 import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Curve} from "core/rendering/shapes/Curve";
 
 import {Wire} from "core/models";
 

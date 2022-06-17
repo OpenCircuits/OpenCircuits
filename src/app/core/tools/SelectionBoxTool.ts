@@ -1,13 +1,15 @@
 import {V, Vector} from "Vector";
-import {Transform} from "math/Transform";
+
 import {RectContains,
         TransformContains} from "math/MathUtils";
+import {Transform} from "math/Transform";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
+
 import {CreateDeselectAllAction,
         CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 

@@ -1,14 +1,17 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
+
+import {GroupAction} from "core/actions/GroupAction";
+import {ShiftAction} from "core/actions/ShiftAction";
+
+import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+
+import {Wire} from "core/models";
 
 import {EventHandler} from "../EventHandler";
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
-import {GroupAction} from "core/actions/GroupAction";
-import {GetAllPorts} from "core/utils/ComponentUtils";
-import {Wire} from "core/models";
-import {ShiftAction} from "core/actions/ShiftAction";
 
 
 export const SelectionHandler: EventHandler = ({

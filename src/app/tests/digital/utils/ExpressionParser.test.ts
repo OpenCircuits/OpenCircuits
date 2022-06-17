@@ -5,21 +5,26 @@ import {InputToken, InputTreeIdent,
         Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
-import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow} from "digital/models/ioobjects/inputs/ConstantLow";
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate} from "digital/models/ioobjects/gates/ORGate";
-import {LED} from "digital/models/ioobjects/outputs/LED";
-import {DigitalComponent} from "digital/models/index";
-
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
-import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
-import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
 
+import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
+import {GenerateTokens}    from "digital/utils/ExpressionParser/GenerateTokens";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
+import {DigitalComponent}       from "digital/models/index";
 import "digital/models/ioobjects";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow}  from "digital/models/ioobjects/inputs/ConstantLow";
+import {Switch}       from "digital/models/ioobjects/inputs/Switch";
+
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 /**

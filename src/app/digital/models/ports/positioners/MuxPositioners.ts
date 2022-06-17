@@ -6,7 +6,7 @@ import {V} from "Vector";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {InputPort} from "../InputPort";
+import {InputPort}  from "../InputPort";
 import {OutputPort} from "../OutputPort";
 
 

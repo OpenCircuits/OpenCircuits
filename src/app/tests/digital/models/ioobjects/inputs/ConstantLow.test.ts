@@ -1,10 +1,13 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ConstantLow}     from "digital/models/ioobjects/inputs/ConstantLow";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {ConstantLow} from "digital/models/ioobjects/inputs/ConstantLow";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Constant Low", () => {

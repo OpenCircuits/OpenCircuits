@@ -2,9 +2,10 @@ import {serializable, serialize} from "serialeazy";
 
 import {Wire} from "core/models/Wire";
 
+import {AnalogNode} from "./AnalogNode";
+
 import {AnalogPort} from "./index";
 
-import {AnalogNode} from "./AnalogNode";
 
 
 @serializable("AnalogWire")

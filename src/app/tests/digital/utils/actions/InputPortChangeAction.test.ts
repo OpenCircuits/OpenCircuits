@@ -1,12 +1,15 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ANDGate}                from "digital/models/ioobjects/gates/ANDGate";
-import {BUFGate}                from "digital/models/ioobjects/gates/BUFGate";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+
+
 
 
 describe("Input Port Change Action", () => {

@@ -1,8 +1,9 @@
 import {serializable, Serialize} from "serialeazy";
+
 import {Camera} from "math/Camera";
 
+import {CircuitDesigner}    from "./CircuitDesigner";
 import {CircuitMetadataDef} from "./CircuitMetadata";
-import {CircuitDesigner} from "./CircuitDesigner";
 
 // THIS IS ALL A HACK
 // TODO: improve serialeazy to allow specifying set ids for reference

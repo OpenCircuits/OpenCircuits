@@ -1,7 +1,9 @@
 import {DEFAULT_BORDER_WIDTH, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V} from "Vector";
-import {Transform} from "math/Transform";
+
 import {RectContains} from "math/MathUtils";
+import {Transform}    from "math/Transform";
 
 import {Event} from "core/utils/Events";
 

@@ -2,6 +2,7 @@ import "jest";
 
 import {ClampedValue} from "math/ClampedValue";
 
+
 describe("ClampedValue", () => {
     describe("Constructor", () => {
         test("One parameter", () => {

@@ -4,8 +4,8 @@ import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {Event} from "core/utils/Events";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Event}  from "core/utils/Events";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

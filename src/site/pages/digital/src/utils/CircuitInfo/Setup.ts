@@ -1,16 +1,17 @@
 import {RefObject} from "react";
 
 import {DefaultTool} from "core/tools/DefaultTool";
-import {Tool} from "core/tools/Tool";
+import {Tool}        from "core/tools/Tool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {AppStore} from "site/digital/state";
 
+import {CreateInfo}                   from "./CreateInfo";
 import {GetDigitalCircuitInfoHelpers} from "./DigitalCircuitInfoHelpers";
 
-import {CreateInfo} from "./CreateInfo";
 
 
 export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, defaultTool: DefaultTool,

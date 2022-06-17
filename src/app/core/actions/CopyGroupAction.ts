@@ -6,7 +6,7 @@ import {CopyGroup,
 import {Action} from "core/actions/Action";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {IOObject} from "core/models/IOObject";
+import {IOObject}        from "core/models/IOObject";
 
 // TODO: Change this terribleness
 export class CopyGroupAction implements Action {

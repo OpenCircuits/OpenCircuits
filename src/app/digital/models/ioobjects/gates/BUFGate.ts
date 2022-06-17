@@ -1,6 +1,8 @@
-import {V} from "Vector";
-import {ClampedValue} from "math/ClampedValue";
 import {serializable} from "serialeazy";
+
+import {V} from "Vector";
+
+import {ClampedValue} from "math/ClampedValue";
 
 import {Gate} from "./Gate";
 

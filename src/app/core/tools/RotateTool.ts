@@ -1,10 +1,11 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
+
 import {Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
 import {RotateAction} from "core/actions/transform/RotateAction";
 

@@ -3,19 +3,28 @@ import "jest";
 import {CopyGroup, CreateGroup,
         GatherGroup} from "core/utils/ComponentUtils";
 
-import {DigitalNode}        from "digital/models/ioobjects/other/DigitalNode";
-import {Button}             from "digital/models/ioobjects/inputs/Button";
-import {Switch}             from "digital/models/ioobjects/inputs/Switch";
-import {LED}                from "digital/models/ioobjects/outputs/LED";
-import {SegmentDisplay}     from "digital/models/ioobjects/outputs/SegmentDisplay";
-import {ANDGate, NANDGate}  from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate}             from "digital/models/ioobjects/gates/ORGate";
-import {DigitalComponent}   from "digital/models/DigitalComponent";
-import {DigitalWire}        from "digital/models/DigitalWire";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
-import {ICData}             from "digital/models/ioobjects/other/ICData";
-import {IC}                 from "digital/models/ioobjects/other/IC";
-import {GetInvertedGate}    from "digital/utils/ComponentUtils";
+import {GetInvertedGate} from "digital/utils/ComponentUtils";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
+import {DigitalWire}      from "digital/models/DigitalWire";
+
+import {ANDGate, NANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}            from "digital/models/ioobjects/gates/ORGate";
+
+import {Button} from "digital/models/ioobjects/inputs/Button";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {IC}          from "digital/models/ioobjects/other/IC";
+import {ICData}      from "digital/models/ioobjects/other/ICData";
+
+import {LED}            from "digital/models/ioobjects/outputs/LED";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+
+
+
+
 
 function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);

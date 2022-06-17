@@ -1,13 +1,13 @@
-import {FORMATS} from "./Constants/Formats";
 import {OperatorFormat} from "./Constants/DataStructures";
+import {FORMATS}        from "./Constants/Formats";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
+import {GenerateInputTree}        from "./GenerateInputTree";
+import {GenerateTokens}           from "./GenerateTokens";
+import {TreeToCircuit}            from "./TreeToCircuit";
 import {ValidateInputOutputTypes} from "./Utils";
-import {GenerateInputTree} from "./GenerateInputTree";
-import {GenerateTokens} from "./GenerateTokens";
-import {TreeToCircuit} from "./TreeToCircuit";
 
 
 /**

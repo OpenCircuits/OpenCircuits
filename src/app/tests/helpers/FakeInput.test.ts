@@ -4,6 +4,7 @@ import {V, Vector} from "Vector";
 
 import {FakeInput} from "./FakeInput";
 
+
 describe("Fake Input", () => {
     const input = new FakeInput();
 

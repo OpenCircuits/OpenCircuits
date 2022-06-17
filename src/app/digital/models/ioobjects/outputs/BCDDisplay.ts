@@ -1,12 +1,16 @@
 import {serializable} from "serialeazy";
 
-import {BCDFont} from "./BCDFont";
 
 import {ClampedValue} from "math/ClampedValue";
-import {PortsToDecimal} from "digital/utils/ComponentUtils";
-import {SegmentDisplay} from "./SegmentDisplay";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
 import {InputPort} from "digital/models/ports/InputPort";
+
+import {BCDFont}        from "./BCDFont";
+import {SegmentDisplay} from "./SegmentDisplay";
 
 /**
  * A representation of a BCD Display, which takes a Binary Coded Decimal

@@ -1,9 +1,11 @@
 import "jest";
 
 import {V} from "Vector";
+
 import {CircleContains, Clamp,
         RectContains, TransformContains} from "math/MathUtils";
 import {Transform} from "math/Transform";
+
 
 describe("Clamp", () => {
     test("less than minimum", () => {

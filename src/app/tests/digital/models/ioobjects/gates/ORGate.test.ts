@@ -1,9 +1,11 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("ORGate", () => {

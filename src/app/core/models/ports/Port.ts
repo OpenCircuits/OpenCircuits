@@ -1,11 +1,13 @@
 import {IO_PORT_LENGTH, IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
+
+import {CircleContains} from "math/MathUtils";
 
 import {Selectable} from "core/utils/Selectable";
 
 import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
-import {CircleContains} from "math/MathUtils";
 
 /**
  * Represents a port,

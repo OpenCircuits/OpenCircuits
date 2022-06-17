@@ -5,8 +5,11 @@ import {V, Vector} from "Vector";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
+
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {Component, IOObject} from "core/models";

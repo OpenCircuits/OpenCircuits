@@ -1,16 +1,19 @@
+import {serialize} from "serialeazy";
+
 import {DEFAULT_SIZE,
         WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
-import {BezierContains} from "math/MathUtils";
-import {BezierCurve} from "math/BezierCurve";
 
-import {CullableObject}   from "./CullableObject";
-import {Component}  from "./Component";
-import {Port} from "./ports/Port";
-import {Node} from "./Node";
-import {serialize} from "serialeazy";
+import {BezierCurve}    from "math/BezierCurve";
+import {BezierContains} from "math/MathUtils";
+
+import {Component}      from "./Component";
+import {CullableObject} from "./CullableObject";
+import {Node}           from "./Node";
+import {Port}           from "./ports/Port";
+
 
 export abstract class Wire extends CullableObject {
     @serialize

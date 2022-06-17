@@ -1,12 +1,14 @@
 import {serialize} from "serialeazy";
 
 import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
 
-import {Port} from "core/models/ports/Port";
+import {Port}    from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {DigitalCircuitDesigner, DigitalWire, InputPort, OutputPort} from "./index";

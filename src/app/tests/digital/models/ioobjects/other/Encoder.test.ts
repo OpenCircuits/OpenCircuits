@@ -1,10 +1,12 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Encoder} from "digital/models/ioobjects/other/Encoder";
-import {Decoder} from "digital/models/ioobjects/other/Decoder";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Decoder} from "digital/models/ioobjects/other/Decoder";
+import {Encoder} from "digital/models/ioobjects/other/Encoder";
+
 
 
 describe("Encoder", () => {

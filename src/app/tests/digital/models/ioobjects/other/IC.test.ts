@@ -1,16 +1,21 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ConstantHigh}    from "digital/models/ioobjects/inputs/ConstantHigh";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {BUFGate}         from "digital/models/ioobjects/gates/BUFGate";
-import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {Switch}       from "digital/models/ioobjects/inputs/Switch";
 
 import {IC}     from "digital/models/ioobjects/other/IC";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
+
 
 
 describe("IC", () => {

@@ -2,6 +2,7 @@ import "jest";
 
 import {Vector} from "Vector";
 
+
 describe("Vector", () => {
     describe("Constructor", () => {
         test("No parameters", () => {

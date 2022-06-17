@@ -1,12 +1,15 @@
 import {IO_LABEL_DIR_PADDING, IO_LABEL_VERTICAL_TEXT_PADDING} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {Camera} from "math/Camera";
 
+import {Renderer} from "core/rendering/Renderer";
+
 import {Port} from "core/models";
+
 import {Component} from "core/models/Component";
 
-import {Renderer} from "core/rendering/Renderer";
 
 
 /**

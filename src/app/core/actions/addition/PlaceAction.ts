@@ -1,9 +1,11 @@
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../GroupAction";
-import {ReversableAction} from "../ReversableAction";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models/Component";
+import {Component}       from "core/models/Component";
+
+import {GroupAction}      from "../GroupAction";
+import {ReversableAction} from "../ReversableAction";
+
 
 /**
  * PlaceAction represents the action of placing a new Component into the CircuitDesigner

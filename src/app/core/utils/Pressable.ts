@@ -1,7 +1,9 @@
 import {Vector} from "Vector";
+
 import {Transform} from "math/Transform";
 
 import {Component} from "core/models/Component";
+
 
 export interface Pressable extends Component {
     press(): void;

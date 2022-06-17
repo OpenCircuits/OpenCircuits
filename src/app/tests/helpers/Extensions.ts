@@ -1,5 +1,7 @@
-import {DigitalComponent} from "digital/models";
 import "jest";
+
+import {DigitalComponent} from "digital/models";
+
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

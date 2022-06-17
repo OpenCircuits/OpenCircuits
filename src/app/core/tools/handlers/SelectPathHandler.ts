@@ -1,8 +1,8 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}                   from "core/utils/CircuitInfo";
 import {GetComponentPath, GetWirePath} from "core/utils/ComponentUtils";
+import {Event}                         from "core/utils/Events";
 
 import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 

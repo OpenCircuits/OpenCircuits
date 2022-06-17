@@ -1,10 +1,12 @@
+import {serializable, serialize} from "serialeazy";
+
 import {DEFAULT_SIZE,
         LED_LIGHT_RADIUS,
         LED_WIDTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
-import {serializable, serialize} from "serialeazy";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 

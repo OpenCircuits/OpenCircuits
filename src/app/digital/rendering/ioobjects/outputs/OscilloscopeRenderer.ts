@@ -9,7 +9,8 @@ import {V} from "Vector";
 import {Camera} from "math/Camera";
 
 import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Style}    from "core/rendering/Style";
+
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Oscilloscope} from "digital/models/ioobjects";

@@ -1,27 +1,31 @@
 import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
-import {ROTATION_ARC_STYLE,
-        ROTATION_CIRCLE_COLOR,
-        SELECTION_BOX_STYLE} from "core/rendering/Styles";
+
 
 import {Vector} from "Vector";
+
 import {Camera} from "math/Camera";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Component} from "core/models";
 
-import {ToolManager} from "core/tools/ToolManager";
-import {InteractionTool} from "core/tools/InteractionTool";
-import {RotateTool} from "core/tools/RotateTool";
-import {WiringTool} from "core/tools/WiringTool";
+import {InteractionTool}  from "core/tools/InteractionTool";
+import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
+import {ToolManager}      from "core/tools/ToolManager";
+import {WiringTool}       from "core/tools/WiringTool";
 
-import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Renderer}            from "core/rendering/Renderer";
+import {Style}               from "core/rendering/Style";
+import {ROTATION_ARC_STYLE,
+        ROTATION_CIRCLE_COLOR,
+        SELECTION_BOX_STYLE} from "core/rendering/Styles";
+
 import {ArcCircle} from "core/rendering/shapes/ArcCircle";
-import {Circle} from "core/rendering/shapes/Circle";
+import {Circle}    from "core/rendering/shapes/Circle";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
+
+import {Component} from "core/models";
 
 import {WireRenderer} from "./WireRenderer";
 

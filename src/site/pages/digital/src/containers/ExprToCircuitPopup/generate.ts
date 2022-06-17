@@ -2,31 +2,41 @@ import {Create} from "serialeazy";
 
 import {OperatorFormat,
         OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS}             from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {AddGroupAction}          from "core/actions/addition/AddGroupAction";
-import {ConnectionAction}        from "core/actions/addition/ConnectionAction";
-import {PlaceAction}             from "core/actions/addition/PlaceAction";
-import {GroupAction}             from "core/actions/GroupAction";
-import {SetNameAction}           from "core/actions/SetNameAction";
-import {TranslateAction}         from "core/actions/transform/TranslateAction";
+import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
+
+import {GroupAction}   from "core/actions/GroupAction";
+import {SetNameAction} from "core/actions/SetNameAction";
+
+import {AddGroupAction}   from "core/actions/addition/AddGroupAction";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {PlaceAction}      from "core/actions/addition/PlaceAction";
+
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+
 import {CreateDeselectAllAction,
         CreateGroupSelectAction,
         SelectAction} from "core/actions/selection/SelectAction";
 
-import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
-import {CreateICDataAction}    from "digital/actions/CreateICDataAction";
-import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
-
-import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digital/models";
-import {Clock, IC, ICData, Label}           from "digital/models/ioobjects";
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
-import {GenerateTokens}      from "digital/utils/ExpressionParser/GenerateTokens";
+
+import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
+
+import {CreateICDataAction}    from "digital/actions/CreateICDataAction";
+import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
+
+import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+
+import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digital/models";
+
+import {Clock, IC, ICData, Label} from "digital/models/ioobjects";
+
+
 
 
 export type ExprToCirGeneratorOptions = {

@@ -1,12 +1,15 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "analog/models";
-import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
-import {ResistanceInfo} from "analog/models/Units";
+
 import {GenInitialInfo} from "analog/models/AnalogComponent";
+import {ResistanceInfo} from "analog/models/Units";
+
+import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
 const Info = {

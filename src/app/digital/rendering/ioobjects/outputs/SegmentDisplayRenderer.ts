@@ -13,12 +13,13 @@ import {Camera} from "math/Camera";
 import {Images} from "core/utils/Images";
 
 import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Line}      from "core/rendering/shapes/Line";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style} from "core/rendering/Style";
 
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
-import {Line} from "core/rendering/shapes/Line";
 
 /**
  * Renders SegmentDisplay

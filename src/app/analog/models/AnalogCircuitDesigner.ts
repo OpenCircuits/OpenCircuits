@@ -1,9 +1,9 @@
-            import {serializable, serialize} from "serialeazy";
+import {serializable, serialize} from "serialeazy";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {IOObject}  from "core/models/IOObject";
+import {IOObject}        from "core/models/IOObject";
 
 import {AnalogComponent, AnalogPort, AnalogWire} from "./index";
 

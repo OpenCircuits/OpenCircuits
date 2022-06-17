@@ -5,10 +5,11 @@ import {DRAG_TIME,
         MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V,Vector} from "Vector";
+
 import {CalculateMidpoint} from "math/MathUtils";
 
 import {Event} from "./Events";
-import {Key} from "./Key";
+import {Key}   from "./Key";
 
 
 export type Listener = (event: Event) => void;
