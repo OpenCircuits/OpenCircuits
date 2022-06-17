@@ -98,13 +98,12 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 /**
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
- * @param full true if you want to return everything in the circuit otherwise returns only the wires/nodes connected to the wire.
- * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (including w)
+ * @param   full True if you want to return everything in the circuit otherwise returns
+ *               only the wires/nodes connected to the wire.
+ * @param   w    The wire to start from
+ * @return       The array of wires/WirePorts in this path (including w)
  */
-
-export function GetPath(w: Wire | Node, full: boolean = true): Array<Wire | Node> {
-
+export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
@@ -179,7 +178,7 @@ export function GetComponentPath(c: Component): Array<Component> {
  * @param  obj  The component
  * @return      An array of connections + WirePorts
  */
-export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | Node> {
+export function GetAllPaths(obj: Component, full = true): Array<Wire | Node> {
     // Get all distinct connections
     const wires = [...new Set(obj.getConnections())];
 
@@ -196,18 +195,15 @@ export function GetAllPaths(obj: Component, full:boolean = true): Array<Wire | N
  * @param objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
-export function GatherGroup(objects: IOObject[], full: boolean = true): IOObjectSet {
-
+export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     // Gather all connecting paths
     const wires = group.getWires();
-
     const components = group.getComponents();
 
-
     const paths = [...new Set(wires.flatMap((w) => GetPath(w, full))
-            .concat(components.flatMap((c) => GetAllPaths(c,full))))];
+            .concat(components.flatMap((c) => GetAllPaths(c, full))))];
 
     return new IOObjectSet((components as IOObject[]).concat(wires, paths));
 }
