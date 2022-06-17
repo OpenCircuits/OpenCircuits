@@ -1,21 +1,23 @@
-import {useEffect, useLayoutEffect, useMemo, useState} from "react";
+import {useState} from "react";
+
+import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "core/utils/Constants";
+import {HEADER_HEIGHT}                 from "shared/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {Rect} from "math/Rect";
+import {Rect, RectProps} from "math/Rect";
 
-import {useDocEvent}   from "shared/utils/hooks/useDocEvent";
-import {useMousePos}   from "shared/utils/hooks/useMousePos";
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useDocEvent}       from "shared/utils/hooks/useDocEvent";
+import {useMousePos}       from "shared/utils/hooks/useMousePos";
+import {useSharedSelector} from "shared/utils/hooks/useShared";
+import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 
-
-export type Corner = "nw" | "ne" | "sw" | "se";
-export type Edge = "w" | "e" | "n" | "s";
-export type ResizeArea = Edge | Corner;
 
 const RESIZE_AREAS = ["center", "nw", "w", "sw", "n", "s", "ne", "e", "se"] as const;
 
-
+type Corner = "nw" | "ne" | "sw" | "se";
+type Edge   = "w"  | "e"  | "n"  | "s";
+type ResizeArea = Edge | Corner;
 type State = "none" | "center" | ResizeArea;
 
 type Props = {
@@ -27,18 +29,28 @@ type Props = {
 
     children: React.ReactNode;
 }
-export const DynamicElement = ({ initialHeight, initialWidth, minHeight, minWidth, children }: Props) => {
-    const [rect, setRect] = useState({ left: 0, bottom: 0, right: initialWidth, top: initialHeight });
-    const [state, setState] = useState<State>("none");
-
-    const curRect = Rect.from(rect);
-    const outerRect = new Rect(curRect.center, curRect.size.add(20));
-    const innerRect = new Rect(curRect.center, curRect.size.sub(20));
+export const DynamicElement = ({ children, initialHeight, initialWidth, minHeight, minWidth }: Props) => {
+    const { isItemNavOpen } = useSharedSelector(({ itemNav }) => ({ isItemNavOpen: itemNav.isOpen }));
 
     const { h, w } = useWindowSize();
     const mousePos = useMousePos();
     const [mouseDownPos, setMouseDownPos] = useState({ x: 0, y: 0 });
 
+    const [rect, setRect] = useState<RectProps>({
+        left:   (w < 768 ? 0 : w - initialWidth),
+        bottom: 0,
+        width:  initialWidth,
+        height: initialHeight,
+    });
+    const [state, setState] = useState<State>("none");
+
+    // Calculate rectangles, inner and outer to represent bounds for edges/corners
+    const curRect = Rect.from(rect);
+    const outerRect = new Rect(curRect.center, curRect.size.add(20));
+    const innerRect = new Rect(curRect.center, curRect.size.sub(20));
+
+    // Helper to get the "RESIZE_AREA" state using the current inner/outer rectangles
+    //  for the bounds of this box, and the given position to see where we are in the box
     const GetArea = (pos: Vector) => RESIZE_AREAS[
         // Get area subsections for the center and each edge/corner
         [innerRect, ...outerRect.sub(innerRect)]
@@ -46,21 +58,16 @@ export const DynamicElement = ({ initialHeight, initialWidth, minHeight, minWidt
         .findIndex(a => a.contains(pos))
     ];
 
-    const onMouseDown = (ev: React.PointerEvent) => {
+    const onMouseDown = ({ button, pageX: x, pageY: y }: React.PointerEvent) => {
         // Ignore non-LMB for mouse events
-        if (ev.button !== 0)
+        if (button !== 0)
             return;
-
-        const mousePos = { x: ev.pageX, y: ev.pageY };
-
-        setMouseDownPos({ ...mousePos });
-
-        const area = GetArea(V(mousePos.x, h - mousePos.y));
-        if (!area)
-            throw new Error("Failed to find area that cursor is within in DynamicElement!");
-        setState(area);
+        // If undefined, lag probably happened, so just ignore this case
+        setState(GetArea(V(x, h - y)) ?? "none");
+        setMouseDownPos({ x, y });
     }
     const onMouseUp = () => {
+        // Set current rect to the newRect and reset state
         setRect({ ...newRect });
         setState("none");
     }
@@ -68,6 +75,18 @@ export const DynamicElement = ({ initialHeight, initialWidth, minHeight, minWidt
     useDocEvent("pointerup", onMouseUp);
     useDocEvent("pointerleave", onMouseUp);
 
+    // Bounds for the screen where the div may exist (TODO: make into a prop passed by user)
+    const bounds = Rect.from({
+        left:   w >= 768 ? (isItemNavOpen ? ITEMNAV_WIDTH  : 0) : 0,
+        right:  w,
+        bottom: w <  768 ? (isItemNavOpen ? ITEMNAV_HEIGHT : 0) : 0,
+        top:    h - HEADER_HEIGHT,
+    });
+    // Min size of the box
+    const minSize = { width: (minWidth ?? initialWidth), height: (minHeight ?? initialHeight) };
+
+    // Calculate new rect based on current mouse position and if we're
+    //  currently resizing/moving the container
     const newRect = (() => {
         if (state === "none")
             return curRect;
@@ -85,22 +104,17 @@ export const DynamicElement = ({ initialHeight, initialWidth, minHeight, minWidt
         );
 
         // Shift each x/y direction separately so that corners work as expected
-        const shiftX = dMousePos.dot(V(dir.x, 0));
-        const shiftY = dMousePos.dot(V(0, dir.y));
-
-        return curRect.shift(dir, V(shiftX, shiftY), {
-            minSize: {
-                width:  minWidth  ?? initialWidth,
-                height: minHeight ?? initialHeight,
-            },
-        });
+        return curRect.shift(dir, dMousePos.scale(dir), { minSize, bounds });
     })();
 
+    // Clamp between the bounds of the screen
+    newRect.clamp(bounds);
+
     const area = GetArea(V(mousePos.x, h - mousePos.y));
-    const cursor = (!area || area === "center") ? (undefined) : (`${area}-resize`);
+    const cursor = (!area) ? (undefined) : ((area === "center") ? ("grab") : (`${area}-resize`));
 
     return (
-        <div role="section"
+        <div role="menu"
              style={{
                  position: "absolute",
 
@@ -109,11 +123,12 @@ export const DynamicElement = ({ initialHeight, initialWidth, minHeight, minWidt
                  width:  newRect.width,
                  height: newRect.height,
 
+                 transition: (state === "none" ? "all 0.5s" : undefined),
+
                  cursor,
              }}
              onPointerDown={onMouseDown}
-             onPointerUp={onMouseUp}
-             onPointerCancel={onMouseUp}>
+             onPointerUp={onMouseUp}>
             {children}
         </div>
     );
