@@ -31,7 +31,7 @@ export const TranslateTool: Tool = (() => {
             // Activate if the user is pressing down on an object or an arrow key
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     currentlyPressedObject instanceof Component) ||
-                   (event.type === "keydown" && (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                   (event.type === "keydown" && (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
                                                   event.key === "ArrowUp"  || event.key === "ArrowDown")
                                              && ((selections.any((c) => c instanceof Component) &&
                                                   selections.get().length > 0)));
@@ -40,7 +40,7 @@ export const TranslateTool: Tool = (() => {
             // Deactivate by releasing mouse or an arrow key
             return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
             (event.type === "keyup" && event.key === activatedButton &&
-                                       (event.key === "ArrowLeft" || event.key === "ArrowRight" || 
+                                       (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
                                         event.key === "ArrowUp"   || event.key === "ArrowDown" ));
         },
 
@@ -48,7 +48,7 @@ export const TranslateTool: Tool = (() => {
         onActivate(event: Event, info: CircuitInfo): void {
             const {camera, input, selections, currentlyPressedObject, designer} = info;
 
-            // The event that activates this will either be keydown or mousedrag, so 
+            // The event that activates this will either be keydown or mousedrag, so
             //  we can save the key like this to use later
             activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);
 
@@ -65,7 +65,7 @@ export const TranslateTool: Tool = (() => {
 
             action = new GroupAction([
                 new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute()
-            ], "Translate Tool");
+            ], "Translate Tool", components.map(c => `Translated ${c.getName()}.`));
 
             initalPositions = components.map(o => o.getPos());
 
@@ -117,14 +117,14 @@ export const TranslateTool: Tool = (() => {
                         return true;
                     }
                     break;
-                
+
                 case "keydown":
                     if (activatedButton === LEFT_MOUSE_BUTTON) break;
 
                     // Translate with the arrow keys
                     let deltaPos = new Vector();
-                
-                    // No else if because it introduces bugs when 
+
+                    // No else if because it introduces bugs when
                     //  multiple arrow keys are pressed
                     if (input.isKeyDown("ArrowLeft"))
                         deltaPos = deltaPos.add(-1, 0);
@@ -134,12 +134,12 @@ export const TranslateTool: Tool = (() => {
                         deltaPos = deltaPos.add(0, -1);
                     if (input.isKeyDown("ArrowDown"))
                         deltaPos = deltaPos.add(0, 1);
-                    
+
                     // Object gets moved different amounts depending on if the shift key is held
-                    const factor = (input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL); 
-                    
+                    const factor = (input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL);
+
                     new TranslateAction(components, initalPositions, initalPositions.map(p => p.add(deltaPos.scale(factor)))).execute();
-                    
+
                     return true;
             }
             return false;
