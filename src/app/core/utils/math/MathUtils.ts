@@ -1,8 +1,8 @@
 import {WIRE_DIST_ITERATIONS,
-        WIRE_NEWTON_ITERATIONS,
-        WIRE_DIST_THRESHOLD2} from "../Constants";
+        WIRE_DIST_THRESHOLD2,
+        WIRE_NEWTON_ITERATIONS} from "../Constants";
 
-import {Vector, V} from "./Vector";
+import {V, Vector} from "./Vector";
 import {Transform} from "./Transform";
 import {BezierCurve} from "./BezierCurve";
 
@@ -324,7 +324,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
  * @return {Vector}
  *         The midpoint of all the given positions
  */
-export function CalculateMidpoint(positions: Array<Vector>): Vector {
+export function CalculateMidpoint(positions: Vector[]): Vector {
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
 }
 
@@ -351,7 +351,7 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 export function DecimalToBCD(decimal: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    let result : boolean[] = [];
+    const result: boolean[] = [];
     while (decimal) {
         result.push(decimal % 2 == 1);
         decimal = Math.floor(decimal / 2);

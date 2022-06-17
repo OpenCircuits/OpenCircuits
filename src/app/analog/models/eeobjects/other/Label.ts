@@ -8,12 +8,12 @@ import {AnalogComponent, GenInitialInfo, PropInfo} from "analog/models/AnalogCom
 
 const Info: Record<string, PropInfo> = {
     "color": {
-        type: "color",
+        type:    "color",
         display: "Color",
         initial: "#ffffff",
     },
     "textColor": {
-        type: "color",
+        type:    "color",
         display: "Text Color",
         initial: "#000000",
     },

@@ -9,7 +9,7 @@ import {DefaultTool} from "core/tools/DefaultTool";
 import {RotateTool}  from "core/tools/RotateTool";
 import {WiringTool}  from "core/tools/WiringTool";
 
-import {ANDGate, Switch, LED} from "digital/models/ioobjects";
+import {ANDGate, LED, Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";

@@ -41,5 +41,5 @@ export type CircuitInfo = {
         debugPressableBounds: boolean;
         debugSelectionBounds: boolean;
         debugNoFill: boolean;
-    },
+    };
 }

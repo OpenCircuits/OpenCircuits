@@ -1,7 +1,7 @@
-import {SELECTED_BORDER_COLOR,
-        DEFAULT_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
-        DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 import {GRID_LINE_COLOR} from "core/rendering/Styles";
 
 import {V} from "Vector";
@@ -151,8 +151,8 @@ export const OscilloscopeRenderer = (() => {
                     Math.max(5, Math.ceil(AXIS_PTS * size.y))
                 );
                 return {
-                    xs: linspace(bounds.left, bounds.right, num.x),
-                    ys: linspace(bounds.bottom, bounds.top, num.y),
+                    xs:    linspace(bounds.left, bounds.right, num.x),
+                    ys:    linspace(bounds.bottom, bounds.top, num.y),
                     xVals: linspace(minX,   maxX,   num.x).map(v => v.toFixed(2)),
                     yVals: linspace(minVal, maxVal, num.y).map(v => v.toFixed(2)),
                 }
@@ -224,8 +224,8 @@ export const OscilloscopeRenderer = (() => {
 
                     // Draw box
                     const box = Rect.from({
-                        left: bounds.left, right: bounds.left + boxSize,
-                        bottom: y, top: y + boxSize,
+                        left:   bounds.left, right:  bounds.left + boxSize,
+                        bottom: y, top:    y + boxSize,
                     }, true);
                     renderer.draw(toShape(box), new Style(color), 1);
 

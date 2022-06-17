@@ -1,7 +1,7 @@
 import {blend, parseColor} from "svg2canvas";
 
-import {LED_LIGHT_RADIUS,
-        LED_LIGHT_INTENSITY,
+import {LED_LIGHT_INTENSITY,
+        LED_LIGHT_RADIUS,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -44,6 +44,6 @@ export const LEDRenderer = (() => {
                 // Draw circle w/ gradient as fill
                 renderer.draw(new Circle(V(), LED_LIGHT_RADIUS), new Style(gradient));
             }
-        }
+        },
     };
 })();

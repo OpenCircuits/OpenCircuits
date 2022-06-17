@@ -93,6 +93,6 @@ export const ICPortTool = (() => {
         findPort: findPort,
         isDragging(): boolean {
             return (port !== undefined);
-        }
+        },
     }
 })();

@@ -1,4 +1,4 @@
-import {blend, parseColor, Color} from "svg2canvas";
+import {blend, Color, parseColor} from "svg2canvas";
 
 import {SELECTED_FILL_COLOR,
         WIRE_THICKNESS} from "core/utils/Constants";
@@ -16,8 +16,8 @@ import {Wire} from "core/models";
 function ColorToHex(col: Color): string {
     return `#${[col.r, col.g, col.b].map(x => {
         const hex = Math.round(x).toString(16);
-        return (hex.length === 1 ? '0'+hex : hex);
-    }).join('')}`
+        return (hex.length === 1 ? "0"+hex : hex);
+    }).join("")}`
 }
 
 /**
@@ -60,6 +60,6 @@ export const WireRenderer = (() => {
         renderAll(renderer: Renderer, info: CircuitInfo, wires: Wire[]): void {
             for (const wire of wires)
                 WireRenderer.render(renderer, info, wire);
-        }
+        },
     };
 })();

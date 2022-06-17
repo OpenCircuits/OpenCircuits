@@ -24,7 +24,7 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
 
     const gates = circuit.getOthers().filter(gate =>
         (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
-    ) as (ANDGate | ORGate | XORGate)[];
+    ) as Array<ANDGate | ORGate | XORGate>;
 
     gates.forEach(gate => {
         const wires = gate.getOutputPort(0).getWires();

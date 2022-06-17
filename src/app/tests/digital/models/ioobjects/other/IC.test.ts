@@ -49,7 +49,7 @@ describe("IC", () => {
         Connect(and_gate, 0, o, 0);
 
         const icdata = ICData.Create([a, b, and_gate, o]);
-        let ic = new IC(icdata);
+        const ic = new IC(icdata);
 
         expect(ic.numInputs()).toBe(2);
         expect(ic.numOutputs()).toBe(1);

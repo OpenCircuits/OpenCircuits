@@ -6,7 +6,7 @@ export type HeaderPopups = "none" | "login" | "quick_start" | "keyboard_shortcut
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        curMenu: "none" as HeaderMenus,
+        curMenu:  "none" as HeaderMenus,
         curPopup: "none" as HeaderPopups,
     },
     {

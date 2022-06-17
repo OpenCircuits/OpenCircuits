@@ -1,7 +1,7 @@
 import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
-import {ROTATION_CIRCLE_COLOR,
-        ROTATION_ARC_STYLE,
+import {ROTATION_ARC_STYLE,
+        ROTATION_CIRCLE_COLOR,
         SELECTION_BOX_STYLE} from "core/rendering/Styles";
 
 import {Vector} from "Vector";
@@ -80,6 +80,6 @@ export const ToolRenderer = (() => {
                 // Draw fake wire
                 WireRenderer.render(renderer, info, WiringTool.getWire());
             }
-        }
+        },
     };
 })();

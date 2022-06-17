@@ -9,7 +9,7 @@ import {Port} from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalWire, DigitalCircuitDesigner, InputPort, OutputPort} from "./index";
+import {DigitalCircuitDesigner, DigitalWire, InputPort, OutputPort} from "./index";
 
 
 export abstract class DigitalComponent extends Component {
@@ -36,7 +36,7 @@ export abstract class DigitalComponent extends Component {
      * @param signal The signal (on or off)
      * @param i      The index of the output port, must be $\in [0, outputs.length)$
      */
-    public activate(signal: boolean, i: number = 0): void {
+    public activate(signal: boolean, i = 0): void {
         // Don't try to activate an Output component since it has no outputs
         if (this.outputs.isEmpty())
             return;

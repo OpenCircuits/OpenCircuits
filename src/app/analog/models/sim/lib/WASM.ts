@@ -126,9 +126,9 @@ function assertNever(x: never): never {
 }
 
 export const CreateWASMInstance = <T extends WASMModule>(module: T) => ({
-    create_array: (...params: CreateArrayParams) => CreateArray(module, ...params),
+    create_array:     (...params: CreateArrayParams) => CreateArray(module, ...params),
     create_str_array: (strs: string[]) => CreateStringArray(module, strs),
-    free_array: (arr: number) => module._free(arr),
-    get_array: <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr,  o),
+    free_array:       (arr: number) => module._free(arr),
+    get_array:        <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr,  o),
     ...module,
 });

@@ -16,7 +16,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
     // lower edge are different, so the offsets are opposite of each other
     private slopeMultiplier: number;
 
-    public constructor(isMultiplexer: boolean = true) {
+    public constructor(isMultiplexer = true) {
         super();
         this.slopeMultiplier = isMultiplexer ? -1 : 1;
     }
@@ -26,7 +26,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
      *
      * @param arr The array of input ports
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         // Calculations for parameters to use in determining origin positions
         const size = ports[0].getParent().getSize();
         const width = size.x;

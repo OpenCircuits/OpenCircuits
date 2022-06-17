@@ -16,11 +16,11 @@ import {getStackTrace, isError} from "./Errors";
 export async function LoadingScreen(
     id: string,
     initialPercent: number,
-    segments: [
+    segments: Array<[
         number,
         string,
-        (onProgress: (percentDone: number) => void) => Promise<void>
-    ][]
+        (onProgress: (percentDone: number) => void) => Promise<void>,
+    ]>
 ): Promise<void> {
     const loadingText = document.getElementById(`${id}-text`)!;
     const loadingBar  = document.getElementById(`${id}-progress-bar`)!;
@@ -32,7 +32,7 @@ export async function LoadingScreen(
     let curPercent: number;
     setProgress((curPercent = initialPercent));
 
-    for (let [endPercent, label, fn] of segments) {
+    for (const [endPercent, label, fn] of segments) {
         setText(label);
 
         try {

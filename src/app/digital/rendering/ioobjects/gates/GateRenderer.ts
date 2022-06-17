@@ -1,11 +1,11 @@
-import {DEFAULT_BORDER_WIDTH,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
+        DEFAULT_CURVE_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
-        SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
         GATE_NOT_CIRCLE_RADIUS,
-        DEFAULT_CURVE_BORDER_WIDTH} from "core/utils/Constants";
-import {Vector,V} from "Vector";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {V,Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
@@ -104,6 +104,6 @@ export const GateRenderer = (() => {
             }
 
 
-        }
+        },
     };
 })();

@@ -85,6 +85,6 @@ export const SplitWireTool: Tool = (() => {
             new TranslateAction([port], [initialPosition], [newPosition]).execute();
 
             return true;
-        }
+        },
     }
 })();

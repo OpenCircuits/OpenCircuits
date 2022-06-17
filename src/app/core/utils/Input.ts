@@ -4,7 +4,7 @@ import {DRAG_TIME,
         LEFT_MOUSE_BUTTON,
         MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 import {CalculateMidpoint} from "math/MathUtils";
 
 import {Event} from "./Events";
@@ -85,7 +85,7 @@ export class Input {
             [["z"], ["Control", "Meta"]],
             [["y"], ["Control", "Meta"]],
             [["Backspace"]],
-            [["Alt"]]   // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
+            [["Alt"]],   // Needed because Alt on Chrome on Windows/Linux causes page to lose focus
         ] as Key[][][];
 
         // Check if some combination has every key pressed and newKey is one of them
@@ -189,9 +189,9 @@ export class Input {
 
         touchManager.on("pinch", (e) => {
             this.callListeners({
-                type: "zoom",
+                type:   "zoom",
                 factor: lastScale/e.scale,
-                pos: this.mousePos
+                pos:    this.mousePos,
             });
             lastScale = e.scale;
         });
@@ -419,9 +419,9 @@ export class Input {
             zoomFactor = 1.0 / zoomFactor;
 
         this.callListeners({
-            type: "zoom",
+            type:   "zoom",
             factor: zoomFactor,
-            pos: this.mousePos
+            pos:    this.mousePos,
         });
     }
 
@@ -432,7 +432,7 @@ export class Input {
      * @param pos represents the position of the mouse being pressed
      * @param button represents the mouse button being pressed (0 by default)
      */
-    protected onMouseDown(pos: Vector, button: number = 0): void {
+    protected onMouseDown(pos: Vector, button = 0): void {
         const rect = this.canvas.getBoundingClientRect();
 
         this.touchCount++;
@@ -472,8 +472,8 @@ export class Input {
 
         if (this.isDragging) {
             this.callListeners({
-                type:"mousedrag",
-                button: this.mouseDownButton
+                type:   "mousedrag",
+                button: this.mouseDownButton,
             });
         }
         this.callListeners({type: "mousemove"});
@@ -484,7 +484,7 @@ export class Input {
      *
      * @param button represents the mouse button being released (0 by default)
      */
-    protected onMouseUp(button: number = 0): void {
+    protected onMouseUp(button = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
         this.mouseDown = false;
         this.mouseDownButton = -1;
@@ -512,8 +512,8 @@ export class Input {
         //  up events get called when the
         //  mouse leaves
         this.callListeners({
-            type: "mouseup",
-            button: this.mouseDownButton
+            type:   "mouseup",
+            button: this.mouseDownButton,
         });
     }
 

@@ -1,6 +1,6 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 import {Input} from "core/utils/Input";
 import {Key} from "core/utils/Key";
 
@@ -12,8 +12,9 @@ export class FakeInput extends Input {
     public constructor(cameraCenter: Vector = V()) {
         // Fake canvas and instant drag time
         super({
-            addEventListener: () => {},
+            addEventListener:      () => {},
             getBoundingClientRect: () => ({left: 0, top: 0, width: 1, height: 1}),
+
             width: 1, height: 1,
         } as any, -1);
 
@@ -52,13 +53,13 @@ export class FakeInput extends Input {
         super.onMouseDown(pos, button);
         return this;
     }
-    public move(amt: Vector, steps: number = 1): FakeInput {
+    public move(amt: Vector, steps = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let i = 1; i <= steps; i++)
             super.onMouseMove(super.getMousePos().add(step));
         return this;
     }
-    public moveTo(target: Vector, steps: number = 5): FakeInput {
+    public moveTo(target: Vector, steps = 5): FakeInput {
         // Calculate step Vector
         const pos = this.getMousePos();
         const step = target.add(this.center).sub(pos).scale(1.0 / steps);
@@ -74,7 +75,7 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public drag(start: Vector, target: Vector, button: number = LEFT_MOUSE_BUTTON, steps: number = 5): FakeInput {
+    public drag(start: Vector, target: Vector, button: number = LEFT_MOUSE_BUTTON, steps = 5): FakeInput {
         this.press(start, button);
         this.moveTo(target, steps);
         this.release(button);
@@ -96,7 +97,7 @@ export class FakeInput extends Input {
         super.onTouchStart(this.touches);
         return this;
     }
-    public moveTouch(i: number, amt: Vector, steps: number = 1): FakeInput {
+    public moveTouch(i: number, amt: Vector, steps = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let s = 1; s <= steps; s++) {
             this.touches[i] = this.touches[i].add(step);
@@ -104,13 +105,13 @@ export class FakeInput extends Input {
         }
         return this;
     }
-    public moveTouches(amt: Vector, steps: number = 1): FakeInput {
+    public moveTouches(amt: Vector, steps = 1): FakeInput {
         const step = amt.scale(1.0 / steps);
         for (let i = 1; i <= steps; i++)
             this.touches.forEach((_, i) => this.moveTouch(i, step));
         return this;
     }
-    public releaseTouch(i: number = 0): FakeInput {
+    public releaseTouch(i = 0): FakeInput {
         super.onTouchEnd();
         this.touches.splice(i, 1);
         return this;

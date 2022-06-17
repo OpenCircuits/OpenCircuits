@@ -2,7 +2,7 @@ import {serializable} from "serialeazy";
 
 import {GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
@@ -29,7 +29,7 @@ export class ORGate extends Gate {
     /**
      * Creates an OR Gate with a default of 2 ports, a minimum of two ports, a maximum of 8 ports, and a size of 60 by 50 pixels.
      */
-    public constructor(not: boolean = false) {
+    public constructor(not = false) {
         super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
     }
     /**
@@ -50,7 +50,7 @@ export class ORGate extends Gate {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
-     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate 
+     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate
      * @returns 'NOR Gate' or 'OR Gate'
      */
     public getDisplayName(): string {

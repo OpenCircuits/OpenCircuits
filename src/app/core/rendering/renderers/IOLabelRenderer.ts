@@ -44,7 +44,7 @@ export const IOLabelRenderer = (() => {
 
             const size = object.getTransform().getSize();
             object.getPorts().forEach((p) => drawPortText(renderer, p, size));
-        }
+        },
     };
 
 })();

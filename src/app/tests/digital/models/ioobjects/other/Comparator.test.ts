@@ -10,7 +10,7 @@ describe("Comparator", () => {
     const designer = new DigitalCircuitDesigner(0);
     const {Place,Connect} = GetHelpers(designer);
 
-    //create necessary components for testing
+    // create necessary components for testing
     const [c] = Place(new Comparator());
     const [a,b] = Place(new ConstantNumber(), new ConstantNumber());
     const [lt,eq,gt] = Place(new LED(), new LED(), new LED());
@@ -25,8 +25,8 @@ describe("Comparator", () => {
     Connect(c, Comparator.LT_PORT, lt, 0);
     Connect(c, Comparator.EQ_PORT, eq, 0);
     Connect(c, Comparator.GT_PORT, gt, 0);
-    
-    //testing numbers 0-15 to make sure they work
+
+    // testing numbers 0-15 to make sure they work
     test("Numbers 0-15", () => {
         a.setInput(5);
         b.setInput(6);
@@ -37,10 +37,10 @@ describe("Comparator", () => {
             a.setInput(i);
             for (let j = 0; j < 15; j++){
                 b.setInput(j);
-        
+
                 expect(lt.isOn()).toBe((i < j));
                 expect(gt.isOn()).toBe((i > j));
-                expect(eq.isOn()).toBe((i===j));                                
+                expect(eq.isOn()).toBe((i===j));
             }
         }
     });

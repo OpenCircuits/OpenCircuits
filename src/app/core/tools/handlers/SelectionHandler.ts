@@ -43,5 +43,5 @@ export const SelectionHandler: EventHandler = ({
         // https://github.com/OpenCircuits/OpenCircuits/issues/622
         if (!action.isEmpty())
             history.add(action);
-    }
+    },
 });

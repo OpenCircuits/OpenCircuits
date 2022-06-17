@@ -14,12 +14,12 @@ import {simStateReducer} from "./Sim";
 
 
 export const reducers = combineReducers<AppState>({
-    user: userInfoReducer,
-    circuit: circuitInfoReducer,
-    header: headerReducer,
-    sideNav: sideNavReducer,
-    itemNav: itemNavReducer,
+    user:        userInfoReducer,
+    circuit:     circuitInfoReducer,
+    header:      headerReducer,
+    sideNav:     sideNavReducer,
+    itemNav:     itemNavReducer,
     contextMenu: contextMenuReducer,
-    debugInfo: debugInfoReducer,
-    sim: simStateReducer,
+    debugInfo:   debugInfoReducer,
+    sim:         simStateReducer,
 });

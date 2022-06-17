@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 
@@ -43,7 +43,7 @@ export class OutputPort extends Port {
         for (const w of this.connections)
             designer.propagate(w, this.isOn);
     }
-    
+
     /**
      * Connects the output wire to the port and activates the port
      *
@@ -74,7 +74,7 @@ export class OutputPort extends Port {
     }
 
     /**
-     * Gets initial direction of the input port as a vector. 
+     * Gets initial direction of the input port as a vector.
      * The value is 1 because it's an output port (facing right).
      *
      * @returns vector that represents the direction of the output port
@@ -86,7 +86,7 @@ export class OutputPort extends Port {
     /**
      * Gets all the wires the port is connected to
      *
-     * @returns the wire connections 
+     * @returns the wire connections
      */
     public getWires(): DigitalWire[] {
         return this.connections;

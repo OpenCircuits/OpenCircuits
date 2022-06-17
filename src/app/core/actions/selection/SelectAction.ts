@@ -10,7 +10,7 @@ export class SelectAction extends ReversableAction {
     private selections: SelectionsWrapper;
     private obj: Selectable;
 
-    public constructor(selections: SelectionsWrapper, obj: Selectable, flip: boolean = false) {
+    public constructor(selections: SelectionsWrapper, obj: Selectable, flip = false) {
         super(flip);
 
         this.selections = selections;

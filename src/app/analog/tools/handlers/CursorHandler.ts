@@ -55,7 +55,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
 }
 
 export const CursorHandler = ({
-    conditions: (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
+    conditions:  (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
     getResponse: (info: AnalogCircuitInfo, _: Event) => {
         const [cursor] = FindEdge(info);
         info.cursor = cursor;

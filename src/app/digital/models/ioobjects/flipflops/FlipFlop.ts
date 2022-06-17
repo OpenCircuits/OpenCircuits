@@ -20,13 +20,13 @@ export abstract class FlipFlop extends DigitalComponent {
     public static readonly Q2_PORT = 1;
 
     @serialize
-    protected clock: boolean = false;
+    protected clock = false;
 
     @serialize
-    protected state: boolean = false;
+    protected state = false;
 
     @serialize
-    protected lastClock: boolean = false;
+    protected lastClock = false;
 
     public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs+3), new ClampedValue(2), size, inputPositioner);

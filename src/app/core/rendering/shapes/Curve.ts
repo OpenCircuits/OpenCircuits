@@ -12,13 +12,13 @@ export class Curve implements Shape {
 
     /**
      * Constructor for Curve
-     * 
+     *
      * @param curve Bezier curve
      */
     public constructor(curve: BezierCurve);
     /**
      * Constructor for Curve
-     * 
+     *
      * @param p1 control point of curve
      * @param p2 control point of curve
      * @param c1 control point of curve
@@ -27,7 +27,7 @@ export class Curve implements Shape {
     public constructor(p1: Vector, p2: Vector, c1: Vector, c2: Vector);
     /**
      * Constructor for Curve
-     * 
+     *
      * @param p1 Bezier curve or control point of curve
      * @param p2 optional control point of curve
      * @param c1 optional control point of curve
@@ -42,7 +42,7 @@ export class Curve implements Shape {
 
     /**
      * Draws the Curve on the canvas
-     * 
+     *
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

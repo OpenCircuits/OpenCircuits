@@ -36,7 +36,7 @@ export const CleanUpHandler: EventHandler = ({
                 components,
                 components.map(o => o.getPos()),
                 components.map(o => Snap(o.getPos()))
-            )
+            ),
         ], "Clean Up Handler").execute());
-    }
+    },
 });

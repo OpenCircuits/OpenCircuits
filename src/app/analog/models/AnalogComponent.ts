@@ -8,7 +8,7 @@ import {Component} from "core/models/Component";
 import {PortSet} from "core/models/ports/PortSets";
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {AnalogCircuitDesigner, AnalogWire, AnalogPort} from "./index";
+import {AnalogCircuitDesigner, AnalogPort, AnalogWire} from "./index";
 import {NetlistElement} from "./sim/Netlist";
 
 
@@ -85,9 +85,9 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
     const merge = (a1: GroupPropInfo["isActive"], a2: GroupPropInfo["isActive"]): GroupPropInfo["isActive"] => {
         if (a1 && a2) {
             return (state) => (a1(state) && a2(state));
-        } else {
-            return a1 ?? a2;
         }
+            return a1 ?? a2;
+
     }
 
     const collectGroups = (groups: GroupPropInfo[], parentIsActive?: GroupPropInfo["isActive"]): void => {

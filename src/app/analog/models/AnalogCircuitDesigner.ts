@@ -5,7 +5,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 
-import {AnalogWire, AnalogComponent, AnalogPort} from "./index";
+import {AnalogComponent, AnalogPort, AnalogWire} from "./index";
 
 
 
@@ -34,7 +34,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     @serialize
     private wires: AnalogWire[];
 
-    private updateCallbacks: ((ev: AnalogEvent) => void)[];
+    private updateCallbacks: Array<(ev: AnalogEvent) => void>;
 
     public constructor() {
         super();

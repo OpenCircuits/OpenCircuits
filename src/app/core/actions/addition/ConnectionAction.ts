@@ -19,7 +19,7 @@ export class ConnectionAction extends ReversableAction {
 
     /**
      * Initializes a ConnectionAction given the CircuitDesigner and a Wire
-     * 
+     *
      * @param designer The CircuitDesigner this action is being done on
      * @param w The Wire being connected
      */
@@ -27,7 +27,7 @@ export class ConnectionAction extends ReversableAction {
 
     /**
      * Initializes a ConnectionAction given the CircuitDesigner and two Ports
-     * 
+     *
      * @param designer the CircuitDesigner this action is being done on
      * @param p1 The first Port being connected
      * @param p2 The second Port being connected
@@ -52,7 +52,7 @@ export class ConnectionAction extends ReversableAction {
     /**
      * Executes the ConnectionAction by creating the Wire and connecting
      * it to the proper Ports
-     * 
+     *
      * @returns 'this' ConnectionAction after execution
      */
     public normalExecute(): Action {
@@ -67,7 +67,7 @@ export class ConnectionAction extends ReversableAction {
     /**
      * Undoes the ConnectionAction by removing the Wire and
      * disconnecting it from the two Ports
-     * 
+     *
      * @returns 'this' ConnectionAction after undoing
      */
     public normalUndo(): Action {
@@ -81,7 +81,7 @@ export class ConnectionAction extends ReversableAction {
 
     /**
      * Gets the Wire associated with this ConnectionAction
-     * 
+     *
      * @returns the Wire in this connection
      */
     public getWire(): Wire {
@@ -101,7 +101,7 @@ export class ConnectionAction extends ReversableAction {
 export class DisconnectAction extends ConnectionAction {
     /**
      * Initializes a DisconnectAction given a CircuitDesigner and a Wire
-     * 
+     *
      * @param designer the CircuitDesigner the action is done on
      * @param wire the Wire being disconnected
      */
@@ -112,7 +112,7 @@ export class DisconnectAction extends ConnectionAction {
 
 /**
  * Creates a GroupAction of DisconnectActions
- * 
+ *
  * @param designer the CircuitDesigner the actions are done on
  * @param wires the Wires being disconnected
  * @returns a GroupAction representing the DisconnectActions of each Wire

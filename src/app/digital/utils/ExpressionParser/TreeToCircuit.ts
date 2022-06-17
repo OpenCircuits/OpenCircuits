@@ -30,8 +30,8 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
  *  Note that the circuit parameter is edited in place by this function.
- *  Avoid calling this function directly, use TreeToCircuit instead. 
- * 
+ *  Avoid calling this function directly, use TreeToCircuit instead.
+ *
  * @param node the root node of the InputTree to convert
  * @param inputs the input components used by this expression
  * @param circuit used to store the circuit while recursing, on the intial call it should contain the DigitalComponents found in inputs
@@ -72,7 +72,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
 
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
- * 
+ *
  * @param tree the root node of the InputTree to convert or an empty array if tree is null
  * @param inputs the input components used by this expression
  * @param output the component that the circuit outputs to

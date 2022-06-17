@@ -83,6 +83,6 @@ export const SelectionBoxTool = (() => {
         },
         getP2(): Vector {
             return V(p2);
-        }
+        },
     }
 })();

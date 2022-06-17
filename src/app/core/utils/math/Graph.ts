@@ -27,12 +27,12 @@ export class Edge<V, E> {
  * @param E The type for the weight of the edges of the graph
  */
 export class Graph<V, E> {
-    private list: Map<V, Edge<V, E>[]>;
-    private reverseList: Map<V, Edge<V, E>[]>;
+    private list: Map<V, Array<Edge<V, E>>>;
+    private reverseList: Map<V, Array<Edge<V, E>>>;
 
     public constructor() {
-        this.list = new Map<V, Edge<V, E>[]>();
-        this.reverseList = new Map<V, Edge<V, E>[]>();
+        this.list = new Map<V, Array<Edge<V, E>>>();
+        this.reverseList = new Map<V, Array<Edge<V, E>>>();
     }
 
     private dfs(visited: Map<V, boolean>, v: V): void {
@@ -97,7 +97,7 @@ export class Graph<V, E> {
         return this.list.get(node)!.length + this.reverseList.get(node)!.length;
     }
 
-    public getConnections(value: V): Edge<V, E>[] {
+    public getConnections(value: V): Array<Edge<V, E>> {
         if (!this.list.has(value))
             throw new Error("getConnections() failed: value not found");
         return this.list.get(value)!;
@@ -143,7 +143,7 @@ export class Graph<V, E> {
         }
 
         // Convert to an array of arrays where each index indicates the depth of that node
-        let ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
+        const ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
 
         Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
             ret[depth].push(node)

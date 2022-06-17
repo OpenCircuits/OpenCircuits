@@ -1,6 +1,6 @@
 /**
  * Checks if the substring of a given input starting at a given index is equal to a given sequence
- * 
+ *
  * @param input the input string that a substring of will be examined
  * @param index the starting index of input to compare at
  * @param sequence the sequence to check equality with

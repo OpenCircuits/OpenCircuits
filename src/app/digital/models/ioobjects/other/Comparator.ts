@@ -29,8 +29,8 @@ export class Comparator extends DigitalComponent {
 
         this.activate();
         this.setInputPortCount(2);
-        
-        this.getOutputPort(Comparator.LT_PORT).setName("<");        
+
+        this.getOutputPort(Comparator.LT_PORT).setName("<");
         this.getOutputPort(Comparator.EQ_PORT).setName("=");
         this.getOutputPort(Comparator.GT_PORT).setName(">");
     }

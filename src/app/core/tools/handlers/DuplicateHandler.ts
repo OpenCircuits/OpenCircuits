@@ -34,7 +34,7 @@ export const DuplicateHandler: EventHandler = ({
             CreateGroupSelectAction(selections, components).execute(),
             new TranslateAction(components,
                                 components.map(o => o.getPos()),
-                                components.map(o => o.getPos().add(V(5, 5)))).execute()
+                                components.map(o => o.getPos().add(V(5, 5)))).execute(),
         ], "Duplicate Handler"));
-    }
+    },
 });

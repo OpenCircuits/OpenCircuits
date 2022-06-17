@@ -27,10 +27,10 @@ export function Margin(h: number, v: number): Margin;
 export function Margin(left: number, right: number, bottom?: number, top?: number) {
     if (bottom !== undefined) {
         return { left, right, bottom, top };
-    } else {
+    }
         const h = left, v = right;
         return { left: h, right: h, bottom: v, top: v };
-    }
+
 }
 
 
@@ -230,16 +230,16 @@ export class Rect {
 
         // Get "bounds" for each direction
         const boundsX = {
-            ...("left"  in bounds ? { min:    bounds.left  } : {}),
-            ...("right" in bounds ? { max:    bounds.right } : {}),
-            ...("cx"    in bounds ? { center: bounds.cx    } : {}),
-            ...("width" in bounds ? { size:   bounds.width } : {}),
+            ...("left"  in bounds ? { min: bounds.left } : {}),
+            ...("right" in bounds ? { max: bounds.right } : {}),
+            ...("cx"    in bounds ? { center: bounds.cx } : {}),
+            ...("width" in bounds ? { size: bounds.width } : {}),
         } as BoundProps;
         const boundsY = {
-            ...("bottom" in bounds ? { min:    bounds.bottom } : {}),
-            ...("top"    in bounds ? { max:    bounds.top    } : {}),
-            ...("cy"     in bounds ? { center: bounds.cy     } : {}),
-            ...("height" in bounds ? { size:   bounds.height } : {}),
+            ...("bottom" in bounds ? { min: bounds.bottom } : {}),
+            ...("top"    in bounds ? { max: bounds.top } : {}),
+            ...("cy"     in bounds ? { center: bounds.cy } : {}),
+            ...("height" in bounds ? { size: bounds.height } : {}),
         } as BoundProps;
 
         return new Rect(

@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Transform} from "math/Transform";
@@ -57,7 +57,7 @@ import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
  */
 export const ComponentRenderer = (() => {
 
-    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol: string = "#ffffff"): void {
+    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol = "#ffffff"): void {
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol   = (selected ? SELECTED_FILL_COLOR   : fillcol);
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
@@ -150,6 +150,6 @@ export const ComponentRenderer = (() => {
         renderAll(renderer: Renderer, info: CircuitInfo, objects: Component[]): void {
             for (const obj of objects)
                 ComponentRenderer.render(renderer, info, obj);
-        }
+        },
     };
 })();

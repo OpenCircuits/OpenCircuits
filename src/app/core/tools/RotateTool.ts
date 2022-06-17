@@ -60,7 +60,7 @@ export const RotateTool = (() => {
             startAngle = getAngle(worldMousePos, selections.midpoint());
             prevAngle = startAngle;
 
-            return;
+
         },
         onDeactivate({}: Event, {history, selections}: CircuitInfo): void {
             const components = selections.get() as Component[];
@@ -104,6 +104,6 @@ export const RotateTool = (() => {
         },
         getPrevAngle(): number {
             return prevAngle;
-        }
+        },
     }
 })();

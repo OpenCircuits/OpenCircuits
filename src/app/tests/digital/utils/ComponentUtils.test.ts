@@ -1,7 +1,7 @@
 import "jest";
 
-import {CreateGroup, GatherGroup,
-        CopyGroup} from "core/utils/ComponentUtils";
+import {CopyGroup, CreateGroup,
+        GatherGroup} from "core/utils/ComponentUtils";
 
 import {DigitalNode}        from "digital/models/ioobjects/other/DigitalNode";
 import {Button}             from "digital/models/ioobjects/inputs/Button";

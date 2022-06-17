@@ -7,12 +7,12 @@ import {Circle} from "./Circle";
  * A representation of an ArcCircle shape.
  */
 export class ArcCircle extends Circle {
-    protected a0: number = 0;
+    protected a0 = 0;
     protected a1: number = 2*Math.PI;
 
     /**
      * Constructor for ArcCircle
-     * 
+     *
      * @param pos the position
      * @param radius the radius
      * @param a0 the starting angle
@@ -26,7 +26,7 @@ export class ArcCircle extends Circle {
 
     /**
      * Draws the ArcCircle on the canvas
-     * 
+     *
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

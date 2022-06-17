@@ -1,8 +1,8 @@
 import {DEFAULT_BORDER_WIDTH,
-        IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
+        IO_PORT_BORDER_WIDTH,
+        IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {Vector,V}     from "Vector";
+import {V,Vector}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {serialize}    from "serialeazy";

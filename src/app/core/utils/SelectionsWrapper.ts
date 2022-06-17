@@ -88,7 +88,7 @@ export class SelectionsWrapper {
 
     /**
      * Returns whether or not `f` returns true for at least one element of `this.selections`
-     * 
+     *
      * @param f a function that takes a Selectable `s` and returns a boolean
      * @returns returns true if `f` returns true for every element in `this.selections` and false otherwise
      */
@@ -122,7 +122,7 @@ export class SelectionsWrapper {
      * be used to calculate the midpoint (defaults to false)
      * @returns a Vector containing the midpoint of the elements in `this.selections`
      */
-    public midpoint(all: boolean = false): Vector {
+    public midpoint(all = false): Vector {
         if (this.amount() === 0)
             return V();
 
@@ -130,7 +130,7 @@ export class SelectionsWrapper {
         const selections =
             Array.from(this.selections)
                  .filter(s => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
-                                   : (s instanceof Component))) as (Component | Wire | Port)[];
+                                   : (s instanceof Component))) as Array<Component | Wire | Port>;
 
         // Get positions from Selectables
         const positions = selections

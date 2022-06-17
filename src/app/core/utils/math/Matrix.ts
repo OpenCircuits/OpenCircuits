@@ -1,4 +1,4 @@
-import {Vector,V} from "./Vector";
+import {V,Vector} from "./Vector";
 import {serializable} from "serialeazy";
 
 

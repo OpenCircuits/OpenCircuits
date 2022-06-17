@@ -7,7 +7,7 @@ import {CalculateMidpoint} from "math/MathUtils";
 export const useMousePos = () => {
     const [pos, setPos] = useState({
         x: undefined as number|undefined,
-        y: undefined as number|undefined
+        y: undefined as number|undefined,
     });
 
     useEffect(() => {

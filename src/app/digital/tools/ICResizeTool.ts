@@ -82,6 +82,6 @@ export const ICResizeTool = (() => {
         },
 
 
-        findEdge: findEdge
+        findEdge: findEdge,
     }
 })();

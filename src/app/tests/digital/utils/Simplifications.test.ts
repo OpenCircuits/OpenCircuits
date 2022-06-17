@@ -4,7 +4,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 import {IOObject} from "core/models";
 import {CreateNegatedGatesAction} from "digital/actions/simplification/NegatedGatesActionFactory";
-import {Switch, LED, ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
+import {ANDGate, LED, ORGate, Switch, XORGate} from "digital/models/ioobjects";
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
@@ -25,7 +25,7 @@ describe("Simplifications", () => {
                 b,
                 o,
                 and,
-                not
+                not,
             ];
 
             objects.push(Connect(a, 0, and, 0).getWire());
@@ -79,7 +79,7 @@ describe("Simplifications", () => {
                 b,
                 o,
                 or,
-                not
+                not,
             ];
 
             objects.push(Connect(a, 0, or, 0).getWire());
@@ -133,7 +133,7 @@ describe("Simplifications", () => {
                 b,
                 o,
                 xor,
-                not
+                not,
             ];
 
             objects.push(Connect(a, 0, xor, 0).getWire());

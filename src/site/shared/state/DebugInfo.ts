@@ -2,10 +2,10 @@ import {CreateState} from "shared/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        debugCullboxes: false,
+        debugCullboxes:       false,
         debugPressableBounds: false,
         debugSelectionBounds: false,
-        debugNoFill: false
+        debugNoFill:          false,
     },
     {
         ToggleDebugCullboxes:       () => ({ type: "TOGGLE_DEBUG_CULLBOXES"        }) as const,
@@ -17,7 +17,7 @@ const [initialState, actions, reducer] = CreateState()(
         "TOGGLE_DEBUG_CULLBOXES":        (state) => ({ ...state, debugCullboxes: !state.debugCullboxes }),
         "TOGGLE_DEBUG_PRESSABLE_BOUNDS": (state) => ({ ...state, debugPressableBounds: !state.debugPressableBounds }),
         "TOGGLE_DEBUG_SELECTION_BOUNDS": (state) => ({ ...state, debugSelectionBounds: !state.debugSelectionBounds }),
-        "TOGGLE_DEBUG_NO_FILL":          (state) => ({ ...state, debugNoFill: !state.debugNoFill })
+        "TOGGLE_DEBUG_NO_FILL":          (state) => ({ ...state, debugNoFill: !state.debugNoFill }),
     }
 );
 

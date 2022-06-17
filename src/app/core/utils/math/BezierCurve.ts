@@ -1,4 +1,4 @@
-import {Vector,V}  from "./Vector";
+import {V,Vector}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
 import {serializable} from "serialeazy";
@@ -6,11 +6,11 @@ import {serializable} from "serialeazy";
 
 /**
  * Cubic Bezier Curve class
- * 
+ *
  * Consists of a start point, an end point,
  * 2 control points, and the bounding
  * box for the curve
- * 
+ *
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8
  */

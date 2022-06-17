@@ -45,6 +45,6 @@ export const ConstantNumberRenderer = (() => {
             // Connect the output lines together and draw the text
             drawOutputConnector(renderer, transform.getSize(), borderColor);
             drawInputText(renderer, object.getInputNum());
-        }
+        },
     };
 })();

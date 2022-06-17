@@ -5,7 +5,7 @@ export type InputTreeUnOpType = "!";
 /** Represents operands of both unary and binary operations */
 export type InputTreeOpType = InputTreeBinOpType | InputTreeUnOpType;
 export type ParenType = "(" | ")";
-export type TokenType = 
+export type TokenType =
     | InputTreeOpType
     | ParenType;
 
@@ -14,22 +14,22 @@ export type BinOpChildren = [InputTree, InputTree, InputTree?, InputTree?, Input
 
 /** Represents a node on the parsed tree that itself represents an input component */
 export interface InputTreeIdent {
-    kind: "leaf"
-    ident: string
+    kind: "leaf";
+    ident: string;
 }
 /** Represents a node on the parsed tree that itself represents a unary operation */
 export interface InputTreeUnOpNode {
-    kind: "unop"
-    type: InputTreeUnOpType
-    child: InputTree
+    kind: "unop";
+    type: InputTreeUnOpType;
+    child: InputTree;
 }
 /** Represents a node on the parsed tree that itself represents a binary operation */
 export interface InputTreeBinOpNode {
-    kind: "binop"
-    type: InputTreeBinOpType
-    isNot: boolean // true for NAND, false for AND
+    kind: "binop";
+    type: InputTreeBinOpType;
+    isNot: boolean; // true for NAND, false for AND
     // Can have 2-8 children
-    children: BinOpChildren
+    children: BinOpChildren;
 }
 /** Represents all possible types of nodes for the input tree */
 export type InputTree =
@@ -43,10 +43,10 @@ export interface OpToken {
 }
 /** Used to represent the token of an input component when parsing the initial expression to a token list */
 export interface InputToken {
-    type: "input"
+    type: "input";
     name: string;
 }
-export type Token = 
+export type Token =
     | OpToken
     | InputToken;
 

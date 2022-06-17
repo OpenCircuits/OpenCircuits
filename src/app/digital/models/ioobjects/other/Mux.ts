@@ -46,7 +46,7 @@ export abstract class Mux extends DigitalComponent {
         this.updatePortNames();
     }
 
-    public getSelectPorts(): Array<InputPort> {
+    public getSelectPorts(): InputPort[] {
         return this.selects.getPorts();
     }
 

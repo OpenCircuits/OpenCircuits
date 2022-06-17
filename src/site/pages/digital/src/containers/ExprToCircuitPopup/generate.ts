@@ -12,8 +12,8 @@ import {SetNameAction}           from "core/actions/SetNameAction";
 import {TranslateAction}         from "core/actions/transform/TranslateAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {CreateDeselectAllAction,
-        SelectAction,
-        CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+        CreateGroupSelectAction,
+        SelectAction} from "core/actions/selection/SelectAction";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -22,7 +22,7 @@ import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
 import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digital/models";
-import {ICData, IC, Clock, Label}           from "digital/models/ioobjects";
+import {Clock, IC, ICData, Label}           from "digital/models/ioobjects";
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
@@ -30,26 +30,26 @@ import {GenerateTokens}      from "digital/utils/ExpressionParser/GenerateTokens
 
 
 export type ExprToCirGeneratorOptions = {
-    input: InputTypes,
-    output: OutputTypes,
-    isIC: boolean,
-    connectClocksToOscope: boolean,
-    label: boolean,
-    format: OperatorFormatLabel,
-    ops: OperatorFormat,
+    input: InputTypes;
+    output: OutputTypes;
+    isIC: boolean;
+    connectClocksToOscope: boolean;
+    label: boolean;
+    format: OperatorFormatLabel;
+    ops: OperatorFormat;
 }
 
 export type InputTypes = "Button" | "Clock" | "Switch";
 export type OutputTypes = "Oscilloscope" | "LED";
 
 const defaultOptions: ExprToCirGeneratorOptions = {
-    input: "Switch",
-    output: "LED",
-    isIC: false,
+    input:                 "Switch",
+    output:                "LED",
+    isIC:                  false,
     connectClocksToOscope: false,
-    label: false,
-    format: "|",
-    ops: Formats[0],
+    label:                 false,
+    format:                "|",
+    ops:                   Formats[0],
 }
 
 function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,

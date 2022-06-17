@@ -15,7 +15,7 @@ import {AnalogCircuitDesigner} from "analog/models";
 import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
-import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
+import {_SetCircuitLoading, SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
@@ -177,7 +177,7 @@ export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<H
             await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, circuitCopyMetadata.getId()));
 
             await store.dispatch(LoadUserCircuits());
-        }
+        },
     }
 
     return helpers;

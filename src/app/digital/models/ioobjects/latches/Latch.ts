@@ -17,10 +17,10 @@ export abstract class Latch extends DigitalComponent {
     public static readonly Q2_PORT = 1;
 
     @serialize
-    protected enabled: boolean = false;
+    protected enabled = false;
 
     @serialize
-    protected state: boolean = false;
+    protected state = false;
 
     protected constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs+1), new ClampedValue(2), V(70, 70), inputPositioner);

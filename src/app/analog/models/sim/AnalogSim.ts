@@ -100,7 +100,7 @@ export class AnalogSim {
         return this.vecs[id].data;
     }
 
-    public getVecDataIm(id: string): { re: number, im: number }[] {
+    public getVecDataIm(id: string): Array<{ re: number, im: number }> {
         // const idPtr = this.lib.create_array("string", id);
         // const vecDataPtr = this.lib.get_vector_data(idPtr);
         // return this.lib.get_array(vecDataPtr, { type: "double", len: this.getVecLen(id) });

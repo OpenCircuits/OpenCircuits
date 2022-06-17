@@ -2,7 +2,7 @@ import {serializable} from "serialeazy";
 
 import {IOObject, Wire} from "core/models";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-import {DigitalWire, DigitalComponent} from "./index";
+import {DigitalComponent, DigitalWire} from "./index";
 
 /**
  * Helper class to hold different groups of components.

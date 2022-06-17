@@ -126,7 +126,7 @@ export class Vector {
      * @returns A new vector with 'this' scalar multiplied by 'a'
      */
     public scale(x: number): Vector;
-    
+
     public scale(a: Vector | number): Vector {
         if (a instanceof Vector)
             return new Vector(a.x * this.x, a.y * this.y);
@@ -135,7 +135,7 @@ export class Vector {
     /**
      * Return a Vector with 'this' Vector's absolute value of 'x' and 'y'
      * @returns Return a new vector that hold the absolute value
-     *          of original vector 
+     *          of original vector
      */
     public abs(): Vector {
         return new Vector(Math.abs(this.x), Math.abs(this.y));
@@ -214,7 +214,7 @@ export class Vector {
      * Return a vector that has mininum 'x' and 'y' components from
      * vectors within the array 'vectors'
      * @param vectors The array that holds vectors
-     * @returns A Vector with the smallest 'x' and 'y' that 
+     * @returns A Vector with the smallest 'x' and 'y' that
      *          from vector(s) in the array
      */
     public static min(...vectors: Vector[]): Vector {
@@ -225,7 +225,7 @@ export class Vector {
      * Return a vector that has maxium 'x' and 'y' components from
      * vectors within the array 'vectors'
      * @param vectors The array that holds vectors
-     * @returns A Vector with the biggest 'x' and 'y' that 
+     * @returns A Vector with the biggest 'x' and 'y' that
      *          from vector(s) in the array
      */
     public static max(...vectors: Vector[]): Vector {
@@ -238,9 +238,9 @@ export class Vector {
      * @param lo The minimum vector of the range
      * @param hi The maximum vector of the range
      * @returns Return 'x' itself if it is in the range of 'lo' and 'hi'.
-     *          If one of the component of 'x' out of the range, it will 
+     *          If one of the component of 'x' out of the range, it will
      *          be respectively change to corresponding compoenent of 'lo' or 'hi' and return.
-     *          If both component of 'x' out of the range, 
+     *          If both component of 'x' out of the range,
      *          it will return 'lo' or 'hi' depend on the valueof 'x'
      */
     public static clamp(x: Vector, lo: Vector, hi: Vector): Vector {

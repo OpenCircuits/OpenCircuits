@@ -28,7 +28,7 @@ expect.extend({
         if (!(received instanceof CircuitDesigner)) {
             return {
                 message: () => "expected type of CircuitDesigner",
-                pass: false
+                pass:    false,
             };
         }
 
@@ -60,7 +60,7 @@ expect.extend({
 
         return {
             message: () => `expected ${received} to not be the same as ${expected}`,
-            pass: true
+            pass:    true,
         };
-    }
+    },
 });

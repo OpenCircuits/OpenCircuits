@@ -13,7 +13,7 @@ export class QuadCurve implements Shape {
 
     /**
      * Constructor for QuadCurve
-     * 
+     *
      * @param p1 start point
      * @param p2 end point
      * @param c control point
@@ -26,7 +26,7 @@ export class QuadCurve implements Shape {
 
     /**
      * Draws the QuadCurve on the canvas
-     * 
+     *
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

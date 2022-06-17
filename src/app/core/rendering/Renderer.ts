@@ -1,6 +1,6 @@
 import {parseColor, SVGDrawing} from "svg2canvas";
 
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 import {Transform} from "math/Transform";
 import {Camera} from "math/Camera";
 
@@ -58,7 +58,7 @@ export class Renderer {
     public stroke(): void {
         this.context.stroke();
     }
-    public draw(shape: Shape, style: Style, alpha: number = 1): void {
+    public draw(shape: Shape, style: Style, alpha = 1): void {
         this.save();
         this.setStyle(style, alpha);
 

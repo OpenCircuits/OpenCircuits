@@ -3,8 +3,8 @@ import "test/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {Switch, LED,
-        DigitalNode} from "digital/models/ioobjects";
+import {DigitalNode, LED,
+        Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";

@@ -33,6 +33,6 @@ export const GridRenderer = (() => {
             renderer.closePath();
             renderer.stroke();
             renderer.restore();
-        }
+        },
     };
 })();

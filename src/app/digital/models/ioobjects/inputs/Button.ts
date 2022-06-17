@@ -1,4 +1,4 @@
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 import {CircleContains} from "math/MathUtils";
 import {ClampedValue} from "math/ClampedValue";
 
@@ -6,7 +6,7 @@ import {PressableComponent} from "../PressableComponent";
 import {serializable} from "serialeazy";
 
 /**
- * An input that acts as a button. While pressed down by the mouse button, it outputs a signal. When you 
+ * An input that acts as a button. While pressed down by the mouse button, it outputs a signal. When you
  * release the mouse button, the signal is no longer outputted. The red portion is the clickable
  * portion. Clicking anywhere else on the button (ie. the corners) will give you the settings for the
  * button.
@@ -35,7 +35,7 @@ export class Button extends PressableComponent {
     }
 
     /**
-     * Activates the button (makes the output true) by calling activate. 
+     * Activates the button (makes the output true) by calling activate.
      */
     public press(): void {
         this.activate(true);
@@ -50,8 +50,8 @@ export class Button extends PressableComponent {
 
     /**
      * Activates or deactivates the output.
-     * 
-     * @param signal true makes it activate the output, 
+     *
+     * @param signal true makes it activate the output,
      *              false deactivates.
      */
     public activate(signal: boolean): void {

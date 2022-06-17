@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 import {Transform} from "math/Transform";
@@ -18,7 +18,7 @@ import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-import {Oscilloscope, Label} from "analog/models/eeobjects";
+import {Label, Oscilloscope} from "analog/models/eeobjects";
 
 import {OscilloscopeRenderer} from "./OscilloscopeRenderer";
 

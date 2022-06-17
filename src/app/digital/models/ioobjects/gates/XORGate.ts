@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
@@ -19,7 +19,7 @@ export class XORGate extends Gate {
      *
      * @param not true for XNOR gate, false for XOR gate
      */
-    public constructor(not: boolean = false) {
+    public constructor(not = false) {
         super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
     }
     /**

@@ -46,7 +46,7 @@ export class CoderPortChangeAction implements Action {
             this.outputPortAction = new OutputPortChangeAction(obj, obj.getOutputPortCount().getValue(), Math.pow(2, target));
         }
     }
-    
+
     /**
      * This code changes the size of the actual object.
      *
@@ -55,7 +55,7 @@ export class CoderPortChangeAction implements Action {
     protected changeSize(val: number): void {
         this.obj.setSize(V(DEFAULT_SIZE * (1 + (val - 1)/20), DEFAULT_SIZE/2 * Math.pow(2, val)));
     }
-    
+
     /**
      * This function calls upon the change size function and the port actions to change the size of the obj and the number of inputs/output ports.
      *
@@ -70,7 +70,7 @@ export class CoderPortChangeAction implements Action {
         this.obj.updatePortNames();
         return this;
     }
-    
+
     /**
      * This function undoes the execute(): Action function and sets the size and number of ports back to the inital count and size.
      *

@@ -3,7 +3,7 @@ import "jest";
 import {V} from "Vector";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {Switch, LED} from "digital/models/ioobjects";
+import {LED, Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";

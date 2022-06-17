@@ -36,21 +36,21 @@ export class ToolManager {
                 return true;
             }
             return changed;
-        } else {
-            // Check if some other tool should be activated
-            const newTool = this.tools.find(t => t.shouldActivate(event, info));
-            if (newTool !== undefined) {
-                this.currentTool = newTool;
-                newTool.onActivate(event, info);
-                return true;
-            }
-
-            // Specifically do defaultTool's `onEvent` last
-            //  which means that Tool activations will take priority
-            //  over the default behavior for things like Handlers
-            //  Fixes #624
-            return this.defaultTool.onEvent(event, info);
         }
+        // Check if some other tool should be activated
+        const newTool = this.tools.find(t => t.shouldActivate(event, info));
+        if (newTool !== undefined) {
+            this.currentTool = newTool;
+            newTool.onActivate(event, info);
+            return true;
+        }
+
+        // Specifically do defaultTool's `onEvent` last
+        //  which means that Tool activations will take priority
+        //  over the default behavior for things like Handlers
+        //  Fixes #624
+        return this.defaultTool.onEvent(event, info);
+
     }
 
     public hasTool(tool: Tool): boolean {

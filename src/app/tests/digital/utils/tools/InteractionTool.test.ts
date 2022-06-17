@@ -284,7 +284,7 @@ describe("Selection Tool", () => {
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
-            
+
             // Select all objects with shift and click
             input.pressKey("Shift");
             input.click(obj1.getPos());
