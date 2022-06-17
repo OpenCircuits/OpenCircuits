@@ -6,6 +6,7 @@ import {Wire} from "core/models/Wire";
 import {DigitalComponent, InputPort, OutputPort} from "./index";
 
 import {DigitalNode} from "./ioobjects/other/DigitalNode";
+import {DEFAULT_ON_COLOR} from "core/utils/Constants";
 
 
 @serializable("DigitalWire")
@@ -69,6 +70,10 @@ export class DigitalWire extends Wire {
 
     public getOutputComponent(): DigitalComponent {
         return this.p2.getParent();
+    }
+
+    public getDisplayColor(): string {
+        return (this.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : this.getColor());
     }
 
     public getIsOn(): boolean {

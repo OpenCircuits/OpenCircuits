@@ -54,7 +54,7 @@ type Props<D> = {
     getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
-    onDelete: (section: ItemNavSection, item: ItemNavItem) => boolean;
+    onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
 export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
@@ -350,7 +350,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                                             setNumClicks(1);
                                             // Stops drag'n'drop preview when deleting
                                             setCurItemImg("");
-                                            onDelete(section, item) && setHover("");
+                                            if (onDelete)
+                                                onDelete(section, item);
+                                            setHover("");
 
                                             ev.stopPropagation();
                                         }}>
