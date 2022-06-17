@@ -103,25 +103,26 @@ export const HistoryBox = ({ info }: Props) => {
     const { undoHistory, redoHistory } = useHistory(info);
 
     return (
-        <AdjustableElement initialWidth={240} initialHeight={400}>
-            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-                <div>
-                    <span>History</span>
-                    <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
+        <AdjustableElement initialWidth={240} initialHeight={400} minHeight={240}>
+            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}
+                 data-adjustable>
+                <div data-adjustable>
+                    <span data-adjustable>History</span>
+                    <span role="button" tabIndex={0} data-adjustable
+                          onClick={() => dispatch(CloseHistoryBox())}>×</span>
                 </div>
-                <div>
+                <div data-adjustable>
                     {[...redoHistory].map((a, i) =>
-                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
+                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo />,
                     )}
                     { redoHistory.length > 0 && (<>
                         <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
-                        <div className={"historybox__separator"} > </div>
+                        <div className="historybox__separator"></div>
                     </>)}
                     <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
                     {[...undoHistory].reverse().map((a, i) =>
-                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
+                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false} />,
                     )}
-
                 </div>
             </div>
         </AdjustableElement>

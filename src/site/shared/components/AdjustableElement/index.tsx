@@ -33,7 +33,7 @@ export const AdjustableElement = ({ children, initialHeight, initialWidth, minHe
         left:   w >= 768 ? (isItemNavOpen ? ITEMNAV_WIDTH  : 0) : 0,
         right:  w,
         bottom: w <  768 ? (isItemNavOpen ? ITEMNAV_HEIGHT : 0) : 0,
-        top:    h - HEADER_HEIGHT,
+        top:    h - HEADER_HEIGHT + 5/2,
     }), { // Min size of the box
         width:  (minWidth  ?? initialWidth),
         height: (minHeight ?? initialHeight),
@@ -53,8 +53,12 @@ export const AdjustableElement = ({ children, initialHeight, initialWidth, minHe
 
                  cursor,
              }}
-             onPointerDown={onMouseDown}
-             onPointerUp={onMouseUp}>
+             onPointerUp={onMouseUp}
+             onPointerDown={(ev) => {
+                // Only drag on "adjustable" parts of the element
+                if (ev.target instanceof HTMLElement && "adjustable" in ev.target.dataset)
+                    onMouseDown(ev);
+             }}>
             {children}
         </div>
     );
