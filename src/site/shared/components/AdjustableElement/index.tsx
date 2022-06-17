@@ -13,16 +13,20 @@ type Props = {
     initialWidth: number;
     initialHeight: number;
 
+    className?: string;
+    style?: React.CSSProperties;
+
     minWidth?: number;
     minHeight?: number;
 
     children: React.ReactNode;
 }
 
-export const AdjustableElement = ({ children, initialHeight, initialWidth, minHeight, minWidth }: Props) => {
+export const AdjustableElement = ({ className, style, initialWidth, initialHeight,
+                                    minWidth, minHeight, children }: Props) => {
     const { isItemNavOpen } = useSharedSelector(({ itemNav }) => ({ isItemNavOpen: itemNav.isOpen }));
 
-    const { h, w } = useWindowSize();
+    const { w, h } = useWindowSize();
 
     const { cursor, newRect, state, onMouseDown, onMouseUp } = useAdjustableElement({
         left:   (w < 768 ? 0 : w - initialWidth),
@@ -41,6 +45,7 @@ export const AdjustableElement = ({ children, initialHeight, initialWidth, minHe
 
     return (
         <div role="menu"
+             className={className}
              style={{
                  position: "absolute",
 
@@ -52,6 +57,8 @@ export const AdjustableElement = ({ children, initialHeight, initialWidth, minHe
                  transition: (state === "none" ? "all 0.5s" : undefined),
 
                  cursor,
+
+                 ...(style ?? {}),
              }}
              onPointerUp={onMouseUp}
              onPointerDown={(ev) => {

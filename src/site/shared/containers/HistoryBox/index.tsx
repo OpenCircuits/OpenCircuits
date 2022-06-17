@@ -13,6 +13,7 @@ import {AdjustableElement} from "shared/components/AdjustableElement";
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
+import {useEvent} from "shared/utils/hooks/useEvent";
 
 
 type HistoryEntryProps = {
@@ -96,14 +97,24 @@ type Props = {
 }
 export const HistoryBox = ({ info }: Props) => {
     const { isOpen, isHistoryBoxOpen } = useSharedSelector(
-        state => ({ ...state.itemNav })
+        state => ({ ...state.itemNav }),
     );
     const dispatch = useSharedDispatch();
 
     const { undoHistory, redoHistory } = useHistory(info);
 
+    const [isDragging, setIsDragging] = useState(false);
+    useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]);
+    useEvent("mouseup",   (_) => setIsDragging(false), info.input, [setIsDragging]);
+
+
     return (
-        <AdjustableElement initialWidth={240} initialHeight={400} minHeight={240}>
+        <AdjustableElement
+            initialWidth={240} initialHeight={400} minHeight={240}
+            style={{
+                pointerEvents: (isDragging ? "none" : undefined),
+                opacity:       (isDragging ? 0.5    : undefined),
+            }}>
             <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}
                  data-adjustable>
                 <div data-adjustable>
