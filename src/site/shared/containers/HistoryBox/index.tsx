@@ -8,10 +8,12 @@ import {GroupAction} from "core/actions/GroupAction";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
+import {AdjustableElement} from "shared/components/AdjustableElement";
+
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
-import {DynamicElement} from "shared/components/DynamicElement";
+
 
 type HistoryEntryProps = {
     a: Action;
@@ -101,7 +103,7 @@ export const HistoryBox = ({ info }: Props) => {
     const { undoHistory, redoHistory } = useHistory(info);
 
     return (
-        <DynamicElement initialWidth={240} initialHeight={400}>
+        <AdjustableElement initialWidth={240} initialHeight={400}>
             <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
                 <div>
                     <span>History</span>
@@ -122,6 +124,6 @@ export const HistoryBox = ({ info }: Props) => {
 
                 </div>
             </div>
-        </DynamicElement>
+        </AdjustableElement>
     );
 }

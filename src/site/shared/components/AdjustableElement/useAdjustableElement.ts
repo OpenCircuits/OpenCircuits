@@ -14,10 +14,11 @@ const RESIZE_AREAS = ["center", "nw", "w", "sw", "n", "s", "ne", "e", "se"] as c
 type Corner = "nw" | "ne" | "sw" | "se";
 type Edge   = "w"  | "e"  | "n"  | "s";
 type ResizeArea = Edge | Corner;
+
 type State = "none" | "center" | ResizeArea;
 
-
-export const useDynamicElement = (initialRect: RectProps, bounds: Rect, minSize: { width: number, height: number }) => {
+export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
+                                     minSize: { width: number, height: number }) => {
     const { h } = useWindowSize();
     const mousePos = useMousePos();
     const [mouseDownPos, setMouseDownPos] = useState({ x: 0, y: 0 });

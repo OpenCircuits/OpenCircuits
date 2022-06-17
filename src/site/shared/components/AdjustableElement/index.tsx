@@ -6,7 +6,7 @@ import {Rect} from "math/Rect";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 
-import {useDynamicElement} from "./useDynamicElement";
+import {useAdjustableElement} from "./useAdjustableElement";
 
 
 type Props = {
@@ -19,12 +19,12 @@ type Props = {
     children: React.ReactNode;
 }
 
-export const DynamicElement = ({ children, initialHeight, initialWidth, minHeight, minWidth }: Props) => {
+export const AdjustableElement = ({ children, initialHeight, initialWidth, minHeight, minWidth }: Props) => {
     const { isItemNavOpen } = useSharedSelector(({ itemNav }) => ({ isItemNavOpen: itemNav.isOpen }));
 
     const { h, w } = useWindowSize();
 
-    const { cursor, newRect, state, onMouseDown, onMouseUp } = useDynamicElement({
+    const { cursor, newRect, state, onMouseDown, onMouseUp } = useAdjustableElement({
         left:   (w < 768 ? 0 : w - initialWidth),
         bottom: 0,
         width:  initialWidth,
