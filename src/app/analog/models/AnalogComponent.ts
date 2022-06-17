@@ -86,7 +86,7 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
         if (a1 && a2) {
             return (state) => (a1(state) && a2(state));
         }
-            return a1 ?? a2;
+        return a1 ?? a2;
 
     }
 

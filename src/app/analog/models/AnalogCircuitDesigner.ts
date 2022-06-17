@@ -1,4 +1,4 @@
-            import {serializable, serialize} from "serialeazy";
+import {serializable, serialize} from "serialeazy";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -104,7 +104,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public addWire(wire: AnalogWire): void {
         if (this.wires.includes(wire))
-throw new Error("Attempted to add a wire that already existed!");
+            throw new Error("Attempted to add a wire that already existed!");
 
         this.wires.push(wire);
 
