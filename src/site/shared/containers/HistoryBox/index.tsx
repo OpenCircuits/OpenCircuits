@@ -96,7 +96,7 @@ type Props = {
     info: CircuitInfo;
 }
 export const HistoryBox = ({ info }: Props) => {
-    const { isOpen, isHistoryBoxOpen } = useSharedSelector(
+    const { isOpen, isHistoryBoxOpen, curItemID } = useSharedSelector(
         state => ({ ...state.itemNav }),
     );
     const dispatch = useSharedDispatch();
@@ -107,13 +107,15 @@ export const HistoryBox = ({ info }: Props) => {
     useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]);
     useEvent("mouseup",   (_) => setIsDragging(false), info.input, [setIsDragging]);
 
+    // Make history box passthrough if dragging on canvas or from ItemNav
+    const passthrough = isDragging || !!curItemID;
 
     return (
         <AdjustableElement
             initialWidth={240} initialHeight={400} minHeight={240}
             style={{
-                pointerEvents: (isDragging ? "none" : undefined),
-                opacity:       (isDragging ? 0.5    : undefined),
+                pointerEvents: (passthrough ? "none" : undefined),
+                opacity:       (passthrough ? 0.5    : undefined),
             }}>
             <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}
                  data-adjustable>
