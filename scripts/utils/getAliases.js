@@ -28,11 +28,15 @@ module.exports = function getAliases(cwd = process.cwd(), format = "webpack") {
                 aliases[name] = url;
             } else {
                 const name = n.replace("/*", "/(.*)$");
-                const url = p.replace("./", "<rootDir>/").replace("/*", "/$1");
+                const url = (p.startsWith("./")
+                    ? p.replace("./", "<rootDir>/")
+                    : "<rootDir>/".concat(p)
+                ).replace("/*", "/$1");
                 aliases[name] = url;
             }
         });
     }
 
+    console.log(aliases);
     return aliases;
 }
