@@ -12,11 +12,12 @@ export type ModuleSubmitInfo = {
     isValid: false;
 }
 
-export type SharedModuleInputFieldProps<V extends Types, E = {}> = {
+export type SharedModuleInputFieldProps<V extends Types, M = {}> = {
     props: V[];
 
-    getAction: (newVal: V, extra?: E) => Action;
+    getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
+    getModifierAction?: (newMod: M) => Action;
     getCustomDisplayVal?: (val: V) => V;
 
     placeholder?: string;
@@ -24,14 +25,16 @@ export type SharedModuleInputFieldProps<V extends Types, E = {}> = {
 }
 
 
-type State = {
+type State<M = {}> = {
     focused: boolean;
     textVal: string;
     tempAction: Action | undefined;
+
+    modifier: M | undefined;
     modifierAction: Action | undefined;
 }
 type Types = string | number | boolean;
-type Props<V extends Types, E = {}> = {
+type Props<V extends Types, M = {}> = {
     props: V[];
 
     parseVal: (val: string) => V;
@@ -40,24 +43,26 @@ type Props<V extends Types, E = {}> = {
 
     getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
-    getModifierAction?: (newMod: E) => Action;
+    getModifierAction?: (newMod: M) => Action;
     getCustomDisplayVal?: (val: V) => V;
 }
-export const useBaseModule = <V extends Types, E = {}>({ props, getAction, getModifierAction, parseVal, isValid,
-                                                    parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V,E>) => {
+export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getModifierAction, parseVal, isValid,
+                                                    parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V,M>) => {
     const [state, setState] = useState<State>({
-        focused: false,
-        textVal: "",
+        focused:    false,
+        textVal:    "",
         tempAction: undefined,
+
+        modifier:       undefined,
         modifierAction: undefined,
     });
 
-    const { focused, textVal, tempAction, modifierAction } = state;
+    const { focused, textVal, tempAction, modifier, modifierAction } = state;
 
     const allSame = props.every(v => v === props[0]);
     const val = props[0];
 
-    const onModify = (newMod: E) => {
+    const onModify = (newMod: M) => {
         if (!getModifierAction)
             return;
 
@@ -85,7 +90,9 @@ export const useBaseModule = <V extends Types, E = {}>({ props, getAction, getMo
         onSubmit?.({ isFinal: false, isValid: true, action });
 
         // Reset modifier when state here since state is being set exactly
-        setState({ focused: true, textVal: newVal, tempAction: action, modifierAction: undefined });
+        setState({
+            focused: true, textVal: newVal, tempAction: action, modifier: undefined, modifierAction: undefined
+        });
     }
 
     // Focusing on the input will enter a sort-of new "mode" where
@@ -106,7 +113,7 @@ export const useBaseModule = <V extends Types, E = {}>({ props, getAction, getMo
         // On focus, if all same (displaying `val`) then
         //  start user-input with `val`, otherwise empty
         const textVal = (allSame ? val.toString() : "");
-        setState({ ...state, focused: true, textVal, tempAction: undefined, modifierAction: undefined });
+        setState({ focused: true, textVal, tempAction: undefined, modifier: undefined, modifierAction: undefined });
     }
 
     // Blurring should trigger a 'submit' so the user-inputted value
@@ -161,9 +168,5 @@ export const useBaseModule = <V extends Types, E = {}>({ props, getAction, getMo
             onBlur,
             onModify,
         },
-        {
-            state,
-            setState,
-        }
     ] as const;
 }

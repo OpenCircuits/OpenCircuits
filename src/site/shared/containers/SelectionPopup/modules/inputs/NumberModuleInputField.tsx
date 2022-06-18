@@ -7,7 +7,7 @@ import {NumberInputField} from "shared/components/InputField";
 import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
-type Props = SharedModuleInputFieldProps<number, number | undefined> & {
+type Props = SharedModuleInputFieldProps<number, number> & {
     kind: "float" | "int";
     step?: number;
     min?: number;
@@ -19,16 +19,12 @@ export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt,
     const Min = min ?? -Infinity;
     const Max = max ?? +Infinity;
 
-    const [state, setState, internal] = useBaseModule<number, number | undefined>({
+    const [state, setState] = useBaseModule<number, number>({
         ...props,
 
         parseVal:      (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
         parseFinalVal: (val) => Clamp(val, Min, Max),
         isValid:       (val) => (!isNaN(val) && (Min <= val && val <= Max)),
-
-        getModifierAction: (newMod) => {
-            return props.getAction(0, newMod);
-        }
     });
 
     // TODO: Maybe store this "modifier" as a state variable in base module?
@@ -42,16 +38,19 @@ export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt,
         // If the props are the same (or has been set to be the same)
         //  and the current input value is not NaN, then just set the increment
         //  as a direct change since the props are all the same and don't need
-        //  to be applied on a per-prop basis
-        if ((state.allSame || incrementState.hasSet) && !isNaN(ref.current!.valueAsNumber)) {
-            setState.onChange(`${ref.current!.valueAsNumber + step}`);
+        //  to be applied on a per-prop basis (or there isn't a modifier)
+        if (!props.getModifierAction ||
+            ((state.allSame || incrementState.hasSet) && !isNaN(ref.current!.valueAsNumber))) {
+            const total = Clamp(ref.current!.valueAsNumber + step, Min, Max);
+            setState.onChange(`${total}`);
             return;
         }
 
         // Otherwise, store the increment and use the onModify function to apply
         //  the increment on a per-prop basis
-        setIncrementState({ total: incrementState.total + step, hasSet: false });
-        setState.onModify(incrementState.total + step);
+        const total = Clamp(incrementState.total + step, Min, Max);
+        setIncrementState({ total, hasSet: false });
+        setState.onModify(total);
     }
 
     return (
@@ -67,7 +66,7 @@ export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt,
             }}
             onIncrement={onIncrement}
             onFocus={() => { setState.onFocus(); setIncrementState({ total: 0, hasSet: false }) }}
-            onBlur={ () => { setState.onBlur();  setIncrementState({ total: 0, hasSet: false }) }}
+            onBlur={() => { setState.onBlur();  setIncrementState({ total: 0, hasSet: false }) }}
             min={min} max={max} step={step} alt={alt} />
     )
 }

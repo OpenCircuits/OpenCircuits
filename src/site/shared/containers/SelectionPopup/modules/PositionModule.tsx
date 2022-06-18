@@ -8,6 +8,7 @@ import {Component} from "core/models";
 
 import {useSelectionProps} from "./useSelectionProps";
 import {NumberModuleInputField} from "./inputs/NumberModuleInputField";
+import {ModuleSubmitInfo} from "./inputs/ModuleInputField";
 
 
 type Props = {
@@ -25,57 +26,54 @@ export const PositionModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+
+    const onSubmit = (info: ModuleSubmitInfo) => {
+        renderer.render();
+        if (info.isValid && info.isFinal) // Only add final action to history
+            history.add(info.action);
+    }
+    const getAction = (newVal: number, dir: "x" | "y") => (
+        new TranslateAction(
+            cs,
+            cs.map(c => c.getPos()),
+            cs.map(c => c.getPos())
+                .map(({ x, y }) => V(
+                    (dir === "x" ? newVal*100 : x),
+                    (dir === "y" ? newVal*100 : y),
+                )),
+            false,
+        )
+    );
+    const getStepAction = (step: number, dir: "x" | "y") => (
+        new TranslateAction(
+            cs,
+            cs.map(c => c.getPos()),
+            cs.map(c => c.getPos())
+                .map(({ x, y }) => V(
+                    (dir === "x" ? x + step*100 : x),
+                    (dir === "y" ? y + step*100 : y),
+                )),
+            false,
+        )
+    );
+
+    return (<div>
         Position
         <label>
             <NumberModuleInputField
-                kind="float"
+                kind="float" step={1} alt="X-Position of object(s)"
                 props={props.x}
-                getAction={(newX, step) =>
-                    new TranslateAction(
-                        cs,
-                        cs.map(c => c.getPos()),
-                        cs.map(c => V(
-                            // If incremented, then shift the currnet position over,
-                            //  otherwise set it directly (issue #890)
-                            (step !== undefined ? c.getPos().x + step*100 : newX*100),
-                            c.getPos().y
-                        )),
-                        false
-                    )
-                }
-                onSubmit={(info) => {
-                    renderer.render();
-                    if (info.isValid && info.isFinal) /// Only add final action to history
-                        history.add(info.action);
-                }}
+                getAction={(newX) => getAction(newX, "x")}
+                getModifierAction={(step) => getStepAction(step, "x")}
                 getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
-                step={1}
-                alt="X-Position of object(s)" />
+                onSubmit={onSubmit} />
             <NumberModuleInputField
-                kind="float"
+                kind="float" step={1} alt="Y-Position of object(s)"
                 props={props.y}
-                getAction={(newY, step) =>
-                    new TranslateAction(
-                        cs,
-                        cs.map(c => c.getPos()),
-                        cs.map(c => V(
-                            // If incremented, then shift the currnet position over,
-                            //  otherwise set it directly (issue #890)
-                            c.getPos().x,
-                            (step !== undefined ? c.getPos().y + step*100 : newY*100),
-                        )),
-                        false
-                    )
-                }
-                onSubmit={(info) => {
-                    renderer.render();
-                    if (info.isValid && info.isFinal) /// Only add final action to history
-                        history.add(info.action);
-                }}
+                getAction={(newY) => getAction(newY, "y")}
+                getModifierAction={(step) => getStepAction(step, "y")}
                 getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
-                step={1}
-                alt="Y-Position of object(s)" />
+                onSubmit={onSubmit} />
         </label>
-    </div>
+    </div>);
 }
