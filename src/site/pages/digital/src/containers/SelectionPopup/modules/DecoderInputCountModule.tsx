@@ -1,26 +1,46 @@
+import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GroupAction} from "core/actions/GroupAction";
-
-import {Decoder} from "digital/models/ioobjects";
 
 import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
-import {CreateModule, ModuleConfig, PopupModule} from "shared/containers/SelectionPopup/modules/Module";
+import {Decoder} from "digital/models/ioobjects";
+
+import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
-const Config: ModuleConfig<[Decoder], number> = {
-    types: [Decoder],
-    valType: "int",
-    getProps: (o) => o.getInputPortCount().getValue(),
-    getAction: (s, newCount) =>
-        new GroupAction(s.map(o => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCount)), "Decoder Input Count Module")
+type Props = {
+    info: CircuitInfo;
 }
+export const DecoderInputCountModule = ({ info }: Props) => {
+    const { history, renderer } = info;
 
-export const DecoderInputCountModule = PopupModule({
-    label: "Input Count",
-    modules: [CreateModule({
-        inputType: "number",
-        config: Config,
-        step: 1, min: 1, max: 8,
-        alt: "Number of inputs object(s) have"
-    })]
-});
+    const [props, cs] = useSelectionProps(
+        info,
+        (c): c is Decoder => (c instanceof Decoder),
+        (c) => ({ numInputs: c.getInputPortCount().getValue() })
+    );
+
+    if (!props)
+        return null;
+
+    return <div>
+        Input Count
+        <label>
+            <NumberModuleInputField
+                kind="int" min={1} max={8} step={1}
+                props={props.numInputs}
+                getAction={(newCount) =>
+                    new GroupAction(
+                        cs.map(o => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
+                        "Decoder Input Count Module"
+                    )}
+                onSubmit={(info) => {
+                    renderer.render();
+                    if (info.isValid && info.isFinal)
+                        history.add(info.action);
+                }}
+                alt="Number of inputs object(s) have" />
+        </label>
+    </div>
+}

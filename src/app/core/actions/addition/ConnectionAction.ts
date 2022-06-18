@@ -14,8 +14,8 @@ export class ConnectionAction extends ReversableAction {
     private designer: CircuitDesigner;
     private wire: Wire;
 
-    private p1: Port;
-    private p2: Port;
+    protected p1: Port;
+    protected p2: Port;
 
     /**
      * Initializes a ConnectionAction given the CircuitDesigner and a Wire
@@ -107,6 +107,10 @@ export class DisconnectAction extends ConnectionAction {
      */
     public constructor(designer: CircuitDesigner, wire: Wire) {
         super(designer, wire);
+    }
+
+    public getName(): string {
+        return `Disconnected ${this.p1.getParent().getName()} to ${this.p2.getParent().getName()}`;
     }
 }
 

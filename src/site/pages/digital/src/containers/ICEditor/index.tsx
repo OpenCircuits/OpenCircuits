@@ -6,7 +6,7 @@ import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 import {Input}        from "core/utils/Input";
 import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
 
-import {CullableObject, IOObject} from "core/models";
+import {Component, CullableObject, IOObject} from "core/models";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 import {InteractionTool}  from "core/tools/InteractionTool";
@@ -60,7 +60,6 @@ import { DecoderInputCountModule } from "../SelectionPopup/modules/DecoderInputC
 import { EditICButtonModule } from "../SelectionPopup/modules/EditICButtonModule";
 import { FrequencyModule } from "../SelectionPopup/modules/FrequencyModule";
 import { InputCountModule } from "../SelectionPopup/modules/InputCountModule";
-import { OscilloscopeDisplaySizeModule, OscilloscopeInputCountModule, OscilloscopeSamplesModule, ClearOscilloscopeButtonModule } from "../SelectionPopup/modules/OscilloscopeModules";
 import { OutputCountModule } from "../SelectionPopup/modules/OutputCountModule";
 import { PauseResumeButtonModule } from "../SelectionPopup/modules/PauseResumeButtonModules";
 import { SegmentCountModule } from "../SelectionPopup/modules/SegmentCountModule";
@@ -76,6 +75,7 @@ import { EditICDataAction } from "digital/actions/EditICDataAction";
 import { GroupAction } from "core/actions/GroupAction";
 import { DigitalWire } from "digital/models/DigitalWire";
 import { DisconnectAction } from "core/actions/addition/ConnectionAction";
+import { OscilloscopeModule } from "../SelectionPopup/modules/OscilloscopeModules";
 
 type Props = {
     mainInfo: DigitalCircuitInfo;
@@ -201,22 +201,41 @@ export const ICEditor = (() => {
                 if (!data)
                     throw new Error("ICEditor.close failed: data was undefined");
 
-                // // Update IC data
-                // (mainInfo.selections.get()[0] as IC).getData().rebuild(icInfo.designer.getAll(), name);
-
-                const ic = mainInfo.selections.get()[0] as IC;
+                let ic = mainInfo.selections.get()[0] as IC;
                 const oldInputCount = ic.getData().getInputCount();
                 const oldOutputCount = ic.getData().getOutputCount();
 
-                let inputConn: DigitalWire[] = [];
+                console.log("ic.getInputPorts()");
+                console.log(ic.getInputPorts());
+                console.log("ic.getOutputPorts()");
+                console.log(ic.getOutputPorts());
+
+                let inputObjs: Component[] = [];
                 ic.getInputPorts().forEach((p) => {
-                    inputConn.push(p.getWires()[0]);
+                    inputObjs.push(p.getWires()[0].getP1Component());
                 });
-                console.log(inputConn);
-                let outputConn = ic.getOutputPorts();
+                console.log("Input Objects: " + inputObjs);
+                console.log(inputObjs);
+
+                let outputObjs: Component[] = [];
+                ic.getOutputPorts().forEach((p) => {
+                    outputObjs.push(p.getWires()[0].getP1Component());
+                })
+                console.log("Output Objects: " + outputObjs);
+                console.log(outputObjs);
 
                 console.log(ic);
-                console.log(oldInputCount);
+                console.log("Old input count was " + oldInputCount);
+                console.log("Old output count was " + oldOutputCount);
+
+                const newICData = ICData.Create(icInfo.designer.getAll());
+                if (!newICData)
+                    throw new Error("ICEditor.close failed: unable to create new ICData");
+                const newInputCount = newICData.getInputCount();
+                const newOutputCount = newICData.getOutputCount();
+
+                console.log("New input count is " + newInputCount);
+                console.log("New output count is " + newOutputCount);
 
                 // Create Edit action to update all ICData
                 const editICAction = new GroupAction([
@@ -224,24 +243,25 @@ export const ICEditor = (() => {
                         mainInfo.designer, ic,
                         prevCollection, prevName,
                         icInfo.designer.getAll(), name
-                    ) // make prev and new data
+                    )
                 ], "Edit IC Action");
 
                 mainInfo.history.add(editICAction.execute());
 
-                const newInputCount = ic.getData().getInputCount();
-                
-                console.log(ic);
-                console.log(newInputCount);
-
-                const cleanICAction = new GroupAction([], "IC Edit Clean Up");
-
-                for (let i = 0; i < oldInputCount - newInputCount; ++i) {
-                    // inputConn[i];
-                    cleanICAction.add(new DisconnectAction(mainInfo.designer, inputConn[i]));
+                for (let i = oldInputCount - 1; i >= newInputCount; --i) {
+                    console.log(inputObjs[i].getName());
+                    editICAction.add(new DisconnectAction(mainInfo.designer, inputObjs[i].getConnections()[0]));
                 }
 
-                mainInfo.history.add(cleanICAction.execute());
+                for (let i = oldOutputCount - 1; i >= newOutputCount; --i) {
+                    console.log(outputObjs[i].getName());
+                    editICAction.add(new DisconnectAction(mainInfo.designer, outputObjs[i].getConnections()[0]));
+                }
+
+                ic.setInputPortCount(newInputCount);
+                ic.setOutputPortCount(newOutputCount);
+
+                mainInfo.history.add(editICAction.execute());
 
                 mainInfo.renderer.render();
             }
@@ -285,23 +305,26 @@ export const ICEditor = (() => {
                 </Droppable>
 
                 <HistoryBox info={icInfo} />
-                <SelectionPopup info={icInfo}
-                                    modules={[PositionModule, InputCountModule,
-                                        ComparatorInputCountModule,
-                                        SelectPortCountModule,
-                                        ConstantNumberInputModule,
-                                        DecoderInputCountModule,
-                                        OutputCountModule, SegmentCountModule,
-                                        OscilloscopeDisplaySizeModule,
-                                        OscilloscopeInputCountModule,
-                                        FrequencyModule, OscilloscopeSamplesModule,
-                                        PauseResumeButtonModule,
-                                        ClearOscilloscopeButtonModule,
-                                        ClockSyncButtonModule,
-                                        ColorModule, TextColorModule,
-                                        BusButtonModule,
-                                        CreateICButtonModule, EditICButtonModule, ViewICButtonModule]}
-                                    docsUrlConfig={docsConfig} />
+                <SelectionPopup info={info}
+                                docsUrlConfig={docsConfig}>
+                    <PositionModule info={info} />
+                    <InputCountModule info={info} />
+                    <ComparatorInputCountModule info={info} />
+                    <SelectPortCountModule info={info} />
+                    <ConstantNumberInputModule info={info} />
+                    <DecoderInputCountModule info={info} />
+                    <OutputCountModule info={info} />
+                    <SegmentCountModule info={info} />
+                    <FrequencyModule info={info} />
+                    <PauseResumeButtonModule info={info} />
+                    <ClockSyncButtonModule info={info} />
+                    <OscilloscopeModule info={info} />
+                    <ColorModule info={info} />
+                    <TextColorModule info={info} />
+                    <BusButtonModule info={info} />
+                    <CreateICButtonModule info={info} />
+                    <ViewICButtonModule info={info} />
+                </SelectionPopup>
 
                 <InputField type="text"
                             value={name}
