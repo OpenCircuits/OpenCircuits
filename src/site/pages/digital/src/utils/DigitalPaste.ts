@@ -25,6 +25,7 @@ import {IC} from "digital/models/ioobjects/other";
 
 /**
  * Finds and adds any new IC data upon paste
+ *
  * @param objs All objects in data
  * @param designer Circuit designer
  * @returns GroupAction to add all relevant IC data
@@ -72,6 +73,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
 
 /**
  * Performs paste action in Digital Circuit
+ *
  * @param data Clipboard data
  * @param info Circuit info
  * @param menuPos Top left of context menu if being pasted using context menu

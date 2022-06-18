@@ -43,10 +43,10 @@ export class LabelTextColorChangeAction implements Action {
     }
 
      /**
-     * Undo the change, back the color of the text to the initial color.
-     *
-     * @returns This action
-     */
+      * Undo the change, back the color of the text to the initial color.
+      *
+      * @returns This action
+      */
     public undo(): Action {
         this.label.setTextColor(this.initialColor);
 

@@ -12,7 +12,7 @@ import {AnalogCircuitDesigner, AnalogComponent} from "analog/models";
  *
  * @param itemId The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
  *               corresponds to the index of the IC relative to the list of ICs in `designer`
- * @param designer The circuit designer for the items. Needed for access to ICs
+ * @param _designer The circuit designer for the items. Needed for access to ICs. Currently unused.
  * @returns The DigitalComponent associated with the given ID
  * @throws If the itemId is an invalid item or IC
  */

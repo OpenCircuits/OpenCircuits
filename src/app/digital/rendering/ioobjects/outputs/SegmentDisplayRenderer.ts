@@ -23,9 +23,9 @@ import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
 /**
  * Renders SegmentDisplay
- * * Colour and style border and fill as per selection status
- * * Draws line spanning length between first and last input ports
- * * Draw segments one by one - prioritize on colour, else colour as per selection status
+ * Colour and style border and fill as per selection status
+ * Draws line spanning length between first and last input ports
+ * Draw segments one by one - prioritize on colour, else colour as per selection status
  */
 export const SegmentDisplayRenderer = (() => {
 

@@ -94,6 +94,7 @@ export enum SmartPlaceOptions {
  *               corresponds to the index of the IC relative to the list of ICs in `designer`
  * @param designer The cirucit designer for the items. Needed for access to ICs
  * @param N The number of items to create
+ * @param options The options used to indicate what connected components to create.
  * @returns A GroupAction to place and connect all the components.
  * @throws If the itemId is an invalid item or IC
  */

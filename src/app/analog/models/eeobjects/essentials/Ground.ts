@@ -24,6 +24,7 @@ export class Ground extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Ground"
      */
     public getDisplayName(): string {
@@ -32,6 +33,7 @@ export class Ground extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "ground.svg"
      */
     public getImageName(): string {

@@ -52,8 +52,9 @@ export abstract class Component extends CullableObject {
     /**
      * Determines whether or not a point is within
      *  this component's "selectable" bounds
+     *
      * @param  v The point
-     * @return   True if the point is within this component,
+     * @returns   True if the point is within this component,
      *           false otherwise
      */
     public isWithinSelectBounds(v: Vector): boolean {

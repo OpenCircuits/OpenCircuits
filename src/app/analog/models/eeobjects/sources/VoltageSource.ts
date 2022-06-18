@@ -103,6 +103,7 @@ export class VoltageSource extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Voltage Source"
      */
     public override getDisplayName(): string {
@@ -111,6 +112,7 @@ export class VoltageSource extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "voltagesource.svg"
      */
     public override getImageName(): string {

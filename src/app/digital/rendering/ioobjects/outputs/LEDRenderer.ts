@@ -19,8 +19,8 @@ import {LED} from "digital/models/ioobjects";
 
 /**
  * Renders LEDs
- * * Draws LED svg
- * * If LED is on, draws glow the appropriate colour
+ * Draws LED svg
+ * If LED is on, draws glow the appropriate colour
  */
 export const LEDRenderer = (() => {
     return {

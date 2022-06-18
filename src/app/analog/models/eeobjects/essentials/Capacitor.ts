@@ -40,6 +40,7 @@ export class Capacitor extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Capacitor"
      */
     public getDisplayName(): string {
@@ -48,6 +49,7 @@ export class Capacitor extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "capacitor.svg"
      */
     public getImageName(): string {

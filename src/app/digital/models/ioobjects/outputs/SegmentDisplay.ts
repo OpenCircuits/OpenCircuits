@@ -32,6 +32,9 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Initializes a 7-segment display with input ports on the left side
+     *
+     * @param numInputs The number of inputs this display is allowed to have.
+     * @param positioner The positioner used to position the ports.
      */
     public constructor(numInputs?: ClampedValue, positioner?: Positioner<InputPort>) {
         super(numInputs ?? new ClampedValue(7, 7, 16),
@@ -45,6 +48,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Changes the number of segements in the display
+     *
      * @param val the number of segments in the segemt display
      */
     protected setSegmentCount(val: number): void {
@@ -58,6 +62,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Sets the input port and segement count to val
+     *
      * @param val the new number of segements and input ports
      */
     public setInputPortCount(val: number): void {
@@ -67,6 +72,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Checks if each input port is connected to a power source that is on
+     *
      * @param segment the number of input ports
      * @returns if the ports are on as a boolean
      */
@@ -77,6 +83,7 @@ export class SegmentDisplay extends DigitalComponent {
     /**
      * Gets the positions of the segemnts from the json file
      * depending on how many segments there are
+     *
      * @returns an array of Vectors and SegmentTypes
      */
     public getSegments(): Array<[Vector, SegmentType]> {
@@ -90,6 +97,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Gets the number of segements in a segment display
+     *
      * @returns The number of segements
      */
     public getSegmentCount(): number {
@@ -98,6 +106,7 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Gets the name to display for the history
+     *
      * @returns a string of the name to display in the history
      */
     public getDisplayName(): string {

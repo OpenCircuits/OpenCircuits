@@ -52,7 +52,7 @@ export class XORGate extends Gate {
     /**
      * Returns the name of the image used to display in the frontend.
      *
-     * @return the name of the image to use to represent this gate
+     * @returns the name of the image to use to represent this gate
      */
     public getImageName(): string {
         return "or.svg";
@@ -62,8 +62,8 @@ export class XORGate extends Gate {
 @serializable("XNORGate")
 export class XNORGate extends XORGate {
     /**
-    * Calls the constructor of XORGate with the parameter as false, indicating this is a XNOR gate
-    */
+     * Calls the constructor of XORGate with the parameter as false, indicating this is a XNOR gate
+     */
     public constructor() {
         super(true);
     }

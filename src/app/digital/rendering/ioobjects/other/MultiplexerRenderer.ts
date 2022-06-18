@@ -21,8 +21,8 @@ import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
 
 /**
  * Renders Muxs
- * * Colour and style border and fill as per selection status
- * * Draw Mux correct size and shape depending on whether it is a Multiplexor or Demultiplexor
+ * Colour and style border and fill as per selection status
+ * Draw Mux correct size and shape depending on whether it is a Multiplexor or Demultiplexor
  */
 export const MultiplexerRenderer = (() => {
 

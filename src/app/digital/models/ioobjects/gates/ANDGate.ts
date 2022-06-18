@@ -17,6 +17,7 @@ export class ANDGate extends Gate {
 
     /**
      * Creates an AND (or NAND) gate.
+     *
      * @param not True if this should be a NAND gate.
      */
     public constructor(not = false) {
@@ -35,6 +36,7 @@ export class ANDGate extends Gate {
     /**
      * Returns the display name for this logic gate, either "AND Gate" or
      * "NAND Gate".
+     *
      * @returns The display name
      */
     public getDisplayName(): string {
@@ -43,6 +45,7 @@ export class ANDGate extends Gate {
 
     /**
      * Returns the filename for the image used by this logic gate.
+     *
      * @returns The image filename
      */
     public getImageName(): string {

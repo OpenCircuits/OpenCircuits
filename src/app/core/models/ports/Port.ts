@@ -28,8 +28,8 @@ export abstract class Port implements Selectable {
      */
     protected name: string;
     /**
-    * direction of the ports relative to the parent component
-    */
+     * direction of the ports relative to the parent component
+     */
     protected dir: Vector;
     /**
      * a vector representing the position where the port attaches to the parent component relative to the
@@ -48,6 +48,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Intializes a Port with the following parameters
+     *
      * @param parent parent component of the port
      * @param dir direction of the of the port relative to the parent component
      */
@@ -77,6 +78,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Sets the name of the port to a given string
+     *
      * @param name string to set `this.name` to
      */
     public setName(name: string): void {
@@ -85,6 +87,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Changes the position of where the port attaches to the parent component relative to the parent component
+     *
      * @param pos vector representing the position to change it to
      */
     public setOriginPos(pos: Vector): void {
@@ -94,6 +97,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Changes the position of where the port is on the canvas relative to the parent component
+     *
      * @param pos vector representing the position to change it to
      */
     public setTargetPos(pos: Vector): void {
@@ -104,6 +108,7 @@ export abstract class Port implements Selectable {
     /**
      * Connects a wire to a port
      * Left as abstract since we expect different behaviour for analog and digital ports
+     *
      * @param w Wire to connect
      */
     public abstract connect(w: Wire): void;
@@ -111,12 +116,14 @@ export abstract class Port implements Selectable {
     /**
      * Disconnects a wire from a port
      * Left as abstract since we expect different behaviour for analog and digital ports
+     *
      * @param w Wire to disconnect
      */
     public abstract disconnect(w: Wire): void;
 
     /**
      * When clicking on a port returns true if the position clicked is within the selection bound and false otherwise
+     *
      * @param v vector representing the position clicked
      * @returns true if the vector v is within the selection bound of the port and false otherwise
      */
@@ -126,6 +133,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Finds index of this port in the parent's array of ports
+     *
      * @returns the index of this port in the parent component's array of ports
      */
     public getIndex(): number {
@@ -134,6 +142,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Returns the parent Component of this port
+     *
      * @returns `this.parent`
      */
     public getParent(): Component {
@@ -142,6 +151,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Returns whether or not the port is on
+     *
      * @returns True if `this.isOn` is true and false otherwise
      */
     public getIsOn(): boolean {
@@ -150,6 +160,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Return the name of this port
+     *
      * @returns `this.name`
      */
     public getName(): string {
@@ -157,23 +168,25 @@ export abstract class Port implements Selectable {
     }
 
     /**
-    * Returns the intial direction of a port represented as a Vector
-    * Left as abstract since ports will have a different intial direction depending on their parent component
-    * and whether they serve as input or output ports
-    */
+     * Returns the intial direction of a port represented as a Vector
+     * Left as abstract since ports will have a different intial direction depending on their parent component
+     * and whether they serve as input or output ports
+     */
     public abstract getInitialDir(): Vector;
 
 
      /**
-     * Returns the direction of the port relative to the parent component
-     * @returns a vector representing the direction of the port relative to the parent component
-     */
+      * Returns the direction of the port relative to the parent component
+      *
+      * @returns a vector representing the direction of the port relative to the parent component
+      */
     public getDir(): Vector {
         return this.dir.copy();
     }
 
     /**
      * Returns the position of where the port attaches to the parent component relative to the parent component
+     *
      * @returns a copy of `this.origin`
      */
     public getOriginPos(): Vector {
@@ -181,15 +194,17 @@ export abstract class Port implements Selectable {
     }
 
      /**
-     * Returns the position of where the port is on the canvas relative to the parent component
-     * @returns a copy of `this.target`
-     */
+      * Returns the position of where the port is on the canvas relative to the parent component
+      *
+      * @returns a copy of `this.target`
+      */
     public getTargetPos(): Vector {
         return this.target.copy();
     }
 
     /**
      * Returns the direction of the port
+     *
      * @returns a vector representing the direction of the port
      */
     public getWorldDir(): Vector {
@@ -197,15 +212,17 @@ export abstract class Port implements Selectable {
     }
 
      /**
-     * Returns the position of where the port attaches to the parent component
-     * @returns a vector representing the position where the port attaches to the parent component
-     */
+      * Returns the position of where the port attaches to the parent component
+      *
+      * @returns a vector representing the position where the port attaches to the parent component
+      */
     public getWorldOriginPos(): Vector {
         return this.parent.getTransform().toWorldSpace(this.origin);
     }
 
     /**
      * Returns the position of where the port is on the canvas
+     *
      * @returns a vector representing the position of the port
      */
     public getWorldTargetPos(): Vector {
@@ -214,6 +231,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Returns the position of where the port is on the canvas relative to the parent component
+     *
      * @returns a vector representing the position of the port relative to the parent component
      */
     public getPos(): Vector {
@@ -222,6 +240,7 @@ export abstract class Port implements Selectable {
 
     /**
      * Returns an array that contains the Wires connected to the port
+     *
      * @returns `this.connections`
      */
     public getWires(): Wire[] {

@@ -44,9 +44,9 @@ export class Transform {
     /**
      * Constructs a new Transform object
      *
-     * @param  {Vector} pos     The initial position of the transform
-     * @param  {Vector} size    The initial size of the transform
-     * @param  {number} angle   The initial angle of the transform
+     * @param pos     The initial position of the transform
+     * @param size    The initial size of the transform
+     * @param angle   The initial angle of the transform
      */
     public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
         this.parent = undefined;
@@ -114,8 +114,8 @@ export class Transform {
     /**
      * Rotates this transform 'a' radians about the axis 'c'
      *
-     * @param {number} a The angle to rotate
-     * @param {number} c The axis to rotate about
+     * @param a The angle to rotate
+     * @param c The axis to rotate about
      */
     public rotateAbout(a: number, c: Vector): void {
         this.setAngle(this.getAngle() + a);
@@ -174,10 +174,9 @@ export class Transform {
      * Converts the given Vector, v, to local space relative
      *  to this transform
      *
-     * @param {Vector} v    The vector to transform
+     * @param v    The vector to transform
      *                      Must be in world coordinates
-     *
-     * @return {Vector}     The local space vector
+     * @returns     The local space vector
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
@@ -187,10 +186,9 @@ export class Transform {
      * Converts the given Vector, v, to world space relative
      *  to this transform
      *
-     * @param {Vector} v    The vector to transform
+     * @param v    The vector to transform
      *                      Must be in local coordinates
-     *
-     * @return {Vector}     The world space vector
+     * @returns     The world space vector
      */
     public toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);

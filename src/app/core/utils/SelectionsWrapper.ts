@@ -27,22 +27,25 @@ export class SelectionsWrapper {
 
     /**
      * Adds `listener` to `this.listeners`
+     *
      * @param listener function to call when an element gets added or removed from `this.selections`
-    */
+     */
     public addChangeListener(listener: () => void): void {
         this.listeners.add(listener);
     }
 
     /**
      * Removes `listener` to `this.listeners`
+     *
      * @param listener function to call when an element gets added or removed from `this.selections`
-    */
+     */
     public removeChangeListener(listener: () => void): void {
         this.listeners.delete(listener);
     }
 
     /**
      * Sets `this.disabled` equal to `disabled`
+     *
      * @param disabled boolean value to set `this.disabled` to (defaults to true)
      */
     public setDisabled(disabled = true): void {
@@ -51,6 +54,7 @@ export class SelectionsWrapper {
 
     /**
      * If `s` is not in `this.selections`, adds `s` to `this.selections` then calls every function in `this.listeners`
+     *
      * @param s Selectable to add to `this.selections`
      * @returns true if `this.disabled` is false and `s` is not in `this.selections`, and false otheriwse
      */
@@ -67,6 +71,7 @@ export class SelectionsWrapper {
 
     /**
      * If `s` is in `this.selections`, removes `s` from `this.selections` then calls every function in `this.listeners`
+     *
      * @param s Selectable to remove from `this.selections`
      * @returns true if `this.disabled` is false and `s` is in `this.selections`, and false otheriwse
      */
@@ -82,6 +87,7 @@ export class SelectionsWrapper {
 
     /**
      * Returns whether or not `f` returns true for every element of `this.selections`
+     *
      * @param f a function that takes a Selectable `s` and returns a boolean
      * @returns returns true if `f` returns true for every element in `this.selections` and false otherwise
      */
@@ -101,6 +107,7 @@ export class SelectionsWrapper {
 
     /**
      * Checks to see if the elements of `s` are also in `this.selections`
+     *
      * @param s an array of type Selectable
      * @returns true if every Selectable in s is also in `this.selections` and false otherwise
      */
@@ -111,6 +118,7 @@ export class SelectionsWrapper {
 
     /**
      * Returns the number of elements in `this.selections`
+     *
      * @returns `this.selections.size`
      */
     public amount(): number {
@@ -120,6 +128,7 @@ export class SelectionsWrapper {
     /**
      * Returns a vector that represents the midpoint of the elements in `this.selections`, will returns
      * zero vector if there no elements
+     *
      * @param all if `all` is set to false elements of type Wire and Port will
      * be excluded from the midpoint calculation and only elements of type Component will
      * be used to calculate the midpoint (defaults to false)
@@ -149,6 +158,7 @@ export class SelectionsWrapper {
 
     /**
      * Returns an array containing the elements of `this.selections`
+     *
      * @returns an array of type Selectable that contains the elements of `this.selections`
      */
     public get(): Selectable[] {
@@ -157,6 +167,7 @@ export class SelectionsWrapper {
 
     /**
      * Returns the value of this.disabled
+     *
      * @returns true if `this.disabled` is true and false otherwise
      */
     public isDisabled(): boolean {

@@ -38,8 +38,10 @@ export type InputTree =
     | InputTreeUnOpNode
     | InputTreeBinOpNode
 
-/** Used to represent a unary operation, binary operation, or parenthesis when parsing the intial expression
- * to a token list */
+/**
+ * Used to represent a unary operation, binary operation, or parenthesis when parsing the intial expression
+ * to a token list
+ */
 export interface OpToken {
     type: TokenType;
 }

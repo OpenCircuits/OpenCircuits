@@ -49,6 +49,7 @@ export class Clock extends TimedComponent {
 
     /**
      * Get size of offset needed.
+     *
      * @returns An empty vector.
      */
     // @Override
@@ -58,6 +59,7 @@ export class Clock extends TimedComponent {
 
     /**
      * Gets the display name of clock input.
+     *
      * @returns The display name of "Clock".
      */
     public getDisplayName(): string {
@@ -66,6 +68,7 @@ export class Clock extends TimedComponent {
 
     /**
      * Gets the name of the clock image file.
+     *
      * @returns The name of the clock image file.
      */
     public getImageName(): string {

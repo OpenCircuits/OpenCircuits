@@ -14,8 +14,8 @@ export class FrequencyChangeAction implements Action {
      */
     private initialFreq: number;
      /**
-     * The target frequency of this Action
-     */
+      * The target frequency of this Action
+      */
     private targetFreq: number;
 
     /**

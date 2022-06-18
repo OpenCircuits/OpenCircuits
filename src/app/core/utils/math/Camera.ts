@@ -37,6 +37,7 @@ export class Camera {
      * This constructor creates new Camera object which is the field of view (the screen)
      * and initializes all the variables.
      * It sets dirty to true which means that
+     *
      * @param width The width of the camera (screen)
      * @param height The height of the camera (screen)
      * @param startPos The starting position in the camera to 0,0 (vector)
@@ -75,6 +76,7 @@ export class Camera {
 
     /**
      * This function resizes the height and width and sets dirty to true when the screen is moved.
+     *
      * @param width new width of screen
      * @param height new height of screen
      */
@@ -86,6 +88,7 @@ export class Camera {
 
     /**
      * This sets the position of the screen (vector coordinates) and sets dirty to true.
+     *
      * @param pos  the new position vector
      */
     public setPos(pos: Vector): void {
@@ -95,6 +98,7 @@ export class Camera {
 
     /**
      * The sets the zoom variable to the new zoom number
+     *
      * @param zoom  the new zoom number (how much it's being zoomed in).
      */
     public setZoom(zoom: number): void{
@@ -104,6 +108,7 @@ export class Camera {
 
     /**
      * This moves the position of the screen by dv (Ex: pos=(10,10) dv=(5,0) then pos will = (15,10) after call)
+     *
      * @param dv is a vector that represents by how much the position will be moved
      */
     public translate(dv: Vector): void {
@@ -113,6 +118,7 @@ export class Camera {
 
     /**
      * Zooms to a certain position on the screen by a certain amount z.
+     *
      * @param c is the position it's zooming to
      * @param z the amount it is zooming
      */
@@ -127,6 +133,7 @@ export class Camera {
 
     /**
      * zooms in or out at the current position
+     *
      * @param s amount to zoom by
      */
     public zoomBy(s: number): void {
@@ -135,6 +142,7 @@ export class Camera {
     }
     /**
      * This function returns true or false if this.transform contains the transform passed through
+     *
      * @param transform comparing this with this.transform
      * @returns true or false
      */
@@ -143,6 +151,7 @@ export class Camera {
     }
     /**
      * This returns the coordinates of the center of the screen wherever it is.
+     *
      * @returns return vector with coordinates
      */
     public getCenter(): Vector {
@@ -150,6 +159,7 @@ export class Camera {
     }
     /**
      * Returns the size of the screen. This is the bottom-right corner
+     *
      * @returns vector that contains the size of the screen
      */
     public getSize(): Vector {
@@ -157,6 +167,7 @@ export class Camera {
     }
     /**
      * makes a copy of pos to return
+     *
      * @returns the position
      */
     public getPos(): Vector {
@@ -164,6 +175,7 @@ export class Camera {
     }
     /**
      * return how much the screen is zoomed in/out by.
+     *
      * @returns the zoom, which is data type Number
      */
     public getZoom(): number {
@@ -171,6 +183,7 @@ export class Camera {
     }
     /**
      * This returns a copy of the transform of camera and updates the matrix
+     *
      * @returns copy of this.transform
      */
     public getTransform(): Transform {
@@ -179,6 +192,7 @@ export class Camera {
     }
     /**
      * Returns copy of current matrix and updates the matrix as needed.
+     *
      * @returns returns copy of mat.
      */
     public getMatrix(): Matrix2x3 {
@@ -187,6 +201,7 @@ export class Camera {
     }
     /**
      * Returns a copy of the inverse of the matrix and updates the matrix
+     *
      * @returns return copy of inv
      */
     public getInverseMatrix(): Matrix2x3 {
@@ -195,6 +210,7 @@ export class Camera {
     }
     /**
      * returns the current screen position with formula using the vector v and getCenter
+     *
      * @param v  is the vector multiplied to inv
      * @returns a vector of the screen position
      */
@@ -203,6 +219,8 @@ export class Camera {
     }
     /**
      * Returns the global position not the local screens position
+     *
+     * @param v The current position.
      * @returns global position
      */
     public getWorldPos(v: Vector): Vector {
@@ -211,6 +229,7 @@ export class Camera {
 
     /**
      * Returns a set of margins that adjusts the view of the camera
+     *
      * @returns margin values for the camera
      */
     public getMargin(): Margin {
@@ -219,10 +238,12 @@ export class Camera {
 
     /**
      * This sets the margin for the camera
-     * @param left the left margin of the camera
-     * @param right the right margin of the camera
-     * @param bottom the bottom margin of the camera
-     * @param top the top margin of the camera
+     *
+     * @param newMargin The new margins for the camera.
+     * @param newMargin.left the left margin of the camera
+     * @param newMargin.right the right margin of the camera
+     * @param newMargin.bottom the bottom margin of the camera
+     * @param newMargin.top the top margin of the camera
      */
     public setMargin(newMargin: Partial<Margin>): void{
         this.margin = {...this.margin, ...newMargin};

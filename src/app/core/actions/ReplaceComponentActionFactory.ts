@@ -14,7 +14,7 @@ import {TranslateAction}                    from "./transform/TranslateAction";
  * @param designer the designer that original is placed on
  * @param original the component to replace, already in designer
  * @param replacement the new component, not yet in designer
- * @return a GroupAction containing the actions required to replace the component
+ * @returns a GroupAction containing the actions required to replace the component
  * @throws {Error} if original and replacement do not have the same number of ports
  */
  export function CreateReplaceComponentAction(designer: CircuitDesigner, original: Component,

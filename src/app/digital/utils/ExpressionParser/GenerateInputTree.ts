@@ -50,6 +50,7 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
  * @param prev the name of the first token
  * @param next the name of the second token
  * @param ops the represenation of the operands in the original expression
+ * @returns The generate error message.
  */
 function generateErrorMessage(prev: string, next: string, ops: Record<TokenType, string>): string {
     let errorMessage = `No valid operator between "${prev}" and "${next}"`;

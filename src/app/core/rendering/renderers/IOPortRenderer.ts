@@ -19,9 +19,9 @@ import {Port} from "core/models/ports/Port";
 
 /**
  * Renders Ports
- * * Color, style, draw port line - selected colour only if parent object
- *                                  is selected as a whole without separate port selection
- * * Color, style, draw port border and fill - selected colour both if port or parent object are selected
+ * Color, style, draw port line - selected colour only if parent object
+ *                                is selected as a whole without separate port selection
+ * Color, style, draw port border and fill - selected colour both if port or parent object are selected
  */
 export const IOPortRenderer = (() => {
     return {

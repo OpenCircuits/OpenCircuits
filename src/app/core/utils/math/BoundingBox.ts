@@ -10,6 +10,7 @@ export class BoundingBox {
 
     /**
      * Creates a Bounding Box with the given coordinates
+     *
      * @param min the corrdinates of bottom left corner of Bounding Box
      * @param max the coordinates of top right corner of Bounding Box
      */
@@ -20,6 +21,7 @@ export class BoundingBox {
 
     /**
      * Returns the (x,y) value of bottom left corner of Bounding Box
+     *
      * @returns coordinates of bottom left corner of Bounding Box
      */
     public getMin(): Vector {
@@ -28,6 +30,7 @@ export class BoundingBox {
 
     /**
      * Returns the (x,y) value of top right corner of Bounding Box
+     *
      * @returns coordinates of top right corner of Bounding Box
      */
     public getMax(): Vector {
@@ -36,6 +39,7 @@ export class BoundingBox {
 
     /**
      * Sets new coordinates for bottom left corner of Bounding Box
+     *
      * @param min coordinates of new bottom left corner of Bounding Box
      */
     public setMin(min: Vector): void {
@@ -45,6 +49,7 @@ export class BoundingBox {
 
     /**
      * Sets new corrdinates for top right corner of Bounding Box
+     *
      * @param max coordinates of new top right corner of Bounding Box
      */
     public setMax(max: Vector): void {
@@ -54,6 +59,7 @@ export class BoundingBox {
 
     /**
      * Calculates coordinate length of the width of Bounding Box
+     *
      * @returns coordinate length of the width of Bounding Box
      */
     public getWidth(): number {
@@ -62,6 +68,7 @@ export class BoundingBox {
 
     /**
      * Calculates coordinate length of the height of Bounding Box
+     *
      * @returns coordinate length of the height of Bounding Box
      */
     public getHeight(): number {
@@ -70,6 +77,7 @@ export class BoundingBox {
 
     /**
      * Calculates coordinate area of Bounding Box
+     *
      * @returns coordinate area of Bounding Box
      */
     public getArea(): number {
@@ -78,6 +86,7 @@ export class BoundingBox {
 
     /**
      * Calculates the coordinates of the center of Bounding Box
+     *
      * @returns coordinates of the center of Bounding Box
      */
     public getCenter(): Vector {

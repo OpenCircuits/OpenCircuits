@@ -255,7 +255,7 @@ describe("CopyGroup", () => {
      * Helper function to expect a full copy with different scenarios
      *
      * @param  types    The list of types of DigitalComponents to create
-     * @param  i1       The list of connections to connect different components
+     * @param  connections The list of connections to connect different components
      *                      Each connection is defined by 4 numbers
      *                       0. The index of the first component (in types)
      *                       1. The index of the port from the first component

@@ -40,6 +40,7 @@ export class CurrentSource extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Current Source"
      */
     public override getDisplayName(): string {
@@ -48,6 +49,7 @@ export class CurrentSource extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "currentsource.svg"
      */
     public override getImageName(): string {

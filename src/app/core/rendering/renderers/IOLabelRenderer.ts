@@ -14,8 +14,8 @@ import {Component} from "core/models/Component";
 
 /**
  * Renders IOLabels
- * * Check if Component is on screen, quit if not
- * * For each port, align and render name of port at port position
+ * Check if Component is on screen, quit if not
+ * For each port, align and render name of port at port position
  */
 export const IOLabelRenderer = (() => {
 

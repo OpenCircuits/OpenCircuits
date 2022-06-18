@@ -15,6 +15,7 @@ import {Gate} from "./Gate";
 export class BUFGate extends Gate {
     /**
      *Creates a Buffer Gate.
+     *
      *@param [not] determines whether the gate is a Buffer gate or a Not gate
      */
     public constructor(not = false) {
@@ -31,7 +32,8 @@ export class BUFGate extends Gate {
 
     /**
      * Returns a string the name of the gate
-     * @return display name
+     *
+     * @returns display name
      */
     public getDisplayName(): string {
         return this.not ? "NOT Gate" : "Buffer Gate";
@@ -39,7 +41,8 @@ export class BUFGate extends Gate {
 
     /**
      * Returns the file name for the image used to represent the BUFGate
-     * @return filename
+     *
+     * @returns filename
      */
     public getImageName(): string {
         return "buf.svg";

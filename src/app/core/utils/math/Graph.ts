@@ -159,7 +159,7 @@ export class Graph<V, E> {
      *  have a depth of 4. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns a map where each key is each node and the value is the max depth of that node
      */
     public getMaxNodeDepths(): V[][] {
         return this.getNodeDepths(true);
@@ -172,7 +172,7 @@ export class Graph<V, E> {
      *  have a depth of 2. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns a map where each key is each node and the value is the max depth of that node
      */
     public getMinNodeDepths(): V[][] {
         return this.getNodeDepths(false);

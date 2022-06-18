@@ -40,6 +40,7 @@ export class Inductor extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Inductor"
      */
     public override getDisplayName(): string {
@@ -48,6 +49,7 @@ export class Inductor extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "inductor.svg"
      */
     public override getImageName(): string {

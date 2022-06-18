@@ -29,11 +29,11 @@ import {OscilloscopeRenderer} from "./OscilloscopeRenderer";
 
 /**
  * Renders Components
- * * Check if object to be rendered is on the screen, quit if not
- * * Transform renderer to object transform
- * * Draw all object ports first using IOPortRenderer
- * * Render IOLabels if not blank
- * * Restore
+ * Check if object to be rendered is on the screen, quit if not
+ * Transform renderer to object transform
+ * Draw all object ports first using IOPortRenderer
+ * Render IOLabels if not blank
+ * Restore
  */
 export const ComponentRenderer = (() => {
     const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol = "#ffffff") {

@@ -11,7 +11,7 @@ export class ComparatorPositioner extends ConstantSpacePositioner<InputPort> {
     /**
      * Position ports with constant space but put blank space in the middle
      *
-     * @param arr The array of input ports
+     * @param ports The array of input ports
      */
     public updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions([

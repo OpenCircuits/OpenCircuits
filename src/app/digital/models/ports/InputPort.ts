@@ -46,6 +46,7 @@ export class InputPort extends Port {
      * Connects the input wire to the port if the wire is not already connected.
      *
      * @param wire new input wire
+     * @throws Error if the there is already a wire connected to this port.
      */
     public connect(wire: DigitalWire): void {
         if (this.connections.length === 1)

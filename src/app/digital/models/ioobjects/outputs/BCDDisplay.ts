@@ -31,6 +31,7 @@ export class BCDDisplay extends SegmentDisplay {
     /**
      * Changes the number of segments used to display the input value.
      * Does not change the input port count.
+     *
      * @param val number of segments.
      */
     public setInputPortCount(val: number): void {
@@ -43,6 +44,7 @@ export class BCDDisplay extends SegmentDisplay {
     /**
      * Given a specific segment, returns true if that segment
      * should be on, accoring to the input ports.
+     *
      * @param segment the index of a segment.
      * @returns true if the segment is on, false otherwise.
      */
@@ -63,6 +65,7 @@ export class BCDDisplay extends SegmentDisplay {
     /**
      * Gets the display name of the BCD Display which includes
      * the number of segments it has.
+     *
      * @returns the display name.
      */
     public getDisplayName(): string {

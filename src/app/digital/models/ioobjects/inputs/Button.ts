@@ -28,8 +28,9 @@ export class Button extends PressableComponent {
     /**
      * Determines whether or not a point is within
      *  this component's "pressable" bounds, in this case the inner red circle.
+     *
      * @param  v The point
-     * @return   True if the point is within this component,
+     * @returns   True if the point is within this component,
      *           false otherwise
      */
     public isWithinPressBounds(v: Vector): boolean {
@@ -62,6 +63,7 @@ export class Button extends PressableComponent {
 
     /**
      * Returns the name of the object.
+     *
      * @returns The string "Button"
      */
     public getDisplayName(): string {
@@ -70,6 +72,7 @@ export class Button extends PressableComponent {
 
     /**
      * Returns the name of the file for when the button *is* pressed
+     *
      * @returns The filename "buttonUp.svg"
      */
     public getOffImageName(): string {
@@ -78,6 +81,7 @@ export class Button extends PressableComponent {
 
     /**
      * Returns the name of the file for when the button *is not* pressed
+     *
      * @returns The filename "buttonDown.svg"
      */
     public getOnImageName(): string {

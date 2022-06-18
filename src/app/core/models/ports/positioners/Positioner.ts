@@ -17,8 +17,8 @@ export type Dir = "left" | "right" | "top" | "bottom";
 @serializable("Positioner")
 export class Positioner<T extends Port> {
     /**
-    * maps directions to their corresponding vectors
-    */
+     * maps directions to their corresponding vectors
+     */
     public static readonly DIRS: Record<Dir, Vector> = {
         "left":   V(-1, 0),
         "right":  V(1,  0),
@@ -27,16 +27,16 @@ export class Positioner<T extends Port> {
     };
 
     /**
-    * direction of the ports relative to the parent component
-    */
+     * direction of the ports relative to the parent component
+     */
     private dir: Vector;
     /**
-    * factor to increase the spacing of the ports by
-    */
+     * factor to increase the spacing of the ports by
+     */
     private scale: number;
     /**
-    * length of the ports
-    */
+     * length of the ports
+     */
     private length: number;
     /**
      * if true the first port and last port will be moved innerward
@@ -46,6 +46,7 @@ export class Positioner<T extends Port> {
 
     /**
      * Intializes a Positioner with the following parameters
+     *
      * @param dir direction of the ports relative to the parent component
      * @param scale factor to increase the spacing of the ports by (defaults to 1)
      * @param length length of the ports (defaults to IO_PORT_LENGTH )
@@ -61,6 +62,7 @@ export class Positioner<T extends Port> {
 
     /**
      * Calculates the amount of space between ports
+     *
      * @param i index of port
      * @param numPorts the number of ports
      * @param size factor to increase the spacing between ports (the spacing is multiplied by size/2)
@@ -83,6 +85,7 @@ export class Positioner<T extends Port> {
     }
     /**
      * Calculates the position of where the port attaches to the parent component relative to the parent component
+     *
      * @param sX  position of the port on X axis
      * @param sY position of the port on Y axis
      * @param w width of the port
@@ -98,6 +101,7 @@ export class Positioner<T extends Port> {
 
     /**
      * Calculates the position of where the port is on the canvas relative to the parent component
+     *
      * @param sX  position of the port on X axis
      * @param sY position of the port on Y axis
      * @param w width of the port
@@ -115,7 +119,8 @@ export class Positioner<T extends Port> {
      * Default behavior for port positioning to
      *  be evenly spaced along the left side
      *  of this component.
-     * @param arr The array of ports (either in or out ports)
+     *
+     * @param ports The array of ports (either in or out ports)
      */
     public updatePortPositions(ports: T[]): void {
         ports.forEach((port, i) => {

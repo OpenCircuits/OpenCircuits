@@ -29,6 +29,7 @@ export class Switch extends PressableComponent {
 
     /**
      * Activates or deactivates Switch output
+     *
      * @param signal Boolean representing on or off
      */
     public activate(signal: boolean): void {
@@ -37,6 +38,7 @@ export class Switch extends PressableComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Switch"
      */
     public getDisplayName(): string {
@@ -45,6 +47,7 @@ export class Switch extends PressableComponent {
 
     /**
      * Returns name of image file with on state Switch
+     *
      * @returns "switchUp.svg"
      */
     public getOffImageName(): string {
@@ -53,6 +56,7 @@ export class Switch extends PressableComponent {
 
     /**
      * Returns name of image file with off state Switch
+     *
      * @returns "switchDown.svg"
      */
     public getOnImageName(): string {

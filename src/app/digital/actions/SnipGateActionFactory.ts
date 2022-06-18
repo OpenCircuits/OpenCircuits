@@ -13,7 +13,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
  *  inputting into the gate. This action is implicitly executed upon creation.
  *
  * @param gate the gate to remove
- * @return a GroupAction containing the actions required to snip the gate
+ * @returns a GroupAction containing the actions required to snip the gate
  * @throws {Error} if gate is not placed in a designer
  */
  export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {

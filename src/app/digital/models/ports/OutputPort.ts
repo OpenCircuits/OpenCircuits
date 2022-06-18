@@ -47,7 +47,7 @@ export class OutputPort extends Port {
     /**
      * Connects the output wire to the port and activates the port
      *
-     * @param wire new output wire
+     * @param w new output wire
      */
     public connect(w: DigitalWire): void {
         this.connections.push(w);
@@ -56,6 +56,8 @@ export class OutputPort extends Port {
 
     /**
      * Disconnects the output wire from the output port
+     *
+     * @param w The output wire to disconnect.
      */
     public disconnect(w: DigitalWire): void {
         // find index and splice

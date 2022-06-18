@@ -40,6 +40,7 @@ export class Resistor extends AnalogComponent {
 
     /**
      * Returns name of Component
+     *
      * @returns "Resistor"
      */
     public override getDisplayName(): string {
@@ -48,6 +49,7 @@ export class Resistor extends AnalogComponent {
 
     /**
      * Returns name of image file
+     *
      * @returns "resistor.svg"
      */
     public override getImageName(): string {

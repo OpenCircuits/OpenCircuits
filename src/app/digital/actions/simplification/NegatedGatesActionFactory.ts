@@ -19,6 +19,7 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
  *
  * @param designer the designer in which the action is taking place
  * @param circuit the circuit to modify, must be placed in designer
+ * @returns The action to create the negated circuit and the negated circuit.
  */
 export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                                          circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {

@@ -9,17 +9,10 @@ import {V, Vector}   from "./Vector";
 /**
  * Clamps a number between a given min and max
  *
- * @param  {Number} x
- *         The number to clamp
- *
- * @param  {Number} min
- *         The minimum
- *
- * @param  {Number} max
- *         The maximum
- *
- * @return {Number}
- *         The clamped number
+ * @param x The number to clamp
+ * @param min The minimum
+ * @param max The maximum
+ * @returns The clamped number
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
@@ -29,17 +22,10 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param  {Vector} bl
- *         Bottom left corner of the rectangle
- *
- * @param  {Vector} tr
- *         Top right corner of the rectangle
- *
- * @param  {Vector} pos
- *         The position to get the nearest point on
- *
- * @return {Vector}
- *         The closest position on the edge of
+ * @param bl Bottom left corner of the rectangle
+ * @param tr Top right corner of the rectangle
+ * @param pos The position to get the nearest point on
+ * @returns The closest position on the edge of
  *         the rectangle from 'pos'
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
@@ -63,16 +49,11 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
  * within the rectangle defined by the
  * given transform
  *
- * @param  {Transform} transform
- *         The transform that represents the rectangle
- *
- * @param  {Vector} pos
- *         * Must be in world coordinates *
+ * @param transform The transform that represents the rectangle
+ * @param pos Must be in world coordinates *
  *         The point to determine whether or not
  *         it's within the rectangle
- *
- * @return {Boolean}
- *         True if the point is within the rectangle,
+ * @returns True if the point is within the rectangle,
  *         false otherwise
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
@@ -92,21 +73,14 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
  * is within the circle defined by the
  * given transform
  *
- * @param  {Vector} pos1
- *         The center of the circle in world
+ * @param pos1 The center of the circle in world
  *         coordinates
- *
- * @param  {number} r
- *         The radius of the circle in world
+ * @param r The radius of the circle in world
  *         units
- *
- * @param  {Vector} pos2
- *         * Must be in world coordinates *
+ * @param pos2 Must be in world coordinates *
  *         The point to determine whether or not
  *         it's within the circle
- *
- * @return {Boolean}
- *          True if the point is within the rectangle,
+ * @returns True if the point is within the rectangle,
  *          false otherwise
  */
 export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
@@ -122,13 +96,9 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
  * to determine whether or not the two transforms
  * are intersecting
  *
- * @param  {Transform} a
- *         The first transform
- *
- * @param  {Transform} b
- *         The second transform
- *
- * @return {Boolean}
+ * @param A The first transform
+ * @param B The second transform
+ * @returns
  *         True if the two transforms are overlapping,
  *         false otherwise
  */
@@ -222,30 +192,17 @@ export function TransformContains(A: Transform, B: Transform): boolean {
  * Uses Newton's method to find the roots of
  * the function 'f' given a derivative 'df'
  *
- * @param  {Number} iterations
- *         The number of iterations to perform
+ * @param iterations The number of iterations to perform
  *         Newton's method with; the smaller
  *         the better but less accurate
- *
- * @param  {Number} t0
- *         The starting root value parameter
- *
- * @param  {Number} x
- *         Parameter 1 for the function
- *
- * @param  {Number} y
- *         Parameter 2 for the function
- *
- * @param  {Function} f
- *         The function to find the roots of
+ * @param t0 The starting root value parameter
+ * @param x Parameter 1 for the function
+ * @param y Parameter 2 for the function
+ * @param f The function to find the roots of
  *         In the form f(t, x, y) = ...
- *
- * @param  {Function} df
- *         The derivative of the function
+ * @param df The derivative of the function
  *         In the form of df(t, x, y)
- *
- * @return {Number}
- *         The parameter 't' that results in
+ * @returns The parameter 't' that results in
  *         f(t, x, y) = 0
  */
 export function FindRoots(iterations: number, t0: number, x: number, y: number,
@@ -275,15 +232,10 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
  * the distance function between the line and `pos`
  * D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)
  *
- * @param  {BezierCurve} curve
-           The bezier curve
- *
- * @param  {Vector} pos
-           The position
- *
- * @return {boolean}
- *         True if position is within the bezier curve
-           False otherwise
+ * @param curve The bezier curve
+ * @param pos The position
+ * @returns True if position is within the bezier curve
+ *         False otherwise
  */
 export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
@@ -320,11 +272,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 /**
  * Finds the midpoint from a list of positions
  *
- * @param  {Array<Vector>} positions
-           The list of positions
- *
- * @return {Vector}
- *         The midpoint of all the given positions
+ * @param positions The list of positions
+ * @returns The midpoint of all the given positions
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
@@ -334,11 +283,8 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
  * Calculates the decimal value of a binary-coded-decimal
  *  represented by a list of booleans
  *
- * @param  {Array<boolean>} bcd
- *         The binary-coded-decimal as a list of booleans
- *
- * @return {number}
- *         The decimal equivalent of the binary-coded-decimal
+ * @param bcd The binary-coded-decimal as a list of booleans
+ * @returns The decimal equivalent of the binary-coded-decimal
  */
 export function BCDtoDecimal(bcd: boolean[]): number {
     return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
@@ -346,8 +292,9 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 
 /**
  * Calculates the BCD representation of the input number.
- * @param decimal The number to convert
- * @requires `decimal >= 0`
+ *
+ * @param decimal The number to convert (`decimal >= 0`)
+ * @throws An Error if decimal is not a valid integer `>= 0`
  * @returns The BCD representation of the input
  */
 export function DecimalToBCD(decimal: number): boolean[] {
