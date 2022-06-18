@@ -6,12 +6,12 @@ import {SubStrEquals} from "core/utils/StringUtils";
 const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
 
 /**
- * Extracts the input name from an expression starting at a certain location
+ * Extracts the input name from an expression starting at a certain location.
  *
- * @param expression the expression to extract the input name from
- * @param index the index at which the input starts
- * @param ops the representation format for the operations used in this expression
- * @returns an InputToken with the input name in it
+ * @param expression The expression to extract the input name from.
+ * @param index The index at which the input starts.
+ * @param ops The representation format for the operations used in this expression.
+ * @returns An InputToken with the input name in it.
  */
  function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
     const endIndex = Array.from({length: expression.length - index - 1}, (_, i) => i + index + 1)
@@ -27,13 +27,13 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
 }
 
 /**
- * Gets a token from a given expression starting at a certain index
+ * Gets a token from a given expression starting at a certain index.
  *
- * @param expression the expression to extract the token from
- * @param index the index where the token starts
- * @param ops the representation format for the operations used in this expression
- * @returns the token extracted from the expression or null if the index points to the starting location of
- *              a separator (like " ")
+ * @param expression The expression to extract the token from.
+ * @param index The index where the token starts.
+ * @param ops The representation format for the operations used in this expression.
+ * @returns The token extracted from the expression or null if the index points to the starting location of
+ *              a separator (like " ").
  */
 function getToken(expression: string, index: number, ops: OperatorFormat): Token | undefined {
     const tokenType = TokenTypesArray.find(tokenType => SubStrEquals(expression, index, ops.ops[tokenType]));
@@ -45,13 +45,13 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
 }
 
 /**
- * Converts the given expression to an array of tokens
+ * Converts the given expression to an array of tokens.
  *
- * @param expression the expression to convert
- * @param ops the representation format for the operations used in this expression
- * @returns a list of tokens that represent the given expression
- * @throws {Error} if ops is missing the keys "|", "^", "&", "(", ")", or "separator"
- * @throws {Error} if the value in ops for keys "|", "^", "&", "(", ")", or "separator" is ""
+ * @param expression The expression to convert.
+ * @param ops The representation format for the operations used in this expression.
+ * @returns A list of tokens that represent the given expression.
+ * @throws {Error} If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
+ * @throws {Error} If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
 export function GenerateTokens(expression: string, ops: OperatorFormat): Token[] {
     for (const tokenType of TokenTypesArray) {

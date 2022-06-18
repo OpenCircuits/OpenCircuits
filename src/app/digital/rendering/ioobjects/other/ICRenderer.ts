@@ -16,10 +16,10 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 import {IC} from "digital/models/ioobjects/other/IC";
 
 /**
- * Render ICs
- * Colour and style border and fill as per selection status
- * Draw Rectangle to size
- * Render IC name aligned in center
+ * Render ICs using the following steps:
+ * Colour and style border and fill as per selection status.
+ * Draw Rectangle to size.
+ * Render IC name aligned in center.
  */
 export const ICRenderer = (() => {
     return {

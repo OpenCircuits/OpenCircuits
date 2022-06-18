@@ -5,16 +5,16 @@ import {TimedComponent} from "digital/models/ioobjects/TimedComponent";
 
 export class FrequencyChangeAction implements Action {
     /**
-     * The time component of the action
+     * The time component of the action.
      */
     private component: TimedComponent;
 
     /**
-     * The initial frequency of this Action
+     * The initial frequency of this Action.
      */
     private initialFreq: number;
      /**
-      * The target frequency of this Action
+      * The target frequency of this Action.
       */
     private targetFreq: number;
 
@@ -22,8 +22,8 @@ export class FrequencyChangeAction implements Action {
      * Initialize a FrequencyChangeAction with the component and
      * target frequency given.
      *
-     * @param component The component that we need to change the frequency
-     * @param targetFreq The frequency that we want the clock change to
+     * @param component The component that we need to change the frequency.
+     * @param targetFreq The frequency that we want the clock change to.
      */
     public constructor(component: TimedComponent, targetFreq: number) {
         this.component = component;
@@ -36,7 +36,7 @@ export class FrequencyChangeAction implements Action {
     /**
      * Set the frequency of the component to the target ferquency.
      *
-     * @returns This action
+     * @returns This action.
      */
     public execute(): Action {
         this.component.setFrequency(this.targetFreq);
@@ -45,9 +45,9 @@ export class FrequencyChangeAction implements Action {
     }
 
     /**
-     * Undo the changing action, back the frequency of the clock to initialFreq
+     * Undo the changing action, back the frequency of the clock to initialFreq.
      *
-     * @returns This action
+     * @returns This action.
      */
     public undo(): Action {
         this.component.setFrequency(this.initialFreq);

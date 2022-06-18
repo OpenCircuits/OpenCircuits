@@ -17,9 +17,9 @@ export class QuadraticCurvePositioner extends Positioner<InputPort> {
     }
 
     /**
-     * Port positioning for OR/XOR gates along the quadratic curves
+     * Port positioning for OR/XOR gates along the quadratic curves.
      *
-     * @param ports The array of ports (either in or out ports)
+     * @param ports The array of ports (either in or out ports).
      */
     public updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions(ports);

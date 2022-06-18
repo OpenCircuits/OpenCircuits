@@ -32,7 +32,7 @@ export class Multiplexer extends Mux {
 
     /**
      * Activate function that allows the multiplexer
-     *  to give desired output
+     *  to give desired output.
      */
     public activate(): void {
         let num = 0;

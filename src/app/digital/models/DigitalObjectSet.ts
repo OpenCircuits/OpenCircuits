@@ -10,14 +10,14 @@ import {DigitalComponent, DigitalWire} from "./index";
  * Helper class to hold different groups of components.
  *
  * The groups are:
- *  Input components  (anything with 0 output ports and >0  input ports)
- *  Output components (anything with 0 input ports  and >0 output ports)
- *  Wires             (wires)
- *  Other             (anything else)
+ *  Input components  (anything with 0 output ports and >0  input ports).
+ *  Output components (anything with 0 input ports  and >0 output ports).
+ *  Wires             (wires).
+ *  Other             (anything else).
  *
  * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as toList()
+ *  is included as toList().
  */
 @serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {

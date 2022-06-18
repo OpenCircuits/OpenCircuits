@@ -37,7 +37,7 @@ export class ANDGate extends Gate {
      * Returns the display name for this logic gate, either "AND Gate" or
      * "NAND Gate".
      *
-     * @returns The display name
+     * @returns The display name ("NAND Gate" or "AND Gate").
      */
     public getDisplayName(): string {
         return this.not ? "NAND Gate" : "AND Gate";
@@ -46,7 +46,7 @@ export class ANDGate extends Gate {
     /**
      * Returns the filename for the image used by this logic gate.
      *
-     * @returns The image filename
+     * @returns The image filename.
      */
     public getImageName(): string {
         return "and.svg";

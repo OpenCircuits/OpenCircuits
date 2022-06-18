@@ -85,8 +85,8 @@ export abstract class Mux extends DigitalComponent {
     /**
      * Calculates the size for a Mux with a number of selectors.
      *
-     * @param ports number of selectors
-     * @returns a Vector of the size for a Mux
+     * @param ports Number of selectors.
+     * @returns A Vector of the size for a Mux.
      */
     public static CalcSize(ports: number): Vector {
         return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);

@@ -46,27 +46,27 @@ export class ORGate extends Gate {
     }
 
     /**
-     * Calculates a height offset to account for more inputs than the default height can hold
+     * Calculates a height offset to account for more inputs than the default height can hold.
      *
-     * @returns A vector with the symmetric offset based on the current input number
+     * @returns A vector with the symmetric offset based on the current input number.
      */
     // @Override
     public getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
-     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate
+     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate.
      *
-     * @returns 'NOR Gate' or 'OR Gate'
+     * @returns The string "NOR Gate" or "OR Gate".
      */
     public getDisplayName(): string {
         return this.not ? "NOR Gate" : "OR Gate";
     }
 
     /**
-     * Returns the name of the image displayed in the UI for the gate
+     * Returns the name of the image displayed in the UI for the gate.
      *
-     * @returns "or.svg"
+     * @returns The string "or.svg".
      */
     public getImageName(): string {
         return "or.svg";

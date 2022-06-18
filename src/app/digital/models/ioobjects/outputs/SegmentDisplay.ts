@@ -19,19 +19,17 @@ import {InputPort} from "digital/models/ports/InputPort";
 import {Segments, SegmentType} from "./Segments";
 
 /**
- * Here we have the code that applies to the different segment displays
+ * Here we have the code that applies to the different segment displays.
  * There is the initial state within the constructor
- * and other functions that allow you to modify said segment display
+ * and other functions that allow you to modify said segment display.
  */
-
-
 @serializable("SegmentDisplay")
 export class SegmentDisplay extends DigitalComponent {
     @serialize
     protected segmentCount: number;
 
     /**
-     * Initializes a 7-segment display with input ports on the left side
+     * Initializes a 7-segment display with input ports on the left side.
      *
      * @param numInputs The number of inputs this display is allowed to have.
      * @param positioner The positioner used to position the ports.
@@ -47,9 +45,9 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     /**
-     * Changes the number of segements in the display
+     * Changes the number of segements in the display.
      *
-     * @param val the number of segments in the segemt display
+     * @param val The number of segments in the segemt display.
      */
     protected setSegmentCount(val: number): void {
         this.segmentCount = val;
@@ -61,9 +59,9 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     /**
-     * Sets the input port and segement count to val
+     * Sets the input port and segement count to val.
      *
-     * @param val the new number of segements and input ports
+     * @param val The new number of segements and input ports.
      */
     public setInputPortCount(val: number): void {
         super.setInputPortCount(val);
@@ -71,10 +69,10 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     /**
-     * Checks if each input port is connected to a power source that is on
+     * Checks if each input port is connected to a power source that is on.
      *
-     * @param segment the number of input ports
-     * @returns if the ports are on as a boolean
+     * @param segment The number of input ports.
+     * @returns If the ports are on as a boolean.
      */
     public isSegmentOn(segment: number): boolean {
         return this.getInputPort(segment).getIsOn();
@@ -82,9 +80,9 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Gets the positions of the segemnts from the json file
-     * depending on how many segments there are
+     * depending on how many segments there are.
      *
-     * @returns an array of Vectors and SegmentTypes
+     * @returns An array of Vectors and SegmentTypes.
      */
     public getSegments(): Array<[Vector, SegmentType]> {
         const segments = Segments[`${this.segmentCount}`];
@@ -96,18 +94,18 @@ export class SegmentDisplay extends DigitalComponent {
     }
 
     /**
-     * Gets the number of segements in a segment display
+     * Gets the number of segements in a segment display.
      *
-     * @returns The number of segements
+     * @returns The number of segements.
      */
     public getSegmentCount(): number {
         return this.segmentCount;
     }
 
     /**
-     * Gets the name to display for the history
+     * Gets the name to display for the history.
      *
-     * @returns a string of the name to display in the history
+     * @returns A string of the name to display in the history.
      */
     public getDisplayName(): string {
         return `${this.segmentCount} Segment Display`;

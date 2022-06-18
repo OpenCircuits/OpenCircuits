@@ -23,7 +23,7 @@ export class ConstantLow extends DigitalComponent {
     /**
      * Gets the offset (border width) of `this` Constant Low input.
      *
-     * @returns the offset vector which represents a border width of 0px.
+     * @returns The offset vector which represents a border width of 0px.
      */
     // @Override
     public getOffset(): Vector {
@@ -33,7 +33,7 @@ export class ConstantLow extends DigitalComponent {
     /**
      * Gets the display name of `this` Constant Low input.
      *
-     * @returns the display name "Constant Low"
+     * @returns The display name "Constant Low".
      */
     public getDisplayName(): string {
         return "Constant Low";
@@ -42,7 +42,7 @@ export class ConstantLow extends DigitalComponent {
     /**
      * Gets the image name of `this` Constant Low input.
      *
-     * @returns the image name "constLow.svg"
+     * @returns The image name "constLow.svg".
      */
     public getImageName(): string {
         return "constLow.svg";
