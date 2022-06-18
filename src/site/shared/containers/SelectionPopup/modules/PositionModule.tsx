@@ -31,11 +31,16 @@ export const PositionModule = ({ info }: Props) => {
             <NumberModuleInputField
                 kind="float"
                 props={props.x}
-                getAction={(newX) =>
+                getAction={(newX, step) =>
                     new TranslateAction(
                         cs,
                         cs.map(c => c.getPos()),
-                        cs.map(c => V(newX*100, c.getPos().y)),
+                        cs.map(c => V(
+                            // If incremented, then shift the currnet position over,
+                            //  otherwise set it directly (issue #890)
+                            (step !== undefined ? c.getPos().x + step*100 : newX*100),
+                            c.getPos().y
+                        )),
                         false
                     )
                 }
@@ -50,11 +55,16 @@ export const PositionModule = ({ info }: Props) => {
             <NumberModuleInputField
                 kind="float"
                 props={props.y}
-                getAction={(newY) =>
+                getAction={(newY, step) =>
                     new TranslateAction(
                         cs,
                         cs.map(c => c.getPos()),
-                        cs.map(c => V(c.getPos().x, newY*100)),
+                        cs.map(c => V(
+                            // If incremented, then shift the currnet position over,
+                            //  otherwise set it directly (issue #890)
+                            c.getPos().x,
+                            (step !== undefined ? c.getPos().y + step*100 : newY*100),
+                        )),
                         false
                     )
                 }

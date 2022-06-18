@@ -1,4 +1,5 @@
 import {Action} from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
 import {useState} from "react";
 
 
@@ -11,10 +12,10 @@ export type ModuleSubmitInfo = {
     isValid: false;
 }
 
-export type SharedModuleInputFieldProps<V extends Types> = {
+export type SharedModuleInputFieldProps<V extends Types, E = {}> = {
     props: V[];
 
-    getAction: (newVal: V) => Action;
+    getAction: (newVal: V, extra?: E) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
     getCustomDisplayVal?: (val: V) => V;
 
@@ -27,9 +28,10 @@ type State = {
     focused: boolean;
     textVal: string;
     tempAction: Action | undefined;
+    modifierAction: Action | undefined;
 }
 type Types = string | number | boolean;
-type Props<V extends Types> = {
+type Props<V extends Types, E = {}> = {
     props: V[];
 
     parseVal: (val: string) => V;
@@ -38,20 +40,33 @@ type Props<V extends Types> = {
 
     getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
+    getModifierAction?: (newMod: E) => Action;
     getCustomDisplayVal?: (val: V) => V;
 }
-export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isValid,
-                                                parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V>) => {
+export const useBaseModule = <V extends Types, E = {}>({ props, getAction, getModifierAction, parseVal, isValid,
+                                                    parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V,E>) => {
     const [state, setState] = useState<State>({
         focused: false,
         textVal: "",
         tempAction: undefined,
+        modifierAction: undefined,
     });
 
-    const { focused, textVal, tempAction } = state;
+    const { focused, textVal, tempAction, modifierAction } = state;
 
     const allSame = props.every(v => v === props[0]);
     const val = props[0];
+
+    const onModify = (newMod: E) => {
+        if (!getModifierAction)
+            return;
+
+        modifierAction?.undo();
+        const action = getModifierAction(newMod).execute();
+        onSubmit?.({ isFinal: false, isValid: true, action });
+
+        setState({ ...state, focused: true, modifierAction: action });
+    }
 
     const onChange = (newVal: string) => {
         const val = parseVal(newVal);
@@ -64,11 +79,13 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
         }
 
         // Create new temporary action with new valid val
-        tempAction?.undo(); // If tempAction exists, then undo it first
+        modifierAction?.undo(); // If modifierAction exists, then undo it first
+        tempAction?.undo(); // If tempAction exists, then undo it second
         const action = getAction(val).execute();
         onSubmit?.({ isFinal: false, isValid: true, action });
 
-        setState({ ...state, textVal: newVal, tempAction: action });
+        // Reset modifier when state here since state is being set exactly
+        setState({ focused: true, textVal: newVal, tempAction: action, modifierAction: undefined });
     }
 
     // Focusing on the input will enter a sort-of new "mode" where
@@ -89,7 +106,7 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
         // On focus, if all same (displaying `val`) then
         //  start user-input with `val`, otherwise empty
         const textVal = (allSame ? val.toString() : "");
-        setState({ ...state, focused: true, textVal, tempAction: undefined });
+        setState({ ...state, focused: true, textVal, tempAction: undefined, modifierAction: undefined });
     }
 
     // Blurring should trigger a 'submit' so the user-inputted value
@@ -97,13 +114,20 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
     const onBlur = () => {
         // If temp action doesn't exist, it means that the user didn't change anything
         //  so we should just do nothing and go back to normal
-        if (!tempAction) {
+        if (!tempAction && !modifierAction) {
             setState({ ...state, focused: false });
             return;
         }
 
         // Temp action exists, so undo it before committing final action
-        tempAction.undo();
+        modifierAction?.undo();
+        tempAction?.undo();
+
+        if (!tempAction) {
+            onSubmit?.({ isFinal: true, isValid: true, action: modifierAction!.execute() });
+            setState({ ...state, focused: false, tempAction: undefined, modifierAction: undefined });
+            return;
+        }
 
         const finalVal = (parseFinalVal ?? ((v) => v))(parseVal(textVal));
         if (!isValid(finalVal)) {
@@ -114,12 +138,17 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
         }
 
         // Submit final valid action
-        onSubmit?.({ isFinal: true, isValid: true, action: getAction(finalVal).execute() });
+        onSubmit?.({ isFinal: true, isValid: true, action: new GroupAction([
+            getAction(finalVal),
+            ...(modifierAction ? [modifierAction] : []),
+        ]).execute() });
 
         // When submitting, it will be true that all the values are the same
         //  and they will all be `newVal`, so
-        setState({ ...state, focused: false, tempAction: undefined }); // TOOD: may have to text textVal here
+        setState({ ...state, focused: false, tempAction: undefined, modifierAction: undefined });
     }
+
+    // console.log("update internal: ", focused, textVal, allSame, val);
 
     return [
         {
@@ -130,6 +159,11 @@ export const useBaseModule = <V extends Types>({ props, getAction, parseVal, isV
             onChange,
             onFocus,
             onBlur,
+            onModify,
         },
+        {
+            state,
+            setState,
+        }
     ] as const;
 }

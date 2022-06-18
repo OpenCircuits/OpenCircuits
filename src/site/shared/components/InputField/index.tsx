@@ -37,10 +37,9 @@ type NumberProps = Props & {
     step?: number;
 
     onIncrement?: (step: number) => void;
-    onDecrement?: (step: number) => void;
 }
 export const NumberInputField = React.forwardRef(
-    ({onEnter, value, onChange, onIncrement, onDecrement, step, ...props}: NumberProps,
+    ({onEnter, value, onChange, onIncrement, step, ...props}: NumberProps,
         ref: React.RefObject<HTMLInputElement>) => {
 
     ref = ref ?? useRef<HTMLInputElement>();
@@ -51,20 +50,37 @@ export const NumberInputField = React.forwardRef(
         ref.current.addEventListener("keyup", function (evt) {
             if (evt.key === "Escape" || evt.key === "Enter")
                 ref.current!.blur();
-            
+
             if (evt.key == "Enter" && onEnter)
                 onEnter(evt);
         });
     }, [ref]);
 
-    /*
-     * TODO need to ensure user cannot type in invalid input
-     */
-    return  <div className="numberinputfield">
-                <input ref={ref} type="number" value={value} onChange={onChange} {...props} />
-                {!!step && <span>
-                    <button onClick={() => onIncrement?.(step ?? 1)}>&and;</button>
-                    <button onClick={() => onDecrement?.(step ?? 1)}>&or;</button>
-                </span>}
-            </div>
+    // TODO: need to ensure user cannot type in invalid input
+    // TODO: use `InputField` instead of `input` here?
+    return  (
+        <div className="numberinputfield">
+            <input ref={ref} type="number" value={value} onChange={onChange} {...props} />
+            {!!step && <span>
+                <button
+                    onMouseDown={(ev) => ev.preventDefault()}
+                    onClick={() => {
+                        if (document.activeElement !== ref.current) {
+                            ref.current?.focus();
+                            props.onFocus?.({} as React.FocusEvent<HTMLInputElement>);
+                        }
+                        onIncrement?.(+(step ?? 1));
+                    }}>&and;</button>
+                <button
+                    onMouseDown={(ev) => ev.preventDefault()}
+                    onClick={() => {
+                        if (document.activeElement !== ref.current) {
+                            ref.current?.focus();
+                            props.onFocus?.({} as React.FocusEvent<HTMLInputElement>);
+                        }
+                        onIncrement?.(-(step ?? 1));
+                    }}>&or;</button>
+            </span>}
+        </div>
+    );
 });
