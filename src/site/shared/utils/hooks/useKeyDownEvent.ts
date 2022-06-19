@@ -11,7 +11,8 @@ export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: Re
             return;
 
         const LookForKey = (ev: Event) => {
-            if (ev.type === "keydown" && ev.key === key) f();
+            if (ev.type === "keydown" && ev.key === key)
+                f();
         }
 
         input.addListener(LookForKey);

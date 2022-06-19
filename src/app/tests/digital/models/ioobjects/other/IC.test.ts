@@ -17,13 +17,13 @@ describe("IC", () => {
     test("Basic IC", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers(designer);
-        const a = new Switch, o = new LED(), buf_gate = new BUFGate();
+        const a = new Switch, o = new LED(), bufGate = new BUFGate();
 
-        Place(a, o, buf_gate);
-        Connect(a, buf_gate);
-        Connect(buf_gate, o);
+        Place(a, o, bufGate);
+        Connect(a, bufGate);
+        Connect(bufGate, o);
 
-        const icdata = ICData.Create([a, buf_gate, o]);
+        const icdata = ICData.Create([a, bufGate, o]);
         const ic = new IC(icdata);
 
         expect(ic.numInputs()).toBe(1);
@@ -41,15 +41,15 @@ describe("IC", () => {
     test("Basic IC 2", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {Place, Connect} = GetHelpers(designer);
-        const a = new Switch, b = new Switch, o = new LED(), and_gate = new ANDGate();
+        const a = new Switch, b = new Switch, o = new LED(), andGate = new ANDGate();
 
-        Place(a, b, o, and_gate);
-        Connect(a, and_gate);
-        Connect(b, and_gate);
-        Connect(and_gate, o);
+        Place(a, b, o, andGate);
+        Connect(a, andGate);
+        Connect(b, andGate);
+        Connect(andGate, o);
 
-        const icdata = ICData.Create([a, b, and_gate, o]);
-        let ic = new IC(icdata);
+        const icdata = ICData.Create([a, b, andGate, o]);
+        const ic = new IC(icdata);
 
         expect(ic.numInputs()).toBe(2);
         expect(ic.numOutputs()).toBe(1);

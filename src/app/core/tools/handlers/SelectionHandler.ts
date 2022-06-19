@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
 import {GroupAction} from "core/actions/GroupAction";
 import {GetAllPorts} from "core/utils/ComponentUtils";
-import {Component, Wire} from "core/models";
+import {Wire} from "core/models";
 import {ShiftAction} from "core/actions/ShiftAction";
 
 
@@ -43,5 +43,5 @@ export const SelectionHandler: EventHandler = ({
         // https://github.com/OpenCircuits/OpenCircuits/issues/622
         if (!action.isEmpty())
             history.add(action);
-    }
+    },
 });

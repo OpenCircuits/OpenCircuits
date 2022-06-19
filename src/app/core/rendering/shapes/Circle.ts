@@ -12,7 +12,7 @@ export class Circle implements Shape {
 
     /**
      * Constructor for Circle
-     * 
+     *
      * @param pos the position
      * @param radius the radius
      */
@@ -23,7 +23,7 @@ export class Circle implements Shape {
 
     /**
      * Draws the Circle on the canvas
-     * 
+     *
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

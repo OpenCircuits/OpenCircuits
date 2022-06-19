@@ -39,7 +39,7 @@ export type NGNetlistAnalysis =
 
 export type NGNetlist = [
     [".title",string],
-    ...(NGNetlistElement | NGNetlistAnalysis)[],
+    ...Array<NGNetlistElement | NGNetlistAnalysis>,
     [".end"],
     ["\0"],
 ];

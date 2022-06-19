@@ -33,5 +33,5 @@ export const SelectPathHandler: EventHandler = ({
 
         const path = (obj instanceof Wire) ? (GetPath(obj)) : (GetComponentPath(obj!));
         history.add(CreateGroupSelectAction(selections, path).execute());
-    }
+    },
 });

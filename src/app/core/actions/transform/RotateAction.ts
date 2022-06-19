@@ -12,7 +12,7 @@ export class RotateAction implements Action {
     /**
      * an Array of the selected component(s)
      */
-    private objects: Array<Component>;
+    private objects: Component[];
 
     /**
      * the x, y coordinates of the midpoint between the selected component(s)
@@ -22,22 +22,25 @@ export class RotateAction implements Action {
     /**
      * an Array of the initial angles the selected component(s) are placed at
      */
-    private initialAngles: Array<number>;
+    private initialAngles: number[];
 
     /**
      * an Array of the final angles the selected component(s) will be placed at
      */
-    private finalAngles: Array<number>;
+    private finalAngles: number[];
 
     /**
      * Creates a rotation action for a component or a group of components
      *
      * @param objects Initializes the action with an Array of the selected component(s)
-     * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between the selected component(s)
-     * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s) are placed at
-     * @param finalAngles Inititalizes the action an Array of the final angles the selected component(s) will be placed at
+     * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between
+     *  the selected component(s)
+     * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s)
+     *  are placed at
+     * @param finalAngles Inititalizes the action an Array of the final angles the selected component(s)
+     *  will be placed at
      */
-    public constructor(objects: Array<Component>, midpoint: Vector, initialAngles: Array<number>, finalAngles: Array<number>) {
+    public constructor(objects: Component[], midpoint: Vector, initialAngles: number[], finalAngles: number[]) {
         this.objects = objects;
         this.midpoint = midpoint;
         this.initialAngles = initialAngles;
@@ -49,7 +52,7 @@ export class RotateAction implements Action {
      *
      * @param angles the final angle(s) the component(s) will be set as
      */
-    private setAngles(angles: Array<number>): void {
+    private setAngles(angles: number[]): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
             obj.setRotationAbout(angles[i], this.midpoint);

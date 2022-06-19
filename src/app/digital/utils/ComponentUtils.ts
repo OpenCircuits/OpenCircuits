@@ -14,14 +14,14 @@ import {IC, ICData} from "digital/models/ioobjects";
  * Stores identifier of types of gates corresponded to their inverted counterparts
  */
 const gateInversion: Record<string, string> = {
-    "ANDGate": "NANDGate",
+    "ANDGate":  "NANDGate",
     "NANDGate": "ANDGate",
-    "ORGate": "NORGate",
-    "NORGate": "ORGate",
-    "XORGate": "XNORGate",
+    "ORGate":   "NORGate",
+    "NORGate":  "ORGate",
+    "XORGate":  "XNORGate",
     "XNORGate": "XORGate",
-    "BUFGate": "NOTGate",
-    "NOTGate": "BUFGate",
+    "BUFGate":  "NOTGate",
+    "NOTGate":  "BUFGate",
 }
 
 /**
@@ -39,7 +39,7 @@ export function GetInvertedGate(oldGate: Gate): Gate {
     return Create<Gate>(newName);
 }
 
-export function PortsToDecimal(ports: (InputPort | OutputPort)[]): number {
+export function PortsToDecimal(ports: Array<InputPort | OutputPort>): number {
     return BCDtoDecimal(ports.map(p => p.getIsOn()));
 }
 

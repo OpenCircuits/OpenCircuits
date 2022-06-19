@@ -17,7 +17,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     validTypes: (s: Selectable) => s is V,
     getProps: (s: V) => T,
     deps: React.DependencyList = [],
-    ignore: (s: Selectable) => boolean = (s) => false,
+    ignore: (s: Selectable) => boolean = () => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<T> | undefined);
 

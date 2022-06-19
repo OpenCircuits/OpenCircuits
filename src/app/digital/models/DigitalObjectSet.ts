@@ -2,7 +2,7 @@ import {serializable} from "serialeazy";
 
 import {IOObject, Wire} from "core/models";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-import {DigitalWire, DigitalComponent} from "./index";
+import {DigitalComponent, DigitalWire} from "./index";
 
 /**
  * Helper class to hold different groups of components.
@@ -24,7 +24,8 @@ export class DigitalObjectSet extends IOObjectSet {
     private others:  DigitalComponent[];
 
     public constructor();
-    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[], others: DigitalComponent[], wires: Wire[]);
+    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[],
+                       others: DigitalComponent[], wires: Wire[]);
     public constructor(inputs: DigitalComponent[] = [], outputs: DigitalComponent[] = [],
                        others: DigitalComponent[] = [], wires: Wire[] = []) {
         super([...inputs, ...outputs, ...others, ...wires]);
@@ -54,7 +55,7 @@ export class DigitalObjectSet extends IOObjectSet {
         return [...this.inputs, ...this.outputs, ...this.others];
     }
 
-    public static from(set: IOObject[] = []): DigitalObjectSet {
+    public static From(set: IOObject[] = []): DigitalObjectSet {
         const inputs  = [] as DigitalComponent[];
         const outputs = [] as DigitalComponent[];
         const others  = [] as DigitalComponent[];

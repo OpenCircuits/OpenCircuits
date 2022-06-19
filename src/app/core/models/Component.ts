@@ -1,8 +1,8 @@
 import {DEFAULT_BORDER_WIDTH,
-        IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
+        IO_PORT_BORDER_WIDTH,
+        IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {Vector,V}     from "Vector";
+import {V,Vector}     from "Vector";
 import {Transform}    from "math/Transform";
 import {RectContains} from "math/MathUtils";
 import {serialize}    from "serialeazy";
@@ -97,7 +97,7 @@ export abstract class Component extends CullableObject {
             p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
-        return Vector.min(min, ...corners, ...ports);
+        return Vector.Min(min, ...corners, ...ports);
     }
 
     public getMaxPos(): Vector {
@@ -113,7 +113,7 @@ export abstract class Component extends CullableObject {
             p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
-        return Vector.max(max, ...corners, ...ports);
+        return Vector.Max(max, ...corners, ...ports);
     }
 
     public getImageName(): string | undefined {

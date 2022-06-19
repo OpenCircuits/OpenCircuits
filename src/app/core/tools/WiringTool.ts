@@ -1,4 +1,4 @@
-import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
+import {IO_PORT_RADIUS, LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
@@ -13,7 +13,7 @@ import {Port, Wire} from "core/models";
 export const WiringTool = (() => {
     enum StateType {
         CLICKED,
-        DRAGGED
+        DRAGGED,
     }
 
     let port: Port;
@@ -122,6 +122,6 @@ export const WiringTool = (() => {
 
         getWire(): Wire {
             return wire;
-        }
+        },
     }
 })();

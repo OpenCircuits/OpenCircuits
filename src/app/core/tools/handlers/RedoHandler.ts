@@ -10,5 +10,5 @@ export const RedoHandler: EventHandler = ({
          (event.key === "z" && input.isModifierKeyDown() && input.isShiftKeyDown() ||
           event.key === "y" && input.isModifierKeyDown())),
 
-    getResponse: ({history}: CircuitInfo) => history.redo()
+    getResponse: ({history}: CircuitInfo) => history.redo(),
 });

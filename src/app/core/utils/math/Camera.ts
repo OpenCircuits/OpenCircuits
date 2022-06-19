@@ -1,6 +1,6 @@
 import {serializable, serialize} from "serialeazy";
 
-import {Vector,V} from "./Vector";
+import {V,Vector} from "./Vector";
 import {Transform} from "./Transform";
 import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
@@ -34,14 +34,15 @@ export class Camera {
     private margin: Margin;
 
     /**
-     * This constructor creates new Camera object which is the field of view (the screen) and initializes all the variables.
-     * It sets dirty to true which means that 
+     * This constructor creates new Camera object which is the field of view (the screen)
+     * and initializes all the variables.
+     * It sets dirty to true which means that
      * @param width The width of the camera (screen)
      * @param height The height of the camera (screen)
      * @param startPos The starting position in the camera to 0,0 (vector)
      * @param startZoom This initialzed zoom to 1
      */
-    public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom: number = 1) {
+    public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom = 1) {
         this.width = width!;
         this.height = height!;
         this.pos = startPos;
@@ -52,7 +53,7 @@ export class Camera {
     }
 
     /**
-     * If dirty is true then it updates and recalculates the matrix to the new position, height, and width. 
+     * If dirty is true then it updates and recalculates the matrix to the new position, height, and width.
      * dirty represents whether the screen has been changed/moved or not.
      */
     private updateMatrix(): void {
@@ -113,7 +114,7 @@ export class Camera {
     /**
      * Zooms to a certain position on the screen by a certain amount z.
      * @param c is the position it's zooming to
-     * @param z the amount it is zooming 
+     * @param z the amount it is zooming
      */
     public zoomTo(c: Vector, z: number): void {
         // Calculate position to zoom in/out of
@@ -125,7 +126,7 @@ export class Camera {
     }
 
     /**
-     * zooms in or out at the current position 
+     * zooms in or out at the current position
      * @param s amount to zoom by
      */
     public zoomBy(s: number): void {
@@ -169,7 +170,7 @@ export class Camera {
         return this.zoom;
     }
     /**
-     * This returns a copy of the transform of camera and updates the matrix 
+     * This returns a copy of the transform of camera and updates the matrix
      * @returns copy of this.transform
      */
     public getTransform(): Transform {
@@ -193,7 +194,7 @@ export class Camera {
         return this.inv.copy();
     }
     /**
-     * returns the current screen position with formula using the vector v and getCenter 
+     * returns the current screen position with formula using the vector v and getCenter
      * @param v  is the vector multiplied to inv
      * @returns a vector of the screen position
      */
@@ -210,7 +211,7 @@ export class Camera {
 
     /**
      * Returns a set of margins that adjusts the view of the camera
-     * @returns margin values for the camera 
+     * @returns margin values for the camera
      */
     public getMargin(): Margin {
         return this.margin;

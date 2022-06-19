@@ -23,7 +23,7 @@ export class InputPortChangeAction extends PortChangeAction {
         super(obj.getDesigner(), target, initial);
         this.obj = obj;
     }
-    
+
     /**
      * Returns the objects input ports
      *

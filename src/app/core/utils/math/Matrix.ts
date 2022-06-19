@@ -1,4 +1,4 @@
-import {Vector,V} from "./Vector";
+import {V,Vector} from "./Vector";
 import {serializable} from "serialeazy";
 
 
@@ -168,7 +168,7 @@ export class Matrix2x3 {
 
         det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
 
-        if (det == 0)
+        if (det === 0)
             return new Matrix2x3();
 
         det = 1.0 / det;
@@ -203,9 +203,6 @@ export class Matrix2x3 {
      * @returns True if the two matrices are equal, false otherwise
      */
     public equals(other: Matrix2x3): boolean {
-        if (other == null)
-            return false;
-
         for (let i = 0; i < 2*3; i++) {
             if (this.mat[i] !== other.mat[i])
                 return false;
@@ -219,13 +216,5 @@ export class Matrix2x3 {
      */
     public copy(): Matrix2x3 {
         return new Matrix2x3(this);
-    }
-
-    /**
-     * Prints `this` matrix to the console.
-     */
-    public print(): void {
-        console.log("[" + this.mat[0].toFixed(3) + ", " + this.mat[2].toFixed(3) + ", " + this.mat[4].toFixed(3) + "]\n" +
-                    "[" + this.mat[1].toFixed(3) + ", " + this.mat[3].toFixed(3) + ", " + this.mat[5].toFixed(3) + "]");
     }
 }

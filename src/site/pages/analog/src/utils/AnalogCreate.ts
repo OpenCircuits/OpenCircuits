@@ -16,7 +16,7 @@ import {AnalogCircuitDesigner, AnalogComponent} from "analog/models";
  * @returns The DigitalComponent associated with the given ID
  * @throws If the itemId is an invalid item or IC
  */
-export function AnalogCreate(itemId: string, designer: AnalogCircuitDesigner): AnalogComponent {
+export function AnalogCreate(itemId: string, _designer: AnalogCircuitDesigner): AnalogComponent {
     const component = Create<AnalogComponent>(itemId);
     if (!component)
         throw new Error(`Failed to create digital item w/ id: ${itemId}`);
@@ -36,7 +36,8 @@ export function AnalogCreate(itemId: string, designer: AnalogCircuitDesigner): A
  * @returns The list of DigitalComponents associated with the given ID and of length `N`
  * @throws If the itemId is an invalid item or IC
  */
-export function AnalogCreateN(pos: Vector, itemId: string, designer: AnalogCircuitDesigner, N: number): AnalogComponent[] {
+export function AnalogCreateN(pos: Vector, itemId: string, designer: AnalogCircuitDesigner,
+                              N: number): AnalogComponent[] {
     const comps = [] as AnalogComponent[];
 
     for (let i = 0; i < N; i++) {

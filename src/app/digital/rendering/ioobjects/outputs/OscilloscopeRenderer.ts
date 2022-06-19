@@ -1,8 +1,8 @@
-import {SELECTED_BORDER_COLOR,
-        DEFAULT_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
+import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        DEFAULT_ON_COLOR} from "core/utils/Constants";
+        DEFAULT_ON_COLOR,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -69,6 +69,6 @@ export const OscilloscopeRenderer = (() => {
             renderer.closePath();
             renderer.stroke();
             renderer.restore();
-        }
+        },
     };
 })();

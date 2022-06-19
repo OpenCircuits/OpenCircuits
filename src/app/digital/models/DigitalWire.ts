@@ -33,7 +33,7 @@ export class DigitalWire extends Wire {
             return;
 
         this.isOn = signal;
-        if (this.p2 != null)
+        if (this.p2 !== undefined)
             this.p2.activate(signal);
     }
 

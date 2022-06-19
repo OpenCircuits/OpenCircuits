@@ -1,4 +1,4 @@
-import {FIT_PADDING_RATIO,} from "core/utils/Constants";
+import {FIT_PADDING_RATIO} from "core/utils/Constants";
 
 import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -25,5 +25,5 @@ export const FitToScreenHandler: EventHandler = ({
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
         history.add(new MoveCameraAction(camera, pos, zoom).execute());
-    }
+    },
 });

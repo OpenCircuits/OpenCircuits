@@ -1,9 +1,9 @@
 import "jest";
 
-import {InputToken, Token,
-        InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent,
-        OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
+import {InputToken, InputTreeIdent,
+        InputTreeUnOpNode, OperatorFormat,
+        Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
@@ -24,7 +24,7 @@ import "digital/models/ioobjects";
 
 /**
  * Gets the component that the first wire of the first output port of the supplied component is connected to
- * 
+ *
  * @param component the component whose output is wanted
  * @returns the component that is the "first" connected from the supplied component
  */
@@ -56,9 +56,10 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  * @param expected the expected states of the output LED for all the different switch combinations
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  */
-function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -94,9 +95,11 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs
  */
-function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED,
+                          expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2 ** inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -119,14 +122,17 @@ function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet,
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
  *
- * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the entire expression.
+ * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
+ * entire expression.
  * This behavior can be overwritten with the verbose argument.
  *
  * @param numInputs the number of switches that are used by this expression/test
  * @param expression the logical boolean expression to test
- * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
+ * @param expected the expected states of the output LED for all the different switch combinations
+ *                  (see testInputs for order)
  * @param ops the strings used to represent the different operators
- * @param verbose true to force creating a new test for every state, false to force creating one single test encompassing all states
+ * @param verbose true to force creating a new test for every state, false to force creating one single test
+ *                  encompassing all states
  * @throws {Error} if numInputs > 8
  * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
  * @see testInputs
@@ -138,14 +144,14 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
-        const inputs: [string, Switch][] = [];
+        const inputs: Array<[string, Switch]> = [];
         const charCodeStart = "a".charCodeAt(0);
         for (let i = 0; i < numInputs; i++)
             inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
-        if (verbose === false || (verbose == undefined && numInputs > 3))
+        if (verbose === false || (verbose === undefined && numInputs > 3))
             testInputsSimple(inputs, objectSet, o, expected);
         else
             testInputs(inputs, objectSet, o, expected);
@@ -158,10 +164,10 @@ describe("Expression Parser", () => {
         test("Not An Input", () => {
             const a = new LED(), b = new ORGate(), o1 = new LED(), o2 = new LED();
             const inputMap1 = new Map([
-                ["a", a]
+                ["a", a],
             ]);
             const inputMap2 = new Map([
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -177,7 +183,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o1 = new ANDGate(), o2 = new Switch();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -192,7 +198,7 @@ describe("Expression Parser", () => {
         test("Input Not Found", () => {
             const a = new Switch(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             expect(() => {
@@ -210,7 +216,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
             const inputMap2 = new Map();
 
@@ -250,7 +256,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -295,7 +301,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -344,9 +350,10 @@ describe("Expression Parser", () => {
 
             test("Invalid |", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "",
                         "^": "^",
@@ -354,7 +361,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -362,9 +369,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid ^", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "",
@@ -372,7 +380,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -380,9 +388,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid &", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -390,7 +399,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -398,9 +407,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid !", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -408,7 +418,7 @@ describe("Expression Parser", () => {
                         "!": "",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -416,9 +426,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid (", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -426,7 +437,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -434,9 +445,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid )", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -444,7 +456,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": "",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -452,9 +464,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid separator", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: "",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -462,7 +475,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -503,7 +516,7 @@ describe("Expression Parser", () => {
             const designer = new DigitalCircuitDesigner(0);
             const a = new ConstantHigh(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
@@ -518,7 +531,7 @@ describe("Expression Parser", () => {
             const designer = new DigitalCircuitDesigner(0);
             const a = new ConstantLow(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
@@ -545,7 +558,7 @@ describe("Expression Parser", () => {
 
         describe("Parse: 'longName'", () => {
             const a = new Switch(), o = new LED();
-            const inputs: [string, Switch][] = [["longName", a]];
+            const inputs: Array<[string, Switch]> = [["longName", a]];
             const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
 
             testInputs(inputs, objectSet, o, [false, true]);
@@ -599,21 +612,21 @@ describe("Expression Parser", () => {
     });
 
     describe("Alternate Formats", () => {
-        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], Formats[1]);
+        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], FORMATS[1]);
 
-        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], Formats[2]);
+        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], FORMATS[2]);
 
-        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], Formats[1]);
+        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], FORMATS[1]);
 
-        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], Formats[2]);
+        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], FORMATS[2]);
 
-        runTests(1, "_a", [true, false], Formats[3]);
+        runTests(1, "_a", [true, false], FORMATS[3]);
     });
 
     describe("Binary gate variants", () => {
         describe("7 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
+            const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 7; i++)
                 inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
@@ -633,7 +646,7 @@ describe("Expression Parser", () => {
 
         describe("8 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
+            const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 8; i++)
                 inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
@@ -653,7 +666,7 @@ describe("Expression Parser", () => {
 
         describe("9 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
+            const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 9; i++)
                 inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
@@ -675,7 +688,7 @@ describe("Expression Parser", () => {
 
         describe("(a|b)|(c|d)", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
+            const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 4; i++)
                 inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
@@ -698,7 +711,7 @@ describe("Expression Parser", () => {
 
         describe("!(a|b|c)", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
+            const inputs: Array<[string, Switch]> = [];
             const charCodeStart = "a".charCodeAt(0);
             for (let i = 0; i < 3; i++)
                 inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);

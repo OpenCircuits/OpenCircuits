@@ -15,7 +15,7 @@ export class SegmentDisplayPositioner extends Positioner<InputPort> {
      *
      * @param arr The array of ports (either in or out ports)
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         ports.forEach((port, i) => {
             // Calculate y position of port
             const size = port.getParent().getSize();

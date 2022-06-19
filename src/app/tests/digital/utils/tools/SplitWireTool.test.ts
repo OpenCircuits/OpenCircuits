@@ -3,15 +3,15 @@ import "test/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {Switch, LED,
-        DigitalNode} from "digital/models/ioobjects";
+import {DigitalNode, LED,
+        Switch} from "digital/models/ioobjects";
 
 import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Split Wire Tool", () => {
-    const {camera, designer, input} = Setup();
+    const {designer, input} = Setup();
     const {Place} = GetHelpers(designer);
 
     afterEach(() => {

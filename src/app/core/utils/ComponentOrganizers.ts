@@ -10,8 +10,8 @@ function OrganizeCore(groups: IOObjectSet, start: Vector, depths: number[][]): v
     const components = groups.getComponents();
 
     depths.forEach((nodes, depth) =>
-        nodes.forEach((node, index) => 
-            components[node].setPos(start.add(ORGANIZE_SEP_X*depth - depths.length/2, 
+        nodes.forEach((node, index) =>
+            components[node].setPos(start.add(ORGANIZE_SEP_X*depth - depths.length/2,
                                               ORGANIZE_SEP_Y*index - nodes.length/2))
         )
     );

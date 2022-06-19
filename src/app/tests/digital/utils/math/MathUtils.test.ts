@@ -1,8 +1,8 @@
 import "jest";
 
 import {V} from "Vector";
-import {Clamp, TransformContains,
-        RectContains, CircleContains} from "math/MathUtils";
+import {CircleContains, Clamp,
+        RectContains, TransformContains} from "math/MathUtils";
 import {Transform} from "math/Transform";
 
 describe("Clamp", () => {

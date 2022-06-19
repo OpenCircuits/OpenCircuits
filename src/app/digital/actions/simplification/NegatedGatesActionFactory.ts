@@ -18,13 +18,14 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
  * @param designer the designer in which the action is taking place
  * @param circuit the circuit to modify, must be placed in designer
  */
-export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
+export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
+                                         circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
     const action = new GroupAction([], "Create Negated Gates Action");
     const negatedCircuit = [...circuit.toList()];
 
     const gates = circuit.getOthers().filter(gate =>
         (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
-    ) as (ANDGate | ORGate | XORGate)[];
+    ) as Array<ANDGate | ORGate | XORGate>;
 
     gates.forEach(gate => {
         const wires = gate.getOutputPort(0).getWires();
@@ -51,5 +52,5 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
         }
     });
 
-    return [action, DigitalObjectSet.from(negatedCircuit)];
+    return [action, DigitalObjectSet.From(negatedCircuit)];
 }

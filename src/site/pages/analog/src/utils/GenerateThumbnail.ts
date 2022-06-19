@@ -1,5 +1,5 @@
-import {THUMBNAIL_ZOOM_PADDING_RATIO,
-        DEFAULT_THUMBNAIL_SIZE} from "./Constants";
+import {DEFAULT_THUMBNAIL_SIZE,
+        THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
 import {Camera} from "math/Camera";
 
 import {CullableObject} from "core/models";

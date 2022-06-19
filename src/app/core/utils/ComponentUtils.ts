@@ -343,8 +343,8 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 // Find a minimal bounding box enclosing all cullable objects in a given array
 // Note that if the array is empty, min and max will both be (0, 0)
 export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
-    const min = Vector.min(...all.map(o => o.getMinPos()));
-    const max = Vector.max(...all.map(o => o.getMaxPos()));
+    const min = Vector.Min(...all.map(o => o.getMinPos()));
+    const max = Vector.Max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
 }

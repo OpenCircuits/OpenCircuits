@@ -4,7 +4,7 @@ import {SegmentType, Segments} from "./Segments";
 
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {Name} from "core/utils/Name";
@@ -15,7 +15,7 @@ import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpa
 import {DigitalComponent} from "digital/models/DigitalComponent";
 import {InputPort} from "digital/models/ports/InputPort";
 
-/** 
+/**
  * Here we have the code that applies to the different segment displays
  * There is the initial state within the constructor
  * and other functions that allow you to modify said segment display
@@ -73,10 +73,10 @@ export class SegmentDisplay extends DigitalComponent {
 
     /**
      * Gets the positions of the segemnts from the json file
-     * depending on how many segments there are 
+     * depending on how many segments there are
      * @returns an array of Vectors and SegmentTypes
      */
-    public getSegments(): [Vector, SegmentType][] {
+    public getSegments(): Array<[Vector, SegmentType]> {
         const segments = Segments[`${this.segmentCount}`];
 
         // Turns the array into an array of Vectors and SegmentTypes

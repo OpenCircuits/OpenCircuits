@@ -33,16 +33,18 @@ export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
         camera,
         designer,
         sim,
+
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,
         selections,
         toolManager,
         renderer,
+
         debugOptions: {
-            debugCullboxes: false,
+            debugCullboxes:       false,
             debugPressableBounds: false,
             debugSelectionBounds: false,
-            debugNoFill: false,
+            debugNoFill:          false,
         },
     };
 

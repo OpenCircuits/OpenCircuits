@@ -1,9 +1,9 @@
-import {DEFAULT_BORDER_WIDTH,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
+        MULTIPLEXER_HEIGHT_OFFSET,
         SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
-        MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Renderer} from "core/rendering/Renderer";
@@ -36,7 +36,7 @@ export const MultiplexerRenderer = (() => {
                 const p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2);
                 const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
-                
+
                 // Renders to the beginning two points again in order to fully connect the last corner
                 renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
             }
@@ -45,10 +45,10 @@ export const MultiplexerRenderer = (() => {
                 const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2);
                 const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
                 const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
-                
+
                 // Renders to the beginning two points again in order to fully connect the last corner
                 renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
             }
-        }
+        },
     }
 })();

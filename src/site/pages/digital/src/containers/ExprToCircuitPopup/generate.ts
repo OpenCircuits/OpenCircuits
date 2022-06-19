@@ -2,7 +2,7 @@ import {Create} from "serialeazy";
 
 import {OperatorFormat,
         OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats}             from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS}             from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {AddGroupAction}          from "core/actions/addition/AddGroupAction";
 import {ConnectionAction}        from "core/actions/addition/ConnectionAction";
@@ -12,8 +12,8 @@ import {SetNameAction}           from "core/actions/SetNameAction";
 import {TranslateAction}         from "core/actions/transform/TranslateAction";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 import {CreateDeselectAllAction,
-        SelectAction,
-        CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+        CreateGroupSelectAction,
+        SelectAction} from "core/actions/selection/SelectAction";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
@@ -22,7 +22,7 @@ import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
 import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digital/models";
-import {ICData, IC, Clock, Label}           from "digital/models/ioobjects";
+import {Clock, IC, ICData, Label}           from "digital/models/ioobjects";
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
@@ -30,26 +30,26 @@ import {GenerateTokens}      from "digital/utils/ExpressionParser/GenerateTokens
 
 
 export type ExprToCirGeneratorOptions = {
-    input: InputTypes,
-    output: OutputTypes,
-    isIC: boolean,
-    connectClocksToOscope: boolean,
-    label: boolean,
-    format: OperatorFormatLabel,
-    ops: OperatorFormat,
+    input: InputTypes;
+    output: OutputTypes;
+    isIC: boolean;
+    connectClocksToOscope: boolean;
+    label: boolean;
+    format: OperatorFormatLabel;
+    ops: OperatorFormat;
 }
 
 export type InputTypes = "Button" | "Clock" | "Switch";
 export type OutputTypes = "Oscilloscope" | "LED";
 
 const defaultOptions: ExprToCirGeneratorOptions = {
-    input: "Switch",
-    output: "LED",
-    isIC: false,
+    input:                 "Switch",
+    output:                "LED",
+    isIC:                  false,
     connectClocksToOscope: false,
-    label: false,
-    format: "|",
-    ops: Formats[0],
+    label:                 false,
+    format:                "|",
+    ops:                   FORMATS[0],
 }
 
 function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
@@ -81,12 +81,14 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
         for (const clock of inputMap.values()) {
             action.add(new ConnectionAction(designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
             inIndex++;
-            if (inIndex === 5) break;
+            if (inIndex === 5)
+                break;
         }
     }
 }
 
-function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string, info: DigitalCircuitInfo) {
+function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string,
+                  info: DigitalCircuitInfo) {
     const data = ICData.Create(circuitComponents);
     if (!data)
         throw new Error("Failed to create ICData");
@@ -105,9 +107,9 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
-    const ops = (options.format === "custom") ? (options.ops) : (Formats.find(form => form.icon === options.format) ?? Formats[0]);
-
-    // Create input tokens
+    const ops = (options.format === "custom")
+                ? (options.ops)
+                : (FORMATS.find(form => form.icon === options.format) ?? FORMATS[0]);
     const tokenList = GenerateTokens(expression, ops);
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()], "Expression Parser Action");
     const inputMap = new Map<string, DigitalComponent>();

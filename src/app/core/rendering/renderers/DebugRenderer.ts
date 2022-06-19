@@ -1,7 +1,7 @@
 import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
 import {DEBUG_CULLBOX_STYLE,
-        DEBUG_SELECTION_BOUNDS_STYLE,
-        DEBUG_PRESSABLE_BOUNDS_STYLE} from "../Styles";
+        DEBUG_PRESSABLE_BOUNDS_STYLE,
+        DEBUG_SELECTION_BOUNDS_STYLE} from "../Styles";
 
 import {V} from "Vector";
 
@@ -56,6 +56,6 @@ export const DebugRenderer = (() => {
                 renderer.restore();
             }
 
-        }
+        },
     };
 })();

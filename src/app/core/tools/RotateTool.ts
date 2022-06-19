@@ -1,7 +1,7 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 
 import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -60,7 +60,7 @@ export const RotateTool = (() => {
             startAngle = getAngle(worldMousePos, selections.midpoint());
             prevAngle = startAngle;
 
-            return;
+
         },
         onDeactivate({}: Event, {history, selections}: CircuitInfo): void {
             const components = selections.get() as Component[];
@@ -104,6 +104,6 @@ export const RotateTool = (() => {
         },
         getPrevAngle(): number {
             return prevAngle;
-        }
+        },
     }
 })();

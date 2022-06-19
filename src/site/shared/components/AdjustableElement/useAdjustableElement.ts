@@ -27,7 +27,7 @@ export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
     const [state, setState] = useState<State>("none");
 
     // Calculate rectangles, inner and outer to represent bounds for edges/corners
-    const curRect = Rect.from(rect);
+    const curRect = Rect.From(rect);
     const outerRect = new Rect(curRect.center, curRect.size.add(20));
     const innerRect = new Rect(curRect.center, curRect.size.sub(20));
 

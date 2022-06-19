@@ -22,7 +22,8 @@ export class PortSet<T extends Port> {
     private positioner: Positioner<T>;
 
     public constructor();
-    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component | undefined) => T);
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>,
+                       type: new(c: Component | undefined) => T);
     public constructor(parent?: Component, count?: ClampedValue,
                        positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component | undefined) => T) {
         this.parent = parent!;
@@ -46,7 +47,7 @@ export class PortSet<T extends Port> {
     public setPortCount(newVal: number): void {
         // no need to update if value is already
         //  the current amount
-        if (newVal == this.currentPorts.length)
+        if (newVal === this.currentPorts.length)
             return;
 
         // set count (will auto-clamp)
@@ -99,6 +100,6 @@ export class PortSet<T extends Port> {
     }
 
     public isEmpty(): boolean {
-        return this.currentPorts.length == 0;
+        return this.currentPorts.length === 0;
     }
 }

@@ -27,7 +27,7 @@ describe("SelectionHandler", () => {
         expect(selections.get()[0]).toBe(lo);
     });
     test("Select Object ontop of Other", () => {
-        const [lo, hi] = Place(new ConstantLow(), new ConstantHigh());
+        const [, hi] = Place(new ConstantLow(), new ConstantHigh());
 
         expect(selections.amount()).toBe(0);
         input.click(V(0, 0));

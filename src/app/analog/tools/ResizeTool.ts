@@ -80,7 +80,7 @@ export const ResizeTool = (() => {
             tempAction = new GroupAction([
                 new ShiftAction(designer, obj!),
                 new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
-                new SetPropertyAction(obj!, "size", Vector.max(V(400, 200), newRect.size)),
+                new SetPropertyAction(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
             ]).execute();
 
             // Return true since we did something

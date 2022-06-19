@@ -18,9 +18,11 @@ export const GridRenderer = (() => {
             const cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));
 
             let cpx = cpos.x - Math.floor(cpos.x / step) * step;
-            if (cpx < 0) cpx += step;
+            if (cpx < 0)
+                cpx += step;
             let cpy = cpos.y - Math.floor(cpos.y / step) * step;
-            if (cpy < 0) cpy += step;
+            if (cpy < 0)
+                cpy += step;
 
             // Batch-render the lines = uglier code + way better performance
             renderer.save();
@@ -33,6 +35,6 @@ export const GridRenderer = (() => {
             renderer.closePath();
             renderer.stroke();
             renderer.restore();
-        }
+        },
     };
 })();

@@ -30,11 +30,12 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
  *  Note that the circuit parameter is edited in place by this function.
- *  Avoid calling this function directly, use TreeToCircuit instead. 
- * 
+ *  Avoid calling this function directly, use TreeToCircuit instead.
+ *
  * @param node the root node of the InputTree to convert
  * @param inputs the input components used by this expression
- * @param circuit used to store the circuit while recursing, on the intial call it should contain the DigitalComponents found in inputs
+ * @param circuit used to store the circuit while recursing, on the intial call it should contain the
+ *              DigitalComponents found in inputs
  * @returns the current part of the tree that has been converted to a circuit, the most recently used component
  *              should always be last in the array
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
@@ -51,7 +52,9 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
     }
 
     const ret = circuit;
-    const newGate = Create<Gate>((node.kind === "binop" && node.isNot) ? NegatedTypeToGate[node.type] : TypeToGate[node.type]);
+    const newGate = Create<Gate>((node.kind === "binop" && node.isNot)
+                                 ? NegatedTypeToGate[node.type]
+                                 : TypeToGate[node.type]);
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
         const wire = LazyConnect(prevNode, newGate);
@@ -72,14 +75,15 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
 
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
- * 
+ *
  * @param tree the root node of the InputTree to convert or an empty array if tree is null
  * @param inputs the input components used by this expression
  * @param output the component that the circuit outputs to
  * @returns the components and wires converted from the tree
  * @throws {Error} when one of the leaf nodes of the InputTree references an input that is not inputs
  */
-export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>, output: DigitalComponent): IOObject[] {
+export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>,
+                              output: DigitalComponent): IOObject[] {
     if (!tree)
         return [];
 

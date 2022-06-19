@@ -15,18 +15,18 @@ export class BUFGate extends Gate {
      *Creates a Buffer Gate.
      *@param [not] determines whether the gate is a Buffer gate or a Not gate
      */
-    public constructor(not: boolean = false) {
+    public constructor(not = false) {
         super(not, new ClampedValue(1,1,1), V(50, 50));
     }
     /**
-     * Activate function, passes the input port state to 
+     * Activate function, passes the input port state to
      * the parent class activate function.
      */
     // @Override
     public activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
-    
+
     /**
      * Returns a string the name of the gate
      * @return display name

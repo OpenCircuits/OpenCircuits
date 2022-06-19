@@ -22,7 +22,7 @@ export abstract class Mux extends DigitalComponent {
                         selectPositioner: Positioner<InputPort>,
                         inputPositioner?: Positioner<InputPort>,
                         outputPositioner?: Positioner<OutputPort>) {
-        super(inputPortCount, outputPortCount, Mux.calcSize(MUX_DEFAULT_SELECT_PORTS),
+        super(inputPortCount, outputPortCount, Mux.CalcSize(MUX_DEFAULT_SELECT_PORTS),
                 inputPositioner, outputPositioner);
 
         this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
@@ -33,7 +33,8 @@ export abstract class Mux extends DigitalComponent {
 
     protected updatePortNames(): void {
         this.selects.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName(`S${i}`);
+            if (p.getName() === "")
+                p.setName(`S${i}`);
         });
     }
 
@@ -46,7 +47,7 @@ export abstract class Mux extends DigitalComponent {
         this.updatePortNames();
     }
 
-    public getSelectPorts(): Array<InputPort> {
+    public getSelectPorts(): InputPort[] {
         return this.selects.getPorts();
     }
 
@@ -69,7 +70,7 @@ export abstract class Mux extends DigitalComponent {
         //  and then filter out the null ones
         return super.getInputs().concat(
             this.getSelectPorts().map((p) => p.getInput())
-                    .filter((w) => w != null));
+                    .filter(w => !!w));
     }
 
     // @Override
@@ -82,7 +83,7 @@ export abstract class Mux extends DigitalComponent {
      * @param ports number of selectors
      * @returns a Vector of the size for a Mux
      */
-    public static calcSize(ports: number): Vector {
+    public static CalcSize(ports: number): Vector {
         return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);
     }
 

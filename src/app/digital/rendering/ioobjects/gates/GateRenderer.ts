@@ -1,11 +1,11 @@
-import {DEFAULT_BORDER_WIDTH,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
+        DEFAULT_CURVE_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
-        SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
         GATE_NOT_CIRCLE_RADIUS,
-        DEFAULT_CURVE_BORDER_WIDTH} from "core/utils/Constants";
-import {Vector,V} from "Vector";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {V,Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
@@ -30,12 +30,13 @@ import {XORGate} from "digital/models/ioobjects/gates/XORGate";
  */
 export const GateRenderer = (() => {
 
-    const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector, inputs: number, borderCol: string): void {
+    const drawQuadCurve = function(renderer: Renderer, dx: number, size: Vector,
+                                   inputs: number, borderCol: string): void {
         // Border width increased to account for curve not being able to cover small visual clips
         const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
         const amt = 2 * Math.floor(inputs / 4) + 1;
 
-        // Renders a specialized, shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
+        // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
         const lNumMod = (amt === 1 && dx !== 0) ? 0.7 : 0.0;
         const sMod = (amt === 1 && dx !== 0) ? 0.0 : 0.6;
         for (let i = 0; i < amt; i++) {
@@ -104,6 +105,6 @@ export const GateRenderer = (() => {
             }
 
 
-        }
+        },
     };
 })();

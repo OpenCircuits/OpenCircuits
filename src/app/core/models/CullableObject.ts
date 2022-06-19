@@ -1,4 +1,4 @@
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 import {Transform} from "math/Transform";
 
 import {IOObject} from "./IOObject"

@@ -2,7 +2,7 @@ import {useState} from "react";
 
 import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {Popup}        from "shared/components/Popup";
 import {ButtonToggle} from "shared/components/ButtonToggle";
@@ -41,7 +41,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const [input, setInput] = useState<InputTypes>("Switch");
     const [output, setOutput] = useState<OutputTypes>("LED");
     const [format, setFormat] = useState<OperatorFormatLabel>("|");
-    const [customOps, setCustomOps] = useState<OperatorFormat>({...Formats[0], icon: "custom"});
+    const [customOps, setCustomOps] = useState<OperatorFormat>({...FORMATS[0], icon: "custom"});
 
     function reset() {
         setExpression("");
@@ -66,7 +66,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                 <div className="exprtocircuit__popup__settings">
                     <div>
                         <h3>Notation</h3>
-                        {Formats.map(curFormat =>
+                        {FORMATS.map(curFormat =>
                             <ButtonToggle key={curFormat.icon}
                                           isOn={format === curFormat.icon} text={curFormat.label} height="40px"
                                           onChange={() => setFormat(curFormat.icon)} />

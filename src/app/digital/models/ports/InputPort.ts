@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {Vector,V} from "Vector";
+import {V,Vector} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 
@@ -22,7 +22,7 @@ export class InputPort extends Port {
         this.parent = parent!;
         this.connections = [];
     }
-    
+
     /**
      * Activates the port and propagates the signal to all connections
      *
@@ -53,7 +53,7 @@ export class InputPort extends Port {
         this.connections = [wire];
         this.activate(wire.getIsOn());
     }
-    
+
     /**
      * Disconnects the input port from the input wire and changes the signal
      */
@@ -66,14 +66,14 @@ export class InputPort extends Port {
     /**
      * Gets the input wire of the port
      *
-     * @returns the input wire 
+     * @returns the input wire
      */
     public getInput(): DigitalWire {
         return this.connections[0];
     }
 
     /**
-     * Gets initial direction of the input port as a vector. 
+     * Gets initial direction of the input port as a vector.
      * Value is -1 because it's an input port (facing left).
      *
      * @returns vector that represents the direction of the input port
@@ -81,7 +81,7 @@ export class InputPort extends Port {
     public getInitialDir(): Vector {
         return V(-1, 0);
     }
-    
+
     /**
      * Gets the parent component of the port
      *
@@ -90,11 +90,11 @@ export class InputPort extends Port {
     public getParent(): DigitalComponent {
         return this.parent;
     }
-    
+
     /**
      * Gets all the wires the port is connected to
      *
-     * @returns the wire connections 
+     * @returns the wire connections
      */
     public getWires(): DigitalWire[] {
         return this.connections;

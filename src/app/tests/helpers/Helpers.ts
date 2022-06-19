@@ -19,12 +19,14 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
     // type ObjConnectInfo = { c: DigitalComponent, i?: number };
     // function Connect(c1: ObjConnectInfo, c2: ObjConnectInfo): ConnectionAction[] {
     //     if (c1.i && c2.i) {
-    //         return [new ConnectionAction(designer, c1.c.getOutputPort(c1.i), c2.c.getInputPort(c2.i)).execute() as ConnectionAction];
+    //         return [new ConnectionAction(designer, c1.c.getOutputPort(c1.i),
+    //                                      c2.c.getInputPort(c2.i)).execute() as ConnectionAction];
     //     }
     // }
     function Connect(c1: DigitalComponent, c2: DigitalComponent): ConnectionAction[];
     function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): ConnectionAction;
-    function Connect(...args: [DigitalComponent, DigitalComponent] | [DigitalComponent, number, DigitalComponent, number]) {
+    function Connect(...args: [DigitalComponent, DigitalComponent] |
+                              [DigitalComponent, number, DigitalComponent, number]) {
         switch (args.length) {
             case 2: {
                 const [c1, c2] = args;
@@ -38,7 +40,8 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
             }
             case 4: {
                 const [c1, i1, c2, i2] = args;
-                return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2)).execute() as ConnectionAction;
+                return new ConnectionAction(designer, c1.getOutputPort(i1),
+                                            c2.getInputPort(i2)).execute() as ConnectionAction;
             }
         }
     }
@@ -59,7 +62,7 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
             group.add(CreateGroupPlaceAction(designer, [obj, ...switches, ...leds]));
 
             // Create connections
-            let wires = [] as Wire[];
+            const wires = [] as Wire[];
             switches.forEach((s, i) => {
                 const action = new ConnectionAction(designer, s.getOutputPort(0), obj.getInputPort(i));
                 group.add(action);
@@ -73,8 +76,8 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
 
             return [obj, switches, leds, wires, group.execute()] as [T, Switch[], LED[], Wire[], Action];
         },
-        Remove: (...objs: (DigitalComponent | DigitalWire)[]) => {
+        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => {
             return CreateDeleteGroupAction(designer, objs).execute();
-        }
+        },
     };
 }

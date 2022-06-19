@@ -5,7 +5,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}  from "core/models/IOObject";
 
-import {AnalogWire, AnalogComponent, AnalogPort} from "./index";
+import {AnalogComponent, AnalogPort, AnalogWire} from "./index";
 
 
 
@@ -34,7 +34,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     @serialize
     private wires: AnalogWire[];
 
-    private updateCallbacks: ((ev: AnalogEvent) => void)[];
+    private updateCallbacks: Array<(ev: AnalogEvent) => void>;
 
     public constructor() {
         super();
@@ -68,8 +68,8 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     /**
      * Method to call when you want to force an update
-     * 	Used when something changed but isn't propagated
-     * 	(i.e. Clock updated but wasn't connected to anything)
+     *  Used when something changed but isn't propagated
+     *  (i.e. Clock updated but wasn't connected to anything)
      */
     public forceUpdate(): void {
         this.callback({ type: "forced" });

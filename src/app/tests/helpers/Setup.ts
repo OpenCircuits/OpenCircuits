@@ -43,7 +43,7 @@ export function GetDefaultTools() {
             CleanUpHandler,
         ]),
         tools: [PanTool, RotateTool, TranslateTool,
-                WiringTool, SplitWireTool, SelectionBoxTool]
+                WiringTool, SplitWireTool, SelectionBoxTool],
     };
 }
 
@@ -56,7 +56,8 @@ type Props = {
         tools?: Tool[];
     };
 }
-export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input: FakeInput, reset: (d?: boolean) => void} {
+export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
+                                      {input: FakeInput, reset: (d?: boolean) => void} {
     const propagationTime = props?.propagationTime ?? -1;
     const screenSize = props?.screenSize ?? [500, 500];
     const tools = props?.tools ?? GetDefaultTools();
@@ -78,18 +79,20 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> & {input
         selections,
         toolManager,
         renderer,
+
         debugOptions: {
-            debugCullboxes: false,
+            debugCullboxes:       false,
             debugPressableBounds: false,
             debugSelectionBounds: false,
-            debugNoFill: false
+            debugNoFill:          false,
         },
 
         // Utility function to reset the state of the CircuitInfo
-        reset: (resetDesigner: boolean = false) => {
+        reset: (resetDesigner = false) => {
             history.reset();
             camera.setPos(V()); camera.setZoom(1); // Reset camera
-            if (resetDesigner) designer.reset();
+            if (resetDesigner)
+                designer.reset();
             input.reset();
             selections.get().forEach(s => selections.deselect(s)); // Reset selections
             toolManager.reset(info);

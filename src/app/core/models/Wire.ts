@@ -106,7 +106,7 @@ export abstract class Wire extends CullableObject {
     }
 
     public setIsStraight(straight: boolean): void {
-        if (straight == this.straight)
+        if (straight === this.straight)
             return;
 
         this.straight = straight;

@@ -10,7 +10,7 @@ import {DigitalComponent} from "digital/models/index";
  */
 @serializable("ConstantLow")
 export class ConstantLow extends DigitalComponent {
-    
+
     /**
      * Creates a Constant Low input with 0 inputs, 1 output, and initial transform size of 50px by 50px.
      */

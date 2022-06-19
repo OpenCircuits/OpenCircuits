@@ -14,7 +14,7 @@ export function GetCookie(cname: string): string {
     return "";
 }
 
-export function SetCookie(cname: string, cvalue: string, exdays: number = 1000): void {
+export function SetCookie(cname: string, cvalue: string, exdays = 1000): void {
     const d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     const expires = "expires="+ d.toUTCString();

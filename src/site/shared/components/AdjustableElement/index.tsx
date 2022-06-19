@@ -33,7 +33,7 @@ export const AdjustableElement = ({ className, style, initialWidth, initialHeigh
         bottom: 0,
         width:  initialWidth,
         height: initialHeight,
-    }, Rect.from({ // Bounds for the screen where the div may exist (TODO: make into a prop passed by user)
+    }, Rect.From({ // Bounds for the screen where the div may exist (TODO: make into a prop passed by user)
         left:   w >= 768 ? (isItemNavOpen ? ITEMNAV_WIDTH  : 0) : 0,
         right:  w,
         bottom: w <  768 ? (isItemNavOpen ? ITEMNAV_HEIGHT : 0) : 0,

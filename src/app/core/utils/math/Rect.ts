@@ -26,12 +26,11 @@ export type Margin = {
 export function Margin(left: number, right: number, bottom: number, top: number): Margin;
 export function Margin(h: number, v: number): Margin;
 export function Margin(left: number, right: number, bottom?: number, top?: number) {
-    if (bottom !== undefined) {
+    if (bottom !== undefined)
         return { left, right, bottom, top };
-    } else {
-        const h = left, v = right;
-        return { left: h, right: h, bottom: v, top: v };
-    }
+
+    const h = left, v = right;
+    return { left: h, right: h, bottom: v, top: v };
 }
 
 
@@ -127,14 +126,14 @@ export class Rect {
             return [];
 
         return [
-            Rect.from({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: this.left,  right: rect.left,  top: rect.top,    bottom: rect.bottom }),
-            Rect.from({ left: this.left,  right: rect.left,  top: rect.bottom, bottom: this.bottom }),
-            Rect.from({ left: rect.left,  right: rect.right, top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: rect.left,  right: rect.right, top: rect.bottom, bottom: this.bottom }),
-            Rect.from({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top    }),
-            Rect.from({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
-            Rect.from({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: this.left,  right: rect.left,  top: rect.top,    bottom: rect.bottom }),
+            Rect.From({ left: this.left,  right: rect.left,  top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: rect.left,  right: rect.right, top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: rect.left,  right: rect.right, top: rect.bottom, bottom: this.bottom }),
+            Rect.From({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top    }),
+            Rect.From({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
+            Rect.From({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
         ].filter(r => r.width > 0 && r.height > 0);
     }
 
@@ -163,7 +162,7 @@ export class Rect {
 
         // Make new rect in shifted directions
         //  and clamped such that it's within the bounds and >= minSize
-        return Rect.from({
+        return Rect.From({
             left: (dir.x < 0 // Shift left
                 ? Clamp(
                     this.left + shift.x,
@@ -265,7 +264,7 @@ export class Rect {
      * @param yIsUp Whether this rectangle has +y or -y
      * @returns A Rect from the given bounds/attributes and yIsUp direction
      */
-    public static from(bounds: RectProps, yIsUp = true): Rect {
+    public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
         type BoundProps = ExpandTypes<BoundKeys, KeysToRecord<BoundKeys>>;
 
@@ -291,16 +290,16 @@ export class Rect {
 
         // Get "bounds" for each direction
         const boundsX = {
-            ...("left"  in bounds ? { min:    bounds.left  } : {}),
-            ...("right" in bounds ? { max:    bounds.right } : {}),
-            ...("cx"    in bounds ? { center: bounds.cx    } : {}),
-            ...("width" in bounds ? { size:   bounds.width } : {}),
+            ...("left"  in bounds ? { min: bounds.left } : {}),
+            ...("right" in bounds ? { max: bounds.right } : {}),
+            ...("cx"    in bounds ? { center: bounds.cx } : {}),
+            ...("width" in bounds ? { size: bounds.width } : {}),
         } as BoundProps;
         const boundsY = {
-            ...("bottom" in bounds ? { min:    bounds.bottom } : {}),
-            ...("top"    in bounds ? { max:    bounds.top    } : {}),
-            ...("cy"     in bounds ? { center: bounds.cy     } : {}),
-            ...("height" in bounds ? { size:   bounds.height } : {}),
+            ...("bottom" in bounds ? { min: bounds.bottom } : {}),
+            ...("top"    in bounds ? { max: bounds.top } : {}),
+            ...("cy"     in bounds ? { center: bounds.cy } : {}),
+            ...("height" in bounds ? { size: bounds.height } : {}),
         } as BoundProps;
 
         return new Rect(

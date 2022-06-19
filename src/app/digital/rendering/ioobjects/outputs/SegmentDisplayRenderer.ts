@@ -1,10 +1,10 @@
-import {DEFAULT_BORDER_WIDTH,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
-        SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
         DEFAULT_ON_COLOR,
-        SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
+        SEGMENT_DISPLAY_WIDTH,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -57,6 +57,6 @@ export const SegmentDisplayRenderer = (() => {
                 const size = V(img.width, img.height).scale(0.1);
                 renderer.image(img, pos, size, col);
             }
-        }
+        },
     };
 })();

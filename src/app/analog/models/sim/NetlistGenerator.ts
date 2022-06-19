@@ -44,10 +44,14 @@ function GetAllPaths(start: AnalogWire): Path[] {
             } else if (q instanceof AnalogWire) {
                 const p1 = q.getP1Component(), p2 = q.getP2Component();
 
-                if (isNode(p1)) outgoingConnected.push(p1 as AnalogNode);
-                else outgoingConnected.push(q.getP1() as AnalogPort);
-                if (isNode(p2)) outgoingConnected.push(p2 as AnalogNode);
-                else outgoingConnected.push(q.getP2() as AnalogPort);
+                if (isNode(p1))
+                    outgoingConnected.push(p1 as AnalogNode);
+                else
+                    outgoingConnected.push(q.getP1() as AnalogPort);
+                if (isNode(p2))
+                    outgoingConnected.push(p2 as AnalogNode);
+                else
+                    outgoingConnected.push(q.getP2() as AnalogPort);
             } else {
                 outgoingConnected = q.getConnections();
             }

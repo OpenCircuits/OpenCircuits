@@ -1,5 +1,6 @@
-import {Token, TokenType, InputTree, InputToken, BinOpChildren, InputTreeBinOpType, InputTreeBinOpNode} from "./Constants/DataStructures";
-import {Formats} from "./Constants/Formats";
+import {BinOpChildren, InputToken, InputTree, InputTreeBinOpNode, InputTreeBinOpType,
+        Token, TokenType} from "./Constants/DataStructures";
+import {FORMATS} from "./Constants/Formats";
 
 
 /** Used to return current index and currently built tree in core tree generation function */
@@ -14,7 +15,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
 
 /**
  * Checks if the input tree can have its number of inputs increased.
- * 
+ *
  * @param tree the tree to check
  * @param op the operation the tree should have
  * @param isFinal whether or not the tree can be modified
@@ -26,7 +27,7 @@ function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boo
 
 /**
  * Generates a nested tree structure where each layer has at most 8 children
- * 
+ *
  * @param children the array of children to turn into a nested structure
  * @param currentOp the operand all these nodes have
  * @returns the properly nested tree structure
@@ -37,6 +38,7 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
     const next = children.slice(7);
     const newTree: InputTree = {
         kind: "binop", type: currentOp, isNot: false,
+
         children: generateNestedTrees(next, currentOp) as BinOpChildren,
     };
     return [...children.slice(0, 7), newTree];
@@ -45,14 +47,14 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
 /**
  * Generates a specific error message when no operator is detected between two tokens.
  * This message searches to see if one of the tokens is the operator for a different format.
- * 
+ *
  * @param prev the name of the first token
  * @param next the name of the second token
  * @param ops the represenation of the operands in the original expression
  */
 function generateErrorMessage(prev: string, next: string, ops: Record<TokenType, string>): string {
     let errorMessage = `No valid operator between "${prev}" and "${next}"`;
-    for (const format of Formats) {
+    for (const format of FORMATS) {
         Object.entries(format.ops).forEach(([tokenType, op]) => {
             if (op === prev)
                 errorMessage += `\nDid you mean to use "${ops[tokenType as TokenType]}" instead of "${prev}"?`
@@ -66,7 +68,7 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
  *  It is recommended to not call this function directly and instead call GenerateInputTree
- * 
+ *
  * @param tokens the array of tokens representing the expression to parse
  * @param ops the represenation of the operands in the original expression, only used for error text formatting
  * @param currentOpNum the index of the current operation to evaluate
@@ -79,7 +81,8 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
-function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum: number = 0, index: number = 0): NewTreeRetValue {
+function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
+                               currentOpNum = 0, index = 0): NewTreeRetValue {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
@@ -159,14 +162,16 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
         const lTree = leftRet!.tree, rTree = rightRet.tree;
-        let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final) ? lTree.children as InputTree[] : [lTree];
+        let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final)
+                            ? lTree.children as InputTree[]
+                            : [lTree];
         if (isTreeExtendable(rTree, currentOp, rightRet.final))
             childrenArray = [...childrenArray, ...rTree.children as InputTree[]];
         else
             childrenArray.push(rTree);
 
         childrenArray = generateNestedTrees(childrenArray, currentOp);
-            
+
         tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
     }
     return {index: index, tree: tree!};
@@ -175,7 +180,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
 
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs
- * 
+ *
  * @param tokens the array of tokens representing the expression to parse
  * @param ops the representation format for the operations used in this expression (only used for error messages)
  * @returns undefined if tokens.length is 0, the relevant input tree otherwise
@@ -188,7 +193,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string> = Formats[0].ops): InputTree | undefined {
+export function GenerateInputTree(tokens: Token[], ops = FORMATS[0].ops): InputTree | undefined {
     if (tokens.length === 0)
         return;
     const ret = generateInputTreeCore(tokens, ops);

@@ -1,4 +1,5 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, DEFAULT_ON_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, DEFAULT_ON_COLOR,
+        SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
 import {V, Vector} from "Vector";
 import {Renderer} from "core/rendering/Renderer";
 import {Line} from "core/rendering/shapes/Line";
@@ -45,6 +46,6 @@ export const ConstantNumberRenderer = (() => {
             // Connect the output lines together and draw the text
             drawOutputConnector(renderer, transform.getSize(), borderColor);
             drawInputText(renderer, object.getInputNum());
-        }
+        },
     };
 })();

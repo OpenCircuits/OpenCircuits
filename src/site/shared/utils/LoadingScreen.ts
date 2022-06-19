@@ -16,11 +16,11 @@ import {getStackTrace, isError} from "./Errors";
 export async function LoadingScreen(
     id: string,
     initialPercent: number,
-    segments: [
+    segments: Array<[
         number,
         string,
-        (onProgress: (percentDone: number) => void) => Promise<void>
-    ][]
+        (onProgress: (percentDone: number) => void) => Promise<void>,
+    ]>
 ): Promise<void> {
     const loadingText = document.getElementById(`${id}-text`)!;
     const loadingBar  = document.getElementById(`${id}-progress-bar`)!;
@@ -32,7 +32,7 @@ export async function LoadingScreen(
     let curPercent: number;
     setProgress((curPercent = initialPercent));
 
-    for (let [endPercent, label, fn] of segments) {
+    for (const [endPercent, label, fn] of segments) {
         setText(label);
 
         try {
@@ -53,7 +53,8 @@ export async function LoadingScreen(
             if (isError(e)) {
                 issueURL.searchParams.set(
                     "body",
-                    `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n${getStackTrace(e).join("\n")}\n`
+                    `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n` +
+                        `${getStackTrace(e).join("\n")}\n`
                 );
             }
             issueURL.searchParams.set(
@@ -63,11 +64,12 @@ export async function LoadingScreen(
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";
-            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
-                Error occurred while "${label}". Please refresh the page.
-                <br />
-                If this error continues to occur, please click this text to submit a bug report.
-            </a>`;
+            loadingText.innerHTML =
+                `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
+                    Error occurred while "${label}". Please refresh the page.
+                    <br />
+                    If this error continues to occur, please click this text to submit a bug report.
+                </a>`;
 
             console.error(e);
 

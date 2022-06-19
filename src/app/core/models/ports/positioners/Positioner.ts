@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {IO_PORT_LENGTH, DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
+import {DEFAULT_BORDER_WIDTH, IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -16,7 +16,7 @@ export type Dir = "left" | "right" | "top" | "bottom";
 @serializable("Positioner")
 export class Positioner<T extends Port> {
     /**
-    * maps directions to their corresponding vectors  
+    * maps directions to their corresponding vectors
     */
     public static readonly DIRS: Record<Dir, Vector> = {
         "left":   V(-1, 0),
@@ -26,20 +26,20 @@ export class Positioner<T extends Port> {
     };
 
     /**
-    * direction of the ports relative to the parent component 
+    * direction of the ports relative to the parent component
     */
     private dir: Vector;
     /**
-    * factor to increase the spacing of the ports by 
+    * factor to increase the spacing of the ports by
     */
     private scale: number;
     /**
-    * length of the ports 
+    * length of the ports
     */
     private length: number;
     /**
-     * if true the first port and last port will be moved innerward 
-     * by one space in the spacing calculation 
+     * if true the first port and last port will be moved innerward
+     * by one space in the spacing calculation
      */
     private shortenEdges: boolean;
 
@@ -48,10 +48,10 @@ export class Positioner<T extends Port> {
      * @param dir direction of the ports relative to the parent component
      * @param scale factor to increase the spacing of the ports by (defaults to 1)
      * @param length length of the ports (defaults to IO_PORT_LENGTH )
-     * @param shortenEdges if true the first port and last port will be moved innerward 
+     * @param shortenEdges if true the first port and last port will be moved innerward
      * by one space in the spacing calculation (defaults to true)
      */
-    public constructor(dir?: Dir, scale: number = 1, length: number = IO_PORT_LENGTH, shortenEdges: boolean = true) {
+    public constructor(dir?: Dir, scale = 1, length: number = IO_PORT_LENGTH, shortenEdges = true) {
         this.dir = (dir) ? (Positioner.DIRS[dir]) : (V());
         this.scale = scale;
         this.length = length;
@@ -73,8 +73,10 @@ export class Positioner<T extends Port> {
         // AKA: mapping i = [0, N-1] to [-(N-1)/2, (N-1)/2]
         let l = this.scale * size/2 * (i - midpoint);
 
-        if (this.shortenEdges && i === 0) l++;
-        if (this.shortenEdges && i == numPorts-1) l--;
+        if (this.shortenEdges && i === 0)
+            l++;
+        if (this.shortenEdges && i === numPorts-1)
+            l--;
 
         return l;
     }
@@ -99,7 +101,7 @@ export class Positioner<T extends Port> {
      * @param sY position of the port on Y axis
      * @param w width of the port
      * @param h height of the port
-     * @returns a vector representing the position of the port relative to the parent component 
+     * @returns a vector representing the position of the port relative to the parent component
      */
     protected calcTargetPos(sX: number, sY: number, w: number, h: number): Vector {
         const dir = this.dir;
@@ -114,7 +116,7 @@ export class Positioner<T extends Port> {
      *  of this component.
      * @param arr The array of ports (either in or out ports)
      */
-    public updatePortPositions(ports: Array<T>): void {
+    public updatePortPositions(ports: T[]): void {
         ports.forEach((port, i) => {
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;

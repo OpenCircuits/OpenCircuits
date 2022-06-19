@@ -1,6 +1,6 @@
-import {Vector,V}  from "./Vector";
+import {V,Vector}  from "./Vector";
 import {Matrix2x3} from "./Matrix";
-import {serialize, serializable} from "serialeazy";
+import {serializable, serialize} from "serialeazy";
 
 /**
  * Class representing a Transform.
@@ -27,8 +27,8 @@ export class Transform {
     @serialize
     private size: Vector;
 
-    private corners: Array<Vector>;
-    private localCorners: Array<Vector>;
+    private corners: Vector[];
+    private localCorners: Vector[];
 
     private dirty: boolean;
     private dirtySize: boolean;
@@ -47,7 +47,7 @@ export class Transform {
      * @param  {Vector} size    The initial size of the transform
      * @param  {number} angle   The initial angle of the transform
      */
-    public constructor(pos: Vector = V(0), size: Vector = V(1), angle: number = 0) {
+    public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
         this.parent = undefined;
 
         this.pos = V(pos.x, pos.y);
@@ -65,7 +65,7 @@ export class Transform {
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirty = true;
 
@@ -78,7 +78,7 @@ export class Transform {
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
 
-        if (this.parent != undefined) {
+        if (this.parent !== undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
             this.prevParentMatrix = this.parent.getMatrix();
         }
@@ -97,7 +97,7 @@ export class Transform {
     }
     private updateCorners(): void {
         // If parent changed then we need to recalculate corners
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirtyCorners = true;
 
@@ -238,11 +238,11 @@ export class Transform {
         this.updateCorners();
         return this.corners[3];
     }
-    public getCorners(): Array<Vector> {
+    public getCorners(): Vector[] {
         this.updateCorners();
         return this.corners.slice(); // Shallow copy array
     }
-    public getLocalCorners(): Array<Vector> {
+    public getLocalCorners(): Vector[] {
         this.updateSize();
         return this.localCorners.slice(); // Shallow copy array
     }
@@ -254,7 +254,7 @@ export class Transform {
         return trans;
     }
 
-    public static fromCorners(p1: Vector, p2: Vector): Transform {
+    public static FromCorners(p1: Vector, p2: Vector): Transform {
         return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
     }
 }

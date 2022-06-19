@@ -10,7 +10,7 @@ import {PortChangeAction} from "core/actions/ports/PortChangeAction";
  */
 export class OutputPortChangeAction extends PortChangeAction {
     protected obj: DigitalComponent;
-    
+
     /**
      * This code constructs the obj with the new number of ports.
      *
@@ -22,7 +22,7 @@ export class OutputPortChangeAction extends PortChangeAction {
         super(obj.getDesigner(), target, initial);
         this.obj = obj;
     }
-    
+
     /**
      * Returns the objects output ports
      *
@@ -42,7 +42,7 @@ export class OutputPortChangeAction extends PortChangeAction {
         this.obj.setOutputPortCount(this.targetCount);
         return this;
     }
-    
+
     /**
      * Resets the number of output ports back to the initial count.
      *

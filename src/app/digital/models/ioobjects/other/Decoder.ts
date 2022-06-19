@@ -40,10 +40,12 @@ export class Decoder extends DigitalComponent {
 
     public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`I${i}`);
+            if (p.getName() === "")
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`O${i}`);
+            if (p.getName() === "")
+                p.setName(`O${i}`);
         });
     }
 

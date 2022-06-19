@@ -14,15 +14,16 @@ import {InputPort} from "digital/models/ports/InputPort";
 //
 export abstract class Gate extends DigitalComponent {
     @serialize
-    protected not: boolean = false;
+    protected not = false;
 
-    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector, inputPositioner?: Positioner<InputPort>) {
+    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector,
+                       inputPositioner?: Positioner<InputPort>) {
         super(inputPortCount, new ClampedValue(1), size, inputPositioner);
         this.setNot(not);
     }
 
     // @Override
-    public activate(on: boolean, i: number = 0): void {
+    public activate(on: boolean, i = 0): void {
         super.activate((this.not ? !on : on), i);
     }
 

@@ -13,20 +13,20 @@ export class Rectangle implements Shape {
 
     /**
      * Constructor for Rectangle
-     * 
+     *
      * @param transform transform spatial information
      */
     public constructor(transform: Transform);
     /**
      * Constructor for Rectangle
-     * 
+     *
      * @param pos position
      * @param size dimensions
      */
     public constructor(pos: Vector, size: Vector);
     /**
      * Constructor for Rectangle
-     * 
+     *
      * @param pos position or transform spatial information
      * @param size dimensions
      */
@@ -42,7 +42,7 @@ export class Rectangle implements Shape {
 
     /**
      * Draws the Rectangle on the canvas
-     * 
+     *
      * @param ctx provides the 2D rendering context for the drawing surface of an element
      */
     public draw(ctx: CanvasRenderingContext2D): void {

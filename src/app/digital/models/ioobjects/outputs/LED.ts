@@ -2,7 +2,7 @@ import {DEFAULT_SIZE,
         LED_LIGHT_RADIUS,
         LED_WIDTH} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 import {serializable, serialize} from "serialeazy";
 
@@ -11,7 +11,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 /**
  * The LED turns on when signal input connnected to it is 1
- * Outputs a bright light 
+ * Outputs a bright light
  */
 @serializable("LED")
 export class LED extends DigitalComponent {
@@ -38,7 +38,7 @@ export class LED extends DigitalComponent {
      * @param signal Signal connected to the LED (on or off)
      * @param i Output port
      */
-    public activate(signal: boolean, i: number = 0): void {
+    public activate(signal: boolean, i = 0): void {
         this.onTransformChange();
         super.activate(signal, i);
     }

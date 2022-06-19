@@ -5,7 +5,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 
-import {isNode, Node} from "core/models";
+import {Node, isNode} from "core/models";
 
 import {EventHandler} from "../EventHandler";
 
@@ -23,7 +23,7 @@ export const SnipWirePortsHandler: EventHandler = ({
         // Deselect the ports and then snip them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),
-            CreateGroupSnipAction(designer, ports) // Implicitly executed automatically
+            CreateGroupSnipAction(designer, ports), // Implicitly executed automatically
         ], "Snip Wire Ports Handler"));
-    }
+    },
 });

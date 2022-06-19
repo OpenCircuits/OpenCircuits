@@ -23,7 +23,8 @@ export class Multiplexer extends Mux {
     protected updatePortNames(): void {
         super.updatePortNames();
         this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName(`I${i}`);
+            if (p.getName() === "")
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts()[0].setName("O0");
 
@@ -31,7 +32,7 @@ export class Multiplexer extends Mux {
 
     /**
      * Activate function that allows the multiplexer
-     * 	to give desired output
+     *  to give desired output
      */
     public activate(): void {
         let num = 0;

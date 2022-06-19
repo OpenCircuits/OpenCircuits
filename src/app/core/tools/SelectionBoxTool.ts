@@ -10,7 +10,6 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 import {GroupAction} from "core/actions/GroupAction";
 import {CreateDeselectAllAction,
         CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {Tool}        from "core/tools/Tool";
 
 
 export const SelectionBoxTool = (() => {
@@ -43,7 +42,7 @@ export const SelectionBoxTool = (() => {
             if (!input.isShiftKeyDown())
                 action.add(CreateDeselectAllAction(selections).execute());
 
-            const box = Transform.fromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
+            const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = designer.getObjects().filter(o => TransformContains(box, o.getTransform()));
@@ -83,6 +82,6 @@ export const SelectionBoxTool = (() => {
         },
         getP2(): Vector {
             return V(p2);
-        }
+        },
     }
 })();

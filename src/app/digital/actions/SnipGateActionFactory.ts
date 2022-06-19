@@ -1,4 +1,4 @@
-import {DisconnectAction, ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
 import {DeleteAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -9,7 +9,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 /**
  * This action is used to remove a BUFGate or NOTGate while creating new wires from the component
  *  inputting into the gate. This action is implicitly executed upon creation.
- * 
+ *
  * @param gate the gate to remove
  * @return a GroupAction containing the actions required to snip the gate
  * @throws {Error} if gate is not placed in a designer
@@ -19,7 +19,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
     const designer = gate.getDesigner();
     if (!designer)
         throw new Error("gate not placed in designer");
-    
+
     const inputs = gate.getInputs();
     const outputs = gate.getOutputs();
 

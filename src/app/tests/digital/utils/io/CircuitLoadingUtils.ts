@@ -16,7 +16,9 @@ export function LoadCircuit(circuit: Circuit): CircuitDesigner {
 }
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace jest {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
             toMatchCircuit(expected: CircuitDesigner): CustomMatcherResult;
         }
@@ -28,7 +30,7 @@ expect.extend({
         if (!(received instanceof CircuitDesigner)) {
             return {
                 message: () => "expected type of CircuitDesigner",
-                pass: false
+                pass:    false,
             };
         }
 
@@ -60,7 +62,7 @@ expect.extend({
 
         return {
             message: () => `expected ${received} to not be the same as ${expected}`,
-            pass: true
+            pass:    true,
         };
-    }
+    },
 });

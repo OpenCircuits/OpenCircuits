@@ -11,6 +11,6 @@ export const SaveHandler = (save: () => void): EventHandler => {
 
         getResponse: () => {
             save();
-        }
+        },
     });
 }

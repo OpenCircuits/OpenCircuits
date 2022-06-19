@@ -27,7 +27,9 @@ export const ICResizeTool = (() => {
 
         // Determine if mouse is over horizontal or vertical edge
         return (worldMousePos.y < ic.getPos().y + ic.getSize().y/2 - DEFAULT_BORDER_WIDTH*5/2 &&
-                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + DEFAULT_BORDER_WIDTH*5/2) ? "horizontal" : "vertical";
+                worldMousePos.y > ic.getPos().y - ic.getSize().y/2 + DEFAULT_BORDER_WIDTH*5/2)
+               ? "horizontal"
+               : "vertical";
     }
 
     return {
@@ -49,7 +51,7 @@ export const ICResizeTool = (() => {
             if (event.type === "mousedrag")
                 this.onEvent(event, info); // Explicitly call drag event
         },
-        onDeactivate(_: Event, __: ICCircuitInfo): void {
+        onDeactivate(): void {
             edge = "none";
         },
 
@@ -82,6 +84,6 @@ export const ICResizeTool = (() => {
         },
 
 
-        findEdge: findEdge
+        findEdge: findEdge,
     }
 })();

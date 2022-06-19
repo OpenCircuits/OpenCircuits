@@ -1,4 +1,4 @@
-import {Vector,V}  from "./Vector";
+import {V,Vector}  from "./Vector";
 import {Transform} from "./Transform";
 import {Clamp} from "./MathUtils";
 import {serializable} from "serialeazy";
@@ -6,11 +6,11 @@ import {serializable} from "serialeazy";
 
 /**
  * Cubic Bezier Curve class
- * 
+ *
  * Consists of a start point, an end point,
  * 2 control points, and the bounding
  * box for the curve
- * 
+ *
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8
  */
@@ -78,7 +78,7 @@ export class BezierCurve {
      * @returns t, t represents how far along the bezier curve the given point is
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
-        if (a == 0)
+        if (a === 0)
             return end;
         const d = b*b - 4*a*c;
         if (d < 0)

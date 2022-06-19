@@ -40,7 +40,7 @@ export const ICPortTool = (() => {
             const icPort = findPort(info);
             port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort!)];
         },
-        onDeactivate(_: Event, __: ICCircuitInfo): void {
+        onDeactivate(): void {
             port = undefined;
         },
 
@@ -63,7 +63,7 @@ export const ICPortTool = (() => {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
                 v = worldMousePos.sub(p);
-            } else if (worldMousePos.x == p.x && worldMousePos.y == p.y) {
+            } else if (worldMousePos.x === p.x && worldMousePos.y === p.y) {
                 // Set v outwards from the edge the origin position is on
                 if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
                     v = V(0,-1).scale(p.y);
@@ -93,6 +93,6 @@ export const ICPortTool = (() => {
         findPort: findPort,
         isDragging(): boolean {
             return (port !== undefined);
-        }
+        },
     }
 })();

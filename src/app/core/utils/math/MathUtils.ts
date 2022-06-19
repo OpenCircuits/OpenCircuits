@@ -1,8 +1,8 @@
 import {WIRE_DIST_ITERATIONS,
-        WIRE_NEWTON_ITERATIONS,
-        WIRE_DIST_THRESHOLD2} from "../Constants";
+        WIRE_DIST_THRESHOLD2,
+        WIRE_NEWTON_ITERATIONS} from "../Constants";
 
-import {Vector, V} from "./Vector";
+import {V, Vector} from "./Vector";
 import {Transform} from "./Transform";
 import {BezierCurve} from "./BezierCurve";
 
@@ -44,7 +44,7 @@ export function Clamp(x: number, min: number, max: number): number {
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     // First clamp point to within the rectangle
-    pos = Vector.clamp(pos, bl, tr);
+    pos = Vector.Clamp(pos, bl, tr);
 
     // Then find corresponding edge when point is inside the rectangle
     // (see https://www.desmos.com/calculator/edhaqiwgf1)
@@ -297,7 +297,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     }
 
     const f1  = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
-    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
+    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2)
+                                                                  .dot(curve.getDerivative(t));
 
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
@@ -305,7 +306,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
         return true;
 
     const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
-    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t))
+                                                             + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
@@ -324,7 +326,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
  * @return {Vector}
  *         The midpoint of all the given positions
  */
-export function CalculateMidpoint(positions: Array<Vector>): Vector {
+export function CalculateMidpoint(positions: Vector[]): Vector {
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
 }
 
@@ -351,9 +353,9 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 export function DecimalToBCD(decimal: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    let result : boolean[] = [];
+    const result: boolean[] = [];
     while (decimal) {
-        result.push(decimal % 2 == 1);
+        result.push(decimal % 2 === 1);
         decimal = Math.floor(decimal / 2);
     }
     return result;
