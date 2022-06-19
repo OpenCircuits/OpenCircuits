@@ -39,6 +39,8 @@ module.exports = {
         "no-case-declarations": "off",
         "no-empty-pattern": "off",
 
-        "nonblock-statement-body-position": ["error", "below"],
+        "nonblock-statement-body-position": ["error", "below", {
+            "overrides": { "while": "any" },
+        }],
     },
 }
