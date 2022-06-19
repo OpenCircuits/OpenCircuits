@@ -7,7 +7,7 @@ import {CreateGroupSnipAction} from "core/actions/addition/SplitWireAction";
 
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
-import {isNode, Node} from "core/models";
+import {Node, isNode} from "core/models";
 
 import {EventHandler} from "../EventHandler";
 

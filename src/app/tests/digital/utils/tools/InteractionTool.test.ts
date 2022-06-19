@@ -125,7 +125,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
 
             input.click(V(100, 0));
             expect(selections.get().length).toBe(1);
@@ -143,7 +143,7 @@ describe("Selection Tool", () => {
 
             obj2.setPos(V(200, 0));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(20, 0));
             expect(selections.get().length).toBe(1);
@@ -162,7 +162,7 @@ describe("Selection Tool", () => {
             obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
             expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(0, 20));
             expect(selections.get().length).toBe(1);
@@ -198,7 +198,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
@@ -281,7 +281,7 @@ describe("Selection Tool", () => {
             obj2.setPos(V(200, 0));
             obj1.setPos(V(0, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
@@ -309,7 +309,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
             obj1.setPos(V(100, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);

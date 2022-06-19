@@ -40,11 +40,11 @@ export const CreateRenderers = <A, B1, B2, C1, C2, D, E>(
         render: (extra?: A) => renderers.gridRenderer.render(renderer, info, extra),
     },
     Wires: {
-        render:    (wire: B1, extra?: B2) => renderers.wireRenderer.render(renderer, info, wire, extra),
+        render:    (wire:  B1,   extra?: B2) => renderers.wireRenderer.render   (renderer, info, wire,  extra),
         renderAll: (wires: B1[], extra?: B2) => renderers.wireRenderer.renderAll(renderer, info, wires, extra),
     },
     Components: {
-        render:    (obj: C1, extra?: C2) => renderers.componentRenderer.render(renderer, info, obj, extra),
+        render:    (obj:  C1,   extra?: C2) => renderers.componentRenderer.render   (renderer, info, obj,  extra),
         renderAll: (objs: C1[], extra?: C2) => renderers.componentRenderer.renderAll(renderer, info, objs, extra),
     },
     Tools: {

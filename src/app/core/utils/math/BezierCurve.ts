@@ -2,8 +2,7 @@ import {serializable} from "serialeazy";
 
 import {Clamp}     from "./MathUtils";
 import {Transform} from "./Transform";
-import {V,Vector}  from "./Vector";
-
+import {V, Vector} from "./Vector";
 
 
 /**

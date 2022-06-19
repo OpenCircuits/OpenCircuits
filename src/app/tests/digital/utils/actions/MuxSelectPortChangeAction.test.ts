@@ -55,7 +55,7 @@ describe("Select Port Change Action", () => {
         const [sw, n, mux] = Place(new Switch(), new DigitalNode(), new Multiplexer());
 
         // Connect switch to node and then then to input and select ports of Mux
-        Connect(sw, 0, n, 0);
+        Connect(sw, n);
         Connect(n, 0, mux, 3);
         new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]).execute();
 

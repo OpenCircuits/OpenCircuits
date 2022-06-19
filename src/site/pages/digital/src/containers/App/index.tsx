@@ -95,10 +95,10 @@ export const App = ({info, helpers, canvas}: Props) => {
                         <DecoderInputCountModule info={info} />
                         <OutputCountModule info={info} />
                         <SegmentCountModule info={info} />
+                        <OscilloscopeModule info={info} />
                         <FrequencyModule info={info} />
                         <PauseResumeButtonModule info={info} />
                         <ClockSyncButtonModule info={info} />
-                        <OscilloscopeModule info={info} />
                         <ColorModule info={info} />
                         <TextColorModule info={info} />
                         <BusButtonModule info={info} />

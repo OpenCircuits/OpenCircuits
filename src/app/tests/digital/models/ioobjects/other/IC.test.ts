@@ -25,8 +25,8 @@ describe("IC", () => {
         const a = new Switch, o = new LED(), bufGate = new BUFGate();
 
         Place(a, o, bufGate);
-        Connect(a, 0, bufGate, 0);
-        Connect(bufGate, 0, o, 0);
+        Connect(a, bufGate);
+        Connect(bufGate, o);
 
         const icdata = ICData.Create([a, bufGate, o]);
         const ic = new IC(icdata);
@@ -36,8 +36,8 @@ describe("IC", () => {
 
         const a2 = new Switch(), o2 = new LED();
         Place(a2, o2, ic);
-        Connect(a2, 0, ic, 0);
-        Connect(ic, 0, o2, 0);
+        Connect(a2, ic);
+        Connect(ic, o2);
 
         expect(o2.isOn()).toBe(false);
         a2.activate(true);
@@ -49,9 +49,9 @@ describe("IC", () => {
         const a = new Switch, b = new Switch, o = new LED(), andGate = new ANDGate();
 
         Place(a, b, o, andGate);
-        Connect(a, 0, andGate, 0);
-        Connect(b, 0, andGate, 1);
-        Connect(andGate, 0, o, 0);
+        Connect(a, andGate);
+        Connect(b, andGate);
+        Connect(andGate, o);
 
         const icdata = ICData.Create([a, b, andGate, o]);
         const ic = new IC(icdata);
@@ -61,9 +61,9 @@ describe("IC", () => {
 
         const a2 = new Switch(), b2 = new Switch(), o2 = new LED();
         Place(a2, b2, o2, ic);
-        Connect(a2, 0, ic, 0);
-        Connect(b2, 0, ic, 1);
-        Connect(ic, 0, o2, 0);
+        Connect(a2, ic);
+        Connect(b2, ic);
+        Connect(ic, o2);
 
         expect(o2.isOn()).toBe(false);
         a2.activate(true);
@@ -81,7 +81,7 @@ describe("IC", () => {
         const a = new Switch, o = new LED();
 
         Place(a, o);
-        Connect(a, 0, o, 0);
+        Connect(a, o);
 
         a.click(); // Turn on Switch initially
 
@@ -93,8 +93,8 @@ describe("IC", () => {
 
         const a2 = new Switch(), o2 = new LED();
         Place(a2, o2, ic);
-        Connect(a2, 0, ic, 0);
-        Connect(ic, 0, o2, 0);
+        Connect(a2, ic);
+        Connect(ic, o2);
 
         expect(o2.isOn()).toBe(false);
         a2.activate(true);
@@ -108,7 +108,7 @@ describe("IC", () => {
         const a = new ConstantHigh(), o = new LED();
 
         Place(a, o);
-        Connect(a, 0, o, 0);
+        Connect(a, o);
 
         const icdata = ICData.Create([a, o]);
         const ic = new IC(icdata);
@@ -118,7 +118,7 @@ describe("IC", () => {
 
         const o2 = new LED();
         Place(o2, ic);
-        Connect(ic, 0, o2, 0);
+        Connect(ic, o2);
 
         expect(o2.isOn()).toBe(true);
     });

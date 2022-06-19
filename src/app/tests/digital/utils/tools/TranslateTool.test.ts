@@ -124,8 +124,8 @@ describe("Translate Tool", () => {
             led.setPos(V(100, 0));
 
             // Connect to Port and set as straight
-            Connect(sw,   0, port, 0).getWire().setIsStraight(true);
-            Connect(port, 0, led,  0).getWire().setIsStraight(true);
+            Connect(sw,   port)[0].getWire().setIsStraight(true);
+            Connect(port,  led)[0].getWire().setIsStraight(true);
 
             // Select all
             input.drag(V(-200, -200), V(200, 200));

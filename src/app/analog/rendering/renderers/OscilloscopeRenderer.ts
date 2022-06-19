@@ -226,8 +226,10 @@ export const OscilloscopeRenderer = (() => {
 
                     // Draw box
                     const box = Rect.From({
-                        left:   bounds.left, right:  bounds.left + boxSize,
-                        bottom: y, top:    y + boxSize,
+                        left:   bounds.left,
+                        right:  bounds.left + boxSize,
+                        bottom: y,
+                        top:    y + boxSize,
                     }, true);
                     renderer.draw(toShape(box), new Style(color), 1);
 

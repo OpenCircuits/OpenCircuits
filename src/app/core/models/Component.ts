@@ -4,7 +4,7 @@ import {DEFAULT_BORDER_WIDTH,
         IO_PORT_BORDER_WIDTH,
         IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {RectContains} from "math/MathUtils";
 import {Transform}    from "math/Transform";

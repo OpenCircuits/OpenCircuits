@@ -1,7 +1,7 @@
 import {serializable, serialize} from "serialeazy";
 
 import {Matrix2x3} from "./Matrix";
-import {V,Vector}  from "./Vector";
+import {V, Vector} from "./Vector";
 
 /**
  * Class representing a Transform.

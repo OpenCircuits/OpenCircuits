@@ -1,4 +1,4 @@
-import {serializable, Serialize} from "serialeazy";
+import {Serialize, serializable} from "serialeazy";
 
 import {Camera} from "math/Camera";
 

@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 

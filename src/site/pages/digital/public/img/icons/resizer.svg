@@ -1,0 +1,15 @@
+<svg xmlns='http://www.w3.org/2000/svg' height='11' width='11'>
+	<style> 
+		rect { 
+			fill: rgb(34,34,34);
+		}
+		line { 
+			stroke: yellow; 
+			stroke-width: 1; 
+		} 
+	</style>
+	<rect x='0' y='0' height='11' width='11'/>
+	<line x1='1' y1='12' x2='12' y2='1'/>
+	<line x1='4' y1='12' x2='12' y2='4'/>
+	<line x1='7' y1='12' x2='12' y2='7'/>
+</svg>
