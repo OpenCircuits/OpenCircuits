@@ -8,18 +8,18 @@ import {ReversableAction} from "../ReversableAction";
 
 
 /**
- * PlaceAction represents the action of placing a new Component into the CircuitDesigner
+ * PlaceAction represents the action of placing a new Component into the CircuitDesigner.
  */
 export class PlaceAction extends ReversableAction {
     private designer: CircuitDesigner;
     private obj: Component;
 
     /**
-     * Initializes a PlaceAction given the CircuitDesigner, Component, and a flip boolean
+     * Initializes a PlaceAction given the CircuitDesigner, Component, and a flip boolean.
      *
-     * @param designer the CircuitDesigner this action is done on
-     * @param obj the Component being placed
-     * @param flip the flip boolean, false for a PlaceAction, true for a DeleteAction
+     * @param designer The CircuitDesigner this action is done on.
+     * @param obj The Component being placed.
+     * @param flip The flip boolean, false for a PlaceAction, true for a DeleteAction.
      */
     public constructor(designer: CircuitDesigner, obj: Component, flip = false) {
         super(flip);
@@ -29,9 +29,9 @@ export class PlaceAction extends ReversableAction {
     }
 
     /**
-     * Executes a PlaceAction by adding the object to the designer
+     * Executes a PlaceAction by adding the object to the designer.
      *
-     * @returns 'this' PlaceAction after execution
+     * @returns 'this' PlaceAction after execution.
      */
     public normalExecute(): Action {
         this.designer.addObject(this.obj);
@@ -40,9 +40,9 @@ export class PlaceAction extends ReversableAction {
     }
 
     /**
-     * Undoes a PlaceAction by removing the object from the designer
+     * Undoes a PlaceAction by removing the object from the designer.
      *
-     * @returns 'this' PlaceAction after undoing
+     * @returns 'this' PlaceAction after undoing.
      */
     public normalUndo(): Action {
         this.designer.removeObject(this.obj);
@@ -69,9 +69,9 @@ export class DeleteAction extends PlaceAction {
 /**
  * Creates a GroupAction for multiple PlaceActions.
  *
- * @param designer the CircuitDesigner the actions are being done on
- * @param objs the Components of each action
- * @returns a GroupAction representing the PlaceActions of every Component
+ * @param designer The CircuitDesigner the actions are being done on.
+ * @param objs The Components of each action.
+ * @returns A GroupAction representing the PlaceActions of every Component.
  */
 export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
     return new GroupAction(objs.map(o => new PlaceAction(designer, o)), "Group Place Action");

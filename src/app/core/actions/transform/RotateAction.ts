@@ -6,40 +6,40 @@ import {Component} from "core/models/Component";
 
 
 /**
- * Implementation of Action interface for rotating component(s)
+ * Implementation of Action interface for rotating component(s).
  */
 export class RotateAction implements Action {
 
     /**
-     * an Array of the selected component(s)
+     * An Array of the selected component(s).
      */
     private objects: Component[];
 
     /**
-     * the x, y coordinates of the midpoint between the selected component(s)
+     * The x, y coordinates of the midpoint between the selected component(s).
      */
     private midpoint: Vector;
 
     /**
-     * an Array of the initial angles the selected component(s) are placed at
+     * An Array of the initial angles the selected component(s) are placed at.
      */
     private initialAngles: number[];
 
     /**
-     * an Array of the final angles the selected component(s) will be placed at
+     * An Array of the final angles the selected component(s) will be placed at.
      */
     private finalAngles: number[];
 
     /**
-     * Creates a rotation action for a component or a group of components
+     * Creates a rotation action for a component or a group of components.
      *
-     * @param objects Initializes the action with an Array of the selected component(s)
+     * @param objects Initializes the action with an Array of the selected component(s).
      * @param midpoint Inititalizes the action with the x, y coordinates of the midpoint between
-     *  the selected component(s)
+     *  the selected component(s).
      * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s)
-     *  are placed at
+     *  are placed at.
      * @param finalAngles Inititalizes the action an Array of the final angles the selected component(s)
-     *  will be placed at
+     *  will be placed at.
      */
     public constructor(objects: Component[], midpoint: Vector, initialAngles: number[], finalAngles: number[]) {
         this.objects = objects;
@@ -51,7 +51,7 @@ export class RotateAction implements Action {
     /**
      * Rotates a component or group of components.
      *
-     * @param angles the final angle(s) the component(s) will be set as
+     * @param angles The final angle(s) the component(s) will be set as.
      */
     private setAngles(angles: number[]): void {
         for (let i = 0; i < this.objects.length; i++) {
@@ -64,7 +64,7 @@ export class RotateAction implements Action {
      * Rotates a component or group of components from the initial angle(s)
      * to the final angle(s).
      *
-     * @returns an Action where the rotation is executed
+     * @returns An Action where the rotation is executed.
      */
     public execute(): Action {
         this.setAngles(this.finalAngles);
@@ -76,7 +76,7 @@ export class RotateAction implements Action {
      * Reverts the RotateAction object's angles to the original angles it was
      * set to, putting the components back in their initial orientation.
      *
-     * @returns an Action where the rotation is undone
+     * @returns An Action where the rotation is undone.
      */
     public undo(): Action {
         this.setAngles(this.initialAngles);

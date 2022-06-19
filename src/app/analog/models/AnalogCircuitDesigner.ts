@@ -67,9 +67,9 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     }
 
     /**
-     * Method to call when you want to force an update
+     * Method to call when you want to force an update.
      *  Used when something changed but isn't propagated
-     *  (i.e. Clock updated but wasn't connected to anything)
+     *  (i.e. Clock updated but wasn't connected to anything).
      */
     public forceUpdate(): void {
         this.callback({ type: "forced" });

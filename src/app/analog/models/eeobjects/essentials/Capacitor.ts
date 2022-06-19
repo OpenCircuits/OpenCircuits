@@ -39,18 +39,18 @@ export class Capacitor extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
+     * Returns name of Component.
      *
-     * @returns "Capacitor"
+     * @returns The string "Capacitor".
      */
     public getDisplayName(): string {
         return "Capacitor";
     }
 
     /**
-     * Returns name of image file
+     * Returns name of image file.
      *
-     * @returns "capacitor.svg"
+     * @returns The string "capacitor.svg".
      */
     public getImageName(): string {
         return "capacitor.svg";

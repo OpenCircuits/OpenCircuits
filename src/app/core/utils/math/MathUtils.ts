@@ -270,10 +270,10 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 }
 
 /**
- * Finds the midpoint from a list of positions
+ * Finds the midpoint from a list of positions.
  *
- * @param positions The list of positions
- * @returns The midpoint of all the given positions
+ * @param positions The list of positions.
+ * @returns The midpoint of all the given positions.
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
@@ -281,10 +281,10 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
 
 /**
  * Calculates the decimal value of a binary-coded-decimal
- *  represented by a list of booleans
+ *  represented by a list of booleans.
  *
- * @param bcd The binary-coded-decimal as a list of booleans
- * @returns The decimal equivalent of the binary-coded-decimal
+ * @param bcd The binary-coded-decimal as a list of booleans.
+ * @returns The decimal equivalent of the binary-coded-decimal.
  */
 export function BCDtoDecimal(bcd: boolean[]): number {
     return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
@@ -293,9 +293,9 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 /**
  * Calculates the BCD representation of the input number.
  *
- * @param decimal The number to convert (`decimal >= 0`)
- * @throws An Error if decimal is not a valid integer `>= 0`
- * @returns The BCD representation of the input
+ * @param decimal The number to convert (`decimal >= 0`).
+ * @throws An Error if decimal is not a valid integer `>= 0`.
+ * @returns The BCD representation of the input.
  */
 export function DecimalToBCD(decimal: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
@@ -310,24 +310,24 @@ export function DecimalToBCD(decimal: number): boolean[] {
 
 /**
  * Creates a "linear space" or uniform/collocated grid from [x0, xf] with n points
- *  uniformly between them
+ *  uniformly between them.
  *
- * @param x0 Start point (inclusive)
- * @param xf End point (inclusive)
- * @param n  The number of points in the space
- * @returns An array of n uniform points on the domain [x0, xf]
+ * @param x0 Start point (inclusive).
+ * @param xf End point (inclusive).
+ * @param n  The number of points in the space.
+ * @returns An array of n uniform points on the domain [x0, xf].
  */
 export function linspace(x0: number, xf: number, n: number) {
     return Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
 }
 
 /**
- * Creates a "linear space" or uniform/staggered grid from [x0, xf) with spacing dx
+ * Creates a "linear space" or uniform/staggered grid from `[x0, xf)` with spacing dx.
  *
- * @param x0 Start point (inclusive)
- * @param xf End point (exclusive)
- * @param dx The spacing between each point
- * @returns An array of n uniform points on the domain [x0, xf)
+ * @param x0 Start point (inclusive).
+ * @param xf End point (exclusive).
+ * @param dx The spacing between each point.
+ * @returns An array of n uniform points on the domain `[x0, xf)`.
  */
 export function linspaceDX(x0: number, xf: number, dx: number) {
     const N = Math.ceil((xf - x0) / dx);

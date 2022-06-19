@@ -39,18 +39,18 @@ export class Inductor extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
+     * Returns name of Component.
      *
-     * @returns "Inductor"
+     * @returns The string "Inductor".
      */
     public override getDisplayName(): string {
         return "Inductor";
     }
 
     /**
-     * Returns name of image file
+     * Returns name of image file.
      *
-     * @returns "inductor.svg"
+     * @returns The string "inductor.svg".
      */
     public override getImageName(): string {
         return "inductor.svg";

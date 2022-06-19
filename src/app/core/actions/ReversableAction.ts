@@ -4,7 +4,7 @@ import {Action} from "core/actions/Action";
  * Describes an action that is reversable for code-reuse.
  *  Ex. A Place action and Delete action would be identical except
  *  their execute's and undo's would be opposite of eacother.
- *  This reconciles that reuse of code and allows for a single class
+ *  This reconciles that reuse of code and allows for a single class.
  */
 export abstract class ReversableAction implements Action {
     private flipped: boolean;

@@ -46,7 +46,7 @@ export class PortSet<T extends Port> {
      *  The value will be clamped and positions of ports
      *  will be updated.
      *
-     * @param newVal The new number of ports
+     * @param newVal The new number of ports.
      */
     public setPortCount(newVal: number): void {
         // no need to update if value is already
@@ -69,7 +69,7 @@ export class PortSet<T extends Port> {
 
     /**
      * Updates the positions of the ports in the set. Allows for
-     * position updating even when the size does not change
+     * position updating even when the size does not change.
      */
     public updatePortPositions(): void {
         this.positioner.updatePortPositions(this.currentPorts);

@@ -51,11 +51,11 @@ export abstract class Component extends CullableObject {
 
     /**
      * Determines whether or not a point is within
-     *  this component's "selectable" bounds
+     *  this component's "selectable" bounds.
      *
-     * @param  v The point
+     * @param  v The point.
      * @returns   True if the point is within this component,
-     *           false otherwise
+     *           false otherwise.
      */
     public isWithinSelectBounds(v: Vector): boolean {
         return RectContains(this.getTransform(), v);

@@ -9,10 +9,10 @@ export class BoundingBox {
     private max: Vector;
 
     /**
-     * Creates a Bounding Box with the given coordinates
+     * Creates a Bounding Box with the given coordinates.
      *
-     * @param min the corrdinates of bottom left corner of Bounding Box
-     * @param max the coordinates of top right corner of Bounding Box
+     * @param min The corrdinates of bottom left corner of Bounding Box.
+     * @param max The coordinates of top right corner of Bounding Box.
      */
     public constructor(min: Vector, max: Vector) {
         this.min = min.copy();
@@ -20,27 +20,27 @@ export class BoundingBox {
     }
 
     /**
-     * Returns the (x,y) value of bottom left corner of Bounding Box
+     * Returns the (x,y) value of bottom left corner of Bounding Box.
      *
-     * @returns coordinates of bottom left corner of Bounding Box
+     * @returns Coordinates of bottom left corner of Bounding Box.
      */
     public getMin(): Vector {
         return this.min.copy();
     }
 
     /**
-     * Returns the (x,y) value of top right corner of Bounding Box
+     * Returns the (x,y) value of top right corner of Bounding Box.
      *
-     * @returns coordinates of top right corner of Bounding Box
+     * @returns Coordinates of top right corner of Bounding Box.
      */
     public getMax(): Vector {
         return this.max.copy();
     }
 
     /**
-     * Sets new coordinates for bottom left corner of Bounding Box
+     * Sets new coordinates for bottom left corner of Bounding Box.
      *
-     * @param min coordinates of new bottom left corner of Bounding Box
+     * @param min Coordinates of new bottom left corner of Bounding Box.
      */
     public setMin(min: Vector): void {
         this.min.x = min.x;
@@ -48,9 +48,9 @@ export class BoundingBox {
     }
 
     /**
-     * Sets new corrdinates for top right corner of Bounding Box
+     * Sets new corrdinates for top right corner of Bounding Box.
      *
-     * @param max coordinates of new top right corner of Bounding Box
+     * @param max Coordinates of new top right corner of Bounding Box.
      */
     public setMax(max: Vector): void {
         this.max.x = max.x;
@@ -58,36 +58,36 @@ export class BoundingBox {
     }
 
     /**
-     * Calculates coordinate length of the width of Bounding Box
+     * Calculates coordinate length of the width of Bounding Box.
      *
-     * @returns coordinate length of the width of Bounding Box
+     * @returns Coordinate length of the width of Bounding Box.
      */
     public getWidth(): number {
         return this.max.x - this.min.x;
     }
 
     /**
-     * Calculates coordinate length of the height of Bounding Box
+     * Calculates coordinate length of the height of Bounding Box.
      *
-     * @returns coordinate length of the height of Bounding Box
+     * @returns Coordinate length of the height of Bounding Box.
      */
     public getHeight(): number {
         return this.max.y - this.min.y;
     }
 
     /**
-     * Calculates coordinate area of Bounding Box
+     * Calculates coordinate area of Bounding Box.
      *
-     * @returns coordinate area of Bounding Box
+     * @returns Coordinate area of Bounding Box.
      */
     public getArea(): number {
         return this.getWidth() * this.getHeight();
     }
 
     /**
-     * Calculates the coordinates of the center of Bounding Box
+     * Calculates the coordinates of the center of Bounding Box.
      *
-     * @returns coordinates of the center of Bounding Box
+     * @returns Coordinates of the center of Bounding Box.
      */
     public getCenter(): Vector {
         return this.getMin().add(this.getMax()).scale(0.5);

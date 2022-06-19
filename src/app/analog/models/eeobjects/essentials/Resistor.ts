@@ -39,18 +39,18 @@ export class Resistor extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
+     * Returns name of Component.
      *
-     * @returns "Resistor"
+     * @returns The string "Resistor".
      */
     public override getDisplayName(): string {
         return "Resistor";
     }
 
     /**
-     * Returns name of image file
+     * Returns name of image file.
      *
-     * @returns "resistor.svg"
+     * @returns The string "resistor.svg".
      */
     public override getImageName(): string {
         return "resistor.svg";

@@ -17,9 +17,9 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
 
     /**
      * Port positioning for constant spacing that doesn't
-     *  depend on the parent's size
+     *  depend on the parent's size.
      *
-     * @param ports The array of input ports
+     * @param ports The array of input ports.
      */
     public updatePortPositions(ports: Array<T | undefined>): void {
         ports.forEach((port, i) => {
