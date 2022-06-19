@@ -31,7 +31,7 @@
     "@typescript-eslint/parser": "^5.28.0",
     "babel-loader": "^8.2.2",
     "chalk": "^4.1.1",
-    "css-loader": "^5.2.6",
+    "css-loader": "^6.7.1",
     "detect-port-alt": "^1.1.6",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",

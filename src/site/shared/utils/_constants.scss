@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "~shared/utils/theme";
 
 $header-height: 50px;
@@ -12,8 +13,8 @@ $itemnav-height: 250px; // On small screens, ItemNav is on the bottom
 
 $desktop-width: 768px;
 
+
 // Allows our variables to be imported to javascript without units.
 :export {
-    desktopWidth: calc($desktop-width / 1px);
+    desktopWidth: div($desktop-width, 1px);
 }
-

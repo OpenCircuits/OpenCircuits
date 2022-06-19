@@ -28,8 +28,10 @@ import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, SetCurItem} 
 import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 
-import "./index.scss";
+import styles from "./index.scss";
 
+
+console.log(styles);
 
 export type ItemNavItem = {
     id: string;
@@ -65,8 +67,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const dispatch = useSharedDispatch();
 
     const { w, h } = useWindowSize();
-    const desktopWidth = 768; //TODO import width from constants.scss 
-    const side = (w > desktopWidth || w > h) ? "left" : "bottom";
+    const side = (w > Number(styles.desktopWidth) || w > h) ? "left" : "bottom";
 
     const { undoHistory, redoHistory } = useHistory(info);
 
