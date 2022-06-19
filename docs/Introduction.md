@@ -11,7 +11,7 @@ sidebar_position: 0
 
 OpenCircuits is an open source, easy to use, and completely free circuit designer.
 
-It is currently being used at Pasadena City College for their Logic Design and Boolean Algebra class.
+It is currently being used at Rensselaer Polytechnic Institute for their Computer Organization class as well as Pasadena City College for their Logic Design and Boolean Algebra class.
 
 To use OpenCircuits go to our website: [http://www.opencircuits.io/](http://www.opencircuits.io/)
 
