@@ -16,7 +16,7 @@ module.exports = {
         "no-useless-return": "error",
         "no-var": "error",
         "sort-imports": ["error", { // sort only within {} of an import statement
-            "ignoreCase": true,
+            "ignoreCase": false,
             "ignoreDeclarationSort": true,
         }],
         "spaced-comment": "error",
