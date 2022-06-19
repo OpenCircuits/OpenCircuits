@@ -1,11 +1,14 @@
-import {Vector} from "Vector";
-import {ClampedValue} from "math/ClampedValue";
 import {serialize} from "serialeazy";
+
+import {Vector} from "Vector";
+
+import {ClampedValue} from "math/ClampedValue";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {InputPort} from "digital/models/ports/InputPort";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
+import {InputPort} from "digital/models/ports/InputPort";
 
 //
 // FlipFlop is an abstract superclass for general flip flops.

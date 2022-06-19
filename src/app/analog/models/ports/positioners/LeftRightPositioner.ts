@@ -1,6 +1,7 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {serializable} from "serialeazy";
 
 import {V} from "Vector";
 

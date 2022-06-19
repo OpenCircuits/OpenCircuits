@@ -10,9 +10,12 @@ import {GetHelpers} from "test/helpers/Helpers";
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 describe("Delete Group Action", () => {

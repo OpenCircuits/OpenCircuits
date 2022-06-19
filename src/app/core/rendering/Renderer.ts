@@ -1,13 +1,14 @@
 import {SVGDrawing, parseColor} from "svg2canvas";
 
-import {V,Vector} from "Vector";
-import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
+import {V, Vector} from "Vector";
 
-import {FONT} from "./Styles";
-import {Style} from "./Style";
+import {Camera}    from "math/Camera";
+import {Transform} from "math/Transform";
 
 import {Shape} from "./shapes/Shape";
+import {Style} from "./Style";
+import {FONT}  from "./Styles";
+
 
 
 export class Renderer {

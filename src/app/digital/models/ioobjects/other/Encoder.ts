@@ -3,13 +3,16 @@ import {serializable} from "serialeazy";
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {InputPort} from "digital/models/ports/InputPort";
+
+import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+
 
 @serializable("Encoder")
 export class Encoder extends DigitalComponent {

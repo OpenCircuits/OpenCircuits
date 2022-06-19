@@ -3,14 +3,18 @@ import {serialize} from "serialeazy";
 import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET, MUX_DEFAULT_SELECT_PORTS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component, Port} from "core/models";
+
 import {PortSet} from "core/models/ports/PortSets";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {DigitalComponent, DigitalWire} from "digital/models";
-import {InputPort} from "digital/models/ports/InputPort";
+
+import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
 

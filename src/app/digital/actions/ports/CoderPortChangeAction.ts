@@ -4,10 +4,10 @@ import {V} from "Vector";
 
 import {Action} from "core/actions/Action";
 
-import {Encoder} from "digital/models/ioobjects/other/Encoder";
 import {Decoder} from "digital/models/ioobjects/other/Decoder";
+import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
-import {InputPortChangeAction} from "./InputPortChangeAction";
+import {InputPortChangeAction}  from "./InputPortChangeAction";
 import {OutputPortChangeAction} from "./OutputPortChangeAction";
 
 

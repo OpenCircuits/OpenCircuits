@@ -1,12 +1,14 @@
 import {DEFAULT_THUMBNAIL_SIZE,
         THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
+
 import {Camera} from "math/Camera";
 
-import {CullableObject} from "core/models";
 import {GetCameraFit} from "core/utils/ComponentUtils";
 
-import {ToolManager} from "core/tools/ToolManager";
 import {DefaultTool} from "core/tools/DefaultTool";
+import {ToolManager} from "core/tools/ToolManager";
+
+import {CullableObject} from "core/models";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 

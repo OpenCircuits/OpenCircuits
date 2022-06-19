@@ -1,19 +1,21 @@
 import {serializable, serialize} from "serialeazy";
 
-import {SegmentType, Segments} from "./Segments";
-
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Name} from "core/utils/Name";
 
-import {Positioner} from "core/models/ports/positioners/Positioner";
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+import {Positioner}              from "core/models/ports/positioners/Positioner";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
 import {InputPort} from "digital/models/ports/InputPort";
+
+import {SegmentType, Segments} from "./Segments";
 
 /**
  * Here we have the code that applies to the different segment displays

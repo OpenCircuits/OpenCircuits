@@ -1,7 +1,9 @@
 import {serializable} from "serialeazy";
 
 import {Port} from "core/models/ports/Port";
+
 import {Dir, Positioner} from "core/models/ports/positioners/Positioner";
+
 
 @serializable("ConstantSpacePositioner")
 export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {

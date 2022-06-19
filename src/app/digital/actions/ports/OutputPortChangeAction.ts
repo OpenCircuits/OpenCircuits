@@ -1,8 +1,10 @@
 import {Action} from "core/actions/Action";
 
-import {Port} from "core/models/ports/Port";
-import {DigitalComponent} from "digital/models/DigitalComponent";
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
+
+import {Port} from "core/models/ports/Port";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
 
 
 /**

@@ -1,10 +1,13 @@
 import {Action} from "core/actions/Action";
+
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Wire}            from "core/models/Wire";
+
+import {Port} from "core/models/ports/Port";
+
+import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {Wire} from "core/models/Wire";
-import {Port} from "core/models/ports/Port";
-import {GroupAction} from "../GroupAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 /**
  * ConnectionAction represents the action of connecting two

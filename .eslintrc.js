@@ -26,5 +26,4 @@ module.exports = mergeDeep({
     require("./linting/.unicorn.js"),
     require("./linting/.sonarjs.js"),
     require("./linting/.jsxa11y.js"),
-    require("./linting/.sortDestructureKeys.js"),
 );

@@ -5,9 +5,11 @@ import {BCDtoDecimal} from "math/MathUtils";
 import {IOObject} from "core/models";
 
 import {DigitalCircuitDesigner, DigitalComponent, DigitalWire} from "digital/models";
+
+import {IC, ICData}            from "digital/models/ioobjects";
 import {InputPort, OutputPort} from "digital/models/ports";
+
 import {Gate} from "digital/models/ioobjects/gates/Gate";
-import {IC, ICData} from "digital/models/ioobjects";
 
 
 /**

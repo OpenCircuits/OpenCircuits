@@ -3,6 +3,7 @@ import {serializable} from "serialeazy";
 import {GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";

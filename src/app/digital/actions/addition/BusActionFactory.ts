@@ -1,12 +1,14 @@
 import {V} from "Vector";
+
 import {Transform} from "math/Transform";
 
 import {GroupAction} from "core/actions/GroupAction";
+
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {Component} from "core/models";
 
-import {InputPort} from "digital/models/ports/InputPort";
+import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
 

@@ -7,11 +7,14 @@ import {DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {Renderer} from "core/rendering/Renderer";
-import {Port} from "core/models/ports/Port";
+import {Style}    from "core/rendering/Style";
 
 import {Circle} from "core/rendering/shapes/Circle";
-import {Line} from "core/rendering/shapes/Line";
-import {Style} from "core/rendering/Style";
+import {Line}   from "core/rendering/shapes/Line";
+
+import {Port} from "core/models/ports/Port";
+
+
 
 
 /**

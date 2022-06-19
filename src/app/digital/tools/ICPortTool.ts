@@ -1,9 +1,11 @@
 import {IO_PORT_LENGTH, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V} from "Vector";
+
 import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
-import {Event} from "core/utils/Events";
+import {Event}        from "core/utils/Events";
 
 import {Port} from "core/models";
 

@@ -1,14 +1,14 @@
-import "jest";
-import "test/helpers/Extensions";
-
 import {Deserialize} from "serialeazy";
 
-import "digital/models/ioobjects";
-import "core/models/Circuit";
+import "test/helpers/Extensions";
+
+import {Component} from "core/models";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models";
+import {CircuitDesigner}       from "core/models/CircuitDesigner";
+
+import "digital/models/ioobjects";
+
 
 export function LoadCircuit(circuit: Circuit): CircuitDesigner {
     const data = Deserialize<ContentsData>(circuit.contents);

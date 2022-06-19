@@ -1,9 +1,11 @@
 import {serializable} from "serialeazy";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent, GenInitialInfo, Prop, PropInfo} from "analog/models/AnalogComponent";
+
 import {SidePositioner} from "analog/models/ports/positioners/SidePositioner";
 
 

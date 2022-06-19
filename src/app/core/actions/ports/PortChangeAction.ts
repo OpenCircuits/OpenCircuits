@@ -1,11 +1,12 @@
+import {GetPath} from "core/utils/ComponentUtils";
+
 import {Action} from "core/actions/Action";
 
-import {GetPath} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner, Port} from "core/models";
 
-import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
+import {GroupAction}            from "../GroupAction";
 
 
 export abstract class PortChangeAction implements Action {

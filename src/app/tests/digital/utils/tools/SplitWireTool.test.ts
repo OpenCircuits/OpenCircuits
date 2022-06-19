@@ -1,13 +1,14 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {V} from "Vector";
+
+import "test/helpers/Extensions";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
 
 import {DigitalNode, LED,
         Switch} from "digital/models/ioobjects";
 
-import {Setup}      from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Split Wire Tool", () => {

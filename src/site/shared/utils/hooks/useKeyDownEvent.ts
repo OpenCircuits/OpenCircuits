@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 
-import {Input} from "core/utils/Input";
-import {Key} from "core/utils/Key";
 import {Event} from "core/utils/Events";
+import {Input} from "core/utils/Input";
+import {Key}   from "core/utils/Key";
 
 
 export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: React.DependencyList) => {

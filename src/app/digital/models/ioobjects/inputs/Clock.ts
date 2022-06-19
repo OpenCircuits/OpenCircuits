@@ -1,6 +1,7 @@
 import {serializable, serialize} from "serialeazy";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {TimedComponent} from "../TimedComponent";

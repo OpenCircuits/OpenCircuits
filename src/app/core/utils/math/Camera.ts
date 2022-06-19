@@ -1,9 +1,9 @@
 import {serializable, serialize} from "serialeazy";
 
-import {V,Vector} from "./Vector";
-import {Transform} from "./Transform";
-import {Matrix2x3} from "./Matrix";
 import {TransformContains} from "./MathUtils";
+import {Matrix2x3}         from "./Matrix";
+import {Transform}         from "./Transform";
+import {V, Vector}         from "./Vector";
 
 
 type Margin = {left: number, right: number, bottom: number, top: number}

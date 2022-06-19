@@ -1,5 +1,6 @@
-import {SubStrEquals} from "core/utils/StringUtils";
 import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStructures";
+
+import {SubStrEquals} from "core/utils/StringUtils";
 
 
 const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];

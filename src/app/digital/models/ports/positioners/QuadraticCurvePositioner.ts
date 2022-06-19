@@ -1,11 +1,13 @@
+import {serializable} from "serialeazy";
+
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
+import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {InputPort} from "../InputPort";
 
-import {Positioner} from "core/models/ports/positioners/Positioner";
-import {serializable} from "serialeazy";
 
 @serializable("QuadraticCurvePositioner")
 export class QuadraticCurvePositioner extends Positioner<InputPort> {

@@ -2,8 +2,9 @@ import "jest";
 
 import {V} from "Vector";
 
-import {Setup} from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
 import {ConstantHigh, ConstantLow} from "digital/models/ioobjects";
 
 

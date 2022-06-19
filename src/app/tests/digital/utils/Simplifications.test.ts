@@ -3,13 +3,16 @@ import "jest";
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {IOObject} from "core/models";
+
 import {CreateNegatedGatesAction} from "digital/actions/simplification/NegatedGatesActionFactory";
+
+import {DigitalCircuitDesigner}                from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}                      from "digital/models/DigitalObjectSet";
 import {ANDGate, LED, ORGate, Switch, XORGate} from "digital/models/ioobjects";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
+
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
-import "digital/models/ioobjects";
+
 
 
 describe("Simplifications", () => {

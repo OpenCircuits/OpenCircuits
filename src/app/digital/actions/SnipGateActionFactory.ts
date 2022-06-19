@@ -1,8 +1,10 @@
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {DeleteAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
 
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {DeleteAction}                       from "core/actions/addition/PlaceAction";
+
 import {BUFGate} from "digital/models/ioobjects";
+
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 

@@ -1,10 +1,10 @@
-import {Store} from "redux";
+import {Store}         from "redux";
 import {ThunkDispatch} from "redux-thunk";
 
-import {SharedAppState}  from "shared/state";
+import {SharedAppState} from "shared/state";
 
 import {AllActions} from "./actions";
-import {SimState} from "./Sim";
+import {SimState}   from "./Sim";
 
 
 export type AppState = SharedAppState & {

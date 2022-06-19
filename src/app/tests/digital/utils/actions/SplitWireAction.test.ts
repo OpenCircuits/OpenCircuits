@@ -1,13 +1,17 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Split Wire Action", () => {

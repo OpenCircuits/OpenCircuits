@@ -1,10 +1,13 @@
+import {serializable} from "serialeazy";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
-import {Port}      from "core/models/ports/Port";
+
+import {Port} from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
-import {serializable} from "serialeazy";
+
 
 @serializable("PortSet")
 export class PortSet<T extends Port> {

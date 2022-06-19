@@ -1,8 +1,9 @@
-import {Component} from "./Component";
-import {Wire} from "./Wire";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-import {Port} from "./ports/Port";
-import {IOObject} from "./IOObject";
+
+import {Component} from "./Component";
+import {IOObject}  from "./IOObject";
+import {Port}      from "./ports/Port";
+import {Wire}      from "./Wire";
 
 
 export abstract class CircuitDesigner {

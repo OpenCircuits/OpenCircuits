@@ -1,7 +1,10 @@
 import {serializable, serialize} from "serialeazy";
+
 import {V} from "Vector";
-import {DecimalToBCD} from "math/MathUtils";
+
 import {ClampedValue} from "math/ClampedValue";
+import {DecimalToBCD} from "math/MathUtils";
+
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 

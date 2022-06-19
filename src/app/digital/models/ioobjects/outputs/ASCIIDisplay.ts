@@ -1,9 +1,11 @@
 import {serializable} from "serialeazy";
 
-import {ASCIIFont} from "./ASCIIFont";
 
 import {ClampedValue} from "math/ClampedValue";
+
 import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
+import {ASCIIFont}      from "./ASCIIFont";
 import {SegmentDisplay} from "./SegmentDisplay";
 
 // Index for ASCIIFont can be found at https://en.wikipedia.org/wiki/ASCII

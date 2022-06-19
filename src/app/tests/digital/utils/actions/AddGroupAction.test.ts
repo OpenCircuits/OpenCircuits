@@ -3,9 +3,11 @@ import "jest";
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalWire} from "digital/models/DigitalWire";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
+import {DigitalWire}            from "digital/models/DigitalWire";
+
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
 import {LED} from "digital/models/ioobjects/outputs/LED";
 
 

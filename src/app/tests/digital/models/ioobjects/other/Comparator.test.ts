@@ -1,8 +1,8 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner}          from "digital/models/DigitalCircuitDesigner";
 import {Comparator, ConstantNumber, LED} from "digital/models/ioobjects";
 
 

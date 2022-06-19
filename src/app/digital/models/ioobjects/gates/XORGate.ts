@@ -1,11 +1,12 @@
 import {serializable} from "serialeazy";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
 
-import {Gate} from "./Gate";
+import {Gate}               from "./Gate";
 import {GetQuadraticOffset} from "./ORGate";
 
 

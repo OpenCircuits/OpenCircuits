@@ -1,8 +1,9 @@
 import {CircuitDesigner, Component} from "core/models";
+
 import {ConnectionAction, DisconnectAction} from "./addition/ConnectionAction";
-import {DeleteAction, PlaceAction} from "./addition/PlaceAction";
-import {GroupAction} from "./GroupAction";
-import {TranslateAction} from "./transform/TranslateAction";
+import {DeleteAction, PlaceAction}          from "./addition/PlaceAction";
+import {GroupAction}                        from "./GroupAction";
+import {TranslateAction}                    from "./transform/TranslateAction";
 
 
 /**

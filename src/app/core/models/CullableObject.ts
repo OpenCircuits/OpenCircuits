@@ -1,7 +1,9 @@
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
+
 import {Transform} from "math/Transform";
 
 import {IOObject} from "./IOObject"
+
 
 export abstract class CullableObject extends IOObject {
     private cullTransform: Transform;

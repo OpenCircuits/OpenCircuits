@@ -1,14 +1,18 @@
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalWire} from "digital/models/DigitalWire";
-import {Action} from "core/actions/Action";
-import {LED, Switch} from "digital/models/ioobjects";
-import {GroupAction} from "core/actions/GroupAction";
 import {Wire} from "core/models";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {DigitalWire}            from "digital/models/DigitalWire";
+import {LED, Switch}            from "digital/models/ioobjects";
+
 
 
 export function GetHelpers(designer: DigitalCircuitDesigner) {

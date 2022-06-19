@@ -1,6 +1,7 @@
 import "jest";
 
 import {V} from "Vector";
+
 import {BezierCurve} from "math/BezierCurve";
 
 

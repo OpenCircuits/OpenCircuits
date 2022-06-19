@@ -1,10 +1,13 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Clock}           from "digital/models/ioobjects/inputs/Clock";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Clock} from "digital/models/ioobjects/inputs/Clock";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe ("Clock", () => {

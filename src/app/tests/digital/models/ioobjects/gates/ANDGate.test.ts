@@ -1,9 +1,11 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("ANDGate", () => {

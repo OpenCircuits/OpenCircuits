@@ -1,15 +1,17 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
 
+import "test/helpers/Extensions";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {DigitalComponent} from "digital/models";
+
 import {DigitalNode, LED, Switch} from "digital/models/ioobjects";
 
-import {Setup}      from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
-import {DigitalComponent} from "digital/models";
 
 describe("Node and Wire Interaction", () => {
     const {designer, input} = Setup();

@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {Vector} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Selectable} from "core/utils/Selectable";
+import {Selectable}  from "core/utils/Selectable";
 
 
 type BaseType = Record<string, string | number | Vector | boolean>;

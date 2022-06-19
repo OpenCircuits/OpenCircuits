@@ -1,15 +1,20 @@
-import {GRID_SIZE, LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
-import {GroupAction}           from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
+
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
-import {TranslateAction}       from "core/actions/transform/TranslateAction";
+
 import {CreateDeselectAllAction,
         SelectAction}          from "core/actions/selection/SelectAction";
-import {Tool}                  from "core/tools/Tool";
+
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+
+import {Tool} from "core/tools/Tool";
 
 import {Node, Wire} from "core/models";
 

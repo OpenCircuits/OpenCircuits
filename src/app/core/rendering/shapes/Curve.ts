@@ -1,4 +1,5 @@
-            import {Vector} from "Vector";
+import {Vector} from "Vector";
+
 import {BezierCurve} from "math/BezierCurve";
 
 import {Shape} from "./Shape";

@@ -1,11 +1,14 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "analog/models";
+
+import {GenInitialInfo, GenPropInfo, GroupPropInfo}      from "analog/models/AnalogComponent";
 import {AngleInfo, FrequencyInfo, TimeInfo, VoltageInfo} from "analog/models/Units";
-import {GenInitialInfo, GenPropInfo, GroupPropInfo} from "analog/models/AnalogComponent";
+
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 

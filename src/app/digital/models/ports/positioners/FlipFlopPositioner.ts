@@ -5,8 +5,11 @@ import {IO_PORT_LENGTH} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {FlipFlop} from "digital/models/ioobjects/flipflops/FlipFlop";
+
 import {InputPort} from "../InputPort";
+
 
 @serializable("FlipFlopPositioner")
 export class FlipFlopPositioner extends Positioner<InputPort> {

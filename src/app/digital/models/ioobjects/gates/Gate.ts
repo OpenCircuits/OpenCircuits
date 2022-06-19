@@ -1,11 +1,15 @@
-import {Vector}       from "Vector";
+import {serialize} from "serialeazy";
+
+import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
-import {serialize}    from "serialeazy";
-import {Name}         from "core/utils/Name";
+
+import {Name} from "core/utils/Name";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
 import {InputPort} from "digital/models/ports/InputPort";
 
 //

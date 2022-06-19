@@ -1,11 +1,15 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models";
-import {LED, Switch} from "digital/models/ioobjects";
-import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {CreateSnipGateAction} from "digital/actions/SnipGateActionFactory";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models";
+
+import {LED, Switch} from "digital/models/ioobjects";
+
+import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+
 
 
 describe("SnipGateAction", () => {

@@ -1,5 +1,6 @@
 import {Action} from "core/actions/Action";
 
+
 export class GroupAction implements Action {
     private actions: Action[];
     private customName?: string;

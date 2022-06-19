@@ -4,20 +4,24 @@ import {DEFAULT_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {Transform} from "math/Transform";
 
-import {Images}      from "core/utils/Images";
+import {Images} from "core/utils/Images";
 
-import {Component} from "core/models/Component";
 
-import {Renderer}  from "core/rendering/Renderer";
-import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style}     from "core/rendering/Style";
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+
+import {Component} from "core/models/Component";
+
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
 import {Label, Oscilloscope} from "analog/models/eeobjects";
 
 import {OscilloscopeRenderer} from "./OscilloscopeRenderer";

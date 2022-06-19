@@ -1,9 +1,10 @@
 import {IO_PORT_RADIUS, LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 

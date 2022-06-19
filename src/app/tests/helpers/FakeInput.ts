@@ -1,8 +1,9 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {Input} from "core/utils/Input";
-import {Key} from "core/utils/Key";
+import {Key}   from "core/utils/Key";
 
 
 export class FakeInput extends Input {

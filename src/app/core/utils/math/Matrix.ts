@@ -1,5 +1,6 @@
-import {V,Vector} from "./Vector";
 import {serializable} from "serialeazy";
+
+import {V, Vector} from "./Vector";
 
 
 /**

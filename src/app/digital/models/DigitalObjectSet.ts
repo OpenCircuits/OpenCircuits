@@ -1,7 +1,9 @@
 import {serializable} from "serialeazy";
 
-import {IOObject, Wire} from "core/models";
 import {IOObjectSet} from "core/utils/ComponentUtils";
+
+import {IOObject, Wire} from "core/models";
+
 import {DigitalComponent, DigitalWire} from "./index";
 
 /**

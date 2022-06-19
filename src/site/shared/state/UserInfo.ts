@@ -2,10 +2,11 @@ import {AUTO_SAVE_COOKIE_KEY} from "shared/utils/Constants";
 
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
-import {AuthState} from "shared/api/auth/AuthState";
 
 import {GetCookie, SetCookie} from "shared/utils/Cookies";
-import {CreateState} from "shared/utils/CreateState";
+import {CreateState}          from "shared/utils/CreateState";
+
+import {AuthState} from "shared/api/auth/AuthState";
 
 
 const [initialState, actions, reducer] = CreateState()(

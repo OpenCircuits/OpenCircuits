@@ -1,12 +1,16 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {Button}          from "digital/models/ioobjects/inputs/Button";
-import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+
+import {Button} from "digital/models/ioobjects/inputs/Button";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Button", () => {
