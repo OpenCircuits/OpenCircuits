@@ -92,10 +92,10 @@ export class Rect {
      * Performs a rectangle subtraction (essentially a XOR), see
      *   https://stackoverflow.com/questions/3765283/how-to-subtract-a-rectangle-from-another
      * This method works slightly differently by instead of calculating the minimum rectangles for the subtraction,
-     *  calculates all possible 8 rectangles from each side and corner
+     *  calculates all possible 8 rectangles from each side and corner.
      *
-     * @param rect Rectangle to subtract from this rectangle
-     * @returns The remaining rectangles after the subtraction
+     * @param rect Rectangle to subtract from this rectangle.
+     * @returns The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
@@ -114,15 +114,15 @@ export class Rect {
     }
 
     /**
-     * Shifts the sides of this rectangle given by amt
-     *  if dir.x < 0, shifts amt.x left
-     *  if dir.x > 0, shifts amt.x right
-     *  if dir.y < 0, shifts amt.y down
-     *  if dir.y > 0, shifts amt.y up
+     * Shifts the sides of this rectangle given by amt:
+     *  If dir.x < 0, shifts amt.x left.
+     *  If dir.x > 0, shifts amt.x right.
+     *  If dir.y < 0, shifts amt.y down.
+     *  If dir.y > 0, shifts amt.y up.
      *
-     * @param dir The direction to shift this rectangle
-     * @param amt The amount to shift this rectangle
-     * @returns A new rectangle which is a shifted version of this one
+     * @param dir The direction to shift this rectangle.
+     * @param amt The amount to shift this rectangle.
+     * @returns A new rectangle which is a shifted version of this one.
      */
     public shift(dir: Vector, amt: Vector): Rect {
         return Rect.From({
@@ -200,9 +200,9 @@ export class Rect {
      * Utility method to create a rectangle from any combination of valid rectangle attributes, i.e. allows
      *  specification of size + center, or bottom left + top right, or any other valid combination.
      *
-     * @param bounds Attributes of rectangle
-     * @param yIsUp Whether this rectangle has +y or -y
-     * @returns A Rect from the given bounds/attributes and yIsUp direction
+     * @param bounds Attributes of rectangle.
+     * @param yIsUp Whether this rectangle has +y or -y.
+     * @returns A Rect from the given bounds/attributes and yIsUp direction.
      */
     public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
