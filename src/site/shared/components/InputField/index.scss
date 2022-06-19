@@ -1,3 +1,5 @@
+@import "~shared/utils/constants";
+
 
 .numberinputfield {
     display: inline-flex;
@@ -45,8 +47,7 @@
         }
     }
 
-
-    @media (min-width: 768px) {
+    @media (min-width: $desktop-width) {
         &:hover {
             & > input {
                 border-right: none !important;

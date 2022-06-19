@@ -66,7 +66,7 @@ $historybox-width: 250px;
             border-radius: 15px;
         }
 
-        @media (max-width: 768px) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation:portrait) {
             max-height: 40vh;
         }
     }
@@ -75,7 +75,7 @@ $historybox-width: 250px;
         & > div:last-child {
             left: 0px;
 
-            @media (max-width: 768px) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation:portrait) {
                 margin-bottom: 0px;
             }
         }
