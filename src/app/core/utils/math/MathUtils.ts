@@ -7,12 +7,12 @@ import {Transform}   from "./Transform";
 import {V, Vector}   from "./Vector";
 
 /**
- * Clamps a number between a given min and max
+ * Clamps a number between a given min and max.
  *
- * @param x The number to clamp
- * @param min The minimum
- * @param max The maximum
- * @returns The clamped number
+ * @param x The number to clamp.
+ * @param min The minimum.
+ * @param max The maximum.
+ * @returns The clamped number.
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
@@ -22,11 +22,11 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param bl Bottom left corner of the rectangle
- * @param tr Top right corner of the rectangle
- * @param pos The position to get the nearest point on
+ * @param bl Bottom left corner of the rectangle.
+ * @param tr Top right corner of the rectangle.
+ * @param pos The position to get the nearest point on.
  * @returns The closest position on the edge of
- *         the rectangle from 'pos'
+ *         the rectangle from 'pos'.
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     // First clamp point to within the rectangle
@@ -47,14 +47,14 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
 /**
  * Determines whether the given point is
  * within the rectangle defined by the
- * given transform
+ * given transform.
  *
- * @param transform The transform that represents the rectangle
+ * @param transform The transform that represents the rectangle.
  * @param pos Must be in world coordinates *
  *         The point to determine whether or not
- *         it's within the rectangle
+ *         it's within the rectangle.
  * @returns True if the point is within the rectangle,
- *         false otherwise
+ *         false otherwise.
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
     const tr = transform.getSize().scale(0.5);  // top right corner
@@ -71,17 +71,17 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
 /**
  * Determines whether the given point
  * is within the circle defined by the
- * given transform
+ * given transform.
  *
  * @param pos1 The center of the circle in world
- *         coordinates
+ *         coordinates.
  * @param r The radius of the circle in world
- *         units
+ *         units.
  * @param pos2 Must be in world coordinates *
  *         The point to determine whether or not
- *         it's within the circle
+ *         it's within the circle.
  * @returns True if the point is within the rectangle,
- *          false otherwise
+ *          false otherwise.
  */
 export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
     return (pos2.sub(pos1).len2() <= r*r);
@@ -90,17 +90,17 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
 /**
  * Compares two transforms to see if they overlap.
  * First tests it using a quick circle-circle
- * intersection using the 'radius' of the transform
+ * intersection using the 'radius' of the transform.
  *
  * Then uses a SAT (Separating Axis Theorem) method
  * to determine whether or not the two transforms
- * are intersecting
+ * are intersecting.
  *
- * @param A The first transform
- * @param B The second transform
+ * @param A The first transform.
+ * @param B The second transform.
  * @returns
  *         True if the two transforms are overlapping,
- *         false otherwise
+ *         false otherwise.
  */
 export function TransformContains(A: Transform, B: Transform): boolean {
     // If both transforms are non-rotated
@@ -190,20 +190,20 @@ export function TransformContains(A: Transform, B: Transform): boolean {
 
 /**
  * Uses Newton's method to find the roots of
- * the function 'f' given a derivative 'df'
+ * the function 'f' given a derivative 'df'.
  *
  * @param iterations The number of iterations to perform
  *         Newton's method with; the smaller
- *         the better but less accurate
- * @param t0 The starting root value parameter
- * @param x Parameter 1 for the function
- * @param y Parameter 2 for the function
- * @param f The function to find the roots of
- *         In the form f(t, x, y) = ...
+ *         the better but less accurate.
+ * @param t0 The starting root value parameter.
+ * @param x Parameter 1 for the function.
+ * @param y Parameter 2 for the function.
+ * @param f The function to find the roots of.
+ *         In the form `f(t, x, y) = ...`.
  * @param df The derivative of the function
- *         In the form of df(t, x, y)
+ *         In the form of `df(t, x, y)`.
  * @returns The parameter 't' that results in
- *         f(t, x, y) = 0
+ *         `f(t, x, y) = 0`.
  */
 export function FindRoots(iterations: number, t0: number, x: number, y: number,
                           f:  (t: number, x: number, y: number) => number,
@@ -222,20 +222,20 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
 
 /**
  * Finds if the given position is within
- *  the given bezier curve
+ *  the given bezier curve.
  *
  * Parametric function defined by
- * X(t) = t(p2.x - p1.x) + p1.x
- * Y(t) = t(p2.y - p1.y) + p1.y
+ * `X(t) = t(p2.x - p1.x) + p1.x` and
+ * `Y(t) = t(p2.y - p1.y) + p1.y`.
  *
  * Solves for 't' from root of the derivative of
- * the distance function between the line and `pos`
- * D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)
+ * the distance function between the line and `pos`.
+ * `D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)`.
  *
- * @param curve The bezier curve
- * @param pos The position
- * @returns True if position is within the bezier curve
- *         False otherwise
+ * @param curve The bezier curve.
+ * @param pos The position.
+ * @returns True if position is within the bezier curve,
+ *         false otherwise.
  */
 export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
