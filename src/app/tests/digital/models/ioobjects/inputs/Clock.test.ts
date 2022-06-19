@@ -15,7 +15,7 @@ describe ("Clock", () => {
     const {Place, Connect} = GetHelpers(designer);
 
     const [c, l] = Place(new Clock(), new LED());
-    Connect(c, 0, l, 0);
+    Connect(c, l);
 
     test("Initial State", () => {
         expect(l.isOn()).toBe(true);

@@ -18,7 +18,8 @@ export const ClockSyncButtonModule = ({ info }: Props) => {
                                    //  we need to be able to update the state
     );
 
-    if (!props)
+    // Show if valid and if there are multiple clocks
+    if (!props || props.isClock.length < 2)
         return null;
 
     return <button

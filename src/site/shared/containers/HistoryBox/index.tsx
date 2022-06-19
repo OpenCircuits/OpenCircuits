@@ -8,9 +8,14 @@ import {GroupAction} from "core/actions/GroupAction";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {useHistory} from "shared/utils/hooks/useHistory";
 
+import {AdjustableElement} from "shared/components/AdjustableElement";
+
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
+import {useEvent} from "shared/utils/hooks/useEvent";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+
 
 type HistoryEntryProps = {
     a: Action;
@@ -92,33 +97,48 @@ type Props = {
     info: CircuitInfo;
 }
 export const HistoryBox = ({ info }: Props) => {
-    const { isOpen, isHistoryBoxOpen } = useSharedSelector(
-        state => ({ ...state.itemNav })
+    const { isOpen, isHistoryBoxOpen, curItemID } = useSharedSelector(
+        state => ({ ...state.itemNav }),
     );
     const dispatch = useSharedDispatch();
 
     const { undoHistory, redoHistory } = useHistory(info);
 
-    return (
-        <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}>
-            <div>
-                <span>History</span>
-                <span onClick={() => dispatch(CloseHistoryBox())}>×</span>
-            </div>
-            <div>
-                {[...redoHistory].map((a, i) =>
-                    <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo></HistoryEntry>
-                )}
-                { redoHistory.length > 0 && (<>
-                    <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
-                    <div className={"historybox__separator"} > </div>
-                 </>)}
-                <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
-                {[...undoHistory].reverse().map((a, i) =>
-                    <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false}></HistoryEntry>
-                )}
+    const [isDragging, setIsDragging] = useState(false);
+    useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]);
+    useDocEvent("mouseup", () => setIsDragging(false), [setIsDragging]);
 
+    // Make history box passthrough if dragging on canvas or from ItemNav
+    const passthrough = isDragging || !!curItemID;
+
+    return (
+        <AdjustableElement
+            initialWidth={240} initialHeight={400} minHeight={240}
+            style={{
+                pointerEvents: (passthrough ? "none" : undefined),
+                opacity:       (passthrough ? 0.5    : undefined),
+            }}>
+            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}
+                 data-adjustable>
+                <div data-adjustable>
+                    <span data-adjustable>History</span>
+                    <span role="button" tabIndex={0} data-adjustable
+                          onClick={() => dispatch(CloseHistoryBox())}>×</span>
+                </div>
+                <div data-adjustable>
+                    {[...redoHistory].map((a, i) =>
+                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo />,
+                    )}
+                    { redoHistory.length > 0 && (<>
+                        <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
+                        <div className="historybox__separator"></div>
+                    </>)}
+                    <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
+                    {[...undoHistory].reverse().map((a, i) =>
+                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false} />,
+                    )}
+                </div>
             </div>
-        </div>
+        </AdjustableElement>
     );
 }

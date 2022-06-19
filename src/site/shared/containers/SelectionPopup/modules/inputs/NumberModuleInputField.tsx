@@ -2,7 +2,7 @@ import {useRef} from "react";
 
 import {Clamp} from "math/MathUtils";
 
-import {InputField} from "shared/components/InputField";
+import {NumberInputField} from "shared/components/InputField";
 
 import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
@@ -25,18 +25,20 @@ export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt,
         parseVal:      (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
         parseFinalVal: (val) => Clamp(val, Min, Max),
         isValid:       (val) => (!isNaN(val) && (Min <= val && val <= Max)),
+
+        getModifier: (totalStep, step) => Clamp((totalStep ?? 0) + step, Min, Max),
     });
 
-    // TODO: Fix to 2 digits
     return (
-        <InputField
+        <NumberInputField
             ref={ref}
             type="number"
             value={state.value}
+            min={min} max={max} step={step} alt={alt}
             placeholder={state.allSame ? "" : (placeholder ?? "-")}
             onChange={(ev) => setState.onChange(ev.target.value)}
-            onFocus={() => setState.onFocus()}
-            onBlur={() => setState.onBlur()}
-            min={min} max={max} step={step} alt={alt} />
-    )
+            onIncrement={(step) => setState.onModify(step)}
+            onFocus={() => setState.onFocus(0)}
+            onBlur={() => setState.onBlur(0)} />
+    );
 }

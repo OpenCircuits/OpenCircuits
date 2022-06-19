@@ -37,7 +37,8 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
         return children;
     const next = children.slice(7);
     const newTree: InputTree = {
-        kind:     "binop", type:     currentOp, isNot:    false,
+        kind: "binop", type: currentOp, isNot: false,
+
         children: generateNestedTrees(next, currentOp) as BinOpChildren,
     };
     return [...children.slice(0, 7), newTree];
@@ -80,8 +81,8 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
  * @throws {Error} |, &, ^, or ! are missing an operand on their right (such as "!a")
  * @see GenerateInputTree
  */
-function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, currentOpNum = 0,
-                               index = 0): NewTreeRetValue {
+function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
+                               currentOpNum = 0, index = 0): NewTreeRetValue {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
@@ -192,8 +193,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>, 
  * @throws {Error} generateInputTreeCore returns back up to this function before the end of tokens is reached
  *                  for any other reason
  */
-export function GenerateInputTree(tokens: Token[], ops: Record<TokenType, string>
-                                  = FORMATS[0].ops): InputTree | undefined {
+export function GenerateInputTree(tokens: Token[], ops = FORMATS[0].ops): InputTree | undefined {
     if (tokens.length === 0)
         return;
     const ret = generateInputTreeCore(tokens, ops);

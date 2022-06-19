@@ -103,7 +103,7 @@ export class Input {
      */
     private hookupKeyboardEvents(): void {
         // Keyboard events
-        window.addEventListener("keydown", (e: KeyboardEvent) => {
+        window.addEventListener("keydown", (e) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.key as Key);
@@ -112,13 +112,13 @@ export class Input {
                     e.preventDefault();
             }
         }, false);
-        window.addEventListener("keyup",   (e: KeyboardEvent) => {
+        window.addEventListener("keyup",   (e) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e.key as Key)
         }, false);
 
-        window.addEventListener("blur", (_: FocusEvent) => this.onBlur());
+        window.addEventListener("blur", (_) => this.onBlur());
 
         window.addEventListener("paste", (ev: ClipboardEvent) => this.callListeners({ type: "paste", ev }));
         window.addEventListener("copy",  (ev: ClipboardEvent) => this.callListeners({ type: "copy",  ev }));
@@ -130,12 +130,11 @@ export class Input {
      */
     private hookupMouseEvents(): void {
         // Mouse events
-        this.canvas.addEventListener("click",      (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY),
-                                                                                     e.button), false);
-        this.canvas.addEventListener("dblclick",   (e: MouseEvent) => this.onDoubleClick(e.button), false);
-        this.canvas.addEventListener("wheel",      (e: WheelEvent) => this.onScroll(e.deltaY), false);
+        this.canvas.addEventListener("click",    (e) => this.onClick(V(e.clientX, e.clientY), e.button), false);
+        this.canvas.addEventListener("dblclick", (e) => this.onDoubleClick(e.button), false);
+        this.canvas.addEventListener("wheel",    (e) => this.onScroll(e.deltaY), false);
 
-        this.canvas.addEventListener("mousedown",  (e: MouseEvent) => {
+        this.canvas.addEventListener("mousedown", (e) => {
             this.onMouseDown(V(e.clientX, e.clientY), e.button);
 
             // Fixes issue #777, stops Firefox from scrolling and allows panning
@@ -143,12 +142,12 @@ export class Input {
                 e.preventDefault();
         }, false);
 
-        this.canvas.addEventListener("mouseup",    (e: MouseEvent) => this.onMouseUp(e.button), false);
-        this.canvas.addEventListener("mousemove",  (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        this.canvas.addEventListener("mouseenter", (_: MouseEvent) => this.onMouseEnter(), false);
-        this.canvas.addEventListener("mouseleave", (_: MouseEvent) => this.onMouseLeave(), false);
+        this.canvas.addEventListener("mouseup",    (e) => this.onMouseUp(e.button), false);
+        this.canvas.addEventListener("mousemove",  (e) => this.onMouseMove(V(e.clientX, e.clientY)), false);
+        this.canvas.addEventListener("mouseenter", (_) => this.onMouseEnter(), false);
+        this.canvas.addEventListener("mouseleave", (_) => this.onMouseLeave(), false);
 
-        this.canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+        this.canvas.addEventListener("contextmenu", (e) => {
             e.preventDefault();
             this.callListeners({ type: "contextmenu" });
         });
@@ -163,17 +162,17 @@ export class Input {
         };
 
         // Touch screen events
-        this.canvas.addEventListener("touchstart", (e: TouchEvent) => {
+        this.canvas.addEventListener("touchstart", (e) => {
             this.onTouchStart(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
-        this.canvas.addEventListener("touchmove", (e: TouchEvent) => {
+        this.canvas.addEventListener("touchmove", (e) => {
             this.onTouchMove(getTouchPositions(e.touches));
             e.preventDefault();
         }, false);
 
-        this.canvas.addEventListener("touchend", (e: TouchEvent) => {
+        this.canvas.addEventListener("touchend", (e) => {
             this.onTouchEnd();
             e.preventDefault();
         }, false);
@@ -213,8 +212,10 @@ export class Input {
         // This function is used to prevent default zoom in gesture for all browsers
         //  Fixes #745
         document.addEventListener("wheel",
-            (e) => { if (e.ctrlKey)
-                         e.preventDefault(); },
+            (e) => {
+                if (e.ctrlKey)
+                    e.preventDefault();
+            },
             { passive: false }
         );
     }

@@ -6,8 +6,10 @@ import {CreateUserCircuit, UpdateUserCircuit} from "shared/api/Circuits";
 
 import {SharedAppState} from "shared/state";
 
-import {AllSharedActions}                                              from "shared/state/actions";
-import {_SetCircuitSavingFinish, _SetCircuitSavingStart, SetCircuitId} from "shared/state/CircuitInfo";
+import {AllSharedActions}       from "shared/state/actions";
+import {SetCircuitId,
+        _SetCircuitSavingFinish,
+        _SetCircuitSavingStart} from "shared/state/CircuitInfo";
 
 
 type ThunkResult<R> = ThunkAction<R, SharedAppState, undefined, AllSharedActions>;

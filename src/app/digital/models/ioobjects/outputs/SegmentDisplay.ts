@@ -1,6 +1,5 @@
 import {serializable, serialize} from "serialeazy";
 
-
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
@@ -16,7 +15,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 import {InputPort} from "digital/models/ports/InputPort";
 
-import {Segments, SegmentType} from "./Segments";
+import {SegmentType, Segments} from "./Segments";
 
 /**
  * Here we have the code that applies to the different segment displays

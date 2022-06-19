@@ -1,8 +1,8 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo}                   from "core/utils/CircuitInfo";
-import {GetComponentPath, GetWirePath} from "core/utils/ComponentUtils";
-import {Event}                         from "core/utils/Events";
+import {CircuitInfo}               from "core/utils/CircuitInfo";
+import {GetComponentPath, GetPath} from "core/utils/ComponentUtils";
+import {Event}                     from "core/utils/Events";
 
 import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
@@ -31,7 +31,7 @@ export const SelectPathHandler: EventHandler = ({
             .find(o =>
                 o.isWithinSelectBounds(worldMousePos)) as Component | Wire;
 
-        const path = (obj instanceof Wire) ? (GetWirePath(obj)) : (GetComponentPath(obj!));
+        const path = (obj instanceof Wire) ? (GetPath(obj)) : (GetComponentPath(obj!));
         history.add(CreateGroupSelectAction(selections, path).execute());
     },
 });

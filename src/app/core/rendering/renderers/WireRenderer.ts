@@ -1,4 +1,4 @@
-import {blend, Color, parseColor} from "svg2canvas";
+import {Color, blend, parseColor} from "svg2canvas";
 
 import {SELECTED_FILL_COLOR,
         WIRE_THICKNESS} from "core/utils/Constants";

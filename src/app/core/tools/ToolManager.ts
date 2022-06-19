@@ -24,7 +24,6 @@ export class ToolManager {
 
     public onEvent(event: Event, info: CircuitInfo): boolean {
         // Call the current tool's (or default tool's) onEvent method
-
         if (this.currentTool) {
             const changed = this.currentTool.onEvent(event, info);
             // Check if we should deactivate the current tool
@@ -37,6 +36,7 @@ export class ToolManager {
             }
             return changed;
         }
+
         // Check if some other tool should be activated
         const newTool = this.tools.find(t => t.shouldActivate(event, info));
         if (newTool !== undefined) {
@@ -50,7 +50,6 @@ export class ToolManager {
         //  over the default behavior for things like Handlers
         //  Fixes #624
         return this.defaultTool.onEvent(event, info);
-
     }
 
     public hasTool(tool: Tool): boolean {

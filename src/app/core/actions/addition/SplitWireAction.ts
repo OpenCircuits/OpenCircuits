@@ -13,7 +13,7 @@ import {PlaceAction, DeleteAction} from "./PlaceAction";
 /**
  * Creates an action to represent a Wire being split.
  *
- * @param designer the CirctuitDesigner the action is being done on
+ * @param designer the CircuitDesigner the action is being done on
  * @param w the Wire being split
  * @param port the new Port that is splitting the Wire
  * @returns a GroupAction representing the Wire being split
@@ -55,7 +55,9 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     if (ports.length !== 2)
         throw new Error("Failed to find 2 ports to snip to");
 
+
     const action = new GroupAction([], "Snip Wire Action");
+
 
     action.add(new DisconnectAction(designer, wires[0]).execute());
     action.add(new DisconnectAction(designer, wires[1]).execute());

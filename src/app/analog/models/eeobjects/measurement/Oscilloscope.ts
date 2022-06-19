@@ -13,13 +13,15 @@ const Info: Record<string, PropInfo> = {
     "samples": {
         type:    "int",
         display: "Samples",
-        initial: 100, min:     0, step:    20,
+
+        initial: 100, min: 0, step: 20,
     },
     "size": {
         type:    "veci",
         display: "Display Size",
         initial: V(800, 400),
-        min:     V(400, 200), step:    V(100, 100),
+        min:     V(400, 200),
+        step:    V(100, 100),
     },
 };
 

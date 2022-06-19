@@ -1,5 +1,7 @@
 import {V, Vector} from "Vector";
 
+import {Clamp} from "./MathUtils";
+
 
 // Turn union of keys to union of records with that key
 type KeysToRecord<K> = K extends string ? Record<K, number> : never;
@@ -13,7 +15,7 @@ type YKeys = "top" | "bottom" | "cy" | "height";
 // A valid rectangle is the combination of any two of XKeys + any two of YKeys
 type XRectProps = ExpandTypes<XKeys, KeysToRecord<XKeys>>;
 type YRectProps = ExpandTypes<YKeys, KeysToRecord<YKeys>>;
-type RectProps = (XRectProps) & (YRectProps);
+export type RectProps = (XRectProps) & (YRectProps);
 
 
 export type Margin = {
@@ -25,12 +27,11 @@ export type Margin = {
 export function Margin(left: number, right: number, bottom: number, top: number): Margin;
 export function Margin(h: number, v: number): Margin;
 export function Margin(left: number, right: number, bottom?: number, top?: number) {
-    if (bottom !== undefined) {
+    if (bottom !== undefined)
         return { left, right, bottom, top };
-    }
-        const h = left, v = right;
-        return { left: h, right: h, bottom: v, top: v };
 
+    const h = left, v = right;
+    return { left: h, right: h, bottom: v, top: v };
 }
 
 
@@ -89,13 +90,37 @@ export class Rect {
     }
 
     /**
-     * Performs a rectangle subtraction (essentially a XOR), see
-     *   https://stackoverflow.com/questions/3765283/how-to-subtract-a-rectangle-from-another
-     * This method works slightly differently by instead of calculating the minimum rectangles for the subtraction,
-     *  calculates all possible 8 rectangles from each side and corner
+     * Clamps this rectangle such that it's within the given bounds.
+     * (Note that this preserves the size of the rectangle, unless it is larger then the bounds).
      *
-     * @param rect Rectangle to subtract from this rectangle
-     * @returns The remaining rectangles after the subtraction
+     * @param  bounds The bounds to clamp this rectangle into.
+     */
+    public clamp(bounds: Rect) {
+        // Clamp to be as big as bounds if too big
+        if (this.width > bounds.width)
+            this.width = bounds.width;
+        if (this.height > bounds.height)
+            this.height = bounds.height;
+
+        if (this.left < bounds.left)
+            this.x += (bounds.left - this.left);
+        if (this.right > bounds.right)
+            this.x += (bounds.right - this.right);
+
+        if (this.bottom < bounds.bottom)
+            this.y += (bounds.bottom - this.bottom);
+        if (this.top > bounds.top)
+            this.y += (bounds.top - this.top);
+    }
+
+    /**
+     * Performs a rectangle subtraction (essentially a XOR), see
+     *   https://stackoverflow.com/questions/3765283/how-to-subtract-a-rectangle-from-another.
+     * This method works slightly differently by instead of calculating the minimum rectangles for the subtraction,
+     *  calculates all possible 8 rectangles from each side and corner.
+     *
+     * @param    rect Rectangle to subtract from this rectangle.
+     * @returns       The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
@@ -118,18 +143,54 @@ export class Rect {
      *  if dir.x < 0, shifts amt.x left
      *  if dir.x > 0, shifts amt.x right
      *  if dir.y < 0, shifts amt.y down
-     *  if dir.y > 0, shifts amt.y up
+     *  if dir.y > 0, shifts amt.y up.
      *
-     * @param dir The direction to shift this rectangle
-     * @param amt The amount to shift this rectangle
-     * @returns A new rectangle which is a shifted version of this one
+     * @param    dir                        The direction to shift this rectangle.
+     * @param    amt                        The amount to shift this rectangle.
+     * @param    constraints                a
+     * @param    constraints.minSize        a
+     * @param    constraints.minSize.width  a
+     * @param    constraints.minSize.height a
+     * @param    constraints.bounds         a
+     * @returns                             A new rectangle which is a shifted version of this one.
      */
-    public shift(dir: Vector, amt: Vector): Rect {
+    public shift(dir: Vector, amt: Vector,
+                 constraints?: { minSize?: { width: number, height: number }, bounds?: Rect }): Rect {
+        const minSize = (constraints?.minSize ?? { width: 0, height: 0 });
+        const bounds  = (constraints?.bounds  ?? new Rect(V(0, 0), V(Infinity, Infinity)));
+
+        const shift = dir.scale(amt);
+
+        // Make new rect in shifted directions
+        //  and clamped such that it's within the bounds and >= minSize
         return Rect.From({
-            left:   this.left   + (dir.x < 0 ? amt.x * dir.x : 0),
-            right:  this.right  + (dir.x > 0 ? amt.x * dir.x : 0),
-            top:    this.top    + (dir.y > 0 ? amt.y * dir.y : 0),
-            bottom: this.bottom + (dir.y < 0 ? amt.y * dir.y : 0),
+            left: (dir.x < 0 // Shift left
+                ? Clamp(
+                    this.left + shift.x,
+                    bounds.left,
+                    this.right - minSize.width,
+                ) : this.left),
+
+            right: (dir.x > 0 // Shift right
+                ? Clamp(
+                    this.right + shift.x,
+                    this.left + minSize.width,
+                    bounds.right,
+                ) : this.right),
+
+            bottom: (dir.y < 0 // Shift down
+                ? Clamp(
+                    this.bottom + shift.y,
+                    bounds.bottom,
+                    this.top - minSize.height,
+                ) : this.bottom),
+
+            top: (dir.y > 0 // Shift up
+                ? Clamp(
+                    this.top + shift.y,
+                    this.bottom + minSize.height,
+                    bounds.top,
+                ) : this.top),
         });
     }
 
