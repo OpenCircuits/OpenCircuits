@@ -41,7 +41,7 @@ const siteDirectories = ["shared", "analog", "digital", "landing"];
 const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
-    {"pattern": "{**,**/,,./}{C,c}onstants{**,/**,,}", "group": "external", "position": "after"},
+    {"pattern": "{**,**/,,./,../,*}{C,c}onstants{**,/**,,*}", "group": "external", "position": "after"},
     {"pattern": "Vector", "group": "external", "position": "after"},
     {"pattern": "math/**", "group": "external", "position": "after"},
     {"pattern": "test/helpers/*", "group": "external", "position": "after"},
