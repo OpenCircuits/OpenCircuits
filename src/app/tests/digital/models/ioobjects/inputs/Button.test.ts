@@ -15,10 +15,10 @@ describe("Button", () => {
 
     const [a, b, b2, g, o, o2] = Place(new Switch(), new Button() , new Button(),
                                        new ANDGate(), new LED() , new LED());
-    Connect(a, 0,  g, 0);
-    Connect(b, 0,  g, 1);
-    Connect(g, 0,  o, 0);
-    Connect(b2, 0, o2, 0);
+    Connect(a,  g);
+    Connect(b,  g);
+    Connect(g,  o);
+    Connect(b2, o2);
 
     test("Initial State", () => {
         b2.press();

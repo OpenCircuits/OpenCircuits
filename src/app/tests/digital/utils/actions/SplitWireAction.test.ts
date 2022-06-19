@@ -17,7 +17,7 @@ describe("Split Wire Action", () => {
 
         const [a, b] = Place(new Switch(), new LED());
 
-        const w = Connect(a, 0, b, 0).getWire();
+        const w = Connect(a, b)[0].getWire();
 
         // before split
         expect(designer.getObjects().length).toBe(2);

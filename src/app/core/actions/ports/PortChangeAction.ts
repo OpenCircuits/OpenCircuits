@@ -1,6 +1,6 @@
 import {Action} from "core/actions/Action";
 
-import {GetWirePath} from "core/utils/ComponentUtils";
+import {GetPath} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner, Port} from "core/models";
 
@@ -33,7 +33,7 @@ export abstract class PortChangeAction implements Action {
         //  that will be remove if target < ports.length
         while (ports.length > this.targetCount) {
             const wires = ports.pop()!.getWires();
-            action.add(wires.map(w => CreateDeletePathAction(this.designer, GetWirePath(w))));
+            action.add(wires.map(w => CreateDeletePathAction(this.designer, GetPath(w))));
         }
 
         return action;

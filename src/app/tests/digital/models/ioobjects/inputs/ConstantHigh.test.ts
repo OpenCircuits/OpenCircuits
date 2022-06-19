@@ -12,7 +12,7 @@ describe("Constant Low", () => {
     const {Place, Connect} = GetHelpers(designer);
 
     const [i, o] = Place(new ConstantHigh(), new LED());
-    Connect(i, 0,  o, 0);
+    Connect(i,  o);
 
     test("Check Status", () => {
         expect(o.isOn()).toBe(true);
