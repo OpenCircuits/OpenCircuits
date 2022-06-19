@@ -1,10 +1,11 @@
 import {ThunkAction} from "redux-thunk";
 
-import {AuthState} from "shared/api/auth/AuthState";
 import {QueryUserCircuits} from "shared/api/Circuits";
 
-import {SharedAppState} from "..";
-import {AllSharedActions} from "../actions";
+import {AuthState} from "shared/api/auth/AuthState";
+
+import {SharedAppState}                                  from "..";
+import {AllSharedActions}                                from "../actions";
 import {_LoadCircuitsFinish, _LoadCircuitsStart, _Login} from "../UserInfo";
 
 

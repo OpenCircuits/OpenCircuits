@@ -1,0 +1,68 @@
+.keyboardshortcuts__popup {
+    &__toggle__container {
+        white-space: nowrap;
+        margin-top: 20px;
+        margin-bottom: 5px;
+
+        & > button {
+            width: 50%;
+            margin: 0;
+            padding: 5px 0;
+
+            border: 1px solid rgba(0,0,0,0.2);
+
+            &:active {
+                background-color: #f5f5f5;
+            }
+        }
+
+        & > button[name="mac"] {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        & > button[name="win"] {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+    }
+    & table {
+        display: table;
+
+        border-spacing: 2px;
+        border-collapse: collapse;
+
+        border-color: grey;
+
+        & th, td {
+            width: 100%;
+            padding: 8px;
+
+            text-align: left;
+
+            color: black;
+            border-bottom: 1px solid #ddd;
+        }
+        & tbody {
+            white-space: nowrap;
+
+            & > tr {
+                & > td:nth-child(2) {
+                    & > #key {
+                        margin-right: 3px;
+                        padding: 3px 5px;
+
+                        white-space: nowrap;
+
+                        color: black;
+                        border: 1px solid #bbb;
+                        border-radius: 3px;
+                    }
+                }
+
+                &:hover {
+                    background-color: #f5f5f5;
+                }
+            }
+        }
+    }
+}

@@ -3,9 +3,11 @@ import "jest";
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalWire} from "digital/models/DigitalWire";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
+import {DigitalWire}            from "digital/models/DigitalWire";
+
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
 import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
@@ -21,7 +23,7 @@ describe("Add Group Action", () => {
         outPort.connect(wire);
         inPort.connect(wire);
 
-        const circuit = DigitalObjectSet.from([input, output, wire]);
+        const circuit = DigitalObjectSet.From([input, output, wire]);
         new AddGroupAction(designer, circuit).execute();
 
         expect(circuit.getWires().length).toBe(1);

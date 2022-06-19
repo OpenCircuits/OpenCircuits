@@ -12,12 +12,13 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 import {Dropdown} from "../Dropdown";
 import {AutoSaveToggle} from "./AutoSaveToggle";
 
+
 type Props = {
     helpers: CircuitInfoHelpers;
     info: CircuitInfo;
 }
 export const SettingsMenu = ({ helpers, info }: Props) => {
-    const {curMenu, debugInfo} = useSharedSelector(
+    const { curMenu, debugInfo } = useSharedSelector(
         state => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
     );
     const dispatch = useSharedDispatch();
@@ -33,24 +34,32 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
         <Dropdown open={(curMenu === "settings")}
                   onClick={() => dispatch(OpenHeaderMenu("settings"))}
                   onClose={() => dispatch(CloseHeaderMenus())}
-                  btnInfo={{title: "User Settings", src: "img/icons/settings.svg"}}>
+                  btnInfo={{ title: "User Settings", src: "img/icons/settings.svg" }}>
             <AutoSaveToggle helpers={helpers}/>
             {process.env.NODE_ENV === "development" &&
                 <>
                     <h1>Debug</h1>
                     <hr/>
-                    <SwitchToggle isOn={debugInfo.debugCullboxes}
-                                  onChange={() => dispatch(ToggleDebugCullboxes())}
-                                  text={`Debug Cullboxes : ${debugInfo.debugCullboxes ? "On" : "Off"}`} />
-                    <SwitchToggle isOn={debugInfo.debugPressableBounds}
-                                  onChange={() => dispatch(ToggleDebugPressableBounds())}
-                                  text={`Debug Pressable Bounds : ${debugInfo.debugPressableBounds ? "On" : "Off"}`} />
-                    <SwitchToggle isOn={debugInfo.debugSelectionBounds}
-                                  onChange={() => dispatch(ToggleDebugSelectionBounds())}
-                                  text={`Debug Selection Bounds : ${debugInfo.debugSelectionBounds ? "On" : "Off"}`} />
-                    <SwitchToggle isOn={debugInfo.debugNoFill}
-                                  onChange={() => dispatch(ToggleDebugNoFill())}
-                                  text={`Debug No Fill : ${debugInfo.debugNoFill ? "On" : "Off"}`} />
+                    <SwitchToggle
+                        isOn={debugInfo.debugCullboxes}
+                        onChange={() => dispatch(ToggleDebugCullboxes())}>
+                        Debug Cullboxes : {debugInfo.debugCullboxes ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugPressableBounds}
+                        onChange={() => dispatch(ToggleDebugPressableBounds())}>
+                        Debug Pressable Bounds : {debugInfo.debugPressableBounds ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugSelectionBounds}
+                        onChange={() => dispatch(ToggleDebugSelectionBounds())}>
+                        Debug Selection Bounds : {debugInfo.debugSelectionBounds ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugNoFill}
+                        onChange={() => dispatch(ToggleDebugNoFill())}>
+                        Debug No Fill : {debugInfo.debugNoFill ? "On" : "Off"}
+                    </SwitchToggle>
                 </>
             }
         </Dropdown>

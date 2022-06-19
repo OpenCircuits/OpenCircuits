@@ -1,6 +1,9 @@
 import {Vector} from "Vector";
+
 import {Camera} from "math/Camera";
+
 import {Action} from "core/actions/Action";
+
 
 export class MoveCameraAction implements Action {
     protected camera: Camera;

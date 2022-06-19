@@ -79,9 +79,21 @@
             }
         }
     }
+    &__history {
+        margin-top: math.div($header-height - $header-history-height, 2) - $header-border-width;
+        margin-right: 7px;
+
+        cursor: pointer;
+
+        background-color: transparent;
+
+        img {
+            height: $header-history-height;
+        }
+    }
     &__lock {
         margin-top: math.div($header-height - $header-lock-height, 2) - $header-border-width;
-        margin-right: 5px;
+        margin-right: 7px;
 
         cursor: pointer;
 

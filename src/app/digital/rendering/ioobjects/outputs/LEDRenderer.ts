@@ -1,25 +1,26 @@
 import {blend, parseColor} from "svg2canvas";
 
-import {LED_LIGHT_RADIUS,
-        LED_LIGHT_INTENSITY,
+import {LED_LIGHT_INTENSITY,
+        LED_LIGHT_RADIUS,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
+import {Images} from "core/utils/Images";
+
 import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Style}    from "core/rendering/Style";
+
+import {Circle} from "core/rendering/shapes/Circle";
 
 import {LED} from "digital/models/ioobjects";
 
-import {Images} from "digital/utils/Images";
-import {Circle} from "core/rendering/shapes/Circle";
-
 /**
- * Renders LEDs
- * * Draws LED svg
- * * If LED is on, draws glow the appropriate colour
+ * Renders LEDs using the following steps:
+ * - Draws LED svg
+ * - If LED is on, draws glow the appropriate color.
  */
 export const LEDRenderer = (() => {
     return {
@@ -44,6 +45,6 @@ export const LEDRenderer = (() => {
                 // Draw circle w/ gradient as fill
                 renderer.draw(new Circle(V(), LED_LIGHT_RADIUS), new Style(gradient));
             }
-        }
+        },
     };
 })();

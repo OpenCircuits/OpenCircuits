@@ -6,9 +6,9 @@ import {createStore, applyMiddleware} from "redux";
 import thunk, {ThunkMiddleware} from "redux-thunk";
 import {Provider} from "react-redux";
 
-import {Images} from "digital/utils/Images";
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
-import "digital/models/ioobjects";
+import {Images} from "core/utils/Images";
 
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
@@ -33,6 +33,10 @@ import {PasteHandler}         from "core/tools/handlers/PasteHandler";
 import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
+import "digital/models/ioobjects";
+
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
+
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
@@ -51,6 +55,8 @@ import {reducers}           from "./state/reducers";
 
 import {App} from "./containers/App";
 
+import ImageFiles from "./data/images.json";
+
 
 async function Init(): Promise<void> {
     const startPercent = 30;
@@ -58,7 +64,7 @@ async function Init(): Promise<void> {
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await Images.Load(onProgress);
+            await Images.Load(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
@@ -145,6 +151,12 @@ async function Init(): Promise<void> {
             info.history.addCallback(() => {
                 store.dispatch(SetCircuitSaved(false));
             });
+
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            }
 
             ReactDOM.render(
                 <React.StrictMode>

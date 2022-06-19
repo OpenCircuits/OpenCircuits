@@ -1,10 +1,12 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Encoder} from "digital/models/ioobjects/other/Encoder";
-import {Decoder} from "digital/models/ioobjects/other/Decoder";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Decoder} from "digital/models/ioobjects/other/Decoder";
+import {Encoder} from "digital/models/ioobjects/other/Encoder";
+
 
 
 describe("Encoder", () => {
@@ -12,7 +14,7 @@ describe("Encoder", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {AutoPlace} = GetHelpers(designer);
 
-        const [e, [i1,i2,i3,i4], [o1,o2]] = AutoPlace(new Encoder());
+        const [, [i1,i2,i3,i4], [o1,o2]] = AutoPlace(new Encoder());
 
         test("0 0 0 1 -> 0 0", () => {
             i4.activate(false);
@@ -56,7 +58,7 @@ describe("Encoder", () => {
         const designer = new DigitalCircuitDesigner(0);
         const {AutoPlace} = GetHelpers(designer);
 
-        const [e, [i1,i2], [o1,o2,o3,o4]] = AutoPlace(new Decoder());
+        const [, [i1,i2], [o1,o2,o3,o4]] = AutoPlace(new Decoder());
 
         test("Initial State", () => {
             expect(o4.isOn()).toBe(false);

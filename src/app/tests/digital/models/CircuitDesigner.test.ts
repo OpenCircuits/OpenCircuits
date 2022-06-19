@@ -1,10 +1,13 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("CircuitDesigner", () => {
@@ -49,7 +52,7 @@ describe("CircuitDesigner", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
-        Connect(a, 0,  o, 0);
+        Connect(a,  o);
 
         const objects = designer.getObjects();
         expect(objects.length).toBe(2);
@@ -95,7 +98,7 @@ describe("CircuitDesigner", () => {
             const {Place, Connect, Remove} = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
-            Connect(a, 0,  o, 0);
+            Connect(a,  o);
 
             expect(designer.getObjects().length).toBe(2);
             expect(designer.getWires().length).toBe(1);
@@ -117,7 +120,7 @@ describe("CircuitDesigner", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
-        Connect(a, 0,  o, 0);
+        Connect(a,  o);
 
         expect(designer.getObjects().length).toBe(2);
         expect(designer.getWires().length).toBe(1);

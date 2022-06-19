@@ -1,17 +1,18 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {Switch, LED,
-        DigitalNode} from "digital/models/ioobjects";
-
-import {Setup}      from "test/helpers/Setup";
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {DigitalNode, LED,
+        Switch} from "digital/models/ioobjects";
+
 
 
 describe("Split Wire Tool", () => {
-    const {camera, designer, input} = Setup();
+    const {designer, input} = Setup();
     const {Place} = GetHelpers(designer);
 
     afterEach(() => {

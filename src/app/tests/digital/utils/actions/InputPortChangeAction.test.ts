@@ -1,12 +1,15 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {ANDGate}                from "digital/models/ioobjects/gates/ANDGate";
-import {BUFGate}                from "digital/models/ioobjects/gates/BUFGate";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
+
+
 
 
 describe("Input Port Change Action", () => {
@@ -43,8 +46,8 @@ describe("Input Port Change Action", () => {
 
         const [gate, buf1, buf2, buf3, buf4] = Place(new ANDGate(), new BUFGate(), new BUFGate(),
                                                      new BUFGate(), new BUFGate());
-        Connect(buf1, 0, gate, 0);
-        Connect(buf2, 0, gate, 1);
+        Connect(buf1, gate);
+        Connect(buf2, gate);
 
         // before change
         expect(gate.getInputPortCount().getValue()).toBe(2);
@@ -57,8 +60,8 @@ describe("Input Port Change Action", () => {
         const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
 
         // Connect some more things
-        const c1 = Connect(buf3, 0, gate, 2);
-        const c2 = Connect(buf4, 0, gate, 3);
+        const [c1] = Connect(buf3, gate);
+        const [c2] = Connect(buf4, gate);
 
         // before change2
         expect(gate.getInputPortCount().getValue()).toBe(4);
@@ -119,8 +122,8 @@ describe("Input Port Change Action", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [gate, buf1] = Place(new ANDGate(), new BUFGate());
-        Connect(buf1, 0, gate, 0);
-        Connect(buf1, 0, gate, 1);
+        Connect(buf1, gate);
+        Connect(buf1, gate);
 
         // before change
         expect(gate.getInputPortCount().getValue()).toBe(2);
@@ -132,8 +135,8 @@ describe("Input Port Change Action", () => {
         const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
 
         // Connect some more things
-        const c1 = Connect(buf1, 0, gate, 2);
-        const c2 = Connect(buf1, 0, gate, 3);
+        const [c1] = Connect(buf1, gate);
+        const [c2] = Connect(buf1, gate);
 
         // before change2
         expect(gate.getInputPortCount().getValue()).toBe(4);

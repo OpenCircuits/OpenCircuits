@@ -1,5 +1,6 @@
 import {ASCIIFont} from "./ASCIIFont";
 
+
 export const BCDFont: Record<string, number[][]> =
     Object.fromEntries(
         Object.entries(ASCIIFont).map(

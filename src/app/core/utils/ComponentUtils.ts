@@ -1,8 +1,6 @@
 import {serializable, Serialize, Deserialize} from "serialeazy";
 
 import {IO_PORT_LINE_WIDTH,
-        EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN,
         GRID_SIZE} from "./Constants";
 
 import {Vector, V} from "Vector";
@@ -20,10 +18,6 @@ import {Component} from "core/models/Component";
 import {Wire} from "core/models/Wire";
 import {Node, isNode} from "core/models/Node";
 import {Port} from "core/models/ports/Port";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
@@ -104,32 +98,73 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
 /**
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
- *
- * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (including w)
+ * @param   full True if you want to return everything in the circuit otherwise returns
+ *               only the wires/nodes connected to the wire.
+ * @param   w    The wire to start from
+ * @return       The array of wires/WirePorts in this path (including w)
  */
-export function GetPath(w: Wire | Node): Array<Wire | Node> {
+export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
     const queue = new Array<Wire | Node>(w);
     const visited = new Set<Wire | Node>();
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
         const q = queue.shift()!;
 
         visited.add(q);
         path.push(q);
         if (q instanceof Wire) {
-            const p1 = q.getP1Component();
-            const p2 = q.getP2Component();
-            if (isNode(p1) && !visited.has(p1))
-                queue.push(p1);
-            if (isNode(p2) && !visited.has(p2))
-                queue.push(p2);
+            if(full) {
+                const p1 = q.getP1Component();
+
+                if (isNode(p1) && !visited.has(p1))
+                    queue.push(p1);
+
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+            else {
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+
         } else {
             // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
+        }
+    }
+
+    return path;
+}
+
+/**
+ * Gets all the components connected to this component
+ *  Note: this path is UN-ORDERED!
+ *
+ * @param  c The component to start from
+ * @return   The array of components in the same circuit (including c)
+ */
+export function GetComponentPath(c: Component): Array<Component> {
+    const path: Array<Component> = [];
+
+    // Breadth First Search
+    const queue = new Array<Component>(c);
+    const visited = new Set<Component>();
+
+    while (queue.length > 0) {
+        const q = queue.shift()!;
+
+        visited.add(q);
+        path.push(q);
+        for (const w of q.getConnections()) {
+            if (!visited.has(w.getP1Component()))
+                queue.push(w.getP1Component());
+            if (!visited.has(w.getP2Component()))
+                queue.push(w.getP2Component());
         }
     }
 
@@ -143,32 +178,37 @@ export function GetPath(w: Wire | Node): Array<Wire | Node> {
  * @param  obj  The component
  * @return      An array of connections + WirePorts
  */
-export function GetAllPaths(obj: Component): Array<Wire | Node> {
+export function GetAllPaths(obj: Component, full = true): Array<Wire | Node> {
     // Get all distinct connections
     const wires = [...new Set(obj.getConnections())];
 
     // Get all distinct paths
-    return [...new Set(wires.flatMap((w) => GetPath(w)))];
+
+    return [...new Set(wires.flatMap((w) => GetPath(w,full)))];
+
 }
 
 /**
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
- *
- * @param  objects The list of objects
+ * @param full true if you want to return everything in the circuit otherwise
+ *             returns only the wires/nodes connected to the selected wire.
+ * @param objects The list of objects
  * @return         A SeparatedComponentCollection of the objects
  */
-export function GatherGroup(objects: IOObject[]): IOObjectSet {
+export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     // Gather all connecting paths
     const wires = group.getWires();
     const components = group.getComponents();
 
-    const paths = [...new Set(wires.flatMap((w) => GetPath(w))
-            .concat(components.flatMap((c) => GetAllPaths(c))))];
+    const paths = [...new Set([
+        ...wires.flatMap((w) => GetPath(w, full)),
+        ...components.flatMap((c) => GetAllPaths(c, full))
+    ])];
 
-    return new IOObjectSet((components as IOObject[]).concat(wires, paths));
+    return new IOObjectSet([...components, ...wires, ...paths]);
 }
 
 /**
@@ -303,8 +343,8 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 // Find a minimal bounding box enclosing all cullable objects in a given array
 // Note that if the array is empty, min and max will both be (0, 0)
 export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
-    const min = Vector.min(...all.map(o => o.getMinPos()));
-    const max = Vector.max(...all.map(o => o.getMaxPos()));
+    const min = Vector.Min(...all.map(o => o.getMinPos()));
+    const max = Vector.Max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
 }
@@ -321,16 +361,22 @@ export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: nu
     if (objs.length === 0)
         return [V(), 1];
 
-    const bbox = CircuitBoundingBox(objs);
-    const finalPos = bbox.getCenter();
+    const { left, right, bottom, top } = camera.getMargin();
 
-    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const marginSize = V(left - right, top - bottom);
+
+    const bbox = CircuitBoundingBox(objs);
+
+    const screenSize = camera.getSize().sub(V(left, bottom)); // Bottom right corner of screen
     const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
 
     // Determine which bbox dimension will limit zoom level
-    const xRatio = bbox.getWidth()/worldSize.x;
-    const yRatio = bbox.getHeight()/worldSize.y;
-    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+    const ratio = V(bbox.getWidth() / worldSize.x, bbox.getHeight() / worldSize.y);
+    const finalZoom = camera.getZoom()*Math.max(ratio.x, ratio.y)*padding;
+
+    // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd
+    //  screen size so only half of the margin on the top/left need to be contributed
+    const finalPos = bbox.getCenter().sub(marginSize.scale(0.5 * finalZoom));
 
     return [finalPos, finalZoom];
 }

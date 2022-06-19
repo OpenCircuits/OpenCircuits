@@ -1,13 +1,17 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Split Wire Action", () => {
@@ -17,7 +21,7 @@ describe("Split Wire Action", () => {
 
         const [a, b] = Place(new Switch(), new LED());
 
-        const w = Connect(a, 0, b, 0).getWire();
+        const w = Connect(a, b)[0].getWire();
 
         // before split
         expect(designer.getObjects().length).toBe(2);

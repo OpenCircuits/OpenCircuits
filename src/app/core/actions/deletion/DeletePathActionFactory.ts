@@ -1,15 +1,17 @@
 import {GroupAction} from "core/actions/GroupAction";
-import {DeleteAction} from "core/actions/addition/PlaceAction";
+
 import {DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {DeleteAction}     from "core/actions/addition/PlaceAction";
 
 import {CircuitDesigner} from "core/models";
-import {Wire}            from "core/models/Wire";
-import {Component}       from "core/models/Component";
-import {Node}            from "core/models/Node";
+
+import {Component} from "core/models/Component";
+import {Node}      from "core/models/Node";
+import {Wire}      from "core/models/Wire";
 
 
 export function CreateDeletePathAction(designer: CircuitDesigner, path: Array<Wire | (Component & Node)>): GroupAction {
-    const action = new GroupAction();
+    const action = new GroupAction([], "Delete Path Action");
 
     // Remove wires first
     path.filter((p) => p instanceof Wire)

@@ -1,10 +1,13 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Clock}           from "digital/models/ioobjects/inputs/Clock";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
-
 import {GetHelpers} from "test/helpers/Helpers";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Clock} from "digital/models/ioobjects/inputs/Clock";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe ("Clock", () => {
@@ -12,7 +15,7 @@ describe ("Clock", () => {
     const {Place, Connect} = GetHelpers(designer);
 
     const [c, l] = Place(new Clock(), new LED());
-    Connect(c, 0, l, 0);
+    Connect(c, l);
 
     test("Initial State", () => {
         expect(l.isOn()).toBe(true);

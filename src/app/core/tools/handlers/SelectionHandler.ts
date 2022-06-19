@@ -1,14 +1,17 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
+
+import {GroupAction} from "core/actions/GroupAction";
+import {ShiftAction} from "core/actions/ShiftAction";
+
+import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+
+import {Wire} from "core/models";
 
 import {EventHandler} from "../EventHandler";
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
-import {GroupAction} from "core/actions/GroupAction";
-import {GetAllPorts} from "core/utils/ComponentUtils";
-import {Component, Wire} from "core/models";
-import {ShiftAction} from "core/actions/ShiftAction";
 
 
 export const SelectionHandler: EventHandler = ({
@@ -16,7 +19,7 @@ export const SelectionHandler: EventHandler = ({
         (event.type === "click" && event.button === LEFT_MOUSE_BUTTON),
 
     getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
-        const action = new GroupAction();
+        const action = new GroupAction([], "Selection Handler");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 
         // Clear previous selections if not holding shift
@@ -43,5 +46,5 @@ export const SelectionHandler: EventHandler = ({
         // https://github.com/OpenCircuits/OpenCircuits/issues/622
         if (!action.isEmpty())
             history.add(action);
-    }
+    },
 });

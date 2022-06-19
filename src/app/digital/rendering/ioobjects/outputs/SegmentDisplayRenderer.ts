@@ -1,28 +1,31 @@
-import {DEFAULT_BORDER_WIDTH,
-        DEFAULT_BORDER_COLOR,
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
         DEFAULT_FILL_COLOR,
-        SELECTED_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
         DEFAULT_ON_COLOR,
-        SEGMENT_DISPLAY_WIDTH} from "core/utils/Constants";
+        SEGMENT_DISPLAY_WIDTH,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
+
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
+import {Images} from "core/utils/Images";
+
 import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Line}      from "core/rendering/shapes/Line";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style} from "core/rendering/Style";
 
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
-import {Images} from "digital/utils/Images";
-import {Line} from "core/rendering/shapes/Line";
 
 /**
- * Renders SegmentDisplay
- * * Colour and style border and fill as per selection status
- * * Draws line spanning length between first and last input ports
- * * Draw segments one by one - prioritize on colour, else colour as per selection status
+ * Renders SegmentDisplay using the following steps:
+ * - Color and style border and fill as per selection status,
+ * - Draws line spanning length between first and last input ports,
+ * - Draw segments one by one - prioritize on colour, else colour as per selection status.
  */
 export const SegmentDisplayRenderer = (() => {
 
@@ -55,6 +58,6 @@ export const SegmentDisplayRenderer = (() => {
                 const size = V(img.width, img.height).scale(0.1);
                 renderer.image(img, pos, size, col);
             }
-        }
+        },
     };
 })();

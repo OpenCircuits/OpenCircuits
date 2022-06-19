@@ -1,16 +1,18 @@
+import {Selectable}        from "core/utils/Selectable";
+import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../GroupAction";
+
+import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {Selectable} from "core/utils/Selectable";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 
 export class SelectAction extends ReversableAction {
     private selections: SelectionsWrapper;
     private obj: Selectable;
 
-    public constructor(selections: SelectionsWrapper, obj: Selectable, flip: boolean = false) {
+    public constructor(selections: SelectionsWrapper, obj: Selectable, flip = false) {
         super(flip);
 
         this.selections = selections;
@@ -45,12 +47,12 @@ export class DeselectAction extends SelectAction {
 export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
     return objs.reduce((acc, s) => {
         return acc.add(new SelectAction(selections, s));
-    }, new GroupAction());
+    }, new GroupAction([], "Select Action"));
 }
 
 export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
     const objs = selections.get();
     return objs.reduce((acc, s) => {
         return acc.add(new DeselectAction(selections, s));
-    }, new GroupAction());
+    }, new GroupAction([], "Deselect All Action"));
 }

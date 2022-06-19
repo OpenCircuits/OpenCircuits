@@ -1,20 +1,22 @@
-import {SELECTED_BORDER_COLOR,
-        DEFAULT_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
+import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         DEFAULT_ON_COLOR,
-        GRAPH_LINE_WIDTH} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
 import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Style}    from "core/rendering/Style";
+
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Oscilloscope} from "digital/models/ioobjects";
 
+
+const GRAPH_LINE_WIDTH = 4;
 
 export const OscilloscopeRenderer = (() => {
     return {
@@ -68,6 +70,6 @@ export const OscilloscopeRenderer = (() => {
             renderer.closePath();
             renderer.stroke();
             renderer.restore();
-        }
+        },
     };
 })();

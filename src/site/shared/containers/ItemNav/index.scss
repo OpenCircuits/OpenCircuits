@@ -4,7 +4,6 @@ $tab-width: 18px;
 $tab-padding: 8px;
 
 
-
 .itemnav {
     $top-margin: 10px;
     $top-height: 35px;
@@ -59,8 +58,12 @@ $tab-padding: 8px;
 
         & img {
             position: relative;
-            opacity: 1;
+
+            width: 80px;
+            height: 80px;
             z-index: 100;
+
+            opacity: 1;
 
             filter: drop-shadow(3px 3px 4px #888);
         }
@@ -153,6 +156,7 @@ $tab-padding: 8px;
             border-color: transparent;
 
             cursor: pointer;
+            pointer-events: none;
 
             transition: 0.5s;
 
@@ -168,7 +172,7 @@ $tab-padding: 8px;
 
             &:after {
                 content: '×';
-
+                pointer-events: all;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
@@ -184,13 +188,14 @@ $tab-padding: 8px;
                     left: 50%;
                     top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
                 }
+
             }
         }
 
         &__closed > div {
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
-
+            pointer-events: all;
             &:after {
                 left: 50%;
                 top: 50%;
@@ -285,6 +290,10 @@ $tab-padding: 8px;
                 }
 
                 & > div {
+                    $item-container-width: 100px;
+                    $item-container-padding: 10px;
+                    $item-width: $item-container-width - 2*$item-container-padding;
+
                     position: relative;
                     display: inline-block;
 
@@ -298,13 +307,18 @@ $tab-padding: 8px;
                     padding: 0;
                     margin: 0;
 
-                    width: 100px;
-                    padding: 10px;
+                    width: $item-container-width;
+                    padding: $item-container-padding;
 
                     transition: 0.3s;
                     word-break: break-word;
 
                     color: darken($secondary-color, 5%);
+
+                    & > button > img {
+                        width: $item-width;
+                        height: $item-width;
+                    }
 
                     & > div {
                         position: absolute;

@@ -313,7 +313,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return DigitalObjectSet.from([...this.objects, ...this.wires]);
+        return DigitalObjectSet.From([...this.objects, ...this.wires]);
     }
 
     public getObjects(): DigitalComponent[] {

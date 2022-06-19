@@ -1,15 +1,19 @@
 import "jest";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {GetHelpers} from "test/helpers/Helpers";
 
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {Multiplexer}            from "digital/models/ioobjects/other/Multiplexer";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
+import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
+
+
 
 
 describe("Select Port Change Action", () => {
@@ -51,7 +55,7 @@ describe("Select Port Change Action", () => {
         const [sw, n, mux] = Place(new Switch(), new DigitalNode(), new Multiplexer());
 
         // Connect switch to node and then then to input and select ports of Mux
-        Connect(sw, 0, n, 0);
+        Connect(sw, n);
         Connect(n, 0, mux, 3);
         new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]).execute();
 

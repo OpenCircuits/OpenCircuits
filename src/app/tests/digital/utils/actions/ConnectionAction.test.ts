@@ -1,12 +1,15 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Connection Action", () => {
