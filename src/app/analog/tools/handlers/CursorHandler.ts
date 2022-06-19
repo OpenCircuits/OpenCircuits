@@ -12,10 +12,6 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
 
 
-export type Corner = "topleft" | "topright" | "bottomleft" | "bottomright";
-export type Edge = "left" | "right" | "top" | "bottom";
-export type ResizeArea = Edge | Corner;
-
 const EDGE_SIZE = DEFAULT_BORDER_WIDTH*5;
 
 const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map(s => `${s}-resize` as Cursor);

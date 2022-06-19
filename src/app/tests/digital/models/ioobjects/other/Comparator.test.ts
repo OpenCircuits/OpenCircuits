@@ -18,10 +18,8 @@ describe("Comparator", () => {
     c.setInputPortCount(4);
 
     // Connect everything together
-    for (let i = 0; i < 4; i++) {
-        Connect(a, i, c, i);
-        Connect(b, i, c, i+4);
-    }
+    Connect(a, c);
+    Connect(b, c);
     Connect(c, Comparator.LT_PORT, lt, 0);
     Connect(c, Comparator.EQ_PORT, eq, 0);
     Connect(c, Comparator.GT_PORT, gt, 0);

@@ -49,7 +49,7 @@ describe("CircuitDesigner", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
-        Connect(a, 0,  o, 0);
+        Connect(a,  o);
 
         const objects = designer.getObjects();
         expect(objects.length).toBe(2);
@@ -95,7 +95,7 @@ describe("CircuitDesigner", () => {
             const {Place, Connect, Remove} = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
-            Connect(a, 0,  o, 0);
+            Connect(a,  o);
 
             expect(designer.getObjects().length).toBe(2);
             expect(designer.getWires().length).toBe(1);
@@ -117,7 +117,7 @@ describe("CircuitDesigner", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
-        Connect(a, 0,  o, 0);
+        Connect(a,  o);
 
         expect(designer.getObjects().length).toBe(2);
         expect(designer.getWires().length).toBe(1);

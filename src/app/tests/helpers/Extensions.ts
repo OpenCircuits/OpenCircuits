@@ -79,32 +79,31 @@ expect.extend({
         if (!(source instanceof DigitalComponent))
             throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 
-        let {depth} = options;
-
-        let pass = false;
+        const { depth } = options;
 
         const visited = new Set<DigitalComponent>();
-        const queue = [source];
-        while (queue.length > 0 && depth > 0) {
-            const [cur] = queue.splice(0, 1);
-            visited.add(cur);
+        function bfs(layer: DigitalComponent[], depth: number): boolean {
+            if (depth === 0 || layer.length === 0)
+                return false;
 
-            const connections = [
-                ...cur.getOutputs().map(w => w.getOutputComponent()),
-                ...cur.getInputs().map(w => w.getInputComponent()),
-            ];
-            for (const c of connections) {
-                if (c === target) {
-                    pass = true;
-                    depth = -1;
-                    break;
-                }
-                if (!visited.has(c))
-                    queue.push(c);
+            const queue = [] as DigitalComponent[];
+            for (const cur of layer) {
+                visited.add(cur);
+
+                const connections = [
+                    ...cur.getOutputs().map(w => w.getOutputComponent()),
+                    ...cur.getInputs().map(w => w.getInputComponent()),
+                ].filter(c => !visited.has(c));
+
+                if (connections.includes(target))
+                    return true;
+
+                queue.push(...connections);
             }
-
-            depth--;
+            return bfs(queue, depth-1);
         }
+
+        const pass = bfs([source], depth);
 
         return {
             message: () => `expected ${source.getName()} to ${pass ? "" : "not "}be connected to ${target.getName()}` +

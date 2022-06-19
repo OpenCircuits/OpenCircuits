@@ -16,7 +16,7 @@ describe("IC Action", () => {
         const {Place, Connect} = GetHelpers(designer);
 
         const [a, b] = Place(new Switch(), new LED());
-        Connect(a, 0, b, 0);
+        Connect(a, b);
 
         // before ic creation
         expect(designer.getWires().length).toBe(1);

@@ -12,14 +12,41 @@ import {Wire} from "core/models";
 
 
 export function GetHelpers(designer: DigitalCircuitDesigner) {
+    function Place<T extends DigitalComponent[]>(...objs: T) {
+        return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
+    }
+
+    // type ObjConnectInfo = { c: DigitalComponent, i?: number };
+    // function Connect(c1: ObjConnectInfo, c2: ObjConnectInfo): ConnectionAction[] {
+    //     if (c1.i && c2.i) {
+    //         return [new ConnectionAction(designer, c1.c.getOutputPort(c1.i), c2.c.getInputPort(c2.i)).execute() as ConnectionAction];
+    //     }
+    // }
+    function Connect(c1: DigitalComponent, c2: DigitalComponent): ConnectionAction[];
+    function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): ConnectionAction;
+    function Connect(...args: [DigitalComponent, DigitalComponent] | [DigitalComponent, number, DigitalComponent, number]) {
+        switch (args.length) {
+            case 2: {
+                const [c1, c2] = args;
+                // Connect each port
+                const outs = c1.getOutputPorts();
+                const ins = c2.getInputPorts().filter(i => i.getWires().length === 0);
+
+                return Array(Math.min(outs.length, ins.length))
+                    .fill(0)
+                    .map((_, i) => new ConnectionAction(designer, outs[i], ins[i]).execute()) as ConnectionAction[];
+            }
+            case 4: {
+                const [c1, i1, c2, i2] = args;
+                return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2)).execute() as ConnectionAction;
+            }
+        }
+    }
+
+
     return {
-        Place: <T extends DigitalComponent[]>(...objs: T) => {
-            return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
-        },
-        Connect: (c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number) => {
-            return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2))
-                       .execute() as ConnectionAction;
-        },
+        Place,
+        Connect,
         // Given a DigitalComponent
         // Creates Switches for each input and LEDs for each output
         // Connects them together, and returns them
