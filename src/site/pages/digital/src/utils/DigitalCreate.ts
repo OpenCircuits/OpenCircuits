@@ -21,10 +21,10 @@ import {IC, LED, Switch} from "digital/models/ioobjects";
  *  This does more then simply using the `Create` function since it also takes into
  *  account ICs.
  *
- * @param itemId The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
- *               corresponds to the index of the IC relative to the list of ICs in `designer`.
+ * @param itemId   The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
+ *           corresponds to the index of the IC relative to the list of ICs in `designer`.
  * @param designer The circuit designer for the items. Needed for access to ICs.
- * @returns The DigitalComponent associated with the given ID.
+ * @returns          The DigitalComponent associated with the given ID.
  * @throws If the itemId is an invalid item or IC.
  */
 export function DigitalCreate(itemId: string, designer: DigitalCircuitDesigner): DigitalComponent {
@@ -48,12 +48,12 @@ export function DigitalCreate(itemId: string, designer: DigitalCircuitDesigner):
  * Utility function that creates `N` DigitalComponents from the given `itemId`. It also
  *  will position them vertically starting at the given `pos` vector.
  *
- * @param pos The position of the first component.
- * @param itemId The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
- *               corresponds to the index of the IC relative to the list of ICs in `designer`.
+ * @param pos      The position of the first component.
+ * @param itemId   The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
+ *           corresponds to the index of the IC relative to the list of ICs in `designer`.
  * @param designer The cirucit designer for the items. Needed for access to ICs.
- * @param N The number of items to create.
- * @returns The list of DigitalComponents associated with the given ID and of length `N`.
+ * @param N        The number of items to create.
+ * @returns          The list of DigitalComponents associated with the given ID and of length `N`.
  * @throws If the itemId is an invalid item or IC.
  */
 export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCircuitDesigner,
@@ -89,13 +89,13 @@ export enum SmartPlaceOptions {
  *  output and automatically connect them together. Starts placing at position `pos`.
  * This function is directly used for implementation of issue #689.
  *
- * @param pos The position of the first component.
- * @param itemId The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
- *               corresponds to the index of the IC relative to the list of ICs in `designer`.
+ * @param pos      The position of the first component.
+ * @param itemId   The ID of the item, if an IC then it has the form: `ic/INDEX`, where INDEX
+ *           corresponds to the index of the IC relative to the list of ICs in `designer`.
  * @param designer The cirucit designer for the items. Needed for access to ICs.
- * @param N The number of items to create.
- * @param options The options used to indicate what connected components to create.
- * @returns A GroupAction to place and connect all the components.
+ * @param N        The number of items to create.
+ * @param options  The options used to indicate what connected components to create.
+ * @returns          A GroupAction to place and connect all the components.
  * @throws If the itemId is an invalid item or IC.
  */
 export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuitDesigner,

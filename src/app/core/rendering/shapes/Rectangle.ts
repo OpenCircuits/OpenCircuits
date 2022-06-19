@@ -21,14 +21,14 @@ export class Rectangle implements Shape {
     /**
      * Constructor for Rectangle.
      *
-     * @param pos Position.
+     * @param pos  Position.
      * @param size Dimensions.
      */
     public constructor(pos: Vector, size: Vector);
     /**
      * Constructor for Rectangle.
      *
-     * @param pos Position or transform spatial information.
+     * @param pos  Position or transform spatial information.
      * @param size Dimensions.
      */
     public constructor(pos: Vector | Transform, size?: Vector) {

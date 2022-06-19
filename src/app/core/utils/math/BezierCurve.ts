@@ -72,12 +72,12 @@ export class BezierCurve {
     /**
      * Calculates t by using the quadratic formula with the given a, b, and c.
      *
-     * @param a The a value in the quadratic formula.
-     * @param b The b value in the quadratic formula.
-     * @param c The c value in the quadratic formula.
+     * @param a   The a value in the quadratic formula.
+     * @param b   The b value in the quadratic formula.
+     * @param c   The c value in the quadratic formula.
      * @param mod The +/- in the quadratic formula.
      * @param end Returns end if result is undefined.
-     * @returns The value of t, where t represents how far along the bezier curve the given point is.
+     * @returns     The value of t, where t represents how far along the bezier curve the given point is.
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
         if (a === 0)
@@ -200,7 +200,7 @@ export class BezierCurve {
      * Calculates x coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The x coordinate of t.
+     * @returns   The x coordinate of t.
      */
     public getX(t: number): number {
         const it = 1 - t;
@@ -211,7 +211,7 @@ export class BezierCurve {
      * Calculates y coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The y coordinate of t.
+     * @returns   The y coordinate of t.
      */
     public getY(t: number): number {
         const it = 1 - t;
@@ -222,7 +222,7 @@ export class BezierCurve {
      * Calculates x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The x and y coordinates of t.
+     * @returns   The x and y coordinates of t.
      */
     public getPos(t: number): Vector {
         return V(this.getX(t), this.getY(t));
@@ -232,7 +232,7 @@ export class BezierCurve {
      * Calculates the 1st derivative of x coord of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivative of x coord of t.
+     * @returns   The 1st derivative of x coord of t.
      */
     public getDX(t: number): number {
         const it = 1 - t;
@@ -243,7 +243,7 @@ export class BezierCurve {
      * Calculates the 1st derivative of y coord of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivative of y coord of t.
+     * @returns   The 1st derivative of y coord of t.
      */
     public getDY(t: number): number {
         const it = 1 - t;
@@ -254,7 +254,7 @@ export class BezierCurve {
      * Calculates the 1st derivatives of x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivatives of x and y coordinates of t.
+     * @returns   The 1st derivatives of x and y coordinates of t.
      */
     public getDerivative(t: number): Vector {
         return V(this.getDX(t), this.getDY(t));
@@ -264,7 +264,7 @@ export class BezierCurve {
      * Calculates the 2nd derivative of x coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of x coordinate of t.
+     * @returns   The 2nd derivative of x coordinate of t.
      */
     public getDDX(t: number): number {
         const m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
@@ -276,7 +276,7 @@ export class BezierCurve {
      * Calculates the 2nd derivative of y coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of y coordinate of t.
+     * @returns   The 2nd derivative of y coordinate of t.
      */
     public getDDY(t: number): number {
         const m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
@@ -288,7 +288,7 @@ export class BezierCurve {
      * Calculates the 2nd derivatives of x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of x and y coordinates of t.
+     * @returns   The 2nd derivative of x and y coordinates of t.
      */
     public get2ndDerivative(t: number): Vector {
         return V(this.getDDX(t), this.getDDY(t));

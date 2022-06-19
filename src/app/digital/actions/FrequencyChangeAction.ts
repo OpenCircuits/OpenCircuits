@@ -22,7 +22,7 @@ export class FrequencyChangeAction implements Action {
      * Initialize a FrequencyChangeAction with the component and
      * target frequency given.
      *
-     * @param component The component that we need to change the frequency.
+     * @param component  The component that we need to change the frequency.
      * @param targetFreq The frequency that we want the clock change to.
      */
     public constructor(component: TimedComponent, targetFreq: number) {

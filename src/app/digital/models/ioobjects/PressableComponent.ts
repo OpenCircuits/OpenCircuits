@@ -46,9 +46,9 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
      * Determines whether or not a point is within
      *  this component's "pressable" bounds.
      *
-     * @param  v The point.
+     * @param v The point.
      * @returns   True if the point is within this component,
-     *           false otherwise.
+     *    false otherwise.
      */
     public isWithinPressBounds(v: Vector): boolean {
         return RectContains(this.pressableBox, v);

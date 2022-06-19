@@ -18,8 +18,8 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
  *  NANDGates, NORGates, and XNORGates respectively. This action is implicitly executed on creation.
  *
  * @param designer The designer in which the action is taking place.
- * @param circuit The circuit to modify, must be placed in designer.
- * @returns The action to create the negated circuit and the negated circuit.
+ * @param circuit  The circuit to modify, must be placed in designer.
+ * @returns          The action to create the negated circuit and the negated circuit.
  */
 export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                                          circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {

@@ -16,7 +16,7 @@ export class QuadCurve implements Shape {
      *
      * @param p1 The start point.
      * @param p2 The end point.
-     * @param c The control point.
+     * @param c  The control point.
      */
     public constructor(p1: Vector, p2: Vector, c: Vector) {
         this.p1 = p1;

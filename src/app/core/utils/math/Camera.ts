@@ -38,9 +38,9 @@ export class Camera {
      * and initializes all the variables.
      * It sets dirty to true which means that.
      *
-     * @param width The width of the camera (screen).
-     * @param height The height of the camera (screen).
-     * @param startPos The starting position in the camera to 0,0 (vector).
+     * @param width     The width of the camera (screen).
+     * @param height    The height of the camera (screen).
+     * @param startPos  The starting position in the camera to 0,0 (vector).
      * @param startZoom This initialzed zoom to 1.
      */
     public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom = 1) {
@@ -77,7 +77,7 @@ export class Camera {
     /**
      * This function resizes the height and width and sets dirty to true when the screen is moved.
      *
-     * @param width The new width of screen.
+     * @param width  The new width of screen.
      * @param height The new height of screen.
      */
     public resize(width: number, height: number): void {
@@ -99,7 +99,7 @@ export class Camera {
     /**
      * The sets the zoom variable to the new zoom number.
      *
-     * @param zoom  The new zoom number (how much it's being zoomed in).
+     * @param zoom The new zoom number (how much it's being zoomed in).
      */
     public setZoom(zoom: number): void{
         this.dirty = true;
@@ -144,7 +144,7 @@ export class Camera {
      * This function returns true or false if this.transform contains the transform passed through.
      *
      * @param transform Comparing this with this.transform.
-     * @returns True or false.
+     * @returns           True or false.
      */
     public cull(transform: Transform): boolean {
         return TransformContains(transform, this.getTransform());
@@ -211,8 +211,8 @@ export class Camera {
     /**
      * Returns the current screen position with formula using the vector v and getCenter.
      *
-     * @param v  The vector multiplied to inv.
-     * @returns A vector of the screen position.
+     * @param v The vector multiplied to inv.
+     * @returns   A vector of the screen position.
      */
     public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.getCenter());
@@ -221,7 +221,7 @@ export class Camera {
      * Returns the global position not the local screens position.
      *
      * @param v The current position.
-     * @returns The global position.
+     * @returns   The global position.
      */
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));
@@ -239,11 +239,11 @@ export class Camera {
     /**
      * This sets the margin for the camera.
      *
-     * @param newMargin The new margins for the camera.
-     * @param newMargin.left The left margin of the camera.
-     * @param newMargin.right The right margin of the camera.
+     * @param newMargin        The new margins for the camera.
+     * @param newMargin.left   The left margin of the camera.
+     * @param newMargin.right  The right margin of the camera.
      * @param newMargin.bottom The bottom margin of the camera.
-     * @param newMargin.top The top margin of the camera.
+     * @param newMargin.top    The top margin of the camera.
      */
     public setMargin(newMargin: Partial<Margin>): void{
         this.margin = {...this.margin, ...newMargin};

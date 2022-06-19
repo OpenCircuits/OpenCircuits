@@ -54,7 +54,7 @@ export class Input {
     /**
      * Initializes Input with given canvas and dragTime.
      *
-     * @param canvas The canvas input is being applied to.
+     * @param canvas   The canvas input is being applied to.
      * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
@@ -75,7 +75,7 @@ export class Input {
      * Checks if newKey is a prevented combination of keys.
      *
      * @param newKey Represents the key combination being pressed.
-     * @returns True if newKey is a prevented combination, false otherwise.
+     * @returns        True if newKey is a prevented combination, false otherwise.
      */
     private isPreventedCombination(newKey: Key): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
@@ -282,7 +282,7 @@ export class Input {
      * Checks if the given key is held down.
      *
      * @param key Represents the key being checked.
-     * @returns True if key is down, false otherwise.
+     * @returns     True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
         return (this.keysDown.has(key) &&
@@ -385,7 +385,7 @@ export class Input {
     /**
      * Calls each Listener on Event "click", button.
      *
-     * @param _ Unused position vector.
+     * @param _      Unused position vector.
      * @param button Represents the mouse button being clicked (left mouse button by default).
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
@@ -432,7 +432,7 @@ export class Input {
      * Adjusts mouse variables (dragging, position, etc.),
      * and triggers Listeners on Event "mousedown", button.
      *
-     * @param pos Represents the position of the mouse being pressed.
+     * @param pos    Represents the position of the mouse being pressed.
      * @param button Represents the mouse button being pressed (0 by default).
      */
     protected onMouseDown(pos: Vector, button = 0): void {

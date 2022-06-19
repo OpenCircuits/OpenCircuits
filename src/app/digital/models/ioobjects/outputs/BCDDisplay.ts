@@ -46,7 +46,7 @@ export class BCDDisplay extends SegmentDisplay {
      * should be on, accoring to the input ports.
      *
      * @param segment The index of a segment.
-     * @returns True if the segment is on, false otherwise.
+     * @returns         True if the segment is on, false otherwise.
      */
     public isSegmentOn(segment: number): boolean {
         const dec = PortsToDecimal(this.getInputPorts());

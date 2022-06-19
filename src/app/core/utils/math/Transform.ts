@@ -44,9 +44,9 @@ export class Transform {
     /**
      * Constructs a new Transform object.
      *
-     * @param pos     The initial position of the transform.
-     * @param size    The initial size of the transform.
-     * @param angle   The initial angle of the transform.
+     * @param pos   The initial position of the transform.
+     * @param size  The initial size of the transform.
+     * @param angle The initial angle of the transform.
      */
     public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
         this.parent = undefined;
@@ -174,8 +174,8 @@ export class Transform {
      * Converts the given Vector, v, to local space relative
      *  to this transform.
      *
-     * @param v    The vector to transform, must be in world coordinates.
-     * @returns     The local space vector.
+     * @param v The vector to transform, must be in world coordinates.
+     * @returns   The local space vector.
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
@@ -185,8 +185,8 @@ export class Transform {
      * Converts the given Vector, v, to world space relative
      *  to this transform.
      *
-     * @param v    The vector to transform, must be in local coordinates.
-     * @returns     The world space vector.
+     * @param v The vector to transform, must be in local coordinates.
+     * @returns   The world space vector.
      */
     public toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);

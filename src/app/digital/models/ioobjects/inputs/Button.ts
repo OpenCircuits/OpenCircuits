@@ -29,9 +29,9 @@ export class Button extends PressableComponent {
      * Determines whether or not a point is within
      *  this component's "pressable" bounds, in this case the inner red circle.
      *
-     * @param  v The point.
+     * @param v The point.
      * @returns   True if the point is within this component,
-     *           false otherwise.
+     *    false otherwise.
      */
     public isWithinPressBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x/2, v);
@@ -55,7 +55,7 @@ export class Button extends PressableComponent {
      * Activates or deactivates the output.
      *
      * @param signal True makes it activate the output,
-     *              false deactivates.
+     *         false deactivates.
      */
     public activate(signal: boolean): void {
         super.activate(signal, 0);

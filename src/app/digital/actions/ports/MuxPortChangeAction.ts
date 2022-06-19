@@ -27,9 +27,9 @@ export class MuxPortChangeAction extends PortChangeAction {
     /**
      * Either changes the size of the inputs if it's a multiplexor or the outputs if it's a Demux.
      *
-     * @param obj Refers to the Mux object.
+     * @param obj     Refers to the Mux object.
      * @param initial Refers to the initial number of inputs.
-     * @param target Refers to the new number of inputs requested.
+     * @param target  Refers to the new number of inputs requested.
      */
     public constructor(obj: Mux, initial: number, target: number) {
         super(obj.getDesigner(), target, initial);

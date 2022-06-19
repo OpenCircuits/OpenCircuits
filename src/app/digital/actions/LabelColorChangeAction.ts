@@ -21,7 +21,7 @@ export class LabelColorChangeAction implements Action {
     /**
      * Initialize the Action with label value 'label' and targetCol 'y'.
      *
-     * @param label The label component to change.
+     * @param label     The label component to change.
      * @param targetCol The target color to change.
      */
     public constructor(label: Label, targetCol: string) {

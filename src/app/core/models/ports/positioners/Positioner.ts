@@ -47,11 +47,11 @@ export class Positioner<T extends Port> {
     /**
      * Intializes a Positioner with the following parameters.
      *
-     * @param dir Direction of the ports relative to the parent component.
-     * @param scale Factor to increase the spacing of the ports by (defaults to 1).
-     * @param length Length of the ports (defaults to IO_PORT_LENGTH ).
+     * @param dir          Direction of the ports relative to the parent component.
+     * @param scale        Factor to increase the spacing of the ports by (defaults to 1).
+     * @param length       Length of the ports (defaults to IO_PORT_LENGTH ).
      * @param shortenEdges If true the first port and last port will be moved innerward
-     * by one space in the spacing calculation (defaults to true).
+     *               by one space in the spacing calculation (defaults to true).
      */
     public constructor(dir?: Dir, scale = 1, length: number = IO_PORT_LENGTH, shortenEdges = true) {
         this.dir = (dir) ? (Positioner.DIRS[dir]) : (V());
@@ -63,10 +63,10 @@ export class Positioner<T extends Port> {
     /**
      * Calculates the amount of space between ports.
      *
-     * @param i Index of port.
+     * @param i        Index of port.
      * @param numPorts The number of ports.
-     * @param size Factor to increase the spacing between ports (the spacing is multiplied by size/2).
-     * @returns Value representing the spacing between ports.
+     * @param size     Factor to increase the spacing between ports (the spacing is multiplied by size/2).
+     * @returns          Value representing the spacing between ports.
      */
     protected calcSpacingPos(i: number, numPorts: number, size: number): number {
         const midpoint = (numPorts - 1) / 2;
@@ -88,9 +88,9 @@ export class Positioner<T extends Port> {
      *
      * @param sX Position of the port on X axis.
      * @param sY Position of the port on Y axis.
-     * @param w Width of the port.
-     * @param h Height of the port.
-     * @returns A vector representing the position where the port attaches to the parent component.
+     * @param w  Width of the port.
+     * @param h  Height of the port.
+     * @returns    A vector representing the position where the port attaches to the parent component.
      */
     protected calcOriginPos(sX: number, sY: number, w: number, h: number): Vector {
         const dir = this.dir;
@@ -104,9 +104,9 @@ export class Positioner<T extends Port> {
      *
      * @param sX Position of the port on X axis.
      * @param sY Position of the port on Y axis.
-     * @param w Width of the port.
-     * @param h Height of the port.
-     * @returns A vector representing the position of the port relative to the parent component.
+     * @param w  Width of the port.
+     * @param h  Height of the port.
+     * @returns    A vector representing the position of the port relative to the parent component.
      */
     protected calcTargetPos(sX: number, sY: number, w: number, h: number): Vector {
         const dir = this.dir;

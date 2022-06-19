@@ -13,7 +13,7 @@ export class Circle implements Shape {
     /**
      * Constructor for Circle.
      *
-     * @param pos The position.
+     * @param pos    The position.
      * @param radius The radius.
      */
     public constructor(pos: Vector, radius: number) {

@@ -31,7 +31,7 @@ export class SegmentDisplay extends DigitalComponent {
     /**
      * Initializes a 7-segment display with input ports on the left side.
      *
-     * @param numInputs The number of inputs this display is allowed to have.
+     * @param numInputs  The number of inputs this display is allowed to have.
      * @param positioner The positioner used to position the ports.
      */
     public constructor(numInputs?: ClampedValue, positioner?: Positioner<InputPort>) {
@@ -72,7 +72,7 @@ export class SegmentDisplay extends DigitalComponent {
      * Checks if each input port is connected to a power source that is on.
      *
      * @param segment The number of input ports.
-     * @returns If the ports are on as a boolean.
+     * @returns         If the ports are on as a boolean.
      */
     public isSegmentOn(segment: number): boolean {
         return this.getInputPort(segment).getIsOn();

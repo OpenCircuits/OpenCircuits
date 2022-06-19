@@ -25,7 +25,7 @@ export class ConnectionAction extends ReversableAction {
      * Initializes a ConnectionAction given the CircuitDesigner and a Wire.
      *
      * @param designer The CircuitDesigner this action is being done on.
-     * @param w The Wire being connected.
+     * @param w        The Wire being connected.
      */
     public constructor(designer: CircuitDesigner, w: Wire);
 
@@ -33,8 +33,8 @@ export class ConnectionAction extends ReversableAction {
      * Initializes a ConnectionAction given the CircuitDesigner and two Ports.
      *
      * @param designer The CircuitDesigner this action is being done on.
-     * @param p1 The first Port being connected.
-     * @param p2 The second Port being connected.
+     * @param p1       The first Port being connected.
+     * @param p2       The second Port being connected.
      */
     public constructor(designer: CircuitDesigner, p1: Port, p2: Port);
     public constructor(designer: CircuitDesigner, p1: Port | Wire, p2?: Port) {
@@ -107,7 +107,7 @@ export class DisconnectAction extends ConnectionAction {
      * Initializes a DisconnectAction given a CircuitDesigner and a Wire.
      *
      * @param designer The CircuitDesigner the action is done on.
-     * @param wire The Wire being disconnected.
+     * @param wire     The Wire being disconnected.
      */
     public constructor(designer: CircuitDesigner, wire: Wire) {
         super(designer, wire);
@@ -118,8 +118,8 @@ export class DisconnectAction extends ConnectionAction {
  * Creates a GroupAction of DisconnectActions.
  *
  * @param designer The CircuitDesigner the actions are done on.
- * @param wires The Wires being disconnected.
- * @returns A GroupAction representing the DisconnectActions of each Wire.
+ * @param wires    The Wires being disconnected.
+ * @returns          A GroupAction representing the DisconnectActions of each Wire.
  */
 export function CreateGroupDisconnectAction(designer: CircuitDesigner, wires: Wire[]): GroupAction {
     return new GroupAction(wires.map(w => new DisconnectAction(designer, w)), "Group Disconnect Action");

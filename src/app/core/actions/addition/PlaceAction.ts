@@ -18,8 +18,8 @@ export class PlaceAction extends ReversableAction {
      * Initializes a PlaceAction given the CircuitDesigner, Component, and a flip boolean.
      *
      * @param designer The CircuitDesigner this action is done on.
-     * @param obj The Component being placed.
-     * @param flip The flip boolean, false for a PlaceAction, true for a DeleteAction.
+     * @param obj      The Component being placed.
+     * @param flip     The flip boolean, false for a PlaceAction, true for a DeleteAction.
      */
     public constructor(designer: CircuitDesigner, obj: Component, flip = false) {
         super(flip);
@@ -70,8 +70,8 @@ export class DeleteAction extends PlaceAction {
  * Creates a GroupAction for multiple PlaceActions.
  *
  * @param designer The CircuitDesigner the actions are being done on.
- * @param objs The Components of each action.
- * @returns A GroupAction representing the PlaceActions of every Component.
+ * @param objs     The Components of each action.
+ * @returns          A GroupAction representing the PlaceActions of every Component.
  */
 export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
     return new GroupAction(objs.map(o => new PlaceAction(designer, o)), "Group Place Action");

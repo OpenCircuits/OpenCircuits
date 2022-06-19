@@ -38,7 +38,7 @@ export class LED extends DigitalComponent {
      * Turn the LED on.
      *
      * @param signal Signal connected to the LED (on or off).
-     * @param i The output port index.
+     * @param i      The output port index.
      */
     public activate(signal: boolean, i = 0): void {
         this.onTransformChange();

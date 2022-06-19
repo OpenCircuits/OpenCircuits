@@ -21,8 +21,8 @@ function OrganizeCore(groups: IOObjectSet, start: Vector, depths: number[][]): v
  * Organizes the components so that components at greater depth are further to the right,
  * using the getMaxNodeDepths function of Graph to accomplish this.
  *
- * @param  groups The components to organize.
- * @param  start  The top left coordinate where the organization should start.
+ * @param groups The components to organize.
+ * @param start  The top left coordinate where the organization should start.
  */
 export function OrganizeMaxDepth(groups: IOObjectSet, start: Vector): void {
     OrganizeCore(groups, start, CreateGraph(groups).getMaxNodeDepths());
@@ -32,8 +32,8 @@ export function OrganizeMaxDepth(groups: IOObjectSet, start: Vector): void {
  * Organizes the components so that components at greater depth are further to the right,
  * using the getMinNodeDepths function of Graph to accomplish this.
  *
- * @param  groups The components to organize.
- * @param  start  The top left coordinate where the organization should start.
+ * @param groups The components to organize.
+ * @param start  The top left coordinate where the organization should start.
  */
 export function OrganizeMinDepth(groups: IOObjectSet, start: Vector): void {
     OrganizeCore(groups, start, CreateGraph(groups).getMinNodeDepths());

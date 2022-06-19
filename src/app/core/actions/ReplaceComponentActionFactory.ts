@@ -11,10 +11,10 @@ import {TranslateAction}                    from "./transform/TranslateAction";
  * `original` must be placed in designer, and `replacement` must not be placed in designer.
  * This action implicitly executes on creation.
  *
- * @param designer The designer that original is placed on.
- * @param original The component to replace, already in designer.
- * @param replacement The new component, not yet in designer.
- * @returns A GroupAction containing the actions required to replace the component.
+ * @param    designer    The designer that original is placed on.
+ * @param    original    The component to replace, already in designer.
+ * @param    replacement The new component, not yet in designer.
+ * @returns              A GroupAction containing the actions required to replace the component.
  * @throws {Error} If original and replacement do not have the same number of ports.
  */
  export function CreateReplaceComponentAction(designer: CircuitDesigner, original: Component,

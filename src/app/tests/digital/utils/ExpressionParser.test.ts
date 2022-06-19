@@ -31,7 +31,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
  * Gets the component that the first wire of the first output port of the supplied component is connected to.
  *
  * @param component The component whose output is wanted.
- * @returns The component that is the "first" connected from the supplied component.
+ * @returns           The component that is the "first" connected from the supplied component.
  */
 function getOutputComponent(component: DigitalComponent): DigitalComponent {
     return component.getOutputPort(0).getWires()[0].getOutputComponent();
@@ -54,11 +54,11 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  * the same underlying issue as issues #468 and #613 and if those are fixed, this function should
  * also be modified.
  *
- * @param inputs An array of the names of the switches along with their corresponding Switch,
- *  those same Switch objects must be present in circuit.
- * @param circuit The components and wires that make up the circuit being tested.
- * @param output The component whose state will be evaluated in the test, must be present in circuit.
- * @param expected The expected states of the output LED for all the different switch combinations.
+ * @param  inputs   An array of the names of the switches along with their corresponding Switch,
+ *                  those same Switch objects must be present in circuit.
+ * @param  circuit  The components and wires that make up the circuit being tested.
+ * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
+ * @param  expected The expected states of the output LED for all the different switch combinations.
  * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  */
 function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
@@ -92,11 +92,11 @@ function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, 
 /**
  * This function is similar to testInputs but only generates one test case rather than one for every state.
  *
- * @param inputs An array of the names of the switches along with their corresponding Switch,
- *  those same Switch objects must be present in circuit.
- * @param circuit The components and wires that make up the circuit being tested.
- * @param output The component whose state will be evaluated in the test, must be present in circuit.
- * @param expected The expected states of the output LED for all the different switch combinations.
+ * @param  inputs   An array of the names of the switches along with their corresponding Switch,
+ *                  those same Switch objects must be present in circuit.
+ * @param  circuit  The components and wires that make up the circuit being tested.
+ * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
+ * @param  expected The expected states of the output LED for all the different switch combinations.
  * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
@@ -131,13 +131,13 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
  * entire expression.
  * This behavior can be overwritten with the verbose argument.
  *
- * @param numInputs The number of switches that are used by this expression/test.
- * @param expression The logical boolean expression to test.
- * @param expected The expected states of the output LED for all the different switch combinations
- *                  (see testInputs for order).
- * @param ops The strings used to represent the different operators.
- * @param verbose True to force creating a new test for every state, false to force creating one single test
- *                  encompassing all states.
+ * @param  numInputs  The number of switches that are used by this expression/test.
+ * @param  expression The logical boolean expression to test.
+ * @param  expected   The expected states of the output LED for all the different switch combinations
+ *                    (see testInputs for order).
+ * @param  ops        The strings used to represent the different operators.
+ * @param  verbose    True to force creating a new test for every state, false to force creating one single test
+ *                    encompassing all states.
  * @throws {Error} If numInputs > 8.
  * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs

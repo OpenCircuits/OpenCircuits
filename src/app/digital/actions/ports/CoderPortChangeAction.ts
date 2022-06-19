@@ -31,9 +31,9 @@ export class CoderPortChangeAction implements Action {
      * The constrcutor determines whether the object is an encoder or decoder and calls on the corresponding actions
      * based on the type.
      *
-     * @param obj Is the encoder or decoder selected.
+     * @param obj     Is the encoder or decoder selected.
      * @param initial The inital number of outputs/inputs.
-     * @param target The target numbe of outputs/inputs.
+     * @param target  The target numbe of outputs/inputs.
      */
     public constructor(obj: Encoder | Decoder, initial: number, target: number) {
         this.obj = obj;

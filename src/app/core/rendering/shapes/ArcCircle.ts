@@ -13,10 +13,10 @@ export class ArcCircle extends Circle {
     /**
      * Constructor for ArcCircle.
      *
-     * @param pos The position.
+     * @param pos    The position.
      * @param radius The radius.
-     * @param a0 The starting angle.
-     * @param a1 The ending angle.
+     * @param a0     The starting angle.
+     * @param a1     The ending angle.
      */
     public constructor(pos: Vector, radius: number, a0: number, a1: number) {
         super(pos, radius);

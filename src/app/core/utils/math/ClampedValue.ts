@@ -28,8 +28,8 @@ export class ClampedValue {
      * Set the initial value for a number to be clamped, minimum and maximum values unspecified.
      *
      * @param initialValue The inital value of the number.
-     * @param minValue The minimum value the number can hold.
-     * @param maxValue The maximum value the number can hold.
+     * @param minValue     The minimum value the number can hold.
+     * @param maxValue     The maximum value the number can hold.
      */
     public constructor(initialValue?: number);
 
@@ -37,8 +37,8 @@ export class ClampedValue {
      * Set the initial value for a number and minimum and maximum values for clamping.
      *
      * @param initialValue The inital value of the number.
-     * @param minValue The minimum value the number can hold.
-     * @param maxValue The maximum value the number can hold.
+     * @param minValue     The minimum value the number can hold.
+     * @param maxValue     The maximum value the number can hold.
      */
     public constructor(initialValue: number, minValue: number, maxValue: number);
 
@@ -46,8 +46,8 @@ export class ClampedValue {
      * Set the initial value for a number with minimum and maximum values for clamping equal to the intial.
      *
      * @param initialValue The initial value of the number.
-     * @param minValue The minimum value the number can hold.
-     * @param maxValue The maximum value the number can hold.
+     * @param minValue     The minimum value the number can hold.
+     * @param maxValue     The maximum value the number can hold.
      */
     public constructor(initialValue?: number, minValue?: number, maxValue?: number) {
         this.value = initialValue!;
@@ -58,7 +58,7 @@ export class ClampedValue {
     /**
      * Update the number to a new value, or the closest clamp bound if outside allowed range.
      *
-     * @param val The clamped value of the number.
+     * @param  val The clamped value of the number.
      * @throws {Error} If this.minValue or this.maxValue are undefined.
      */
     public setValue(val: number): void {

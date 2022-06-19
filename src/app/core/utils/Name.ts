@@ -42,8 +42,8 @@ export class Name {
      * Returns whether or not the name
      *  has been changed.
      *
-     * @returns  True if the name has been changed,
-     *          False otherwise.
+     * @returns True if the name has been changed,
+     *  False otherwise.
      */
     public isSet(): boolean {
         return this.set;

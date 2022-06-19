@@ -95,7 +95,7 @@ export class Rect {
      *  calculates all possible 8 rectangles from each side and corner.
      *
      * @param rect Rectangle to subtract from this rectangle.
-     * @returns The remaining rectangles after the subtraction.
+     * @returns      The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
@@ -122,7 +122,7 @@ export class Rect {
      *
      * @param dir The direction to shift this rectangle.
      * @param amt The amount to shift this rectangle.
-     * @returns A new rectangle which is a shifted version of this one.
+     * @returns     A new rectangle which is a shifted version of this one.
      */
     public shift(dir: Vector, amt: Vector): Rect {
         return Rect.From({
@@ -201,8 +201,8 @@ export class Rect {
      *  specification of size + center, or bottom left + top right, or any other valid combination.
      *
      * @param bounds Attributes of rectangle.
-     * @param yIsUp Whether this rectangle has +y or -y.
-     * @returns A Rect from the given bounds/attributes and yIsUp direction.
+     * @param yIsUp  Whether this rectangle has +y or -y.
+     * @returns        A Rect from the given bounds/attributes and yIsUp direction.
      */
     public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";

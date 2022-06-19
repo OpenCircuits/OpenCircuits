@@ -50,7 +50,7 @@ export abstract class Port implements Selectable {
      * Intializes a Port with the following parameters.
      *
      * @param parent Parent component of the port.
-     * @param dir Direction of the of the port relative to the parent component.
+     * @param dir    Direction of the of the port relative to the parent component.
      */
     protected constructor(parent: Component, dir?: Vector) {
         this.parent = parent;
@@ -125,7 +125,7 @@ export abstract class Port implements Selectable {
      * When clicking on a port returns true if the position clicked is within the selection bound and false otherwise.
      *
      * @param v Vector representing the position clicked.
-     * @returns True if the vector v is within the selection bound of the port and false otherwise.
+     * @returns   True if the vector v is within the selection bound of the port and false otherwise.
      */
     public isWithinSelectBounds(v: Vector): boolean {
         return CircleContains(this.getWorldTargetPos(), IO_PORT_SELECT_RADIUS, v);
