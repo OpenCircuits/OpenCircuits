@@ -20,7 +20,7 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @param op      The operation the tree should have.
  * @param isFinal Whether or not the tree can be modified.
  * @returns         True if tree has kind "binop", tree's type is op, and isFinal is false or undefined,
- *                  false otherwise.
+ *          false otherwise.
  */
 function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boolean): tree is InputTreeBinOpNode {
     return tree.kind === "binop" && tree.type === op && !isFinal;
