@@ -2,6 +2,8 @@ import {RefObject}   from "react";
 import {Deserialize} from "serialeazy";
 
 
+import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
+
 import {V} from "Vector";
 
 import {Circuit, ContentsData}  from "core/models/Circuit";
@@ -22,9 +24,8 @@ import {SaveCircuit}      from "shared/state/thunks/SaveCircuit";
 import {LoadUserCircuits} from "shared/state/thunks/User";
 
 
-import {AppStore}                  from "../../state";
-import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
-import {GenerateThumbnail}         from "../GenerateThumbnail";
+import {AppStore}          from "../../state";
+import {GenerateThumbnail} from "../GenerateThumbnail";
 
 
 export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>,
