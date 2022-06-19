@@ -11,12 +11,12 @@ export class ArcCircle extends Circle {
     protected a1 = 2*Math.PI;
 
     /**
-     * Constructor for ArcCircle
+     * Constructor for ArcCircle.
      *
-     * @param pos the position
-     * @param radius the radius
-     * @param a0 the starting angle
-     * @param a1 the ending angle
+     * @param pos    The position.
+     * @param radius The radius.
+     * @param a0     The starting angle.
+     * @param a1     The ending angle.
      */
     public constructor(pos: Vector, radius: number, a0: number, a1: number) {
         super(pos, radius);
@@ -25,9 +25,9 @@ export class ArcCircle extends Circle {
     }
 
     /**
-     * Draws the ArcCircle on the canvas
+     * Draws the ArcCircle on the canvas.
      *
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.pos.x, this.pos.y);

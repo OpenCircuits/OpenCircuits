@@ -8,7 +8,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 
 /**
- * This code allows for the change in the number of input ports on a DigitalComponent
+ * This code allows for the change in the number of input ports on a DigitalComponent.
  */
 export class InputPortChangeAction extends PortChangeAction {
     protected obj: DigitalComponent;
@@ -16,9 +16,9 @@ export class InputPortChangeAction extends PortChangeAction {
     /**
      * This code constructs the obj with the new number of ports.
      *
-     * @param obj the object being changed
-     * @param initial number of ports
-     * @param target number of ports
+     * @param obj     The object being changed.
+     * @param initial Number of ports.
+     * @param target  Number of ports.
      */
     public constructor(obj: DigitalComponent, initial: number, target: number) {
         super(obj.getDesigner(), target, initial);
@@ -26,9 +26,9 @@ export class InputPortChangeAction extends PortChangeAction {
     }
 
     /**
-     * Returns the objects input ports
+     * Returns the objects input ports.
      *
-     * @returns the objects input inports
+     * @returns The objects input inports.
      */
     protected getPorts(): Port[] {
         return this.obj.getInputPorts();
@@ -37,7 +37,7 @@ export class InputPortChangeAction extends PortChangeAction {
     /**
      * Changes the number of input ports on the object to the target count.
      *
-     * @returns the object with the new number of ports.
+     * @returns The object with the new number of ports.
      */
     public execute(): Action {
         super.execute();
@@ -48,7 +48,7 @@ export class InputPortChangeAction extends PortChangeAction {
     /**
      * Resets the number of input ports back to the initial count.
      *
-     * @returns the object with the initial number of ports.
+     * @returns The object with the initial number of ports.
      */
     public undo(): Action {
         this.obj.setInputPortCount(this.initialCount);

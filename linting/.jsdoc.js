@@ -21,7 +21,9 @@ module.exports = {
         "jsdoc/no-types": "error",
         "jsdoc/require-asterisk-prefix": "error",
         "jsdoc/require-description": "error",
-        "jsdoc/require-description-complete-sentence": "warn",
+        "jsdoc/require-description-complete-sentence": ["warn", {
+            "abbreviations": ["ex", "ie", "i.e."],
+        }],
         // TODO: If all the code has jsdoc comments, consider turning this on
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param-description": "error",

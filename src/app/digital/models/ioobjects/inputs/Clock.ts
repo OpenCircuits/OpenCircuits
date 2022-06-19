@@ -6,6 +6,7 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {TimedComponent} from "../TimedComponent";
 
+
 /**
  * This is a clock tool which allows users to create an input which can change constanly bewteen 1 and 0
  * within a required frequency.
@@ -49,15 +50,16 @@ export class Clock extends TimedComponent {
 
     /**
      * Get size of offset needed.
+     *
      * @returns An empty vector.
      */
-    // @Override
     public getOffset(): Vector {
         return V();
     }
 
     /**
      * Gets the display name of clock input.
+     *
      * @returns The display name of "Clock".
      */
     public getDisplayName(): string {
@@ -66,6 +68,7 @@ export class Clock extends TimedComponent {
 
     /**
      * Gets the name of the clock image file.
+     *
      * @returns The name of the clock image file.
      */
     public getImageName(): string {

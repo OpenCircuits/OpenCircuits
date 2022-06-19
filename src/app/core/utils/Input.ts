@@ -15,47 +15,47 @@ import {Key}   from "./Key";
 export type Listener = (event: Event) => void;
 
 /**
- * Class to handle user input, and trigger appropriate event listeners
+ * Class to handle user input, and trigger appropriate event listeners.
  */
 export class Input {
-    /** The canvas the user is performing inputs on */
+    /** The canvas the user is performing inputs on. */
     private canvas: HTMLCanvasElement;
-    /** A vector representing the previous position of the mouse */
+    /** A vector representing the previous position of the mouse. */
     private prevMousePos: Vector;
-    /** A vector representing the current position of the mouse */
+    /** A vector representing the current position of the mouse. */
     private mousePos: Vector;
 
-    /** True if a mousebutton is held down, false otherwise */
+    /** True if a mousebutton is held down, false otherwise. */
     private mouseDown: boolean;
-    /** A vector representing the position the mouse was when the mousebutton first became pressed */
+    /** A vector representing the position the mouse was when the mousebutton first became pressed. */
     private mouseDownPos: Vector;
-    /** Represents the mousebutton being pressed (left, middle, right, etc.) */
+    /** Represents the mousebutton being pressed (left, middle, right, etc.). */
     private mouseDownButton: number;
 
-    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click") */
+    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click"). */
     private isDragging: boolean;
-    /** Represents the time at which the mouse button became held down */
+    /** Represents the time at which the mouse button became held down. */
     private startTapTime: number;
 
-    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device) */
+    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device). */
     private touchCount: number;
 
-    /** Stores the Listeners for events that may be triggered by user input */
+    /** Stores the Listeners for events that may be triggered by user input. */
     private listeners: Listener[];
-    /** Map with keycodes as keys and booleans representing whether that key is held as values */
+    /** Map with keycodes as keys and booleans representing whether that key is held as values. */
     private keysDown: Map<Key, boolean>;
 
-    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click") */
+    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
     private dragTime: number;
 
-    /** If true, "blocks" Input, stopping listeners from triggering events */
+    /** If true, "blocks" Input, stopping listeners from triggering events. */
     private blocked: boolean;
 
     /**
-     * Initializes Input with given canvas and dragTime
+     * Initializes Input with given canvas and dragTime.
      *
-     * @param canvas the canvas input is being applied to
-     * @param dragTime the minimum length of time a mousedown must last to be considered a drag rather than a click
+     * @param canvas   The canvas input is being applied to.
+     * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         this.canvas = canvas;
@@ -72,10 +72,10 @@ export class Input {
     }
 
     /**
-     * Checks if newKey is a prevented combination of keys
+     * Checks if newKey is a prevented combination of keys.
      *
-     * @param newKey represents the key combination being pressed
-     * @returns true if newKey is a prevented combination, false otherwise
+     * @param newKey Represents the key combination being pressed.
+     * @returns        True if newKey is a prevented combination, false otherwise.
      */
     private isPreventedCombination(newKey: Key): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
@@ -99,7 +99,7 @@ export class Input {
     }
 
     /**
-     * Sets up Listeners for all keyboard Events
+     * Sets up Listeners for all keyboard Events.
      */
     private hookupKeyboardEvents(): void {
         // Keyboard events
@@ -126,7 +126,7 @@ export class Input {
     }
 
     /**
-     * Sets up Listeners for mouse Events
+     * Sets up Listeners for mouse Events.
      */
     private hookupMouseEvents(): void {
         // Mouse events
@@ -154,7 +154,7 @@ export class Input {
     }
 
     /**
-     * Sets up Listeners for touch events
+     * Sets up Listeners for touch events.
      */
     private hookupTouchEvents(): void {
         const getTouchPositions = (touches: TouchList): Vector[] => {
@@ -179,7 +179,7 @@ export class Input {
     }
 
     /**
-     * Sets up touchManagers for pinching and tapping
+     * Sets up touchManagers for pinching and tapping.
      */
     private setupHammer(): void {
         // Pinch to zoom
@@ -221,8 +221,8 @@ export class Input {
     }
 
     /**
-     * Resets internal state of the Input
-     *  Keeps listeners and outer-controlled state
+     * Resets internal state of the Input.
+     *  Keeps listeners and outer-controlled state.
      */
     public reset(): void {
         this.prevMousePos = V();
@@ -241,49 +241,49 @@ export class Input {
     }
 
     /**
-     * Sets blocked to true, prevents Listeners from triggering Events
+     * Sets blocked to true, prevents Listeners from triggering Events.
      */
     public block(): void {
         this.blocked = true;
     }
     /**
-     * Sets blocked to false, allows Listeners to trigger Events again
+     * Sets blocked to false, allows Listeners to trigger Events again.
      */
     public unblock(): void {
         this.blocked = false;
     }
 
     /**
-     * Adds a Listener to the list of Listeners Events are checked against
+     * Adds a Listener to the list of Listeners Events are checked against.
      *
-     * @param listener is the Listener being added
+     * @param listener The Listener being added.
      */
     public addListener(listener: Listener): void {
         this.listeners.push(listener);
     }
 
     /**
-     * Removes a Listener from the list of Listeners Events are checked against
+     * Removes a Listener from the list of Listeners Events are checked against.
      *
-     * @param listener is the Listener being removed
+     * @param listener The Listener being removed.
      */
     public removeListener(listener: Listener): void {
         this.listeners.splice(this.listeners.indexOf(listener), 1);
     }
 
     /**
-     * Checks if the mouse is pressed down
+     * Checks if the mouse is pressed down.
      *
-     * @returns true if the mouse is down, false otherwise
+     * @returns True if the mouse is down, false otherwise.
      */
     public isMouseDown(): boolean {
         return this.mouseDown;
     }
     /**
-     * Checks if the given key is held down
+     * Checks if the given key is held down.
      *
-     * @param key represents the key being checked
-     * @returns true if key is down, false otherwise
+     * @param key Represents the key being checked.
+     * @returns     True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
         return (this.keysDown.has(key) &&
@@ -291,9 +291,9 @@ export class Input {
     }
 
     /**
-     * Checks if the shift key is held down
+     * Checks if the shift key is held down.
      *
-     * @returns true if the shift key is down, false otherwise
+     * @returns True if the shift key is down, false otherwise.
      */
     public isShiftKeyDown(): boolean {
         return this.isKeyDown("Shift");
@@ -301,69 +301,69 @@ export class Input {
 
 
     /**
-     * Checks if the option key is held down
+     * Checks if the option key is held down.
      *
-     * @returns true if the option key is down, false otherwise
+     * @returns True if the option key is down, false otherwise.
      */
     public isEscKeyDown(): boolean {
         return this.isKeyDown("Escape");
     }
 
     /**
-     * Checks if the modifier key is held down
+     * Checks if the modifier key is held down.
      *
-     * @returns true if the modifier key (control, command, or meta) is down, false otherwise
+     * @returns True if the modifier key (control, command, or meta) is down, false otherwise.
      */
      public isModifierKeyDown(): boolean {
         return (this.isKeyDown("Control") || this.isKeyDown("Meta"));
     }
     /**
-     * Checks if the option key is held down
+     * Checks if the option key is held down.
      *
-     * @returns true if the option key is down, false otherwise
+     * @returns True if the option key is down, false otherwise.
      */
     public isAltKeyDown(): boolean {
         return this.isKeyDown("Alt");
     }
 
     /**
-     * Gets the position of the cursor of the mouse
+     * Gets the position of the cursor of the mouse.
      *
-     * @returns current position of the mouse
+     * @returns Current position of the mouse.
      */
     public getMousePos(): Vector {
         return V(this.mousePos);
     }
     /**
-     * Gets the position where the mouse was pressed down
+     * Gets the position where the mouse was pressed down.
      *
-     * @returns current position of the mouse down
+     * @returns Current position of the mouse down.
      */
     public getMouseDownPos(): Vector {
         return V(this.mouseDownPos);
     }
     /**
-     * Gets the difference between the current and previous mouse position
+     * Gets the difference between the current and previous mouse position.
      *
-     * @returns difference between current and previous mouse position
+     * @returns Difference between current and previous mouse position.
      */
     public getDeltaMousePos(): Vector {
         return this.mousePos.sub(this.prevMousePos);
     }
 
     /**
-     * Gets the number of times the mouse has been pressed
+     * Gets the number of times the mouse has been pressed.
      *
-     * @returns the touchCount
+     * @returns The touchCount.
      */
     public getTouchCount(): number {
         return this.touchCount;
     }
 
     /**
-     * Sets the given key as down, and calls each Listener on Event "keydown", key
+     * Sets the given key as down, and calls each Listener on Event "keydown", key.
      *
-     * @param key represents the key being pressed
+     * @param key Represents the key being pressed.
      */
     protected onKeyDown(key: Key): void {
         this.keysDown.set(key, true);
@@ -372,9 +372,9 @@ export class Input {
         this.callListeners({type: "keydown", key});
     }
     /**
-     * Sets the given key as up, and calls each Listener on Event "keyup", key
+     * Sets the given key as up, and calls each Listener on Event "keyup", key.
      *
-     * @param key represents the key being released
+     * @param key Represents the key being released.
      */
     protected onKeyUp(key: Key): void {
         this.keysDown.set(key, false);
@@ -384,10 +384,10 @@ export class Input {
     }
 
     /**
-     * Calls each Listener on Event "click", button
+     * Calls each Listener on Event "click", button.
      *
-     * @param _ unused position vector
-     * @param button represents the mouse button being clicked (left mouse button by default)
+     * @param _      Unused position vector.
+     * @param button Represents the mouse button being clicked (left mouse button by default).
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
@@ -400,9 +400,9 @@ export class Input {
         this.callListeners({type: "click", button});
     }
     /**
-     * Calls each Listener on Event "dbclick", button
+     * Calls each Listener on Event "dbclick", button.
      *
-     * @param button represents the mouse button being double clicked
+     * @param button Represents the mouse button being double clicked.
      */
     protected onDoubleClick(button: number): void {
 
@@ -412,9 +412,9 @@ export class Input {
 
     /**
      * Calls each Listener on Event "zoom", zoomFactor, mousePos
-     * where zoomFactor is calculated from delta
+     * where zoomFactor is calculated from delta.
      *
-     * @param delta represents whether the user is zooming in or out (negative and positive, respectively)
+     * @param delta Represents whether the user is zooming in or out (negative and positive, respectively).
      */
     protected onScroll(delta: number): void {
         // calculate zoom factor
@@ -431,10 +431,10 @@ export class Input {
 
     /**
      * Adjusts mouse variables (dragging, position, etc.),
-     * and triggers Listeners on Event "mousedown", button
+     * and triggers Listeners on Event "mousedown", button.
      *
-     * @param pos represents the position of the mouse being pressed
-     * @param button represents the mouse button being pressed (0 by default)
+     * @param pos    Represents the position of the mouse being pressed.
+     * @param button Represents the mouse button being pressed (0 by default).
      */
     protected onMouseDown(pos: Vector, button = 0): void {
         const rect = this.canvas.getBoundingClientRect();
@@ -458,9 +458,9 @@ export class Input {
     /**
      * Triggered on mouse movement, calculates new mouse position,
      * and triggers Listeners on Event "mousemove", as well as Listeners
-     * on Event "mousedrag", [current mouse button down] if the user is clicking
+     * on Event "mousedrag", [current mouse button down] if the user is clicking.
      *
-     * @param pos represents the new absolute position of the mouse
+     * @param pos Represents the new absolute position of the mouse.
      */
     protected onMouseMove(pos: Vector): void {
         const rect = this.canvas.getBoundingClientRect();
@@ -485,9 +485,9 @@ export class Input {
     }
     /**
      * Calls each Listener on Event "mouseup", button
-     * and adjusts variables tracking mouse buttons
+     * and adjusts variables tracking mouse buttons.
      *
-     * @param button represents the mouse button being released (0 by default)
+     * @param button Represents the mouse button being released (0 by default).
      */
     protected onMouseUp(button = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
@@ -498,14 +498,14 @@ export class Input {
     }
 
     /**
-     * Calls each Listener on Event "mouseenter"
+     * Calls each Listener on Event "mouseenter".
      */
     protected onMouseEnter(): void {
         this.callListeners({type: "mouseenter"});
     }
     /**
      * Calls each Listener on Event "mouseleave".
-     * Also calls on Event "mouseup", [current mouse button down]
+     * Also calls on Event "mouseup", [current mouse button down].
      */
     protected onMouseLeave(): void {
         this.touchCount = 0;
@@ -523,31 +523,31 @@ export class Input {
     }
 
     /**
-     * Calls onMouseDown for the midpoint of multiple touches
+     * Calls onMouseDown for the midpoint of multiple touches.
      *
-     * @param touches represents the positions of the touches
+     * @param touches Represents the positions of the touches.
      */
     protected onTouchStart(touches: Vector[]): void {
         this.onMouseDown(CalculateMidpoint(touches));
     }
     /**
-     * Called when a user moves a touch point (as when using a touchpad or mobile device)
-     * Calls onMouseMove for the midpoint of multiple movements
+     * Called when a user moves a touch point (as when using a touchpad or mobile device).
+     * Calls onMouseMove for the midpoint of multiple movements.
      *
-     * @param touches represents the positions of the touches
+     * @param touches Represents the positions of the touches.
      */
     protected onTouchMove(touches: Vector[]): void {
         this.onMouseMove(CalculateMidpoint(touches));
     }
     /**
-     * Calls onMouseUp
+     * Calls onMouseUp.
      */
     protected onTouchEnd(): void {
         this.onMouseUp();
     }
 
     /**
-     * Releases each key that is down
+     * Releases each key that is down.
      */
     protected onBlur(): void {
         this.keysDown.forEach((down, key) => {
@@ -557,9 +557,9 @@ export class Input {
     }
 
     /**
-     * Calls the Listeners in 'listeners' for Event 'event', if Input not blocked
+     * Calls the Listeners in 'listeners' for Event 'event', if Input not blocked.
      *
-     * @param event Event being given to the Listeners
+     * @param event Event being given to the Listeners.
      */
     private callListeners(event: Event): void {
         if (this.blocked)

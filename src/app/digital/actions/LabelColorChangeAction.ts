@@ -5,24 +5,24 @@ import {Label} from "digital/models/ioobjects/other/Label";
 
 export class LabelColorChangeAction implements Action {
     /**
-     * The labal component of the action
+     * The labal component of the action.
      */
     private label: Label;
 
     /**
-     * The initial color of the label
+     * The initial color of the label.
      */
     private initialColor: string;
     /**
-     * The target color of the label
+     * The target color of the label.
      */
     private targetColor: string;
 
     /**
-     * Initialize the Action with label value 'label' and targetCol 'y'
+     * Initialize the Action with label value 'label' and targetCol 'y'.
      *
-     * @param label The label component to change
-     * @param targetCol The target color to change
+     * @param label     The label component to change.
+     * @param targetCol The target color to change.
      */
     public constructor(label: Label, targetCol: string) {
         this.label = label;
@@ -32,9 +32,9 @@ export class LabelColorChangeAction implements Action {
     }
 
     /**
-     * Set the label's color to the target color
+     * Set the label's color to the target color.
      *
-     * @returns This action
+     * @returns This action.
      */
     public execute(): Action {
         this.label.setColor(this.targetColor);
@@ -43,9 +43,9 @@ export class LabelColorChangeAction implements Action {
     }
 
     /**
-     * Undo the change and reset the color of the label to initial color
+     * Undo the change and reset the color of the label to initial color.
      *
-     * @returns This action
+     * @returns This action.
      */
     public undo(): Action {
         this.label.setColor(this.initialColor);

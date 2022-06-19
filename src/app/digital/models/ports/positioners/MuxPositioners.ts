@@ -22,9 +22,9 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
     }
 
     /**
-     * Port positioning for Multiplexer/Demultiplexer select lines
+     * Port positioning for Multiplexer/Demultiplexer select lines.
      *
-     * @param arr The array of input ports
+     * @param ports The array of input ports.
      */
     public updatePortPositions(ports: InputPort[]): void {
         // Calculations for parameters to use in determining origin positions

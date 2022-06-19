@@ -22,11 +22,11 @@ function ColorToHex(col: Color): string {
 }
 
 /**
- * Renders Wires
- * * Check if wire is on screen, quit render if not
- * * Set wire colour - prioritize on colour, else colour as selection status
- * * Calculate Wire Bezier Curve
- * * Draw
+ * Renders Wires:
+ * - Check if wire is on screen, quit render if not,
+ * - Set wire colour - prioritize on colour, else colour as selection status,
+ * - Calculate Wire Bezier Curve,
+ * - Draw.
  */
 export const WireRenderer = (() => {
     return {

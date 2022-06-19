@@ -9,24 +9,24 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 
 export class ColorChangeAction implements Action {
     /**
-     * The 3 components of the action: LED, Label and Wire
+     * The 3 components of the action: LED, Label and Wire.
      */
     private component: LED | Label | Wire;
 
     /**
-     * The initial color of the component
+     * The initial color of the component.
      */
     private initialColor: string;
     /**
-     * The target color of the component
+     * The target color of the component.
      */
     private targetColor: string;
 
     /**
-     * Initialize the action with the given component and the given targetColor
+     * Initialize the action with the given component and the given targetColor.
      *
-     * @param component The component we want to change the color
-     * @param targetCol The target color we want change to
+     * @param component The component we want to change the color.
+     * @param targetCol The target color we want change to.
      */
     public constructor(component: LED | Label | Wire, targetCol: string) {
         this.component = component;
@@ -35,9 +35,9 @@ export class ColorChangeAction implements Action {
     }
 
     /**
-     * Set the component's color to the targetColor
+     * Set the component's color to the targetColor.
      *
-     * @returns This Action
+     * @returns This Action.
      */
     public execute(): Action {
         this.component.setColor(this.targetColor);
@@ -46,9 +46,9 @@ export class ColorChangeAction implements Action {
     }
 
     /**
-     * Undo the action, back the color of the component to the initialColor
+     * Undo the action, back the color of the component to the initialColor.
      *
-     * @returns This Action
+     * @returns This Action.
      */
     public undo(): Action {
         this.component.setColor(this.initialColor);

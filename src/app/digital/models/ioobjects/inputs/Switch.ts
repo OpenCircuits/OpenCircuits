@@ -11,7 +11,7 @@ import {PressableComponent} from "../PressableComponent";
 export class Switch extends PressableComponent {
 
     /**
-     * Initializes Switch with no input ports, a single output port, and predetermined sizes
+     * Initializes Switch with no input ports, a single output port, and predetermined sizes.
      */
     public constructor() {
         super(new ClampedValue(0),
@@ -21,39 +21,43 @@ export class Switch extends PressableComponent {
     }
 
     /**
-     * Toggles Switch
+     * Toggles Switch.
      */
     public click(): void {
         this.activate(!this.on);
     }
 
     /**
-     * Activates or deactivates Switch output
-     * @param signal Boolean representing on or off
+     * Activates or deactivates Switch output.
+     *
+     * @param signal Boolean representing on or off.
      */
     public activate(signal: boolean): void {
         super.activate(signal, 0);
     }
 
     /**
-     * Returns name of Component
-     * @returns "Switch"
+     * Returns name of Component.
+     *
+     * @returns The string "Switch".
      */
     public getDisplayName(): string {
         return "Switch";
     }
 
     /**
-     * Returns name of image file with on state Switch
-     * @returns "switchUp.svg"
+     * Returns name of image file with on state Switch.
+     *
+     * @returns The string "switchUp.svg".
      */
     public getOffImageName(): string {
         return "switchUp.svg";
     }
 
     /**
-     * Returns name of image file with off state Switch
-     * @returns "switchDown.svg"
+     * Returns name of image file with off state Switch.
+     *
+     * @returns The string "switchDown.svg".
      */
     public getOnImageName(): string {
         return "switchDown.svg";

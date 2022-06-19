@@ -4,7 +4,7 @@ import {ConstantNumber} from "digital/models/ioobjects";
 
 
 /**
- * An action to change the input for a ConstantNumber
+ * An action to change the input for a ConstantNumber.
  */
 export class ConstantNumberChangeAction implements Action {
 
@@ -16,10 +16,10 @@ export class ConstantNumberChangeAction implements Action {
     private targetNum: number;
 
     /**
-     * Create an action to change the input for a ConstantNumber
+     * Create an action to change the input for a ConstantNumber.
      *
-     * @param constNum The `ConstantNumber` object
-     * @param newInput The new input value (`0 <= newInput < 16`)
+     * @param constNum The `ConstantNumber` object.
+     * @param newInput The new input value (`0 <= newInput < 16`).
      */
     public constructor(constNum: ConstantNumber, newInput: number) {
         this.constantNumber = constNum;
@@ -28,9 +28,9 @@ export class ConstantNumberChangeAction implements Action {
     }
 
     /**
-     * Sets the input value of the ConstantNumber to the new Input value
+     * Sets the input value of the ConstantNumber to the new Input value.
      *
-     * @returns the action
+     * @returns This Action.
      */
     public execute(): Action {
         this.constantNumber.setInput(this.targetNum);
@@ -38,9 +38,9 @@ export class ConstantNumberChangeAction implements Action {
     }
 
     /**
-     * Sets the input value of the ConstantNumber to the initial Input value
+     * Sets the input value of the ConstantNumber to the initial Input value.
      *
-     * @returns the action
+     * @returns This Action.
      */
     public undo(): Action {
         this.constantNumber.setInput(this.initialNum);
@@ -48,9 +48,9 @@ export class ConstantNumberChangeAction implements Action {
     }
 
     /**
-     * Gets the name of the action
+     * Gets the name of the action.
      *
-     * @returns "Constant Number Change"
+     * @returns The string "Constant Number Change".
      */
     public getName(): string {
         return "Constant Number Change"

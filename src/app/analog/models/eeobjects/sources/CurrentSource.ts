@@ -39,16 +39,18 @@ export class CurrentSource extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
-     * @returns "Current Source"
+     * Returns name of Component.
+     *
+     * @returns The string "Current Source".
      */
     public override getDisplayName(): string {
         return "Current Source";
     }
 
     /**
-     * Returns name of image file
-     * @returns "currentsource.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "currentsource.svg".
      */
     public override getImageName(): string {
         return "currentsource.svg";

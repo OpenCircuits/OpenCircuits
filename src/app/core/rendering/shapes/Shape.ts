@@ -3,9 +3,9 @@
  */
 export interface Shape {
     /**
-     * Draws the Shape on the canvas
+     * Draws the Shape on the canvas.
      *
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     draw(ctx: CanvasRenderingContext2D): void;
 

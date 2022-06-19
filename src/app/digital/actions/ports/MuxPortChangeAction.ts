@@ -27,9 +27,9 @@ export class MuxPortChangeAction extends PortChangeAction {
     /**
      * Either changes the size of the inputs if it's a multiplexor or the outputs if it's a Demux.
      *
-     * @param obj refers to the Mux object
-     * @param initial refers to the initial number of inputs
-     * @param target refers to the new number of inputs requested
+     * @param obj     Refers to the Mux object.
+     * @param initial Refers to the initial number of inputs.
+     * @param target  Refers to the new number of inputs requested.
      */
     public constructor(obj: Mux, initial: number, target: number) {
         super(obj.getDesigner(), target, initial);
@@ -44,16 +44,16 @@ export class MuxPortChangeAction extends PortChangeAction {
     /**
      * This function changes the width and height of the obj based on the number of ports chosen.
      *
-     * @param val is the target number the user chose.
+     * @param val The target number the user chose.
      */
     protected changeSize(val: number): void {
         this.obj.setSize(Mux.CalcSize(val));
     }
 
     /**
-     * Gets selected ports from obj
+     * Gets selected ports from obj.
      *
-     * @returns selected ports from obj
+     * @returns Selected ports from obj.
      */
     protected getPorts(): Port[] {
         return this.obj.getSelectPorts();
@@ -63,7 +63,7 @@ export class MuxPortChangeAction extends PortChangeAction {
      * This code executes the action by changing the size of the obj based on the target count
      * and then changes the number of input/output Ports based on whether the obj is a Mux or Demux.
      *
-     * @returns the new obj with the new size and number of ports.
+     * @returns The new obj with the new size and number of ports.
      */
     public execute(): Action {
         // Change size first
@@ -78,7 +78,7 @@ export class MuxPortChangeAction extends PortChangeAction {
     /**
      * This code does the same as execute except it changes the size and number of ports back to the initial number.
      *
-     * @returns the new object with the initial size and number of ports.
+     * @returns The new object with the initial size and number of ports.
      */
     public undo(): Action {
         // Change size back first

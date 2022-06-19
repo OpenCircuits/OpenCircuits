@@ -10,18 +10,18 @@ export class Polygon implements Shape {
     protected points: Vector[];
 
     /**
-     * Constructor for Polygon
+     * Constructor for Polygon.
      *
-     * @param points list of vertices
+     * @param points List of vertices.
      */
     public constructor(points: Vector[]) {
         this.points = points;
     }
 
     /**
-     * Draws the Polygon on the canvas
+     * Draws the Polygon on the canvas.
      *
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.points[0].x, this.points[0].y);

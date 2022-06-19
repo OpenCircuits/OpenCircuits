@@ -20,9 +20,10 @@ export class SidePositioner extends Positioner<AnalogPort> {
     }
 
     /**
-     * Position ports with constant space but put blank space in the middle
+     * Position ports with constant space but put blank space in the middle.
      *
-     * @param arr The array of input ports
+     * @param arr     The array of input ports.
+     * @param arr."0" The input port.
      */
     public updatePortPositions([p1]: AnalogPort[]): void {
         const size = (

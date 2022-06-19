@@ -16,9 +16,9 @@ import {GetQuadraticOffset} from "./ORGate";
 @serializable("XORGate")
 export class XORGate extends Gate {
     /**
-     * Construtor for the XORgate with a min of 2 inputs and max of 8 inputs and loads svg file with (60,50) size
+     * Construtor for the XORgate with a min of 2 inputs and max of 8 inputs and loads svg file with (60,50) size.
      *
-     * @param not true for XNOR gate, false for XOR gate
+     * @param not True for XNOR gate, false for XOR gate.
      */
     public constructor(not = false) {
         super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
@@ -36,15 +36,15 @@ export class XORGate extends Gate {
     /**
      * Returns a vector which helps position the component's inputs when more inputs are added.
      *
-     * @returns a vector representing the clickable offset
+     * @returns A vector representing the clickable offset.
      */
     public getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
-     * Returns the name of the gate
+     * Returns the name of the gate.
      *
-     * @returns the display name of the gate
+     * @returns The display name of the gate.
      */
     public getDisplayName(): string {
         return this.not ? "XNOR Gate" : "XOR Gate";
@@ -52,7 +52,7 @@ export class XORGate extends Gate {
     /**
      * Returns the name of the image used to display in the frontend.
      *
-     * @return the name of the image to use to represent this gate
+     * @returns The name of the image to use to represent this gate.
      */
     public getImageName(): string {
         return "or.svg";
@@ -62,8 +62,8 @@ export class XORGate extends Gate {
 @serializable("XNORGate")
 export class XNORGate extends XORGate {
     /**
-    * Calls the constructor of XORGate with the parameter as false, indicating this is a XNOR gate
-    */
+     * Calls the constructor of XORGate with the parameter as false, indicating this is a XNOR gate.
+     */
     public constructor() {
         super(true);
     }

@@ -1,7 +1,7 @@
 
 /**
- * @param V The type for the vertices of the edge
- * @param E The type for weight of the edge
+ * @param V The type for the vertices of the edge.
+ * @param E The type for weight of the edge.
  */
 export class Edge<V, E> {
     private target: V;
@@ -23,8 +23,8 @@ export class Edge<V, E> {
 
 
 /**
- * @param V The type for the vertices of the graph
- * @param E The type for the weight of the edges of the graph
+ * @param V The type for the vertices of the graph.
+ * @param E The type for the weight of the edges of the graph.
  */
 export class Graph<V, E> {
     private list: Map<V, Array<Edge<V, E>>>;
@@ -159,7 +159,7 @@ export class Graph<V, E> {
      *  have a depth of 4. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns A map where each key is each node and the value is the max depth of that node.
      */
     public getMaxNodeDepths(): V[][] {
         return this.getNodeDepths(true);
@@ -172,7 +172,7 @@ export class Graph<V, E> {
      *  have a depth of 2. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns A map where each key is each node and the value is the max depth of that node.
      */
     public getMinNodeDepths(): V[][] {
         return this.getNodeDepths(false);

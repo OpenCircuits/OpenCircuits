@@ -20,9 +20,9 @@ export class FlipFlopPositioner extends Positioner<InputPort> {
 
     /**
      * Port positioning for D Flip Flop.
-     *  It sets the Set and Reset on top and bottom
+     *  It sets the Set and Reset on top and bottom.
      *
-     * @param arr The array of input ports
+     * @param ports The array of input ports.
      */
     public updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions(ports.slice(2)); // Position ports after PRE/CLR (index 2)

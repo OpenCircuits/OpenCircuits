@@ -8,14 +8,14 @@ import {TranslateAction}                    from "./transform/TranslateAction";
 
 /**
  * Returns a GroupAction for replacing the original component with a new one. Both must have the same number of ports.
- * original must be placed in designer, and replacement must not be placed in designer.
+ * `original` must be placed in designer, and `replacement` must not be placed in designer.
  * This action implicitly executes on creation.
  *
- * @param designer the designer that original is placed on
- * @param original the component to replace, already in designer
- * @param replacement the new component, not yet in designer
- * @return a GroupAction containing the actions required to replace the component
- * @throws {Error} if original and replacement do not have the same number of ports
+ * @param    designer    The designer that original is placed on.
+ * @param    original    The component to replace, already in designer.
+ * @param    replacement The new component, not yet in designer.
+ * @returns              A GroupAction containing the actions required to replace the component.
+ * @throws {Error} If original and replacement do not have the same number of ports.
  */
  export function CreateReplaceComponentAction(designer: CircuitDesigner, original: Component,
                                               replacement: Component): GroupAction {

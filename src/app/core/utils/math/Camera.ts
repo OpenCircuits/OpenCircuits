@@ -36,11 +36,12 @@ export class Camera {
     /**
      * This constructor creates new Camera object which is the field of view (the screen)
      * and initializes all the variables.
-     * It sets dirty to true which means that
-     * @param width The width of the camera (screen)
-     * @param height The height of the camera (screen)
-     * @param startPos The starting position in the camera to 0,0 (vector)
-     * @param startZoom This initialzed zoom to 1
+     * It sets dirty to true which means that.
+     *
+     * @param width     The width of the camera (screen).
+     * @param height    The height of the camera (screen).
+     * @param startPos  The starting position in the camera to 0,0 (vector).
+     * @param startZoom This initialzed zoom to 1.
      */
     public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom = 1) {
         this.width = width!;
@@ -54,7 +55,7 @@ export class Camera {
 
     /**
      * If dirty is true then it updates and recalculates the matrix to the new position, height, and width.
-     * dirty represents whether the screen has been changed/moved or not.
+     * `dirty` represents whether the screen has been changed/moved or not.
      */
     private updateMatrix(): void {
         if (!this.dirty)
@@ -75,8 +76,9 @@ export class Camera {
 
     /**
      * This function resizes the height and width and sets dirty to true when the screen is moved.
-     * @param width new width of screen
-     * @param height new height of screen
+     *
+     * @param width  The new width of screen.
+     * @param height The new height of screen.
      */
     public resize(width: number, height: number): void {
         this.dirty = true;
@@ -86,7 +88,8 @@ export class Camera {
 
     /**
      * This sets the position of the screen (vector coordinates) and sets dirty to true.
-     * @param pos  the new position vector
+     *
+     * @param pos The new position vector.
      */
     public setPos(pos: Vector): void {
         this.dirty = true;
@@ -94,8 +97,9 @@ export class Camera {
     }
 
     /**
-     * The sets the zoom variable to the new zoom number
-     * @param zoom  the new zoom number (how much it's being zoomed in).
+     * The sets the zoom variable to the new zoom number.
+     *
+     * @param zoom The new zoom number (how much it's being zoomed in).
      */
     public setZoom(zoom: number): void{
         this.dirty = true;
@@ -103,8 +107,9 @@ export class Camera {
     }
 
     /**
-     * This moves the position of the screen by dv (Ex: pos=(10,10) dv=(5,0) then pos will = (15,10) after call)
-     * @param dv is a vector that represents by how much the position will be moved
+     * This moves the position of the screen by dv (Ex: pos=(10,10) dv=(5,0) then pos will = (15,10) after call).
+     *
+     * @param dv A vector that represents by how much the position will be moved.
      */
     public translate(dv: Vector): void {
         this.dirty = true;
@@ -113,8 +118,9 @@ export class Camera {
 
     /**
      * Zooms to a certain position on the screen by a certain amount z.
-     * @param c is the position it's zooming to
-     * @param z the amount it is zooming
+     *
+     * @param c The position it's zooming to.
+     * @param z The amount it is zooming.
      */
     public zoomTo(c: Vector, z: number): void {
         // Calculate position to zoom in/out of
@@ -126,52 +132,59 @@ export class Camera {
     }
 
     /**
-     * zooms in or out at the current position
-     * @param s amount to zoom by
+     * Zooms in or out at the current position.
+     *
+     * @param s The amount to zoom by.
      */
     public zoomBy(s: number): void {
         this.dirty = true;
         this.zoom *= s;
     }
     /**
-     * This function returns true or false if this.transform contains the transform passed through
-     * @param transform comparing this with this.transform
-     * @returns true or false
+     * This function returns true or false if this.transform contains the transform passed through.
+     *
+     * @param transform Comparing this with this.transform.
+     * @returns           True or false.
      */
     public cull(transform: Transform): boolean {
         return TransformContains(transform, this.getTransform());
     }
     /**
      * This returns the coordinates of the center of the screen wherever it is.
-     * @returns return vector with coordinates
+     *
+     * @returns Return vector with coordinates.
      */
     public getCenter(): Vector {
         return V(this.width/2, this.height/2);
     }
     /**
-     * Returns the size of the screen. This is the bottom-right corner
-     * @returns vector that contains the size of the screen
+     * Returns the size of the screen. This is the bottom-right corner.
+     *
+     * @returns Vector that contains the size of the screen.
      */
     public getSize(): Vector {
         return V(this.width, this.height);
     }
     /**
-     * makes a copy of pos to return
-     * @returns the position
+     * Makes a copy of pos to return.
+     *
+     * @returns The position.
      */
     public getPos(): Vector {
         return this.pos.copy();
     }
     /**
-     * return how much the screen is zoomed in/out by.
-     * @returns the zoom, which is data type Number
+     * Return how much the screen is zoomed in/out by.
+     *
+     * @returns The zoom, which is data type Number.
      */
     public getZoom(): number {
         return this.zoom;
     }
     /**
-     * This returns a copy of the transform of camera and updates the matrix
-     * @returns copy of this.transform
+     * This returns a copy of the transform of camera and updates the matrix.
+     *
+     * @returns Copy of this.transform.
      */
     public getTransform(): Transform {
         this.updateMatrix();
@@ -179,50 +192,58 @@ export class Camera {
     }
     /**
      * Returns copy of current matrix and updates the matrix as needed.
-     * @returns returns copy of mat.
+     *
+     * @returns Returns copy of mat.
      */
     public getMatrix(): Matrix2x3 {
         this.updateMatrix();
         return this.mat.copy();
     }
     /**
-     * Returns a copy of the inverse of the matrix and updates the matrix
-     * @returns return copy of inv
+     * Returns a copy of the inverse of the matrix and updates the matrix.
+     *
+     * @returns Returned copy of inv.
      */
     public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();
         return this.inv.copy();
     }
     /**
-     * returns the current screen position with formula using the vector v and getCenter
-     * @param v  is the vector multiplied to inv
-     * @returns a vector of the screen position
+     * Returns the current screen position with formula using the vector v and getCenter.
+     *
+     * @param v The vector multiplied to inv.
+     * @returns   A vector of the screen position.
      */
     public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.getCenter());
     }
     /**
-     * Returns the global position not the local screens position
-     * @returns global position
+     * Returns the global position not the local screens position.
+     *
+     * @param v The current position.
+     * @returns   The global position.
      */
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));
     }
 
     /**
-     * Returns a set of margins that adjusts the view of the camera
-     * @returns margin values for the camera
+     * Returns a set of margins that adjusts the view of the camera.
+     *
+     * @returns Margin values for the camera.
      */
     public getMargin(): Margin {
         return this.margin;
     }
 
     /**
-     * This sets the margin for the camera
-     * @param left the left margin of the camera
-     * @param right the right margin of the camera
-     * @param bottom the bottom margin of the camera
-     * @param top the top margin of the camera
+     * This sets the margin for the camera.
+     *
+     * @param newMargin        The new margins for the camera.
+     * @param newMargin.left   The left margin of the camera.
+     * @param newMargin.right  The right margin of the camera.
+     * @param newMargin.bottom The bottom margin of the camera.
+     * @param newMargin.top    The top margin of the camera.
      */
     public setMargin(newMargin: Partial<Margin>): void{
         this.margin = {...this.margin, ...newMargin};
