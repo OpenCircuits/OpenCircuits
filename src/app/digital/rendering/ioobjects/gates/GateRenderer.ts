@@ -6,7 +6,7 @@ import {DEFAULT_BORDER_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 

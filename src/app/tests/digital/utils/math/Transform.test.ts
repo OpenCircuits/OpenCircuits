@@ -1,6 +1,6 @@
 import "jest";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";
 

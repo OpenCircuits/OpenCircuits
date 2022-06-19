@@ -4,7 +4,7 @@ import {DRAG_TIME,
         LEFT_MOUSE_BUTTON,
         MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V,Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {CalculateMidpoint} from "math/MathUtils";
 

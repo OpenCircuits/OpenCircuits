@@ -3,7 +3,7 @@ import {serializable, serialize} from "serialeazy";
 import {TransformContains} from "./MathUtils";
 import {Matrix2x3}         from "./Matrix";
 import {Transform}         from "./Transform";
-import {V,Vector}          from "./Vector";
+import {V, Vector}         from "./Vector";
 
 
 type Margin = {left: number, right: number, bottom: number, top: number}
