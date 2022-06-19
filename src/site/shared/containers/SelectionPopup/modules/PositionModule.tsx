@@ -6,9 +6,9 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {Component} from "core/models";
 
-import {useSelectionProps} from "./useSelectionProps";
+import {ModuleSubmitInfo}       from "./inputs/ModuleInputField";
 import {NumberModuleInputField} from "./inputs/NumberModuleInputField";
-import {ModuleSubmitInfo} from "./inputs/ModuleInputField";
+import {useSelectionProps}      from "./useSelectionProps";
 
 
 type Props = {
@@ -25,7 +25,6 @@ export const PositionModule = ({ info }: Props) => {
 
     if (!props)
         return null;
-
 
     const onSubmit = (info: ModuleSubmitInfo) => {
         renderer.render();

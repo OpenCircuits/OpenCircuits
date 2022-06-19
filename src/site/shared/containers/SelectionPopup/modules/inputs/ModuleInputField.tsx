@@ -1,6 +1,7 @@
-import {Action} from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
 import {useState} from "react";
+
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
 
 
 export type ModuleSubmitInfo = {
@@ -12,12 +13,12 @@ export type ModuleSubmitInfo = {
     isValid: false;
 }
 
-export type SharedModuleInputFieldProps<V extends Types, M = {}> = {
+export type SharedModuleInputFieldProps<V extends Types> = {
     props: V[];
 
     getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
-    getModifierAction?: (newMod: M) => Action;
+    getModifierAction?: (newMod: V) => Action;
     getCustomDisplayVal?: (val: V) => V;
 
     placeholder?: string;
@@ -25,30 +26,34 @@ export type SharedModuleInputFieldProps<V extends Types, M = {}> = {
 }
 
 
-type State<M = {}> = {
+type Types = string | number | boolean;
+type State<V extends Types> = {
     focused: boolean;
     textVal: string;
     tempAction: Action | undefined;
 
-    modifier: M | undefined;
+    modifier: V | undefined;
     modifierAction: Action | undefined;
 }
-type Types = string | number | boolean;
-type Props<V extends Types, M = {}> = {
+type Props<V extends Types> = {
     props: V[];
 
     parseVal: (val: string) => V;
     parseFinalVal?: (val: V) => V; // TODO: CONSIDER REMOVING THIS
     isValid: (val: V) => boolean;
+    getModifier?: (curMod: V | undefined, newMod: V) => V;
 
     getAction: (newVal: V) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
-    getModifierAction?: (newMod: M) => Action;
+    getModifierAction?: (newMod: V) => Action;
     getCustomDisplayVal?: (val: V) => V;
 }
-export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getModifierAction, parseVal, isValid,
-                                                    parseFinalVal, onSubmit, getCustomDisplayVal }: Props<V,M>) => {
-    const [state, setState] = useState<State>({
+export const useBaseModule = <V extends Types>({
+    props, parseVal, isValid, parseFinalVal, getModifier,
+    getAction, getModifierAction, onSubmit, getCustomDisplayVal,
+}: Props<V>) => {
+
+    const [state, setState] = useState<State<V>>({
         focused:    false,
         textVal:    "",
         tempAction: undefined,
@@ -61,16 +66,34 @@ export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getMo
 
     const allSame = props.every(v => v === props[0]);
     const val = props[0];
+    const value = (focused ? textVal : (allSame ? (getCustomDisplayVal ?? ((v) => v))(val) : ""));
 
-    const onModify = (newMod: M) => {
-        if (!getModifierAction)
+    const onModify = (mod: V) => {
+        if (!getModifier)
             return;
 
+        // Get parsed value from current text within the input itself
+        //  (have to do this since we may not be currently focused, so
+        //   onFocus hasn't been called yet to just set `textVal`)
+        const val = parseVal(`${value}`);
+
+        // If the props are the same (or has been set to be the same)
+        //  and the current input value is not NaN, then just set the increment
+        //  as a direct change since the props are all the same and don't need
+        //  to be applied on a per-prop basis (or there isn't a modifier)
+        if (!getModifierAction || ((allSame || tempAction) && isValid(val))) {
+            onChange(`${getModifier(val, mod)}`);
+            return;
+        }
+
+        // Otherwise, store the increment and use the onModify function to apply
+        //  the increment on a per-prop basis
+        const newMod = getModifier(modifier, mod);
         modifierAction?.undo();
         const action = getModifierAction(newMod).execute();
-        onSubmit?.({ isFinal: false, isValid: true, action });
 
-        setState({ ...state, focused: true, modifierAction: action });
+        onSubmit?.({ isFinal: false, isValid: true, action });
+        setState({ ...state, focused: true, modifier: newMod, modifierAction: action });
     }
 
     const onChange = (newVal: string) => {
@@ -91,7 +114,7 @@ export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getMo
 
         // Reset modifier when state here since state is being set exactly
         setState({
-            focused: true, textVal: newVal, tempAction: action, modifier: undefined, modifierAction: undefined
+            focused: true, textVal: newVal, tempAction: action, modifier: undefined, modifierAction: undefined,
         });
     }
 
@@ -109,16 +132,16 @@ export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getMo
     //     > finally becomes  `-.5` => valid
     //   The input can temporarily be invalid while the user is typing
     //    and is why this is all necessary.
-    const onFocus = () => {
+    const onFocus = (modifier?: V) => {
         // On focus, if all same (displaying `val`) then
         //  start user-input with `val`, otherwise empty
         const textVal = (allSame ? val.toString() : "");
-        setState({ focused: true, textVal, tempAction: undefined, modifier: undefined, modifierAction: undefined });
+        setState({ focused: true, textVal, tempAction: undefined, modifier, modifierAction: undefined });
     }
 
     // Blurring should trigger a 'submit' so the user-inputted value
     //  is finally realized and registers an action to the circuit
-    const onBlur = () => {
+    const onBlur = (modifier?: V) => {
         // If temp action doesn't exist, it means that the user didn't change anything
         //  so we should just do nothing and go back to normal
         if (!tempAction && !modifierAction) {
@@ -139,7 +162,7 @@ export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getMo
         const finalVal = (parseFinalVal ?? ((v) => v))(parseVal(textVal));
         if (!isValid(finalVal)) {
             // Invalid final input, keep action un-done and stay at starting state
-            setState({ ...state, focused: false, textVal: val.toString(), tempAction: undefined }); // <----- TODO: ?? val.toString() correct??
+            setState({ ...state, focused: false, textVal: val.toString(), tempAction: undefined, modifier }); // <----- TODO: ?? val.toString() correct??
             onSubmit?.({ isFinal: true, isValid: false });
             return;
         }
@@ -152,14 +175,12 @@ export const useBaseModule = <V extends Types, M = {}>({ props, getAction, getMo
 
         // When submitting, it will be true that all the values are the same
         //  and they will all be `newVal`, so
-        setState({ ...state, focused: false, tempAction: undefined, modifierAction: undefined });
+        setState({ focused: false, textVal, tempAction: undefined, modifier, modifierAction: undefined });
     }
-
-    // console.log("update internal: ", focused, textVal, allSame, val);
 
     return [
         {
-            value: (focused ? textVal : (allSame ? (getCustomDisplayVal ?? ((v) => v))(val) : "")),
+            value,
             allSame,
         },
         {
