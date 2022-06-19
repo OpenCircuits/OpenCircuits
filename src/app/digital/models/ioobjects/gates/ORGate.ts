@@ -36,10 +36,10 @@ export class ORGate extends Gate {
     public constructor(not = false) {
         super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
     }
+
     /**
      * Checks if some of the inputs are on, and if they are, activates the gate.
      */
-    // @Override
     public activate(): void {
         const on = this.getInputPorts().some((input) => input.getIsOn());
         super.activate(on);
@@ -50,7 +50,6 @@ export class ORGate extends Gate {
      *
      * @returns A vector with the symmetric offset based on the current input number.
      */
-    // @Override
     public getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }

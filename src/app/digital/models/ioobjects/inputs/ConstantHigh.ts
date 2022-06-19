@@ -6,10 +6,10 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+
 /**
  * Creates a constant high circuit component.
  */
-
 @serializable("ConstantHigh")
 export class ConstantHigh extends DigitalComponent {
 
@@ -26,7 +26,6 @@ export class ConstantHigh extends DigitalComponent {
      *
      * @returns An empty vector.
      */
-    // @Override
     public getOffset(): Vector {
         return V();
     }

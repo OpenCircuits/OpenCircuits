@@ -93,7 +93,7 @@ export class Rect {
      * Clamps this rectangle such that it's within the given bounds.
      * (Note that this preserves the size of the rectangle, unless it is larger then the bounds).
      *
-     * @param  bounds The bounds to clamp this rectangle into.
+     * @param bounds The bounds to clamp this rectangle into.
      */
     public clamp(bounds: Rect) {
         // Clamp to be as big as bounds if too big
@@ -147,12 +147,12 @@ export class Rect {
      *
      * @param dir                        The direction to shift this rectangle.
      * @param amt                        The amount to shift this rectangle.
-     * @param constraints                The constraints for the shift
+     * @param constraints                The constraints for the shift.
      * @param constraints.minSize        The minimum size the rectangle can be.
      * @param constraints.minSize.width  The minimum width the rectangle can have.
      * @param constraints.minSize.height The minimum height the rectangle can have.
      * @param constraints.bounds         The bounds that the rectangle must stay within.
-     * @returns     A new rectangle which is a shifted version of this one.
+     * @returns                            A new rectangle which is a shifted version of this one.
      */
     public shift(dir: Vector, amt: Vector,
                  constraints?: { minSize?: { width: number, height: number }, bounds?: Rect }): Rect {

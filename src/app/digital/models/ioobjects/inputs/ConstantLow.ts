@@ -6,6 +6,7 @@ import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalComponent} from "digital/models/index";
 
+
 /**
  * A representation of a Constant Low input.
  */
@@ -25,7 +26,6 @@ export class ConstantLow extends DigitalComponent {
      *
      * @returns The offset vector which represents a border width of 0px.
      */
-    // @Override
     public getOffset(): Vector {
         return V();
     }
@@ -47,5 +47,4 @@ export class ConstantLow extends DigitalComponent {
     public getImageName(): string {
         return "constLow.svg";
     }
-
 }

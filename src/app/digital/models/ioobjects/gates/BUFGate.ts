@@ -7,14 +7,14 @@ import {ClampedValue} from "math/ClampedValue";
 import {Gate} from "./Gate";
 
 /**
- *Super class for gates that take one input and have one output,
- *Buffer Gates and Not Gates.
+ * Super class for gates that take one input and have one output,
+ * Buffer Gates and Not Gates.
  *
  */
 @serializable("BUFGate")
 export class BUFGate extends Gate {
     /**
-     *Creates a Buffer Gate.
+     * Creates a Buffer Gate.
      *
      * @param not Determines whether the gate is a Buffer gate or a Not gate.
      */
@@ -25,7 +25,6 @@ export class BUFGate extends Gate {
      * Activate function, passes the input port state to
      * the parent class activate function.
      */
-    // @Override
     public activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
@@ -48,11 +47,11 @@ export class BUFGate extends Gate {
         return "buf.svg";
     }
 }
+
 /**
  * Not Gate.
  *
  * A gate that outputs the inverse of the signal that it is given.
- *
  */
 @serializable("NOTGate")
 export class NOTGate extends BUFGate {
