@@ -12,11 +12,13 @@
 docs/ts/app/core
 docs/ts/app/digital
 
+.devCache
 node_modules
 coverage
 build
 site/data/config.txt
-site/public/js/combined-min.js
+src/site/pages/analog/src/lib/ngspice.js
+src/site/pages/analog/src/lib/ngspice.wasm
 tests/index.js
 app.yaml
 yarn-error.log

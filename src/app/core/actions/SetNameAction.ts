@@ -1,4 +1,5 @@
 import {Selectable} from "core/utils/Selectable";
+
 import {Action} from "core/actions/Action";
 
 
@@ -21,6 +22,10 @@ export class SetNameAction implements Action {
     public undo(): Action {
         this.obj.setName(this.oldName);
         return this;
+    }
+
+    public getName(): string {
+        return "Set Name";
     }
 
 }

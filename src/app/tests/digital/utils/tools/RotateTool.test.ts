@@ -1,19 +1,19 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {ANDGate, ORGate} from "digital/models/ioobjects";
-
-import {Setup}      from "test/helpers/Setup";
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {ANDGate, ORGate} from "digital/models/ioobjects";
 
 
 describe("Rotate Tool", () => {
     const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers({designer});
+    const {Place} = GetHelpers(designer);
 
     describe("Single Object", () => {
         const obj = new ANDGate();

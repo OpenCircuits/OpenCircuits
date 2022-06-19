@@ -11,5 +11,5 @@
             "site/digital/*": ["./src/*"],
         }
     },
-    "include": ["src"],
+    "include": ["src", "../../shared/utils/types"],
 }

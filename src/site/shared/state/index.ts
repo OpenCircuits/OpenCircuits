@@ -1,10 +1,10 @@
-import {UserInfoState}    from "./UserInfo";
 import {CircuitInfoState} from "./CircuitInfo";
-import {HeaderState}      from "./Header";
-import {SideNavState}     from "./SideNav";
-import {ItemNavState}     from "./ItemNav";
 import {ContextMenuState} from "./ContextMenu";
 import {DebugInfoState}   from "./DebugInfo";
+import {HeaderState}      from "./Header";
+import {ItemNavState}     from "./ItemNav";
+import {SideNavState}     from "./SideNav";
+import {UserInfoState}    from "./UserInfo";
 
 
 export type SharedAppState = {

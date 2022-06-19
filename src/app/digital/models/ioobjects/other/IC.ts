@@ -5,10 +5,9 @@ import {DEFAULT_SIZE} from "core/utils/Constants";
 import {V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
-
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
 import {ICData} from "./ICData";
 
@@ -34,20 +33,28 @@ export class IC extends DigitalComponent {
         this.data = data;
         this.collection = this.data.copy(); // Copy internals
 
+        this.updateInputs();
         this.redirectOutputs();
         this.update();
     }
 
+    private updateInputs(): void {
+        // Set all ports to match the signal of the associated input (issue #468)
+        this.collection.getInputs().forEach((input, i) =>
+            this.getInputPort(i).activate(input.getOutputPort(0).getIsOn())
+        );
+    }
+
     private redirectOutputs(): void {
         // Redirect activate function for output objects
-        const outputs = this.collection.getOutputs();
-        for (let i = 0; i < this.numOutputs(); i++) {
+        this.collection.getOutputs().forEach((output, i) => {
             const port = this.getOutputPort(i);
-            const output = outputs[i];
+            // Activate port to same as output (issue #468)
+            port.activate(output.getInputPort(0).getIsOn());
             output.activate = (on) => {
                 port.activate(on);
             }
-        }
+        });
     }
 
     private copyPorts(): void {
@@ -77,20 +84,24 @@ export class IC extends DigitalComponent {
 
         // Update port positions
         this.copyPorts();
+
+        // Update cullbox
+        this.onTransformChange();
     }
 
     public activate(): void {
         // Activate corresponding input object
-        const inputs = this.collection.getInputs();
-        for (let i = 0; i < this.numInputs(); i++) {
-            const port = this.getInputPort(i);
-            const input = inputs[i];
-            input.activate(port.getIsOn());
-        }
+        this.collection.getInputs().forEach((input, i) =>
+            input.activate(this.getInputPort(i).getIsOn())
+        );
     }
 
     public getData(): ICData {
         return this.data;
+    }
+
+    public getCollection(): DigitalObjectSet {
+        return this.collection;
     }
 
     public getDisplayName(): string {

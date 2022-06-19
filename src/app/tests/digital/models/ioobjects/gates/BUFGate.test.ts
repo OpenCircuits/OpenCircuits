@@ -1,17 +1,19 @@
 import "jest";
 
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("BUFGate", () => {
     describe("BUFGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers({designer});
+        const {AutoPlace} = GetHelpers(designer);
 
-        const [g, [a], [o]] = AutoPlace(new BUFGate());
+        const [, [a], [o]] = AutoPlace(new BUFGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -30,9 +32,9 @@ describe("BUFGate", () => {
 
     describe("NOTGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers({designer});
+        const {AutoPlace} = GetHelpers(designer);
 
-        const [g, [a], [o]] = AutoPlace(new BUFGate(true));
+        const [, [a], [o]] = AutoPlace(new BUFGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

@@ -1,0 +1,152 @@
+@import "~shared/utils/constants";
+
+$historybox-height: 400px;
+$historybox-header-height: 30px;
+$historybox-width: 250px;
+
+
+.historybox {
+    // width: $historybox-width;
+    border: 5px solid $secondary-color;
+    background-color: $primary-color;
+
+    box-sizing: border-box;
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    bottom: 0px;
+    z-index: 4;
+
+    overflow-y: hidden;
+
+    padding-bottom: 10px;
+
+    transition: all 0.5s;
+
+    & > div:first-child {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 10px 5px;
+
+        height: $historybox-header-height;
+
+        & > span:first-child {
+            font-size: 30px;
+        }
+        & > span:last-child {
+            font-size: 40px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+    & > div:last-child {
+        height: calc(100% - #{$historybox-header-height + 2*10px - 2*5px});
+
+        overflow-y: scroll;
+
+        scrollbar-width: thin;
+        scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
+
+        &::-webkit-scrollbar {
+            width: 7px;  // vertical scrollbars
+            height: 7px; // horizontal scrollbar
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 30%);
+            border-radius: 15px;
+        }
+
+        @media (max-width: $desktop-width) and (orientation:portrait) {
+            max-height: 40vh;
+        }
+    }
+
+    &__move {
+        & > div:last-child {
+            left: 0px;
+
+            @media (max-width: $desktop-width) and (orientation:portrait) {
+                margin-bottom: 0px;
+            }
+        }
+    }
+
+    &__separator {
+        padding-bottom: 2px;
+        margin-left: 5px;
+        margin-bottom: 2px;
+        border-bottom: 2px solid $secondary-color;
+    }
+
+    &__entry, &__groupentry {
+        margin: 5px;
+        padding: 5px;
+
+        line-height: 30px;
+
+        border: 1px solid $secondary-color;
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        &--dashed {
+            border: 2px dashed $secondary-color;
+        }
+
+        &__header {
+            width: 100%;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        &__extrainfo {
+            margin-left: 5px;
+        }
+    }
+
+    &__entry {
+        &__header {
+            & > span {
+                margin-left: 5px;
+            }
+        }
+    }
+    &__groupentry {
+        &__header {
+            justify-content: space-between;
+
+            & > div {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                & > span {
+                    margin-left: 5px;
+                }
+            }
+            & > span {
+                margin-right: 5px;
+
+                font-size: 18px;
+
+                transition: 0.5s;
+                transform: rotate(90deg);
+                &.collapsed {
+                    transform: rotate(0deg);
+                }
+            }
+        }
+    }
+}

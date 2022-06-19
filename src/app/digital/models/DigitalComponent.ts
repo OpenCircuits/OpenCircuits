@@ -1,20 +1,22 @@
 import {serialize} from "serialeazy";
 
 import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
 
-import {Port} from "core/models/ports/Port";
+import {Port}    from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalWire, DigitalCircuitDesigner, InputPort, OutputPort} from "./index";
+import {DigitalCircuitDesigner, DigitalWire, InputPort, OutputPort} from "./index";
 
 
 export abstract class DigitalComponent extends Component {
     @serialize
-    protected designer: DigitalCircuitDesigner;
+    protected designer?: DigitalCircuitDesigner;
 
     @serialize
     protected inputs:  PortSet<InputPort>;
@@ -32,11 +34,12 @@ export abstract class DigitalComponent extends Component {
 
     /**
      * Activates this component with the given signal
-     *  through the output port at index i
-     * @param signal The signal (on or off)
-     * @param i      The index of the output port, must be $\in [0, outputs.length)$
+     *  through the output port at index i.
+     *
+     * @param signal The signal (on or off).
+     * @param i      The index of the output port, must be $\in [0, outputs.length)$.
      */
-    public activate(signal: boolean, i: number = 0): void {
+    public activate(signal: boolean, i = 0): void {
         // Don't try to activate an Output component since it has no outputs
         if (this.outputs.isEmpty())
             return;
@@ -81,7 +84,7 @@ export abstract class DigitalComponent extends Component {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput())
-                .filter((w) => w != null);
+                .filter(w => !!w);
     }
 
     public numInputs(): number {
@@ -123,7 +126,7 @@ export abstract class DigitalComponent extends Component {
     }
 
 
-    public getDesigner(): DigitalCircuitDesigner {
+    public getDesigner(): DigitalCircuitDesigner | undefined {
         return this.designer;
     }
 

@@ -1,15 +1,13 @@
-import {Create} from "serialeazy";
-import {useEffect, useState} from "react";
-
-import {OPTION_KEY} from "core/utils/Constants";
+import {Create, GetIDFor} from "serialeazy";
+import {useEffect, useMemo, useState} from "react";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {IsICDataInUse} from "digital/utils/ComponentUtils";
+
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
+import {IC} from "digital/models/ioobjects";
 
 import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
-import {IC} from "digital/models/ioobjects";
-import {ICData} from "digital/models/ioobjects";
 
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {ItemNav, ItemNavItem, ItemNavSection} from "shared/containers/ItemNav";
@@ -57,15 +55,15 @@ const SmartPlaceOrder = [
 type Props = {
     info: DigitalCircuitInfo;
 }
-export const DigitalItemNav = ({info}: Props) => {
-    const {designer} = info;
-    const [{ics}, setState] = useState({ ics: [] as ItemNavItem[] });
+export const DigitalItemNav = ({ info }: Props) => {
+    const { designer } = info;
+    const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
     const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
 
-    // Cycle through Smart Place options on Option key press
-    useWindowKeyDownEvent(OPTION_KEY, () => {
+    // Cycle through Smart Place options on Alt key press
+    useWindowKeyDownEvent("Alt", () => {
         setSmartPlace((smartPlace) => SmartPlaceOrder[
             // Calculate index of current option and find next one in the list
             (SmartPlaceOrder.indexOf(smartPlace) + 1) % SmartPlaceOrder.length]
@@ -85,7 +83,7 @@ export const DigitalItemNav = ({info}: Props) => {
                     label: d.getName(),
                     icon: "multiplexer.svg",
                     removable: true,
-                }))
+                })),
             });
         }
 
@@ -93,26 +91,45 @@ export const DigitalItemNav = ({info}: Props) => {
         return () => designer.removeCallback(onEvent);
     }, [designer]);
 
+    // Generate ItemNavConfig with ICs included
+    const config = useMemo(() => ({
+        imgRoot: itemNavConfig.imgRoot,
+        sections: [
+            ...itemNavConfig.sections,
+            ...(ics.length === 0 ? [] : [{
+                id: "other",
+                label: "ICs",
+                items: ics,
+            }]),
+        ],
+    }), [ics]);
 
     // Append regular ItemNav items with ICs
-    return <ItemNav info={info} config={{
-            imgRoot: itemNavConfig.imgRoot,
-            sections: [
-                ...itemNavConfig.sections,
-                ...(ics.length === 0 ? [] : [{
-                    id: "other",
-                    label: "ICs",
-                    items: ics
-                }])
-            ]
-        }}
+    return <ItemNav
+        info={info}
+        config={config}
         additionalData={smartPlace}
+        getImgSrc={(c) => {
+            // Get ID
+            const id = (c instanceof IC)
+                // IC config 'id' is based on index of its ICData
+                ? (`ic/${designer.getICData().indexOf(c.getData())}`)
+                // Otherwise just get the Serialized ID
+                : (GetIDFor(c));
+            if (!id)
+                throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
+
+            // Get path within config of ItemNav icon
+            const section = config.sections.find(s => s.items.find(i => i.id === id));
+            const item = section?.items.find(i => i.id === id);
+
+            return `${config.imgRoot}/${section?.id}/${item?.icon}`;
+        }}
         onStart= {() => setSmartPlace(SmartPlaceOptions.Off) }
         onFinish={() => setSmartPlace(SmartPlaceOptions.Off) }
         onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            const icData = info.designer.getICData()[+ic.id.substr(ic.id.indexOf('/')+1)];
-            const icInUse = info.designer.getAll().some(o => (o instanceof IC && o.getData() === icData));
-            if (icInUse) {
+            const icData = info.designer.getICData()[+ic.id.substring(ic.id.indexOf("/")+1)];
+            if (IsICDataInUse(info.designer, icData)) {
                 window.alert("Cannot delete this IC while instances remain in the circuit.");
                 return false;
             }

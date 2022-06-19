@@ -1,7 +1,5 @@
 import "jest";
 
-import {SPACEBAR_KEY} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {Switch, Button,
@@ -13,7 +11,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 describe("Translate Tool", () => {
     const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
@@ -126,8 +124,8 @@ describe("Translate Tool", () => {
             led.setPos(V(100, 0));
 
             // Connect to Port and set as straight
-            Connect(sw,   0, port, 0).getWire().setIsStraight(true);
-            Connect(port, 0, led,  0).getWire().setIsStraight(true);
+            Connect(sw,   port)[0].getWire().setIsStraight(true);
+            Connect(port,  led)[0].getWire().setIsStraight(true);
 
             // Select all
             input.drag(V(-200, -200), V(200, 200));
@@ -135,8 +133,8 @@ describe("Translate Tool", () => {
             // Start Translating then Clone
             input.press(V(0, 0))
                     .moveTo(V(-100, 0))
-                    .pressKey(SPACEBAR_KEY)
-                    .releaseKey(SPACEBAR_KEY)
+                    .pressKey(" ")
+                    .releaseKey(" ")
                     .moveTo(V(100, 0))
                     .release();
 

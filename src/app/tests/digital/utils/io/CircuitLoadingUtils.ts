@@ -1,14 +1,14 @@
-import "jest";
-import "test/helpers/Extensions";
-
 import {Deserialize} from "serialeazy";
 
-import "digital/models/ioobjects";
-import "core/models/Circuit";
+import "test/helpers/Extensions";
+
+import {Component} from "core/models";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models";
+import {CircuitDesigner}       from "core/models/CircuitDesigner";
+
+import "digital/models/ioobjects";
+
 
 export function LoadCircuit(circuit: Circuit): CircuitDesigner {
     const data = Deserialize<ContentsData>(circuit.contents);
@@ -16,7 +16,9 @@ export function LoadCircuit(circuit: Circuit): CircuitDesigner {
 }
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace jest {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
             toMatchCircuit(expected: CircuitDesigner): CustomMatcherResult;
         }
@@ -28,7 +30,7 @@ expect.extend({
         if (!(received instanceof CircuitDesigner)) {
             return {
                 message: () => "expected type of CircuitDesigner",
-                pass: false
+                pass:    false,
             };
         }
 
@@ -60,7 +62,7 @@ expect.extend({
 
         return {
             message: () => `expected ${received} to not be the same as ${expected}`,
-            pass: true
+            pass:    true,
         };
-    }
+    },
 });

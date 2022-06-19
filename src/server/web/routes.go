@@ -1,6 +1,8 @@
 package web
 
 import (
+	"net/http"
+
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +14,15 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.Static("/static", "./site/static")
 	router.Static("/examples", "./site/examples")
 
-	router.StaticFile("/", "./site/index.html")
+	router.GET("/ngspice.wasm", func(c *gin.Context) {
+		c.Writer.Header().Set("Content-Type", "application/wasm")
+		c.File("./site/ngspice.wasm")
+	})
+
+	router.LoadHTMLFiles("./site/index.html")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+	})
+
 	router.StaticFile("/robots.txt", "./site/robots.txt")
 }

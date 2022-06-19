@@ -1,23 +1,33 @@
 import "./index.scss";
 
-type Props = {
-    isOn: boolean;
-    onChange?: () => void;
-    text: string;
-    disabled?: boolean;
-    hideStateText?: boolean;
-}
 
-export const SwitchToggle = ({isOn, onChange, text, disabled, hideStateText}: Props) => (
-    <div className={`switchtoggle ${disabled ? "disabled" : ''}`} onClick={onChange}>
+type Props = {
+    className?: string;
+
+    isOn: boolean;
+    height?: string;
+    disabled?: boolean;
+
+    children?: React.ReactNode;
+
+    onChange?: () => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
+}
+export const SwitchToggle = ({ className, isOn, height, disabled, children, ...callbacks }: Props) => (
+    <div className={`switchtoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
+         onClick={callbacks.onChange}
+         onFocus={callbacks.onFocus}
+         onBlur={callbacks.onBlur}
+         style={{ height }}>
         <img src="img/items/switchDown.svg"
-             style={{display: (!disabled && isOn ? "" : "none")}}
+             style={{ display: (!disabled && isOn ? "" : "none") }}
              height="100%" alt="Switch on" />
         <img src="img/items/switchUp.svg"
-             style={{display: (!disabled && isOn ? "none" : "")}}
+             style={{ display: (!disabled && isOn ? "none" : "") }}
              height="100%" alt="Switch off" />
-        <span title="Toggle-Switch">
-            {text}{!hideStateText && <> : {!disabled && isOn ? "On" : "Off"}</>}
+        <span>
+            {children}
         </span>
     </div>
 );

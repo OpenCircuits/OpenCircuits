@@ -1,10 +1,13 @@
+import {serializable} from "serialeazy";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
-import {Port}      from "core/models/ports/Port";
+
+import {Port} from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
-import {serializable} from "serialeazy";
+
 
 @serializable("PortSet")
 export class PortSet<T extends Port> {
@@ -17,17 +20,18 @@ export class PortSet<T extends Port> {
 
     private count: ClampedValue;
 
-    private type: new(c: Component) => T;
+    private type: new(c: Component | undefined) => T;
 
     private positioner: Positioner<T>;
 
     public constructor();
-    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component) => T);
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>,
+                       type: new(c: Component | undefined) => T);
     public constructor(parent?: Component, count?: ClampedValue,
-                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component) => T) {
-        this.parent = parent;
-        this.type = type;
-        this.count = count;
+                       positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component | undefined) => T) {
+        this.parent = parent!;
+        this.type = type!;
+        this.count = count!;
         this.positioner = positioner;
 
         this.oldPorts = [];
@@ -41,12 +45,13 @@ export class PortSet<T extends Port> {
      * Set the number of Ports of this set.
      *  The value will be clamped and positions of ports
      *  will be updated.
-     * @param val The new number of ports
+     *
+     * @param newVal The new number of ports.
      */
     public setPortCount(newVal: number): void {
         // no need to update if value is already
         //  the current amount
-        if (newVal == this.currentPorts.length)
+        if (newVal === this.currentPorts.length)
             return;
 
         // set count (will auto-clamp)
@@ -54,7 +59,7 @@ export class PortSet<T extends Port> {
 
         // add or remove ports to meet target
         while (this.currentPorts.length > this.count.getValue())
-            this.oldPorts.push(this.currentPorts.pop());
+            this.oldPorts.push(this.currentPorts.pop()!);
         while (this.currentPorts.length < this.count.getValue())
             this.currentPorts.push(this.oldPorts.pop() || new this.type(this.parent));
 
@@ -64,7 +69,7 @@ export class PortSet<T extends Port> {
 
     /**
      * Updates the positions of the ports in the set. Allows for
-     * position updating even when the size does not change
+     * position updating even when the size does not change.
      */
     public updatePortPositions(): void {
         this.positioner.updatePortPositions(this.currentPorts);
@@ -99,6 +104,6 @@ export class PortSet<T extends Port> {
     }
 
     public isEmpty(): boolean {
-        return this.currentPorts.length == 0;
+        return this.currentPorts.length === 0;
     }
 }

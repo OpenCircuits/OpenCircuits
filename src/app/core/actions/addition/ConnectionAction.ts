@@ -1,10 +1,13 @@
 import {Action} from "core/actions/Action";
+
+import {CircuitDesigner} from "core/models/CircuitDesigner";
+import {Wire}            from "core/models/Wire";
+
+import {Port} from "core/models/ports/Port";
+
+import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {Wire} from "core/models/Wire";
-import {Port} from "core/models/ports/Port";
-import {GroupAction} from "../GroupAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
 
 /**
  * ConnectionAction represents the action of connecting two
@@ -18,19 +21,19 @@ export class ConnectionAction extends ReversableAction {
     private p2: Port;
 
     /**
-     * Initializes a ConnectionAction given the CircuitDesigner and a Wire
-     * 
-     * @param designer The CircuitDesigner this action is being done on
-     * @param w The Wire being connected
+     * Initializes a ConnectionAction given the CircuitDesigner and a Wire.
+     *
+     * @param designer The CircuitDesigner this action is being done on.
+     * @param w        The Wire being connected.
      */
     public constructor(designer: CircuitDesigner, w: Wire);
 
     /**
-     * Initializes a ConnectionAction given the CircuitDesigner and two Ports
-     * 
-     * @param designer the CircuitDesigner this action is being done on
-     * @param p1 The first Port being connected
-     * @param p2 The second Port being connected
+     * Initializes a ConnectionAction given the CircuitDesigner and two Ports.
+     *
+     * @param designer The CircuitDesigner this action is being done on.
+     * @param p1       The first Port being connected.
+     * @param p2       The second Port being connected.
      */
     public constructor(designer: CircuitDesigner, p1: Port, p2: Port);
     public constructor(designer: CircuitDesigner, p1: Port | Wire, p2?: Port) {
@@ -45,15 +48,15 @@ export class ConnectionAction extends ReversableAction {
         } else {
             this.wire = this.designer.createWire(p1, p2);
             this.p1 = p1;
-            this.p2 = p2;
+            this.p2 = p2!;
         }
     }
 
     /**
      * Executes the ConnectionAction by creating the Wire and connecting
-     * it to the proper Ports
-     * 
-     * @returns 'this' ConnectionAction after execution
+     * it to the proper Ports.
+     *
+     * @returns 'this' ConnectionAction after execution.
      */
     public normalExecute(): Action {
         this.designer.addWire(this.wire);
@@ -66,9 +69,9 @@ export class ConnectionAction extends ReversableAction {
 
     /**
      * Undoes the ConnectionAction by removing the Wire and
-     * disconnecting it from the two Ports
-     * 
-     * @returns 'this' ConnectionAction after undoing
+     * disconnecting it from the two Ports.
+     *
+     * @returns 'this' ConnectionAction after undoing.
      */
     public normalUndo(): Action {
         this.designer.removeWire(this.wire);
@@ -80,26 +83,30 @@ export class ConnectionAction extends ReversableAction {
     }
 
     /**
-     * Gets the Wire associated with this ConnectionAction
-     * 
-     * @returns the Wire in this connection
+     * Gets the Wire associated with this ConnectionAction.
+     *
+     * @returns The Wire in this connection.
      */
     public getWire(): Wire {
         return this.wire;
+    }
+
+    public getName(): string {
+        return `Connected ${this.p1.getParent().getName()} to ${this.p2.getParent().getName()}`;
     }
 
 }
 
 /**
  * DisconnectAction represents the action of disconnecting a Wire
- * from two Ports
+ * from two Ports.
  */
 export class DisconnectAction extends ConnectionAction {
     /**
-     * Initializes a DisconnectAction given a CircuitDesigner and a Wire
-     * 
-     * @param designer the CircuitDesigner the action is done on
-     * @param wire the Wire being disconnected
+     * Initializes a DisconnectAction given a CircuitDesigner and a Wire.
+     *
+     * @param designer The CircuitDesigner the action is done on.
+     * @param wire     The Wire being disconnected.
      */
     public constructor(designer: CircuitDesigner, wire: Wire) {
         super(designer, wire);
@@ -107,12 +114,12 @@ export class DisconnectAction extends ConnectionAction {
 }
 
 /**
- * Creates a GroupAction of DisconnectActions
- * 
- * @param designer the CircuitDesigner the actions are done on
- * @param wires the Wires being disconnected
- * @returns a GroupAction representing the DisconnectActions of each Wire
+ * Creates a GroupAction of DisconnectActions.
+ *
+ * @param designer The CircuitDesigner the actions are done on.
+ * @param wires    The Wires being disconnected.
+ * @returns          A GroupAction representing the DisconnectActions of each Wire.
  */
 export function CreateGroupDisconnectAction(designer: CircuitDesigner, wires: Wire[]): GroupAction {
-    return new GroupAction(wires.map(w => new DisconnectAction(designer, w)));
+    return new GroupAction(wires.map(w => new DisconnectAction(designer, w)), "Group Disconnect Action");
 }

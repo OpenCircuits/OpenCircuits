@@ -17,20 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@main
 
     - name: Setup GCloud
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@main
       with:
         version: '274.0.0'
         service_account_email: ${{ secrets.GCP_SA_EMAIL }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Set Node.js 15.x
-      uses: actions/setup-node@master
+    - name: Set Node.js 16.x
+      uses: actions/setup-node@main
       with:
-        node-version: 15.x
+        node-version: 16.x
 
     - name: Install
       run: yarn
