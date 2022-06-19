@@ -12,41 +12,41 @@ import {serializable, serialize} from "serialeazy";
 export class Vector {
 
     /**
-     * The x-component of this Vector
+     * The x-component of this Vector.
      */
     @serialize
     public x: number;
 
     /**
-     * The y-component of this Vector
+     * The y-component of this Vector.
      */
     @serialize
     public y: number;
 
     /**
-     * Initializes a blank Vector with default x, y values of 0, 0
+     * Initializes a blank Vector with default (x, y) values of (0, 0).
      */
     public constructor();
 
     /**
-     * Creates a Vector with the x and y values of the `other` Vector
+     * Creates a Vector with the x and y values of the `other` Vector.
      *
-     * @param other The vector to copy
+     * @param other The vector to copy.
      */
     public constructor(other: Vector);
 
     /**
-     * Initialize a Vector with the same x and y values as `val`
+     * Initialize a Vector with the same x and y values as `val`.
      *
-     * @param val The value to initialize the vector with
+     * @param val The value to initialize the vector with.
      */
     public constructor(val: number);
 
     /**
-     * Initialize a Vector with x values `x` and y value `y`
+     * Initialize a Vector with x values `x` and y value `y`.
      *
-     * @param x The x-component
-     * @param y The y-component
+     * @param x The x-component.
+     * @param y The y-component.
      */
     public constructor(x: number, y: number);
 
@@ -64,7 +64,7 @@ export class Vector {
      * Returns a new Vector with `this` Vector's x and y
      *  components added to `other`'s components.
      *
-     * @param other The vector to add to `this`
+     * @param other The vector to add to `this`.
      */
     public add(other: Vector): Vector;
 
@@ -72,7 +72,7 @@ export class Vector {
      * Returns a new Vector with `this` Vector's x and y
      *  components added by `val` to each component.
      *
-     * @param val The value to add to `this`
+     * @param val The value to add to `this`.
      */
     public add(val: number): Vector;
 
@@ -80,9 +80,9 @@ export class Vector {
      * Return a new Vector with `this` Vector's x and y
      *  components added by `x` and `y` respectively.
      *
-     * @param x The x-component to add to `this`
-     * @param y The y-component to add to `this`
-     * @returns A vector with `this` added to `x` and `y`
+     * @param x The x-component to add to `this`.
+     * @param y The y-component to add to `this`.
+     * @returns A vector with `this` added to `x` and `y`.
      */
     public add(x: number, y: number): Vector;
 
@@ -93,26 +93,26 @@ export class Vector {
     }
     /**
      * Return a new Vector with 'this' Vector's x and y
-     *  components substracted by 'v''s components
+     *  components substracted by 'v''s components.
      *
-     * @param v The vector to substract ot 'this'
+     * @param v The vector to substract ot 'this'.
      */
     public sub(v: Vector): Vector;
     /**
      * Return a new vector with 'this' Vector's x and y
-     *  components substracted by 'x' to each component
+     *  components substracted by 'x' to each component.
      *
-     * @param x The x-component to substract to 'this'
+     * @param x The x-component to substract to 'this'.
      */
     public sub(x: number): Vector;
 
     /**
      * Return a new vector with 'this' Vector's x and y
-     *  components substracted by 'x' and 'y'respectively
+     *  components substracted by 'x' and 'y'respectively.
      *
-     * @param x The x-component to substract to 'this'
-     * @param y The y-component to substract to 'this'
-     * @returns A new vector with 'this' substracted to 'x' and 'y'
+     * @param x The x-component to substract to 'this'.
+     * @param y The y-component to substract to 'this'.
+     * @returns A new vector with 'this' substracted to 'x' and 'y'.
      */
     public sub(x: number, y: number): Vector;
 
@@ -123,18 +123,18 @@ export class Vector {
     }
     /**
      * Return a new vector with 'this' vector's 'x' and 'y'
-     * scalar multiplied by vector 'v''s 'x' and 'y' respectively
+     * scalar multiplied by vector 'v''s 'x' and 'y' respectively.
      *
-     * @param v The vector to scalar multiply to 'this'
+     * @param v The vector to scalar multiply to 'this'.
      */
     public scale(v: Vector): Vector;
 
     /**
      * Return a new vector with 'this' vector's 'x' and 'y'
-     * scalar multiplied by number 'x'
+     * scalar multiplied by number 'x'.
      *
-     * @param x The number to scalar multiply to 'this'
-     * @returns A new vector with 'this' scalar multiplied by 'a'
+     * @param x The number to scalar multiply to 'this'.
+     * @returns A new vector with 'this' scalar multiplied by 'a'.
      */
     public scale(x: number): Vector;
 
@@ -144,18 +144,18 @@ export class Vector {
         return new Vector(a * this.x, a * this.y);
     }
     /**
-     * Return a Vector with 'this' Vector's absolute value of 'x' and 'y'
+     * Return a Vector with 'this' Vector's absolute value of 'x' and 'y'.
      *
      * @returns Return a new vector that hold the absolute value
-     *          of original vector
+     *          of original vector.
      */
     public abs(): Vector {
         return new Vector(Math.abs(this.x), Math.abs(this.y));
     }
     /**
-     * Return a vector that is normalized 'this' Vector
+     * Return a vector that is normalized 'this' Vector.
      *
-     * @returns Return a new vector that is normalized 'this'
+     * @returns Return a new vector that is normalized 'this'.
      */
     public normalize(): Vector {
         const len = this.len();
@@ -164,18 +164,18 @@ export class Vector {
         return this.scale(1 / len);
     }
     /**
-     * Return the length of the vector
+     * Return the length of the vector.
      *
-     * @returns Return the length of the vector
+     * @returns Return the length of the vector.
      */
     public len(): number {
         return Math.sqrt(this.len2());
     }
     /**
      * Return the dot product of 'this' to itself,
-     * which is the squared length of 'this'
+     * which is the squared length of 'this'.
      *
-     * @returns The dot product of 'this' . 'this'
+     * @returns The dot product of 'this' . 'this'.
      */
     public len2(): number {
         return this.dot(this);
@@ -183,25 +183,25 @@ export class Vector {
     /**
      * Return the angel of 'this' that respects to the x-axis.
      *
-     * @returns The arctan value of 'this''s 'x' and 'y'
+     * @returns The arctan value of 'this''s 'x' and 'y'.
      */
     public angle(): number {
         return Math.atan2(this.y, this.x);
     }
     /**
-     * Return the distance from 'this' to 'v'
+     * Return the distance from 'this' to 'v'.
      *
      * @param v The vector we need to mearsure the distance to.
-     * @returns The length of the vector of 'this' sub 'v'
+     * @returns The length of the vector of 'this' sub 'v'.
      */
     public distanceTo(v: Vector): number {
         return this.sub(v).len();
     }
     /**
-     * Return the dot product of 'this' and 'v'
+     * Return the dot product of 'this' and 'v'.
      *
-     * @param v The vector to dot multiply to 'this'
-     * @returns 'this' dot multiplied by 'v'
+     * @param v The vector to dot multiply to 'this'.
+     * @returns 'this' dot multiplied by 'v'.
      */
     public dot(v: Vector): number {
         return this.x * v.x + this.y * v.y;
@@ -216,28 +216,28 @@ export class Vector {
         return v.scale(this.dot(v) / v.len2())
     }
     /**
-     * Return a negative reciprocal vector of 'this'
+     * Return a negative reciprocal vector of 'this'.
      *
-     * @returns A new vector with negative reciprocal 'this'
+     * @returns A new vector with negative reciprocal 'this'.
      */
     public negativeReciprocal(): Vector {
         return new Vector(this.y, -this.x);
     }
     /**
-     * Return a new vector that copies 'this''s data
+     * Return a new vector that copies 'this''s data.
      *
-     * @returns A Vector with 'this''s 'x' and 'y'
+     * @returns A Vector with 'this''s 'x' and 'y'.
      */
     public copy(): Vector {
         return new Vector(this.x, this.y);
     }
     /**
      * Return a vector that has mininum 'x' and 'y' components from
-     * vectors within the array 'vectors'
+     * vectors within the array 'vectors'.
      *
-     * @param vectors The array that holds vectors
+     * @param vectors The array that holds vectors.
      * @returns A Vector with the smallest 'x' and 'y' that
-     *          from vector(s) in the array
+     *          from vector(s) in the array.
      */
     public static Min(...vectors: Vector[]): Vector {
         return new Vector(Math.min(...vectors.map((v) => v.x)),
@@ -245,27 +245,27 @@ export class Vector {
     }
     /**
      * Return a vector that has maxium 'x' and 'y' components from
-     * vectors within the array 'vectors'
+     * vectors within the array 'vectors'.
      *
-     * @param vectors The array that holds vectors
+     * @param vectors The array that holds vectors.
      * @returns A Vector with the biggest 'x' and 'y' that
-     *          from vector(s) in the array
+     *          from vector(s) in the array.
      */
     public static Max(...vectors: Vector[]): Vector {
         return new Vector(Math.max(...vectors.map((v) => v.x)),
                           Math.max(...vectors.map((v) => v.y)));
     }
     /**
-     * Keep the vector 'x' within the range that formed by 'lo' and 'hi'
+     * Keep the vector 'x' within the range that formed by 'lo' and 'hi'.
      *
-     * @param x The vector that need to be examined
-     * @param lo The minimum vector of the range
-     * @param hi The maximum vector of the range
+     * @param x The vector that need to be examined.
+     * @param lo The minimum vector of the range.
+     * @param hi The maximum vector of the range.
      * @returns Return 'x' itself if it is in the range of 'lo' and 'hi'.
      *          If one of the component of 'x' out of the range, it will
      *          be respectively change to corresponding compoenent of 'lo' or 'hi' and return.
      *          If both component of 'x' out of the range,
-     *          it will return 'lo' or 'hi' depend on the valueof 'x'
+     *          it will return 'lo' or 'hi' depend on the valueof 'x'.
      */
     public static Clamp(x: Vector, lo: Vector, hi: Vector): Vector {
         return Vector.Min(Vector.Max(x, lo), hi);
@@ -273,7 +273,7 @@ export class Vector {
 }
 
 /**
- * The useful utils that make the claim of the vector much easier
+ * The useful utils that make the claim of the vector much easier.
  */
 export function V(): Vector;
 export function V(v: Vector): Vector;
