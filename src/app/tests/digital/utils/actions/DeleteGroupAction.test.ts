@@ -38,7 +38,7 @@ describe("Delete Group Action", () => {
     });
     test("Basic Deletion of 1 wire", () => {
         const [a, b] = Place(new Switch(), new LED());
-        const [w] = Connect(a, b);
+        const [] = Connect(a, b);
 
         expect(designer.getObjects()).toContain(a);
 
