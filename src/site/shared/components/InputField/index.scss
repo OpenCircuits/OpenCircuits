@@ -45,12 +45,15 @@
         }
     }
 
-    &:hover {
-        & > input {
-            border-right: none !important;
-        }
-        & > span > button {
-            display: block;
+
+    @media (min-width: 768px) {
+        &:hover {
+            & > input {
+                border-right: none !important;
+            }
+            & > span > button {
+                display: block;
+            }
         }
     }
 }
