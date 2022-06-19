@@ -2,11 +2,12 @@ import {CreateState} from "shared/utils/CreateState";
 
 
 export type HeaderMenus = "none" | "download" | "settings" | "tutorial" | "utilities";
-export type HeaderPopups = "none" | "login" | "quick_start" | "keyboard_shortcuts" | "image_exporter" | "expr_to_circuit";
+export type HeaderPopups = "none" | "login" | "quick_start" | "keyboard_shortcuts" | "image_exporter" |
+                           "expr_to_circuit" | "cache_circuit" | "reload_circuit";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        curMenu: "none" as HeaderMenus,
+        curMenu:  "none" as HeaderMenus,
         curPopup: "none" as HeaderPopups,
     },
     {

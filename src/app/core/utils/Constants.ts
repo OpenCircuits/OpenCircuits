@@ -17,8 +17,6 @@ export const DEFAULT_ON_COLOR      = "#3cacf2";
 export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 
-export const GRAPH_LINE_WIDTH = 4;
-
 export const DEFAULT_BORDER_WIDTH = 2;
 export const DEFAULT_CURVE_BORDER_WIDTH = 2.1
 export const SEGMENT_DISPLAY_WIDTH = 35;
@@ -62,6 +60,7 @@ export const ARROW_TRANSLATE_DISTANCE_SMALL = 11;
 
 export const SIDENAV_WIDTH = 300;
 export const ITEMNAV_WIDTH = 240;
+export const ITEMNAV_HEIGHT = 255;
 
 export const LEFT_MOUSE_BUTTON  = 0;
 export const MIDDLE_MOUSE_BUTTON = 1;

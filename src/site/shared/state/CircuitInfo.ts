@@ -3,14 +3,14 @@ import {CreateState} from "shared/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        id: "",
-        name: "",
-        isSaved: false,
+        id:       "",
+        name:     "",
+        isSaved:  true,
         isLocked: false,
 
         loading: false,
-        saving: false,
-        error: "",
+        saving:  false,
+        error:   "",
     },
     {
         // TODO: make factory methods for trivial action types when TS4.4 gets adopted
@@ -32,9 +32,9 @@ const [initialState, actions, reducer] = CreateState()(
         "SET_CIRCUIT_SAVING_START_ID":  (state)         => ({ ...state, saving: true, error: "" }),
         "SET_CIRCUIT_SAVING_FINISH_ID": (state, action) => ({
             ...state,
-            saving: false,
+            saving:  false,
             isSaved: (action.err === undefined),
-            error: action.err ?? "",
+            error:   action.err ?? "",
         }),
     }
 );

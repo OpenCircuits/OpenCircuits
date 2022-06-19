@@ -158,7 +158,7 @@ export class ICData {
     }
 
     private static CreateSet(objs: IOObject[]): DigitalObjectSet {
-        const copies = DigitalObjectSet.from(CopyGroup(objs).toList());
+        const copies = DigitalObjectSet.From(CopyGroup(objs).toList());
 
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not

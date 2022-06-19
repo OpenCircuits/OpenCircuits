@@ -1,12 +1,14 @@
-import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Snap} from "core/utils/ComponentUtils";
+import {Snap}        from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
-import {Component} from "core/models";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {RotateAction} from "core/actions/transform/RotateAction";
+
+import {RotateAction}    from "core/actions/transform/RotateAction";
 import {TranslateAction} from "core/actions/transform/TranslateAction";
+
+import {Component} from "core/models";
 
 import {EventHandler} from "../EventHandler";
 
@@ -36,7 +38,7 @@ export const CleanUpHandler: EventHandler = ({
                 components,
                 components.map(o => o.getPos()),
                 components.map(o => Snap(o.getPos()))
-            )
-        ]).execute());
-    }
+            ),
+        ], "Clean Up Handler").execute());
+    },
 });

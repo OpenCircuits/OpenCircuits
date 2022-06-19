@@ -1,11 +1,12 @@
+import {GetPath} from "core/utils/ComponentUtils";
+
 import {Action} from "core/actions/Action";
 
-import {GetPath} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner, Port} from "core/models";
 
-import {GroupAction} from "../GroupAction";
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
+import {GroupAction}            from "../GroupAction";
 
 
 export abstract class PortChangeAction implements Action {
@@ -26,7 +27,7 @@ export abstract class PortChangeAction implements Action {
     }
 
     private createAction(): GroupAction {
-        const action = new GroupAction();
+        const action = new GroupAction([], "Port Change Action");
         const ports = this.getPorts();
 
         // Disconnect all wires from each port

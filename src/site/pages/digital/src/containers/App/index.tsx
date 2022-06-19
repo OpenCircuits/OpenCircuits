@@ -42,10 +42,7 @@ import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup
 import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
 import {PauseResumeButtonModule}    from "../SelectionPopup/modules/PauseResumeButtonModules";
-import {ClearOscilloscopeButtonModule,
-        OscilloscopeDisplaySizeModule,
-        OscilloscopeInputCountModule,
-        OscilloscopeSamplesModule}  from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
+import {OscilloscopeModule}         from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 
 import exampleConfig from "site/digital/data/examples.json";
 import docsConfig from "site/digital/data/docsUrlConfig.json";
@@ -89,22 +86,25 @@ export const App = ({info, helpers, canvas}: Props) => {
                     <HistoryBox info={info} />
 
                     <SelectionPopup info={info}
-                                    modules={[PositionModule, InputCountModule,
-                                        ComparatorInputCountModule,
-                                        SelectPortCountModule,
-                                        ConstantNumberInputModule,
-                                        DecoderInputCountModule,
-                                        OutputCountModule, SegmentCountModule,
-                                        OscilloscopeDisplaySizeModule,
-                                        OscilloscopeInputCountModule,
-                                        FrequencyModule, OscilloscopeSamplesModule,
-                                        PauseResumeButtonModule,
-                                        ClearOscilloscopeButtonModule,
-                                        ClockSyncButtonModule,
-                                        ColorModule, TextColorModule,
-                                        BusButtonModule,
-                                        CreateICButtonModule, ViewICButtonModule]}
-                                    docsUrlConfig={docsConfig} />
+                                    docsUrlConfig={docsConfig}>
+                        <PositionModule info={info} />
+                        <InputCountModule info={info} />
+                        <ComparatorInputCountModule info={info} />
+                        <SelectPortCountModule info={info} />
+                        <ConstantNumberInputModule info={info} />
+                        <DecoderInputCountModule info={info} />
+                        <OutputCountModule info={info} />
+                        <SegmentCountModule info={info} />
+                        <OscilloscopeModule info={info} />
+                        <FrequencyModule info={info} />
+                        <PauseResumeButtonModule info={info} />
+                        <ClockSyncButtonModule info={info} />
+                        <ColorModule info={info} />
+                        <TextColorModule info={info} />
+                        <BusButtonModule info={info} />
+                        <CreateICButtonModule info={info} />
+                        <ViewICButtonModule info={info} />
+                    </SelectionPopup>
 
                     <ContextMenu info={info}
                                  paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />

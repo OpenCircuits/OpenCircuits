@@ -1,9 +1,12 @@
 import "jest";
-import "test/helpers/Extensions";
 
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
+
+import "test/helpers/Extensions";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
 
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
@@ -12,8 +15,6 @@ import {ANDGate, BUFGate,
         LED,
         Multiplexer, Switch} from "digital/models/ioobjects";
 
-import {Setup}      from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Selection Tool", () => {
@@ -124,7 +125,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
 
             input.click(V(100, 0));
             expect(selections.get().length).toBe(1);
@@ -142,7 +143,7 @@ describe("Selection Tool", () => {
 
             obj2.setPos(V(200, 0));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(20, 0));
             expect(selections.get().length).toBe(1);
@@ -161,7 +162,7 @@ describe("Selection Tool", () => {
             obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
             expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(0, 20));
             expect(selections.get().length).toBe(1);
@@ -170,7 +171,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -182,7 +183,7 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate w/ Backspace", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
@@ -197,7 +198,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
@@ -280,11 +281,11 @@ describe("Selection Tool", () => {
             obj2.setPos(V(200, 0));
             obj1.setPos(V(0, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
-            
+
             // Select all objects with shift and click
             input.pressKey("Shift");
             input.click(obj1.getPos());
@@ -308,7 +309,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
             obj1.setPos(V(100, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);

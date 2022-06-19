@@ -4,24 +4,31 @@ import {V, Vector} from "Vector";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
-import {Action} from "core/actions/Action";
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
+
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {Component, IOObject} from "core/models";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
 import {TransferICDataAction} from "digital/actions/TransferICDataAction";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {IC} from "digital/models/ioobjects/other";
 
 /**
- * Finds and adds any new IC data upon paste
- * @param objs All objects in data
- * @param designer Circuit designer
- * @returns GroupAction to add all relevant IC data
+ * Finds and adds any new IC data upon paste.
+ *
+ * @param objs     All objects in data.
+ * @param designer Circuit designer.
+ * @returns          GroupAction to add all relevant IC data.
  */
 function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): Action | undefined {
     // Find ICs and ICData
@@ -51,8 +58,8 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
 
     // Transfer the new ICData
     const action = new GroupAction([
-        new TransferICDataAction(newICData, designer).execute()
-    ]);
+        new TransferICDataAction(newICData, designer).execute(),
+    ], "Recursive Transfer ICData Action");
 
     // Recursively look through all the new ICs for new ICData
     newICData.forEach(d => {
@@ -65,11 +72,12 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
 }
 
 /**
- * Performs paste action in Digital Circuit
- * @param data Clipboard data
- * @param info Circuit info
- * @param menuPos Top left of context menu if being pasted using context menu
- * @returns True if successful paste
+ * Performs paste action in Digital Circuit.
+ *
+ * @param data    Clipboard data.
+ * @param info    Circuit info.
+ * @param menuPos Top left of context menu if being pasted using context menu.
+ * @returns         True if successful paste.
  */
 export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: Vector): boolean {
     try {
@@ -85,14 +93,14 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
 
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
-        const action = new GroupAction();
+        const action = new GroupAction([], "Digital Paste");
         if (newICDataAction)
             action.add(newICDataAction);
         action.add(new GroupAction([
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift)))
+            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift))),
         ]).execute());
 
         history.add(action);

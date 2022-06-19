@@ -1,13 +1,15 @@
 import {V} from "Vector";
 
-import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
-import {GroupAction} from "core/actions/GroupAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {CopyGroupAction} from "core/actions/CopyGroupAction";
+import {GroupAction}     from "core/actions/GroupAction";
+
 import {CreateDeselectAllAction,
         CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {CopyGroupAction} from "core/actions/CopyGroupAction";
+
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {IOObject} from "core/models";
 
@@ -34,7 +36,7 @@ export const DuplicateHandler: EventHandler = ({
             CreateGroupSelectAction(selections, components).execute(),
             new TranslateAction(components,
                                 components.map(o => o.getPos()),
-                                components.map(o => o.getPos().add(V(5, 5)))).execute()
-        ]));
-    }
+                                components.map(o => o.getPos().add(V(5, 5)))).execute(),
+        ], "Duplicate Handler"));
+    },
 });

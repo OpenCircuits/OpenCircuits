@@ -5,7 +5,7 @@ import {Graph} from "math/Graph";
 
 function compareDepths(expected: string[][], actual: string[][]) {
     expect(actual.length).toEqual(expected.length);
-        for (var i = 0; i < actual.length; i++)
+        for (let i = 0; i < actual.length; i++)
             expect(actual[i].sort()).toEqual(expected[i].sort());
 }
 
@@ -92,7 +92,7 @@ describe("Graph", () => {
             const expected = [
                 ["A"],
                 ["B", "D"],
-                ["C"]
+                ["C"],
             ];
             compareDepths(expected, nodeDepths);
         });
@@ -117,7 +117,7 @@ describe("Graph", () => {
             const expected = [
                 ["A", "B"],
                 ["C", "E", "F"],
-                ["D"]
+                ["D"],
             ];
             compareDepths(expected, nodeDepths);
         });
@@ -148,7 +148,7 @@ describe("Graph", () => {
                 ["C"],
                 ["D", "F"],
                 ["E"],
-                ["G"]
+                ["G"],
             ];
             compareDepths(expected, nodeDepths);
         });
@@ -181,7 +181,7 @@ describe("Graph", () => {
             const expected = [
                 ["A"],
                 ["B", "D"],
-                ["C"]
+                ["C"],
             ];
             compareDepths(expected, nodeDepths);
         });
@@ -206,7 +206,7 @@ describe("Graph", () => {
             const expected = [
                 ["A", "B"],
                 ["C", "E", "F"],
-                ["D"]
+                ["D"],
             ];
             compareDepths(expected, nodeDepths);
         });
@@ -235,7 +235,7 @@ describe("Graph", () => {
             const expected = [
                 ["A", "B"],
                 ["C", "F", "E"],
-                ["D", "G"]
+                ["D", "G"],
             ];
             compareDepths(expected, nodeDepths);
         });

@@ -1,11 +1,15 @@
 import "jest";
 
-import {DigitalCircuitDesigner} from "digital/models";
-import {LED, Switch} from "digital/models/ioobjects";
-import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+import {GetHelpers} from "test/helpers/Helpers";
+
 import {CreateSnipGateAction} from "digital/actions/SnipGateActionFactory";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models";
+
+import {LED, Switch} from "digital/models/ioobjects";
+
+import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
+
 
 
 describe("SnipGateAction", () => {
@@ -14,8 +18,8 @@ describe("SnipGateAction", () => {
 
     describe("BUFGate", () => {
         const [input, buf, out] = Place(new Switch(), new BUFGate(), new LED());
-        Connect(input, 0, buf, 0);
-        Connect(buf, 0, out, 0);
+        Connect(input, buf);
+        Connect(buf, out);
 
         const action = CreateSnipGateAction(buf);
 
@@ -50,8 +54,8 @@ describe("SnipGateAction", () => {
 
     describe("NOTGate", () => {
         const [input, not, out] = Place(new Switch(), new NOTGate(), new LED());
-        Connect(input, 0, not, 0);
-        Connect(not, 0, out, 0);
+        Connect(input, not);
+        Connect(not, out);
 
         const action = CreateSnipGateAction(not);
 

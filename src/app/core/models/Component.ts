@@ -1,16 +1,18 @@
+import {serialize} from "serialeazy";
+
 import {DEFAULT_BORDER_WIDTH,
-        IO_PORT_RADIUS,
-        IO_PORT_BORDER_WIDTH} from "core/utils/Constants";
+        IO_PORT_BORDER_WIDTH,
+        IO_PORT_RADIUS} from "core/utils/Constants";
 
-import {Vector,V}     from "Vector";
-import {Transform}    from "math/Transform";
+import {V, Vector} from "Vector";
+
 import {RectContains} from "math/MathUtils";
-import {serialize}    from "serialeazy";
+import {Transform}    from "math/Transform";
 
-import {Port}       from "./ports/Port";
+import {CullableObject} from "./CullableObject";
+import {Port}           from "./ports/Port";
+import {Wire}           from "./Wire";
 
-import {CullableObject}   from "./CullableObject";
-import {Wire}       from "./Wire";
 
 export abstract class Component extends CullableObject {
     @serialize
@@ -49,10 +51,11 @@ export abstract class Component extends CullableObject {
 
     /**
      * Determines whether or not a point is within
-     *  this component's "selectable" bounds
-     * @param  v The point
-     * @return   True if the point is within this component,
-     *           false otherwise
+     *  this component's "selectable" bounds.
+     *
+     * @param v The point.
+     * @returns   True if the point is within this component,
+     *    false otherwise.
      */
     public isWithinSelectBounds(v: Vector): boolean {
         return RectContains(this.getTransform(), v);
@@ -97,7 +100,7 @@ export abstract class Component extends CullableObject {
             p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
-        return Vector.min(min, ...corners, ...ports);
+        return Vector.Min(min, ...corners, ...ports);
     }
 
     public getMaxPos(): Vector {
@@ -113,7 +116,7 @@ export abstract class Component extends CullableObject {
             p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
-        return Vector.max(max, ...corners, ...ports);
+        return Vector.Max(max, ...corners, ...ports);
     }
 
     public getImageName(): string | undefined {

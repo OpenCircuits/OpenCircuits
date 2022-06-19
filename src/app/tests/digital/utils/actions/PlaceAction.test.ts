@@ -3,7 +3,8 @@ import "jest";
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
 
 
 describe("Place Action", () => {

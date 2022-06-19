@@ -12,6 +12,6 @@ export const PasteHandler = (paste: (text: string) => boolean): EventHandler => 
 
         getResponse: (_, {ev}: CopyPasteEvent) => {
             paste(ev.clipboardData!.getData("text/plain"));
-        }
+        },
     });
 }

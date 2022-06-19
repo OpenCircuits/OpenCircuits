@@ -1,0 +1,69 @@
+{
+    "imgRoot": "img/itemnav",
+    "sections": [
+      {
+        "id": "sources",
+        "label": "Sources",
+        "items": [
+          {
+            "id": "VoltageSource",
+            "label": "Voltage Source",
+            "icon": "voltagesource.svg"
+          },
+          {
+            "id": "CurrentSource",
+            "label": "Current Source",
+            "icon": "currentsource.svg"
+          }
+        ]
+      },
+      {
+        "id": "essentials",
+        "label": "Essentials",
+        "items": [
+          {
+            "id": "Ground",
+            "label": "Ground",
+            "icon": "ground.svg"
+          },
+          {
+            "id": "Resistor",
+            "label": "Resistor",
+            "icon": "resistor.svg"
+          },
+          {
+            "id": "Capacitor",
+            "label": "Capacitor",
+            "icon": "capacitor.svg"
+          },
+          {
+            "id": "Inductor",
+            "label": "Inductor",
+            "icon": "inductor.svg"
+          }
+        ]
+      },
+      {
+        "id": "measurements",
+        "label": "Measurements",
+        "items": [
+          {
+            "id": "Oscilloscope",
+            "label": "Oscillo-scope",
+            "icon": "oscilloscope.svg"
+          }
+        ]
+      },
+      {
+        "id": "other",
+        "label": "Other",
+        "items": [
+          {
+            "id": "Label",
+            "label": "Label",
+            "icon": "label.svg"
+          }
+        ]
+      }
+    ]
+  }

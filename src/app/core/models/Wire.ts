@@ -1,16 +1,19 @@
+import {serialize} from "serialeazy";
+
 import {DEFAULT_SIZE,
         WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
-import {V,Vector} from "Vector";
-import {BezierContains} from "math/MathUtils";
-import {BezierCurve} from "math/BezierCurve";
+import {V, Vector} from "Vector";
 
-import {CullableObject}   from "./CullableObject";
-import {Component}  from "./Component";
-import {Port} from "./ports/Port";
-import {Node} from "./Node";
-import {serialize} from "serialeazy";
+import {BezierCurve}    from "math/BezierCurve";
+import {BezierContains} from "math/MathUtils";
+
+import {Component}      from "./Component";
+import {CullableObject} from "./CullableObject";
+import {Node}           from "./Node";
+import {Port}           from "./ports/Port";
+
 
 export abstract class Wire extends CullableObject {
     @serialize
@@ -106,7 +109,7 @@ export abstract class Wire extends CullableObject {
     }
 
     public setIsStraight(straight: boolean): void {
-        if (straight == this.straight)
+        if (straight === this.straight)
             return;
 
         this.straight = straight;
@@ -119,6 +122,10 @@ export abstract class Wire extends CullableObject {
 
     public getColor(): string {
         return this.color;
+    }
+
+    public getDisplayColor(): string {
+        return this.getColor();
     }
 
     public getP1(): Port {

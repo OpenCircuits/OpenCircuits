@@ -1,4 +1,3 @@
-const path = require("path");
 const webpack = require("webpack");
 
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
@@ -50,5 +49,6 @@ module.exports = (config) => {
         require("./css")(config),
         require("./ts")(config),
         require("./html")(config),
+        require("./wasm")(config),
     );
 }

@@ -26,7 +26,12 @@ module.exports = ({ isProd, publicPath }) => ({
                     },
                     {
                         loader: "css-loader",
-                        options: { importLoaders: 1 },
+                        options: {
+                            importLoaders: 2,
+                            modules: {
+                                mode: "icss",
+                            },
+                        },
                     },
                     {
                         loader: "postcss-loader",

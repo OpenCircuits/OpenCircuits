@@ -1,11 +1,14 @@
-import {Vector} from "Vector";
-import {ClampedValue} from "math/ClampedValue";
 import {serialize} from "serialeazy";
+
+import {Vector} from "Vector";
+
+import {ClampedValue} from "math/ClampedValue";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {InputPort} from "digital/models/ports/InputPort";
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
+import {InputPort} from "digital/models/ports/InputPort";
 
 //
 // FlipFlop is an abstract superclass for general flip flops.
@@ -20,13 +23,13 @@ export abstract class FlipFlop extends DigitalComponent {
     public static readonly Q2_PORT = 1;
 
     @serialize
-    protected clock: boolean = false;
+    protected clock = false;
 
     @serialize
-    protected state: boolean = false;
+    protected state = false;
 
     @serialize
-    protected lastClock: boolean = false;
+    protected lastClock = false;
 
     public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs+3), new ClampedValue(2), size, inputPositioner);

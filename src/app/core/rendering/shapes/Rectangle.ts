@@ -1,4 +1,5 @@
 import {Vector} from "Vector";
+
 import {Transform} from "math/Transform";
 
 import {Shape} from "./Shape";
@@ -12,23 +13,23 @@ export class Rectangle implements Shape {
     protected size: Vector;
 
     /**
-     * Constructor for Rectangle
-     * 
-     * @param transform transform spatial information
+     * Constructor for Rectangle.
+     *
+     * @param transform Transform spatial information.
      */
     public constructor(transform: Transform);
     /**
-     * Constructor for Rectangle
-     * 
-     * @param pos position
-     * @param size dimensions
+     * Constructor for Rectangle.
+     *
+     * @param pos  Position.
+     * @param size Dimensions.
      */
     public constructor(pos: Vector, size: Vector);
     /**
-     * Constructor for Rectangle
-     * 
-     * @param pos position or transform spatial information
-     * @param size dimensions
+     * Constructor for Rectangle.
+     *
+     * @param pos  Position or transform spatial information.
+     * @param size Dimensions.
      */
     public constructor(pos: Vector | Transform, size?: Vector) {
         if (pos instanceof Transform) {
@@ -41,9 +42,9 @@ export class Rectangle implements Shape {
     }
 
     /**
-     * Draws the Rectangle on the canvas
-     * 
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * Draws the Rectangle on the canvas.
+     *
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         const center = this.pos.sub(this.size.scale(0.5));

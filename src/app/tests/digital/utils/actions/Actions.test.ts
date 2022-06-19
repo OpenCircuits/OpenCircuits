@@ -1,18 +1,24 @@
 import "jest";
 
-import {HistoryManager}         from "core/actions/HistoryManager";
+import {HistoryManager} from "core/actions/HistoryManager";
+
+import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 import {CreateSplitWireAction}  from "core/actions/addition/SplitWireAction";
-import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
 
-import {CreateBusAction}     from "digital/actions/addition/BusActionFactory";
+import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
+
 import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {LED}                    from "digital/models/ioobjects/outputs/LED";
-import {Multiplexer}            from "digital/models/ioobjects/other/Multiplexer";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Integration Tests for Actions", () => {

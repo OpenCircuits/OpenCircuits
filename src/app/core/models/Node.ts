@@ -1,5 +1,6 @@
-import {Port} from "./ports/Port";
 import {Component} from "./Component";
+import {Port}      from "./ports/Port";
+
 
 export interface Node extends Component {
     getP1(): Port;
@@ -9,6 +10,6 @@ export interface Node extends Component {
 export function isNode(c: unknown): c is Node {
     if (!(c instanceof Component))
         return false;
-    return (c as Node).getP1 != undefined &&
-           (c as Node).getP2 != undefined;
+    return (c as Node).getP1 !== undefined &&
+           (c as Node).getP2 !== undefined;
 }

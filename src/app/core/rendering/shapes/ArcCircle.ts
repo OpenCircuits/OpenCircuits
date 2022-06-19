@@ -7,16 +7,16 @@ import {Circle} from "./Circle";
  * A representation of an ArcCircle shape.
  */
 export class ArcCircle extends Circle {
-    protected a0: number = 0;
-    protected a1: number = 2*Math.PI;
+    protected a0 = 0;
+    protected a1 = 2*Math.PI;
 
     /**
-     * Constructor for ArcCircle
-     * 
-     * @param pos the position
-     * @param radius the radius
-     * @param a0 the starting angle
-     * @param a1 the ending angle
+     * Constructor for ArcCircle.
+     *
+     * @param pos    The position.
+     * @param radius The radius.
+     * @param a0     The starting angle.
+     * @param a1     The ending angle.
      */
     public constructor(pos: Vector, radius: number, a0: number, a1: number) {
         super(pos, radius);
@@ -25,14 +25,15 @@ export class ArcCircle extends Circle {
     }
 
     /**
-     * Draws the ArcCircle on the canvas
-     * 
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * Draws the ArcCircle on the canvas.
+     *
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.pos.x, this.pos.y);
         let da = (this.a1 - this.a0) % (2*Math.PI);
-        if (da < 0) da += 2*Math.PI;
+        if (da < 0)
+            da += 2*Math.PI;
         ctx.arc(this.pos.x, this.pos.y, this.radius, this.a0, this.a1, da > Math.PI);
     }
 

@@ -1,7 +1,9 @@
 import "jest";
 
 import {Vector} from "Vector";
+
 import {Matrix2x3} from "math/Matrix";
+
 
 describe("Matrix2x3", () => {
     describe("Constructor", () => {

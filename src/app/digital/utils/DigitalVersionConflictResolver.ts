@@ -1,5 +1,8 @@
+/* eslint-disable key-spacing */
 import {Circuit, ContentsData} from "core/models/Circuit";
+
 import {DigitalCircuitDesigner} from "digital/models";
+
 import {Button, IC, Switch} from "digital/models/ioobjects";
 
 
@@ -10,7 +13,7 @@ interface SerializationEntry {
 }
 
 export function VersionConflictResolver(fileContents: string | Circuit): string {
-    const circuit = (typeof(fileContents) == "string" ? JSON.parse(fileContents) as Circuit : fileContents);
+    const circuit = (typeof(fileContents) === "string" ? JSON.parse(fileContents) as Circuit : fileContents);
 
     const v = parseFloat(circuit.metadata.version);
 
@@ -36,7 +39,7 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             "SegmentDisplay": [{ports: "inputs",  positioner: "ConstantSpacePositioner"}],
             "SRFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
             "JKFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
-            "SRLatch":        [{ports: "inputs",  positioner: "Positioner"}]
+            "SRLatch":        [{ports: "inputs",  positioner: "Positioner"}],
         };
 
         Object.keys(c).forEach((key) => {

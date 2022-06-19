@@ -2,6 +2,7 @@ import "jest";
 
 import {Vector} from "Vector";
 
+
 describe("Vector", () => {
     describe("Constructor", () => {
         test("No parameters", () => {
@@ -237,7 +238,7 @@ describe("Vector", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
-                const min = Vector.min(v1, v2);
+                const min = Vector.Min(v1, v2);
                 expect(min.x).toBe(-5);
                 expect(min.y).toBe(5);
             }
@@ -246,7 +247,7 @@ describe("Vector", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
-                const max = Vector.max(v1, v2);
+                const max = Vector.Max(v1, v2);
                 expect(max.x).toBe(5);
                 expect(max.y).toBe(10);
             }
