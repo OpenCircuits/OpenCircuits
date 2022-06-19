@@ -15,7 +15,7 @@ import {AnalogCircuitDesigner} from "analog/models";
 import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
 
 import {LoadUserCircuits} from "shared/state/thunks/User";
-import {_SetCircuitLoading, SetCircuitId, SetCircuitName, SetCircuitSaved} from "shared/state/CircuitInfo";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
 import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";

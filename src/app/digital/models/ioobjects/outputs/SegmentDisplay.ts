@@ -1,6 +1,6 @@
 import {serializable, serialize} from "serialeazy";
 
-import {Segments, SegmentType} from "./Segments";
+import {SegmentType, Segments} from "./Segments";
 
 import {IO_PORT_RADIUS} from "core/utils/Constants";
 

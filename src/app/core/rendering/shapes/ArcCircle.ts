@@ -8,7 +8,7 @@ import {Circle} from "./Circle";
  */
 export class ArcCircle extends Circle {
     protected a0 = 0;
-    protected a1: number = 2*Math.PI;
+    protected a1 = 2*Math.PI;
 
     /**
      * Constructor for ArcCircle

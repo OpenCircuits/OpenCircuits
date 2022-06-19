@@ -74,8 +74,8 @@ export const ToolRenderer = (() => {
                 // Draw rotation circle and outline
                 if (hasOnlyComponents) {
                     drawRotationCircleOutline(renderer, camera, midpoint);
-                    drawRotationCircleArc(renderer, camera, midpoint, RotateTool.getStartAngle(),
-                                          RotateTool.getPrevAngle());
+                    drawRotationCircleArc(renderer, camera, midpoint,
+                                          RotateTool.getStartAngle(), RotateTool.getPrevAngle());
                 }
             }
             else if (tool === WiringTool) {

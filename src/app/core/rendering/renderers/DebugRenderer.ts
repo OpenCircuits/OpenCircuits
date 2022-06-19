@@ -7,7 +7,7 @@ import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
-import {isPressable, Pressable} from "core/utils/Pressable";
+import {Pressable, isPressable} from "core/utils/Pressable";
 
 import {Renderer} from "../Renderer";
 

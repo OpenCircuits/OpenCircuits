@@ -24,8 +24,8 @@ export class DigitalObjectSet extends IOObjectSet {
     private others:  DigitalComponent[];
 
     public constructor();
-    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[], others: DigitalComponent[],
-                       wires: Wire[]);
+    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[],
+                       others: DigitalComponent[], wires: Wire[]);
     public constructor(inputs: DigitalComponent[] = [], outputs: DigitalComponent[] = [],
                        others: DigitalComponent[] = [], wires: Wire[] = []) {
         super([...inputs, ...outputs, ...others, ...wires]);

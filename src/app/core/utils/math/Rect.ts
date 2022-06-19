@@ -26,12 +26,11 @@ export type Margin = {
 export function Margin(left: number, right: number, bottom: number, top: number): Margin;
 export function Margin(h: number, v: number): Margin;
 export function Margin(left: number, right: number, bottom?: number, top?: number) {
-    if (bottom !== undefined) {
+    if (bottom !== undefined)
         return { left, right, bottom, top };
-    }
-        const h = left, v = right;
-        return { left: h, right: h, bottom: v, top: v };
 
+    const h = left, v = right;
+    return { left: h, right: h, bottom: v, top: v };
 }
 
 
